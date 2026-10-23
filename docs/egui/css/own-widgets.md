@@ -91,6 +91,7 @@ reference page lists its parts.
 | `toast-host` (its `show` toasts) | `toast`, `accent`, `text`, `action`, `close` | — |
 | `modal` (OW7b) | `backdrop`, `title`, `grip` | — |
 | `inner-window` (OW7b) | `titlebar`, `title`, `close`, `collapse` | `edge-*` (not painted) |
+| `status-bar` (OW7c) | `message` (the message and status tip); the box is the node (`status-bar:open` while one shows), its sections are children (`status-bar > [status-section=end]`) | — |
 
 A rule on a part in the last column has no effect yet; style the host (`switch:checked { … }`) instead.
 The `scrollbar` thumb and the `split-view` sash have no `::part()` yet either.

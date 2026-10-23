@@ -10611,6 +10611,203 @@
       ],
       "text_content": null
     },
+    "StatusBar": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "the message or status tip"
+        ],
+        "note": "A polite live region: a new message or status tip is announced without interrupting.",
+        "role": "Status",
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "message": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "message",
+          "provenance": "svelters-egui: the a taffy flex row with a message area (svelters' own) widget writes message into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "containers",
+      "chain": [
+        "StatusBar",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "`status-bar` styles the bar (the `panel-bg` fill and a top `border-color` line by default); `status-bar > *` and `[status-section=…]` its sections; `::part(message)` the message and status-tip text (`color`, `font-size`, `padding-left`).",
+      "doc": "A generic status bar (QStatusBar): a flex row whose children are its sections, placed by their `status-section`: `start` sections first, then the `temporary` ones, then the `end` sections pushed to the far end; `flex-grow` stretches a section. A message (`message`, `show-message`) or a status tip (a hovered or focused node's `status-tip`) is drawn in `::part(message)`, the free space after the start sections, and hides the temporary sections meanwhile. It holds no app-specific sections: compose your own from labels, buttons and the like.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "clear-message": {
+          "dispatch": "generated",
+          "doc": "Clears the message (Qt `clearMessage`).",
+          "native": "clear-message",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "show-message": {
+          "dispatch": "generated",
+          "doc": "`show-message(text, timeout = 0)`: shows `text` in `::part(message)` for `timeout` seconds (0: until changed or cleared), hiding the temporary sections (Qt `showMessage`).",
+          "native": "show-message",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "a taffy flex row with a message area (svelters' own)",
+      "paint": "box",
+      "parts": [],
+      "present": null,
+      "props": {
+        "message": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The temporary message (Qt `currentMessage`), drawn in `::part(message)` over the temporary sections; empty for none. Setting it shows it until it is changed or cleared; `show-message` sets it with a timeout, after which it is empty again (`bind:message`).",
+          "js": "message",
+          "native": "message",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:StatusBar:message",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "provider_states": [],
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "message",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Its message changed (Qt `messageChanged`): `show-message`, `clear-message` or a timeout; carries the new message.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "kind",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "open",
+          "negated": [],
+          "pseudo": [
+            ":open"
+          ],
+          "source": "kind",
+          "when": "a message or a status tip shows (its temporary sections are hidden)"
+        }
+      ],
+      "text_content": null
+    },
     "Switch": {
       "a11y": {
         "actions": [
@@ -14834,6 +15031,45 @@
           "type": "f64",
           "writable": true
         },
+        "status-section": {
+          "construct_only": false,
+          "default": "temporary",
+          "doc": "Its place in a `status-bar` (QStatusBar): `temporary` (after the start sections; hidden while a message or status tip shows), `start` (permanent, at the start), `end` (permanent, pushed to the end). Also the `[status-section=…]` selector.",
+          "js": "status-section",
+          "native": "status-section",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:status-section",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "temporary",
+            "start",
+            "end"
+          ],
+          "writable": true
+        },
+        "status-tip": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Text for the status bar while the pointer is over the node (enabled or not; the innermost node with one wins) or, with nothing hovered, while it has keyboard focus: every `status-bar` of the viewport shows it in `::part(message)`, and `svelters_egui::status_tip` reads it. Empty for none.",
+          "js": "status-tip",
+          "native": "status-tip",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:status-tip",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "tooltip": {
           "construct_only": false,
           "default": "",
@@ -16077,6 +16313,7 @@
           "popup",
           "scroll-area",
           "sides",
+          "status-bar",
           "tab",
           "toast"
         ],
@@ -16132,6 +16369,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -16359,6 +16597,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -16403,6 +16642,7 @@
           "panel",
           "popup",
           "scroll-area",
+          "status-bar",
           "tab",
           "toast"
         ],
@@ -16497,6 +16737,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -16576,6 +16817,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -16607,6 +16849,7 @@
           "panel",
           "popup",
           "scroll-area",
+          "status-bar",
           "tab",
           "toast"
         ],
@@ -16664,6 +16907,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -16724,6 +16968,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -16755,6 +17000,7 @@
           "panel",
           "popup",
           "scroll-area",
+          "status-bar",
           "tab",
           "toast"
         ],
@@ -16814,6 +17060,7 @@
           "popup",
           "scroll-area",
           "sides",
+          "status-bar",
           "tab",
           "toast",
           "window"
@@ -16882,6 +17129,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -16913,6 +17161,7 @@
           "panel",
           "popup",
           "scroll-area",
+          "status-bar",
           "tab",
           "toast"
         ],
@@ -16987,6 +17236,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17075,6 +17325,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17135,6 +17386,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17195,6 +17447,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17255,6 +17508,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17437,6 +17691,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17499,6 +17754,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17535,6 +17791,7 @@
           "panel",
           "popup",
           "scroll-area",
+          "status-bar",
           "tab",
           "toast"
         ],
@@ -17555,6 +17812,69 @@
           "stable"
         ],
         "via": "css"
+      },
+      "status-section": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "status-section",
+        "prop": "status-section",
+        "tags": [
+          "box",
+          "button",
+          "calendar",
+          "canvas",
+          "checkbox",
+          "collapsing-header",
+          "color-editor",
+          "color-picker",
+          "combo-box",
+          "date-picker",
+          "dialog-buttons",
+          "drag-value",
+          "frame",
+          "grid",
+          "hyperlink",
+          "icon",
+          "image",
+          "inner-window",
+          "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "panel",
+          "popup",
+          "progress-bar",
+          "radio-button",
+          "range-slider",
+          "scroll-area",
+          "scrollbar",
+          "separator",
+          "sides",
+          "slider",
+          "spinner",
+          "split-view",
+          "stack",
+          "status-bar",
+          "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
+          "text-edit",
+          "toast",
+          "toast-host",
+          "toggle-button",
+          "tree-view",
+          "virtual-list"
+        ],
+        "type": "enum",
+        "values": [
+          "temporary",
+          "start",
+          "end"
+        ],
+        "via": "setter"
       },
       "text-align": {
         "decl_type": "enum",
@@ -17638,6 +17958,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17715,6 +18036,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -17787,6 +18109,7 @@
           "spinner",
           "split-view",
           "stack",
+          "status-bar",
           "switch",
           "tab",
           "tab-view",
@@ -18019,6 +18342,7 @@
     "spinner": "Spinner",
     "split-view": "SplitView",
     "stack": "Stack",
+    "status-bar": "StatusBar",
     "switch": "Switch",
     "tab": "Tab",
     "tab-view": "TabView",

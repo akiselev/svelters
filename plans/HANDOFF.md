@@ -51,7 +51,7 @@ the rest of the quota; it is cadatomic's, not tracked here.
 | U4 | WSL, coordinator's agent | `ci/u4` | compiler checker for utility classes (static class, `class:`, clsx, script scan), CX1 codes incl. `utility_bad_value`, per-kind validation, `@apply`, fix-its | MERGED f7f67386 (ci/u4 800f33e4); left: the live loader passes no utilities option or theme tokens yet |
 | FX6b | WSL, coordinator's agent | `ci/fx6b` | embed flush via the host job drain instead of `flushSync` (interrupt inside flushSync left `is_flushing_sync` set), plus an e2e egui test if cheap | MERGED f7f67386 (ci/fx6b 21084825), with its e2e egui test and a second drain bug fixed |
 | OW5b1 | thinkpad-svelters | `ci/ow5b` | own `table` without egui_table (virtual rows/cols, frozen header, resize, parts, sort, hidden columns, header-state) | MERGED 55cf5c9d (ci/ow5b cc427a51); OW5b2/OW5a2 handoff in OW5b-table.md |
-| OW7b | thinkpad-svelters | `ci/ow7b` | stage 1: declarative `<toast>` (per-run CSS for cadatomic); then dialog-buttons, status-bar, auto_default, keyboard window resize, `:exiting`, built-in-kind `::part()` gap for modal/inner-window | MERGED (ci/ow7b 4079bd1a); OW7c (status-bar + status tips, ci/ow7c) finishing; left: `buttons=` shorthand, yes/no roles, destructive never default, orientation, keyboard window resize, `:exiting`, VIS1 probes |
+| OW7b | thinkpad-svelters | `ci/ow7b` | stage 1: declarative `<toast>` (per-run CSS for cadatomic); then dialog-buttons, status-bar, auto_default, keyboard window resize, `:exiting`, built-in-kind `::part()` gap for modal/inner-window | MERGED (ci/ow7b 4079bd1a), OW7c status-bar MERGED (ci/ow7c 0874b79f); left: see §4 item 1 |
 | OW1a4 | thinkpad-svelters | `ci/ow1a4` | `use:` exports, collapsing-header accordion/`slot="end"`/icon | MERGED (ci/ow1a4 d61b3acb); gaps in OW1a4-actions-collapsing.md (`use:` bits one frame late, no key-claim hook, no duplicate-unit warning) |
 | OW4 | macbook-svelters | `ci/ow4` | own text-edit on quire-text (https rev) | full scope |
 | WG3s | macbook-gui (stopped) | `ci/wg3s` e317e65a | scroll pins 9 (wheel, chaining) and 10 (gesture, overscroll), `Driver::scroll_wheel/scroll_gesture`, the user's flick `conformance/scroll/macos-flick.json`, golden `nsscrollview-15.7.5.json`. egui vs AppKit 0/20 equal: wheel 40 vs 10 pt and animated, momentum 1:1 vs ~720 pt, no rubber band; AppKit doesn't chain the wheel | MERGED b0976c1e; left: the fixture's inner area never gets input, a Native::Mac scroll row for OW2, Linux/Windows drivers, noisy timing (±60%) |
@@ -73,8 +73,10 @@ Start each on a fresh agent (CLAUDE.md "Agents"). Lane designs are in the files 
 1. **Finish the own-widget set** (ARCH-WIDGETS.md, WIDGET-PARITY.md; the user fast-tracked "that list of widgets"):
    OW5b2 (table parity: selection-unit, edit triggers, movable columns, grid lines; split decided by the coordinator
    2026-10-22), OW5a2 (grid, rubber band, sticky headers, multi-column tree after OW5b1, rename, expand animation),
-   OW5c (tabs), OW7b leftovers (`buttons=` shorthand, yes/no roles, destructive never default, orientation, keyboard
-   window resize, `:exiting` on modal/inner-window/`show()` toasts, VIS1 probes for toast and dialog-buttons), OW6b (sectioned date field, month/year sub-pickers, rgb/hsv drag-value parts, `path-field`), OW7b
+   OW5c (tabs), OW7b/OW7c leftovers (`buttons=` shorthand, yes/no roles, destructive never default, orientation, keyboard
+   window resize, `:exiting` on modal/inner-window/`show()` toasts, status tips on menu entries, ellipsis + tooltip on a
+   cut-off status message, optional `slot="end"` alias for `status-section`, VIS1 rows for toast, dialog-buttons and
+   status-bar), OW6b (sectioned date field, month/year sub-pickers, rgb/hsv drag-value parts, `path-field`), OW7b
    remainder, OW3b (scrollable tall menus etc.), OW1a4's gaps (`use:` state bits one frame late, a key-claim hook into focus.rs,
    a warning when a `use:` unit duplicates an own widget's), then **OW-DONE** (lint to zero, drop egui_extras/egui_table, audit every
    built-in kind for undeclared `::part()`s: OW7b found modal/inner-window/toast-host parts never reached CSS).
@@ -127,6 +129,8 @@ drain, no Svelte patch; STATUS FX6 row); FM1's `button-order` on any `box` not a
   `python3 tools/metadata/style/gen_utilities.py`. Fixture bundles some tests need: `corepack pnpm --filter
   ./fixtures/lists-egui build`, `--filter ./fixtures/gallery-egui build` (after `cargo build -p svelters-compiler --bin
   svelters-compile`).
+- **Known CI flake:** macos-appkit `counter-mac --test backend request_frame_delivers_one_frame` ("both frames came from
+  CADisplayLink") failed once on e1da7f98 with no AppKit change; it passed on the commits before and after. Rerun the job.
 - **Known local-only quirk:** the VIS1c gate (`-p svelters-testkit --features snapshots -E 'binary(vis1)'`) prints its
   score and then SIGSEGVs at exit under WSL's Mesa; CI passes it. Compare `target/vis1c/windows/report.md` with the baseline.
 - **cadatomic interface:** cadatomic pins svelters by sha (CH1 on the ThinkPad). Requests flow through cadatomic's
@@ -158,6 +162,9 @@ drain, no Svelte patch; STATUS FX6 row); FM1's `button-order` on any `box` not a
 - Our own icon visual language (after codicons interim).
 
 ## 8. Housekeeping still owed
+
+- **ThinkPad (user's call):** the worktree `/projects/sinbad/svelters-ow7` (ci/ow7, merged) has 3 uncommitted edits, OW7's
+  late handoff text, already folded into OW7b's merged record. Removing it discards them, so it was left for the user.
 
 - svelters' `target/` (183 GB) was deleted on 2026-10-23 at the user's request; the space returns to C: only after
   the compaction. The first local build after the pause rebuilds from scratch.

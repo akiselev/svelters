@@ -68,6 +68,8 @@ pub enum W {
     Toast(std::boxed::Box<crate::views::toast::ToastNode>),
     /// OW7b: `dialog-buttons`, a row of role buttons in the platform's order.
     DialogButtons(std::boxed::Box<crate::views::dialog_buttons::DialogButtons>),
+    /// OW7c: `status-bar`, sections and a message area.
+    StatusBar(std::boxed::Box<crate::views::status_bar::StatusBar>),
     /// RT2: an inline run (`span`, `b`, `i`, `code`, `a`: `kinds/rich.rs`), drawn by its label.
     /// `weight` 0 inherits; `anchor`: an `a` run (a link).
     Run { text: String, weight: i64, href: String, anchor: bool },
@@ -131,6 +133,10 @@ pub struct Common {
     pub cancel_button: bool,
     /// OW7b: `dialog-role` (a `dialog-buttons` child's place).
     pub dialog_role: &'static str,
+    /// OW7c: `status-tip` (`crate::views::status_bar`); `None` while empty.
+    pub status_tip: Option<Box<str>>,
+    /// OW7c: `status-section` (a `status-bar` child's place).
+    pub status_section: &'static str,
 }
 
 impl Common {
@@ -171,6 +177,8 @@ impl Common {
         default_button: false,
         cancel_button: false,
         dialog_role: "auto",
+        status_tip: None,
+        status_section: "temporary",
     };
 }
 
@@ -493,7 +501,7 @@ pub fn text_of(w: &W) -> &str {
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,
         W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
-        W::Table(_) | W::TabView { .. } | W::ToastHost(_) | W::Toast(_) | W::DialogButtons(_) => "",
+        W::Table(_) | W::TabView { .. } | W::ToastHost(_) | W::Toast(_) | W::DialogButtons(_) | W::StatusBar(_) => "",
     }
 }
 

@@ -608,6 +608,19 @@ pub static KIND_DOCS: &[KindDoc] = &[
         a11y: NO_NODE,
         css_note: "A flex row: `justify-content`, `gap` and `flex-direction` restyle it; `dialog-buttons button[dialog-role=destructive]` picks a role.",
     },
+    // OW7c
+    KindDoc {
+        id: "StatusBar",
+        category: Category::Containers,
+        paint: Paint::Box,
+        walk: Walk::Container,
+        states: &[
+            StateDoc { name: "hovered", source: Source::Kind, when: "the pointer is over it" },
+            StateDoc { name: "open", source: Source::Kind, when: "a message or a status tip shows (its temporary sections are hidden)" },
+        ],
+        a11y: A11yDoc { role: Some("Status"), name_from: &["the message or status tip"], note: "A polite live region: a new message or status tip is announced without interrupting.", ..NO_NODE },
+        css_note: "`status-bar` styles the bar (the `panel-bg` fill and a top `border-color` line by default); `status-bar > *` and `[status-section=…]` its sections; `::part(message)` the message and status-tip text (`color`, `font-size`, `padding-left`).",
+    },
     // WG4b
     KindDoc {
         id: "DatePicker",

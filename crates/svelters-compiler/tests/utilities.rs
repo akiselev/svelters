@@ -292,7 +292,14 @@ fn fixtures_have_no_utility_diagnostics() {
     for f in &files {
         let src = fs::read_to_string(f).unwrap();
         let r = run_with(&src, Some(scan.clone()));
-        let found: Vec<_> = r.diagnostics.iter().filter(|d| d.code.starts_with("utility_")).map(|d| (d.range.start_pos.line, d.code, d.message.clone())).collect();
+        // U3's gallery page shows a dynamic `p-{n}` on purpose (the runtime generates it on first use)
+        let shows_dynamic = f.ends_with("pages/50-utilities.svelte");
+        let found: Vec<_> = r
+            .diagnostics
+            .iter()
+            .filter(|d| d.code.starts_with("utility_") && !(shows_dynamic && d.code == "utility_dynamic_value"))
+            .map(|d| (d.range.start_pos.line, d.code, d.message.clone()))
+            .collect();
         assert!(found.is_empty(), "{}: {found:#?}", f.display());
     }
 }

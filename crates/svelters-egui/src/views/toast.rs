@@ -161,6 +161,7 @@ pub(crate) fn parts_of(w: &W) -> Option<&'static [crate::provider::PartEntry]> {
     match w {
         W::ToastHost(_) => Some(HOST_PARTS),
         W::Toast(_) => Some(NODE_PARTS),
+        W::StatusBar(_) => Some(crate::views::status_bar::PARTS),
         W::Overlay(o) if o.kind == OverlayKind::Modal => Some(MODAL_PARTS),
         W::Overlay(o) if o.kind == OverlayKind::InnerWindow => Some(WINDOW_PARTS),
         _ => None,

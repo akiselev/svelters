@@ -369,7 +369,7 @@ impl Metrics {
             | W::Spinner { .. }
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
-            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) | W::DialogButtons(_) => crate::views::intrinsic(self, w),
+            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) | W::DialogButtons(_) | W::StatusBar(_) => crate::views::intrinsic(self, w),
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -466,6 +466,7 @@ impl Tree<'_> {
     fn children_laid(&self, i: usize) -> &[SceneId] {
         match self.s.w(i) {
             W::DialogButtons(d) if d.laid.len() == self.s.children[i].len() => &d.laid,
+            W::StatusBar(b) if b.laid.len() == self.s.children[i].len() => &b.laid,
             _ => &self.s.children[i],
         }
     }
@@ -514,6 +515,9 @@ impl LayoutPartialTree for Tree<'_> {
         }
         if matches!(self.s.w(ix(id)), W::DialogButtons(_)) {
             crate::views::dialog_buttons::order_children(self.s, ix(id), &self.m.ctx); // OW7b
+        }
+        if matches!(self.s.w(ix(id)), W::StatusBar(_)) {
+            crate::views::status_bar::order_sections(self.s, ix(id)); // OW7c
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);

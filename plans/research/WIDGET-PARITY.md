@@ -1189,13 +1189,13 @@ editor inline in panels, and AccessKit sliders on each channel. egui has `color_
 
 | Qt | Ours | Status |
 |---|---|---|
-| `showMessage(text, timeout)`, `clearMessage`, `currentMessage`, `messageChanged` | `show-message(text, timeout)`, `clear-message`, `message` (read-only), `message-changed` | **MISSING → OW7 (`status-bar` kind 0.75)** |
-| `addWidget(w, stretch)` (temporary area, hidden by messages) | children (normal) | MISSING with the kind |
-| `addPermanentWidget(w, stretch)` (right side, never hidden) | children with `slot="end"` | MISSING with the kind |
-| status tips from hovered actions and widgets (QA5) | `status-tip` routed to the nearest `status-bar` of the viewport | **MISSING → OW7 (0.25)** |
+| `showMessage(text, timeout)`, `clearMessage`, `currentMessage`, `messageChanged` | `show-message(text, timeout)`, `clear-message`, `message` (bindable; a write shows it until changed), `changed(message)` | **done (OW7c)** |
+| `addWidget(w, stretch)` (temporary area, hidden by messages) | children (`status-section="temporary"`, the default); stretch is `flex-grow` | **done (OW7c)** |
+| `addPermanentWidget(w, stretch)` (right side, never hidden) | children with `status-section="end"` (also `start`: permanent at the start). `slot="end"` (OW1a4's named slots) not wired yet | **done (OW7c)** |
+| status tips from hovered actions and widgets (QA5) | `status-tip` (Widget prop) of the innermost hovered node, else the focused one: every `status-bar` of the viewport shows it, `svelters_egui::status_tip(ctx)` reads it | **done (OW7c)** for in-flow nodes; menu entries deferred (OW7b record) |
 | `sizeGripEnabled` | N/A (OS windows resize from their edges) | N/A |
-| QSS `QStatusBar::item` (border around permanent widgets) | `status-bar > *`, `::part(message)` | MISSING with the kind |
-| AccessKit `Role::Status`, announcements of messages (QA11) | `announce` politeness polite | MISSING with the kind |
+| QSS `QStatusBar::item` (border around permanent widgets) | `status-bar > *`, `[status-section=…]`, `::part(message)`, `:open` | **done (OW7c)** |
+| AccessKit `Role::Status`, announcements of messages (QA11) | `Role::Status`, live `polite`, labelled with the message or tip | **done (OW7c)** |
 
 **Beyond Qt.** Toasts (`toast-host`: corner, duration, levels, `dismiss`) cover KDE-style passive notifications,
 which Qt Widgets does not have.

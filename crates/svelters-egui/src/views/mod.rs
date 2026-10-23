@@ -18,6 +18,7 @@ pub(crate) mod table;
 pub(crate) mod tabs;
 pub mod toast;
 pub mod dialog_buttons;
+pub mod status_bar;
 // WG5a: egui input for the item views' keyboard selection (`selection` is WG5b's shared helper)
 pub mod item_keys;
 
@@ -34,7 +35,7 @@ use taffy::{
 
 /// The views that have children (`W::is_container`).
 pub(crate) fn is_container(w: &W) -> bool {
-    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. } | W::Toast(_) | W::DialogButtons(_))
+    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. } | W::Toast(_) | W::DialogButtons(_) | W::StatusBar(_))
 }
 
 /// The no-wrap size of a view that measures itself (only `table`; the others are sized by their
@@ -71,6 +72,7 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
         W::Table(_) => table::paint(arena, i, r, ui, out),
         W::TabView { .. } => tabs::paint(arena, i, r, origin, ui, out),
         W::DialogButtons(_) => dialog_buttons::paint(arena, i, r, origin, ui, out),
+        W::StatusBar(_) => status_bar::paint(arena, i, r, origin, ui, out),
         _ => unreachable!("not a view container"),
     }
     let c = arena.common(i);
@@ -107,6 +109,8 @@ pub(crate) fn call(b: &EguiBackend, h: Handle, name: &str, args: &[Value]) -> Op
             ("show", W::ToastHost(t)) => t.show(args),
             ("dismiss", W::ToastHost(t)) => t.dismiss(args),
             ("clear", W::ToastHost(t)) => t.clear(args),
+            ("show-message", W::StatusBar(b)) => b.show_message(args),
+            ("clear-message", W::StatusBar(b)) => b.clear_message(args),
             _ => return None,
         };
         (r, scene.core[i].root)

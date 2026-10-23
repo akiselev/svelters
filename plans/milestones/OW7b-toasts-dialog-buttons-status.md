@@ -1,4 +1,4 @@
-# OW7b: declarative toasts, dialog-buttons, auto-default (status-bar handed off)
+# OW7b: declarative toasts, dialog-buttons, auto-default, status-bar
 
 Lane OW7b (thinkpadx1), branch `ci/ow7b`, from master ec8809fe (OW7 merged). Spec: OW7's "Skipped"
 list (`plans/milestones/OW7-modal-window-toasts.md`), WIDGET-PARITY §2.1 (`autoDefault`), §2.21, §2.22,
@@ -44,19 +44,35 @@ FM1's QW11 order (`origin/ci/fm1`, stopped and kept as spec), WG6's `status-tip`
 - **On (Windows, Qt/KDE, GTK, egui).** The push button focused in a dialog scope is that scope's default: it shows `:default` (`focus::shows_default`), and the others in that scope don't. Enter presses it, through the Pressable claim it already had.
 - **Off (macOS).** A focused button no longer claims Enter. EV3 routes Enter to the scope's `default` button whatever is focused; Space still presses the focused button.
 
+### 3. `status-bar` and status tips (OW7c, branch `ci/ow7c`, `views/status_bar.rs`, kind in `kinds/views.rs`)
+
+```svelte
+<status-bar bind:message onchanged={(m) => …}>
+  <label status-section="start">NORMAL</label>
+  <label>Ready</label>                                   <!-- temporary: hidden while a message shows -->
+  <button status-section="end" status-tip="Change the encoding">UTF-8</button>
+</status-bar>
+```
+
+- **Generic kind** (WIDGET-PARITY's Decided block): a Box, a flex row (`align-items: center`, `gap: 12`, `padding: 2`, `min-height: 22`) with no sections of its own; cadatomic composes its sections from ordinary nodes.
+- **Sections.** A new Widget prop `status-section` places each child: `start` (permanent, first), `temporary` (the default; after the start ones, hidden while a message or tip shows: Qt's `addWidget`), `end` (permanent, pushed to the far end: Qt's `addPermanentWidget`). Stretch is `flex-grow`. Only taffy sees the section order (`order_sections`, `layout.rs` `children_laid`, as `dialog-buttons` does); the first end section gets `margin-left: auto`, so the free space between the last start and the first end section is the message area. Not `slot="end"` (OW7's spec): when this was built egui kinds had one slot each; OW1a4 (merged later) added named slots (`kinds::extra_slots`), so `slot="end"` could become an alias for `status-section="end"` (handoff).
+- **Message.** `message` (bindable, `changed(message)`; a JS write shows it until changed, unannounced), `show-message(text, timeout = 0)` (timeout on egui's clock, so kittest's virtual one) and `clear-message`; the methods and a timeout emit `changed`. Qt's `messageChanged` is `changed`, not `message-changed`, so `bind:message` works.
+- **Status tips.** A new Widget prop `status-tip` (`Common::status_tip: Option<Box<str>>`). The walk (`walk::paint_node`, `status_bar::offer`) records the innermost hovered node's tip (enabled or not, out-of-flow nodes excluded) and the focused node's; an egui end-of-pass hook resolves hover over focus, and a change repaints, so the bar shows the tip whether it was drawn before or after the hovered node. Every `status-bar` of the viewport shows it over the message; `svelters_egui::status_tip(&ctx)` returns it (the last complete pass's) for cadatomic's own shell.
+- **CSS.** UA look `STATUS_UA` (`panel-bg`, a 1px top `border` line), painted under the bar's CSS by `style::before_container` (which now takes a per-kind UA). `::part(message)` (`color`, `font-size`, `padding-left`; declared in `toast::parts_of`), `status-bar > *`, `[status-section=…]`, and `:open` while a message or tip shows (kept with `set_own_state`, as `<toast>`'s `:exiting`).
+- **AccessKit.** The bar is a `Status` node, a `polite` live region, labelled with the message or tip.
+
 ### Generated
 
 The generators ran in this order: spec (`SVELTERS_UPDATE=1 --test spec`), `gen_props.py`, `gen_utilities.py`, `gen_reference.py`. They cover egui.json, egui.d.ts, tables/utilities.generated, props.generated.js, and the reference pages (new: `toast.md`, `dialog-buttons.md`; every Widget page gains `dialog-role`).
 
 ## Handoff (not done in this lane)
 
-- **3. `status-bar`: not started.** Planned design:
-  - a Box kind, row, `Role::Status`, with a `::part(message)` area at the start (flex-grow);
-  - children are the sections, placed by flex, with QStatusBar's permanent widgets as `slot="end"`;
-  - `show-message(text, timeout)`, `clear-message`, the read-only `message` prop and `message-changed`, with timeouts on the virtual clock;
-  - WG6's `status-tip` (a Widget prop): while the pointer is over a node with a tip (innermost wins), the nearest `status-bar` of the viewport shows it in `::part(message)` over the message, and `svelters_egui::status_tip(&ctx)` reads it;
-  - announcements: polite.
-  - `Common` has room: SG6's budget is 640 B a node; take an `Option<Box<str>>` for the tip.
+- **3. `status-bar`: done in OW7c** (section 3 above). Left:
+  - **menu entries' status tips**: menus draw their entries outside the walk (`menus.rs` `decorate`), so a menu item's `status-tip` is not offered yet; WG6 called its hook there. Add `status_bar::offer` to the menu entry paint (hover only);
+  - the elided message has no tooltip with the full text, and a message wider than the area is cut (no `…`);
+  - the message area is computed from last pass's section rects (one frame behind a section resize);
+  - VIS1: no reference rows for `status-bar`;
+  - optional: `slot="end"` as an alias for `status-section="end"` through OW1a4's `kinds::extra_slots` (the prop stays: it also gives `start`).
 - **5.**
   - Keyboard resizing of inner windows: not done (OW7's note stands: the edge handles are not focusable).
   - `:exiting` transitions: done for `<toast>` only. The modal and inner-window still close at once.
@@ -69,7 +85,7 @@ OW7b builds on OW7's `widgets/dialog.rs` (the modal and window chrome, the `tool
   - Done: roles, order in all five policy tables, `clicked(role)`, `help`, accept and reject closing the dialog.
   - Not done: the `buttons="ok cancel apply …"` shorthand (host-localised labels), the `yes` and `no` roles, `orientation` (CSS `flex-direction` works), and "a destructive button is never the default".
   - Styling: `dialog-buttons button::part(icon)` works through the own button's icon part.
-- **`status-bar`** (not done), as OW7 specified it:
+- **`status-bar`** (done in OW7c, with the differences noted in section 3), as OW7 specified it:
   - children are the temporary area, hidden while a message shows; children with `slot="end"` are permanent;
   - `show-message(text, timeout)`, `clear-message`, the read-only `message`, `message-changed`, with timeouts on egui's clock;
   - `::part(message)`, with `status-bar > *` styling the sections;
@@ -82,7 +98,7 @@ OW7b builds on OW7's `widgets/dialog.rs` (the modal and window chrome, the `tool
 
 - **Stage 1** (`<toast>`) merges alone from `ci/ow7b-s1` (6d059c4b). This branch (`ci/ow7b`) also has items 2 and 4. Merge master into it once stage 1 is on master.
 - **Left for the continuation agent**, in this order:
-  1. **Item 3, `status-bar`**: the whole kind and the `status-tip` feed, as specified in "From OW7's handoff" and in the Handoff section above. Nothing of it is built.
+  1. ~~**Item 3, `status-bar`**~~: done in OW7c (section 3; what's left is under Handoff).
   2. **`dialog-buttons` gaps:**
      - the `buttons="ok cancel apply …"` shorthand (host-localised labels);
      - the `yes` and `no` roles (add them to `DIALOG_ROLE` and to every `ButtonOrder::roles` row; Qt puts yes with accept and no with reject);
@@ -91,8 +107,9 @@ OW7b builds on OW7's `widgets/dialog.rs` (the modal and window chrome, the `tool
   3. **Item 5:**
      - keyboard resizing of inner windows (edge handles are not focusable; Qt's Alt+F8);
      - `:exiting` transitions for `modal`, `inner-window` and the `show()` toasts (only `<toast>` has it).
-  4. **VIS1:** probe rows for `toast` and `dialog-buttons` once references exist.
-  5. **Item 2 vs QW11:** FM1 specified `button-order` on any `box`; this lane ships the `dialog-buttons` kind only. Decide whether the box prop is still wanted.
+  4. **VIS1:** probe rows for `toast`, `dialog-buttons` and `status-bar` once references exist.
+  6. **`status-bar` remainder:** menu entries' status tips (`menus.rs` `decorate` should call `status_bar::offer`), `…` and a full-text tooltip for a cut message (see Handoff).
+  5. **Item 2 vs QW11: decided (coordinator, 2026-10-22):** FM1's `button-order` on any `box` is NOT adopted; `dialog-buttons` is the one place that applies the platform button order.
 - **Done here and not to redo:** `<toast>` (stage 1, on master), `dialog-buttons` roles, order and results, `Policy::auto_default`, `::part()` for `toast-host`, `toast`, `modal` and `inner-window`, the OW-DONE audit line (WIDGET-PARITY coordinator block).
 - **Gotchas:**
   - kittest's `run()` advances the virtual clock past short timeouts, so give toasts in tests durations of 3 s or more and step to the timeout;
@@ -116,7 +133,7 @@ OW7b builds on OW7's `widgets/dialog.rs` (the modal and window chrome, the `tool
 | §2.21 destructive role styling | done as a selector (`button[dialog-role=destructive]`); "never the default" is not enforced (deferred) |
 | §2.21 `centerButtons`, `orientation` | CSS (`justify-content`, `flex-direction`) |
 | §2.21 open/close animation (`:exiting`) | toasts done; modal and inner-window deferred |
-| §2.22 `status-bar` rows (messages, sections, status tips, `::part(message)`, `Role::Status`) | deferred (handoff above) |
+| §2.22 `status-bar` rows (messages, sections, status tips, `::part(message)`, `Role::Status`) | done (OW7c); menu entries' status tips deferred |
 | §2.22 "Beyond Qt" toasts: per-run CSS | done (declarative `<toast>`) |
 
 **VIS1:** the toast surfaces paint from the same measured tokens as OW7's (`menu-bg`, `menu-border-color`, `menu-radius`, `popup-shadow`, the level tokens). Not probed: the `toast` and `dialog-buttons` kinds have no VIS1 reference rows yet (row "Menus, tooltip, toast, dialog": references captured, not probed).
@@ -129,6 +146,10 @@ New, `crates/svelters-egui/tests/ow7b.rs`:
 - `ow7b_declarative_toasts_style_per_run_stack_and_close`: per-run CSS, `[level]` border, a 6px `::part(accent)`, stacking with `show()`, Alert names and politeness, `:hover`, a child-button action, the timeout, `:exiting` held and ended, reopening;
 - `ow7b_dialog_buttons_platform_order_roles_and_results`: the four orders and `platform` under GTK, the 6px gap, `clicked(role)`, `help`, accept closing the modal with `"accept"`;
 - `ow7b_auto_default_moves_default_to_the_focused_button`: Windows (`:default` follows focus, Enter presses the focused button), macOS (Enter presses OK).
+
+New in OW7c, `crates/svelters-egui/tests/ow7c.rs`:
+- `ow7c_status_bar_sections_message_and_timeout` (layout): sections given out of order land start, temporary, end (pushed to the far end, 12 apart); `show-message` with a 3 s timeout hides the temporary sections, sets `:open`, labels the polite `Status` node and emits `changed`; it times out on the virtual clock; a prop write and `clear-message`;
+- `ow7c_status_tips_follow_hover_and_focus` (routing): a hovered body label's tip (drawn before the bar) and a hovered end section's (drawn inside it) replace the message and are read by `status_tip(ctx)`; leaving restores the message; a focused button's tip shows; hover wins over focus.
 
 `widgets.rs::every_kind_has_a_tooltip_and_inputs_are_named` skips `toast-host` and `toast`, as it skips the overlays: they are out of flow.
 

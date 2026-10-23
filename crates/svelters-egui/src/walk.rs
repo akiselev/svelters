@@ -151,6 +151,9 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
     if crate::overlays::out_of_flow(arena.w(i)) {
         return crate::overlays::paint_node(arena, i, origin, ui, out);
     }
+    if arena.common(i).status_tip.is_some() {
+        crate::views::status_bar::offer(arena, i, arena.core[i].rect.translate(origin), ui); // OW7c
+    }
     // EV2b: a host with behaviours (`use:`) runs their `after_ui` hooks around its own paint
     if arena.core[i]
         .flags

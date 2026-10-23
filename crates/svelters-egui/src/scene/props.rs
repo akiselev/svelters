@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel | DialogRole
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel | DialogRole | StatusTip | StatusSection
     )
 }
 
@@ -128,6 +128,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::AccessibleName, _) => c.accessible_name = as_str(v)?,
         (P::Anchor, _) => c.anchor = as_str(v)?,
         (P::DialogRole, _) => c.dialog_role = as_enum(v, crate::kinds::DIALOG_ROLE)?,
+        (P::StatusTip, _) => c.status_tip = Some(as_str(v)?).filter(|t| !t.is_empty()).map(String::into_boxed_str),
+        (P::StatusSection, _) => c.status_section = as_enum(v, crate::kinds::STATUS_SECTION)?,
         (P::Width, _) => c.width = as_len(v)?,
         (P::Height, _) => c.height = as_len(v)?,
         (P::MinWidth, _) => c.min_width = as_len(v)?,
@@ -261,6 +263,7 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (key, W::ToastHost(t)) => t.set(key, v)?,
         (key, W::Toast(t)) => t.set(key, v)?,
         (P::ButtonOrder, W::DialogButtons(d)) => d.order = as_enum(v, crate::kinds::BUTTON_ORDER)?,
+        (P::Message, W::StatusBar(b)) => b.set_message(as_str(v)?, None),
         (P::Title, W::Tab { title, .. }) => *title = as_str(v)?,
         // OW5b: the column's props (`views::table::ColumnState`)
         (key, W::TableColumn(c)) => c.set(key, v)?,
@@ -300,6 +303,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::AccessibleName, _) => s(&c.accessible_name),
         (P::Anchor, _) => s(&c.anchor),
         (P::DialogRole, _) => Value::Str(c.dialog_role.to_string()),
+        (P::StatusTip, _) => Value::Str(c.status_tip.as_deref().unwrap_or("").to_string()),
+        (P::StatusSection, _) => Value::Str(c.status_section.to_string()),
         (P::Width, _) => len_value(c.width),
         (P::Height, _) => len_value(c.height),
         (P::MinWidth, _) => len_value(c.min_width),
@@ -372,6 +377,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
         (key, W::Toast(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast>"))?,
         (P::ButtonOrder, W::DialogButtons(d)) => Value::Str(d.order.to_string()),
+        (P::Message, W::StatusBar(b)) => s(&b.message),
         (P::Title, W::Tab { title, .. }) => s(title),
         (key, W::TableColumn(c)) => c.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table-column>"))?,
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
