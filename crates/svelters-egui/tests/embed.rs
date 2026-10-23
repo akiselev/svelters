@@ -440,3 +440,43 @@ fn slot_roots_phases_and_deferred_work_follow_the_embed_frame() {
     assert!(ran.get() && scene.deferred_len() == 0);
     assert!(e.settled().is_settled(), "{:?}", e.settled());
 }
+
+/// FX6b (plans/milestones/FX6-embed-destroy-mutation.md): the turn budget stops a root's flush (its
+/// derived never returns). The flush runs in the job drain after the host's props call, not in a
+/// `flushSync` inside it, so the stop leaves no `flushSync` open: the store-backed root is faulted
+/// and disposed cleanly (its subscriber's last unsubscribe runs in the dispose's drain), and a
+/// timer's change in another root renders with no host call into that root.
+#[test]
+fn an_interrupted_flush_disposes_a_store_backed_root_and_timer_changes_still_render() {
+    let (mut eh, entry) = rig();
+    let e = eh.embed.clone();
+    let stalled = e.create_slot("stalled", SlotOptions::fill());
+    let later = e.create_slot("later", SlotOptions::fill());
+    columns(&mut eh, vec![stalled, later]);
+    let s = mount(&e, entry, "Stalled", stalled, "stalled", Props::new());
+    let l = mount(&e, entry, "Later", later, "later", Props::new());
+    eh.run();
+    assert!(has(&eh, "Store 0") && has(&eh, "Later 0"));
+    e.take_events();
+
+    e.set_root_props(s, Props::new().with("stall", true)).unwrap();
+    eh.run();
+    let ev = e.take_events();
+    let fs = faults(&ev);
+    assert_eq!(fs.iter().map(|x| (x.0, x.1)).collect::<Vec<_>>(), vec![(s, FaultCause::Interrupt)], "{ev:?}");
+    // the dispose ran in no stale reaction (FX6's state_unsafe_mutation) and threw nothing
+    assert!(!ev.iter().any(|x| matches!(x, EmbedEvent::Error { .. })), "{ev:?}");
+    assert_eq!(e.backend().with_scene(|sc| sc.n(stalled.handle()).children.len()), 0, "the faulted root's nodes are gone");
+    eh.run();
+    assert!(has(&eh, "stalled failed: interrupted"));
+
+    // the click only starts a timer; the timer's write renders in Svelte's own microtask flush
+    eh.harness.get_by_label("Start timer").click();
+    let end = Instant::now() + Duration::from_secs(2);
+    while !has(&eh, "Later 1") && Instant::now() < end {
+        eh.step();
+    }
+    assert!(has(&eh, "Later 1"), "a timer change renders without a host call into its root");
+    assert!(matches!(e.root_info(l).unwrap().state, RootState::Live));
+    assert!(faults(&e.take_events()).is_empty());
+}

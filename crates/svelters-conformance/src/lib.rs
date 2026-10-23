@@ -2,6 +2,7 @@
 //!
 //! - [`pins`]: the pin scripts (`conformance/pins/*.json`) and the key-role table.
 //! - [`trace`]: the `state #h {…}` trace writer for `tools/oplog-compare.mjs`.
+//! - [`scroll`]: WG3s scroll samples and motion metrics (pins 9 and 10).
 //! - [`golden`]: `conformance/golden/<platform>/<toolkit>-<version>.json`, capture and compare.
 //! - [`xtest`]: the XTEST user-path injector the GTK and Qt captures use.
 //! - [`win`]: the Windows user path (WG3w): `SendInput` and UI Automation, one driver for every fixture.
@@ -10,17 +11,19 @@
 //!   `examples/counter-qt/tests/na_capture.rs` and this crate's egui measurement).
 
 pub mod golden;
-pub mod pins;
-pub mod trace;
 #[cfg(target_os = "macos")]
 pub mod macos;
+pub mod pins;
+pub mod scroll;
+pub mod trace;
 #[cfg(windows)]
 pub mod win;
 #[cfg(target_os = "linux")]
 pub mod xtest;
 
 use golden::PinResult;
-use pins::{Action, Chord, Keys, Pin};
+use pins::{Action, Chord, Keys, Momentum, Pin};
+use scroll::ScrollRecord;
 use trace::Checkpoint;
 
 /// One toolkit's fixture and input. The capture builds a fresh fixture per pin.
@@ -45,14 +48,94 @@ pub trait Driver {
     fn observe(&mut self) -> Result<Checkpoint, String>;
     /// Destroys the fixture and returns the pin's trace (op log with `state` lines).
     fn teardown(&mut self) -> Result<String, String>;
+    /// WG3s: `burst` wheel events of `lines` notches (positive towards the content's end) over
+    /// `target`, `interval_ms` apart; returns after the scroll settled, with the samples.
+    fn scroll_wheel(
+        &mut self,
+        _target: &str,
+        _lines: [i32; 2],
+        _shift: bool,
+        _burst: u32,
+        _interval_ms: u32,
+    ) -> Result<ScrollRecord, String> {
+        Err(UNSUPPORTED.into())
+    }
+    /// WG3s: a trackpad scroll over `target` (began, changed…, ended), then `momentum`.
+    fn scroll_gesture(
+        &mut self,
+        _target: &str,
+        _deltas: &[[f64; 2]],
+        _interval_ms: u32,
+        _momentum: &Momentum,
+    ) -> Result<ScrollRecord, String> {
+        Err(UNSUPPORTED.into())
+    }
 }
+
+/// What a driver without a scroll fixture answers to a scroll action: the step is recorded
+/// without input (as an intent without a chord is).
+pub const UNSUPPORTED: &str = "unsupported";
 
 /// Runs one pin: setup, a checkpoint, then each action followed by a checkpoint.
 pub fn run_pin(d: &mut dyn Driver, pin: &Pin, keys: &Keys) -> Result<(PinResult, String), String> {
+    run_pin_scroll(d, pin, keys).map(|(r, t, _)| (r, t))
+}
+
+/// [`run_pin`], plus each scroll action's samples (`(label, record)`, for the trace directory).
+/// A scroll action's checkpoint gets the `motion` pseudo-anchor ([`scroll::metrics`]).
+#[allow(clippy::type_complexity)]
+pub fn run_pin_scroll(
+    d: &mut dyn Driver,
+    pin: &Pin,
+    keys: &Keys,
+) -> Result<(PinResult, String, Vec<(String, ScrollRecord)>), String> {
     let ctx = |m: String| format!("pin {}: {m}", pin.id);
     d.setup(pin).map_err(ctx)?;
     let mut checkpoints = vec![("setup".to_string(), d.observe().map_err(ctx)?)];
+    let mut records = Vec::new();
     for a in &pin.actions {
+        // WG3s: a scroll action's record, the metrics' axis and its notch count
+        let mut scrolled: Option<(ScrollRecord, String, usize, Option<u32>)> = None;
+        let scroll_result = |r: Result<ScrollRecord, String>| match r {
+            Ok(rec) => Ok(Some(rec)),
+            Err(e) if e == UNSUPPORTED => Ok(None),
+            Err(e) => Err(e),
+        };
+        match a {
+            Action::Wheel {
+                target,
+                lines,
+                shift,
+                burst,
+                interval_ms,
+            } => {
+                scroll_result(d.scroll_wheel(target, *lines, *shift, *burst, *interval_ms)).map(
+                    |rec| {
+                        // Shift turns a vertical wheel horizontal
+                        let axis = if *shift || lines[1] == 0 { 0 } else { 1 };
+                        let n = lines[0].unsigned_abs().max(lines[1].unsigned_abs()) * burst;
+                        scrolled = rec.map(|r| (r, target.clone(), axis, Some(n)));
+                    },
+                )
+            }
+            Action::Gesture {
+                target,
+                deltas,
+                interval_ms,
+                momentum,
+                ..
+            } => {
+                scroll_result(d.scroll_gesture(target, deltas, *interval_ms, momentum)).map(|rec| {
+                    let (sx, sy) = deltas
+                        .iter()
+                        .fold((0.0, 0.0), |a, d| (a.0 + d[0].abs(), a.1 + d[1].abs()));
+                    let axis = if sx > sy { 0 } else { 1 };
+                    scrolled = rec.map(|r| (r, target.clone(), axis, None));
+                })
+            }
+            _ => Ok(()),
+        }
+        .map_err(|m| ctx(format!("{}: {m}", a.label())))?;
         match a {
             // An intent the platform has no chord for (`unicode-entry` off Linux) is a step without input: its
             // checkpoint records that nothing happened (WG3w).
@@ -71,9 +154,18 @@ pub fn run_pin(d: &mut dyn Driver, pin: &Pin, keys: &Keys) -> Result<(PinResult,
                 to,
                 count,
             } => d.drag(target, *from, *to, *count),
+            Action::Wheel { .. } | Action::Gesture { .. } => Ok(()),
         }
         .map_err(|m| ctx(format!("{}: {m}", a.label())))?;
-        checkpoints.push((a.label(), d.observe().map_err(ctx)?));
+        let mut cp = d.observe().map_err(ctx)?;
+        if let Some((rec, target, axis, notches)) = scrolled {
+            cp.push((
+                scroll::MOTION.to_string(),
+                trace::State::motion(scroll::metrics(&rec, &target, axis, notches)),
+            ));
+            records.push((a.label(), rec));
+        }
+        checkpoints.push((a.label(), cp));
     }
     let trace = d.teardown().map_err(ctx)?;
     Ok((
@@ -84,6 +176,7 @@ pub fn run_pin(d: &mut dyn Driver, pin: &Pin, keys: &Keys) -> Result<(PinResult,
             checkpoints,
         },
         trace,
+        records,
     ))
 }
 

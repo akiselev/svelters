@@ -27,7 +27,7 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(indicator)`: the box.
 pub const INDICATOR: Ua = Ua(&[
     UaRule::base(&[
@@ -44,7 +44,7 @@ pub const INDICATOR: Ua = Ua(&[
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(mark)`: the glyph's colour.
 pub const MARK: Ua = Ua(&[UaRule::base(&[("color", Token("fg"))]), UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))])]);
 
@@ -229,9 +229,11 @@ pub(crate) fn paint_indicator<'c>(
 /// icon, caption, focus ring. The kind and `imm::Checkbox` (OW-RUST) call it.
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn paint<'c>(pc: &mut paint::PaintCx<'_>, ctx: &egui::Context, host: &StyleView<'_>, part_css: impl Fn(&str) -> Option<&'c svelters_style::ComputedStyle>, rect: egui::Rect, text: &str, icon: &str, on: bool, partial: bool) {
+    // OW1a3: `::part(mark)` rules reach the mark
+    let mark_css = part_css("mark");
     paint_indicator(pc, ctx, host, part_css, rect, "indicator", INDICATOR, true, text, icon, |pc, host, ir| {
         if on || partial {
-            let mark = parts::part_view(host, MARK, false);
+            let mark = parts::part_with(host, mark_css, MARK, false);
             let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
             parts::paint_mark(&mut pc.part("mark"), ir, color, partial);
         }

@@ -431,7 +431,7 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         let (Some(tag), false) = (k.tag, k.toplevel) else { continue };
         // WG2a: menu entries (not widgets) and the overlays (out of flow) are covered by tests/menus.rs
         let widget = kinds::chain(kinds::tag_index(tag).unwrap()).contains(&kinds::kind_index("Widget").unwrap());
-        if !widget || matches!(tag, "popup" | "modal" | "inner-window") {
+        if !widget || matches!(tag, "popup" | "modal" | "inner-window" | "toast-host" | "toast") {
             continue;
         }
         let mut rig = Rig::new();

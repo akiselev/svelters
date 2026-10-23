@@ -1,0 +1,14 @@
+{
+  "id": "gesture",
+  "pin": 10,
+  "title": "Trackpad two-finger scroll: a slow drag (no momentum), a flick with the platform's own momentum, the same flick with the recorded macOS momentum, back up",
+  "setup": {
+    "scroll": { "s": [0, 0] }
+  },
+  "steps": [
+    { "gesture": "s", "deltas": "drag-slow", "momentum": "none" },
+    { "gesture": "s", "deltas": "flick-down", "momentum": "native" },
+    { "gesture": "s", "deltas": "flick-down", "momentum": "replay:macos-flick" },
+    { "gesture": "s", "deltas": "flick-up", "momentum": "native" }
+  ]
+}

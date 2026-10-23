@@ -1,4 +1,4 @@
-//! `svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec path.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--hmr] [--module] [--css-scope class] [--css] [--json] <file | ->`
+//! `svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec path.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--utilities] [--utilities-prefix p] [--utilities-strict] [--utilities-scan-script] [--filename name] [--dev] [--hmr] [--module] [--css-scope class] [--css] [--json] <file | ->`
 //!
 //! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
 //! `--backend gtk,qt,appkit,winui` is the portability mode: the output is for the first platform, the
@@ -19,6 +19,10 @@
 //! `css: {code, hash, hasGlobal, injected, scopedElements}`, hashed with `--css-scope` (else Svelte's
 //! default hash of the filename, which then also scopes the elements); `css_*` errors and
 //! `css_unused_selector` warnings are diagnostics.
+//! U4 (egui): `--utilities` checks utility classes (`utility_*` codes), `--utilities-prefix tw` sets
+//! the embed's prefix, `--utilities-strict` makes colour literals errors and `--utilities-scan-script`
+//! checks `<script>` strings too (each of these implies `--utilities`). `@apply` in `<style>` is
+//! expanded on egui either way.
 
 use std::io::Read;
 use svelters_compiler::check::{CheckOptions, FileState, check_with};
@@ -26,7 +30,7 @@ use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile
 use svelters_compiler::semantics::SpecBackend;
 use svelters_compiler::target::builtin_target;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--hmr] [--module] [--css-scope class] [--css] [--check] [--json] <file.svelte | file.svelte.js | ->\n       svelters-compile --kinds --backend gtk|qt|appkit|winui|egui [--spec spec.json] [--spec-fragment kinds.json]...\n       svelters-compile --explain <code | id>\n       svelters-compile --list-codes";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--utilities] [--utilities-prefix p] [--utilities-strict] [--utilities-scan-script] [--filename name] [--dev] [--hmr] [--module] [--css-scope class] [--css] [--check] [--json] <file.svelte | file.svelte.js | ->\n       svelters-compile --kinds --backend gtk|qt|appkit|winui|egui [--spec spec.json] [--spec-fragment kinds.json]...\n       svelters-compile --explain <code | id>\n       svelters-compile --list-codes";
 
 fn main() {
     let mut backend = "gtk".to_string();
@@ -40,6 +44,7 @@ fn main() {
     let mut css_scope: Option<String> = None;
     let mut scoped_css = false;
     let mut strict_native = false;
+    let mut utilities: Option<svelters_compiler::utilities::UtilityCheck> = None;
     let mut target = "quickjs-host".to_string();
     let mut input: Option<String> = None;
     let mut kinds = false;
@@ -58,6 +63,12 @@ fn main() {
             "--css-scope" => css_scope = args.next(),
             "--css" => scoped_css = true,
             "--strict-native" => strict_native = true,
+            "--utilities" => {
+                utilities.get_or_insert_with(Default::default);
+            }
+            "--utilities-prefix" => utilities.get_or_insert_with(Default::default).prefix = Some(args.next().expect("--utilities-prefix needs a value")),
+            "--utilities-strict" => utilities.get_or_insert_with(Default::default).strict_tokens = true,
+            "--utilities-scan-script" => utilities.get_or_insert_with(Default::default).scan_script = true,
             "--kinds" => kinds = true,
             "--check" => check = true,
             "--explain" => {
@@ -130,6 +141,7 @@ fn main() {
             dev,
             portability: others.iter().map(|o| o as &dyn svelters_compiler::semantics::PlatformSemantics).collect(),
             scoped_css,
+            utilities: utilities.clone(),
         };
         // the kind comes from the path: `--module` checks a module whatever its name
         let path = if module && !filename.ends_with(".svelte.js") { format!("{filename}.svelte.js") } else { filename.clone() };
@@ -180,6 +192,7 @@ fn main() {
         opts.css_scope = css_scope;
         opts.scoped_css = scoped_css;
         opts.strict_native = strict_native;
+        opts.utilities = utilities;
         opts.target = target;
         opts.portability = others.iter().map(|o| o as &dyn svelters_compiler::semantics::PlatformSemantics).collect();
         compile(&src, &opts)

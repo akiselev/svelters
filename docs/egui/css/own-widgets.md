@@ -12,6 +12,7 @@ sources:
   - plans/research/DESIGN.md                   # R-rules
   - plans/research/WIDGET-PARITY.md            # P1-P10
   - plans/milestones/OW5a-lists-tree-dnd.md    # list rows
+  - plans/milestones/OW7b-toasts-dialog-buttons-status.md # toasts
 ---
 
 # Styling own widgets
@@ -86,9 +87,18 @@ reference page lists its parts.
 | menus | `popup` | — |
 | `progress-bar` | — | `track`, `fill` |
 | `collapsing-header` | — | `header`, `twistie` |
+| `toast` (OW7b) | `accent`, `close`; the box is the node (`toast`, `toast[level=warning]`, `toast:hover`, `toast:exiting`) | — |
+| `toast-host` (its `show` toasts) | `toast`, `accent`, `text`, `action`, `close` | — |
+| `modal`, `inner-window` | — | `backdrop`, `title`, `grip`, `titlebar`, `close`, `collapse`, `edge-*` |
 
 A rule on a part in the last column has no effect yet; style the host (`switch:checked { … }`) instead.
 The `scrollbar` thumb and the `split-view` sash have no `::part()` yet either.
+
+**Toasts: per-run CSS needs the declarative form.** A `<toast>` under `toast-host` is a node, and so are
+its labels' runs: `toast b { color: … }` and `toast a:hover { … }` reach them. The runs of
+`host.call('show', runs)` are not nodes and keep RT2's tag defaults; `toast-host::part(text)` styles the
+whole text. A closed `<toast>` stays drawn with `:exiting` while its `transition` plays out
+(`toast { transition: opacity .2s } toast:exiting { opacity: 0 }`), on the virtual clock.
 
 ### List rows
 
@@ -128,6 +138,27 @@ tree-view::part(row):has-children:expanded            { font-weight: 600; }
 - If no sheet has a row rule, nothing is computed and rows paint from the list's UA defaults. In Rust the
   API is `Scene::part_at(list, "row", state, (pos, len))`. Results are cached per (node, part, state,
   position) and dropped at any restyle.
+
+### Table rows, cells and header
+
+`table` (OW5b) styles its rows, cells and header the same way: each repeated part is computed per item,
+with the item's own state and its logical position.
+
+| What | Selector |
+|---|---|
+| row states (R6) | `table::part(row):hover`, `table:focus-within::part(row):selected`, `table:not(:focus-within)::part(row):selected`, `table::part(row):current` |
+| stripes | `table::part(row):nth-child(even)` (without a rule, `striped` fills odd rows with `list-hover` at half strength) |
+| cells | `table::part(cell)`, `table::part(cell):nth-child(2)` (by shown column), `table::part(cell):hover` |
+| cursor cell (R8 ring, keyboard only) | `table::part(cell):focus-visible` |
+| rejected commit | `table::part(error)` (outline in `invalid-border`; the reason is a tooltip) |
+| header | `table::part(header)`, `table::part(header-cell)`, `table::part(header-cell):hover`, `table::part(header-cell):first-child` |
+| sort arrow | `table::part(sort)` (`content: icon(…)`; `:checked` while descending) |
+| resize edge (R11) | `table::part(resize)` (the split view's sash look) |
+| column menu | `table::part(menu)`, `table::part(menu-item):current` |
+| bars, shadows | `table::part(thumb-x)`, `::part(thumb-y)`; `table:state(sv.overflow-top)` and `-left` (base.css) |
+
+Per-column header styling through the column element (`table-column.numeric::part(header)`, P6) is not
+wired yet (OW5b2).
 
 ## State pseudo-classes
 
@@ -201,7 +232,12 @@ Not supported yet: dashed borders (paint solid), radii that follow non-uniform b
 
 ## Transitions
 
-`transition` (the shorthand only; no `transition-*` longhands) works on own widgets and their parts:
+`transition` and its longhands `transition-property`, `transition-duration`,
+`transition-timing-function` and `transition-delay` work on own widgets and their parts:
+
+- The longhands take comma lists. `transition-property` sets the number of transitions, and the
+  other lists repeat or are cut to match it. They cascade with the shorthand, so a later
+  `transition-duration: 150ms` changes only the duration of an earlier `transition: background-color 1s`.
 
 - A changed property named by an entry (by name, `all`, or a covering shorthand) starts a transition if
   the duration is above 0. The last matching entry wins.
@@ -217,6 +253,12 @@ Not supported yet: dashed borders (paint solid), radii that follow non-uniform b
   transitions and starts none, and `@media (prefers-reduced-motion: reduce)` matches. Wrap optional
   motion in `@media (prefers-reduced-motion: no-preference)`.
 - Transitions run on the logic step's clock, which is kittest's virtual clock in tests.
+
+## Platform media feature
+
+`@media (-sv-platform: macos | windows | linux)` matches the platform the native policy names
+(`native::Policy::platform`; with `None`, the egui context's OS). Override the policy to try another
+platform's rules: `native::override_policy(ctx, |p| p.platform = Some(svelters_style::Platform::Macos))`.
 
 ## The DESIGN rules in CSS
 

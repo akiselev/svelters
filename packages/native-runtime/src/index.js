@@ -5,7 +5,7 @@
 // ops (plans/architecture/backend-abi.md "JS-side host ops"). There is no JS tree of DOM-like nodes
 // and no anchors: containers and regions keep just the ordering native insertion needs.
 // Plain ES2022, no globals besides __svelters_host / __svelters_dispatch / __svelters_dispatch_sync /
-// __svelters_gone / __svelters_node.
+// __svelters_gone / __svelters_node / __svelters_recover.
 import { DEV } from 'esm-env';
 import * as $ from './core/index.js';
 import {
@@ -27,6 +27,7 @@ import {
   flush,
   flushing_sync,
   init_dev,
+  recover as recoverCore,
   queue_task,
   mutable_state,
   trace_item,
@@ -1073,6 +1074,30 @@ let dispatchHook = null;
 export function setDispatchHook(hook) {
   dispatchHook = hook;
 }
+
+const recoverHooks = new Set();
+/** FX6: `fn()` resets a module's own per-entry state when the host aborted an entry (`embed.js`). */
+export function onRecover(fn) {
+  recoverHooks.add(fn);
+}
+
+/**
+ * FX6 (plans/milestones/FX6-embed-destroy-mutation.md): what the host calls right after it aborted
+ * an entry into JS (the turn budget's interrupt, or the interrupt flag). The abort skipped every
+ * `finally`, so whatever the runtime restores in one is still set: the ownership scope, the build
+ * nesting, the HMR init, embed.js's current root, and Svelte's reaction context and scheduler
+ * (`recover` in core/svelte.js). Runs no component code.
+ */
+function recover() {
+  scope = null;
+  depth = 0;
+  shows = [];
+  hmrCtx = null;
+  hmrClaims = null;
+  recoverCore();
+  for (const fn of recoverHooks) fn();
+}
+globalThis.__svelters_recover = recover;
 
 /** A mount target for `mount({ target })` (EM2, `embed.js`): its handle can change (`retarget`). */
 export function targetNode(h) {

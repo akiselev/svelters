@@ -2778,8 +2778,7 @@
      "kind": "arbitrary"
     }
    ],
-   "requires": "E5",
-   "pending": true
+   "requires": "E5"
   },
   {
    "name": "delay",
@@ -2801,8 +2800,7 @@
      "kind": "arbitrary"
     }
    ],
-   "requires": "E5",
-   "pending": true
+   "requires": "E5"
   },
   {
    "name": "ease",
@@ -2825,8 +2823,7 @@
      "linear"
     ]
    },
-   "requires": "E5",
-   "pending": true
+   "requires": "E5"
   }
  ],
  "variants": {
@@ -3060,17 +3057,17 @@
    "mac": {
     "query": "(-sv-platform: macos)",
     "requires": "E7",
-    "pending": true
+    "pending": false
    },
    "win": {
     "query": "(-sv-platform: windows)",
     "requires": "E7",
-    "pending": true
+    "pending": false
    },
    "linux": {
     "query": "(-sv-platform: linux)",
     "requires": "E7",
-    "pending": true
+    "pending": false
    }
   },
   "breakpoints": {
@@ -4104,6 +4101,15 @@
      "node": false
     }
    ],
+   "provider_states": []
+  },
+  "toast": {
+   "kind": "Toast",
+   "states": [
+    "exiting",
+    "hover"
+   ],
+   "parts": [],
    "provider_states": []
   },
   "toast-host": {

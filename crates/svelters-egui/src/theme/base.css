@@ -42,6 +42,18 @@
     box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow);
   }
 
+  /* OW5b: the own table (`views/table.rs`; its UA tables hold R6's row states). Its body shades
+     the edges it is scrolled away from, under the frozen header and the sticky columns. */
+  table:state(sv.overflow-top) {
+    box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow);
+  }
+  table:state(sv.overflow-left) {
+    box-shadow: inset 6px 0 6px -6px var(--sv-scroll-shadow);
+  }
+  table:state(sv.overflow-top):state(sv.overflow-left) {
+    box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow), inset 6px 0 6px -6px var(--sv-scroll-shadow);
+  }
+
   /* RT2: inline runs of a rich label (crates/svelters-egui/src/rich.rs). The Rust tag defaults
      are the same, so they hold without a theme; links follow DESIGN R18 (link colour, underline
      on hover) and R10 (pointer). */
@@ -98,6 +110,21 @@
   }
   checkbox:active {
     background-color: var(--sv-button-bg-active);
+  }
+
+  /* DESIGN R3: hover lights up in the same frame and standalone controls ease the colour over
+     100 ms when motion is allowed; R2: the press is instant. (OW1a3) */
+  @media (prefers-reduced-motion: no-preference) {
+    button,
+    toggle-button,
+    checkbox {
+      transition: background-color 100ms, border-color 100ms, color 100ms;
+    }
+    button:active,
+    toggle-button:active,
+    checkbox:active {
+      transition: none;
+    }
   }
 
   /* OW4: svelters' own field (`widgets/text_edit.rs`); its UA table gives the rest of DESIGN R4

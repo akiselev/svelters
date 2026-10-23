@@ -16,6 +16,9 @@ export default defineConfig(
       Animator: 'src/Animator.svelte',
       // WG1 (crates/svelters-egui/tests/widgets_panel.rs)
       TaskPanel: 'src/TaskPanel.svelte',
+      // FX6b (crates/svelters-egui/tests/embed.rs)
+      Stalled: 'src/Stalled.svelte',
+      Later: 'src/Later.svelte',
     },
   }),
 );

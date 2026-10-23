@@ -294,7 +294,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::ProgressBar { .. }
         | W::Spinner { .. }
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
-        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
+        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) => unreachable!("WG4a views: crate::views"),
         W::Run { .. } => unreachable!("RT2: runs are drawn by their label (crate::rich)"),
         }
     };
@@ -341,15 +341,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
     }
     // RT2: an activated `a` run: its `clicked` handler, else its `href` opens (as a hyperlink's)
-    for (node, href) in links_activated {
-        let Some(j) = arena.idx(node) else { continue };
-        let s = kinds::signal_id(arena.core[j].kind as usize, "clicked");
-        if arena.listens(j, s) {
-            out.push(Out::Event(node.to_raw(), s, vec![]));
-        } else if !href.is_empty() {
-            ui.ctx().open_url(egui::OpenUrl::same_tab(href));
-        }
-    }
+    crate::rich::activate(arena, ui.ctx(), out, links_activated);
     // Widget-side value changes: the node already holds the new value (the widget wrote the
     // field); announce it if observed (exact, no echo), then the `changed` event.
     // Compared with the value before the widget ran, so a slider clamping a host-set value into its

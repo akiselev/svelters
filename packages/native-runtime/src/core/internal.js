@@ -29,6 +29,7 @@ export {
   capture_context,
   release_context,
   flushing_sync,
+  recover,
   subscriber,
   get_all_contexts,
   set_context,

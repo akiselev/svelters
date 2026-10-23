@@ -14,7 +14,7 @@ sources:
 # `<table-column>`
 
 <!-- BEGIN GENERATED: summary of kinds.TableColumn (tools/docs/egui/gen_reference.py). Do not edit. -->
-A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.
+A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell.
 
 **Base:** [`Widget`](widget.md) · **Children:** none · **Text content:** no
 <!-- END GENERATED -->
@@ -33,8 +33,12 @@ A column of its parent `table` (data only: not laid out or drawn as a node). Its
 | `align` | `'start' \| 'center' \| 'end'` | `"start"` | no | Horizontal alignment of its cells. |
 | `editable` | `boolean` | `false` | no | Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field. |
 | `editor` | `unknown` | `false` | no | The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit. |
+| `elide` | `'end' \| 'middle' \| 'start' \| 'none'` | `"end"` | no | Where text too wide for a cell or the header is cut with `…` (`none`: clipped). |
+| `header-align` | `'auto' \| 'start' \| 'center' \| 'end'` | `"auto"` | no | Alignment of its header text (`auto`: its `align`). |
+| `hideable` | `boolean` | `true` | no | The column menu lists it (it can be hidden). |
+| `name` | `string` | `""` | no | Its name in `hidden-columns` and `header-state` (empty: its child index). |
 | `resizable` | `boolean` | `true` | no | Its right edge can be dragged (double-click: fit the content). |
-| `sort` | `'none' \| 'ascending' \| 'descending'` | `"none"` | no | The sort arrow its header shows (the data is sorted by JS). |
+| `sort` | `'none' \| 'ascending' \| 'descending'` | `"none"` | no | The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1. |
 | `title` | `string` | `""` | no | The header text. |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.

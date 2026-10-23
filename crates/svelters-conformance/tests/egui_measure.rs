@@ -571,6 +571,7 @@ impl Driver for Egui {
                 text: Some(self.get_text(e)),
                 sel,
                 focus: ctx.memory(|m| m.has_focus(id)),
+                scroll: None,
             };
             self.trace.state(e, &s);
             cp.push((a, s));
@@ -583,6 +584,7 @@ impl Driver for Egui {
             text: None,
             sel: None,
             focus,
+            scroll: None,
         };
         self.trace.state(self.button, &s);
         cp.push((BUTTON.to_string(), s));

@@ -26,7 +26,7 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(track)`.
 pub const TRACK: Ua = Ua(&[
     UaRule::base(&[
@@ -42,7 +42,7 @@ pub const TRACK: Ua = Ua(&[
     UaRule::when(StateBits(StateBits::CHECKED.0 | StateBits::HOVERED.0), &[("background-color", Token("accent-hover")), ("border-color", Token("accent-hover"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(knob)`: its colour and size.
 pub const KNOB: Ua = Ua(&[
     UaRule::base(&[("color", Token("fg")), ("width", Px(12.0)), ("height", Px(12.0))]),
@@ -92,8 +92,10 @@ impl Switch {
 /// The kind and `imm::Switch` (OW-RUST) call it.
 #[allow(clippy::too_many_arguments)]
 pub(crate) fn paint<'c>(pc: &mut crate::paint::PaintCx<'_>, ctx: &egui::Context, host: &crate::paint::StyleView<'_>, part_css: impl Fn(&str) -> Option<&'c svelters_style::ComputedStyle>, rect: egui::Rect, id: egui::Id, text: &str, active: bool) {
+    // OW1a3: `::part(knob)` rules reach the knob
+    let knob_css = part_css("knob");
     checkbox::paint_indicator(pc, ctx, host, part_css, rect, "track", TRACK, false, text, "", |pc, host, tr| {
-        let knob = parts::part_view(host, KNOB, false);
+        let knob = parts::part_with(host, knob_css, KNOB, false);
         let d = parts::part_size(host, KNOB, 12.0).x.min(tr.height());
         let t = if parts::reduced_motion(ctx) { f32::from(u8::from(active)) } else { ctx.animate_bool_responsive(id.with("knob"), active) };
         let inset = tr.height() / 2.0;

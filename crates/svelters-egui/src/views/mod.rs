@@ -2,7 +2,7 @@
 //! are `kinds/views.rs`; this module holds their state, layout, paint and methods, reached through
 //! one dispatch arm each in `layout.rs`, `leaf.rs`, `scene/props.rs` and `ops.rs`:
 //!
-//! - [`table`]: `table` (egui_table) and its `table-column` children;
+//! - [`table`]: `table` (own, OW5b) and its `table-column` children;
 //! - [`tabs`]: `tab-view` and its `tab` pages;
 //! - [`toast`]: `toast-host` and the Rust API [`toast::show`].
 //!
@@ -33,7 +33,7 @@ use taffy::{
 
 /// The views that have children (`W::is_container`).
 pub(crate) fn is_container(w: &W) -> bool {
-    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. })
+    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. } | W::Toast(_))
 }
 
 /// The no-wrap size of a view that measures itself (only `table`; the others are sized by their
@@ -47,9 +47,8 @@ pub(crate) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
 
 /// Paints the view leaves (`toast-host`; a `table-column` draws nothing) and returns a response
 /// at the node's rect (EV2b's host response). `None`: not a view.
-pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> Option<egui::Response> {
+pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, _out: &mut Vec<Out>) -> Option<egui::Response> {
     match arena.w(i) {
-        W::ToastHost(_) => toast::paint(arena, i, ui, out),
         W::TableColumn { .. } => {}
         _ => return None,
     }
@@ -102,6 +101,7 @@ pub(crate) fn call(b: &EguiBackend, h: Handle, name: &str, args: &[Value]) -> Op
             ("end-edit", W::Table(t)) => t.end_edit(args),
             ("clear-rows", W::Table(t)) => t.clear_rows(args),
             ("scroll-to-row", W::Table(t)) => t.scroll_to_row(args),
+            ("fit-columns", W::Table(t)) => t.fit_columns(args),
             ("show", W::ToastHost(t)) => t.show(args),
             ("dismiss", W::ToastHost(t)) => t.dismiss(args),
             ("clear", W::ToastHost(t)) => t.clear(args),

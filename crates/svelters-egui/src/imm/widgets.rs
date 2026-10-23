@@ -394,7 +394,7 @@ impl Label {
     }
 
     fn look(&self) -> label::Look<'_> {
-        label::Look { text: &self.text, wrap_mode: self.wrap_mode, elide: self.elide }
+        label::Look { text: &self.text, wrap_mode: self.wrap_mode, elide: self.elide, rich: None }
     }
     /// Takes clicks ([`Response::clicked`]).
     pub fn sense_click(mut self, on: bool) -> Self {

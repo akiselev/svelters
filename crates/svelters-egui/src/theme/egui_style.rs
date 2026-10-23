@@ -98,6 +98,9 @@ impl Theme {
         ]
         .into();
         style.interaction.tooltip_delay = 0.35;
+        // OW1a3 (cadatomic): app-chrome labels are not selectable (no stray selections, no
+        // AccessKit text runs per label); a label opts in (`selectable`, a read-only TextInput)
+        style.interaction.selectable_labels = false;
         style
     }
 

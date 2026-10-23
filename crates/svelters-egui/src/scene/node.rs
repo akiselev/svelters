@@ -56,12 +56,15 @@ pub enum W {
     // ---- WG4a (plans/milestones/WG4a-tier1-views.md; state and paint in `crate::views`) ----
     /// `table`: props, the JS data window and what the last frame asked for.
     Table(std::boxed::Box<crate::views::table::TableState>),
-    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str, editable: bool, editor: bool },
+    /// OW5b: boxed (the column's header and cell props).
+    TableColumn(std::boxed::Box<crate::views::table::ColumnState>),
     TabView { selected: i64 },
     Tab { title: String, closable: bool },
     /// `vertical`: `orientation="vertical"` (panes stacked).
     /// `toast-host`: props and the toasts shown.
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
+    /// OW7b: `toast`, a declarative toast of its parent `toast-host` (a Box laid out by taffy).
+    Toast(std::boxed::Box<crate::views::toast::ToastNode>),
     /// RT2: an inline run (`span`, `b`, `i`, `code`, `a`: `kinds/rich.rs`), drawn by its label.
     /// `weight` 0 inherits; `anchor`: an `a` run (a link).
     Run { text: String, weight: i64, href: String, anchor: bool },
@@ -468,7 +471,8 @@ pub fn text_of(w: &W) -> &str {
         | W::Checkbox { text, .. }
         | W::ToggleButton { text, .. }
         | W::CollapsingHeader { text, .. } => text,
-        W::Window { title, .. } | W::Tab { title, .. } | W::TableColumn { title, .. } => title,
+        W::Window { title, .. } | W::Tab { title, .. } => title,
+        W::TableColumn(c) => &c.title,
         W::ComboBox { options, selected, .. } => usize::try_from(*selected).ok().and_then(|i| options.get(i)).map_or("", |s| s.as_str()),
         W::Icon { name, .. } => name,
         W::Menu(m) => m.label(),
@@ -480,7 +484,7 @@ pub fn text_of(w: &W) -> &str {
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,
         W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
-        W::Table(_) | W::TabView { .. } | W::ToastHost(_) => "",
+        W::Table(_) | W::TabView { .. } | W::ToastHost(_) | W::Toast(_) => "",
     }
 }
 

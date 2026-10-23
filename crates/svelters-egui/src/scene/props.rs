@@ -58,7 +58,7 @@ pub(crate) fn as_len(v: &Value) -> Result<Option<f64>, String> {
     }
 }
 
-fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
+pub(crate) fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
     match v {
         Value::Null => Ok(Vec::new()),
         Value::List(items) => items.iter().map(as_str).collect(),
@@ -251,13 +251,10 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         // ---- WG4a (`kinds/views.rs`, `crate::views`) ----
         (key, W::Table(t)) => d.insert(t.set(key, v)?),
         (key, W::ToastHost(t)) => t.set(key, v)?,
-        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => *title = as_str(v)?,
-        (P::Resizable, W::TableColumn { resizable, .. }) => *resizable = as_bool(v)?,
-        (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
-        (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
-        (P::Editable, W::TableColumn { editable, .. }) => *editable = as_bool(v)?,
-        // WG5a: the runtime writes `true` while a snippet is set (a function never reaches the backend)
-        (P::Editor, W::TableColumn { editor, .. }) => *editor = !matches!(v, Value::Null | Value::Bool(false)),
+        (key, W::Toast(t)) => t.set(key, v)?,
+        (P::Title, W::Tab { title, .. }) => *title = as_str(v)?,
+        // OW5b: the column's props (`views::table::ColumnState`)
+        (key, W::TableColumn(c)) => c.set(key, v)?,
         (P::SelectedIndex, W::TabView { selected }) => {
             *selected = as_i64(v)?;
             // another page is laid out
@@ -360,12 +357,9 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         // ---- WG4a ----
         (key, W::Table(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table>"))?,
         (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
-        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => s(title),
-        (P::Resizable, W::TableColumn { resizable, .. }) => Value::Bool(*resizable),
-        (P::CellAlign, W::TableColumn { align, .. }) => s(align),
-        (P::Sort, W::TableColumn { sort, .. }) => s(sort),
-        (P::Editable, W::TableColumn { editable, .. }) => Value::Bool(*editable),
-        (P::Editor, W::TableColumn { editor, .. }) => Value::Bool(*editor),
+        (key, W::Toast(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast>"))?,
+        (P::Title, W::Tab { title, .. }) => s(title),
+        (key, W::TableColumn(c)) => c.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table-column>"))?,
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
         (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),

@@ -364,7 +364,7 @@ impl Metrics {
             | W::Spinner { .. }
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
-            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
+            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) => crate::views::intrinsic(self, w),
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -404,12 +404,13 @@ impl Metrics {
     }
 
     /// Height-for-width of a leaf at `width` (labels that wrap).
-    fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
+    fn wrapped(&self, w: &W, width: f32, css: Option<&svelters_style::ComputedStyle>, parts: &[(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)]) -> Option<Vec2> {
         match w {
             W::Label { rich: Some(r), wrap: "wrap", .. } => Some(crate::rich::measure(self, r, Some(width))), // RT2
             W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
-                Some(x.measure(self, crate::provider::AvailableSpace::Definite(width), None, &[]))
+                // OW1a3: with the node's computed style, as its intrinsic size (its CSS font)
+                Some(x.measure(self, crate::provider::AvailableSpace::Definite(width), css, parts))
             }
             _ => None,
         }
@@ -566,7 +567,7 @@ impl LayoutPartialTree for Tree<'_> {
                 let mut sz = intrinsic;
                 if let Some(lim) = limit
                     && lim < intrinsic.x
-                    && let Some(wr) = m.wrapped(w, lim)
+                    && let Some(wr) = m.wrapped(w, lim, css.as_deref(), &parts)
                 {
                     sz = wr;
                 }

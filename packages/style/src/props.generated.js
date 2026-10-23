@@ -27,11 +27,11 @@ export const TAG_SETS = [
   ["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "border", "button", "calendar-date-picker", "calendar-view", "canvas", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "font-icon", "grid", "grid-view", "grid-view-item", "hyperlink-button", "image", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "symbol-icon", "tab-view", "tab-view-item", "teaching-tip", "text-block", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch", "viewbox"],
   ["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "button", "calendar-date-picker", "calendar-view", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "grid", "grid-view", "grid-view-item", "hyperlink-button", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "tab-view", "tab-view-item", "teaching-tip", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch"],
   ["stack-panel"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab"],
-  ["box", "button", "calendar", "canvas", "checkbox", "collapsing-header", "color-editor", "color-picker", "combo-box", "date-picker", "drag-value", "frame", "grid", "hyperlink", "icon", "image", "inner-window", "label", "menu-bar", "menu-button", "modal", "panel", "popup", "progress-bar", "radio-button", "range-slider", "scroll-area", "scrollbar", "separator", "sides", "slider", "spinner", "split-view", "stack", "switch", "tab", "tab-view", "table", "table-column", "text-edit", "toast-host", "toggle-button", "tree-view", "virtual-list"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "tab"],
-  ["box", "collapsing-header", "frame", "inner-window", "modal", "panel", "popup", "scroll-area", "tab"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "window"],
+  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "toast"],
+  ["box", "button", "calendar", "canvas", "checkbox", "collapsing-header", "color-editor", "color-picker", "combo-box", "date-picker", "drag-value", "frame", "grid", "hyperlink", "icon", "image", "inner-window", "label", "menu-bar", "menu-button", "modal", "panel", "popup", "progress-bar", "radio-button", "range-slider", "scroll-area", "scrollbar", "separator", "sides", "slider", "spinner", "split-view", "stack", "switch", "tab", "tab-view", "table", "table-column", "text-edit", "toast", "toast-host", "toggle-button", "tree-view", "virtual-list"],
+  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "tab", "toast"],
+  ["box", "collapsing-header", "frame", "inner-window", "modal", "panel", "popup", "scroll-area", "tab", "toast"],
+  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "toast", "window"],
 ];
 
 export const STYLE_TABLES = {
@@ -345,6 +345,10 @@ export const STYLE_TABLES = {
       "text-transform": {"via": "css", "type": "enum", "values": ["none", "uppercase", "lowercase", "capitalize"]},
       "top": {"via": "setter", "prop": "top", "native": "top", "type": "length", "kinds": ["Widget"], "tags": 20},
       "transition": {"via": "css", "type": "transition"},
+      "transition-delay": {"via": "css", "type": "time-list"},
+      "transition-duration": {"via": "css", "type": "time-list"},
+      "transition-property": {"via": "css", "type": "transition-property"},
+      "transition-timing-function": {"via": "css", "type": "easing-list"},
       "visible": {"via": "setter", "prop": "visible", "native": "visible", "type": "bool", "kinds": ["Widget"], "tags": 20},
       "white-space": {"via": "css", "type": "enum", "values": ["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]},
       "width": {"via": "setter", "prop": "width", "native": "width", "type": "length", "kinds": ["Widget"], "tags": 20, "range": {"min": 0.0}},

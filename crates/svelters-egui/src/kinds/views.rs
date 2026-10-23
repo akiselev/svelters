@@ -2,7 +2,7 @@
 //! `table-column`s, `tab-view` with its `tab`s, `split-view` and `toast-host`. Their entries are
 //! appended to [`KINDS`](super::KINDS); state, layout and paint are in `crate::views`.
 //!
-//! - `table` (`egui_table`: virtual rows and columns). Columns are `<table-column>` children (data,
+//! - `table` (own, OW5b: virtual rows and columns). Columns are `<table-column>` children (data,
 //!   never laid out or drawn as nodes). Rows are JS data in a window: the table emits `range(first,
 //!   last)` for the rows it shows (plus `overscan`), JS answers with `set-rows(first, rows)` (a list
 //!   of rows, each a list of cell strings). Sending every row once (`set-rows(0, all)`) also works.
@@ -13,10 +13,14 @@
 //! - `toast-host`: draws the toasts of its viewport in a corner; `show(text, level?, duration?)`
 //!   from JS (`bind:this`) or `svelters_egui::toast::show` from Rust.
 
-use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, prop, signal};
+use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, optional, prop, signal};
 
 pub const CELL_ALIGN: &[&str] = &["start", "center", "end"];
 pub const SORT: &[&str] = &["none", "ascending", "descending"];
+/// OW5b: `table-column`'s `header-align` (`auto`: the column's `align`).
+pub const HEADER_ALIGN: &[&str] = &["auto", "start", "center", "end"];
+/// OW5b: `table-column`'s `elide` (Qt `textElideMode`; WG6 QW13's modes).
+pub const ELIDE: &[&str] = &["end", "middle", "start", "none"];
 /// WG5a: `table`'s `selection` (the same modes as `virtual-list`'s).
 pub const TABLE_SELECTION: &[&str] = &["none", "single", "multi"];
 pub const TOAST_CORNER: &[&str] = &["bottom-right", "bottom-left", "top-right", "top-left"];
@@ -27,7 +31,11 @@ const NONE: &[(&str, Ty)] = &[];
 /// What a WG4a container's slot accepts (the spec's `slots.<name>.accepts`): a `table` takes only
 /// `table-column`s; `None` for every other kind ([`super::slot_accepts`] asks the other families).
 pub fn slot_accepts(id: &str) -> Option<&'static [&'static str]> {
-    (id == "Table").then_some(&["TableColumn"])
+    match id {
+        "Table" => Some(&["TableColumn"]),
+        "ToastHost" => Some(&["Toast"]), // OW7b
+        _ => None,
+    }
 }
 
 // ---- table ----
@@ -55,6 +63,32 @@ static TABLE_PROPS: &[PropDef] = &[
     prop("selection", P::ListSelection, Ty::Enum(TABLE_SELECTION), Def::Str("single"), "`single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only)."),
     input("current", P::CurrentRow, Ty::I64, Def::I64(-1), "The cursor row's id (keyboard focus inside the table), -1 for none."),
     input("current-column", P::CurrentColumn, Ty::I64, Def::I64(0), "The cursor column (Left/Right move it; F2 and typing edit that cell)."),
+    // OW5b (FM1's QW4, Qt's QHeaderView: sort indicator, hidden sections, saveState/restoreState)
+    prop(
+        "sortable",
+        P::Sortable,
+        Ty::Bool,
+        Def::Bool(false),
+        "A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`).",
+    ),
+    input("sort-column", P::SortColumn, Ty::I64, Def::I64(-1), "The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows."),
+    input("sort-order", P::SortOrder, Ty::Enum(SORT), Def::Str("none"), "The order shown on `sort-column`."),
+    prop("column-menu", P::ColumnMenu, Ty::Bool, Def::Bool(true), "A right click on the header opens a menu that hides and shows the `hideable` columns (after `header-context`, unless prevented)."),
+    input(
+        "hidden-columns",
+        P::HiddenColumns,
+        Ty::StrList,
+        Def::Null,
+        "The hidden columns, by `name` (a column without one by its child index, `\"2\"`). The column menu changes it.",
+    ),
+    input(
+        "header-state",
+        P::HeaderState,
+        Ty::Str,
+        Def::Str(""),
+        "The header as JSON (Qt `saveState`): `{\"widths\":{name:points},\"hidden\":[name],\"sort\":{\"column\":name,\"order\":…}}`. The table writes it after the user resizes, hides or sorts; setting it restores them. Persist it with DX1's `uiState()` (`bind:header-state={ui.header}`): the table itself never writes files.",
+    ),
+    prop("stretch-last", P::StretchLast, Ty::Bool, Def::Bool(true), "The last shown column fills the width the columns leave (Qt `stretchLastSection`)."),
 ];
 
 static TABLE_SIGNALS: &[SignalDef] = &[
@@ -73,6 +107,22 @@ static TABLE_SIGNALS: &[SignalDef] = &[
         doc: "An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts.",
     },
     signal("header-clicked", &[("column", Ty::I64)], "A column header was clicked (sort on it in JS and set the column's `sort`)."),
+    // OW5b
+    signal("header-double-clicked", &[("column", Ty::I64)], "A column header was double-clicked (not its resize edge); carries the column (child index)."),
+    signal(
+        "header-context",
+        &[("column", Ty::I64)],
+        "A right click on the header (Menu key on the focused table); carries the column under the pointer. Unless prevented, `column-menu` opens.",
+    ),
+    signal("column-resized", &[("column", Ty::I64), ("width", Ty::F64)], "The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable."),
+    signal(
+        "sort-changed",
+        &[("sort-column", Ty::I64), ("sort-order", Ty::Enum(SORT))],
+        "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS).",
+    ),
+    signal("columns-changed", &[("hidden-columns", Ty::StrList)], "The column menu hid or showed a column; carries the hidden columns."),
+    signal("header-state-changed", &[("header-state", Ty::Str)], "The user resized, hid or sorted; carries the new `header-state` (save it)."),
+    signal("copy", &[("ids", Ty::IdList)], "Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds)."),
 ];
 
 static TABLE_METHODS: &[MethodDef] = &[
@@ -88,13 +138,17 @@ static TABLE_METHODS: &[MethodDef] = &[
     },
     MethodDef { name: "edit", doc: "`edit(rowId, column)`: starts editing that cell (its column must be `editable`)." },
     MethodDef { name: "end-edit", doc: "`end-edit(commit)`: ends the open edit; true commits (`commit`), false reverts." },
+    MethodDef {
+        name: "fit-columns",
+        doc: "`fit-columns(column?)`: sizes that column (child index), or every resizable shown column, to its header and the cells in the data window (Qt `resizeColumnsToContents`); `column-resized` for each.",
+    },
 ];
 
 static TABLE_COLUMN_PROPS: &[PropDef] = &[
     prop("title", P::Title, Ty::Str, Def::Str(""), "The header text."),
     prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "Its right edge can be dragged (double-click: fit the content)."),
     prop("align", P::CellAlign, Ty::Enum(CELL_ALIGN), Def::Str("start"), "Horizontal alignment of its cells."),
-    prop("sort", P::Sort, Ty::Enum(SORT), Def::Str("none"), "The sort arrow its header shows (the data is sorted by JS)."),
+    prop("sort", P::Sort, Ty::Enum(SORT), Def::Str("none"), "The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1."),
     prop("editable", P::Editable, Ty::Bool, Def::Bool(false), "Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field."),
     prop(
         "editor",
@@ -103,6 +157,11 @@ static TABLE_COLUMN_PROPS: &[PropDef] = &[
         Def::Bool(false),
         "The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit.",
     ),
+    // OW5b (FM1's QW4 `name`, `hideable`; WIDGET-PARITY §2.18.5)
+    prop("name", P::Name, Ty::Str, Def::Str(""), "Its name in `hidden-columns` and `header-state` (empty: its child index)."),
+    prop("hideable", P::Hideable, Ty::Bool, Def::Bool(true), "The column menu lists it (it can be hidden)."),
+    prop("header-align", P::HeaderAlign, Ty::Enum(HEADER_ALIGN), Def::Str("auto"), "Alignment of its header text (`auto`: its `align`)."),
+    prop("elide", P::Elide, Ty::Enum(ELIDE), Def::Str("end"), "Where text too wide for a cell or the header is cut with `…` (`none`: clipped)."),
 ];
 
 static TABLE_COLUMN_SIGNALS: &[SignalDef] = &[
@@ -245,7 +304,7 @@ static TOAST_HOST_SIGNALS: &[SignalDef] = &[
 static TOAST_HOST_METHODS: &[MethodDef] = &[
     MethodDef {
         name: "show",
-        doc: "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
+        doc: "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults (per-run CSS needs a declarative `<toast>` child, whose runs are nodes); a click on a run with an `href` opens it.",
     },
     MethodDef { name: "dismiss", doc: "`dismiss(id)`: closes that toast (`closed(id, 'method')`)." },
     MethodDef { name: "clear", doc: "Closes every toast." },
@@ -254,7 +313,7 @@ static TOAST_HOST_METHODS: &[MethodDef] = &[
 pub(super) const TABLE: KindDef = KindDef {
     id: "Table",
     tag: Some("table"),
-    native: "egui_table::Table",
+    native: "own (OW5b)",
     base: Some("Widget"),
     toplevel: false,
     slot: Some("columns"),
@@ -263,13 +322,13 @@ pub(super) const TABLE: KindDef = KindDef {
     props: TABLE_PROPS,
     signals: TABLE_SIGNALS,
     methods: TABLE_METHODS,
-    doc: "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+    doc: "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
 };
 
 pub(super) const TABLE_COLUMN: KindDef = KindDef {
     id: "TableColumn",
     tag: Some("table-column"),
-    native: "egui_table::Column",
+    native: "own (OW5b)",
     base: Some("Widget"),
     toplevel: false,
     slot: None,
@@ -278,7 +337,7 @@ pub(super) const TABLE_COLUMN: KindDef = KindDef {
     props: TABLE_COLUMN_PROPS,
     signals: TABLE_COLUMN_SIGNALS,
     methods: TABLE_COLUMN_METHODS,
-    doc: "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
+    doc: "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell.",
 };
 
 pub(super) const TAB_VIEW: KindDef = KindDef {
@@ -326,17 +385,50 @@ pub(super) const SPLIT_VIEW: KindDef = KindDef {
     doc: "Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.",
 };
 
+// ---- toast (OW7b) ----
+
+static TOAST_PROPS: &[PropDef] = &[
+    prop("level", P::Level, Ty::Enum(TOAST_LEVEL), Def::Str("info"), "Its severity: the accent bar's colour (`::part(accent)`), the AccessKit politeness (`assertive` for warning and error) and the `[level=…]` selector."),
+    optional("duration", P::Duration, Ty::F64, "Seconds it stays open after it shows (null: the host's `duration`; 0: until closed). Hovering holds it open."),
+    input("open", P::Open, Ty::Bool, Def::Bool(true), "Shown while true. The host sets it false when the toast closes (`bind:open`); setting it true again shows it anew, with a fresh timeout."),
+];
+
+static TOAST_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("open", Ty::Bool)], "It closed (or showed again); carries `open`."),
+    signal(
+        "closed",
+        &[("reason", Ty::Str)],
+        "It closed (`open` is now false): `reason` is `timeout`, `dismissed` (its close button), `action` (a click on one of its child buttons) or `\"\"` (`open` set false).",
+    ),
+    signal("clicked", &[], "Its body was clicked (not a child button or link)."),
+];
+
+pub(super) const TOAST: KindDef = KindDef {
+    id: "Toast",
+    tag: Some("toast"),
+    native: "svelters' own toast surface (a taffy flex box) in its host's foreground Area",
+    base: Some("Box"),
+    toplevel: false,
+    slot: Some("children"),
+    text_content: None,
+    present: None,
+    props: TOAST_PROPS,
+    signals: TOAST_SIGNALS,
+    methods: &[],
+    doc: "A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. Its labels are ordinary nodes, so their RT2 runs (`<b>`, `<a href>`, `<code>`) take per-run CSS; its child buttons are its actions (a click closes it with `action`). Styled by `toast` and `toast[level=…]`, `toast::part(accent)`, `toast::part(close)`, with `:hover` and `:exiting` (while its `transition` plays out after it closed).",
+};
+
 pub(super) const TOAST_HOST: KindDef = KindDef {
     id: "ToastHost",
     tag: Some("toast-host"),
     native: "svelters' own toasts in an egui::Area (foreground)",
     base: Some("Widget"),
     toplevel: false,
-    slot: None,
+    slot: Some("toasts"),
     text_content: None,
     present: None,
     props: TOAST_HOST_PROPS,
     signals: TOAST_HOST_SIGNALS,
     methods: TOAST_HOST_METHODS,
-    doc: "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust.",
+    doc: "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts.",
 };

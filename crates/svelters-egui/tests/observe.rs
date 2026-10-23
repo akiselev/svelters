@@ -40,6 +40,8 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
                     // (OW6: and `calendar`'s and the date-picker's `min`/`max`, `color-editor`'s value)
                     kinds::Ty::Str if matches!(tag, "date-picker" | "calendar") && matches!(p.name, "value" | "min" | "max") => Value::Str("2026-10-22".into()),
                     kinds::Ty::Str if matches!(tag, "color-picker" | "color-editor") && p.name == "value" => Value::Str("#123456".into()),
+                    // OW5b: a table's header-state is JSON, validated on write
+                    kinds::Ty::Str if p.name == "header-state" => Value::Str("{}".into()),
                     kinds::Ty::Str => Value::Str("x".into()),
                     kinds::Ty::Enum(vals) => Value::Str(vals[vals.len() - 1].into()),
                     kinds::Ty::StrList => Value::List(vec![Value::Str("x".into())]),

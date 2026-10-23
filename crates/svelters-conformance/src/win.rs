@@ -811,7 +811,7 @@ impl<F: WinFixture> UiaDriver<F> {
         let ([a, c], dir) = f.sel16()?;
         let focus = self.focused()?.as_deref() == Some(anchor);
         self.reading[dir as usize] += 1;
-        Ok(State { sel: Some([utf16_to_scalar(&text, a), utf16_to_scalar(&text, c)]), text: Some(text), focus })
+        Ok(State { sel: Some([utf16_to_scalar(&text, a), utf16_to_scalar(&text, c)]), text: Some(text), focus, scroll: None })
     }
 
     /// The anchor UIA reports focused while the fixture window is in front.
@@ -842,7 +842,7 @@ impl<F: WinFixture> UiaDriver<F> {
             cp.push((a.to_string(), self.read_field(a)?));
         }
         let focus = self.focused()?.as_deref() == Some(BUTTON);
-        cp.push((BUTTON.to_string(), State { text: None, sel: None, focus }));
+        cp.push((BUTTON.to_string(), State { text: None, sel: None, focus, scroll: None }));
         Ok(cp)
     }
 

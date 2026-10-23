@@ -189,9 +189,9 @@ Tailwind palette and no 4px spacing multiplier: `p-7` is `--sv-space-7` (32px).
 | `transition-opacity` | `transition` | `transition: opacity var(--sv-motion) var(--sv-ease-out)` |
 | `transition-shadow` | `transition` | `transition: box-shadow var(--sv-motion) var(--sv-ease-out)` |
 | `transition-none` | `transition` | `transition: none` |
-| `duration-*` *(waits for E5)* | `transition-duration` | `fast`, `normal` (`motion` scale); an integer *n*: `{n}ms`; `[value]` |
-| `delay-*` *(waits for E5)* | `transition-delay` | `fast`, `normal` (`motion` scale); an integer *n*: `{n}ms`; `[value]` |
-| `ease-*` *(waits for E5)* | `transition-timing-function` | `out` (`easing` scale); `[value]`; `linear` |
+| `duration-*` | `transition-duration` | `fast`, `normal` (`motion` scale); an integer *n*: `{n}ms`; `[value]` |
+| `delay-*` | `transition-delay` | `fast`, `normal` (`motion` scale); an integer *n*: `{n}ms`; `[value]` |
+| `ease-*` | `transition-timing-function` | `out` (`easing` scale); `[value]`; `linear` |
 
 ## Scales
 
@@ -402,9 +402,9 @@ roles (L2) and component colours (L3). Values in the built-in sets:
 | `motion-reduce:` | `@media (prefers-reduced-motion: reduce)` |
 | `portrait:` | `@media (orientation: portrait)` |
 | `landscape:` | `@media (orientation: landscape)` |
-| `mac:` | `@media (-sv-platform: macos)` *(waits for E7)* |
-| `win:` | `@media (-sv-platform: windows)` *(waits for E7)* |
-| `linux:` | `@media (-sv-platform: linux)` *(waits for E7)* |
+| `mac:` | `@media (-sv-platform: macos)` |
+| `win:` | `@media (-sv-platform: windows)` |
+| `linux:` | `@media (-sv-platform: linux)` |
 | `sm:` | `@media (width >= 640px)` (`--sv-breakpoint-sm`) |
 | `md:` | `@media (width >= 960px)` (`--sv-breakpoint-md`) |
 | `lg:` | `@media (width >= 1280px)` (`--sv-breakpoint-lg`) |

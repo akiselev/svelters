@@ -162,6 +162,9 @@ pub(crate) struct QjsEngine {
     /// Set by the interrupt handler when it stopped a script at `deadline_ns` (not for the external
     /// flag); `disarm` turns it into `Core::last_interrupt`.
     deadline_hit: Arc<AtomicBool>,
+    /// FX6: set whenever the interrupt handler stopped a script (budget or external flag); `disarm`
+    /// then calls the runtime's `__svelters_recover`.
+    aborted: Arc<AtomicBool>,
     /// The budget `arm` armed (for `Core::last_interrupt`).
     armed_budget: std::cell::Cell<Option<Duration>>,
     async_errors: Rc<RefCell<Vec<JsError>>>,
@@ -208,18 +211,22 @@ impl QjsEngine {
         let base = Instant::now();
         let deadline_ns = Arc::new(AtomicU64::new(0));
         let deadline_hit = Arc::new(AtomicBool::new(false));
+        let aborted = Arc::new(AtomicBool::new(false));
         {
             let dl = deadline_ns.clone();
             let hit = deadline_hit.clone();
+            let ab = aborted.clone();
             let flag: Arc<AtomicBool> = core.interrupt.clone();
             rt.set_interrupt_handler(Some(Box::new(move || {
                 if flag.swap(false, Ordering::Relaxed) {
+                    ab.store(true, Ordering::Relaxed);
                     return true;
                 }
                 let d = dl.load(Ordering::Relaxed);
                 let stop = d != 0 && base.elapsed().as_nanos() as u64 >= d;
                 if stop {
                     hit.store(true, Ordering::Relaxed);
+                    ab.store(true, Ordering::Relaxed);
                 }
                 stop
             })));
@@ -272,6 +279,7 @@ impl QjsEngine {
             base,
             deadline_ns,
             deadline_hit,
+            aborted,
             armed_budget: std::cell::Cell::new(None),
             async_errors,
             core: core.clone(),
@@ -298,6 +306,34 @@ impl QjsEngine {
             if let Some(budget) = self.armed_budget.get() {
                 self.core.last_interrupt.set(Some(crate::core::BudgetInterrupt { budget, late }));
             }
+        }
+        self.recover_if_aborted();
+    }
+
+    /// FX6 (plans/milestones/FX6-embed-destroy-mutation.md): QuickJS stops a script with an
+    /// uncatchable error that skips every `finally`, so the runtime's per-entry state (Svelte's
+    /// active reaction and effect, the batch being flushed, the ownership scope) stays as it was
+    /// mid-update, and the next entry would run inside it (the dispose of the interrupted root failed
+    /// with `state_unsafe_mutation`). Right after an aborted entry, with no budget armed, the
+    /// runtime's `globalThis.__svelters_recover()` (if it has one) puts that state back at rest; it
+    /// runs no component code. Its own errors are reported.
+    fn recover_if_aborted(&self) {
+        if !self.aborted.swap(false, Ordering::Relaxed) {
+            return;
+        }
+        let r = self.ctx.with(|ctx| {
+            let _running = RunningCtx::enter(&ctx);
+            let f: Value = match ctx.globals().get("__svelters_recover") {
+                Ok(f) => f,
+                Err(e) => return Err(js_err(&ctx, e)),
+            };
+            match f.as_function() {
+                Some(f) => f.call::<_, ()>(()).map_err(|e| js_err(&ctx, e)),
+                None => Ok(()),
+            }
+        });
+        if let Err(e) = r {
+            self.async_errors.borrow_mut().push(e);
         }
     }
 
@@ -611,6 +647,14 @@ impl JsEngine for QjsEngine {
                     st.ran += 1;
                     let e = job_ctx.0.with(|c| describe(&c, c.catch()));
                     self.async_errors.borrow_mut().push(e);
+                    // FX6b: an interrupted job left the runtime mid-update (no `finally` ran). The
+                    // drain stops here, so `disarm` recovers before any other job runs: a job queued
+                    // by the aborted one (a subscriber's cleanup) would run in its stale reaction,
+                    // and with the deadline passed every later job would be stopped too.
+                    if self.aborted.load(Ordering::Relaxed) {
+                        st.pending = self.rt.is_job_pending();
+                        break;
+                    }
                 }
             }
         }

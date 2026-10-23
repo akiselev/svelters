@@ -1,0 +1,14 @@
+{
+  "id": "overscroll",
+  "pin": 10,
+  "title": "Trackpad scroll past the content's start and end: rubber-band stretch and settle back (or a clamp), and a gesture on a nested area at its end (chaining)",
+  "setup": {
+    "scroll": { "s": [0, 0], "t": [0, 0] }
+  },
+  "steps": [
+    { "gesture": "t", "deltas": "to-end", "momentum": "none" },
+    { "gesture": "s", "deltas": "flick-up", "momentum": "none" },
+    { "gesture": "s", "deltas": "to-end", "momentum": "none" },
+    { "gesture": "s", "deltas": "flick-down", "momentum": "none" }
+  ]
+}

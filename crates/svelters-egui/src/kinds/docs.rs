@@ -588,8 +588,21 @@ pub static KIND_DOCS: &[KindDoc] = &[
         paint: Paint::None,
         walk: Walk::Leaf(Focus::Never),
         states: &[],
-        a11y: A11yDoc { note: "Each toast is an `Alert` node named by its text, with a `Dismiss` button.", decorated: false, ..NO_NODE },
-        css_note: "The toasts are drawn over everything in the theme's look; CSS does not reach them.",
+        a11y: A11yDoc { note: "Each toast is an `Alert` node named `Level: text`, a live region (`assertive` for warning and error, `polite` otherwise), with a `Dismiss` button.", decorated: false, ..NO_NODE },
+        css_note: "Its `show` toasts take `::part(toast)`, `::part(accent)`, `::part(text)`, `::part(action)` and `::part(close)`; their runs keep RT2's tag defaults. Per-run CSS needs a declarative `<toast>` child.",
+    },
+    // OW7b
+    KindDoc {
+        id: "Toast",
+        category: Category::Overlays,
+        paint: Paint::Box,
+        walk: Walk::None,
+        states: &[
+            StateDoc { name: "hovered", source: Source::Kind, when: "the pointer is over it" },
+            StateDoc { name: "exiting", source: Source::Kind, when: "it closed and its `transition` is playing out" },
+        ],
+        a11y: A11yDoc { role: Some("Alert"), name_from: &["level", "its labels' text"], note: "A live region: `assertive` for warning and error, `polite` otherwise; its close button is a `Dismiss` button.", ..NO_NODE },
+        css_note: "`toast` and `toast[level=…]` style its box (R7 `elev-3` by default); `::part(accent)` the level bar, `::part(close)` the close button. Its labels' runs are nodes: `toast b`, `toast a` and the like reach them.",
     },
     // WG4b
     KindDoc {
