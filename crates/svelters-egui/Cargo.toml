@@ -53,6 +53,8 @@ arboard = { version = "3.7", default-features = false }
 taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
 # AS1: the own SVG loader (`assets::SvgLoader`). The version egui_extras 0.37 pins, so one resvg links.
 resvg = { version = "=0.45.1", default-features = false }
+# ICR1: the colour-slot rewrite (`icons::slot_svg`) parses icon SVGs with the roxmltree usvg links.
+roxmltree = "=0.20.0"
 # WG2b: `image` decodes PNG (the version arboard locks).
 image = { version = "0.25", default-features = false, features = ["png"] }
 

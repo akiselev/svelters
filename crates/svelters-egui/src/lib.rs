@@ -34,6 +34,8 @@ pub mod elements;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
 pub mod fonts;
 pub mod focus;
+// ICR1: the icon registry and how icons are drawn.
+pub mod icons;
 /// OW0: behaviour units of the own widgets (hover, press, focus; ARCH-WIDGETS §1.2).
 pub mod interact;
 pub mod kinds;
@@ -56,6 +58,8 @@ pub mod style;
 pub mod theme;
 /// OW0: svelters' own widgets (ARCH-WIDGETS §1.3) and the own-widget switch (§6.2).
 pub mod widgets;
+/// ZM1: UI zoom (`set_zoom`, VS Code's 1.2^n levels, who handles Ctrl+= / Ctrl+- / Ctrl+0).
+pub mod zoom;
 
 mod a11y;
 /// AU1: the accessible name the automation selectors share with AccessKit.

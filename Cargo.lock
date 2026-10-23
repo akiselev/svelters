@@ -4642,6 +4642,7 @@ dependencies = [
  "jiff",
  "resvg",
  "rfd",
+ "roxmltree",
  "serde_json",
  "svelters",
  "svelters-abi",

@@ -145,7 +145,15 @@ fn toggle_buttons_toggle_and_radio_ones_stay_checked() {
 /// Combo box: shows the selected option; picking a row in the popup changes `selected`.
 #[test]
 fn combo_box_picks_an_option() {
+    // OW3: the egui wrapper and svelters' own select
+    for set in [svelters_egui::widgets::KindSet::None, svelters_egui::widgets::KindSet::tags(["combo-box"])] {
+        combo_box_picks_an_option_on(set);
+    }
+}
+
+fn combo_box_picks_an_option_on(set: svelters_egui::widgets::KindSet) {
     let mut rig = Rig::new();
+    rig.backend.set_own_widgets(set);
     let (_w, col) = rig.window();
     let opts = Value::List(vec![s("Alpha"), s("Beta"), s("Gamma")]);
     let cb = rig.leaf(col, "combo-box", &[("options", opts.clone()), ("accessible-name", s("Plane"))]);
@@ -424,6 +432,8 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         }
         let mut rig = Rig::new();
         rig.harness.ctx.all_styles_mut(|st| st.interaction.tooltip_delay = 0.0);
+        // OW3: svelters' own tooltips wait for the policy's delay
+        svelters_egui::native::override_policy(&rig.harness.ctx, |p| p.tooltip_delay_ms = 0);
         let (_w, col) = rig.window();
         // a leaf whose drawn rect gives the root's screen origin (containers draw nothing)
         let probe = rig.leaf(col, "label", &[("text", s("probe"))]);
@@ -448,7 +458,8 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         rig.harness.hover_at(pos);
         rig.run();
         // the tooltip's label (an input without a caption is also named by its tooltip: two nodes)
-        let shown = rig.harness.query_all_by_label(&tip).filter(|n| n.accesskit_node().role() == Role::Label).count();
+        // (egui's tooltip is a label; svelters' own is a `Tooltip` node, OW3)
+        let shown = rig.harness.query_all_by_label(&tip).filter(|n| matches!(n.accesskit_node().role(), Role::Label | Role::Tooltip)).count();
         assert_eq!(shown, 1, "<{tag}>: no tooltip shown");
     }
 }

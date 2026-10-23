@@ -167,7 +167,8 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut
         _ => {}
     }
     if !tip.is_empty() {
-        ui.interact(r, id.with("tip"), Sense::hover()).on_hover_text(tip);
+        let tr = ui.interact(r, id.with("tip"), Sense::hover());
+        crate::widgets::tooltip::attach(ui, &tr, &tip, arena.own.contains("tooltip")); // OW3
     }
     if let W::Stack { .. } = arena.w(i) {
         if let Some(k) = stack_pick(arena, i).visible {

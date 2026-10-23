@@ -22,9 +22,11 @@ pub fn install(ctx: &Context) {
     }
 }
 
-/// The uri an `image`'s `source` names: a bare path becomes a `file://` uri.
+/// The uri an `image`'s `source` names: a bare path becomes a `file://` uri; a uri (`scheme://`,
+/// or a `data:` uri) is kept.
 pub fn uri_of(source: &str) -> String {
-    if source.contains("://") { source.to_string() } else { format!("file://{source}") }
+    let data = source.get(..5).is_some_and(|p| p.eq_ignore_ascii_case("data:"));
+    if data || source.contains("://") { source.to_string() } else { format!("file://{source}") }
 }
 
 type Entry = Result<Arc<ColorImage>, String>;
