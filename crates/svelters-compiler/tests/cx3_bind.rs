@@ -56,14 +56,17 @@ fn commit_lowers_onto_the_kinds_commit_event() {
     // a function binding keeps its accessors
     let out = js("<script>let n = $state('');</script><window><text-edit bind:text|commit={() => n, (v) => (n = v.trim())} /></window>");
     assert!(out.contains(r#"$n.bind_commit($$n2, "text", (() => $.get(n)), ((v) => ($.set(n, v.trim(), true))), "commit", 0);"#), "{out}");
+    // OW1b: egui's own slider raises `commit(value)`, so its `value` lowers the same way
+    let out = js("<script>let v = $state(0);</script><window><slider bind:value|commit={v} /></window>");
+    assert!(out.contains(r#"$n.bind_commit($$n2, "value", "#) && out.contains(r#""commit", 0);"#), "{out}");
 }
 
 #[test]
 fn commit_on_a_kind_without_a_commit_event_is_diagnosed_with_a_fix() {
-    // egui's slider has no commit event (FM1 adds drag-value's)
-    let r = run_with("<script>let v = $state(0);</script><window><slider bind:value|commit={v} /></window>", &egui());
+    // egui's range-slider has no commit event for `low` (its `commit` carries no value: OW1b)
+    let r = run_with("<script>let v = $state(0);</script><window><range-slider bind:low|commit={v} /></window>", &egui());
     let d = r.diagnostics.iter().find(|d| d.code == "bind_commit_unsupported").expect("diagnosed");
-    assert!(d.message.contains("<slider> has no commit event for `value` on egui"), "{}", d.message);
+    assert!(d.message.contains("<range-slider> has no commit event for `low` on egui"), "{}", d.message);
     assert_eq!(d.fixes.len(), 1);
     assert_eq!(d.fixes[0].message, "remove `|commit`");
     // GTK's entry declares none either

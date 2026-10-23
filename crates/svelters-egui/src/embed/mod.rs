@@ -1735,7 +1735,7 @@ impl Embed {
 fn takes_input(w: &crate::scene::W) -> bool {
     use crate::scene::W;
     match w {
-        W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. } | W::Slider { .. } => true,
+        W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. } => true,
         // scrolls and selects (LS1)
         W::VirtualList(_) => true,
         W::Run { anchor, .. } => *anchor,
@@ -1769,13 +1769,10 @@ fn takes_input(w: &crate::scene::W) -> bool {
         | W::Hyperlink { .. }
         | W::RadioButton { .. }
         | W::Switch { .. }
-        | W::RangeSlider { .. }
-        | W::DragValue { .. }
         | W::Canvas(_)
         | W::Table(_)
         | W::TabView { .. }
-        | W::ToastHost(_)
-        | W::Picker(_) => true,
+        | W::ToastHost(_) => true,
     }
 }
 

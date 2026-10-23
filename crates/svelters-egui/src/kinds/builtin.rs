@@ -358,4 +358,7 @@ pub static KINDS: &[KindDef] = &[
     super::rich::ANCHOR,
     // ---- OW2: appended (`views.rs`; svelters' own widget only, `widgets::scrollbar`) ----
     super::views::SCROLLBAR,
+    // ---- OW6: appended (`pickers.rs`; svelters' own widgets only) ----
+    super::pickers::CALENDAR,
+    super::pickers::COLOR_EDITOR,
 ];
