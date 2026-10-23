@@ -38,9 +38,6 @@ unicode-general-category = "1.1"
 egui = { version = "=0.37.0", default-features = false, features = ["default_fonts"] }
 eframe = { version = "=0.37.0", optional = true, default-features = false, features = ["glow", "default_fonts", "x11", "wayland", "accesskit"] }
 egui_kittest = { version = "=0.37.0", optional = true }
-# WG4a: `table` (EGUI.md §5 Tier 1). A same-week crate of egui 0.37.0 (version rule 4): it links our
-# one egui copy (`cargo tree -d -i egui` stays empty). Moves with the egui pin.
-egui_table = "=0.11.0"
 # WG4b: `date-picker` (EGUI.md §5: same-week crates only; egui_extras moves with egui).
 egui_extras = { version = "=0.37.0", default-features = false, features = ["datepicker"] }
 jiff = { version = "0.2.35", default-features = false, features = ["std"] }

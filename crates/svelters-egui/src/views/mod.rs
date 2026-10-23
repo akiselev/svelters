@@ -2,7 +2,7 @@
 //! are `kinds/views.rs`; this module holds their state, layout, paint and methods, reached through
 //! one dispatch arm each in `layout.rs`, `leaf.rs`, `scene/props.rs` and `ops.rs`:
 //!
-//! - [`table`]: `table` (egui_table) and its `table-column` children;
+//! - [`table`]: `table` (own, OW5b) and its `table-column` children;
 //! - [`tabs`]: `tab-view` and its `tab` pages;
 //! - [`toast`]: `toast-host` and the Rust API [`toast::show`].
 //!
@@ -102,6 +102,7 @@ pub(crate) fn call(b: &EguiBackend, h: Handle, name: &str, args: &[Value]) -> Op
             ("end-edit", W::Table(t)) => t.end_edit(args),
             ("clear-rows", W::Table(t)) => t.clear_rows(args),
             ("scroll-to-row", W::Table(t)) => t.scroll_to_row(args),
+            ("fit-columns", W::Table(t)) => t.fit_columns(args),
             ("show", W::ToastHost(t)) => t.show(args),
             ("dismiss", W::ToastHost(t)) => t.dismiss(args),
             ("clear", W::ToastHost(t)) => t.clear(args),

@@ -85,5 +85,4 @@ disallowed-types = [
   { path = "egui::containers::menu::SubMenuButton", reason = "OW: svelters draws its own widgets (OW3)" },
   { path = "egui::containers::menu::SubMenu", reason = "OW: svelters draws its own widgets (OW3)" },
   { path = "egui_extras::DatePickerButton", reason = "OW: svelters draws its own widgets (OW6)" },
-  { path = "egui_table::Table", reason = "OW: svelters draws its own widgets (OW5b)" },
 ]
