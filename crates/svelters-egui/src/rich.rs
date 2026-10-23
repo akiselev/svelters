@@ -100,17 +100,38 @@ fn keyword(v: Option<&ComputedValue>) -> Option<&str> {
 
 /// The runs of label `i`, or `None` when it has no run children.
 pub fn collect(s: &Scene, i: usize) -> Option<Rich> {
+    match s.w(i) {
+        W::Label { text, weight, .. } => collect_runs(s, i, text, *weight),
+        // OW1a3: the own label (`widgets::label`)
+        W::Ext(x) => x.with(|l: &crate::widgets::label::Label| l.text_weight()).and_then(|(t, w)| collect_runs(s, i, &t, w)),
+        _ => None,
+    }
+}
+
+/// Whether node `i` is a label (built-in, or the own label): by its kind row, which an own
+/// widget keeps, so this holds while the own label draws (its payload out of the scene).
+fn is_label(s: &Scene, i: usize) -> bool {
+    crate::kinds::kind(s.core[i].kind as usize).id == "Label"
+}
+
+/// OW1a3: whether `x` is the own label (false while it is borrowed: being drawn).
+fn own_label(x: &crate::provider::ExtWidget) -> bool {
+    x.0.try_borrow().is_ok_and(|b| b.entry().replaces == Some("label"))
+}
+
+/// The runs of label `i` whose own text and weight are `text` and `weight` (OW1a3: the own label
+/// passes its props, as its payload is out of the scene while it draws).
+pub(crate) fn collect_runs(s: &Scene, i: usize, text: &str, weight: i64) -> Option<Rich> {
     // a label without runs (no children, or only an attached context menu) is plain text
-    if !matches!(s.w(i), W::Label { .. }) || !s.children[i].iter().any(|&c| s.idx(c).is_some_and(|j| matches!(s.w(j), W::Run { .. }))) {
+    if !s.children[i].iter().any(|&c| s.idx(c).is_some_and(|j| matches!(s.w(j), W::Run { .. }))) {
         return None;
     }
-    let W::Label { text, weight, .. } = s.w(i) else { return None };
     let label_size = s.slots.id_at(i).and_then(|id| s.style.computed(id)).and_then(|c| match c.get("font-size") {
         Some(ComputedValue::Length(l)) => Some(l.px),
         _ => None,
     });
-    let base = RunFmt { weight: *weight, ..RunFmt::default() };
-    let mut rich = Rich { plain: text.clone(), runs: Vec::new() };
+    let base = RunFmt { weight, ..RunFmt::default() };
+    let mut rich = Rich { plain: text.to_string(), runs: Vec::new() };
     if !text.is_empty() {
         let id = s.slots.id_at(i)?;
         rich.runs.push(RunSeg { node: Some(id), start: 0, end: text.len(), fmt: base, link: None, href: None });
@@ -184,14 +205,26 @@ fn visit(s: &Scene, id: NodeId, parent: RunFmt, link: Option<NodeId>, label_size
     }
 }
 
-/// Recollects label `i`'s runs into `W::Label::rich` (before it is measured).
+/// Recollects label `i`'s runs into `W::Label::rich` (before it is measured); OW1a3: into the own
+/// label's, whose text mirror (`Node::text`, AccessKit) becomes all runs.
 pub(crate) fn refresh(s: &mut Scene, i: usize) {
-    if !matches!(s.w(i), W::Label { .. }) {
-        return;
-    }
-    let new = collect(s, i).map(Box::new);
-    if let W::Label { rich, .. } = s.w_mut(i) {
-        *rich = new;
+    match s.w(i) {
+        W::Label { .. } => {
+            let new = collect(s, i).map(Box::new);
+            if let W::Label { rich, .. } = s.w_mut(i) {
+                *rich = new;
+            }
+        }
+        W::Ext(x) if own_label(x) => {
+            let new = collect(s, i).map(Box::new);
+            if let W::Ext(x) = s.w_mut(i) {
+                let text = x.with_mut(|l: &mut crate::widgets::label::Label| l.set_rich(new));
+                if let Some(t) = text {
+                    x.set_text(t);
+                }
+            }
+        }
+        _ => {}
     }
 }
 
@@ -202,7 +235,7 @@ pub(crate) fn host_of(s: &Scene, i: usize) -> Option<NodeId> {
         let j = s.idx(id)?;
         match s.w(j) {
             W::Run { .. } => p = s.core[j].parent,
-            W::Label { .. } => return Some(id),
+            _ if is_label(s, j) => return Some(id),
             _ => return None,
         }
     }
@@ -213,8 +246,8 @@ pub(crate) fn host_of(s: &Scene, i: usize) -> Option<NodeId> {
 /// remeasure the label.
 pub(crate) fn touched(s: &mut Scene, i: usize) {
     let host = match s.w(i) {
-        W::Label { .. } => s.slots.id_at(i),
         W::Run { .. } => host_of(s, i),
+        _ if is_label(s, i) => s.slots.id_at(i),
         _ => None,
     };
     if let Some(h) = host {
@@ -234,6 +267,22 @@ pub struct Colors {
 pub fn layout_job(ctx: &egui::Context, style: &egui::Style, rich: &Rich, colors: Colors, wrap: Option<f32>, underline: Option<NodeId>) -> LayoutJob {
     let mut job = LayoutJob::default();
     let body = egui::TextStyle::Body.resolve(style);
+    layout_into(&mut job, ctx, style, &body, rich, colors, underline);
+    job.wrap.max_width = wrap.unwrap_or(f32::INFINITY);
+    job
+}
+
+/// OW1a3: [`layout_job`] at the label's computed font size `size` (the own label's CSS
+/// `font-size`; runs that set their own keep it).
+pub fn layout_job_at(ctx: &egui::Context, style: &egui::Style, size: f32, rich: &Rich, colors: Colors, wrap: Option<f32>, underline: Option<NodeId>) -> LayoutJob {
+    let mut job = LayoutJob::default();
+    let body = FontId::new(size, egui::TextStyle::Body.resolve(style).family);
+    layout_into(&mut job, ctx, style, &body, rich, colors, underline);
+    job.wrap.max_width = wrap.unwrap_or(f32::INFINITY);
+    job
+}
+
+fn layout_into(job: &mut LayoutJob, ctx: &egui::Context, style: &egui::Style, body: &FontId, rich: &Rich, colors: Colors, underline: Option<NodeId>) {
     for r in &rich.runs {
         let text = &rich.plain[r.start..r.end];
         let f = r.fmt;
@@ -263,8 +312,6 @@ pub fn layout_job(ctx: &egui::Context, style: &egui::Style, rich: &Rich, colors:
             },
         );
     }
-    job.wrap.max_width = wrap.unwrap_or(f32::INFINITY);
-    job
 }
 
 /// A plain run list, for text that is not nodes (a toast's `show`): a string (one run), or a list
@@ -355,33 +402,34 @@ pub(crate) struct Painted {
     pub activated: Vec<(NodeId, String)>,
 }
 
-/// Paints rich label `i` in `ui` (its rect is the leaf's), with one interaction per link.
-pub(crate) fn paint(s: &mut Scene, i: usize, ui: &mut egui::Ui, wrap_mode: &str, sense: egui::Sense) -> Option<Painted> {
-    let mut rich = collect(s, i)?;
-    let colors = Colors { text: ui.visuals().text_color(), link: ui.visuals().hyperlink_color };
-    let wrap = (wrap_mode == "wrap").then(|| ui.available_width());
-    let links = rich.links();
-    // the link the pointer or keyboard focus is on (underlined, `:hover`/`:focus`)
-    let lit = links.iter().map(|(n, _)| *n).find(|&n| {
+/// The link the pointer or keyboard focus is on (underlined, `:hover`/`:focus`).
+pub(crate) fn lit_link(s: &Scene, links: &[(NodeId, Vec<(usize, usize)>)], ctx: &egui::Context) -> Option<NodeId> {
+    links.iter().map(|(n, _)| *n).find(|&n| {
         s.idx(n).is_some_and(|j| {
             let id = s.core[j].egui_id;
-            ui.ctx().memory(|m| m.has_focus(id)) || ui.ctx().read_response(id).is_some_and(|r| r.hovered())
+            ctx.memory(|m| m.has_focus(id)) || ctx.read_response(id).is_some_and(|r| r.hovered())
         })
-    });
-    let mut job = layout_job(ui.ctx(), ui.style(), &rich, colors, wrap, lit);
-    if wrap_mode == "truncate" {
-        job.wrap = egui::text::TextWrapping::truncate_at_width(ui.available_width());
-    }
-    let galley = ui.fonts_mut(|f| f.layout_job(job));
-    let (rect, resp) = ui.allocate_exact_size(galley.size(), sense);
-    let label_resp = resp.clone();
-    label_resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, ui.is_enabled(), rich.plain.as_str()));
+    })
+}
+
+/// One egui interaction per link of `rich`, laid out as `galley` at `origin`: hover (pointer
+/// cursor), click, keyboard focus (with a `ring` round the glyphs), an AccessKit `Link` node, and
+/// the run's `:hover`/`:focus` bits. Gives the links activated and the link lit now.
+pub(crate) fn link_pass(
+    s: &mut Scene,
+    ui: &egui::Ui,
+    rich: &Rich,
+    links: &[(NodeId, Vec<(usize, usize)>)],
+    galley: &egui::Galley,
+    origin: egui::Pos2,
+    ring: Stroke,
+) -> (Vec<(NodeId, String)>, Option<NodeId>) {
     let mut activated = Vec::new();
     let mut lit_now = None;
-    for (node, ranges) in &links {
+    for (node, ranges) in links {
         let Some(j) = s.idx(*node) else { continue };
         let id = s.core[j].egui_id;
-        let rects = glyph_rects(&galley, &rich.plain, ranges, rect.min);
+        let rects = glyph_rects(galley, &rich.plain, ranges, origin);
         let Some(bounds) = rects.iter().copied().reduce(|a, b| a.union(b)) else { continue };
         let text: String = ranges.iter().map(|&(a, b)| &rich.plain[a..b]).collect();
         let r = ui.interact(bounds, id, egui::Sense::click());
@@ -397,7 +445,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, ui: &mut egui::Ui, wrap_mode: &str,
             activated.push((*node, href));
         }
         if r.has_focus() {
-            ui.painter().rect_stroke(bounds.expand(1.0), 2.0, ui.visuals().selection.stroke, egui::StrokeKind::Outside);
+            ui.painter().rect_stroke(bounds.expand(1.0), 2.0, ring, egui::StrokeKind::Outside);
         }
         let mut b = StateBits(s.core[j].state.0 & !(StateBits::HOVERED.0 | StateBits::FOCUSED.0));
         b.set(StateBits::HOVERED, on);
@@ -407,6 +455,38 @@ pub(crate) fn paint(s: &mut Scene, i: usize, ui: &mut egui::Ui, wrap_mode: &str,
             lit_now = Some(*node);
         }
     }
+    (activated, lit_now)
+}
+
+/// Activated links: the run's `clicked` when a runtime listens, otherwise its `href` opens.
+pub(crate) fn activate(s: &Scene, ctx: &egui::Context, out: &mut Vec<crate::walk::Out>, activated: Vec<(NodeId, String)>) {
+    for (node, href) in activated {
+        let Some(j) = s.idx(node) else { continue };
+        let sig = crate::kinds::signal_id(s.core[j].kind as usize, "clicked");
+        if s.listens(j, sig) {
+            out.push(crate::walk::Out::Event(node.to_raw(), sig, vec![]));
+        } else if !href.is_empty() {
+            ctx.open_url(egui::OpenUrl::same_tab(href));
+        }
+    }
+}
+
+/// Paints rich label `i` in `ui` (its rect is the leaf's), with one interaction per link.
+pub(crate) fn paint(s: &mut Scene, i: usize, ui: &mut egui::Ui, wrap_mode: &str, sense: egui::Sense) -> Option<Painted> {
+    let mut rich = collect(s, i)?;
+    let colors = Colors { text: ui.visuals().text_color(), link: ui.visuals().hyperlink_color };
+    let wrap = (wrap_mode == "wrap").then(|| ui.available_width());
+    let links = rich.links();
+    let lit = lit_link(s, &links, ui.ctx());
+    let mut job = layout_job(ui.ctx(), ui.style(), &rich, colors, wrap, lit);
+    if wrap_mode == "truncate" {
+        job.wrap = egui::text::TextWrapping::truncate_at_width(ui.available_width());
+    }
+    let galley = ui.fonts_mut(|f| f.layout_job(job));
+    let (rect, resp) = ui.allocate_exact_size(galley.size(), sense);
+    let label_resp = resp.clone();
+    label_resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, ui.is_enabled(), rich.plain.as_str()));
+    let (activated, lit_now) = link_pass(s, ui, &rich, &links, &galley, rect.min, ui.visuals().selection.stroke);
     // a hover or focus that began this frame restyles the link before it is drawn
     let galley = if lit_now != lit {
         rich = collect(s, i)?;

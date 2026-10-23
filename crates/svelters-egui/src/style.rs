@@ -815,8 +815,9 @@ impl Scene {
         let w = self.w(i);
         if matches!(w, W::Run { .. }) {
             crate::rich::touched(self, i); // RT2: a run's font may have changed
-        } else if !w.is_container() && !matches!(w, W::Ext(_)) {
+        } else if !w.is_container() && (!matches!(w, W::Ext(_)) || replaces_leaf(w)) {
             // CS5f: a leaf's font or padding changed: it measures again (a new size relays out).
+            // OW1a3: so does an own widget that replaces a leaf (it measures from its CSS).
             // `old` is None when only its parts changed (OW-CSS): nothing of its own to compare.
             if let Some(o) = old.as_deref() {
                 let new = self.style.computed(id).cloned();
@@ -1214,6 +1215,15 @@ fn widget_visuals(c: &ComputedStyle, v: &mut egui::style::WidgetVisuals) {
 // ---- typography and leaf padding (CS5f) ----
 
 /// The computed properties a leaf is measured with: a change remeasures it.
+/// OW1a3: an own widget measured as a leaf (it replaces a built-in kind and is no container;
+/// `layout.rs` lays out the others' children with taffy). False while it is borrowed.
+fn replaces_leaf(w: &W) -> bool {
+    match w {
+        W::Ext(x) => x.0.try_borrow().is_ok_and(|b| b.entry().replaces.is_some() && !b.entry().caps.contains(crate::provider::Caps::CONTAINER)),
+        _ => false,
+    }
+}
+
 const MEASURED_PROPS: &[&str] = &["font-family", "font-size", "font-weight", "padding", "padding-bottom", "padding-left", "padding-right", "padding-top"];
 
 /// Leaves whose CSS padding goes inside egui's frame, as `Spacing::button_padding` (the button is
