@@ -1,7 +1,7 @@
 # OW7: own modal, inner-window and toasts
 
 Lane OW7 (thinkpadx1), branch `ci/ow7`, from master e832e001 (OW3 merged), merged with master
-62f06ce8 (OW5a1, ICR1, DOC2). Spec: `plans/research/ARCH-WIDGETS.md` §3.2 (layers: "modal = an Area at
+62f06ce8 (OW5a1, ICR1, DOC2), then c0faf05a (OW1b, OW6). Spec: `plans/research/ARCH-WIDGETS.md` §3.2 (layers: "modal = an Area at
 `Foreground` whose first node is a full-viewport backdrop part"), §6.1 rows `modal`, `inner-window`,
 `toast-host`, §7 row OW7; `plans/research/WIDGET-PARITY.md` §2.21 and the OW7 rows; DESIGN R-rules; OW3's
 popup surface and units; EV1's overlay layers; EV3's dialog scopes; RT2's `crate::rich`.
@@ -183,8 +183,10 @@ All runs used `cargo-slot`; the egui tests ran under `headless`.
 - `cargo check -p svelters-egui --all-targets` (after the merge).
 - `cargo clippy -p svelters-egui --all-targets`: no warning in OW7's files. The `ops.rs` warnings it reports were there before.
 - `pnpm install --frozen-lockfile`.
-- nextest `-p svelters-egui --test ow7 --test menus --test focus_keys --test views --test ow1a2 --test widgets --test ow3 --test spec --test rt2_rich`: 69 of 69 green, after the merge.
-- `SVELTERS_UPDATE=1 … --test spec`, `gen_props.py` and `gen_reference.py` (no change after the merge).
+- nextest `-p svelters-egui --test ow7 --test menus --test focus_keys --test views --test ow1a2 --test widgets --test ow3 --test spec --test rt2_rich --test scene`: 75 of 75 green, after the second merge.
+  - `scene.rs::mutations_allocate_nothing_without_observers` failed on master 62f06ce8, which was the first CI run's linux-gtk failure. OW1b's merge (22f90e29) fixed it.
+- `SVELTERS_UPDATE=1 … --test spec`, `gen_props.py` and `gen_reference.py` (no change after either merge).
+- **Conflict in the second merge:** `widgets/mod.rs` `OWN_ONLY`. OW1b and OW6's kinds and OW7's `toast-host` are both kept.
 
 ### Not run locally (CI)
 
