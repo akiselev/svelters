@@ -103,7 +103,8 @@ Also run locally, green: `ow1a2`, `ow1a3`, `spec`, `scene_memory`, `scene` (with
 (`checked_in_kinds_json_and_typings_are_current`), `wg4b` `gallery_export_stubs_are_current`.
 
 Generated, in order: `SVELTERS_UPDATE=1 … --test spec` (egui.json, egui.d.ts), `gen_props.py` (no
-change), `gen_reference.py` (collapsing-header page); the app dumps of `examples/egui-kinds` and
+change), `gen_reference.py` (collapsing-header page), `gen_utilities.py` (it reads the kinds' parts:
+`::part(icon)`; CI's js job caught it missing on the first push); the app dumps of `examples/egui-kinds` and
 `fixtures/gallery-egui` (`SVELTERS_UPDATE=1`, they now carry `behaviors/sv.js`, `sv.js` and the `sv.*`
 behaviour kinds).
 
