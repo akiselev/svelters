@@ -4,6 +4,10 @@ Lane `ci/ow5b` (thinkpad), from `origin/master` 943b4c67 (OW5a and OW5a1b merged
 ARCH-WIDGETS §6.1 (`table`, `table-column` rows) and §7 (OW5). Acceptance rows: WIDGET-PARITY §2.18
 (OW5b). FM1's QW4 header state comes from `origin/ci/fm1` (its handoff in `FM1-form-widgets.md`).
 
+**Decided (coordinator, 2026-10-22):** the split is accepted. OW5b1 is this lane; OW5b2 goes to a
+fresh agent (handoff below). OW5a2's multi-column tree builds on this lane's `table-column` and header.
+The table.rs egui cells are OW5b's, not OW1a4's.
+
 **Split (proposed to the coordinator at the start).** The OW5b parity rows add up to about 5.15 d, on
 top of replacing egui_table. This lane is **OW5b1**: the own table, its header, FM1's QW4, and the small
 rows. The rows marked "OW5b2" below are left for a fresh agent.
@@ -142,3 +146,46 @@ Run locally, all pass:
 Not run locally (they need the built fixtures; CI runs them): `gallery_views.rs`, `clipboard.rs`,
 `embed.rs`. FM1's own QW4 tests (in `forms.rs` on `ci/fm1`) were not ported as they are; `ow5b.rs`
 covers the same behaviour.
+
+## OW5b2 handoff (for a fresh agent)
+
+Start from master once `ci/ow5b` merges, and read this record and the module doc of `views/table.rs`
+first. Keep the `Scene::part_at` design: every repeated part is computed per item, with its own state
+and logical position. Rows (WIDGET-PARITY §2.18):
+
+1. **`selection-unit="row" | "cell" | "column"`** (0.75). Cells are keyed by `(rowId, data column)`.
+   This needs a cell set beside `KeySelect`; extend `views/selection.rs` with a cell mode rather than a
+   second selector. Shift ranges are rectangles. Header cells get `:selected` when their column has
+   selected cells (`highlightSections`).
+2. **`edit-triggers`** (token list: `double-click f2 typing selected-click`; today's fixed set is the
+   default) and **`tab-navigation`** (Tab moves the cursor while not editing). Both act in `paint`'s key
+   block and in `start_edit`'s callers.
+3. **Cell content from the data:**
+   - cells as `{ value, tooltip, icon, part }` objects (`cell_text` only reads values today; keep plain
+     values working);
+   - `::part(cell-icon)`;
+   - extra part names (P10, `table::part(cell negative)`, which needs OW-CSS's multi-name `part_at`);
+   - tooltips through `tooltip::attach` on the cell's response.
+4. **Checkable cells** (a boolean column paints `::part(cell-check)` and toggles on Space or click, with
+   `commit`) and **persistent editors** (an always-on editor column). Both need a per-column `kind` or
+   `editor-mode` prop on `ColumnState`. With OW4's own text field on master, also replace the seam in
+   `paint_editor` (the one `egui::TextEdit`).
+5. **Grid lines** (`::part(grid)`, `--sv-grid-lines: none | rows | cols | both`) and the **corner button**
+   (`::part(corner)`, Ctrl+A on click; only with a row header, so it may wait for OW-P2's `row-header`).
+6. **Header:**
+   - `table-column resize="interactive" | "fixed" | "stretch" | "contents"` (`resizable` stays as
+     shorthand; stretch columns share the slack that `stretch-last` gives the last column today, in
+     `Geom::new`);
+   - movable columns: `columns-movable` and `column-moved(from, to)`, a drag on a header cell with a
+     drop line;
+   - `sort-priority`: a badge in the `sort` part;
+   - `table-column icon`;
+   - a "Fit to contents" entry in the column menu (`column_menu`; `fit_width` exists);
+   - P6: `table-column.numeric::part(header|cell)` (the style host is the column node; needs OW-CSS's
+     style-host indirection in `part_at`).
+7. **Table DnD:** `row-drag-type`/`row-drop-types`/`internal-move` as in OW5a1b's `RowDnd` (list).
+8. **Column menu keyboard:** arrows, Enter and the Menu key (Shift+F10 on the focused table raising
+   `header-context` at the cursor column). The menu is pointer-only today.
+
+Tests to extend: `tests/ow5b.rs` (header), `tests/wg5a.rs` (keys, editing). Shared code OW5a2 also uses
+(`columns`, `Geom`, `header`): change it in one place, and run `ow5b.rs` together with the tree tests.
