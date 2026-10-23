@@ -323,7 +323,9 @@ Done in the handoff's order. The `Scene::part_at` row design is unchanged.
 Shared changes:
 - `native/mod.rs`: `Policy::context_click_selects` and `drag_expand_ms` (500 ms on every row; the exact platform
   values are **verify**).
-- `kinds/mod.rs`: `P::CurrentItem`, `InternalMove`, `UniformRows`.
+- `kinds/mod.rs`: `P::CurrentItem`, `InternalMove`, `UniformRows`. They are P keys, not `#[prop]` extras (the OW0b
+  rule), because `virtual-list` and `tree-view` are still built-in `W::VirtualList` kinds (`KindDef`s in
+  `virtuallist.rs`/`treeview.rs`) with no `replaces` struct. When they become own widgets, these move to extras.
 - `scene/props.rs`: the matching arms.
 - `kinds/docs.rs`: the list and tree css notes.
 - Regenerated, in this order: `egui.json` and `egui.d.ts`, then `gen_props.py`, then the reference.
