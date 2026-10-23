@@ -6,10 +6,14 @@ popups, Anchored, Dismissable). Design: `plans/research/ARCH-WIDGETS.md` §6.1 (
 §2.20, its Decided block (the new kinds `calendar` and `color-editor`; DOC1's state-bit gaps), DESIGN.md's R
 rules, and the existing picker tests (`wg4b.rs`, `observe.rs`).
 
-**Split (proposed to the coordinator at the start; default taken, since no answer came):** OW6 here covers the
-two new inline kinds and both pickers on OW3's popups. **OW6b** covers sectioned date editing (`editable`),
-the month and year sub-pickers, and file/path fields. WIDGET-PARITY has no OW6 row for file/path fields
-(QT-SURVEY lists `QFileDialog` as "rfd, WG4b"), so they need a parity row first. See "Handoff".
+**Split (decided by the coordinator, 2026-10-22):** OW6 covers `color-editor`, `color-picker`, `calendar` and
+`date-picker`. **OW6b** covers:
+- the sectioned date field (`editable`);
+- the month and year sub-pickers;
+- the rgb/hsv fields as OW1b `drag-value` parts;
+- the new `path-field` kind, for which the coordinator is adding a WIDGET-PARITY row.
+
+See "Handoff".
 
 ## What landed
 
@@ -187,9 +191,12 @@ paints the field's box; the seam paints only the text and caret. When OW1b's `En
 - **OW6b:**
   - `editable` sectioned date field;
   - the month and year sub-pickers on `::part(month)`/`::part(year)`;
-  - file/path fields. They need a WIDGET-PARITY row first. Design: a text field plus a browse button, with
-    the dialog through `dialogs.rs`' `DialogBackend` futures (rfd's async dialogs, polled by the runner).
-    That path never blocks the UI thread, which ZU3's lint requires.
+  - the rgb/hsv channel boxes as OW1b `drag-value`/`ValueBox` parts, which brings typed numbers and step
+    buttons. `ColorBody`'s channel loop is the one place to change;
+  - **`path-field`** (a new kind; the coordinator adds its WIDGET-PARITY row): a text field plus a browse
+    button, with modes `file`, `dir` and `save`, plus filters and multi. The dialog goes off the UI thread
+    through `dialogs.rs`' `DialogBackend` futures (rfd's async dialogs, polled by the runner), never
+    blocking, as ZU3's lint requires. The text part takes the same text-input seam as the hex field.
 - **Per-day part CSS (OW-CSS follow-up):** egui computes `::part()` styles once per host (single names, in
   the host's state). Two things are missing:
   - per-instance part states (a day's own `:hover`/`:selected`);
@@ -199,8 +206,12 @@ paints the field's box; the seam paints only the text and caret. When OW1b's `En
   (`PseudoElement::parts`, P10). What's missing is a `SceneStyle` hook that computes a part for given names
   and state, which OW-CSS owns.
 - **Text input:** replace `color_editor::text_entry`'s body with OW1b's `Entry`, then OW4's `TextInput`.
-- **Channel boxes:** become OW1b's `drag-value`/`ValueBox` once it is on master. That brings typing a
-  number and step buttons.
+- **Roving (coordinator note, 2026-10-22):** the calendar uses no roving unit. Its cursor is a date, moved
+  by date arithmetic inside `CalBody`: arrows cross into the next or previous month, Up/Down move ±7 days,
+  PageUp/PageDown move a month or a year, everything clamps to `min`/`max`. OW3's `RovingList` is a 1-D
+  index over a fixed list, and OW1a2's `Roving` moves focus across nodes; neither crosses months. Nothing
+  was added to `interact/`. If a grid unit is wanted later (for tables), `CalBody`'s key block is the one
+  place to switch.
 - **`page-changed(year, month)`:** the payload is a `[year, month]` list. OW1b's `flush_writes` change
   spreads a list over a signal of several args. Until it merges, JS sees one list argument.
 - **IN1:** locale names for months and weekdays, and `first-day="auto"`.
