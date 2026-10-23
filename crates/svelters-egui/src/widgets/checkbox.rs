@@ -149,9 +149,15 @@ pub(crate) fn indicator_view<'a>(host: &'a StyleView<'a>, css: Option<&'a svelte
 
 /// What an indicator kind measures: its parts (P3) plus the host's padding and border.
 pub(crate) fn measure_with_indicator(cx: &MeasureCx<'_>, ua: Ua, ind_name: &'static str, ind: Ua, text: &str, icon: &str, host_css: bool) -> egui::Vec2 {
-    let host = cx.style(ua);
-    let ind_v = indicator_view(&host, cx.part_css(ind_name), ind, host_css);
-    with_parts(cx.ctx, &host, ind_name, &ind_v, |n| cx.part_css(n), text, icon, |items, _, _| paint::measure_parts(&host, items)) + paint::box_extra(&host)
+    measure_indicator(cx.ctx, &cx.style(ua), |n| cx.part_css(n), ind_name, ind, text, icon, host_css)
+}
+
+/// [`measure_with_indicator`] under `host` (the style at rest) with `part_css` (the parts'
+/// computed styles): the kind's and `imm`'s (OW-RUST).
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn measure_indicator<'c>(ctx: &egui::Context, host: &StyleView<'_>, part_css: impl Fn(&str) -> Option<&'c svelters_style::ComputedStyle>, ind_name: &'static str, ind: Ua, text: &str, icon: &str, host_css: bool) -> egui::Vec2 {
+    let ind_v = indicator_view(host, part_css(ind_name), ind, host_css);
+    with_parts(ctx, host, ind_name, &ind_v, &part_css, text, icon, |items, _, _| paint::measure_parts(host, items)) + paint::box_extra(host)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -168,12 +174,29 @@ pub(crate) fn paint_indicator_kind(
     icon: &str,
     mark: impl FnOnce(&mut paint::PaintCx<'_>, &StyleView<'_>, egui::Rect),
 ) {
-    let host = cx.style(ua);
-    let ind_v = indicator_view(&host, cx.part_css(ind_name), ind, host_css);
-    let content = paint::box_geom(&host, cx.rect()).content;
-    let mut pc = cx.paint_cx(ui);
-    let ir = with_parts(ui.ctx(), &host, ind_name, &ind_v, |n| cx.part_css(n), text, icon, |items, key, galley| {
-        let rects = paint::layout_parts(&host, content, items);
+    paint_indicator(&mut cx.paint_cx(ui), ui.ctx(), &cx.style(ua), |n| cx.part_css(n), cx.rect(), ind_name, ind, host_css, text, icon, mark);
+}
+
+/// [`paint_indicator_kind`] with no scene node: in `pc` at `rect` under `host` (the style in this
+/// pass's state) with `part_css` (the parts' computed styles). The kind and `imm` (OW-RUST) call it.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn paint_indicator<'c>(
+    pc: &mut paint::PaintCx<'_>,
+    ctx: &egui::Context,
+    host: &StyleView<'_>,
+    part_css: impl Fn(&str) -> Option<&'c svelters_style::ComputedStyle>,
+    rect: egui::Rect,
+    ind_name: &'static str,
+    ind: Ua,
+    host_css: bool,
+    text: &str,
+    icon: &str,
+    mark: impl FnOnce(&mut paint::PaintCx<'_>, &StyleView<'_>, egui::Rect),
+) {
+    let ind_v = indicator_view(host, part_css(ind_name), ind, host_css);
+    let content = paint::box_geom(host, rect).content;
+    let ir = with_parts(ctx, host, ind_name, &ind_v, &part_css, text, icon, |items, key, galley| {
+        let rects = paint::layout_parts(host, content, items);
         let mut ir = None;
         for (item, r) in items.iter().zip(rects) {
             let Some(r) = r else { continue };
@@ -197,9 +220,22 @@ pub(crate) fn paint_indicator_kind(
         ir
     });
     if let Some(ir) = ir {
-        mark(&mut pc, &host, ir);
-        paint::paint_outline(&mut pc, &host, ir);
+        mark(pc, host, ir);
+        paint::paint_outline(pc, host, ir);
     }
+}
+
+/// Paints the check box at `rect` under `host` with `part_css`: indicator, mark (check or dash),
+/// icon, caption, focus ring. The kind and `imm::Checkbox` (OW-RUST) call it.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn paint<'c>(pc: &mut paint::PaintCx<'_>, ctx: &egui::Context, host: &StyleView<'_>, part_css: impl Fn(&str) -> Option<&'c svelters_style::ComputedStyle>, rect: egui::Rect, text: &str, icon: &str, on: bool, partial: bool) {
+    paint_indicator(pc, ctx, host, part_css, rect, "indicator", INDICATOR, true, text, icon, |pc, host, ir| {
+        if on || partial {
+            let mark = parts::part_view(host, MARK, false);
+            let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
+            parts::paint_mark(&mut pc.part("mark"), ir, color, partial);
+        }
+    });
 }
 
 impl Widget for Checkbox {
@@ -221,14 +257,7 @@ impl Widget for Checkbox {
             }
         }
         if ui.is_rect_visible(cx.rect()) {
-            let (on, partial) = (self.checked, self.indeterminate);
-            paint_indicator_kind(ui, cx, UA, "indicator", INDICATOR, true, &self.text, &self.icon, |pc, host, ir| {
-                if on || partial {
-                    let mark = parts::part_view(host, MARK, false);
-                    let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
-                    parts::paint_mark(&mut pc.part("mark"), ir, color, partial);
-                }
-            });
+            paint(&mut cx.paint_cx(ui), ui.ctx(), &cx.style(UA), |n| cx.part_css(n), cx.rect(), &self.text, &self.icon, self.checked, self.indeterminate);
         }
         let (enabled, checked, text) = (cx.enabled(), self.checked && !self.indeterminate, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, enabled, checked, text));

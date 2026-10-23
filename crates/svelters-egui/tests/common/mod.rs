@@ -55,6 +55,12 @@ pub struct Rig {
 
 impl Rig {
     pub fn new() -> Rig {
+        Rig::with_extra(|_| {})
+    }
+
+    /// A rig whose frame also runs `extra` after the backend's `ui` (OW-RUST: Rust-drawn `imm`
+    /// widgets next to the scene's).
+    pub fn with_extra(mut extra: impl FnMut(&mut egui::Ui) + 'static) -> Rig {
         let backend = EguiBackend::new();
         let vt: &'static BackendVtable = Box::leak(Box::new(backend.vtable()));
         let log: Rc<RefCell<Log>> = Rc::default();
@@ -62,7 +68,13 @@ impl Rig {
         vt.backend_ref().start(hv).expect("start");
         let harness = Harness::builder()
             .with_size(egui::vec2(480.0, 360.0))
-            .build_ui_state(|ui, b: &mut EguiBackend| b.ui(ui), backend.clone());
+            .build_ui_state(
+                move |ui, b: &mut EguiBackend| {
+                    b.ui(ui);
+                    extra(ui);
+                },
+                backend.clone(),
+            );
         Rig { backend, vt, hv, log, harness }
     }
 
