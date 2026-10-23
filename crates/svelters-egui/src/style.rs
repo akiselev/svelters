@@ -47,8 +47,69 @@ use std::sync::{Arc, Mutex, OnceLock};
 use svelters_abi::*;
 use svelters_style::{
     Atom, ColorScheme, ComputeContext, Contrast, ComputedStyle, ComputedValue, DeclBlock, Diagnostic, Element, Length, MatchCaches, MediaEnv, Origin, ParseOptions, Reach, SheetId,
-    Overlay, PseudoElement, StateMask, StateNames, Stylesheet, Stylist, Transitions,
+    Overlay, PseudoElement, StateMask, StateNames, Stylesheet, Stylist, Transitions, UtilityConfig, UtilityIssue, UtilityTokens,
 };
+
+/// U3 (UTILITY-CSS §4.6, UQ8): an embed's utility classes (`EmbedConfig::utilities`,
+/// [`EguiBackend::set_utilities`]). Off by default, so existing semantic classes (`flex`,
+/// `hidden`, `border`) keep their meaning. On, a class that parses as a utility (`p-4`,
+/// `hover:bg-list-hover`, `part-thumb:bg-accent`) gets its rule generated on first use, in the author
+/// layer `utilities` below every component `<style>` rule; values are the theme's tokens.
+///
+/// ```ignore
+/// EmbedConfig::default().with_utilities(Utilities::on().prefix("tw").strict_tokens(true))
+/// ```
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct Utilities {
+    pub enabled: bool,
+    /// With `Some("tw")`, only `tw:`-prefixed classes are utilities (`tw:p-4`).
+    pub prefix: Option<String>,
+    /// cadatomic's lint profile: a colour literal (`bg-[#f00]`) is an error, not a warning; the
+    /// class then generates nothing.
+    pub strict_tokens: bool,
+    /// Past this many generated utilities, those no node carries are dropped, oldest first (a
+    /// dropped one is generated again on its next use).
+    pub high_water: usize,
+}
+
+impl Default for Utilities {
+    fn default() -> Self {
+        Utilities { enabled: false, prefix: None, strict_tokens: false, high_water: 4096 }
+    }
+}
+
+impl Utilities {
+    /// Utilities off (the default).
+    pub fn off() -> Utilities {
+        Utilities::default()
+    }
+
+    /// Utilities on, no prefix, colour literals a warning.
+    pub fn on() -> Utilities {
+        Utilities { enabled: true, ..Utilities::default() }
+    }
+
+    /// Only classes with this prefix as their first variant are utilities (`prefix("tw")`: `tw:p-4`).
+    pub fn prefix(mut self, prefix: impl Into<String>) -> Utilities {
+        self.prefix = Some(prefix.into());
+        self
+    }
+
+    pub fn strict_tokens(mut self, on: bool) -> Utilities {
+        self.strict_tokens = on;
+        self
+    }
+
+    pub fn high_water(mut self, n: usize) -> Utilities {
+        self.high_water = n;
+        self
+    }
+
+    fn config(&self) -> UtilityConfig {
+        UtilityConfig { enabled: self.enabled, prefix: self.prefix.clone(), strict_tokens: self.strict_tokens, high_water: self.high_water }
+    }
+}
 
 /// `SVL_STYLE_TARGET` answer of a backend that runs the Rust engine itself: the runtime sends raw
 /// CSS (sheets, inline text) and the user classes. Runtimes that do not know the code treat the
@@ -279,6 +340,11 @@ pub(crate) struct SceneStyle {
     /// Reduced motion (`EguiBackend::set_motion`): `prefers-reduced-motion: reduce` matches and
     /// no transition runs.
     pub(crate) reduced_motion: bool,
+    /// U3: the installed theme's token names (`None`: the default theme's), and the `--sv-*`
+    /// tokens the host set with `set_tokens` (SV5), with their types: what utility values resolve
+    /// against.
+    theme_tokens: Option<UtilityTokens>,
+    host_tokens: std::collections::BTreeMap<String, &'static str>,
 }
 
 impl SceneStyle {
@@ -324,6 +390,8 @@ impl Default for SceneStyle {
             part_at: Default::default(),
             now: 0.0,
             reduced_motion: false,
+            theme_tokens: None,
+            host_tokens: Default::default(),
         }
     }
 }
@@ -424,8 +492,14 @@ impl SceneStyle {
         self.part_sampled.clear();
     }
 
-    /// Node `id` went away: forgets its transitions.
+    /// Node `id` went away: forgets its transitions, and releases its utility classes (U3).
     pub(crate) fn forget(&mut self, id: NodeId) {
+        if let Some(n) = self.nodes.get_mut(id.index() as usize).filter(|n| n.id == Some(id))
+            && !n.classes.is_empty()
+        {
+            let classes = std::mem::take(&mut n.classes);
+            self.stylist.release_utilities(&classes);
+        }
         if self.sampled.remove(&id).is_some() {
             self.transitions.remove(id);
         }
@@ -706,6 +780,7 @@ impl Scene {
             if !self.style.sheets.iter().any(|(n, _)| n == THEME_TOKENS) {
                 self.install_sheet(THEME_TOKENS, crate::theme::default_tokens_css());
             }
+            self.refresh_utility_tokens();
             self.observe_for_style();
         }
     }
@@ -850,6 +925,9 @@ impl Scene {
         if !self.style.active {
             return 0;
         }
+        // U3: past the high-water mark, drop utility rules no node carries (dead entries match
+        // nothing, so no node restyles for it)
+        self.style.stylist.collect_utilities();
         if let Some(obs) = &self.style.observer {
             let set = obs.take();
             if set.overflowed {
@@ -1687,16 +1765,128 @@ fn sheet_payload(text: &str) -> (&str, Option<&str>) {
 }
 
 impl Scene {
-    fn apply_classes(&mut self, id: NodeId, classes: Vec<Atom>) {
+    /// Node `id`'s user classes. U3: with utilities on, the classes that are utilities get their
+    /// rules first (so the class change's reach sees the new selectors), and the node holds a
+    /// reference on each (the GC drops only rules no node carries). Returns the problems found in
+    /// classes seen for the first time (each reported once per process).
+    fn apply_classes(&mut self, id: NodeId, classes: Vec<Atom>) -> Vec<UtilityIssue> {
         self.activate_style();
+        let issues = self.ensure_utilities(&classes);
         let old = std::mem::take(&mut self.style.node_mut(id).classes);
+        let added: Vec<Atom> = classes.iter().filter(|c| !old.contains(c)).cloned().collect();
+        let removed: Vec<Atom> = old.iter().filter(|c| !classes.contains(c)).cloned().collect();
+        self.style.stylist.retain_utilities(&added);
+        self.style.stylist.release_utilities(&removed);
         let inv = self.style.stylist.invalidation();
         let mut reach = Reach::NONE;
-        for c in old.iter().filter(|c| !classes.contains(c)).chain(classes.iter().filter(|c| !old.contains(c))) {
+        for c in removed.iter().chain(&added) {
             reach |= inv.class_changed(c.as_str());
         }
         self.style.node_mut(id).classes = classes;
         self.mark_reach(id, reach);
+        issues
+    }
+
+    /// U3: generates the rules of the utilities among `classes` that have none yet (one batch).
+    /// A new rule may use a state the journal observer doesn't follow yet (`checked:bg-accent`):
+    /// the observer is then recreated and, as for a sheet change, every node restyles at the next
+    /// logic (the old observer's undrained records go with it). That happens once per new state.
+    pub(crate) fn ensure_utilities(&mut self, classes: &[Atom]) -> Vec<UtilityIssue> {
+        if !self.style.stylist.utility_config().enabled {
+            return Vec::new();
+        }
+        let before = self.style.stylist.utility_stats().generated;
+        // the states the observer follows (the walk sets its own bits and restyles for them)
+        let followed = |s: &Self| s.style.stylist.invalidation().states_used().0 & !WALK_BITS.0;
+        let used = followed(self);
+        let issues = self.style.stylist.ensure_utilities(classes, &ParseOptions { states: Some(&ProviderStates) });
+        if self.style.stylist.utility_stats().generated != before && followed(self) != used && self.style.observer.is_some() {
+            self.observe_for_style();
+            self.style.all = true;
+        }
+        issues
+    }
+
+    /// U3 (OW-RUST): the utilities among an `imm` virtual chain's classes. Virtual elements hold no
+    /// reference, so the GC may drop such a rule past the high-water mark; the next computation
+    /// of that chain (after the restyle that drops `imm`'s cache) generates it again.
+    pub(crate) fn ensure_virtual_utilities<'a>(&mut self, classes: impl Iterator<Item = &'a str>) {
+        if !self.style.active || !self.style.stylist.utility_config().enabled {
+            return;
+        }
+        let classes: Vec<Atom> = classes.filter(|c| !self.style.stylist.is_utility(c)).map(Atom::new).collect();
+        if classes.is_empty() {
+            return;
+        }
+        for i in self.ensure_utilities(&classes) {
+            warn_utility(&i);
+        }
+    }
+
+    /// U3: the utility settings. A change of `enabled` or `prefix` drops every generated rule;
+    /// the live nodes' classes are then resolved again and every node restyles.
+    pub(crate) fn set_utilities(&mut self, u: &Utilities) -> Vec<UtilityIssue> {
+        let config = u.config();
+        if *self.style.stylist.utility_config() == config {
+            return Vec::new();
+        }
+        self.style.stylist.set_utilities(config);
+        self.reresolve_utilities()
+    }
+
+    /// U3: after the settings or the token names changed, resolves the live nodes' classes again:
+    /// classes rejected before may be utilities now (a new `--sv-cad-*` token, a prefix), and a
+    /// reset dropped every rule. Nodes take a reference on each class that gained a rule here,
+    /// and every node restyles.
+    fn reresolve_utilities(&mut self) -> Vec<UtilityIssue> {
+        if !self.style.active {
+            return Vec::new();
+        }
+        let live = |n: &&NodeStyle| n.id.is_some() && !n.classes.is_empty();
+        let mut all: Vec<Atom> = Vec::new();
+        for n in self.style.nodes.iter().filter(live) {
+            for c in &n.classes {
+                if !self.style.stylist.is_utility(c) && !all.contains(c) {
+                    all.push(c.clone());
+                }
+            }
+        }
+        let issues = self.ensure_utilities(&all);
+        let fresh: Vec<Atom> = all.into_iter().filter(|c| self.style.stylist.is_utility(c)).collect();
+        if !fresh.is_empty() {
+            let SceneStyle { nodes, stylist, .. } = &mut self.style;
+            for n in nodes.iter().filter(live) {
+                let gained: Vec<Atom> = n.classes.iter().filter(|c| fresh.contains(c)).cloned().collect();
+                stylist.retain_utilities(&gained);
+            }
+        }
+        self.observe_for_style();
+        self.style.all = true;
+        issues
+    }
+
+    /// U3: what utility values resolve against: the installed theme's tokens (else the default
+    /// theme's), plus the host's `--sv-*` tokens (SV5 `set_tokens`).
+    pub(crate) fn refresh_utility_tokens(&mut self) {
+        let mut t = match &self.style.theme_tokens {
+            Some(t) => t.clone(),
+            None => crate::theme::default_utility_tokens().clone(),
+        };
+        for (name, ty) in &self.style.host_tokens {
+            t.insert(name, ty);
+        }
+        if t != *self.style.stylist.utility_tokens() {
+            self.style.stylist.set_utility_tokens(t);
+            if self.style.stylist.utility_config().enabled {
+                self.reresolve_utilities();
+            }
+        }
+    }
+
+    /// U3: the installed theme's token names (DS1 `set_theme`).
+    pub(crate) fn set_theme_tokens(&mut self, tokens: UtilityTokens) {
+        self.style.theme_tokens = Some(tokens);
+        self.refresh_utility_tokens();
     }
 
     fn apply_name(&mut self, id: NodeId, name: Option<&str>) {
@@ -1807,6 +1997,14 @@ impl Scene {
     }
 }
 
+/// U3: a utility class's problem (each is reported once per process by the engine): errors
+/// always, warnings and notes in debug builds.
+fn warn_utility(i: &UtilityIssue) {
+    if i.severity == svelters_style::Severity::Error || cfg!(debug_assertions) {
+        eprintln!("[svelters-egui/utilities] {i}");
+    }
+}
+
 fn parse_classes(text: &str) -> Vec<Atom> {
     let mut v: Vec<Atom> = Vec::new();
     for c in text.split_whitespace() {
@@ -1885,7 +2083,11 @@ impl EguiBackend {
             let mut s = self.0.scene.borrow_mut();
             let id = s.live(h)?;
             match op {
-                SVL_STYLE_CLASSES => s.apply_classes(id, parse_classes(text.unwrap_or(""))),
+                SVL_STYLE_CLASSES => {
+                    for i in s.apply_classes(id, parse_classes(text.unwrap_or(""))) {
+                        warn_utility(&i);
+                    }
+                }
                 SVL_STYLE_NAME => s.apply_name(id, text.filter(|t| !t.is_empty())),
                 SVL_STYLE_INLINE => {
                     for d in s.apply_inline(id, text) {
@@ -1898,6 +2100,30 @@ impl EguiBackend {
         };
         self.touched(Some(r));
         Ok(0)
+    }
+
+    /// U3: turns utility classes on or off, with a prefix and the strict colour lint
+    /// (`EmbedConfig::utilities`; [`Utilities`]). Takes effect for live nodes too: their classes
+    /// are resolved again and every node restyles.
+    pub fn set_utilities(&self, u: &Utilities) {
+        let issues = self.0.scene.borrow_mut().set_utilities(u);
+        for i in &issues {
+            warn_utility(i);
+        }
+        self.touch_all();
+    }
+
+    /// U3: the utility settings in force.
+    pub fn utilities(&self) -> Utilities {
+        let s = self.0.scene.borrow();
+        let c = s.style.stylist.utility_config();
+        Utilities { enabled: c.enabled, prefix: c.prefix.clone(), strict_tokens: c.strict_tokens, high_water: c.high_water }
+    }
+
+    /// U3: the utility layer's counters (generated, live, negative, dropped, batches), for tests
+    /// and the MCP stats.
+    pub fn utility_stats(&self) -> svelters_style::UtilityStats {
+        self.0.scene.borrow().style.stylist.utility_stats()
     }
 
     fn warn_style(&self, what: &str, d: &Diagnostic) {
@@ -1949,6 +2175,16 @@ impl EguiBackend {
     /// set before for that scheme.
     pub fn set_tokens(&self, scheme: Option<ColorScheme>, map: &[(&str, &str)]) -> Result<(), String> {
         let css = tokens_css(scheme, map)?;
+        {
+            // U3: `--sv-*` tokens are utility values (`bg-cad-panel` for `--sv-cad-panel`)
+            let mut s = self.0.scene.borrow_mut();
+            for (k, v) in map {
+                if let Some(n) = k.strip_prefix("--sv-") {
+                    s.style.host_tokens.insert(n.to_string(), crate::theme::token_type(n, v));
+                }
+            }
+            s.refresh_utility_tokens();
+        }
         let name = match scheme {
             None => "@tokens",
             Some(ColorScheme::Light) => "@tokens:light",
@@ -1986,6 +2222,14 @@ impl EguiBackend {
         let s = self.0.scene.borrow();
         let id = s.live(h).ok()?;
         s.style.computed(id).cloned()
+    }
+
+    /// The computed style of the node's paint part `part` (`::part(name)`, after the last
+    /// restyle): `None` when no rule reaches that part (the widget paints it from its UA table).
+    pub fn computed_part_style(&self, h: Handle, part: &str) -> Option<Arc<ComputedStyle>> {
+        let s = self.0.scene.borrow();
+        let id = s.live(h).ok()?;
+        s.style.part_computed(id, part).cloned()
     }
 }
 

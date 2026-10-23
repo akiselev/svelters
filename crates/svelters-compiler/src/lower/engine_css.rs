@@ -18,6 +18,7 @@
 use crate::diag::Diagnostics;
 use crate::semantics::{PlatformSemantics, codes};
 use crate::svelte::ast::Root;
+use crate::utilities::apply::Expansion;
 use svelters_style::{Origin, ParseOptions, Severity, StateMask, StateNames, Stylesheet, Stylist, Table};
 
 /// Any `:state(ns.name)` parses: provider states are registered at run time.
@@ -29,20 +30,23 @@ impl StateNames for AnyState {
     }
 }
 
-/// Checks the component's `<style>` with the engine and reports into `diags`.
-pub(super) fn check(root: &Root, sem: &dyn PlatformSemantics, diags: &mut Diagnostics) {
+/// Checks the component's `<style>` with the engine and reports into `diags`. With `apply`, the
+/// sheet with `@apply` expanded (U4) is checked, and spans map back to the original source.
+pub(super) fn check(root: &Root, sem: &dyn PlatformSemantics, apply: Option<&Expansion>, diags: &mut Diagnostics) {
     let Some(css) = &root.css else { return };
     let Some(table) = Table::for_toolkit(sem.backend()) else { return };
-    let text = blank_svelte_syntax(&css.content.styles);
+    let styles = apply.map_or(css.content.styles.as_str(), |x| x.styles(root));
+    let map = |s: (u32, u32)| apply.map_or(s, |x| x.to_orig(s));
+    let text = blank_svelte_syntax(styles);
     let sheet = Stylesheet::parse(&text, &ParseOptions { states: Some(&AnyState) });
     let (_, table_diags) = Stylist::new(table).add_sheet(&sheet, Origin::Author);
-    let src = &css.content.styles;
+    let src = styles;
     let base = css.content.start;
     // lines the compiler's own `<style>` parser already reported on
     let reported: Vec<u32> = diags.list.iter().filter(|d| d.code.starts_with("style_") && d.start >= base && d.start <= css.content.end).map(|d| d.start).collect();
     for d in &sheet.diagnostics {
-        let Some(span) = span_of(src, base, d.line, d.column) else { continue };
-        let (ls, le) = line_bounds(src, base, span.0);
+        let Some(span) = span_of(src, base, d.line, d.column).map(map) else { continue };
+        let (ls, le) = line_bounds(&css.content.styles, base, span.0);
         if reported.iter().any(|&s| s >= ls && s <= le) {
             continue;
         }
@@ -52,7 +56,7 @@ pub(super) fn check(root: &Root, sem: &dyn PlatformSemantics, diags: &mut Diagno
         };
     }
     for d in &table_diags {
-        let Some(span) = span_of(src, base, d.line, d.column) else { continue };
+        let Some(span) = span_of(src, base, d.line, d.column).map(map) else { continue };
         match d.severity {
             Severity::Error => diags.native_error(codes::STYLE_BAD_VALUE, span, d.message.clone()),
             Severity::Warning => diags.native_warning(codes::STYLE_UNKNOWN_DECLARATION, span, d.message.clone()),

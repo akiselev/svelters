@@ -51,10 +51,13 @@ pub use svelters_style::ColorScheme;
 /// The base sheet for the stock-painted kinds (`@layer sv.base`, theme origin; DESIGN.md §4.3).
 pub const BASE_CSS: &str = include_str!("base.css");
 
-/// The cascade layers of the theme sheets, lowest first: tokens, the base look, DS3's
-/// affordances. Author rules (unlayered or not, at author origin) beat all of them; a host's
-/// unlayered theme-origin sheet (`set_tokens`) beats them too.
-pub const LAYERS: &str = "@layer sv.tokens, sv.base, sv.affordance;";
+/// The cascade layers, lowest first: at theme origin the tokens, the base look and DS3's
+/// affordances; at author origin `components` and `utilities` (U3, UTILITY-CSS §4.6: generated
+/// utility rules sit below every unlayered component `<style>`). Declaring them here fixes the order
+/// before any sheet loads (layer ranks are global, by first appearance), so the first generated
+/// utility appends without a rebuild. Author rules (unlayered or not, at author origin) beat every
+/// theme layer; a host's unlayered theme-origin sheet (`set_tokens`) beats them too.
+pub const LAYERS: &str = "@layer sv.tokens, sv.base, sv.affordance, components, utilities;";
 
 /// Contrast: `High` selects VS Code's High Contrast sets and `prefers-contrast: more`.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
@@ -756,6 +759,14 @@ impl Theme {
         &self.problems
     }
 
+    /// U3: the names and types of this theme's `--sv-*` tokens (L2 roles, L3 components, shape,
+    /// density and set tokens, and `--sv-*` overrides such as cadatomic's `--sv-cad-panel`): what
+    /// utility values resolve against, so `bg-cad-panel` is a utility once the theme has that
+    /// colour. The types are the token manifest's ([`token_manifest`]).
+    pub fn utility_tokens(&self) -> svelters_style::UtilityTokens {
+        self.tokens.iter().filter_map(|(k, v)| k.strip_prefix("--sv-").map(|n| (n, token_type(n, v)))).collect()
+    }
+
     /// The `:root` sheet of every token, theme origin in `@layer sv.tokens`.
     pub fn css(&self) -> String {
         format!("{LAYERS}\n@layer sv.tokens {{\n{}}}\n", self.tokens.root_rule())
@@ -773,6 +784,21 @@ pub(crate) fn default_tokens_css() -> &'static str {
         }
         s.push_str("}\n");
         s
+    })
+}
+
+/// U3: the token names utilities resolve against while no theme is set: the default theme's
+/// (both schemes, as [`default_tokens_css`] installs them).
+pub(crate) fn default_utility_tokens() -> &'static svelters_style::UtilityTokens {
+    static T: OnceLock<svelters_style::UtilityTokens> = OnceLock::new();
+    T.get_or_init(|| {
+        let mut t = Theme::light_modern().utility_tokens();
+        for (k, v) in Theme::dark_modern().tokens().iter() {
+            if let Some(n) = k.strip_prefix("--sv-") {
+                t.insert(n, token_type(n, v));
+            }
+        }
+        t
     })
 }
 
@@ -851,7 +877,7 @@ pub fn token_manifest() -> Vec<TokenInfo> {
 }
 
 /// A token's value type, from the tables first (a colour role, an elevation), else from its value.
-fn token_type(name: &str, value: &str) -> &'static str {
+pub(crate) fn token_type(name: &str, value: &str) -> &'static str {
     let colors = ROLES.iter().chain(COMPONENT_COLORS).any(|(n, _)| *n == name);
     if colors {
         return "color";

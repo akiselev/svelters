@@ -19,6 +19,8 @@ serde_json = "1"
 sourcemap = "9"
 # CS5g: the CSS engine checks `<style>` for backends that run it (egui)
 svelters-style.workspace = true
+# U4: a utility's selector relative to its class (the escaping the engine uses)
+cssparser = "=0.38.0"
 
 [dev-dependencies]
 svelters-host.workspace = true

@@ -112,9 +112,20 @@ pub struct EmbedConfig {
     /// the shortcuts and calls [`Embed::set_zoom`]; egui's own handler is turned off. `app` sets
     /// `Embed` (steps of 1.2).
     pub zoom_keys: crate::zoom::ZoomKeys,
+    /// U3 (UTILITY-CSS §4.6, UQ8): utility classes (`p-4 bg-surface hover:bg-list-hover`). Off by
+    /// default; [`EmbedConfig::with_utilities`]. [`EguiBackend::set_utilities`] changes it later.
+    pub utilities: crate::style::Utilities,
 }
 
 impl EmbedConfig {
+    /// U3: utility classes for this embed: `cfg.with_utilities(Utilities::on())`, optionally with
+    /// a prefix (`Utilities::on().prefix("tw")`: only `tw:p-4` is a utility) and the strict
+    /// colour lint (`.strict_tokens(true)`).
+    pub fn with_utilities(mut self, u: crate::style::Utilities) -> EmbedConfig {
+        self.utilities = u;
+        self
+    }
+
     /// OW0 (WIDGET-PARITY §4.3): changes fields of the native behaviour policy of the embed's
     /// context (tooltip delay, drag threshold, button order…): `cfg.with_policy(|p|
     /// p.tooltip_delay_ms = 400)`. Applied by [`Embed::new`].
@@ -142,6 +153,7 @@ impl Default for EmbedConfig {
             prepass_plugin: true,
             policy: None,
             zoom_keys: crate::zoom::ZoomKeys::Host,
+            utilities: crate::style::Utilities::default(),
         }
     }
 }
@@ -479,6 +491,7 @@ impl Embed {
         }
         let backend = EguiBackend::new();
         backend.bind_ctx(ctx);
+        backend.set_utilities(&cfg.utilities);
         let host = Host::new_owned(backend.clone(), cfg.host.clone()).map_err(EmbedError::Host)?;
         host.start().map_err(|e| EmbedError::Host(JsError::new(ErrorKind::Host, e.to_string())))?;
         host.set_turn_budget(Some(cfg.budgets.interrupt));

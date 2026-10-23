@@ -120,6 +120,13 @@ impl Sv {
             h.finish()
         };
         let mut cache = self.cache.borrow_mut();
+        // U3: utility classes on the chain (`.class("px-2 rounded hover:bg-toolbar-hover")`) get
+        // their rules before the first computation, as a scene node's do in `apply_classes`
+        if (0..=last).any(|k| !cache.map.contains_key(&key(k, if k == last { state } else { StateBits::NONE })))
+            && let Ok(mut s) = backend.0.scene.try_borrow_mut()
+        {
+            s.ensure_virtual_utilities(chain.iter().flat_map(|e| e.classes.iter().map(|c| &**c)));
+        }
         let Ok(scene) = backend.0.scene.try_borrow() else {
             return cache.map.get(&key(last, state)).cloned();
         };

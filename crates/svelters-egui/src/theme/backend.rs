@@ -28,6 +28,8 @@ impl EguiBackend {
             }
             // DS3 slots in here: `@theme:affordance` (`@layer sv.affordance`) when
             // `theme.affordances()`, removed otherwise.
+            // U3: utility values resolve against this theme's token names
+            s.set_theme_tokens(theme.utility_tokens());
         }
         *self.0.theme.borrow_mut() = Some(theme.clone());
         self.0.theme_generation.set(self.0.theme_generation.get() + 1);

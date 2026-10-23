@@ -117,3 +117,32 @@ fn own_buttons_page_styles_parts_from_css() {
     let errors = app.errors();
     assert!(errors.is_empty(), "{errors:?}");
 }
+
+#[test]
+fn utilities_page_generates_its_classes() {
+    // U3: utility classes turned on after load (live nodes are resolved again), then the page
+    let mut app = TestApp::load(bundle()).unwrap();
+    app.backend.set_utilities(&svelters_egui::Utilities::on());
+    app.run();
+    let negative = app.backend.utility_stats().negative;
+    app.harness.get_by_role_and_label(Role::Button, "utilities").click();
+    app.harness.run_steps(6);
+    assert!(has(&app, "Page: utilities"));
+    let stats = app.backend.utility_stats();
+    assert!(stats.generated >= 18, "{stats:?}");
+    assert_eq!(stats.negative, negative, "every class on the page is a valid utility: {stats:?}");
+    let slider = app.backend.handles_of("slider")[0];
+    let thumb = app.backend.computed_part_style(slider, "thumb").expect("part-thumb:bg-accent reaches the thumb");
+    assert!(thumb.get("background-color").is_some());
+    // a dynamic `p-{n}`: p-2 exists already (`p-2 bg-surface`), p-3 is generated on first use
+    app.harness.get_by_role_and_label(Role::Button, "Padding 1").click();
+    app.run();
+    assert!(has(&app, "p-2 border rounded-lg"));
+    assert_eq!(app.backend.utility_stats().generated, stats.generated);
+    app.harness.get_by_role_and_label(Role::Button, "Padding 2").click();
+    app.run();
+    assert!(has(&app, "p-3 border rounded-lg"));
+    assert_eq!(app.backend.utility_stats().generated, stats.generated + 1);
+    let errors = app.errors();
+    assert!(errors.is_empty(), "{errors:?}");
+}
