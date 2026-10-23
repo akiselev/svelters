@@ -34,6 +34,8 @@ pub mod elements;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
 pub mod fonts;
 pub mod focus;
+// ICR1: the icon registry and how icons are drawn.
+pub mod icons;
 /// OW0: behaviour units of the own widgets (hover, press, focus; ARCH-WIDGETS §1.2).
 pub mod interact;
 pub mod kinds;
