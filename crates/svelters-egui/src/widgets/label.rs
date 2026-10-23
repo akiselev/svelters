@@ -91,6 +91,7 @@ impl Label {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     /// RT2: the rich galley at `width` (`wrap` wraps, `truncate` cuts the paragraph at the end).
     fn rich_galley(&self, ctx: &egui::Context, style: &egui::Style, s: &paint::StyleView<'_>, rich: &Rich, colors: crate::rich::Colors, width: Option<f32>, lit: Option<crate::scene::NodeId>) -> std::sync::Arc<egui::Galley> {
         let wrap = (self.wrap_mode == "wrap").then_some(width).flatten();

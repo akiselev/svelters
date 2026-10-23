@@ -145,7 +145,8 @@ fn part_fill(rig: &Rig, h: svl_handle, part: &str, kind: svelters_egui::paint::T
 fn ow1a3_part_rules_paint_the_indicator_kinds() {
     use svelters_egui::paint::TraceKind::{Box as B, Path as P};
     let red = egui::Color32::from_rgb(255, 0, 0);
-    let cases: &[(&str, &[(&str, Value)], &str, svelters_egui::paint::TraceKind, &str)] = &[
+    type Case<'a> = (&'a str, &'a [(&'a str, Value)], &'a str, svelters_egui::paint::TraceKind, &'a str);
+    let cases: &[Case] = &[
         ("checkbox", &[("text", Value::Str("Check".into())), ("checked", Value::Bool(true))], "mark", P, "color"),
         ("checkbox", &[("text", Value::Str("Check".into()))], "indicator", B, "background-color"),
         ("switch", &[("text", Value::Str("Switch".into())), ("active", Value::Bool(true))], "knob", P, "color"),
@@ -217,9 +218,9 @@ fn ow1a3_a_provider_kind_registers_focus_stops_with_a_role() {
     // a click focuses a stop Tab skips (Tab skips it in EV3's scoped chains: dialogs, scopes)
     let three = rig.harness.get_by_role_and_label(egui::accesskit::Role::Tab, "three").rect();
     let at = three.center();
-    rig.harness.hover_at(egui::pos2(at.x as f32, at.y as f32));
+    rig.harness.hover_at(at);
     for pressed in [true, false] {
-        rig.harness.event(Event::PointerButton { pos: egui::pos2(at.x as f32, at.y as f32), button: PointerButton::Primary, pressed, modifiers: Modifiers::NONE });
+        rig.harness.event(Event::PointerButton { pos: at, button: PointerButton::Primary, pressed, modifiers: Modifiers::NONE });
     }
     rig.run();
     assert_eq!(focused(&rig), Some("three"));
