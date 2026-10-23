@@ -105,7 +105,12 @@ impl<'a> PaintCx<'a> {
     }
 
     pub(crate) fn record(&mut self, kind: TraceKind, rect: egui::Rect, fill: Color32, stroke: egui::Stroke, font_size: f32) {
-        let e = TraceEntry { node: self.target.0, part: self.target.1, kind, rect, fill, stroke, font_size };
+        self.record_entry(TraceEntry { node: self.target.0, part: self.target.1, kind, rect, fill, stroke, font_size, radius: 0.0, padding: [0.0; 4], opacity: 1.0 });
+    }
+
+    /// Records `e` (boxes and outlines with their radius and padding), with the painter's opacity.
+    pub(crate) fn record_entry(&mut self, mut e: TraceEntry) {
+        e.opacity = self.painter.opacity();
         if let Some(t) = self.trace.as_deref_mut() {
             t.entries.push(e);
         } else if let Some(ctx) = &self.sink {

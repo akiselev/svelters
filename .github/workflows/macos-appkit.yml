@@ -108,6 +108,12 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 30
         run: cargo test -p svelters-conformance --lib --test staleness --test appkit_capture
+      # VIS1c: svelters' own widgets (the egui backend under kittest) against the macOS VS Code
+      # references (conformance/visual/vscode-macos), a ratchet over conformance/visual/baseline-macos.json.
+      - name: VIS1c visual gate (macOS references)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 20
+        run: cargo test -p svelters-testkit --test vis1
       # One JSON line per generated case (svelters_apple::testing): the input of
       # `tools/metadata/ledger.py import --toolkit appkit` (uploaded below; commit the imported ledger).
       - name: counter-mac generated
@@ -189,5 +195,6 @@ jobs:
           path: |
             target/gallery/
             target/todo/
+            target/vis1c/
             target/*.png
             target/*.json
