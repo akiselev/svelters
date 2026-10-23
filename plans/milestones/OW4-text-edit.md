@@ -1,6 +1,6 @@
 # OW4: svelters' own `text-edit` on TC0 (`quire-text`)
 
-Lane `ci/ow4` (macbook), from master d0542a3a, with master 2cf3f4db (RA3) merged. Design:
+Lane `ci/ow4` (macbook), from master d0542a3a, with master merged at 2cf3f4db (RA3) and ec8809fe (OW1b, OW3, OW5a, OW6, OW7, EV3b, CB1, VIS1c, OW-RUST, U0). Design:
 `plans/research/ARCH-WIDGETS.md` §1.2 (TextInput), §2.4 (signals), §4 (text input on TC0), §6.1 (the
 `text-edit` row) and the OW4 row of §7.2; parity rows `plans/research/WIDGET-PARITY.md` §2.4, §2.5; look from
 DESIGN.md §1.3 (input box), R4, R5, R8, R9, R10; references: WG3/WG3b (GTK 4.24.1, Qt 6.12.0), WG3w (Win32
@@ -202,7 +202,28 @@ programmatic writes (no echo), `commit` (`editingFinished`), `submit` (`returnPr
 
 ## Tests
 
-TESTS
+New: `crates/svelters-egui/tests/own_text_edit.rs` (9): `ow4_commit_submit_and_changed`,
+`ow4_word_rules_per_platform` (GTK, Qt, AppKit), `ow4_undo_grouping_per_platform` (GTK per word, Qt per run, redo),
+`ow4_gtk_hex_entry`, `ow4_line_breaks` (one-line paste keeps them; multi-line Enter, Up keeps the column,
+Ctrl+Enter submits), `ow4_extras_and_accessibility` (read-only, maxlength + `rejected`, placeholder in AccessKit,
+password copies nothing and is masked), `ow4_mac_focus_rules` (Tab selects all, no unfocused selection, Return
+selects all, Escape keeps focus), `ow4_field_metrics` (26px), `ow4_middle_click_pastes_primary_into_another_field`;
+unit tests `native::text::tests::{ow4_double_click_words_match_the_goldens, ow4_mac_word_stops}`; the floors in
+`svelters-conformance/tests/egui_measure.rs` (Linux per pin, Windows and macOS totals).
+
+Ported: `native_focus.rs` (selection through `EguiBackend::text_selection`), `viewports.rs`
+(`dock_w4…keeps_caret…`: the caret through the same API), `egui_measure.rs` (selection set and read through the
+API, click points from `text_char_point`, the Windows and macOS runs with `Native::Windows`/`Native::Mac`),
+`native::tests::fx1_platform_table` (the new OS table).
+
+Run locally (macbook), all passing unless noted: `own_text_edit`, `native_focus`, `bind_targets` (3, unchanged),
+`focus_keys`, `clipboard`, `observe`, `own_widgets`, `spec`, `widgets`, `tier0`, the `native::` and `scene::` unit
+tests, `svelters-automation` (all but `e2e`), `egui_measure` (3); `cargo clippy` on the changed crates (no warning in
+the files this lane touched); `cargo check --all-targets` on every crate that depends on svelters-egui.
+
+Not run locally: `viewports.rs` and other tests that need `pnpm build` fixtures (`fixtures/*/dist`), the TK1
+snapshots (`svelters-testkit --features snapshots`: the own field's look changes them, see CI), the full
+workspace suite, VIS1c's gate, conformance. CI runs them.
 
 ## Push and CI
 

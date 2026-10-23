@@ -304,6 +304,11 @@ impl VScroll {
             self.pending += (y1 - view).min(y0) - self.offset;
         }
     }
+
+    /// OW5a1b (`scrollTo`'s hint): scrolls so the offset becomes `y` (clamped when it is decided).
+    pub fn reveal_at(&mut self, y: f64) {
+        self.pending += y.max(0.0) - self.offset;
+    }
 }
 
 // ---- realised rows ----
@@ -516,7 +521,7 @@ pub fn widgets_in_layer(ctx: &egui::Context, layer: egui::LayerId) -> usize {
 /// static texts registered on `layer` since `first` (else the named widgets), as testing-library's
 /// `getByLabelText` and a screen reader's name-from-contents expect. A row with a label of its own
 /// keeps it.
-pub fn label_row_by_contents(ctx: &egui::Context, id: egui::Id, layer: egui::LayerId, first: usize) {
+pub fn label_row_by_contents(ctx: &egui::Context, id: egui::Id, layer: egui::LayerId, first: usize) -> bool {
     use egui::accesskit::Role;
     let named = |n: &egui::accesskit::Node| {
         let t = if n.role() == Role::Label { n.value().or(n.label()) } else { n.label() };
@@ -540,7 +545,7 @@ pub fn label_row_by_contents(ctx: &egui::Context, id: egui::Id, layer: egui::Lay
     });
     let by = if texts.is_empty() { others } else { texts };
     if by.is_empty() {
-        return;
+        return false;
     }
     ctx.accesskit_node_builder(id, |n| {
         if n.label().is_none_or(|l| l.trim().is_empty()) {
@@ -548,6 +553,7 @@ pub fn label_row_by_contents(ctx: &egui::Context, id: egui::Id, layer: egui::Lay
             n.set_labelled_by(by);
         }
     });
+    true
 }
 
 /// `"row[<key>]"`: the default anchor of a row with no anchor of its own.

@@ -1,0 +1,436 @@
+# Tailwind CSS v4 names (https://tailwindcss.com/docs, v4.1; the names are facts, Tailwind is MIT)
+# and what svelters does with each (plans/research/UTILITY-CSS.md §3.3, §4.3, §4.4; lane U0).
+#
+# A plain name is one we render: tools/metadata/style/gen_utilities.py checks that utilities.yaml
+# has it (a namespace, a fixed utility, or a variant). An entry with a `reason` is one we don't: it
+# feeds the compiler's `utility_unsupported` diagnostic (U4) and the docs, with `use` as the
+# replacement fix-it where one exists. Every namespace of utilities.yaml must be listed here or be
+# marked `own: true` there, so the two lists can't drift.
+#
+# Utility names are prefixes: `ring` covers `ring-2` and `ring-accent`. A longer unsupported name
+# narrows a namespace we do render (`text-wrap` under `text`, `bg-cover` under `bg`); the generator
+# checks that no utility we generate falls under an unsupported prefix.
+
+utilities:
+  # ---- layout ----
+  - { name: aspect, reason: "no aspect-ratio property on egui yet (UTILITY-CSS §5)" }
+  - { name: columns, reason: "no multi-column layout", use: grid-cols-* }
+  - { name: break-after, reason: "no fragmentation" }
+  - { name: break-before, reason: "no fragmentation" }
+  - { name: break-inside, reason: "no fragmentation" }
+  - { name: box-decoration, reason: "no fragmentation" }
+  - { name: box-border, reason: "every box is border-box" }
+  - { name: box-content, reason: "every box is border-box" }
+  - { name: block, reason: "every element is a flex or grid container", use: flex }
+  - { name: inline, reason: "every element is a flex or grid container", use: flex }
+  - { name: inline-block, reason: "every element is a flex or grid container", use: flex }
+  - { name: inline-flex, reason: "every element is a flex or grid container", use: flex }
+  - { name: inline-grid, reason: "every element is a flex or grid container", use: grid }
+  - { name: contents, reason: "every element is a box" }
+  - { name: flow-root, reason: "every element is a flex or grid container", use: flex }
+  - { name: list-item, reason: "every element is a flex or grid container", use: flex }
+  - { name: table, reason: "no table display; use the table kind", use: grid }
+  - flex
+  - grid
+  - hidden
+  - { name: sr-only, reason: "accessibility comes from props (accessible-name), not CSS" }
+  - { name: not-sr-only, reason: "accessibility comes from props (accessible-name), not CSS" }
+  - { name: float, reason: "no floats", use: flex }
+  - { name: clear, reason: "no floats" }
+  - { name: isolate, reason: "no stacking contexts" }
+  - { name: isolation, reason: "no stacking contexts" }
+  - { name: object, reason: "an image's fit is a prop of the image kind" }
+  - overflow
+  - overflow-x
+  - overflow-y
+  - overscroll
+  - { name: overscroll-x, reason: "one overscroll-behavior for both axes", use: overscroll-* }
+  - { name: overscroll-y, reason: "one overscroll-behavior for both axes", use: overscroll-* }
+  - static
+  - relative
+  - absolute
+  - { name: fixed, reason: "no viewport-fixed positioning; overlays are their own kinds" }
+  - { name: sticky, reason: "no sticky positioning" }
+  - inset
+  - inset-x
+  - inset-y
+  - top
+  - right
+  - bottom
+  - left
+  - { name: start, reason: "no logical (RTL) properties", use: left-* }
+  - { name: end, reason: "no logical (RTL) properties", use: right-* }
+  - { name: visible, reason: "visibility is the `visible` prop, not CSS", use: hidden }
+  - { name: invisible, reason: "visibility is the `visible` prop, not CSS", use: hidden }
+  - { name: collapse, reason: "visibility is the `visible` prop, not CSS", use: hidden }
+  - { name: z, reason: "layers are structural (overlays, popups), not z-index" }
+
+  # ---- flexbox and grid ----
+  - basis
+  - grow
+  - shrink
+  - { name: order, reason: "no order property on egui yet (UTILITY-CSS §5)" }
+  - grid-cols
+  - grid-rows
+  - col
+  - col-span
+  - { name: col-start, reason: "grid-column is one value", use: "col-[<start>/<end>]" }
+  - { name: col-end, reason: "grid-column is one value", use: "col-[<start>/<end>]" }
+  - row
+  - row-span
+  - { name: row-start, reason: "grid-row is one value", use: "row-[<start>/<end>]" }
+  - { name: row-end, reason: "grid-row is one value", use: "row-[<start>/<end>]" }
+  - { name: grid-flow, reason: "no grid-auto-flow" }
+  - { name: auto-cols, reason: "no grid-auto-columns" }
+  - { name: auto-rows, reason: "no grid-auto-rows" }
+  - gap
+  - gap-x
+  - gap-y
+  - justify
+  - justify-items
+  - { name: justify-self, reason: "no justify-self" }
+  - { name: content, reason: "no align-content; a glyph part's `content` is set in CSS" }
+  - items
+  - self
+  - { name: place-content, reason: "no place-* shorthands", use: justify-* }
+  - { name: place-items, reason: "no place-* shorthands", use: items-* }
+  - { name: place-self, reason: "no place-* shorthands", use: self-* }
+
+  # ---- spacing ----
+  - p
+  - px
+  - py
+  - pt
+  - pr
+  - pb
+  - pl
+  - { name: ps, reason: "no logical (RTL) properties", use: pl-* }
+  - { name: pe, reason: "no logical (RTL) properties", use: pr-* }
+  - m
+  - mx
+  - my
+  - mt
+  - mr
+  - mb
+  - ml
+  - { name: ms, reason: "no logical (RTL) properties", use: ml-* }
+  - { name: me, reason: "no logical (RTL) properties", use: mr-* }
+  - { name: space-x, reason: "gap does the same on flex and grid containers", use: gap-x-* }
+  - { name: space-y, reason: "gap does the same on flex and grid containers", use: gap-y-* }
+
+  # ---- sizing ----
+  - w
+  - min-w
+  - max-w
+  - h
+  - min-h
+  - max-h
+  - size
+
+  # ---- typography ----
+  - font
+  - { name: font-stretch, reason: "no font-stretch" }
+  - text
+  - { name: text-wrap, reason: "no text-wrap", use: whitespace-* }
+  - { name: text-nowrap, reason: "no text-wrap", use: whitespace-nowrap }
+  - { name: text-balance, reason: "no text-wrap" }
+  - { name: text-pretty, reason: "no text-wrap" }
+  - { name: text-shadow, reason: "no text shadows", allow: [text-shadow-color] }   # ours: the shadow-color role
+  - { name: antialiased, reason: "egui renders the text" }
+  - { name: subpixel-antialiased, reason: "egui renders the text" }
+  - italic
+  - not-italic
+  - { name: normal-nums, reason: "no font-variant-numeric" }
+  - { name: ordinal, reason: "no font-variant-numeric" }
+  - { name: slashed-zero, reason: "no font-variant-numeric" }
+  - { name: lining-nums, reason: "no font-variant-numeric" }
+  - { name: oldstyle-nums, reason: "no font-variant-numeric" }
+  - { name: proportional-nums, reason: "no font-variant-numeric" }
+  - { name: tabular-nums, reason: "no font-variant-numeric", use: font-mono }
+  - { name: diagonal-fractions, reason: "no font-variant-numeric" }
+  - { name: stacked-fractions, reason: "no font-variant-numeric" }
+  - tracking
+  - { name: line-clamp, reason: "no line clamping", use: truncate }
+  - leading
+  - { name: list, reason: "no list styles" }
+  - underline
+  - overline
+  - line-through
+  - no-underline
+  - { name: decoration, reason: "no text-decoration colour, style or thickness" }
+  - { name: underline-offset, reason: "no text-underline-offset" }
+  - uppercase
+  - lowercase
+  - capitalize
+  - normal-case
+  - truncate
+  - { name: indent, reason: "no text-indent" }
+  - { name: align, reason: "no vertical-align; use items-* on the container", use: items-* }
+  - whitespace
+  - { name: break, reason: "no word-break" }
+  - { name: wrap, reason: "no overflow-wrap" }
+  - { name: hyphens, reason: "no hyphenation" }
+
+  # ---- backgrounds ----
+  - bg
+  - { name: bg-fixed, reason: "background images are gradients or painters: no attachment" }
+  - { name: bg-local, reason: "background images are gradients or painters: no attachment" }
+  - { name: bg-scroll, reason: "background images are gradients or painters: no attachment", allow: [bg-scroll-shadow] }   # ours: the scroll-shadow role
+  - { name: bg-clip, reason: "no background-clip" }
+  - { name: bg-origin, reason: "no background-origin" }
+  - { name: bg-repeat, reason: "no background-repeat" }
+  - { name: bg-no-repeat, reason: "no background-repeat" }
+  - { name: bg-cover, reason: "no background-size" }
+  - { name: bg-contain, reason: "no background-size" }
+  - { name: bg-center, reason: "no background-position" }
+  - { name: bg-top, reason: "no background-position" }
+  - { name: bg-bottom, reason: "no background-position" }
+  - { name: bg-left, reason: "no background-position" }
+  - { name: bg-right, reason: "no background-position" }
+  - { name: bg-none, reason: "background-image utilities come later; set background-image in CSS" }
+  - { name: bg-linear, reason: "gradient utilities come later (gradient stop variables); set background-image in CSS" }
+  - { name: bg-radial, reason: "gradient utilities come later; set background-image in CSS" }
+  - { name: bg-conic, reason: "no conic gradients" }
+  - { name: from, reason: "gradient utilities come later" }
+  - { name: via, reason: "gradient utilities come later" }
+  - { name: to, reason: "gradient utilities come later" }
+  - { name: bg-blend, reason: "no blend modes" }
+
+  # ---- borders ----
+  - rounded
+  - rounded-t
+  - rounded-r
+  - rounded-b
+  - rounded-l
+  - rounded-tl
+  - rounded-tr
+  - rounded-br
+  - rounded-bl
+  - { name: rounded-s, reason: "no logical (RTL) properties", use: rounded-l-* }
+  - { name: rounded-e, reason: "no logical (RTL) properties", use: rounded-r-* }
+  - { name: rounded-ss, reason: "no logical (RTL) properties", use: rounded-tl-* }
+  - { name: rounded-se, reason: "no logical (RTL) properties", use: rounded-tr-* }
+  - { name: rounded-es, reason: "no logical (RTL) properties", use: rounded-bl-* }
+  - { name: rounded-ee, reason: "no logical (RTL) properties", use: rounded-br-* }
+  - border
+  - border-x
+  - border-y
+  - border-t
+  - border-r
+  - border-b
+  - border-l
+  - { name: border-s, reason: "no logical (RTL) properties", use: border-l-* }
+  - { name: border-e, reason: "no logical (RTL) properties", use: border-r-* }
+  - { name: border-collapse, reason: "no table borders" }
+  - { name: border-separate, reason: "no table borders" }
+  - { name: border-spacing, reason: "no table borders" }
+  - { name: divide, reason: "no sibling borders yet; put border-* on the children" }
+  - { name: divide-x, reason: "no sibling borders yet; put border-l-* on the children" }
+  - { name: divide-y, reason: "no sibling borders yet; put border-t-* on the children" }
+  - outline
+  - outline-offset
+  - { name: outline-hidden, reason: "no forced-colors mode (high contrast is a token set)", use: outline-none }
+  - { name: ring, reason: "no ring (a box-shadow outline)", use: outline-* }
+  - { name: ring-offset, reason: "no ring", use: outline-offset-* }
+  - { name: inset-ring, reason: "no ring", use: outline-* }
+
+  # ---- effects ----
+  - shadow
+  - { name: inset-shadow, reason: "no inset shadow utilities; set box-shadow in CSS" }
+  - opacity
+  - { name: mix-blend, reason: "no blend modes" }
+  - { name: mask, reason: "no masks" }
+
+  # ---- filters ----
+  - { name: blur, reason: "no filters" }
+  - { name: brightness, reason: "no filters" }
+  - { name: contrast, reason: "no filters" }
+  - { name: drop-shadow, reason: "no filters", use: shadow-* }
+  - { name: grayscale, reason: "no filters" }
+  - { name: hue-rotate, reason: "no filters" }
+  - { name: invert, reason: "no filters" }
+  - { name: saturate, reason: "no filters" }
+  - { name: sepia, reason: "no filters" }
+  - { name: backdrop, reason: "no backdrop filters" }
+
+  # ---- tables ----
+  - { name: table-auto, reason: "no table display; use the table kind" }
+  - { name: table-fixed, reason: "no table display; use the table kind" }
+  - { name: caption, reason: "no table display; use the table kind" }
+
+  # ---- transitions and animation ----
+  - transition
+  - transition-colors
+  - transition-opacity
+  - transition-shadow
+  - transition-none
+  - { name: transition-all, reason: "transition covers the properties egui animates", use: transition }
+  - { name: transition-transform, reason: "no transforms on egui" }
+  - { name: transition-discrete, reason: "no transition-behavior" }
+  - { name: transition-normal, reason: "no transition-behavior" }
+  - duration
+  - ease
+  - delay
+  - { name: animate, reason: "animations are Svelte transitions (TR1)" }
+
+  # ---- transforms ----
+  - { name: backface, reason: "no transforms on egui" }
+  - { name: perspective, reason: "no transforms on egui" }
+  - { name: perspective-origin, reason: "no transforms on egui" }
+  - { name: rotate, reason: "no transforms on egui" }
+  - { name: scale, reason: "no transforms on egui" }
+  - { name: skew, reason: "no transforms on egui" }
+  - { name: transform, reason: "no transforms on egui" }
+  - { name: origin, reason: "no transforms on egui" }
+  - { name: translate, reason: "no transforms on egui" }
+
+  # ---- interactivity ----
+  - { name: accent, reason: "no accent-color; the theme's accent role styles the controls" }
+  - { name: appearance, reason: "own widgets draw from CSS; no native appearance" }
+  - { name: caret, reason: "the caret colour is the theme's caret role (later: a caret part)" }
+  - { name: scheme, reason: "the colour scheme is the theme's (set_theme)" }
+  - cursor
+  - { name: field-sizing, reason: "no field-sizing" }
+  - { name: pointer-events, reason: "hit-testing is a prop, not CSS" }
+  - { name: resize, reason: "resizing is the sash and window kinds' job" }
+  - { name: scroll-auto, reason: "no scroll-behavior; scrolling is the scroll-area's" }
+  - { name: scroll-smooth, reason: "no scroll-behavior; scrolling is the scroll-area's" }
+  - scroll-m
+  - { name: scroll-mx, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-my, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-mt, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-mr, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-mb, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-ml, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-ms, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-me, reason: "one scroll-margin for every side", use: scroll-m-* }
+  - { name: scroll-p, reason: "no scroll-padding" }
+  - { name: snap, reason: "no scroll snapping" }
+  - { name: touch, reason: "no touch-action" }
+  - { name: select, reason: "text selection is the `selectable` prop", use: "the selectable prop" }
+  - { name: will-change, reason: "no will-change" }
+
+  # ---- SVG and accessibility ----
+  - { name: fill, reason: "no SVG styling; icons take a colour from `color`", use: text-* }
+  - { name: stroke, reason: "no SVG styling" }
+  - { name: forced-color-adjust, reason: "high contrast is a token set, not forced colours" }
+  - { name: "@container", reason: "container queries come with CS-CQ" }
+
+variants:
+  # ---- states (the style table's pseudo-classes) ----
+  - hover
+  - focus
+  - focus-within
+  - focus-visible
+  - active
+  - disabled
+  - enabled
+  - checked
+  - indeterminate
+  - default
+  - optional
+  - required
+  - valid
+  - invalid
+  - user-invalid
+  - placeholder-shown
+  - read-only
+  - open
+  - { name: visited, reason: "no links history" }
+  - { name: target, reason: "no URL fragments" }
+  - { name: user-valid, reason: "no :user-valid state", use: "valid:" }
+  - { name: in-range, reason: "no range states" }
+  - { name: out-of-range, reason: "no range states" }
+  - { name: autofill, reason: "no autofill" }
+  - { name: details-content, reason: "no details element; use collapsing-header" }
+  - { name: inert, reason: "no inert state", use: "disabled:" }
+  # ---- structure ----
+  - first
+  - last
+  - only
+  - odd
+  - even
+  - { name: first-of-type, reason: "every child is an element of its kind; position is by child", use: "first:" }
+  - { name: last-of-type, reason: "position is by child", use: "last:" }
+  - { name: only-of-type, reason: "position is by child", use: "only:" }
+  - { name: nth, reason: "nth-N: comes later" }
+  - { name: nth-last, reason: "nth-last-N: comes later" }
+  - { name: nth-of-type, reason: "position is by child" }
+  - { name: nth-last-of-type, reason: "position is by child" }
+  - { name: empty, reason: "no :empty yet" }
+  - { name: "*", reason: "child variants come later" }
+  - { name: "**", reason: "descendant variants come later" }
+  # ---- pseudo-elements ----
+  - placeholder
+  - selection
+  - { name: before, reason: "no generated content boxes; parts are declared by the kind", use: "part-<name>:" }
+  - { name: after, reason: "no generated content boxes; parts are declared by the kind", use: "part-<name>:" }
+  - { name: first-letter, reason: "no ::first-letter" }
+  - { name: first-line, reason: "no ::first-line" }
+  - { name: marker, reason: "no list markers" }
+  - { name: file, reason: "no file inputs" }
+  # Tailwind's `backdrop:` is the ::backdrop pseudo-element; ours is the :backdrop state (the window
+  # lost the OS focus). Same name, our meaning.
+  - backdrop
+  # ---- compound ----
+  - group
+  - peer
+  - has
+  - not
+  - in
+  - { name: data, reason: "nodes have props, not data attributes", use: "prop-[<name>=<value>]:" }
+  - { name: aria, reason: "only the aria-* names with a state (aria-checked:, ...) are accepted, as aliases" }
+  - aria-busy
+  - aria-checked
+  - aria-disabled
+  - aria-expanded
+  - { name: aria-hidden, reason: "no hidden state", use: hidden }
+  - { name: aria-pressed, reason: "a toggle's pressed state is :checked", use: "checked:" }
+  - aria-readonly
+  - aria-required
+  - aria-selected
+  # ---- media ----
+  - sm
+  - md
+  - lg
+  - xl
+  - { name: 2xl, reason: "breakpoints are the theme's breakpoint-* tokens (sm, md, lg, xl)", use: "xl:" }
+  - max
+  - { name: min, reason: "breakpoints are the theme's breakpoint-* tokens", use: "sm:" }
+  - dark
+  - motion-safe
+  - motion-reduce
+  - contrast-more
+  - contrast-less
+  - portrait
+  - landscape
+  - { name: forced-colors, reason: "high contrast is a token set", use: "contrast-more:" }
+  - { name: inverted-colors, reason: "no inverted-colors" }
+  - { name: pointer-fine, reason: "no pointer media features" }
+  - { name: pointer-coarse, reason: "no pointer media features" }
+  - { name: pointer-none, reason: "no pointer media features" }
+  - { name: any-pointer-fine, reason: "no pointer media features" }
+  - { name: any-pointer-coarse, reason: "no pointer media features" }
+  - { name: any-pointer-none, reason: "no pointer media features" }
+  - { name: print, reason: "no printing" }
+  - { name: noscript, reason: "always scripted" }
+  - { name: supports, reason: "the engine's support is static; see the property table" }
+  - { name: not-supports, reason: "the engine's support is static" }
+  - { name: starting, reason: "no @starting-style; enter transitions are Svelte's" }
+  - { name: rtl, reason: "no right-to-left layout" }
+  - { name: ltr, reason: "no right-to-left layout" }
+  # ---- containers (CS-CQ) ----
+  - "@xs"
+  - "@sm"
+  - "@md"
+  - "@lg"
+  - "@xl"
+  - { name: "@3xs", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xs:" }
+  - { name: "@2xs", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xs:" }
+  - { name: "@2xl", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xl:" }
+  - { name: "@3xl", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xl:" }
+  - { name: "@4xl", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xl:" }
+  - { name: "@5xl", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xl:" }
+  - { name: "@6xl", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xl:" }
+  - { name: "@7xl", reason: "container sizes are the theme's container-* tokens (xs to xl)", use: "@xl:" }
+  - "@max"

@@ -90,6 +90,10 @@ pub(crate) struct Inner {
     pub pending_out: RefCell<Vec<crate::walk::Out>>,
     /// EV1: event dispatch state (presses, focus, late events per viewport; `events.rs`).
     pub ev: RefCell<crate::events::BackendState>,
+    /// ZM1 (`zoom.rs`): the zoom `set_zoom` asked for, until the context has it; the root
+    /// viewport's `pixels_per_point` the leaves were last measured at (0: none yet).
+    pub zoom_pending: Cell<Option<f32>>,
+    pub scale_seen: Cell<f32>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -140,6 +144,8 @@ impl EguiBackend {
             theme_pending: Cell::new(false),
             pending_out: RefCell::new(Vec::new()),
             ev: RefCell::new(Default::default()),
+            zoom_pending: Cell::new(None),
+            scale_seen: Cell::new(0.0),
         }))
     }
 

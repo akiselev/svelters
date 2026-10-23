@@ -14,19 +14,50 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+pub mod calendar;
+pub mod color_editor;
+pub mod color_picker;
+pub mod date_picker;
+/// OW1b: `drag-value`.
+pub mod drag_value;
+/// OW1b: the interim one-line entry of the value boxes (OW4's TextInput replaces it).
+pub mod entry;
+/// OW1b: number formats (locale, decimals, affixes, special text) and the formatter registry.
+pub mod numfmt;
+/// OW1b: the rail of `slider` and `range-slider`.
+pub mod rail;
+/// OW1b: `range-slider`.
+pub mod range_slider;
+/// OW1b: `slider`.
+pub mod slider;
+/// OW1b: the number field of `drag-value` and the sliders' value boxes.
+pub mod value_box;
 pub mod checkbox;
+pub mod collapsing;
+pub(crate) mod dialog;
+pub mod frame;
+pub(crate) mod glyph;
 pub mod hyperlink;
+pub mod image;
 pub mod label;
+pub(crate) mod list_rows;
+pub(crate) mod menu;
 pub mod panel;
 mod parts;
+mod picker_glyphs;
+mod picker_popup;
+pub(crate) mod popup;
 pub mod progress;
+pub mod radio;
 pub mod scroll_area;
 pub mod scrollbar;
+pub mod select;
 pub mod separator;
 pub mod split_view;
 pub mod switch;
 pub mod text_edit;
 pub mod toggle_button;
+pub mod tooltip;
 
 /// OW2: the window's inner chrome (`windows.rs`).
 pub use crate::windows::WINDOW_UA;
@@ -35,12 +66,44 @@ use crate::scene::W;
 
 /// The built-in tags whose own widget is the default (the egui wrapper otherwise). Grows by one
 /// tag per lane as each own widget passes its acceptance (ARCH-WIDGETS §6.2 step 2).
-pub const DEFAULT_OWN: &[&str] = &["button", "text-edit"];
+///
+/// OW3 adds the menu roots (`menu-bar`, `menu-button`, `context-menu`: their entries follow
+/// them), `popup`, `combo-box` and `tooltip` (no tag of its own: every kind's `tooltip` prop).
+pub const DEFAULT_OWN: &[&str] = &[
+    "button",
+    // OW1a, OW1a2
+    "checkbox",
+    "switch",
+    "toggle-button",
+    "radio-button",
+    // (`label` stays the egui wrapper by default until OW1a3 draws RT2's rich runs, `crate::rich`,
+    // in the own label; `SVELTERS_OWN_WIDGETS=all` or a tag list picks it)
+    "hyperlink",
+    "separator",
+    "progress-bar",
+    "spinner",
+    "frame",
+    "collapsing-header",
+    "icon",
+    "image",
+    // OW3
+    "menu-bar",
+    "menu-button",
+    "context-menu",
+    "popup",
+    "combo-box",
+    "tooltip",
+    // OW7
+    "modal",
+    "inner-window",
+    // OW4
+    "text-edit",
+];
 
 /// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
 /// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the
 /// switch says.
-pub const OWN_ONLY: &[&str] = &["panel", "scroll-area", "scrollbar", "split-view", "text-edit"];
+pub const OWN_ONLY: &[&str] = &["calendar", "color-editor", "color-picker", "date-picker", "drag-value", "panel", "range-slider", "scroll-area", "scrollbar", "slider", "split-view", "text-edit", "toast-host"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -62,8 +125,11 @@ impl KindSet {
         KindSet::Tags(tags.into_iter().map(|t| t.as_ref().to_string()).collect())
     }
 
-    /// Whether new `<tag>` nodes get the own widget (when one exists).
+    /// Whether new `<tag>` nodes get the own widget (when one exists). Always for [`OWN_ONLY`].
     pub fn contains(&self, tag: &str) -> bool {
+        if OWN_ONLY.contains(&tag) {
+            return true;
+        }
         match self {
             KindSet::Default => DEFAULT_OWN.contains(&tag),
             KindSet::All => true,
@@ -85,6 +151,22 @@ impl KindSet {
     /// `SVELTERS_OWN_WIDGETS`, if set.
     pub fn from_env() -> Option<KindSet> {
         std::env::var("SVELTERS_OWN_WIDGETS").ok().map(|v| KindSet::parse(&v))
+    }
+}
+
+/// OW3: marks a new built-in payload `w` of tag `tag` as drawn by svelters when `set` holds the
+/// tag: the menu roots (`menu-bar`, `menu-button`, `context-menu`) and `popup` keep their payload
+/// (the WG2a data model: entries are scene children the root walks) and only their drawing and
+/// behaviour are ours ([`menu`], [`popup`]).
+pub(crate) fn mark_own(set: &KindSet, tag: &str, w: &mut W) {
+    if !set.contains(tag) {
+        return;
+    }
+    match w {
+        W::Menu(m) => m.set_own(true),
+        // OW7: `modal` and `inner-window` too (their tag is in `set`)
+        W::Overlay(o) => o.own = true,
+        _ => {}
     }
 }
 
@@ -120,6 +202,11 @@ impl svelters_host::exports::IntoJs for Len {
     fn into_js(self, cx: &svelters_host::exports::CallCx<'_>) -> Result<svelters_host::exports::Value, svelters_host::exports::NativeError> {
         self.0.into_js(cx)
     }
+}
+
+/// OW6: the error a typed prop (`IsoDate`, `HexColor`) refuses a write with.
+pub(crate) fn invalid(message: String) -> svelters_host::exports::NativeError {
+    svelters_host::exports::NativeError { domain: "svelters:egui".into(), code: svelters_abi::Value::Str("invalid-value".into()), message }
 }
 
 /// OW2: an enum prop read leniently (an unknown value is the default).

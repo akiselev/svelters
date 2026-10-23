@@ -224,6 +224,24 @@ impl Backend for EguiBackend {
             self.touched(self.root_of(h));
             return Ok(Value::Null);
         }
+        // OW7: `close(result?)` on a modal or inner-window (applied and announced at the next pass)
+        if def.name == "close" && matches!(kinds::kind(k).tag, Some("modal" | "inner-window")) {
+            let result = match args {
+                [] => String::new(),
+                [Value::Str(s)] => s.clone(),
+                _ => return Err("close takes an optional result string".into()),
+            };
+            {
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                if let scene::W::Overlay(o) = scene.w_mut(i) {
+                    o.cmd = Some(false);
+                    o.result = Some(result);
+                }
+            }
+            self.touched(self.root_of(h));
+            return Ok(Value::Null);
+        }
         // WG4a: the views' methods take arguments (`crate::views::call`)
         if let Some(r) = crate::views::call(self, h, def.name, args) {
             return r;

@@ -30,13 +30,27 @@ A number edited by dragging horizontally, the arrow keys, or typing after a clic
 <!-- BEGIN GENERATED: props of kinds.DragValue (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `accelerated` | `boolean` | `false` | no | Holding a step button speeds it up (Qt `accelerated`). |
+| `buttons` | `boolean` | `false` | no | Shows the `dec`/`inc` step buttons at the right end (Qt `buttonSymbols`). |
+| `commit` | `boolean` | `false` | no | Commit-only mode (Qt `keyboardTracking=false`): `value` moves only at a commit point. |
+| `correction` | `'nearest' \| 'previous'` | `"nearest"` | no | An out-of-range typed value commits to the `nearest` bound (default) or the `previous` value. |
 | `decimals` | `number \| null` | `null` | no | Decimals shown; null for egui's automatic precision. |
+| `formatter` | `string` | `""` | no | A registered formatter. |
+| `group-separator` | `boolean` | `true` | no | The locale's group separators (Qt `showGroupSeparator`). |
 | `max` | `number \| null` | `null` | no | Upper bound; null for none. |
 | `min` | `number \| null` | `null` | no | Lower bound; null for none. |
+| `page-step` | `number` | `0` | no | PageUp/PageDown in value units; 0 for ten steps. |
+| `parser` | `string` | `""` | no | A registered parser. |
 | `prefix` | `string` | `""` | no | Text before the number (`x: `). |
+| `read-only` | `boolean` | `false` | no | Shown and focusable, not changed by the user (Qt `readOnly`). |
+| `special-value-text` | `string` | `""` | no | Shown instead of the number at `min` (Qt `specialValueText`, e.g. "Auto"). |
 | `speed` | `number` | `1` | no | Value change per point dragged. |
+| `step` | `number` | `1` | no | One step (Up/Down, a step button, a wheel notch; Qt `singleStep`). |
+| `step-type` | `'default' \| 'adaptive'` | `"default"` | no | `default`, or `adaptive` (Qt AdaptiveDecimalStepType: one decade below the value). |
 | `suffix` | `string` | `""` | no | Text after the number (` mm`). |
 | `value` | `number` | `0` | **yes**, on `changed` | The value; dragging, the arrow keys or typing change it. Kept within `min` and `max`. |
+| `wheel` | `'focused' \| 'hover' \| 'off'` | `"focused"` | no | When the wheel steps: `focused` (default: over the field while it has focus), `hover`, `off`. |
+| `wrap` | `boolean` | `false` | no | Stepping past one end goes to the other (Qt `wrapping`). |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
@@ -50,6 +64,8 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 | `oncommit` | `(value: number) => void` | The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value. |
 | `ondrag-started` | `() => void` | A drag on it began. |
 | `ondrag-stopped` | `() => void` | A drag on it ended. |
+| `oninput` | `(value: number) => void` | §2.4's live signal (as `changed`). |
+| `onsubmit` | `(value: number) => void` | Enter in the field; carries the value. |
 
 `on:changed` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 

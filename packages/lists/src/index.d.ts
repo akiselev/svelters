@@ -98,7 +98,7 @@ export interface TreeViewProps<T = any> {
   row?: (anchor: any, node: () => T, level: () => number) => void;
   /** Shows the nodes that pass, and their ancestors (loaded children only). */
   filter?: (node: T) => boolean;
-  selection?: 'none' | 'single' | 'multi';
+  selection?: 'none' | 'single' | 'multi' | 'toggle' | 'range';
   /** `bind:selected`: the selected keys; keys hidden by a filter or a collapse stay selected. */
   selected?: unknown[];
   /** `bind:expanded`: the expanded keys. */
@@ -137,3 +137,18 @@ export declare function flattenTree<T = any>(
     filter?: (node: T) => boolean;
   },
 ): TreeRow<T>[];
+
+/** OW5a1b: how the expand helpers read a tree (as on `<TreeView>`). */
+export interface ExpandOptions<T = any> {
+  key?: (node: T) => unknown;
+  children?: (node: T) => readonly T[] | undefined;
+}
+
+/** The keys of every node with (loaded) children, for `bind:expanded` (Qt `expandAll`). */
+export declare function expandAll<T = any>(roots: readonly T[], opts?: ExpandOptions<T>): unknown[];
+/** `[]` (Qt `collapseAll`). */
+export declare function collapseAll(): unknown[];
+/** The nodes above `depth` open; 0 opens the roots (Qt `expandToDepth`). */
+export declare function expandToDepth<T = any>(roots: readonly T[], depth: number, opts?: ExpandOptions<T>): unknown[];
+/** `expanded` plus `node` and all its descendants (Qt `expandRecursively`). */
+export declare function expandRecursively<T = any>(expanded: readonly unknown[] | undefined, node: T, opts?: ExpandOptions<T>): unknown[];

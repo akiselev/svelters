@@ -30,7 +30,10 @@ use svelters_abi::Value;
 pub enum MenuW {
     /// The abstract base (never created).
     Entry,
-    Bar,
+    /// `own`: OW3 draws it (the own-widget switch when it was created).
+    Bar {
+        own: bool,
+    },
     Menu {
         label: String,
     },
@@ -45,12 +48,14 @@ pub enum MenuW {
     /// `cmd`: a `popup`/`popdown` call applied at the next pass.
     Context {
         cmd: Option<bool>,
+        own: bool,
     },
     /// `cmd`: a host write of `active` or a `popup`/`popdown` call, applied at the next pass.
     Button {
         label: String,
         active: bool,
         cmd: Option<bool>,
+        own: bool,
     },
 }
 
@@ -66,14 +71,27 @@ impl MenuW {
 
     /// Drawn in its parent's flow (a taffy leaf): `menu-bar`, `menu-button`.
     pub fn in_flow(&self) -> bool {
-        matches!(self, MenuW::Bar | MenuW::Button { .. })
+        matches!(self, MenuW::Bar { .. } | MenuW::Button { .. })
+    }
+
+    /// OW3: a menu root that svelters draws itself (`menu-bar`, `menu-button`, `context-menu`
+    /// created while the own-widget switch held its tag).
+    pub fn is_own(&self) -> bool {
+        matches!(self, MenuW::Bar { own: true } | MenuW::Button { own: true, .. } | MenuW::Context { own: true, .. })
+    }
+
+    /// OW3: marks a new menu root as drawn by svelters (`crate::widgets::mark_own`).
+    pub(crate) fn set_own(&mut self, on: bool) {
+        if let MenuW::Bar { own } | MenuW::Button { own, .. } | MenuW::Context { own, .. } = self {
+            *own = on;
+        }
     }
 }
 
 /// The payload of a new node of kind `id` (the defaults of `kinds/menus.rs`).
 pub(crate) fn payload(id: &str) -> MenuW {
     match id {
-        "MenuBar" => MenuW::Bar,
+        "MenuBar" => MenuW::Bar { own: false },
         "Menu" => MenuW::Menu {
             label: String::new(),
         },
@@ -85,11 +103,12 @@ pub(crate) fn payload(id: &str) -> MenuW {
             group: String::new(),
         },
         "MenuSeparator" => MenuW::Separator,
-        "ContextMenu" => MenuW::Context { cmd: None },
+        "ContextMenu" => MenuW::Context { cmd: None, own: false },
         "MenuButton" => MenuW::Button {
             label: String::new(),
             active: false,
             cmd: None,
+            own: false,
         },
         _ => MenuW::Entry,
     }
@@ -191,7 +210,7 @@ pub(crate) fn get_prop(m: &MenuW, key: P) -> Result<Value, String> {
 /// `popup`/`popdown` (`ops.rs`): queued on the node, applied at its next pass.
 pub(crate) fn call(arena: &mut Arena, i: usize, open: bool) {
     match arena.w_mut(i) {
-        W::Menu(MenuW::Context { cmd } | MenuW::Button { cmd, .. }) => *cmd = Some(open),
+        W::Menu(MenuW::Context { cmd, .. } | MenuW::Button { cmd, .. }) => *cmd = Some(open),
         W::Overlay(o) => o.cmd = Some(open),
         _ => {}
     }
@@ -200,11 +219,15 @@ pub(crate) fn call(arena: &mut Arena, i: usize, open: bool) {
 // ---- measure ----
 
 /// The size of an in-flow menu kind (`layout.rs`): a menu-bar is one interact row high and takes
-/// no width of its own; a menu-button is a button.
-pub(crate) fn measure(m: &Metrics, w: &MenuW) -> Vec2 {
+/// no width of its own; a menu-button is a button. OW3's own roots measure from CSS
+/// (`crate::widgets::menu::measure`).
+pub(crate) fn measure(m: &Metrics, w: &MenuW, css: Option<&svelters_style::ComputedStyle>) -> Vec2 {
+    if w.is_own() {
+        return crate::widgets::menu::measure(m, w, css);
+    }
     let sp = &m.style.spacing;
     match w {
-        MenuW::Bar => vec2(0.0, sp.interact_size.y),
+        MenuW::Bar { .. } => vec2(0.0, sp.interact_size.y),
         MenuW::Button { label, .. } => {
             let font = egui::TextStyle::Button.resolve(&m.style);
             let t = m.ctx.fonts_mut(|f| {
@@ -274,7 +297,23 @@ fn set_checked(arena: &mut Arena, i: usize, on: bool, out: &mut Vec<Out>) {
 
 /// The user picked action `i` (click, Enter, its shortcut): a check item toggles, a radio item turns
 /// on and turns off the rest of its group (same parent, same group); then `activate(checked)`.
-fn activate(arena: &mut Arena, i: usize, out: &mut Vec<Out>) {
+///
+/// EV1 (OW3): `activate` goes through the scene's Rust filters first; a filter that prevents it
+/// keeps the check state (the default action), one that stops it also keeps it from JS.
+pub(crate) fn activate(arena: &mut Arena, i: usize, ctx: &egui::Context, out: &mut Vec<Out>) {
+    let Some(node) = arena.slots.id_at(i) else { return };
+    let (o, runs) = crate::events::dispatch_signal(arena, node, "activate");
+    for r in runs {
+        crate::provider::behavior::apply(arena, r, Some(ctx), out);
+    }
+    if o.stopped && o.prevented() {
+        return;
+    }
+    if o.prevented() {
+        let checked = matches!(arena.w(i), W::Menu(MenuW::Action { checked: true, .. }));
+        announce(arena, i, None, &[("activate", vec![Value::Bool(checked)])], out);
+        return;
+    }
     let W::Menu(MenuW::Action {
         checkable,
         checked,
@@ -302,11 +341,13 @@ fn activate(arena: &mut Arena, i: usize, out: &mut Vec<Out>) {
     if now != was {
         set_checked(arena, i, now, out);
     }
-    announce(arena, i, None, &[("activate", vec![Value::Bool(now)])], out);
+    if !o.stopped {
+        announce(arena, i, None, &[("activate", vec![Value::Bool(now)])], out);
+    }
 }
 
 /// Fires the actions under menu container `root` whose shortcut was pressed this frame (consumed).
-fn shortcuts(arena: &mut Arena, root: usize, ui: &mut Ui, out: &mut Vec<Out>) {
+pub(crate) fn shortcuts(arena: &mut Arena, root: usize, ui: &mut Ui, out: &mut Vec<Out>) {
     if !ui.is_enabled() || !arena.common(root).enabled {
         return;
     }
@@ -333,7 +374,7 @@ fn shortcuts(arena: &mut Arena, root: usize, ui: &mut Ui, out: &mut Vec<Out>) {
         }
     }
     for c in hits {
-        activate(arena, c, out);
+        activate(arena, c, &ui.ctx().clone(), out);
     }
 }
 
@@ -351,7 +392,7 @@ fn decorate(arena: &Arena, i: usize, resp: egui::Response) -> egui::Response {
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a, OW3
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW3
 /// Draws the menu entries under `parent` in `ui` (a menu bar, a menu popup). `flatten`: a `menu`
 /// child shows its items inline (a menu-button's menu).
 fn items(
@@ -438,7 +479,7 @@ fn items(
                 };
                 let r = decorate(arena, c, r);
                 if r.clicked() {
-                    activate(arena, c, out);
+                    activate(arena, c, &ui.ctx().clone(), out);
                 }
             }
             W::Menu(MenuW::Separator) => {
@@ -452,15 +493,20 @@ fn items(
 #[allow(clippy::disallowed_types)] // OW: wrapper until OW3
 /// Paints an in-flow menu kind at its rect (`leaf.rs` dispatches here): `menu-bar`, `menu-button`.
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
+    if let W::Menu(m) = arena.w(i)
+        && m.is_own()
+    {
+        return crate::widgets::menu::leaf(arena, i, ui, out); // OW3
+    }
     let size = arena.core[i].rect.size();
     let resp = match arena.w(i) {
-        W::Menu(MenuW::Bar) => {
+        W::Menu(MenuW::Bar { .. }) => {
             shortcuts(arena, i, ui, out);
             egui::MenuBar::new()
                 .ui(ui, |ui| items(arena, i, ui, out, true, false))
                 .response
         }
-        W::Menu(MenuW::Button { label, active, cmd }) => {
+        W::Menu(MenuW::Button { label, active, cmd, .. }) => {
             let (label, active, cmd) = (label.clone(), *active, *cmd);
             if let W::Menu(MenuW::Button { cmd, .. }) = arena.w_mut(i) {
                 *cmd = None;
@@ -505,7 +551,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
 }
 
 /// The id under which the context-menu claims of one pass are kept (the innermost owner wins).
-fn claim(ctx: &egui::Context, area: f32) -> bool {
+pub(crate) fn claim(ctx: &egui::Context, area: f32) -> bool {
     let key = Id::NULL.with("svelters-egui/context-menu-claim");
     let pass = ctx.cumulative_pass_nr();
     ctx.data_mut(|d| {
@@ -524,11 +570,14 @@ fn claim(ctx: &egui::Context, area: f32) -> bool {
 /// Paints `context-menu` node `i` attached to an owner drawn at `owner` (screen): a secondary click
 /// on the owner (in `ui`'s layer, not covered) opens it at the pointer; `popup()` below the owner.
 pub(crate) fn context(arena: &mut Arena, i: usize, owner: Rect, ui: &mut Ui, out: &mut Vec<Out>) {
-    let W::Menu(MenuW::Context { cmd }) = arena.w(i) else {
+    let W::Menu(MenuW::Context { cmd, own }) = arena.w(i) else {
         return;
     };
+    if *own {
+        return crate::widgets::menu::context(arena, i, owner, ui, out); // OW3
+    }
     let cmd = *cmd;
-    if let W::Menu(MenuW::Context { cmd }) = arena.w_mut(i) {
+    if let W::Menu(MenuW::Context { cmd, .. }) = arena.w_mut(i) {
         *cmd = None;
     }
     let id = arena.core[i].egui_id.with("context-menu");

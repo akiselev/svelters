@@ -55,6 +55,13 @@ static MODAL_PROPS: &[PropDef] = &[
         Def::Bool(true),
         "Escape or a click on the backdrop closes it; with false only the app does.",
     ),
+    prop(
+        "resizable",
+        P::Resizable,
+        Ty::Bool,
+        Def::Bool(false),
+        "The user can resize it from its right and bottom edges and its size grip (`::part(grip)`, Qt's `sizeGripEnabled`); the content is laid out at that size.",
+    ),
 ];
 
 static INNER_WINDOW_PROPS: &[PropDef] = &[
@@ -130,6 +137,27 @@ static OVERLAY_SIGNALS: &[SignalDef] = &[
     signal("closed", NONE, "The user (or `popdown`) closed it."),
 ];
 
+/// OW7: `modal` and `inner-window` (QDialog `finished`, `accepted`, `rejected`).
+static DIALOG_SIGNALS: &[SignalDef] = &[
+    signal(
+        "changed",
+        &[("open", Ty::Bool)],
+        "The user (or `close`) opened or closed it; carries `open`.",
+    ),
+    signal(
+        "closed",
+        &[("result", Ty::Str)],
+        "It closed; carries the result: `\"reject\"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `\"\"` when `open` was set false.",
+    ),
+    signal("accepted", NONE, "It closed with the result `\"accept\"` (`close(\"accept\")`)."),
+    signal("rejected", NONE, "It closed with the result `\"reject\"`: dismissed by the user or `close(\"reject\")`."),
+];
+
+static DIALOG_METHODS: &[MethodDef] = &[MethodDef {
+    name: "close",
+    doc: "`close(result?)`: closes it (applied at the next pass) and emits `closed(result)` (QDialog `done`): `\"accept\"` also emits `accepted`, `\"reject\"` `rejected`.",
+}];
+
 static POPUP_METHODS: &[MethodDef] = &[
     MethodDef {
         name: "popup",
@@ -166,8 +194,8 @@ pub(super) const MODAL: KindDef = KindDef {
     text_content: None,
     present: None,
     props: MODAL_PROPS,
-    signals: OVERLAY_SIGNALS,
-    methods: &[],
+    signals: DIALOG_SIGNALS,
+    methods: DIALOG_METHODS,
     doc: "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
 };
 
@@ -181,7 +209,7 @@ pub(super) const INNER_WINDOW: KindDef = KindDef {
     text_content: None,
     present: None,
     props: INNER_WINDOW_PROPS,
-    signals: OVERLAY_SIGNALS,
-    methods: &[],
+    signals: DIALOG_SIGNALS,
+    methods: DIALOG_METHODS,
     doc: "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
 };

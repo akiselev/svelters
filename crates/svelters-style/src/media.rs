@@ -303,6 +303,19 @@ fn parse_in_parens<'i>(input: &mut Parser<'i>) -> PResult<'i, Cond> {
 const RANGE: &[&str] = &["width", "height", "aspect-ratio"];
 const DISCRETE: &[&str] = &["prefers-color-scheme", "prefers-reduced-motion", "prefers-contrast", "orientation"];
 
+/// U0 (UTILITY-CSS §3.4): the media features this engine evaluates, for the semantic spec
+/// (`style.media_features`), the utility variants and the docs: `(name, "range" | "discrete", the
+/// discrete values)`. The media tests keep it equal to what the evaluator knows.
+pub const MEDIA_FEATURES: &[(&str, &str, &[&str])] = &[
+    ("width", "range", &[]),
+    ("height", "range", &[]),
+    ("aspect-ratio", "range", &[]),
+    ("orientation", "discrete", &["portrait", "landscape"]),
+    ("prefers-color-scheme", "discrete", &["light", "dark"]),
+    ("prefers-contrast", "discrete", &["no-preference", "more", "less", "custom"]),
+    ("prefers-reduced-motion", "discrete", &["no-preference", "reduce"]),
+];
+
 fn parse_feature<'i>(input: &mut Parser<'i>) -> PResult<'i, Cond> {
     // `value op name [op value]`
     if let Ok(v) = input.try_parse(feature_value) {
@@ -400,6 +413,38 @@ mod tests {
 
     fn m(q: &str, env: &MediaEnv) -> bool {
         MediaList::parse(q).unwrap_or_else(|e| panic!("{q}: {e}")).matches(env)
+    }
+
+    /// U0: `MEDIA_FEATURES` lists exactly the features the parser keeps, and every discrete value
+    /// it lists is one some environment matches (an unknown value would never match).
+    #[test]
+    fn media_features_table_matches_the_evaluator() {
+        let range: Vec<&str> = MEDIA_FEATURES.iter().filter(|f| f.1 == "range").map(|f| f.0).collect();
+        let discrete: Vec<&str> = MEDIA_FEATURES.iter().filter(|f| f.1 == "discrete").map(|f| f.0).collect();
+        assert_eq!(range.len() + discrete.len(), MEDIA_FEATURES.len());
+        fn sorted<'a>(v: &[&'a str]) -> Vec<&'a str> {
+            let mut v = v.to_vec();
+            v.sort_unstable();
+            v
+        }
+        assert_eq!(sorted(&range), sorted(RANGE));
+        assert_eq!(sorted(&discrete), sorted(DISCRETE));
+        let envs: Vec<MediaEnv> = [ColorScheme::Light, ColorScheme::Dark]
+            .into_iter()
+            .flat_map(|color_scheme| {
+                [Contrast::NoPreference, Contrast::More, Contrast::Less, Contrast::Custom].into_iter().flat_map(move |contrast| {
+                    [false, true].into_iter().flat_map(move |reduced_motion| {
+                        [(800.0, 600.0), (600.0, 800.0)].map(|(width, height)| MediaEnv { width, height, color_scheme, contrast, reduced_motion, ..Default::default() })
+                    })
+                })
+            })
+            .collect();
+        for (name, _, values) in MEDIA_FEATURES {
+            for v in *values {
+                let q = format!("({name}: {v})");
+                assert!(envs.iter().any(|e| m(&q, e)), "{q} never matches");
+            }
+        }
     }
 
     #[test]

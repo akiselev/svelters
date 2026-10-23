@@ -969,8 +969,7 @@ pub fn event_app_bar_button_click() {
     h.pump(100);
     h.listen(w, "click", true).unwrap();
     h.invoke(w).unwrap();
-    h.pump(200);
-    assert_eq!(h.events(w, "click"), 1, "event delivered once");
+    assert_eq!(h.await_events(w, "click", 1), 1, "event delivered once");
 }
 
 pub fn event_app_bar_button_is_enabled_changed() {
@@ -984,8 +983,7 @@ pub fn event_app_bar_button_is_enabled_changed() {
     h.pump(50);
     h.listen(w, "is-enabled-changed", true).unwrap();
     h.set(w, "is-enabled", Value::Bool(false)).unwrap();
-    h.pump(200);
-    assert!(h.events(w, "is-enabled-changed") >= 1, "event delivered");
+    assert!(h.await_events(w, "is-enabled-changed", 1) >= 1, "event delivered");
 }
 
 pub fn event_app_bar_button_layout_updated() {
@@ -995,8 +993,7 @@ pub fn event_app_bar_button_layout_updated() {
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
-    h.pump(300);
-    assert!(h.events(w, "layout-updated") >= 1, "raised when mounted in an activated window");
+    assert!(h.await_events(w, "layout-updated", 1) >= 1, "raised when mounted in an activated window");
 }
 
 pub fn event_app_bar_button_loaded() {
@@ -1006,8 +1003,7 @@ pub fn event_app_bar_button_loaded() {
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
-    h.pump(300);
-    assert!(h.events(w, "loaded") >= 1, "raised when mounted in an activated window");
+    assert!(h.await_events(w, "loaded", 1) >= 1, "raised when mounted in an activated window");
 }
 
 pub fn event_app_bar_button_size_changed() {
@@ -1017,8 +1013,7 @@ pub fn event_app_bar_button_size_changed() {
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
-    h.pump(300);
-    assert!(h.events(w, "size-changed") >= 1, "raised when mounted in an activated window");
+    assert!(h.await_events(w, "size-changed", 1) >= 1, "raised when mounted in an activated window");
 }
 
 pub fn event_progress_bar_value_changed() {
@@ -1030,8 +1025,7 @@ pub fn event_progress_bar_value_changed() {
     h.pump(100);
     h.listen(w, "value-changed", true).unwrap();
     h.set(w, "value", Value::F64(42.0)).unwrap();
-    h.pump(200);
-    assert_eq!(h.events(w, "value-changed"), 1, "event delivered once");
+    assert_eq!(h.await_events(w, "value-changed", 1), 1, "event delivered once");
     assert_eq!(h.last_args(w, "value-changed").len(), 2, "payload arity");
 }
 
@@ -1044,8 +1038,7 @@ pub fn event_text_box_text_changed() {
     h.pump(100);
     h.listen(w, "text-changed", true).unwrap();
     h.set(w, "text", Value::Str("abc".into())).unwrap();
-    h.pump(200);
-    assert_eq!(h.events(w, "text-changed"), 1, "event delivered once");
+    assert_eq!(h.await_events(w, "text-changed", 1), 1, "event delivered once");
     assert_eq!(h.last_args(w, "text-changed").len(), 1, "payload arity");
 }
 
@@ -1059,8 +1052,7 @@ pub fn event_text_box_before_text_changing() {
     h.listen(w, "before-text-changing", true).unwrap();
     h.reply(Reply::Bool(true));
     h.set(w, "text", Value::Str("abc".into())).unwrap();
-    h.pump(200);
-    assert_eq!(h.events(w, "before-text-changing"), 1, "event delivered once");
+    assert_eq!(h.await_events(w, "before-text-changing", 1), 1, "event delivered once");
     assert_eq!(h.last_args(w, "before-text-changing").len(), 1, "payload arity");
     assert_ne!(h.get(w, "text").unwrap(), Value::Str("abc".into()), "Cancel = true vetoes the change");
 }
@@ -1074,8 +1066,7 @@ pub fn event_text_box_text_changing() {
     h.pump(100);
     h.listen(w, "text-changing", true).unwrap();
     h.set(w, "text", Value::Str("abc".into())).unwrap();
-    h.pump(200);
-    assert!(h.events(w, "text-changing") >= 1, "event delivered");
+    assert!(h.await_events(w, "text-changing", 1) >= 1, "event delivered");
 }
 
 pub fn event_app_bar_toggle_button_checked() {
@@ -1087,8 +1078,7 @@ pub fn event_app_bar_toggle_button_checked() {
     h.pump(100);
     h.listen(w, "checked", true).unwrap();
     h.set(w, "is-checked", Value::Bool(true)).unwrap();
-    h.pump(200);
-    assert_eq!(h.events(w, "checked"), 1, "event delivered once");
+    assert_eq!(h.await_events(w, "checked", 1), 1, "event delivered once");
 }
 
 pub fn event_app_bar_toggle_button_unchecked() {
@@ -1102,8 +1092,7 @@ pub fn event_app_bar_toggle_button_unchecked() {
     h.pump(50);
     h.listen(w, "unchecked", true).unwrap();
     h.set(w, "is-checked", Value::Bool(false)).unwrap();
-    h.pump(200);
-    assert_eq!(h.events(w, "unchecked"), 1, "event delivered once");
+    assert_eq!(h.await_events(w, "unchecked", 1), 1, "event delivered once");
 }
 
 pub fn event_window_closed() {

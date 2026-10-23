@@ -433,7 +433,9 @@ fn frame_pads_its_content_by_its_margins_and_caption() {
     rig.set(f, "label", s("Group"));
     rig.run();
     let (fr, ir) = rig.backend.with_scene(|sc| (sc.n(f).rect, sc.n(inner).rect));
-    assert_eq!(ir.min, fr.min + vec2(m.left, m.top + egui::Style::default().spacing.interact_size.y));
+    // (own frame, OW1a2: the caption's own row plus the UA `gap`; the egui wrapper: `interact_size.y`)
+    assert_eq!(ir.min.x, fr.min.x + m.left);
+    assert!(ir.min.y >= fr.min.y + m.top + 14.0 && ir.min.y <= fr.min.y + m.top + 26.0, "{fr:?} {ir:?}");
     // no chrome: the content is at the frame's corner
     rig.set(f, "frame-style", s("none"));
     rig.set(f, "label", s(""));

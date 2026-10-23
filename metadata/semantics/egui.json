@@ -77,6 +77,7 @@
       "methods": {},
       "native": "egui::Button (menu item)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "checkable": {
@@ -168,6 +169,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "activate": {
           "args": [
@@ -181,6 +183,17 @@
           "handler_result": "none",
           "js_event": "activate",
           "name": "activate",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "hover": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3).",
+          "handler_result": "none",
+          "js_event": "hover",
+          "name": "hover",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -256,6 +269,7 @@
       "methods": {},
       "native": "svelters text run (a link: focusable, clickable, AccessKit `Link`)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "href": {
@@ -279,6 +293,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -359,11 +374,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -409,6 +426,7 @@
       "methods": {},
       "native": "taffy::Style (flexbox)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "align-items": {
@@ -599,6 +617,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -685,6 +704,18 @@
       "methods": {},
       "native": "egui::Button",
       "paint": "stock",
+      "parts": [
+        {
+          "doc": "The icon (paint part): `width`/`height`, `margin`, `order`, `display`, `color`,\n`content: icon(<key>)`.",
+          "name": "icon",
+          "node": false
+        },
+        {
+          "doc": "The caption (paint part): `color`, `font-*`, `margin`, `order`, `display`.",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "cancel": {
@@ -844,6 +875,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -970,6 +1002,410 @@
       ],
       "text_content": "text"
     },
+    "Calendar": {
+      "a11y": {
+        "actions": [
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "A `Grid` of six `Row`s of `GridCell`s, each named by its ISO date (`selected`, `disabled`, Click); previous/next are `Button`s. The grid is one tab stop and the arrow keys rove its days.",
+        "role": "Grid",
+        "value": "the picked date",
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the svelters' own (OW6) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "pickers",
+      "chain": [
+        "Calendar",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Parts: `header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`. Day states `:hover`, `:selected`, `:current` (the keyboard cursor, ringed while `:focus-visible`), `:disabled`, and the part names `today`, `weekend`, `other-month` plus `day-parts`' names, painted from the UA tables until per-day part styles reach egui.",
+      "doc": "An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters' own (OW6)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "header",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "prev",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "next",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "month",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "year",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "grid",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "day",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "weekday",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "week-number",
+          "node": false
+        }
+      ],
+      "present": null,
+      "props": {
+        "calendar-week": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows ISO week numbers in front of each week (`::part(week-number)`).",
+          "js": "calendar-week",
+          "native": "calendar-week",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:calendar-week",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "day-parts": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`.",
+          "js": "day-parts",
+          "native": "day-parts",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:day-parts",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "first-day": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "The weekday the grid starts on; `auto` is the locale's (Monday until IN1).",
+          "js": "first-day",
+          "native": "first-day",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:first-day",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "writable": true
+        },
+        "max": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit.",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit.",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "navigation": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the header with the previous/next month buttons and the month and year.",
+          "js": "navigation",
+          "native": "navigation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:navigation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows and roves the calendar but never picks (Qt's `NoSelection`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The picked date, ISO 8601 (`2026-10-22`); `\"\"` for none.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Calendar:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "weekday-format": {
+          "construct_only": false,
+          "default": "short",
+          "doc": "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row).",
+          "js": "weekday-format",
+          "native": "weekday-format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:weekday-format",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "narrow",
+            "short",
+            "long",
+            "none"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "provider_states": [],
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked a day; carries it (ISO 8601).",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pick is a commit (§2.4); carries the date.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "page-changed": {
+          "args": [
+            {
+              "name": "year",
+              "type": "i64"
+            },
+            {
+              "name": "month",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user moved to another month (prev/next, PageUp/PageDown, arrows across a month).",
+          "handler_result": "none",
+          "js_event": "page-changed",
+          "name": "page-changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "read-only",
+          "negated": [
+            ":read-write"
+          ],
+          "pseudo": [
+            ":read-only"
+          ],
+          "source": "kind",
+          "when": "`read-only` is set"
+        }
+      ],
+      "text_content": null
+    },
     "Canvas": {
       "a11y": {
         "actions": [
@@ -1003,6 +1439,7 @@
       "methods": {},
       "native": "egui::Painter (X8 display list replay)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "content-height": {
@@ -1060,6 +1497,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -1191,6 +1629,25 @@
           "value": {
             "arg": 0
           }
+        },
+        "indeterminate": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "indeterminate",
+          "provenance": "svelters-egui: the egui::Checkbox widget writes indeterminate into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
         }
       },
       "category": "inputs",
@@ -1207,6 +1664,28 @@
       "methods": {},
       "native": "egui::Checkbox",
       "paint": "stock",
+      "parts": [
+        {
+          "doc": "",
+          "name": "indicator",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "mark",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "icon",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "checked": {
@@ -1219,6 +1698,40 @@
           "observe": {
             "class": "exact",
             "fact": "egui:Checkbox:checked",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "icon": {
+          "construct_only": false,
+          "default": "",
+          "doc": "An icon before the caption (a key, or `family:name`).",
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Checkbox:icon",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "indeterminate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "WIDGET-PARITY §2.2: partially checked (`bind:indeterminate`), shown as a dash. The app\nwrites it; a click clears it and checks the box (Qt, GTK).",
+          "js": "indeterminate",
+          "native": "indeterminate",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Checkbox:indeterminate",
             "mechanism": "widget",
             "verified": "delivery"
           },
@@ -1242,11 +1755,29 @@
           "readable": true,
           "type": "string",
           "writable": true
+        },
+        "tristate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The user cycles unchecked → checked → indeterminate (Qt's tristate).",
+          "js": "tristate",
+          "native": "tristate",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Checkbox:tristate",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -1390,11 +1921,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -1467,6 +2000,23 @@
       "methods": {},
       "native": "egui::CollapsingHeader (header) + taffy flexbox (body)",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "header",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "twistie",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "open": {
@@ -1507,6 +2057,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -1576,27 +2127,51 @@
       ],
       "text_content": "text"
     },
-    "ColorPicker": {
+    "ColorEditor": {
       "a11y": {
         "actions": [
-          "Click",
           "Focus"
         ],
         "author_id": "anchor",
         "invalid": true,
         "name_from": [
-          "accessible-name",
-          "tooltip",
-          "\"Color\""
+          "accessible-name"
         ],
-        "note": "",
-        "role": "ColorWell",
-        "value": "the colour",
+        "note": "A `Group` holding a `Slider` each for saturation/value, hue and alpha, a `SpinButton` per channel box, a `TextInput` for hex (SetValue), and a `Button` per swatch and custom colour. Each slider and box is a tab stop; arrows step it (Shift ×10).",
+        "role": "Group",
+        "value": "the colour (hex)",
         "variants": []
       },
       "abstract": false,
       "bindings": {
+        "custom-colors": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "custom-colors",
+          "provenance": "svelters-egui: the svelters' own (OW6) widget writes custom-colors into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -1608,7 +2183,7 @@
           },
           "natively_normalizes": true,
           "property": "value",
-          "provenance": "svelters-egui: the egui::color_picker::color_edit_button_hsva widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "provenance": "svelters-egui: the svelters' own (OW6) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": true,
           "sync_signals_on_set": [],
           "value": {
@@ -1618,30 +2193,72 @@
       },
       "category": "pickers",
       "chain": [
-        "ColorPicker",
+        "ColorEditor",
         "Widget"
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "The swatch shows the colour; the picker popup follows the theme.",
-      "doc": "A colour swatch; clicking it opens egui's colour picker popup.",
+      "css_note": "Parts: `square`, `hue`, `alpha`, `handle` (`:dragging`, `:focus-visible`), `fields`, `field`, `swatches`, `swatch-cell`. The checkerboard under alpha is painted until `background-image` repeating gradients reach egui.",
+      "doc": "An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
-      "native": "egui::color_picker::color_edit_button_hsva",
-      "paint": "box",
+      "native": "svelters' own (OW6)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "square",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "hue",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "alpha",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "handle",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fields",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "field",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatches",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatch-cell",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "alpha": {
           "construct_only": false,
           "default": "opaque",
-          "doc": "Whether the popup edits alpha (`egui::color_picker::Alpha`): `opaque` hides it, `blend` edits it, `blend-or-additive` also offers additive.",
+          "doc": "`opaque` hides the alpha strip; `blend` and `blend-or-additive` show it.",
           "js": "alpha",
           "native": "alpha",
           "nullable": false,
           "observe": {
             "class": "set_only",
-            "fact": "egui:ColorPicker:alpha",
+            "fact": "egui:ColorEditor:alpha",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -1654,16 +2271,69 @@
           ],
           "writable": true
         },
+        "custom-colors": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`.",
+          "js": "custom-colors",
+          "native": "custom-colors",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ColorEditor:custom-colors",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "fields": {
+          "construct_only": false,
+          "default": "hex rgb",
+          "doc": "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100).",
+          "js": "fields",
+          "native": "fields",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorEditor:fields",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "swatches": {
+          "construct_only": false,
+          "default": null,
+          "doc": "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one.",
+          "js": "swatches",
+          "native": "swatches",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorEditor:swatches",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
         "value": {
           "construct_only": false,
           "default": "#000000",
-          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it.",
+          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted).",
           "js": "value",
           "native": "value",
           "nullable": false,
           "observe": {
             "class": "exact",
-            "fact": "egui:ColorPicker:value",
+            "fact": "egui:ColorEditor:value",
             "mechanism": "widget",
             "verified": "delivery"
           },
@@ -1675,6 +2345,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -1684,10 +2355,26 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user edited the colour; carries it (CSS hex, once per frame while dragging).",
+          "doc": "The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex).",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A commit point: a drag released, a key step, a field set, a swatch picked (§2.4).",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1753,6 +2440,377 @@
       ],
       "text_content": null
     },
+    "ColorPicker": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip",
+          "\"Color\""
+        ],
+        "note": "A `ColorWell` named \"Color\" (or its accessible name) with the hex as its value, `expanded` while open. The popup holds the `color-editor` kind's sliders, boxes and swatches and, with `commit-mode=\"confirm\"`, Save and Cancel; Escape closes it and focus returns.",
+        "role": "ColorWell",
+        "value": "the colour",
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "custom-colors": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "custom-colors",
+          "provenance": "svelters-egui: the svelters' own (OW6; was egui::color_picker::color_edit_button_hsva) widget writes custom-colors into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the svelters' own (OW6; was egui::color_picker::color_edit_button_hsva) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "pickers",
+      "chain": [
+        "ColorPicker",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "The button shows `::part(swatch)` (a checkerboard under alpha) and R14's `::part(chevron)`; the popup is `::part(popup)` holding the `color-editor` kind's parts and `::part(save)`, `::part(cancel)`.",
+      "doc": "A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters' own (OW6; was egui::color_picker::color_edit_button_hsva)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "swatch",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "chevron",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "popup",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "square",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "hue",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "alpha",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "handle",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fields",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "field",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatches",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatch-cell",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "save",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "cancel",
+          "node": false
+        }
+      ],
+      "present": null,
+      "props": {
+        "alpha": {
+          "construct_only": false,
+          "default": "opaque",
+          "doc": "Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor).",
+          "js": "alpha",
+          "native": "alpha",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:alpha",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "opaque",
+            "blend",
+            "blend-or-additive"
+          ],
+          "writable": true
+        },
+        "commit-mode": {
+          "construct_only": false,
+          "default": "live",
+          "doc": "`live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog).",
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:commit-mode",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "live",
+            "confirm"
+          ],
+          "writable": true
+        },
+        "custom-colors": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`.",
+          "js": "custom-colors",
+          "native": "custom-colors",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ColorPicker:custom-colors",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "fields": {
+          "construct_only": false,
+          "default": "hex rgb",
+          "doc": "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100).",
+          "js": "fields",
+          "native": "fields",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:fields",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "swatches": {
+          "construct_only": false,
+          "default": null,
+          "doc": "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one.",
+          "js": "swatches",
+          "native": "swatches",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:swatches",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": "#000000",
+          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ColorPicker:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "provider_states": [],
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user edited the colour; carries it (CSS hex, once per frame while dragging).",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "open",
+          "negated": [],
+          "pseudo": [
+            ":open"
+          ],
+          "source": "kind",
+          "when": "its editor popup is shown"
+        }
+      ],
+      "text_content": null
+    },
     "ComboBox": {
       "a11y": {
         "actions": [
@@ -1772,6 +2830,25 @@
       },
       "abstract": false,
       "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::ComboBox widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -1806,6 +2883,28 @@
       "methods": {},
       "native": "egui::ComboBox",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "The shown text (paint part).",
+          "name": "label",
+          "node": false
+        },
+        {
+          "doc": "The `chevron-down` glyph (paint part).",
+          "name": "chevron",
+          "node": false
+        },
+        {
+          "doc": "The list's surface (paint part, in its own layer).",
+          "name": "popup",
+          "node": false
+        },
+        {
+          "doc": "A row of the list (paint part, repeated: `:current`, `:hover`, `:selected`).",
+          "name": "option",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "hint-text": {
@@ -1823,6 +2922,40 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "max-visible": {
+          "construct_only": false,
+          "default": 30,
+          "doc": "Rows shown before the list scrolls (QComboBox `maxVisibleItems`).",
+          "js": "max-visible",
+          "native": "max-visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ComboBox:max-visible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The list is open; the user opening or closing it changes it, setting it opens or closes it\n(QComboBox `showPopup`/`hidePopup`).",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ComboBox:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "options": {
@@ -1859,12 +2992,51 @@
           "readable": true,
           "type": "i64",
           "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "off",
+          "doc": "The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ComboBox:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "off",
+            "hover",
+            "focused"
+          ],
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked an option, the same one or not (QComboBox `activated`); carries its index.",
+          "handler_result": "none",
+          "js_event": "activate",
+          "name": "activate",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "changed": {
           "args": [
             {
@@ -1877,6 +3049,38 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pick finished the edit (§2.4); carries the index.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "highlight": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The current row of the open list moved (keyboard or pointer; `highlighted`).",
+          "handler_result": "none",
+          "js_event": "highlight",
+          "name": "highlight",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1998,11 +3202,13 @@
       },
       "native": "egui::Popup (menu)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": null
@@ -2019,7 +3225,7 @@
           "accessible-name",
           "the shown date"
         ],
-        "note": "The calendar popup's controls are nodes of their own.",
+        "note": "A `Button` named by the shown date (or its accessible name), `expanded` while open, `has_popup` dialog. The popup holds the calendar's `Grid` (cells named by ISO date) and, with `commit-mode=\"confirm\"`, Save and Cancel buttons; Escape closes it and focus returns to the button.",
         "role": "Button",
         "value": null,
         "variants": []
@@ -2027,6 +3233,10 @@
       "abstract": false,
       "bindings": {
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -2038,7 +3248,7 @@
           },
           "natively_normalizes": true,
           "property": "value",
-          "provenance": "svelters-egui: the egui_extras::DatePickerButton widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "provenance": "svelters-egui: the svelters' own (OW6; was egui_extras::DatePickerButton) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": true,
           "sync_signals_on_set": [],
           "value": {
@@ -2053,13 +3263,80 @@
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "The calendar popup follows the theme.",
-      "doc": "A button showing a date; clicking it opens a calendar popup (Save/Cancel).",
+      "css_note": "The button: R4's field look with R14's chevron (`::part(chevron)`); the popup is `::part(popup)` (OW3's surface) holding the `calendar` kind's parts (`header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`) and `::part(save)`, `::part(cancel)`.",
+      "doc": "A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode=\"immediate\"`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
-      "native": "egui_extras::DatePickerButton",
-      "paint": "box",
+      "native": "svelters' own (OW6; was egui_extras::DatePickerButton)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "chevron",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "popup",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "header",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "prev",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "next",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "month",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "year",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "grid",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "day",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "weekday",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "week-number",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "save",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "cancel",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "calendar-week": {
@@ -2079,6 +3356,72 @@
           "type": "bool",
           "writable": true
         },
+        "commit-mode": {
+          "construct_only": false,
+          "default": "confirm",
+          "doc": "`confirm`: a picked day is pending until Save (Enter saves, Cancel or Escape drops it); `immediate`: a pick commits and closes the popup (Qt).",
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:commit-mode",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "confirm",
+            "immediate"
+          ],
+          "writable": true
+        },
+        "day-parts": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`.",
+          "js": "day-parts",
+          "native": "day-parts",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:day-parts",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "first-day": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "The weekday the grid starts on; `auto` is the locale's (Monday until IN1).",
+          "js": "first-day",
+          "native": "first-day",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:first-day",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "writable": true
+        },
         "format": {
           "construct_only": false,
           "default": "%Y-%m-%d",
@@ -2096,10 +3439,78 @@
           "type": "string",
           "writable": true
         },
+        "max": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit.",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit.",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "navigation": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the header with the previous/next month buttons and the month and year.",
+          "js": "navigation",
+          "native": "navigation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:navigation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows and roves the calendar but never picks (Qt's `NoSelection`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "value": {
           "construct_only": false,
           "default": "",
-          "doc": "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day and pressing Save changes it.",
+          "doc": "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day (and, with `commit-mode=\"confirm\"`, pressing Save) changes it.",
           "js": "value",
           "native": "value",
           "nullable": false,
@@ -2112,11 +3523,35 @@
           "readable": true,
           "type": "string",
           "writable": true
+        },
+        "weekday-format": {
+          "construct_only": false,
+          "default": "short",
+          "doc": "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row).",
+          "js": "weekday-format",
+          "native": "weekday-format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:weekday-format",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "narrow",
+            "short",
+            "long",
+            "none"
+          ],
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -2130,6 +3565,42 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pick was applied (§2.4): Save, or the pick itself with `commit-mode=\"immediate\"`.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "page-changed": {
+          "args": [
+            {
+              "name": "year",
+              "type": "i64"
+            },
+            {
+              "name": "month",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user moved the calendar to another month.",
+          "handler_result": "none",
+          "js_event": "page-changed",
+          "name": "page-changed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -2191,6 +3662,26 @@
           ],
           "source": "scene",
           "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "open",
+          "negated": [],
+          "pseudo": [
+            ":open"
+          ],
+          "source": "kind",
+          "when": "its calendar popup is shown"
+        },
+        {
+          "name": "read-only",
+          "negated": [
+            ":read-write"
+          ],
+          "pseudo": [
+            ":read-only"
+          ],
+          "source": "kind",
+          "when": "`read-only` is set"
         }
       ],
       "text_content": null
@@ -2254,8 +3745,97 @@
       "methods": {},
       "native": "egui::DragValue",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "The number's text (paint part).",
+          "name": "text",
+          "node": false
+        },
+        {
+          "doc": "The step buttons (paint parts with their own `:hover`/`:active`/`:disabled`).",
+          "name": "inc",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "dec",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
+        "accelerated": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Holding a step button speeds it up (Qt `accelerated`).",
+          "js": "accelerated",
+          "native": "accelerated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:accelerated",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "buttons": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows the `dec`/`inc` step buttons at the right end (Qt `buttonSymbols`).",
+          "js": "buttons",
+          "native": "buttons",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:buttons",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode (Qt `keyboardTracking=false`): `value` moves only at a commit point.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "correction": {
+          "construct_only": false,
+          "default": "nearest",
+          "doc": "An out-of-range typed value commits to the `nearest` bound (default) or the `previous` value.",
+          "js": "correction",
+          "native": "correction",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:correction",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "nearest",
+            "previous"
+          ],
+          "writable": true
+        },
         "decimals": {
           "construct_only": false,
           "default": null,
@@ -2271,6 +3851,40 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "formatter": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A registered formatter (`numfmt::register_formatter`; Qt `textFromValue`).",
+          "js": "formatter",
+          "native": "formatter",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:formatter",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "group-separator": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The locale's group separators (Qt `showGroupSeparator`).",
+          "js": "group-separator",
+          "native": "group-separator",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:group-separator",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "max": {
@@ -2307,6 +3921,40 @@
           "type": "f64",
           "writable": true
         },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown in value units; 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "parser": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A registered parser (`numfmt::register_parser`; Qt `valueFromText`).",
+          "js": "parser",
+          "native": "parser",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:parser",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "prefix": {
           "construct_only": false,
           "default": "",
@@ -2317,6 +3965,40 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:DragValue:prefix",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shown and focusable, not changed by the user (Qt `readOnly`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "special-value-text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Shown instead of the number at `min` (Qt `specialValueText`, e.g. \"Auto\").",
+          "js": "special-value-text",
+          "native": "special-value-text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:special-value-text",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -2339,6 +4021,44 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "One step (Up/Down, a step button, a wheel notch; Qt `singleStep`).",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "step-type": {
+          "construct_only": false,
+          "default": "default",
+          "doc": "`default`, or `adaptive` (Qt AdaptiveDecimalStepType: one decade below the value).",
+          "js": "step-type",
+          "native": "step-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:step-type",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "default",
+            "adaptive"
+          ],
           "writable": true
         },
         "suffix": {
@@ -2374,11 +4094,51 @@
           "readable": true,
           "type": "f64",
           "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default: over the field while it has focus), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
+          "writable": true
+        },
+        "wrap": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Stepping past one end goes to the other (Qt `wrapping`).",
+          "js": "wrap",
+          "native": "wrap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:wrap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -2430,6 +4190,38 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "§2.4's live signal (as `changed`).",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Enter in the field; carries the value.",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -2507,7 +4299,27 @@
         "variants": []
       },
       "abstract": false,
-      "bindings": {},
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-egui: the egui::Frame + taffy flexbox widget writes checked into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
       "category": "containers",
       "chain": [
         "Frame",
@@ -2537,8 +4349,59 @@
       "methods": {},
       "native": "egui::Frame + taffy flexbox",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "caption",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "indicator",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "mark",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
+        "checkable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "WIDGET-PARITY §2.16 (QGroupBox `checkable`): a check before the caption; unchecked\ndisables the content.",
+          "js": "checkable",
+          "native": "checkable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Frame:checkable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "checked": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Checked (`bind:checked`), when `checkable`.",
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Frame:checked",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "frame-style": {
           "construct_only": false,
           "default": "group",
@@ -2586,7 +4449,25 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
-      "signals": {},
+      "provider_states": [],
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user toggled the check; carries the new state.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
       "states": [
         {
           "name": "hovered",
@@ -2679,6 +4560,7 @@
       "methods": {},
       "native": "taffy::Style (CSS grid)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "align-items": {
@@ -2817,6 +4699,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -2902,6 +4785,7 @@
       "methods": {},
       "native": "egui::Hyperlink",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "new-tab": {
@@ -2959,6 +4843,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -3076,12 +4961,13 @@
       "children": null,
       "css_hidden": [],
       "css_note": "The glyph takes `color`. With `frame`, it is drawn as a button and `:focus` matches.",
-      "doc": "A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
+      "doc": "An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Label / egui::Button (icon font glyph)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "family": {
@@ -3155,7 +5041,7 @@
         "name": {
           "construct_only": false,
           "default": "",
-          "doc": "The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name.",
+          "doc": "An icon registry key (`file.save`, `debug.step-over`; `svelters_egui::icons`) when `family` is `icons` and the key is registered: drawn from its SVG masters (optical size by physical pixels), tinted by CSS `color`, with the `--icon-subject`/`--icon-accent`/`--icon-badge` colour slots. Otherwise the glyph's name in the family's name table (`svelters_egui::fonts::register_icons`). Also the default accessible name.",
           "js": "name",
           "native": "name",
           "nullable": false,
@@ -3189,7 +5075,7 @@
         "size": {
           "construct_only": false,
           "default": null,
-          "doc": "Font size in points; null for the body size.",
+          "doc": "Font size in points; null for the body size (16 for a registry icon).",
           "js": "size",
           "native": "size",
           "nullable": true,
@@ -3241,6 +5127,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -3369,6 +5256,7 @@
       "methods": {},
       "native": "egui::Image",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "fit": {
@@ -3416,6 +5304,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -3550,9 +5439,21 @@
       "doc": "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "close": {
+          "dispatch": "generated",
+          "doc": "`close(result?)`: closes it (applied at the next pass) and emits `closed(result)` (QDialog `done`): `\"accept\"` also emits `accepted`, `\"reject\"` `rejected`.",
+          "native": "close",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
       "native": "egui::Window",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "closable": {
@@ -3712,7 +5613,19 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
+        "accepted": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"accept\"` (`close(\"accept\")`).",
+          "handler_result": "none",
+          "js_event": "accepted",
+          "name": "accepted",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "changed": {
           "args": [
             {
@@ -3721,7 +5634,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "doc": "The user (or `close`) opened or closed it; carries `open`.",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
@@ -3730,12 +5643,28 @@
           "sync_required": false
         },
         "closed": {
-          "args": [],
+          "args": [
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popdown`) closed it.",
+          "doc": "It closed; carries the result: `\"reject\"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `\"\"` when `open` was set false.",
           "handler_result": "none",
           "js_event": "closed",
           "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "rejected": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"reject\"`: dismissed by the user or `close(\"reject\")`.",
+          "handler_result": "none",
+          "js_event": "rejected",
+          "name": "rejected",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -3789,11 +5718,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -3849,8 +5780,32 @@
       "methods": {},
       "native": "egui::Label",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
+        "elide": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "WG6 QW13: cut one line with `…` to the width: `none`, `start`, `middle`, `end`.",
+          "js": "elide",
+          "native": "elide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:elide",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "start",
+            "middle",
+            "end"
+          ],
+          "writable": true
+        },
         "font-weight": {
           "construct_only": false,
           "default": 400,
@@ -3866,6 +5821,23 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "for": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The `anchor` of the control this label names (Qt's buddy): a click focuses it.",
+          "js": "for",
+          "native": "for",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:for",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
           "writable": true
         },
         "selectable": {
@@ -3928,6 +5900,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -4050,6 +6023,7 @@
       "methods": {},
       "native": "egui::containers::menu::{MenuButton, SubMenuButton}",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "label": {
@@ -4073,6 +6047,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "label"
@@ -4120,11 +6095,13 @@
       "methods": {},
       "native": "egui::MenuBar",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -4267,6 +6244,7 @@
       },
       "native": "egui::containers::menu::MenuButton",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "active": {
@@ -4307,6 +6285,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -4413,6 +6392,7 @@
       "methods": {},
       "native": "egui menu entry",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "accessible-name": {
@@ -4504,6 +6484,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": null
@@ -4535,11 +6516,13 @@
       "methods": {},
       "native": "egui::Separator",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": null
@@ -4603,9 +6586,21 @@
       "doc": "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "close": {
+          "dispatch": "generated",
+          "doc": "`close(result?)`: closes it (applied at the next pass) and emits `closed(result)` (QDialog `done`): `\"accept\"` also emits `accepted`, `\"reject\"` `rejected`.",
+          "native": "close",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
       "native": "egui::Modal",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "dismissable": {
@@ -4642,6 +6637,23 @@
           "type": "bool",
           "writable": true
         },
+        "resizable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The user can resize it from its right and bottom edges and its size grip (`::part(grip)`, Qt's `sizeGripEnabled`); the content is laid out at that size.",
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Modal:resizable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "title": {
           "construct_only": false,
           "default": "",
@@ -4663,7 +6675,19 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
+        "accepted": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"accept\"` (`close(\"accept\")`).",
+          "handler_result": "none",
+          "js_event": "accepted",
+          "name": "accepted",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "changed": {
           "args": [
             {
@@ -4672,7 +6696,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "doc": "The user (or `close`) opened or closed it; carries `open`.",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
@@ -4681,12 +6705,28 @@
           "sync_required": false
         },
         "closed": {
-          "args": [],
+          "args": [
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popdown`) closed it.",
+          "doc": "It closed; carries the result: `\"reject\"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `\"\"` when `open` was set false.",
           "handler_result": "none",
           "js_event": "closed",
           "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "rejected": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"reject\"`: dismissed by the user or `close(\"reject\")`.",
+          "handler_result": "none",
+          "js_event": "rejected",
+          "name": "rejected",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -4764,6 +6804,7 @@
       "methods": {},
       "native": "egui panel look (`Visuals::panel_fill`, separator, resize grip) + taffy flexbox",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "resizable": {
@@ -4844,6 +6885,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -4997,6 +7039,7 @@
       },
       "native": "egui::Popup",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "autohide": {
@@ -5060,6 +7103,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -5123,6 +7167,18 @@
       "methods": {},
       "native": "egui::ProgressBar",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fill",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "animate": {
@@ -5142,6 +7198,23 @@
           "type": "bool",
           "writable": true
         },
+        "format": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The label's text when `text` is empty: `%p` percent, `%v` value, `%m` maximum (`%%` a\npercent sign); shown when set or with `show-percentage` (`%p%`).",
+          "js": "format",
+          "native": "format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:format",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "fraction": {
           "construct_only": false,
           "default": 0.0,
@@ -5157,6 +7230,95 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "indeterminate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Busy, as `animate` (and `:indeterminate`); also when `value` is set and `min == max`.",
+          "js": "indeterminate",
+          "native": "indeterminate",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:indeterminate",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Fills from the end (right, or top when vertical) instead.",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "max": {
+          "construct_only": false,
+          "default": 100.0,
+          "doc": "",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "The bar's axis (P7: `[orientation=\"vertical\"]` styles it).",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
           "writable": true
         },
         "show-percentage": {
@@ -5192,11 +7354,29 @@
           "readable": true,
           "type": "string",
           "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": null,
+          "doc": "WIDGET-PARITY §2.9: the value in `min..max`, the alternative to `fraction` (Qt's form).",
+          "js": "value",
+          "native": "value",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -5322,6 +7502,28 @@
       "methods": {},
       "native": "egui::RadioButton",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "indicator",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "dot",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "icon",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "checked": {
@@ -5353,6 +7555,23 @@
             "fact": "egui:RadioButton:group",
             "mechanism": "widget",
             "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "icon": {
+          "construct_only": false,
+          "default": "",
+          "doc": "WIDGET-PARITY §2.3: an icon before the caption (a key, or `family:name`).",
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RadioButton:icon",
+            "mechanism": "scene",
+            "verified": "weak"
           },
           "readable": true,
           "type": "string",
@@ -5396,6 +7615,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -5564,8 +7784,67 @@
       "methods": {},
       "native": "egui::RangeSlider",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "range",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "rest",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "low-thumb",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "high-thumb",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "tick",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "low-value",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "high-value",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode: `low`/`high` move at the release.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "high": {
           "construct_only": false,
           "default": 100.0,
@@ -5581,6 +7860,23 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Max at the start.",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "low": {
@@ -5634,6 +7930,65 @@
           "type": "f64",
           "writable": true
         },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal` (default) or `vertical`.",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown; 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scale": {
+          "construct_only": false,
+          "default": "linear",
+          "doc": "`linear` (default) or `log`.",
+          "js": "scale",
+          "native": "scale",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:scale",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "writable": true
+        },
         "show-value": {
           "construct_only": false,
           "default": true,
@@ -5684,11 +8039,74 @@
           "readable": true,
           "type": "string",
           "writable": true
+        },
+        "tick-interval": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Between ticks; 0 for `page-step`.",
+          "js": "tick-interval",
+          "native": "tick-interval",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:tick-interval",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "ticks": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "Tick marks: `none`, `before`, `after`, `both`.",
+          "js": "ticks",
+          "native": "ticks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:ticks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "before",
+            "after",
+            "both"
+          ],
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -5706,6 +8124,17 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -5728,6 +8157,17 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -5837,6 +8277,7 @@
       "methods": {},
       "native": "svelters text run",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "accessible-name": {
@@ -5894,6 +8335,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -5987,6 +8429,7 @@
       "methods": {},
       "native": "egui::ScrollArea + taffy flexbox (content)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "direction": {
@@ -6049,6 +8492,12 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "changed": {
           "args": [
@@ -6176,6 +8625,7 @@
       "methods": {},
       "native": "svelters' own (Scrollable; OW2)",
       "paint": "provider",
+      "parts": [],
       "present": null,
       "props": {
         "max": {
@@ -6288,6 +8738,12 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "changed": {
           "args": [
@@ -6384,6 +8840,7 @@
       "methods": {},
       "native": "egui::Separator",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "orientation": {
@@ -6411,6 +8868,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -6504,6 +8962,7 @@
       "methods": {},
       "native": "egui::Sides (taffy flex row, space-between)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "align-items": {
@@ -6568,6 +9027,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -6643,6 +9103,10 @@
       "abstract": false,
       "bindings": {
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -6676,8 +9140,96 @@
       "methods": {},
       "native": "egui::Slider",
       "paint": "stock",
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fill",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "rest",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "thumb",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "tick",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "mark-label",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "value-box",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode (Qt `tracking=false`): `value` moves at the release, not while dragging.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Max at the start (Qt `invertedAppearance`).",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "marks": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Marks on the rail, drawn as ticks (with labels) instead of the `tick-interval` ticks:\nvalues separated by commas, each optionally `value:label` (`\"0:Low, 50, 100:High\"`).",
+          "js": "marks",
+          "native": "marks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:marks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "max": {
           "construct_only": false,
           "default": 100.0,
@@ -6712,6 +9264,65 @@
           "type": "f64",
           "writable": true
         },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal` (default) or `vertical` (max at the top).",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown and `track-click=\"page\"` move this much (Qt `pageStep`); 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scale": {
+          "construct_only": false,
+          "default": "linear",
+          "doc": "`linear` (default) or `log` (both ends > 0).",
+          "js": "scale",
+          "native": "scale",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:scale",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "writable": true
+        },
         "show-value": {
           "construct_only": false,
           "default": true,
@@ -6722,6 +9333,23 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:Slider:show-value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "snap-to-marks": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Dragging snaps to the nearest mark.",
+          "js": "snap-to-marks",
+          "native": "snap-to-marks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:snap-to-marks",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -6763,6 +9391,67 @@
           "type": "string",
           "writable": true
         },
+        "tick-interval": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Between ticks; 0 for `page-step` (Qt `tickInterval`).",
+          "js": "tick-interval",
+          "native": "tick-interval",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:tick-interval",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "ticks": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "Tick marks: `none` (default), `before` (above or left), `after`, `both` (Qt `tickPosition`).",
+          "js": "ticks",
+          "native": "ticks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:ticks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "before",
+            "after",
+            "both"
+          ],
+          "writable": true
+        },
+        "track-click": {
+          "construct_only": false,
+          "default": "jump",
+          "doc": "A press on the track off the thumb: `jump` there (default) or `page` toward it.",
+          "js": "track-click",
+          "native": "track-click",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:track-click",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "jump",
+            "page"
+          ],
+          "writable": true
+        },
         "value": {
           "construct_only": false,
           "default": 0.0,
@@ -6779,11 +9468,34 @@
           "readable": true,
           "type": "f64",
           "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -6797,6 +9509,22 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -6819,6 +9547,38 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -6929,11 +9689,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -6968,6 +9730,7 @@
       "methods": {},
       "native": "egui::Spinner",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "size": {
@@ -7008,6 +9771,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -7142,6 +9906,7 @@
       "methods": {},
       "native": "two panes + a draggable divider (egui drag sense)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "collapsible": {
@@ -7293,6 +10058,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -7441,6 +10207,7 @@
       "methods": {},
       "native": "synthetic (one child shown at a time)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "homogeneous": {
@@ -7515,6 +10282,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -7621,6 +10389,18 @@
       "methods": {},
       "native": "synthetic (egui toggle switch, AccessKit role `Switch`)",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "knob",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "active": {
@@ -7661,6 +10441,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -7797,6 +10578,7 @@
       "methods": {},
       "native": "taffy flexbox (a tab-view page)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "closable": {
@@ -7837,6 +10619,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "close-requested": {
           "args": [],
@@ -7962,6 +10745,7 @@
       "methods": {},
       "native": "tab bar (egui selectable labels) + the selected page",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "selected": {
@@ -7985,6 +10769,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -8218,6 +11003,7 @@
       },
       "native": "egui_table::Table",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "current": {
@@ -8383,6 +11169,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "activated": {
           "args": [
@@ -8594,6 +11381,7 @@
       },
       "native": "egui_table::Column",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "align": {
@@ -8712,6 +11500,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "editor-bind": {
           "args": [
@@ -8843,6 +11632,28 @@
       },
       "native": "egui::TextEdit",
       "paint": "stock",
+      "parts": [
+        {
+          "doc": "`::placeholder`: `color`, `font-*`.",
+          "name": "placeholder",
+          "node": false
+        },
+        {
+          "doc": "`::selection`: `background-color`, `color`.",
+          "name": "selection",
+          "node": false
+        },
+        {
+          "doc": "`::part(caret)`: `background-color`, `width`.",
+          "name": "caret",
+          "node": false
+        },
+        {
+          "doc": "`::part(preedit)`: `color`, the underline.",
+          "name": "preedit",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "can-copy": {
@@ -9199,6 +12010,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -9445,7 +12257,7 @@
         },
         "show": {
           "dispatch": "generated",
-          "doc": "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
+          "doc": "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
           "native": "show",
           "params": [],
           "returns": {
@@ -9454,8 +12266,9 @@
           }
         }
       },
-      "native": "egui::Area (foreground) of egui::Frame toasts",
+      "native": "svelters' own toasts in an egui::Area (foreground)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "corner": {
@@ -9502,7 +12315,28 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
+        "action": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "index",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`).",
+          "handler_result": "none",
+          "js_event": "action",
+          "name": "action",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "clicked": {
           "args": [
             {
@@ -9531,7 +12365,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `method` (`dismiss`/`clear`).",
+          "doc": "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `action` (one of its actions), `method` (`dismiss`/`clear`).",
           "handler_result": "none",
           "js_event": "closed",
           "name": "closed",
@@ -9650,6 +12484,7 @@
       "methods": {},
       "native": "egui::Button (selected)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "checked": {
@@ -9703,6 +12538,23 @@
           "type": "bool",
           "writable": true
         },
+        "group": {
+          "construct_only": false,
+          "default": "",
+          "doc": "WIDGET-PARITY §2.1 (QButtonGroup): the sibling toggle buttons with the same `group` form an\nexclusive set (checking one unchecks the others) and one Tab stop the arrow keys move in.",
+          "js": "group",
+          "native": "group",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToggleButton:group",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "radio": {
           "construct_only": false,
           "default": false,
@@ -9741,6 +12593,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -9846,7 +12699,27 @@
         "variants": []
       },
       "abstract": false,
-      "bindings": {},
+      "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-egui: the svelters_egui::kinds::treeview (a virtual-list with tree rows) widget writes current into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
       "category": "views",
       "chain": [
         "TreeView",
@@ -9854,7 +12727,7 @@
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "Style the rows: each row is the element its row template renders.",
+      "css_note": "As `virtual-list` (`::part(row)` per row, `placeholder`, `drop-line`, `ghost`, the bar), plus `:has-children` and `:expanded` on rows and the `::part(twistie)` chevron.",
       "doc": "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
       "interface": false,
       "lifetime": "owned",
@@ -9881,7 +12754,7 @@
         },
         "scrollTo": {
           "dispatch": "generated",
-          "doc": "`scrollTo(pos)`: scrolls the row into view.",
+          "doc": "`scrollTo(pos, hint?)`: scrolls the row into view; `hint`: `nearest` (default), `top`, `bottom`, `center`.",
           "native": "scrollTo",
           "params": [],
           "returns": {
@@ -9942,8 +12815,48 @@
       },
       "native": "svelters_egui::kinds::treeview (a virtual-list with tree rows)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
+        "current": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "OW5a1b: the cursor's row id (`bind:current`), -1 for none. Setting it moves the cursor without selecting.",
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:TreeView:current",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "expand-on": {
+          "construct_only": false,
+          "default": "twistie",
+          "doc": "What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`).",
+          "js": "expand-on",
+          "native": "expand-on",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:expand-on",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "twistie",
+            "click",
+            "double-click"
+          ],
+          "writable": true
+        },
         "indent": {
           "construct_only": false,
           "default": 16,
@@ -9959,6 +12872,23 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "root-decorated": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Level-0 rows show their twistie (Qt's `rootIsDecorated`).",
+          "js": "root-decorated",
+          "native": "root-decorated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:root-decorated",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "row-drag-type": {
@@ -10015,7 +12945,7 @@
         "selection": {
           "construct_only": false,
           "default": "single",
-          "doc": "`single` or `multi` (Shift ranges, Ctrl toggles); `none`: rows are not selectable.",
+          "doc": "`single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable.",
           "js": "selection",
           "native": "selection",
           "nullable": false,
@@ -10030,14 +12960,39 @@
           "values": [
             "none",
             "single",
-            "multi"
+            "multi",
+            "toggle",
+            "range"
           ],
+          "writable": true
+        },
+        "uniform-rows": {
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`).",
+          "js": "uniform-rows",
+          "native": "uniform-rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:uniform-rows",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "activate": {
           "args": [
@@ -10154,6 +13109,66 @@
           "sync": false,
           "sync_required": false
         },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "handler_result": "none",
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy).",
+          "handler_result": "none",
+          "js_event": "row-context",
+          "name": "row-context",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-hovered": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`).",
+          "handler_result": "none",
+          "js_event": "row-hovered",
+          "name": "row-hovered",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "selection-changed": {
           "args": [],
           "disconnect_on_drop": true,
@@ -10243,6 +13258,25 @@
       },
       "abstract": false,
       "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-egui: the svelters_egui::kinds::virtuallist (recycled row slots over a VScroll) widget writes current into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -10289,7 +13323,7 @@
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "Style the rows: each row is the element its row template renders.",
+      "css_note": "Each row is `::part(row)` in its own state (`:hover`, `:active`, `:selected`, `:current`, `:focus-visible`, `:drop-target`, `:nth-child()`; `:focus-within` stays the list's) and the element its row template renders. Other parts: `placeholder`, `drop-line`, `ghost` (the drag label), `scrollbar-y`, `thumb-y`. The list is `:drop-target` while a row drag it takes is over it.",
       "doc": "A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows.",
       "interface": false,
       "lifetime": "owned",
@@ -10316,7 +13350,7 @@
         },
         "scrollTo": {
           "dispatch": "generated",
-          "doc": "`scrollTo(pos)`: scrolls the item into view.",
+          "doc": "`scrollTo(pos, hint?)`: scrolls the item into view; `hint` (Qt `ScrollHint`): `nearest` (the default, the least scroll), `top`, `bottom` or `center`.",
           "native": "scrollTo",
           "params": [],
           "returns": {
@@ -10347,8 +13381,43 @@
       },
       "native": "svelters_egui::kinds::virtuallist (recycled row slots over a VScroll)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
+        "current": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "OW5a1b: the cursor's item id (`bind:current`), -1 for none. Setting it moves the cursor without selecting.",
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:VirtualList:current",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "internal-move": {
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: rows reorder by drag within the list (Qt `InternalMove`): a drop raises `move(from, to)`.",
+          "js": "internal-move",
+          "native": "internal-move",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:internal-move",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "layout": {
           "construct_only": false,
           "default": "list",
@@ -10368,6 +13437,40 @@
             "list",
             "grid"
           ],
+          "writable": true
+        },
+        "row-drag-type": {
+          "construct_only": false,
+          "default": "",
+          "doc": "OW5a1b: non-empty: rows drag, as a payload of this type (the dragged item ids, a line each) plus `text/plain` (their labels).",
+          "js": "row-drag-type",
+          "native": "row-drag-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:row-drag-type",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-drop-types": {
+          "construct_only": false,
+          "default": "",
+          "doc": "OW5a1b: non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`.",
+          "js": "row-drop-types",
+          "native": "row-drop-types",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:row-drop-types",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
           "writable": true
         },
         "row-height": {
@@ -10425,7 +13528,7 @@
         "selection": {
           "construct_only": false,
           "default": "single",
-          "doc": "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable.",
+          "doc": "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `toggle`: a click toggles its row, no modifier (checklists); `range`: one contiguous run, Shift extends; `none`: rows are not selectable.",
           "js": "selection",
           "native": "selection",
           "nullable": false,
@@ -10440,14 +13543,39 @@
           "values": [
             "none",
             "single",
-            "multi"
+            "multi",
+            "toggle",
+            "range"
           ],
+          "writable": true
+        },
+        "uniform-rows": {
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`).",
+          "js": "uniform-rows",
+          "native": "uniform-rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:uniform-rows",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "activate": {
           "args": [
@@ -10491,6 +13619,130 @@
           "name": "bind",
           "phases": [],
           "sync": true,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: Ctrl+C on the focused list: copy the selected items (their ids).",
+          "handler_result": "none",
+          "js_event": "copy",
+          "name": "copy",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drop-row": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "where",
+              "type": "string"
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: a drag was dropped `before`, `after` or `into` item `id` (-1: below the last row), as the entry of `type` it took.",
+          "handler_result": "none",
+          "js_event": "drop-row",
+          "name": "drop-row",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "move": {
+          "args": [
+            {
+              "name": "from",
+              "type": "i64"
+            },
+            {
+              "name": "to",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b (`internal-move`): the row at `from` was dragged to the gap before position `to` (`count()`: the end); move it.",
+          "handler_result": "none",
+          "js_event": "move",
+          "name": "move",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "handler_result": "none",
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy).",
+          "handler_result": "none",
+          "js_event": "row-context",
+          "name": "row-context",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-hovered": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`).",
+          "handler_result": "none",
+          "js_event": "row-hovered",
+          "name": "row-hovered",
+          "phases": [],
+          "sync": false,
           "sync_required": false
         },
         "select": {
@@ -10620,6 +13872,7 @@
       },
       "native": "egui::Widget",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "accessible-name": {
@@ -11081,6 +14334,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "animationend": {
           "args": [
@@ -11228,10 +14482,14 @@
             {
               "name": "dropped",
               "type": "bool"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drag source: the drag ended; `dropped` is true when a target took it.",
+          "doc": "Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped).",
           "handler_result": "none",
           "js_event": "drag-end",
           "name": "drag-end",
@@ -11283,10 +14541,14 @@
             {
               "name": "y",
               "type": "f64"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type.",
           "handler_result": "none",
           "js_event": "drop",
           "name": "drop",
@@ -11654,6 +14916,7 @@
       },
       "native": "egui::ViewportBuilder",
       "paint": "box",
+      "parts": [],
       "present": "present",
       "props": {
         "default-height": {
@@ -11745,6 +15008,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "click": {
           "args": [
@@ -12160,6 +15424,57 @@
   "style": {
     "dialect": "none",
     "engine": "backend",
+    "media_features": [
+      {
+        "name": "width",
+        "type": "range",
+        "values": []
+      },
+      {
+        "name": "height",
+        "type": "range",
+        "values": []
+      },
+      {
+        "name": "aspect-ratio",
+        "type": "range",
+        "values": []
+      },
+      {
+        "name": "orientation",
+        "type": "discrete",
+        "values": [
+          "portrait",
+          "landscape"
+        ]
+      },
+      {
+        "name": "prefers-color-scheme",
+        "type": "discrete",
+        "values": [
+          "light",
+          "dark"
+        ]
+      },
+      {
+        "name": "prefers-contrast",
+        "type": "discrete",
+        "values": [
+          "no-preference",
+          "more",
+          "less",
+          "custom"
+        ]
+      },
+      {
+        "name": "prefers-reduced-motion",
+        "type": "discrete",
+        "values": [
+          "no-preference",
+          "reduce"
+        ]
+      }
+    ],
     "properties": {
       "align-items": {
         "kinds": [
@@ -12201,9 +15516,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12267,10 +15584,16 @@
       },
       "border-bottom-left-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-bottom-right-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-bottom-style": {
@@ -12291,6 +15614,9 @@
       },
       "border-bottom-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-color": {
@@ -12319,10 +15645,16 @@
       },
       "border-left-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-right-color": {
@@ -12347,6 +15679,9 @@
       },
       "border-right-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-top-color": {
@@ -12355,10 +15690,16 @@
       },
       "border-top-left-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-top-right-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-top-style": {
@@ -12379,10 +15720,16 @@
       },
       "border-top-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "bottom": {
@@ -12394,9 +15741,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12453,6 +15802,9 @@
         ],
         "native": "column-gap",
         "prop": "column-gap",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "collapsing-header",
@@ -12529,12 +15881,17 @@
         ],
         "native": "flex-basis",
         "prop": "flex-basis",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12608,12 +15965,17 @@
         ],
         "native": "flex-grow",
         "prop": "flex-grow",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12661,12 +16023,17 @@
         ],
         "native": "flex-shrink",
         "prop": "flex-shrink",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12739,6 +16106,9 @@
       },
       "font-size": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "font-style": {
@@ -12763,6 +16133,9 @@
         ],
         "native": "gap",
         "prop": "gap",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "collapsing-header",
@@ -12802,12 +16175,17 @@
         ],
         "native": "height",
         "prop": "height",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12904,9 +16282,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12982,12 +16362,17 @@
         ],
         "native": "max-height",
         "prop": "max-height",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13035,12 +16420,17 @@
         ],
         "native": "max-width",
         "prop": "max-width",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13088,12 +16478,17 @@
         ],
         "native": "min-height",
         "prop": "min-height",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13141,12 +16536,17 @@
         ],
         "native": "min-width",
         "prop": "min-width",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13190,6 +16590,10 @@
       },
       "opacity": {
         "decl_type": "number",
+        "range": {
+          "max": 1.0,
+          "min": 0.0
+        },
         "via": "css"
       },
       "outline-color": {
@@ -13218,6 +16622,9 @@
       },
       "outline-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "overflow-x": {
@@ -13253,22 +16660,37 @@
       },
       "padding": {
         "decl_type": "insets",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-bottom": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-left": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-right": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-top": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "position": {
@@ -13280,9 +16702,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13338,9 +16762,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13389,6 +16815,9 @@
         ],
         "native": "row-gap",
         "prop": "row-gap",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "collapsing-header",
@@ -13406,6 +16835,9 @@
       },
       "scroll-margin": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "scrollbar-gutter": {
@@ -13465,9 +16897,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13522,9 +16956,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13584,12 +17020,17 @@
         ],
         "native": "width",
         "prop": "width",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13632,6 +17073,28 @@
         "via": "setter"
       }
     },
+    "provider_states": [
+      {
+        "name": "sv.overflow-bottom",
+        "namespace": "sv",
+        "state": "overflow-bottom"
+      },
+      {
+        "name": "sv.overflow-left",
+        "namespace": "sv",
+        "state": "overflow-left"
+      },
+      {
+        "name": "sv.overflow-right",
+        "namespace": "sv",
+        "state": "overflow-right"
+      },
+      {
+        "name": "sv.overflow-top",
+        "namespace": "sv",
+        "state": "overflow-top"
+      }
+    ],
     "pseudo_classes": [
       {
         "name": "hover",
@@ -13787,10 +17250,12 @@
     "b": "Bold",
     "box": "Box",
     "button": "Button",
+    "calendar": "Calendar",
     "canvas": "Canvas",
     "checkbox": "Checkbox",
     "code": "Code",
     "collapsing-header": "CollapsingHeader",
+    "color-editor": "ColorEditor",
     "color-picker": "ColorPicker",
     "combo-box": "ComboBox",
     "context-menu": "ContextMenu",
@@ -13834,5 +17299,1227 @@
     "tree-view": "TreeView",
     "virtual-list": "VirtualList",
     "window": "Window"
+  },
+  "theme": {
+    "densities": [
+      "compact",
+      "default",
+      "comfortable"
+    ],
+    "prefix": "--sv-",
+    "sets": [
+      "dark",
+      "light",
+      "hc-dark",
+      "hc-light"
+    ],
+    "source": "crates/svelters-egui/src/theme (ROLES, COMPONENT_*, theme/data/*.json)",
+    "tokens": {
+      "accent": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#000000",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "button.background"
+      },
+      "accent-fg": {
+        "layer": "role",
+        "type": "color",
+        "value": "#FFFFFF",
+        "vscode": "button.foreground"
+      },
+      "accent-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#026EC1",
+          "hc-dark": "#000000",
+          "hc-light": "#0F4A85",
+          "light": "#0258A8"
+        },
+        "vscode": "button.hoverBackground"
+      },
+      "activitybar-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "48px"
+      },
+      "badge": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#616161",
+          "hc-dark": "#000000",
+          "hc-light": "#0F4A85",
+          "light": "#CCCCCC"
+        },
+        "vscode": "badge.background"
+      },
+      "badge-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#F8F8F8",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#FFFFFF",
+          "light": "#3B3B3B"
+        },
+        "vscode": "badge.foreground"
+      },
+      "bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#181818",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        },
+        "vscode": "sideBar.background"
+      },
+      "border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2B2B2B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#E5E5E5"
+        },
+        "vscode": "sideBar.border"
+      },
+      "border-widget": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#E5E5E5"
+        },
+        "vscode": "widget.border"
+      },
+      "breakpoint-lg": {
+        "layer": "shape",
+        "type": "length",
+        "value": "1280px"
+      },
+      "breakpoint-md": {
+        "layer": "shape",
+        "type": "length",
+        "value": "960px"
+      },
+      "breakpoint-sm": {
+        "layer": "shape",
+        "type": "length",
+        "value": "640px"
+      },
+      "breakpoint-xl": {
+        "layer": "shape",
+        "type": "length",
+        "value": "1600px"
+      },
+      "button-bg": {
+        "from": "button2-bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#00000000",
+          "hc-light": "#FFFFFF",
+          "light": "#E5E5E5"
+        }
+      },
+      "button-bg-active": {
+        "from": "toolbar-active",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#63666750",
+          "hc-dark": "#FFFFFF33",
+          "hc-light": "#0F4A8533",
+          "light": "#A6A6A650"
+        }
+      },
+      "button-bg-hover": {
+        "from": "button2-hover",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#3B3B3B",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#CCCCCC"
+        }
+      },
+      "button-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF1A",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#0000001A"
+        },
+        "vscode": "button.border"
+      },
+      "button-border-color": {
+        "from": "control-border",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        }
+      },
+      "button-fg": {
+        "from": "button2-fg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        }
+      },
+      "button-pad-x": {
+        "density": {
+          "comfortable": "12px",
+          "compact": "6px",
+          "default": "8px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "8px"
+      },
+      "button-pad-y": {
+        "density": {
+          "comfortable": "6px",
+          "compact": "2px",
+          "default": "4px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "4px"
+      },
+      "button-radius": {
+        "from": "radius",
+        "layer": "component",
+        "type": "length",
+        "value": "4px"
+      },
+      "button2-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#00000000",
+          "hc-light": "#FFFFFF",
+          "light": "#E5E5E5"
+        },
+        "vscode": "button.secondaryBackground"
+      },
+      "button2-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "button.secondaryForeground"
+      },
+      "button2-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#3B3B3B",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#CCCCCC"
+        },
+        "vscode": "button.secondaryHoverBackground"
+      },
+      "caret": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#AEAFAD",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#0F4A85",
+          "light": "#000000"
+        },
+        "vscode": "editorCursor.foreground"
+      },
+      "checkbox-bg": {
+        "from": "control-bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        }
+      },
+      "checkbox-border-color": {
+        "from": "control-border",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        }
+      },
+      "container-lg": {
+        "layer": "shape",
+        "type": "length",
+        "value": "640px"
+      },
+      "container-md": {
+        "layer": "shape",
+        "type": "length",
+        "value": "480px"
+      },
+      "container-sm": {
+        "layer": "shape",
+        "type": "length",
+        "value": "320px"
+      },
+      "container-xl": {
+        "layer": "shape",
+        "type": "length",
+        "value": "800px"
+      },
+      "container-xs": {
+        "layer": "shape",
+        "type": "length",
+        "value": "240px"
+      },
+      "control-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        },
+        "vscode": "input.background"
+      },
+      "control-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        },
+        "vscode": "input.border"
+      },
+      "control-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "input.foreground"
+      },
+      "control-h": {
+        "density": {
+          "comfortable": "32px",
+          "compact": "22px",
+          "default": "26px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "26px"
+      },
+      "danger": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#F85149",
+          "hc-dark": "#F48771",
+          "hc-light": "#B5200D",
+          "light": "#F85149"
+        },
+        "vscode": "errorForeground"
+      },
+      "disabled-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC80",
+          "hc-dark": "#A5A5A5",
+          "hc-light": "#7F7F7F",
+          "light": "#61616180"
+        },
+        "vscode": "disabledForeground"
+      },
+      "ease-out": {
+        "layer": "shape",
+        "type": "easing",
+        "value": "cubic-bezier(.22,1,.36,1)"
+      },
+      "elev-0": {
+        "layer": "set",
+        "type": "shadow",
+        "value": "none"
+      },
+      "elev-1": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 1px 0 #00000059",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 1px 1px #0000001A"
+        }
+      },
+      "elev-2": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 0 4px #0000004D",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 4px #00000014"
+        }
+      },
+      "elev-3": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 2px 8px #0000005C",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 12px #00000024"
+        }
+      },
+      "elev-4": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 8px 28px #00000080",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 20px #00000026"
+        }
+      },
+      "error": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#F14C4C",
+          "hc-dark": "#F48771",
+          "hc-light": "#B5200D",
+          "light": "#E51400"
+        },
+        "vscode": "editorError.foreground"
+      },
+      "fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "foreground"
+      },
+      "fg-strong": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#1F1F1F"
+        },
+        "vscode": "settings.headerForeground"
+      },
+      "focus": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2488DB",
+          "hc-dark": "#F38518",
+          "hc-light": "#006BBD",
+          "light": "#005FB8"
+        },
+        "vscode": "focusBorder"
+      },
+      "font-family": {
+        "layer": "shape",
+        "type": "font-family",
+        "value": "Inter, system-ui, sans-serif"
+      },
+      "font-mono": {
+        "layer": "shape",
+        "type": "font-family",
+        "value": "\"JetBrains Mono\", monospace"
+      },
+      "font-size": {
+        "layer": "shape",
+        "type": "length",
+        "value": "13px"
+      },
+      "font-size-h1": {
+        "layer": "shape",
+        "type": "length",
+        "value": "26px"
+      },
+      "font-size-h2": {
+        "layer": "shape",
+        "type": "length",
+        "value": "18px"
+      },
+      "font-size-h3": {
+        "layer": "shape",
+        "type": "length",
+        "value": "13px"
+      },
+      "font-size-label1": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "font-size-label2": {
+        "layer": "shape",
+        "type": "length",
+        "value": "11px"
+      },
+      "font-size-label3": {
+        "layer": "shape",
+        "type": "length",
+        "value": "10px"
+      },
+      "font-size-sm": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "font-size-xs": {
+        "layer": "shape",
+        "type": "length",
+        "value": "11px"
+      },
+      "header-h": {
+        "density": {
+          "comfortable": "28px",
+          "compact": "22px",
+          "default": "22px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "22px"
+      },
+      "icon": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "icon.foreground"
+      },
+      "icon-size": {
+        "density": {
+          "comfortable": "20px",
+          "compact": "16px",
+          "default": "16px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "16px"
+      },
+      "indent": {
+        "layer": "shape",
+        "type": "length",
+        "value": "8px"
+      },
+      "indent-guide": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#585858",
+          "hc-dark": "#A9A9A9",
+          "hc-light": "#A5A5A5",
+          "light": "#A9A9A9"
+        },
+        "vscode": "tree.indentGuidesStroke"
+      },
+      "info": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#59A4F9",
+          "hc-dark": "#59A4F9",
+          "hc-light": "#0063D3",
+          "light": "#0063D3"
+        },
+        "vscode": "editorInfo.foreground"
+      },
+      "input-bg": {
+        "from": "control-bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        }
+      },
+      "input-border-color": {
+        "from": "control-border",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        }
+      },
+      "input-border-color-focus": {
+        "from": "focus",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#2488DB",
+          "hc-dark": "#F38518",
+          "hc-light": "#006BBD",
+          "light": "#005FB8"
+        }
+      },
+      "input-fg": {
+        "from": "control-fg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        }
+      },
+      "input-radius": {
+        "from": "radius",
+        "layer": "component",
+        "type": "length",
+        "value": "4px"
+      },
+      "invalid-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#5A1D1D",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F2DEDE"
+        },
+        "vscode": "inputValidation.errorBackground"
+      },
+      "invalid-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#BE1100",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#BE1100"
+        },
+        "vscode": "inputValidation.errorBorder"
+      },
+      "link": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#4DAAFC",
+          "hc-dark": "#21A6FF",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "textLink.foreground"
+      },
+      "list-drop": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#383B3D",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#D6EBFF"
+        },
+        "vscode": "list.dropBackground"
+      },
+      "list-focus-outline": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#F38518",
+          "hc-light": "#006BBD",
+          "light": "#005FB8"
+        },
+        "vscode": "list.focusOutline"
+      },
+      "list-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2A2D2E",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#F2F2F2"
+        },
+        "vscode": "list.hoverBackground"
+      },
+      "list-sel": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#04395E",
+          "hc-dark": "#00000000",
+          "hc-light": "#0F4A851A",
+          "light": "#E8E8E8"
+        },
+        "vscode": "list.activeSelectionBackground"
+      },
+      "list-sel-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#000000"
+        },
+        "vscode": "list.activeSelectionForeground"
+      },
+      "list-sel-inactive": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#37373D",
+          "hc-dark": "#00000000",
+          "hc-light": "#0F4A851A",
+          "light": "#E4E6F1"
+        },
+        "vscode": "list.inactiveSelectionBackground"
+      },
+      "menu-bg": {
+        "from": "surface-raised",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#202020",
+          "hc-dark": "#0C141F",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        }
+      },
+      "menu-border-color": {
+        "from": "border-widget",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#E5E5E5"
+        }
+      },
+      "menu-radius": {
+        "from": "radius-md",
+        "layer": "component",
+        "type": "length",
+        "value": "6px"
+      },
+      "menu-sel": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#005FB8"
+        },
+        "vscode": "menu.selectionBackground"
+      },
+      "menu-sel-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#FFFFFF"
+        },
+        "vscode": "menu.selectionForeground"
+      },
+      "motion": {
+        "layer": "shape",
+        "type": "duration",
+        "value": "150ms"
+      },
+      "motion-fast": {
+        "layer": "shape",
+        "type": "duration",
+        "value": "100ms"
+      },
+      "muted": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#9D9D9D",
+          "hc-dark": "#FFFFFFB3",
+          "hc-light": "#292929B3",
+          "light": "#616161"
+        },
+        "vscode": "descriptionForeground"
+      },
+      "panel-bg": {
+        "from": "bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#181818",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        }
+      },
+      "placeholder": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#989898",
+          "hc-dark": "#FFFFFFB3",
+          "hc-light": "#292929B3",
+          "light": "#767676"
+        },
+        "vscode": "input.placeholderForeground"
+      },
+      "popup-shadow": {
+        "from": "elev-3",
+        "layer": "component",
+        "type": "shadow",
+        "values": {
+          "dark": "0 2px 8px #0000005C",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 12px #00000024"
+        }
+      },
+      "progress": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "progressBar.background"
+      },
+      "radius": {
+        "layer": "shape",
+        "type": "length",
+        "value": "4px"
+      },
+      "radius-lg": {
+        "layer": "shape",
+        "type": "length",
+        "value": "8px"
+      },
+      "radius-md": {
+        "layer": "shape",
+        "type": "length",
+        "value": "6px"
+      },
+      "radius-xl": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "radius-xs": {
+        "layer": "shape",
+        "type": "length",
+        "value": "2px"
+      },
+      "row-h": {
+        "density": {
+          "comfortable": "28px",
+          "compact": "20px",
+          "default": "22px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "22px"
+      },
+      "sash-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "4px"
+      },
+      "scroll-shadow": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#000000",
+          "hc-dark": "#00000000",
+          "hc-light": "#00000000",
+          "light": "#DDDDDD"
+        },
+        "vscode": "scrollbar.shadow"
+      },
+      "scrollbar": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#79797966",
+          "hc-dark": "#6FC3DF99",
+          "hc-light": "#0F4A8566",
+          "light": "#64646466"
+        },
+        "vscode": "scrollbarSlider.background"
+      },
+      "scrollbar-active": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#BFBFBF66",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#00000099"
+        },
+        "vscode": "scrollbarSlider.activeBackground"
+      },
+      "scrollbar-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#646464B3",
+          "hc-dark": "#6FC3DFCC",
+          "hc-light": "#0F4A85CC",
+          "light": "#646464B3"
+        },
+        "vscode": "scrollbarSlider.hoverBackground"
+      },
+      "scrollbar-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "10px"
+      },
+      "selection": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#264F78",
+          "hc-dark": "#F3F518",
+          "hc-light": "#0F4A85",
+          "light": "#ADD6FF"
+        },
+        "vscode": "editor.selectionBackground"
+      },
+      "shadow-color": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0000005C",
+          "hc-dark": "#00000000",
+          "hc-light": "#00000000",
+          "light": "#00000029"
+        },
+        "vscode": "widget.shadow"
+      },
+      "space-0": {
+        "layer": "shape",
+        "type": "length",
+        "value": "0px"
+      },
+      "space-0-5": {
+        "layer": "shape",
+        "type": "length",
+        "value": "2px"
+      },
+      "space-1": {
+        "layer": "shape",
+        "type": "length",
+        "value": "4px"
+      },
+      "space-1-5": {
+        "layer": "shape",
+        "type": "length",
+        "value": "6px"
+      },
+      "space-2": {
+        "layer": "shape",
+        "type": "length",
+        "value": "8px"
+      },
+      "space-3": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "space-4": {
+        "layer": "shape",
+        "type": "length",
+        "value": "16px"
+      },
+      "space-5": {
+        "layer": "shape",
+        "type": "length",
+        "value": "20px"
+      },
+      "space-6": {
+        "layer": "shape",
+        "type": "length",
+        "value": "24px"
+      },
+      "space-7": {
+        "layer": "shape",
+        "type": "length",
+        "value": "32px"
+      },
+      "space-8": {
+        "layer": "shape",
+        "type": "length",
+        "value": "40px"
+      },
+      "statusbar-h": {
+        "layer": "shape",
+        "type": "length",
+        "value": "22px"
+      },
+      "stroke": {
+        "layer": "shape",
+        "type": "length",
+        "value": "1px"
+      },
+      "success": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#73C991",
+          "hc-dark": "#73C991",
+          "hc-light": "#007100",
+          "light": "#73C991"
+        },
+        "vscode": "testing.iconPassed"
+      },
+      "surface": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#1F1F1F",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        },
+        "vscode": "editor.background"
+      },
+      "surface-raised": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#202020",
+          "hc-dark": "#0C141F",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        },
+        "vscode": "editorWidget.background"
+      },
+      "tab-active-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#1F1F1F",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        },
+        "vscode": "tab.activeBackground"
+      },
+      "tab-active-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "tab.activeForeground"
+      },
+      "tab-active-marker": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#F38518",
+          "hc-light": "#B5200D",
+          "light": "#005FB8"
+        },
+        "vscode": "tab.activeBorderTop"
+      },
+      "tab-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#181818",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        },
+        "vscode": "tab.inactiveBackground"
+      },
+      "tab-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#9D9D9D",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#868686"
+        },
+        "vscode": "tab.inactiveForeground"
+      },
+      "tab-h": {
+        "density": {
+          "comfortable": "40px",
+          "compact": "28px",
+          "default": "35px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "35px"
+      },
+      "tab-marker": {
+        "from": "tab-active-marker",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#F38518",
+          "hc-light": "#B5200D",
+          "light": "#005FB8"
+        }
+      },
+      "titlebar-h": {
+        "layer": "shape",
+        "type": "length",
+        "value": "35px"
+      },
+      "toggle-on-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2489DB82",
+          "hc-dark": "#00000000",
+          "hc-light": "#00000000",
+          "light": "#BED6ED"
+        },
+        "vscode": "inputOption.activeBackground"
+      },
+      "toggle-on-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2488DB",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "inputOption.activeBorder"
+      },
+      "toolbar-active": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#63666750",
+          "hc-dark": "#FFFFFF33",
+          "hc-light": "#0F4A8533",
+          "light": "#A6A6A650"
+        },
+        "vscode": "toolbar.activeBackground"
+      },
+      "toolbar-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#5A5D5E50",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#B8B8B850"
+        },
+        "vscode": "toolbar.hoverBackground"
+      },
+      "tooltip-bg": {
+        "from": "surface-raised",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#202020",
+          "hc-dark": "#0C141F",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        }
+      },
+      "twistie-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "16px"
+      },
+      "warning": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCA700",
+          "hc-dark": "#FFD370",
+          "hc-light": "#895503",
+          "light": "#BF8803"
+        },
+        "vscode": "editorWarning.foreground"
+      },
+      "window-radius": {
+        "from": "radius-lg",
+        "layer": "component",
+        "type": "length",
+        "value": "8px"
+      },
+      "window-shadow": {
+        "from": "elev-4",
+        "layer": "component",
+        "type": "shadow",
+        "values": {
+          "dark": "0 8px 28px #00000080",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 20px #00000026"
+        }
+      }
+    }
   }
 }

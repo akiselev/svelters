@@ -68,7 +68,7 @@ fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
     }
 }
 
-fn as_weight(v: &Value) -> Result<i64, String> {
+pub(crate) fn as_weight(v: &Value) -> Result<i64, String> {
     let w = as_f64(v)?;
     if !(1.0..=1000.0).contains(&w) {
         return Err(format!("font-weight {w} is outside 1..=1000"));
@@ -99,6 +99,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         return if matches!(w, W::Ext(_)) { crate::provider::set_prop(w, i as usize, v) } else { Ok(Dirty::EMPTY) };
     }
     if matches!(w, W::Ext(_)) && !is_common(def.key) {
+        if matches!(def.ty, Ty::StrList) {
+            // OW3: a list prop takes the row's forms (null, a list, a static whitespace-separated string)
+            let l = Value::List(as_str_list(v)?.into_iter().map(Value::Str).collect());
+            return crate::provider::set_replaced_prop(w, def, &l);
+        }
         return crate::provider::set_replaced_prop(w, def, v); // OW0: an own widget's field
     }
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
@@ -164,7 +169,6 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             W::Label { text, .. }
             | W::Button { text, .. }
             | W::Checkbox { text, .. }
-            | W::Slider { text, .. }
             | W::ToggleButton { text, .. }
             | W::CollapsingHeader { text, .. },
         ) => {
@@ -188,16 +192,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         }
         (P::Checked, W::Checkbox { checked, .. } | W::ToggleButton { checked, .. }) => *checked = as_bool(v)?,
         (P::HintText, W::ComboBox { hint, .. }) => *hint = as_str(v)?,
-        (P::Value, W::Slider { value, .. }) => *value = as_f64(v)?,
-        (P::Min, W::Slider { min, .. }) => *min = as_f64(v)?,
-        (P::Max, W::Slider { max, .. }) => *max = as_f64(v)?,
-        (P::Step, W::Slider { step, .. }) => *step = as_f64(v)?.max(0.0),
-        (P::ShowValue, W::Slider { show_value, .. }) => {
-            *show_value = as_bool(v)?;
-            d.insert(Dirty::MEASURE);
-        }
-        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowDragType | P::RowDropTypes, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
-        (P::RowHeight | P::TreeIndent, W::VirtualList(l)) => {
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated | P::CurrentItem | P::InternalMove, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
+        (P::RowHeight | P::TreeIndent | P::UniformRows, W::VirtualList(l)) => {
             crate::kinds::virtuallist::set(l, def.key, v)?;
             d.insert(Dirty::LAYOUT);
         }
@@ -268,12 +264,6 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             d.insert(Dirty::LAYOUT);
         }
         (P::Closable, W::Tab { closable, .. }) => *closable = as_bool(v)?,
-        // WG4b: the pickers' fields (`kinds/pickers.rs`)
-        (key, W::Picker(p)) => {
-            if p.set(key, v)? {
-                d.insert(Dirty::MEASURE);
-            }
-        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -349,12 +339,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Small, W::Button { small, .. }) => Value::Bool(*small),
         (P::Checked, W::Checkbox { checked, .. } | W::ToggleButton { checked, .. }) => Value::Bool(*checked),
         (P::HintText, W::ComboBox { hint, .. }) => s(hint),
-        (P::Value, W::Slider { value, .. }) => Value::F64(*value),
-        (P::Min, W::Slider { min, .. }) => Value::F64(*min),
-        (P::Max, W::Slider { max, .. }) => Value::F64(*max),
-        (P::Step, W::Slider { step, .. }) => Value::F64(*step),
-        (P::ShowValue, W::Slider { show_value, .. }) => Value::Bool(*show_value),
-        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight | P::TreeIndent | P::RowDragType | P::RowDropTypes, W::VirtualList(l)) => {
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight | P::TreeIndent | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated | P::CurrentItem | P::InternalMove | P::UniformRows, W::VirtualList(l)) => {
             crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
         }
         // ---- WG1 ----
@@ -383,7 +368,6 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Editor, W::TableColumn { editor, .. }) => Value::Bool(*editor),
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
         (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
-        (key, W::Picker(p)) => p.get(key).ok_or_else(|| format!("{key:?} is not a prop of <{}>", n.tag()))?, // WG4b
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }

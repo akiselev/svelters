@@ -487,6 +487,14 @@ For own widgets:
   Kinds VS Code lacks (slider, switch, date picker, spin buttons) get checks against the DESIGN
   rules (R1–R18: ≥ 3:1 boundaries, lip, sunken fields) rather than a VS Code crop (Q4).
 
+**VIS1c (landed):** `crates/svelters-testkit/tests/vis1.rs::own_widgets_match_vscode` is the gate on
+the own widgets (`KindSet::All`, PaintTrace only; the `Visuals` mapping and the 90% floor are gone):
+per-OS references (`conformance/visual/vscode{,-macos}/`), a ratchet per reference set
+(`conformance/visual/baseline-{windows,macos}.json`), the score per element and theme. Probe
+contracts for the lanes that swap kinds, the measured gaps by lane and the kinds whose wrapper can go:
+`plans/milestones/VIS1c-visual-gate.md`. VIS1b's theme roles above did not land on master; the gaps
+that need them are listed there.
+
 ### 3.8 Paint caching (later, measured first)
 
 Each own node's shapes are a pure function of (style generation incl. running transitions, rect,

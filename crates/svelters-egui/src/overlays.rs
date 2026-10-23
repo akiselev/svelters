@@ -49,6 +49,13 @@ pub struct OverlayW {
     pub resizable: bool,
     /// The layout generation of the subtree's last overlay layout (`layout::layout_overlay`).
     pub seen: u64,
+    /// OW3: a `popup` svelters draws itself (the own-widget switch held `popup` when it was created).
+    /// OW7: also `modal` and `inner-window`.
+    pub own: bool,
+    /// OW7: a `close(result)` call, applied (and announced) at the next pass with `cmd`.
+    pub result: Option<String>,
+    /// OW7: the own dialog's or window's state between passes (position, user size, collapsed).
+    pub run: crate::widgets::dialog::DialogRun,
 }
 
 pub(crate) fn payload(id: &str) -> OverlayW {
@@ -71,8 +78,12 @@ pub(crate) fn payload(id: &str) -> OverlayW {
         default_y: None,
         closable: true,
         collapsible: true,
-        resizable: true,
+        // a modal keeps its content's size unless asked (Qt's `sizeGripEnabled` is off)
+        resizable: kind == OverlayKind::InnerWindow,
         seen: 0,
+        own: false,
+        result: None,
+        run: Default::default(),
     }
 }
 
@@ -211,10 +222,19 @@ fn content(
     out: &mut Vec<Out>,
     size: [Option<f32>; 2],
 ) {
-    let m = Metrics::new(ui.ctx());
     let at = ui.available_rect_before_wrap().min;
+    let ctx = ui.ctx().clone();
+    let sz = lay_out(arena, i, origin, &ctx, at, size);
+    draw_content(arena, i, origin, ui, out, Rect::from_min_size(at, sz));
+}
+
+/// Lays out overlay `i`'s subtree with its top-left at `at` (screen; `size`: the definite axes);
+/// returns its size. Its children's rects stay root-relative (`origin`). Laying it out again at
+/// another place is cheap (taffy's cache).
+pub(crate) fn lay_out(arena: &mut Arena, i: usize, origin: Vec2, ctx: &egui::Context, at: egui::Pos2, size: [Option<f32>; 2]) -> Vec2 {
+    let m = Metrics::new(ctx);
     let Some(node) = arena.slots.id_at(i) else {
-        return;
+        return Vec2::ZERO;
     };
     let seen = match arena.w(i) {
         W::Overlay(o) => o.seen,
@@ -224,14 +244,18 @@ fn content(
     if let W::Overlay(o) = arena.w_mut(i) {
         o.seen = generation;
     }
-    let r = Rect::from_min_size(at, sz);
+    sz
+}
+
+/// Paints overlay `i`'s children (laid out at `r` by [`lay_out`]) in `ui`, allocating `r`.
+pub(crate) fn draw_content(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>, r: Rect) {
     arena.core[i].drawn = r;
     ui.allocate_rect(r, Sense::hover());
     crate::focus::record_scope(arena, i, ui); // EV3: a dialog focus scope
     crate::walk::paint_children(arena, i, origin, ui, out);
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW3, OW7
+#[allow(clippy::disallowed_types)] // OW: wrappers until VIS1c (own: OW3 popup, OW7 modal and inner-window)
 /// Paints overlay `i` (open or not) anchored to `owner`, and announces a user (or `popup`/`popdown`)
 /// open or close.
 fn overlay(
@@ -246,8 +270,12 @@ fn overlay(
     let o = (**o).clone();
     let was = o.open;
     let mut open = o.cmd.unwrap_or(was);
+    // OW7: the result of a close: `close(result)`, else "" for `popdown`/`open = false`, "reject" for
+    // a user dismissal (below)
+    let mut result = o.result.clone().unwrap_or_default();
     if let W::Overlay(w) = arena.w_mut(i) {
         w.cmd = None;
+        w.result = None;
         w.open = open;
     }
     let id = arena.core[i].egui_id;
@@ -256,6 +284,10 @@ fn overlay(
     arena.core[i].drawn = Rect::NOTHING;
     if open {
         match o.kind {
+            // OW3: svelters' own popup surface (Anchored, Dismissable), behind the switch
+            OverlayKind::Popup if o.own => {
+                open = crate::widgets::popup::show(arena, i, origin, owner, &o, enabled, ui, out);
+            }
             OverlayKind::Popup => {
                 let align = match o.placement {
                     "top" => RectAlign::TOP_START,
@@ -286,6 +318,19 @@ fn overlay(
                     });
                 open = still;
             }
+            // OW7: svelters' own dialog and window chrome, behind the switch
+            OverlayKind::Modal if o.own => {
+                if let Some(r) = crate::widgets::dialog::modal(arena, i, origin, &o, enabled, ui, out) {
+                    open = false;
+                    result = r.to_string();
+                }
+            }
+            OverlayKind::InnerWindow if o.own => {
+                if let Some(r) = crate::widgets::dialog::window(arena, i, origin, &o, enabled, ui, out) {
+                    open = false;
+                    result = r.to_string();
+                }
+            }
             OverlayKind::Modal => {
                 let r = egui::Modal::new(id.with("modal")).show(&ctx, |mui| {
                     if !enabled {
@@ -298,6 +343,7 @@ fn overlay(
                 });
                 if o.dismissable && r.should_close() {
                     open = false;
+                    result = crate::widgets::dialog::REJECT.to_string();
                 }
             }
             OverlayKind::InnerWindow => {
@@ -325,17 +371,35 @@ fn overlay(
                     };
                     content(arena, i, origin, wui, out, size);
                 });
-                open = still;
+                if !still {
+                    open = false;
+                    result = crate::widgets::dialog::REJECT.to_string();
+                }
             }
         }
+    }
+    if !open && o.own && arena.core[i].state.contains(crate::provider::StateBits::OPEN) {
+        // OW3, OW7: an own overlay's state bits are its own; closed, it is neither open nor behind
+        let mut st = arena.core[i].state;
+        st.set(crate::provider::StateBits::OPEN, false);
+        st.set(crate::provider::StateBits::BACKDROP, false);
+        crate::style::set_own_state(arena, i, st);
     }
     if open != was {
         if let W::Overlay(w) = arena.w_mut(i) {
             w.open = open;
         }
         let mut events = vec![("changed", vec![Value::Bool(open)])];
-        if !open {
+        if !open && o.kind == OverlayKind::Popup {
             events.push(("closed", vec![]));
+        } else if !open {
+            // OW7 (QDialog `finished`, `accepted`, `rejected`)
+            match result.as_str() {
+                "accept" => events.push(("accepted", vec![])),
+                "reject" => events.push(("rejected", vec![])),
+                _ => {}
+            }
+            events.push(("closed", vec![Value::Str(result)]));
         }
         announce(arena, i, Some(P::Open), &events, out);
     }

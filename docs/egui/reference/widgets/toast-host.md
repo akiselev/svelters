@@ -41,10 +41,11 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 <!-- BEGIN GENERATED: events of kinds.ToastHost (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Attribute | Handler | When |
 |---|---|---|
+| `onaction` | `(id: number, index: number) => void` | One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`). |
 | `onclicked` | `(id: number) => void` | A toast's body was clicked. |
-| `onclosed` | `(id: number, reason: string) => void` | A toast went away: `reason` is `timeout`, `dismissed` (its close button), `method` (`dismiss`/`clear`). |
+| `onclosed` | `(id: number, reason: string) => void` | A toast went away: `reason` is `timeout`, `dismissed` (its close button), `action` (one of its actions), `method` (`dismiss`/`clear`). |
 
-`on:clicked` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
+`on:action` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
 Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
@@ -56,7 +57,7 @@ Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `o
 |---|---|---|
 | `clear` | `void` | Closes every toast. |
 | `dismiss` | `void` | `dismiss(id)`: closes that toast (`closed(id, 'method')`). |
-| `show` | `void` | `show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it. |
+| `show` | `void` | `show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it. |
 
 Call them through `bind:this`: `el.call('clear')`.
 <!-- END GENERATED -->

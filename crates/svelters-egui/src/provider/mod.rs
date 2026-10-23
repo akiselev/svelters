@@ -401,6 +401,16 @@ pub trait Widget: 'static {
     fn text_input(&self) -> Option<bool> {
         None
     }
+    /// EV3b: an edit command for this text input (`text_input` is `Some`) from the host's Edit
+    /// menu (`Embed::text_command`: Undo, Redo, Cut, Copy, Paste, Select All, Delete), at its next
+    /// paint, just before `ui`, with the node's cx. Return true when the kind applied it itself
+    /// (its own undo stack, a host-owned document's undo); false (the default) feeds it to its egui
+    /// text field as the input it stands for (`Ctrl+Z`, `Event::Copy`, …). Through
+    /// `Embed::text_command` a Paste comes as the `Insert` of the host clipboard's text, and what a
+    /// Cut or Copy puts in egui's clipboard (`ui.ctx().copy_text`) also reaches the host's.
+    fn text_command(&mut self, _cmd: &crate::focus::TextCommand, _cx: &mut WidgetCx<'_>) -> bool {
+        false
+    }
 }
 
 pub use crate::layout::LayoutCx;
@@ -526,6 +536,8 @@ pub struct WidgetCx<'a> {
     changed: Vec<usize>,
     emits: Vec<(usize, Value)>,
     remeasure: bool,
+    /// OW1a2: a peer write ([`WidgetCx::with_peer`]) wants another frame.
+    repaint: bool,
     errors: Vec<String>,
     /// OW0: UA tokens resolve in the dark scheme.
     dark: bool,
@@ -546,6 +558,11 @@ impl WidgetCx<'_> {
     /// picking, capture and focus memory under the units (Q2).
     pub fn interact(&self, ui: &mut egui::Ui, sense: egui::Sense) -> egui::Response {
         ui.interact(self.rect, self.id, sense)
+    }
+    /// OW1a2: [`Self::interact`] over `rect` only (a label's text, an unframed icon's glyph: the
+    /// node's hit area and drawn rect are its content, as the egui wrappers' were).
+    pub fn interact_at(&self, ui: &mut egui::Ui, rect: egui::Rect, sense: egui::Sense) -> egui::Response {
+        ui.interact(rect.intersect(self.rect), self.id, sense)
     }
 
     /// Runs behaviour units on the node's response (`#[svelters::widget]`'s generated
@@ -594,6 +611,11 @@ impl WidgetCx<'_> {
         host.part(self.part_css(name), ua).with_overlay(self.s.style.part_overlay(self.node, name))
     }
 
+    /// OW1b: the node's computed style (the cascade's), if a sheet reaches it.
+    pub fn computed(&self) -> Option<&svelters_style::ComputedStyle> {
+        self.s.style.computed(self.node).map(|c| &**c)
+    }
+
     /// A paint context on `ui`'s painter for this node (traced when the pass traces).
     pub fn paint_cx<'p>(&self, ui: &'p egui::Ui) -> crate::paint::PaintCx<'p> {
         let mut p = crate::paint::PaintCx::for_node(ui.painter(), self.node.to_raw());
@@ -630,6 +652,11 @@ impl WidgetCx<'_> {
     /// The node's egui id (use it for the widget's own id: focus and memory follow the node).
     pub fn id(&self) -> egui::Id {
         self.id
+    }
+    /// EV3b: the pass's egui context (from [`Widget::text_command`], where no `Ui` is at hand:
+    /// `cx.ctx().copy_text(..)` for a Cut or Copy).
+    pub fn ctx(&self) -> &egui::Context {
+        &self.ctx
     }
     /// The rect layout gave the node, in screen coordinates.
     pub fn rect(&self) -> egui::Rect {
@@ -712,6 +739,12 @@ impl WidgetCx<'_> {
     /// (arrows, Home/End, PageUp/PageDown), so Tab reaches it and the host keymap leaves them.
     pub fn record_part_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
         crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Slider, true);
+    }
+
+    /// OW6: puts a part's text entry (the colour editor's hex field) in EV3's tab order with a
+    /// one-line text field's keys, so focus stays on it while the user types.
+    pub fn record_part_text_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
+        crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Text { multiline: false }, true);
     }
 
     /// OW2: the node's rect from layout, in its root's coordinates (unscrolled content
@@ -822,6 +855,102 @@ impl WidgetCx<'_> {
     pub fn request_measure(&mut self) {
         self.remeasure = true;
     }
+
+    /// OW1a2: writes to another own widget of type `Wd` in this pass, through `PeerCx` (its
+    /// `set` and `emit` are announced like the peer's own). It is for the writes one widget makes
+    /// to its group: radio exclusivity, toggle-button `group` and accordion. A peer drawn earlier in
+    /// the pass shows the change next frame, so a repaint is requested. `None` if `id` is this node,
+    /// is not live, or is not a `Wd`.
+    pub fn with_peer<Wd: 'static, R>(&mut self, id: crate::scene::NodeId, f: impl FnOnce(&mut Wd, &mut PeerCx) -> R) -> Option<R> {
+        let j = self.s.idx(id)?;
+        if j == self.i {
+            return None;
+        }
+        let (r, p) = {
+            let crate::scene::node::Payload::Builtin(W::Ext(x)) = &self.s.payload[j] else { return None };
+            let mut b = x.0.try_borrow_mut().ok()?;
+            let (entry, base) = (b.entry(), b.base());
+            let w = b.as_any_mut().downcast_mut::<Wd>()?;
+            let mut p = PeerCx { entry, base, changed: Vec::new(), emits: Vec::new(), errors: Vec::new(), focus: false };
+            (f(w, &mut p), p)
+        };
+        if p.focus {
+            self.s.core[j].flags.insert(crate::scene::NodeFlags::WANT_FOCUS);
+        }
+        if !p.changed.is_empty() || !p.emits.is_empty() || p.focus {
+            self.s.invalidate_content(id);
+            self.repaint = true;
+        }
+        flush_writes(self.s, j, p.changed, p.emits, p.errors, self.out);
+        Some(r)
+    }
+
+    /// OW1a2: moves keyboard focus to node `id` (a label's `for` target) at its next draw.
+    pub fn focus_node(&mut self, id: crate::scene::NodeId) {
+        if let Some(j) = self.s.idx(id) {
+            self.s.core[j].flags.insert(crate::scene::NodeFlags::WANT_FOCUS);
+            self.s.invalidate_content(id);
+            self.repaint = true;
+        }
+    }
+
+    /// OW1a2: this node's siblings (the parent's children, this one included), in order.
+    pub fn sibling_ids(&self) -> Vec<crate::scene::NodeId> {
+        match self.s.core[self.i].parent.and_then(|p| self.s.idx(p)) {
+            Some(p) => self.s.children[p].clone(),
+            None => Vec::new(),
+        }
+    }
+
+    /// OW1a2: the tag of node `id` (an own widget's is the built-in tag it replaces).
+    pub fn tag_of(&self, id: crate::scene::NodeId) -> Option<&'static str> {
+        let j = self.s.idx(id)?;
+        crate::kinds::KindRegistry::global().kind(self.s.core[j].kind as usize).tag
+    }
+}
+
+/// OW1a2: what [`WidgetCx::with_peer`] gives the closure: the peer's own `set` and `emit`.
+pub struct PeerCx {
+    entry: &'static KindEntry,
+    base: usize,
+    changed: Vec<usize>,
+    emits: Vec<(usize, Value)>,
+    errors: Vec<String>,
+    focus: bool,
+}
+
+impl PeerCx {
+    /// [`WidgetCx::set`] on the peer's `#[prop]` field.
+    pub fn set<T: PartialEq>(&mut self, field: &mut T, v: T) {
+        if *field != v {
+            *field = v;
+            written_prop(self.entry, self.base, field, &mut self.changed, &mut self.errors);
+        }
+    }
+    /// [`WidgetCx::emit`] on the peer's event.
+    pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
+        queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
+    }
+    /// Moves keyboard focus to the peer (Roving), shown as keyboard focus.
+    pub fn focus(&mut self) {
+        self.focus = true;
+    }
+}
+
+/// OW1a2: an event payload of several arguments (a built-in signal with more than one, such as
+/// `radio-button`'s `changed(checked, group)`); the emit path spreads it into the signal's args.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Args(pub Vec<Value>);
+
+impl svelters_host::exports::JsType for Args {
+    fn describe(b: &mut svelters_host::exports::TypeBuilder) -> svelters_host::exports::TypeRef {
+        <Vec<String> as svelters_host::exports::JsType>::describe(b)
+    }
+}
+impl IntoJs for Args {
+    fn into_js(self, _: &svelters_host::exports::CallCx<'_>) -> Result<Value, NativeError> {
+        Ok(Value::List(self.0))
+    }
 }
 
 /// The prop a `cx.set` wrote (by the field's offset in the struct at `base`), recorded once in
@@ -918,6 +1047,10 @@ pub trait ErasedWidget: Any {
     fn text_input(&self) -> Option<bool> {
         None
     }
+    /// EV3b: [`Widget::text_command`].
+    fn text_command(&mut self, _cmd: &crate::focus::TextCommand, _cx: &mut WidgetCx<'_>) -> bool {
+        false
+    }
 }
 
 impl<T: Widget + KindDecl> ErasedWidget for T {
@@ -978,6 +1111,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     fn text_input(&self) -> Option<bool> {
         Widget::text_input(self).or_else(|| KindDecl::__units_text_input(self))
     }
+    fn text_command(&mut self, cmd: &crate::focus::TextCommand, cx: &mut WidgetCx<'_>) -> bool {
+        Widget::text_command(self, cmd, cx)
+    }
 }
 
 /// The payload of a provider node (`W::Ext`). A `RefCell` so layout can measure through `&W`.
@@ -991,6 +1127,10 @@ impl ExtWidget {
     /// set so `Node::text`, queries and a11y read it without borrowing the widget); empty for
     /// provider kinds.
     pub fn text(&self) -> &str {
+        &self.1
+    }
+    /// [`Self::text`], as the `String` typed keys read (`scene::keys`).
+    pub(crate) fn text_string(&self) -> &String {
         &self.1
     }
     pub fn entry(&self) -> &'static KindEntry {
@@ -1067,6 +1207,11 @@ pub(crate) fn set_prop(w: &W, i: usize, v: &Value) -> Result<crate::scene::Dirty
 pub(crate) fn set_replaced_prop(w: &mut W, def: &crate::kinds::PropDef, v: &Value) -> Result<crate::scene::Dirty, String> {
     let W::Ext(x) = w else { return Err("not an own widget".into()) };
     let v = if matches!(v, Value::Null) && !def.nullable { crate::scene::props::default_value(def) } else { v.clone() };
+    // (OW1a2: the row's own range checks, so an own widget rejects what its wrapper rejected)
+    let v = match def.key {
+        crate::kinds::P::FontWeight => Value::I64(crate::scene::props::as_weight(&v)?),
+        _ => v,
+    };
     let mut d = {
         let mut b = x.0.borrow_mut();
         let entry = b.entry();
@@ -1160,11 +1305,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let id = arena.core[i].egui_id;
     let state0 = arena.core[i].state;
     let dark = ui.ctx().theme() == egui::Theme::Dark;
-    // RA3: a provider text input gets EV3's pending edit command before its `ui`
+    // RA3: a provider text input gets EV3's pending edit command before its `ui`: EV3b, through
+    // its `text_command` first, else as the input it stands for
     let text_input = matches!(&arena.payload[i], crate::scene::node::Payload::Builtin(W::Ext(x)) if x.0.try_borrow().is_ok_and(|w| w.text_input().is_some()));
-    if text_input {
-        crate::focus::before_text(ui, id);
-    }
+    let pending = if text_input { crate::focus::take_command(ui.ctx(), id) } else { None };
     let ran = with_taken(arena, i, |w, s| {
         let mut cx = WidgetCx {
             s,
@@ -1181,12 +1325,21 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             changed: Vec::new(),
             emits: Vec::new(),
             remeasure: false,
+            repaint: false,
             errors: Vec::new(),
             dark,
             relayout: false,
             ctx: ui.ctx().clone(),
         };
+        if let Some(cmd) = pending
+            && !w.text_command(&cmd, &mut cx)
+        {
+            crate::focus::feed(ui.ctx(), cmd);
+        }
         let resp = w.ui(ui, &mut cx);
+        if cx.repaint {
+            ui.ctx().request_repaint();
+        }
         let WidgetCx { state, changed, emits, remeasure, errors, relayout, .. } = cx;
         (resp, state, changed, emits, remeasure, errors, relayout)
     });
@@ -1203,7 +1356,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
         // OW0 (DESIGN R9): an own widget shows its tooltip while disabled too (the reason)
-        resp = if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
+        resp = if arena.own.contains("tooltip") {
+            let tip = c.tooltip.clone();
+            crate::widgets::tooltip::attach(ui, &resp, &tip, true) // OW3
+        } else if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
     }
     let c = arena.common(i);
     {
@@ -1279,7 +1435,7 @@ fn flush_writes(
         let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
             // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
-            // (OW2: a list payload spreads over a built-in signal of several args: `changed(x, y)`)
+            // (OW1b, OW2: a list payload spreads over a built-in signal of several args: `changed(low, high)`)
             let n = if reg.provider(kind).is_none() { reg.signal_def(kind, sig).map(|d| d.args.len()) } else { None };
             let args = match (n, v) {
                 (Some(0), _) => vec![],

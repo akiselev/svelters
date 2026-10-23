@@ -108,6 +108,10 @@ pub struct EmbedConfig {
     pub prepass_plugin: bool,
     /// OW0: an app's change to the native behaviour policy ([`EmbedConfig::with_policy`]).
     pub policy: Option<fn(&mut crate::native::Policy)>,
+    /// ZM1: who handles Ctrl+= / Ctrl+- / Ctrl+0 ([`ZoomKeys`]). Default `Host`: the embedder owns
+    /// the shortcuts and calls [`Embed::set_zoom`]; egui's own handler is turned off. `app` sets
+    /// `Embed` (steps of 1.2).
+    pub zoom_keys: crate::zoom::ZoomKeys,
 }
 
 impl EmbedConfig {
@@ -137,6 +141,7 @@ impl Default for EmbedConfig {
             timer_horizon: Duration::from_millis(50),
             prepass_plugin: true,
             policy: None,
+            zoom_keys: crate::zoom::ZoomKeys::Host,
         }
     }
 }
@@ -144,9 +149,10 @@ impl Default for EmbedConfig {
 impl EmbedConfig {
     /// For an app bundle (the desktop runners, `TestApp`): the host's config as given, every entry
     /// under its `turn_budget` (as before EM1), quitting when the last window goes if it says so.
+    /// ZM1: the embed handles the zoom keys (`ZoomKeys::Embed`, steps of 1.2).
     pub fn app(host: HostConfig) -> EmbedConfig {
         let b = host.turn_budget.unwrap_or(Duration::from_secs(24 * 3600));
-        EmbedConfig { host, budgets: Budgets { warn: b, interrupt: b, mount: b }, ..EmbedConfig::default() }
+        EmbedConfig { host, budgets: Budgets { warn: b, interrupt: b, mount: b }, zoom_keys: crate::zoom::ZoomKeys::Embed, ..EmbedConfig::default() }
     }
 }
 
@@ -500,6 +506,7 @@ impl Embed {
     pub fn attach(&self, ctx: &egui::Context) {
         let b = &self.inner.backend;
         b.bind_ctx(ctx);
+        crate::zoom::configure(ctx, self.inner.cfg.zoom_keys);
         b.0.scene.hook_passes(ctx);
         current::install(self, ctx);
         if let Some(a) = self.assets() {
@@ -828,6 +835,10 @@ impl Embed {
         self.apply_commands();
         self.sync_info(ctx);
         b.0.in_frame.set(false);
+        // ZM1: the runner's zoom keys (the host's own keymap otherwise); `logic_pass` applies it
+        if self.inner.cfg.zoom_keys == crate::zoom::ZoomKeys::Embed {
+            crate::zoom::handle_keys(ctx, b);
+        }
         // checkpoint (events, changes, timers), rAF, remeasure: every entry under the handler budget
         b.logic_pass(ctx);
         self.collect();
@@ -1230,7 +1241,20 @@ impl Embed {
     /// EV3 (QT-SURVEY §2.3): what has keyboard focus in `ctx`'s current viewport, when it is a node
     /// of this embed, with its root. cadatomic's `TextFocus` layer reads it.
     pub fn focus_info(&self, ctx: &egui::Context) -> crate::focus::FocusInfo {
-        let mut info = self.backend().focus_info(ctx);
+        self.with_root(self.backend().focus_info(ctx))
+    }
+
+    /// EV3b: the text field of this embed that [`Embed::text_command`] acts on, with its root: the
+    /// focused one, else the last one that had focus while nothing or a menu item has it (a click
+    /// on host chrome, the Edit menu open), so the Edit menu enables Cut, Copy and Paste. A
+    /// built-in `text-edit`, an own text widget or a provider kind whose `Widget::text_input` is
+    /// `Some`. `None` once another widget took focus, or the field was removed, hidden or disabled.
+    pub fn last_text_field(&self, ctx: &egui::Context) -> Option<crate::focus::FocusInfo> {
+        self.backend().last_text_field(ctx).map(|i| self.with_root(i))
+    }
+
+    /// `info` with the root of its node filled in.
+    fn with_root(&self, mut info: crate::focus::FocusInfo) -> crate::focus::FocusInfo {
         if let Some(node) = info.node {
             let top = {
                 let scene = self.backend().0.scene.borrow();
@@ -1253,10 +1277,20 @@ impl Embed {
         self.backend().shortcut_override(ctx, chord)
     }
 
+    /// EV3b: [`Embed::shortcut_override`] for a press with its logical (typed) and physical key,
+    /// for a keymap with cadatomic KL1's Latin fallback: the typed key wins, and a Ctrl or Cmd
+    /// chord whose logical key is a symbol or a non-Latin letter is also asked with the physical
+    /// (Latin) key. True when the focused node claims either.
+    pub fn shortcut_override_press(&self, ctx: &egui::Context, logical: egui::Key, physical: Option<egui::Key>, modifiers: egui::Modifiers) -> bool {
+        self.backend().shortcut_override_press(ctx, logical, physical, modifiers)
+    }
+
     /// EV3 (QT-SURVEY §2.3 `text_command`): an Edit-menu command for the focused text field of this
-    /// embed (or the last one, when a click on host chrome took focus to nowhere). Cut, Copy and
-    /// Paste use the host's clipboard (DX2 `Host::platform()`, the one `svelters:clipboard` uses);
-    /// Cut and Copy also go to egui's. False when there is no such field.
+    /// embed (or the last one, when a click on host chrome or a menu took focus: see
+    /// [`Embed::last_text_field`]). Cut, Copy and Paste use the host's clipboard (DX2
+    /// `Host::platform()`, the one `svelters:clipboard` uses); Cut and Copy also go to egui's. A
+    /// provider kind with `Widget::text_input` gets it through `Widget::text_command` first (EV3b).
+    /// False when there is no such field: the host runs its own command.
     pub fn text_command(&self, ctx: &egui::Context, cmd: crate::focus::TextCommand) -> bool {
         // DX2: the clipboard JS uses (`Host::platform()`)
         let clip = crate::focus::Clip(self.host().platform().clipboard.clone());
@@ -1325,6 +1359,17 @@ impl Embed {
     /// Exports, op log, stats, interrupt flag: the underlying host.
     pub fn host(&self) -> &Host<'static> {
         &self.inner.host
+    }
+
+    /// ZM1: sets the UI zoom factor, multiplied with the OS scale ([`EguiBackend::set_zoom`]).
+    /// cadatomic maps its zoom levels to factors (`crate::zoom::level_factor`: 1.2^n).
+    pub fn set_zoom(&self, zoom: f32) {
+        self.inner.backend.set_zoom(zoom);
+    }
+
+    /// ZM1: the UI zoom factor ([`EguiBackend::zoom`]).
+    pub fn zoom(&self) -> f32 {
+        self.inner.backend.zoom()
     }
 
     /// The backend (scene access for tests and devtools: `with_scene`, `handles_of`, `stats`).
@@ -1713,7 +1758,7 @@ impl Embed {
 fn takes_input(w: &crate::scene::W) -> bool {
     use crate::scene::W;
     match w {
-        W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } => true,
+        W::Button { .. } | W::Checkbox { .. } => true,
         // scrolls and selects (LS1)
         W::VirtualList(_) => true,
         W::Run { anchor, .. } => *anchor,
@@ -1747,13 +1792,10 @@ fn takes_input(w: &crate::scene::W) -> bool {
         | W::Hyperlink { .. }
         | W::RadioButton { .. }
         | W::Switch { .. }
-        | W::RangeSlider { .. }
-        | W::DragValue { .. }
         | W::Canvas(_)
         | W::Table(_)
         | W::TabView { .. }
-        | W::ToastHost(_)
-        | W::Picker(_) => true,
+        | W::ToastHost(_) => true,
     }
 }
 

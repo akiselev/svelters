@@ -30,7 +30,6 @@ fn name_of(c: &Common, w: &W, text: &str) -> Option<String> {
     let own = match w {
         // OW4: an own text field is named by its hint
         W::Ext(x) if x.entry().replaces == Some("text-edit") => crate::widgets::text_edit::hint_of(x),
-        W::Slider { text, .. } => some(text),
         W::Icon { name, .. } => some(&c.tooltip).or_else(|| some(name)),
         _ => None,
     };

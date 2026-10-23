@@ -300,6 +300,9 @@ two-roots), the full workspace suite and conformance. CI runs them.
     `(PaintCx, StyleView, rect, …)` and its behaviour in units driven by `interact::run`. A foreign painter then
     calls the same code with `StyleView::ua_only(UA, state, dark)` (or a theme's computed style) and a `Response`
     of its own.
+    OW-RUST did this for OW1a's kinds: `pub(crate) fn paint`/`measure` in the widget file, called by the kind's
+    `ui` and by its `svelters_egui::imm` builder (`src/imm/widgets.rs`). Give a new kind both, add its `imm`
+    builder, and add a parity case to `tests/imm.rs` (plans/milestones/OW-RUST-immediate.md).
 
 ## Not done (and where it goes)
 

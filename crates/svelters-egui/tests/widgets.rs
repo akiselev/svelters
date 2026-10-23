@@ -79,12 +79,18 @@ fn collapsing_header_toggles_open_and_lays_out_its_body() {
     let _ = field;
     assert_eq!(rig.harness.get_by_role_and_label(Role::DisclosureTriangle, "Placement").accesskit_node().data().is_expanded(), Some(true));
     let (hd, xr) = (rig.drawn(h), rig.drawn(x));
-    assert!(xr.top() >= hd.bottom() - 0.5, "the body is below the header: {hd:?} {xr:?}");
+    // (the own header's node is header and body, OW1a2; the egui wrapper's drawn rect is the header)
+    let head_h = rig.drawn(after).top() - closed_after;
+    assert!(xr.top() >= hd.top() + 16.0 && head_h > 10.0, "the body is below the header: {hd:?} {xr:?}");
     assert!(xr.left() >= hd.left() + 10.0, "and indented: {hd:?} {xr:?}");
     assert!(rig.drawn(after).top() > closed_after + 10.0, "the next sibling moved down");
 
-    // closing again
-    rig.click(h);
+    // closing again, by the header (the open node's centre is in its body: OW4's 26px field)
+    let head = egui::pos2(rig.drawn(h).center().x, (rig.drawn(h).top() + rig.drawn(x).top()) / 2.0);
+    rig.harness.hover_at(head);
+    for pressed in [true, false] {
+        rig.harness.event(egui::Event::PointerButton { pos: head, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
+    }
     rig.run();
     assert_eq!(rig.get(h, "open"), Value::Bool(false));
     assert!(rig.harness.query_by_label("X offset").is_none());
@@ -143,7 +149,15 @@ fn toggle_buttons_toggle_and_radio_ones_stay_checked() {
 /// Combo box: shows the selected option; picking a row in the popup changes `selected`.
 #[test]
 fn combo_box_picks_an_option() {
+    // OW3: the egui wrapper and svelters' own select
+    for set in [svelters_egui::widgets::KindSet::None, svelters_egui::widgets::KindSet::tags(["combo-box"])] {
+        combo_box_picks_an_option_on(set);
+    }
+}
+
+fn combo_box_picks_an_option_on(set: svelters_egui::widgets::KindSet) {
     let mut rig = Rig::new();
+    rig.backend.set_own_widgets(set);
     let (_w, col) = rig.window();
     let opts = Value::List(vec![s("Alpha"), s("Beta"), s("Gamma")]);
     let cb = rig.leaf(col, "combo-box", &[("options", opts.clone()), ("accessible-name", s("Plane"))]);
@@ -422,6 +436,8 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         }
         let mut rig = Rig::new();
         rig.harness.ctx.all_styles_mut(|st| st.interaction.tooltip_delay = 0.0);
+        // OW3: svelters' own tooltips wait for the policy's delay
+        svelters_egui::native::override_policy(&rig.harness.ctx, |p| p.tooltip_delay_ms = 0);
         let (_w, col) = rig.window();
         // a leaf whose drawn rect gives the root's screen origin (containers draw nothing)
         let probe = rig.leaf(col, "label", &[("text", s("probe"))]);
@@ -446,7 +462,8 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         rig.harness.hover_at(pos);
         rig.run();
         // the tooltip's label (an input without a caption is also named by its tooltip: two nodes)
-        let shown = rig.harness.query_all_by_label(&tip).filter(|n| n.accesskit_node().role() == Role::Label).count();
+        // (egui's tooltip is a label; svelters' own is a `Tooltip` node, OW3)
+        let shown = rig.harness.query_all_by_label(&tip).filter(|n| matches!(n.accesskit_node().role(), Role::Label | Role::Tooltip)).count();
         assert_eq!(shown, 1, "<{tag}>: no tooltip shown");
     }
 }

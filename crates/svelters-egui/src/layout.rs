@@ -347,27 +347,15 @@ impl Metrics {
                 let icon = sp.icon_width + if text.is_empty() { 0.0 } else { sp.icon_spacing };
                 vec2(t.x + icon, t.y.max(interact.y))
             }
-            W::Slider { text, show_value, .. } => {
-                let mut wdt = sp.slider_width;
-                if *show_value {
-                    wdt += sp.item_spacing.x + interact.x;
-                }
-                if !text.is_empty() {
-                    wdt += sp.item_spacing.x + self.text_size(text, None).x;
-                }
-                vec2(wdt, interact.y)
-            }
             W::Box | W::Window { .. } | W::Grid { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
-            W::Menu(x) => crate::menus::measure(self, x),
+            W::Menu(x) => crate::menus::measure(self, x, css),
             W::Overlay(_) => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent, css, parts),
             // ---- WG2b (`crate::elements`) ----
             W::Hyperlink { .. }
             | W::RadioButton { .. }
             | W::Switch { .. }
-            | W::RangeSlider { .. }
-            | W::DragValue { .. }
             | W::Sides
             | W::Frame { .. }
             | W::Stack { .. }
@@ -377,7 +365,6 @@ impl Metrics {
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
             W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
-            W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -393,7 +380,11 @@ impl Metrics {
             W::Separator { vertical: false } => vec2(0.0, 6.0),
             W::Separator { vertical: true } => vec2(6.0, 0.0),
             W::Icon { name, glyph, family, size, weight, frame, source, .. } => {
-                let t = if !source.is_empty() {
+                let t = if source.is_empty() && crate::icons::is_registry_icon(&self.ctx, family, name) {
+                    // ICR1: a registry icon is a square of `size` (else 16) points
+                    let side = size.map_or(crate::icons::DEFAULT_SIZE, |s| s as f32);
+                    crate::icons::size(&self.ctx, &crate::icons::registry(&self.ctx), name, side).unwrap_or(Vec2::splat(side))
+                } else if !source.is_empty() {
                     // AS1: an image icon is a square of `size` (else the body size)
                     Vec2::splat(size.map_or_else(|| egui::TextStyle::Body.resolve(&self.style).size, |s| s as f32))
                 } else {
@@ -736,7 +727,16 @@ impl CacheTree for Tree<'_> {
     fn cache_store(&mut self, id: NodeId, inputs: &LayoutInput, out: LayoutOutput) {
         // SG6: only nodes whose layout is not a built-in leaf's cheap rerun keep a cache
         let i = ix(id);
-        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if !w.is_container() && !matches!(w, W::Ext(_)));
+        // (OW1a2: an own widget replacing a built-in leaf is such a leaf: its intrinsic size is
+        // cached in `LayoutBox` like the egui wrapper's)
+        let leaf_like = |w: &W| match w {
+            W::Ext(x) => {
+                let e = x.entry();
+                e.replaces.is_some() && !e.caps.contains(crate::provider::Caps::CONTAINER) && !e.caps.contains(crate::provider::Caps::CUSTOM_LAYOUT)
+            }
+            w => !w.is_container(),
+        };
+        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if leaf_like(w));
         if cached || CACHE_LEAVES {
             self.s.layout[i].cache.store(inputs, out)
         }
@@ -1022,7 +1022,8 @@ fn positional_parent(s: &Scene, i: usize) -> Option<usize> {
     }
 }
 
-/// The capabilities of node `i`'s provider kind, `None` for a built-in.
+/// The capabilities of node `i`'s provider kind (or of the own widget that replaces a built-in,
+/// OW1a2: `frame`, `collapsing-header`), `None` for a built-in's egui wrapper.
 fn provider_caps(s: &Scene, i: usize) -> Option<crate::provider::Caps> {
     // OW2: an own widget replacing a built-in has a provider entry too (`replaces`)
     if let Payload::Builtin(W::Ext(x)) = &s.payload[i] {
@@ -1123,6 +1124,49 @@ impl LayoutCx<'_> {
     pub fn default_layout(&mut self, inputs: LayoutInput) -> LayoutOutput {
         let id = tid(self.node);
         self.with_tree(|t| compute_flexbox_layout(t, id, inputs))
+    }
+
+    /// OW1a2: [`Self::default_layout`] with `add` (left, right, top, bottom, in points) added to
+    /// the node's padding: room for chrome the widget paints itself (a frame's caption and
+    /// border, a collapsing header's row and indent).
+    pub fn padded_layout(&mut self, inputs: LayoutInput, add: [f32; 4]) -> LayoutOutput {
+        let i = self.node.index() as usize;
+        let grow = |p: LengthPercentage, a: f32| match p.into_raw().tag() {
+            taffy::style::CompactLength::LENGTH_TAG => LengthPercentage::length(p.into_raw().value() + a),
+            _ => p,
+        };
+        let saved = self.s.layout[i].style.clone();
+        let st = std::sync::Arc::make_mut(&mut self.s.layout[i].style); // SG6: a copy for this run only
+        let p = st.padding;
+        st.padding = taffy::Rect { left: grow(p.left, add[0]), right: grow(p.right, add[1]), top: grow(p.top, add[2]), bottom: grow(p.bottom, add[3]) };
+        let out = self.default_layout(inputs);
+        self.s.layout[i].style = saved;
+        out
+    }
+
+    /// OW1a2: the node as a leaf of `size` (its known dimensions win), with every child given the
+    /// hidden layout: a closed collapsing header.
+    pub fn collapsed(&mut self, inputs: LayoutInput, size: egui::Vec2) -> LayoutOutput {
+        let i = self.node.index() as usize;
+        self.leaf_layouts += 1;
+        let out = compute_leaf_layout(inputs, &*self.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(size.x.ceil()), height: known.height.unwrap_or(size.y.ceil()) });
+        if inputs.run_mode == RunMode::PerformLayout {
+            for k in 0..self.s.children[i].len() {
+                let c = tid(self.s.children[i][k]);
+                self.with_tree(|t| compute_hidden_layout(t, c));
+            }
+        }
+        out
+    }
+
+    /// OW1a2: a [`MeasureCx`](crate::provider::MeasureCx) for this node (its computed style and
+    /// part styles), to size chrome the widget paints.
+    pub fn with_measure<R>(&self, f: impl FnOnce(&crate::provider::MeasureCx<'_>) -> R) -> R {
+        let css = self.s.style.computed(self.node).cloned();
+        let parts = self.s.style.part_styles(self.node);
+        let id = egui::Id::new(("svelters-egui.measure", self.node)); // RA3's measuring id
+        let cx = crate::provider::MeasureCx { ctx: &self.m.ctx, style: &self.m.style, id, css: css.as_deref(), parts: &parts };
+        f(&cx)
     }
 }
 

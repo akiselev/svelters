@@ -144,6 +144,44 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("white-space", "enum", &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]),
 ];
 
+/// U0 (UTILITY-CSS §3.4): the numeric ranges of egui's style properties, kind-table setters and
+/// [`ENGINE_PROPS`] alike, as `(name, min, max)` (infinite for an open end): the spec's `range`, which
+/// guards utility and arbitrary values (`opacity-150`, a negative width). Unlisted: unbounded
+/// (margins and insets may be negative).
+pub(crate) const PROP_RANGES: &[(&str, f64, f64)] = &[
+    ("border-bottom-left-radius", 0.0, f64::INFINITY),
+    ("border-bottom-right-radius", 0.0, f64::INFINITY),
+    ("border-bottom-width", 0.0, f64::INFINITY),
+    ("border-left-width", 0.0, f64::INFINITY),
+    ("border-radius", 0.0, f64::INFINITY),
+    ("border-right-width", 0.0, f64::INFINITY),
+    ("border-top-left-radius", 0.0, f64::INFINITY),
+    ("border-top-right-radius", 0.0, f64::INFINITY),
+    ("border-top-width", 0.0, f64::INFINITY),
+    ("border-width", 0.0, f64::INFINITY),
+    ("column-gap", 0.0, f64::INFINITY),
+    ("flex-basis", 0.0, f64::INFINITY),
+    ("flex-grow", 0.0, f64::INFINITY),
+    ("flex-shrink", 0.0, f64::INFINITY),
+    ("font-size", 0.0, f64::INFINITY),
+    ("gap", 0.0, f64::INFINITY),
+    ("height", 0.0, f64::INFINITY),
+    ("max-height", 0.0, f64::INFINITY),
+    ("max-width", 0.0, f64::INFINITY),
+    ("min-height", 0.0, f64::INFINITY),
+    ("min-width", 0.0, f64::INFINITY),
+    ("opacity", 0.0, 1.0),
+    ("outline-width", 0.0, f64::INFINITY),
+    ("padding", 0.0, f64::INFINITY),
+    ("padding-bottom", 0.0, f64::INFINITY),
+    ("padding-left", 0.0, f64::INFINITY),
+    ("padding-right", 0.0, f64::INFINITY),
+    ("padding-top", 0.0, f64::INFINITY),
+    ("row-gap", 0.0, f64::INFINITY),
+    ("scroll-margin", 0.0, f64::INFINITY),
+    ("width", 0.0, f64::INFINITY),
+];
+
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.
 pub(crate) const WALK_BITS: StateBits = StateBits(
     StateBits::HOVERED.0
@@ -162,7 +200,14 @@ pub(crate) const WALK_BITS: StateBits = StateBits(
 const OWN_KEEPS: StateBits = StateBits(WALK_BITS.0 & !(StateBits::DISABLED.0 | StateBits::EXITING.0));
 
 /// OW0: an own widget draws itself (`crate::paint`) and owns its interaction bits.
+/// (OW1a2: every own widget that replaces a built-in, too: its units own its interaction bits
+/// and its prop mirror, such as a checkbox's `:checked`, whether or not it paints its own box.)
 pub(crate) fn is_own(w: &W) -> bool {
+    matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::PAINTS_BOX) || x.entry().replaces.is_some())
+}
+
+/// OW0: an own widget that paints its own box (the walk paints none behind it).
+fn paints_box(w: &W) -> bool {
     matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::PAINTS_BOX))
 }
 
@@ -210,12 +255,18 @@ pub(crate) struct SceneStyle {
     focus: Option<NodeId>,
     /// A walk-time restyle that needs another frame (an ancestor or a layout change).
     pub(crate) repaint: bool,
+    /// OW-RUST: bumped whenever every node restyles (sheets, media, fonts): `imm`'s cache of
+    /// virtual-element styles is valid while it holds.
+    generation: u64,
     /// OW-CSS: running CSS transitions of nodes, and of own widgets' parts (by declaration index).
     transitions: Transitions<NodeId>,
     part_transitions: Transitions<(NodeId, u16)>,
     /// Their samples at `now`: what paint reads over the computed style.
     sampled: std::collections::HashMap<NodeId, Overlay>,
     part_sampled: std::collections::HashMap<(NodeId, u16), Overlay>,
+    /// OW5a: repeated parts' styles by (host, part, forced state, index, count) ([`Scene::part_at`]),
+    /// dropped at every restyle.
+    part_at: std::collections::HashMap<(NodeId, &'static str, u64, u32, u32), Arc<ComputedStyle>>,
     /// egui's input time at the last logic step (kittest's virtual clock in tests): transitions
     /// start and are sampled at it.
     pub(crate) now: f64,
@@ -259,10 +310,12 @@ impl Default for SceneStyle {
             contrast: None,
             focus: None,
             repaint: false,
+            generation: 0,
             transitions: Transitions::new(),
             part_transitions: Transitions::new(),
             sampled: Default::default(),
             part_sampled: Default::default(),
+            part_at: Default::default(),
             now: 0.0,
             reduced_motion: false,
         }
@@ -397,6 +450,25 @@ impl SceneStyle {
     /// The computed style of a live node.
     pub(crate) fn computed(&self, id: NodeId) -> Option<&Arc<ComputedStyle>> {
         self.node(id)?.computed.as_ref()
+    }
+
+    /// OW-RUST: the restyle generation (see [`SceneStyle::generation`]'s field).
+    pub(crate) fn generation(&self) -> u64 {
+        self.generation
+    }
+
+    /// OW-RUST: the computed style of `el`, an element that is not a scene node (`imm`'s virtual
+    /// element: tag, classes, state), from the scene's sheets and media, inheriting `parent`.
+    pub(crate) fn compute_virtual<E: Element>(&self, el: E, parent: Option<&ComputedStyle>) -> ComputedStyle {
+        self.stylist.compute(el, parent, None, &self.cx, &mut MatchCaches::new())
+    }
+
+    /// OW-RUST: the style of a virtual element's paint part `part` (`::part(name)`) over `host`,
+    /// as [`Scene::restyle_node`] computes a node's: `None` when no sheet has a rule ending in
+    /// that part (the widget then paints it from its UA table, inheriting from the host).
+    pub(crate) fn part_virtual<E: Element>(&self, el: E, host: &ComputedStyle, part: &str) -> Option<ComputedStyle> {
+        let pe = PseudoElement::part(part);
+        self.stylist.has_pseudo_rules(&pe).then(|| self.stylist.compute_pseudo(el, &pe, host, &self.cx, &mut MatchCaches::new()))
     }
 }
 
@@ -550,7 +622,7 @@ impl Element for Forced<'_> {
 
 /// Stock widgets: egui draws them with per-state `WidgetVisuals`.
 fn is_stock(w: &W) -> bool {
-    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. })
+    matches!(w, W::Button { .. } | W::Checkbox { .. })
 }
 
 /// Whether two part lists hold the same parts with equal styles.
@@ -640,10 +712,48 @@ impl Scene {
         self.style.observer = Some(self.journal.observe(f));
     }
 
+    /// OW5a (DESIGN R6, WIDGET-PARITY P1): node `id`'s repeated part `part` (a list's `row`) at
+    /// logical position `at` = (index, count), matched with the host's state bits replaced by
+    /// `state` (the row's own hover, selection, cursor; the caller keeps the host's
+    /// `:focus-within`), so `virtual-list::part(row):selected`,
+    /// `virtual-list:not(:focus-within)::part(row):selected` and `::part(row):nth-child(even)`
+    /// style each pooled row. `None` when no sheet has a rule ending in `::part(part)` (the widget
+    /// paints the part from its UA table). Cached until the next restyle of any node.
+    pub(crate) fn part_at(&mut self, id: NodeId, part: &'static str, state: StateBits, at: (usize, usize)) -> Option<Arc<ComputedStyle>> {
+        let st = &self.style;
+        if !st.active {
+            return None;
+        }
+        let host = st.computed(id)?.clone();
+        let key = (id, part, state.0, at.0 as u32, at.1 as u32);
+        if let Some(c) = st.part_at.get(&key) {
+            return Some(c.clone());
+        }
+        let pe = PseudoElement::part(part);
+        if !st.stylist.has_pseudo_rules(&pe) {
+            return None;
+        }
+        let mut caches = std::mem::take(&mut self.style.caches);
+        let n = NodeRef::at(self, id);
+        let st = &self.style;
+        caches.clear();
+        let c = Arc::new(st.stylist.compute_pseudo_at(Forced { n, subject: id, state }, &pe, Some(at), &host, &st.cx, &mut caches));
+        caches.clear();
+        self.style.caches = caches;
+        if self.style.part_at.len() > 4096 {
+            self.style.part_at.clear();
+        }
+        self.style.part_at.insert(key, c.clone());
+        Some(c)
+    }
+
     /// Computes node `i`'s style now from its parent's stored style; applies it (taffy style,
     /// paint). Returns true if what its children inherit changed.
     pub(crate) fn restyle_node(&mut self, i: usize) -> bool {
         let Some(id) = self.slots.id_at(i) else { return false };
+        if !self.style.part_at.is_empty() {
+            self.style.part_at.clear();
+        }
         self.core[i].dirty.remove(Dirty::STYLE);
         let parent = self.core[i].parent.and_then(|p| self.style.computed(p).cloned());
         let inline = self.style.node(id).and_then(|n| n.inline.clone());
@@ -766,6 +876,7 @@ impl Scene {
             }
         }
         if std::mem::take(&mut self.style.all) {
+            self.style.generation += 1;
             self.style.dirty.clear();
             let ids: Vec<NodeId> = (0..self.core.len()).filter_map(|i| self.slots.id_at(i)).collect();
             for id in ids {
@@ -977,7 +1088,19 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         // (and `opacity`: `StyleView::opacity`, CSS over its UA table)
         let b = s.prop_bits(i) | StateBits(s.core[i].state.0 & OWN_KEEPS.0);
         s.set_walk_state(i, b);
-        let _ = child;
+        // (OW1a2: one that does not paint its own box gets the node's CSS box and opacity here)
+        if !paints_box(s.w(i))
+            && let Some(c) = s.style.computed(id).cloned()
+        {
+            if let Some(ComputedValue::Number(o)) = c.get("opacity")
+                && *o < 1.0
+            {
+                child.multiply_opacity(o.max(0.0));
+            }
+            let dark = child.ctx().theme() == egui::Theme::Dark;
+            let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+            crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(child.painter(), id.to_raw()), &v, r);
+        }
         return;
     }
     // the id the widget takes: TextEdit's is the node's (leaf.rs), the others the child's first
@@ -1155,7 +1278,7 @@ fn resolve_family(ctx: &egui::Context, list: &str) -> Option<egui::FontFamily> {
 /// The text a leaf draws, for the weight family's glyph check.
 fn leaf_text(w: &W) -> &str {
     match w {
-        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::Slider { text, .. } => text,
+        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } => text,
         _ => "",
     }
 }

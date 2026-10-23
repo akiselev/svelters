@@ -135,7 +135,6 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Span" | "Bold" | "Italic" | "Code" | "Anchor" => W::Run { text: String::new(), weight: 0, href: String::new(), anchor: kinds::kind(kind).id == "Anchor" },
         "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false, weight: 400 },
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
-        "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
         "VirtualList" => W::VirtualList(Box::default()),
         "TreeView" => W::VirtualList(Box::new(crate::kinds::VList::tree())),
         // WG1: the defaults match the kind tables (`kinds/builtin.rs`, `kinds/containers.rs`)
@@ -158,7 +157,6 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "TabView" => W::TabView { selected: 0 },
         "Tab" => W::Tab { title: String::new(), closable: false },
         "ToastHost" => W::ToastHost(Box::default()),
-        id if kinds::pickers::is_picker(id) => W::Picker(kinds::pickers::Picker::new(id)), // WG4b
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })
@@ -183,7 +181,8 @@ impl Scene {
         let tag = (kind < kinds::KindRegistry::global().len()).then(|| kinds::kind(kind).tag).flatten().ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
         // OW0: a built-in kind whose own widget is switched on (`crate::widgets`) gets it
         let own = crate::widgets::own_payload(&self.own, kind);
-        let w = own.or_else(|| builtin_payload(kind)).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
+        let mut w = own.or_else(|| builtin_payload(kind)).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
+        crate::widgets::mark_own(&self.own, tag, &mut w); // OW3: menu roots and `popup`
         let (id, fresh) = self.slots.alloc();
         let tick = self.stamp();
         let i = id.index() as usize;

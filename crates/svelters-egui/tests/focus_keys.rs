@@ -12,6 +12,7 @@ use svelters_abi::*;
 use svelters_egui::EguiBackend;
 use svelters_egui::focus::{self, TextCommand};
 use svelters_egui::native::{self, Native};
+use svelters_egui::widgets::KindSet;
 
 const CTRL: egui::Modifiers = egui::Modifiers { alt: false, ctrl: true, shift: false, mac_cmd: false, command: true };
 
@@ -350,7 +351,15 @@ fn ev3_modal_overlay_is_a_dialog_scope() {
 /// that had it, so an Edit-menu command reaches it.
 #[test]
 fn ev3_focus_returns_after_a_menu_closes() {
+    // OW3: the egui menus and svelters' own (the own menu holds the keyboard while open)
+    for set in [svelters_egui::widgets::KindSet::None, svelters_egui::widgets::KindSet::tags(["menu-button"])] {
+        ev3_focus_returns_after_a_menu_closes_on(set);
+    }
+}
+
+fn ev3_focus_returns_after_a_menu_closes_on(set: svelters_egui::widgets::KindSet) {
     let mut rig = Rig::new();
+    rig.backend.set_own_widgets(set);
     native::set(&rig.harness.ctx, Native::Egui); // a click does not focus the menu button
     let (_w, col) = rig.window();
     let field = rig.leaf(col, "text-edit", &[("accessible-name", s("field"))]);
@@ -410,4 +419,393 @@ fn ev3_edit_commands_use_the_host_clipboard() {
     app.harness.key_press(egui::Key::Enter);
     app.run();
     assert!(app.harness.query_by_label("Result: ok:Bob").is_some(), "{:?}", app.errors());
+}
+
+// ---- EV3b: Embed hooks for cadatomic (last text field, Latin fallback, provider edit commands) ----
+
+use std::cell::Cell;
+use svelters_egui::provider::{AvailableSpace, MeasureCx, Widget, WidgetCx};
+
+/// A provider text input whose egui `TextEdit` has the node's id (`<quantity-field>`'s shape): EV3's
+/// edit commands reach it as the input they stand for.
+#[svelters::widget(namespace = "t", tag = "t-field", caps = FOCUSABLE | EDITABLE)]
+pub struct TField {
+    #[prop]
+    label: String,
+    #[state]
+    text: String,
+}
+
+impl Widget for TField {
+    fn measure(&mut self, _cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
+        egui::vec2(160.0, 24.0)
+    }
+    fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
+        ui.add(egui::TextEdit::singleline(&mut self.text).id(cx.id()).desired_width(160.0))
+    }
+    fn a11y(&self, _cx: &svelters_egui::provider::A11yCx<'_>, node: &mut egui::accesskit::Node) {
+        node.set_label(if self.label.is_empty() { "qty" } else { self.label.as_str() });
+    }
+    fn text_input(&self) -> Option<bool> {
+        Some(false)
+    }
+}
+
+/// A provider text input with its own undo (`<code-editor>`'s shape, a host-owned document): it
+/// takes the edit commands through `Widget::text_command`, except Delete, which it leaves to be
+/// fed as the key. `editable = false` makes it a plain focusable kind (`text_input` is `None`).
+#[svelters::widget(namespace = "t", tag = "t-editor", caps = FOCUSABLE | EDITABLE)]
+pub struct TEditor {
+    #[prop(default = true)]
+    editable: bool,
+    #[state]
+    text: String,
+    #[state]
+    undo: Vec<String>,
+    /// The commands `text_command` was given.
+    #[state]
+    handled: Vec<TextCommand>,
+    /// The key events its `ui` saw while focused: (Ctrl/Cmd+Z, Delete).
+    #[state]
+    keys: (usize, usize),
+}
+
+impl Widget for TEditor {
+    fn measure(&mut self, _cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
+        egui::vec2(160.0, 40.0)
+    }
+    fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
+        let resp = ui.interact(cx.rect(), cx.id(), egui::Sense::click());
+        if resp.clicked() {
+            resp.request_focus();
+        }
+        if resp.has_focus() {
+            ui.input(|i| {
+                for e in &i.events {
+                    match e {
+                        egui::Event::Text(t) => {
+                            self.undo.push(self.text.clone());
+                            self.text.push_str(t);
+                        }
+                        egui::Event::Key { key: egui::Key::Z, pressed: true, modifiers, .. } if modifiers.command => self.keys.0 += 1,
+                        egui::Event::Key { key: egui::Key::Delete, pressed: true, .. } => self.keys.1 += 1,
+                        _ => {}
+                    }
+                }
+            });
+        }
+        resp
+    }
+    fn consume_key(&self, key: egui::Key, m: egui::Modifiers) -> bool {
+        self.editable && m.command && key == egui::Key::Z
+    }
+    fn text_input(&self) -> Option<bool> {
+        self.editable.then_some(true)
+    }
+    fn text_command(&mut self, cmd: &TextCommand, cx: &mut WidgetCx<'_>) -> bool {
+        self.handled.push(cmd.clone());
+        match cmd {
+            TextCommand::Undo => {
+                if let Some(t) = self.undo.pop() {
+                    self.text = t;
+                }
+            }
+            TextCommand::Insert(t) => {
+                self.undo.push(std::mem::replace(&mut self.text, t.clone()));
+            }
+            TextCommand::Copy => cx.ctx().copy_text(self.text.clone()),
+            TextCommand::Delete => return false,
+            _ => {}
+        }
+        true
+    }
+}
+
+fn editor<R>(rig: &Rig, h: svl_handle, f: impl FnOnce(&TEditor) -> R) -> R {
+    rig.backend.with_scene(|s| s.n(h).widget(f)).expect("a t-editor")
+}
+
+/// The egui id of the widget of node `h` (its node id for these leaves and kinds).
+fn widget_id(rig: &Rig, h: svl_handle) -> egui::Id {
+    rig.backend.with_scene(|s| s.n(h).id)
+}
+
+/// A rig whose frame draws the svelters content, then a host button ("Host item", a menu item or
+/// host chrome) that takes focus when `focus_host` is set.
+fn host_rig() -> (Rig, Rc<Cell<bool>>) {
+    let mut rig = Rig::new();
+    let focus_host: Rc<Cell<bool>> = Rc::default();
+    let f = focus_host.clone();
+    rig.harness = Harness::builder().with_size(egui::vec2(480.0, 360.0)).build_ui_state(
+        move |ui, b: &mut EguiBackend| {
+            b.ui(ui);
+            let r = ui.add(egui::Button::new("Host item"));
+            if f.take() {
+                r.request_focus();
+            }
+        },
+        rig.backend.clone(),
+    );
+    (rig, focus_host)
+}
+
+/// Under OW3's own menus (the default, which hold the keyboard while open) and the egui wrappers
+/// (`SVELTERS_OWN_WIDGETS=none`, egui popups).
+#[test]
+fn ev3b_last_text_field_survives_menus_and_ends_with_the_field() {
+    for set in [KindSet::Default, KindSet::None] {
+        last_text_field_on(set);
+    }
+}
+
+fn last_text_field_on(set: KindSet) {
+    let (mut rig, focus_host) = host_rig();
+    native::set(&rig.harness.ctx, Native::Egui); // a click does not focus the menu button
+    rig.backend.set_own_widgets(set.clone());
+    let (_w, col) = rig.window();
+    let field = rig.leaf(col, "text-edit", &[("accessible-name", s("field"))]);
+    let _btn = rig.leaf(col, "button", &[("text", s("Plain"))]);
+    let mb = rig.leaf(col, "menu-button", &[("label", s("More")), ("align-self", s("start"))]);
+    let _copy = rig.leaf(mb, "action", &[("label", s("Copy"))]);
+    let qty = rig.create("t-field");
+    rig.insert(col, qty);
+    rig.run();
+    let ctx = rig.harness.ctx.clone();
+    assert_eq!(rig.backend.last_text_field(&ctx), None, "no text field had focus yet");
+
+    // the focused field is the last one
+    rig.type_into(field, "hi");
+    let info = rig.backend.last_text_field(&ctx).expect("the focused field");
+    assert_eq!((info.kind, info.text_input, info.widget), (Some("text-edit"), true, Some(widget_id(&rig, field))));
+
+    // a click on host chrome took focus to nowhere: still the field
+    ctx.memory_mut(|m| m.surrender_focus(m.focused().unwrap()));
+    rig.run();
+    assert_eq!(rig.backend.last_text_field(&ctx).and_then(|i| i.widget), Some(widget_id(&rig, field)));
+
+    // a menu opens and one of its items (a host widget) takes focus: still the field, and the
+    // Edit menu's command reaches it
+    let pos = rig.harness.get_by_label("More").rect().center();
+    rig.harness.hover_at(pos);
+    for pressed in [true, false] {
+        rig.harness.event(egui::Event::PointerButton { pos, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
+    }
+    rig.run();
+    assert!(rig.harness.query_by_label("Copy").is_some(), "{set:?}: the menu is open");
+    assert_eq!(rig.backend.last_text_field(&ctx).and_then(|i| i.widget), Some(widget_id(&rig, field)), "{set:?}: the menu is open");
+    focus_host.set(true);
+    rig.run();
+    assert!(focused(&rig, "Host item"));
+    assert_eq!(rig.backend.last_text_field(&ctx).and_then(|i| i.widget), Some(widget_id(&rig, field)), "{set:?}: a menu item has focus");
+    assert!(rig.backend.text_command(&ctx, TextCommand::SelectAll));
+    rig.run();
+    assert!(focused(&rig, "field"), "the command focused the field again");
+    // a press outside closes the menu (an own menu takes Escape only while it holds the keyboard,
+    // and the command gave the keyboard to the field)
+    let out = egui::pos2(470.0, 350.0);
+    rig.harness.hover_at(out);
+    for pressed in [true, false] {
+        rig.harness.event(egui::Event::PointerButton { pos: out, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
+    }
+    rig.run();
+    rig.run();
+    assert!(rig.harness.query_by_label("Copy").is_none(), "{set:?}: the menu closed");
+
+    // another widget takes focus (a host widget with no menu open, a svelters button): no target
+    focus_host.set(true);
+    rig.run();
+    rig.run();
+    assert!(focused(&rig, "Host item"));
+    assert_eq!(rig.backend.last_text_field(&ctx), None, "a host widget took focus");
+    assert!(!rig.backend.text_command(&ctx, TextCommand::Undo));
+    rig.type_into(field, "hi");
+    key(&mut rig, egui::Modifiers::NONE, egui::Key::Tab); // (a click does not focus a button here)
+    assert!(focused(&rig, "Plain"));
+    ctx.memory_mut(|m| m.surrender_focus(m.focused().unwrap()));
+    rig.run();
+    assert_eq!(rig.backend.last_text_field(&ctx), None, "the button had focus after the field");
+
+    // a provider kind with `text_input` is a text field too
+    rig.click(qty);
+    rig.run();
+    let info = rig.backend.last_text_field(&ctx).expect("the provider field");
+    assert_eq!((info.kind, info.text_input, info.multiline), (Some("t-field"), true, false));
+
+    // disabled: gone, and it does not come back when enabled again
+    ctx.memory_mut(|m| m.surrender_focus(m.focused().unwrap()));
+    rig.run();
+    assert!(rig.backend.last_text_field(&ctx).is_some());
+    rig.set(qty, "enabled", Value::Bool(false));
+    rig.run();
+    rig.run();
+    assert_eq!(rig.backend.last_text_field(&ctx), None, "a disabled field is no target");
+    assert!(!rig.backend.text_command(&ctx, TextCommand::Undo));
+    rig.set(qty, "enabled", Value::Bool(true));
+    rig.run();
+    rig.run();
+    assert_eq!(rig.backend.last_text_field(&ctx), None);
+
+    // removed
+    rig.type_into(field, "hi");
+    ctx.memory_mut(|m| m.surrender_focus(m.focused().unwrap()));
+    rig.run();
+    assert!(rig.backend.last_text_field(&ctx).is_some());
+    rig.br().remove(col, field).unwrap();
+    rig.run();
+    rig.run();
+    assert_eq!(rig.backend.last_text_field(&ctx), None, "a removed field is no target");
+}
+
+/// The Latin-fallback matrix (cadatomic KL1): the typed key wins; Ctrl/Cmd chords also ask for the
+/// physical key only when the logical one is a symbol or a non-Latin letter (which egui reports
+/// as its physical key).
+#[test]
+fn ev3b_shortcut_override_press_latin_fallback() {
+    use egui::Key as K;
+    let mut rig = Rig::new();
+    native::set(&rig.harness.ctx, Native::Gtk);
+    let (_w, col) = rig.window();
+    let field = rig.leaf(col, "text-edit", &[("accessible-name", s("field"))]);
+    let btn = rig.leaf(col, "button", &[("text", s("Plain"))]);
+    rig.run();
+    rig.type_into(field, "abc");
+    let ctx = rig.harness.ctx.clone();
+    let none = egui::Modifiers::NONE;
+    let cmd = egui::Modifiers { mac_cmd: true, command: true, ..Default::default() };
+    // (layout, logical, physical, modifiers, claimed by the focused field)
+    let matrix: &[(&str, K, Option<K>, egui::Modifiers, bool)] = &[
+        // Latin (AZERTY, QWERTZ): the letter typed is the key, never its physical neighbour
+        ("azerty Ctrl+Z at US W", K::Z, Some(K::W), CTRL, true),
+        ("azerty Ctrl+W at US Z", K::W, Some(K::Z), CTRL, false),
+        ("qwertz Ctrl+Z at US Y", K::Z, Some(K::Y), CTRL, true),
+        ("qwerty Ctrl+S", K::S, Some(K::S), CTRL, false),
+        ("azerty W at US Z", K::W, Some(K::Z), none, true),
+        ("latin, no physical key", K::Z, None, CTRL, true),
+        // symbol keys (Dvorak's `;` at US Z, AZERTY's `,` at US M): Ctrl falls back to the Latin key
+        ("dvorak Ctrl+; at US Z", K::Semicolon, Some(K::Z), CTRL, true),
+        ("dvorak Cmd+; at US Z", K::Semicolon, Some(K::Z), cmd, true),
+        ("azerty Ctrl+, at US M", K::Comma, Some(K::M), CTRL, false),
+        ("dvorak ; at US Z", K::Semicolon, Some(K::Z), none, true),
+        ("symbol, no physical key", K::Semicolon, None, CTRL, false),
+        // non-Latin (Russian): egui reports the physical key as the logical one
+        ("ru Ctrl+я at US Z", K::Z, Some(K::Z), CTRL, true),
+        ("ru Ctrl+ы at US S", K::S, Some(K::S), CTRL, false),
+        ("ru а at US F", K::F, Some(K::F), none, true),
+        ("ru Cmd+с at US C", K::C, Some(K::C), cmd, true),
+    ];
+    for &(name, logical, physical, m, want) in matrix {
+        assert_eq!(rig.backend.shortcut_override_press(&ctx, logical, physical, m), want, "field: {name}");
+    }
+    // the same claim as `shortcut_override` for the typed key
+    assert!(rig.backend.shortcut_override(&ctx, &egui::KeyboardShortcut::new(CTRL, K::Z)));
+    // a focused button claims none of these chords, fallback or not
+    rig.click(btn);
+    assert!(focused(&rig, "Plain"));
+    for &(name, logical, physical, m, _) in matrix.iter().filter(|r| r.3 != none) {
+        assert!(!rig.backend.shortcut_override_press(&ctx, logical, physical, m), "button: {name}");
+    }
+}
+
+/// Edit commands on a focused provider kind with `text_input`: through `Widget::text_command` when
+/// the kind takes them (its own undo), else as the input they stand for; a kind without
+/// `text_input` gets none and the host runs its own command (its document's undo).
+#[test]
+fn ev3b_text_commands_reach_provider_kinds() {
+    let (mut rig, km) = keymap_rig();
+    native::set(&rig.harness.ctx, Native::Gtk);
+    let (_w, col) = rig.window();
+    let qty = rig.create("t-field");
+    rig.insert(col, qty);
+    let ed = rig.create("t-editor");
+    rig.insert(col, ed);
+    rig.run();
+    let ctx = rig.harness.ctx.clone();
+    let z = egui::KeyboardShortcut::new(CTRL, egui::Key::Z);
+    let qty_text = |rig: &Rig| rig.backend.with_scene(|s| s.n(qty).widget(|w: &TField| w.text.clone())).unwrap();
+
+    // a `TextEdit`-backed kind (quantity-field): Undo is fed as Ctrl+Z to its field, not the host's
+    rig.type_into(qty, "12");
+    assert_eq!(qty_text(&rig), "12");
+    assert!(rig.backend.shortcut_override(&ctx, &z), "the keymap leaves Ctrl+Z to the field");
+    assert!(rig.backend.text_command(&ctx, TextCommand::Undo), "the field takes Undo: no document undo");
+    rig.run();
+    assert_ne!(qty_text(&rig), "12", "undone by egui's undoer");
+    assert!(km.borrow().seen_after.is_empty(), "no Ctrl+Z reached the host keymap");
+
+    // a kind with its own undo: the commands go to `Widget::text_command`, not as keys
+    rig.click(ed);
+    assert!(rig.backend.focus_info(&ctx).kind == Some("t-editor"));
+    rig.harness.event(egui::Event::Text("ab".into()));
+    rig.run();
+    assert_eq!(editor(&rig, ed, |e| e.text.clone()), "ab");
+    assert!(rig.backend.text_command(&ctx, TextCommand::Undo));
+    rig.run();
+    assert_eq!(editor(&rig, ed, |e| (e.text.clone(), e.handled.clone(), e.keys)), (String::new(), vec![TextCommand::Undo], (0, 0)));
+    assert!(rig.backend.text_command(&ctx, TextCommand::Insert("xy".into())));
+    rig.run();
+    assert!(rig.backend.text_command(&ctx, TextCommand::Copy));
+    rig.run();
+    // Delete is not the kind's: fed as the key
+    assert!(rig.backend.text_command(&ctx, TextCommand::Delete));
+    rig.run();
+    // Paste without the host's clipboard (`EguiBackend` alone) comes as Paste
+    assert!(rig.backend.text_command(&ctx, TextCommand::Paste));
+    rig.run();
+    let (text, handled, keys) = editor(&rig, ed, |e| (e.text.clone(), e.handled.clone(), e.keys));
+    assert_eq!(text, "xy");
+    assert_eq!(handled, vec![TextCommand::Undo, TextCommand::Insert("xy".into()), TextCommand::Copy, TextCommand::Delete, TextCommand::Paste]);
+    assert_eq!(keys, (0, 1), "no Ctrl+Z fed; the declined Delete fed as its key");
+
+    // nothing focused (a click on a Rust menu): the last text field is the kind; it gets focus back
+    ctx.memory_mut(|m| m.surrender_focus(m.focused().unwrap()));
+    rig.run();
+    assert_eq!(rig.backend.last_text_field(&ctx).and_then(|i| i.kind), Some("t-editor"));
+    assert!(rig.backend.text_command(&ctx, TextCommand::Undo));
+    rig.run();
+    assert_eq!(editor(&rig, ed, |e| e.text.clone()), "");
+    assert!(rig.backend.focus_info(&ctx).kind == Some("t-editor"), "focused again");
+
+    // the same kind without `text_input`: no edit commands, the host keeps Ctrl+Z
+    rig.set(ed, "editable", Value::Bool(false));
+    rig.run();
+    rig.run();
+    let before = editor(&rig, ed, |e| e.handled.len());
+    assert!(!rig.backend.text_command(&ctx, TextCommand::Undo), "falls back to the host's command");
+    assert!(!rig.backend.shortcut_override(&ctx, &z));
+    rig.run();
+    assert_eq!(editor(&rig, ed, |e| e.handled.len()), before);
+}
+
+/// Through the embed: `last_text_field` carries the root, and ends when the dialog holding the
+/// field goes away; `shortcut_override_press` asks the focused field.
+#[test]
+fn ev3b_embed_hooks() {
+    use svelters_egui::harness::TestApp;
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/motion-egui/src/FocusDialog.svelte");
+    let mut app = TestApp::from_source(path).unwrap();
+    app.run();
+    let ctx = app.harness.ctx.clone();
+    assert_eq!(app.embed.last_text_field(&ctx), None);
+    app.harness.get_by_label("Open").click();
+    app.run();
+    app.run();
+    app.harness.event(egui::Event::Text("Ada".into()));
+    app.run();
+    let info = app.embed.last_text_field(&ctx).expect("the dialog's field");
+    assert!(info.kind == Some("text-edit") && info.text_input, "{info:?}"); // a window: no embed root
+    assert_eq!(info, app.embed.focus_info(&ctx));
+    assert!(app.embed.shortcut_override_press(&ctx, egui::Key::Semicolon, Some(egui::Key::Z), CTRL));
+    assert!(!app.embed.shortcut_override_press(&ctx, egui::Key::W, Some(egui::Key::Z), CTRL));
+
+    // host chrome took focus: still the field (the Edit menu stays enabled)
+    ctx.memory_mut(|m| m.surrender_focus(m.focused().unwrap()));
+    app.run();
+    assert_eq!(app.embed.last_text_field(&ctx).map(|i| i.root), Some(info.root));
+    // Escape (nothing focused: the topmost dialog's cancel button) closes the dialog: no field
+    app.harness.key_press(egui::Key::Escape);
+    app.run();
+    app.run();
+    assert!(app.harness.query_by_label("Result: cancel").is_some(), "{:?}", app.errors());
+    assert_eq!(app.embed.last_text_field(&ctx), None, "the field went with the dialog");
+    assert!(!app.embed.text_command(&ctx, TextCommand::Paste));
 }

@@ -79,6 +79,11 @@ fn shared() -> Rc<Shared> {
     r.unwrap_or_else(|e| panic!("WinUI init failed: {e}"))
 }
 
+/// How long [`Harness::await_events`] and the dialog check wait for an event before failing.
+pub const EVENT_WAIT_MS: u64 = 10_000;
+/// How long [`Harness::await_events`] keeps pumping after the expected count arrived (a second delivery shows).
+pub const EVENT_SETTLE_MS: u64 = 200;
+
 /// One test's view of the shared backend. Handles it created are destroyed when it drops.
 pub struct Harness {
     s: Rc<Shared>,
@@ -176,6 +181,31 @@ impl Harness {
 
     pub fn pump(&self, ms: u64) {
         self.s.backend.pump(ms);
+    }
+
+    /// Pumps until `done` holds, for up to `ms` milliseconds: whether it held. Tests wait on the condition rather
+    /// than a fixed delay, because XAML raises some events from later dispatcher turns (TextChanged is
+    /// asynchronous, ContentDialog.Opened follows ShowAsync's layout and transition) and a loaded CI runner takes
+    /// far longer to get there than an idle machine (FX5: fixed 200 and 600 ms pumps failed intermittently).
+    pub fn pump_until(&self, ms: u64, mut done: impl FnMut(&Self) -> bool) -> bool {
+        let end = std::time::Instant::now() + std::time::Duration::from_millis(ms);
+        loop {
+            if done(self) {
+                return true;
+            }
+            if std::time::Instant::now() >= end {
+                return false;
+            }
+            self.pump(10);
+        }
+    }
+
+    /// Pumps until `event` reached the host at least `n` times for `h` (up to [`EVENT_WAIT_MS`]), then
+    /// [`EVENT_SETTLE_MS`] more so that a duplicate delivery would show: the count.
+    pub fn await_events(&self, h: u64, event: &str, n: usize) -> usize {
+        self.pump_until(EVENT_WAIT_MS, |s| s.events(h, event) >= n);
+        self.pump(EVENT_SETTLE_MS);
+        self.events(h, event)
     }
 
     /// Click a button the way UI Automation does (`ButtonAutomationPeer.Invoke`).
@@ -560,11 +590,9 @@ pub fn content_dialog_show() {
     h.listen(d, "opened", true).unwrap();
     h.listen(d, "closed", true).unwrap();
     h.call(d, "show-async", &[]).unwrap_or_else(|e| panic!("show-async: {e}"));
-    h.pump(600);
-    assert!(h.events(d, "opened") >= 1, "show-async did not open the dialog");
+    assert!(h.pump_until(EVENT_WAIT_MS, |h| h.events(d, "opened") >= 1), "show-async did not open the dialog");
     h.call(d, "hide", &[]).unwrap_or_else(|e| panic!("hide: {e}"));
-    h.pump(600);
-    assert!(h.events(d, "closed") >= 1, "hide did not close the dialog");
+    assert!(h.pump_until(EVENT_WAIT_MS, |h| h.events(d, "closed") >= 1), "hide did not close the dialog");
     assert_eq!(h.last_args(d, "closed"), vec![Value::I64(0)], "closed carries ContentDialogResult.None");
 }
 

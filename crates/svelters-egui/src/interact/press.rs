@@ -3,7 +3,7 @@
 //!
 //! OW0a follows egui's click semantics (what `egui::Button` did, so every button test holds);
 //! the platform rows (Space activates on release on GTK/Qt, pointer thresholds of WG3s pin 10,
-//! `repeat` for spin and scroll arrows, Escape cancels a held press) are OW1a/OW1b's.
+//! Escape cancels a held press) are OW1a's. `repeat` (with Qt's `accelerated`) is OW1b's.
 
 use super::{InputCx, Intents, Unit};
 use crate::provider::StateBits;
@@ -25,6 +25,27 @@ pub struct PressParams {
     pub activate_on: ActivateOn,
     /// `(delay, interval)` in seconds: repeat while held (OW1b: spin buttons, scroll arrows).
     pub repeat: Option<(f32, f32)>,
+    /// OW1b (Qt `accelerated`): the repeat interval halves after every [`ACCEL_EVERY`] repeats,
+    /// down to a fifth of `interval`.
+    pub accelerate: bool,
+}
+
+/// OW1b: repeats per halving of the interval when [`PressParams::accelerate`] is on.
+pub const ACCEL_EVERY: u32 = 8;
+
+/// The time from the press to the first repeat under `p` (`None`: no repeat).
+fn repeat_due(p: &PressParams, _k: u32) -> Option<f64> {
+    p.repeat.map(|(delay, _)| delay.max(0.0) as f64)
+}
+
+/// The interval after `sent` repeats: `interval`, halved every [`ACCEL_EVERY`] repeats under
+/// `accelerate`, down to a fifth.
+fn repeat_interval(p: &PressParams, sent: u32) -> f64 {
+    let base = p.repeat.map_or(0.1, |(_, i)| (i as f64).max(0.01));
+    if !p.accelerate {
+        return base;
+    }
+    (base / 2f64.powi((sent / ACCEL_EVERY).min(8) as i32)).max(base / 5.0)
 }
 
 /// What [`Pressable`] reports.
@@ -58,6 +79,8 @@ pub struct Pressable {
     last_repeat: f64,
     /// The interval while a repeating press is held.
     repeat_every: Option<f64>,
+    /// OW1b: repeats sent by this press (`accelerate`).
+    repeats: u32,
 }
 
 impl Pressable {
@@ -82,19 +105,22 @@ impl Unit for Pressable {
             out.push(Press::Down);
             self.down_at = cx.now;
             self.last_repeat = cx.now;
+            self.repeats = 0;
         } else if !down && self.down {
             out.push(if cx.enabled { Press::Up { inside: r.hovered } } else { Press::Cancel });
         }
         // `repeat`: held over the host, a step after `delay`, then every `interval` (QAbstractButton
-        // autoRepeat); the widget treats each `Repeat` as an activation
+        // autoRepeat); the widget treats each `Repeat` as an activation. OW1b: with `accelerate`
+        // the interval shortens as the press is held (Qt `QAbstractSpinBox::accelerated`).
         self.repeat_every = None;
-        if down && let Some((delay, interval)) = p.repeat {
-            let (delay, interval) = (delay as f64, (interval as f64).max(0.01));
+        if down && p.repeat.is_some() {
+            let interval = repeat_interval(p, self.repeats);
             self.repeat_every = Some(interval);
-            let next = if self.last_repeat == self.down_at { self.down_at + delay } else { self.last_repeat + interval };
+            let next = if self.repeats == 0 { self.down_at + repeat_due(p, 1).unwrap_or(0.0) } else { self.last_repeat + interval };
             if r.hovered && cx.now >= next {
                 out.push(Press::Repeat);
                 self.last_repeat = cx.now;
+                self.repeats += 1;
             }
         }
         self.down = down;
@@ -128,5 +154,21 @@ impl Unit for Pressable {
     /// EV3: a focused clickable claims Space and Enter (unmodified).
     fn claims(&self, _p: &PressParams, key: egui::Key, m: egui::Modifiers) -> bool {
         !m.command && !m.alt && !m.shift && matches!(key, egui::Key::Space | egui::Key::Enter)
+    }
+}
+
+#[cfg(test)]
+mod ow1b_tests {
+    use super::*;
+
+    #[test]
+    fn ow1b_accelerated_repeat_shortens_the_interval() {
+        let p = PressParams { repeat: Some((0.5, 0.1)), accelerate: true, ..PressParams::default() };
+        assert_eq!(repeat_due(&p, 1), Some(0.5));
+        assert!((repeat_interval(&p, 0) - 0.1).abs() < 1e-6);
+        assert!((repeat_interval(&p, ACCEL_EVERY) - 0.05).abs() < 1e-6);
+        assert!((repeat_interval(&p, 10 * ACCEL_EVERY) - 0.02).abs() < 1e-6, "at most five times faster");
+        let q = PressParams { accelerate: false, ..p };
+        assert!((repeat_interval(&q, 100) - 0.1).abs() < 1e-6);
     }
 }

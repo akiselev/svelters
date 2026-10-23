@@ -23,7 +23,6 @@ pub enum W {
     Label { text: String, wrap: &'static str, selectable: bool, weight: i64, rich: Option<Box<crate::rich::Rich>> },
     Button { text: String, selected: bool, frame: bool, small: bool, weight: i64 },
     Checkbox { text: String, checked: bool },
-    Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
     /// LS1: a `virtual-list` (`kinds/virtuallist.rs`): its rows are its children.
@@ -47,8 +46,6 @@ pub enum W {
     /// `value`: what the button stands for; with one, `checked` follows `group == value`.
     RadioButton { text: String, checked: bool, value: String, group: String },
     Switch { text: String, active: bool },
-    RangeSlider { low: f64, high: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
-    DragValue { value: f64, min: Option<f64>, max: Option<f64>, speed: f64, decimals: Option<i64>, prefix: String, suffix: String },
     Sides,
     Frame { label: String, style: &'static str },
     Stack { name: String, index: i64, homogeneous: bool },
@@ -65,8 +62,6 @@ pub enum W {
     /// `vertical`: `orientation="vertical"` (panes stacked).
     /// `toast-host`: props and the toasts shown.
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
-    /// WG4b: `date-picker`, `color-picker` (`kinds/pickers.rs`).
-    Picker(crate::kinds::pickers::Picker),
     /// RT2: an inline run (`span`, `b`, `i`, `code`, `a`: `kinds/rich.rs`), drawn by its label.
     /// `weight` 0 inherits; `anchor`: an `a` run (a link).
     Run { text: String, weight: i64, href: String, anchor: bool },
@@ -471,7 +466,6 @@ pub fn text_of(w: &W) -> &str {
         W::Label { text, .. }
         | W::Button { text, .. }
         | W::Checkbox { text, .. }
-        | W::Slider { text, .. }
         | W::ToggleButton { text, .. }
         | W::CollapsingHeader { text, .. } => text,
         W::Window { title, .. } | W::Tab { title, .. } | W::TableColumn { title, .. } => title,
@@ -483,11 +477,10 @@ pub fn text_of(w: &W) -> &str {
         W::Ext(x) => x.text(),
         W::Box | W::Separator { .. } | W::Grid { .. } | W::VirtualList(_) => "",
         // WG2b
-        W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
+        W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,
-        W::DragValue { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
+        W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
         W::Table(_) | W::TabView { .. } | W::ToastHost(_) => "",
-        W::Picker(p) => p.text(),
     }
 }
 

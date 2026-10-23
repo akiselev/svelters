@@ -33,6 +33,8 @@ them.
 
 **Decided (coordinator, 2026-10-22):** svelters ships generic `toolbar` and `status-bar` kinds, cadatomic builds its command strip and status sections on them; the completer is cadatomic's, svelters' half (caret-anchored popup + key forwarding) is OW4b; lane splits adopted: OW3b (toolbar, editable combo), OW4b (masks, validators, adornments, completer popup), OW5a (lists, tree incl. WG5b's tree-view, DnD), OW5b (table, header), OW5c (tabs), OW6b optional; new kinds `scrollbar`, `calendar`, `color-editor`, `dialog-buttons` in their lanes; P1-P10 styling rules go to OW-CSS/OW0b; container queries CS-CQ after OW-CSS. The **verify** items are checked by the lane that implements them. The state-bit gaps DOC1 found on today's egui wrappers (`:invalid`, `:open`, `:expanded`, `:read-only`, `:dragging`, `:busy`, `:checked` beyond checkbox, combo `:focus`) are acceptance for the own-widget replacements.
 
+**Decided (coordinator, 2026-10-22, later):** splits OW5a1/OW5a2 (OW5a2 after OW5b: grid layout, rubber band, sticky headers, multi-column tree, rename, expand animation) and OW6/OW6b (OW6b: sectioned date field, month/year sub-pickers, rgb/hsv fields as OW1b drag-value parts). New row, OW6b: **`path-field`** (QFileDialog-backed line edit; Qt's pattern is a QLineEdit plus a browse button): a text field plus browse button, `mode` file|dir|save, `filters`, `multiple`, `start-dir`; the dialog runs off the UI thread through the async rfd path (ZU3); validation shows `:invalid` for a missing path when `must-exist`.
+
 ## 0. Summary
 
 1. **Configuration.** Today's kinds cover the core of every Qt widget, but this document finds 223 MISSING items
@@ -938,28 +940,28 @@ sashes with AccessKit `Role::Splitter`. egui has no splitter (`SidePanel::resiza
 | Qt | Ours | Status |
 |---|---|---|
 | `selectionMode` NoSelection / SingleSelection / ExtendedSelection | `selection="none" \| "single" \| "multi"` (multi = Qt's Extended: Ctrl/Shift) | have (list, tree, table) |
-| `selectionMode` MultiSelection (a click toggles, no modifier) | `selection="toggle"` (checklists) | **MISSING → OW5a (0.1)** |
-| `selectionMode` ContiguousSelection | `selection="range"` (Selectable `Range`, ARCH) | **MISSING → OW5a (0.05)** (unit ARCH; prop value not) |
+| `selectionMode` MultiSelection (a click toggles, no modifier) | `selection="toggle"` (checklists) | done (OW5a1b: `selection="toggle"`, list and tree) |
+| `selectionMode` ContiguousSelection | `selection="range"` (Selectable `Range`, ARCH) | done (OW5a1b: `selection="range"`, list and tree) |
 | `selectionBehavior` SelectItems / SelectRows / SelectColumns | `table selection-unit="row" \| "cell" \| "column"` (rows only today; cells keyed by `(rowId, column)`) | **MISSING → OW5b (0.75)** |
-| `currentIndex` (cursor vs selection) | `current` (table), `:current` (bit 19); list/tree `bind:current` | table: have; list/tree: **MISSING → OW5a (0.1)** |
+| `currentIndex` (cursor vs selection) | `current` (table), `:current` (bit 19); list/tree `bind:current` | table: have; list/tree: done (OW5a1b `current`) |
 | `editTriggers` (NoEditTriggers, CurrentChanged, DoubleClicked, SelectedClicked, EditKeyPressed, AnyKeyPressed) | `edit-triggers="double-click f2 typing selected-click"` (a token list; today's fixed set is double-click + F2 + typing) | **MISSING → OW5b (0.25)** |
 | editing in list and tree rows (rename in place) | rows are nodes: a `text-edit` in the row snippet, with `edit(id)`/`end-edit` methods and the same triggers | **MISSING → OW5a (0.5)** |
-| `dragDropMode` (NoDragDrop, DragOnly, DropOnly, DragDrop, InternalMove), `dragEnabled`, `defaultDropAction`, `showDropIndicator`, `dragDropOverwriteMode` | tree: `row-drag-type`/`row-drop-types` (have); list and table: same props **MISSING → OW5a (0.5)**; `drop-actions` (copy, move, link by modifier, QA9) ARCH (OW5a); `internal-move` (reorder, `move(from, to)` signal) **MISSING → OW5a (0.25)** | mixed |
+| `dragDropMode` (NoDragDrop, DragOnly, DropOnly, DragDrop, InternalMove), `dragEnabled`, `defaultDropAction`, `showDropIndicator`, `dragDropOverwriteMode` | tree: `row-drag-type`/`row-drop-types` (have); list and table: same props **MISSING → OW5a (0.5)**; `drop-actions` (copy, move, link by modifier, QA9) ARCH (OW5a); `internal-move` (reorder, `move(from, to)` signal) **MISSING → OW5a (0.25)** | tree: have; list: done (OW5a1b: `row-drag-type`/`row-drop-types`, `internal-move` + `move(from, to)`); `drop-actions`: done (WG6/OW5a); table: OW5b |
 | `alternatingRowColors` | `table striped` (have); list and tree: CSS `::part(row):nth-child(even)` by logical index (P1) | table: have; list/tree: P1 |
 | `iconSize` | CSS `--sv-icon-size` on the view | CSS |
 | `textElideMode` | `elide` on `table-column` and on label rows | **MISSING → OW5b (0.05)** |
 | `verticalScrollMode` / `horizontalScrollMode` (ScrollPerItem, ScrollPerPixel) | per pixel always; `scroll-snap="row"` | P2 → OW-P2 (0.25) |
-| `autoScroll`, `autoScrollMargin` (during drags) | DropTarget auto-scroll edges | ARCH (OW5a) |
+| `autoScroll`, `autoScrollMargin` (during drags) | DropTarget auto-scroll edges | done (OW5a: Scrollable auto-scroll; OW5a1b: DropTarget unit) |
 | `tabKeyNavigation` (Tab moves between cells) | table: Tab to the next cell while editing (WG5a QW3); `tab-navigation` to also move the cursor when not editing | editing: have; the prop: **MISSING → OW5b (0.05)** |
 | `keyboardSearch` | Typeahead (labels from `splice`/`set-ids`) | have |
-| `scrollTo(index, hint)` (EnsureVisible, PositionAtTop, PositionAtBottom, PositionAtCenter) | `scrollTo(pos)` / `scroll-to-row(row)`; the `hint` argument | method: have; hint: **MISSING → OW5a (0.1)** |
-| `activated`, `clicked`, `doubleClicked`, `pressed`, `entered` | `activate`/`activated`; `row-clicked`, `row-hovered` | activate: have; the others: **MISSING → OW5a (0.1)** |
+| `scrollTo(index, hint)` (EnsureVisible, PositionAtTop, PositionAtBottom, PositionAtCenter) | `scrollTo(pos)` / `scroll-to-row(row)`; the `hint` argument | done (OW5a1b: `scrollTo(pos, hint)`, `nearest`/`top`/`bottom`/`center`) |
+| `activated`, `clicked`, `doubleClicked`, `pressed`, `entered` | `activate`/`activated`; `row-clicked`, `row-hovered` | activate: have; `row-clicked`: done (OW5a); `row-hovered`: done (OW5a1b) |
 | `setItemDelegate`, `setItemDelegateForColumn` (custom paint and editors) | list and tree: rows are scene nodes (any content); table: `table-column editor` snippets (have); custom cell paint: Q3 | have / Q3 |
 | `openPersistentEditor` | table: an always-on editor column (checkboxes in a column) | **MISSING → OW5b (0.5)** |
 | `setIndexWidget` | list/tree rows: any content (have); table cells: Q3 | have / Q3 |
-| empty state (no Qt API; VS Code views have "no items" text) | `slot="empty"` child shown when `count() == 0` | **MISSING → OW5a (0.1)** |
-| context menu on rows (`customContextMenuRequested`) | `context-menu` child; `row-context` signal with the row under the pointer (the selection follows, per Policy) | **MISSING → OW5a (0.1)** |
-| Ctrl+A, copy (`copy` signal on tree) | Selectable Ctrl+A; `copy` on all three | Ctrl+A: ARCH; `copy` on list and table: **MISSING → OW5a (0.05)** |
+| empty state (no Qt API; VS Code views have "no items" text) | `slot="empty"` child shown when `count() == 0` | **deferred** (OW5a1b: needs named container slots, which RA3 deferred) |
+| context menu on rows (`customContextMenuRequested`) | `context-menu` child; `row-context` signal with the row under the pointer (the selection follows, per Policy) | done (OW5a `row-context`; OW5a1b: the selection follows per `Policy::context_click_selects`) |
+| Ctrl+A, copy (`copy` signal on tree) | Selectable Ctrl+A; `copy` on all three | Ctrl+A: ARCH; `copy` on list: done (OW5a1b `copy(ids)`); table: OW5b |
 | AccessKit: list, tree and grid roles, set size, level, `active_descendant` | yes | ARCH (OW5a/b) |
 
 #### 2.18.2 QListView
@@ -982,9 +984,9 @@ sashes with AccessKit `Role::Splitter`. egui has no splitter (`SidePanel::resiza
 | `rootIsDecorated` | `root-decorated` (twisties on level 0) | **MISSING → OW5a (0.05)** |
 | `itemsExpandable`, `expandsOnDoubleClick` | `expandable`, `expand-on="double-click" \| "click" \| "twistie"` | **MISSING → OW5a (0.1)** |
 | `animated` (expand animation) | CSS: rows enter with `transition`/TR (instant under reduced motion) | **MISSING → OW5a (0.25)** |
-| `uniformRowHeights` | `row-height` as the assumed and minimum height; `uniform-rows` skips measuring | **MISSING → OW5a (0.1)** |
-| `autoExpandDelay` (expand on DnD hover) | DropTarget auto-expand (QA9) | ARCH (OW5a) |
-| `expandAll`, `collapseAll`, `expandToDepth`, `expandRecursively` | JS owns the tree (`setNodes`, `splice`): helpers in `svelters:views/tree` | **MISSING → OW5a (0.25)** |
+| `uniformRowHeights` | `row-height` as the assumed and minimum height; `uniform-rows` skips measuring | done (OW5a1b `uniform-rows`) |
+| `autoExpandDelay` (expand on DnD hover) | DropTarget auto-expand (QA9) | done (OW5a1b: `Policy::drag_expand_ms`, 500 ms) |
+| `expandAll`, `collapseAll`, `expandToDepth`, `expandRecursively` | JS owns the tree (`setNodes`, `splice`): helpers in `svelters:views/tree` | done (OW5a1b: `expandAll`, `collapseAll`, `expandToDepth`, `expandRecursively` in `@svelters/lists` and `svelters:views/tree`) |
 | `isExpanded`, `setExpanded` | `setNodes` flags (2 = expanded) | have |
 | `expanded`, `collapsed` signals | `expand`, `collapse` | have |
 | multiple columns with a header (QTreeView + QHeaderView; `allColumnsShowFocus`, `firstColumnSpanned`, `treePosition`) | a tree with `table-column` children (the header of §2.18.5, rows laid out on the columns' widths; the tree column holds the twistie) | **MISSING → OW5a (1.5)** |
@@ -1052,8 +1054,8 @@ sashes with AccessKit `Role::Splitter`. egui has no splitter (`SidePanel::resiza
 | `gridline-color` | `::part(grid) { border-color }` | MISSING with `showGrid` |
 | `selection-background-color`, `selection-color`, `alternate-background-color` (properties) | `--sv-list-active-selection-bg` etc. (tokens) and the rules above | ARCH (DS3) |
 | `paint-alternating-row-colors-for-empty-area` | `::part(filler)` rows below the last row (P2) | P2 → OW-P2 (0.1) |
-| drop indicator (no QSS) | `::part(drop-line)`, `:drop-target` (bit 18) on rows (R12) | ARCH (OW5a) |
-| drag ghost | `::part(ghost)` (R12 lift: `elev-3`, 0.9 opacity) | ARCH (OW5a) |
+| drop indicator (no QSS) | `::part(drop-line)`, `:drop-target` (bit 18) on rows (R12) | done (OW5a; OW5a1b: `:drop-target` on the list, `::part(drop-line)` outline on any node target) |
+| drag ghost | `::part(ghost)` (R12 lift: `elev-3`, 0.9 opacity) | done (OW5a1b: `::part(ghost)`, UA `menu-bg`, `elev-3`, 0.9 opacity) |
 | empty-state text | `slot="empty"` | MISSING (counted in §2.18.1) |
 | sticky section header | `::part(section)` | MISSING with sections |
 
