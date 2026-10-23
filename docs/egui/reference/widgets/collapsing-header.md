@@ -30,6 +30,8 @@ A clickable header with a caret; its children (a flex box, indented) are shown a
 <!-- BEGIN GENERATED: props of kinds.CollapsingHeader (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `accordion` | `string` | `""` | no | The group of sibling headers of which one is open at a time (QToolBox); empty: none. |
+| `icon` | `string` | `""` | no | An icon before the caption (a key, or `family:name`). |
 | `open` | `boolean` | `false` | **yes**, on `changed` | Shows the children; a click on the header (or Enter/Space on it) toggles it. |
 | `text` | `string` | `""` | no | The header's caption (also its accessible name). |
 

@@ -1989,6 +1989,15 @@
             "many": true,
             "order": "before_sibling",
             "route_by_kind": false
+          },
+          "end": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
           }
         }
       },
@@ -2015,10 +2024,49 @@
           "doc": "",
           "name": "label",
           "node": false
+        },
+        {
+          "doc": "",
+          "name": "icon",
+          "node": false
         }
       ],
       "present": null,
       "props": {
+        "accordion": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The group of sibling headers of which one is open at a time (QToolBox); empty: none.",
+          "js": "accordion",
+          "native": "accordion",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:CollapsingHeader:accordion",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "icon": {
+          "construct_only": false,
+          "default": "",
+          "doc": "An icon before the caption (a key, or `family:name`).",
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:CollapsingHeader:icon",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "open": {
           "construct_only": false,
           "default": false,

@@ -510,6 +510,20 @@ pub fn slot_of(kind: usize) -> Option<&'static str> {
     KindRegistry::global().slot_of(kind)
 }
 
+/// OW1a4: the named slots of a kind besides its default one, slot ids 2, 3, … in order
+/// (`collapsing-header`'s `end`: header actions). A child inserted into one is still a light
+/// child of the node; [`SLOT`] names the slot.
+pub fn extra_slots(kind: usize) -> &'static [&'static str] {
+    match KindRegistry::global().chain_iter(kind).map(|k| self::kind(k).id).find(|id| *id == "CollapsingHeader") {
+        Some(_) => &["end"],
+        None => &[],
+    }
+}
+
+/// OW1a4: the named slot (one of [`extra_slots`]) a child was inserted into; absent for the
+/// default slot.
+pub static SLOT: crate::scene::ExtKey<&'static str> = crate::scene::ExtKey::new("sv.slot");
+
 /// The signal id of `name` on `kind`, or 0.
 pub fn signal_id(kind: usize, name: &str) -> u32 {
     KindRegistry::global().signal_id(kind, name)

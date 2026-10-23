@@ -45,3 +45,19 @@ cancel). The Promise then resolves with the caption clicked. */ labels?: string[
    */
   export function saveFile(opts?: FileDialogOptions | null, options?: AsyncOptions): Promise<string | null>;
 }
+
+declare module 'svelters:app/sv' {
+  import type { NativeObject } from '@svelters/types/core';
+  /** `use:anchored`'s `placed` payload: the side and the surface's rect, in points. */
+  export interface UsePlaced { /** `top`, `bottom`, `left` or `right`. */ side: string; x: number; y: number; width: number; height: number; }
+  /** `use:dismissable`'s `dismiss` payload. */
+  export interface UseDismiss { /** `escape` or `outside-press`. */ reason: string; /** The press point (`null` for Escape). */ x?: number | null; y?: number | null; }
+  /** `use:draggable`'s `drag` payload. */
+  export interface UseDrag { /** `start`, `move`, `end` or `cancel`. */ phase: string; /** The total movement since the start, in points. */ dx: number; dy: number; }
+  /** `use:pressable`'s `press` payload. */
+  export interface UsePress { /** 1 for a click, 2 for a double click. */ count: number; /** `primary`, `secondary` or `middle`. */ button: string; }
+  /** `use:scrollable`'s `scroll` payload: the new offset, in points. */
+  export interface UseScroll { x: number; y: number; }
+  /** `use:toggleable`'s `toggle` payload. */
+  export interface UseToggle { checked: boolean; indeterminate: boolean; }
+}

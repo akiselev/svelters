@@ -16,3 +16,233 @@ declare module 'svelters:behaviors/cad' {
   /** EV2b (ARCH-EMBED §8.5): a native behaviour, `use:pick` from `svelters:behaviors/cad`. While a pick runs (`active`), its host is a pick target (`cad.pick-target`), hovering it sets `cad.pick-hover`, and a click reports what the host presents. All of it runs in Rust every frame. */
   export const pick: Action<any, PickParams>;
 }
+
+declare module 'svelters:behaviors/sv' {
+  import type { Action } from 'svelte/action';
+  import type { UsePlaced, UseDismiss, UseDrag, UsePress, UseScroll, UseToggle } from 'svelters:app/sv';
+
+  /** The params of `use:anchored`: its props and its events' callbacks. */
+  export interface UseAnchoredParams {
+    /** The anchor rect: `[x, y, width, height]`. */
+    anchor: number[];
+    /** `bottom-start`, `top`, `right-end` and so on. */
+    placement?: string;
+    /** Points between the anchor and the surface. */
+    gap: number;
+    /** Flips to the other side when it does not fit. */
+    flip?: boolean;
+    /** Shifts along the side to stay inside the window. */
+    shift?: boolean;
+    /** The surface is at least as wide as the anchor. */
+    matchWidth: boolean;
+    /** Where it goes: `{ side, x, y, width, height }`. */
+    onplaced?: (value: UsePlaced) => void;
+  }
+  /** `use:anchored`: where a surface of the host's size goes beside `anchor` (`[x, y, width, height]` in points) inside the window, flipping and shifting to stay visible. Reports `placed({ side, x, y, width, height })` when the placement changes; the app positions the host. */
+  export const anchored: Action<any, UseAnchoredParams>;
+
+  /** The params of `use:dismissable`: its props and its events' callbacks. */
+  export interface UseDismissableParams {
+    /** Escape dismisses. */
+    escape?: boolean;
+    /** A press outside the host: `close` asks to dismiss, `ignore` does not. */
+    outside: string;
+    /** `{ reason, x, y }`. */
+    ondismiss?: (value: UseDismiss) => void;
+  }
+  /** `use:dismissable`: asks to close the host (a popup the app owns) on Escape (with `escape`) or on a press outside it (with `outside: 'close'`): `dismiss({ reason, x, y })`, `reason` one of `escape`, `outside-press`. */
+  export const dismissable: Action<any, UseDismissableParams>;
+
+  /** The params of `use:dragToValue`: its props and its events' callbacks. */
+  export interface UseDragToValueParams {
+    value: number;
+    min?: number;
+    max?: number;
+    /** Snaps to multiples (`0`: none). */
+    step: number;
+    /** Value per point dragged. */
+    speed?: number;
+    /** The value while dragging. */
+    onscrub?: (value: number) => void;
+    /** The value at the release (or the restored one after Escape). */
+    oncommit?: (value: number) => void;
+  }
+  /** `use:dragToValue`: dragging on the host scrubs `value` (relative: `speed` per point, Shift slower, Ctrl/Cmd faster), with `:active` and `:dragging`: `scrub(value)` live, `commit(value)` at the release, Escape restores. */
+  export const dragToValue: Action<any, UseDragToValueParams>;
+
+  /** The params of `use:draggable`: its props and its events' callbacks. */
+  export interface UseDraggableParams {
+    axis: string;
+    /** Points before a drag starts (`null`: the platform's). */
+    threshold?: number | null;
+    /** `{ phase, dx, dy }`. */
+    ondrag?: (value: UseDrag) => void;
+  }
+  /** `use:draggable`: a drag past the platform threshold on the host, with `:dragging`: `drag({ phase, dx, dy })`, `phase` one of `start`, `move`, `end`, `cancel` (Escape); `dx`, `dy` are the total movement since the start (along `axis`). */
+  export const draggable: Action<any, UseDraggableParams>;
+
+  /** The params of `use:expandable`: its props and its events' callbacks. */
+  export interface UseExpandableParams {
+    expanded: boolean;
+    /** A click toggles it. */
+    byClick?: boolean;
+    /** The user opened (`true`) or closed it. */
+    onexpand?: (value: boolean) => void;
+  }
+  /** `use:expandable`: Right/Left on the focused host, AccessKit `Expand`/`Collapse` and (with `byClick`) a click open and close it; the host gets `:expanded` and AccessKit `expanded`. */
+  export const expandable: Action<any, UseExpandableParams>;
+
+  /** The params of `use:focusable`: its props and its events' callbacks. */
+  export interface UseFocusableParams {
+    /** In the Tab order. */
+    tabStop?: boolean;
+    /** A press focuses it (`null`: the platform's rule). */
+    focusOnClick?: boolean | null;
+    /** Focus came: `keyboard`, `pointer` or `program`. */
+    onfocus?: (value: string) => void;
+    /** Focus left. */
+    onblur?: (value: void) => void;
+  }
+  /** `use:focusable`: makes the host a focus stop (Tab, click-to-focus per platform) with `:focus` and `:focus-visible` (keyboard or program focus only, never a pointer press). */
+  export const focusable: Action<any, UseFocusableParams | undefined>;
+
+  /** The params of `use:hoverable`: its props and its events' callbacks. */
+  export interface UseHoverableParams {
+    /** The pointer entered (`true`) or left (`false`) the host. */
+    onhover?: (value: boolean) => void;
+  }
+  /** `use:hoverable`: the host gets `:hover` (also while disabled, DESIGN R9) and reports entering and leaving. */
+  export const hoverable: Action<any, UseHoverableParams | undefined>;
+
+  /** The params of `use:pressable`: its props and its events' callbacks. */
+  export interface UsePressableParams {
+    /** `press` fires on the press instead of the release. */
+    activateOn: string;
+    /** Fires `repeat` while held (0.5 s, then every 0.1 s, accelerating). */
+    autoRepeat: boolean;
+    /** A click: `{ count, button }`. */
+    onpress?: (value: UsePress) => void;
+    /** A button went down on the host. */
+    ondown?: (value: void) => void;
+    /** The button went up: `inside` the host or not. */
+    onup?: (value: boolean) => void;
+    /** The press was cancelled (Escape, focus loss). */
+    oncancel?: (value: void) => void;
+    /** Auto-repeat while held (`autoRepeat`). */
+    onrepeat?: (value: void) => void;
+  }
+  /** `use:pressable`: the host gets `:active` while pressed and reports presses: `press({ count, button })` for a click (pointer, Space/Enter on focus, AccessKit `Click`), `down`, `up(inside)`, `cancel`, and `repeat` while held when `autoRepeat` is set. */
+  export const pressable: Action<any, UsePressableParams>;
+
+  /** The params of `use:resizable`: its props and its events' callbacks. */
+  export interface UseResizableParams {
+    /** The size the sash controls, in points. */
+    size: number;
+    axis: string;
+    /** A drag towards the start grows it (a sash on the panel's left or top edge). */
+    invert: boolean;
+    min: number;
+    max?: number;
+    /** Arrow-key step. */
+    step?: number;
+    collapsible: boolean;
+    onresize?: (value: number) => void;
+    oncommit?: (value: number) => void;
+  }
+  /** `use:resizable`: the host is a sash: dragging it (or the arrows when focused) resizes `size` along `axis` within `min`..`max`, with `:hover` after the platform's delay, `:active`, `:dragging` and `:focus-visible`; a double click resets (`collapsible` collapses). Reports `resize(size)` live and `commit(size)` at the end; Escape restores. */
+  export const resizable: Action<any, UseResizableParams>;
+
+  /** The params of `use:roving`: its props and its events' callbacks. */
+  export interface UseRovingParams {
+    /** Takes part in the group. */
+    on?: boolean;
+    /** Focus moved to member `to` (an index among the group's members). */
+    onrove?: (value: number) => void;
+  }
+  /** `use:roving`: the host's siblings that carry `use:roving` too form one Tab stop; the arrows, Home and End move focus among the enabled ones (wrapping). Reports the move as `rove(to)`, the member index it went to. */
+  export const roving: Action<any, UseRovingParams | undefined>;
+
+  /** The params of `use:rovingList`: its props and its events' callbacks. */
+  export interface UseRovingListParams {
+    /** One entry per item: whether it can be highlighted. */
+    enabled: boolean[];
+    orientation: string;
+    wrap: boolean;
+    /** The highlighted item (`-1`: none); the host writes it on hover. */
+    current?: number;
+    /** The highlight moved to item `to`. */
+    onmove?: (value: number) => void;
+  }
+  /** `use:rovingList`: a highlighted index inside the host (its own rows): the arrows (by `orientation`), Home and End move it over the enabled items, wrapping with `wrap`. */
+  export const rovingList: Action<any, UseRovingListParams>;
+
+  /** The params of `use:scrollable`: its props and its events' callbacks. */
+  export interface UseScrollableParams {
+    /** The content's size: `[width, height]`. */
+    content: number[];
+    /** The offset: `[x, y]`. */
+    offset: number[];
+    /** Which axes scroll. */
+    axes?: string;
+    /** The keys scroll when the host is focused. */
+    keys: boolean;
+    /** The new offset: `{ x, y }`. */
+    onscroll?: (value: UseScroll) => void;
+  }
+  /** `use:scrollable`: the wheel, trackpad momentum, and (with `keys`) the arrows and PageUp/PageDown/Home/End on the focused host scroll a virtual `content` of `[width, height]` points through the host's rect: `scroll({ x, y })`, the new offset. The app draws the content at minus the offset. */
+  export const scrollable: Action<any, UseScrollableParams>;
+
+  /** The params of `use:steppable`: its props and its events' callbacks. */
+  export interface UseSteppableParams {
+    value: number;
+    min?: number;
+    max?: number;
+    step?: number;
+    /** PageUp/PageDown step (`0`: ten steps). */
+    page: number;
+    /** Past `max` goes to `min` and back. */
+    wrap: boolean;
+    /** When the wheel steps: `focused` (default), `hover`, `off`. */
+    wheel: string;
+    /** The new value. */
+    onchange?: (value: number) => void;
+  }
+  /** `use:steppable`: on the focused host, the arrows step `value` by `step` (PageUp/PageDown by `page`, Home/End to `min`/`max`) and the wheel steps it per `wheel`: `step(value)`. */
+  export const steppable: Action<any, UseSteppableParams>;
+
+  /** The params of `use:toggleable`: its props and its events' callbacks. */
+  export interface UseToggleableParams {
+    checked: boolean;
+    indeterminate: boolean;
+    /** Cycles unchecked, checked, indeterminate. */
+    tristate: boolean;
+    /** A checked host stays checked on a click (a radio item). */
+    radio: boolean;
+    /** The user toggled it: `{ checked, indeterminate }`. */
+    ontoggle?: (value: UseToggle) => void;
+  }
+  /** `use:toggleable`: a click (or Space/Enter, AccessKit `Click`) toggles; the host gets `:checked` and `:indeterminate`, and AccessKit `toggled`. */
+  export const toggleable: Action<any, UseToggleableParams>;
+
+  /** The params of `use:tooltipable`: its props and its events' callbacks. */
+  export interface UseTooltipableParams {
+    /** Seconds before it shows (`0`: the platform's). */
+    delay: number;
+    /** Seconds it stays (`0`: until the pointer leaves). */
+    duration: number;
+    /** Show (`true`) or hide. */
+    ontip?: (value: boolean) => void;
+  }
+  /** `use:tooltipable`: the platform's tooltip timing on the host (the delay, the follow-on window, a press hiding it until the pointer leaves, disabled hosts included, R9), for a tooltip the app draws itself: `tip(true)` to show, `tip(false)` to hide. The common `tooltip` prop needs none of this. */
+  export const tooltipable: Action<any, UseTooltipableParams>;
+
+  /** The params of `use:typeahead`: its props and its events' callbacks. */
+  export interface UseTypeaheadParams {
+    /** Seconds between keys before the prefix restarts. */
+    timeout?: number;
+    /** The prefix typed so far. */
+    onsearch?: (value: string) => void;
+  }
+  /** `use:typeahead`: printable keys typed on the focused host within `timeout` build a prefix, reported as `search(text)` (typing one letter again cycles: the app picks the next match). */
+  export const typeahead: Action<any, UseTypeaheadParams | undefined>;
+}

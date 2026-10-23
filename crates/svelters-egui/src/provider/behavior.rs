@@ -110,6 +110,8 @@ pub struct BehaviorCx<'a> {
     scene: &'a Scene,
     /// EV1: what other behaviours' filters did during this hook's `dispatch`es, applied after it.
     deferred: Vec<HookRun>,
+    /// OW1a4: nodes to focus at their next draw (`use:roving`).
+    focus: Vec<NodeId>,
     _a: PhantomData<&'a mut ()>,
 }
 
@@ -131,6 +133,10 @@ impl BehaviorCx<'_> {
     /// The rect the host took this frame (screen coordinates).
     pub fn rect(&self) -> egui::Rect {
         self.rect
+    }
+    /// OW1a4: the host's state bits, with this hook's writes.
+    pub fn host_bits(&self) -> StateBits {
+        self.state
     }
     /// Whether every bit of `bits` is set on the host (with this hook's writes).
     pub fn host_state(&self, bits: impl IntoStateBits) -> bool {
@@ -159,6 +165,15 @@ impl BehaviorCx<'_> {
     }
     /// Asks for another frame (an animation the behaviour drives).
     pub fn request_repaint(&mut self) {
+        self.repaint = true;
+    }
+    /// OW1a4: the scene, read-only (the host's siblings and their behaviours, for `use:roving`).
+    pub fn scene(&self) -> SceneRef<'_> {
+        SceneRef::new(self.scene)
+    }
+    /// OW1a4: moves keyboard focus to node `id` at its next draw (applied after the hook).
+    pub fn focus_node(&mut self, id: NodeId) {
+        self.focus.push(id);
         self.repaint = true;
     }
     /// EV1 (ARCH-WIDGETS §1.2): dispatches a user-visible event of this behaviour (a unit's
@@ -287,6 +302,12 @@ pub(crate) fn around(
         (None, Some(r)) => r,
         (None, None) => return,
     };
+    // OW1a4: a focus move to a host whose own drawing does not take focus (`use:roving` among
+    // boxes)
+    if arena.core[i].flags.contains(NodeFlags::WANT_FOCUS) {
+        arena.core[i].flags.remove(NodeFlags::WANT_FOCUS);
+        resp.request_focus();
+    }
     hooks(arena, i, resp.id, resp.rect, &resp.ctx, out, &mut |bh, host, cx| bh.after_ui(host, &resp, cx));
     // SG4: paint_over, on top of the host (and a container's children)
     let painter = ui.painter().clone();
@@ -305,6 +326,7 @@ pub(crate) struct HookRun {
     errors: Vec<String>,
     repaint: bool,
     deferred: Vec<HookRun>,
+    focus: Vec<NodeId>,
 }
 
 /// Runs `call` on the behaviour in slot `bi` (attached to the host in slot `i`) against `scene`,
@@ -340,20 +362,27 @@ fn run_one(
         repaint: false,
         scene,
         deferred: Vec::new(),
+        focus: Vec::new(),
         _a: PhantomData,
     };
     let host_ref = SceneRef::new(scene).get(host)?;
     call(bh, host_ref, &mut cx);
-    let BehaviorCx { state, emits, writes, errors, repaint, deferred, .. } = cx;
-    Some(HookRun { host_i: i, host, bi, before, after: state, writes, emits, errors, repaint, deferred })
+    let BehaviorCx { state, emits, writes, errors, repaint, deferred, focus, .. } = cx;
+    Some(HookRun { host_i: i, host, bi, before, after: state, writes, emits, errors, repaint, deferred, focus })
 }
 
 /// Applies a [`HookRun`]: what the hook's own dispatches deferred first, then its host state bits
 /// (only the bits it changed, journaled), host writes, events and errors.
 pub(crate) fn apply(arena: &mut Scene, r: HookRun, ctx: Option<&egui::Context>, out: &mut Vec<Out>) {
-    let HookRun { host_i: i, host, bi, before, after, writes, emits, errors, repaint, deferred } = r;
+    let HookRun { host_i: i, host, bi, before, after, writes, emits, errors, repaint, deferred, focus } = r;
     for d in deferred {
         apply(arena, d, ctx, out);
+    }
+    for f in focus {
+        if let Some(j) = arena.idx(f) {
+            arena.core[j].flags.insert(NodeFlags::WANT_FOCUS);
+            arena.invalidate_content(f);
+        }
     }
     if arena.idx(host) != Some(i) {
         return;
