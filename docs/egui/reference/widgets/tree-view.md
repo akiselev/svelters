@@ -30,7 +30,9 @@ A virtualized tree: JS keeps the tree and flattens its visible rows into the lis
 <!-- BEGIN GENERATED: props of kinds.TreeView (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `expand-on` | `'twistie' \| 'click' \| 'double-click'` | `"twistie"` | no | What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`). |
 | `indent` | `number` | `16` | no | Points per level; the disclosure triangle sits in the last one. |
+| `root-decorated` | `boolean` | `true` | no | Level-0 rows show their twistie (Qt's `rootIsDecorated`). |
 | `row-drag-type` | `string` | `""` | no | Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels). |
 | `row-drop-types` | `string` | `""` | no | Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`. |
 | `row-height` | `number` | `24` | no | The height a row is assumed to have before it is measured, and its minimum, in points. |
@@ -50,6 +52,8 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 | `oncopy` | `() => void` | Ctrl+C on the focused tree: copy the selected rows. |
 | `ondrop-row` | `(id: number, where: string, type: string, data: string) => void` | A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. |
 | `onexpand` | `(id: number) => void` | The user expanded node `id` (disclosure click, Right): splice its children in. |
+| `onrow-clicked` | `(pos: number, id: number) => void` | OW5a: a click on the row at `pos` (item `id`), after the selection moved. |
+| `onrow-context` | `(pos: number, id: number) => void` | OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. |
 | `onselection-changed` | `() => void` | The user changed the selection: read it with `selection()`. |
 | `onsetup` | `(e: SvlEvent<[number]>, row: number) => void` | Row slot `row` was created: give it content with `setRow`. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
 | `onteardown` | `(e: SvlEvent<[number]>, row: number) => void` | Slot `row` is gone: release its widget. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |

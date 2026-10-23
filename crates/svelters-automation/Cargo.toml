@@ -23,6 +23,8 @@ required-features = ["run"]
 svelters-egui = { path = "../svelters-egui", default-features = false }
 svelters-style.workspace = true
 svelters-host.workspace = true
+# OW1b: own widgets' prop values (`NodeRef::value_of`) in snapshots
+svelters-abi.workspace = true
 svelters-macros = { path = "../svelters-macros", optional = true }
 serde_json.workspace = true
 egui = { version = "=0.37.0", default-features = false }
