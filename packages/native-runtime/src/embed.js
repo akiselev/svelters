@@ -27,7 +27,7 @@
 import * as $ from './core/index.js';
 import { active } from './core/svelte.js';
 import { flushSync, getContext, mount, onDestroy, unmount } from './svelte.js';
-import { setDispatchHook, targetNode } from './index.js';
+import { onRecover, setDispatchHook, targetNode } from './index.js';
 
 const host = () => globalThis.__svelters_host;
 
@@ -324,6 +324,10 @@ if (!globalThis.__svelters_embed) {
   setDispatchHook((node, run) => {
     const r = current ?? rootOfNode(node);
     return r ? within(r, run) : run();
+  });
+  // FX6: an aborted entry skipped `within`'s finally
+  onRecover(() => {
+    current = null;
   });
   globalThis.__svelters_embed = api;
 }

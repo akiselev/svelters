@@ -534,6 +534,53 @@ pub struct WidgetCx<'a> {
     ctx: egui::Context,
 }
 
+/// OW1a3: a focus stop for [`WidgetCx::focus_stop`]: its AccessKit role (which also picks the
+/// keys it claims while focused) and whether Tab reaches it.
+///
+/// Keys by role (EV3, R11): `Button`, `DefaultButton` (the scope's Enter), `Link` and the toggles
+/// (`CheckBox`, `Switch`, `RadioButton`, `Tab`, `MenuItem*`) claim Space and Enter; `Slider`, `SpinButton`,
+/// `ScrollBar` and `Splitter` the arrows, Home/End and PageUp/PageDown; `ListBoxOption`,
+/// `ListItem`, `Row`, `TreeItem` and `Cell` those plus Space and Enter; `TextInput`,
+/// `SearchInput`, `EmailInput`, `NumberInput`, `PasswordInput`, `PhoneNumberInput`, `UrlInput`
+/// and `MultilineTextInput` the editing keys (Enter only when multiline); any other role none.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct FocusStop {
+    /// The AccessKit role of the stop's node.
+    pub role: egui::accesskit::Role,
+    /// Tab and Shift+Tab reach it in EV3's scoped chains (dialogs and focus scopes; a roving
+    /// group's inactive members are not tab stops). Outside a scope egui's own traversal visits
+    /// every focusable response, as for LS1's rows.
+    pub tab_stop: bool,
+}
+
+impl FocusStop {
+    /// A tab stop with AccessKit role `role`.
+    pub fn new(role: egui::accesskit::Role) -> FocusStop {
+        FocusStop { role, tab_stop: true }
+    }
+
+    /// Whether Tab reaches it (default true).
+    pub fn tab_stop(mut self, on: bool) -> FocusStop {
+        self.tab_stop = on;
+        self
+    }
+
+    pub(crate) fn key_role(&self) -> crate::focus::Role {
+        use crate::focus::Role as K;
+        use egui::accesskit::Role as A;
+        match self.role {
+            A::Button | A::DefaultButton => K::Button { default: matches!(self.role, A::DefaultButton), cancel: false },
+            A::CheckBox | A::Switch | A::RadioButton | A::Tab | A::MenuItem | A::MenuItemCheckBox | A::MenuItemRadio | A::Link => K::Toggle,
+            A::Slider | A::SpinButton | A::ScrollBar | A::Splitter => K::Slider,
+            A::ListBoxOption | A::ListItem | A::Row | A::TreeItem | A::Cell | A::GridCell => K::List,
+            A::MultilineTextInput => K::Text { multiline: true },
+            A::TextInput | A::SearchInput | A::EmailInput | A::NumberInput | A::PasswordInput | A::PhoneNumberInput | A::UrlInput | A::DateInput | A::DateTimeInput | A::TimeInput => K::Text { multiline: false },
+            _ => K::Other,
+        }
+    }
+}
+
 /// What [`WidgetCx::dispatch`] reports (OW0's name for EV1's [`Outcome`](crate::events::Outcome)):
 /// `prevented` skips the widget's default action, `stopped` means a filter stopped propagation.
 pub type Dispatched = crate::events::Outcome;
@@ -722,6 +769,15 @@ impl WidgetCx<'_> {
         self.s.invalidate_content(self.node);
     }
 
+    /// OW1a3: registers `resp` (the node's own response, or a part's under its own id) as a focus
+    /// stop: in EV3's tab order and focus scopes, with the keys its role claims from the host
+    /// keymap while it has focus (R11), and its AccessKit role set to `stop.role`. A response
+    /// registered here before the walk records the node's own keeps this role.
+    pub fn focus_stop(&mut self, ui: &egui::Ui, resp: &egui::Response, stop: FocusStop) {
+        ui.ctx().accesskit_node_builder(resp.id, |n| n.set_role(stop.role));
+        crate::focus::record_with(self.s, self.i, ui, resp, stop.key_role(), stop.tab_stop);
+    }
+
     /// OW2: puts a part's response (a sash) in EV3's tab order with the keys a slider claims
     /// (arrows, Home/End, PageUp/PageDown), so Tab reaches it and the host keymap leaves them.
     pub fn record_part_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
@@ -766,6 +822,16 @@ impl WidgetCx<'_> {
     /// OW2: the scene, writable, for the crate's own widgets (scroll requests).
     pub(crate) fn scene_mut(&mut self) -> &mut crate::scene::Scene {
         self.s
+    }
+
+    /// OW1a3: the node's scene index (for the crate's own widgets: the own label's runs).
+    pub(crate) fn index(&self) -> usize {
+        self.i
+    }
+
+    /// OW1a3: the scene and the pass's outbox (the own label fires its links' `clicked`).
+    pub(crate) fn scene_out(&mut self) -> (&mut crate::scene::Scene, &mut Vec<Out>) {
+        (self.s, self.out)
     }
 
     /// SG4: draws one child of this node (a row of a pool); false if `id` is not one of them.
@@ -1115,6 +1181,10 @@ impl ExtWidget {
     /// provider kinds.
     pub fn text(&self) -> &str {
         &self.1
+    }
+    /// OW1a3: sets the text mirror (the own label's runs).
+    pub(crate) fn set_text(&mut self, t: String) {
+        self.1 = t;
     }
     /// [`Self::text`], as the `String` typed keys read (`scene::keys`).
     pub(crate) fn text_string(&self) -> &String {

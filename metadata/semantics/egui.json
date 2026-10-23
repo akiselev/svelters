@@ -5747,7 +5747,46 @@
         "variants": []
       },
       "abstract": false,
-      "bindings": {},
+      "bindings": {
+        "selection-end": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selection-end",
+          "provenance": "svelters-egui: the egui::Label widget writes selection-end into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selection-start": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selection-start",
+          "provenance": "svelters-egui: the egui::Label widget writes selection-start into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
       "category": "display",
       "chain": [
         "Label",
@@ -5855,6 +5894,40 @@
           },
           "readable": true,
           "type": "bool",
+          "writable": true
+        },
+        "selection-end": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "The selection's end, in chars (`bind:`); a negative end is the end of the text.",
+          "js": "selection-end",
+          "native": "selection-end",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Label:selection-end",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selection-start": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "The selection's start, in chars of the shown text (`bind:`).",
+          "js": "selection-start",
+          "native": "selection-start",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Label:selection-start",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
           "writable": true
         },
         "text": {
@@ -15331,6 +15404,15 @@
           "no-preference",
           "reduce"
         ]
+      },
+      {
+        "name": "-sv-platform",
+        "type": "discrete",
+        "values": [
+          "macos",
+          "windows",
+          "linux"
+        ]
       }
     ],
     "properties": {
@@ -16824,6 +16906,22 @@
       },
       "transition": {
         "decl_type": "transition",
+        "via": "css"
+      },
+      "transition-delay": {
+        "decl_type": "time-list",
+        "via": "css"
+      },
+      "transition-duration": {
+        "decl_type": "time-list",
+        "via": "css"
+      },
+      "transition-property": {
+        "decl_type": "transition-property",
+        "via": "css"
+      },
+      "transition-timing-function": {
+        "decl_type": "easing-list",
         "via": "css"
       },
       "visible": {

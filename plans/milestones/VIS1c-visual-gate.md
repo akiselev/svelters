@@ -265,3 +265,15 @@ runs them.
 - OW5: list-row probes and a list on the page; OW3/OW7: popup probes.
 - An affordance-on run (the default theme) reporting DESIGN-rule checks for kinds VS Code lacks (Q4).
 - Windows CI step (§3.4), if wanted.
+- VIS1 should list affordance deviations (DESIGN §2.2, affordances on by default) as allowed differences, not
+  failures. This is a VIS1 follow-up, not a theme change.
+
+## 8. Baseline changes after this lane
+
+- **`dark-modern/button-secondary:a/pressed/bg` removed from `baseline-windows.json` and
+  `baseline-macos.json` (OW1a3).** Decided (coordinator, 2026-10-22): keep OW1a3's Pressable hold fix and
+  this baseline edit. The gate holds its press past egui's 0.8 s click cutoff, and the old entry passed only
+  because egui had dropped the press: the probe measured an unpressed button, which matched VS Code's
+  secondary button (it has no `:active` style). The user chose Modern with affordances on, and visible
+  pressed feedback (DESIGN R2) is one of those affordances, so this deliberate difference from VS Code's
+  missing `:active` is acceptable.

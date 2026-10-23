@@ -232,6 +232,70 @@ fn transitions_parse() {
     assert_eq!(TimingFunction::Steps(4, false).apply(0.3), 0.25);
 }
 
+#[test]
+fn transition_longhands_cascade_with_the_shorthand() {
+    // U2 E5: the four longhands, comma lists, and the shorthand expanding into them
+    let s = stylist(
+        "#ok { transition: background-color 1s linear 50ms; transition-duration: 150ms }
+         #cancel { transition-duration: 150ms; transition: opacity 1s }
+         #name { transition-property: background-color, opacity, color; transition-duration: 1s, 2s;
+                 transition-timing-function: linear; transition-delay: 0s, 1s, 2s, 3s }
+         #opt { transition-duration: 200ms }
+         #tri { transition: color 1s, opacity 2s; transition-property: none }
+         .colors { transition-property: color, background-color; transition-timing-function: ease-out; transition-duration: 150ms }
+         .slow { transition-duration: 300ms }
+         #row { --d: 75ms; transition: var(--d) border-top-color; transition-delay: var(--d) }",
+    );
+    let tree = Tree::parse(&format!("{TREE}    box#util.colors.slow\n    box#util2.slow.colors\n"));
+    let list = |id: &str| StyleView::new(&style_of(&s, &tree, id)).transitions().to_vec();
+    let t = |p: &str, d: f32, e: TimingFunction, l: f32| Transition { property: p.into(), duration: d, timing: e, delay: l };
+    let (lin, ease, out) = (TimingFunction::LINEAR, TimingFunction::EASE, TimingFunction::CubicBezier(0.0, 0.0, 0.58, 1.0));
+    // a later longhand changes only its part of the shorthand
+    assert_eq!(list("ok"), [t("background-color", 0.15, lin, 0.05)]);
+    // a later shorthand resets every longhand
+    assert_eq!(list("cancel"), [t("opacity", 1.0, ease, 0.0)]);
+    // `transition-property` sets the count; the other lists repeat or are cut
+    assert_eq!(list("name"), [t("background-color", 1.0, lin, 0.0), t("opacity", 2.0, lin, 1.0), t("color", 1.0, lin, 2.0)]);
+    // unset longhands take their initial values (`all 0s ease 0s`)
+    assert_eq!(list("opt"), [t("all", 0.2, ease, 0.0)]);
+    assert!(list("tri").is_empty(), "transition-property: none");
+    // utility-style composition: the later rule's duration wins whatever the class order
+    assert_eq!(list("util"), [t("color", 0.3, out, 0.0), t("background-color", 0.3, out, 0.0)]);
+    assert_eq!(list("util2"), list("util"));
+    // var() in the shorthand and a longhand
+    assert_eq!(list("row"), [t("border-top-color", 0.075, ease, 0.075)]);
+    // the longhands' own computed values
+    let name = style_of(&s, &tree, "name");
+    assert_eq!(name.get("transition-delay").map(|v| v.to_string()).as_deref(), Some("0s, 1s, 2s, 3s"));
+    assert_eq!(name.get("transition-property").map(|v| v.to_string()).as_deref(), Some("background-color, opacity, color"));
+    // nothing set: no list at all
+    assert_eq!(style_of(&s, &tree, "form").get("transition"), None);
+
+    // bad longhand values are errors
+    let mut st = Stylist::new(&tables::EGUI);
+    let sheet = Stylesheet::parse(
+        "a { transition-duration: -1s } b { transition-property: none, color } c { transition-timing-function: bogus }
+         d { transition-delay: 1px } e { transition-delay: -1s } f { transition: opacity 1s, none }",
+        &ParseOptions::default(),
+    );
+    let (_, diags) = st.add_sheet(&sheet, Origin::Author);
+    let errors: Vec<&str> = diags.iter().filter(|d| d.severity == Severity::Error).map(|d| d.message.as_str()).collect();
+    assert_eq!(errors.len(), 5, "a negative delay is fine: {errors:?}");
+
+    // the store runs on the assembled list, and changes to the longhands themselves don't transition
+    let s = stylist(
+        "button { background-color: rgb(0, 0, 0); transition-property: background-color; transition-duration: 1s; transition-timing-function: linear }
+         button:hover { background-color: rgb(200, 100, 0); transition-duration: 2s }",
+    );
+    let idle = style_of(&s, &Tree::parse("window\n  button#b"), "b");
+    let hover = style_of(&s, &Tree::parse("window\n  button#b :hovered"), "b");
+    let mut tr: Transitions<u32> = Transitions::new();
+    assert!(tr.restyled(1, &idle, &hover, 0.0, false));
+    let c = tr.view(1, &hover, 1.0).background().unwrap();
+    assert!((c.r - 100.0 / 255.0).abs() < 1e-3, "2 s from the hover rule: {c:?}");
+    assert!(tr.sample(1, 1.0).unwrap().iter().all(|(i, _)| !tables::EGUI.props[*i].name.starts_with("transition")));
+}
+
 /// A button whose background transitions over 1 s, except while pressed (DESIGN R2).
 const SHEET: &str = "
     button { background-color: rgb(0, 0, 0); opacity: 1; transition: background-color 1s linear, opacity 1s linear }

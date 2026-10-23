@@ -237,6 +237,20 @@ fn runaway_handler_is_interrupted_and_host_keeps_working() {
     );
 }
 
+/// FX6: the interrupt skips the handler's `finally`, so the host calls the runtime's
+/// `__svelters_recover` once after the aborted entry (and not after the ones that finished).
+#[test]
+fn an_interrupted_entry_is_followed_by_one_recover_call() {
+    let (mut cfg, opts) = fixture_config();
+    cfg.turn_budget = Some(Duration::from_millis(150));
+    let steps = script(r#"[{"event":[1,"ping",[]]},{"event":[1,"spin",[]]},{"event":[1,"ping",[]]}]"#);
+    let r = run_bundle(&js("runaway_recover.js"), steps, cfg, opts).unwrap();
+    assert_eq!(r.errors.len(), 1, "{:?}", r.errors);
+    assert_eq!(r.errors[0].kind, ErrorKind::Interrupted);
+    assert!(r.oplog.contains("set #1 title \"inside=false recovered=0\"\n"), "{}", r.oplog);
+    assert!(r.oplog.ends_with("set #1 title \"inside=true recovered=1\"\n"), "{}", r.oplog);
+}
+
 #[test]
 fn external_interrupt_flag_stops_a_script() {
     let log = LogBackend::new(vec![]);

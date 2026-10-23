@@ -47,7 +47,7 @@ fn events(rig: &Rig, log: &common::Log, h: svl_handle, name: &str) -> Vec<Vec<Va
 fn ow1a2_the_default_is_own_for_every_ow1a_kind_and_none_keeps_the_wrappers() {
     let reg = KindRegistry::global();
     for tag in OW1A {
-        assert_eq!(DEFAULT_OWN.contains(tag), *tag != "label", "{tag} flipped (label waits for RT2's runs, OW1a3)");
+        assert!(DEFAULT_OWN.contains(tag), "{tag} flipped (label since OW1a3)");
         let k = reg.tag_index(tag).expect(tag);
         let r = reg.replacement(k).unwrap_or_else(|| panic!("an own widget replaces <{tag}>"));
         assert_eq!(r.entry.replaces, Some(*tag));

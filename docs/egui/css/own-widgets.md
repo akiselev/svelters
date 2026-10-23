@@ -211,7 +211,12 @@ Not supported yet: dashed borders (paint solid), radii that follow non-uniform b
 
 ## Transitions
 
-`transition` (the shorthand only; no `transition-*` longhands) works on own widgets and their parts:
+`transition` and its longhands `transition-property`, `transition-duration`,
+`transition-timing-function` and `transition-delay` work on own widgets and their parts:
+
+- The longhands take comma lists. `transition-property` sets the number of transitions, and the
+  other lists repeat or are cut to match it. They cascade with the shorthand, so a later
+  `transition-duration: 150ms` changes only the duration of an earlier `transition: background-color 1s`.
 
 - A changed property named by an entry (by name, `all`, or a covering shorthand) starts a transition if
   the duration is above 0. The last matching entry wins.
@@ -227,6 +232,12 @@ Not supported yet: dashed borders (paint solid), radii that follow non-uniform b
   transitions and starts none, and `@media (prefers-reduced-motion: reduce)` matches. Wrap optional
   motion in `@media (prefers-reduced-motion: no-preference)`.
 - Transitions run on the logic step's clock, which is kittest's virtual clock in tests.
+
+## Platform media feature
+
+`@media (-sv-platform: macos | windows | linux)` matches the platform the native policy names
+(`native::Policy::platform`; with `None`, the egui context's OS). Override the policy to try another
+platform's rules: `native::override_policy(ctx, |p| p.platform = Some(svelters_style::Platform::Macos))`.
 
 ## The DESIGN rules in CSS
 

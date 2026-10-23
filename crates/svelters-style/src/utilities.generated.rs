@@ -153,9 +153,9 @@ pub static ROWS: &[Row] = &[
     Row { name: "transition-opacity", rank: 116, family: "transitions", requires: None, pending: false, kind: RowKind::Fixed { decls: &[("transition", "opacity var(--sv-motion) var(--sv-ease-out)")] } },
     Row { name: "transition-shadow", rank: 117, family: "transitions", requires: None, pending: false, kind: RowKind::Fixed { decls: &[("transition", "box-shadow var(--sv-motion) var(--sv-ease-out)")] } },
     Row { name: "transition-none", rank: 118, family: "transitions", requires: None, pending: false, kind: RowKind::Fixed { decls: &[("transition", "none")] } },
-    Row { name: "duration", rank: 119, family: "transitions", requires: Some("E5"), pending: true, kind: RowKind::Namespace { props: &["transition-duration"], values: &[ValueSource::Scale("motion"), ValueSource::Integer("{n}ms"), ValueSource::Arbitrary], keywords: &[], negative: false } },
-    Row { name: "delay", rank: 120, family: "transitions", requires: Some("E5"), pending: true, kind: RowKind::Namespace { props: &["transition-delay"], values: &[ValueSource::Scale("motion"), ValueSource::Integer("{n}ms"), ValueSource::Arbitrary], keywords: &[], negative: false } },
-    Row { name: "ease", rank: 121, family: "transitions", requires: Some("E5"), pending: true, kind: RowKind::Namespace { props: &["transition-timing-function"], values: &[ValueSource::Scale("easing"), ValueSource::Arbitrary], keywords: &[Keyword { name: "linear", values: &["linear"] }], negative: false } },
+    Row { name: "duration", rank: 119, family: "transitions", requires: Some("E5"), pending: false, kind: RowKind::Namespace { props: &["transition-duration"], values: &[ValueSource::Scale("motion"), ValueSource::Integer("{n}ms"), ValueSource::Arbitrary], keywords: &[], negative: false } },
+    Row { name: "delay", rank: 120, family: "transitions", requires: Some("E5"), pending: false, kind: RowKind::Namespace { props: &["transition-delay"], values: &[ValueSource::Scale("motion"), ValueSource::Integer("{n}ms"), ValueSource::Arbitrary], keywords: &[], negative: false } },
+    Row { name: "ease", rank: 121, family: "transitions", requires: Some("E5"), pending: false, kind: RowKind::Namespace { props: &["transition-timing-function"], values: &[ValueSource::Scale("easing"), ValueSource::Arbitrary], keywords: &[Keyword { name: "linear", values: &["linear"] }], negative: false } },
 ];
 
 /// The state variants: the style table's pseudo-classes (`hover:` is `&:hover`).
@@ -237,9 +237,9 @@ pub static MEDIA: &[MediaVariant] = &[
     MediaVariant { name: "motion-reduce", query: "(prefers-reduced-motion: reduce)", requires: None, pending: false },
     MediaVariant { name: "portrait", query: "(orientation: portrait)", requires: None, pending: false },
     MediaVariant { name: "landscape", query: "(orientation: landscape)", requires: None, pending: false },
-    MediaVariant { name: "mac", query: "(-sv-platform: macos)", requires: Some("E7"), pending: true },
-    MediaVariant { name: "win", query: "(-sv-platform: windows)", requires: Some("E7"), pending: true },
-    MediaVariant { name: "linux", query: "(-sv-platform: linux)", requires: Some("E7"), pending: true },
+    MediaVariant { name: "mac", query: "(-sv-platform: macos)", requires: Some("E7"), pending: false },
+    MediaVariant { name: "win", query: "(-sv-platform: windows)", requires: Some("E7"), pending: false },
+    MediaVariant { name: "linux", query: "(-sv-platform: linux)", requires: Some("E7"), pending: false },
 ];
 
 /// `breakpoints`: sizes from the `breakpoint` scale in px (the built-in theme; media queries can't use `var()`).
@@ -307,6 +307,7 @@ pub static KINDS: &[KindStyle] = &[
     KindStyle { tag: "table", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "table-column", states: &[], parts: &[], provider_states: &[] },
     KindStyle { tag: "text-edit", states: &["active", "disabled", "enabled", "exiting", "focus", "focus-within", "hover"], parts: &[], provider_states: &[] },
+    KindStyle { tag: "toast", states: &["exiting", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "toast-host", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "toggle-button", states: &["active", "disabled", "enabled", "exiting", "focus", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "tree-view", states: &[], parts: &[], provider_states: &["sv.overflow-top", "sv.overflow-bottom", "sv.overflow-left", "sv.overflow-right"] },

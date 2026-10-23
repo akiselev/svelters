@@ -87,7 +87,8 @@ impl<K: Copy + Eq + Hash> Transitions<K> {
         let entry = self.running.entry(key).or_default();
         for i in changed {
             let name = table.props[i].name;
-            if name == "transition" {
+            // `transition` and its longhands (U2 E5) don't transition
+            if name.starts_with("transition") {
                 continue;
             }
             let pos = entry.iter().position(|r| r.prop == i);

@@ -100,14 +100,19 @@ impl Unit for Pressable {
 
     fn input(&mut self, p: &PressParams, cx: &mut InputCx<'_>, out: &mut Intents<Press>) {
         let r = cx.resp;
-        let down = cx.enabled && r.down_on;
+        // OW1a3: a press that began on the host stays down while the primary button is held, also
+        // past egui's click cutoff (`max_click_duration`, 0.8 s), after which egui no longer
+        // reports a click-only widget as pressed (so `repeat` runs for as long as it is held)
+        let held = self.down && cx.input.pointer.primary_down();
+        let down = cx.enabled && (r.down_on || held);
+        let over = r.hovered || (down && r.contains_pointer);
         if down && !self.down {
             out.push(Press::Down);
             self.down_at = cx.now;
             self.last_repeat = cx.now;
             self.repeats = 0;
         } else if !down && self.down {
-            out.push(if cx.enabled { Press::Up { inside: r.hovered } } else { Press::Cancel });
+            out.push(if cx.enabled { Press::Up { inside: over } } else { Press::Cancel });
         }
         // `repeat`: held over the host, a step after `delay`, then every `interval` (QAbstractButton
         // autoRepeat); the widget treats each `Repeat` as an activation. OW1b: with `accelerate`
@@ -117,7 +122,7 @@ impl Unit for Pressable {
             let interval = repeat_interval(p, self.repeats);
             self.repeat_every = Some(interval);
             let next = if self.repeats == 0 { self.down_at + repeat_due(p, 1).unwrap_or(0.0) } else { self.last_repeat + interval };
-            if r.hovered && cx.now >= next {
+            if over && cx.now >= next {
                 out.push(Press::Repeat);
                 self.last_repeat = cx.now;
                 self.repeats += 1;
