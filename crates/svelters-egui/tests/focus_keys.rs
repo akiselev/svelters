@@ -350,7 +350,15 @@ fn ev3_modal_overlay_is_a_dialog_scope() {
 /// that had it, so an Edit-menu command reaches it.
 #[test]
 fn ev3_focus_returns_after_a_menu_closes() {
+    // OW3: the egui menus and svelters' own (the own menu holds the keyboard while open)
+    for set in [svelters_egui::widgets::KindSet::None, svelters_egui::widgets::KindSet::tags(["menu-button"])] {
+        ev3_focus_returns_after_a_menu_closes_on(set);
+    }
+}
+
+fn ev3_focus_returns_after_a_menu_closes_on(set: svelters_egui::widgets::KindSet) {
     let mut rig = Rig::new();
+    rig.backend.set_own_widgets(set);
     native::set(&rig.harness.ctx, Native::Egui); // a click does not focus the menu button
     let (_w, col) = rig.window();
     let field = rig.leaf(col, "text-edit", &[("accessible-name", s("field"))]);

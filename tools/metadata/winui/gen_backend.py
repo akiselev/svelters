@@ -1123,8 +1123,8 @@ def gen_tests(m: Model) -> str:
                 continue
             lines.append(f"    h.listen(w, {rs_str(e['name'])}, true).unwrap();\n"
                          "    let win = h.create(\"window\");\n    h.insert(win, w, None, None).unwrap();\n"
-                         "    h.call(win, \"activate\", &[]).unwrap();\n    h.pump(300);\n"
-                         f"    assert!(h.events(w, {rs_str(e['name'])}) >= 1, \"raised when mounted in an activated window\");\n")
+                         "    h.call(win, \"activate\", &[]).unwrap();\n"
+                         f"    assert!(h.await_events(w, {rs_str(e['name'])}, 1) >= 1, \"raised when mounted in an activated window\");\n")
             body = "".join(lines)
             fact(e["class"], "events", e["native"], name, {"o": e["o"]}, body)
             add_test(name, body)
@@ -1152,11 +1152,13 @@ def gen_tests(m: Model) -> str:
             if p["ty"]["t"] == "F64":
                 v = float(val)
             lines.append(f"    h.set(w, {rs_str(p['name'])}, {test_value(p, v)}).unwrap();\n")
-        lines.append("    h.pump(200);\n")
+        # Wait on the event itself, not a fixed pump: XAML raises some (TextChanged) from a later dispatcher turn,
+        # which a loaded CI runner reaches well after 200 ms (FX5). await_events then pumps a settle window so a
+        # duplicate delivery still fails the `once` check.
         if inferred:
-            lines.append(f"    assert!(h.events(w, {rs_str(e['name'])}) >= 1, \"event delivered\");\n")
+            lines.append(f"    assert!(h.await_events(w, {rs_str(e['name'])}, 1) >= 1, \"event delivered\");\n")
         else:
-            lines.append(f"    assert_eq!(h.events(w, {rs_str(e['name'])}), 1, \"event delivered once\");\n")
+            lines.append(f"    assert_eq!(h.await_events(w, {rs_str(e['name'])}, 1), 1, \"event delivered once\");\n")
         if e["payload"]:
             lines.append(f"    assert_eq!(h.last_args(w, {rs_str(e['name'])}).len(), {len(e['payload'])}, \"payload arity\");\n")
         if res and trig.startswith("set:Text"):
