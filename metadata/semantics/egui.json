@@ -3825,7 +3825,18 @@
       "doc": "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "close": {
+          "dispatch": "generated",
+          "doc": "`close(result?)`: closes it (applied at the next pass) and emits `closed(result)` (QDialog `done`): `\"accept\"` also emits `accepted`, `\"reject\"` `rejected`.",
+          "native": "close",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
       "native": "egui::Window",
       "paint": "none",
       "present": null,
@@ -3988,6 +3999,17 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {
+        "accepted": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"accept\"` (`close(\"accept\")`).",
+          "handler_result": "none",
+          "js_event": "accepted",
+          "name": "accepted",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "changed": {
           "args": [
             {
@@ -3996,7 +4018,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "doc": "The user (or `close`) opened or closed it; carries `open`.",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
@@ -4005,12 +4027,28 @@
           "sync_required": false
         },
         "closed": {
-          "args": [],
+          "args": [
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popdown`) closed it.",
+          "doc": "It closed; carries the result: `\"reject\"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `\"\"` when `open` was set false.",
           "handler_result": "none",
           "js_event": "closed",
           "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "rejected": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"reject\"`: dismissed by the user or `close(\"reject\")`.",
+          "handler_result": "none",
+          "js_event": "rejected",
+          "name": "rejected",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -4918,7 +4956,18 @@
       "doc": "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "close": {
+          "dispatch": "generated",
+          "doc": "`close(result?)`: closes it (applied at the next pass) and emits `closed(result)` (QDialog `done`): `\"accept\"` also emits `accepted`, `\"reject\"` `rejected`.",
+          "native": "close",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
       "native": "egui::Modal",
       "paint": "none",
       "present": null,
@@ -4957,6 +5006,23 @@
           "type": "bool",
           "writable": true
         },
+        "resizable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The user can resize it from its right and bottom edges and its size grip (`::part(grip)`, Qt's `sizeGripEnabled`); the content is laid out at that size.",
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Modal:resizable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "title": {
           "construct_only": false,
           "default": "",
@@ -4979,6 +5045,17 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {
+        "accepted": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"accept\"` (`close(\"accept\")`).",
+          "handler_result": "none",
+          "js_event": "accepted",
+          "name": "accepted",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "changed": {
           "args": [
             {
@@ -4987,7 +5064,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "doc": "The user (or `close`) opened or closed it; carries `open`.",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
@@ -4996,12 +5073,28 @@
           "sync_required": false
         },
         "closed": {
-          "args": [],
+          "args": [
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ],
           "disconnect_on_drop": true,
-          "doc": "The user (or `popdown`) closed it.",
+          "doc": "It closed; carries the result: `\"reject\"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `\"\"` when `open` was set false.",
           "handler_result": "none",
           "js_event": "closed",
           "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "rejected": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It closed with the result `\"reject\"`: dismissed by the user or `close(\"reject\")`.",
+          "handler_result": "none",
+          "js_event": "rejected",
+          "name": "rejected",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -9568,7 +9661,7 @@
         },
         "show": {
           "dispatch": "generated",
-          "doc": "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
+          "doc": "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
           "native": "show",
           "params": [],
           "returns": {
@@ -9577,7 +9670,7 @@
           }
         }
       },
-      "native": "egui::Area (foreground) of egui::Frame toasts",
+      "native": "svelters' own toasts in an egui::Area (foreground)",
       "paint": "none",
       "present": null,
       "props": {
@@ -9626,6 +9719,26 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {
+        "action": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "index",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`).",
+          "handler_result": "none",
+          "js_event": "action",
+          "name": "action",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "clicked": {
           "args": [
             {
@@ -9654,7 +9767,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `method` (`dismiss`/`clear`).",
+          "doc": "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `action` (one of its actions), `method` (`dismiss`/`clear`).",
           "handler_result": "none",
           "js_event": "closed",
           "name": "closed",
