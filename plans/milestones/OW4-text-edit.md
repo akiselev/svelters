@@ -233,7 +233,16 @@ workspace suite, VIS1c's gate, conformance. CI runs them.
   delayed repaint where the test wants the viewports idle. egui's own field blinks only while the viewport has
   input focus (and `visuals.text_cursor.blink`); the own field now does the same. Its `egui-snapshots` job passed
   (no TK1 or VIS1c snapshot changed).
-- The next push: see the coordinator report.
+- `ci/ow4` 4103eeef (the blink fix, merged with master f7f67386): js 39896158425, linux-qt 39896158587,
+  macos-appkit 39896158386, windows-winui 39896158310 succeeded; linux-gtk 39896158389 had `dock_w4` passing and
+  one failure, `eframe_idle::eframe_window_draws_then_idles_at_zero_cpu` (4 frames, 400 ms CPU in 2 s; it passed on
+  1ad6c51c with the same field code and its comment records Xvfb's late-event bursts); the rerun of the job
+  passed, so all five workflows are green on 4103eeef.
+- Local disk: the macbook reached 0 free during the second merge's test build; this lane's `target/…/incremental`
+  (9.5 GB) was deleted, leaving 9.8 GB (below the 15 GB rule), so nothing after that merge was built locally
+  (regenerated files only: spec through the earlier build, `gen_reference.py`, `gen_utilities.py`).
+- `focus::before_text` is now unused (it fed the deleted egui wrapper; EV3b's `take_command`/`feed` serve provider
+  kinds): a dead-code warning, to delete in a follow-up.
 
 ## Handoff
 
