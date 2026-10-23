@@ -11857,13 +11857,210 @@
       ],
       "text_content": null
     },
+    "Toast": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "level",
+          "its labels' text"
+        ],
+        "note": "A live region: `assertive` for warning and error, `polite` otherwise; its close button is a `Dismiss` button.",
+        "role": "Alert",
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the svelters' own toast surface (a taffy flex box) in its host's foreground Area widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "overlays",
+      "chain": [
+        "Toast",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "`toast` and `toast[level=…]` style its box (R7 `elev-3` by default); `::part(accent)` the level bar, `::part(close)` the close button. Its labels' runs are nodes: `toast b`, `toast a` and the like reach them.",
+      "doc": "A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. Its labels are ordinary nodes, so their RT2 runs (`<b>`, `<a href>`, `<code>`) take per-run CSS; its child buttons are its actions (a click closes it with `action`). Styled by `toast` and `toast[level=…]`, `toast::part(accent)`, `toast::part(close)`, with `:hover` and `:exiting` (while its `transition` plays out after it closed).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters' own toast surface (a taffy flex box) in its host's foreground Area",
+      "paint": "box",
+      "parts": [],
+      "present": null,
+      "props": {
+        "duration": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Seconds it stays open after it shows (null: the host's `duration`; 0: until closed). Hovering holds it open.",
+          "js": "duration",
+          "native": "duration",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Toast:duration",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "level": {
+          "construct_only": false,
+          "default": "info",
+          "doc": "Its severity: the accent bar's colour (`::part(accent)`), the AccessKit politeness (`assertive` for warning and error) and the `[level=…]` selector.",
+          "js": "level",
+          "native": "level",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Toast:level",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "info",
+            "success",
+            "warning",
+            "error"
+          ],
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown while true. The host sets it false when the toast closes (`bind:open`); setting it true again shows it anew, with a fresh timeout.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Toast:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "provider_states": [],
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "It closed (or showed again); carries `open`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Its body was clicked (not a child button or link).",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [
+            {
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "It closed (`open` is now false): `reason` is `timeout`, `dismissed` (its close button), `action` (a click on one of its child buttons) or `\"\"` (`open` set false).",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "kind",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "kind",
+          "when": "it closed and its `transition` is playing out"
+        }
+      ],
+      "text_content": null
+    },
     "ToastHost": {
       "a11y": {
         "actions": [],
         "author_id": null,
         "invalid": false,
         "name_from": [],
-        "note": "Each toast is an `Alert` node named by its text, with a `Dismiss` button.",
+        "note": "Each toast is an `Alert` node named `Level: text`, a live region (`assertive` for warning and error, `polite` otherwise), with a `Dismiss` button.",
         "role": null,
         "value": null,
         "variants": []
@@ -11875,10 +12072,24 @@
         "ToastHost",
         "Widget"
       ],
-      "children": null,
+      "children": {
+        "default_slot": "toasts",
+        "policy": "ordered",
+        "slots": {
+          "toasts": {
+            "accepts": [
+              "Toast"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
       "css_hidden": [],
-      "css_note": "The toasts are drawn over everything in the theme's look; CSS does not reach them.",
-      "doc": "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust.",
+      "css_note": "Its `show` toasts take `::part(toast)`, `::part(accent)`, `::part(text)`, `::part(action)` and `::part(close)`; their runs keep RT2's tag defaults. Per-run CSS needs a declarative `<toast>` child.",
+      "doc": "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts.",
       "interface": false,
       "lifetime": "owned",
       "methods": {
@@ -11904,7 +12115,7 @@
         },
         "show": {
           "dispatch": "generated",
-          "doc": "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
+          "doc": "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults (per-run CSS needs a declarative `<toast>` child, whose runs are nodes); a click on a run with an `href` opens it.",
           "native": "show",
           "params": [],
           "returns": {
@@ -15142,7 +15353,8 @@
           "popup",
           "scroll-area",
           "sides",
-          "tab"
+          "tab",
+          "toast"
         ],
         "type": "enum",
         "values": [
@@ -15201,6 +15413,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -15426,6 +15639,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -15462,7 +15676,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "toast"
         ],
         "type": "length",
         "via": "setter"
@@ -15572,6 +15787,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -15595,7 +15811,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "toast"
         ],
         "type": "enum",
         "values": [
@@ -15656,6 +15873,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -15714,6 +15932,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -15737,7 +15956,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "toast"
         ],
         "type": "enum",
         "values": [
@@ -15795,6 +16015,7 @@
           "scroll-area",
           "sides",
           "tab",
+          "toast",
           "window"
         ],
         "type": "length",
@@ -15866,6 +16087,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -15889,7 +16111,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "toast"
         ],
         "type": "enum",
         "values": [
@@ -15967,6 +16190,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16053,6 +16277,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16111,6 +16336,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16169,6 +16395,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16227,6 +16454,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16387,6 +16615,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16447,6 +16676,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16475,7 +16705,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "toast"
         ],
         "type": "length",
         "via": "setter"
@@ -16582,6 +16813,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16641,6 +16873,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16711,6 +16944,7 @@
           "table",
           "table-column",
           "text-edit",
+          "toast",
           "toast-host",
           "toggle-button",
           "tree-view",
@@ -16941,6 +17175,7 @@
     "table": "Table",
     "table-column": "TableColumn",
     "text-edit": "TextEdit",
+    "toast": "Toast",
     "toast-host": "ToastHost",
     "toggle-button": "ToggleButton",
     "tree-view": "TreeView",

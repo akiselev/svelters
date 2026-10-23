@@ -352,6 +352,8 @@ pub enum P {
     Swatches,
     CustomColors,
     Fields,
+    /// OW7b: toast (its level; `duration` reuses toast-host's)
+    Level,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

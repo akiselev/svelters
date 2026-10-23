@@ -325,7 +325,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::ProgressBar { .. }
         | W::Spinner { .. }
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
-        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
+        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) => unreachable!("WG4a views: crate::views"),
         W::Run { .. } => unreachable!("RT2: runs are drawn by their label (crate::rich)"),
         }
     };
