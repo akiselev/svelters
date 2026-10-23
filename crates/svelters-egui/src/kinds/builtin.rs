@@ -132,13 +132,17 @@ static WIDGET_SIGNALS: &[SignalDef] = dom_signals![
     signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself."),
     // WG4b: drag and drop on any node (`kinds/dnd.rs`)
     signal("drag-begin", NONE, "Drag source: the user started dragging this node (`drag-type` set)."),
-    signal("drag-end", &[("dropped", Ty::Bool)], "Drag source: the drag ended; `dropped` is true when a target took it."),
+    signal(
+        "drag-end",
+        &[("dropped", Ty::Bool), ("action", Ty::Str)],
+        "Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped).",
+    ),
     signal("drag-enter", &[("type", Ty::Str)], "Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type."),
     signal("drag-leave", NONE, "Drop target: the drag left, was cancelled, or was dropped here (before `drop`)."),
     signal(
         "drop",
-        &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64)],
-        "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+        &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64), ("action", Ty::Str)],
+        "Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type.",
     )
 ];
 

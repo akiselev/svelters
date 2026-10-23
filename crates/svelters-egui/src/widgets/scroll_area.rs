@@ -358,6 +358,13 @@ impl Widget for ScrollArea {
             let sc = &mut self.scroll;
             cx.run_units_with(ui, &area, &parts, |icx| sc.input(&params, icx, &mut fired));
         }
+        // WG6 QA9 (OW5a): a drag held near an edge scrolls
+        if enabled
+            && let Some(d) = crate::kinds::dnd::auto_scroll(ui.ctx(), view)
+        {
+            self.scroll.scroll_by(&params, d);
+            ui.ctx().request_repaint();
+        }
         // take the wheel delta and keys it used out of egui's input (chaining)
         let consumed = self.scroll.consumed();
         let keys: Vec<_> = self.scroll.keys_used().to_vec();

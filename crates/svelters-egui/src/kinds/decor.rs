@@ -20,7 +20,7 @@ static ICON_PROPS: &[PropDef] = &[
         P::Name,
         Ty::Str,
         Def::Str(""),
-        "The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name.",
+        "An icon registry key (`file.save`, `debug.step-over`; `svelters_egui::icons`) when `family` is `icons` and the key is registered: drawn from its SVG masters (optical size by physical pixels), tinted by CSS `color`, with the `--icon-subject`/`--icon-accent`/`--icon-badge` colour slots. Otherwise the glyph's name in the family's name table (`svelters_egui::fonts::register_icons`). Also the default accessible name.",
     ),
     prop("glyph", P::Glyph, Ty::Str, Def::Str(""), "The glyph itself (text), when `name` is empty or not in the table."),
     prop(
@@ -30,7 +30,7 @@ static ICON_PROPS: &[PropDef] = &[
         Def::Str("icons"),
         "The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`).",
     ),
-    optional("size", P::Size, Ty::F64, "Font size in points; null for the body size."),
+    optional("size", P::Size, Ty::F64, "Font size in points; null for the body size (16 for a registry icon)."),
     prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),
     optional(
         "source",
@@ -70,5 +70,5 @@ pub(super) const ICON: KindDef = KindDef {
         props: ICON_PROPS,
         signals: BUTTON_SIGNALS,
         methods: &[],
-        doc: "A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
+        doc: "An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
     };

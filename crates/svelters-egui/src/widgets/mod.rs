@@ -21,6 +21,7 @@ mod glyph;
 pub mod hyperlink;
 pub mod image;
 pub mod label;
+pub(crate) mod list_rows;
 pub(crate) mod menu;
 pub mod panel;
 mod parts;

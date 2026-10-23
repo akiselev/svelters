@@ -29,6 +29,18 @@
 //! drags if it senses drags: a draggable slider still slides) and the target half after it; for a
 //! container, both before its children (they stay on top).
 //!
+//! WG6 (QA9, plans/milestones/WG6-widget-polish.md):
+//! - **Drop actions**: `drop` and the source's `drag-end` carry an `action` from the modifiers held
+//!   at the release (Qt's `Qt::DropAction`): `copy` with Ctrl (Option on macOS), `link` with
+//!   Ctrl+Shift (Cmd+Option on macOS), else `move`; the cursor over the target shows it. A file
+//!   dropped from the OS is always `copy`. `drag-end`'s action is `none` when nothing took it.
+//! - **File drops from the OS on any node**: a target whose `drop-types` accepts `text/uri-list`
+//!   (or `*`) takes files dragged in from the file manager (egui's `hovered_files` and
+//!   `dropped_files`): `drag-enter("text/uri-list")`, `drag-leave`, then `drop("text/uri-list",
+//!   uris, x, y, "copy")`, the `file://` URIs one per line (`\r\n`, RFC 2483).
+//! - **Auto-scroll**: a `scroll-area` and a `virtual-list`/`tree-view` scroll while a drag (in-app
+//!   or files) is held within [`EDGE`] points of their edge ([`auto_scroll`], through Scrollable).
+//!
 //! Writer lane: WIDGETS (WG4b).
 
 use super::P;
@@ -89,7 +101,33 @@ pub struct DragPayload {
     /// The source node's egui id (`None` for drags Rust started).
     pub source: Option<Id>,
     dropped: Arc<AtomicBool>,
+    /// WG6: the action the target took it with (an index into [`ACTIONS`]).
+    action: Arc<std::sync::atomic::AtomicU8>,
 }
+
+/// WG6: the drop actions (`drop`'s and `drag-end`'s `action`).
+pub const ACTIONS: &[&str] = &["none", "move", "copy", "link"];
+
+/// WG6: the drop action for the modifiers held at the release (Qt's defaults: Ctrl copies,
+/// Ctrl+Shift links; on macOS Option copies and Cmd+Option links).
+pub fn drop_action(m: egui::Modifiers, mac: bool) -> &'static str {
+    if mac {
+        match (m.mac_cmd || m.command, m.alt) {
+            (true, true) => "link",
+            (false, true) => "copy",
+            _ => "move",
+        }
+    } else {
+        match (m.ctrl || m.command, m.shift) {
+            (true, true) => "link",
+            (true, false) => "copy",
+            _ => "move",
+        }
+    }
+}
+
+/// WG6: the type a file drop from the OS has.
+pub const URI_LIST: &str = "text/uri-list";
 
 impl DragPayload {
     /// One entry: type `ty`, data `data`.
@@ -99,7 +137,7 @@ impl DragPayload {
 
     /// Several types (a Rust drag, or the clipboard's contents).
     pub fn from_mime(data: MimeData) -> DragPayload {
-        DragPayload { data, source: None, dropped: Arc::default() }
+        DragPayload { data, source: None, dropped: Arc::default(), action: Arc::default() }
     }
 
     /// The first type (a Svelte drag's `drag-type`); `""` when empty.
@@ -125,6 +163,21 @@ impl DragPayload {
 
     pub fn was_dropped(&self) -> bool {
         self.dropped.load(Ordering::Relaxed)
+    }
+
+    /// WG6: [`accept`](Self::accept) with a drop action (one of [`ACTIONS`]).
+    pub fn accept_as(&self, action: &str) {
+        let k = ACTIONS.iter().position(|a| *a == action).unwrap_or(1);
+        self.action.store(k as u8, Ordering::Relaxed);
+        self.accept();
+    }
+
+    /// WG6: the action a target took it with (`none` before a drop; `move` for a plain `accept`).
+    pub fn action(&self) -> &'static str {
+        match self.action.load(Ordering::Relaxed) {
+            0 if self.was_dropped() => "move",
+            k => ACTIONS.get(k as usize).copied().unwrap_or("none"),
+        }
     }
 }
 
@@ -184,6 +237,7 @@ pub(crate) fn claim(ctx: &egui::Context, id: Id) {
 #[derive(Clone)]
 struct InFlight {
     dropped: Arc<AtomicBool>,
+    action: Arc<std::sync::atomic::AtomicU8>,
     ended: bool,
 }
 
@@ -218,19 +272,30 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
         let flight: Option<InFlight> = ctx.data(|m| m.get_temp(key));
         // the pass after the release: every target has run, so `dropped` is final
         if let Some(f) = flight.as_ref().filter(|f| f.ended) {
-            emit(arena, "drag-end", vec![Value::Bool(f.dropped.load(Ordering::Relaxed))]);
+            let dropped = f.dropped.load(Ordering::Relaxed);
+            let action = match f.action.load(Ordering::Relaxed) {
+                0 if dropped => "move",
+                k => ACTIONS.get(k as usize).copied().unwrap_or("none"),
+            };
+            emit(arena, "drag-end", vec![Value::Bool(dropped), Value::Str(action.into())]);
             ctx.data_mut(|m| m.remove::<InFlight>(key));
         }
         let resp = ui.interact(r, id.with("dnd-src"), Sense::drag());
         if resp.drag_started() {
-            let p = DragPayload { data: MimeData::single(drag_type.clone(), drag_data), source: Some(id), dropped: Arc::default() };
-            ctx.data_mut(|m| m.insert_temp(key, InFlight { dropped: p.dropped.clone(), ended: false }));
+            let p = DragPayload { data: MimeData::single(drag_type.clone(), drag_data), source: Some(id), dropped: Arc::default(), action: Arc::default() };
+            ctx.data_mut(|m| m.insert_temp(key, InFlight { dropped: p.dropped.clone(), action: p.action.clone(), ended: false }));
             DragAndDrop::set_payload(&ctx, p);
             emit(arena, "drag-begin", vec![]);
         }
         if resp.dragged() {
             let over = claims(&ctx).prev.is_some();
-            ctx.set_cursor_icon(if over { CursorIcon::Grabbing } else { CursorIcon::NoDrop });
+            let cursor = match (over, drop_action(ctx.input(|i| i.modifiers), mac(&ctx))) {
+                (false, _) => CursorIcon::NoDrop,
+                (true, "copy") => CursorIcon::Copy,
+                (true, "link") => CursorIcon::Alias,
+                _ => CursorIcon::Grabbing,
+            };
+            ctx.set_cursor_icon(cursor);
             let text = crate::scene::node::text_of(arena.w(i));
             ghost(ui, id, if text.is_empty() { &drag_type } else { text });
         } else if resp.hovered() {
@@ -248,7 +313,18 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
         let key = id.with("dnd-in");
         let was_in: bool = ctx.data(|m| m.get_temp(key)).unwrap_or(false);
         let payload = DragAndDrop::payload::<DragPayload>(&ctx).filter(|p| p.source != Some(id) && p.best(&drop_types).is_some());
-        let inside = ctx.rect_contains_pointer(ui.layer_id(), r.intersect(ui.clip_rect()));
+        // WG6: files dragged in from the OS (no in-app drag at the same time)
+        let files = payload.is_none() && accepts(&drop_types, URI_LIST) && ctx.input(|i| !i.raw.hovered_files.is_empty() || !i.raw.dropped_files.is_empty());
+        let inside = if files {
+            ctx.input(|i| i.pointer.latest_pos()).is_some_and(|p| r.intersect(ui.clip_rect()).contains(p) && ctx.layer_id_at(p).is_none_or(|l| l == ui.layer_id()))
+        } else {
+            ctx.rect_contains_pointer(ui.layer_id(), r.intersect(ui.clip_rect()))
+        };
+        if files {
+            let dropped: Vec<egui::DroppedFileHandle> = ctx.input(|i| i.raw.dropped_files.clone());
+            file_drop(&ctx, id, r, inside, &dropped, |name, args| emit(arena, name, args));
+            return;
+        }
         if payload.is_some() && inside {
             claim(&ctx, id);
         }
@@ -265,16 +341,83 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
             emit(arena, "drag-leave", vec![]);
         }
         if released && let Some(p) = DragAndDrop::take_payload::<DragPayload>(&ctx) {
-            p.accept();
+            let action = drop_action(ctx.input(|i| i.modifiers), mac(&ctx));
+            p.accept_as(action);
             let at = ctx.pointer_interact_pos().unwrap_or(r.min) - r.min;
             let (ty, data) = p.best(&drop_types).map(|(t, d)| (t.to_string(), d)).unwrap_or_default();
-            emit(arena, "drop", vec![Value::Str(ty), Value::Str(data), Value::F64(at.x as f64), Value::F64(at.y as f64)]);
+            emit(arena, "drop", vec![Value::Str(ty), Value::Str(data), Value::F64(at.x as f64), Value::F64(at.y as f64), Value::Str(action.into())]);
         }
         let now_in = active && !released;
         if now_in != was_in {
             ctx.data_mut(|m| m.insert_temp(key, now_in));
         }
     }
+}
+
+fn mac(ctx: &egui::Context) -> bool {
+    ctx.os() == egui::os::OperatingSystem::Mac
+}
+
+/// WG6: the `file://` URIs of dropped files' paths, one per line (`text/uri-list`).
+pub fn uri_list<'a>(paths: impl IntoIterator<Item = &'a std::path::Path>) -> String {
+    paths.into_iter().map(svelters_host::platform::file_uri).collect::<Vec<_>>().join("\r\n")
+}
+
+/// WG6: the target half of [`node`] for files dragged in from the OS: `inside`, the pointer is
+/// over it; `dropped`, this pass's dropped files.
+fn file_drop(ctx: &egui::Context, id: Id, r: Rect, inside: bool, dropped: &[egui::DroppedFileHandle], mut emit: impl FnMut(&str, Vec<Value>)) {
+    let key = id.with("dnd-in");
+    let was_in: bool = ctx.data(|m| m.get_temp(key)).unwrap_or(false);
+    if inside {
+        claim(ctx, id);
+    }
+    let active = inside && claims(ctx).prev == Some(id);
+    if active {
+        ctx.layer_painter(LayerId::new(Order::Foreground, id.with("dnd-files"))).rect_stroke(r, 2.0, ctx.global_style().visuals.selection.stroke, StrokeKind::Inside);
+        ctx.set_cursor_icon(CursorIcon::Copy);
+        ctx.request_repaint();
+    }
+    if active && !was_in {
+        emit("drag-enter", vec![Value::Str(URI_LIST.into())]);
+    }
+    let released = active && !dropped.is_empty();
+    if was_in && (!active || released) {
+        emit("drag-leave", vec![]);
+    }
+    if released {
+        let at = ctx.input(|i| i.pointer.latest_pos()).unwrap_or(r.min) - r.min;
+        emit("drop", vec![Value::Str(URI_LIST.into()), Value::Str(uri_list(dropped.iter().map(|f| f.path()))), Value::F64(at.x as f64), Value::F64(at.y as f64), Value::Str("copy".into())]);
+    }
+    let now_in = active && !released;
+    if now_in != was_in {
+        ctx.data_mut(|m| m.insert_temp(key, now_in));
+    }
+}
+
+/// WG6: how close to a scroll area's edge a drag scrolls it, in points.
+pub const EDGE: f32 = 24.0;
+
+/// WG6 (OW5a: on the Scrollable unit): while a drag (in-app or files from the OS) is held within
+/// [`EDGE`] of `view`'s edge, the offset change that scrolls towards it (up to 12 points a frame,
+/// faster nearer the edge; positive moves the content towards its end). `None` with no drag.
+pub(crate) fn auto_scroll(ctx: &egui::Context, view: Rect) -> Option<egui::Vec2> {
+    let dragging = DragAndDrop::has_any_payload(ctx) || ctx.input(|i| !i.raw.hovered_files.is_empty());
+    if !dragging {
+        return None;
+    }
+    let p = ctx.input(|i| i.pointer.latest_pos())?;
+    let d = -edge_delta(view, p);
+    (d != egui::Vec2::ZERO).then_some(d)
+}
+
+/// The auto-scroll delta for the pointer at `p` in rect `r` (`scroll_with_delta`: positive
+/// reveals the content above or to the left).
+pub(crate) fn edge_delta(r: Rect, p: egui::Pos2) -> egui::Vec2 {
+    if !r.contains(p) {
+        return egui::Vec2::ZERO;
+    }
+    let f = |d: f32| if d < EDGE { (EDGE - d) / EDGE * 12.0 } else { 0.0 };
+    egui::vec2(f(p.x - r.left()) - f(r.right() - p.x), f(p.y - r.top()) - f(r.bottom() - p.y))
 }
 
 /// The label that follows the pointer during a drag.
@@ -295,6 +438,29 @@ pub(crate) fn ghost(ui: &Ui, id: Id, text: &str) {
 mod tests {
     use super::{accepts, DragPayload};
     use svelters_host::platform::MimeData;
+
+    #[test]
+    fn wg6_drop_actions_and_uri_list() {
+        use super::{drop_action, edge_delta, uri_list, DragPayload};
+        use egui::Modifiers as M;
+        assert_eq!(drop_action(M::NONE, false), "move");
+        assert_eq!(drop_action(M::CTRL, false), "copy");
+        assert_eq!(drop_action(M::CTRL | M::SHIFT, false), "link");
+        assert_eq!(drop_action(M::ALT, true), "copy");
+        assert_eq!(drop_action(M::MAC_CMD | M::ALT, true), "link");
+        let p = DragPayload::new("cad/part", "1");
+        assert_eq!(p.action(), "none");
+        p.accept_as("copy");
+        assert!(p.was_dropped());
+        assert_eq!(p.action(), "copy");
+        let paths = [std::path::Path::new("/a b/x.step"), std::path::Path::new("/y.kicad_pcb")];
+        assert_eq!(uri_list(paths), "file:///a%20b/x.step\r\nfile:///y.kicad_pcb");
+        let r = egui::Rect::from_min_size(egui::pos2(0.0, 0.0), egui::vec2(100.0, 100.0));
+        assert_eq!(edge_delta(r, egui::pos2(50.0, 50.0)), egui::Vec2::ZERO);
+        assert!(edge_delta(r, egui::pos2(50.0, 2.0)).y > 0.0, "near the top: reveal above");
+        assert!(edge_delta(r, egui::pos2(50.0, 98.0)).y < 0.0);
+        assert_eq!(edge_delta(r, egui::pos2(150.0, 98.0)), egui::Vec2::ZERO);
+    }
 
     #[test]
     fn drop_types_match_exactly_by_prefix_or_any() {
