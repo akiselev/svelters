@@ -1165,6 +1165,21 @@ impl LayoutCx<'_> {
         out
     }
 
+    /// OW1a4: runs `f` with `kids` taken out of the flow (`position: absolute` for this run
+    /// only), so the node's flexbox leaves no room for them; `f` then [`place`](Self::place)s
+    /// them itself (collapsing-header's header actions).
+    pub fn out_of_flow<R>(&mut self, kids: &[SceneId], f: impl FnOnce(&mut Self) -> R) -> R {
+        let saved: Vec<_> = kids.iter().map(|k| self.s.layout[k.index() as usize].style.clone()).collect();
+        for k in kids {
+            std::sync::Arc::make_mut(&mut self.s.layout[k.index() as usize].style).position = Position::Absolute;
+        }
+        let r = f(self);
+        for (k, st) in kids.iter().zip(saved) {
+            self.s.layout[k.index() as usize].style = st;
+        }
+        r
+    }
+
     /// OW1a2: a [`MeasureCx`](crate::provider::MeasureCx) for this node (its computed style and
     /// part styles), to size chrome the widget paints.
     pub fn with_measure<R>(&self, f: impl FnOnce(&crate::provider::MeasureCx<'_>) -> R) -> R {

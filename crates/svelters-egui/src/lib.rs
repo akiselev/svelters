@@ -62,6 +62,7 @@ pub mod widgets;
 pub mod imm;
 /// ZM1: UI zoom (`set_zoom`, VS Code's 1.2^n levels, who handles Ctrl+= / Ctrl+- / Ctrl+0).
 pub mod zoom;
+pub mod use_units;
 
 mod a11y;
 /// AU1: the accessible name the automation selectors share with AccessKit.

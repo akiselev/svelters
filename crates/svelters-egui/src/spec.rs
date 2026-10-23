@@ -256,10 +256,16 @@ fn kind_json(k: &KindDef) -> J {
             .collect(),
     };
     let children = k.slot.map(|slot| {
+        let mut slots = Map::new();
+        slots.insert(slot.to_string(), json!({"accepts": kinds::slot_accepts(k.id), "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}));
+        // OW1a4: named slots after the default one (collapsing-header's `end`)
+        for s in kinds::extra_slots(index) {
+            slots.insert(s.to_string(), json!({"accepts": ["Widget"], "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}));
+        }
         json!({
             "default_slot": slot,
             "policy": "ordered",
-            "slots": {slot: {"accepts": kinds::slot_accepts(k.id), "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}},
+            "slots": slots,
         })
     });
     let mut kj = json!({

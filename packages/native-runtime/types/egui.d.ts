@@ -491,6 +491,10 @@ export interface EguiElements {
     /** Shows the children; a click on the header (or Enter/Space on it) toggles it. */
     open?: boolean;
     'bind:open'?: boolean;
+    /** The group of sibling headers of which one is open at a time (QToolBox); empty: none. */
+    accordion?: string;
+    /** An icon before the caption (a key, or `family:name`). */
+    icon?: string;
     /** The user opened or closed it; carries the new state. */
     onchanged?: (open: boolean) => void;
   };
