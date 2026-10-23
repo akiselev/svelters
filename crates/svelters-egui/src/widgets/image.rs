@@ -1,7 +1,9 @@
 //! `icon` and `image`, svelters' own (OW1a2, ARCH-WIDGETS §6.1): an icon-font glyph or an AS1
 //! image `source` (tinted with `color` when `tint`), and a fitted image. Replace the
 //! `egui::Label`/`egui::Button` icon wrapper (`leaf.rs`) and the self-painted image
-//! (`elements/media.rs`). ICR1's `IconRegistry` re-points `icon` later behind the same props.
+//! (`elements/media.rs`). ICR1: a `name` that is an icon registry key (family `icons`) draws from
+//! the registry (`paint::paint_icon_sized`: optical-size master, `color` tint, `--icon-*` slots),
+//! a square of `size` (else 16) points.
 //!
 //! `icon`: with `frame` it is an icon button (the button's UA table: R1–R3 fills, R8 ring, R9
 //! disabled, R10 pointer; focusable, role `Button`); without, an image (role `Image`, or `Button`
@@ -128,11 +130,29 @@ impl Icon {
     fn src(&self) -> &str {
         self.source.as_deref().unwrap_or("")
     }
+    /// ICR1: the registry key `name` is, when it draws from the context's icon registry.
+    fn registry_key(&self, ctx: &egui::Context) -> Option<paint::IconKey> {
+        if !self.src().is_empty() || self.name.is_empty() {
+            return None;
+        }
+        // the own widget's `family` defaults to "" (the builtin kind's to `icons`): both are the
+        // registry's family
+        let family = if self.family.is_empty() { paint::IconKey::REGISTRY_FAMILY } else { self.family.as_str() };
+        let key = paint::IconKey::new(family, self.name.clone());
+        paint::is_registered(ctx, &key).then_some(key)
+    }
+    /// A registry icon's side: `size`, else 16 (ICON-STYLE's default chrome size).
+    fn registry_side(&self) -> f32 {
+        self.size.filter(|v| v.is_finite() && *v > 0.0).map_or(crate::icons::DEFAULT_SIZE, |v| v as f32)
+    }
     /// The glyph's side or text size under `s`.
     fn content(&self, ctx: &egui::Context, s: &paint::StyleView<'_>) -> (Vec2, Option<(egui::FontId, String)>) {
         let size = self.size.filter(|v| v.is_finite() && *v > 0.0).or(Some(f64::from(s.font_size())));
         if !self.src().is_empty() {
             return (Vec2::splat(size.unwrap_or(16.0) as f32), None);
+        }
+        if let Some(key) = self.registry_key(ctx) {
+            return (paint::icon_size_sized(ctx, s, &key, Some(self.registry_side())), None);
         }
         match crate::fonts::icon_look(ctx, &ctx.global_style(), &self.family, &self.name, &self.glyph, self.font_weight, size) {
             // nothing to draw (no name, no glyph): a blank square of the font size
@@ -208,6 +228,8 @@ impl Widget for Icon {
                     let pv = paint::StyleView::ua_only(PLACEHOLDER_UA, host.state(), host.is_dark());
                     placeholder(&mut pc, r, r.width().min(r.height()), pv.color("color").unwrap_or(color), false);
                 }
+            } else if let Some(key) = self.registry_key(ui.ctx()) {
+                paint::paint_icon_sized(&mut pc, &host, &key, r, Some(self.registry_side()));
             } else if let Some((font, text)) = glyph {
                 let g = ui.ctx().fonts_mut(|f| f.layout_no_wrap(text, font.clone(), color));
                 let pos = pos2(((content.center().x - g.size().x / 2.0) * pc.ppp).round() / pc.ppp, ((content.center().y - g.size().y / 2.0) * pc.ppp).round() / pc.ppp);

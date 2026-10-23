@@ -145,7 +145,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button, label, checkbox, toggle-button, separator and icon wrappers, behind the switch), OW1b, OW3, OW4
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button, label, checkbox, toggle-button, separator and icon wrappers, behind the switch), OW3
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
@@ -169,12 +169,18 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let mut text_enter = false; // CX3: Enter in a focused one-line field (commit and submit)
     let before = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } => Some(Value::Bool(*checked)),
-        W::Slider { value, .. } => Some(Value::F64(*value)),
         W::ComboBox { selected, .. } => Some(Value::I64(*selected)),
-        W::Picker(p) => Some(p.value()), // WG4b
         _ => None,
     };
     let enabled = arena.common(i).enabled;
+    // ICR1: an `icon` whose name is a registry key draws from the registry with its computed style
+    // (the `--icon-*` slots)
+    let icon_css = match arena.w(i) {
+        W::Icon { name, family, source, .. } if source.is_empty() && crate::icons::is_registry_icon(ui.ctx(), family, name) => {
+            Some(arena.slots.id_at(i).and_then(|id| arena.style.computed(id)).cloned())
+        }
+        _ => None,
+    };
     // RT2: a label with run children is one paragraph of styled runs (`crate::rich`)
     let rich_wrap = match arena.w(i) {
         W::Label { wrap, .. } if !arena.children[i].is_empty() => Some(*wrap),
@@ -239,30 +245,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             }
             r
         }
-        W::Slider { value, min, max, step, text, show_value } => {
-            // The slider fills its rect: the rail takes what the value box and caption leave.
-            let sp = ui.spacing().clone();
-            let mut extra = 0.0;
-            if *show_value {
-                extra += sp.item_spacing.x + sp.interact_size.x;
-            }
-            if !text.is_empty() {
-                let font = egui::TextStyle::Body.resolve(ui.style());
-                let tw = ui.ctx().fonts_mut(|f| f.layout_no_wrap(text.clone(), font, egui::Color32::WHITE).size().x);
-                extra += sp.item_spacing.x + tw;
-            }
-            // 4 points of slack: the value box can come out slightly wider than interact_size.x.
-            ui.spacing_mut().slider_width = (size.x - extra - 4.0).max(sp.interact_size.x);
-            // IN1: the value box shows and reads numbers in the host's locale
-            let mut s = crate::numeric::slider(egui::Slider::new(value, *min..=*max).show_value(*show_value));
-            if *step > 0.0 {
-                s = s.step_by(*step);
-            }
-            if !text.is_empty() {
-                s = s.text(text.as_str());
-            }
-            ui.add(s)
-        }
         // ---- WG1 ----
         W::ToggleButton { text, checked, radio, frame, weight } => {
             let r = ui.add(egui::Button::new(weighted(ui, text, egui::TextStyle::Button, *weight)).selected(*checked).frame(*frame).min_size(size));
@@ -293,6 +275,9 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         W::Separator { vertical } => ui.add(if *vertical { egui::Separator::default().vertical() } else { egui::Separator::default().horizontal() }),
         W::Icon { source, tint, frame, selected, .. } if !source.is_empty() => icon_image(ui, source, *tint, *frame, *selected, size, click_sense),
+        W::Icon { name, size: pt, frame, selected, .. } if let Some(css) = &icon_css => {
+            registry_icon(ui, css.as_deref(), name, *pt, *frame, *selected, size, click_sense)
+        }
         W::Icon { name, glyph, family, size: pt, weight, frame, selected, .. } => {
             use crate::fonts::IconLook;
             // a family, name or glyph the fonts cannot draw: an outlined box instead (never egui's
@@ -333,8 +318,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Hyperlink { .. }
         | W::RadioButton { .. }
         | W::Switch { .. }
-        | W::RangeSlider { .. }
-        | W::DragValue { .. }
         | W::Sides
         | W::Frame { .. }
         | W::Stack { .. }
@@ -343,7 +326,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::Spinner { .. }
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
         W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
-        W::Picker(p) => p.ui(ui, size), // WG4b (`kinds/pickers.rs`)
         W::Run { .. } => unreachable!("RT2: runs are drawn by their label (crate::rich)"),
         }
     };
@@ -414,9 +396,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let changed = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } if Some(Value::Bool(*checked)) != before => Some((kinds::P::Checked, Value::Bool(*checked))),
         W::ComboBox { selected, .. } if Some(Value::I64(*selected)) != before => Some((kinds::P::SelectedIndex, Value::I64(*selected))),
-        W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
         W::TextEdit { .. } => text_changed.clone().map(|t| (kinds::P::Text, Value::Str(t))),
-        W::Picker(p) if Some(p.value()) != before => Some((kinds::P::Value, p.value())), // WG4b
         _ => None,
     };
     if let Some((key, v)) = changed {
@@ -456,6 +436,43 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
     }
     resp
+}
+
+/// ICR1: an `icon` drawn from the icon registry (`crate::icons`): `size` points (else 16), tinted
+/// with the text colour (CSS `color`), the `--icon-*` slots from its computed style.
+#[allow(clippy::too_many_arguments)]
+fn registry_icon(ui: &mut Ui, css: Option<&svelters_style::ComputedStyle>, key: &str, pt: Option<f64>, frame: bool, selected: bool, size: Vec2, click_sense: bool) -> egui::Response {
+    // a framed one is an icon button: clickable, painted with the button's visuals (no egui widget)
+    let sense = if click_sense || frame { Sense::click() } else { Sense::hover() };
+    let r = ui.allocate_exact_size(size, sense).1;
+    let color = if frame {
+        let v = ui.style().interact_selectable(&r, selected);
+        if ui.is_rect_visible(r.rect) {
+            ui.painter().rect(r.rect.expand(v.expansion), v.corner_radius, v.weak_bg_fill, v.bg_stroke, egui::StrokeKind::Inside);
+        }
+        ui.visuals().override_text_color.unwrap_or(v.fg_stroke.color)
+    } else {
+        ui.visuals().text_color()
+    };
+    if ui.is_rect_visible(r.rect) {
+        let get = |n: &str| css.and_then(|c| c.custom(n));
+        let slots = crate::icons::Slots::from_css(get("--icon-subject"), get("--icon-accent"), get("--icon-badge"));
+        let style = crate::icons::IconStyle { size: pt.map_or(crate::icons::DEFAULT_SIZE, |p| p as f32), color, slots, high_contrast: false };
+        let reg = crate::icons::registry(ui.ctx());
+        let painter = ui.painter().with_clip_rect(r.rect.intersect(ui.clip_rect()));
+        if crate::icons::paint(&painter, &reg, key, r.rect, &style).is_none() {
+            let rect = Rect::from_center_size(r.rect.center(), Vec2::splat(style.size));
+            painter.rect_stroke(rect, 1.0, egui::Stroke::new(1.0, color), egui::StrokeKind::Inside);
+        }
+    }
+    {
+        let role = if click_sense || frame { Role::Button } else { Role::Image };
+        ui.ctx().accesskit_node_builder(r.id, |b| {
+            b.set_role(role);
+            b.clear_value();
+        });
+    }
+    r
 }
 
 #[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button and icon wrappers, behind the switch)

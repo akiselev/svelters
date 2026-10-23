@@ -590,20 +590,20 @@ pub static KIND_DOCS: &[KindDoc] = &[
     KindDoc {
         id: "DatePicker",
         category: Category::Pickers,
-        paint: Paint::Box,
+        paint: Paint::Provider,
         walk: Walk::Leaf(Focus::Yes),
-        states: &[],
-        a11y: A11yDoc { note: "The calendar popup's controls are nodes of their own.", ..a11y(Some("Button"), &["accessible-name", "the shown date"], None, CLICK_FOCUS) },
-        css_note: "The calendar popup follows the theme.",
+        states: &[StateDoc { name: "open", source: Source::Kind, when: "its calendar popup is shown" }, StateDoc { name: "read-only", source: Source::Kind, when: "`read-only` is set" }],
+        a11y: A11yDoc { note: "A `Button` named by the shown date (or its accessible name), `expanded` while open, `has_popup` dialog. The popup holds the calendar's `Grid` (cells named by ISO date) and, with `commit-mode=\"confirm\"`, Save and Cancel buttons; Escape closes it and focus returns to the button.", ..a11y(Some("Button"), &["accessible-name", "the shown date"], None, CLICK_FOCUS) },
+        css_note: "The button: R4's field look with R14's chevron (`::part(chevron)`); the popup is `::part(popup)` (OW3's surface) holding the `calendar` kind's parts (`header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`) and `::part(save)`, `::part(cancel)`.",
     },
     KindDoc {
         id: "ColorPicker",
         category: Category::Pickers,
-        paint: Paint::Box,
+        paint: Paint::Provider,
         walk: Walk::Leaf(Focus::Yes),
-        states: &[],
-        a11y: a11y(Some("ColorWell"), &["accessible-name", "tooltip", "\"Color\""], Some("the colour"), CLICK_FOCUS),
-        css_note: "The swatch shows the colour; the picker popup follows the theme.",
+        states: &[StateDoc { name: "open", source: Source::Kind, when: "its editor popup is shown" }],
+        a11y: A11yDoc { note: "A `ColorWell` named \"Color\" (or its accessible name) with the hex as its value, `expanded` while open. The popup holds the `color-editor` kind's sliders, boxes and swatches and, with `commit-mode=\"confirm\"`, Save and Cancel; Escape closes it and focus returns.", ..a11y(Some("ColorWell"), &["accessible-name", "tooltip", "\"Color\""], Some("the colour"), CLICK_FOCUS) },
+        css_note: "The button shows `::part(swatch)` (a checkerboard under alpha) and R14's `::part(chevron)`; the popup is `::part(popup)` holding the `color-editor` kind's parts and `::part(save)`, `::part(cancel)`.",
     },
     // LISTS
     KindDoc {
@@ -618,7 +618,7 @@ pub static KIND_DOCS: &[KindDoc] = &[
             decorated: false,
             ..a11y(Some("List"), &["accessible-name"], Some("its row count (size of set)"), &["Focus"])
         },
-        css_note: "Style the rows: each row is the element its row template renders.",
+        css_note: "Each row is `::part(row)` in its own state (`:hover`, `:active`, `:selected`, `:current`, `:focus-visible`, `:drop-target`, `:nth-child()`; `:focus-within` stays the list's) and the element its row template renders. Other parts: `placeholder`, `drop-line`, `ghost` (the drag label), `scrollbar-y`, `thumb-y`. The list is `:drop-target` while a row drag it takes is over it.",
     },
     // WG5b: a `virtual-list` with a tree attached
     KindDoc {
@@ -632,7 +632,7 @@ pub static KIND_DOCS: &[KindDoc] = &[
             decorated: false,
             ..a11y(Some("Tree"), &["accessible-name"], None, &["Focus"])
         },
-        css_note: "Style the rows: each row is the element its row template renders.",
+        css_note: "As `virtual-list` (`::part(row)` per row, `placeholder`, `drop-line`, `ghost`, the bar), plus `:has-children` and `:expanded` on rows and the `::part(twistie)` chevron.",
     },
     // RT2: the inline runs (`rich.rs`)
     KindDoc {
@@ -699,6 +699,25 @@ pub static KIND_DOCS: &[KindDoc] = &[
         a11y: a11y(Some("ScrollBar"), &["accessible-name"], Some("`value` in `min`..`max`, with its step"), &["Increment", "Decrement", "ScrollUp", "ScrollDown"]),
         css_note: "Its track and thumb (`::part(scrollbar)`, `::part(thumb)`) paint from VS Code's `scrollbarSlider.*` tokens until `::part()` reaches them; its thickness is `scrollbar-w`.",
     },
+    // OW6: new kinds, svelters' own only
+    KindDoc {
+        id: "Calendar",
+        category: Category::Pickers,
+        paint: Paint::Provider,
+        walk: Walk::Leaf(Focus::Yes),
+        states: &[StateDoc { name: "read-only", source: Source::Kind, when: "`read-only` is set" }],
+        a11y: A11yDoc { note: "A `Grid` of six `Row`s of `GridCell`s, each named by its ISO date (`selected`, `disabled`, Click); previous/next are `Button`s. The grid is one tab stop and the arrow keys rove its days.", ..a11y(Some("Grid"), &["accessible-name"], Some("the picked date"), &["Focus"]) },
+        css_note: "Parts: `header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`. Day states `:hover`, `:selected`, `:current` (the keyboard cursor, ringed while `:focus-visible`), `:disabled`, and the part names `today`, `weekend`, `other-month` plus `day-parts`' names, painted from the UA tables until per-day part styles reach egui.",
+    },
+    KindDoc {
+        id: "ColorEditor",
+        category: Category::Pickers,
+        paint: Paint::Provider,
+        walk: Walk::Leaf(Focus::Yes),
+        states: &[],
+        a11y: A11yDoc { note: "A `Group` holding a `Slider` each for saturation/value, hue and alpha, a `SpinButton` per channel box, a `TextInput` for hex (SetValue), and a `Button` per swatch and custom colour. Each slider and box is a tab stop; arrows step it (Shift ×10).", ..a11y(Some("Group"), &["accessible-name"], Some("the colour (hex)"), &["Focus"]) },
+        css_note: "Parts: `square`, `hue`, `alpha`, `handle` (`:dragging`, `:focus-visible`), `fields`, `field`, `swatches`, `swatch-cell`. The checkerboard under alpha is painted until `background-image` repeating gradients reach egui.",
+    },
 ];
 
 /// Paint properties a kind's own drawing covers, so a rule with them has no visible effect (the
@@ -708,6 +727,20 @@ pub static CSS_HIDDEN: &[(&str, &[&str])] = &[("Panel", &["background-color", "b
 /// [`CSS_HIDDEN`]'s entry for kind `id`.
 pub fn css_hidden(id: &str) -> &'static [&'static str] {
     CSS_HIDDEN.iter().find(|(k, _)| *k == id).map_or(&[], |(_, v)| v)
+}
+
+/// U0 (UTILITY-CSS §3.4): the provider states (`:state(sv.<name>)`) a built-in kind sets on itself,
+/// by kind id: the spec's `kinds[].provider_states`, for `state-[sv.<name>]:` utility variants and
+/// the docs. `tests/spec.rs` checks that every `sv` provider state is claimed by a kind.
+pub fn provider_states(id: &str) -> &'static [&'static crate::provider::StateBit] {
+    use crate::interact::scroll::sv;
+    static OVERFLOW: [&crate::provider::StateBit; 4] = [&sv::OVERFLOW_TOP, &sv::OVERFLOW_BOTTOM, &sv::OVERFLOW_LEFT, &sv::OVERFLOW_RIGHT];
+    match id {
+        // each runs a `Scrollable` unit, which sets the overflow states on its host (the lists
+        // through `widgets::list_rows::ListBar`)
+        "ScrollArea" | "Scrollbar" | "VirtualList" | "TreeView" => &OVERFLOW,
+        _ => &[],
+    }
 }
 
 /// The row of built-in kind `id`.

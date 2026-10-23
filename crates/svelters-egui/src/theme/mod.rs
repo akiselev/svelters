@@ -776,6 +776,105 @@ pub(crate) fn default_tokens_css() -> &'static str {
     })
 }
 
+// ---- U0: the token manifest ----
+
+/// U0 (UTILITY-CSS §3.4): one L2/L3 token (`--sv-<name>`) as the spec's `theme.tokens` lists it:
+/// for the utility generator (colour, scale and metric names), the docs and the editors. The
+/// role and component tables above stay the single source; this only reads them.
+#[derive(Clone, Debug, PartialEq)]
+pub struct TokenInfo {
+    /// The bare name (`list-hover`; the property is `--sv-list-hover`).
+    pub name: String,
+    /// `role` (L2 colour role, [`ROLES`]), `component` (L3, [`components`]), `density` (one value
+    /// per [`Density`]), `shape` (scheme-independent) or `set` (per colour set, elevation).
+    pub layer: &'static str,
+    /// `color`, `length`, `shadow`, `duration`, `easing`, `font-family` or `raw`.
+    pub ty: &'static str,
+    /// A role's VS Code colour key (`list.hoverBackground`).
+    pub vscode: Option<&'static str>,
+    /// A component token's default source token (`button-bg` ← `button2-bg`).
+    pub from: Option<&'static str>,
+    /// Its value in each built-in set (`dark`, `light`, `hc-dark`, `hc-light`), at the default
+    /// density with the affordance overlay on.
+    pub values: [(&'static str, String); 4],
+    /// A density token's value per density (`compact`, `default`, `comfortable`); empty otherwise.
+    pub density: Vec<(&'static str, String)>,
+}
+
+/// The built-in sets by name, in [`set_index`] order.
+pub const SET_NAMES: [&str; 4] = ["dark", "light", "hc-dark", "hc-light"];
+
+/// U0: every L2/L3 token of the built-in themes (the `--sv-*` names; no L1 `--vscode-*` keys), in
+/// name order. See [`TokenInfo`].
+pub fn token_manifest() -> Vec<TokenInfo> {
+    let d = data();
+    let themes = [Theme::dark_modern(), Theme::light_modern(), Theme::hc_dark(), Theme::hc_light()];
+    let mut names: Vec<String> = Vec::new();
+    for t in &themes {
+        for (k, _) in t.tokens().iter() {
+            if let Some(n) = k.strip_prefix("--sv-")
+                && !names.iter().any(|x| x == n)
+            {
+                names.push(n.to_string());
+            }
+        }
+    }
+    names.sort();
+    let in_density = |n: &str| d.density.iter().any(|set| set.iter().any(|(k, _)| k == n));
+    let in_shape = |n: &str| d.shape.iter().any(|(k, _)| k == n);
+    names
+        .into_iter()
+        .map(|name| {
+            let role = ROLES.iter().find(|(r, _)| *r == name);
+            let component = components().find(|(c, _)| *c == name);
+            let layer = if role.is_some() {
+                "role"
+            } else if component.is_some() {
+                "component"
+            } else if in_density(&name) {
+                "density"
+            } else if in_shape(&name) {
+                "shape"
+            } else {
+                "set"
+            };
+            let values = [0, 1, 2, 3].map(|i| (SET_NAMES[i], themes[i].token(&name).unwrap_or_default().to_string()));
+            let ty = token_type(&name, &values[0].1);
+            let density = if layer == "density" {
+                Density::ALL.iter().map(|&dn| (dn.name(), themes[0].with_density(dn).token(&name).unwrap_or_default().to_string())).collect()
+            } else {
+                Vec::new()
+            };
+            TokenInfo { layer, ty, vscode: role.and_then(|r| r.1), from: component.map(|c| c.1).filter(|s| !s.is_empty()), values, density, name }
+        })
+        .collect()
+}
+
+/// A token's value type, from the tables first (a colour role, an elevation), else from its value.
+fn token_type(name: &str, value: &str) -> &'static str {
+    let colors = ROLES.iter().chain(COMPONENT_COLORS).any(|(n, _)| *n == name);
+    if colors {
+        return "color";
+    }
+    if name.starts_with("elev-") || COMPONENT_SHADOWS.iter().any(|(n, _)| *n == name) {
+        return "shadow";
+    }
+    let v = value.trim();
+    if parse_px(v).is_some() {
+        "length"
+    } else if parse_duration(v).is_some() {
+        "duration"
+    } else if ["cubic-bezier(", "steps(", "linear", "ease"].iter().any(|p| v.starts_with(p)) {
+        "easing"
+    } else if parse_color(v).is_some() {
+        "color"
+    } else if name.starts_with("font-") {
+        "font-family"
+    } else {
+        "raw"
+    }
+}
+
 // ---- value parsing ----
 
 /// `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, `rgb()`/`rgba()`, `transparent`.

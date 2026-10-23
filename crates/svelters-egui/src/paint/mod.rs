@@ -27,11 +27,12 @@ mod text;
 pub mod trace;
 
 pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint_inset_shadows, paint_outline};
-pub use icon::{IconKey, content_icon, icon_size, paint_icon};
+pub use icon::{IconKey, content_icon, icon_size, icon_size_sized, icon_slots, is_registered, paint_icon, paint_icon_sized};
 pub use image::paint_image;
 pub use painters::{Orientation, PaintArgs, PartInfo, PartPainter, register_painter};
 pub use parts::{PartItem, layout_parts, measure_parts};
 pub use text::{Align, Elide, elide, elide_with, measure_text, paint_text, text_galley};
+pub(crate) use text::font as text_font;
 pub use trace::{PaintTrace, TraceEntry, TraceKind};
 
 use crate::provider::StateBits;
@@ -104,7 +105,12 @@ impl<'a> PaintCx<'a> {
     }
 
     pub(crate) fn record(&mut self, kind: TraceKind, rect: egui::Rect, fill: Color32, stroke: egui::Stroke, font_size: f32) {
-        let e = TraceEntry { node: self.target.0, part: self.target.1, kind, rect, fill, stroke, font_size };
+        self.record_entry(TraceEntry { node: self.target.0, part: self.target.1, kind, rect, fill, stroke, font_size, radius: 0.0, padding: [0.0; 4], opacity: 1.0 });
+    }
+
+    /// Records `e` (boxes and outlines with their radius and padding), with the painter's opacity.
+    pub(crate) fn record_entry(&mut self, mut e: TraceEntry) {
+        e.opacity = self.painter.opacity();
         if let Some(t) = self.trace.as_deref_mut() {
             t.entries.push(e);
         } else if let Some(ctx) = &self.sink {
@@ -190,6 +196,12 @@ fn ua_theme(dark: bool) -> &'static crate::theme::Theme {
     static DARK: std::sync::OnceLock<crate::theme::Theme> = std::sync::OnceLock::new();
     static LIGHT: std::sync::OnceLock<crate::theme::Theme> = std::sync::OnceLock::new();
     if dark { DARK.get_or_init(crate::theme::Theme::dark_modern) } else { LIGHT.get_or_init(crate::theme::Theme::light_modern) }
+}
+
+/// OW1b: a colour token of the built-in theme of the scheme (what UA tables resolve), for
+/// paint-only pieces that have no part style yet (the selection and caret of a value box).
+pub fn ua_token(dark: bool, name: &str) -> Option<Color32> {
+    ua_theme(dark).color(name)
 }
 
 /// The properties a part (or child) inherits from its host when nothing sets them on it.

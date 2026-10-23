@@ -87,6 +87,22 @@ impl Switch {
     }
 }
 
+/// Paints the switch at `rect` under `host` with `part_css`: track, knob (moving to `active` over
+/// the motion time unless reduced, animated under `id`), caption, the focus ring around the track.
+/// The kind and `imm::Switch` (OW-RUST) call it.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn paint<'c>(pc: &mut crate::paint::PaintCx<'_>, ctx: &egui::Context, host: &crate::paint::StyleView<'_>, part_css: impl Fn(&str) -> Option<&'c svelters_style::ComputedStyle>, rect: egui::Rect, id: egui::Id, text: &str, active: bool) {
+    checkbox::paint_indicator(pc, ctx, host, part_css, rect, "track", TRACK, false, text, "", |pc, host, tr| {
+        let knob = parts::part_view(host, KNOB, false);
+        let d = parts::part_size(host, KNOB, 12.0).x.min(tr.height());
+        let t = if parts::reduced_motion(ctx) { f32::from(u8::from(active)) } else { ctx.animate_bool_responsive(id.with("knob"), active) };
+        let inset = tr.height() / 2.0;
+        let x = egui::lerp((tr.left() + inset)..=(tr.right() - inset), t);
+        let color = knob.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
+        parts::paint_dot(&mut pc.part("knob"), egui::pos2(x, tr.center().y), d / 2.0, color, egui::Stroke::NONE);
+    });
+}
+
 impl Widget for Switch {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
         checkbox::measure_with_indicator(cx, UA, "track", TRACK, &self.text, "", false)
@@ -104,16 +120,7 @@ impl Widget for Switch {
             }
         }
         if ui.is_rect_visible(cx.rect()) {
-            let (active, id) = (self.active, cx.id());
-            checkbox::paint_indicator_kind(ui, cx, UA, "track", TRACK, false, &self.text, "", |pc, host, tr| {
-                let knob = parts::part_view(host, KNOB, false);
-                let d = parts::part_size(host, KNOB, 12.0).x.min(tr.height());
-                let t = if parts::reduced_motion(ui.ctx()) { f32::from(u8::from(active)) } else { ui.ctx().animate_bool_responsive(id.with("knob"), active) };
-                let inset = tr.height() / 2.0;
-                let x = egui::lerp((tr.left() + inset)..=(tr.right() - inset), t);
-                let color = knob.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
-                parts::paint_dot(&mut pc.part("knob"), egui::pos2(x, tr.center().y), d / 2.0, color, egui::Stroke::NONE);
-            });
+            paint(&mut cx.paint_cx(ui), ui.ctx(), &cx.style(UA), |n| cx.part_css(n), cx.rect(), cx.id(), &self.text, self.active);
         }
         let (enabled, on, text) = (cx.enabled(), self.active, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Switch, enabled, on, text));

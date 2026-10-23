@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Runs a Node script on Windows inside the installed Code.exe (ELECTRON_RUN_AS_NODE), so it can reach
+# VS Code's DevTools port on the Windows loopback. Usage: winnode C:\vis1\cdp.js eval 'document.title'
+export ELECTRON_RUN_AS_NODE=1
+export WSLENV="ELECTRON_RUN_AS_NODE/w:CDP_PORT/w:VIS_THEME/w${WSLENV:+:$WSLENV}"
+exec "/mnt/c/Program Files/Microsoft VS Code/Code.exe" "$@"

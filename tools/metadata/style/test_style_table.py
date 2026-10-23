@@ -63,3 +63,16 @@ def test_a_setter_only_toolkit_has_no_css_entries():
 def test_names_are_kebab_case():
     with pytest.raises(st.StyleError, match="kebab-case"):
         build({"minWidth": {"via": "css"}})
+
+
+def test_optional_range_on_numeric_rows():
+    t = build({"width-request": {"via": "setter", "prop": "width-request", "type": "length", "kinds": ["Widget"], "range": {"min": 0}},
+               "stretch": {"via": "child-attr", "attr": "stretch", "type": "int", "parents": ["Box"], "range": {"min": 0, "max": 10}}})
+    assert t["properties"]["width-request"]["range"] == {"min": 0}
+    assert t["properties"]["stretch"]["range"] == {"min": 0, "max": 10}
+    with pytest.raises(st.StyleError, match="only for"):
+        build({"mode": {"via": "setter", "prop": "mode", "type": "enum", "kinds": ["Box"], "range": {"min": 0}}})
+    with pytest.raises(st.StyleError, match="min > range.max"):
+        build({"width-request": {"via": "setter", "prop": "width-request", "type": "length", "kinds": ["Widget"], "range": {"min": 2, "max": 1}}})
+    with pytest.raises(st.StyleError, match="min and/or max"):
+        build({"width-request": {"via": "setter", "prop": "width-request", "type": "length", "kinds": ["Widget"], "range": {"low": 0}}})

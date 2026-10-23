@@ -1,7 +1,7 @@
 ---
 title: Writing an own widget
 description: "Build a widget that svelters draws itself: behaviour units, paint primitives, parts, events and focus."
-status: available   # with_peer, Expandable and Roving: pending the OW1a2 merge (marked below)
+status: available
 verified_at: d0542a3a
 sources:
   - crates/svelters-egui/src/provider/mod.rs   # WidgetCx, MeasureCx
@@ -182,12 +182,41 @@ gone (`panel`, `scroll-area`, `scrollbar`, `split-view`). Check both in `widgets
 | `Focusable` | `focused`, `focus-visible` (keyboard or program focus only) | `Focus` | `FocusParams` |
 | `Toggleable` | `checked`, `indeterminate` | `Toggle::Toggled { checked, indeterminate }` | `ToggleParams { checked, indeterminate, tristate, radio }` |
 | `Resizable`, `Scrollable` | see `interact/resize.rs`, `interact/scroll.rs` (used by `split-view`, `scroll-area`) | | |
-| `Expandable` *(pending OW1a2)* | `expanded` | `Expand::Set(bool)`: Right/Left, AccessKit `Expand`/`Collapse`, and a click when `on_click` | `ExpandParams { expanded, on_click }` |
-| `Roving` *(pending OW1a2)* | — | `Rove::{By(i32), First, Last}`; `Rove::target(at, len)` wraps | `RovingParams { on }` |
+| `Expandable` | `expanded` | `Expand::Set(bool)`: Right/Left, AccessKit `Expand`/`Collapse`, and a click when `on_click` | `ExpandParams { expanded, on_click }` |
+| `Roving` | — | `Rove::{By(i32), First, Last}`; `Rove::target(at, len)` wraps | `RovingParams { on }` |
+| `RovingList` | — | `Move { to }` | `RovingListParams { enabled: Vec<bool>, orientation, wrap }` |
 
 `Press::Click` covers pointer clicks, Space/Enter and AccessKit `Click`. A click is `Click { count: 1, .. }`
 first; a double click then sends `count: 2`. Roving only reports the move: the widget finds the members,
 skips disabled ones, and moves focus and checks through `with_peer` (below).
+
+**`Roving` or `RovingList`?** Both make a group one Tab stop and move with the arrows, Home and End.
+
+- `Roving` moves **focus across sibling nodes**, each its own widget: radio buttons,
+  `toggle-button group`.
+- `RovingList` moves a **highlighted index inside one widget**: menu rows, a menu bar, a select's
+  options, list, tree and tab rows. It skips items whose `enabled` entry is false, wraps when `wrap` is
+  set, and follows `orientation` (`Vertical`/`Horizontal`). The widget reads `current()`, sets it on hover
+  with `set(Some(i))`, and can use the helpers `RovingList::edge(&enabled, forward)` and
+  `RovingList::next(&enabled, from, step, wrap)` without the unit.
+
+### Floating surfaces and tooltips
+
+These units serve popups, menus, select lists and tooltips (`widgets/menu.rs`, `select.rs`,
+`popup.rs`, `tooltip.rs` are the worked examples). None of them owns a state bit. The widget owns
+`open` and decides.
+
+| Unit | Reports | Use |
+|---|---|---|
+| `Anchored` | `Placed { side, rect }` | where a surface goes beside its anchor. `AnchorParams { anchor, size, bounds, placement, gap, cross, flip, shift, match_anchor_width }`, `Placement::parse("bottom-start")`. `interact::anchor::place(&p)` is the geometry alone; `anchor::bounds(ctx)` gives the bounds |
+| `Dismissable` | `Dismiss { reason, at }`, with `Reason::{Escape, OutsidePress, FocusOut, AnchorHidden, Programmatic}` | asks to close on Escape (claimed when `escape`) or on a press outside `inside` rects (`Outside::{Close, Ignore}`). `Dismissable::check(&p, &input)` without the unit |
+| `Typeahead` | `Search { text }` | printable keys within `timeout` (1 s) build a prefix. `typeahead::find(labels, &enabled, query, current)` picks the next match; typing one letter again cycles |
+| `Tooltipable` | `Tip::{Show, Hide}` | the delay (`Policy::tooltip_delay_ms`), the follow-on window, a press hiding it until the pointer leaves, and showing on disabled hosts (R9) |
+
+**Tooltips need no code.** The common `tooltip` prop works on every own widget: the provider passes it
+to the shared tooltip (`widgets/tooltip.rs`, crate-level `attach`). The innermost host's tooltip is
+painted once per pass below the pointer, and the text becomes the host's AccessKit description.
+`widgets::tooltip::{show(ctx, text, at), hide(ctx), is_shown(ctx)}` are for showing one by hand.
 
 **A new unit** goes in `interact/<unit>.rs` and implements `Unit` (`Params`, `Intent`, `OWNS`, `sense`,
 `input`, `a11y`, `claims`, `next_frame`). Inside `input`, read `cx.resp` (a `Resp` snapshot) and
@@ -256,14 +285,14 @@ if !cx.dispatch(&self.clicked, ()).prevented() { self.activate(cx) }
 `cx.set(&mut self.field, v)` writes a `#[prop]` and announces it to `bind:`; a write to a non-prop field
 is reported as an error.
 
-### Writing to sibling widgets *(pending OW1a2)*
+### Writing to sibling widgets
 
 `cx.with_peer::<Wd, R>(id, |w: &mut Wd, peer: &mut PeerCx| …) -> Option<R>` writes to another own widget
 of type `Wd` in the same pass: `peer.set(&mut w.checked, false)`, `peer.emit(&w.changed, …)`,
 `peer.focus()`. The writes are announced and the events queued exactly like the peer's own, and a peer
 drawn earlier in the pass is repainted. It returns `None` for this node, a dead node, or another type.
 Find members with `cx.sibling_ids()` and `cx.tag_of(id)`. Radio exclusivity, `toggle-button group` and
-Roving use it (`widgets/radio.rs` on `ci/ow1a2`). It is crate-level: `pub` items in a `pub(crate)` seam,
+Roving use it (`widgets/radio.rs`). It is crate-level: `pub` items in a `pub(crate)` seam,
 not re-exported for app crates.
 
 ## Focus and keys
@@ -308,7 +337,8 @@ layout, not tessellation.
 | `widgets/checkbox.rs` | Toggleable, an indicator part and a path mark, `dispatch(..).prevented()` |
 | `widgets/switch.rs`, `widgets/progress.rs` | parts with a knob or fill, reduced motion |
 | `widgets/scroll_area.rs`, `widgets/split_view.rs` | containers: `record_hit`, `children_offset`, `run_units_with`, `record_part_focus` |
-| `widgets/radio.rs`, `widgets/collapsing.rs` (`ci/ow1a2`) | Roving and `with_peer`; Expandable and a container with a collapsed body |
+| `widgets/radio.rs`, `widgets/collapsing.rs` | Roving and `with_peer`; Expandable and a container with a collapsed body |
+| `widgets/menu.rs`, `widgets/select.rs`, `widgets/popup.rs` | RovingList, Typeahead, Anchored, Dismissable |
 
 ## Mistakes we have seen
 

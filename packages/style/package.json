@@ -8,12 +8,13 @@
   "exports": {
     ".": "./src/translate.js",
     "./runtime": "./src/runtime.js",
-    "./build": "./src/translate.js"
+    "./build": "./src/translate.js",
+    "./utilities": "./src/utilities.generated.js"
   },
   "dependencies": {
     "svelte": "5.57.2"
   },
   "scripts": {
-    "test": "node --test test/translate.test.mjs test/docs.test.mjs test/decl.test.mjs"
+    "test": "node --test test/translate.test.mjs test/docs.test.mjs test/decl.test.mjs test/utilities.test.mjs"
   }
 }

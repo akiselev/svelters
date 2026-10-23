@@ -2,7 +2,7 @@
 title: Styling own widgets
 description: "::part(), state pseudo-classes, content: icon(), paint() painters and transitions on svelters' own widgets."
 status: available
-verified_at: d0542a3a
+verified_at: c0faf05a
 sources:
   - plans/milestones/OW-CSS.md
   - crates/svelters-style/src/state.rs        # pseudo-class table
@@ -11,6 +11,7 @@ sources:
   - fixtures/gallery-egui/src/pages/23-own-buttons.svelte   # checked by tests/gallery.rs
   - plans/research/DESIGN.md                   # R-rules
   - plans/research/WIDGET-PARITY.md            # P1-P10
+  - plans/milestones/OW5a-lists-tree-dnd.md    # list rows
 ---
 
 # Styling own widgets
@@ -73,16 +74,23 @@ reference page lists its parts.
 - A part inherits from its host. A part change that affects size (box, text, `content`) relayouts the
   host; anything else only repaints.
 
-**Which widgets read `::part()` rules today:** `button` (`icon`, `label`). The OW1a indicator kinds
-(`checkbox`, `switch`, `progress-bar`, and on `ci/ow1a2` `radio-button`, `frame`, `collapsing-header`)
-still paint their parts from built-in tables plus the host's computed style, so a `::part()` rule on
-them has no effect yet. Style the host (`checkbox:checked { … }`) or wait for their switch to
-`cx.part`. The `scrollbar` thumb and `split-view` sash have no `::part()` yet either.
+**Which parts read `::part()` rules today:**
 
-### List rows *(pending OW5a)*
+| Widget | Parts that take CSS | Parts still painted from built-in tables |
+|---|---|---|
+| `button` | `icon`, `label` | — |
+| `checkbox`, `radio-button` | `indicator`, `icon`, `label` | `mark` (checkbox), `dot` (radio) |
+| `switch` | `track`, `label` | `knob` |
+| `frame` | `caption` | `indicator`, `mark` (checkable frames) |
+| `combo-box` (select) | `chevron`, `label`, `popup`, `option` | — |
+| menus | `popup` | — |
+| `progress-bar` | — | `track`, `fill` |
+| `collapsing-header` | — | `header`, `twistie` |
 
-> **Pending.** This is OW5a on `ci/ow5a` (record `plans/milestones/OW5a-lists-tree-dnd.md`, selector table as of cd7b7a38), not
-> on master yet.
+A rule on a part in the last column has no effect yet; style the host (`switch:checked { … }`) instead.
+The `scrollbar` thumb and the `split-view` sash have no `::part()` yet either.
+
+### List rows
 
 Pooled rows of `virtual-list` and `tree-view` are styled as `::part(row)`. Each drawn row's part style is
 computed with the list's state bits replaced by the row's own state, at the row's logical position:
@@ -110,9 +118,9 @@ tree-view::part(row):has-children:expanded            { font-weight: 600; }
 | drop into a row | `virtual-list::part(row):drop-target` |
 | stripes (1-based) | `virtual-list::part(row):nth-child(even)` |
 | tree rows | `tree-view::part(row):has-children`, `tree-view::part(row):expanded` |
-| tree chevron | `tree-view::part(twistie)` |
+| tree chevron | `tree-view::part(twistie)`, `tree-view::part(twistie):expanded` |
 | row contents | `virtual-list:focus-within > :selected { color: … }` (row nodes carry the same state bits) |
-| scroll bar | `::part(thumb-y)`, `::part(scrollbar-y)` |
+| scroll bar | `virtual-list::part(thumb-y):hover`, `::part(scrollbar-y)` |
 | other parts | `::part(placeholder)`, `::part(drop-line)` |
 
 - Tokens the defaults use: `list-hover`, `list-sel`, `list-sel-fg`, `list-sel-inactive`, `list-drop`,
@@ -233,6 +241,6 @@ the same properties.
 ## Mistakes we have seen
 
 - `::part(icon):hover` read as "hovering the icon": the state is always the host's.
-- Styling `checkbox::part(indicator)` and seeing no change: see "Which widgets read `::part()` rules
-  today" above.
+- Styling `switch::part(knob)` and seeing no change: see "Which parts read `::part()` rules today"
+  above.
 - A transition on `:active`: pressed must be instant (`transition: none`).

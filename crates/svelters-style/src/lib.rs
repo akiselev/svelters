@@ -27,6 +27,11 @@ mod transition;
 /// The generated style tables of the five toolkits.
 #[path = "tables.generated.rs"]
 pub mod tables;
+/// U0: the generated utility-class table (`tools/metadata/style/gen_utilities.py`); its types are
+/// in [`utility_table`].
+#[path = "utilities.generated.rs"]
+pub mod utilities;
+pub mod utility_table;
 mod values;
 mod var;
 mod view;
@@ -37,7 +42,7 @@ pub use computed::{ComputeContext, ComputedStyle};
 pub use diag::{Diagnostic, Severity};
 pub use element::Element;
 pub use invalidation::{Invalidation, Reach, for_each_reached};
-pub use media::{ColorScheme, Contrast, MediaEnv, MediaList};
+pub use media::{ColorScheme, Contrast, MEDIA_FEATURES, MediaEnv, MediaList};
 pub use selector::{Impl, Logical, PseudoClass, PseudoElement, Selector, SelectorList, SelectorParser, parse_selector_list};
 pub use sheet::{DeclBlock, Declaration, ParseOptions, Rule, Stylesheet};
 pub use state::{STATE_PSEUDO_CLASSES, StateMask, StateNames};

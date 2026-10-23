@@ -352,16 +352,6 @@ impl Metrics {
                 let rows = if *multiline { 4.0 } else { 1.0 };
                 vec2(sp.text_edit_width, (rows * self.row_height() + 4.0).max(interact.y))
             }
-            W::Slider { text, show_value, .. } => {
-                let mut wdt = sp.slider_width;
-                if *show_value {
-                    wdt += sp.item_spacing.x + interact.x;
-                }
-                if !text.is_empty() {
-                    wdt += sp.item_spacing.x + self.text_size(text, None).x;
-                }
-                vec2(wdt, interact.y)
-            }
             W::Box | W::Window { .. } | W::Grid { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x, css),
@@ -371,8 +361,6 @@ impl Metrics {
             W::Hyperlink { .. }
             | W::RadioButton { .. }
             | W::Switch { .. }
-            | W::RangeSlider { .. }
-            | W::DragValue { .. }
             | W::Sides
             | W::Frame { .. }
             | W::Stack { .. }
@@ -382,7 +370,6 @@ impl Metrics {
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
             W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
-            W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -398,7 +385,11 @@ impl Metrics {
             W::Separator { vertical: false } => vec2(0.0, 6.0),
             W::Separator { vertical: true } => vec2(6.0, 0.0),
             W::Icon { name, glyph, family, size, weight, frame, source, .. } => {
-                let t = if !source.is_empty() {
+                let t = if source.is_empty() && crate::icons::is_registry_icon(&self.ctx, family, name) {
+                    // ICR1: a registry icon is a square of `size` (else 16) points
+                    let side = size.map_or(crate::icons::DEFAULT_SIZE, |s| s as f32);
+                    crate::icons::size(&self.ctx, &crate::icons::registry(&self.ctx), name, side).unwrap_or(Vec2::splat(side))
+                } else if !source.is_empty() {
                     // AS1: an image icon is a square of `size` (else the body size)
                     Vec2::splat(size.map_or_else(|| egui::TextStyle::Body.resolve(&self.style).size, |s| s as f32))
                 } else {

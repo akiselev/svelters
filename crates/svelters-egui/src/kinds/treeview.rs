@@ -7,12 +7,13 @@
 //! the app's `children(node)` (an array or a Promise) and splices the result.
 //!
 //! ```text
-//! props  selection "none"|"single"|"multi", row-height i64, indent i64 (points per level),
-//!        row-drag-type str (non-empty: rows drag), row-drop-types str (non-empty: rows take drops)
+//! props  selection "none"|"single"|"multi"|"toggle"|"range", row-height i64, indent i64 (points
+//!        per level), row-drag-type str (non-empty: rows drag), row-drop-types str (non-empty:
+//!        rows take drops), expand-on, root-decorated, current i64 (OW5a1b), uniform-rows bool
 //! calls  virtual-list's, plus setNodes(ids[], levels[], flags[], labels[], data[]) (flags: 1
 //!        expandable, 2 expanded; a level < 0 forgets the id), setSelection(ids[]), selection()
 //! async  expand(id), collapse(id), selection-changed(), activate(pos), copy(),
-//!        drop-row(id, where, type, data)
+//!        drop-row(id, where, type, data), row-clicked, row-context, row-hovered(pos, id)
 //! ```
 //!
 //! **Selection** is by id ([`KeySelect`], shared with WG5a's lists): ids filtered out stay selected
@@ -40,23 +41,35 @@
 //!
 //! Writer lane: WG5b.
 
-use super::dnd::DragPayload;
-use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, prop};
-use crate::scene::{NodeId, Scene, W};
+use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, prop};
+use crate::scene::{Scene, W};
 use crate::views::selection::{Change, KeySelect, Mode, Mods, Nav};
 use crate::walk::Out;
-use egui::{CursorIcon, DragAndDrop, Id, Rect, Sense, StrokeKind, Ui};
+use crate::interact::{Expand, ExpandParams, Expandable, Intents, PartResponses, Unit};
+use crate::provider::StateBits;
+use crate::widgets::list_rows::{self, RowState};
+use egui::{Id, Rect, Sense, Ui};
 use std::collections::HashMap;
 use svelters_abi::Value;
 
-pub const SELECTION: &[&str] = &["none", "single", "multi"];
+pub const SELECTION: &[&str] = &["none", "single", "multi", "toggle", "range"];
 
 pub(super) static PROPS: &[PropDef] = &[
-    prop("selection", P::ListSelection, Ty::Enum(SELECTION), Def::Str("single"), "`single` or `multi` (Shift ranges, Ctrl toggles); `none`: rows are not selectable."),
+    prop("selection", P::ListSelection, Ty::Enum(SELECTION), Def::Str("single"), "`single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable."),
     prop("row-height", P::RowHeight, Ty::I64, Def::I64(24), "The height a row is assumed to have before it is measured, and its minimum, in points."),
     prop("indent", P::TreeIndent, Ty::I64, Def::I64(16), "Points per level; the disclosure triangle sits in the last one."),
     prop("row-drag-type", P::RowDragType, Ty::Str, Def::Str(""), "Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels)."),
     prop("row-drop-types", P::RowDropTypes, Ty::Str, Def::Str(""), "Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`."),
+    prop(
+        "expand-on",
+        P::ExpandOn,
+        Ty::Enum(EXPAND_ON),
+        Def::Str("twistie"),
+        "What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`).",
+    ),
+    prop("root-decorated", P::RootDecorated, Ty::Bool, Def::Bool(true), "Level-0 rows show their twistie (Qt's `rootIsDecorated`)."),
+    input("current", P::CurrentItem, Ty::I64, Def::I64(-1), "OW5a1b: the cursor's row id (`bind:current`), -1 for none. Setting it moves the cursor without selecting."),
+    prop("uniform-rows", P::UniformRows, Ty::Bool, Def::Bool(false), "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`)."),
 ];
 
 const ROW: (&str, Ty) = ("row", Ty::I64);
@@ -73,6 +86,9 @@ pub(super) static SIGNALS: &[SignalDef] = &[
     SignalDef { name: "collapse", args: &[ID], sync: false, doc: "The user collapsed node `id` (disclosure click, Left): splice its children out." },
     SignalDef { name: "selection-changed", args: &[], sync: false, doc: "The user changed the selection: read it with `selection()`." },
     SignalDef { name: "copy", args: &[], sync: false, doc: "Ctrl+C on the focused tree: copy the selected rows." },
+    SignalDef { name: "row-clicked", args: &[POS, ID], sync: false, doc: "OW5a: a click on the row at `pos` (item `id`), after the selection moved." },
+    SignalDef { name: "row-context", args: &[POS, ID], sync: false, doc: "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy)." },
+    SignalDef { name: "row-hovered", args: &[POS, ID], sync: false, doc: "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`)." },
     SignalDef {
         name: "drop-row",
         args: &[ID, ("where", Ty::Str), ("type", Ty::Str), ("data", Ty::Str)],
@@ -84,7 +100,7 @@ pub(super) static SIGNALS: &[SignalDef] = &[
 pub(super) static METHODS: &[MethodDef] = &[
     MethodDef { name: "splice", doc: "`splice(pos, removed, ids)`: replaces `removed` rows at `pos` with `ids` (the visible rows, flattened)." },
     MethodDef { name: "count", doc: "The number of visible rows." },
-    MethodDef { name: "scrollTo", doc: "`scrollTo(pos)`: scrolls the row into view." },
+    MethodDef { name: "scrollTo", doc: "`scrollTo(pos, hint?)`: scrolls the row into view; `hint`: `nearest` (default), `top`, `bottom`, `center`." },
     MethodDef { name: "setRow", doc: "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it." },
     MethodDef { name: "rowAt", doc: "`rowAt(pos)`: the slot bound to `pos`, or -1." },
     MethodDef { name: "setNodes", doc: "`setNodes(ids, levels, flags, labels, data)`: the tree facts of rows by id (flags: 1 expandable, 2 expanded; a level < 0 forgets the id)." },
@@ -160,13 +176,52 @@ pub struct Tree {
     pub nodes: HashMap<u64, TreeNode>,
     pub sel: KeySelect,
     pub indent: f32,
-    pub drag_type: String,
-    pub drop_types: String,
+    /// OW5a (`expand-on`, Qt `expandsOnDoubleClick`): what besides the twistie and the keys
+    /// toggles a row.
+    pub expand_on: ExpandOn,
+    /// OW5a (`root-decorated`, Qt `rootIsDecorated`): level-0 rows show their twistie.
+    pub root_decorated: bool,
 }
 
 impl Default for Tree {
     fn default() -> Self {
-        Tree { nodes: HashMap::new(), sel: KeySelect::new(Mode::Single), indent: 16.0, drag_type: String::new(), drop_types: String::new() }
+        Tree {
+            nodes: HashMap::new(),
+            sel: KeySelect::new(Mode::Single),
+            indent: 16.0,
+            expand_on: ExpandOn::Twistie,
+            root_decorated: true,
+        }
+    }
+}
+
+/// OW5a: `expand-on`.
+pub const EXPAND_ON: &[&str] = &["twistie", "click", "double-click"];
+
+/// What toggles a tree row (`expand-on`), besides its twistie, Left/Right and AccessKit.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum ExpandOn {
+    /// The twistie only (VS Code's `workbench.tree.expandMode: doubleClick` off; a double click
+    /// activates).
+    #[default]
+    Twistie,
+    /// A click anywhere on the row (VS Code's default `singleClick`).
+    Click,
+    /// A double click (Qt's `expandsOnDoubleClick`); it no longer raises `activate`.
+    DoubleClick,
+}
+
+impl ExpandOn {
+    pub fn parse(s: &str) -> Option<ExpandOn> {
+        Some(match s {
+            "twistie" => ExpandOn::Twistie,
+            "click" => ExpandOn::Click,
+            "double-click" => ExpandOn::DoubleClick,
+            _ => return None,
+        })
+    }
+    pub fn name(self) -> &'static str {
+        EXPAND_ON[self as usize]
     }
 }
 
@@ -215,7 +270,13 @@ pub struct KeyOut {
 impl Tree {
     /// A fresh tree with the same props (a cloned node).
     pub fn fresh(&self) -> Tree {
-        Tree { sel: KeySelect::new(self.sel.mode), indent: self.indent, drag_type: self.drag_type.clone(), drop_types: self.drop_types.clone(), ..Tree::default() }
+        Tree {
+            sel: KeySelect::new(self.sel.mode),
+            indent: self.indent,
+            expand_on: self.expand_on,
+            root_decorated: self.root_decorated,
+            ..Tree::default()
+        }
     }
 
     pub fn level(&self, id: u64) -> u32 {
@@ -307,11 +368,11 @@ impl Tree {
 
     /// The payload of rows `rows`: `row-drag-type` (their data, a line each) and `text/plain`
     /// (their labels).
-    pub fn mime(&self, rows: &[u64]) -> svelters_host::platform::MimeData {
+    pub fn mime(&self, drag_type: &str, rows: &[u64]) -> svelters_host::platform::MimeData {
         let join = |f: fn(&TreeNode) -> &str| rows.iter().map(|r| self.nodes.get(r).map_or("", f)).collect::<Vec<_>>().join("\n");
         let mut m = svelters_host::platform::MimeData::new();
-        if !self.drag_type.is_empty() {
-            m = m.with(self.drag_type.clone(), join(|n| &n.data));
+        if !drag_type.is_empty() {
+            m = m.with(drag_type.to_string(), join(|n| &n.data));
         }
         m.with("text/plain", join(|n| &n.label))
     }
@@ -322,24 +383,27 @@ impl Tree {
 /// Raises signal `name` of the tree being painted, when listened.
 pub(crate) type Emit<'a> = dyn Fn(&Scene, &mut Vec<Out>, &str, Vec<Value>) + 'a;
 
-/// One tree row: `full` is the row across the whole list (the content sits at its inset). The
-/// row senses clicks (selection, focus, double click: `activate`) and drags (`row-drag-type`);
-/// the disclosure triangle in the gutter raises `expand`/`collapse`.
+/// One tree row (OW5a: svelters' own): the list's `::part(row)` in the row's state (R6, with
+/// `:has-children` and `:expanded`), the R14 twistie (`::part(twistie)`) at its level, an
+/// [`Expandable`] on the twistie (a click toggles) and on the row (AccessKit Expand/Collapse;
+/// `expand-on="click"` also a click on the row, `"double-click"` a double click). Returns the
+/// row's state (its outline is painted over the contents) and whether it was clicked.
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn tree_row(s: &mut Scene, i: usize, key: u64, pos: usize, len: usize, full: Rect, indent: f32, drag_type: &str, focused: bool, row_id: Id, list_id: Id, ui: &mut Ui, out: &mut Vec<Out>, emit: &Emit<'_>) {
+pub(crate) fn tree_row(s: &mut Scene, i: usize, key: u64, at: (usize, usize), full: Rect, indent: f32, focused: bool, kbd: bool, drop_into: bool, row_id: Id, list_id: Id, ui: &mut Ui, out: &mut Vec<Out>, emit: &Emit<'_>) -> (RowState, bool) {
+    let (pos, len) = at;
     let ctx = ui.ctx().clone();
-    let (node, mode, is_sel, is_cursor) = {
-        let W::VirtualList(v) = s.w(i) else { return };
-        let Some(t) = v.tree.as_deref() else { return };
-        (t.nodes.get(&key).cloned().unwrap_or_default(), t.sel.mode, t.sel.is_selected(key), t.sel.cursor == Some(key))
+    let (node, mode, is_sel, is_cursor, expand_on, root_decorated) = {
+        let W::VirtualList(v) = s.w(i) else { return (RowState::default(), false) };
+        let Some(t) = v.tree.as_deref() else { return (RowState::default(), false) };
+        (t.nodes.get(&key).cloned().unwrap_or_default(), t.sel.mode, t.sel.is_selected(key), t.sel.cursor == Some(key), t.expand_on, t.root_decorated)
     };
     let selectable = mode != Mode::None;
-    let drags = !drag_type.is_empty();
+    let drags = matches!(s.w(i), W::VirtualList(v) if v.dnd.drags());
     let sense = match (selectable, drags) {
         (true, true) => Sense::click_and_drag(),
         (true, false) => Sense::click(),
-        (false, true) => Sense::drag(),
-        (false, false) => Sense::hover(),
+        (false, true) => Sense::click_and_drag(),
+        (false, false) => Sense::click(),
     };
     let rresp = ui.interact(full, row_id, sense);
     crate::scene::virt::a11y_row(&ctx, row_id, pos, len, |n| {
@@ -347,100 +411,110 @@ pub(crate) fn tree_row(s: &mut Scene, i: usize, key: u64, pos: usize, len: usize
         n.set_level(node.level as usize + 1);
         if node.expandable {
             n.set_expanded(node.expanded);
+            n.add_action(if node.expanded { egui::accesskit::Action::Collapse } else { egui::accesskit::Action::Expand });
         }
         if selectable {
             n.set_selected(is_sel);
         }
     });
-    if is_sel {
-        ui.painter().rect_filled(full, 0.0, ui.visuals().selection.bg_fill);
-    } else if rresp.hovered() {
-        ui.painter().rect_filled(full, 0.0, ui.visuals().widgets.hovered.weak_bg_fill);
+    let row = RowState {
+        hovered: rresp.hovered(),
+        pressed: rresp.is_pointer_button_down_on(),
+        selected: is_sel,
+        current: is_cursor,
+        list_focused: focused,
+        keyboard: kbd,
+        drop_into,
+        has_children: node.expandable,
+        expanded: node.expanded,
+        disabled: !ui.is_enabled(),
+    };
+    let painted = list_rows::paint_row(s, i, &row, at, full, ui);
+    if row.hovered
+        && let Some(c) = painted.cursor
+    {
+        ctx.set_cursor_icon(c);
     }
-    if focused && is_cursor {
-        ui.painter().rect_stroke(full.shrink(0.5), 0.0, ui.visuals().selection.stroke, StrokeKind::Inside);
-    }
-    if node.expandable {
-        let side = indent.min(full.height()).max(1.0);
+    // the twistie: R14, in the row's last indent step (`root-decorated={false}`: none on level 0)
+    let mut toggle: Option<bool> = None;
+    let mut state = StateBits::NONE;
+    if node.expandable && (root_decorated || node.level > 0) {
+        let side = list_rows::twistie_width(s, i, ui).min(indent.max(1.0)).min(full.height()).max(1.0);
         let g = Rect::from_center_size(egui::pos2(full.min.x + (node.level as f32 + 0.5) * indent, full.center().y), egui::vec2(side, side));
         let tr = ui.interact(g, row_id.with("disclosure"), Sense::click());
-        egui::collapsing_header::paint_default_icon(ui, if node.expanded { 1.0 } else { 0.0 }, &tr);
-        if tr.clicked() {
-            emit(s, out, if node.expanded { "collapse" } else { "expand" }, vec![Value::I64(key as i64)]);
-            ctx.request_repaint();
+        list_rows::paint_twistie(s, i, &row, at, g, ui);
+        let mut fired = Intents::default();
+        let mut ex = Expandable;
+        crate::interact::run(ui, &tr, &mut state, &PartResponses::default(), |cx| ex.input(&ExpandParams { expanded: node.expanded, on_click: true }, cx, &mut fired));
+        toggle = fired.iter().map(|Expand::Set(v)| *v).next_back();
+    }
+    // the row: AccessKit Expand/Collapse, and a click or double click per `expand-on`
+    if node.expandable && toggle.is_none() {
+        let mut fired = Intents::default();
+        let mut ex = Expandable;
+        let on_click = expand_on == ExpandOn::Click;
+        crate::interact::run(ui, &rresp, &mut state, &PartResponses::default(), |cx| ex.input(&ExpandParams { expanded: node.expanded, on_click }, cx, &mut fired));
+        toggle = fired.iter().map(|Expand::Set(v)| *v).next_back();
+        if toggle.is_none() && expand_on == ExpandOn::DoubleClick && rresp.double_clicked() {
+            toggle = Some(!node.expanded);
         }
     }
-    if rresp.clicked() || rresp.drag_started() {
-        ctx.memory_mut(|m| m.request_focus(list_id));
-    }
-    if selectable && rresp.clicked() {
-        let m = ui.input(|inp| inp.modifiers);
-        let changed = {
-            let W::VirtualList(v) = s.w_mut(i) else { return };
-            let v: &mut super::VList = v;
-            let Some(t) = v.tree.as_deref_mut() else { return };
-            t.sel.click(&v.ids, key, Mods { shift: m.shift, ctrl: m.command }).selection
-        };
-        if changed {
-            emit(s, out, "selection-changed", vec![]);
-        }
+    if let Some(open) = toggle
+        && list_rows::allowed(s, i, if open { "expand" } else { "collapse" }, &ctx, out)
+    {
+        emit(s, out, if open { "expand" } else { "collapse" }, vec![Value::I64(key as i64)]);
         ctx.request_repaint();
     }
-    if rresp.double_clicked() {
+    let clicked = rresp.clicked() || rresp.drag_started();
+    if clicked {
+        ctx.memory_mut(|m| m.request_focus(list_id));
+    }
+    // OW5a1b (Policy): a context click on an unselected row selects it first
+    let context = rresp.secondary_clicked() && !is_sel && crate::native::policy_of(&ctx).context_click_selects;
+    if selectable && (rresp.clicked() || context) {
+        let m = if context { Mods::default() } else { let m = ui.input(|inp| inp.modifiers); Mods { shift: m.shift, ctrl: m.command } };
+        if context {
+            ctx.memory_mut(|mem| mem.request_focus(list_id));
+        }
+        click_select(s, i, key, m, &ctx, out, emit);
+        ctx.request_repaint();
+    }
+    if rresp.clicked() {
+        emit(s, out, "row-clicked", vec![Value::I64(pos as i64), Value::I64(key as i64)]);
+    }
+    if rresp.secondary_clicked() {
+        emit(s, out, "row-context", vec![Value::I64(pos as i64), Value::I64(key as i64)]);
+    }
+    if rresp.double_clicked() && expand_on != ExpandOn::DoubleClick && list_rows::allowed(s, i, "activate", &ctx, out) {
         emit(s, out, "activate", vec![Value::I64(pos as i64)]);
     }
     if drags {
-        if rresp.drag_started() {
-            let W::VirtualList(v) = s.w(i) else { return };
-            let Some(t) = v.tree.as_deref() else { return };
-            let mut p = DragPayload::from_mime(t.mime(&t.drag_rows(&v.ids, key)));
-            p.source = Some(list_id);
-            DragAndDrop::set_payload(&ctx, p);
-        }
-        if rresp.dragged() {
-            ctx.set_cursor_icon(if super::dnd::over_target(&ctx) { CursorIcon::Grabbing } else { CursorIcon::NoDrop });
-            super::dnd::ghost(ui, row_id, if node.label.is_empty() { drag_type } else { &node.label });
-        }
+        super::virtuallist::row_drag(s, i, key, &rresp, ui, &node.label);
     }
+    (row, clicked)
 }
 
-/// `row-drop-types`: when an accepted drag is over the rows, where it would land (and the row's
-/// rect from its inset, `None` below the last row); on release raises `drop-row`. Runs before the
-/// rows are painted, so drop targets inside rows (painted later) win the pointer.
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn tree_drop_target(s: &Scene, i: usize, placed: &[(NodeId, usize)], origin: egui::Vec2, r: Rect, clip: Rect, drop_types: &str, ui: &Ui, out: &mut Vec<Out>, emit: &Emit<'_>) -> Option<(DropAt, Option<Rect>)> {
-    let ctx = ui.ctx().clone();
-    let zone = s.core[i].egui_id.with("row-drop");
-    DragAndDrop::payload::<DragPayload>(&ctx).filter(|p| p.best(drop_types).is_some())?;
-    if !ctx.rect_contains_pointer(ui.layer_id(), clip) {
-        return None;
+/// A click on row `key` through the tree's keyed selection; EV1 (OW5a1b): a filter that prevents
+/// `selection-changed` keeps the selection (the cursor still moves).
+fn click_select(s: &mut Scene, i: usize, key: u64, m: Mods, ctx: &egui::Context, out: &mut Vec<Out>, emit: &Emit<'_>) {
+    let (sel, changed) = {
+        let W::VirtualList(v) = s.w(i) else { return };
+        let Some(t) = v.tree.as_deref() else { return };
+        let mut sel = t.sel.clone();
+        let changed = sel.click(&v.ids, key, m).selection;
+        (sel, changed)
+    };
+    let allowed = !changed || list_rows::allowed(s, i, "selection-changed", ctx, out);
+    let W::VirtualList(v) = s.w_mut(i) else { return };
+    let Some(t) = v.tree.as_deref_mut() else { return };
+    if allowed {
+        t.sel = sel;
+    } else {
+        t.sel.cursor = sel.cursor;
     }
-    super::dnd::claim(&ctx, zone);
-    ctx.request_repaint(); // the claim decides next pass
-    if !super::dnd::claimed(&ctx, zone) {
-        return None;
+    if changed && allowed {
+        emit(s, out, "selection-changed", vec![]);
     }
-    let ptr = ctx.pointer_latest_pos()?;
-    let W::VirtualList(v) = s.w(i) else { return None };
-    let mut hit: Option<(i64, DropAt, Rect)> = None;
-    for &(n, pos) in placed {
-        let Some(ni) = s.idx(n) else { continue };
-        let rr = s.core[ni].rect.translate(origin);
-        if pos < v.len() && rr.y_range().contains(ptr.y) {
-            let t = (ptr.y - rr.min.y) / rr.height().max(1.0);
-            let x = (r.min.x + v.row_inset(pos) - v.tree.as_ref().map_or(0.0, |t| t.indent)).max(r.min.x);
-            hit = Some((v.key_at(pos) as i64, DropAt::of(t), Rect::from_x_y_ranges(x..=r.max.x, rr.y_range())));
-        }
-    }
-    if ctx.input(|inp| inp.pointer.any_released())
-        && let Some(p) = DragAndDrop::take_payload::<DragPayload>(&ctx)
-    {
-        p.accept();
-        let (ty, data) = p.best(drop_types).map(|(t, d)| (t.to_string(), d)).unwrap_or_default();
-        let (id, at) = hit.map_or((-1, DropAt::Into), |h| (h.0, h.1));
-        emit(s, out, "drop-row", vec![Value::I64(id), Value::Str(at.name().into()), Value::Str(ty), Value::Str(data)]);
-    }
-    Some(hit.map_or((DropAt::Into, None), |h| (h.1, Some(h.2))))
 }
 
 /// EV3 (`focus::Role::Tree`): the keys a focused tree takes, its [`TreeKey`]s and the keys that
@@ -509,21 +583,28 @@ pub(crate) fn tree_keys(s: &mut Scene, i: usize, keys: Vec<(TreeKey, egui::Modif
         }
         let cursor = t.sel.cursor.and_then(|c| v.ids.iter().position(|x| *x == c));
         if outs.iter().any(|o| o.change.cursor) {
-            v.reveal = cursor;
+            v.reveal = cursor.map(|p| (p, super::virtuallist::Reveal::Nearest));
         }
         for o in &mut outs {
             // `activate` carries a position
             o.activate = o.activate.and_then(|a| v.ids.iter().position(|x| *x == a)).map(|p| p as u64);
         }
     }
+    // EV1: a Rust filter that prevents `expand`, `collapse` or `activate` skips it
     for o in &outs {
-        if let Some(id) = o.expand {
+        if let Some(id) = o.expand
+            && list_rows::allowed(s, i, "expand", ctx, out)
+        {
             emit(s, out, "expand", vec![Value::I64(id as i64)]);
         }
-        if let Some(id) = o.collapse {
+        if let Some(id) = o.collapse
+            && list_rows::allowed(s, i, "collapse", ctx, out)
+        {
             emit(s, out, "collapse", vec![Value::I64(id as i64)]);
         }
-        if let Some(p) = o.activate {
+        if let Some(p) = o.activate
+            && list_rows::allowed(s, i, "activate", ctx, out)
+        {
             emit(s, out, "activate", vec![Value::I64(p as i64)]);
         }
         if o.copy {
@@ -575,8 +656,7 @@ mod tests {
         assert_eq!(t.drag_rows(&ids, 1), vec![1]);
         t.sel.set([3, 1]);
         assert_eq!(t.drag_rows(&ids, 3), vec![1, 3]);
-        t.drag_type = "cad/part".into();
-        let m = t.mime(&[1, 3]);
+        let m = t.mime("cad/part", &[1, 3]);
         assert_eq!(m.best(&["cad/*"]).map(|(t, d)| (t.to_string(), d.to_vec())), Some(("cad/part".into(), b"a\nc".to_vec())));
         assert_eq!(m.best(&["text/plain"]).map(|(_, d)| d.to_vec()), Some(b"alpha\ngamma".to_vec()));
         t.set_nodes(&[3], &[-1], &[], &[], &[]);

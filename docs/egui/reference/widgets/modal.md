@@ -32,6 +32,7 @@ An in-window modal dialog: a backdrop over the viewport that blocks the rest of 
 |---|---|---|---|---|
 | `dismissable` | `boolean` | `true` | no | Escape or a click on the backdrop closes it; with false only the app does. |
 | `open` | `boolean` | `true` | **yes**, on `changed` | Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false. |
+| `resizable` | `boolean` | `false` | no | The user can resize it from its right and bottom edges and its size grip (`::part(grip)`, Qt's `sizeGripEnabled`); the content is laid out at that size. |
 | `title` | `string` | `""` | no | A heading above the content; also the dialog's accessible name. |
 
 From [`box`](box.md):
@@ -56,10 +57,12 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 <!-- BEGIN GENERATED: events of kinds.Modal (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Attribute | Handler | When |
 |---|---|---|
-| `onchanged` | `(open: boolean) => void` | The user (or `popup`/`popdown`) opened or closed it; carries `open`. |
-| `onclosed` | `() => void` | The user (or `popdown`) closed it. |
+| `onaccepted` | `() => void` | It closed with the result `"accept"` (`close("accept")`). |
+| `onchanged` | `(open: boolean) => void` | The user (or `close`) opened or closed it; carries `open`. |
+| `onclosed` | `(result: string) => void` | It closed; carries the result: `"reject"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `""` when `open` was set false. |
+| `onrejected` | `() => void` | It closed with the result `"reject"`: dismissed by the user or `close("reject")`. |
 
-`on:changed` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
+`on:accepted` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
 Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
@@ -67,7 +70,11 @@ Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `o
 ## Methods
 
 <!-- BEGIN GENERATED: methods of kinds.Modal (tools/docs/egui/gen_reference.py). Do not edit. -->
-None.
+| Method | Returns | Description |
+|---|---|---|
+| `close` | `void` | `close(result?)`: closes it (applied at the next pass) and emits `closed(result)` (QDialog `done`): `"accept"` also emits `accepted`, `"reject"` `rejected`. |
+
+Call them through `bind:this`: `el.call('close')`.
 <!-- END GENERATED -->
 
 ## Behaviour you need to know

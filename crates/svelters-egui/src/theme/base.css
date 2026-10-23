@@ -29,6 +29,19 @@
     box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow), inset 6px 0 6px -6px var(--sv-scroll-shadow);
   }
 
+  /* OW5a: lists and trees (DESIGN R6, R15). Rows are `::part(row)` of the list, styled per row
+     (`widgets/list_rows.rs`, whose UA table holds R6's four states from the same tokens); the row
+     nodes mirror `:selected`, so their contents take the active selection's foreground. A list
+     scrolled away from its top shades that edge, as a scroll area does. */
+  virtual-list:focus-within > :selected,
+  tree-view:focus-within > :selected {
+    color: var(--sv-list-sel-fg);
+  }
+  virtual-list:state(sv.overflow-top),
+  tree-view:state(sv.overflow-top) {
+    box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow);
+  }
+
   /* RT2: inline runs of a rich label (crates/svelters-egui/src/rich.rs). The Rust tag defaults
      are the same, so they hold without a theme; links follow DESIGN R18 (link colour, underline
      on hover) and R10 (pointer). */
@@ -61,6 +74,16 @@
   }
   button:active {
     background-color: var(--sv-button-bg-active);
+  }
+  /* VIS1c: VS Code's primary button (`button.background`, `button.border`, `button.foreground`);
+     pressed keeps the hover fill, as VS Code does */
+  button.primary {
+    background-color: var(--sv-accent);
+    border-color: var(--sv-button-border);
+    color: var(--sv-accent-fg);
+  }
+  button.primary:hover {
+    background-color: var(--sv-accent-hover);
   }
 
   checkbox {

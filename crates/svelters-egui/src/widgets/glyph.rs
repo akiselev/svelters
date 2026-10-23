@@ -14,6 +14,8 @@ pub(crate) enum Glyph {
     Dot,
     ChevronRight,
     ChevronDown,
+    /// OW7: a window's or toast's close button (codicon `close`).
+    Close,
 }
 
 impl Glyph {
@@ -23,6 +25,7 @@ impl Glyph {
             Glyph::Dot => "circle-small-filled",
             Glyph::ChevronRight => "chevron-right",
             Glyph::ChevronDown => "chevron-down",
+            Glyph::Close => "close",
         }
     }
 }
@@ -56,6 +59,11 @@ pub(crate) fn paint(cx: &mut PaintCx<'_>, s: &StyleView<'_>, g: Glyph, r: Rect) 
             let h = b.height() * 0.25;
             let pts = vec![pos2(b.left(), b.center().y - h), pos2(b.center().x, b.center().y + h), pos2(b.right(), b.center().y - h)];
             cx.painter.add(egui::Shape::line(pts, stroke));
+        }
+        Glyph::Close => {
+            let b = b.shrink(b.width() * 0.1);
+            cx.painter.line_segment([b.left_top(), b.right_bottom()], stroke);
+            cx.painter.line_segment([b.right_top(), b.left_bottom()], stroke);
         }
     }
     cx.record(TraceKind::Path, b, color, stroke, side);

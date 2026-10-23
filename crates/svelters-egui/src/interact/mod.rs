@@ -23,6 +23,8 @@
 
 pub mod anchor;
 pub mod dismiss;
+pub mod dnd;
+mod drag;
 mod expand;
 mod focus;
 mod hover;
@@ -31,17 +33,23 @@ mod resize;
 pub mod roving;
 pub mod roving_list;
 pub mod scroll;
+mod scrub;
+mod step;
 mod toggle;
 pub mod tooltip;
 pub mod typeahead;
 
+pub use dnd::{DragIntent, DragSource, DragSourceParams, DropIntent, DropParams, DropTarget, Offer};
+pub use drag::{Axis, Drag, DragParams, Draggable};
 pub use expand::{Expand, ExpandParams, Expandable};
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
-pub use press::{Press, PressParams, Pressable};
+pub use press::{ACCEL_EVERY, ActivateOn, Press, PressParams, Pressable};
 pub use roving::{Rove, Roving, RovingParams};
 pub use resize::{Resizable, Resize, ResizeParams};
 pub use scroll::{BarGeom, Scroll, ScrollBy, ScrollParams, Scrollable};
+pub use scrub::{DragToValue, Scale, Scrub, ScrubMode, ScrubParams};
+pub use step::{Arrows, POINTS_PER_STEP, Step, StepParams, Steppable, Wheel};
 pub use toggle::{Toggle, ToggleParams, Toggleable};
 // OW3: floating surfaces, groups and tooltips
 pub use anchor::{AnchorParams, Anchored, Placed, Placement};
@@ -264,9 +272,23 @@ impl InputCx<'_> {
 ///
 /// This is all a foreign painter needs (OW-RUST, berth's `ChromePainter`): no scene, no JS.
 pub fn run(ui: &egui::Ui, resp: &egui::Response, state: &mut StateBits, parts: &PartResponses, f: impl FnOnce(&mut InputCx<'_>)) -> FocusCx {
+    let focus = observe(ui, resp, ui.is_enabled(), state, parts, f);
+    if focus.request && !focus.has {
+        resp.request_focus();
+    } else if focus.surrender && focus.has {
+        resp.surrender_focus();
+    }
+    crate::native::keep_focus_on_escape(ui, resp.id);
+    focus
+}
+
+/// [`run`] for a host whose focus and input someone else owns (OW-RUST's `imm::chrome`, berth's
+/// paint-only `ChromePainter`): the units read `resp` and set `state`, but nothing is applied
+/// (no focus request or surrender, no Escape rule); `enabled` is the host's own (a disabled
+/// button on an enabled `Ui`).
+pub fn observe(ui: &egui::Ui, resp: &egui::Response, enabled: bool, state: &mut StateBits, parts: &PartResponses, f: impl FnOnce(&mut InputCx<'_>)) -> FocusCx {
     let ctx = ui.ctx();
     let policy = &crate::native::policy_of(ctx);
-    let enabled = ui.is_enabled();
     let mut snap = Resp::of(resp);
     if !enabled {
         // egui senses nothing on a disabled widget; R9 keeps it hoverable (tooltip, reason)
@@ -288,12 +310,6 @@ pub fn run(ui: &egui::Ui, resp: &egui::Response, state: &mut StateBits, parts: &
         let mut cx = InputCx { resp: &snap, input: inp, policy, now: inp.time, state, enabled, a11y: &a11y, focus: &mut focus, parts };
         f(&mut cx);
     });
-    if focus.request && !focus.has {
-        resp.request_focus();
-    } else if focus.surrender && focus.has {
-        resp.surrender_focus();
-    }
-    crate::native::keep_focus_on_escape(ui, resp.id);
     focus
 }
 

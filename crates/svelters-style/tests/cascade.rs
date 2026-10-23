@@ -28,6 +28,7 @@ static TABLE: Table = Table {
         prop("padding", Via::Setter, ValueType::Insets, &[]),
         prop("width", Via::Setter, ValueType::Length, &[]),
     ],
+    ranges: &[],
 };
 
 const TREE: &str = "
