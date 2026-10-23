@@ -62,6 +62,20 @@ The generators ran in this order: spec (`SVELTERS_UPDATE=1 --test spec`), `gen_p
   - `:exiting` transitions: done for `<toast>` only. The modal and inner-window still close at once.
 - **`modal` and `inner-window` parts don't take CSS.** Their `::part(backdrop|title|grip|titlebar|close|collapse|edge-*)` have no part declarations either (see item 1). Adding them to `toast::parts_of`'s pattern is a small follow-up. Recorded in `docs/egui/css/own-widgets.md`.
 
+### Handoff details (coordinator, 2026-10-22: OW7b finishes its full scope)
+
+- **Stage 1** (`<toast>`) merges alone from `ci/ow7b-s1` (6d059c4b). This branch (`ci/ow7b`) also has items 2 and 4. Merge master into it once stage 1 is on master.
+- **Left for this lane:**
+  - item 3, `status-bar` (design above);
+  - the `::part()` declarations for `modal` and `inner-window`: backdrop, title, grip, titlebar, close, collapse, edge-*. Follow `views::toast::parts_of` (`style.rs`, the `decl` match), and add a test that a `modal::part(backdrop)` author rule paints;
+  - from OW7's handoff (its uncommitted diff, `ow7-uncommitted-handoff.diff`): the `dialog-buttons` `buttons="ok cancel apply …"` shorthand (host-localised labels), the `yes` and `no` roles, and `orientation`.
+- **Gotchas:**
+  - kittest's `run()` advances the virtual clock past short timeouts, so give toasts in tests durations of 3 s or more and step to the timeout;
+  - an egui Area's layer is only as big as what is allocated in it, so `aui.expand_to_include_rect` is needed for `:hover`;
+  - built-in kinds have no `::part()` declarations unless they are listed like `parts_of`;
+  - `label` is an own widget since OW1a3 (`W::Ext`): read RT2 runs through computed styles or the text mirror, not `W::Label { rich }`;
+  - the generator order is spec, gen_props, **gen_utilities**, gen_reference (the js CI job checks the utilities).
+
 ## Acceptance
 
 **R-rules:** R7 (`toast`'s elev-3 surface, from OW7's UA), R8 (the toast close button's keyboard-only ring), R1, R2, R3 and R10 (the toast close tool button), R17 (`:exiting` follows the reduced-motion `Transitions` path). `dialog-buttons` draws nothing itself; its buttons keep the own button's R1–R3, R8 and R10.
