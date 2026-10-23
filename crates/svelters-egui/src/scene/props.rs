@@ -303,6 +303,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Tooltip, _) => s(&c.tooltip),
         (P::AccessibleName, _) => s(&c.accessible_name),
         (P::Anchor, _) => s(&c.anchor),
+        (P::DialogRole, _) => Value::Str(c.dialog_role.to_string()),
         (P::Width, _) => len_value(c.width),
         (P::Height, _) => len_value(c.height),
         (P::MinWidth, _) => len_value(c.min_width),
