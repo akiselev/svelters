@@ -1787,16 +1787,20 @@ impl Scene {
 
     /// U3: generates the rules of the utilities among `classes` that have none yet (one batch).
     /// A new rule may use a state the journal observer doesn't follow yet (`checked:bg-accent`):
-    /// the observer is then recreated.
+    /// the observer is then recreated and, as for a sheet change, every node restyles at the next
+    /// logic (the old observer's undrained records go with it). That happens once per new state.
     pub(crate) fn ensure_utilities(&mut self, classes: &[Atom]) -> Vec<UtilityIssue> {
         if !self.style.stylist.utility_config().enabled {
             return Vec::new();
         }
         let before = self.style.stylist.utility_stats().generated;
-        let used = self.style.stylist.invalidation().states_used();
+        // the states the observer follows (the walk sets its own bits and restyles for them)
+        let followed = |s: &Self| s.style.stylist.invalidation().states_used().0 & !WALK_BITS.0;
+        let used = followed(self);
         let issues = self.style.stylist.ensure_utilities(classes, &ParseOptions { states: Some(&ProviderStates) });
-        if self.style.stylist.utility_stats().generated != before && self.style.stylist.invalidation().states_used() != used && self.style.observer.is_some() {
+        if self.style.stylist.utility_stats().generated != before && followed(self) != used && self.style.observer.is_some() {
             self.observe_for_style();
+            self.style.all = true;
         }
         issues
     }
