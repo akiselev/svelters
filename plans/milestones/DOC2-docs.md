@@ -65,8 +65,7 @@ START-HERE should link them. Paths follow DOCS-PLAN §5.2 (`loading-code.md`, `h
 11. `rust/own-widgets.md` is 318 lines, over DOCS-PLAN §4's 300-line target, because of the full example.
     A later pass can move the example to `examples/egui-docs` once DOC4's snippet checker exists.
 
-12. **OW5a is on `ci/ow5a`** (d80f80e5), not on master. The list-rows section of `css/own-widgets.md` follows
-    its record and is marked pending. When it merges, drop the banner.
+12. OW5a: resolved in the follow-up below.
 
 ## Follow-up (after OW1a2 and OW3 merged)
 
@@ -81,6 +80,7 @@ START-HERE should link them. Paths follow DOCS-PLAN §5.2 (`loading-code.md`, `h
   progress `track`/`fill`, collapsing `header`/`twistie`.
 - `docs/egui/START-HERE.md`: the index of every docs/egui page, with one line on when to read each (coordinator, 2026-10-22). CLAUDE.md is the coordinator's and was not touched.
 - ICR1 merged (4f474ae8). `icons.md` is now `available`, without its banner, and covers what changed at merge: rasters at physical size, `RASTERS_PER_KEY` (6) with LRU eviction, `cached_rasters`, `paint::is_registered(ctx, &IconKey)`. That closes gap 8.
+- OW5a merged (62f06ce8). The list-rows section of `css/own-widgets.md` is now `available`, checked against the merged record (it adds `tree-view::part(twistie):expanded` and `virtual-list::part(thumb-y):hover`). START-HERE gained a line each for OW3's own menus, popup, select and tooltips, and for OW6's calendar, colour editor and pickers (links to their reference pages).
 - Gap 4 is resolved: `DEFAULT_OWN` now includes the OW1a/OW1a2 kinds (not `label`) and OW3's kinds.
 
 ## Not run

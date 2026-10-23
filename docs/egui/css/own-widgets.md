@@ -2,7 +2,7 @@
 title: Styling own widgets
 description: "::part(), state pseudo-classes, content: icon(), paint() painters and transitions on svelters' own widgets."
 status: available
-verified_at: d0542a3a
+verified_at: c0faf05a
 sources:
   - plans/milestones/OW-CSS.md
   - crates/svelters-style/src/state.rs        # pseudo-class table
@@ -11,6 +11,7 @@ sources:
   - fixtures/gallery-egui/src/pages/23-own-buttons.svelte   # checked by tests/gallery.rs
   - plans/research/DESIGN.md                   # R-rules
   - plans/research/WIDGET-PARITY.md            # P1-P10
+  - plans/milestones/OW5a-lists-tree-dnd.md    # list rows
 ---
 
 # Styling own widgets
@@ -89,10 +90,7 @@ reference page lists its parts.
 A rule on a part in the last column has no effect yet; style the host (`switch:checked { … }`) instead.
 The `scrollbar` thumb and the `split-view` sash have no `::part()` yet either.
 
-### List rows *(pending OW5a)*
-
-> **Pending.** This is OW5a on `ci/ow5a` (record `plans/milestones/OW5a-lists-tree-dnd.md`, selector table as of cd7b7a38), not
-> on master yet.
+### List rows
 
 Pooled rows of `virtual-list` and `tree-view` are styled as `::part(row)`. Each drawn row's part style is
 computed with the list's state bits replaced by the row's own state, at the row's logical position:
@@ -120,9 +118,9 @@ tree-view::part(row):has-children:expanded            { font-weight: 600; }
 | drop into a row | `virtual-list::part(row):drop-target` |
 | stripes (1-based) | `virtual-list::part(row):nth-child(even)` |
 | tree rows | `tree-view::part(row):has-children`, `tree-view::part(row):expanded` |
-| tree chevron | `tree-view::part(twistie)` |
+| tree chevron | `tree-view::part(twistie)`, `tree-view::part(twistie):expanded` |
 | row contents | `virtual-list:focus-within > :selected { color: … }` (row nodes carry the same state bits) |
-| scroll bar | `::part(thumb-y)`, `::part(scrollbar-y)` |
+| scroll bar | `virtual-list::part(thumb-y):hover`, `::part(scrollbar-y)` |
 | other parts | `::part(placeholder)`, `::part(drop-line)` |
 
 - Tokens the defaults use: `list-hover`, `list-sel`, `list-sel-fg`, `list-sel-inactive`, `list-drop`,

@@ -2,7 +2,7 @@
 title: Start here
 description: "The index of svelters' egui docs: which page to read for which task."
 status: available
-verified_at: 4f474ae8
+verified_at: c0faf05a
 sources:
   - plans/research/DOCS-PLAN.md   # §3.2 item 1, §5
 ---
@@ -25,6 +25,8 @@ a lane branch, not merged; the page says which), `stub` (a page skeleton, still 
 | You want to | Read |
 |---|---|
 | look up a tag's props, events, parts and states | [Widget reference](reference/widgets/index.md) |
+| use the own menus, popup, select and tooltips | [menu-bar](reference/widgets/menu-bar.md), [context-menu](reference/widgets/context-menu.md), [popup](reference/widgets/popup.md), [combo-box](reference/widgets/combo-box.md); the common `tooltip` prop works on every tag |
+| use the own calendar, colour editor and pickers | [calendar](reference/widgets/calendar.md), [color-editor](reference/widgets/color-editor.md), [color-picker](reference/widgets/color-picker.md), [date-picker](reference/widgets/date-picker.md) |
 | build a control the built-in tags don't have, drawn by svelters | [Writing an own widget](rust/own-widgets.md) |
 | restyle a widget: parts, states, icons in CSS, painters, transitions, list rows | [Styling own widgets](css/own-widgets.md) |
 | show icons by key, register app or extension icons | [Icons](icons.md) |
