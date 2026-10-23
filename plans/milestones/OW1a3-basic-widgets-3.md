@@ -59,12 +59,16 @@ Generated files, regenerated in the required order (spec, then `gen_props.py`, t
 - The label's text colour is now the theme's `fg` (the own label's `color`), not egui's `Visuals::text_color()`. The TK1 snapshots `counter-three` and `transition-back` change in label text colour only (regenerated from CI's lavapipe artifact, see §4).
 - A uniform part border is still one `RectShape` (`StrokeKind::Inside`), so the box measurements are unchanged.
 - **VIS1c gate:** one check left the baselines: `dark-modern/button-secondary:a/pressed/bg`, removed from
-  `baseline-windows.json` and `baseline-macos.json`. The gate holds the press for 30 steps, past egui's 0.8 s
-  click cutoff. Before item 6, egui had dropped the press by then, so the "pressed" probe measured an unpressed
-  (hovered) button. That matched VS Code's secondary button, which has no `:active` style. Now the probe sees a
-  real `:active`, painted with R2's `--sv-button-bg-active`. Primary pressed and light secondary pressed still
-  pass. Follow-up (theme/VIS1): the dark secondary active token, or a deliberate R2 deviation. Locally, the
-  gate passes with that one entry removed.
+  `baseline-windows.json` and `baseline-macos.json`. The gate holds the press past egui's 0.8 s click
+  cutoff. Before item 6, egui had dropped the press by then, so the "pressed" probe measured an unpressed
+  (hovered) button, which matched VS Code's secondary button (no `:active` style). Now the probe sees a real
+  `:active` (R2's `--sv-button-bg-active`). Primary pressed and light secondary pressed still pass, and the
+  gate passes locally.
+  **Decided (coordinator, 2026-10-22):** keep the Pressable hold fix and the baseline edit. The old entry
+  passed only because the press had been dropped. The user chose Modern with affordances on, and visible
+  pressed feedback is one of those affordances, so differing on purpose from VS Code's missing `:active` is
+  acceptable. Recorded in VIS1c's record §8 too, which also gains the follow-up that VIS1 should list
+  affordance deviations as allowed differences, not failures.
 
 ### 2.4 Pins
 
