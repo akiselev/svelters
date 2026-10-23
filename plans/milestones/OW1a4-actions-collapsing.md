@@ -121,3 +121,24 @@ behaviour kinds).
    `svelters:behaviors/sv`; they only act on the element they are attached to, but the module needs
    an entry in the extension policy's module allow-list when that lands.
 5. Still from OW1a3 §5: `label::selection` colours and `:visited` (OW-P2).
+
+## 4. Gotchas (what the `use:` mechanism taught this lane)
+
+- **Behaviour event payloads are not spread.** A provider kind's event with an `Args` (list) payload
+  reaches JS as one array; only replaced built-ins spread lists over their signal's args. Use a
+  `#[derive(svelters::Record)]` payload (it lands in `svelters:app/<namespace>`).
+- **Event and param names:** a param key `on<x>` is a callback only when `x` is an event, so event
+  names must be single JS-identifier words (`onrepeat`, not `onrepeat-fired`); multi-word props use
+  `#[prop(rename = "camelCase")]`.
+- **`after_ui` has no `Ui`:** `UseUnit::run_on` uses `resp.ctx`; host bits written there apply after
+  the host painted (one frame late).
+- **Boxes don't record `drawn`** (it stays an inverted infinite rect); tests use the layout rect.
+- **Arrow keys:** egui's own arrow-key focus navigation moves focus unless the focused host sets a
+  focus-lock filter; `run_on` derives it from `Unit::claims`.
+- **Focus moves within one pass:** a member focused by `use:roving` sees the same key press in the
+  same pass; `UseRoving` acts only when its host had focus last frame.
+- **New behaviours change every app dump** (`kinds.json`, `behaviors.d.ts`, `behaviors/<ns>.js`):
+  regenerate `examples/egui-kinds` (`--test kinds`) and `fixtures/gallery-egui` (`--test wg4b`) with
+  `SVELTERS_UPDATE=1`.
+- VIS1 needs `pnpm install` and `pnpm --filter ./fixtures/gallery-egui build` (after building
+  `svelters-compiler`) in a fresh worktree.
