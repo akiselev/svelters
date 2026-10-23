@@ -120,14 +120,14 @@ export interface EguiWidgetProps {
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
   'ondrag-begin'?: () => void;
-  /** Drag source: the drag ended; `dropped` is true when a target took it. */
-  'ondrag-end'?: (dropped: boolean) => void;
+  /** Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped). */
+  'ondrag-end'?: (dropped: boolean, action: string) => void;
   /** Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type. */
   'ondrag-enter'?: (type: string) => void;
   /** Drop target: the drag left, was cancelled, or was dropped here (before `drop`). */
   'ondrag-leave'?: () => void;
-  /** Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points. */
-  ondrop?: (type: string, data: string, x: number, y: number) => void;
+  /** Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type. */
+  ondrop?: (type: string, data: string, x: number, y: number, action: string) => void;
   /** A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). */
   onpointerdown?: (e: SvlUiEvent) => void;
   onpointerdowncapture?: (e: SvlUiEvent) => void;
@@ -1099,6 +1099,10 @@ export interface EguiElements {
     onselect?: (pos: number) => void;
     /** The user changed the selection; carries the selected ids. */
     onselectionchange?: (ids: number[]) => void;
+    /** OW5a: a click on the row at `pos` (item `id`), after the selection moved. */
+    'onrow-clicked'?: (pos: number, id: number) => void;
+    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. */
+    'onrow-context'?: (pos: number, id: number) => void;
   };
   /** A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands. */
   'tree-view': EguiWidgetProps & {
@@ -1112,6 +1116,10 @@ export interface EguiElements {
     'row-drag-type'?: string;
     /** Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`. */
     'row-drop-types'?: string;
+    /** What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`). */
+    'expand-on'?: 'twistie' | 'click' | 'double-click';
+    /** Level-0 rows show their twistie (Qt's `rootIsDecorated`). */
+    'root-decorated'?: boolean;
     /** Row slot `row` was created: give it content with `setRow`. */
     onsetup?: (e: SvlEvent<[number]>, row: number) => void;
     /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
@@ -1130,6 +1138,10 @@ export interface EguiElements {
     'onselection-changed'?: () => void;
     /** Ctrl+C on the focused tree: copy the selected rows. */
     oncopy?: () => void;
+    /** OW5a: a click on the row at `pos` (item `id`), after the selection moved. */
+    'onrow-clicked'?: (pos: number, id: number) => void;
+    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. */
+    'onrow-context'?: (pos: number, id: number) => void;
     /** A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. */
     'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
   };

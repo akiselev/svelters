@@ -53,6 +53,7 @@ use crate::views::selection::{KeySelect, Mode};
 use crate::scene::virt::{RowHeights, RowPool, RowSource, VScroll, VirtualChildren};
 use crate::scene::{NodeId, Origin, ProviderId, RootIx, Scene, SceneError, SceneMut, W};
 use crate::walk::Out;
+use crate::widgets::list_rows::{self, ListBar, RowState};
 use std::borrow::Cow;
 use svelters_abi::Value;
 
@@ -84,6 +85,8 @@ pub(super) static SIGNALS: &[SignalDef] = &[
     SignalDef { name: "activate", args: &[POS], sync: false, doc: "The user activated the item at `pos` (double click)." },
     SignalDef { name: "select", args: &[POS], sync: false, doc: "The user selected the item at `pos`." },
     SignalDef { name: "selectionchange", args: &[("ids", Ty::IdList)], sync: false, doc: "The user changed the selection; carries the selected ids." },
+    SignalDef { name: "row-clicked", args: &[POS, ("id", Ty::I64)], sync: false, doc: "OW5a: a click on the row at `pos` (item `id`), after the selection moved." },
+    SignalDef { name: "row-context", args: &[POS, ("id", Ty::I64)], sync: false, doc: "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu." },
 ];
 
 pub(super) static METHODS: &[MethodDef] = &[
@@ -114,8 +117,6 @@ pub(super) const DEF: KindDef = KindDef {
 
 /// Rows bound around the viewport, beyond what it shows, in estimated rows.
 const OVERSCAN_ROWS: f64 = 2.0;
-/// The scroll bar's width.
-const BAR: f32 = 8.0;
 
 // ---- state ----
 
@@ -184,6 +185,11 @@ pub struct VList {
     pub(crate) stats: ListStats,
     /// WG5b: a `tree-view` (`treeview.rs`): rows are tree nodes.
     pub(crate) tree: Option<Box<Tree>>,
+    /// OW5a: the scroll bar (OW2's Scrollable over [`VList::scroll`]).
+    pub(crate) bar: ListBar,
+    /// OW5a (R8): the list's focus came from the keyboard; it had focus last frame.
+    pub(crate) kbd: bool,
+    pub(crate) was_focused: bool,
 }
 
 impl Default for VList {
@@ -204,6 +210,9 @@ impl Default for VList {
             view: egui::Vec2::ZERO,
             stats: ListStats::default(),
             tree: None,
+            bar: ListBar::default(),
+            kbd: false,
+            was_focused: false,
         }
     }
 }
@@ -474,7 +483,9 @@ pub(crate) fn set(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
             (P::RowDragType, Value::Null) => t.drag_type.clear(),
             (P::RowDropTypes, Value::Str(x)) => t.drop_types = x.clone(),
             (P::RowDropTypes, Value::Null) => t.drop_types.clear(),
-            (P::TreeIndent | P::RowDragType | P::RowDropTypes, other) => return Err(format!("{key:?}: unexpected value {other:?}")),
+            (P::ExpandOn, Value::Str(x)) => t.expand_on = super::treeview::ExpandOn::parse(x).ok_or_else(|| format!("`{x}` is not one of twistie, click, double-click"))?,
+            (P::RootDecorated, Value::Bool(b)) => t.root_decorated = *b,
+            (P::TreeIndent | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated, other) => return Err(format!("{key:?}: unexpected value {other:?}")),
             _ => return set_list(v, key, val),
         }
         return Ok(());
@@ -534,6 +545,8 @@ pub(crate) fn get(v: &VList, key: P) -> Option<Value> {
         P::TreeIndent => Value::I64(v.tree.as_ref()?.indent as i64),
         P::RowDragType => Value::Str(v.tree.as_ref()?.drag_type.clone()),
         P::RowDropTypes => Value::Str(v.tree.as_ref()?.drop_types.clone()),
+        P::ExpandOn => Value::Str(v.tree.as_ref()?.expand_on.name().into()),
+        P::RootDecorated => Value::Bool(v.tree.as_ref()?.root_decorated),
         _ => return None,
     })
 }
@@ -952,7 +965,9 @@ pub(crate) fn uniform_height(v: &VList) -> Option<f32> {
 
 /// Draws list `i` (its rect from layout, offset by `origin`): rows at their places in a clipped
 /// child `Ui`, a11y nodes with set size, selection and activation, placeholders for unbound
-/// positions, the scroll bar; wheel input not taken by this frame's offset waits for the next.
+/// positions, the scroll bar. OW5a: every row is the list's `::part(row)` in its own state (DESIGN
+/// R6, [`list_rows`]), the bar is OW2's Scrollable ([`list_rows::ListBar`]); nothing reads egui's
+/// `Visuals`.
 pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::Ui, out: &mut Vec<Out>) -> Option<egui::Response> {
     let r = s.core[i].rect.translate(origin);
     if !ui.is_rect_visible(r) {
@@ -981,10 +996,12 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         placed.iter().filter(|&&(_, p)| p < v.len()).map(|&(_, p)| v.key_at(p)).collect()
     };
     let mut tree_input = None;
+    let mut had_keys = false;
     let focused = if tree.is_some() {
         let focused = resp.has_focus();
         // EV3: focused, the tree takes its keys (read here; `record_with` takes them out)
         tree_input = focused.then(|| super::treeview::tree_input(list_id, ui));
+        had_keys = tree_input.as_ref().is_some_and(|(k, t)| !k.is_empty() || !t.is_empty());
         crate::focus::record_with(s, i, ui, &resp, crate::focus::Role::Tree, true);
         focused
     } else {
@@ -996,23 +1013,28 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             }
             let keys = item_keys::read_keys(ui, true);
             if !keys.is_empty() {
-                keys_input(s, i, &keys, out);
+                had_keys = true;
+                keys_input(s, i, &keys, &ctx, out);
                 ctx.request_repaint();
             }
         }
         focused
     };
-    let (len, selectable, multi, cursor, offset, total, view, est, taken, decided) = {
+    let (len, selectable, multi, cursor, offset, total, view, taken, decided, kbd) = {
         let W::VirtualList(v) = s.w_mut(i) else { return None };
         v.scroll.last_rect = r;
         v.scroll.layer = Some(ui.layer_id());
         v.stats.frames += 1;
+        // R8: the cursor row's ring is for keyboard focus (Tab in, or keys); a click clears it
+        if focused && (had_keys || !v.was_focused) {
+            v.kbd = true;
+        }
         // a tree's selection and cursor are its own (`Tree::sel`, drawn by `tree_row`)
         let (selectable, multi, cursor) = match &tree {
             Some((mode, ..)) => (*mode != Mode::None, *mode == Mode::Multi, None),
             None => (v.selection != "none", v.selection == "multi", v.sel.cursor),
         };
-        (v.len(), selectable, multi, cursor, v.scroll.offset, v.heights.total(), v.view, v.heights.estimate(), v.scroll.taken(), v.scroll.decided_in(&ctx))
+        (v.len(), selectable, multi, cursor, v.scroll.offset, v.heights.total(), v.view, v.scroll.taken(), v.scroll.decided_in(&ctx), v.kbd)
     };
     ctx.accesskit_node_builder(list_id, |n| {
         n.set_role(if tree.is_some() {
@@ -1031,18 +1053,9 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             n.set_active_descendant(list_id.with(("row", k)).accesskit_id());
         }
     });
-    // wheel input: consumed when this frame's offset took it, else kept for the next frame
+    // wheel input this frame's offset took (the rest goes to the bar's Scrollable, then chains)
     if decided && taken != 0.0 {
         ui.input_mut(|inp| inp.smooth_scroll_delta.y -= taken);
-    } else if resp.hovered() {
-        let d = ui.input(|inp| inp.smooth_scroll_delta.y);
-        if d != 0.0 && (d > 0.0 && offset > 0.0 || d < 0.0 && offset < total - view.y as f64) {
-            ui.input_mut(|inp| inp.smooth_scroll_delta.y = 0.0);
-            if let W::VirtualList(v) = s.w_mut(i) {
-                v.scroll.add_pending(-d as f64);
-            }
-            ctx.request_repaint();
-        }
     }
     s.core[i].drawn = r;
     crate::scene::hit::record(s, i, ui);
@@ -1064,6 +1077,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         _ => None,
     };
     let mut first_row = true; // EV3
+    let mut clicked = false;
     let cursor_drawn = cursor.is_some_and(|c| placed_keys.contains(&c));
     for (n, pos) in placed {
         let Some(ni) = s.idx(n) else { continue };
@@ -1080,8 +1094,13 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             v.key_at(pos)
         };
         let row_id = list_id.with(("row", key));
-        if let Some((_, indent, drag_type, _)) = &tree {
-            tree_row(s, i, key, pos, len, egui::Rect::from_x_y_ranges(r.x_range(), rr.y_range()), *indent, drag_type, focused, row_id, list_id, &mut rows_ui, out, &emit);
+        let at = (pos, len);
+        let full = egui::Rect::from_x_y_ranges(r.x_range(), rr.y_range());
+        let row = if let Some((_, indent, drag_type, _)) = &tree {
+            let drop_into = matches!(drop_at, Some((DropAt::Into, Some(d))) if (d.min.y - rr.min.y).abs() < 0.5);
+            let rs = tree_row(s, i, key, at, full, *indent, drag_type, focused, kbd, drop_into, row_id, list_id, &mut rows_ui, out, &emit);
+            clicked |= rs.1;
+            rs.0
         } else {
             let rresp = rows_ui.interact(rr, row_id, egui::Sense::click());
             let is_sel = selectable && matches!(s.w(i), W::VirtualList(v) if v.sel.is_selected(key));
@@ -1091,13 +1110,21 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
                     node.set_selected(is_sel);
                 }
             });
-            if is_sel {
-                rows_ui.painter().rect_filled(rr, 0.0, rows_ui.visuals().selection.bg_fill);
-            } else if rresp.hovered() {
-                rows_ui.painter().rect_filled(rr, 0.0, rows_ui.visuals().widgets.hovered.weak_bg_fill);
-            }
-            if focused && cursor == Some(key) {
-                rows_ui.painter().rect_stroke(rr.shrink(1.0), 0.0, rows_ui.visuals().selection.stroke, egui::StrokeKind::Inside);
+            let row = RowState {
+                hovered: rresp.hovered(),
+                pressed: rresp.is_pointer_button_down_on(),
+                selected: is_sel,
+                current: cursor == Some(key),
+                list_focused: focused,
+                keyboard: kbd,
+                disabled: !rows_ui.is_enabled(),
+                ..RowState::default()
+            };
+            let painted = list_rows::paint_row(s, i, &row, at, rr, &rows_ui);
+            if row.hovered
+                && let Some(c) = painted.cursor
+            {
+                ctx.set_cursor_icon(c);
             }
             // WG5a: focus follows the cursor row (from the list itself: Tab in, or after a jump);
             // with no cursor yet, the list's tab stop takes it
@@ -1108,11 +1135,16 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             if rresp.clicked() {
                 // WG5a: a click focuses the row and goes through the keyed selection (Ctrl/Shift)
                 rresp.request_focus();
+                clicked = true;
                 let m = item_keys::mods(rows_ui.input(|inp| inp.modifiers));
-                click_row(s, i, key, m, out);
+                click_row(s, i, key, m, &ctx, out);
+                emit(s, out, "row-clicked", vec![Value::I64(pos as i64), Value::I64(key as i64)]);
                 ctx.request_repaint();
             }
-            if rresp.double_clicked() && s.listens(i, sig_activate) {
+            if rresp.secondary_clicked() {
+                emit(s, out, "row-context", vec![Value::I64(pos as i64), Value::I64(key as i64)]);
+            }
+            if rresp.double_clicked() && s.listens(i, sig_activate) && list_rows::allowed(s, i, "activate", &ctx, out) {
                 out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
             }
             {
@@ -1121,33 +1153,39 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
                 first_row = false;
                 crate::focus::record_with(s, i, &rows_ui, &rresp, crate::focus::Role::List, stop);
             }
-        }
+            row
+        };
+        // the row node mirrors its row's state (`virtual-list:focus-within > :selected`)
+        list_rows::mirror(s, ni, &row);
         let mut row_ui = rows_ui.new_child(egui::UiBuilder::new().max_rect(rr).id_salt(("row", key)).accessibility_parent(row_id));
         row_ui.set_clip_rect(clip);
         let mark = crate::scene::virt::widgets_in_layer(&ctx, row_ui.layer_id());
         crate::walk::paint_at(s, ni, origin, &mut row_ui, out);
-        crate::scene::virt::label_row_by_contents(&ctx, row_id, row_ui.layer_id(), mark);
+        // OW5a: a row whose contents are clipped away (partly scrolled out) is still named, by
+        // its type-ahead label or its position
+        if !crate::scene::virt::label_row_by_contents(&ctx, row_id, row_ui.layer_id(), mark) {
+            let name = match s.w(i) {
+                W::VirtualList(v) => v.label_at(pos).unwrap_or_else(|| format!("Row {}", pos + 1)),
+                _ => format!("Row {}", pos + 1),
+            };
+            ctx.accesskit_node_builder(row_id, |n| {
+                if n.label().is_none_or(|l| l.trim().is_empty()) {
+                    n.set_label(name);
+                }
+            });
+        }
         s.core[ni].drawn = rr;
         crate::scene::hit::record(s, ni, &row_ui);
+        // R8: the cursor row's focus ring, over its contents
+        list_rows::paint_row_outline(s, i, &row, at, if tree.is_some() { full } else { rr }, &rows_ui);
         drawn += 1;
     }
-    if let Some((at, row)) = drop_at {
-        let stroke = rows_ui.visuals().selection.stroke;
-        let p = rows_ui.painter();
-        match (at, row) {
-            (_, None) => {
-                p.rect_stroke(r.intersect(clip), 2.0, stroke, egui::StrokeKind::Inside);
-            }
-            (DropAt::Into, Some(rr)) => {
-                p.rect_stroke(rr, 2.0, stroke, egui::StrokeKind::Inside);
-            }
-            (DropAt::Before, Some(rr)) => {
-                p.hline(rr.x_range(), rr.min.y, egui::Stroke::new(2.0, stroke.color));
-            }
-            (DropAt::After, Some(rr)) => {
-                p.hline(rr.x_range(), rr.max.y, egui::Stroke::new(2.0, stroke.color));
-            }
-        }
+    match drop_at {
+        Some((_, None)) => list_rows::paint_drop_line(s, i, r.intersect(clip), None, false, &rows_ui),
+        Some((DropAt::Before, Some(rr))) => list_rows::paint_drop_line(s, i, r, Some(rr), false, &rows_ui),
+        Some((DropAt::After, Some(rr))) => list_rows::paint_drop_line(s, i, r, Some(rr), true, &rows_ui),
+        // `into`: the row's `:drop-target` fill (`list-drop`)
+        Some((DropAt::Into, Some(_))) | None => {}
     }
     if let Some((keys, text)) = tree_input {
         tree_keys(s, i, keys, text, &ctx, ui, out, &emit);
@@ -1160,39 +1198,46 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     // positions in view that no bound row covers: placeholders (R22's gate counts them)
     let mut unbound = 0u64;
     if view.y > 0.0 {
-        let W::VirtualList(v) = s.w(i) else { return None };
-        for pos in v.heights.range(offset, offset + view.y as f64) {
-            let y = r.min.y + (v.heights.offset(pos) - offset) as f32;
-            let yr = y..y + v.heights.height(pos);
-            if !covered.iter().any(|c| c.0 <= yr.start + 0.5 && c.1 >= yr.end - 0.5) {
-                unbound += 1;
-                let pr = egui::Rect::from_x_y_ranges(r.x_range(), yr.start.max(r.min.y)..=yr.end.min(r.max.y));
-                rows_ui.painter().rect_filled(pr.shrink(2.0), 2.0, rows_ui.visuals().faint_bg_color);
+        let mut gaps = Vec::new();
+        {
+            let W::VirtualList(v) = s.w(i) else { return None };
+            for pos in v.heights.range(offset, offset + view.y as f64) {
+                let y = r.min.y + (v.heights.offset(pos) - offset) as f32;
+                let yr = y..y + v.heights.height(pos);
+                if !covered.iter().any(|c| c.0 <= yr.start + 0.5 && c.1 >= yr.end - 0.5) {
+                    gaps.push(egui::Rect::from_x_y_ranges(r.x_range(), yr.start.max(r.min.y)..=yr.end.min(r.max.y)));
+                }
             }
+        }
+        unbound = gaps.len() as u64;
+        for pr in gaps {
+            list_rows::paint_placeholder(s, i, pr, &rows_ui);
         }
     }
     if unbound > 0 {
         ctx.request_repaint();
     }
-    // the scroll bar
-    if total > view.y as f64 && view.y > 0.0 {
-        let max = total - view.y as f64;
-        let track = egui::Rect::from_min_max(egui::pos2(r.max.x - BAR, r.min.y), r.max);
-        let th = ((view.y as f64 / total) * track.height() as f64).max(est.min(24.0) as f64) as f32;
-        let ty = track.min.y + ((offset / max) * (track.height() - th) as f64) as f32;
-        let thumb = egui::Rect::from_min_size(egui::pos2(track.min.x, ty), egui::vec2(BAR, th));
-        let bar = ui.interact(thumb, list_id.with("bar"), egui::Sense::drag());
-        let vis = ui.style().interact(&bar);
-        ui.painter().rect_filled(thumb.shrink2(egui::vec2(1.5, 0.0)), 3.0, vis.bg_fill);
-        if bar.dragged() {
-            let dy = bar.drag_delta().y as f64 * max / (track.height() - th).max(1.0) as f64;
-            if let W::VirtualList(v) = s.w_mut(i) {
-                v.scroll.add_pending(dy);
-            }
+    // R15: the edge shadows of a list scrolled away from its top (`:state(sv.overflow-top)`)
+    list_rows::paint_shadows(s, i, r, &rows_ui);
+    // the scroll bar (OW2's Scrollable): what it moves applies at the next offset decision
+    let moved = {
+        let W::VirtualList(v) = s.w_mut(i) else { return None };
+        let mut bar = std::mem::take(&mut v.bar);
+        let d = bar.run(s, i, ui, &resp, r, offset, total);
+        if let W::VirtualList(v) = s.w_mut(i) {
+            v.bar = bar;
+        }
+        d
+    };
+    if let W::VirtualList(v) = s.w_mut(i) {
+        if moved.abs() > 1e-3 {
+            v.scroll.add_pending(moved);
             ctx.request_repaint();
         }
-    }
-    if let W::VirtualList(v) = s.w_mut(i) {
+        if clicked {
+            v.kbd = false;
+        }
+        v.was_focused = focused || clicked;
         v.stats.rows_drawn += drawn;
         v.stats.unbound_drawn += unbound;
     }
@@ -1228,37 +1273,67 @@ fn selection_changed(s: &mut Scene, i: usize, out: &mut Vec<Out>) {
     crate::leaf::widget_changed(s, i, &[P::SelectedIds], vec![ids], out);
 }
 
-fn click_row(s: &mut Scene, i: usize, key: u64, m: crate::views::selection::Mods, out: &mut Vec<Out>) {
+fn click_row(s: &mut Scene, i: usize, key: u64, m: crate::views::selection::Mods, ctx: &egui::Context, out: &mut Vec<Out>) {
     let W::VirtualList(v) = s.w_mut(i) else { return };
     let ids = v.all_ids().into_owned();
-    let c = v.sel.click(&ids, key, m);
+    // EV1: a filter that prevents `selectionchange` keeps the selection (the cursor still moves)
+    let mut sel = v.sel.clone();
+    let c = sel.click(&ids, key, m);
+    if c.selection && !list_rows::allowed(s, i, "selectionchange", ctx, out) {
+        if let W::VirtualList(v) = s.w_mut(i) {
+            v.sel.cursor = sel.cursor;
+        }
+        return;
+    }
+    if let W::VirtualList(v) = s.w_mut(i) {
+        v.sel = sel;
+    }
     if c.selection {
         selection_changed(s, i, out);
     }
 }
 
 /// The focused list's keys: cursor moves (scrolled into view), selection, Enter (`activate`).
-fn keys_input(s: &mut Scene, i: usize, keys: &[item_keys::Input], out: &mut Vec<Out>) {
+fn keys_input(s: &mut Scene, i: usize, keys: &[item_keys::Input], ctx: &egui::Context, out: &mut Vec<Out>) {
     let h = s.slots.id_at(i).expect("live list").to_raw();
     let kind = s.core[i].kind as usize;
     let W::VirtualList(v) = s.w_mut(i) else { return };
     let ids = v.all_ids().into_owned();
     let page = v.page();
+    let before = v.sel.clone();
     let mut sel = std::mem::take(&mut v.sel);
     let o = item_keys::apply(&mut sel, &ids, keys, page, |p| v.label_at(p));
     v.sel = sel;
-    if o.cursor
+    // EV1: a filter that prevents `selectionchange` keeps the selection (the cursor moves)
+    if o.selection && !list_rows::allowed(s, i, "selectionchange", ctx, out) {
+        if let W::VirtualList(v) = s.w_mut(i) {
+            let cursor = v.sel.cursor;
+            v.sel.set(before.selected.iter().copied());
+            v.sel.cursor = cursor;
+            v.sel.anchor = before.anchor;
+        }
+        return keys_rest(s, i, h, kind, &ids, o.cursor, None, ctx, out);
+    }
+    keys_rest(s, i, h, kind, &ids, o.cursor, Some(o), ctx, out)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn keys_rest(s: &mut Scene, i: usize, h: u64, kind: usize, ids: &[u64], cursor: bool, o: Option<item_keys::Outcome>, ctx: &egui::Context, out: &mut Vec<Out>) {
+    let W::VirtualList(v) = s.w_mut(i) else { return };
+    if cursor
         && let Some(p) = v.sel.cursor.and_then(|k| ids.iter().position(|&x| x == k))
     {
         v.reveal = Some(p);
         s.invalidate_content(s.slots.id_at(i).expect("live list"));
     }
+    let Some(o) = o else { return };
     if o.selection {
         selection_changed(s, i, out);
     }
     let sig = super::signal_id(kind, "activate");
     if let Some(p) = o.activate
         && s.listens(i, sig)
+        && list_rows::allowed(s, i, "activate", ctx, out)
     {
         out.push(Out::Event(h, sig, vec![Value::I64(p as i64)]));
     }
