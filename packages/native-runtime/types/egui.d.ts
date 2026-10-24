@@ -1018,7 +1018,7 @@ export interface EguiElements {
     /** It closed with the result `"reject"`: dismissed by the user or `close("reject")`. */
     onrejected?: () => void;
   };
-  /** A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
+  /** A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
   table: EguiWidgetProps & {
     /** Number of rows (the scroll extent). Rows without data yet are drawn empty. */
     'row-count'?: number;
@@ -1077,7 +1077,7 @@ export interface EguiElements {
     'onheader-context'?: (column: number) => void;
     /** The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable. */
     'oncolumn-resized'?: (column: number, width: number) => void;
-    /** A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS). */
+    /** A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table). */
     'onsort-changed'?: (sort_column: number, sort_order: 'none' | 'ascending' | 'descending') => void;
     /** The column menu hid or showed a column; carries the hidden columns. */
     'oncolumns-changed'?: (hidden_columns: string[]) => void;
@@ -1085,6 +1085,8 @@ export interface EguiElements {
     'onheader-state-changed'?: (header_state: string) => void;
     /** Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds). */
     oncopy?: (ids: number[]) => void;
+    /** A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now. */
+    'onrow-toggled'?: (id: number, expanded: boolean) => void;
   };
   /** A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell. */
   'table-column': EguiWidgetProps & {

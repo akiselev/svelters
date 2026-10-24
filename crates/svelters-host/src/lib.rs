@@ -35,6 +35,7 @@ mod engine;
 mod hooks;
 pub mod exports;
 pub mod platform;
+pub mod rows;
 mod quickjs;
 mod reload;
 pub mod sched;

@@ -105,6 +105,31 @@ jobs:
             target/vis1c/
             target/*.png
 
+  # LS2 (SV47): the T2 list benches in release: `virtual-list` (RowSource) and `table` (RowModel) at
+  # 20k and 100k rows (bind per row, page rebind, fling, sort, filter). The numbers go to the job
+  # summary; the asserted bounds are generous (they catch gross regressions, not the numbers).
+  egui-benches:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: linux-egui-benches
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+      - name: T2 benches (release)
+        env:
+          LS2_BENCH_OUT: ${{ runner.temp }}/ls2-bench.txt
+        run: cargo nextest run --release -p svelters-egui --test ls2 -E 'test(/^bench_/)' --no-capture
+      - name: Report the numbers
+        if: ${{ !cancelled() }}
+        run: |
+          { echo '### LS2 T2 benches (release)'; echo '```'; cat "${{ runner.temp }}/ls2-bench.txt" || true; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
   # TK1: the egui runs of tests/cases with `snapshot` steps rendered through wgpu on lavapipe (Mesa's
   # software Vulkan) and compared with the committed PNGs in tests/cases/snapshots. A case whose
   # snapshot does not exist yet records it (uploaded below; commit it).

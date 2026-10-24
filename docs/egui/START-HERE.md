@@ -31,6 +31,7 @@ a lane branch, not merged; the page says which), `stub` (a page skeleton, still 
 | restyle a widget: parts, states, icons in CSS, painters, transitions, list rows | [Styling own widgets](css/own-widgets.md) |
 | show icons by key, register app or extension icons | [Icons](icons.md) |
 | test an app or a component end to end, with seeds and virtual time | [Automation and end-to-end tests](rust/automation.md) |
+| feed a `table` (or a tree) from Rust rows at 20k+ rows, sorted and filtered in Rust | [Rust row models](rust/row-models.md) |
 | load an app or extension from source, ship a `.svb` bundle, control what extensions can import | [Loading code and release bundles](rust/loading-code.md) |
 | understand what an edit does to the running app and which state survives | [Hot reload](rust/hot-reload.md) |
 
@@ -43,6 +44,9 @@ a lane branch, not merged; the page says which), `stub` (a page skeleton, still 
 - [Automation and end-to-end tests](rust/automation.md): `#[svelters_automation::test]`,
   `@svelters/test` with `svelters-e2e`, `mount`, locators, `svelters-run`, `Session`. Read it before
   writing UI tests.
+- [Rust row models](rust/row-models.md): `RowModel`, `RowView` (sort, filter, tree rows),
+  `set_table_model`, and `RowSource` for realised `virtual-list` rows. Read it before giving a table
+  or list rows that live in Rust.
 - [Loading code and release bundles](rust/loading-code.md): `SourceProvider`, `SvbProvider`,
   `ModuleHooks` and extension isolation, `svelters-bundle`, the bytecode cache. Read it when you wire up
   loading or ship a release.
