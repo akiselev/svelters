@@ -466,3 +466,37 @@ fn bench_table_20k() {
 fn bench_table_100k() {
     bench_table(100_000);
 }
+
+// ---- edits commit into the model ----
+
+#[test]
+fn edits_commit_into_the_rust_model_which_may_reject_them() {
+    let mut r = Rig::new(500.0, 300.0);
+    let mut m = VecModel::new(vec![Column::new("name", "Name").width(120.0), Column::new("pads", "Pads").width(80.0).kind(CellKind::Number)]);
+    for (name, pads) in [("GND", 12), ("VCC", 4), ("SDA", 2)] {
+        m.push(vec![Cell::text(name), Cell::Int(pads)]);
+    }
+    let t = r.table(m, RowView::new(), &[]);
+    let pads = r.scene.read(|s| s.get(t).unwrap().children().nth(1).unwrap().id());
+    r.set(pads, "editable", Value::Bool(true));
+    let type_and_enter = |r: &mut Rig, text: &str| {
+        r.h.harness.event(egui::Event::Key { key: egui::Key::A, physical_key: None, pressed: true, repeat: false, modifiers: egui::Modifiers::COMMAND });
+        r.h.harness.event(egui::Event::Text(text.into()));
+        r.h.run();
+        r.key(egui::Key::Enter);
+    };
+    // accepted: the model stores it (VecModel::commit types it by the cell) and the table shows it
+    r.call(t, "edit", &[Value::I64(1), Value::I64(1)]);
+    r.h.run();
+    assert!(r.h.harness.query_by_role_and_label(Role::TextInput, "Pads").is_some(), "the editor is open");
+    type_and_enter(&mut r, "40");
+    let v = r.scene.read(|s| s.table_model::<VecModel, _>(t, |m, _| m.cell(1, 1).into_text().into_owned()));
+    assert_eq!(v.as_deref(), Some("40"));
+    assert!(r.has("40") && !r.has("4"));
+    // rejected: the model's reason shows, the cell keeps its value
+    r.call(t, "edit", &[Value::I64(2), Value::I64(1)]);
+    r.h.run();
+    type_and_enter(&mut r, "many");
+    assert!(r.h.harness.query_by_label_contains("is not a whole number").is_some(), "the reason is shown");
+    assert!(r.has("2"));
+}

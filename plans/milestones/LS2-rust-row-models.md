@@ -72,17 +72,19 @@ Status: **done on the lane, waiting for CI** (sha and run ids below).
 
 Run locally (debug), all pass:
 - `svelters-host` `rows::tests` (4): natural order, sort/filter keep keys, tree expand/sort/filter, commit.
-- `svelters-egui` `tests/ls2.rs` (7): `a_rust_model_feeds_the_table_with_columns_from_the_model` (20k rows,
+- `svelters-egui` `tests/ls2.rs` (8): `a_rust_model_feeds_the_table_with_columns_from_the_model` (20k rows,
   model columns, ≤ visible cells read per frame, `scroll-to-row`, a version bump redraws);
   `sorting_and_filtering_run_in_rust_and_keep_the_selection_by_key`;
   `tree_rows_expand_by_their_expander_and_the_keyboard` (a11y level/expanded, chevron click, Right/Left,
-  sorted siblings); the four `bench_*`.
+  sorted siblings); `edits_commit_into_the_rust_model_which_may_reject_them`; the four `bench_*`.
 - `svelters-egui` `tests/spec.rs` (regenerated `egui.json` and `egui.d.ts` with `SVELTERS_UPDATE=1`);
   `tools/docs/egui/gen_reference.py` rerun (table.md events).
 - `cargo clippy -p svelters-host -p svelters-egui --all-targets`: no errors (advisory warnings only).
 
-Not run locally: the full workspace suite, the other table tests (`views.rs`, `wg5a.rs`, `ow5b.rs`; their code
-paths changed only behind `model.is_some()` and the `cell` return type) and the release benches: CI runs them.
+- The existing table suites, unchanged and passing: `ow5b.rs` (3), `wg5a.rs` (5), `views.rs` table tests (2),
+  `views::table` units (4).
+
+Not run locally: the full workspace suite and the release benches: CI runs them.
 
 ### T2 bench numbers (SV47)
 
