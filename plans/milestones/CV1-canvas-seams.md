@@ -5,7 +5,7 @@ Lane `canvas-seams` of cloud batch 8 (`plans/cloud/batch8/LANE-canvas-seams.md`)
 paints itself (`ViewClass` panes), not scene nodes; this lane gives them hit tests, Svelte overlays
 over them `pointermove`, agents a way to drive them, and keyed lists stable anchor ids.
 
-**Status:** in progress (WIP pushed; see "Handoff" for what is left).
+**Status:** done on the branch, waiting for the coordinator's merge (see "CI").
 
 cadatomic's request text (`docs/plan/04-kernel-requests.md`) could not be read: attaching
 `akiselev/cadatomic` was refused in this session. The lane brief's wording was the spec.
@@ -106,8 +106,25 @@ test -p svelters-egui --test spec`), `docs/egui/reference/widgets/*.md`
 
 ## CI
 
-(pending)
+- 3d24bc94 (WIP): js failed (the runtime's op-log tests and 17 conformance each-* samples saw the
+  extra `anchor-scope` writes; fixed in 69018d13 by sending it only once an app writes an anchor).
+- 69018d13: js 40047866033, linux-qt 40047866012, macos-appkit 40047865990, windows-winui
+  40047865997 green; linux-gtk 40047865992 failed one test outside this lane,
+  `svelters-egui::wg4b dialog_exports_resolve_from_the_backend_and_abort`: the host's wall-clock
+  warning "`app:egui.openFile` ... blocked it for 33 ms in one poll" landed in the console the test
+  compares (a slow runner; the test passes locally on this branch). This session cannot re-run
+  jobs (403), so this record's push is the re-run.
+- Final sha: see the coordinator report.
 
 ## Handoff
 
-Left: the full CI round.
+Nothing left in scope. For the coordinator:
+
+- **Flaky test (recommendation: fix in a small lane):** `wg4b::dialog_exports_resolve_from_the_backend_and_abort`
+  compares the whole console, so the host's 8 ms async-poll warning fails it on a slow runner. Filter
+  lines starting `svelters:` out of `lines` there (or raise the warning threshold under test).
+- **Question (recommendation: yes):** cadatomic's request text (SV49–SV53) was unreadable here
+  (`add_repo akiselev/cadatomic` was refused). Please have main-cadatomic check the API above against
+  SV49 (FW3's `PickProvider` consuming `Target::Virtual` of a pane) before its EU canvases use it.
+- `pointermove` uses the node under the pointer even while a button is held (no pointer capture);
+  a canvas drag that leaves its node reports to the new node. Capture is a follow-up if cadatomic needs it.
