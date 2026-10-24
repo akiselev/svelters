@@ -17,6 +17,11 @@
 //!   reported as `Target::Virtual(VNodeId { host, key })`) or `Hit::Miss` (the point goes
 //!   through).
 //!
+//! **Panes (SV49).** A pane the host paints itself (a canvas, a 3D view: `Embed::create_pane`) is
+//! a host-owned node at the top of its own root, recorded in the hit list where the host draws it
+//! (`Embed::show_pane`) and answered by its [`PaneHit`]: a `Hit::Part` is a `Target::Virtual` of
+//! the pane, as a provider's part is, so picking, overlays and event filters treat it as a node.
+//!
 //! Layers: entries of a higher `egui::Order` are on top; within one order, later-drawn entries
 //! are. Two overlapping areas of the same order (two floating windows) are ordered by draw order,
 //! not by egui's area z-order.
@@ -51,6 +56,35 @@ pub struct HitCx {
     pub rect: egui::Rect,
     /// The point in screen points.
     pub pos: egui::Pos2,
+}
+
+/// SV49: what a pane the host paints itself answers for SG3 hit tests (`Embed::create_pane`). Its
+/// parts are its own (a pick id, a handle index): `Hit::Part(key)` is reported as
+/// `Target::Virtual(VNodeId { host: pane node, key })`.
+pub trait PaneHit: 'static {
+    /// What is at `local` (relative to the pane's rect drawn last pass, `cx.rect`).
+    fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit;
+    /// Part `key`'s rect, relative to the pane's rect (overlays, `SceneRef::target_rect`,
+    /// automation); `None` when it has none.
+    fn part_rect(&self, _key: u64) -> Option<egui::Rect> {
+        None
+    }
+    /// Part `key`'s name (`SceneRef::target_anchor`: `"<pane key>/<name>"`); `None` when unnamed.
+    fn part_anchor(&self, _key: u64) -> Option<String> {
+        None
+    }
+}
+
+/// The panes' hit testers by node (SV49).
+#[derive(Default)]
+pub(crate) struct Panes {
+    pub(crate) by_node: std::collections::HashMap<NodeId, (String, std::rc::Rc<std::cell::RefCell<dyn PaneHit>>)>,
+}
+
+impl Panes {
+    fn get(&self, n: NodeId) -> Option<&std::rc::Rc<std::cell::RefCell<dyn PaneHit>>> {
+        self.by_node.get(&n).map(|p| &p.1)
+    }
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -103,6 +137,13 @@ pub(crate) fn record(s: &mut Scene, i: usize, ui: &egui::Ui) {
 /// hits no leaf go to the innermost box under it (a click on a box's padding targets the box).
 pub(crate) fn record_box(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui) {
     push(s, i, rect, ui, true);
+}
+
+/// SV49: the host drew pane `i` at `rect` (screen) in `ui`: its drawn rect, and an entry of the
+/// viewport's hit list in the host's draw order.
+pub(crate) fn record_pane(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui) {
+    s.core[i].drawn = rect;
+    push(s, i, rect, ui, false);
 }
 
 fn push(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui, container: bool) {
@@ -257,8 +298,14 @@ fn exiting(s: &Scene, i: usize) -> bool {
     false
 }
 
-/// Asks a `Caps::HIT_TEST` provider kind about `pos`; every other node is hit as itself.
+/// Asks a `Caps::HIT_TEST` provider kind (or a pane's `PaneHit`) about `pos`; every other node is
+/// hit as itself.
 fn ask_provider(s: &Scene, i: usize, e: &Entry, pos: egui::Pos2) -> Hit {
+    if let Some(p) = s.panes.get(e.node) {
+        // borrowed (the host is changing it): the pane as a whole
+        let Ok(p) = p.try_borrow() else { return Hit::Node };
+        return p.hit_test(&HitCx { node: e.node, rect: e.rect, pos }, (pos - e.rect.min).to_pos2());
+    }
     let W::Ext(x) = s.w(i) else { return Hit::Node };
     let kind = s.core[i].kind as usize;
     let caps = crate::kinds::KindRegistry::global().provider(kind).map(|p| p.entry.caps);
@@ -268,4 +315,20 @@ fn ask_provider(s: &Scene, i: usize, e: &Entry, pos: egui::Pos2) -> Hit {
     // the widget is borrowed while it draws: hit-testing from its own `ui` sees the node
     let Ok(w) = x.0.try_borrow() else { return Hit::Node };
     w.hit_test(&HitCx { node: e.node, rect: e.rect, pos }, (pos - e.rect.min).to_pos2())
+}
+
+impl<'a> SceneRef<'a> {
+    /// SV49: part `key` of pane `pane`: its rect on screen (relative to the pane's drawn rect,
+    /// offset), if the pane is drawn and its `PaneHit` has one.
+    pub(crate) fn pane_part_rect(self, pane: NodeId, key: u64) -> Option<Option<egui::Rect>> {
+        let p = self.s.panes.get(pane)?;
+        let drawn = self.get(pane)?.drawn();
+        Some(drawn.and_then(|d| p.try_borrow().ok()?.part_rect(key).map(|r| r.translate(d.min.to_vec2()))))
+    }
+
+    /// SV49: part `key` of pane `pane`: `"<pane key>/<name>"` if its `PaneHit` names it.
+    pub(crate) fn pane_part_anchor(self, pane: NodeId, key: u64) -> Option<Option<String>> {
+        let (k, p) = self.s.panes.by_node.get(&pane)?;
+        Some(p.try_borrow().ok().and_then(|p| p.part_anchor(key)).map(|a| format!("{k}/{a}")))
+    }
 }

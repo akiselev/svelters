@@ -31,6 +31,7 @@ Common properties of the menu entries (`menu`, `action`, `menu-separator`, `cont
 |---|---|---|---|---|
 | `accessible-name` | `string` | `""` | no | AccessKit name; the label by default. |
 | `anchor` | `string` | `""` | no | A name unique in its embedded root. |
+| `anchor-scope` | `string` | `""` | no | Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. |
 | `enabled` | `boolean` | `true` | no | Can be picked when true; drawn greyed out otherwise. |
 | `tooltip` | `string` | `""` | no | Hover text; empty for none. |
 | `visible` | `boolean` | `true` | no | Shown in its menu when true. |

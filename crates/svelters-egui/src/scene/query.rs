@@ -238,6 +238,19 @@ impl<'a> NodeRef<'a> {
         self.s.anchor_at(self.i)
     }
 
+    /// SV53: the keyed each item this node is in: the innermost `anchor-scope` on it or an
+    /// ancestor, as the item's key (the last of the keys the runtime set), if any.
+    pub fn item_key(self) -> Option<&'a str> {
+        let mut x = Some(self.i);
+        while let Some(k) = x {
+            if let Some(sc) = self.s.common[k].as_deref().and_then(|c| c.anchor_scope.as_deref()) {
+                return sc.rsplit('\u{1f}').next();
+            }
+            x = self.s.core[k].parent.and_then(|p| self.s.idx(p));
+        }
+        None
+    }
+
     /// The screen rect drawn last frame and its root's viewport; `None` if not drawn.
     pub fn screen_rect(self) -> Option<(egui::ViewportId, egui::Rect)> {
         let r = self.drawn()?;

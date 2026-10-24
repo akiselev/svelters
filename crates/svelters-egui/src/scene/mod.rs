@@ -45,7 +45,7 @@ pub(crate) mod tree;
 pub mod virt;
 
 pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle, SceneMut, SceneRef};
-pub use hit::{Hit, HitCx};
+pub use hit::{Hit, HitCx, PaneHit};
 pub use query::{Cursor, Query, Visit};
 pub use journal::{Change, ChangeFilter, ChangeMask, ChangeSet, Damage, ExtChange, Observer, OriginMask, RootChange, Scope};
 pub use dump::{DumpOpts, SceneStats};
@@ -110,6 +110,8 @@ pub struct Scene {
     pub(crate) index: query::Indexes,
     /// Last pass's drawn nodes per viewport (SG3).
     pub(crate) hits: hit::HitLists,
+    /// CV1 (SV49): the hit testers of host-painted panes, by their node (`hit::PaneHit`).
+    pub(crate) panes: hit::Panes,
     pub(crate) tick: u64,
     pub(crate) in_batch: bool,
     pub(crate) counters: Counters,
@@ -153,6 +155,7 @@ impl Default for Scene {
             roots: RootTable::default(),
             index: query::Indexes::default(),
             hits: hit::HitLists::default(),
+            panes: Default::default(),
             tick: 0,
             in_batch: false,
             counters: Counters::default(),

@@ -39,13 +39,17 @@ macro_rules! dom_signals {
             $crate::kinds::SignalDef { name: "keyup", args: $crate::kinds::KEY_ARGS, sync: true, doc: "A key went up while this node or a descendant had focus (EV1)." },
             $crate::kinds::SignalDef { name: "focusin", args: $crate::kinds::FOCUS_ARGS, sync: true, doc: "This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none." },
             $crate::kinds::SignalDef { name: "focusout", args: $crate::kinds::FOCUS_ARGS, sync: true, doc: "This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none." },
+            // CV1 (SV50): appended
+            $crate::kinds::SignalDef { name: "pointermove", args: $crate::kinds::POINTER_ARGS, sync: true, doc: "The pointer moved over this node or a descendant (EV1 propagation; CV1): one per frame at the last point, `button` -1, `buttons` the held ones, `offsetX`/`offsetY` relative to the target. Not cancelable: egui always sees the move." },
         ]
     };
 }
 
 /// EV1: the arguments of the DOM-style events (`dom_signals!`).
-pub(crate) const POINTER_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("x", Ty::F64), ("y", Ty::F64), ("button", Ty::I64), ("modifiers", Ty::I64)];
-pub(crate) const WHEEL_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("x", Ty::F64), ("y", Ty::F64), ("dx", Ty::F64), ("dy", Ty::F64), ("modifiers", Ty::I64)];
+/// CV1 appended `ox`, `oy` (the point relative to the target's rect) and `buttons` (held, DOM bits).
+pub(crate) const POINTER_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("x", Ty::F64), ("y", Ty::F64), ("button", Ty::I64), ("modifiers", Ty::I64), ("ox", Ty::F64), ("oy", Ty::F64), ("buttons", Ty::I64)];
+/// CV1 appended `ox`, `oy`.
+pub(crate) const WHEEL_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("x", Ty::F64), ("y", Ty::F64), ("dx", Ty::F64), ("dy", Ty::F64), ("modifiers", Ty::I64), ("ox", Ty::F64), ("oy", Ty::F64)];
 pub(crate) const KEY_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("key", Ty::Str), ("repeat", Ty::Bool), ("modifiers", Ty::I64)];
 pub(crate) const FOCUS_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("related", Ty::I64)];
 
@@ -361,6 +365,8 @@ pub enum P {
     StatusTip,
     StatusSection,
     Message,
+    /// CV1 (SV53): Widget (`anchor-scope`, the keyed each keys around a node)
+    AnchorScope,
     /// OW5b: `table` header (FM1's QW4: sort, hidden columns, saved state; `stretch-last`) and
     /// `table-column` (`hideable`, `header-align`, `elide`; `name` reuses the icon's key)
     Sortable,
