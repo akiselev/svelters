@@ -238,6 +238,12 @@ impl<'a> NodeRef<'a> {
         self.s.anchor_at(self.i)
     }
 
+    /// SV53: the `anchor-scope` the runtime set on this node (the top of a keyed each item): its
+    /// keys, outermost first, U+001F-separated.
+    pub fn anchor_scope(self) -> Option<&'a str> {
+        self.s.common[self.i].as_deref().and_then(|c| c.anchor_scope.as_deref())
+    }
+
     /// SV53: the keyed each item this node is in: the innermost `anchor-scope` on it or an
     /// ancestor, as the item's key (the last of the keys the runtime set), if any.
     pub fn item_key(self) -> Option<&'a str> {

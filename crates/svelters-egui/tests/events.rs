@@ -426,7 +426,8 @@ fn ev1_filters_run_before_svelte_and_can_consume() {
     rig.click(button);
     assert!(rig.take().is_empty(), "no Svelte listener saw a consumed event");
     assert_eq!(rig.posted(button, "clicked"), 0, "nor egui");
-    let seen_now: Vec<_> = seen.borrow_mut().drain(..).collect();
+    // CV1: the hover before the press is a `pointermove` the filters see too
+    let seen_now: Vec<_> = seen.borrow_mut().drain(..).filter(|e| e.1 != "pointermove").collect();
     let (o, i, b) = (rig.id(outer), rig.id(inner), rig.id(button));
     let _ = (o, b);
     assert_eq!(seen_now[0], ("all", "pointerdown".into(), rig.backend.scene().read(|s| s.get(o).unwrap().parent().unwrap().id()), EventPhase::Capture), "the scene's filters at the root");

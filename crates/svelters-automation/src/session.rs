@@ -121,6 +121,107 @@ impl Default for ActOptions {
     }
 }
 
+/// SV51: a point in an act's target, in its local points (from the top left of its rect drawn last
+/// pass; a point outside the rect is allowed: a canvas drag that leaves the node), or its centre.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub enum At {
+    #[default]
+    Center,
+    Local(egui::Pos2),
+}
+
+impl At {
+    fn in_rect(self, rect: egui::Rect) -> egui::Pos2 {
+        match self {
+            At::Center => rect.center(),
+            At::Local(p) => rect.min + p.to_vec2(),
+        }
+    }
+}
+
+/// SV51: where a drag ends.
+#[derive(Clone, Debug)]
+pub enum DragTo {
+    /// A point in the target's local points.
+    Local(egui::Pos2),
+    /// The centre of another node (resolved when the drag starts).
+    Node(Target),
+}
+
+/// SV51: `input.drag`: a press at `from`, `steps` moves (one frame each) to `to`, a release there.
+#[non_exhaustive]
+#[derive(Clone, Debug)]
+pub struct Drag {
+    pub from: At,
+    pub to: DragTo,
+    /// Moves between the press and the release (at least 1), each in its own frame.
+    pub steps: u32,
+    pub button: egui::PointerButton,
+    /// Held for the whole drag (`ModifiersChanged` before the press, released after).
+    pub modifiers: egui::Modifiers,
+}
+
+impl Drag {
+    /// From the target's centre to `to` (its local points), 10 steps, primary button.
+    pub fn to(to: egui::Pos2) -> Drag {
+        Drag::new(DragTo::Local(to))
+    }
+    /// From the target's centre to `node`'s centre.
+    pub fn to_node(node: impl Into<Target>) -> Drag {
+        Drag::new(DragTo::Node(node.into()))
+    }
+    fn new(to: DragTo) -> Drag {
+        Drag { from: At::Center, to, steps: 10, button: egui::PointerButton::Primary, modifiers: egui::Modifiers::NONE }
+    }
+    pub fn from(mut self, at: At) -> Drag {
+        self.from = at;
+        self
+    }
+    pub fn steps(mut self, n: u32) -> Drag {
+        self.steps = n.max(1);
+        self
+    }
+    pub fn button(mut self, b: egui::PointerButton) -> Drag {
+        self.button = b;
+        self
+    }
+    pub fn modifiers(mut self, m: egui::Modifiers) -> Drag {
+        self.modifiers = m;
+        self
+    }
+}
+
+/// SV51: `input.wheel`: a scroll at a point of the target.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug)]
+pub struct Wheel {
+    pub at: At,
+    /// egui's wheel delta (positive `y` scrolls up, as egui sends it), in `unit`s.
+    pub delta: egui::Vec2,
+    /// `Line` (a mouse wheel's notches), `Point` (a trackpad's pixels) or `Page`.
+    pub unit: egui::MouseWheelUnit,
+    pub modifiers: egui::Modifiers,
+}
+
+impl Wheel {
+    /// `lines` notches (positive `y`: up) at the target's centre.
+    pub fn lines(lines: egui::Vec2) -> Wheel {
+        Wheel { at: At::Center, delta: lines, unit: egui::MouseWheelUnit::Line, modifiers: egui::Modifiers::NONE }
+    }
+    /// `points` of trackpad scroll (positive `y`: up) at the target's centre.
+    pub fn points(points: egui::Vec2) -> Wheel {
+        Wheel { at: At::Center, delta: points, unit: egui::MouseWheelUnit::Point, modifiers: egui::Modifiers::NONE }
+    }
+    pub fn at(mut self, at: At) -> Wheel {
+        self.at = at;
+        self
+    }
+    pub fn modifiers(mut self, m: egui::Modifiers) -> Wheel {
+        self.modifiers = m;
+        self
+    }
+}
+
 /// What an act did, read after the app settled.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ActResult {
@@ -281,7 +382,7 @@ impl<D: Driver> Session<D> {
             "roots": roots,
             "grants": {"read": self.grants.read, "act": self.grants.act, "tooling": self.grants.tooling, "clock": self.grants.clock},
             "capabilities": ["scene.query", "scene.node", "scene.snapshot", "a11y.tree", "app.roots", "input.click", "input.focus",
-                "input.fill", "input.set_value", "input.press", "input.type", "input.hover", "wait.settled", "wait.for",
+                "input.fill", "input.set_value", "input.press", "input.type", "input.hover", "input.pointer_move", "input.wheel", "input.drag", "wait.settled", "wait.for",
                 "journal.subscribe", "journal.take", "capture.screenshot", "clock.now", "clock.advance"],
             "clock": self.clock_json(),
         }))
@@ -603,7 +704,7 @@ impl<D: Driver> Session<D> {
                     }
                 };
                 let n = s.get(id).expect("resolved");
-                let rect = n.screen_rect().map(|(_, r)| r);
+                let rect = node_rect(s, n);
                 let check = if !n.is_visible() || rect.is_none_or(|r| r.area() <= 0.0) {
                     Err("not visible".to_string())
                 } else if !has_state(n, "enabled") {
@@ -764,6 +865,117 @@ impl<D: Driver> Session<D> {
         self.act(target.into(), opts, |me, _, rect| {
             me.send(egui::Event::PointerMoved(rect.center()));
             Tier::Synthetic
+        })
+    }
+
+    /// SV51 `input.pointer_move`: the pointer moves to `at` in the target (its local points), with
+    /// `modifiers` held during the move. Synthetic only.
+    pub fn pointer_move(
+        &mut self,
+        target: impl Into<Target>,
+        at: At,
+        modifiers: egui::Modifiers,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        self.act(target.into(), opts, |me, _, rect| {
+            me.with_modifiers(modifiers, |me| me.send(egui::Event::PointerMoved(at.in_rect(rect))));
+            Tier::Synthetic
+        })
+    }
+
+    /// SV51 `input.wheel`: the pointer moves to the point, then one wheel event there (egui's
+    /// `MouseWheel`: line, point or page deltas, with its modifiers). Synthetic only.
+    pub fn wheel(
+        &mut self,
+        target: impl Into<Target>,
+        wheel: Wheel,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        self.act(target.into(), opts, |me, _, rect| {
+            let p = wheel.at.in_rect(rect);
+            me.send(egui::Event::PointerMoved(p));
+            me.step(); // the wheel scrolls what is hovered
+            me.with_modifiers(wheel.modifiers, |me| {
+                me.send(egui::Event::MouseWheel {
+                    unit: wheel.unit,
+                    delta: wheel.delta,
+                    phase: egui::TouchPhase::Move,
+                    source: egui::MouseWheelSource::Unknown,
+                    modifiers: wheel.modifiers,
+                })
+            });
+            Tier::Synthetic
+        })
+    }
+
+    /// SV51 `input.drag`: a press at `drag.from` in the target, `drag.steps` pointer moves on a
+    /// straight line to `drag.to`, one frame each, and the release there, with `drag.modifiers`
+    /// held throughout. Deterministic: frames run at the driver's step (the virtual clock).
+    /// Synthetic only. A `DragTo::Node` end must resolve (to one node) when the drag starts.
+    pub fn drag(
+        &mut self,
+        target: impl Into<Target>,
+        drag: Drag,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        let end = match &drag.to {
+            DragTo::Local(_) => None,
+            DragTo::Node(t) => Some(self.resolve_rect(t)?),
+        };
+        self.act(target.into(), opts, |me, _, rect| {
+            let from = drag.from.in_rect(rect);
+            let to = match (&drag.to, end) {
+                (DragTo::Local(p), _) => rect.min + p.to_vec2(),
+                (_, Some(r)) => r.center(),
+                (_, None) => from,
+            };
+            let (b, m) = (drag.button, drag.modifiers);
+            if m != egui::Modifiers::NONE {
+                me.send(egui::Event::ModifiersChanged(m));
+            }
+            me.send(egui::Event::PointerMoved(from));
+            me.step();
+            me.send(egui::Event::PointerButton { pos: from, button: b, pressed: true, modifiers: m });
+            me.step();
+            let n = drag.steps.max(1);
+            for i in 1..=n {
+                me.send(egui::Event::PointerMoved(from.lerp(to, i as f32 / n as f32)));
+                me.step();
+            }
+            me.send(egui::Event::PointerButton { pos: to, button: b, pressed: false, modifiers: m });
+            if m != egui::Modifiers::NONE {
+                me.send(egui::Event::ModifiersChanged(egui::Modifiers::NONE));
+            }
+            Tier::Synthetic
+        })
+    }
+
+    /// `f`'s events with `m` held (a `ModifiersChanged` before and after, when not none).
+    fn with_modifiers(&mut self, m: egui::Modifiers, f: impl FnOnce(&mut Self)) {
+        if m == egui::Modifiers::NONE {
+            return f(self);
+        }
+        self.send(egui::Event::ModifiersChanged(m));
+        f(self);
+        self.send(egui::Event::ModifiersChanged(egui::Modifiers::NONE));
+    }
+
+    /// The screen rect of `target` now (one node), for a drag's end.
+    fn resolve_rect(&self, target: &Target) -> Result<egui::Rect, Error> {
+        self.with_scene(|s, roots| {
+            let id = match target {
+                Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
+                Target::Invalid(e) => return Err(e.clone()),
+                Target::Ref(r) => {
+                    if r.epoch != self.epoch || s.get(r.id).is_none() {
+                        return Err(stale(*r));
+                    }
+                    r.id
+                }
+            };
+            s.get(id)
+                .and_then(|n| node_rect(s, n))
+                .ok_or_else(|| Error::new("node.not_actionable", format!("{} is not drawn", target.describe())))
         })
     }
 
@@ -990,6 +1202,38 @@ impl<D: Driver> Session<D> {
             "input.click" => act_json(self.click(target_param(p)?, opts()?)?),
             "input.hover" => act_json(self.hover(target_param(p)?, opts()?)?),
             "input.focus" => act_json(self.focus(target_param(p)?, opts()?)?),
+            "input.pointer_move" => act_json(self.pointer_move(target_param(p)?, at_param(p, "at")?, modifiers_param(p)?, opts()?)?),
+            "input.wheel" => {
+                let unit = match p.get("unit").and_then(Value::as_str).unwrap_or("line") {
+                    "line" => egui::MouseWheelUnit::Line,
+                    "pixel" | "point" => egui::MouseWheelUnit::Point,
+                    "page" => egui::MouseWheelUnit::Page,
+                    u => return Err(Error::new("params.invalid", format!("unknown wheel unit `{u}` (line, pixel, page)"))),
+                };
+                let num = |k: &str| p.get(k).map_or(Ok(0.0), |v| v.as_f64().ok_or_else(|| Error::new("params.invalid", format!("`{k}` wants a number"))));
+                let wheel = Wheel { at: at_param(p, "at")?, delta: egui::vec2(num("dx")? as f32, num("dy")? as f32), unit, modifiers: modifiers_param(p)? };
+                act_json(self.wheel(target_param(p)?, wheel, opts()?)?)
+            }
+            "input.drag" => {
+                let to = match (p.get("to"), p.get("to_selector"), p.get("to_ref")) {
+                    (Some(_), None, None) => match at_param(p, "to")? {
+                        At::Local(l) => DragTo::Local(l),
+                        At::Center => return Err(Error::new("params.invalid", "`to` wants [x, y]")),
+                    },
+                    (None, Some(_), None) => DragTo::Node(Target::Selector(parse(str_param(p, "to_selector")?)?)),
+                    (None, None, Some(_)) => DragTo::Node(target_param(&json!({"ref": p["to_ref"]}))?),
+                    _ => return Err(Error::new("params.invalid", "input.drag wants one of `to` ([x, y] in the target), `to_selector` or `to_ref`")),
+                };
+                let button = match p.get("button").and_then(Value::as_str).unwrap_or("primary") {
+                    "primary" | "left" => egui::PointerButton::Primary,
+                    "secondary" | "right" => egui::PointerButton::Secondary,
+                    "middle" => egui::PointerButton::Middle,
+                    b => return Err(Error::new("params.invalid", format!("unknown button `{b}`"))),
+                };
+                let steps = p.get("steps").and_then(Value::as_u64).unwrap_or(10) as u32;
+                let drag = Drag { from: at_param(p, "from")?, to, steps: steps.max(1), button, modifiers: modifiers_param(p)? };
+                act_json(self.drag(target_param(p)?, drag, opts()?)?)
+            }
             "input.fill" => act_json(self.fill(target_param(p)?, str_param(p, "text")?, opts()?)?),
             "input.set_value" => {
                 let v = p.get("value").and_then(Value::as_f64).ok_or_else(|| Error::new("params.invalid", "`value` wants a number"))?;
@@ -1145,6 +1389,44 @@ fn str_param<'v>(p: &'v Value, k: &str) -> Result<&'v str, Error> {
     p.get(k)
         .and_then(Value::as_str)
         .ok_or_else(|| Error::new("params.invalid", format!("`{k}` wants a string")))
+}
+
+/// Where `n` was drawn last pass on screen: a widget's rect, else (CV1) a container's layout rect
+/// from the hit list (a `box` canvas has no widget rect).
+fn node_rect(s: SceneRef<'_>, n: NodeRef<'_>) -> Option<egui::Rect> {
+    n.screen_rect().map(|(_, r)| r).or_else(|| s.box_rect(s.root_viewport(n.root())?, n.id()))
+}
+
+/// SV51: `[x, y]` in the target's local points under `k`; absent: its centre.
+fn at_param(p: &Value, k: &str) -> Result<At, Error> {
+    match p.get(k) {
+        None | Some(Value::Null) => Ok(At::Center),
+        Some(Value::Array(a)) if a.len() == 2 && a.iter().all(Value::is_number) => {
+            Ok(At::Local(egui::pos2(a[0].as_f64().unwrap_or(0.0) as f32, a[1].as_f64().unwrap_or(0.0) as f32)))
+        }
+        _ => Err(Error::new("params.invalid", format!("`{k}` wants [x, y] (local points of the target)"))),
+    }
+}
+
+/// SV51: `modifiers`: `"Shift+Ctrl"` (the names of `input.press`'s chords) or `["Shift", "Ctrl"]`.
+fn modifiers_param(p: &Value) -> Result<egui::Modifiers, Error> {
+    let names: Vec<String> = match p.get("modifiers") {
+        None | Some(Value::Null) => return Ok(egui::Modifiers::NONE),
+        Some(Value::String(s)) => s.split('+').map(|x| x.trim().to_string()).filter(|x| !x.is_empty()).collect(),
+        Some(Value::Array(a)) => a.iter().map(|v| v.as_str().unwrap_or("?").to_string()).collect(),
+        _ => return Err(Error::new("params.invalid", "`modifiers` wants \"Shift+Ctrl\" or [\"Shift\", \"Ctrl\"]")),
+    };
+    let mut m = egui::Modifiers::NONE;
+    for n in names {
+        match n.as_str() {
+            "Ctrl" | "Control" => m.ctrl = true,
+            "Cmd" | "Command" | "Mod" => m |= egui::Modifiers::COMMAND,
+            "Shift" => m.shift = true,
+            "Alt" | "Option" => m.alt = true,
+            x => return Err(Error::new("params.invalid", format!("unknown modifier `{x}`"))),
+        }
+    }
+    Ok(m)
 }
 
 fn timeout(p: &Value) -> f64 {

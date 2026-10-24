@@ -12,7 +12,7 @@
 //! ```
 //!
 //! A pane is a host-owned node at the top of its own root (a slot without a mount): it has an id
-//! (`PaneId::node`), a viewport (`Embed::set_viewport(pane.slot(), …)`) and a visibility
+//! (`PaneId::node`), its key as its `anchor` (automation's `anchor=<key>`), a viewport (`Embed::set_viewport(pane.slot(), …)`) and a visibility
 //! (`Embed::set_visible`), and nothing in it runs JS. [`Embed::show_pane`] records it in the
 //! viewport's hit list where the host draws it, so it is ordered among the slots and overlays by
 //! draw order and layer; an overlay root drawn over it is above it. Its [`PaneHit`] answers what is
@@ -80,7 +80,13 @@ impl Embed {
         let p = Rc::new(RefCell::new(hit));
         let id = PaneId(slot);
         let dynp: Rc<RefCell<dyn PaneHit>> = p.clone();
-        self.inner.backend.0.scene.borrow_mut().panes.by_node.insert(id.node(), (name, dynp));
+        let mut scene = self.inner.backend.0.scene.borrow_mut();
+        // the key is the pane's anchor: `anchor=<key>` selectors (automation) find it
+        let kind = scene.core[scene.ix(id.node())].kind as usize;
+        let anchor = crate::kinds::prop_id(kind, crate::kinds::P::Anchor);
+        let _ = scene.set_value(id.node(), anchor, &svelters_abi::Value::Str(name.clone()), crate::scene::Origin::Rust(crate::scene::ProviderId::APP));
+        scene.panes.by_node.insert(id.node(), (name, dynp));
+        drop(scene);
         PaneHandle { id, p }
     }
 

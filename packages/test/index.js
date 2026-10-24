@@ -150,6 +150,21 @@ export class Locator {
   focus(opts) {
     return this.#act('input.focus', {}, opts);
   }
+  /** SV51: the pointer to `at` (`[x, y]` in the node's local points; default its centre). */
+  pointerMove({ at, modifiers, ...opts } = {}) {
+    return this.#act('input.pointer_move', { at, modifiers }, opts);
+  }
+  /** SV51: a wheel event: `dx`, `dy` (egui's direction: positive `dy` scrolls up) in `unit`s
+   * (`'line'`, `'pixel'`, `'page'`), at `at` with `modifiers` (`'Shift+Ctrl'`). */
+  wheel({ dx = 0, dy = 0, unit = 'line', at, modifiers, ...opts } = {}) {
+    return this.#act('input.wheel', { dx, dy, unit, at, modifiers }, opts);
+  }
+  /** SV51: press at `from`, `steps` moves (one frame each) to `to` (`[x, y]` in the node) or to
+   * another locator's centre, release there. */
+  drag({ from, to, steps, button, modifiers, ...opts } = {}) {
+    const end = to instanceof Locator ? { to_selector: to.selector } : { to };
+    return this.#act('input.drag', { from, ...end, steps, button, modifiers }, opts);
+  }
   fill(text, opts) {
     return this.#act('input.fill', { text }, opts);
   }

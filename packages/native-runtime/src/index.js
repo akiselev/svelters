@@ -280,19 +280,32 @@ function attach(node) {
  * SV53 (CV1): a native at the top of a keyed `{#each}` item gets the `anchor-scope` prop: the
  * item's key, after the keys of the keyed items around it up to its native parent (U+001F
  * between them). The egui backend scopes the ids of the `anchor`s inside it by these keys, so an
- * anchor repeated in every row is one egui id per row. Kinds (and backends) without the prop
- * throw once and are not asked again.
+ * anchor repeated in every row is one egui id per row. Only once the app has written an `anchor`
+ * (egui's prop; other backends never get the scope): from then on at every placement, and at an
+ * anchor write for the items above that node. Kinds without the prop throw once and are not asked
+ * again.
  */
 function anchorScope(node) {
+  if (!anchorsUsed || node.anchorScope !== undefined || noAnchorScope.has(node.kind)) return;
   let keys = null;
   for (let c = node.owner; c instanceof Region; c = c.owner) if (c.keyed) (keys ??= []).push(keyText(c.key));
-  if (!keys || node.anchorScope !== undefined || noAnchorScope.has(node.kind)) return;
+  if (!keys) return;
   const scope = keys.reverse().join('\u001f');
   node.anchorScope = scope;
   try {
     node.host.setProp(node.h, 'anchor-scope', scope);
   } catch {
     noAnchorScope.add(node.kind);
+  }
+}
+let anchorsUsed = false;
+/** An `anchor` was written on `node`: the keyed items above it get their scope now. */
+function anchorWritten(node) {
+  anchorsUsed = true;
+  for (let n = node; n; ) {
+    anchorScope(n);
+    const t = n.owner && target(n.owner);
+    n = t instanceof Slot ? t.node : null;
   }
 }
 const noAnchorScope = new Set();
@@ -609,6 +622,7 @@ export function set(node, prop, value) {
     return;
   }
   if (value == null) node.snippets?.delete(prop);
+  if (prop === 'anchor' && value) anchorWritten(node); // SV53
   node.host.setProp(node.h, prop, value);
 }
 

@@ -5,6 +5,7 @@
 //! part     := "role=" ROLE ("[" attr "]")*      role=button[name="Apply"][disabled]
 //!           | "label=" text | "text=" text       text: "exact" or bare (substring, any case)
 //!           | "anchor=" ANCHOR | "root=" KEY     anchor=extents[0], root=panel.task
+//!           | "key=" ITEM                        the keyed each item `ITEM`: key=k42 >> anchor=row
 //!           | "pos=" X "," Y                     hit test in the root viewport (last resort)
 //!           | "nth=" N                           the N-th match so far (0-based, -1: last)
 //!           | "component=" … | "source=" … | "a11y=" …   parsed; answered `capability.absent` (AU3)
@@ -76,6 +77,9 @@ pub enum Part {
     Label(TextMatch),
     Text(TextMatch),
     Anchor(String),
+    /// CV1 (SV53): the top nodes of the keyed `{#each}` item with this key (the next part searches
+    /// them and their subtrees).
+    Key(String),
     Root(String),
     Pos(egui::Pos2),
     Nth(i64),
@@ -153,6 +157,7 @@ fn part(p: &str) -> Result<Part, Error> {
         "label" => Part::Label(TextMatch::parse(v)?),
         "text" => Part::Text(TextMatch::parse(v)?),
         "anchor" => Part::Anchor(strip_quotes(v).to_string()),
+        "key" => Part::Key(strip_quotes(v).to_string()),
         "root" => Part::Root(strip_quotes(v).to_string()),
         "css" => Part::Css(v.to_string()),
         "nth" => {

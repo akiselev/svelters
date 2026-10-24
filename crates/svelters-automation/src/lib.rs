@@ -45,8 +45,8 @@ pub use driver::{A11yNode, Driver};
 pub use svelters_macros::test;
 pub use selector::{Selector, TextMatch};
 pub use session::{
-    ActOptions, ActResult, Expect, Grants, NodeInfo, Ref, RootInfo, Session, Target, Tier,
-    WaitState,
+    ActOptions, ActResult, At, Drag, DragTo, Expect, Grants, NodeInfo, Ref, RootInfo, Session, Target, Tier,
+    WaitState, Wheel,
 };
 
 use std::sync::atomic::{AtomicBool, Ordering};

@@ -797,7 +797,7 @@ impl EguiBackend {
             if moved.is_some() && matches!(input.events[k], Event::PointerButton { .. } | Event::MouseWheel { .. } | Event::PointerGone) {
                 self.pointer_move(ctx, nested, vp, moved.take(), mods);
             }
-            if let Event::Key { modifiers, .. } | Event::PointerButton { modifiers, .. } | Event::MouseWheel { modifiers, .. } = &input.events[k] {
+            if let Event::ModifiersChanged(modifiers) | Event::Key { modifiers, .. } | Event::PointerButton { modifiers, .. } | Event::MouseWheel { modifiers, .. } = &input.events[k] {
                 mods = *modifiers;
             }
             match input.events[k].clone() {
