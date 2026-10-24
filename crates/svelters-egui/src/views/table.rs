@@ -324,8 +324,9 @@ impl Clone for ModelSlot {
 }
 
 impl PartialEq for ModelSlot {
-    fn eq(&self, o: &ModelSlot) -> bool {
-        self.0.is_none() && o.0.is_none()
+    /// As [`TableRt`]: not part of a table's props.
+    fn eq(&self, _: &ModelSlot) -> bool {
+        true
     }
 }
 
