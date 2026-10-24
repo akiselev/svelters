@@ -7,7 +7,10 @@
 
 <window title="Waits" default-width={400} default-height={300}>
   <box class="column">
-    <button margin-left={x}>Mover</button>
+    <box class="row">
+      <box width={x + 1} height={4}></box>
+      <button>Mover</button>
+    </box>
     <box class="stack">
       <button width={200} height={40}>Under</button>
       <button class="cover">Cover</button>
@@ -19,6 +22,9 @@
 <style>
   .column {
     gap: 8px;
+  }
+  .row {
+    flex-direction: row;
   }
   .stack {
     position: relative;

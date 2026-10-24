@@ -277,6 +277,7 @@ mod tests {
         n.store(0, Ordering::SeqCst);
         r.poll(500.0);
         n.store(1, Ordering::SeqCst);
-        assert_eq!(r.poll(600.0)[0].busy_for_ms, 0.0);
+        let anim = r.poll(600.0).into_iter().find(|b| b.id == "anim").unwrap();
+        assert_eq!(anim.busy_for_ms, 0.0);
     }
 }
