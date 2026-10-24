@@ -4,7 +4,7 @@ Lane `ci/b8-tables` (cloud batch 8, for cadatomic), from `master` c3034451 (b6ef
 Brief: `plans/cloud/batch8/LANE-tables.md`. Sources: TRACKS.md LISTS (LS2), `LS1-SG5-virtual-lists.md`,
 `OW5b-table.md`, `WG5a-list-table-interaction.md`. LS3 (row records, templates) stays out.
 
-Status: **done on the lane, waiting for CI** (sha and run ids below).
+Status: **done on the lane; CI green** (sha and run ids below). Ready for the coordinator's merge (order 1).
 
 ## Scope
 1. SV41: an engine-neutral Rust row-model trait, read by the egui `table` with no JS call per page; the JS
@@ -103,7 +103,11 @@ Bounds asserted: frame ≤ 400 ms debug / 40 ms release; bind per row ≤ 20 ms 
 
 ## CI
 
-- sha: (filled in at the end)
+- Code sha `eea7d263` (all five workflows green): js 40047707170, linux-gtk 40047707146 (including the new
+  `egui-benches` release job), linux-qt 40047707058, macos-appkit 40047707164, windows-winui 40047707277.
+- This record's own commit follows it (docs only); its CI run is reported to the coordinator.
+- The release bench numbers are in linux-gtk run 40047707146's `egui-benches` job summary. Reading it needs an
+  account, which this session doesn't have, so they are not copied here. The coordinator can add them at the merge.
 
 ## Handoff and open items
 - **cadatomic request text not read:** `add_repo akiselev/cadatomic` was refused in this cloud session, so the
