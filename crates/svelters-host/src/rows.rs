@@ -43,12 +43,20 @@ impl<'a> Cell<'a> {
     /// The text a view shows (integral floats without a fraction, as JS prints them).
     pub fn display(&self) -> Cow<'_, str> {
         match self {
-            Cell::Empty => Cow::Borrowed(""),
             Cell::Text(s) => Cow::Borrowed(s),
+            other => other.clone().into_text(),
+        }
+    }
+
+    /// [`Cell::display`], keeping borrowed text borrowed.
+    pub fn into_text(self) -> Cow<'a, str> {
+        match self {
+            Cell::Empty => Cow::Borrowed(""),
+            Cell::Text(s) => s,
             Cell::Int(i) => Cow::Owned(i.to_string()),
-            Cell::Float(f) if f.fract() == 0.0 && f.abs() < 1e15 => Cow::Owned(format!("{}", *f as i64)),
+            Cell::Float(f) if f.fract() == 0.0 && f.abs() < 1e15 => Cow::Owned(format!("{}", f as i64)),
             Cell::Float(f) => Cow::Owned(f.to_string()),
-            Cell::Bool(b) => Cow::Borrowed(if *b { "true" } else { "false" }),
+            Cell::Bool(b) => Cow::Borrowed(if b { "true" } else { "false" }),
         }
     }
 
@@ -208,8 +216,7 @@ pub trait RowModel: Any {
 
     /// The text keyboard type-ahead matches (default: the first cell).
     fn label(&self, row: usize) -> Option<Cow<'_, str>> {
-        let c = self.cell(row, 0);
-        Some(Cow::Owned(c.display().into_owned()))
+        Some(self.cell(row, 0).into_text())
     }
 
     /// The row's anchor (`"row[net:GND]"`), for paths and tutorials.

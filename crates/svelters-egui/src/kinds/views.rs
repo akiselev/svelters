@@ -118,11 +118,13 @@ static TABLE_SIGNALS: &[SignalDef] = &[
     signal(
         "sort-changed",
         &[("sort-column", Ty::I64), ("sort-order", Ty::Enum(SORT))],
-        "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS).",
+        "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table).",
     ),
     signal("columns-changed", &[("hidden-columns", Ty::StrList)], "The column menu hid or showed a column; carries the hidden columns."),
     signal("header-state-changed", &[("header-state", Ty::Str)], "The user resized, hid or sorted; carries the new `header-state` (save it)."),
     signal("copy", &[("ids", Ty::IdList)], "Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds)."),
+    // LS2
+    signal("row-toggled", &[("id", Ty::I64), ("expanded", Ty::Bool)], "A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now."),
 ];
 
 static TABLE_METHODS: &[MethodDef] = &[
@@ -322,7 +324,7 @@ pub(super) const TABLE: KindDef = KindDef {
     props: TABLE_PROPS,
     signals: TABLE_SIGNALS,
     methods: TABLE_METHODS,
-    doc: "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+    doc: "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
 };
 
 pub(super) const TABLE_COLUMN: KindDef = KindDef {
