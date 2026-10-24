@@ -11485,7 +11485,7 @@
       },
       "css_hidden": [],
       "css_note": "Rows, cells and headers follow the theme; the box paints under the whole table.",
-      "doc": "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+      "doc": "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
       "interface": false,
       "lifetime": "owned",
       "methods": {
@@ -12047,6 +12047,26 @@
           "sync": false,
           "sync_required": false
         },
+        "row-toggled": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "expanded",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now.",
+          "handler_result": "none",
+          "js_event": "row-toggled",
+          "name": "row-toggled",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "selectionchange": {
           "args": [
             {
@@ -12075,7 +12095,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS).",
+          "doc": "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table).",
           "handler_result": "none",
           "js_event": "sort-changed",
           "name": "sort-changed",

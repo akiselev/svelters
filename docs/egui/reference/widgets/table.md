@@ -3,7 +3,7 @@ title: table
 tag: table
 kind: Table
 category: views
-description: "A virtual table (`egui_table`): only the visible rows and columns are drawn."
+description: "svelters' own virtual table: only the visible rows and columns are drawn; rows from a JS window or a Rust row model."
 status: stub
 verified_at: ~
 generated: partial   # regions between BEGIN/END GENERATED markers come from the spec
@@ -14,7 +14,7 @@ sources:
 # `<table>`
 
 <!-- BEGIN GENERATED: summary of kinds.Table (tools/docs/egui/gen_reference.py). Do not edit. -->
-A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.
+A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.
 
 **Base:** [`Widget`](widget.md) · **Children:** [`table-column`](table-column.md) · **Text content:** no
 <!-- END GENERATED -->
@@ -66,8 +66,9 @@ Plus the 29 props every element has, from [`Widget`](widget.md#props): `accessib
 | `onheader-double-clicked` | `(column: number) => void` | A column header was double-clicked (not its resize edge); carries the column (child index). |
 | `onheader-state-changed` | `(header_state: string) => void` | The user resized, hid or sorted; carries the new `header-state` (save it). |
 | `onrange` | `(first: number, last: number) => void` | The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`. |
+| `onrow-toggled` | `(id: number, expanded: boolean) => void` | A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now. |
 | `onselectionchange` | `(ids: unknown[]) => void` | The user changed the selection; carries the selected row ids. |
-| `onsort-changed` | `(sort_column: number, sort_order: string) => void` | A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS). |
+| `onsort-changed` | `(sort_column: number, sort_order: string) => void` | A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table). |
 
 `on:activated` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
@@ -91,6 +92,19 @@ Call them through `bind:this`: `el.call('clear-rows')`.
 <!-- END GENERATED -->
 
 ## Behaviour you need to know
+
+### Rows from a Rust model (LS2)
+
+A table can read its rows from a Rust `RowModel` instead of the JS window: `SceneMut::set_table_model`
+(see [Rust row models](../../rust/row-models.md)). Then:
+
+- no `range` event fires, and `set-rows`, `set-ids` and `clear-rows` are not used;
+- `sort-column`/`sort-order` (and header clicks on a `sortable` table) sort the rows in Rust;
+- a filter set on the model's `RowView` hides rows; selection stays keyed by the model's row keys;
+- tree rows (`RowModel::depth`) are indented in the first shown column, with a chevron
+  (`::part(expander)`, `:checked` while expanded). A click on it, or Right/Left on the first column,
+  expands and collapses the row and fires `row-toggled(id, expanded)`;
+- a table without `table-column` children gets the model's columns.
 
 <!-- TODO(DOC7): what the tables don't say: timing, edge cases, limits. -->
 

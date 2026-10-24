@@ -57,7 +57,7 @@ impl RowModel for Nets {
         self.reads.set(self.reads.get() + 1);
         match col {
             0 => Cell::text(&self.names[row]),
-            1 => Cell::text(if row % 3 == 0 { "power" } else { "signal" }),
+            1 => Cell::text(if row.is_multiple_of(3) { "power" } else { "signal" }),
             _ => Cell::Int(self.pads[row]),
         }
     }
@@ -241,7 +241,7 @@ fn sorting_and_filtering_run_in_rust_and_keep_the_selection_by_key() {
     r.write(|m| m.with_table_model::<Nets, _>(t, |_, v| v.set_filter(Some(RowFilter::custom(|m, row| m.cell(row, 1).display() == "power" && m.cell(row, 0).display().contains('5'))))));
     r.h.run();
     let shown = r.shown(t);
-    assert!(!shown.is_empty() && shown.iter().all(|&k| k % 3 == 0), "{shown:?}");
+    assert!(!shown.is_empty() && shown.iter().all(|&k| k.is_multiple_of(3)), "{shown:?}");
     assert!(!shown.contains(&5));
     assert_eq!(r.get(t, "selected"), ids(&[5]), "a filtered-out row stays selected (by key)");
     r.write(|m| m.with_table_model::<Nets, _>(t, |_, v| v.set_filter(None)));
@@ -339,6 +339,12 @@ fn stats(v: &mut [f64]) -> (f64, f64) {
     (v[v.len() / 2], v[v.len() - 1])
 }
 
+/// The median of 10 frames with nothing changing (egui and kittest's AccessKit tree: the floor).
+fn idle_ms(r: &mut Rig) -> f64 {
+    let mut v: Vec<f64> = (0..10).map(|_| frame_ms(r)).collect();
+    stats(&mut v).0
+}
+
 fn frame_ms(r: &mut Rig) -> f64 {
     let t0 = Instant::now();
     r.h.harness.step();
@@ -368,6 +374,7 @@ fn bench_virtual_list(n: usize) {
     r.h.run();
     let shown = binds.get();
     assert!(shown > 10, "{shown} rows bound");
+    let idle = idle_ms(&mut r);
     // a page rebind: the model changes, every realised row binds again in one frame
     let mut rebind = Vec::new();
     for _ in 0..10 {
@@ -378,7 +385,7 @@ fn bench_virtual_list(n: usize) {
     let rows = rebind.iter().map(|x| x.1).max().unwrap();
     let mut ms: Vec<f64> = rebind.iter().map(|x| x.0).collect();
     let (rebind_ms, _) = stats(&mut ms);
-    let per_row = rebind_ms / rows.max(1) as f64;
+    let per_row = (rebind_ms - idle).max(0.0) / rows.max(1) as f64;
     // a fling: 60 frames of 600 points each
     let mut fling = Vec::new();
     for _ in 0..60 {
@@ -389,7 +396,7 @@ fn bench_virtual_list(n: usize) {
     let off = r.scene.read(|s| s.virtual_list(list).unwrap().offset());
     assert!(off > 10_000.0, "the fling scrolled: {off}");
     report(format!(
-        "SV47 virtual-list {n} rows: page rebind {rebind_ms:.2} ms ({rows} rows, {per_row:.3} ms/row); fling frame median {fling_med:.2} ms, max {fling_max:.2} ms"
+        "SV47 virtual-list {n} rows: still frame {idle:.2} ms; page rebind {rebind_ms:.2} ms ({rows} rows, bind {per_row:.3} ms/row over the still frame); fling frame median {fling_med:.2} ms, max {fling_max:.2} ms"
     ));
     assert!(per_row < BIND_ROW_MAX_MS, "bind per row {per_row:.3} ms");
     assert!(rebind_ms < FRAME_MAX_MS && fling_max < FRAME_MAX_MS, "frames: rebind {rebind_ms:.2}, fling max {fling_max:.2}");
@@ -402,6 +409,7 @@ fn bench_table(n: usize) {
     let t0 = Instant::now();
     let t = r.table(nets, RowView::new(), &[("sortable", Value::Bool(true))]);
     let first_ms = t0.elapsed().as_secs_f64() * 1e3;
+    let idle = idle_ms(&mut r);
     // a page rebind: a jump far away shows only new rows
     let mut jumps = Vec::new();
     let mut cells = 0;
@@ -412,7 +420,7 @@ fn bench_table(n: usize) {
         cells = cells.max(reads.get() - c0);
     }
     let (jump_ms, jump_max) = stats(&mut jumps);
-    let per_row = jump_ms / (cells as f64 / 3.0).max(1.0);
+    let per_row = (jump_ms - idle).max(0.0) / (cells as f64 / 3.0).max(1.0);
     // a fling
     let mut fling = Vec::new();
     for _ in 0..60 {
@@ -432,7 +440,7 @@ fn bench_table(n: usize) {
     r.h.harness.step();
     let filter_ms = t2.elapsed().as_secs_f64() * 1e3;
     report(format!(
-        "SV47 table {n} rows: first frame {first_ms:.1} ms; page jump median {jump_ms:.2} ms, max {jump_max:.2} ms ({cells} cells, {per_row:.3} ms/row); fling frame median {fling_med:.2} ms, max {fling_max:.2} ms; sort by name {sort_ms:.1} ms; filter {filter_ms:.1} ms"
+        "SV47 table {n} rows: first frame {first_ms:.1} ms; still frame {idle:.2} ms; page jump median {jump_ms:.2} ms, max {jump_max:.2} ms ({cells} cells, {per_row:.3} ms/row over the still frame); fling frame median {fling_med:.2} ms, max {fling_max:.2} ms; sort by name {sort_ms:.1} ms; filter {filter_ms:.1} ms"
     ));
     assert!(per_row < BIND_ROW_MAX_MS, "per row {per_row:.3} ms");
     assert!(jump_max < FRAME_MAX_MS && fling_max < FRAME_MAX_MS, "frames: jump max {jump_max:.2}, fling max {fling_max:.2}");

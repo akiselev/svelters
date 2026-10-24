@@ -250,8 +250,11 @@ pub enum RowFilter {
     /// [`RowModel::columns`] column, or column 0 when the model names none).
     Text { needle: String, columns: Vec<usize> },
     /// Rows for which the function is true.
-    Custom(Arc<dyn Fn(&dyn RowModel, usize) -> bool>),
+    Custom(RowPredicate),
 }
+
+/// A [`RowFilter::Custom`] predicate: (model, model row) → shown.
+pub type RowPredicate = Arc<dyn Fn(&dyn RowModel, usize) -> bool>;
 
 impl RowFilter {
     pub fn text(needle: impl Into<String>) -> RowFilter {
@@ -631,7 +634,7 @@ mod tests {
     fn nets(n: usize) -> VecModel {
         let mut m = VecModel::new(vec![Column::new("name", "Net"), Column::new("class", "Class"), Column::new("pads", "Pads").kind(CellKind::Number)]);
         for i in 0..n {
-            m.push(vec![Cell::Text(format!("N{i}").into()), Cell::text(if i % 3 == 0 { "power" } else { "signal" }), Cell::Int((i % 7) as i64)]);
+            m.push(vec![Cell::Text(format!("N{i}").into()), Cell::text(if i.is_multiple_of(3) { "power" } else { "signal" }), Cell::Int((i % 7) as i64)]);
         }
         m
     }
