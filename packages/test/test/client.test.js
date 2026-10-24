@@ -79,6 +79,30 @@ test('locators, acts and expect send the app the same methods as Rust', async ()
   m.server.close();
 });
 
+test('SV51: pointer moves, wheel and drags send their points, units and modifiers', async () => {
+  const m = await mockApp({
+    'session.hello': () => ({ protocol: 1 }),
+    'input.pointer_move': () => ({}),
+    'input.wheel': () => ({}),
+    'input.drag': () => ({}),
+  });
+  const app = await attach(m.endpoint);
+  const canvas = app.locator('anchor=board');
+  await canvas.pointerMove({ at: [10, 20], modifiers: 'Shift' });
+  await canvas.wheel({ dy: -3, modifiers: 'Ctrl' });
+  await canvas.drag({ from: [5, 5], to: [100, 50], steps: 4 });
+  await app.getByText('A').drag({ to: app.getByText('B'), button: 'secondary' });
+  const calls = m.seen.filter((r) => r.method.startsWith('input.')).map((r) => [r.method, JSON.parse(JSON.stringify(r.params))]);
+  assert.deepEqual(calls, [
+    ['input.pointer_move', { selector: 'anchor=board', at: [10, 20], modifiers: 'Shift' }],
+    ['input.wheel', { selector: 'anchor=board', dx: 0, dy: -3, unit: 'line', modifiers: 'Ctrl' }],
+    ['input.drag', { selector: 'anchor=board', from: [5, 5], to: [100, 50], steps: 4 }],
+    ['input.drag', { selector: 'text=A', to_selector: 'text=B', button: 'secondary' }],
+  ]);
+  app.client.close();
+  m.server.close();
+});
+
 test('a closed app fails pending and later calls with transport.closed', async () => {
   const m = await mockApp({ 'session.hello': () => ({ protocol: 1 }), 'wait.settled': () => new Promise(() => {}) });
   const app = await attach(m.endpoint);

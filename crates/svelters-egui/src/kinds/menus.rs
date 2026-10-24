@@ -47,6 +47,14 @@ static ENTRY_PROPS: &[PropDef] = &[
         Def::Str(""),
         "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`).",
     ),
+    // CV1 (SV53): appended
+    prop(
+        "anchor-scope",
+        P::AnchorScope,
+        Ty::Str,
+        Def::Str(""),
+        "Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set.",
+    ),
 ];
 
 static MENU_PROPS: &[PropDef] = &[prop(

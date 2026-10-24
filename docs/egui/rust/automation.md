@@ -12,6 +12,7 @@ sources:
   - plans/milestones/AU1b-seeds-clock-test-macro.md
   - plans/milestones/AU2-automation-transport.md
   - plans/milestones/AU2b-ts-runner-mount.md
+  - plans/milestones/CV1-canvas-seams.md   # drag, pointer_move, wheel; panes
 ---
 
 # Automation and end-to-end tests
@@ -126,6 +127,7 @@ Selectors are the same in Rust, TS and JSON. Engines chain with `>>`:
 | `role=button[name="Save"]` | ARIA role and accessible name (`[name*=…]`, state names) |
 | `text="Exact"` / `text=part` | text, exact, or a case-insensitive substring |
 | `label=`, `anchor=`, `root=` | label text, `anchor` prop, root key |
+| `key=k42` | the rows of the keyed `{#each}` item with key `k42` (`key=k42 >> anchor=row`; CV1) |
 | `pos=x,y`, `nth=` | a point; the n-th match |
 
 `locate` is strict: more than one match fails `node.ambiguous`. Not yet: regex names (`/…/`),
@@ -171,6 +173,12 @@ assert!(s.snapshot(None)?.contains(r#"- label "Count: 1""#));
   first (attached, visible, stable over two frames, enabled, hit at the centre) and reply after the
   settle. `ActOptions { tier, force, timeout_ms }`: `Tier::Synthetic` (default, egui input) or
   `Tier::Semantic` (AccessKit actions).
+- Canvas acts (CV1, synthetic only, deterministic under the virtual clock): `drag(target, Drag, opts)`
+  (a press, `steps` moves of one frame each, the release; `Drag::to(local).from(At::Local(p)).steps(n)
+  .button(b).modifiers(m)` or `Drag::to_node(other)`), `pointer_move(target, At, modifiers, opts)` and
+  `wheel(target, Wheel::lines(v) | Wheel::points(v), opts)` (egui's direction: positive `y` scrolls
+  up; `.at(..)`, `.modifiers(..)`). Points are the target's local points (from the top left of its
+  rect; outside it is allowed); `At::Center` is the default. See "Canvases" below.
 - Settled means `Embed::settled()` is empty, no injected input is pending, and the host's idle predicate
   holds. A timeout names the busy reasons.
 - `set_tooling_roots(..)` hides tooling roots from queries unless `include_tooling(true)` (needs the
@@ -179,6 +187,34 @@ assert!(s.snapshot(None)?.contains(r#"- label "Count: 1""#));
 - `Session::call(method, params)` is the JSON schema: `scene.query`, `scene.locate`, `scene.node`,
   `scene.snapshot`, `a11y.tree`, `input.*`, `wait.settled`, `wait.for`, `capture.screenshot`,
   `journal.subscribe/take`, `clock.*`.
+
+## Canvases: drags, moves and wheels at local points
+
+A canvas is either a Svelte node (a `canvas`, a box listening to `onpointerdown`/`onpointermove`)
+or a pane the host paints itself (`Embed::create_pane`, CV1): a pane's key is its `anchor`, so
+`anchor=<key>` addresses it, and events on its parts reach the host's event filters as
+`Target::Virtual`.
+
+```rust
+// not run
+s.drag("anchor=board", Drag::to(egui::pos2(150.0, 140.0)).from(At::Local(egui::pos2(50.0, 100.0)))
+    .steps(4).modifiers(egui::Modifiers::SHIFT), ActOptions::default())?;
+s.wheel("anchor=board", Wheel::lines(egui::vec2(0.0, 2.0)).modifiers(egui::Modifiers::CTRL), ActOptions::default())?;
+```
+
+| JSON method | Params (besides the target and `ActOptions`' `tier`, `force`, `timeout`) |
+|---|---|
+| `input.pointer_move` | `at: [x, y]` (default the centre), `modifiers: "Shift+Ctrl"` or `["Shift"]` |
+| `input.wheel` | `dx`, `dy` (egui's direction), `unit: "line" \| "pixel" \| "page"` (default `line`), `at`, `modifiers` |
+| `input.drag` | `from: [x, y]`, one of `to: [x, y]`, `to_selector`, `to_ref`; `steps` (default 10), `button: "primary" \| "secondary" \| "middle"`, `modifiers` |
+
+TypeScript: `locator.pointerMove({ at, modifiers })`, `locator.wheel({ dx, dy, unit, at, modifiers })`,
+`locator.drag({ from, to: [x, y] | otherLocator, steps, button, modifiers })`.
+
+A drag sends the move to `from`, the press, each step's move and the release in their own frames, so
+a `pointermove` listener sees every step (SV50 coalesces moves within one frame only). Modifiers are
+held with egui's `ModifiersChanged` around the act and carried on the press, release and wheel
+events.
 
 ## Out of process: `Server`
 

@@ -319,9 +319,49 @@ impl Scene {
         }
         let h = id.to_raw();
         self.core[i].egui_id = match self.roots.get(r).and_then(|e| e.base) {
-            Some(base) => crate::ids::rooted_id(base, h, &self.common(i).anchor),
+            Some(base) => {
+                let anchor = &self.common(i).anchor;
+                match self.anchor_path(i).filter(|_| !anchor.is_empty()) {
+                    Some(path) => crate::ids::scoped_id(base, anchor, &path),
+                    None => crate::ids::rooted_id(base, h, anchor),
+                }
+            }
             None => crate::ids::node_id(h),
         };
+    }
+
+    /// SV53: the scope path of node `i` (`ids::scoped_id`), root first: each `anchor-scope` on it
+    /// and its ancestors in its root, with the anchors of its anchored ancestors; `None` when no
+    /// node on the way has a scope. O(depth), for anchored nodes only.
+    fn anchor_path(&self, i: usize) -> Option<Vec<(&str, &str)>> {
+        let r = self.core[i].root;
+        let mut path: Vec<(&str, &str)> = Vec::new();
+        let mut scoped = false;
+        let mut x = Some(i);
+        while let Some(k) = x {
+            if let Some(c) = self.common[k].as_deref() {
+                if k != i && !c.anchor.is_empty() {
+                    path.push(("a", c.anchor.as_str()));
+                }
+                if let Some(sc) = c.anchor_scope.as_deref() {
+                    path.push(("s", sc));
+                    scoped = true;
+                }
+            }
+            x = self.core[k].parent.and_then(|p| self.idx(p)).filter(|&p| self.core[p].root == r);
+        }
+        path.reverse();
+        scoped.then_some(path)
+    }
+
+    /// SV53: re-derives the egui ids of `id`'s subtree in root `r` (an `anchor` or `anchor-scope`
+    /// change moves the ids of the anchored nodes below it).
+    pub(crate) fn rederive(&mut self, id: NodeId, r: RootIx) {
+        let mut stack = vec![id];
+        while let Some(x) = stack.pop() {
+            self.attached(x, r);
+            stack.extend(self.children[self.ix(x)].iter().copied());
+        }
     }
 
     /// Sets the egui id base of root `r` (EM1: a root mounted into a slot, `None` when unmounted).

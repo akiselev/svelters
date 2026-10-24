@@ -827,7 +827,7 @@ export interface SvlEvent<A extends unknown[] = unknown[]> {
   stopPropagation(): void;
 }
 
-/** EV1: what a DOM-style event's handler gets (`pointerdown`, `click`, `wheel`, `keydown`, `focusin`, ...):
+/** EV1: what a DOM-style event's handler gets (`pointerdown`, `pointermove`, `click`, `wheel`, `keydown`, `focusin`, ...):
  * dispatched along the scene in capture, target and bubble order. */
 export interface SvlUiEvent extends SvlEvent {
   /** The node the event is for; `currentTarget` is the node whose listener runs. */
@@ -844,8 +844,13 @@ export interface SvlUiEvent extends SvlEvent {
   y?: number;
   clientX?: number;
   clientY?: number;
-  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward. */
+  /** Pointer events and `wheel`: the point relative to the top left of the target's drawn rect. */
+  offsetX?: number;
+  offsetY?: number;
+  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward; -1 for `pointermove`. */
   button?: number;
+  /** Pointer events: the buttons held (1 primary, 2 secondary, 4 middle, 8 back, 16 forward). */
+  buttons?: number;
   /** `wheel`: the scroll in points. */
   deltaX?: number;
   deltaY?: number;

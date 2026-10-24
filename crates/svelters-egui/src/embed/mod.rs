@@ -31,13 +31,18 @@
 //!   before a deferred viewport's pass). [`Embed::move_root`] moves a root into another slot without
 //!   a remount.
 //!
+//! - **Panes** (CV1, SV49): a pane the host paints itself (a canvas) answers SG3 hit tests through
+//!   its `PaneHit` ([`Embed::create_pane`], [`Embed::show_pane`]; `panes.rs`).
+//!
 //! Writer lane: EMBED.
 
 mod current;
+mod panes;
 mod roots;
 mod settle;
 mod slots;
 
+pub use panes::{PaneHandle, PaneId};
 pub use current::{EmbedId, SlotPainter, show_viewport_passes, with_current, with_embed};
 pub use roots::{FaultCause, RootError, RootId, RootInfo, RootOwner, RootState};
 pub use settle::{Busy, BusyProbe, Settle};

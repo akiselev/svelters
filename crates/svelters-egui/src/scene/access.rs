@@ -926,10 +926,14 @@ impl Scene {
             crate::rich::touched(self, i); // RT2: the label shows the run
         }
         // EM1: the anchor salts the egui id (ARCH-EMBED §4.4): re-derive it in its root
+        // SV53: so does the keyed each scope, for the anchored nodes below it
+        if def.key == kinds::P::AnchorScope && !self.core[i].root.is_detached() {
+            self.rederive(id, self.core[i].root);
+        }
         if def.key == kinds::P::Anchor {
             let r = self.core[i].root;
             if !r.is_detached() {
-                self.attached(id, r);
+                self.rederive(id, r);
                 let new = self.common[i].as_deref().map_or("", |c| c.anchor.as_str()); // SG6: `None` = no anchor
                 super::query::index_anchor(&mut self.roots, r, id, old_anchor.as_deref().unwrap_or(""), false);
                 super::query::index_anchor(&mut self.roots, r, id, new, true);

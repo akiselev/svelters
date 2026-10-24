@@ -94,6 +94,8 @@ pub struct Common {
     pub accessible_name: String,
     /// EM1 (ARCH-EMBED §4.4): the `anchor` prop.
     pub anchor: String,
+    /// CV1 (SV53): `anchor-scope` (the keyed each keys, U+001F-separated); `None` while empty.
+    pub anchor_scope: Option<Box<str>>,
     pub width: Option<f64>,
     pub height: Option<f64>,
     pub min_width: Option<f64>,
@@ -146,6 +148,7 @@ impl Common {
         tooltip: String::new(),
         accessible_name: String::new(),
         anchor: String::new(),
+        anchor_scope: None,
         width: None,
         height: None,
         min_width: None,

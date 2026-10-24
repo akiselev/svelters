@@ -623,6 +623,10 @@ impl<'a> SceneRef<'a> {
             Target::Virtual(v) => {
                 let host = self.get(v.host)?;
                 let (vp, hr) = host.screen_rect()?;
+                // SV49: a pane's part
+                if let Some(r) = self.pane_part_rect(v.host, v.key) {
+                    return r.map(|r| (vp, r));
+                }
                 let r = with_virtual(self.s, host.i, |vc| vc.row_of(v.key).and_then(|row| vc.rect(row)))??;
                 Some((vp, r.translate(hr.min.to_vec2())))
             }
@@ -634,6 +638,9 @@ impl<'a> SceneRef<'a> {
         match t {
             Target::Node(n) => self.get(n)?.anchor().map(str::to_string),
             Target::Virtual(v) => {
+                if let Some(a) = self.pane_part_anchor(v.host, v.key) {
+                    return a; // SV49
+                }
                 let host = self.get(v.host)?;
                 let row = with_virtual(self.s, host.i, |vc| vc.anchor(v.key).map(|a| a.into_owned()))??;
                 Some(match host.anchor() {

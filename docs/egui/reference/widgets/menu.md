@@ -32,7 +32,7 @@ A menu: a menu-bar button, or a submenu row inside another menu. Inside a `menu-
 |---|---|---|---|---|
 | `label` | `string` | `""` | no | The title: the menu-bar button, or the submenu row. |
 
-Plus the 5 props every menu entry has, from [`MenuEntry`](menu-entry.md#props): `accessible-name`, `anchor`, `enabled`, `tooltip`, `visible`.
+Plus the 6 props every menu entry has, from [`MenuEntry`](menu-entry.md#props): `accessible-name`, `anchor`, `anchor-scope`, `enabled`, `tooltip`, `visible`.
 <!-- END GENERATED -->
 
 ## Events

@@ -30,7 +30,7 @@ A line between menu items (a vertical one in a menu bar).
 <!-- BEGIN GENERATED: props of kinds.MenuSeparator (tools/docs/egui/gen_reference.py). Do not edit. -->
 No props of its own.
 
-Plus the 5 props every menu entry has, from [`MenuEntry`](menu-entry.md#props): `accessible-name`, `anchor`, `enabled`, `tooltip`, `visible`.
+Plus the 6 props every menu entry has, from [`MenuEntry`](menu-entry.md#props): `accessible-name`, `anchor`, `anchor-scope`, `enabled`, `tooltip`, `visible`.
 <!-- END GENERATED -->
 
 ## Events

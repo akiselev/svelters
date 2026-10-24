@@ -9,7 +9,9 @@
 //! Svelte's `onclick` / `onclickcapture` (and `on:click|capture`) listen to them; a listener gets
 //! the event object (`NativeEvent` in `@svelters/native-runtime`) with `target`, `currentTarget`,
 //! `eventPhase`, the point, key or button, and `stopPropagation()`, `stopImmediatePropagation()`,
-//! `preventDefault()`.
+//! `preventDefault()`. Pointer events and `wheel` carry the point twice: `x`/`y` in the viewport's
+//! points and `offsetX`/`offsetY` relative to the target's drawn rect (CV1: [`SceneEvent::local`];
+//! a provider part's own rect where the provider has one, else its host's).
 //!
 //! **When.** egui decides clicks, drags and focus when its pass begins, from the raw input. The
 //! dispatch therefore runs in an input hook (an `egui::Plugin`'s `input_hook`), before the pass and
@@ -24,6 +26,7 @@
 //! | `pointerup` | the node under the point | the click egui would see is cancelled |
 //! | `click`, `dblclick` | the innermost node holding the press and the release (primary button) | as `pointerup` |
 //! | `wheel` | the node under the pointer | the scroll never reaches egui |
+//! | `pointermove` | the node under the pointer (SV50): one per pass, at the last point (moves between button changes are coalesced) | not cancelable: egui always sees the move (hover) |
 //! | `keydown`, `keyup` | the focused node, else the viewport's window | the key (and the text it types) never reaches the focused widget |
 //! | `focusin`, `focusout` | the node that took or lost focus, after the pass that moved it | not cancelable |
 //!
@@ -63,6 +66,8 @@ use svelters_abi::{SVL_LISTEN_CAPTURE, SVL_SIGNAL_FLAGS_SHIFT, Value};
 pub enum EventKind {
     PointerDown,
     PointerUp,
+    /// CV1 (SV50): the pointer moved over the node (one per pass).
+    PointerMove,
     Click,
     DoubleClick,
     ContextMenu,
@@ -84,6 +89,7 @@ impl EventKind {
         match self {
             EventKind::PointerDown => "pointerdown",
             EventKind::PointerUp => "pointerup",
+            EventKind::PointerMove => "pointermove",
             EventKind::Click => "click",
             EventKind::DoubleClick => "dblclick",
             EventKind::ContextMenu => "contextmenu",
@@ -97,7 +103,7 @@ impl EventKind {
     }
 
     fn pointer(self) -> bool {
-        matches!(self, EventKind::PointerDown | EventKind::PointerUp | EventKind::Click | EventKind::DoubleClick | EventKind::ContextMenu)
+        matches!(self, EventKind::PointerDown | EventKind::PointerUp | EventKind::PointerMove | EventKind::Click | EventKind::DoubleClick | EventKind::ContextMenu)
     }
 }
 
@@ -130,8 +136,15 @@ pub struct SceneEvent {
     pub viewport: ViewportId,
     /// Pointer events and `wheel`: the point (screen points of the viewport).
     pub pos: Option<Pos2>,
-    /// Pointer events: the button.
+    /// CV1: pointer events and `wheel`: the point relative to the top left of the target's rect
+    /// drawn last pass (a provider part's rect where it has one, else its host's): DOM `offsetX`,
+    /// `offsetY`. Filled at dispatch.
+    pub local: Option<Pos2>,
+    /// Pointer events: the button (`None` for `pointermove`).
     pub button: Option<PointerButton>,
+    /// CV1: pointer events: the buttons held, DOM `buttons` bits (1 primary, 2 secondary, 4
+    /// middle, 8 back, 16 forward).
+    pub buttons: u8,
     /// `wheel`: the scroll in points, DOM direction (positive `y`: scrolling down).
     pub delta: Vec2,
     /// Key events: the key, and whether it is an auto-repeat.
@@ -154,7 +167,9 @@ impl SceneEvent {
             phase: EventPhase::Target,
             viewport,
             pos: None,
+            local: None,
             button: None,
+            buttons: 0,
             delta: Vec2::ZERO,
             key: None,
             repeat: false,
@@ -503,11 +518,13 @@ struct Vp {
     /// A keydown was prevented: the text it types (the next `Text` event, in this input or a
     /// later one) is taken out too.
     eat_text: bool,
+    /// SV50: the buttons held (DOM `buttons` bits), from the presses and releases seen.
+    buttons: u8,
 }
 
 impl Vp {
     fn new(vp: ViewportId) -> Vp {
-        Vp { vp, press: [None; BUTTONS], last_click: None, pointer: None, focus: None, focused: None, eat_text: false }
+        Vp { vp, press: [None; BUTTONS], last_click: None, pointer: None, focus: None, focused: None, eat_text: false, buttons: 0 }
     }
 }
 
@@ -596,6 +613,17 @@ fn dom_button(b: PointerButton) -> i64 {
         PointerButton::Secondary => 2,
         PointerButton::Extra1 => 3,
         PointerButton::Extra2 => 4,
+    }
+}
+
+/// DOM `buttons` bit of `b`.
+fn dom_buttons_bit(b: PointerButton) -> u8 {
+    match b {
+        PointerButton::Primary => 1,
+        PointerButton::Secondary => 2,
+        PointerButton::Middle => 4,
+        PointerButton::Extra1 => 8,
+        PointerButton::Extra2 => 16,
     }
 }
 
@@ -760,18 +788,37 @@ impl EguiBackend {
         let time = input.time.unwrap_or_else(|| ctx.input_for(vp, |i| i.time) + input.predicted_dt as f64);
         let max_click_dist = ctx.options(|o| o.input_options.max_click_dist);
         let dbl_delay = ctx.options(|o| o.input_options.max_double_click_delay);
+        // SV50: the moves since the last button change, dispatched as one `pointermove`
+        let mut moved: Option<Pos2> = None;
+        // the modifiers held: last pass's, then the latest an event of this input carries
+        let mut mods = ctx.input_for(vp, |i| i.modifiers);
         let mut k = 0;
         while k < input.events.len() {
+            if moved.is_some() && matches!(input.events[k], Event::PointerButton { .. } | Event::MouseWheel { .. } | Event::PointerGone) {
+                self.pointer_move(ctx, nested, vp, moved.take(), mods);
+            }
+            if let Event::ModifiersChanged(modifiers) | Event::Key { modifiers, .. } | Event::PointerButton { modifiers, .. } | Event::MouseWheel { modifiers, .. } = &input.events[k] {
+                mods = *modifiers;
+            }
             match input.events[k].clone() {
-                Event::PointerMoved(pos) => self.0.ev.borrow_mut().vp(vp).pointer = Some(pos),
+                Event::PointerMoved(pos) => {
+                    self.0.ev.borrow_mut().vp(vp).pointer = Some(pos);
+                    moved = Some(pos);
+                }
                 Event::PointerGone => self.0.ev.borrow_mut().vp(vp).pointer = None,
                 Event::PointerButton { pos, button, pressed: true, modifiers } => {
-                    self.0.ev.borrow_mut().vp(vp).pointer = Some(pos);
+                    {
+                        let mut st = self.0.ev.borrow_mut();
+                        let v = st.vp(vp);
+                        v.pointer = Some(pos);
+                        v.buttons |= dom_buttons_bit(button);
+                    }
                     let target = self.target_at(vp, pos);
                     let mut press = Press { target: target.map(Target::node), pos, consumed: false, prevented: false };
                     if let Some(t) = target {
                         let mut ev = SceneEvent::new(EventKind::PointerDown, t, vp);
                         (ev.pos, ev.button, ev.modifiers) = (Some(pos), Some(button), modifiers);
+                        ev.buttons = self.0.ev.borrow_mut().vp(vp).buttons;
                         let o = self.fire(ctx, nested, ev.clone());
                         (press.consumed, press.prevented) = (o.consumed, o.prevented);
                         if button == PointerButton::Secondary && !o.consumed {
@@ -792,6 +839,7 @@ impl EguiBackend {
                         let mut st = self.0.ev.borrow_mut();
                         let v = st.vp(vp);
                         v.pointer = Some(pos);
+                        v.buttons &= !dom_buttons_bit(button);
                         v.press[button as usize].take()
                     };
                     if press.is_some_and(|p| p.consumed) {
@@ -801,9 +849,10 @@ impl EguiBackend {
                     let target = self.target_at(vp, pos);
                     let mut cancel = false;
                     let mut consumed = false;
+                    let held = self.0.ev.borrow_mut().vp(vp).buttons;
                     let pointer_ev = |kind, t| {
                         let mut ev = SceneEvent::new(kind, t, vp);
-                        (ev.pos, ev.button, ev.modifiers) = (Some(pos), Some(button), modifiers);
+                        (ev.pos, ev.button, ev.modifiers, ev.buttons) = (Some(pos), Some(button), modifiers, held);
                         ev
                     };
                     if let Some(t) = target {
@@ -895,6 +944,20 @@ impl EguiBackend {
             }
             k += 1;
         }
+        self.pointer_move(ctx, nested, vp, moved, mods);
+    }
+
+    /// SV50: one `pointermove` at `pos` (the last point of a run of moves) to the node under it,
+    /// when anything on its path would see it. Not cancelable: egui always sees the move.
+    fn pointer_move(&self, ctx: &Context, nested: bool, vp: ViewportId, pos: Option<Pos2>, modifiers: Modifiers) {
+        let Some(pos) = pos else { return };
+        let Some(t) = self.target_at(vp, pos) else { return };
+        let mut ev = SceneEvent::new(EventKind::PointerMove, t, vp);
+        (ev.pos, ev.modifiers, ev.cancelable) = (Some(pos), modifiers, false);
+        ev.buttons = self.0.ev.borrow_mut().vp(vp).buttons;
+        if self.wanted(&ev) {
+            self.fire(ctx, nested, ev);
+        }
     }
 
     /// The end of each pass: focus that moved to or from one of this scene's nodes queues
@@ -958,6 +1021,9 @@ impl EguiBackend {
             let path = path_of(&s, ev.target.node());
             if path.is_empty() {
                 return Outcome::default();
+            }
+            if let Some(pos) = ev.pos.filter(|_| ev.local.is_none()) {
+                ev.local = local_point(SceneRef::new(&s), ev.viewport, ev.target, pos);
             }
             let light = light_index(&s, &path);
             ev.light_target = path[light];
@@ -1068,12 +1134,17 @@ fn js_args(ev: &SceneEvent, phase: EventPhase, prevented: bool) -> Vec<Value> {
     let p = phase as i64 | if prevented { PHASE_PREVENTED } else { 0 } | if ev.cancelable { 0 } else { PHASE_NOT_CANCELABLE };
     let mut a = vec![Value::I64(ev.light_target.to_raw() as i64), Value::I64(p)];
     let pos = ev.pos.unwrap_or(Pos2::ZERO);
+    let local = ev.local.unwrap_or(pos);
     match ev.kind {
         k if k.pointer() => {
-            a.extend([Value::F64(pos.x as f64), Value::F64(pos.y as f64), Value::I64(ev.button.map_or(0, dom_button)), Value::I64(modifier_bits(ev.modifiers))]);
+            // DOM: `button` is -1 for a move
+            let button = if k == EventKind::PointerMove { -1 } else { ev.button.map_or(0, dom_button) };
+            a.extend([Value::F64(pos.x as f64), Value::F64(pos.y as f64), Value::I64(button), Value::I64(modifier_bits(ev.modifiers))]);
+            a.extend([Value::F64(local.x as f64), Value::F64(local.y as f64), Value::I64(ev.buttons as i64)]);
         }
         EventKind::Wheel => {
             a.extend([Value::F64(pos.x as f64), Value::F64(pos.y as f64), Value::F64(ev.delta.x as f64), Value::F64(ev.delta.y as f64), Value::I64(modifier_bits(ev.modifiers))]);
+            a.extend([Value::F64(local.x as f64), Value::F64(local.y as f64)]);
         }
         EventKind::KeyDown | EventKind::KeyUp => {
             a.extend([Value::Str(ev.key.map_or("", |k| k.name()).to_string()), Value::Bool(ev.repeat), Value::I64(modifier_bits(ev.modifiers))]);
@@ -1081,4 +1152,15 @@ fn js_args(ev: &SceneEvent, phase: EventPhase, prevented: bool) -> Vec<Value> {
         _ => a.push(Value::I64(ev.related.map_or(0, |n| n.to_raw() as i64))),
     }
     a
+}
+
+/// CV1: `pos` relative to the top left of `t`'s rect drawn last pass in `vp`: a container's box
+/// rect, a widget's rect, a provider part's rect where the provider has one, else its host's.
+fn local_point(s: SceneRef<'_>, vp: ViewportId, t: Target, pos: Pos2) -> Option<Pos2> {
+    let node = t.node();
+    let rect = match t {
+        Target::Node(_) => s.box_rect(vp, node).or_else(|| s.target_rect(t).map(|r| r.1)),
+        Target::Virtual(_) => s.target_rect(t).or_else(|| s.target_rect(Target::Node(node))).map(|r| r.1),
+    }?;
+    Some((pos - rect.min).to_pos2())
 }
