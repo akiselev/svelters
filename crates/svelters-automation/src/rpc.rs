@@ -35,6 +35,15 @@ const CODES: &[&str] = &[
     "automation.disabled",
     "method.unknown",
     "params.invalid",
+    "journal.overflow",
+    "event.unregistered",
+    "event.invalid",
+    "event.kind_conflict",
+    "wait.never",
+    "busy.invalid",
+    "replay.invalid",
+    "replay.missing",
+    "replay.live_emit",
     "rpc.parse",
     "rpc.request",
     "transport.closed",
@@ -114,7 +123,12 @@ pub fn numeric_code(e: &Error) -> i64 {
 }
 
 pub fn error_reply(id: &Value, numeric: i64, e: &Error) -> Value {
-    json!({ "jsonrpc": "2.0", "id": id, "error": { "code": numeric, "message": e.message, "data": { "code": e.code } } })
+    let mut data = json!({ "code": e.code });
+    if let Some(r) = &e.data {
+        // AU7: a wait's report
+        data["report"] = r.clone();
+    }
+    json!({ "jsonrpc": "2.0", "id": id, "error": { "code": numeric, "message": e.message, "data": data } })
 }
 
 /// The reply for a call's outcome.
@@ -133,7 +147,9 @@ pub fn outcome(reply: &Value) -> Result<Value, Error> {
             .and_then(Value::as_str)
             .unwrap_or("rpc.error");
         let message = e.get("message").and_then(Value::as_str).unwrap_or_default();
-        return Err(Error::new(intern(code), message));
+        let mut err = Error::new(intern(code), message);
+        err.data = e.pointer("/data/report").cloned();
+        return Err(err);
     }
     Ok(reply.get("result").cloned().unwrap_or(Value::Null))
 }
