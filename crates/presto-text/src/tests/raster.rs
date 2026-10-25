@@ -16,7 +16,7 @@ fn masks_are_byte_identical_across_rasterizers() {
     assert_eq!(a.format, GlyphFormat::Mask);
     assert_eq!(a.data.len(), (a.width * a.height) as usize);
     assert!(a.top < 0 && a.top + a.height as i32 > 0, "g descends below the baseline: {a:?}");
-    assert!(a.data.iter().any(|v| *v == 255) || a.data.iter().any(|v| *v > 200));
+    assert!(a.data.contains(&255) || a.data.iter().any(|v| *v > 200));
 }
 
 #[test]

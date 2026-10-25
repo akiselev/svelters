@@ -284,11 +284,10 @@ impl TextSystem {
                 .symbols
                 .entry(ch)
                 .or_insert_with(|| SYMBOL_CHAIN.iter().copied().find(|f| fonts.family_has_char(f, ch)));
-            if let Some(f) = found {
-                if !out.contains(&f) {
+            if let Some(f) = found
+                && !out.contains(&f) {
                     out.push(f);
                 }
-            }
         }
         out
     }
