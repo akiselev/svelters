@@ -214,3 +214,8 @@ when the five svelters workflows plus `presto` are green.
   matched; the 4 red egui-kinds-example tests on linux-gtk came from that. APP-TEST is done (7bd9ee8f: its crates are
   green on all three OSes). To skelter-fixes: Windows `presto-widgets` `dialogs::native::tests::
   an_installed_backend_answers_and_cancel_is_none` (dialogs/native.rs:271, WIDGETS-TIER1's) fails on windows-latest.
+- 23:25: consolidation 1 final: 6a93efd2, 5 of 6 green (linux-gtk red only on F20, fixed by compiler 012047d0).
+  **Consolidation 2 launched:** `session_01G2wHdFUFPtVnsN9F7zf8Ma` (`ci/skelter-integration`: late heads, rename,
+  master merges; berth claude/presto-berth 12d66b6, quire claude/presto-quire faafb7b8). Decided (coordinator):
+  counter-mac green on the final head counts as green; it stays open in the FIX-QUEUE; one re-run, a second failure
+  is red.
