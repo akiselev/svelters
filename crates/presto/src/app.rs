@@ -523,6 +523,12 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
             };
             self.compositor = Some(spawn(sink, clock));
         }
+        // TODO(consolidation, TEXT-INPUT request): install presto-widgets' text services here, beside
+        // `presto_widgets::host::install_text_system(text_system)`:
+        // `presto_widgets::text::shim::install_services(Box::new(services))`, where `services` gives
+        // text kinds the clipboard, a caret fast-commit channel to this window's compositor
+        // (`CompositorApi::fast`) and `clock`. Without both, text-edit draws only its box. Not wired
+        // yet: presto-widgets' text module is on ci/presto-text-input (0030df69), not in base.
         for desc in std::mem::take(&mut self.cfg.windows) {
             if let Err(e) = self.open_window(cx, desc) {
                 eprintln!("presto: cannot open window: {e}");

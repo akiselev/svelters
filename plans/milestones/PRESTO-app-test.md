@@ -150,3 +150,11 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
     commit (no ops, revision 0, no input; the tree only moves its revision forward). Recommend
     `CompositorHandle::ui_frame_skipped(window, frame)` → `Signal::UiFrameSkipped { frame }` clearing
     `ui_sent` (presto-frame's `FrameClock` should take the same signal), then the impl calls it.
+11. **TEXT-INPUT's `TextServices` (asked by the coordinator 2026-10-25 19:28):** not wired yet; the API
+    is on `ci/presto-text-input` 0030df69, not in base. A TODO naming the call sits in `App::init`
+    (`crates/presto/src/app.rs`). One design note for the consolidation: the platform clipboard is only
+    reachable through `&mut dyn PlatformCx` during a handler call, so a `TextServices` installed once in
+    a thread-local cannot hold it. Recommend that the services own their own
+    `presto_platform::SystemClipboard` (or `MemoryClipboard` headless), and that the fast-commit channel
+    be a clone of the compositor handle (`CompositorApi::fast`). `presto` then needs a dependency on
+    `presto-widgets`.
