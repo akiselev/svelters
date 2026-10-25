@@ -16,12 +16,16 @@
 //! | [`frame`] | vsync and presentation sources for the compositor thread |
 //! | [`headless`] | the test platform |
 //! | [`clock`] | presto's real clock and OS timestamp conversion |
+//! | `dialogs` | native file and message dialogs (feature `dialogs`) |
 
 pub mod a11y;
 pub mod api;
 pub mod backend;
 pub mod clipboard;
 pub mod clock;
+#[cfg(feature = "dialogs")]
+pub mod dialogs;
+pub mod frame;
 pub mod headless;
 pub mod keys;
 pub mod os;
@@ -30,4 +34,5 @@ pub mod translate;
 pub use api::*;
 pub use backend::run;
 pub use clipboard::{Clipboard, ClipboardKind, MemoryClipboard, SystemClipboard};
+pub use frame::{FrameSource, FrameWait, IntervalSource, Presented};
 pub use headless::{HeadlessPlatform, PlatformCall, Scripted, VirtualClock};

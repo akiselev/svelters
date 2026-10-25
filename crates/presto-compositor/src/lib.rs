@@ -10,25 +10,29 @@
 //! |---|---|
 //! | [`tree`] | a window's committed state: commits and fast commits applied, flattening per surface |
 //! | [`damage`] | damage by diffing flattened frames, device rects, buffer-age history |
+//! | [`caret`] | the caret blink rule and its per-OS defaults |
 //! | [`core`] | the engine: messages, frame clocks, animations, scroll motions, caret, drawing |
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
-//! | [`pacer`] | the interval frame clock used until `presto-frame` is wired in |
-//! | [`seams`] | the renderer, frame-clock and animation interfaces the compositor codes against |
+//! | [`vsync`] | a thread per platform frame source, posting ticks, occlusion and feedback |
+//! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces (real crates behind traits) |
 
+pub mod caret;
 pub mod core;
 pub mod damage;
 pub mod gpu;
-pub mod pacer;
 pub mod seams;
 pub mod tree;
+pub mod vsync;
 
-pub use crate::core::{FrameSource, Stats};
+pub use crate::caret::CaretBlink;
+pub use crate::core::Stats;
 pub use crate::gpu::GpuContext;
 pub use presto_base::commit::ToUi;
 
 use crate::core::{Engine, EngineConfig, Msg};
 use crate::gpu::{GpuBackend, SharedGpu};
-use crate::seams::{AnimSampler, FlingFactory, PacerFactory, RendererFactory};
+use crate::seams::{PacerFactory, RendererFactory};
+use presto_anim::scroll::DurationBehavior;
 use presto_base::anim::FlingCurve;
 use presto_base::color::Color;
 use presto_base::commit::{Commit, FastCommit};
@@ -41,22 +45,17 @@ use std::sync::{Arc, Mutex, RwLock};
 use std::thread::JoinHandle;
 use std::time::Duration;
 
-/// How the compositor is set up. The renderer, animation sampler and scroll physics come from
-/// presto-render and presto-anim; until they are wired in by default, the caller passes them.
+/// How the compositor is set up.
 pub struct CompositorConfig {
     /// The process clock every thread shares (the platform's).
     pub clock: Arc<dyn Clock>,
-    /// Builds the renderer on the compositor thread (again after device loss).
+    /// Builds the renderer on the compositor thread (again after device loss); defaults to
+    /// [`presto_render::Renderer`].
     pub renderer: RendererFactory,
-    /// Samples compositor animations; `None` aborts them (reported as `AnimationEvent::Aborted`).
-    pub anim: Option<Arc<dyn AnimSampler>>,
-    /// Scroll physics for [`CompositorHandle::fling`]; `None` ignores flings.
-    pub fling: Option<FlingFactory>,
-    /// Builds each window's frame clock; defaults to [`pacer::IntervalPacer`].
+    /// Display pixels per inch, for fling physics (the platform's monitor value).
+    pub ppi: f32,
+    /// Builds each window's frame clock; defaults to [`presto_frame::FrameClock`].
     pub pacer: PacerFactory,
-    /// A platform display clock; `None` = a timer at the refresh interval and presentation estimated
-    /// from GPU completion.
-    pub frame_source: Option<Box<dyn FrameSource>>,
     /// The refresh interval of new windows until the platform reports theirs.
     pub refresh: Span,
     /// Passed to the instance for GL/Wayland (winit's `OwnedDisplayHandle`).
@@ -65,27 +64,26 @@ pub struct CompositorConfig {
     /// Clear colour of damaged areas; `None` = draw over the previous frame.
     pub clear: Option<Color>,
     pub caret_color: Color,
-    /// Half period of the caret blink (the OS setting); `None` = a steady caret.
-    pub caret_blink: Option<Span>,
+    /// The caret blink of new windows (the OS setting; [`CaretBlink::platform_default`]); `None` = a
+    /// steady caret. Per window: [`CompositorHandle::set_caret_blink`].
+    pub caret_blink: Option<CaretBlink>,
     /// Swapchain images assumed per surface for buffer-age-correct damage copies.
     pub swap_images: usize,
 }
 
 impl CompositorConfig {
-    pub fn new(clock: Arc<dyn Clock>, refresh: Span, renderer: RendererFactory) -> Self {
+    pub fn new(clock: Arc<dyn Clock>, refresh: Span) -> Self {
         CompositorConfig {
             clock,
-            renderer,
-            anim: None,
-            fling: None,
-            pacer: Box::new(|interval| Box::new(pacer::IntervalPacer::new(interval))),
-            frame_source: None,
+            renderer: seams::presto_renderer(),
+            ppi: 96.0,
+            pacer: Box::new(seams::frame_clock),
             refresh,
             display: None,
             power: wgpu::PowerPreference::HighPerformance,
             clear: Some(Color::TRANSPARENT),
             caret_color: Color::BLACK,
-            caret_blink: None,
+            caret_blink: Some(CaretBlink::platform_default()),
             // Mesa's Wayland WSI uses up to 4 images even at latency 1 (`round2/wgpu-integration.md` §3.1).
             swap_images: 4,
         }
@@ -124,15 +122,15 @@ impl Compositor {
                 clear: cfg.clear,
                 caret_color: cfg.caret_color,
                 caret_blink: cfg.caret_blink,
-                swap_images: cfg.swap_images,
+                ppi: cfg.ppi,
             },
             cfg.pacer,
-            cfg.anim,
-            cfg.fling,
-            cfg.frame_source,
             to_ui,
             wake_ui,
         );
+        let frame_args: core::SharedFrameArgs = Arc::default();
+        let mut engine = engine;
+        engine.publish_frame_args(frame_args.clone());
         let clock = cfg.clock;
         let thread = std::thread::Builder::new()
             .name("presto-compositor".into())
@@ -142,6 +140,7 @@ impl Compositor {
             tx,
             instance: Arc::new(instance),
             gpu: shared,
+            frame_args,
             thread: Arc::new(Mutex::new(Some(thread))),
         }
     }
@@ -182,6 +181,7 @@ pub struct CompositorHandle {
     tx: Sender<Msg>,
     instance: Arc<wgpu::Instance>,
     gpu: SharedGpu,
+    frame_args: core::SharedFrameArgs,
     thread: Arc<Mutex<Option<JoinHandle<()>>>>,
 }
 
@@ -195,6 +195,12 @@ impl CompositorHandle {
     /// The instance to create surfaces with, on the main thread.
     pub fn instance(&self) -> &wgpu::Instance {
         &self.instance
+    }
+
+    /// The window's frame-clock snapshot (next target, `D_ui`, `est_ui_input`, idle, visible), as of
+    /// the clock's last update: what the UI thread's urgent-frame rule reads without a round trip.
+    pub fn frame_args(&self, window: WindowId) -> Option<presto_frame::FrameArgs> {
+        self.frame_args.read().unwrap_or_else(|e| e.into_inner()).get(&window).copied()
     }
 
     /// The device and queue, once the first surface created them (`None` before that and while a lost
@@ -243,6 +249,11 @@ impl CompositorHandle {
         self.post(Msg::SetVisible { window, visible });
     }
 
+    /// The window's caret blink (the user's OS setting); `None` = a steady caret.
+    pub fn set_caret_blink(&self, window: WindowId, blink: Option<CaretBlink>) {
+        self.post(Msg::SetCaretBlink { window, blink });
+    }
+
     /// The display refresh interval of the window's monitor.
     pub fn set_refresh(&self, window: WindowId, interval: Span) {
         self.post(Msg::SetRefresh { window, interval });
@@ -258,9 +269,15 @@ impl CompositorHandle {
         self.post(Msg::UnregisterTexture(id));
     }
 
-    /// The UI thread has dirty state: send a `ToUi::BeginFrame` for the next frame.
-    pub fn request_ui_frame(&self, window: WindowId) {
-        self.post(Msg::RequestUiFrame(window));
+    /// The UI thread's scene is dirty and wants a `ToUi::BeginFrame` (`true`), or it has nothing
+    /// more to commit (`false`). A level, not a counter.
+    pub fn needs_ui_frame(&self, window: WindowId, on: bool) {
+        self.post(Msg::NeedsUiFrame { window, on });
+    }
+
+    /// The UI answered `BeginFrame { frame }` without a commit (nothing changed).
+    pub fn ui_frame_skipped(&self, window: WindowId, frame: FrameId) {
+        self.post(Msg::UiFrameSkipped { window, frame });
     }
 
     /// Continuous input arrived (pointer moves, touchpad scroll): keeps variable-refresh displays up.
@@ -273,20 +290,43 @@ impl CompositorHandle {
         self.post(Msg::UiCost { window, frame, cost });
     }
 
-    /// Starts a compositor-owned fling on a scroll node; offsets come back as `ToUi::ScrollMoved`. A
-    /// scroll-offset fast commit on the same node stops it.
+    /// Like [`Self::ui_cost`], for a UI frame that handled discrete input.
+    pub fn ui_input_cost(&self, window: WindowId, frame: FrameId, cost: Span) {
+        self.post(Msg::UiInputCost { window, frame, cost });
+    }
+
+    /// Starts a compositor-owned fling on a scroll node (presto-anim's curves; `velocity` in points
+    /// per second at release); offsets come back as `ToUi::ScrollMoved`. A scroll-offset fast commit
+    /// on the same node stops it.
     pub fn fling(&self, window: WindowId, node: PropNodeId, velocity: Vec2, curve: FlingCurve, at: Time) {
         self.post(Msg::Fling { window, node, velocity, curve, at });
     }
 
-    /// A display-clock tick from a platform [`FrameSource`].
-    pub fn vsync(&self, window: WindowId, target: Time, interval: Span) {
-        self.post(Msg::Vsync { window, target, interval });
+    /// Animates a scroll node to `to` on the compositor (wheel steps, keyboard, `scrollTo` smooth); a
+    /// smooth scroll already running heads for the new target keeping its velocity.
+    pub fn smooth_scroll(&self, window: WindowId, node: PropNodeId, to: Vec2, behavior: DurationBehavior, at: Time) {
+        self.post(Msg::SmoothScroll { window, node, to, behavior, at });
     }
 
-    /// Presentation feedback from the platform.
-    pub fn presented(&self, window: WindowId, frame: FrameId, at: Time) {
-        self.post(Msg::Presented { window, frame, at });
+    /// Paces `window` by the platform's frame source (`PlatformCx::frame_source`) instead of a timer
+    /// at the refresh interval; its presentation feedback replaces the estimate from GPU completion,
+    /// and its occlusion reports become `ToUi::Occluded`.
+    pub fn set_frame_source(&self, window: WindowId, source: Arc<dyn presto_platform::FrameSource>) {
+        let link = vsync::spawn(window, source, self.tx.clone());
+        self.post(Msg::SetFrameSource { window, link });
+    }
+
+    /// The platform's committer for `window`'s OS compositor tree (`PlatformCx::os_layer_committer`):
+    /// called after each configure of a DirectComposition surface, which wgpu does not commit. Set it
+    /// before `add_window`.
+    pub fn set_os_layer_committer(&self, window: WindowId, committer: presto_platform::OsLayerCommitter) {
+        self.post(Msg::SetCommitter { window, committer });
+    }
+
+    /// Whether windows should present through the OS compositor tree (`WindowDesc::os_compositing`):
+    /// only with wgpu's DX12 backend, which the compositor uses on Windows and nowhere else.
+    pub fn os_compositing(&self) -> bool {
+        gpu::backend_order() == [wgpu::Backends::DX12]
     }
 
     /// Stops the thread and waits for it.

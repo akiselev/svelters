@@ -47,9 +47,12 @@ brief's signatures until the wave-1 skeletons are merged into `ci/presto-base`.
 | CORE-2 | `ci/presto-core-2` | `session_01QDYxkmxLL2rFtDDfSbu4ow` | style table, DESC_NONPASSIVE, CORE's not-done list (CORE's a07c3189 wins on overlap) |
 | BERTH | berth `claude/presto-berth` | `session_01FfrTeoE8knLYGyFeFf9Ss3` | presto_berth |
 | QUIRE | quire `claude/presto-quire` | `session_01VFabqgKPiq5AmCkua2ntGG` | presto_quire |
+| CORE-3 | `ci/presto-core-3` | `session_012X4RdtAUrgfNuRfD1Vh4ge` | WIDGETS-BASIC core requests (a)–(j) plus the shared drag/anchor members |
 
 Merged into `ci/presto-base` so far: platform skeleton, frame-anim, compositor skeleton, core (full batch-1 scope and
-the request work a07c3189), text, render (full API), the widgets substrate (WIDGETS-BASIC d46dcd96), CI fix 14981893.
+the request work a07c3189), text, render (full API, then GPU references 90959a28), the widgets substrate (WIDGETS-BASIC d46dcd96),
+CORE-2 (8d45666c), FRAME-ANIM test fixes (1ea8983c), platform try_create_window (5aab7622), CI fixes 14981893 and 2a12e530.
+Done lanes: CORE, CORE-2, PLATFORM, RENDER, RUNTIME (4c65de8d, all five svelters workflows green; merged at consolidation).
 Decisions: SVELTERS-PRESTO Q1–Q4 and CORE Q1–Q3 as in their records (coordinator, 2026-10-25).
 
 ## Waves 2 and 3 (original plan)
@@ -65,3 +68,30 @@ One consolidation per wave: merge lane branches into `ci/presto-integration` in 
 → text → render → frame-anim → compositor → platform → compiler → runtime; fix build breaks; run the presto
 and svelters CI; record failures in `plans/cloud/presto-b1/FIX-QUEUE.md`; the coordinator merges to master
 when the five svelters workflows plus `presto` are green.
+
+## For the consolidation (running list)
+
+- BERTH done at berth `claude/presto-berth` a49111b: run `presto_berth` tests (tests/dock.rs, 11) and berth's
+  check.sh, neither run yet. Gaps and 4 questions in berth `docs/PRESTO-BERTH.md` (pointer capture, window rects and
+  z-order in PlatformCx, service access from A11yCx).
+- TEXT-INPUT at 0030df69. Answered (coordinator, 2026-10-25): Q1 Monaco undo grouping on Windows/macOS, Q2 caret blink as
+  per-window compositor config (sent to COMPOSITOR), Q3 pin floors after the first green run, Q4 text-edit stays on
+  `presto_core::Kind`. Routed: R1/R2 to QUIRE, R4 to CORE-3, R6 (PRIMARY) to WAYLAND, TextServices install to APP-TEST.
+- COMPOSITOR 2b98a948 merged into base (d58a0fa0) before its CI finished; check it.
+- APP-TEST 30dd49e2: TextServices not wired (TODO in `crates/presto/src/app.rs` App::init, request 11). Decided
+  (coordinator, 2026-10-25): TextServices owns its own `SystemClipboard` (`MemoryClipboard` headless) and a compositor
+  handle clone for caret fast commits; the consolidation wires it.
+- APP-TEST requests 1–10 (`plans/milestones/PRESTO-app-test.md`), decided (coordinator, 2026-10-25): 1–5 to CORE-3
+  (additive Document entries; IME purpose rides with the area), 6–8 and 10 to COMPOSITOR (`frame_args`, a new
+  `ToUi::FrameTimings` variant for compositor-side stamps, confirm BeginFrame back-pressure, `ui_frame_skipped` →
+  `Signal::UiFrameSkipped`; then drop APP-TEST's empty-commit stopgap), 9 fixed in the workflow (crates/presto added).
+- CI load (coordinator, 2026-10-25): the five svelters workflows skip pushes that touch only presto crates and presto lane records (paths-ignore); presto.yml covers those. A consolidation's or master's push still runs all six.
+- 19:35 UTC: 65 runs queued; cancelling the stale runs of done lanes failed (403, the session lacks actions write). Superseded runs on a lane branch are still cancelled by each workflow's concurrency group.
+- WAYLAND 755fcaf6 (R6 PRIMARY in Clipboard, cross-lane in presto-platform). Q1 decided (coordinator, 2026-10-25): the
+  facade `crates/presto` selects the backend (target-cfg deps on presto-platform-{win32,wayland,macos}, default-on
+  features, winit fallback); no presto-platform-api split now. Consolidation wires the selection in `App`.
+- QUIRE done at quire `claude/presto-quire` 676b49bc (crate presto_quire, 43 tests not run; quire has no CI, so the
+  consolidation runs them). Decided: Q1 kind-owned layers/fast commits (to CORE-3), Q2 TextLayout cluster accessor (to
+  TEXT), Q3 4 new host events approved, Q4 egui-free quire view crate as a follow-up, Q5 svelters git dep OK.
+- FRAME-ANIM done once presto CI on a9503acb passes its crates.
+- QUIRE R1/R2 at quire 35b5063a; R2 (composition over a selection replaces it) approved (coordinator, 2026-10-25). TEXT-INPUT re-pins quire-text to it. Consolidation merges quire claude/presto-quire and berth claude/presto-berth into their masters after their tests and checks pass.
