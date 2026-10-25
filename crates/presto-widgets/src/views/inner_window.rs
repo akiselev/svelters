@@ -25,7 +25,7 @@ use crate::controls::common::host_view;
 use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use presto_base::accesskit;
 use presto_base::color::Color;
 use presto_base::cursor::CursorIcon;
@@ -184,6 +184,11 @@ impl InnerWindow {
     /// The smallest frame a resize leaves.
     pub fn min(&self) -> Size {
         Size::new(self.props.min_width.max(0.0) as f32, self.props.min_height.max(0.0) as f32)
+    }
+
+    /// The body: the frame below the title bar (where the content goes).
+    pub fn body(&self) -> Rect {
+        Rect::new(self.frame.min.x, self.frame.min.y + TITLE_H, self.frame.max.x, self.frame.max.y.max(self.frame.min.y + TITLE_H))
     }
 
     /// The frame as drawn (only the title bar while collapsed).
@@ -464,6 +469,25 @@ impl Kind for InnerWindow {
         self.props.get(prop)
     }
 
+    /// The content fills the body (the frame below the title bar, in the node's window-point space);
+    /// while collapsed it is not laid out, painted or hit.
+    fn child_layout(&self, _cx: &ChildCx, style: &mut taffy::Style) -> bool {
+        if self.props.collapsed {
+            style.display = taffy::Display::None;
+            return false;
+        }
+        let body = self.body();
+        style.position = taffy::Position::Absolute;
+        style.inset = taffy::Rect {
+            left: taffy::LengthPercentageAuto::length(body.min.x),
+            top: taffy::LengthPercentageAuto::length(body.min.y),
+            right: taffy::LengthPercentageAuto::auto(),
+            bottom: taffy::LengthPercentageAuto::auto(),
+        };
+        style.size = taffy::Size { width: taffy::Dimension::length(body.width()), height: taffy::Dimension::length(body.height()) };
+        true
+    }
+
     fn record(&self, cx: &mut RecordCx) {
         let host = host_view(&cx.style, UA);
         let bar = host.part(cx.style.part_css("titlebar"), TITLEBAR_UA);
@@ -689,5 +713,21 @@ mod tests {
         // the collapse bar
         assert_eq!(testkit::kinds(&list), ["shadow", "quad", "line", "glyphs", "line", "line", "line"]);
         assert_eq!(res.runs.len(), 1);
+    }
+
+    #[test]
+    fn content_fills_the_body_and_hides_when_collapsed() {
+        let mut w = InnerWindow::default();
+        w.frame = Rect::new(10.0, 20.0, 310.0, 220.0);
+        let mut style = taffy::Style::default();
+        assert!(w.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert_eq!(style.position, taffy::Position::Absolute);
+        assert_eq!(style.inset.top, taffy::LengthPercentageAuto::length(20.0 + TITLE_H));
+        assert_eq!(style.size.width, taffy::Dimension::length(300.0));
+        assert_eq!(style.size.height, taffy::Dimension::length(200.0 - TITLE_H));
+        w.props.collapsed = true;
+        let mut style = taffy::Style::default();
+        assert!(!w.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert_eq!(style.display, taffy::Display::None);
     }
 }

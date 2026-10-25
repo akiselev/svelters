@@ -424,6 +424,17 @@ impl Kind for Select {
     fn spec() -> &'static KindSpec {
         &SPEC
     }
+
+    /// `:open` and `:placeholder-shown` follow the props, so CSS on the node sees them.
+    fn prop_state(&self) -> StateBits {
+        let mut s = StateBits::NONE;
+        s.set(StateBits::OPEN, self.props.open);
+        s.set(StateBits::PLACEHOLDER_SHOWN, self.selected.is_none());
+        s
+    }
+    fn prop_states() -> StateBits {
+        StateBits(StateBits::OPEN.0 | StateBits::PLACEHOLDER_SHOWN.0)
+    }
     fn kind_spec(&self) -> &'static KindSpec {
         &SPEC
     }

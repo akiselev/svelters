@@ -873,6 +873,13 @@ impl Kind for ContextMenu {
     fn spec() -> &'static KindSpec {
         &CONTEXT_MENU_SPEC
     }
+
+    fn prop_state(&self) -> StateBits {
+        if self.props.open { StateBits::OPEN } else { StateBits::NONE }
+    }
+    fn prop_states() -> StateBits {
+        StateBits::OPEN
+    }
     fn kind_spec(&self) -> &'static KindSpec {
         &CONTEXT_MENU_SPEC
     }
