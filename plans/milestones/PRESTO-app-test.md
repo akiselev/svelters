@@ -158,3 +158,6 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
     `presto_platform::SystemClipboard` (or `MemoryClipboard` headless), and that the fast-commit channel
     be a clone of the compositor handle (`CompositorApi::fast`). `presto` then needs a dependency on
     `presto-widgets`.
+    **Decided (coordinator, 2026-10-25):** `TextServices` owns its own `presto_platform::SystemClipboard`
+    (`MemoryClipboard` headless) and a clone of the compositor handle for caret fast commits; the
+    consolidation wires it at the TODO in `App::init`.
