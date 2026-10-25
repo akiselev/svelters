@@ -63,3 +63,68 @@ conformance, and the Starlight half of `pnpm docs:test`.
 - `style.matched` / `style.computed` JSON methods for agents (AU4 planned `style.computed`).
 - The Vite plugin path doesn't pass `file`/`map` to `registerStyles` (dev through Vite has no CSS
   offsets).
+
+## DZ0b2 follow-ups
+
+Lane `dz0-followups` (designer wave 1, `plans/cloud/designer-wave1/LANE-dz0-followups.md`), branch
+`ci/dz-followups`, based on DZ0 (`5c1f83c6`, on `claude/practical-lamport-y8z11o`) because DZ0 had not
+merged into `master` yet. Consumer: cadatomic DZ1 (read-only inspect and outline).
+
+### What landed
+
+| Item | What | Where |
+|---|---|---|
+| 1 `style.matched`, `style.computed` | Automation methods over the JSON path (target `{selector}` or `{ref}`, `read` grant), listed in `session.hello` capabilities and `docs/egui/rust/automation.md`. `style.matched`: DZ0's matched rules in cascade order (lowest first) with sheet, selectors, specificity, line, column, `source {file, style_offset}` and decls, each decl marked `winner`. `style.computed`: E2E-INSPECTOR §1.4's shape, `{values, custom, inherited, rules}`: computed values as CSS text, custom properties, inherited-from (the nearest declaring ancestor's ref, per inherited property the node doesn't declare) and the matched rules | automation `session.rs`; egui `style.rs`; style `cascade.rs` |
+| 2 dynamic call sites | `<svelte:component this>`, `<X>` with a reactive or member `X` and `{@render}` (static and reactive) are call sites in a dev build for a backend with `source-loc`: the compiler places their block in `$n.region(container, $$src, start)` (the call's or the render tag's span start). HMR instance keys take every site between the anchor and the parent instance (innermost first, U+001F-separated), so the edit translation already covers them; `source-loc` lists them through its owner walk | compiler `codegen/component.rs` (`site_region`); runtime `instancePath` |
+| 3 root toplevels | Cause: the egui `Window` kind had no `source-loc` prop, so the compiler emitted no `$n.source_loc` for `<window>` (the runtime's `attach()` was right). The prop is appended to `WINDOW_PROPS`; `egui.json`, `egui.d.ts` and the window reference page regenerated | egui `kinds/containers.rs` |
+| 4 Vite style map | `svelters-compile --css --json` gains `css.map` (the same `o,s,l;…` text, `ScopedCss::source_map_text`). The Vite plugin's egui sheets scoped by the svelters compiler (the `@apply` path) pass `file` and `map` to `registerStyles` in dev | compiler `scoped_css.rs`, `svelters-compile.rs`; `packages/native-runtime/vite.js` |
+
+The seam for item 1: the automation `Session` holds a `SceneHandle`, not the `EguiBackend`, so the
+style reads moved from the backend onto `NodeRef` (the scene owns the style engine).
+`EguiBackend::matched_rules` now delegates to the same code.
+
+### Public API (all additive)
+
+- svelters-style: `Stylist::winners(el, inline, caches) -> BTreeMap<String, &Declaration>`: the winning
+  declaration per property (a shorthand keyed by each longhand).
+- svelters-egui: `NodeRef::matched_rules()`, `NodeRef::computed_style()`, `NodeRef::inherited_from() ->
+  Vec<(String, Option<NodeId>)>`; `style::DeclInfo::winner: bool` (a new field: code that builds a
+  `DeclInfo` literal must add it; nothing outside svelters does yet). The `Window` kind's `source-loc` prop.
+- svelters-automation: `Session::style_matched(Ref) -> Vec<MatchedRuleInfo>`, `Session::style_computed(Ref)
+  -> ComputedInfo`, `ComputedInfo {values, custom, inherited, rules}` with `to_json`, `rule_json`; JSON
+  methods `style.matched` and `style.computed`.
+- svelters-compile: `css.map` in `--css --json` output.
+- Runtime: HMR keys of calls under `{@render}` gain the render sites (dev, `source-loc` backends only);
+  `source-loc` of nodes under `{@render}` and dynamic components lists those sites.
+
+`winner` is decided among rules, `style=` and forced declarations. A prop the runtime set
+(`NodeCore::explicit`) still wins over all of them and is not reflected (CSS.md §2.8); `@layer` names are not
+in the output (the stylist keeps only a rank).
+
+### Tests
+
+- svelters-automation `style` (2): JSON shapes, cascade order, winners, `<style>` offsets, ref and
+  selector targets, `node.not_found`, inherited-from for `color` and a custom property.
+- svelters-egui `hmr_sites` (+2): a dynamic call inserted before another and a `{@render}` inserted before
+  another keep the later one's state. Both fail with the runtime change reverted (checked).
+- svelters-egui `source_loc` (+2): sites of `<svelte:component>`, `<Comp>`, `<parts.Named>` and a call
+  inside a rendered snippet (call, then render tag); a root `<window>` from `TestApp` has its `source-loc`.
+- svelters-compiler `q3w_css_wiring::cli_css_flag`: `css.map` runs are untouched `<style>` text.
+- native-runtime `vite-style-map.test.mjs` (2): dev egui `@apply` sheets carry `file` and `map`;
+  release ones don't.
+
+Run locally, all passing: the tests above, svelters-egui `spec` (after `SVELTERS_UPDATE=1`),
+`gen_reference.py --check`, `gen_utilities.py --check`, native-runtime `pnpm test` (138 + the new file),
+the python half of `pnpm docs:test`. Not run locally: everything else (CI is the gate).
+
+CI run ids: see below.
+
+### Left, and why
+
+- **The Vite path for egui sheets without `@apply`** still compiles `<style>` with stock Svelte
+  (`nativeSheets`, CS5e), which has no span map, so dev through Vite has no CSS offsets there. Per the
+  brief, no second mapper. **Question for the coordinator:** move egui's Vite path to `svelters-compile
+  --css` for every sheet (the Rust loader already scopes with our compiler; the port is byte-identical to
+  svelte@5.57.2 on the corpus). Recommendation: yes, in dev at least; it is a one-line change in `vite.js`
+  plus a test, and it makes both paths give the designer the same offsets.
+- `@layer` names and "inherited from" for properties set by explicit props are not reported (see above).
