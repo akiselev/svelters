@@ -30,6 +30,17 @@ Tests written, none run, as the brief says: key mapping (`keymap`), input frame 
 conversion, CSD, IME batches and the client bridge, buffer sizes, URI lists, cursor tables, and the shim's
 UTF-16 conversion.
 
+## Shared API decisions adopted (base e7f68dd2)
+
+- `set_text_input`: the window keeps the client. text-input-v3 composition edits (preedit, commit,
+  delete-surrounding) go straight into it through `ime::apply_to_client`. After each edit, the surrounding
+  text, purpose and caret/composition rectangle are read back from the client and sent to the IME.
+  Enable/disable still arrive as `ImeEvent`s.
+- `WindowDesc.custom_title_bar` requests xdg-decoration client mode, and `client_side_decorations()`
+  reports `true`. The CSD resize border and hit regions then apply.
+- `KeyEvent.physical` already used `page << 16 | usage`.
+- `WindowEvent::Moved` is never emitted, because Wayland has no global position.
+
 ## Not run
 
 Only `cargo check -p presto-platform-wayland --all-targets` and `--no-default-features` ran (clean, no

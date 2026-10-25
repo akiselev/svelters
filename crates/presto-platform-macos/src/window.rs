@@ -76,6 +76,9 @@ impl WindowState {
         unsafe { window.setReleasedWhenClosed(false) };
         window.setTitle(&NSString::from_str(&desc.title));
         window.setAcceptsMouseMovedEvents(true);
+        if desc.custom_title_bar {
+            set_custom_title_bar(&window, true);
+        }
         if desc.transparent {
             window.setOpaque(false);
             window.setBackgroundColor(Some(&NSColor::clearColor()));

@@ -119,3 +119,36 @@ when the five svelters workflows plus `presto` are green.
   (966d4d75, base c65b2e79); F7 done (svelters-presto 80189479); F8 TextServices + F9 backend selection to APP-TEST;
   F10 presto.yml checks presto-widgets `dialogs` (this commit); F11 berth/quire at consolidation 2; F13 at consolidation 2.
 - CORE-3 final ceaf16b8 and COMPOSITOR 9a58f1c4 merged (177731fd): F1–F5 fixed (presto-core --lib 119/119 locally). Slider tests disputed (CORE-3: fail; WIDGETS-BASIC: 19/19 pass after 966d4d75); consolidation 1 settles it. Done lanes now: CORE, CORE-2, CORE-3, PLATFORM, RENDER, RUNTIME, WIDGETS-BASIC, BERTH, QUIRE.
+- MACOS a706b24f (code bef22840): presto CI check green on all OSes, its unit tests pass on macOS; nothing run on Mac hardware. Q1–Q7 decided as recommended (coordinator, 2026-10-25); MACOS adds PlatformCx::set_text_input, WindowDesc.custom_title_bar and the key-code/Moved docs; WIN32/WAYLAND adopt after.
+- APP-TEST c091234d closes F8 (widget services via CoreDocument::with_widgets, clipboard service, fast-commit drain) and F9 (presto::run backend selection, winit fallback, PRESTO_BACKEND). It contains integration 65ead449, so it merges into ci/presto-integration, not base.
+- WIN32 a051ddbd (own backend, no winit; CI 40226717129 on 07bb50d1: crate tests pass on all three OSes). Decided (coordinator, 2026-10-25): (a) WIN32 adds OsLayerCommitter::new; (b) DXGI waitable through before_present/wait, no FrameSource widening; (c) DeleteSurrounding-before-Commit documented in presto-base; (d) DwmExtendFrameIntoClientArea [local]. Open for consolidation 2: drag-source, popup and fullscreen APIs in presto-platform. WAYLAND 880ec338 adopted the shared API.
+- FRAME-ANIM final (a9503acb, fully in base): presto-frame and presto-anim pass on all three OSes (run 40226563028). Same run: svelters macos-appkit failed (counter-mac backend). Consolidation 1 must check whether integration reproduces it. Left out: filter values (AnimValue::Filter), 3-D transforms, invariant 6, EDF GPU ordering.
+- EGUI-ISLAND b1a9d379 (code 0dd5a347): every target passes on all three OSes. Decided: Rotate clockwise-positive (doc in presto-base), UI-thread island rendering, Q4 EguiIslandKind + mount API now (for CADATOMIC/presto_berth), PrestoDrag shim onto core DnD. linux-gtk eframe_idle idle-CPU failure called load flake by the lane; consolidation to confirm.
+- WIDGETS-VIEWS ae617f24: 19 view kinds; presto-widgets 370/3 in run 40227999085 (the 3 are the since-fixed slider tests). Decided (coordinator, 2026-10-25): Q1 300 ms latch (consolidation 2 checks it against Chromium's source), Q2 inner windows in the overlay stack, Q3 NSMenu owned by MACOS from MenuModel (menu-bar hidden on macOS), Q4 disabled rows reachable (disabled_focusable=false skips), Q5 platforms emit AltLeft/AltRight, Q6 common scroll event, Q7 menu roots not in Tab order, Q8 anchor prop kept. host.rs PLACING/parts_of to spec-driven: WIDGETS-BASIC.
+- MACOS ff854b58 merged: native menu bar API in presto-platform (MenuDesc/MenuNode, PlatformCx::set_menu_bar -> bool, AppHandler::menu_activated). Consolidation 2: crates/presto routes menu_activated to the menu-bar kind; WIN32/WAYLAND keep the default (false).
+- CADATOMIC milestone 1 (claude/presto-adoption): the whole app in one EguiIsland under presto, seen live under Xvfb; native status bar; CancelClose bridge; key pre-dispatch; adapter/limits ported; builds on ci/presto-integration. WIDGETS-BASIC df3c476d merged (spec-driven parts/places_children, host tests 12/12). EGUI-ISLAND gets physical_key mapping and the device-reset path.
+- 20:48–22:10 UTC: every lane stopped on the account's 5-hour usage limit. 22:12 UTC: all lanes with work left resumed (CORE-3 also gets Document::start_drag for EGUI-ISLAND Q5; APP-TEST gets the menu_activated routing). The limit is shared by about 18 sessions, so lanes were told to avoid reruns on unchanged code and keep turns short.
+- MACOS done: presto run 40230302721 on ff854b58 (contains base 177731fd+) green on all three OSes, check and test: the first fully green presto run.
+- WIN32 done 305eb732 (run 40230205775 green on all three OSes), merged into base. TEXT-INPUT done 300b2660 (run 40228643140: presto-widgets green on all three OSes; pins 228/243 GTK, 226/243 Qt). MOTION-CSS done 4a4374fe (svelters workflows green; presto-motion passes). CORE-3 done (presto-core 119/119 and presto-widgets 248/248 on all three OSes in 40228786756). Decided (coordinator, 2026-10-25): a presto-base Easing variant for svelte/easing curves (MOTION-CSS); SVELTERS-PRESTO wires OP_ANIMATE native descriptors and SVL_STYLE_SHEET_BIN into presto; APP-TEST sets set_single_selection under GTK and CaretBlink from TextPolicy.
+- TEXT done (code f0236878, record 690b998; run 40226699805: 40 presto-text tests pass on all three OSes, masks
+  byte-identical across OSes). Decided: stay on skrifa 0.44 until parley moves; measure dilation amounts [local];
+  consolidation 2 moves skrifa/png to the workspace table.
+- COMPOSITOR done (code 9a58f1c4, record 4906597c; run 40228927630: every compositor target passes on all three OSes,
+  GPU tests included). Q1–Q7 decided as recommended (coordinator, 2026-10-25): consolidation 2 adds `color` and a
+  `transform: PropNodeId` to FastCommit::Caret; CSS transform replaces (core omits the local CSS transform while a
+  compositor transform animation runs); core never sends UI-placed animations; a11y, cursor and ime_area stay on the
+  UI thread (APP-TEST confirms); UiFrameState answers every BeginFrame; APP-TEST sets refresh and ppi from the
+  monitor.
+- APP-TEST CI on c091234d (contains integration 65ead449): its own crates pass (latency 14, harness 20, render 2 on
+  Metal, lib 13). Integration breaks found: (1) pnpm build "Duplicated export 'setp'" in
+  experiments/native-compiler/handwritten breaks all five svelters workflows (consolidation 1 fixes it);
+  (2) presto-platform-wayland time.rs:84 u64 overflow in a test (WAYLAND).
+- WIDGETS-TIER1 done 0876a38f (table, tabs, pickers, dnd, dialogs, zoom; tier-1 tests pass on Linux and macOS; a Windows
+  path test fixed in 0876a38f). Open items for consolidation 2 in its record: picker overlay layers, prepare can't emit,
+  EventCx can't emit on a child, drag-preview hook, table scrollbars on the views scroll layer, hex/cell editors.
+- WIDGETS-VIEWS done 2226e000: spec-driven parts/places_children, scroll through EventCx::scroll_to → core scroll_fast,
+  MenuModel::to_menu_desc behind `native-menu`, menu-bar `native-bar`. Runner wiring sent to APP-TEST (via Kind::call).
+- TEXT-INPUT done 093ae50f (base merged; code as green 300b2660). Q5 for consolidation 2: a RecordCx::fixed() (or similar)
+  so a self_scroll kind can record its box outside the scroll layer; until then a field scroll re-records the node.
+- CORE-3 done fa1d7758 (Document::start_drag), WAYLAND dd66a164 (overflow fix), both merged into base 21d341bb.
+- CANVAS code complete f208b779 (presto-canvas, Viewport OS-layer promotion with resize handshake, Prim::Canvas, Slug text; locally 10^6 primitives = 542 µs CPU plan per frame (debug), orbit test 0 commits). Decided: Q1 camera handle now, FastCommit::CanvasCamera later; Q2 [local] gates into cadatomic REVISIT.md via CADATOMIC's branch; Q3 polygon AA follow-up.

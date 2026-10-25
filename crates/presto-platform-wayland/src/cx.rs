@@ -155,6 +155,19 @@ impl PlatformCx for Cx<'_> {
         self.refresh_cursor(id);
     }
 
+    fn set_text_input(&mut self, id: WindowId, client: Option<Box<dyn presto_base::input::TextInputClient>>) {
+        let Some(w) = self.state.windows.get_mut(&id) else { return };
+        let off = client.is_none();
+        w.text_client = client;
+        if off {
+            if w.ime.take().is_some() {
+                crate::seat::update_ime(self.state, id);
+            }
+        } else {
+            crate::seat::refresh_from_client(self.state, id);
+        }
+    }
+
     fn set_ime(&mut self, id: WindowId, state: Option<ImeState>) {
         let Some(w) = self.state.windows.get_mut(&id) else { return };
         if w.ime == state {

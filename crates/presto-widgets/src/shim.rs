@@ -566,6 +566,29 @@ pub mod core {
         fn prop_state(&self) -> StateBits {
             StateBits::NONE
         }
+        /// The paint parts it draws (`::part(name)`): presto-core computes their styles, which reach
+        /// the kind as [`Styles::parts`].
+        fn parts() -> &'static [&'static str]
+        where
+            Self: Sized,
+        {
+            &[]
+        }
+        /// It places or hides its own children ([`Kind::child_layout`] is called for each child).
+        fn places_children() -> bool
+        where
+            Self: Sized,
+        {
+            false
+        }
+        /// Its children are content it folds into its own (a label's runs, [`Styles::children`]): presto-core
+        /// measures it as a leaf and does not lay out, record or hit-test the children.
+        fn folds_children() -> bool
+        where
+            Self: Sized,
+        {
+            false
+        }
         /// The bits [`Kind::prop_state`] owns.
         fn prop_states() -> StateBits
         where

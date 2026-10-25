@@ -1,4 +1,5 @@
-//! The IME's view of the focused text field. presto-platform's contract gives the platform the field
+//! The IME's view of the focused text field: the app's own [`TextInputClient`] when it gave one
+//! (`PlatformCx::set_text_input`), else a shadow. With `PlatformCx::set_ime` the platform gets the field
 //! as data ([`ImeState`]: caret area, purpose, per-character composition rectangles, the text around
 //! the caret with its selection) and takes edits back as [`ImeEvent`]s, so the TSF store and
 //! `WM_IME_REQUEST` work on this shadow copy: a [`TextInputClient`] over the surrounding text plus
@@ -14,6 +15,60 @@ use presto_base::event::ImeEvent;
 use presto_base::geom::{Point, Rect};
 use presto_base::input::{InputPurpose, TextInputClient, Utf16Range};
 use presto_platform::ImeState;
+
+/// The focused field as the IME bridge reads and edits it.
+pub enum Field {
+    /// Built from `ImeState`; edits become `ImeEvent`s.
+    Shadow(ShadowClient),
+    /// The app's editor: edits apply directly.
+    Client(Box<dyn TextInputClient>),
+}
+
+impl Default for Field {
+    fn default() -> Self {
+        Field::Shadow(ShadowClient::default())
+    }
+}
+
+impl Field {
+    pub fn client(&mut self) -> &mut dyn TextInputClient {
+        match self {
+            Field::Shadow(s) => s,
+            Field::Client(c) => &mut **c,
+        }
+    }
+
+    /// The events the shadow's edits produced (none for a client, which applied them itself).
+    pub fn take_events(&mut self) -> Vec<ImeEvent> {
+        match self {
+            Field::Shadow(s) => s.take_events(),
+            Field::Client(_) => Vec::new(),
+        }
+    }
+
+    /// The shadow, replacing a client the app handed over earlier.
+    pub fn shadow(&mut self) -> &mut ShadowClient {
+        if let Field::Client(_) = self {
+            *self = Field::default();
+        }
+        match self {
+            Field::Shadow(s) => s,
+            Field::Client(_) => unreachable!("replaced above"),
+        }
+    }
+
+    /// Drops the composition without committing it.
+    pub fn cancel_composition(&mut self) {
+        match self {
+            Field::Shadow(s) => s.cancel_composition(),
+            Field::Client(c) => {
+                if let Some(m) = c.marked_range() {
+                    c.replace_text_in_range(Some(m), "");
+                }
+            }
+        }
+    }
+}
 
 #[derive(Debug, Default)]
 pub struct ShadowClient {
