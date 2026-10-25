@@ -81,7 +81,7 @@ impl PrestoBackend {
 
     pub(crate) fn install_sync_delivery(&self) {
         let weak = Rc::downgrade(&self.0);
-        self.0.doc.borrow_mut().set_sync_delivery(Box::new(move |ev: &JsEvent| match weak.upgrade() {
+        self.0.doc.borrow_mut().set_sync_delivery(Box::new(move |_doc: &mut presto_core::Document, ev: &JsEvent| match weak.upgrade() {
             Some(inner) => PrestoBackend(inner).deliver_cancelable(ev),
             None => Outcome::default(),
         }));
