@@ -16,6 +16,7 @@ smallvec = { workspace = true }
 
 [dev-dependencies]
 pollster = "0.4"
+presto-text = { workspace = true }
 # Shader validation without an adapter, and reference images for the GPU tests.
 naga = { version = "30.0.1", features = ["wgsl-in"] }
 png = "0.18"
