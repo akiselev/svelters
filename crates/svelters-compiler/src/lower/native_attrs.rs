@@ -136,7 +136,7 @@ impl<'a> Lower<'a, '_, '_> {
     /// W-C5: whether a listener is passive (inferred, or as its modifier says), with the warnings:
     /// a modifier that contradicts the handler, and a non-passive listener of a scrolling signal.
     fn passive_listener(&mut self, er: &ElementRef, ev: &EventSpec, handler: &Handler<'a>, modifier: Option<(bool, (u32, u32))>, name_span: (u32, u32)) -> bool {
-        let inferred = super::passive::infer(handler, ev);
+        let inferred = super::passive::infer(handler, ev, &self.handlers);
         let passive = match modifier {
             Some((true, at)) => {
                 if let super::passive::Passivity::Cancels(c) = inferred {

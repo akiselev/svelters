@@ -73,6 +73,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
         const_ok: false,
         snippet_roots,
         script: ScriptFacts::collect([root.instance.as_ref(), root.module.as_ref()]),
+        handlers: passive::declared([root.instance.as_ref(), root.module.as_ref()]),
         list_views: lists::list_view_names(root),
         kinds: false,
         animate_hosts: HashSet::new(),
@@ -155,6 +156,8 @@ struct Lower<'a, 's, 'd> {
     snippet_roots: HashMap<String, Option<Vec<&'a AstElement>>>,
     /// Imports of the scripts (renderer `listen`).
     script: ScriptFacts,
+    /// W-C5: the scripts' top-level handler functions, by name (passive inference sees into them).
+    handlers: HashMap<String, passive::Declared<'a>>,
     /// Local names of `ListView` imported from `@svelters/lists` (virtualized lists, `lists.rs`).
     list_views: HashSet<String>,
     /// Some element resolves attributes at run time (the module imports `$$kinds`).

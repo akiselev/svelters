@@ -5,13 +5,51 @@
 //! read as `event.<name>` for a name other than `preventDefault`, `stopPropagation` and
 //! `stopImmediatePropagation`, and never written (`event.result = ...` sets a sync result). An
 //! event that escapes (passed on, stored, read with a computed key, a rest parameter, a function
-//! using `arguments`) and a handler the compiler cannot see (a variable, a member, a forwarded
-//! prop) make the listener non-passive. `|passive` and `|nonpassive` override the inference.
+//! using `arguments`) and a handler the compiler cannot see (a member, a forwarded prop, a variable
+//! that is not a top-level `function` or `const` function of the component's scripts) make the
+//! listener non-passive. `|passive` and `|nonpassive` override the inference.
 
 use crate::estree::*;
 use crate::lower::ir::Handler;
 use crate::semantics::EventSpec;
 use crate::svelte::scope::walk::{NodeRef, Visitor, Walker, expr_ref};
+use std::collections::HashMap;
+
+/// A handler function declared at the top level of a script, by name.
+#[derive(Clone, Copy)]
+pub enum Declared<'a> {
+    /// `function name(...) {}`.
+    Function(&'a Function),
+    /// `const name = (...) => ...` (or a function expression).
+    Const(&'a Expression),
+}
+
+/// The top-level `function` declarations and `const` function bindings of the component's scripts.
+pub fn declared<'a>(scripts: [Option<&'a crate::svelte::ast::Script>; 2]) -> HashMap<String, Declared<'a>> {
+    let mut out = HashMap::new();
+    for s in scripts.into_iter().flatten() {
+        for stmt in &s.content.body {
+            match stmt {
+                Statement::FunctionDeclaration(f) => {
+                    if let Some(id) = &f.id {
+                        out.insert(id.name.clone(), Declared::Function(f));
+                    }
+                }
+                Statement::VariableDeclaration(d) if d.kind == VariableKind::Const => {
+                    for v in &d.declarations {
+                        if let (Pattern::Identifier(id), Some(init)) = (&v.id, &v.init)
+                            && matches!(unparen(init), Expression::ArrowFunctionExpression(_) | Expression::FunctionExpression(_))
+                        {
+                            out.insert(id.name.clone(), Declared::Const(init));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    out
+}
 
 /// What a handler can do to its event.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -33,15 +71,27 @@ impl Passivity {
 /// The members of an event a listener cancels it with.
 const CANCEL: &[&str] = &["preventDefault", "stopPropagation", "stopImmediatePropagation"];
 
-/// The passivity of `handler` for the signal of `ev`.
-pub fn infer(handler: &Handler, ev: &EventSpec) -> Passivity {
+/// The passivity of `handler` for the signal of `ev`; `declared`: the scripts' handler functions.
+pub fn infer(handler: &Handler, ev: &EventSpec, declared: &HashMap<String, Declared>) -> Passivity {
     if !ev.cancelable {
         return Passivity::Passive;
     }
     match handler {
-        Handler::Expr(h) => of_function(unparen(h)),
+        Handler::Expr(h) => match unparen(h) {
+            Expression::Identifier(id) => match declared.get(&id.name) {
+                Some(Declared::Function(f)) => of_parts(&f.params, body_of(f), true),
+                Some(Declared::Const(e)) => of_function(unparen(e)),
+                None => Passivity::Unknown,
+            },
+            h => of_function(h),
+        },
         Handler::Member { .. } | Handler::Forward { .. } => Passivity::Unknown,
     }
+}
+
+fn body_of(f: &Function) -> NodeRef<'_> {
+    let BlockStatementNode::BlockStatement(b) = &f.body;
+    NodeRef::BlockStatement(b)
 }
 
 fn unparen(e: &Expression) -> &Expression {
@@ -60,12 +110,14 @@ fn of_function(h: &Expression) -> Passivity {
             };
             (&f.params, body, false)
         }
-        Expression::FunctionExpression(f) => {
-            let BlockStatementNode::BlockStatement(b) = &f.body;
-            (&f.params, NodeRef::BlockStatement(b), true)
-        }
+        Expression::FunctionExpression(f) => (&f.params, body_of(f), true),
         _ => return Passivity::Unknown,
     };
+    of_parts(params, body, arguments)
+}
+
+/// A function's passivity from its parameters and body; `arguments`: it has its own `arguments`.
+fn of_parts(params: &[Pattern], body: NodeRef<'_>, arguments: bool) -> Passivity {
     // a function's `arguments` reaches the event whatever its parameters
     if arguments && uses_arguments(body) {
         return Passivity::Unknown;
@@ -222,7 +274,7 @@ mod tests {
 
     fn of(src: &str) -> Passivity {
         let h = handler(src);
-        infer(&Handler::Expr(&h), &ev(true))
+        infer(&Handler::Expr(&h), &ev(true), &HashMap::new())
     }
 
     #[test]
@@ -232,7 +284,7 @@ mod tests {
         assert_eq!(of("({ dx, dy }) => move(dx, dy)"), Passivity::Passive);
         assert_eq!(of("function (e) { log(e.target, other.e); }"), Passivity::Passive);
         let h = handler("(e) => e.preventDefault()");
-        assert_eq!(infer(&Handler::Expr(&h), &ev(false)), Passivity::Passive, "a signal that cannot be canceled");
+        assert_eq!(infer(&Handler::Expr(&h), &ev(false), &HashMap::new()), Passivity::Passive, "a signal that cannot be canceled");
     }
 
     #[test]

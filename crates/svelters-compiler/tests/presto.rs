@@ -160,6 +160,16 @@ fn listeners_that_cannot_cancel_are_passive() {
 }
 
 #[test]
+fn named_handlers_are_followed_to_their_declaration() {
+    let src = "<script>let y = $state(0); function onWheel(e) { y += e.dy; } const stop = (e) => e.preventDefault();</script>\
+<box onwheel={onWheel} /><box onwheel={stop} />";
+    let r = run(src, &["passive"], false);
+    let out = r.js.as_deref().unwrap();
+    assert!(out.contains("onWheel?.apply(this, $$args); }, 4);"), "{out}");
+    assert_eq!(codes(&r).iter().filter(|c| **c == "nonpassive_scroll_listener").count(), 1, "{:?}", r.diagnostics);
+}
+
+#[test]
 fn a_cancelling_scroll_listener_warns() {
     let src = "<box onwheel={(e) => e.preventDefault()} />";
     let r = run(src, &["passive"], false);

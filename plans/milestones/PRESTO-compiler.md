@@ -49,7 +49,8 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
 - `lower/passive.rs`: inference (no parameter; event only read as `event.<name>` outside
   `preventDefault`/`stopPropagation`/`stopImmediatePropagation`, never written; destructured
   fields; `arguments`, rest, computed keys, escapes and invisible handlers are non-passive;
-  a non-cancelable signal is always passive).
+  a non-cancelable signal is always passive). A handler named by a variable is followed to its
+  top-level `function` or `const` function declaration in the component's scripts.
 - With `passive`: `LISTEN_PASSIVE` in the listener's flags (`$n.on(n, sig, h, 4)`);
   `on:x|passive={h}` / `|nonpassive` (also with `|capture`) lower instead of `unsupported_feature`;
   warnings `passive_listener_cancels`, `nonpassive_redundant`, `nonpassive_scroll_listener`
@@ -105,7 +106,7 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
 - Ran: `cargo check -p svelters-compiler [--tests]`, `cargo check -p svelters-egui --tests`;
   `SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` (the generator: rewrote `egui.json`
   and wrote `egui.ids.json`; its 9 tests passed); `cargo test -p svelters-compiler --test presto`
-  (13 pass); `cargo test -p svelters-compiler --lib -- lower::passive lower::templates
+  (14 pass); `cargo test -p svelters-compiler --lib -- lower::passive lower::templates
   lower::change` (8 pass); `UPDATE=1 cargo test -p svelters-compiler --test cx1_codes` (3 pass);
   `python3 -I tools/docs/egui/gen_reference.py --check`, `gen_utilities.py --check`,
   `tools/docs/test_egui_reference.py` (pass, unchanged by the new spec fields).
@@ -125,8 +126,8 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
   template tables are not emitted (tables keep names; the host would resolve them once per table).
 - **No backend advertises a capability yet** (see questions).
 - The `layout_write_per_frame` fix-it (rewrite to `transform`) is not written (only the help line).
-- Passive inference does not follow a handler named by a variable to its declaration (it is
-  non-passive).
+- Passive inference does not follow handlers imported from other modules, or `let` bindings
+  (they are non-passive).
 
 ## Cross-lane edits
 
