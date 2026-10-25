@@ -127,3 +127,18 @@ fn hit_test_below_and_above_clamps_to_lines() {
     let end = l.hit_test(Point::new(1000.0, 1000.0));
     assert_eq!(end.byte, l.lines()[n - 1].range.end);
 }
+
+#[test]
+fn clusters_are_visual_per_line() {
+    let mut ts = system();
+    let text = format!("ab {HEBREW}");
+    let l = lay(&mut ts, &text, 13.0, None);
+    let cs: Vec<_> = l.clusters(0).collect();
+    assert_eq!(cs.len(), 7, "{cs:?}");
+    assert!(cs.windows(2).all(|w| (w[0].x + w[0].advance - w[1].x).abs() < 0.01), "contiguous, left to right");
+    assert_eq!(cs[0].range, 0..1);
+    assert!(!cs[0].rtl && cs[6].rtl);
+    // The last Hebrew letter (logically) is the leftmost of the Hebrew run.
+    assert_eq!(cs[3].range, 9..11);
+    assert_eq!(l.clusters(1).count(), 0);
+}
