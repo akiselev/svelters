@@ -132,6 +132,9 @@ impl AppHandler for Forward {
     fn quit_requested(&mut self, cx: &mut dyn PlatformCx) -> bool {
         self.0.handler.borrow_mut().quit_requested(cx)
     }
+    fn menu_activated(&mut self, cx: &mut dyn PlatformCx, id: &str) {
+        self.0.handler.borrow_mut().menu_activated(cx, id);
+    }
     fn exiting(&mut self, cx: &mut dyn PlatformCx) {
         self.0.handler.borrow_mut().exiting(cx);
     }

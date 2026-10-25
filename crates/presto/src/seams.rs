@@ -46,6 +46,19 @@ pub trait DocumentApi {
     fn take_fast_commits(&mut self) -> Vec<FastCommit> {
         Vec::new()
     }
+    /// The caret blink new windows get (the text policy's); `None` = leave the compositor's default.
+    fn caret_blink(&self) -> Option<Option<presto_compositor::CaretBlink>> {
+        None
+    }
+    /// A native menu item was chosen (`AppHandler::menu_activated`); true when something handled it.
+    fn menu_activated(&mut self, _id: &str) -> bool {
+        false
+    }
+    /// A menu bar the document published since the last call (`Some(None)` removes it), for
+    /// `PlatformCx::set_menu_bar`.
+    fn take_menu_bar(&mut self) -> Option<Option<presto_platform::MenuDesc>> {
+        None
+    }
     /// The app's clipboard, for kinds that copy and paste (installed once, at `init`).
     fn install_clipboard(&mut self, _clipboard: Box<dyn presto_platform::Clipboard>) {}
     /// A window opened or got a new size (points) and scale.
@@ -104,6 +117,8 @@ pub trait CompositorApi {
     fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, input: bool);
     /// The UI answered `BeginFrame` `frame` with nothing to commit (`UiFrameSkipped`).
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
+    /// The window's caret blink; `None` = a steady caret.
+    fn set_caret_blink(&self, _window: WindowId, _blink: Option<presto_compositor::CaretBlink>) {}
     /// The window's frame-clock snapshot for the urgent-frame rule; `None` = not known (the frame
     /// state then runs urgent frames for `now`).
     fn frame_args(&self, _window: WindowId) -> Option<presto_frame::FrameArgs> {

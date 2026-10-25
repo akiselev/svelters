@@ -210,3 +210,23 @@ Branch `ci/presto-app-test` with `ci/presto-base` 4756b7ca, `ci/presto-text-inpu
   An own backend that errors before calling `init` falls back to winit (the app is shared through a
   forwarding handler, so it is not lost); `PRESTO_BACKEND=winit` forces winit, `PRESTO_BACKEND=native`
   disables the fallback. No test (it needs a display); CI builds it on all three OSes.
+
+## Menu bar, single selection, caret blink (coordinator, 2026-10-25 22:12)
+
+- CI on c091234d: `presto` (14) and `presto-test` (harness 20, render 2 on Metal, lib 13) green; the red
+  jobs were other lanes' (reported).
+- **Menus:** `AppHandler::menu_activated(cx, id)` → `DocumentApi::menu_activated(id)`, then an urgent frame
+  for each window the document dirtied; `DocumentApi::take_menu_bar()` → `PlatformCx::set_menu_bar` after
+  each commit and menu event. `CoreDocument` keeps it a small hook until presto-widgets' views expose the
+  menu bar's dispatch and `MenuModel::to_menu_desc`: `publish_menu_bar(Option<MenuDesc>)` and
+  `on_menu(MenuHandler)`. `presto::run`'s forwarding handler forwards `menu_activated`.
+- **Single selection:** `CoreDocument::with_widgets` calls `Document::set_single_selection(policy.one_selection_owner)`
+  (true under the GTK policy).
+- **Caret blink:** `with_widgets` derives it from `TextPolicy::from_policy(Platform::current(), &policy)`
+  (`caret_blink_ms`, 0 = steady; `caret_blink_timeout_ms`); `App::open_window` sends it with
+  `CompositorApi::set_caret_blink` → `CompositorHandle::set_caret_blink`.
+- **Services:** match text-edit's lookups: `presto_text::TextSystem` (`host::install`) and
+  `Box<dyn presto_platform::Clipboard>` (`install_clipboard`).
+- Tests: `menu_items_reach_the_document_with_an_urgent_frame`, `new_windows_get_the_policy_caret_blink`
+  (`Harness::menu_activated`; the headless compositor records caret blinks). The headless platform does
+  not record `set_menu_bar` (its default returns false), so menu-bar publishing has no harness assertion.

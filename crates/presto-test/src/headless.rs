@@ -52,6 +52,7 @@ struct CompState {
     ui_costs: Vec<(WindowId, FrameId, Span)>,
     high_rate: u64,
     skipped: u64,
+    caret_blinks: Vec<(WindowId, Option<presto::compositor_crate::CaretBlink>)>,
     shut_down: bool,
 }
 
@@ -269,6 +270,10 @@ impl HeadlessCompositor {
     pub fn high_rate_inputs(&self) -> u64 {
         self.lock().high_rate
     }
+    /// Every caret blink the app set, per window, in order.
+    pub fn caret_blinks(&self) -> Vec<(WindowId, Option<presto::compositor_crate::CaretBlink>)> {
+        self.lock().caret_blinks.clone()
+    }
     /// `BeginFrame`s the UI answered with nothing.
     pub fn skipped_frames(&self) -> u64 {
         self.lock().skipped
@@ -390,6 +395,13 @@ impl CompositorApi for HeadlessCompositor {
     }
     fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, _input: bool) {
         self.lock().ui_costs.push((window, frame, cost));
+    }
+    fn set_caret_blink(
+        &self,
+        window: WindowId,
+        blink: Option<presto::compositor_crate::CaretBlink>,
+    ) {
+        self.lock().caret_blinks.push((window, blink));
     }
     fn ui_frame_skipped(&self, _window: WindowId, _frame: FrameId) {
         self.lock().skipped += 1;

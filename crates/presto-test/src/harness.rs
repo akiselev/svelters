@@ -693,6 +693,13 @@ impl<D: DocumentApi + 'static> Harness<D> {
         self.egui.borrow().macos
     }
 
+    /// A native menu item chosen now (`AppHandler::menu_activated`), as the macOS backend reports it.
+    pub fn menu_activated(&mut self, id: &str) {
+        self.deliver();
+        presto::platform::AppHandler::menu_activated(&mut self.app, self.platform.cx(), id);
+        self.collect_calls();
+    }
+
     /// Modifiers held for the following keys, clicks and wheel input.
     pub fn set_modifiers(&mut self, m: impl IntoModifiers) {
         self.modifiers = m.into_modifiers(self.macos());
