@@ -11,8 +11,7 @@
 
 use crate::easing::SvelteEasing;
 use crate::flip::{DomRect, Flip, FlipInput, FlipParams};
-use crate::shim::css::parse_transform;
-use crate::transition::{Channel, Computed, NotNative, Params, Plan, Run, Track, Transition, TransitionKind};
+use crate::transition::{parse_transform, Channel, Computed, NotNative, Params, Plan, Run, Track, Transition, TransitionKind};
 use presto_base::anim::{AnimValue, Easing, FillMode, Keyframe, PlaybackDirection, Timing, TransformFn};
 use presto_base::geom::Vec2;
 use presto_base::time::Span;

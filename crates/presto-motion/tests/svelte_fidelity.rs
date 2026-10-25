@@ -5,9 +5,8 @@
 use presto_base::anim::{AnimValue, TransformFn};
 use presto_motion::easing::{SvelteEasing, SvelteEasingExt};
 use presto_motion::flip::{DomRect, Flip, FlipInput, FlipParams};
-use presto_motion::shim::css::parse_transform;
 use presto_motion::spring::{SpringMotion, SvelteSpring};
-use presto_motion::transition::{Channel, Computed, Params, Run, Transition, TransitionKind};
+use presto_motion::transition::{parse_transform, Channel, Computed, Params, Run, Transition, TransitionKind};
 use serde::Deserialize;
 
 const GOLDENS: &str = include_str!("fixtures/svelte-goldens.json");

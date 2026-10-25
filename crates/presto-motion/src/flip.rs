@@ -8,8 +8,7 @@
 //! layout size is presto's own, so a scaled ancestor is accounted for.
 
 use crate::easing::{SvelteEasing, SvelteEasingExt};
-use crate::transition::{Channel, Plan, Track, Transform64};
-use crate::shim::css::TransformList;
+use crate::transition::{Channel, Plan, Track, Transform64, TransformList};
 use presto_base::anim::{AnimValue, FillMode, Keyframe, PlaybackDirection, Timing};
 use presto_base::time::Span;
 

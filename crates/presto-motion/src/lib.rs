@@ -17,7 +17,6 @@
 pub mod easing;
 pub mod flip;
 pub mod op;
-pub mod shim;
 pub mod spring;
 pub mod transition;
 pub mod waapi;

@@ -14,7 +14,6 @@ Design: `plans/research/presto/compiler-and-js.md` §3.6, §3.7.
 | `transition` | `fade fly slide scale blur draw` from their JSON parameters and the computed style (`Transition::new`); `css(t, u)` as numbers (`Frame`); `Run {t1, t2, duration, delay}` with Svelte's 60 Hz keyframe `t`s; `plan(run)` → per-channel two-keyframe tracks (slide's opacity knee as a third keyframe at eased offset), timing easing = the transition's, fill forwards; `NotNative` for what presto can't resolve (em/vw units, a computed filter, an unknown easing) so the host plays the frames |
 | `flip` | Svelte's `flip` from rects + layout size + origin; **the scale bug is fixed** (`sx = clientWidth / to.width / zoom`, svelters had `to.width / to.width`) |
 | `spring` | svelte/motion's spring as a motion on `presto_anim::spring::Spring::svelte` (start velocity from Svelte's last two values): exact at 60 Hz, frame-rate independent; Svelte's settle frame; `retarget` keeps position and last step; `physical()` and `velocity()` for a compositor spring |
-| `shim::css` | the computed `transform` parser the built-ins need (matrix, translate, scale, rotate, skew) |
 | `waapi` | the Web Animations slice Svelte uses: `Animation` (play/pause/cancel/finish, `currentTime` get/set, `playState`, `effect = null`, fill forwards, progress), `Animations<N>` per document (`of_node` = `getAnimations`, `poll` raises each finish once → `animationend`, `next_finish` for the clock) |
 | `op` | the `OP_ANIMATE` payload: channel frames plus the optional `native` descriptor; `plan()` prefers the descriptor, falls back to the frames |
 
@@ -88,8 +87,8 @@ Run locally once to fix CI's first report (filtered): presto-motion's tests, sve
 ## Shims and cross-lane edits
 
 - Merged `ci/presto-base` ac7cc8c4 (wave-1 APIs): easings and the spring now use presto-anim's.
-  `presto-motion::shim::css` stands in for `presto_anim::css` (still empty): the computed `transform`
-  parser.
+  The computed `transform` of the built-ins is parsed with `presto_anim::css` (`transition::parse_transform`);
+  presto-motion has no shims left.
 - Cross-lane edits (all additive): `svelters-compiler` semantics/codegen/transform/compile and the
   CSS pruner (COMPILER lane works in the same crate; I told it the exact `capabilities` field text by
   message), `svelters-modules` source/mod.rs (sheet module), `svelters-style` (binary, utility),
