@@ -3895,7 +3895,26 @@ dependencies = [
 name = "presto-platform"
 version = "0.0.0"
 dependencies = [
+ "accesskit",
+ "accesskit_macos",
+ "accesskit_unix",
+ "accesskit_windows",
+ "arboard",
+ "log",
+ "objc2 0.5.3",
+ "objc2-app-kit 0.2.2",
+ "objc2-foundation 0.2.2",
+ "objc2-quartz-core 0.2.2",
  "presto-base",
+ "raw-window-handle",
+ "rfd",
+ "smallvec",
+ "smithay-clipboard",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-protocols",
+ "windows",
+ "winit",
 ]
 
 [[package]]
