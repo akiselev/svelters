@@ -257,6 +257,9 @@ pub mod core {
         Timer,
         /// The pointer capture ended without a release (another window took it, the node was hidden).
         CaptureLost,
+        /// A pointer press in the window outside this node and its subtree (node-local position),
+        /// for a node that asks for them while open ([`Kind::light_dismiss`]): a popup closes on it.
+        OutsidePress(Point),
     }
 
     /// Stands in for `presto_core::StyleCx`: the node's computed style and state, for `layout_style`.
@@ -366,6 +369,9 @@ pub mod core {
         pub args: Vec<Value>,
     }
 
+    /// Delivers a signal now; returns whether a listener prevented its default.
+    pub type SyncEmit<'a> = dyn FnMut(SignalId, &[Value]) -> bool + 'a;
+
     /// Stands in for `presto_core::EventCx`: what a kind's native default reads and writes.
     pub struct EventCx<'a> {
         pub now: Time,
@@ -395,15 +401,29 @@ pub mod core {
         pub peers: Vec<PeerRequest>,
         /// Move keyboard focus to the node with this anchor (a `label`'s `for`); core resolves it.
         pub focus_anchor: Option<String>,
+        /// Delivers a signal to JS now and reports whether a listener prevented its default
+        /// ([`EventCx::emit_sync`]); `None`: signals are queued and nothing is prevented.
+        pub sync: Option<&'a mut SyncEmit<'a>>,
     }
 
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, sync: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
+        }
+        /// Emits `signal` at event time when the host can deliver it now (a cancelable signal whose
+        /// default action follows); returns whether a listener prevented that default.
+        pub fn emit_sync(&mut self, signal: SignalId, args: Vec<Value>) -> bool {
+            match self.sync.as_mut() {
+                Some(f) => f(signal, &args),
+                None => {
+                    self.emit(signal, args);
+                    false
+                }
+            }
         }
         pub fn prop_changed(&mut self, prop: PropId) {
             if !self.changed.contains(&prop) {
@@ -537,6 +557,22 @@ pub mod core {
         /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:
         /// an `icon` or `image` takes clicks only while one of its click signals is listened.
         fn listen(&mut self, _signal: SignalId, _listened: bool) {}
+        /// It wants [`Event::OutsidePress`] now (an open floating surface: light dismiss).
+        fn light_dismiss(&self) -> bool {
+            false
+        }
+        /// The state bits the kind derives from its props alone (`:checked`, `:busy`); presto-core sets
+        /// them after every prop write (bits outside [`Kind::prop_states`] are ignored).
+        fn prop_state(&self) -> StateBits {
+            StateBits::NONE
+        }
+        /// The bits [`Kind::prop_state`] owns.
+        fn prop_states() -> StateBits
+        where
+            Self: Sized,
+        {
+            StateBits::NONE
+        }
     }
 
     /// Checks a value against a prop's spec type (what `set_prop` implementations call first).

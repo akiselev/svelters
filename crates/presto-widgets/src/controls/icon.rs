@@ -164,6 +164,12 @@ impl Icon {
 }
 
 impl Kind for Icon {
+    fn prop_state(&self) -> crate::interact::StateBits {
+        { let mut s = crate::interact::StateBits::NONE; self.mirror(&mut s); s }
+    }
+    fn prop_states() -> crate::interact::StateBits {
+        crate::interact::StateBits::SELECTED
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

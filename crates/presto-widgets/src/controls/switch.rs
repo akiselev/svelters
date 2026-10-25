@@ -69,7 +69,7 @@ kind_props! {
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
-    SignalSpec::new("changed", &[("active", ValueType::Bool)], "The user toggled it; carries the new state."),
+    SignalSpec::new("changed", &[("active", ValueType::Bool)], "The user toggled it; carries the new state. Preventing it keeps the state.").cancelable(),
     SignalSpec::new("clicked", &[], "Pressed and released (or Space, Enter, AccessKit `Click`)."),
 ];
 
@@ -119,6 +119,12 @@ impl Switch {
 }
 
 impl Kind for Switch {
+    fn prop_state(&self) -> crate::interact::StateBits {
+        self.mirror(crate::interact::StateBits::NONE)
+    }
+    fn prop_states() -> crate::interact::StateBits {
+        crate::interact::StateBits::CHECKED
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
@@ -164,12 +170,16 @@ impl Kind for Switch {
         }
         for Toggle::Toggled { checked, .. } in toggled.iter().copied() {
             // EV1: the signal goes out before the default action (the prop write)
-            common::emit(cx, &SPEC, "changed", vec![Value::Bool(checked)]);
+            if common::emit_sync(cx, &SPEC, "changed", vec![Value::Bool(checked)]) {
+                continue;
+            }
             if self.props.active != checked {
                 self.props.active = checked;
                 cx.prop_changed(P::active.id());
             }
         }
+        // a prevented toggle leaves the unit's bits at the new value: back to the props
+        *cx.state = self.mirror(*cx.state);
         if pass.resp.hovered || pass.resp.down_on || !pressed.is_empty() || !toggled.is_empty() { Handled::Yes } else { Handled::No }
     }
 
@@ -322,5 +332,14 @@ mod tests {
         assert_eq!(n.toggled(), Some(accesskit::Toggled::False));
         s.props.active = true;
         assert_eq!(testkit::a11y(&s, StateBits::NONE, SIZE).toggled(), Some(accesskit::Toggled::True));
+    }
+
+    #[test]
+    fn a_prevented_changed_keeps_the_state() {
+        let mut d = Driver::new(Switch::default(), presto_base::geom::Size::new(80.0, 20.0));
+        d.prevent = vec!["changed"];
+        d.click();
+        assert!(d.names().contains(&"changed"));
+        assert!(!d.kind.props.active && !d.state.contains(StateBits::CHECKED));
     }
 }

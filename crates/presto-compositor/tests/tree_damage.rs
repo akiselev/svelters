@@ -273,3 +273,31 @@ fn pending_full_damage_covers_the_surface() {
     assert!(damage::covers(&d, size));
     assert!(p.take(size).is_none());
 }
+
+#[test]
+fn reordered_items_are_damaged() {
+    let mut tree = WindowTree::default();
+    let mut c = commit(1);
+    c.props.ops = vec![t(1, None, Affine::IDENTITY)];
+    c.layers = vec![
+        LayerDelta::Add(desc(1, None, LayerKind::Root, 1, 0, Rect::new(0.0, 0.0, 400.0, 300.0))),
+        LayerDelta::Items { layer: LayerId(1), items: vec![item(1, 1), item(2, 1), item(3, 1)] },
+    ];
+    c.lists = vec![
+        (NodeId(1), quad(Rect::new(0.0, 0.0, 10.0, 10.0))),
+        (NodeId(2), quad(Rect::new(20.0, 0.0, 30.0, 10.0))),
+        (NodeId(3), quad(Rect::new(40.0, 0.0, 50.0, 10.0))),
+    ];
+    tree.apply_commit(c);
+    let mut snap = Snapshot::default();
+    let mut out = Vec::new();
+    snap.diff(&tree.flatten()[&SurfaceKey::Main], &mut out);
+    // Node 1 moves above node 3.
+    let mut c2 = commit(2);
+    c2.layers = vec![LayerDelta::Items { layer: LayerId(1), items: vec![item(2, 1), item(3, 1), item(1, 1)] }];
+    tree.apply_commit(c2);
+    out.clear();
+    snap.diff(&tree.flatten()[&SurfaceKey::Main], &mut out);
+    assert!(out.contains(&Rect::new(0.0, 0.0, 10.0, 10.0)), "{out:?}");
+    assert!(!out.contains(&Rect::new(20.0, 0.0, 30.0, 10.0)), "unmoved relative to the others: {out:?}");
+}

@@ -56,6 +56,12 @@ jobs:
       - name: cargo check (all targets)
         shell: bash
         run: cargo check ${{ steps.crates.outputs.list }} --all-targets
+      - name: cargo check (optional features)
+        shell: bash
+        run: |
+          if grep -q '^dialogs' crates/presto-widgets/Cargo.toml 2>/dev/null; then
+            cargo check -p presto-widgets --all-targets --features dialogs
+          fi
       - name: cargo test
         shell: bash
         run: |
