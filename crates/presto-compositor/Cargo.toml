@@ -8,3 +8,6 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+wgpu = { workspace = true }
+smallvec = { workspace = true }
+log = "0.4"

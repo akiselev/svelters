@@ -1,0 +1,11 @@
+[package]
+name = "presto-motion"
+description = "presto's native transitions, FLIP and springs for Svelte (svelte/transition, svelte/animate, svelte/motion)."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }
+presto-anim = { workspace = true }
