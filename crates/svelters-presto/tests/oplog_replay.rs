@@ -1,5 +1,6 @@
-//! The counter fixture's op log on presto equals egui's: `fixtures/counter-egui/expected.oplog` replayed
-//! against the presto backend through the real vtable, as svelters-egui's `oplog_replay.rs` replays it
+//! The egui fixtures' op logs on presto equal egui's: `fixtures/*-egui/expected.oplog` (counter,
+//! if-toggle, keyed-list, motion, timers: Tier 0 kinds only) replayed against the presto backend
+//! through the real vtable, as svelters-egui's `oplog_replay.rs` replays it
 //! on egui. Every op must succeed and read back; `event` and `changed` lines are produced natively and
 //! must reach the recording host exactly once (`changed` exactly when the log observes it).
 //!
@@ -132,6 +133,16 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                         o => panic!("{ctx}: arg {o}"),
                     })
                     .collect();
+                // a kind that emits its new value has written it first (a text field's `changed`)
+                let reg = rig.backend.registry().clone();
+                let kind = rig.backend.with_doc(|d| d.kind(rig.backend.node(h).unwrap())).unwrap();
+                if let Some((_, spec)) = reg.signal(kind, sig) {
+                    for ((arg, _), v) in spec.args.iter().zip(&want) {
+                        if reg.prop(kind, arg).is_some_and(|(_, p)| p.native) {
+                            rig.native_set(h, arg, pvalue(v));
+                        }
+                    }
+                }
                 rig.emit(h, sig, want.iter().map(pvalue).collect());
                 rig.backend.pump();
                 let l = rig.take();
@@ -166,9 +177,25 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
 }
 
 #[test]
-fn counter_egui_oplog_replays_on_presto() {
-    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/counter-egui/expected.oplog");
-    let log = std::fs::read_to_string(path).unwrap();
-    let (events, changes) = replay("counter-egui", &log);
-    assert_eq!((events, changes), (1, 3));
+fn egui_fixtures_replay_on_presto() {
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures");
+    let mut names: Vec<_> = std::fs::read_dir(&dir)
+        .unwrap()
+        .filter_map(|e| e.ok())
+        .filter(|e| {
+            let pkg = std::fs::read_to_string(e.path().join("package.json")).unwrap_or_default();
+            // the menus gallery uses Tier 1 kinds (menus, popups, modals) presto does not have yet
+            e.path().join("expected.oplog").exists() && pkg.contains("\"toolkit\": \"egui\"") && e.file_name() != "gallery-egui-menus"
+        })
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    names.sort();
+    assert_eq!(names, ["counter-egui", "if-toggle-egui", "keyed-list-egui", "motion-egui", "timers-egui"]);
+    for name in names {
+        let log = std::fs::read_to_string(dir.join(&name).join("expected.oplog")).unwrap();
+        let (events, changes) = replay(&name, &log);
+        if name == "counter-egui" {
+            assert_eq!((events, changes), (1, 3));
+        }
+    }
 }
