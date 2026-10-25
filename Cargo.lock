@@ -4171,12 +4171,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "presto-canvas"
+version = "0.0.0"
+dependencies = [
+ "bytemuck",
+ "lyon",
+ "naga",
+ "pollster 0.4.0",
+ "presto-base",
+ "skrifa",
+ "wgpu",
+]
+
+[[package]]
 name = "presto-compositor"
 version = "0.0.0"
 dependencies = [
  "log",
  "presto-anim",
  "presto-base",
+ "presto-canvas",
  "presto-frame",
  "presto-platform",
  "presto-render",
@@ -4322,6 +4336,7 @@ dependencies = [
  "png 0.18.1",
  "pollster 0.4.0",
  "presto-base",
+ "presto-canvas",
  "presto-text",
  "smallvec",
  "wgpu",

@@ -357,6 +357,16 @@ impl PlatformCx for Cx<'_> {
         }
     }
 
+    fn begin_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) -> bool {
+        self.win_mut(id).is_some_and(|w| w.shim.begin_layer_resize(layer))
+    }
+
+    fn end_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) {
+        if let Some(w) = self.win_mut(id) {
+            w.shim.end_layer_resize(layer);
+        }
+    }
+
     fn os_layer_committer(&self, id: WindowId) -> Option<OsLayerCommitter> {
         self.win(id)?.shim.committer()
     }

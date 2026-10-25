@@ -61,6 +61,8 @@ pub enum PlatformCall {
     CreateOsLayer(WindowId, SurfaceId, OsLayerDesc),
     SetOsLayerBounds(WindowId, SurfaceId, Rect),
     RemoveOsLayer(WindowId, SurfaceId),
+    BeginOsLayerResize(WindowId, SurfaceId),
+    EndOsLayerResize(WindowId, SurfaceId),
     SetCursor(WindowId, CursorIcon),
     SetIme(WindowId, Option<ImeState>),
     EndImeComposition(WindowId, bool),
@@ -303,6 +305,16 @@ impl PlatformCx for HeadlessCx {
             w.layers.retain(|l| *l != layer);
         }
         self.calls.push(PlatformCall::RemoveOsLayer(id, layer));
+    }
+
+    /// Recorded; nothing is held (headless layers are never shown).
+    fn begin_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) -> bool {
+        self.calls.push(PlatformCall::BeginOsLayerResize(id, layer));
+        false
+    }
+
+    fn end_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) {
+        self.calls.push(PlatformCall::EndOsLayerResize(id, layer));
     }
 
     fn os_layer_committer(&self, _id: WindowId) -> Option<OsLayerCommitter> {

@@ -13,7 +13,7 @@ use objc2::runtime::{AnyObject, Sel};
 use objc2::sel;
 use objc2_app_kit::{NSApplication, NSScreen, NSView};
 use objc2_foundation::{CGPoint, CGRect, CGSize, MainThreadMarker, NSProcessInfo};
-use objc2_quartz_core::{CALayer, CAMetalLayer, CATransaction};
+use objc2_quartz_core::{kCAGravityTopLeft, CALayer, CAMetalLayer, CATransaction};
 use presto_base::event::PointerSample;
 use presto_base::geom::{DeviceRect, Rect};
 use presto_base::ids::SurfaceId;
@@ -105,6 +105,11 @@ impl WindowShim {
             layer.setFrame(Self::frame_in(&host, desc.bounds));
             layer.setContentsScale(scale as f64);
             layer.setOpaque(!desc.transparent);
+            // A drawable whose size lags the frame (the compositor configures off the main thread) is
+            // shown unscaled from the top-left corner and cut at the frame, never stretched.
+            // SAFETY: a constant string of QuartzCore.
+            layer.setContentsGravity(unsafe { kCAGravityTopLeft });
+            layer.setMasksToBounds(true);
             host.addSublayer(&layer);
         });
         let ptr = Retained::as_ptr(&layer) as *mut c_void;
@@ -126,6 +131,14 @@ impl WindowShim {
             without_animation(|| l.layer.removeFromSuperlayer());
         }
     }
+
+    /// Sublayers pin their drawable to the top-left (`create_layer`), so a size mismatch is never
+    /// stretched: nothing to hold.
+    pub fn begin_layer_resize(&mut self, _id: SurfaceId) -> bool {
+        false
+    }
+
+    pub fn end_layer_resize(&mut self, _id: SurfaceId) {}
 
     pub fn committer(&self) -> Option<OsLayerCommitter> {
         None

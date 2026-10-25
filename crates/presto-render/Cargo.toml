@@ -8,6 +8,7 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+presto-canvas = { workspace = true }
 wgpu = { workspace = true }
 etagere = { workspace = true }
 lyon = { workspace = true }
