@@ -75,6 +75,13 @@ pub struct Document {
     pub(crate) scroll: HashMap<NodeId, presto_base::geom::Vec2>,
     /// The revision of the last edit that changed something.
     pub(crate) last_change: Revision,
+    /// Run and image ids are unique per document (the compositor holds them per window).
+    pub(crate) run_counter: u64,
+    pub(crate) images: crate::cx::ImageSink,
+    pub(crate) key_hook: Option<Box<dyn FnMut(WindowId, &presto_base::event::KeyEvent) -> bool>>,
+    pub(crate) services: crate::cx::Services,
+    /// Kinds' deadlines (`EventCx::wake_at`).
+    pub(crate) timers: HashMap<NodeId, presto_base::time::Time>,
 }
 
 impl Document {
@@ -105,6 +112,11 @@ impl Document {
             anim: Default::default(),
             scroll: HashMap::new(),
             last_change: Revision(0),
+            run_counter: 0,
+            images: Default::default(),
+            key_hook: None,
+            services: Default::default(),
+            timers: HashMap::new(),
         }
     }
 
@@ -203,6 +215,7 @@ impl Document {
             size: Size::new(l.size.width, l.size.height),
             children: &self.children[i],
             window: core.window,
+            css: self.style.nodes[i].css.as_deref(),
         }
     }
 
@@ -260,7 +273,7 @@ impl Document {
             slot: None,
             window: None,
             flags: NodeFlags::EMPTY,
-            dirty: Dirty::STYLE | Dirty::LAYOUT | Dirty::MEASURE | Dirty::RECORD,
+            dirty: Dirty::STYLE | Dirty::LAYOUT | Dirty::RECORD,
             changed: rev,
         };
         let i = id.index() as usize;
@@ -292,13 +305,33 @@ impl Document {
     /// Creates a window's root node of `kind` and attaches the window.
     pub fn create_window(&mut self, window: WindowId, kind: KindId, size: Size, scale: Scale) -> NodeId {
         let root = self.create(kind);
-        let i = self.ix(root);
+        self.attach_window(window, root, size, scale).expect("a new node is detached");
+        root
+    }
+
+    /// Presents a detached node (a JS-created `window` node) as `window`'s root. A window that had
+    /// another root keeps that root's nodes, detached.
+    pub fn attach_window(&mut self, window: WindowId, root: NodeId, size: Size, scale: Scale) -> Result<(), TreeError> {
+        let i = self.idx(root).ok_or(TreeError::Stale(root))?;
+        if let Some(p) = self.core[i].parent {
+            return Err(TreeError::NotAChild { parent: p, child: root });
+        }
+        if let Some(old) = self.window_root(window).filter(|&r| r != root)
+            && let Some(oi) = self.idx(old)
+        {
+            self.forget_in_window(window, oi);
+            self.core[oi].flags.remove(NodeFlags::ROOT);
+            self.set_window(oi, None);
+        }
+        self.stamp();
         self.core[i].flags.insert(NodeFlags::ROOT);
-        self.core[i].window = Some(window);
+        self.set_window(i, Some(window));
         self.windows.retain(|w| w.id != window);
         self.windows.push(WindowState::new(window, root, size, scale));
+        self.layout[i].cache.clear();
         self.mark_subtree_style(i);
-        root
+        self.mark_subtree(i, Dirty::RECORD);
+        Ok(())
     }
 
     /// Removes a window: its root and every node under it are destroyed.
@@ -454,6 +487,7 @@ impl Document {
         self.style.reset(i);
         self.anim.forget(id);
         self.scroll.remove(&id);
+        self.timers.remove(&id);
         self.slots.free(i);
     }
 
@@ -504,9 +538,8 @@ impl Document {
         self.core[pi].dirty.insert(Dirty::CHILDREN | Dirty::A11Y);
         self.mark_up(pi, Dirty::DESC_RECORD);
         self.invalidate_content(pi);
-        // structural selectors (:first-child, :has) may restyle siblings
-        self.core[pi].dirty.insert(Dirty::STYLE_SUBTREE | Dirty::STYLE);
-        self.mark_up(pi, Dirty::DESC_STYLE);
+        // structural selectors (:first-child, :has) may restyle around it
+        self.restyle_structure(pi);
     }
 
     // ---- props ----
@@ -592,9 +625,7 @@ impl Document {
             self.set_state(node, StateMask::DISABLED, on);
         }
         // attribute selectors may match the prop
-        self.style.prop_written(i);
-        self.core[i].dirty.insert(Dirty::STYLE);
-        self.mark_up(i, Dirty::DESC_STYLE);
+        self.restyle_attr(i, spec.name);
         self.journal.push(Change::Prop { node, prop, revision: rev, native });
         Ok(class)
     }
@@ -688,11 +719,11 @@ impl Document {
     /// Sets the node's classes, `#id` and inline declarations.
     pub fn set_style(&mut self, node: NodeId, style: StyleInput) {
         let Some(i) = self.idx(node) else { return };
-        if self.style.set_input(i, style) {
+        let old = self.style.input(i).cloned();
+        if self.style.set_input(i, style.clone()) {
             let rev = self.stamp();
             self.core[i].changed = rev;
-            self.core[i].dirty.insert(Dirty::STYLE | Dirty::STYLE_SUBTREE);
-            self.mark_up(i, Dirty::DESC_STYLE);
+            self.restyle_inputs(i, old.as_ref(), &style);
             self.journal.push(Change::Style { node, revision: rev });
         }
     }
@@ -735,11 +766,9 @@ impl Document {
         }
         self.state[i] = new;
         self.stamp();
-        self.core[i].dirty.insert(Dirty::STYLE | Dirty::A11Y);
-        if self.style.state_affects_descendants(StateMask(old.0 ^ new.0)) {
-            self.core[i].dirty.insert(Dirty::STYLE_SUBTREE);
-        }
-        self.mark_up(i, Dirty::DESC_STYLE | Dirty::DESC_RECORD);
+        self.core[i].dirty.insert(Dirty::A11Y);
+        self.mark_up(i, Dirty::DESC_RECORD);
+        self.restyle_state(i, old, new);
         self.journal.push(Change::State { node, state: new });
     }
 
@@ -818,6 +847,119 @@ impl Document {
     /// preparing): svelters-presto delivers them after its own task.
     pub fn take_events(&mut self) -> Vec<crate::input::JsEvent> {
         std::mem::take(&mut self.input_events)
+    }
+
+    // ---- services, timers, methods ----
+
+    /// Lends kinds a service by type (replacing one of the same type).
+    pub fn set_service<T: 'static>(&mut self, t: T) -> Option<T> {
+        self.services.insert(t)
+    }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut()
+    }
+
+    pub(crate) fn set_timer(&mut self, node: NodeId, at: Option<presto_base::time::Time>) {
+        match at {
+            Some(t) => {
+                self.timers.insert(node, t);
+            }
+            None => {
+                self.timers.remove(&node);
+            }
+        }
+    }
+
+    /// The earliest kind deadline (the platform's `set_timer`).
+    pub fn next_timer(&self) -> Option<presto_base::time::Time> {
+        self.timers.values().min().copied()
+    }
+
+    /// Delivers [`Event::Timer`](crate::Event::Timer) to every node whose deadline is at or before
+    /// `now`, as one transaction; returns the JS events their kinds emitted.
+    pub fn run_timers(&mut self, now: presto_base::time::Time) -> Vec<crate::input::JsEvent> {
+        let mut due: Vec<(presto_base::time::Time, NodeId)> = self.timers.iter().filter(|&(_, &t)| t <= now).map(|(&n, &t)| (t, n)).collect();
+        if due.is_empty() {
+            return Vec::new();
+        }
+        due.sort();
+        let mut emitted = Vec::new();
+        self.transaction(|doc| {
+            for (t, n) in due {
+                doc.timers.remove(&n);
+                doc.input.now = t;
+                crate::input::dispatch::call_kind(doc, n, &crate::kind::Event::Timer, &mut emitted, None);
+            }
+        });
+        for e in emitted {
+            crate::input::dispatch::queue_emitted(self, e);
+        }
+        self.take_events()
+    }
+
+    /// Calls a kind's method (from JS). Arguments are checked against the spec's params.
+    pub fn call(&mut self, node: NodeId, method: crate::ids::MethodId, args: &[Value]) -> Result<(Option<Value>, Vec<crate::input::JsEvent>), PropError> {
+        let i = self.idx(node).ok_or(PropError::Stale(node))?;
+        let entry = self.registry.get(self.core[i].kind).expect("registered kind");
+        let spec = entry.method(method).ok_or_else(|| PropError::Rejected(format!("unknown method {method:?}")))?;
+        let required = spec.params.iter().filter(|p| !p.nullable).count();
+        if args.len() < required || args.len() > spec.params.len() {
+            return Err(PropError::Rejected(format!("{} takes {} arguments, got {}", spec.name, spec.params.len(), args.len())));
+        }
+        let mut checked = Vec::with_capacity(args.len());
+        for (a, p) in args.iter().zip(spec.params) {
+            let got = a.ty();
+            checked.push(a.clone().coerce(p.ty).ok_or(PropError::Rejected(format!("{}: argument `{}` takes {}, got {}", spec.name, p.name, p.ty.name(), got.name())))?);
+        }
+        let mut k = self.kinds[i].take().expect("kind present");
+        let mut emitted = Vec::new();
+        let r = self.transaction(|doc| {
+            let mut cx = crate::cx::EventCx { doc, node, emitted: &mut emitted, pointer: None };
+            k.call(&mut cx, method, &checked)
+        });
+        if let Some(i) = self.idx(node) {
+            self.kinds[i] = Some(k);
+        }
+        for e in emitted {
+            crate::input::dispatch::queue_emitted(self, e);
+        }
+        Ok((r?, self.take_events()))
+    }
+
+    /// An assistive technology's action request: the target's kind handles it first; unhandled
+    /// `Focus`, `Blur` and `ScrollIntoView` get their defaults.
+    pub fn a11y_action(&mut self, window: WindowId, req: &accesskit::ActionRequest) -> crate::input::Dispatched {
+        let node = NodeId(req.target_node.0);
+        let mut out = crate::input::Dispatched { window, revision: self.revision, ..Default::default() };
+        if self.window_of(node) != Some(window) {
+            return out;
+        }
+        out.target = Some(node);
+        let mut emitted = Vec::new();
+        let before = self.revision;
+        self.transaction(|doc| {
+            let handled = !doc.state(node).contains(StateMask::DISABLED)
+                && crate::input::dispatch::call_kind(doc, node, &crate::kind::Event::A11y(req), &mut emitted, None) == crate::kind::Handled::Yes;
+            out.handled = handled;
+            if !handled {
+                match req.action {
+                    accesskit::Action::Focus => {
+                        doc.focus(node, FocusReason::Programmatic);
+                        out.handled = doc.focused(window) == Some(node);
+                    }
+                    accesskit::Action::Blur => doc.blur(window),
+                    accesskit::Action::ScrollIntoView => doc.scroll_into_view(node),
+                    _ => {}
+                }
+            }
+        });
+        for e in emitted {
+            crate::input::dispatch::queue_emitted(self, e);
+        }
+        out.events = self.take_events();
+        out.changed = self.revision > before && self.last_change >= self.revision;
+        out.revision = self.revision;
+        out
     }
 
     /// Drains the change journal (svelters-presto reads it for `bind:` and observers).
