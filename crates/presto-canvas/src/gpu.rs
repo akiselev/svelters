@@ -123,7 +123,10 @@ struct CacheKey {
 }
 
 struct StaticCache {
+    /// The key of the last frame that drew this canvas.
     key: Option<CacheKey>,
+    /// The texture holds the plane as `key` describes it.
+    valid: bool,
     texture: wgpu::Texture,
     bind_group: wgpu::BindGroup,
     size: DeviceSize,
@@ -521,7 +524,7 @@ impl CanvasRenderer {
                 ],
             });
             let changed_last_frame = self.caches.get(&id).is_some_and(|c| c.changed_last_frame);
-            self.caches.insert(id, StaticCache { key: None, texture, bind_group, size, changed_last_frame, last_used: self.frame });
+            self.caches.insert(id, StaticCache { key: None, valid: false, texture, bind_group, size, changed_last_frame, last_used: self.frame });
         }
         let c = self.caches.get_mut(&id).expect("inserted");
         c.last_used = self.frame;
@@ -566,13 +569,15 @@ impl CanvasRenderer {
             let cache_size = DeviceSize { w: (rect[2] - rect[0]).max(0) as u32, h: (rect[3] - rect[1]).max(0) as u32 };
             if !draws.is_empty() && cache_size.w > 0 && cache_size.h > 0 {
                 let key = CacheKey { revision: snap.statics.revision, projection: proj, lod, rect };
-                let (changed, moving) = {
+                let (render, moving) = {
                     let cache = self.cache_for(id, cache_size);
                     let changed = cache.key != Some(key);
                     let moving = changed && cache.changed_last_frame;
                     cache.changed_last_frame = changed;
-                    cache.key = if moving { None } else { Some(key) };
-                    (changed, moving)
+                    cache.key = Some(key);
+                    let render = !moving && !cache.valid || !moving && changed;
+                    cache.valid = !moving;
+                    (render, moving)
                 };
                 if moving {
                     stats.direct += 1;
@@ -586,7 +591,7 @@ impl CanvasRenderer {
                     out.statics = StaticMode::Direct;
                     out.direct = first..self.prepared.len();
                 } else {
-                    if changed {
+                    if render {
                         stats.cache_renders += 1;
                         let first = self.prepared.len();
                         for d in draws {

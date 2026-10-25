@@ -4165,6 +4165,7 @@ dependencies = [
  "png 0.18.1",
  "pollster 0.4.0",
  "presto-base",
+ "presto-canvas",
  "presto-text",
  "smallvec",
  "wgpu",
