@@ -11,6 +11,7 @@ presto-base = { workspace = true }
 
 # Everything below builds only on macOS; other targets compile an empty crate (src/lib.rs).
 [target.'cfg(target_os = "macos")'.dependencies]
+presto-platform = { workspace = true }
 accesskit = { workspace = true }
 accesskit_macos = "0.27.1"
 raw-window-handle = { workspace = true }

@@ -1,6 +1,6 @@
 # PRESTO-macos: presto's own macOS platform backend (presto batch 3, lane MACOS)
 
-Branch `ci/presto-macos` (from `ci/presto-base` at efe20dd5). Session `session_01TjQo3Ks6gxG7GdDLdgUZ86`.
+Branch `ci/presto-macos` (from `ci/presto-base` at efe20dd5; merged `ci/presto-base` 7a947d45 with presto-platform's API). Session `session_01TjQo3Ks6gxG7GdDLdgUZ86`.
 Brief: `plans/cloud/presto-b3/LANE-macos.md`. Crate: `crates/presto-platform-macos` (empty on other OSes:
 `#![cfg(target_os = "macos")]` at the crate root).
 
@@ -8,7 +8,7 @@ Brief: `plans/cloud/presto-b3/LANE-macos.md`. Crate: `crates/presto-platform-mac
 
 | Module | What |
 |---|---|
-| `shim` | The b1 brief's platform trait (`AppHandler`, `PlatformCx`, `run`) and the types the brief names but doesn't define (proposals for `presto-platform`, see below). |
+| (trait) | Implements `presto_platform::{AppHandler, PlatformCx}` as merged into `ci/presto-base` (all methods, including `set_os_layer_bounds`, `remove_os_layer`, `os_layer_committer` → `None` (CA transactions need no commit), `end_ime_composition`, `set_mouse_capture` (CGAssociateMouseAndMouseCursorPosition + hidden cursor, moves become `raw_mouse_motion`), `set_title`, `set_visible`, `drag_window`, `update_a11y`, `window_scale`; `quit_requested`/`exiting`/`a11y_event` delivered). `shim` keeps only `FrameSource`/`VsyncTick`, which `presto-platform` doesn't have yet. |
 | `app` | `PrestoApplication` (NSApplication subclass: forwards Cmd+keyUp, which AppKit swallows), `PrestoAppDelegate` (Cmd-Q / Quit always vetoed → `MacAppHandler::quit_requested`, default sends `CloseRequested` to every window; reopen → `MacAppHandler::reopen`), main-thread state, the re-entrancy-safe event queue (every callback posts; the handler is never re-entered), `PlatformCx` (windows, OS layers, cursor, IME state, clipboard, `NSTimer` timers in common modes, GCD-based coalescing `Waker`, clock, monitors, hit regions, exit via `NSApp.stop`). `run_mac(handler, MacConfig)` adds the macOS callbacks; `run` wraps a plain `AppHandler`. |
 | `window` | `PrestoWindow` (NSWindow subclass: borderless windows can be key; forwards `accessibilityFocusedUIElement` to the view), `PrestoWindowDelegate` (close → `CloseRequested`, move, focus + AccessKit focus, occlusion), `WindowDesc` → style mask, custom title bar (transparent, full-size content), transparency, min/max size, position in global top-left points. |
 | `view` | `PrestoView`: layer-hosting `CAMetalLayer`; mouse (all buttons, enter/leave via a tracking area), tablet pen (`tabletPoint:`/`tabletProximity:`, subtype TabletPoint: pressure, tilt, pointer id per device), precise scrolling with `phase`/`momentumPhase`, magnify, rotate, smart magnify; keys with IME-first routing; the full `NSTextInputClient` (marked text, `attributedSubstringForProposedRange:actualRange:`, `firstRectForCharacterRange:actualRange:` per range, `characterIndexForPoint:`, `replacementRange`, `selectedRange` never NSNotFound in simple mode, `unmarkText`, `doCommandBySelector:`); AccessKit host methods; file drops; size/scale/theme reporting; live resize toggling `presentsWithTransaction`; caption hit regions (window drag, double-click per `AppleActionOnDoubleClick`, `_opaqueRectForWindowMoveWhenInTitlebar`); the standard Edit actions (`copy:` etc.) as the Cmd shortcuts they stand for. |
@@ -19,7 +19,7 @@ Brief: `plans/cloud/presto-b3/LANE-macos.md`. Crate: `crates/presto-platform-mac
 | `layer`, `cursor`, `clipboard`, `monitor`, `menu`, `a11y`, `time` | GPUI-style `CAMetalLayer` config, OS-layer sublayers (flipped geometry, transactions without actions); `NSCursor` mapping (private shapes only when the class answers them); `NSPasteboard` text; `NSScreen` in global top-left points; muda menu bar (`set_menu_bar`, default App + Edit menu, events → `MacAppHandler::menu`); AccessKit adapter host (inactive / placeholder / active, full trees kept until the first request, `a11y_update`); mach clock (`NSEvent` and CA timestamps convert by scaling). |
 
 Public main-thread extras: `set_text_input_client`, `text_input_changed`, `set_option_as_alt`,
-`set_mouse_coalescing`, `set_os_layer_frame`, `remove_os_layer`, `set_presents_with_transaction`,
+`set_mouse_coalescing`, `set_custom_title_bar`, `set_presents_with_transaction`,
 `in_live_resize`, `frame_source`, `a11y_update`, `set_menu_bar`.
 
 ## Not done / stubbed (nothing returns a fake success)
@@ -51,13 +51,10 @@ aarch64-apple-darwin --all-targets` passes locally (cross-check, no link), and `
 
 ## Questions for the coordinator (each with a recommendation)
 
-1. **Shim types for `presto-platform`.** I defined `WindowDesc` (title, size, min/max, position, resizable,
-   decorations, `custom_title_bar`, transparent, visible), `OsLayerDesc { rect, opaque }`,
-   `SurfaceTarget::CoreAnimationLayer`, `ImeState { area, purpose }`, `Clipboard { get_text, set_text }`,
-   `Waker(Arc<dyn Fn>)`, `Monitor`, `HitRegion { rect, kind: Caption|Client|Minimize|Maximize|Close }`,
-   `FrameSource { set_active }` + `VsyncTick { now, target, interval }`, `PlatformError`.
-   *Recommendation:* the consolidation maps these onto PLATFORM's types; where PLATFORM has none, adopt
-   these.
+1. **`Monitor` and `WindowDesc.position` in device pixels.** macOS's desktop is in points with per-screen
+   scales; I report each monitor's position and size as its global points times its own scale, and read
+   `WindowDesc.position` at the main screen's scale. *Recommendation:* fine for single-DPI setups; if
+   mixed-DPI placement matters, add points-based fields to `presto-platform`.
 2. **Text-input client API.** The b1 `PlatformCx` only has `set_ime(ImeState)` (winit model). A full
    `NSTextInputClient` needs synchronous access to the document, so this backend takes
    `set_text_input_client(window, Option<Box<dyn TextInputClient>>)` (a free function). *Recommendation:*
@@ -69,9 +66,11 @@ aarch64-apple-darwin --all-targets` passes locally (cross-check, no link), and `
    wayland agree.
 4. **`WindowEvent::Moved` units.** I report the content's top-left in global points (presto geometry is
    points). *Recommendation:* document points in presto-base.
-5. **macOS-only callbacks** (`reopen`, `quit_requested`, `menu`, `live_resize`, `a11y_activated`,
-   `a11y_action`) live on `MacAppHandler: AppHandler`. *Recommendation:* the cross-platform ones
-   (`quit_requested`, `menu`, a11y) move to `AppHandler` with defaults at consolidation.
-6. **Default frame source.** `CAMetalDisplayLink` acquires a drawable per tick; until wgpu P3 lets the
+5. **macOS-only callbacks** (`reopen`, `menu`, `live_resize`) live on `MacAppHandler: AppHandler`
+   (`run_mac`). *Recommendation:* keep them there; `menu` could move to `AppHandler` if Windows/Linux
+   menus ever go through muda. `FrameSource` moves to `presto_platform`'s trait when PLATFORM lands it.
+6. **Custom title bar.** `WindowDesc` has no transparent-title-bar flag; this backend offers
+   `set_custom_title_bar(window, on)`. *Recommendation:* add `WindowDesc.custom_title_bar` to presto-platform.
+7. **Default frame source.** `CAMetalDisplayLink` acquires a drawable per tick; until wgpu P3 lets the
    compositor present it, `FrameSourceKind::best_timing()` picks `NSView.displayLink` (14+) or
    `CVDisplayLink`. *Recommendation:* switch the default to `MetalDisplayLink` when P3 lands.

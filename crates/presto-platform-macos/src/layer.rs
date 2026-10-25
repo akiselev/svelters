@@ -4,14 +4,13 @@
 //! `configure_layer` (`crates/gpui_macos` / `gpui_apple` at a5c4ca8): opaque windows get
 //! direct-to-display, three drawables, no next-drawable timeout.
 
-use crate::shim::{OsLayerDesc, SurfaceTarget};
 use objc2::rc::Retained;
 use objc2_core_foundation::{CGPoint, CGRect, CGSize};
 use objc2_metal::MTLPixelFormat;
 use objc2_quartz_core::{CAAutoresizingMask, CALayer, CAMetalLayer, CATransaction};
 use presto_base::geom::Rect;
+use presto_platform::{OsLayerDesc, SurfaceTarget};
 use std::ffi::c_void;
-use std::ptr::NonNull;
 
 pub(crate) fn new_window_layer(opaque: bool, scale: f64) -> Retained<CAMetalLayer> {
     let layer = CAMetalLayer::new();
@@ -34,8 +33,7 @@ fn configure(layer: &CAMetalLayer, opaque: bool, scale: f64) {
 }
 
 pub(crate) fn target(layer: &CAMetalLayer) -> SurfaceTarget {
-    let ptr = layer as *const CAMetalLayer as *mut c_void;
-    SurfaceTarget::CoreAnimationLayer(NonNull::new(ptr).expect("layer pointer"))
+    SurfaceTarget::CoreAnimationLayer(layer as *const CAMetalLayer as *mut c_void)
 }
 
 pub(crate) fn cg_rect(r: &Rect) -> CGRect {
@@ -62,9 +60,9 @@ pub(crate) fn create_os_layer(
     scale: f64,
 ) -> Retained<CAMetalLayer> {
     let layer = CAMetalLayer::new();
-    configure(&layer, desc.opaque, scale);
+    configure(&layer, !desc.transparent, scale);
     transaction(|| {
-        layer.setFrame(cg_rect(&desc.rect));
+        layer.setFrame(cg_rect(&desc.bounds));
         root.addSublayer(&layer);
     });
     layer

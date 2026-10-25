@@ -6,8 +6,8 @@
 //! frame sources, live resize with `presentsWithTransaction`, the app delegate (Cmd-Q veto, reopen),
 //! an AccessKit host view, the menu bar through muda, cursors and the clipboard.
 //!
-//! The platform trait ([`AppHandler`], [`PlatformCx`]) is lane PLATFORM's (`presto-platform`); until it
-//! lands, [`shim`] holds the brief's signatures. macOS extras are [`MacAppHandler`] callbacks and the
+//! It implements `presto_platform`'s [`AppHandler`] / [`PlatformCx`]; [`shim`] holds the frame-source
+//! trait `presto-platform` doesn't have yet. macOS extras are [`MacAppHandler`] callbacks and the
 //! main-thread functions below.
 //!
 //! | Module | What |
@@ -43,12 +43,12 @@ pub use display_link::{FrameSourceConfig, FrameSourceKind, MacFrameSource, Metal
 pub use keymap::OptionAsAlt;
 pub use menu::set_menu_bar;
 pub use muda;
-pub use shim::*;
+pub use presto_platform::{AppHandler, PlatformCx, PlatformError};
+pub use shim::{FrameSource, VsyncTick};
 pub use time::MachClock;
 
 use objc2::MainThreadMarker;
-use presto_base::geom::Rect;
-use presto_base::ids::{SurfaceId, WindowId};
+use presto_base::ids::WindowId;
 use presto_base::input::TextInputClient;
 
 /// Gives `window` a full text-input client (architecture §11.3): the IME then reads and edits the
@@ -86,20 +86,11 @@ pub fn set_mouse_coalescing(enabled: bool) {
     objc2_app_kit::NSEvent::setMouseCoalescingEnabled(enabled);
 }
 
-/// Moves or resizes an OS layer (window points, top-left origin). Main thread.
-pub fn set_os_layer_frame(window: WindowId, surface: SurfaceId, rect: Rect) -> bool {
-    app::with_window(window, |w| {
-        w.os_layers
-            .get(&surface)
-            .map(|l| layer::set_frame(l, &rect))
-            .is_some()
-    })
-    .unwrap_or(false)
-}
-
-pub fn remove_os_layer(window: WindowId, surface: SurfaceId) {
-    if let Some(l) = app::with_window(window, |w| w.os_layers.remove(&surface)).flatten() {
-        layer::remove(&l);
+/// Puts `window`'s content under a transparent title bar (the window controls stay), for app-drawn
+/// title bars marked with [`PlatformCx::set_hit_test_regions`]. Main thread.
+pub fn set_custom_title_bar(window: WindowId, on: bool) {
+    if let Some(w) = app::with_window(window, |w| w.ns_window.clone()) {
+        window::set_custom_title_bar(&w, on);
     }
 }
 
@@ -119,7 +110,8 @@ pub fn frame_source(
     window: WindowId,
     config: FrameSourceConfig,
 ) -> Result<MacFrameSource, PlatformError> {
-    let mtm = MainThreadMarker::new().ok_or(PlatformError::NotMainThread)?;
+    let mtm =
+        MainThreadMarker::new().ok_or_else(|| PlatformError::Os("not the main thread".into()))?;
     let (view, layer) = app::with_window(window, |w| (w.view.clone(), w.layer.clone()))
         .ok_or_else(|| PlatformError::Os(format!("unknown window {window:?}")))?;
     MacFrameSource::new(mtm, &view, &layer, config)

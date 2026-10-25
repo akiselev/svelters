@@ -10,7 +10,6 @@
 use crate::app::{self, Pending, post, post_input};
 use crate::events;
 use crate::keymap;
-use crate::shim::HitKind;
 use crate::text_input::{self, ClientTarget, ImeTarget, InsertOutcome, KeyRoute, NsRange};
 use crate::window::size_of;
 use crate::{a11y, cursor, layer};
@@ -34,6 +33,7 @@ use presto_base::geom::{Point, Rect};
 use presto_base::ids::WindowId;
 use presto_base::input::TextInputClient;
 use presto_base::key::Key;
+use presto_platform::HitKind;
 use std::path::PathBuf;
 
 pub(crate) struct ViewIvars {
@@ -488,6 +488,14 @@ impl PrestoView {
     }
 
     fn pointer(&self, event: &NSEvent, phase: PointerPhase, with_button: bool) {
+        // While the pointer is captured (mouse look) moves are raw deltas; the cursor stays put.
+        if phase == PointerPhase::Move
+            && app::with_app(|st| st.mouse_capture) == Some(Some(self.window_id()))
+        {
+            let delta = presto_base::geom::Vec2::new(event.deltaX() as f32, event.deltaY() as f32);
+            post(Pending::RawMotion(self.window_id(), delta));
+            return;
+        }
         post_input(
             self.window_id(),
             events::os_time(event),

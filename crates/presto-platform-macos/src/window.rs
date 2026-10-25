@@ -5,7 +5,6 @@ use crate::a11y::{self, A11y};
 use crate::app::{self, Pending};
 use crate::layer;
 use crate::monitor;
-use crate::shim::{HitRegion, WindowDesc};
 use crate::text_input::SimpleIme;
 use crate::view::PrestoView;
 use objc2::rc::Retained;
@@ -24,6 +23,7 @@ use presto_base::event::{KeyEvent, WindowEvent};
 use presto_base::geom::{DeviceSize, Scale};
 use presto_base::ids::{SurfaceId, WindowId};
 use presto_base::input::TextInputClient;
+use presto_platform::{HitRegion, WindowDesc};
 use std::collections::HashMap;
 
 /// A key press while the input method handles it (`interpretKeyEvents`).
@@ -65,9 +65,6 @@ impl WindowState {
         if desc.resizable {
             style |= NSWindowStyleMask::Resizable;
         }
-        if desc.decorations && desc.custom_title_bar {
-            style |= NSWindowStyleMask::FullSizeContentView;
-        }
         let content = NSRect::new(
             NSPoint::new(0.0, 0.0),
             NSSize::new(desc.size.w as f64, desc.size.h as f64),
@@ -77,10 +74,6 @@ impl WindowState {
         unsafe { window.setReleasedWhenClosed(false) };
         window.setTitle(&NSString::from_str(&desc.title));
         window.setAcceptsMouseMovedEvents(true);
-        if desc.custom_title_bar {
-            window.setTitlebarAppearsTransparent(true);
-            window.setTitleVisibility(NSWindowTitleVisibility::Hidden);
-        }
         if desc.transparent {
             window.setOpaque(false);
             window.setBackgroundColor(Some(&NSColor::clearColor()));
@@ -104,13 +97,13 @@ impl WindowState {
         window.setDelegate(Some(ProtocolObject::from_ref(&*delegate)));
 
         match desc.position {
-            Some(p) => {
+            // The outer top-left in the desktop's device pixels, at the primary screen's scale.
+            Some((x, y)) => {
+                let s = objc2_app_kit::NSScreen::mainScreen(mtm)
+                    .map(|s| s.backingScaleFactor())
+                    .unwrap_or(1.0);
                 let ph = monitor::primary_height(mtm);
-                let content_screen = NSRect::new(
-                    NSPoint::new(p.x as f64, ph - p.y as f64 - desc.size.h as f64),
-                    NSSize::new(desc.size.w as f64, desc.size.h as f64),
-                );
-                window.setFrame_display(window.frameRectForContentRect(content_screen), false);
+                window.setFrameTopLeftPoint(NSPoint::new(x as f64 / s, ph - y as f64 / s));
             }
             None => window.center(),
         }
@@ -161,10 +154,29 @@ pub(crate) fn size_of(view: &NSView, scale: f64) -> (DeviceSize, Scale) {
     (size, Scale(scale as f32))
 }
 
-pub(crate) fn finish_creation(_id: WindowId, window: &PrestoWindow, visible: bool) {
+pub(crate) fn finish_creation(window: &PrestoWindow, visible: bool, maximized: bool) {
     if visible {
         window.makeKeyAndOrderFront(None);
     }
+    if maximized && !window.isZoomed() {
+        window.zoom(None);
+    }
+}
+
+/// Content under a transparent title bar (the window controls stay), for app-drawn title bars.
+pub(crate) fn set_custom_title_bar(window: &NSWindow, on: bool) {
+    let mut style = window.styleMask();
+    if !style.contains(NSWindowStyleMask::Titled) {
+        return;
+    }
+    style.set(NSWindowStyleMask::FullSizeContentView, on);
+    window.setStyleMask(style);
+    window.setTitlebarAppearsTransparent(on);
+    window.setTitleVisibility(if on {
+        NSWindowTitleVisibility::Hidden
+    } else {
+        NSWindowTitleVisibility::Visible
+    });
 }
 
 pub(crate) fn discard_marked_text(view: &NSView) {

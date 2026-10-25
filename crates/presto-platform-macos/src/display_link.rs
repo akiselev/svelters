@@ -14,7 +14,7 @@
 //! callback's context is leaked (one small allocation per source) and checked for liveness, so a late
 //! callback after drop is harmless.
 
-use crate::shim::{FrameSource, PlatformError, VsyncTick};
+use crate::shim::{FrameSource, VsyncTick};
 use crate::time;
 use block2::RcBlock;
 use objc2::rc::Retained;
@@ -32,6 +32,7 @@ use objc2_quartz_core::{
     CAMetalDrawable, CAMetalLayer,
 };
 use presto_base::time::{Span, Time};
+use presto_platform::PlatformError;
 use std::ffi::c_void;
 use std::ptr::NonNull;
 use std::sync::atomic::{AtomicBool, AtomicI64, Ordering};

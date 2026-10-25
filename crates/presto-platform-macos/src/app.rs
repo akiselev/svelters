@@ -1,5 +1,7 @@
 //! The application: `NSApplication` (our subclass), its delegate, the main-thread state, and the
-//! one queue every platform callback goes through on its way to the [`MacAppHandler`].
+//! one queue every platform callback goes through on its way to the [`MacAppHandler`]. Cmd-Q asks
+//! [`AppHandler::quit_requested`] (AppKit's own termination is always cancelled; quitting ends the loop
+//! like [`PlatformCx::exit`], so `run` returns).
 //!
 //! AppKit calls back re-entrantly (closing a window runs its delegate, a key press runs the input
 //! method, which runs `insertText:`), so callbacks never call the handler directly: they push a
@@ -8,13 +10,9 @@
 //! cloned out of it before any call that can call back.
 
 use crate::cursor;
-use crate::shim::{
-    AppHandler, Clipboard, HitRegion, ImeState, Monitor, OsLayerDesc, PlatformCx, PlatformError,
-    SurfaceTarget, WindowDesc,
-};
 use crate::text_input::SimpleIme;
 use crate::window::{self, WindowState};
-use crate::{clipboard, layer, menu, monitor, time};
+use crate::{clipboard, layer, menu, monitor, text_input, time};
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{ClassType, MainThreadMarker, MainThreadOnly, define_class, msg_send};
@@ -25,43 +23,32 @@ use objc2_app_kit::{
 use objc2_foundation::{
     NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRunLoop, NSRunLoopCommonModes, NSTimer,
 };
+use presto_base::accesskit;
 use presto_base::cursor::CursorIcon;
 use presto_base::event::{ImeEvent, InputEnvelope, InputEvent, WindowEvent};
+use presto_base::geom::{Rect, Scale, Vec2};
 use presto_base::ids::{InputSeq, SurfaceId, WindowId};
 use presto_base::time::{Clock, Time};
+use presto_platform::{
+    A11yEvent, AppHandler, Clipboard, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc,
+    PlatformCx, PlatformError, SurfaceTarget, Waker, WindowDesc,
+};
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 pub use crate::keymap::OptionAsAlt;
-use crate::shim::Waker;
 
 /// macOS-only application callbacks, on top of [`AppHandler`]. Every method has a default.
 pub trait MacAppHandler: AppHandler {
     /// The Dock icon was clicked (or the app was opened again) while running.
     fn reopen(&mut self, _cx: &mut dyn PlatformCx, _has_visible_windows: bool) {}
-    /// Cmd-Q or the app menu's Quit. Return `true` when handled; `false` sends
-    /// [`WindowEvent::CloseRequested`] to every window (and exits when there is none). Quitting is
-    /// always vetoed: the app ends the loop with [`PlatformCx::exit`].
-    fn quit_requested(&mut self, _cx: &mut dyn PlatformCx) -> bool {
-        false
-    }
     /// A muda menu item was chosen.
     fn menu(&mut self, _cx: &mut dyn PlatformCx, _id: &muda::MenuId) {}
     /// A live resize (the user dragging an edge) started or ended. During it the window's layer
     /// presents with the Core Animation transaction (`platform.md` §4, macOS).
     fn live_resize(&mut self, _cx: &mut dyn PlatformCx, _window: WindowId, _active: bool) {}
-    /// An assistive technology started using the window: send a full tree with
-    /// [`a11y_update`](crate::a11y_update).
-    fn a11y_activated(&mut self, _cx: &mut dyn PlatformCx, _window: WindowId) {}
-    fn a11y_action(
-        &mut self,
-        _cx: &mut dyn PlatformCx,
-        _window: WindowId,
-        _request: accesskit::ActionRequest,
-    ) {
-    }
 }
 
 /// Options for [`run_mac`].
@@ -93,9 +80,10 @@ pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
 
 /// [`run`] with macOS callbacks and options.
 pub fn run_mac(handler: Box<dyn MacAppHandler>, config: MacConfig) -> Result<(), PlatformError> {
-    let mtm = MainThreadMarker::new().ok_or(PlatformError::NotMainThread)?;
+    let mtm = MainThreadMarker::new()
+        .ok_or_else(|| PlatformError::EventLoop("must run on the main thread".into()))?;
     if STATE.with(|s| s.borrow().is_some()) {
-        return Err(PlatformError::AlreadyRunning);
+        return Err(PlatformError::EventLoop("already running".into()));
     }
     STATE.with(|s| *s.borrow_mut() = Some(AppState::new(&config)));
     HANDLER.with(|h| *h.borrow_mut() = Some(handler));
@@ -114,6 +102,8 @@ pub fn run_mac(handler: Box<dyn MacAppHandler>, config: MacConfig) -> Result<(),
         post(Pending::Init);
     }
     app.run();
+    QUEUE.with(|q| q.borrow_mut().clear());
+    post(Pending::Exiting);
 
     let windows: Vec<WindowState> = STATE.with(|s| {
         s.borrow_mut()
@@ -155,6 +145,18 @@ impl AppHandler for Plain {
     fn timer(&mut self, cx: &mut dyn PlatformCx, now: Time) {
         self.0.timer(cx, now)
     }
+    fn raw_mouse_motion(&mut self, cx: &mut dyn PlatformCx, window: WindowId, delta: Vec2) {
+        self.0.raw_mouse_motion(cx, window, delta)
+    }
+    fn a11y_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: A11yEvent) {
+        self.0.a11y_event(cx, window, ev)
+    }
+    fn quit_requested(&mut self, cx: &mut dyn PlatformCx) -> bool {
+        self.0.quit_requested(cx)
+    }
+    fn exiting(&mut self, cx: &mut dyn PlatformCx) {
+        self.0.exiting(cx)
+    }
 }
 
 impl MacAppHandler for Plain {}
@@ -170,8 +172,9 @@ pub(crate) enum Pending {
     QuitRequested,
     Menu(muda::MenuId),
     LiveResize(WindowId, bool),
-    A11yActivated(WindowId),
-    A11yAction(WindowId, accesskit::ActionRequest),
+    A11y(WindowId, A11yEvent),
+    RawMotion(WindowId, Vec2),
+    Exiting,
 }
 
 pub(crate) struct AppState {
@@ -181,6 +184,8 @@ pub(crate) struct AppState {
     timer: Option<Retained<NSTimer>>,
     pub option_as_alt: OptionAsAlt,
     pub cursor_hidden: bool,
+    /// The window whose pointer is captured (`set_mouse_capture`).
+    pub mouse_capture: Option<WindowId>,
     exiting: bool,
     wake_pending: Arc<AtomicBool>,
 }
@@ -194,6 +199,7 @@ impl AppState {
             timer: None,
             option_as_alt: config.option_as_alt,
             cursor_hidden: false,
+            mouse_capture: None,
             exiting: false,
             wake_pending: Arc::new(AtomicBool::new(false)),
         }
@@ -282,21 +288,15 @@ fn deliver(h: &mut dyn MacAppHandler, cx: &mut MacCx, p: Pending) {
         Pending::Timer => h.timer(cx, time::now()),
         Pending::Reopen(visible) => h.reopen(cx, visible),
         Pending::QuitRequested => {
-            if !h.quit_requested(cx) {
-                let ids: Vec<WindowId> =
-                    with_app(|st| st.windows.keys().copied().collect()).unwrap_or_default();
-                if ids.is_empty() {
-                    cx.exit();
-                }
-                for id in ids {
-                    h.window_event(cx, id, WindowEvent::CloseRequested);
-                }
+            if h.quit_requested(cx) {
+                cx.exit();
             }
         }
         Pending::Menu(id) => h.menu(cx, &id),
         Pending::LiveResize(id, active) => h.live_resize(cx, id, active),
-        Pending::A11yActivated(id) => h.a11y_activated(cx, id),
-        Pending::A11yAction(id, req) => h.a11y_action(cx, id, req),
+        Pending::A11y(id, ev) => h.a11y_event(cx, id, ev),
+        Pending::RawMotion(id, d) => h.raw_mouse_motion(cx, id, d),
+        Pending::Exiting => h.exiting(cx),
     }
 }
 
@@ -315,12 +315,12 @@ impl PlatformCx for MacCx {
         }) else {
             panic!("create_window: the platform is not running");
         };
-        let visible = desc.visible;
+        let (visible, maximized) = (desc.visible, desc.maximized);
         let mut state = WindowState::new(self.mtm, id, &desc);
         let (window, size) = (state.ns_window.clone(), state.device_size());
         state.last_size = Some((size.0, size.1.0));
         with_app(|st| st.windows.insert(id, state));
-        window::finish_creation(id, &window, visible);
+        window::finish_creation(&window, visible, maximized);
         post(Pending::Window(
             id,
             WindowEvent::Resized {
@@ -338,8 +338,7 @@ impl PlatformCx for MacCx {
     }
 
     fn surface_target(&self, id: WindowId) -> SurfaceTarget {
-        with_window(id, |w| layer::target(&w.layer))
-            .unwrap_or_else(|| panic!("surface_target: unknown window {id:?}"))
+        with_window(id, |w| layer::target(&w.layer)).unwrap_or(SurfaceTarget::None)
     }
 
     fn create_os_layer(
@@ -358,6 +357,25 @@ impl PlatformCx for MacCx {
             w.os_layers.insert(surface, l);
             (surface, target)
         })
+    }
+
+    fn set_os_layer_bounds(&mut self, id: WindowId, layer: SurfaceId, bounds: Rect) {
+        with_window(id, |w| {
+            if let Some(l) = w.os_layers.get(&layer) {
+                layer::set_frame(l, &bounds);
+            }
+        });
+    }
+
+    fn remove_os_layer(&mut self, id: WindowId, layer: SurfaceId) {
+        if let Some(l) = with_window(id, |w| w.os_layers.remove(&layer)).flatten() {
+            layer::remove(&l);
+        }
+    }
+
+    /// Core Animation needs no commit from the compositor thread (layer changes go in transactions).
+    fn os_layer_committer(&self, _id: WindowId) -> Option<OsLayerCommitter> {
+        None
     }
 
     fn set_cursor(&mut self, id: WindowId, c: CursorIcon) {
@@ -384,10 +402,13 @@ impl PlatformCx for MacCx {
                 (Some(ime), Some(s)) => {
                     ime.area = s.area;
                     ime.purpose = s.purpose;
+                    ime.composition_rects = s.composition_rects;
                     Change::None
                 }
                 (None, Some(s)) => {
-                    w.ime = Some(SimpleIme::new(s.area, s.purpose));
+                    let mut ime = SimpleIme::new(s.area, s.purpose);
+                    ime.composition_rects = s.composition_rects;
+                    w.ime = Some(ime);
                     Change::Enabled
                 }
                 (Some(ime), None) => {
@@ -421,6 +442,26 @@ impl PlatformCx for MacCx {
         window::invalidate_character_coordinates(&view);
     }
 
+    fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool {
+        let Some(view) = with_window(id, |w| w.view.clone()) else {
+            return false;
+        };
+        crate::view::with_target(id, |t, ev| {
+            if commit {
+                t.unmark(ev);
+            } else {
+                t.set_marked(
+                    "",
+                    text_input::NsRange::NOT_FOUND,
+                    text_input::NsRange::NOT_FOUND,
+                    ev,
+                );
+            }
+        });
+        window::discard_marked_text(&view);
+        true
+    }
+
     fn clipboard(&mut self) -> &mut dyn Clipboard {
         &mut self.clipboard
     }
@@ -445,7 +486,7 @@ impl PlatformCx for MacCx {
 
     fn waker(&self) -> Waker {
         let flag = with_app(|st| st.wake_pending.clone()).unwrap_or_default();
-        Waker(Arc::new(move || {
+        Waker::new(move || {
             if flag.swap(true, Ordering::AcqRel) {
                 return;
             }
@@ -454,7 +495,7 @@ impl PlatformCx for MacCx {
                 flag.store(false, Ordering::Release);
                 post(Pending::Wake);
             });
-        }))
+        })
     }
 
     fn clock(&self) -> Arc<dyn Clock> {
@@ -469,12 +510,73 @@ impl PlatformCx for MacCx {
         with_window(id, |w| w.hit_regions = regions.to_vec());
     }
 
+    fn set_mouse_capture(&mut self, id: WindowId, capture: bool) {
+        let changed = with_app(|st| {
+            let new = capture.then_some(id);
+            let changed = st.mouse_capture.is_some() != new.is_some();
+            if capture || st.mouse_capture == Some(id) {
+                st.mouse_capture = new;
+            }
+            changed
+        })
+        .unwrap_or(false);
+        if changed {
+            // SAFETY: plain CoreGraphics call.
+            unsafe { CGAssociateMouseAndMouseCursorPosition(!capture as u8) };
+            cursor::set_hidden(capture);
+        }
+    }
+
+    fn set_title(&mut self, id: WindowId, title: &str) {
+        if let Some(w) = with_window(id, |w| w.ns_window.clone()) {
+            w.setTitle(&objc2_foundation::NSString::from_str(title));
+        }
+    }
+
+    fn set_visible(&mut self, id: WindowId, visible: bool) {
+        if let Some(w) = with_window(id, |w| w.ns_window.clone()) {
+            if visible {
+                w.makeKeyAndOrderFront(None)
+            } else {
+                w.orderOut(None)
+            }
+        }
+    }
+
+    fn drag_window(&mut self, id: WindowId) {
+        let Some(w) = with_window(id, |w| w.ns_window.clone()) else {
+            return;
+        };
+        let event = NSApplication::sharedApplication(self.mtm).currentEvent();
+        if let Some(e) = event.filter(|e| {
+            matches!(
+                e.r#type(),
+                NSEventType::LeftMouseDown | NSEventType::LeftMouseDragged
+            )
+        }) {
+            w.performWindowDragWithEvent(&e);
+        }
+    }
+
+    fn update_a11y(&mut self, id: WindowId, update: accesskit::TreeUpdate) {
+        crate::a11y::a11y_update(id, update);
+    }
+
+    fn window_scale(&self, id: WindowId) -> Option<Scale> {
+        with_window(id, |w| Scale(w.scale() as f32))
+    }
+
     fn exit(&mut self) {
         let first = with_app(|st| !std::mem::replace(&mut st.exiting, true)).unwrap_or(false);
         if first {
             stop_app(self.mtm);
         }
     }
+}
+
+#[link(name = "CoreGraphics", kind = "framework")]
+unsafe extern "C" {
+    fn CGAssociateMouseAndMouseCursorPosition(connected: u8) -> i32;
 }
 
 /// Ends `NSApplication.run` once the current event finishes (a posted event wakes the loop so the

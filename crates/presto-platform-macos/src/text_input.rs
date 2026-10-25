@@ -1,6 +1,6 @@
 //! `NSTextInputClient` semantics without AppKit: how each protocol method maps onto presto's
 //! [`TextInputClient`] (architecture §11.3) or, for windows that only turned IME on
-//! ([`ImeState`](crate::shim::ImeState)), onto [`SimpleIme`], which reports the composition as
+//! ([`ImeState`](presto_platform::ImeState)), onto [`SimpleIme`], which reports the composition as
 //! [`ImeEvent`]s. Also the key-routing rule (IME first, architecture §11.2) and the UTF-16 helpers.
 //!
 //! Ranges are UTF-16 code units of the whole document, as `NSRange` is; `NSNotFound` is
@@ -222,6 +222,8 @@ impl ImeTarget for ClientTarget<'_> {
 pub struct SimpleIme {
     pub area: Rect,
     pub purpose: InputPurpose,
+    /// Per-character rectangles of the composition (window points), when the app gives them.
+    pub composition_rects: Vec<Rect>,
     marked: Option<(String, Utf16Range)>,
 }
 
@@ -230,6 +232,7 @@ impl SimpleIme {
         SimpleIme {
             area,
             purpose,
+            composition_rects: Vec::new(),
             marked: None,
         }
     }
@@ -287,7 +290,11 @@ impl ImeTarget for SimpleIme {
         } else {
             self.selected()
         };
-        Some((self.area, actual))
+        let rect = actual
+            .to_range()
+            .and_then(|r| composition_rect(&self.composition_rects, r))
+            .unwrap_or(self.area);
+        Some((rect, actual))
     }
 
     fn index_for_point(&self, _p: Point) -> usize {
@@ -332,6 +339,33 @@ impl ImeTarget for SimpleIme {
     fn purpose(&self) -> InputPurpose {
         self.purpose
     }
+}
+
+/// The union of the per-character rectangles in `r` (UTF-16 offsets into the composition, one
+/// rectangle per unit); for an empty range, the caret edge at `r.start`.
+pub fn composition_rect(rects: &[Rect], r: Range<usize>) -> Option<Rect> {
+    if rects.is_empty() {
+        return None;
+    }
+    if r.is_empty() {
+        return Some(match rects.get(r.start) {
+            Some(c) => Rect {
+                min: c.min,
+                max: Point::new(c.min.x, c.max.y),
+            },
+            None => {
+                let last = rects[rects.len() - 1];
+                Rect {
+                    min: Point::new(last.max.x, last.min.y),
+                    max: last.max,
+                }
+            }
+        });
+    }
+    let end = r.end.min(rects.len());
+    let mut it = rects.get(r.start..end)?.iter();
+    let first = *it.next()?;
+    Some(it.fold(first, |a, b| a.union(b)))
 }
 
 #[cfg(test)]
@@ -628,6 +662,28 @@ mod tests {
             ]
         );
         assert_eq!(ime.marked_text(), None);
+    }
+
+    #[test]
+    fn simple_ime_uses_per_character_rects() {
+        let rect = |x0: f32| Rect {
+            min: Point::new(x0, 0.0),
+            max: Point::new(x0 + 10.0, 20.0),
+        };
+        let mut ime = SimpleIme::new(rect(100.0), InputPurpose::Text);
+        ime.composition_rects = vec![rect(0.0), rect(10.0), rect(20.0)];
+        let mut ev = Vec::new();
+        ime.set_marked("あいう", NsRange::new(3, 0), NsRange::NOT_FOUND, &mut ev);
+        let (r, _) = ime.first_rect(NsRange::new(1, 2)).unwrap();
+        assert_eq!((r.min.x, r.max.x), (10.0, 30.0));
+        let (r, _) = ime.first_rect(NsRange::new(3, 0)).unwrap();
+        assert_eq!(
+            (r.min.x, r.max.x),
+            (30.0, 30.0),
+            "caret after the last character"
+        );
+        assert_eq!(composition_rect(&[], 0..1), None);
+        assert_eq!(composition_rect(&ime.composition_rects, 5..6), None);
     }
 
     #[test]

@@ -4,7 +4,7 @@
 //!
 //! The app pushes tree updates with [`a11y_update`]. Until an assistive technology asks, the adapter
 //! is inactive and only full trees are kept (the latest one answers the first request); the first
-//! request without one tells the app through [`MacAppHandler::a11y_activated`](crate::MacAppHandler).
+//! request without one sends the app [`A11yEvent::Activated`].
 
 use crate::app::{self, Pending};
 use accesskit::{ActionHandler, ActionRequest, ActivationHandler, TreeUpdate};
@@ -12,6 +12,7 @@ use accesskit_macos::{Adapter, QueuedEvents};
 use objc2::rc::Retained;
 use objc2_app_kit::NSView;
 use presto_base::ids::WindowId;
+use presto_platform::A11yEvent;
 
 pub(crate) struct A11y {
     adapter: Option<Adapter>,
@@ -49,7 +50,7 @@ struct Actions(WindowId);
 
 impl ActionHandler for Actions {
     fn do_action(&mut self, request: ActionRequest) {
-        app::post(Pending::A11yAction(self.0, request));
+        app::post(Pending::A11y(self.0, A11yEvent::Action(request)));
     }
 }
 
@@ -99,7 +100,7 @@ pub(crate) fn with_adapter<R>(
         e.raise();
     }
     if served == Some(false) {
-        app::post(Pending::A11yActivated(window));
+        app::post(Pending::A11y(window, A11yEvent::Activated));
     }
     for update in queued {
         a11y_update(window, update);
