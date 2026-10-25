@@ -65,7 +65,7 @@ Deliverables:
   inspect it"; each PNG is also printed as `PRESTO_REFERENCE <name> <base64>` in the test log, so the
   consolidation can recover them from the CI log, inspect, and commit them to
   `crates/presto-render/tests/reference/` (or run with `PRESTO_BLESS=1` on a machine with an adapter).
-  Expect the eight image tests to fail on every OS until then.
+  Expect the ten image tests to fail on every OS until then.
 
 ## Not run
 
@@ -91,7 +91,7 @@ this container (no Vulkan ICD), so pipeline creation against a real device is fi
 - `THIRD_PARTY_NOTICES.md`: a new "presto-render (Apache-2.0 and MIT ports)" section (GPUI shaders and
   bounds tree, Windows Terminal gamma), and the Apache-2.0 text at
   `crates/presto-render/LICENSES/Apache-2.0-GPUI.txt`.
-- `Cargo.lock` (wgpu, etagere, lyon, naga, png, pollster for presto-render).
+- `Cargo.lock` (wgpu, etagere, lyon, naga, png, pollster, presto-text as a dev-dependency).
 - presto-base: no changes.
 - `.github/workflows/presto.yml` (base's file), one line: the "Which presto crates exist" step ran
   `ls -d crates/presto-* crates/svelters-presto` under `pipefail`; `crates/svelters-presto` doesn't exist,
