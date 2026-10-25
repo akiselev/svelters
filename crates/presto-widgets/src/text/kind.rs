@@ -11,7 +11,9 @@
 //! (`Box<dyn presto_platform::Clipboard>`). The caret goes out through presto-core's fast channel
 //! (`EventCx::set_caret`), the IME's window-space queries through the node's window transform.
 //! Without a text system the kind records its box only and takes no input (it cannot place a caret);
-//! without a clipboard it edits without one. GTK's one selection is core's
+//! without a clipboard it edits without one. Keys reach the IME first by core's dispatch
+//! (`Document::set_ime_source`, set by the platform layer). Scrolling re-records the field: a
+//! `self_scroll` kind's whole list would move with its content, border included. GTK's one selection is core's
 //! (`Document::set_single_selection`): the field claims it when it selects and collapses on
 //! `selection_lost`.
 

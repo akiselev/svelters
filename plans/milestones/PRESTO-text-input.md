@@ -53,6 +53,14 @@ services the bridge does (`TextSystem`, `Policy` through `TextPolicy::from_polic
 grouping, PRIMARY and mask stay in `text/policy.rs`, which `interact::Policy` lacks) and the event time
 from `EventCx::time`.
 
+**IME-first routing** is core's (`Document::set_ime_source(window, active)`, which the platform layer calls
+when an input-method source is on; core's dispatch then hands printable keys and every key during a
+composition to the IME). The field keeps its own `composing` guard as a second line.
+
+**Scrolling** stays a re-record of the field (its own `scroll` offset), not `Kind::self_scroll` +
+`EventCx::scroll_fast`: a self-scrolling kind records its whole list in content space inside the scroll
+layer, so a bordered field's box would scroll with its text. Question 5.
+
 ## The pins (local run, deterministic)
 
 `tests/text_pins.rs` at the head of this branch, checkpoints equal to the golden:
@@ -130,6 +138,11 @@ No change to `presto-base` or any wave-1 crate.
 3. The pins' floors: after the first green CI run.
 4. `text-edit` stays on `presto_core::Kind` directly.
 
+5. **Fast scrolling in text fields** (new, for CORE-3). Recommendation: let a `self_scroll` kind record a
+   part outside the scroll layer (its box), e.g. `RecordCx::fixed()` for the box and the scrolled list for
+   the content; then `text-edit` scrolls through `scroll_fast` and records text in content space. Until
+   then a scroll re-records the one field node.
+
 Routing: R1, R2 → QUIRE; R3 → COMPOSITOR; R4 → CORE-3; R6 (PRIMARY) → WAYLAND (an additive `Clipboard`
 method with a default); installing `TextHost` → APP-TEST.
 
@@ -154,4 +167,6 @@ method with a default); installing `TextHost` → APP-TEST.
   `--test engine` and `--test tree_damage`, presto-core `--lib` (its `tests::hooks` and `tests::style`).
 - Pin floors (Q3): the measured totals above (228 GTK, 226 Qt of 243), per pin as in the table, are ready
   to become `text_pins`' ratchet; not added on this branch so the green head stays the one CI checked.
+- After merging `ci/presto-base` at `97aee9a2`'s parent (22:13 resume): `cargo check -p presto-widgets
+  --tests` clean; tests not rerun (no text code changed since the green CI on `300b2660`).
 - Not run: clippy, other crates.
