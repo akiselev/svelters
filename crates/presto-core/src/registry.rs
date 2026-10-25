@@ -3,8 +3,8 @@
 //! spec generator.
 
 use crate::common;
-use crate::ids::{KindId, PropId, SignalId, SlotId};
-use crate::kind::{Kind, KindFactory, KindSpec, PropSpec, SignalSpec, SlotSpec};
+use crate::ids::{KindId, MethodId, PropId, SignalId, SlotId};
+use crate::kind::{Kind, KindFactory, KindSpec, MethodSpec, PropSpec, SignalSpec, SlotSpec};
 use crate::value::Value;
 use std::collections::HashMap;
 
@@ -18,6 +18,7 @@ pub struct KindEntry {
     pub(crate) prop_ids: Vec<PropId>,
     pub(crate) signal_ids: Vec<SignalId>,
     pub(crate) slot_ids: Vec<SlotId>,
+    pub(crate) method_ids: Vec<MethodId>,
     /// The text-content prop's id.
     pub text_prop: Option<PropId>,
 }
@@ -36,6 +37,12 @@ impl KindEntry {
     pub fn slot(&self, slot: SlotId) -> Option<&'static SlotSpec> {
         self.slot_ids.iter().position(|&s| s == slot).map(|i| &self.spec.slots[i])
     }
+    pub fn method(&self, method: MethodId) -> Option<&'static MethodSpec> {
+        self.method_ids.iter().position(|&m| m == method).map(|i| &self.spec.methods[i])
+    }
+    pub fn method_ids(&self) -> &[MethodId] {
+        &self.method_ids
+    }
     pub fn prop_ids(&self) -> &[PropId] {
         &self.prop_ids
     }
@@ -50,6 +57,9 @@ pub enum RegistryError {
     DuplicateKind { name: &'static str, existing: &'static str },
     /// Two members of one kind (or a member and a common one) hash to the same id.
     MemberCollision { kind: &'static str, a: &'static str, b: &'static str },
+    /// A member's id equals a member id of another registered kind (the ids are the wire's
+    /// authority, so they must be unique across kinds): `kind.member` against `other_kind.other`.
+    CrossKindCollision { kind: &'static str, member: &'static str, other_kind: &'static str, other: &'static str, id: u32 },
     /// The spec's `text_prop` names no prop of the kind.
     UnknownTextProp { kind: &'static str, prop: &'static str },
 }
@@ -59,6 +69,9 @@ impl std::fmt::Display for RegistryError {
         match self {
             RegistryError::DuplicateKind { name, existing } => write!(f, "kind `{name}` collides with registered kind `{existing}`"),
             RegistryError::MemberCollision { kind, a, b } => write!(f, "kind `{kind}`: members `{a}` and `{b}` have the same id"),
+            RegistryError::CrossKindCollision { kind, member, other_kind, other, id } => {
+                write!(f, "`{kind}.{member}` and `{other_kind}.{other}` hash to the same id {id:#010x}: rename one")
+            }
             RegistryError::UnknownTextProp { kind, prop } => write!(f, "kind `{kind}`: text prop `{prop}` is not one of its props"),
         }
     }
@@ -69,6 +82,8 @@ impl std::error::Error for RegistryError {}
 /// Every kind a document can create.
 pub struct KindRegistry {
     kinds: Vec<KindEntry>,
+    /// Every member id of every registered kind (and of the common members): id → (kind, member).
+    members: HashMap<u32, (&'static str, &'static str)>,
     by_id: HashMap<KindId, usize>,
     by_name: HashMap<&'static str, usize>,
 }
@@ -82,7 +97,14 @@ impl Default for KindRegistry {
 impl KindRegistry {
     /// A registry with no kinds (the common props and signals of [`crate::common`] are always known).
     pub fn new() -> Self {
-        KindRegistry { kinds: Vec::new(), by_id: HashMap::new(), by_name: HashMap::new() }
+        let mut members = HashMap::new();
+        for (i, p) in common::COMMON.props.iter().enumerate() {
+            members.insert(common::COMMON.prop_id(i).0, ("*", p.name));
+        }
+        for (i, s) in common::COMMON.signals.iter().enumerate() {
+            members.insert(common::COMMON.signal_id(i).0, ("*", s.name));
+        }
+        KindRegistry { kinds: Vec::new(), members, by_id: HashMap::new(), by_name: HashMap::new() }
     }
 
     /// Registers `K`, built with `K::default()`.
@@ -106,9 +128,23 @@ impl KindRegistry {
         let own = prop_ids.iter().zip(spec.props).map(|(id, p)| (id.0, p.name));
         let own_signals = signal_ids.iter().zip(spec.signals).map(|(id, s)| (id.0, s.name));
         let own_slots = slot_ids.iter().zip(spec.slots).map(|(id, s)| (id.0, s.name));
-        for (h, name) in common_props.chain(common_signals).chain(own).chain(own_signals).chain(own_slots) {
+        let method_ids: Vec<MethodId> = (0..spec.methods.len()).map(|i| spec.method_id(i)).collect();
+        let own_methods = method_ids.iter().zip(spec.methods).map(|(id, m)| (id.0, m.name));
+        let mut mine = Vec::new();
+        for (h, name) in common_props.chain(common_signals).chain(own.chain(own_signals).chain(own_slots).chain(own_methods).inspect(|&(h, n)| mine.push((h, n)))) {
             if let Some(prev) = seen.insert(h, name) {
                 return Err(RegistryError::MemberCollision { kind: spec.name, a: prev, b: name });
+            }
+        }
+        // and against every other kind's members (the kind's own ids hash its name, so equal ids
+        // across kinds are true collisions)
+        let kid = spec.id().0;
+        if let Some(&(other_kind, other)) = self.members.get(&kid) {
+            return Err(RegistryError::CrossKindCollision { kind: spec.name, member: "(kind id)", other_kind, other, id: kid });
+        }
+        for &(h, name) in &mine {
+            if let Some(&(other_kind, other)) = self.members.get(&h) {
+                return Err(RegistryError::CrossKindCollision { kind: spec.name, member: name, other_kind, other, id: h });
             }
         }
         let text_prop = match spec.text_prop {
@@ -117,7 +153,11 @@ impl KindRegistry {
         };
         let defaults = spec.props.iter().map(|p| p.default.to_value()).collect();
         let ix = self.kinds.len();
-        self.kinds.push(KindEntry { id, spec, factory, defaults, prop_ids, signal_ids, slot_ids, text_prop });
+        for &(h, name) in &mine {
+            self.members.insert(h, (spec.name, name));
+        }
+        self.members.insert(kid, (spec.name, "(kind id)"));
+        self.kinds.push(KindEntry { id, spec, factory, defaults, prop_ids, signal_ids, slot_ids, method_ids, text_prop });
         self.by_id.insert(id, ix);
         self.by_name.insert(spec.name, ix);
         Ok(id)
@@ -137,5 +177,24 @@ impl KindRegistry {
     }
     pub fn is_empty(&self) -> bool {
         self.kinds.is_empty()
+    }
+
+    /// What a wire id names: `(kind, member)` (`"*"` for the common members, `"(kind id)"` for a
+    /// kind's own id). svelters-presto decodes ids from the wire with it.
+    pub fn member(&self, id: u32) -> Option<(&'static str, &'static str)> {
+        self.members.get(&id).copied()
+    }
+
+    /// A hash of every id in the registry and what it names, independent of registration order: the
+    /// host compares it with the compiled spec's to detect a stale spec.
+    pub fn spec_hash(&self) -> u32 {
+        let mut rows: Vec<(u32, &str, &str)> = self.members.iter().map(|(&id, &(k, m))| (id, k, m)).collect();
+        rows.sort_unstable();
+        let mut h = crate::ids::fingerprint(&["spec"]);
+        for (id, k, m) in rows {
+            h ^= crate::ids::fingerprint(&[&format!("{id:08x}"), k, m]);
+            h = h.wrapping_mul(0x0100_0193);
+        }
+        h
     }
 }

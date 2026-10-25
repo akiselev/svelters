@@ -33,6 +33,29 @@ pub struct ShapedText {
     pub runs: Vec<(Arc<GlyphRun>, Point)>,
 }
 
+/// Services the document lends its kinds by type: a rich-text shaping system, an icon registry, an
+/// image cache. Set with [`Document::set_service`]; kinds reach them with `cx.service::<T>()` in
+/// measure, prepare, record and event handling.
+#[derive(Default)]
+pub struct Services {
+    map: std::collections::HashMap<std::any::TypeId, Box<dyn std::any::Any>>,
+}
+
+impl Services {
+    pub fn insert<T: 'static>(&mut self, t: T) -> Option<T> {
+        self.map.insert(std::any::TypeId::of::<T>(), Box::new(t)).and_then(|b| b.downcast().ok().map(|b| *b))
+    }
+    pub fn get<T: 'static>(&self) -> Option<&T> {
+        self.map.get(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast_ref())
+    }
+    pub fn get_mut<T: 'static>(&mut self) -> Option<&mut T> {
+        self.map.get_mut(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast_mut())
+    }
+    pub fn remove<T: 'static>(&mut self) -> Option<T> {
+        self.map.remove(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast().ok().map(|b| *b))
+    }
+}
+
 fn common_defaults() -> &'static [Option<Value>] {
     static D: OnceLock<Vec<Option<Value>>> = OnceLock::new();
     D.get_or_init(|| common::COMMON.props.iter().map(|p| p.default.to_value()).collect())
@@ -49,9 +72,16 @@ pub struct NodeView<'a> {
     pub(crate) size: Size,
     pub(crate) children: &'a [NodeId],
     pub(crate) window: Option<WindowId>,
+    pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
+    pub(crate) doc: &'a Document,
 }
 
 impl<'a> NodeView<'a> {
+    /// The engine's computed style (every property of the style table, custom properties included),
+    /// for kinds that draw from author CSS beyond [`ComputedBox`]. `None` before the first restyle.
+    pub fn css(&self) -> Option<&'a svelters_style::ComputedStyle> {
+        self.css
+    }
     pub fn id(&self) -> NodeId {
         self.id
     }
@@ -109,6 +139,14 @@ impl<'a> NodeView<'a> {
     pub fn children(&self) -> &'a [NodeId] {
         self.children
     }
+    /// A read view of another live node (a child whose runs a folding kind lays out, a sibling).
+    pub fn view(&self, node: NodeId) -> Option<NodeView<'a>> {
+        self.doc.view(node)
+    }
+    /// The `k`-th child's view.
+    pub fn child(&self, k: usize) -> Option<NodeView<'a>> {
+        self.children.get(k).and_then(|&c| self.doc.view(c))
+    }
 }
 
 /// [`Kind::prop_changed`](crate::Kind::prop_changed): ask for more work than the prop's class.
@@ -164,6 +202,7 @@ impl StyleCx<'_> {
 pub struct MeasureCx<'a> {
     pub node: NodeView<'a>,
     pub(crate) text: &'a mut dyn TextMeasure,
+    pub(crate) services: &'a mut Services,
 }
 
 impl<'a> std::ops::Deref for MeasureCx<'a> {
@@ -187,6 +226,9 @@ impl MeasureCx<'_> {
     pub fn text_measure(&mut self) -> &mut dyn TextMeasure {
         self.text
     }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut()
+    }
 }
 
 /// Images a kind uploads; the commit carries them to the compositor's resource store.
@@ -200,9 +242,10 @@ pub(crate) struct ImageSink {
 /// [`Kind::prepare`](crate::Kind::prepare).
 pub struct PrepareCx<'a> {
     pub node: NodeView<'a>,
-    pub(crate) shaper: Option<&'a mut dyn TextShaper>,
+    pub(crate) shaper: Option<&'a mut (dyn TextShaper + 'static)>,
     pub(crate) images: &'a mut ImageSink,
     pub(crate) request: Dirty,
+    pub(crate) services: &'a mut Services,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -232,6 +275,9 @@ impl PrepareCx<'_> {
     pub fn request_paint(&mut self) {
         self.request.insert(Dirty::PAINT);
     }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut()
+    }
 }
 
 /// Glyph runs recorded this frame; the commit sends the new ones.
@@ -248,7 +294,8 @@ pub struct RecordCx<'a> {
     pub(crate) runs: &'a mut RunSink,
     /// The runs this node's list references (replaced runs are dropped when the list is).
     pub(crate) node_runs: &'a mut Vec<RunId>,
-    pub(crate) shaper: Option<&'a mut dyn TextShaper>,
+    pub(crate) shaper: Option<&'a mut (dyn TextShaper + 'static)>,
+    pub(crate) services: &'a mut Services,
 }
 
 impl<'a> std::ops::Deref for RecordCx<'a> {
@@ -262,6 +309,9 @@ impl RecordCx<'_> {
     /// Adds a primitive with its ink rect.
     pub fn push(&mut self, p: Prim, ink: Rect) {
         self.list.push(p, ink);
+    }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut()
     }
     /// Hands a shaped run to the compositor; the id is valid for this node's list.
     pub fn add_run(&mut self, run: Arc<GlyphRun>) -> RunId {
@@ -441,6 +491,28 @@ impl EventCx<'_> {
             self.doc.input.release(p);
         }
     }
+    /// The event's time (its OS timestamp; a timer's deadline for [`Event::Timer`](crate::Event::Timer)).
+    pub fn time(&self) -> presto_base::time::Time {
+        self.doc.input.now
+    }
+    /// Delivers [`Event::Timer`](crate::Event::Timer) to this node at `at` (replacing its earlier
+    /// deadline); the app's loop asks [`Document::next_timer`] and calls [`Document::run_timers`].
+    pub fn wake_at(&mut self, at: presto_base::time::Time) {
+        self.doc.set_timer(self.node, Some(at));
+    }
+    pub fn cancel_wake(&mut self) {
+        self.doc.set_timer(self.node, None);
+    }
+    /// Gives up keyboard focus (when this node or a descendant has it).
+    pub fn blur(&mut self) {
+        let Some(w) = self.doc.window_of(self.node) else { return };
+        if self.doc.focused(w).is_some_and(|f| self.doc.is_ancestor_or_self(self.node, f)) {
+            crate::input::focus::clear_focus(self.doc, w);
+        }
+    }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.doc.services.get_mut()
+    }
     /// Moves keyboard focus to this node.
     pub fn focus(&mut self, reason: crate::kind::FocusReason) {
         let n = self.node;
@@ -454,6 +526,24 @@ impl EventCx<'_> {
     }
     pub fn request_layout(&mut self) {
         self.doc.mark_layout(self.node);
+    }
+}
+
+/// [`VirtualChildren::realize`](crate::VirtualChildren::realize): the document, to create, recycle and
+/// bind the rows of the virtualising node.
+pub struct RealizeCx<'a> {
+    pub(crate) doc: &'a mut Document,
+    pub(crate) node: NodeId,
+}
+
+impl RealizeCx<'_> {
+    /// The virtualising node (the rows' parent).
+    pub fn node(&self) -> NodeId {
+        self.node
+    }
+    /// The document (the node's own kind value is out while it realises).
+    pub fn doc(&mut self) -> &mut Document {
+        self.doc
     }
 }
 
@@ -474,7 +564,17 @@ impl<'a> std::ops::Deref for A11yCx<'a> {
 impl A11yCx<'_> {
     /// The defaults: the label from `aria-label` or the text content, disabled, focusable.
     pub fn default_a11y(&mut self) {
-        let label = self.node.prop_str(common::ARIA_LABEL).filter(|s| !s.is_empty()).or_else(|| Some(self.node.text()).filter(|s| !s.is_empty()));
+        let v = self.node;
+        let label = v.entry.spec.name_from.iter().find_map(|src| {
+            let s = match *src {
+                crate::kind::NameSource::AriaLabel => v.prop_str(common::ARIA_LABEL)?,
+                crate::kind::NameSource::Prop(p) => v.prop_str(v.entry.spec.prop_named(p)?)?,
+                crate::kind::NameSource::Text => v.text(),
+                // the children's own labels are their nodes'; AccessKit computes it from them
+                crate::kind::NameSource::Children => return None,
+            };
+            (!s.is_empty()).then_some(s)
+        });
         if let Some(l) = label {
             self.out.set_label(l);
         }

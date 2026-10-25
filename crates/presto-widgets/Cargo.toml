@@ -18,3 +18,5 @@ smallvec = { workspace = true }
 serde_json = { workspace = true }
 # Icon kit SVGs rasterised into images (EGUI.md §5 `icon`).
 resvg = { version = "=0.45.1", default-features = false }
+# The icon colour-slot rewrite (`paint::icon::registry::slot_svg`) parses icon SVGs with the roxmltree usvg links.
+roxmltree = "=0.20.0"
