@@ -1,0 +1,1020 @@
+{
+  "backend": "egui",
+  "kinds": {
+    "Action": {
+      "id": 32,
+      "methods": {},
+      "props": {
+        "checkable": 3,
+        "checked": 4,
+        "group": 5,
+        "label": 1,
+        "shortcut": 2
+      },
+      "signals": {
+        "activate": 2,
+        "hover": 3,
+        "toggled": 1
+      }
+    },
+    "Anchor": {
+      "id": 54,
+      "methods": {},
+      "props": {
+        "href": 1
+      },
+      "signals": {
+        "clicked": 1
+      }
+    },
+    "Bold": {
+      "id": 51,
+      "methods": {},
+      "props": {},
+      "signals": {}
+    },
+    "Box": {
+      "id": 3,
+      "methods": {},
+      "props": {
+        "align-items": 7,
+        "column-gap": 5,
+        "flex-direction": 1,
+        "flex-wrap": 2,
+        "focus-scope": 9,
+        "gap": 3,
+        "justify-content": 8,
+        "padding": 6,
+        "row-gap": 4
+      },
+      "signals": {}
+    },
+    "Button": {
+      "id": 5,
+      "methods": {},
+      "props": {
+        "cancel": 7,
+        "default": 6,
+        "font-weight": 5,
+        "frame": 3,
+        "icon": 8,
+        "repeat": 9,
+        "selected": 2,
+        "small": 4,
+        "text": 1
+      },
+      "signals": {
+        "clicked": 1,
+        "double-clicked": 2,
+        "press": 4,
+        "release": 5,
+        "secondary-clicked": 3
+      }
+    },
+    "Calendar": {
+      "id": 56,
+      "methods": {},
+      "props": {
+        "calendar-week": 2,
+        "day-parts": 9,
+        "first-day": 5,
+        "max": 4,
+        "min": 3,
+        "navigation": 7,
+        "read-only": 8,
+        "value": 1,
+        "weekday-format": 6
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 2,
+        "page-changed": 3
+      }
+    },
+    "Canvas": {
+      "id": 28,
+      "methods": {},
+      "props": {
+        "content-height": 3,
+        "content-width": 2,
+        "ops": 1
+      },
+      "signals": {
+        "clicked": 2,
+        "resize": 1
+      }
+    },
+    "Checkbox": {
+      "id": 6,
+      "methods": {},
+      "props": {
+        "checked": 2,
+        "icon": 5,
+        "indeterminate": 3,
+        "text": 1,
+        "tristate": 4
+      },
+      "signals": {
+        "changed": 1,
+        "clicked": 2
+      }
+    },
+    "Code": {
+      "id": 53,
+      "methods": {},
+      "props": {},
+      "signals": {}
+    },
+    "CollapsingHeader": {
+      "id": 14,
+      "methods": {},
+      "props": {
+        "accordion": 3,
+        "icon": 4,
+        "open": 2,
+        "text": 1
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "ColorEditor": {
+      "id": 57,
+      "methods": {},
+      "props": {
+        "alpha": 2,
+        "custom-colors": 5,
+        "fields": 3,
+        "swatches": 4,
+        "value": 1
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 2
+      }
+    },
+    "ColorPicker": {
+      "id": 46,
+      "methods": {},
+      "props": {
+        "alpha": 2,
+        "commit-mode": 6,
+        "custom-colors": 5,
+        "fields": 3,
+        "swatches": 4,
+        "value": 1
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 2
+      }
+    },
+    "ComboBox": {
+      "id": 10,
+      "methods": {},
+      "props": {
+        "hint-text": 3,
+        "max-visible": 5,
+        "open": 4,
+        "options": 1,
+        "selected": 2,
+        "wheel": 6
+      },
+      "signals": {
+        "activate": 2,
+        "changed": 1,
+        "commit": 4,
+        "highlight": 3
+      }
+    },
+    "ContextMenu": {
+      "id": 34,
+      "methods": {
+        "popdown": 2,
+        "popup": 1
+      },
+      "props": {},
+      "signals": {}
+    },
+    "DatePicker": {
+      "id": 45,
+      "methods": {},
+      "props": {
+        "calendar-week": 3,
+        "commit-mode": 11,
+        "day-parts": 10,
+        "first-day": 6,
+        "format": 2,
+        "max": 5,
+        "min": 4,
+        "navigation": 8,
+        "read-only": 9,
+        "value": 1,
+        "weekday-format": 7
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 2,
+        "page-changed": 3
+      }
+    },
+    "DialogButtons": {
+      "id": 59,
+      "methods": {},
+      "props": {
+        "order": 1
+      },
+      "signals": {
+        "clicked": 1,
+        "help": 2
+      }
+    },
+    "DragValue": {
+      "id": 20,
+      "methods": {},
+      "props": {
+        "accelerated": 15,
+        "buttons": 10,
+        "commit": 11,
+        "correction": 17,
+        "decimals": 5,
+        "formatter": 20,
+        "group-separator": 19,
+        "max": 3,
+        "min": 2,
+        "page-step": 9,
+        "parser": 21,
+        "prefix": 6,
+        "read-only": 18,
+        "special-value-text": 14,
+        "speed": 4,
+        "step": 8,
+        "step-type": 16,
+        "suffix": 7,
+        "value": 1,
+        "wheel": 12,
+        "wrap": 13
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 4,
+        "drag-started": 2,
+        "drag-stopped": 3,
+        "input": 5,
+        "submit": 6
+      }
+    },
+    "Frame": {
+      "id": 23,
+      "methods": {},
+      "props": {
+        "checkable": 3,
+        "checked": 4,
+        "frame-style": 2,
+        "label": 1
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "Grid": {
+      "id": 13,
+      "methods": {},
+      "props": {
+        "align-items": 6,
+        "column-gap": 4,
+        "gap": 2,
+        "grid-template-columns": 1,
+        "justify-items": 7,
+        "padding": 5,
+        "row-gap": 3
+      },
+      "signals": {}
+    },
+    "Hyperlink": {
+      "id": 16,
+      "methods": {},
+      "props": {
+        "new-tab": 3,
+        "text": 1,
+        "url": 2
+      },
+      "signals": {
+        "clicked": 1,
+        "secondary-clicked": 2
+      }
+    },
+    "Icon": {
+      "id": 12,
+      "methods": {},
+      "props": {
+        "family": 3,
+        "font-weight": 5,
+        "frame": 8,
+        "glyph": 2,
+        "name": 1,
+        "selected": 9,
+        "size": 4,
+        "source": 6,
+        "tint": 7
+      },
+      "signals": {
+        "clicked": 1,
+        "double-clicked": 2,
+        "secondary-clicked": 3
+      }
+    },
+    "Image": {
+      "id": 25,
+      "methods": {},
+      "props": {
+        "fit": 2,
+        "source": 1
+      },
+      "signals": {
+        "clicked": 1
+      }
+    },
+    "InnerWindow": {
+      "id": 38,
+      "methods": {
+        "close": 1
+      },
+      "props": {
+        "closable": 7,
+        "collapsible": 8,
+        "default-height": 4,
+        "default-width": 3,
+        "default-x": 5,
+        "default-y": 6,
+        "open": 1,
+        "resizable": 9,
+        "title": 2
+      },
+      "signals": {
+        "accepted": 3,
+        "changed": 1,
+        "closed": 2,
+        "rejected": 4
+      }
+    },
+    "Italic": {
+      "id": 52,
+      "methods": {},
+      "props": {},
+      "signals": {}
+    },
+    "Label": {
+      "id": 4,
+      "methods": {},
+      "props": {
+        "elide": 7,
+        "font-weight": 4,
+        "for": 8,
+        "selectable": 3,
+        "selection-end": 6,
+        "selection-start": 5,
+        "text": 1,
+        "wrap-mode": 2
+      },
+      "signals": {
+        "clicked": 1
+      }
+    },
+    "Menu": {
+      "id": 31,
+      "methods": {},
+      "props": {
+        "label": 1
+      },
+      "signals": {}
+    },
+    "MenuBar": {
+      "id": 30,
+      "methods": {},
+      "props": {},
+      "signals": {}
+    },
+    "MenuButton": {
+      "id": 35,
+      "methods": {
+        "popdown": 2,
+        "popup": 1
+      },
+      "props": {
+        "active": 2,
+        "label": 1
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "MenuEntry": {
+      "id": 29,
+      "methods": {},
+      "props": {
+        "accessible-name": 4,
+        "anchor": 5,
+        "anchor-scope": 6,
+        "enabled": 1,
+        "source-loc": 7,
+        "tooltip": 3,
+        "visible": 2
+      },
+      "signals": {}
+    },
+    "MenuSeparator": {
+      "id": 33,
+      "methods": {},
+      "props": {},
+      "signals": {}
+    },
+    "Modal": {
+      "id": 37,
+      "methods": {
+        "close": 1
+      },
+      "props": {
+        "dismissable": 3,
+        "open": 1,
+        "resizable": 4,
+        "title": 2
+      },
+      "signals": {
+        "accepted": 3,
+        "changed": 1,
+        "closed": 2,
+        "rejected": 4
+      }
+    },
+    "Panel": {
+      "id": 21,
+      "methods": {},
+      "props": {
+        "resizable": 3,
+        "separator": 4,
+        "side": 1,
+        "size": 2
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "Popup": {
+      "id": 36,
+      "methods": {
+        "popdown": 2,
+        "popup": 1
+      },
+      "props": {
+        "autohide": 3,
+        "open": 1,
+        "placement": 2
+      },
+      "signals": {
+        "changed": 1,
+        "closed": 2
+      }
+    },
+    "ProgressBar": {
+      "id": 26,
+      "methods": {},
+      "props": {
+        "animate": 4,
+        "format": 11,
+        "fraction": 1,
+        "indeterminate": 8,
+        "inverted": 10,
+        "max": 7,
+        "min": 6,
+        "orientation": 9,
+        "show-percentage": 3,
+        "text": 2,
+        "value": 5
+      },
+      "signals": {}
+    },
+    "RadioButton": {
+      "id": 17,
+      "methods": {},
+      "props": {
+        "checked": 2,
+        "group": 4,
+        "icon": 5,
+        "text": 1,
+        "value": 3
+      },
+      "signals": {
+        "changed": 1,
+        "clicked": 2
+      }
+    },
+    "RangeSlider": {
+      "id": 19,
+      "methods": {},
+      "props": {
+        "commit": 14,
+        "high": 2,
+        "inverted": 12,
+        "low": 1,
+        "max": 4,
+        "min": 3,
+        "orientation": 9,
+        "page-step": 8,
+        "scale": 13,
+        "show-value": 7,
+        "step": 5,
+        "text": 6,
+        "tick-interval": 11,
+        "ticks": 10,
+        "wheel": 15
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 5,
+        "drag-started": 2,
+        "drag-stopped": 3,
+        "input": 4
+      }
+    },
+    "Run": {
+      "id": 49,
+      "methods": {},
+      "props": {
+        "accessible-name": 3,
+        "font-weight": 2,
+        "text": 1
+      },
+      "signals": {}
+    },
+    "ScrollArea": {
+      "id": 15,
+      "methods": {},
+      "props": {
+        "direction": 1,
+        "scroll-x": 2,
+        "scroll-y": 3
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "Scrollbar": {
+      "id": 55,
+      "methods": {},
+      "props": {
+        "max": 3,
+        "min": 2,
+        "orientation": 6,
+        "page": 4,
+        "step": 5,
+        "value": 1
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "Separator": {
+      "id": 11,
+      "methods": {},
+      "props": {
+        "orientation": 1
+      },
+      "signals": {}
+    },
+    "Sides": {
+      "id": 22,
+      "methods": {},
+      "props": {
+        "align-items": 3,
+        "gap": 1,
+        "padding": 2
+      },
+      "signals": {}
+    },
+    "Slider": {
+      "id": 8,
+      "methods": {},
+      "props": {
+        "commit": 16,
+        "inverted": 13,
+        "marks": 11,
+        "max": 3,
+        "min": 2,
+        "orientation": 8,
+        "page-step": 7,
+        "scale": 15,
+        "show-value": 6,
+        "snap-to-marks": 12,
+        "step": 4,
+        "text": 5,
+        "tick-interval": 10,
+        "ticks": 9,
+        "track-click": 14,
+        "value": 1,
+        "wheel": 17
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 5,
+        "drag-started": 2,
+        "drag-stopped": 3,
+        "input": 4,
+        "submit": 6
+      }
+    },
+    "Span": {
+      "id": 50,
+      "methods": {},
+      "props": {},
+      "signals": {}
+    },
+    "Spinner": {
+      "id": 27,
+      "methods": {},
+      "props": {
+        "size": 2,
+        "spinning": 1
+      },
+      "signals": {}
+    },
+    "SplitView": {
+      "id": 43,
+      "methods": {},
+      "props": {
+        "collapsible": 6,
+        "commit-mode": 8,
+        "divider-position": 2,
+        "min-size": 3,
+        "orientation": 1,
+        "resizable": 4,
+        "restore-on-double-click": 7,
+        "sizes": 5
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 4,
+        "drag-started": 2,
+        "drag-stopped": 3
+      }
+    },
+    "Stack": {
+      "id": 24,
+      "methods": {},
+      "props": {
+        "homogeneous": 3,
+        "padding": 4,
+        "visible-child-name": 1,
+        "visible-index": 2
+      },
+      "signals": {}
+    },
+    "StatusBar": {
+      "id": 60,
+      "methods": {
+        "clear-message": 2,
+        "show-message": 1
+      },
+      "props": {
+        "message": 1
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "Switch": {
+      "id": 18,
+      "methods": {},
+      "props": {
+        "active": 1,
+        "text": 2
+      },
+      "signals": {
+        "changed": 1,
+        "clicked": 2
+      }
+    },
+    "Tab": {
+      "id": 42,
+      "methods": {},
+      "props": {
+        "closable": 2,
+        "title": 1
+      },
+      "signals": {
+        "close-requested": 1
+      }
+    },
+    "TabView": {
+      "id": 41,
+      "methods": {},
+      "props": {
+        "selected": 1
+      },
+      "signals": {
+        "changed": 1
+      }
+    },
+    "Table": {
+      "id": 39,
+      "methods": {
+        "clear-rows": 2,
+        "edit": 5,
+        "end-edit": 6,
+        "fit-columns": 7,
+        "scroll-to-row": 3,
+        "set-ids": 4,
+        "set-rows": 1
+      },
+      "props": {
+        "column-menu": 13,
+        "current": 8,
+        "current-column": 9,
+        "header-state": 15,
+        "hidden-columns": 14,
+        "overscan": 5,
+        "row-count": 1,
+        "row-height": 2,
+        "selected": 6,
+        "selection": 7,
+        "sort-column": 11,
+        "sort-order": 12,
+        "sortable": 10,
+        "sticky-columns": 3,
+        "stretch-last": 16,
+        "striped": 4
+      },
+      "signals": {
+        "activated": 4,
+        "changed": 2,
+        "column-resized": 9,
+        "columns-changed": 11,
+        "commit": 5,
+        "copy": 13,
+        "header-clicked": 6,
+        "header-context": 8,
+        "header-double-clicked": 7,
+        "header-state-changed": 12,
+        "range": 1,
+        "row-toggled": 14,
+        "selectionchange": 3,
+        "sort-changed": 10
+      }
+    },
+    "TableColumn": {
+      "id": 40,
+      "methods": {
+        "end-edit": 2,
+        "set-editor": 1
+      },
+      "props": {
+        "align": 3,
+        "editable": 5,
+        "editor": 6,
+        "elide": 10,
+        "header-align": 9,
+        "hideable": 8,
+        "name": 7,
+        "resizable": 2,
+        "sort": 4,
+        "title": 1
+      },
+      "signals": {
+        "editor-bind": 1,
+        "editor-unbind": 3,
+        "editor-value": 2
+      }
+    },
+    "TextEdit": {
+      "id": 7,
+      "methods": {
+        "request-focus": 1
+      },
+      "props": {
+        "char-limit": 5,
+        "hint-text": 2,
+        "multiline": 3,
+        "password": 4,
+        "text": 1
+      },
+      "signals": {
+        "changed": 1,
+        "commit": 4,
+        "gained-focus": 2,
+        "lost-focus": 3,
+        "submit": 5
+      }
+    },
+    "Toast": {
+      "id": 58,
+      "methods": {},
+      "props": {
+        "duration": 2,
+        "level": 1,
+        "open": 3
+      },
+      "signals": {
+        "changed": 1,
+        "clicked": 3,
+        "closed": 2
+      }
+    },
+    "ToastHost": {
+      "id": 44,
+      "methods": {
+        "clear": 3,
+        "dismiss": 2,
+        "show": 1
+      },
+      "props": {
+        "corner": 1,
+        "duration": 2
+      },
+      "signals": {
+        "action": 3,
+        "clicked": 2,
+        "closed": 1
+      }
+    },
+    "ToggleButton": {
+      "id": 9,
+      "methods": {},
+      "props": {
+        "checked": 2,
+        "font-weight": 5,
+        "frame": 4,
+        "group": 6,
+        "radio": 3,
+        "text": 1
+      },
+      "signals": {
+        "changed": 1,
+        "clicked": 2
+      }
+    },
+    "TreeView": {
+      "id": 48,
+      "methods": {
+        "count": 2,
+        "rowAt": 5,
+        "scrollTo": 3,
+        "selection": 8,
+        "setNodes": 6,
+        "setRow": 4,
+        "setSelection": 7,
+        "splice": 1
+      },
+      "props": {
+        "current": 8,
+        "expand-on": 6,
+        "indent": 3,
+        "root-decorated": 7,
+        "row-drag-type": 4,
+        "row-drop-types": 5,
+        "row-height": 2,
+        "selection": 1,
+        "uniform-rows": 9
+      },
+      "signals": {
+        "activate": 5,
+        "bind": 2,
+        "collapse": 7,
+        "copy": 9,
+        "drop-row": 13,
+        "expand": 6,
+        "row-clicked": 10,
+        "row-context": 11,
+        "row-hovered": 12,
+        "selection-changed": 8,
+        "setup": 1,
+        "teardown": 4,
+        "unbind": 3
+      }
+    },
+    "VirtualList": {
+      "id": 47,
+      "methods": {
+        "count": 2,
+        "rowAt": 5,
+        "scrollTo": 3,
+        "setRow": 4,
+        "splice": 1
+      },
+      "props": {
+        "current": 6,
+        "internal-move": 10,
+        "layout": 4,
+        "row-drag-type": 8,
+        "row-drop-types": 9,
+        "row-height": 5,
+        "selected": 1,
+        "selected-ids": 3,
+        "selection": 2,
+        "uniform-rows": 7
+      },
+      "signals": {
+        "activate": 5,
+        "bind": 2,
+        "copy": 11,
+        "drop-row": 12,
+        "move": 13,
+        "row-clicked": 8,
+        "row-context": 9,
+        "row-hovered": 10,
+        "select": 6,
+        "selectionchange": 7,
+        "setup": 1,
+        "teardown": 4,
+        "unbind": 3
+      }
+    },
+    "Widget": {
+      "id": 1,
+      "methods": {
+        "scroll-into-view": 1
+      },
+      "props": {
+        "accessible-name": 5,
+        "align-self": 15,
+        "anchor": 17,
+        "anchor-scope": 30,
+        "autofocus": 3,
+        "bottom": 26,
+        "dialog-role": 27,
+        "drag-data": 20,
+        "drag-type": 19,
+        "drop-types": 21,
+        "enabled": 1,
+        "flex-basis": 14,
+        "flex-grow": 12,
+        "flex-shrink": 13,
+        "height": 7,
+        "invalid": 18,
+        "left": 23,
+        "margin": 16,
+        "max-height": 11,
+        "max-width": 10,
+        "min-height": 9,
+        "min-width": 8,
+        "position": 22,
+        "right": 25,
+        "source-loc": 31,
+        "status-section": 29,
+        "status-tip": 28,
+        "tooltip": 4,
+        "top": 24,
+        "visible": 2,
+        "width": 6
+      },
+      "signals": {
+        "animationend": 1,
+        "click": 9,
+        "contextmenu": 11,
+        "dblclick": 10,
+        "drag-begin": 2,
+        "drag-end": 3,
+        "drag-enter": 4,
+        "drag-leave": 5,
+        "drop": 6,
+        "focusin": 15,
+        "focusout": 16,
+        "keydown": 13,
+        "keyup": 14,
+        "pointerdown": 7,
+        "pointermove": 17,
+        "pointerup": 8,
+        "wheel": 12
+      }
+    },
+    "Window": {
+      "id": 2,
+      "methods": {
+        "close": 2,
+        "present": 1
+      },
+      "props": {
+        "default-height": 3,
+        "default-width": 2,
+        "gap": 5,
+        "padding": 4,
+        "source-loc": 6,
+        "title": 1
+      },
+      "signals": {
+        "click": 4,
+        "close-request": 1,
+        "contextmenu": 6,
+        "dblclick": 5,
+        "focusin": 10,
+        "focusout": 11,
+        "keydown": 8,
+        "keyup": 9,
+        "pointerdown": 2,
+        "pointermove": 12,
+        "pointerup": 3,
+        "wheel": 7
+      }
+    }
+  },
+  "schema": "svelters-ids/v0"
+}

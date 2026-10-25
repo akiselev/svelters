@@ -47,6 +47,9 @@ Severities: **error** fails the build; **warning** does not (the observability w
 | `svelters::event::forwarding_lowered` | `legacy_forwarding_lowered` | note | A bare `on:x` forwards the component's own `onx` callback prop (FW1); once per component. |  |
 | `svelters::event::sync_handler_arguments` | `sync_handler_arguments` | warning | A handler of a sync signal declares a parameter for a signal argument, but listeners get `(event, ...args)`. |  |
 | `svelters::event::sync_handler_return` | `sync_handler_return` | warning | The return value of a sync signal's listener is ignored. |  |
+| `svelters::event::nonpassive_scroll_listener` | `nonpassive_scroll_listener` | warning | A listener of a scrolling or pointer-tracking signal can cancel its event, so the toolkit waits for JavaScript on every event. |  |
+| `svelters::event::passive_listener_cancels` | `passive_listener_cancels` | warning | `\|passive` on a listener whose handler cancels the event; a passive listener's `preventDefault` does nothing. | remove the modifier |
+| `svelters::event::nonpassive_redundant` | `nonpassive_redundant` | warning | `\|nonpassive` on a listener whose handler never cancels the event: the toolkit waits for it for nothing. | remove the modifier |
 
 ### bind
 
@@ -70,6 +73,19 @@ Severities: **error** fails the build; **warning** does not (the observability w
 | Id | Code | Severity | Meaning | Fix-it |
 | --- | --- | --- | --- | --- |
 | `svelters::reactivity::native_read_not_observable` | `native_read_not_observable` | warning | A reactive context reads a native property whose changes are not announced, so it does not rerun when the property changes (error under `--strict-native`). |  |
+
+### change
+
+| Id | Code | Severity | Meaning | Fix-it |
+| --- | --- | --- | --- | --- |
+| `svelters::change::layout_write_per_frame` | `layout_write_per_frame` | warning | A layout property is driven by a variable a per-frame handler (wheel, pointer move) sets: every event relayouts. |  |
+
+### a11y
+
+| Id | Code | Severity | Meaning | Fix-it |
+| --- | --- | --- | --- | --- |
+| `svelters::a11y::missing_name` | `a11y_missing_name` | warning | A control that needs an accessible name sets none of the props that name it. |  |
+| `svelters::a11y::icon_only_control` | `a11y_icon_only_control` | warning | A control shows only an icon and sets none of the props that name it. |  |
 
 ### slot
 

@@ -9,7 +9,33 @@ use super::edit::Edits;
 use super::writer::Writer;
 use crate::estree::{Expression, Pattern, Span, Spanned};
 use crate::lower::ir::*;
+use crate::semantics::ChangeClass;
 use serde_json::Value as Json;
+use std::collections::{BTreeMap, HashMap};
+
+/// W-C2: `Item::Template` emission.
+mod template;
+
+/// What codegen emits beyond today's ops, from the backend's capabilities (presto
+/// `compiler-and-js.md` §3). The default is today's output; template items come from the
+/// lowering (`lower::templates`), which makes them only for a backend with `templates`.
+#[derive(Default)]
+pub struct Features<'s> {
+    /// W-C1 (`ids`): element kinds and prop writes carry the spec's stable ids.
+    pub ids: Option<&'s dyn IdSource>,
+    /// W-C4 (`change_classes`): reactive writes carry their change class.
+    pub change_classes: bool,
+}
+
+/// W-C1: the stable ids codegen writes, answered from the backend spec.
+pub trait IdSource {
+    fn backend(&self) -> &str;
+    fn spec_hash(&self) -> &str;
+    /// The kind id of the elements `tag` creates, and the kind's name (for the constant's name).
+    fn kind(&self, tag: &str) -> Option<(u32, String)>;
+    /// The id of prop `prop` (its canonical JS name) of elements `tag`, and its declaring kind.
+    fn prop(&self, tag: &str, prop: &str) -> Option<(u32, String)>;
+}
 
 /// How an expression is evaluated.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -138,14 +164,21 @@ pub struct Codegen<'a, 's> {
     locs: Option<&'s dyn Fn(&str) -> bool>,
     /// DZ0: some code read `$$src` (the module then declares it).
     src_used: bool,
+    features: &'s Features<'s>,
+    /// W-C1: the id constants the module declares: name -> (id, tag, prop).
+    id_consts: BTreeMap<String, (u32, String, Option<String>)>,
+    /// W-C1: the tag of each element variable (prop ids depend on the element's kind).
+    node_tags: HashMap<String, String>,
+    /// W-C2: the template tables the module declares, by template number.
+    tables: Vec<template::Table>,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
 #[allow(clippy::too_many_arguments)]
-pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool, locs: Option<&dyn Fn(&str) -> bool>) -> (String, String) {
+pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool, locs: Option<&dyn Fn(&str) -> bool>, features: &Features) -> (String, String) {
     let drafts = comp.drafts.clone();
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, locs, src_used: false, _p: std::marker::PhantomData };
+    let mut g = Codegen::new(src, rw, Writer::new(src), name, drafts, locs, features);
     g.module(comp, imports, hmr.then_some(filename));
     if g.src_used {
         // `var`: hoisted, and assigned before any component function of the module runs
@@ -160,8 +193,31 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
 /// the template's expressions, so the walk runs, but nothing is written and no source map is built.
 pub fn traverse(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, imports: &crate::target::RuntimeImports) {
     let drafts = comp.drafts.clone();
-    let mut g = Codegen { src, rw, w: Writer::sink(), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, locs: None, src_used: false, _p: std::marker::PhantomData };
+    let features = Features::default();
+    let mut g = Codegen::new(src, rw, Writer::sink(), name, drafts, None, &features);
     g.module(comp, imports, None);
+}
+
+impl<'a, 's> Codegen<'a, 's> {
+    fn new(src: &'s str, rw: &'s dyn Rewriter, w: Writer<'s>, name: &'s str, drafts: Vec<(usize, Draft<'a>)>, locs: Option<&'s dyn Fn(&str) -> bool>, features: &'s Features<'s>) -> Self {
+        Codegen {
+            src,
+            rw,
+            w,
+            tmp: 0,
+            root_fragment: false,
+            memo: Vec::new(),
+            name,
+            drafts,
+            locs,
+            src_used: false,
+            features,
+            id_consts: BTreeMap::new(),
+            node_tags: HashMap::new(),
+            tables: Vec::new(),
+            _p: std::marker::PhantomData,
+        }
+    }
 }
 
 impl<'a> Codegen<'a, '_> {
@@ -212,6 +268,7 @@ impl Codegen<'_, '_> {
         g.w.dedent();
         g.w.newline();
         g.w.write("}\n");
+        g.module_tables();
         if let Some(id) = hmr_id {
             let id = serde_json::to_string(id).expect("string serializes");
             let sig = rw.hmr_signature().map_or(String::new(), |s| format!(", {s}"));
@@ -346,14 +403,25 @@ impl Codegen<'_, '_> {
     /// The end of a fragment: its template effect, then its events and bindings.
     fn close(&mut self, fr: Frag) {
         self.template_effect(&fr.update);
-        for a in &fr.after {
+        let mut i = 0;
+        while i < fr.after.len() {
+            let a = &fr.after[i];
             match a.op {
                 Op::Listen { .. } => {
+                    // W-C2: a template's listeners, when they come in one run, in one call
+                    if let Some(t) = a.template
+                        && let Some(run) = self.template_listen_run(&fr.after, i, t)
+                    {
+                        self.template_listen(t, &fr.after[i..i + run]);
+                        i += run;
+                        continue;
+                    }
                     self.line();
                     self.listen(&a.node, a.op, a.memo.as_deref());
                 }
                 op => self.op(&a.node, op),
             }
+            i += 1;
         }
     }
 
@@ -378,6 +446,7 @@ impl Codegen<'_, '_> {
             Item::Render(r) => self.render(r, container),
             Item::Component(c) => self.component(c, container),
             Item::Dynamic(d) => self.dynamic_element(d, container),
+            Item::Template(t) => self.template_item(t, container, fr),
         }
     }
 
@@ -403,9 +472,9 @@ impl Codegen<'_, '_> {
                 }
                 Phase::Event => {
                     let memo = self.handler_memo(op);
-                    own.after.push(After { node: n.clone(), op, memo });
+                    own.after.push(After { node: n.clone(), op, memo, template: None });
                 }
-                Phase::Binding => own.after.push(After { node: n.clone(), op, memo: None }),
+                Phase::Binding => own.after.push(After { node: n.clone(), op, memo: None, template: None }),
             }
         }
         self.close(own);
@@ -517,8 +586,10 @@ impl Codegen<'_, '_> {
         } else if e.attached {
             self.w.write(&format!("const {n} = $n.attached({});", js_str(&e.kind)));
         } else {
-            self.w.write(&format!("const {n} = $n.element({});", js_str(&e.kind)));
+            let kind = self.kind_ref(&e.kind);
+            self.w.write(&format!("const {n} = {kind};"));
         }
+        self.node_tags.insert(n.clone(), e.kind.clone());
         if self.locs.is_some_and(|has| has(&e.kind)) {
             self.src_used = true;
             self.w.write(&format!(" $n.source_loc({n}, $$src, {});", e.span.start));
@@ -546,7 +617,7 @@ impl Codegen<'_, '_> {
                 }
                 Phase::Event => {
                     let memo = self.handler_memo(op);
-                    fr.after.push(After { node: n.clone(), op, memo });
+                    fr.after.push(After { node: n.clone(), op, memo, template: None });
                 }
                 Phase::ElementInit => own_init.push(op),
                 Phase::Binding => own_after.push(op),
@@ -568,7 +639,7 @@ impl Codegen<'_, '_> {
             self.children(&e.children, &n, &mut inner);
             self.element_init(&n, &own_init);
             append(self);
-            inner.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None }));
+            inner.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None, template: None }));
             self.close(inner);
             self.w.dedent();
             self.line();
@@ -577,7 +648,7 @@ impl Codegen<'_, '_> {
             self.children(&e.children, &n, fr);
             self.element_init(&n, &own_init);
             append(self);
-            fr.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None }));
+            fr.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None, template: None }));
         }
     }
 
@@ -744,9 +815,19 @@ impl Codegen<'_, '_> {
 
     /// `$n.on(node, signal, handler[, flags]);` of an `Op::Listen` (`memo`: its handler derived).
     fn listen(&mut self, n: &str, op: &Op, memo: Option<&str>) {
-        let Op::Listen { signal, handler, flags, span, .. } = op else { unreachable!() };
+        let Op::Listen { signal, flags, span, .. } = op else { unreachable!() };
         self.w.map(span.start);
         self.w.write(&format!("$n.on({n}, {}, ", js_str(signal)));
+        self.listener(op, memo);
+        if *flags != 0 {
+            self.w.write(&format!(", {flags}"));
+        }
+        self.w.write(");");
+    }
+
+    /// The handler function of an `Op::Listen` (`memo`: its handler derived).
+    fn listener(&mut self, op: &Op, memo: Option<&str>) {
+        let Op::Listen { signal, handler, flags, .. } = op else { unreachable!() };
         match handler {
             Handler::Expr(h) => {
                 // the event as Svelte's `$.apply` names it: type, plus `capture`
@@ -765,10 +846,73 @@ impl Codegen<'_, '_> {
                 self.w.write(&format!("function (...$$args) {{ {}?.apply(this, $$args); }}", props_member(key)));
             }
         }
-        if *flags != 0 {
-            self.w.write(&format!(", {flags}"));
+    }
+
+    /// W-C1: the creation of an element `tag`: `$n.element("tag")`, or with ids
+    /// `$n.element_id($$K_Kind)`.
+    fn kind_ref(&mut self, tag: &str) -> String {
+        match self.features.ids.and_then(|ids| ids.kind(tag)) {
+            Some((id, kind)) => {
+                let c = self.id_const(format!("$$K_{}", ident(&kind)), id, tag, None);
+                format!("$n.element_id({c})")
+            }
+            None => format!("$n.element({})", js_str(tag)),
         }
-        self.w.write(");");
+    }
+
+    /// W-C1: the head of a prop write on element variable `n`, up to its value:
+    /// `$n.set(n, "prop", `, or with ids `$n.setp(n, $$P_Kind_prop, `.
+    fn set_head(&mut self, n: &str, prop: &str) -> String {
+        let found = self.features.ids.zip(self.node_tags.get(n).cloned()).and_then(|(ids, tag)| ids.prop(&tag, prop).map(|p| (p, tag)));
+        match found {
+            Some(((id, owner), tag)) => {
+                let c = self.id_const(format!("$$P_{}_{}", ident(&owner), ident(prop)), id, &tag, Some(prop));
+                format!("$n.setp({n}, {c}, ")
+            }
+            None => format!("$n.set({n}, {}, ", js_str(prop)),
+        }
+    }
+
+    /// W-C1: declares the id constant `name` (a name already taken by another id gets the id
+    /// appended) and returns its name.
+    fn id_const(&mut self, name: String, id: u32, tag: &str, prop: Option<&str>) -> String {
+        let name = match self.id_consts.get(&name) {
+            Some((other, ..)) if *other != id => format!("{name}_{id}"),
+            _ => name,
+        };
+        self.id_consts.entry(name.clone()).or_insert_with(|| (id, tag.to_string(), prop.map(str::to_string)));
+        name
+    }
+
+    /// W-C4: `, <class code>` after a reactive write's value, with the `change_classes` feature
+    /// and a known class.
+    fn change_arg(&self, c: Option<ChangeClass>) -> String {
+        match c {
+            Some(c) if self.features.change_classes => format!(", {}", c.code()),
+            _ => String::new(),
+        }
+    }
+
+    /// The module-scope declarations codegen collected: W-C2's template tables, then W-C1's id
+    /// constants and their check (`$n.ids`, which verifies them against the host once per module).
+    fn module_tables(&mut self) {
+        for t in std::mem::take(&mut self.tables) {
+            self.w.write(&t.declaration());
+        }
+        let Some(ids) = self.features.ids else { return };
+        if self.id_consts.is_empty() {
+            return;
+        }
+        self.w.write("\n");
+        let mut check = Vec::new();
+        for (name, (id, tag, prop)) in &self.id_consts {
+            self.w.write(&format!("const {name} = {id};\n"));
+            check.push(match prop {
+                Some(p) => format!("[{name}, {}, {}]", js_str(tag), js_str(p)),
+                None => format!("[{name}, {}]", js_str(tag)),
+            });
+        }
+        self.w.write(&format!("$n.ids({}, {}, [{}]);\n", js_str(ids.backend()), js_str(ids.spec_hash()), check.join(", ")));
     }
 
     /// The init statements of an update op, written with its element: the native value a
@@ -795,11 +939,13 @@ impl Codegen<'_, '_> {
     /// The statement of an update op in the fragment's template effect (no `;`).
     fn update(&mut self, n: &str, op: &Op) {
         match op {
-            Op::SetDynamic { prop, value, span } => {
+            Op::SetDynamic { prop, value, change, span } => {
                 self.w.map(span.start);
-                self.w.write(&format!("$n.set({n}, {}, ", js_str(prop)));
+                let head = self.set_head(n, prop);
+                self.w.write(&head);
                 self.dynamic(value);
-                self.w.write(")");
+                let change = self.change_arg(*change);
+                self.w.write(&format!("{change})"));
             }
             Op::ChildAttr { name, value: AttrValue::Dynamic(d), span } => {
                 self.w.map(span.start);
@@ -819,7 +965,7 @@ impl Codegen<'_, '_> {
                 self.dynamic(d);
                 self.w.write(")");
             }
-            Op::Classes { base, dynamic, toggles, span } => {
+            Op::Classes { base, dynamic, toggles, change, span } => {
                 self.w.map(span.start);
                 self.w.write(&format!("$n.attr({n}, \"class\", $n.class_name({}, ", js_str(base)));
                 match dynamic {
@@ -835,9 +981,10 @@ impl Codegen<'_, '_> {
                     self.memo_or_paren(e);
                     self.w.write("]");
                 }
-                self.w.write("]))");
+                let change = self.change_arg(*change);
+                self.w.write(&format!("]){change})"));
             }
-            Op::InlineStyle { base, dynamic, directives, span } => {
+            Op::InlineStyle { base, dynamic, directives, change, span } => {
                 self.w.map(span.start);
                 self.w.write(&format!("$n.attr({n}, \"style\", $n.style_text("));
                 match dynamic {
@@ -856,7 +1003,8 @@ impl Codegen<'_, '_> {
                     }
                     self.w.write("]");
                 }
-                self.w.write("]))");
+                let change = self.change_arg(*change);
+                self.w.write(&format!("]){change})"));
             }
             Op::StyleSetter { name, target, child_attr, backend, value, fallback: (candidates, fallback), span } => {
                 self.w.map(span.start);
@@ -919,13 +1067,15 @@ impl Codegen<'_, '_> {
         match op {
             Op::Set { prop, value, span } => {
                 self.w.map(span.start);
-                self.w.write(&format!("$n.set({n}, {}, ", js_str(prop)));
+                let head = self.set_head(n, prop);
+                self.w.write(&head);
                 self.json(value);
                 self.w.write(");");
             }
-            Op::SetDynamic { prop, value, span } => {
+            Op::SetDynamic { prop, value, span, .. } => {
                 self.w.map(span.start);
-                self.dynamic_call(&format!("$n.set({n}, {}, ", js_str(prop)), value);
+                let head = self.set_head(n, prop);
+                self.dynamic_call(&head, value);
             }
             Op::Listen { .. } => unreachable!("events are written after the template effect"),
             Op::ListenAttach { signal, handler, flags, span } => {
@@ -977,7 +1127,7 @@ impl Codegen<'_, '_> {
                 }
                 self.w.write(");");
             }
-            Op::Classes { base, dynamic, toggles, span } => {
+            Op::Classes { base, dynamic, toggles, span, .. } => {
                 self.w.map(span.start);
                 if dynamic.is_none() && toggles.is_empty() {
                     self.w.write(&format!("$n.attr({n}, \"class\", {});", js_str(base)));
@@ -996,7 +1146,7 @@ impl Codegen<'_, '_> {
                     AttrValue::Dynamic(d) => self.dynamic_call(&format!("$n.attr({n}, \"id\", "), d),
                 }
             }
-            Op::InlineStyle { base, dynamic, directives, span } => {
+            Op::InlineStyle { base, dynamic, directives, span, .. } => {
                 self.w.map(span.start);
                 if dynamic.is_none() && directives.is_empty() {
                     self.w.write(&format!("$n.attr({n}, \"style\", {});", js_str(base)));
@@ -1888,6 +2038,8 @@ struct After<'f> {
     op: &'f Op<'f>,
     /// The handler derived of an event (declared with the element).
     memo: Option<String>,
+    /// W-C2: the template (number) whose listener slot this event fills.
+    template: Option<usize>,
 }
 
 /// Where an op is written (Svelte's `init` / `update` / `after_update`, element-level `init`).
@@ -1939,6 +2091,11 @@ fn js_key(s: &str) -> String {
 fn props_member(name: &str) -> String {
     let key = js_key(name);
     if key == name { format!("$$props.{name}") } else { format!("$$props[{key}]") }
+}
+
+/// A JS identifier fragment for a name (`text-edit` -> `text_edit`).
+fn ident(s: &str) -> String {
+    s.chars().map(|c| if c.is_ascii_alphanumeric() || c == '_' || c == '$' { c } else { '_' }).collect()
 }
 
 fn escape_template(s: &str) -> String {

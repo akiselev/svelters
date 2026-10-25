@@ -126,7 +126,7 @@ fn bad_values_and_colour_literals() {
 
 #[test]
 fn aliases_are_notes_with_the_canonical_spelling() {
-    let src = r#"<checkbox class="aria-checked:bg-accent [&::part(indicator)]:bg-accent" />"#;
+    let src = r#"<checkbox text="On" class="aria-checked:bg-accent [&::part(indicator)]:bg-accent" />"#;
     let r = run(src);
     assert_eq!(codes(&r), ["utility_alias", "utility_alias"], "{:#?}", utility_codes(&r));
     assert!(r.diagnostics.iter().all(|d| d.severity == Severity::Note));

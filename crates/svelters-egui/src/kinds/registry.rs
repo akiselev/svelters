@@ -1,12 +1,17 @@
 //! [`KindRegistry`]: the built-in kinds plus the provider kinds of `#[svelters::widget]`, with the id
 //! scheme over them (ARCH-EMBED §8.1). Writer lane: RUSTAPI.
 
+use super::ids::{Cat, StableIds};
 use super::{Def, KINDS, KindDef, MethodDef, Native, P, PropDef, SignalDef, Ty};
+use std::collections::HashMap;
 use svelters_host::exports::TypeRef;
 
 /// Kind ids of provider kinds: pack 62 (`62 << 22 | local`; CUSTOM-WIDGETS.md §3.2).
 pub const PROVIDER_PACK: u32 = 62 << 22;
 const PACK_MASK: u32 = 0x3F << 22;
+/// The owner field (`id >> 16`) of a provider kind's member ids: `0x8000 | (local + 1)`; built-in
+/// kind ids stay below it.
+const PROVIDER_OWNER: u32 = 0x8000;
 
 /// A provider kind in the registry.
 pub struct ProviderKind {
@@ -40,11 +45,13 @@ impl ProviderKind {
 
 /// The kinds the backend knows, with the id scheme over them.
 ///
-/// Built once per process: the built-in table [`KINDS`] (indexes and kind ids `index + 1`) plus the
-/// provider kinds collected from `inventory`, sorted by spec id (indexes `KINDS.len() + local`, kind
-/// ids `62 << 22 | (local + 1)`, so ids are stable for a given binary). A duplicate tag or spec id,
-/// or one that collides with a built-in, fails at startup. Member ids are
-/// `(defining kind index + 1) << 16 | (member index + 1)` for both.
+/// Built once per process: the built-in table [`KINDS`] (indexes `0..KINDS.len()`, ids from the
+/// stable id table, [`super::ids`]) plus the provider kinds collected from `inventory`, sorted by spec
+/// id (indexes `KINDS.len() + local`, kind ids `62 << 22 | (local + 1)`, so ids are stable for a
+/// given binary). A duplicate tag or spec id, or one that collides with a built-in, fails at
+/// startup. Member ids are `owner << 16 | number`: for a built-in kind the declaring kind's id and
+/// the member's number in the table, for a provider kind `0x8000 | (local + 1)` and the member's
+/// index + 1.
 ///
 /// Built-in definitions are references into [`KINDS`] itself (callers compare them by address,
 /// `tests/spec.rs`); provider definitions are leaked once, so every definition is `'static`.
@@ -54,6 +61,29 @@ pub struct KindRegistry {
     replacements: Vec<Replacement>,
     /// The base kind index of each kind (SG2: member lookups walk the chain without allocating).
     bases: Vec<Option<usize>>,
+    /// W-C1: the stable ids of the built-in kinds and their members.
+    ids: StableIds,
+    /// Per built-in kind index: its id and its members' numbers.
+    stable: Vec<StableKind>,
+    /// Built-in kind id -> kind index.
+    by_id: HashMap<u32, usize>,
+}
+
+/// The stable ids of one built-in kind's members (its row, then an own widget's extras), by
+/// category ([`Cat`] as index): position -> number, and number -> position.
+#[derive(Default)]
+struct StableKind {
+    id: u32,
+    numbers: [Vec<u16>; 3],
+    positions: [HashMap<u16, usize>; 3],
+}
+
+fn cat_index(c: Cat) -> usize {
+    match c {
+        Cat::Prop => 0,
+        Cat::Signal => 1,
+        Cat::Method => 2,
+    }
 }
 
 /// OW0 (ARCH-WIDGETS §6.2): an own widget implementing built-in kind `kind`. The kind's row stays
@@ -128,7 +158,7 @@ impl Replacement {
                         layout: false,
                         doc: e.docs,
                     });
-                    KindRegistry::member_id(kind, def.props.len() + extra_props.len() - 1)
+                    reg.stable_member_id(kind, Cat::Prop, e.name)
                 }
             })
             .collect();
@@ -148,7 +178,7 @@ impl Replacement {
                         }
                     };
                     extra_signals.push(SignalDef { name: e.name, args, sync: false, doc: e.docs });
-                    KindRegistry::member_id(kind, def.signals.len() + extra_signals.len() - 1)
+                    reg.stable_member_id(kind, Cat::Signal, e.name)
                 }
             })
             .collect();
@@ -201,7 +231,7 @@ impl KindRegistry {
         entries.retain(|e| e.replaces.is_none());
         let mut providers: Vec<ProviderKind> = Vec::with_capacity(entries.len());
         if entries.is_empty() {
-            return KindRegistry { providers, replacements: Vec::new(), bases: Vec::new() }.with_bases().with_replacements(own);
+            return KindRegistry::new(providers).with_bases().with_ids().with_replacements(own).finish_ids();
         }
         let schema = svelters_host::exports::schema();
         // RA3: the kinds' methods, by spec id (one `#[svelters::widget] impl` per kind)
@@ -279,7 +309,70 @@ impl KindRegistry {
         if let Some(id) = methods.keys().next() {
             panic!("svelters-egui: #[svelters::widget] impl for {id}, which is not a registered provider kind");
         }
-        KindRegistry { providers, replacements: Vec::new(), bases: Vec::new() }.with_bases().with_replacements(own)
+        KindRegistry::new(providers).with_bases().with_ids().with_replacements(own).finish_ids()
+    }
+
+    fn new(providers: Vec<ProviderKind>) -> KindRegistry {
+        KindRegistry { providers, replacements: Vec::new(), bases: Vec::new(), ids: StableIds::new(super::ids::checked_in()), stable: Vec::new(), by_id: HashMap::new() }
+    }
+
+    /// W-C1: the ids of the built-in kinds and their rows' members, from the table (rows it lacks
+    /// are assigned after its own, in kind table order).
+    fn with_ids(mut self) -> KindRegistry {
+        for k in KINDS {
+            self.ids.ensure_kind(k.id);
+            for p in k.props {
+                self.ids.ensure(k.id, Cat::Prop, p.name);
+            }
+            for s in k.signals {
+                self.ids.ensure(k.id, Cat::Signal, s.name);
+            }
+            for m in k.methods {
+                self.ids.ensure(k.id, Cat::Method, m.name);
+            }
+        }
+        self.index_ids();
+        self
+    }
+
+    /// W-C1: the position <-> number maps of every built-in kind's members (rows and own widgets'
+    /// extras).
+    fn index_ids(&mut self) {
+        let mut stable = Vec::with_capacity(KINDS.len());
+        for (i, k) in KINDS.iter().enumerate() {
+            let def = self.spec_kind(i);
+            let mut s = StableKind { id: self.ids.kind(k.id).expect("kind id assigned"), ..StableKind::default() };
+            let names: [Vec<&str>; 3] = [def.props.iter().map(|p| p.name).collect(), def.signals.iter().map(|s| s.name).collect(), def.methods.iter().map(|m| m.name).collect()];
+            for (c, list) in [Cat::Prop, Cat::Signal, Cat::Method].into_iter().zip(names) {
+                let ci = cat_index(c);
+                for (pos, name) in list.into_iter().enumerate() {
+                    let n = self.ids.member(k.id, c, name).expect("member number assigned");
+                    s.numbers[ci].push(n);
+                    s.positions[ci].insert(n, pos);
+                }
+            }
+            stable.push(s);
+        }
+        self.by_id = stable.iter().enumerate().map(|(i, s)| (s.id, i)).collect();
+        self.stable = stable;
+    }
+
+    /// W-C1: the own widgets' extras have their numbers (assigned in `with_replacements`).
+    fn finish_ids(mut self) -> KindRegistry {
+        self.index_ids();
+        self
+    }
+
+    /// W-C1: the stable ids in use (the table plus what it lacks: `tests/spec.rs` checks it).
+    pub fn stable_ids(&self) -> &StableIds {
+        &self.ids
+    }
+
+    /// The id of member `name` (category `c`) declared by built-in kind `kind`.
+    fn stable_member_id(&self, kind: usize, c: Cat, name: &str) -> u32 {
+        let k = KINDS[kind].id;
+        let n = self.ids.member(k, c, name).expect("member number assigned");
+        (self.stable[kind].id << 16) | u32::from(n)
     }
 
     /// OW0: routes each own widget to the built-in kind it replaces; a tag that is not a built-in,
@@ -289,6 +382,17 @@ impl KindRegistry {
             let tag = e.replaces.expect("filtered");
             let kind = KINDS.iter().position(|k| k.tag == Some(tag)).unwrap_or_else(|| panic!("svelters-egui: own widget {} replaces <{tag}>, which is not a built-in kind", e.id));
             assert!(self.replacements.iter().all(|r| r.kind != kind), "svelters-egui: <{tag}> is replaced twice ({})", e.id);
+            // W-C1: the struct's props and events the row lacks get numbers of the kind
+            for p in e.props {
+                if self.find_prop(kind, p.name).is_none() {
+                    self.ids.ensure(KINDS[kind].id, Cat::Prop, p.name);
+                }
+            }
+            for ev in e.events {
+                if self.find_signal(kind, ev.name).is_none() {
+                    self.ids.ensure(KINDS[kind].id, Cat::Signal, ev.name);
+                }
+            }
             let r = Replacement::new(&self, kind, e).unwrap_or_else(|m| panic!("{m}"));
             self.replacements.push(r);
         }
@@ -418,10 +522,10 @@ impl KindRegistry {
 
     // ---- ids ----
 
-    /// The kind id of index `kind`: `index + 1` for built-ins, `62 << 22 | (local + 1)` for providers.
+    /// The kind id of index `kind`: its stable id for built-ins, `62 << 22 | (local + 1)` for providers.
     pub fn kind_id(&self, kind: usize) -> u32 {
         match kind.checked_sub(KINDS.len()) {
-            None => kind as u32 + 1,
+            None => self.stable[kind].id,
             Some(local) => PROVIDER_PACK | (local as u32 + 1),
         }
     }
@@ -431,18 +535,32 @@ impl KindRegistry {
             let local = ((id & !PACK_MASK) as usize).checked_sub(1)?;
             return (local < self.providers.len()).then_some(KINDS.len() + local);
         }
-        let i = (id as usize).checked_sub(1)?;
-        (i < KINDS.len()).then_some(i)
+        self.by_id.get(&id).copied()
     }
 
-    fn member_id(owner: usize, i: usize) -> u32 {
-        ((owner as u32 + 1) << 16) | (i as u32 + 1)
+    /// The id of member `i` (category `c`, a position in the kind's own list, extras last) of the
+    /// kind `owner` that declares it; 0 when out of range.
+    fn member_id(&self, owner: usize, c: Cat, i: usize) -> u32 {
+        match owner.checked_sub(KINDS.len()) {
+            None => self.stable[owner].numbers[cat_index(c)].get(i).map_or(0, |&n| (self.stable[owner].id << 16) | u32::from(n)),
+            Some(local) => ((PROVIDER_OWNER | (local as u32 + 1)) << 16) | (i as u32 + 1),
+        }
     }
 
-    fn split(&self, id: u32) -> Option<(usize, usize)> {
-        let owner = ((id >> 16) as usize).checked_sub(1)?;
-        let i = ((id & 0xffff) as usize).checked_sub(1)?;
-        (owner < self.len()).then_some((owner, i))
+    /// The declaring kind and the position of a member id of category `c`.
+    fn split(&self, id: u32, c: Cat) -> Option<(usize, usize)> {
+        let owner = id >> 16;
+        let n = (id & 0xffff) as u16;
+        if n == 0 {
+            return None;
+        }
+        if owner & PROVIDER_OWNER != 0 {
+            let local = ((owner & !PROVIDER_OWNER) as usize).checked_sub(1)?;
+            return (local < self.providers.len()).then_some((KINDS.len() + local, usize::from(n) - 1));
+        }
+        let k = *self.by_id.get(&owner)?;
+        let pos = *self.stable[k].positions[cat_index(c)].get(&n)?;
+        Some((k, pos))
     }
 
     /// OW0: the extra props of kind `k` (an own widget's props its built-in row lacks).
@@ -464,16 +582,16 @@ impl KindRegistry {
     pub fn find_prop(&self, kind: usize, name: &str) -> Option<(u32, &'static PropDef)> {
         self.chain_iter(kind).find_map(|k| {
             let props = self.kind(k).props;
-            props.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, i), &props[i])).or_else(|| {
+            props.iter().position(|p| p.name == name).map(|i| (self.member_id(k, Cat::Prop, i), &props[i])).or_else(|| {
                 let extra = self.extra_props(k);
-                extra.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, props.len() + i), &extra[i]))
+                extra.iter().position(|p| p.name == name).map(|i| (self.member_id(k, Cat::Prop, props.len() + i), &extra[i]))
             })
         })
     }
 
     /// The property definition behind an id, if `kind` has it.
     pub fn prop_def(&self, kind: usize, id: u32) -> Option<&'static PropDef> {
-        let (owner, i) = self.split(id)?;
+        let (owner, i) = self.split(id, Cat::Prop)?;
         if !self.chain_iter(kind).any(|k| k == owner) {
             return None;
         }
@@ -484,15 +602,15 @@ impl KindRegistry {
     pub fn find_signal(&self, kind: usize, name: &str) -> Option<(u32, &'static SignalDef)> {
         self.chain_iter(kind).find_map(|k| {
             let signals = self.kind(k).signals;
-            signals.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, i), &signals[i])).or_else(|| {
+            signals.iter().position(|s| s.name == name).map(|i| (self.member_id(k, Cat::Signal, i), &signals[i])).or_else(|| {
                 let extra = self.extra_signals(k);
-                extra.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, signals.len() + i), &extra[i]))
+                extra.iter().position(|s| s.name == name).map(|i| (self.member_id(k, Cat::Signal, signals.len() + i), &extra[i]))
             })
         })
     }
 
     pub fn signal_def(&self, kind: usize, id: u32) -> Option<&'static SignalDef> {
-        let (owner, i) = self.split(id)?;
+        let (owner, i) = self.split(id, Cat::Signal)?;
         if !self.chain_iter(kind).any(|k| k == owner) {
             return None;
         }
@@ -503,12 +621,12 @@ impl KindRegistry {
     pub fn find_method(&self, kind: usize, name: &str) -> Option<(u32, &'static MethodDef)> {
         self.chain_iter(kind).find_map(|k| {
             let methods = self.kind(k).methods;
-            methods.iter().position(|m| m.name == name).map(|i| (Self::member_id(k, i), &methods[i]))
+            methods.iter().position(|m| m.name == name).map(|i| (self.member_id(k, Cat::Method, i), &methods[i]))
         })
     }
 
     pub fn method_def(&self, kind: usize, id: u32) -> Option<&'static MethodDef> {
-        let (owner, i) = self.split(id)?;
+        let (owner, i) = self.split(id, Cat::Method)?;
         self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).methods.get(i)).flatten()
     }
 
@@ -526,7 +644,7 @@ impl KindRegistry {
     pub fn prop_id(&self, kind: usize, key: P) -> u32 {
         for k in self.chain(kind) {
             if let Some(i) = self.kind(k).props.iter().position(|p| p.key == key) {
-                return Self::member_id(k, i);
+                return self.member_id(k, Cat::Prop, i);
             }
         }
         0
@@ -534,12 +652,12 @@ impl KindRegistry {
 
     /// The id of prop `i` of provider kind `kind` (0 if out of range).
     pub fn provider_prop_id(&self, kind: usize, i: usize) -> u32 {
-        if self.provider(kind).is_some_and(|p| i < p.entry.props.len()) { Self::member_id(kind, i) } else { 0 }
+        if self.provider(kind).is_some_and(|p| i < p.entry.props.len()) { self.member_id(kind, Cat::Prop, i) } else { 0 }
     }
 
     /// The id of event `i` of provider kind `kind` (0 if out of range).
     pub fn provider_signal_id(&self, kind: usize, i: usize) -> u32 {
-        if self.provider(kind).is_some_and(|p| i < p.entry.events.len()) { Self::member_id(kind, i) } else { 0 }
+        if self.provider(kind).is_some_and(|p| i < p.entry.events.len()) { self.member_id(kind, Cat::Signal, i) } else { 0 }
     }
 
     /// The host descriptor of prop `i` of provider kind `kind`: its export type's slot.
@@ -568,7 +686,7 @@ impl KindRegistry {
 
     /// RA3: the index of method id `id` among provider kind `kind`'s own methods.
     pub fn provider_method_index(&self, kind: usize, id: u32) -> Option<usize> {
-        let (owner, i) = self.split(id)?;
+        let (owner, i) = self.split(id, Cat::Method)?;
         (owner == kind && self.provider(kind)?.methods.is_some_and(|m| i < m.methods.len())).then_some(i)
     }
 }

@@ -202,6 +202,21 @@ impl<'a> Lower<'a, '_, '_> {
     }
 }
 
+/// W-C5: `on:name|passive={h}` / `|nonpassive` (with or without `|capture`) on an element, for a
+/// backend with the `passive` capability: (capture, passive, the modifier's span).
+pub(super) fn passive_modifiers(d: &Directive) -> Option<(bool, bool, (u32, u32))> {
+    if d.expression.is_none() || d.modifiers.is_empty() || !d.modifiers.iter().all(|m| matches!(m.as_str(), "capture" | "passive" | "nonpassive")) {
+        return None;
+    }
+    let passive = d.modifiers.iter().any(|m| m == "passive");
+    let nonpassive = d.modifiers.iter().any(|m| m == "nonpassive");
+    if passive == nonpassive {
+        return None;
+    }
+    let capture = d.modifiers.iter().any(|m| m == "capture");
+    Some((capture, passive, sp(d.span())))
+}
+
 /// EV1: `on:name|capture={h}` on an element: a handler and no modifier but `capture`. It lowers to
 /// the capture listener `onnamecapture={h}`; every other modifier stays unsupported.
 pub(super) fn capture_only(d: &Directive) -> bool {

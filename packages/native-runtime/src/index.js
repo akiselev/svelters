@@ -54,6 +54,10 @@ export { observeProp, trackProp, trackLocal, invalidateProp } from './observe.js
 export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
 // CX3: a `bind:` on a Rust store field linked to the prop in the host (no JS per change).
 export { bind_link } from './bind-observe.js';
+// presto W-C1 and W-C2 (lane COMPILER): stable ids and native templates, emitted for backends with
+// the `ids` and `templates` capabilities (./ids.js, ./template.js).
+export { ids, element_id, setp } from './ids.js';
+export { template, instantiate, at, template_listen } from './template.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');

@@ -20,7 +20,7 @@ pub use observe::{BindLowering, BindPlan, Observability, plan_bind, plan_bind_co
 pub use overlay::Overlay;
 pub use types::{TypeProp, TypeRef, TypeTable};
 pub use spec::{
-    AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, ObsClass, ObsTiming,
+    A11ySpec, ChangeClass, capability, AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, ObsClass, ObsTiming,
     ObsVerified, ObserveSpec, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
     StylePropSpec, ValueCost, ValueKind, Via,
 };
@@ -167,11 +167,19 @@ pub struct EventSpec {
     pub phases: Vec<String>,
     /// The DOM-style alias that was applied (`click` -> `clicked`).
     pub via_alias: Option<String>,
+    /// W-C5: a listener can cancel the signal's default (spec `cancelable`; absent there: `sync`).
+    pub cancelable: bool,
+    /// W-C5: the signal drives scrolling or pointer tracking (spec `passive`).
+    pub passive: bool,
+    /// W-C1: the signal's stable id, if the spec has one.
+    pub id: Option<u32>,
 }
 
 /// Listener phase flags (ABI v2.2 `listen_ex`, the renderer's LISTEN_AFTER / LISTEN_CAPTURE).
 pub const LISTEN_AFTER: u32 = 1;
 pub const LISTEN_CAPTURE: u32 = 2;
+/// W-C5: the listener never cancels its event, so the toolkit need not wait for it.
+pub const LISTEN_PASSIVE: u32 = 4;
 
 /// A resolved `parent:<name>` child attribute.
 #[derive(Debug, Clone, PartialEq)]
@@ -415,6 +423,27 @@ pub trait PlatformSemantics {
     }
     /// A property of a non-GUI class by its JS getter name (`cursorPosition`), with its observability.
     fn type_property(&self, _ty: &TypeRef, _prop: &str) -> Option<TypeProp> {
+        None
+    }
+
+    /// The new op shapes the backend's runtime path accepts (spec `capabilities`,
+    /// [`spec::capability`]); none by default.
+    fn capabilities(&self) -> &[String] {
+        &[]
+    }
+    fn has_capability(&self, name: &str) -> bool {
+        self.capabilities().iter().any(|c| c == name)
+    }
+    /// W-C1: the hash of the spec's stable ids (spec `spec_hash`).
+    fn spec_hash(&self) -> Option<&str> {
+        None
+    }
+    /// W-C1: the stable id of the kind `el` creates.
+    fn kind_id(&self, _el: &ElementRef) -> Option<u32> {
+        None
+    }
+    /// W-C9: the kind's accessibility facts.
+    fn a11y(&self, _el: &ElementRef) -> Option<&A11ySpec> {
         None
     }
 }
