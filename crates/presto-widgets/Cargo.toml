@@ -20,3 +20,9 @@ serde_json = { workspace = true }
 resvg = { version = "=0.45.1", default-features = false }
 # The icon colour-slot rewrite (`paint::icon::registry::slot_svg`) parses icon SVGs with the roxmltree usvg links.
 roxmltree = "=0.20.0"
+# The native menu bar's description (`views::menu_model::MenuModel::to_menu_desc`); presto-platform
+# pulls winit, so it is optional.
+presto-platform = { workspace = true, optional = true }
+
+[features]
+native-menu = ["dep:presto-platform"]

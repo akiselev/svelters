@@ -699,6 +699,12 @@ impl SplitView {
 }
 
 impl Kind for SplitView {
+    fn parts() -> &'static [&'static str] {
+        &["sash", "guide"]
+    }
+    fn places_children() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

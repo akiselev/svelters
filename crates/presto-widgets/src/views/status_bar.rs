@@ -147,6 +147,9 @@ impl StatusBar {
 }
 
 impl Kind for StatusBar {
+    fn parts() -> &'static [&'static str] {
+        &["message"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

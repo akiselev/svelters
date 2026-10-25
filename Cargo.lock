@@ -4307,6 +4307,7 @@ dependencies = [
  "presto-anim",
  "presto-base",
  "presto-core",
+ "presto-platform",
  "presto-text",
  "resvg",
  "roxmltree 0.20.0",

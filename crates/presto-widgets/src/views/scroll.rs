@@ -1013,6 +1013,9 @@ impl ScrollArea {
 }
 
 impl Kind for ScrollArea {
+    fn parts() -> &'static [&'static str] {
+        &["thumb-x", "thumb-y", "scrollbar-x", "scrollbar-y", "corner"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
@@ -1288,6 +1291,9 @@ impl Scrollbar {
 }
 
 impl Kind for Scrollbar {
+    fn parts() -> &'static [&'static str] {
+        &["thumb-x", "thumb-y", "scrollbar-x", "scrollbar-y", "corner"]
+    }
     fn spec() -> &'static KindSpec {
         &SCROLLBAR_SPEC
     }
