@@ -3833,6 +3833,64 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8cf8e6a8aa66ce33f63993ffc4ea4271eb5b0530a9002db8455ea6050c77bfa"
 
 [[package]]
+name = "presto-anim"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-base"
+version = "0.0.0"
+dependencies = [
+ "accesskit",
+ "bytemuck",
+ "smallvec",
+]
+
+[[package]]
+name = "presto-compositor"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-core"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-frame"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-platform"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-render"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-text"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
 name = "proc-macro-crate"
 version = "3.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
