@@ -13,7 +13,8 @@ use super::common::emit;
 use crate::controls::common::host_view;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::interact::StateBits;
+use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use presto_base::accesskit;
 use presto_base::event::{KeyState, MouseButton, PointerPhase};
 use presto_base::geom::{Point, Rect, Size};
@@ -129,10 +130,16 @@ impl Modal {
         Rect::new(d.min.x + PAD, d.min.y + PAD + self.heading_h(), d.max.x - PAD, d.max.y - PAD)
     }
 
-    /// Asks to cancel: `cancel` is cancelable; the app (or the default when nobody prevents it)
-    /// closes it with [`Modal::close`].
+    /// Asks to cancel: `cancel` goes to JS at event time and, unless a listener prevents it, the
+    /// modal closes ([`Modal::close`]).
     fn cancel(&mut self, cx: &mut EventCx<'_>, reason: &'static str) {
-        emit(cx, &SPEC, "cancel", vec![Value::str(reason)]);
+        let prevented = match SPEC.signal("cancel") {
+            Some(id) => cx.emit_sync(id, vec![Value::str(reason)]),
+            None => false,
+        };
+        if !prevented {
+            self.close(cx, reason);
+        }
     }
 
     /// Closes it (`open` written back as native state); focus goes back to the opener (returned).
@@ -160,6 +167,21 @@ impl Kind for Modal {
     }
     fn get_prop(&self, prop: PropId) -> Option<Value> {
         self.props.get(prop)
+    }
+
+    /// The content is not laid out, painted or hit while the modal is closed.
+    fn child_layout(&self, _cx: &ChildCx, style: &mut taffy::Style) -> bool {
+        if !self.props.open {
+            style.display = taffy::Display::None;
+        }
+        self.props.open
+    }
+
+    fn prop_state(&self) -> StateBits {
+        if self.props.open { StateBits::OPEN } else { StateBits::NONE }
+    }
+    fn prop_states() -> StateBits {
+        StateBits::OPEN
     }
 
     fn record(&self, cx: &mut RecordCx) {
@@ -281,8 +303,11 @@ mod tests {
         let mut m = open_modal();
         let mut cx = EventCx::new(Time::ZERO, size, &mut st, &pol);
         assert_eq!(m.event(&mut cx, &esc()), Handled::Yes);
-        assert_eq!(signals(&cx), vec![("cancel", Some(Value::str("escape")))]);
+        assert_eq!(signals(&cx), vec![("cancel", Some(Value::str("escape"))), ("close", Some(Value::str("escape")))], "nobody prevented it: it closes");
+        assert!(!m.props.open);
+        assert_eq!(cx.changed, vec![P::open.id()]);
         // a press inside the dialog dragged out to the backdrop is not a backdrop click
+        let mut m = open_modal();
         let mut cx = EventCx::new(Time::ZERO, size, &mut st, &pol);
         m.event(&mut cx, &ptr(PointerPhase::Down, 400.0, 300.0));
         m.event(&mut cx, &ptr(PointerPhase::Up, 10.0, 10.0));
@@ -290,9 +315,10 @@ mod tests {
         // a backdrop click
         m.event(&mut cx, &ptr(PointerPhase::Down, 10.0, 10.0));
         assert_eq!(m.event(&mut cx, &ptr(PointerPhase::Up, 12.0, 10.0)), Handled::Yes);
-        assert_eq!(signals(&cx), vec![("cancel", Some(Value::str("backdrop")))]);
+        assert_eq!(signals(&cx)[0], ("cancel", Some(Value::str("backdrop"))));
         assert!(SPEC.signals[0].cancelable, "`cancel` can be prevented");
         // not dismissable: nothing cancels, but presses are still swallowed
+        let mut m = open_modal();
         m.props.dismissable = false;
         let mut cx = EventCx::new(Time::ZERO, size, &mut st, &pol);
         assert_eq!(m.event(&mut cx, &esc()), Handled::Yes);
@@ -303,6 +329,39 @@ mod tests {
         assert_eq!(m.close(&mut cx, "accept"), Some(NodeId(9)));
         assert_eq!(cx.changed, vec![P::open.id()]);
         assert_eq!(m.close(&mut cx, "accept"), None, "already closed");
+    }
+
+    #[test]
+    fn a_prevented_cancel_keeps_it_open() {
+        let pol = Policy::default();
+        let mut st = StateBits::NONE;
+        let mut m = open_modal();
+        let mut seen = Vec::new();
+        let mut prevent = |sig: crate::shim::core::SignalId, args: &[Value]| {
+            seen.push((SPEC.signals[sig.0 as usize].name, args.to_vec()));
+            true
+        };
+        let mut cx = EventCx::new(Time::ZERO, Size::new(800.0, 600.0), &mut st, &pol);
+        cx.sync = Some(&mut prevent);
+        m.event(&mut cx, &esc());
+        assert!(cx.emitted.is_empty(), "delivered at event time, not queued");
+        assert!(cx.changed.is_empty());
+        drop(cx);
+        assert_eq!(seen, vec![("cancel", vec![Value::str("escape")])]);
+        assert!(m.props.open, "the listener kept it open");
+    }
+
+    #[test]
+    fn closed_it_hides_its_content_and_open_is_a_state() {
+        let mut m = open_modal();
+        assert_eq!(m.prop_state(), StateBits::OPEN);
+        let mut style = taffy::Style::default();
+        assert!(m.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        m.props.open = false;
+        assert!(!m.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert_eq!(style.display, taffy::Display::None);
+        assert_eq!(m.prop_state(), StateBits::NONE);
+        assert_eq!(Modal::prop_states(), StateBits::OPEN);
     }
 
     #[test]

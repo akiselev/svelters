@@ -287,7 +287,7 @@ mod tests {
         let mut bar = StatusBar::default();
         bar.props.message = "Ready".into();
         let (list, res) = testkit::record(&bar, Size::new(400.0, 22.0), StateBits::NONE);
-        assert_eq!(testkit::kinds(&list), ["quad", "glyphs"]);
+        assert_eq!(testkit::kinds(&list), ["quad", "quad", "glyphs"], "surface, top hairline, message");
         assert_eq!(res.runs.len(), 1);
         let n = testkit::a11y(&bar, StateBits::NONE, Size::new(400.0, 22.0));
         assert_eq!(n.role(), accesskit::Role::Status);

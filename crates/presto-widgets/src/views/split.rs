@@ -18,7 +18,8 @@ use super::common::{self, ms, secs};
 use crate::interact::{Policy, StateBits};
 use crate::kind_props;
 use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Styles, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PrepareCx, PropError, PropId, RecordCx, SignalSpec, StyleCx, Styles, Value, ValueType};
+use std::cell::Cell;
 use presto_base::accesskit;
 use presto_base::color::{Color, Fill};
 use presto_base::cursor::CursorIcon;
@@ -413,6 +414,17 @@ pub struct SplitView {
     /// `commit-mode="release"`: the sash being dragged and the size it would give.
     ghost: Option<(usize, f32)>,
     now: Time,
+    /// The pane count core last laid out ([`Kind::child_layout`] sees it; [`Kind::prepare`] needs it).
+    panes: Cell<usize>,
+}
+
+/// How one pane takes its share of the main axis ([`SplitView::weights`]).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Share {
+    /// A fixed size in points (`divider-position` for the first of two panes).
+    Fixed(f32),
+    /// A share of the room left, by weight.
+    Grow(f32),
 }
 
 impl Default for SplitView {
@@ -439,6 +451,7 @@ impl Default for SplitView {
             focused: None,
             ghost: None,
             now: Time::ZERO,
+            panes: Cell::new(0),
         }
     }
 }
@@ -534,6 +547,34 @@ impl SplitView {
         self.laid = sizes;
         self.sashes.resize_with(n.saturating_sub(1), Sash::default);
         out
+    }
+
+    /// How each of `n` panes takes the main axis: `sizes` as weights when it lists `n` sizes, else
+    /// `divider-position` for the first of two panes, else the last laid sizes, else equal shares.
+    /// Weights equal to sizes that fill the room give exactly those sizes; when the room changes the
+    /// panes keep their proportions (`QSplitter`'s stretch).
+    pub fn weights(&self, n: usize) -> Vec<Share> {
+        let pos = |v: &[f32]| v.len() == n && v.iter().all(|x| x.is_finite() && *x >= 0.0) && v.iter().sum::<f32>() > 0.0;
+        if let Some(s) = self.sizes.as_ref().map(|s| s.iter().map(|x| *x as f32).collect::<Vec<_>>()).filter(|s| pos(s)) {
+            return s.into_iter().map(Share::Grow).collect();
+        }
+        if let (Some(p), 2) = (self.divider_position, n) {
+            return vec![Share::Fixed(p.max(0.0) as f32), Share::Grow(1.0)];
+        }
+        if pos(&self.laid) {
+            return self.laid.iter().map(|x| Share::Grow(*x)).collect();
+        }
+        vec![Share::Grow(1.0); n]
+    }
+
+    /// The pane sizes [`SplitView::weights`] give in `room` points (what taffy computes for the
+    /// children [`Kind::child_layout`] styles, before CSS `min-*`/`max-*` on the panes).
+    pub fn shares(&self, n: usize, room: f32) -> Vec<f32> {
+        let w = self.weights(n);
+        let fixed: f32 = w.iter().map(|s| if let Share::Fixed(f) = s { f.min(room) } else { 0.0 }).sum();
+        let total: f32 = w.iter().map(|s| if let Share::Grow(g) = s { *g } else { 0.0 }).sum();
+        let left = (room - fixed).max(0.0);
+        w.iter().map(|s| match s { Share::Fixed(f) => f.min(room), Share::Grow(g) if total > 0.0 => left * g / total, Share::Grow(_) => 0.0 }).collect()
     }
 
     /// The laid-out pane sizes.
@@ -685,6 +726,58 @@ impl Kind for SplitView {
     }
     fn get_prop(&self, prop: PropId) -> Option<Value> {
         self.props.get(prop)
+    }
+
+    /// A flex row (column when vertical) with the sash lines as gaps; the panes are placed by
+    /// [`Kind::child_layout`].
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        s.display = taffy::Display::Flex;
+        s.flex_direction = if self.vertical { taffy::FlexDirection::Column } else { taffy::FlexDirection::Row };
+        s.flex_wrap = taffy::FlexWrap::NoWrap;
+        s.gap = taffy::Size { width: taffy::LengthPercentage::length(self.line), height: taffy::LengthPercentage::length(self.line) };
+        s
+    }
+
+    /// Each pane fills the cross axis and takes its [`SplitView::weights`] share of the main axis,
+    /// never below `min-size`.
+    fn child_layout(&self, cx: &ChildCx, style: &mut taffy::Style) -> bool {
+        self.panes.set(cx.count());
+        let share = self.weights(cx.count()).get(cx.index).copied().unwrap_or(Share::Grow(1.0));
+        match share {
+            Share::Fixed(f) => {
+                style.flex_basis = taffy::Dimension::length(f);
+                style.flex_grow = 0.0;
+                style.flex_shrink = 0.0;
+            }
+            Share::Grow(g) => {
+                style.flex_basis = taffy::Dimension::length(0.0);
+                style.flex_grow = g;
+                style.flex_shrink = 1.0;
+            }
+        }
+        let min = taffy::LengthPercentageAuto::length(self.min_size.max(0.0) as f32);
+        if self.vertical {
+            style.min_size.height = min;
+        } else {
+            style.min_size.width = min;
+        }
+        style.align_self = Some(taffy::AlignSelf::STRETCH);
+        true
+    }
+
+    /// Takes the laid size: the pane sizes (as [`SplitView::shares`] gives them) and the sashes
+    /// between them.
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        let n = self.panes.get();
+        let main = if self.vertical { cx.size.h } else { cx.size.w };
+        let room = (main - self.line * n.saturating_sub(1) as f32).max(0.0);
+        self.laid = self.shares(n, room);
+        self.size = cx.size;
+        let min = self.min_size.max(0.0) as f32;
+        self.mins = vec![min; n];
+        self.maxs = vec![f32::INFINITY; n];
+        self.sashes.resize_with(n.saturating_sub(1), Sash::default);
     }
 
     fn record(&self, cx: &mut RecordCx) {
@@ -855,6 +948,38 @@ mod tests {
 
     fn key(k: Key) -> Event {
         Event::Key(KeyEvent { key: Some(k), physical: 0, text: None, state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::default() })
+    }
+
+    #[test]
+    fn child_layout_gives_each_pane_its_share_and_prepare_takes_it() {
+        let mut s = SplitView::default();
+        let anchors = ["", "", ""];
+        let mut styles = Vec::new();
+        for i in 0..3 {
+            let mut st = taffy::Style::default();
+            assert!(s.child_layout(&ChildCx { index: i, anchors: &anchors }, &mut st), "every pane shows");
+            styles.push(st);
+        }
+        assert!(styles.iter().all(|st| st.flex_grow == 1.0 && st.flex_basis == taffy::Dimension::length(0.0)), "equal shares");
+        assert_eq!(styles[0].min_size.width, taffy::LengthPercentageAuto::length(32.0));
+        // 302 wide, two 1-point sash lines: 100 each
+        let mut text = crate::shim::testing::MonoShaper;
+        let style = Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true };
+        s.prepare(&mut PrepareCx { size: Size::new(302.0, 50.0), style, text: &mut text });
+        assert_eq!(s.laid(), &[100.0, 100.0, 100.0]);
+        assert_eq!(s.sash_rects(0).0, Rect::new(100.0, 0.0, 101.0, 50.0));
+        // `sizes` become weights: they hold while the room is theirs and scale with it
+        s.sizes = Some(vec![50.0, 150.0, 100.0]);
+        assert_eq!(s.shares(3, 300.0), vec![50.0, 150.0, 100.0]);
+        assert_eq!(s.shares(3, 600.0), vec![100.0, 300.0, 200.0]);
+        // `divider-position` fixes the first of two panes
+        s.sizes = None;
+        s.divider_position = Some(80.0);
+        assert_eq!(s.weights(2), vec![Share::Fixed(80.0), Share::Grow(1.0)]);
+        assert_eq!(s.shares(2, 299.0), vec![80.0, 219.0]);
+        let mut st = taffy::Style::default();
+        s.child_layout(&ChildCx { index: 0, anchors: &["", ""] }, &mut st);
+        assert_eq!((st.flex_basis, st.flex_grow, st.flex_shrink), (taffy::Dimension::length(80.0), 0.0, 0.0));
     }
 
     #[test]

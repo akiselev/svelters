@@ -2,14 +2,15 @@
 //! background, sized by `size` along its side's axis (width for `left`/`right`, height for
 //! `top`/`bottom`; it does not shrink). `resizable` makes the inner edge a [`Sash`]: drag it within
 //! the panel's `min-*`/`max-*`, or focus it and use the arrow keys; `changed(size)` reports each new
-//! size. The separator is a 1 pt line inside the panel along its inner edge.
+//! size. The separator is a 1 pt line inside the panel along its inner edge, kept clear of content by
+//! [`Kind::chrome_padding`]; the sash takes the laid-out box in [`Kind::prepare`].
 
 use super::common;
 use super::split::{Sash, SashIntent, SashParams, leave_event, record_sash};
 use crate::controls::common::host_view;
 use crate::kind_props;
 use crate::paint::{self, PaintCx, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, SignalSpec, StyleCx, Value, ValueType};
 use presto_base::accesskit;
 use presto_base::cursor::CursorIcon;
 use presto_base::event::{KeyState, MouseButton, PointerPhase};
@@ -192,6 +193,40 @@ impl Kind for Panel {
         self.props.get(prop)
     }
 
+    /// `size` fixes the panel's extent along its side's axis (it does not shrink).
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        if let Some(v) = self.size {
+            let d = taffy::Dimension::length(v.max(0.0));
+            if self.side.axis() == 0 {
+                s.size.width = d;
+            } else {
+                s.size.height = d;
+            }
+            s.flex_shrink = 0.0;
+        }
+        s
+    }
+
+    /// Room for the separator line along the inner edge, so content does not run under it.
+    fn chrome_padding(&self, _cx: &mut MeasureCx) -> Option<[f32; 4]> {
+        if !self.separator {
+            return None;
+        }
+        // [left, right, top, bottom]
+        Some(match self.side {
+            PanelSide::Left => [0.0, 1.0, 0.0, 0.0],
+            PanelSide::Right => [1.0, 0.0, 0.0, 0.0],
+            PanelSide::Top => [0.0, 0.0, 0.0, 1.0],
+            PanelSide::Bottom => [0.0, 0.0, 1.0, 0.0],
+        })
+    }
+
+    /// Takes the laid-out box for the sash.
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.set_layout(cx.size);
+    }
+
     fn record(&self, cx: &mut RecordCx) {
         let host = host_view(&cx.style, UA);
         let styles = crate::shim::core::Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
@@ -339,5 +374,20 @@ mod tests {
         p.set_layout(Size::new(200.0, 300.0));
         let (list, _) = crate::controls::testkit::record(&p, Size::new(200.0, 300.0), crate::interact::StateBits::NONE);
         assert_eq!(crate::controls::testkit::kinds(&list), ["quad", "quad"], "surface, then the separator line");
+    }
+
+    #[test]
+    fn layout_hooks_fix_the_size_and_clear_the_separator() {
+        let mut p = Panel { side: PanelSide::Right, size: Some(240.0), ..Panel::default() };
+        let st = p.layout_style(&StyleCx { computed: None, state: crate::interact::StateBits::NONE, dark: true, base: None });
+        assert_eq!((st.size.width, st.flex_shrink), (taffy::Dimension::length(240.0), 0.0));
+        let mut text = crate::shim::testing::MonoShaper;
+        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true };
+        let mut mcx = MeasureCx { style, text: &mut text, scale: 1.0 };
+        assert_eq!(p.chrome_padding(&mut mcx), Some([1.0, 0.0, 0.0, 0.0]), "a right panel's inner edge is its left");
+        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true };
+        let mut text = crate::shim::testing::MonoShaper;
+        p.prepare(&mut PrepareCx { size: Size::new(240.0, 300.0), style, text: &mut text });
+        assert_eq!(p.edge_rects().0, Rect::new(0.0, 0.0, 1.0, 300.0));
     }
 }

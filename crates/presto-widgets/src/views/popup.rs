@@ -15,7 +15,8 @@ use crate::controls::common::host_view;
 use crate::controls::props::PropValue;
 use crate::kind_props;
 use crate::paint::{self, PaintCx, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Default as Dv, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::interact::StateBits;
+use crate::shim::core::{A11yCx, ChildCx, Default as Dv, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use presto_base::accesskit;
 use presto_base::event::KeyState;
 use presto_base::geom::{Point, Rect, Size};
@@ -222,6 +223,21 @@ impl Kind for Popup {
         self.props.get(prop)
     }
 
+    /// The content is not laid out, painted or hit while it is closed.
+    fn child_layout(&self, _cx: &ChildCx, style: &mut taffy::Style) -> bool {
+        if !self.props.open {
+            style.display = taffy::Display::None;
+        }
+        self.props.open
+    }
+
+    fn prop_state(&self) -> StateBits {
+        if self.props.open { StateBits::OPEN } else { StateBits::NONE }
+    }
+    fn prop_states() -> StateBits {
+        StateBits::OPEN
+    }
+
     fn record(&self, cx: &mut RecordCx) {
         let host = host_view(&cx.style, UA);
         let rect = cx.rect();
@@ -341,5 +357,19 @@ mod tests {
         let (list, _) = testkit::record(&Popup::default(), Size::new(120.0, 80.0), StateBits::NONE);
         // popup-shadow (elev-3) under the filled, bordered surface
         assert_eq!(testkit::kinds(&list), ["shadow", "quad"]);
+    }
+
+    #[test]
+    fn closed_it_hides_its_content_and_open_is_a_state() {
+        let mut p = Popup::default();
+        let mut style = taffy::Style::default();
+        assert!(!p.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert_eq!(style.display, taffy::Display::None);
+        assert_eq!(p.prop_state(), StateBits::NONE);
+        p.props.open = true;
+        let mut style = taffy::Style::default();
+        assert!(p.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert_ne!(style.display, taffy::Display::None);
+        assert_eq!(p.prop_state(), StateBits::OPEN);
     }
 }
