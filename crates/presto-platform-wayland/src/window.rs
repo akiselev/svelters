@@ -60,6 +60,8 @@ pub struct Window {
     pub cursor: CursorIcon,
     pub ime: Option<ImeState>,
     pub ime_hints: ImeHints,
+    /// The focused editor, when the app hands it over (`set_text_input`): the IME edits it directly.
+    pub text_client: Option<Box<dyn presto_base::input::TextInputClient>>,
     pub layers: HashMap<SurfaceId, Layer>,
     pub lock: Arc<SurfaceLock>,
     reported: Option<(DeviceSize, f32)>,
@@ -106,7 +108,8 @@ impl Window {
 
     /// The app draws its own title bar and frame.
     pub fn client_side_decorations(&self) -> bool {
-        self.toplevel().is_some() && self.desc.decorations && self.decoration == DecorationMode::Client
+        self.toplevel().is_some()
+            && (self.desc.custom_title_bar || (self.desc.decorations && self.decoration == DecorationMode::Client))
     }
 
     fn uses_viewport(&self) -> bool {
@@ -171,7 +174,12 @@ pub fn create(
     let (role, surface) = match &popup {
         None => {
             let surface = state.compositor.create_surface(&qh);
-            let decorations = if desc.decorations { WindowDecorations::RequestServer } else { WindowDecorations::RequestClient };
+            // A custom title bar asks for client-side mode: the app draws it, the compositor draws nothing.
+            let decorations = if desc.decorations && !desc.custom_title_bar {
+                WindowDecorations::RequestServer
+            } else {
+                WindowDecorations::RequestClient
+            };
             let w = state.xdg.create_window(surface.clone(), decorations, &qh);
             w.set_title(desc.title.clone());
             if let Some(app_id) = &desc.app_id {
@@ -219,6 +227,7 @@ pub fn create(
         cursor: CursorIcon::Default,
         ime: None,
         ime_hints: ImeHints::default(),
+        text_client: None,
         layers: HashMap::new(),
         lock: Arc::new(SurfaceLock::default()),
         reported: None,
