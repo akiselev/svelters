@@ -6,6 +6,7 @@ mod change;
 mod commit;
 mod dispatch;
 mod focus;
+mod ime;
 mod services;
 mod style;
 mod tree;

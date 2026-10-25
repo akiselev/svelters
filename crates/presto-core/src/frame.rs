@@ -124,6 +124,7 @@ impl Document {
         commit.animations.extend(orphaned.into_iter().map(AnimationCmd::Cancel));
         self.bind_animation_targets(&mut commit);
         commit.cursor = self.input.cursor.take();
+        commit.ime_area = self.ime_area(window);
         let empty = commit.layers.is_empty()
             && commit.props.ops.is_empty()
             && commit.lists.is_empty()
@@ -134,13 +135,30 @@ impl Document {
             && commit.resources.removed_images.is_empty()
             && commit.animations.is_empty()
             && commit.a11y.is_none()
-            && commit.cursor.is_none();
+            && commit.cursor.is_none()
+            && commit.ime_area.is_none();
         if empty {
             return (None, stats);
         }
         let ws = self.window_mut(window).expect("window");
         ws.built = Some(commit.revision);
         (Some(commit), stats)
+    }
+
+    /// The IME candidate area when it moved: the focused text kind's composition (or selection)
+    /// bounds, else its box. `None` when unchanged or nothing editable has focus.
+    fn ime_area(&mut self, window: WindowId) -> Option<Rect> {
+        let node = self.focused(window)?;
+        let i = self.idx(node)?;
+        let mut k = self.kinds[i].take()?;
+        let r = k.text_input().map(|c| c.marked_range().or_else(|| c.selected_range()).and_then(|r| c.bounds_for_range(r)));
+        self.kinds[i] = Some(k);
+        let r = r?.unwrap_or(self.record[i].world);
+        if self.window(window).and_then(|w| w.ime_sent) == Some(r) {
+            return None;
+        }
+        self.window_mut(window)?.ime_sent = Some(r);
+        Some(r)
     }
 
     /// The compositor applied the commit with `revision` (back-pressure release; `settle`).
