@@ -2,6 +2,7 @@
 //! focus traversal and the accessibility projection, on the test kinds of [`crate::testkinds`].
 
 mod a11y;
+mod absolute;
 mod change;
 mod commit;
 mod dispatch;

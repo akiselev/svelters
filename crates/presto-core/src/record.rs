@@ -18,6 +18,9 @@ pub(crate) struct NodePaint {
     /// A scroll container's content space (translated by the scroll offset).
     pub content: Option<PropNodeId>,
     pub layer: Option<LayerId>,
+    /// The clip node its children draw under (the dirty walk's; absolute descendants whose
+    /// containing block this is take it).
+    pub child_clip: Option<PropNodeId>,
     /// The border box in window space at the last rebuild (`scroll_into_view`, the IME area).
     pub world: Rect,
     /// The border box's window transform at the last rebuild.
@@ -39,6 +42,7 @@ impl Default for NodePaint {
             scroll: None,
             content: None,
             layer: None,
+            child_clip: None,
             world: Rect::ZERO,
             world_tf: Affine::IDENTITY,
             a11y_tf: None,
