@@ -12,6 +12,7 @@
 
 use presto_base::event::{KeyState, Modifiers};
 use presto_base::key::Key;
+use crate::shim::core::Value;
 use presto_base::time::{Span, Time};
 
 /// An entry's index in its [`MenuModel`].
@@ -211,6 +212,58 @@ impl MenuModel {
 
     pub fn new() -> MenuModel {
         MenuModel { entries: vec![Entry::menu("", "")] }
+    }
+
+    /// The model a `menu-bar` or `context-menu` holds as its element children (`menu`, `menu-item`,
+    /// `menu-separator`), from the element records the host folds in ([`crate::shim::core::Kind::folds_elements`]).
+    /// An entry's id is its `anchor`, else its position path (`"1.0.2"`), so ids stay put while the
+    /// structure does. Other tags are skipped.
+    pub fn from_elements(els: &[Value]) -> MenuModel {
+        let mut m = MenuModel::new();
+        m.add_elements(MenuModel::ROOT, els, "");
+        m
+    }
+
+    fn add_elements(&mut self, parent: EntryIx, els: &[Value], path: &str) {
+        fn field<'v>(v: &'v Value, name: &str) -> Option<&'v Value> {
+            match v {
+                Value::Record(fs) => fs.iter().find(|(k, _)| &**k == name).map(|(_, v)| v),
+                _ => None,
+            }
+        }
+        for (i, el) in els.iter().enumerate() {
+            let tag = field(el, "tag").and_then(Value::as_str).unwrap_or("");
+            let props = field(el, "props");
+            let prop = |n: &str| props.and_then(|p| field(p, n));
+            let text = |n: &str| prop(n).and_then(Value::as_str).unwrap_or("").to_string();
+            let flag = |n: &str, d: bool| prop(n).and_then(Value::as_bool).unwrap_or(d);
+            let here = if path.is_empty() { i.to_string() } else { format!("{path}.{i}") };
+            let anchor = field(el, "anchor").and_then(Value::as_str).unwrap_or("");
+            let id = if anchor.is_empty() { here.clone() } else { anchor.to_string() };
+            let mut e = match tag {
+                "menu" => Entry::menu(&id, &text("label")),
+                "menu-item" => {
+                    let mut e = Entry::item(&id, &text("label")).shortcut(&text("shortcut"));
+                    let group = text("group");
+                    if !group.is_empty() {
+                        e = e.radio(&group, flag("checked", false));
+                    } else if flag("checkable", false) {
+                        e = e.checkable(flag("checked", false));
+                    }
+                    e
+                }
+                "menu-separator" => Entry::separator(),
+                _ => continue,
+            };
+            e.enabled = flag("enabled", true);
+            e.visible = flag("visible", true);
+            let ix = self.add(parent, e);
+            if tag == "menu"
+                && let Some(Value::List(kids)) = field(el, "children")
+            {
+                self.add_elements(ix, kids, &here);
+            }
+        }
     }
 
     /// Appends `e` to `parent`'s children.

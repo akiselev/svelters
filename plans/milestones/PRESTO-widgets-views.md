@@ -118,6 +118,14 @@ timers (host forwards `wake`); the container hooks; `parts`/`places_children` re
   default does).
 - `crates/presto-widgets/src/theme/base.css` (WIDGETS-BASIC): `scroll-area` gets `overflow-x`/`overflow-y`
   by its `direction`, which makes it core's scroll container on those axes.
+- `crates/presto-widgets/src/shim.rs` + `host.rs` (WIDGETS-BASIC): `Kind::folds_elements` (additive):
+  with `folds_children`, the host folds the children in as element records (`{tag, anchor, props,
+  children}`) instead of text runs; `menu-bar` and `context-menu` build their `MenuModel` from them
+  (`Menus::sync_elements`, ids = `anchor`, else the position path), so a real document's menus reach
+  the bar and `to_menu_desc` (APP-TEST question 12).
+- `crates/presto-widgets/src/host.rs` (WIDGETS-BASIC, bug fix): `Hosted::prepare` now calls the widget's
+  own `prepare` before the dry recording; before, no kind's `prepare` ran in a document (split-view,
+  panel, menus, select and toast lay out there).
 - `crates/presto-widgets/Cargo.toml`: optional `presto-platform` dependency behind the `native-menu`
   feature (presto-platform pulls winit).
 - `presto-base` unchanged.
@@ -126,4 +134,6 @@ timers (host forwards `wake`); the container hooks; `parts`/`places_children` re
 
 No tests were run locally (batch rule; the last filtered run was skipped at the usage limit);
 `cargo check -p presto-widgets --all-targets` (with and without `--features native-menu`) was clean (no
-presto-widgets warnings) at each commit. CI results: see the report to the coordinator.
+presto-widgets warnings) at each commit. CI checks without the feature, so
+`a_bar_built_from_elements_describes_the_native_bar` and `the_model_describes_the_native_bar` run only
+with `cargo test -p presto-widgets --features native-menu`. CI results: see the report to the coordinator.

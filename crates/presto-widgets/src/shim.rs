@@ -605,6 +605,15 @@ pub mod core {
         {
             false
         }
+        /// With [`Kind::folds_children`]: the children arrive in [`Styles::children`] as element records
+        /// (`{tag, anchor, props, children}`: every prop of the child's kind by name, its `anchor`, its own
+        /// children the same way) instead of text runs. A menu bar builds its menus from them.
+        fn folds_elements() -> bool
+        where
+            Self: Sized,
+        {
+            false
+        }
         /// The bits [`Kind::prop_state`] owns.
         fn prop_states() -> StateBits
         where
