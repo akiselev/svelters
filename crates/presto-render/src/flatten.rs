@@ -286,7 +286,7 @@ fn visible(bounds: Rect, clip: &ClipState) -> Option<Rect> {
 }
 
 fn quad(q: &display::Quad, sp: &Space, clip: &ClipState, opacity: f32, ctx: &mut Ctx<'_>, b: &mut Builder) {
-    let has_border = q.border_style_visible();
+    let has_border = has_visible_border(q);
     let fill_visible = match &q.fill {
         Fill::Solid(c) => c.a > 0.0,
         Fill::Linear { stops, .. } => stops.iter().any(|s| s.color.a > 0.0),
@@ -333,15 +333,9 @@ fn quad(q: &display::Quad, sp: &Space, clip: &ClipState, opacity: f32, ctx: &mut
     b.push(ctx, Kind::Quad, Tex::None, idx, dev);
 }
 
-trait QuadExt {
-    fn border_style_visible(&self) -> bool;
-}
-
-impl QuadExt for display::Quad {
-    fn border_style_visible(&self) -> bool {
-        let w = self.border_widths;
-        self.border_color.a > 0.0 && (w.top > 0.0 || w.right > 0.0 || w.bottom > 0.0 || w.left > 0.0)
-    }
+fn has_visible_border(q: &display::Quad) -> bool {
+    let w = q.border_widths;
+    q.border_color.a > 0.0 && (w.top > 0.0 || w.right > 0.0 || w.bottom > 0.0 || w.left > 0.0)
 }
 
 /// At most [`gpu::MAX_STOPS`] stops: more are resampled evenly between the first and last offset.

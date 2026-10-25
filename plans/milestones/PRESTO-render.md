@@ -93,6 +93,10 @@ this container (no Vulkan ICD), so pipeline creation against a real device is fi
   `crates/presto-render/LICENSES/Apache-2.0-GPUI.txt`.
 - `Cargo.lock` (wgpu, etagere, lyon, naga, png, pollster for presto-render).
 - presto-base: no changes.
+- `.github/workflows/presto.yml` (base's file), one line: the "Which presto crates exist" step ran
+  `ls -d crates/presto-* crates/svelters-presto` under `pipefail`; `crates/svelters-presto` doesn't exist,
+  so `ls` exits 2 and every presto job failed before building (run 40221188131). Now
+  `(ls … 2>/dev/null || true)`. The same fix belongs on `ci/presto-base`.
 
 ## Questions for the coordinator
 
