@@ -144,11 +144,10 @@ pub struct Inner {
     pub(crate) sheets: RefCell<BTreeMap<String, (svelters_style::SheetId, String)>>,
     /// Native output queued outside the tree (an embedder's, a test's), delivered by the next pump.
     pub(crate) pending: RefCell<Output>,
-    /// Ops made while presto-core's dispatch runs cancelable listeners (`sync.rs`): `Some` while
-    /// deferring.
-    pub(crate) sync: RefCell<Option<crate::sync::Deferred>>,
-    /// What deferred ops failed with when applied (taken by the embedder or runner).
-    pub(crate) deferred_errors: RefCell<Vec<String>>,
+    /// The document presto-core lends the sync deliverer (`sync.rs`), while it runs; null otherwise.
+    pub(crate) lent: Cell<*mut Document>,
+    /// Borrows of the lent document: > 0 shared, -1 exclusive (the `RefCell` rules, checked).
+    pub(crate) lent_borrows: Cell<isize>,
     /// While events dispatched at this revision are delivered: JS writes are a JS task that saw it
     /// (native-owned props the kind changed since are not overwritten, architecture §4.5).
     pub(crate) seen: Cell<Option<Revision>>,
@@ -194,8 +193,8 @@ impl PrestoBackend {
             scheme: Cell::new(None),
             sheets: RefCell::new(BTreeMap::new()),
             pending: RefCell::new(Output::default()),
-            sync: RefCell::new(None),
-            deferred_errors: RefCell::new(Vec::new()),
+            lent: Cell::new(std::ptr::null_mut()),
+            lent_borrows: Cell::new(0),
             seen: Cell::new(None),
             handles: RefCell::new(Handles::default()),
             host: Cell::new(std::ptr::null()),
@@ -235,10 +234,7 @@ impl PrestoBackend {
 
     /// The document, for the runner (style, layout, frame) and tests.
     pub fn with_doc<R>(&self, f: impl FnOnce(&mut Document) -> R) -> R {
-        let r = f(&mut self.0.doc.borrow_mut());
-        // a frame or a native step may have delivered cancelable signals (`sync.rs`)
-        self.apply_deferred(None);
-        r
+        f(&mut self.doc_mut())
     }
 
     pub fn kinds(&self) -> &Arc<Kinds> {
@@ -354,17 +350,14 @@ impl PrestoBackend {
     /// The node behind a live handle and its kind's member map.
     pub(crate) fn live(&self, h: svl_handle) -> StrResult<(NodeId, &KindMap)> {
         let n = self.node(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        // the document is borrowed while presto-core's dispatch runs cancelable listeners
-        if let Ok(doc) = self.0.doc.try_borrow()
-            && !doc.contains(n)
-        {
+        if !self.doc().contains(n) {
             return Err(format!("stale handle {h}"));
         }
         let m = self.kind_map(h)?;
         Ok((n, m))
     }
 
-    /// The member map of `h`'s kind (also for a handle whose creation is deferred).
+    /// The member map of `h`'s kind.
     pub(crate) fn kind_map(&self, h: svl_handle) -> StrResult<&KindMap> {
         let k = self.0.handles.borrow().kind(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
         self.0.kinds.by_wire(k).ok_or_else(|| format!("handle {h} has a kind JS does not know"))
@@ -374,7 +367,7 @@ impl PrestoBackend {
     pub(crate) fn create_at(&self, h: svl_handle, kind: svl_id) -> StrResult<NodeId> {
         let m = self.0.kinds.by_wire(kind).ok_or_else(|| format!("unknown kind id {kind}"))?;
         let k = m.core.ok_or_else(|| format!("{} is abstract: no element creates it", m.surface.name))?;
-        let n = self.0.doc.borrow_mut().create(k);
+        let n = self.doc_mut().create(k);
         let mut hs = self.0.handles.borrow_mut();
         hs.bind(h, n);
         hs.set_kind(h, kind);
@@ -413,7 +406,7 @@ impl PrestoBackend {
             Some(v) => d.set_prop(n, pid, v),
             None => d.reset_prop(n, pid),
         };
-        let mut doc = self.0.doc.borrow_mut();
+        let mut doc = self.doc_mut();
         let r = match self.0.seen.get() {
             Some(seen) => doc.js_transaction(seen, write),
             None => write(&mut doc),
@@ -439,7 +432,7 @@ impl PrestoBackend {
         }
         // a signal presto does not produce yet is accepted and never fires
         let Some(sid) = sm.native else { return Ok(()) };
-        let mut doc = self.0.doc.borrow_mut();
+        let mut doc = self.doc_mut();
         if on {
             let mut f = ListenFlags::EMPTY;
             if capture {
@@ -462,7 +455,7 @@ impl PrestoBackend {
     pub fn listening(&self, h: svl_handle, name: &str) -> bool {
         let Ok((n, m)) = self.live(h) else { return false };
         let Some(sid) = m.signal_named(name).and_then(|s| s.native) else { return false };
-        self.0.doc.borrow().listeners(n).iter().any(|l| l.signal == sid)
+        self.doc().listeners(n).iter().any(|l| l.signal == sid)
     }
 
     /// The insert behind `insert`, shared with templates.
@@ -471,7 +464,7 @@ impl PrestoBackend {
         let (c, _) = self.live(child)?;
         let b = before.map(|b| self.node(b).ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))).transpose()?;
         let s = pm.slot(slot).ok_or_else(|| format!("unknown slot id {slot} on <{}>", pm.tag()))?;
-        self.0.doc.borrow_mut().insert(p, c, b, s).map_err(|e| e.to_string())
+        self.doc_mut().insert(p, c, b, s).map_err(|e| e.to_string())
     }
 
     fn forget(&self, h: svl_handle) {
@@ -489,7 +482,7 @@ impl PrestoBackend {
         let mut stack = vec![n];
         while let Some(x) = stack.pop() {
             order.push(x);
-            let kids = self.0.doc.borrow().children(x).to_vec();
+            let kids = self.doc().children(x).to_vec();
             stack.extend(kids.into_iter().rev());
         }
         let mut freed = Vec::new();
@@ -500,7 +493,7 @@ impl PrestoBackend {
                     self.free(h);
                     freed.push(h);
                 }
-                None => self.0.doc.borrow_mut().destroy(*x),
+                None => self.doc_mut().destroy(*x),
             }
         }
         freed.reverse();
@@ -530,7 +523,7 @@ impl PrestoBackend {
     /// The runner opened `window` for presented handle `h`: the JS-built node becomes its root.
     pub fn attach_presented(&self, h: svl_handle, window: WindowId, size: Size, scale: Scale) -> StrResult<()> {
         let (n, _) = self.live(h)?;
-        self.0.doc.borrow_mut().attach_window(window, n, size, scale).map_err(|e| e.to_string())?;
+        self.doc_mut().attach_window(window, n, size, scale).map_err(|e| e.to_string())?;
         self.0.window_ids.borrow_mut().insert(h, window);
         Ok(())
     }
@@ -547,7 +540,7 @@ impl PrestoBackend {
 
     /// The document's revision (one per transaction).
     pub fn revision(&self) -> Revision {
-        self.0.doc.borrow().revision()
+        self.doc().revision()
     }
 
     /// JS asked for a frame that has not run yet.
@@ -560,7 +553,7 @@ impl PrestoBackend {
     pub(crate) fn free(&self, h: svl_handle) {
         let Some(n) = self.0.handles.borrow_mut().unbind(h) else { return };
         {
-            let mut doc = self.0.doc.borrow_mut();
+            let mut doc = self.doc_mut();
             let known: Vec<NodeId> = doc.children(n).iter().copied().filter(|&c| self.0.handles.borrow().handle(c).is_some()).collect();
             for c in known {
                 let _ = doc.remove(n, c);
@@ -595,35 +588,18 @@ impl Backend for PrestoBackend {
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
         let h = self.0.handles.borrow_mut().reserve(1);
-        if self.deferring() {
-            let m = self.0.kinds.by_wire(kind).ok_or_else(|| format!("unknown kind id {kind}"))?;
-            if m.core.is_none() {
-                return Err(format!("{} is abstract: no element creates it", m.surface.name));
-            }
-            self.0.handles.borrow_mut().set_kind(h, kind);
-            self.defer(move |b| b.create_at(h, kind).map(|_| ()));
-            return Ok(h);
-        }
         self.create_at(h, kind)?;
         Ok(h)
     }
 
     fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
-        if self.deferring() {
-            self.defer(move |b| b.write_insert(parent, child, before, slot));
-            return Ok(());
-        }
         self.write_insert(parent, child, before, slot)
     }
 
     fn remove(&self, parent: svl_handle, child: svl_handle) -> StrResult<()> {
-        if self.deferring() {
-            self.defer(move |b| b.remove(parent, child));
-            return Ok(());
-        }
         let (p, c) = (self.node(parent), self.node(child));
         let (Some(p), Some(c)) = (p, c) else { return Err("stale or foreign handle".into()) };
-        self.0.doc.borrow_mut().remove(p, c).map_err(|e| e.to_string())
+        self.doc_mut().remove(p, c).map_err(|e| e.to_string())
     }
 
     fn destroy(&self, h: svl_handle) {
@@ -631,51 +607,31 @@ impl Backend for PrestoBackend {
         if self.0.borrowed.borrow().contains(&h) {
             return;
         }
-        if self.deferring() {
-            self.defer(move |b| {
-                b.free(h);
-                Ok(())
-            });
-            return;
-        }
         self.free(h);
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
-        if self.deferring() {
-            self.kind_map(h)?.prop(prop).ok_or_else(|| format!("unknown prop id {prop}"))?;
-            self.defer_write(h, prop, v.clone());
-            return Ok(());
-        }
         self.write_prop(h, prop, v)
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
-        if self.deferring() {
-            return self.deferred_read(h, prop);
-        }
         let (n, km) = self.live(h)?;
         let pm = km.prop(prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", km.tag()))?;
         let stored = match pm.target {
             PropTarget::Side => self.0.side.borrow().get(&(n, prop)).cloned(),
-            PropTarget::Native(pid) => self.0.doc.borrow().get_prop(n, pid).map(|v| match v {
+            PropTarget::Native(pid) => self.doc().get_prop(n, pid).map(|v| match v {
                 presto_core::Value::Enum(ci) => crate::kinds::core_prop(self.0.kinds.registry(), km.core.expect("a live node's kind"), pid)
                     .and_then(|c| crate::kinds::enum_from_core(pm.spec.ty, c, ci))
                     .map_or(surface::Value::Null, surface::Value::Enum),
                 v => value::from_core(&v),
             }),
-            PropTarget::Inverted(pid) => self.0.doc.borrow().get_prop(n, pid).and_then(|v| v.as_bool()).map(|b| surface::Value::Bool(!b)),
+            PropTarget::Inverted(pid) => self.doc().get_prop(n, pid).and_then(|v| v.as_bool()).map(|b| surface::Value::Bool(!b)),
         };
         let v = stored.unwrap_or_else(|| pm.spec.default.value());
         Ok(value::to_abi(&v, pm.spec.ty))
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
-        if self.deferring() {
-            let args = args.to_vec();
-            self.defer(move |b| b.call(h, method, &args).map(|_| ()));
-            return Ok(Value::Null);
-        }
         let (_, km) = self.live(h)?;
         let m = km.method(method).ok_or_else(|| format!("unknown method id {method} on <{}>", km.tag()))?;
         if !args.is_empty() && m.spec.params.is_empty() {
@@ -694,7 +650,7 @@ impl Backend for PrestoBackend {
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
             (_, "request-focus") => {
                 let (n, _) = self.live(h)?;
-                let mut doc = self.0.doc.borrow_mut();
+                let mut doc = self.doc_mut();
                 // a node gets a window when its tree is a window's (presto-core `attach_window`, Q4)
                 if doc.window_of(n).is_none() {
                     return Err(format!("<{}>.request-focus(): the node is not in a window", km.tag()));
@@ -710,7 +666,7 @@ impl Backend for PrestoBackend {
                     let v = value::from_abi(a, *ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
                     core_args.extend(value::to_core(v));
                 }
-                let (ret, events) = self.0.doc.borrow_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;
+                let (ret, events) = self.doc_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;
                 self.queue(Output { events, ..Output::default() });
                 return Ok(match (ret, m.spec.ret) {
                     (Some(v), Some(ty)) => value::to_abi(&value::from_core(&v), ty),
@@ -729,15 +685,11 @@ impl Backend for PrestoBackend {
 
     /// EV1 capture on the DOM-style events, and `LISTEN_PASSIVE` (compiler-and-js §3.5).
     fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> StrResult<()> {
-        if self.deferring() {
-            self.defer(move |b| b.write_listen(h, signal, on, flags));
-            return Ok(());
-        }
         self.write_listen(h, signal, on, flags)
     }
 
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
-        let km = if self.deferring() { self.kind_map(h)? } else { self.live(h)?.1 };
+        let (_, km) = self.live(h)?;
         Ok(svl_handle_info {
             kind: km.wire,
             lifetime: if self.0.borrowed.borrow().contains(&h) {
@@ -789,11 +741,6 @@ impl Backend for PrestoBackend {
     }
 
     fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<i32> {
-        if self.deferring() && !matches!(op, SVL_STYLE_TARGET | SVL_STYLE_ANIMATE) {
-            let text = text.map(str::to_string);
-            self.defer(move |b| b.style_op(op, h, text.as_deref()).map(|_| ()));
-            return Ok(0);
-        }
         self.style_op(op, h, text)
     }
 

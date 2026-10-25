@@ -1,21 +1,21 @@
-//! Event-time delivery inside presto-core's dispatch (EV1; decided by the coordinator, 2026-10-25):
-//! the cancelable DOM-style events (pointer down/up, click, wheel, keys) and kinds' `emit_sync`
-//! signals reach JS before their native default, through `Document::set_sync_delivery`, so
-//! `preventDefault` skips the default. presto-core needs only the answer (prevented, stopped) at that
-//! point.
+//! Event-time delivery inside presto-core's dispatch (EV1; decided by the coordinator, 2026-10-25,
+//! presto-core's lent-document `SyncDelivery`): the cancelable DOM-style events (pointer down/up,
+//! click, wheel, keys) and kinds' `emit_sync` signals reach JS before their native default, so
+//! `preventDefault` skips it, kinds' own cancelable signals included.
 //!
-//! The deliverer runs while presto-core's dispatch holds the document, so the JS it runs cannot reach
-//! the tree. Its ops are deferred: they are checked against the kind maps (which need no document),
-//! queued in order, and applied right after the dispatch returns, in `js_transaction(revision)`.
-//! Handles are the backend's, so a node created in a listener has its handle at once. A read of a
-//! prop the listener wrote answers the written value; a read of anything else fails with a message
-//! that says why (the tree is mid-dispatch). Ops that fail when applied are collected
-//! ([`PrestoBackend::take_deferred_errors`]).
+//! presto-core takes the deliverer out of the document and calls it with `&mut Document`, no other
+//! borrow outstanding. For the call, the backend's ops use that document ([`PrestoBackend::doc`] and
+//! [`PrestoBackend::doc_mut`] hand out the lent one, with the `RefCell` borrow rules checked), so a
+//! listener reads the live tree, writes (in `js_transaction` at the event's revision, which the open
+//! dispatch transaction shares) and builds nodes as anywhere else. The path is fixed when the event
+//! is built: listener nodes gone by their turn are skipped. No delivery nests: a cancelable signal
+//! raised meanwhile comes back in the dispatch's events.
 
 use crate::backend::PrestoBackend;
 use crate::value::{self, PHASE_BUBBLE, PHASE_CAPTURE, PHASE_TARGET};
-use presto_core::{JsEvent, Outcome, Phase};
-use std::collections::HashMap;
+use presto_core::{Document, JsEvent, Outcome, Phase};
+use std::cell::{Cell, Ref, RefMut};
+use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
 use svelters_abi::*;
 
@@ -24,78 +24,128 @@ const STOP: i64 = 1;
 const PREVENT: i64 = 2;
 const IMMEDIATE: i64 = 4;
 
-type Op = Box<dyn FnOnce(&PrestoBackend) -> StrResult<()>>;
+/// A shared borrow of the backend's document (its own, or the one lent to the deliverer).
+pub enum DocRef<'a> {
+    Own(Ref<'a, Document>),
+    Lent(&'a Document, &'a Cell<isize>),
+}
 
-/// The ops JS made while the tree was mid-dispatch.
-#[derive(Default)]
-pub struct Deferred {
-    ops: Vec<Op>,
-    /// The props written, for reads in the same listeners.
-    written: HashMap<(svl_handle, svl_id), Value>,
+impl Deref for DocRef<'_> {
+    type Target = Document;
+    fn deref(&self) -> &Document {
+        match self {
+            DocRef::Own(r) => r,
+            DocRef::Lent(d, _) => d,
+        }
+    }
+}
+
+impl Drop for DocRef<'_> {
+    fn drop(&mut self) {
+        if let DocRef::Lent(_, n) = self {
+            n.set(n.get() - 1);
+        }
+    }
+}
+
+/// An exclusive borrow of the backend's document.
+pub enum DocMut<'a> {
+    Own(RefMut<'a, Document>),
+    Lent(&'a mut Document, &'a Cell<isize>),
+}
+
+impl Deref for DocMut<'_> {
+    type Target = Document;
+    fn deref(&self) -> &Document {
+        match self {
+            DocMut::Own(r) => r,
+            DocMut::Lent(d, _) => d,
+        }
+    }
+}
+
+impl DerefMut for DocMut<'_> {
+    fn deref_mut(&mut self) -> &mut Document {
+        match self {
+            DocMut::Own(r) => r,
+            DocMut::Lent(d, _) => d,
+        }
+    }
+}
+
+impl Drop for DocMut<'_> {
+    fn drop(&mut self) {
+        if let DocMut::Lent(_, n) = self {
+            n.set(0);
+        }
+    }
 }
 
 impl PrestoBackend {
-    pub(crate) fn deferring(&self) -> bool {
-        self.0.sync.borrow().is_some()
-    }
-
-    pub(crate) fn defer(&self, op: impl FnOnce(&PrestoBackend) -> StrResult<()> + 'static) {
-        if let Some(d) = self.0.sync.borrow_mut().as_mut() {
-            d.ops.push(Box::new(op));
+    /// The document, shared.
+    ///
+    /// # Panics
+    /// Like `RefCell::borrow`, while it is borrowed exclusively.
+    pub fn doc(&self) -> DocRef<'_> {
+        let p = self.0.lent.get();
+        if p.is_null() {
+            return DocRef::Own(self.0.doc.borrow());
         }
+        let n = &self.0.lent_borrows;
+        assert!(n.get() >= 0, "svelters-presto: the lent document is borrowed exclusively");
+        n.set(n.get() + 1);
+        // SAFETY: `lent` is the `&mut Document` presto-core passed to the deliverer, valid for its
+        // call (`deliver_lent` clears it before returning); `lent_borrows` enforces the borrow rules
+        // between the guards made from it.
+        DocRef::Lent(unsafe { &*p }, n)
     }
 
-    pub(crate) fn defer_write(&self, h: svl_handle, prop: svl_id, v: Value) {
-        if let Some(d) = self.0.sync.borrow_mut().as_mut() {
-            d.written.insert((h, prop), v.clone());
-            d.ops.push(Box::new(move |b: &PrestoBackend| b.write_prop(h, prop, &v)));
+    /// The document, exclusively.
+    ///
+    /// # Panics
+    /// Like `RefCell::borrow_mut`, while it is borrowed.
+    pub fn doc_mut(&self) -> DocMut<'_> {
+        let p = self.0.lent.get();
+        if p.is_null() {
+            return DocMut::Own(self.0.doc.borrow_mut());
         }
-    }
-
-    pub(crate) fn deferred_read(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
-        let sync = self.0.sync.borrow();
-        if let Some(v) = sync.as_ref().and_then(|d| d.written.get(&(h, prop))) {
-            return Ok(v.clone());
-        }
-        let km = self.kind_map(h)?;
-        let name = km.prop(prop).map_or("?", |p| p.spec.name);
-        Err(format!("<{}>.{name} cannot be read inside a cancelable event's listener on presto (the tree is mid-dispatch); read it after the event", km.tag()))
-    }
-
-    /// Ops that failed when applied after a dispatch, since the last call.
-    pub fn take_deferred_errors(&self) -> Vec<String> {
-        std::mem::take(&mut self.0.deferred_errors.borrow_mut())
-    }
-
-    /// Applies the deferred ops in order, as a JS task that saw `revision`.
-    pub(crate) fn apply_deferred(&self, revision: Option<presto_base::ids::Revision>) {
-        let Some(d) = self.0.sync.borrow_mut().take() else { return };
-        let prev = self.0.seen.replace(revision.or(self.0.seen.get()));
-        for op in d.ops {
-            if let Err(e) = op(self) {
-                self.0.deferred_errors.borrow_mut().push(e);
-            }
-        }
-        self.0.seen.set(prev);
+        let n = &self.0.lent_borrows;
+        assert!(n.get() == 0, "svelters-presto: the lent document is already borrowed");
+        n.set(-1);
+        // SAFETY: as in `doc`; no other guard exists (checked above).
+        DocMut::Lent(unsafe { &mut *p }, n)
     }
 
     pub(crate) fn install_sync_delivery(&self) {
         let weak = Rc::downgrade(&self.0);
-        self.0.doc.borrow_mut().set_sync_delivery(Box::new(move |_doc: &mut presto_core::Document, ev: &JsEvent| match weak.upgrade() {
-            Some(inner) => PrestoBackend(inner).deliver_cancelable(ev),
+        self.doc_mut().set_sync_delivery(Box::new(move |doc: &mut Document, ev: &JsEvent| match weak.upgrade() {
+            Some(inner) => PrestoBackend(inner).deliver_lent(doc, ev),
             None => Outcome::default(),
         }));
     }
 
-    /// One cancelable event, along its path, without the document: what presto-core's dispatch calls
-    /// (see the module docs). JS ops from here on are deferred until the next dispatch return, pump
-    /// or `with_doc`.
+    /// What presto-core's dispatch calls for a cancelable event: `doc` is lent for the call.
+    fn deliver_lent(&self, doc: &mut Document, ev: &JsEvent) -> Outcome {
+        let prev = self.0.lent.replace(doc as *mut Document);
+        let borrows = self.0.lent_borrows.replace(0);
+        let out = self.deliver_cancelable(ev);
+        self.0.lent_borrows.set(borrows);
+        self.0.lent.set(prev);
+        out
+    }
+
+    /// One cancelable event along its path, its listeners run now; returns what they did. JS writes
+    /// are a task that saw the event's revision.
     pub fn deliver_cancelable(&self, ev: &JsEvent) -> Outcome {
         let mut out = Outcome::default();
         let Some(host) = self.host() else { return out };
-        self.0.sync.borrow_mut().get_or_insert_with(Deferred::default);
+        let prev = self.0.seen.replace(Some(self.doc().revision()));
         let target = self.handle(ev.target).map_or(0, |h| h as i64);
         for d in &ev.path {
+            // a listener node removed by an earlier listener is skipped
+            if !self.doc().contains(d.node) {
+                continue;
+            }
             let Some(h) = self.handle(d.node) else { continue };
             let Ok(m) = self.kind_map(h) else { continue };
             let Some(sm) = m.of_native_signal(ev.signal) else { continue };
@@ -120,6 +170,7 @@ impl PrestoBackend {
                 break;
             }
         }
+        self.0.seen.set(prev);
         out
     }
 }
