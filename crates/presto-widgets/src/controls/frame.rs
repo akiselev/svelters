@@ -249,6 +249,12 @@ impl Frame {
 }
 
 impl Kind for Frame {
+    fn prop_state(&self) -> crate::interact::StateBits {
+        { let mut s = crate::interact::StateBits::NONE; self.mirror(&mut s); s }
+    }
+    fn prop_states() -> crate::interact::StateBits {
+        crate::interact::StateBits::CHECKED
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
