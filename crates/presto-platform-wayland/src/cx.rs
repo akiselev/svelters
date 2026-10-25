@@ -4,8 +4,8 @@ use crate::app::State;
 use crate::layers::Layer;
 use crate::present::{FrameSourceConfig, SurfaceLock, WaylandFrameSource};
 use crate::shim::{
-    Clipboard, ClipboardKind, DragData, DragId, FrameSource, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx,
-    PlatformError, SurfaceTarget, Waker, WindowDesc, WindowStateRequest,
+    Clipboard, ClipboardKind, DragData, DragId, DragOutcome, FrameSource, HitRegion, ImeHints, ImeState, Monitor, OsLayerCommitter,
+    OsLayerDesc, PlatformCx, PlatformError, PopupDesc, SurfaceTarget, Waker, WaylandCx, WindowDesc, WindowStateRequest,
 };
 use crate::time::MonotonicClock;
 use crate::window;
@@ -43,6 +43,30 @@ impl<'a> Cx<'a> {
         }
     }
 
+    /// Creates a window and waits for its first configure: presenting before it is a protocol error.
+    fn open(&mut self, desc: WindowDesc, popup: Option<PopupDesc>, parent: Option<WindowId>) -> WindowId {
+        let id = WindowId(self.state.next_window);
+        self.state.next_window += 1;
+        if window::create(self.state, id, desc, popup, parent).is_err() {
+            // The app hears about it as an immediate close.
+            self.state.push_window(id, WindowEvent::CloseRequested);
+            return id;
+        }
+        while self.state.windows.get(&id).is_some_and(|w| !w.configured) {
+            if self.queue.blocking_dispatch(self.state).is_err() {
+                break;
+            }
+        }
+        if let Some(theme) = self.state.theme {
+            self.state.push_window(id, WindowEvent::ThemeChanged(theme));
+        }
+        id
+    }
+
+    pub(crate) fn state_mut(&mut self) -> &mut State {
+        self.state
+    }
+
     fn refresh_cursor(&mut self, id: WindowId) {
         let keys: Vec<_> = self
             .state
@@ -64,23 +88,7 @@ impl<'a> Cx<'a> {
 
 impl PlatformCx for Cx<'_> {
     fn create_window(&mut self, desc: WindowDesc) -> WindowId {
-        let id = WindowId(self.state.next_window);
-        self.state.next_window += 1;
-        if window::create(self.state, id, desc).is_err() {
-            // The app hears about it as an immediate close.
-            self.state.push_window(id, WindowEvent::CloseRequested);
-            return id;
-        }
-        // Wait for the first configure: presenting before it is a protocol error.
-        while self.state.windows.get(&id).is_some_and(|w| !w.configured) {
-            if self.queue.blocking_dispatch(self.state).is_err() {
-                break;
-            }
-        }
-        if let Some(theme) = self.state.theme {
-            self.state.push_window(id, WindowEvent::ThemeChanged(theme));
-        }
-        id
+        self.open(desc, None, None)
     }
 
     fn close_window(&mut self, id: WindowId) {
@@ -251,6 +259,28 @@ impl PlatformCx for Cx<'_> {
             w.lock.remove_child(&l.subsurface);
             self.state.surfaces.remove(&l.surface.id());
         }
+    }
+}
+
+impl WaylandCx for Cx<'_> {
+    fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> WindowId {
+        self.open(desc, Some(popup), None)
+    }
+
+    fn create_child_window(&mut self, desc: WindowDesc, parent: WindowId) -> WindowId {
+        self.open(desc, None, Some(parent))
+    }
+
+    fn set_ime_hints(&mut self, id: WindowId, hints: ImeHints) {
+        let Some(w) = self.state.windows.get_mut(&id) else { return };
+        if w.ime_hints != hints {
+            w.ime_hints = hints;
+            crate::seat::update_ime(self.state, id);
+        }
+    }
+
+    fn take_finished_drags(&mut self) -> Vec<(DragId, DragOutcome)> {
+        std::mem::take(&mut self.state.finished_drags)
     }
 
     fn frame_source(&mut self, id: WindowId, layer: Option<SurfaceId>) -> Option<Box<dyn FrameSource>> {

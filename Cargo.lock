@@ -4139,6 +4139,7 @@ dependencies = [
  "ashpd",
  "futures-lite",
  "presto-base",
+ "presto-platform",
  "raw-window-handle",
  "rustix 1.1.5",
  "smallvec",

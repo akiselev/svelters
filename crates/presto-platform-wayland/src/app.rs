@@ -103,6 +103,7 @@ pub struct State {
     pub(crate) timer: Option<Time>,
     pub(crate) exit: bool,
     pub(crate) theme: Option<Theme>,
+    pub(crate) finished_drags: Vec<(DragId, DragOutcome)>,
 }
 
 impl State {
@@ -146,6 +147,7 @@ impl State {
             timer: None,
             exit: false,
             theme: None,
+            finished_drags: Vec::new(),
             conn,
             qh,
         })
@@ -300,6 +302,7 @@ pub fn run(mut handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
             }
         }
     }
+    handler.exiting(&mut Cx::new(&mut state, &mut queue, &waker));
     // Windows close (and their surfaces go away) before the connection.
     state.windows.clear();
     let _ = queue.flush();
@@ -312,7 +315,10 @@ fn deliver(handler: &mut dyn AppHandler, state: &mut State, queue: &mut EventQue
         match p {
             Pending::Input(env) => handler.input(&mut cx, env),
             Pending::Window(id, ev) => handler.window_event(&mut cx, id, ev),
-            Pending::DragEnded(id, outcome) => handler.drag_ended(&mut cx, id, outcome),
+            Pending::DragEnded(id, outcome) => {
+                cx.state_mut().finished_drags.push((id, outcome));
+                handler.wake(&mut cx);
+            }
         }
         if state.exit {
             return;

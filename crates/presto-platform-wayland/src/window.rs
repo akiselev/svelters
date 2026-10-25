@@ -13,7 +13,8 @@ use crate::app::State;
 use crate::csd::CsdState;
 use crate::layers::Layer;
 use crate::present::{Geometry, SurfaceLock};
-use crate::shim::{HitRegion, ImeState, PopupDesc, PopupGravity, WindowDesc};
+use crate::csd::CsdFrame;
+use crate::shim::{HitRegion, ImeHints, ImeState, PopupDesc, PopupGravity, WindowDesc};
 use presto_base::cursor::CursorIcon;
 use presto_base::event::WindowEvent;
 use presto_base::geom::{DeviceSize, Scale};
@@ -58,6 +59,7 @@ pub struct Window {
     pub csd: CsdState,
     pub cursor: CursorIcon,
     pub ime: Option<ImeState>,
+    pub ime_hints: ImeHints,
     pub layers: HashMap<SurfaceId, Layer>,
     pub lock: Arc<SurfaceLock>,
     reported: Option<(DeviceSize, f32)>,
@@ -68,6 +70,22 @@ impl Window {
         match &self.role {
             Role::Toplevel(w) => w.xdg_surface(),
             Role::Popup(p) => p.xdg_surface(),
+        }
+    }
+
+    /// What the CSD module needs: the size and whether the resize border is active.
+    pub fn csd_frame(&self) -> CsdFrame {
+        let constrained = self.states.intersects(
+            WindowState::MAXIMIZED
+                | WindowState::FULLSCREEN
+                | WindowState::TILED_LEFT
+                | WindowState::TILED_RIGHT
+                | WindowState::TILED_TOP
+                | WindowState::TILED_BOTTOM,
+        );
+        CsdFrame {
+            size: (self.size.0 as f32, self.size.1 as f32),
+            border: self.client_side_decorations() && self.desc.resizable && !constrained,
         }
     }
 
@@ -141,10 +159,16 @@ fn clamp_size(size: (u32, u32), desc: &WindowDesc) -> (u32, u32) {
 
 /// Creates the window's objects and sends the initial commit. The window is usable once its first configure
 /// arrived (`configured`); the caller dispatches until then.
-pub fn create(state: &mut State, id: WindowId, desc: WindowDesc) -> Result<(), crate::shim::PlatformError> {
+pub fn create(
+    state: &mut State,
+    id: WindowId,
+    desc: WindowDesc,
+    popup: Option<PopupDesc>,
+    parent: Option<WindowId>,
+) -> Result<(), crate::shim::PlatformError> {
     let qh = state.qh.clone();
     let initial = clamp_size((desc.size.w.round().max(1.0) as u32, desc.size.h.round().max(1.0) as u32), &desc);
-    let (role, surface) = match &desc.popup {
+    let (role, surface) = match &popup {
         None => {
             let surface = state.compositor.create_surface(&qh);
             let decorations = if desc.decorations { WindowDecorations::RequestServer } else { WindowDecorations::RequestClient };
@@ -160,7 +184,7 @@ pub fn create(state: &mut State, id: WindowId, desc: WindowDesc) -> Result<(), c
             };
             w.set_min_size(min);
             w.set_max_size(max);
-            if let Some(parent) = desc.parent.and_then(|p| state.windows.get(&p)).and_then(|p| p.toplevel()) {
+            if let Some(parent) = parent.and_then(|p| state.windows.get(&p)).and_then(|p| p.toplevel()) {
                 w.set_parent(Some(parent));
             }
             if desc.maximized {
@@ -194,6 +218,7 @@ pub fn create(state: &mut State, id: WindowId, desc: WindowDesc) -> Result<(), c
         csd: CsdState::default(),
         cursor: CursorIcon::Default,
         ime: None,
+        ime_hints: ImeHints::default(),
         layers: HashMap::new(),
         lock: Arc::new(SurfaceLock::default()),
         reported: None,

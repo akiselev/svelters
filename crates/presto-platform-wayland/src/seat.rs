@@ -12,7 +12,6 @@ use crate::frames::{
 };
 use crate::ime::{self, DoneBatch};
 use crate::keymap;
-use crate::shim::HitKind;
 use crate::time;
 use crate::xkb::Xkb;
 use presto_base::cursor::CursorIcon;
@@ -54,7 +53,7 @@ pub struct PointerDev {
     /// The cursor last set, to skip redundant requests.
     pub shown: Option<CursorIcon>,
     /// The CSD region under the pointer, when it overrides the cursor.
-    pub csd_hover: Option<HitKind>,
+    pub csd_hover: Option<csd::CsdHit>,
 }
 
 pub struct KeyboardDev {
@@ -334,25 +333,26 @@ fn deliver_pointer(state: &mut State, key: SeatKey, events: impl IntoIterator<It
         let mut consumed = false;
         if let InputEvent::Pointer(p) = &a.event {
             let Some(w) = state.windows.get_mut(&a.surface) else { continue };
-            let regions_active = w.toplevel().is_some() && !w.hit_regions.is_empty();
+            let frame = w.csd_frame();
+            let regions_active = w.toplevel().is_some() && (frame.border || !w.hit_regions.is_empty());
             if regions_active {
                 let action = match (p.phase, p.button) {
                     (PointerPhase::Down, Some(presto_base::event::MouseButton::Primary)) => {
-                        let (act, eat) = w.csd.press(&w.hit_regions, p.pos, true, now);
+                        let (act, eat) = w.csd.press(&w.hit_regions, frame, p.pos, true, now);
                         consumed = eat;
                         act
                     }
                     (PointerPhase::Down, Some(presto_base::event::MouseButton::Secondary)) => {
-                        let (act, eat) = w.csd.press(&w.hit_regions, p.pos, false, now);
+                        let (act, eat) = w.csd.press(&w.hit_regions, frame, p.pos, false, now);
                         consumed = eat;
                         act
                     }
-                    (PointerPhase::Up, Some(presto_base::event::MouseButton::Primary)) => w.csd.release(&w.hit_regions, p.pos),
+                    (PointerPhase::Up, Some(presto_base::event::MouseButton::Primary)) => w.csd.release(&w.hit_regions, frame, p.pos),
                     _ => None,
                 };
                 let hover = match p.phase {
                     PointerPhase::Leave => None,
-                    _ => csd::hit(&w.hit_regions, p.pos).filter(|k| csd::cursor_for(*k).is_some()),
+                    _ => csd::hit(&w.hit_regions, frame, p.pos).filter(|k| csd::cursor_for(*k).is_some()),
                 };
                 if let Some(action) = action {
                     run_csd_action(state, key, a.surface, action, p.pos);
@@ -382,11 +382,7 @@ fn run_csd_action(state: &mut State, key: SeatKey, id: WindowId, action: CsdActi
     let Some(top) = w.toplevel() else { return };
     match action {
         CsdAction::Move => top.move_(&wl_seat, serial),
-        CsdAction::Resize(kind) => {
-            if let Some(edge) = csd::resize_edge(kind) {
-                top.resize(&wl_seat, serial, edge);
-            }
-        }
+        CsdAction::Resize(edge) => top.resize(&wl_seat, serial, edge),
         CsdAction::WindowMenu => top.show_window_menu(&wl_seat, serial, (pos.x as i32, pos.y as i32)),
         CsdAction::ToggleMaximize => {
             if w.states.contains(smithay_client_toolkit::reexports::csd_frame::WindowState::MAXIMIZED) {
@@ -851,17 +847,17 @@ impl Dispatch<ZwpTextInputV3, SeatKey> for State {
             zwp_text_input_v3::Event::Enter { surface } => state.window_of(surface),
             _ => None,
         };
-        let ime_state = entered.and_then(|w| state.windows.get(&w)).and_then(|w| w.ime.clone());
+        let ime_state = entered.and_then(|w| state.windows.get(&w)).and_then(|w| Some((w.ime.clone()?, w.ime_hints)));
         let Some(seat) = seat_mut(state, *key) else { return };
         let Some(ti) = seat.text_input.as_mut() else { return };
         let mut out: Vec<(WindowId, ImeEvent)> = Vec::new();
         match event {
             zwp_text_input_v3::Event::Enter { .. } => {
                 ti.focus = entered;
-                if let (Some(w), Some(s)) = (entered, ime_state) {
+                if let (Some(w), Some((s, hints))) = (entered, ime_state) {
                     ti.ti.enable();
                     ti.enabled = true;
-                    ime::send_state(&ti.ti, &s);
+                    ime::send_state(&ti.ti, &s, hints);
                     out.push((w, ImeEvent::Enabled));
                 }
             }
@@ -909,6 +905,7 @@ impl Dispatch<ZwpTextInputV3, SeatKey> for State {
 pub fn update_ime(state: &mut State, window: WindowId) {
     let now = time::now();
     let ime_state = state.windows.get(&window).and_then(|w| w.ime.clone());
+    let hints = state.windows.get(&window).map(|w| w.ime_hints).unwrap_or_default();
     let mut out = Vec::new();
     for seat in &mut state.seats {
         let Some(ti) = seat.text_input.as_mut() else { continue };
@@ -922,7 +919,7 @@ pub fn update_ime(state: &mut State, window: WindowId) {
                     ti.enabled = true;
                     out.push(ImeEvent::Enabled);
                 }
-                ime::send_state(&ti.ti, s);
+                ime::send_state(&ti.ti, s, hints);
             }
             None if ti.enabled => {
                 ti.ti.disable();
@@ -948,6 +945,7 @@ pub fn update_ime(state: &mut State, window: WindowId) {
 pub fn end_composition(state: &mut State, window: WindowId, commit: bool) -> bool {
     let now = time::now();
     let ime_state = state.windows.get(&window).and_then(|w| w.ime.clone());
+    let hints = state.windows.get(&window).map(|w| w.ime_hints).unwrap_or_default();
     let mut out = Vec::new();
     let mut handled = false;
     for seat in &mut state.seats {
@@ -969,7 +967,7 @@ pub fn end_composition(state: &mut State, window: WindowId, commit: bool) -> boo
         ti.ti.commit();
         ti.ti.enable();
         match &ime_state {
-            Some(s) => ime::send_state(&ti.ti, s),
+            Some(s) => ime::send_state(&ti.ti, s, hints),
             None => ti.ti.commit(),
         }
     }

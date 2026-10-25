@@ -15,6 +15,7 @@ portal = ["dep:ashpd", "dep:futures-lite"]
 presto-base = { workspace = true }
 
 [target.'cfg(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly", target_os = "netbsd", target_os = "openbsd"))'.dependencies]
+presto-platform = { workspace = true }
 smallvec = { workspace = true }
 raw-window-handle = { workspace = true }
 smithay-client-toolkit = { version = "0.20", default-features = false }

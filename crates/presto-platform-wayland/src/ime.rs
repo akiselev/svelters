@@ -191,7 +191,7 @@ pub fn utf16_to_byte(text: &str, u16: usize) -> usize {
 /// Clamps surrounding text to the protocol's 4000 bytes on character boundaries, keeping the selection
 /// inside; returns the text and the cursor and anchor byte offsets.
 pub fn clamp_surrounding(text: &str, sel: std::ops::Range<usize>) -> (String, i32, i32) {
-    const MAX: usize = ImeState::SURROUNDING_MAX;
+    const MAX: usize = crate::shim::SURROUNDING_MAX;
     let sel = sel.start.min(text.len())..sel.end.min(text.len());
     if text.len() <= MAX {
         return (text.to_owned(), sel.end as i32, sel.start as i32);
@@ -211,13 +211,13 @@ pub fn clamp_surrounding(text: &str, sel: std::ops::Range<usize>) -> (String, i3
 }
 
 /// Sends an editor's state to the text input and commits it.
-pub fn send_state(ti: &ZwpTextInputV3, state: &ImeState) {
+pub fn send_state(ti: &ZwpTextInputV3, state: &ImeState, hints: ImeHints) {
     if let Some((text, sel)) = &state.surrounding {
         let bytes = utf16_to_byte(text, sel.start)..utf16_to_byte(text, sel.end);
         let (text, cursor, anchor) = clamp_surrounding(text, bytes);
         ti.set_surrounding_text(text, cursor, anchor);
     }
-    let (hint, purpose) = content_type(state.purpose, state.hints);
+    let (hint, purpose) = content_type(state.purpose, hints);
     ti.set_content_type(hint, purpose);
     let r = state.area;
     ti.set_cursor_rectangle(

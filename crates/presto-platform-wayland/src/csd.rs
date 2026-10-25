@@ -1,74 +1,105 @@
 //! Our client-side decorations. Where the compositor draws none (no `xdg-decoration`, as on Mutter, or it
-//! chose client-side), the app draws its own title bar and frame and tells the platform what each part means
-//! with hit-test regions. This module turns pointer presses on those regions into xdg-shell requests:
+//! chose client-side), the app draws its own title bar and tells the platform what each part means with
+//! hit-test regions; the platform adds a resize border along the window's edges itself (not while maximised,
+//! fullscreen or tiled). This module turns pointer presses on them into xdg-shell requests:
 //!
-//! | Region | Primary press | Primary release (same region) | Secondary press | Double click |
+//! | Part | Primary press | Primary release (same part) | Secondary press | Double click |
 //! |---|---|---|---|---|
 //! | caption | `xdg_toplevel.move` | — | `show_window_menu` | toggle maximised |
 //! | system menu (window icon) | `show_window_menu` | — | `show_window_menu` | — |
-//! | resize edges | `xdg_toplevel.resize` | — | — | — |
+//! | resize border | `xdg_toplevel.resize` | — | — | — |
 //! | minimise / maximise / close | — | minimise / toggle maximised / close request | — | — |
 //!
-//! Presses that start a move or resize are not delivered to the app (the compositor takes the pointer grab);
-//! button regions get their events as ordinary input too, so the app can draw pressed states.
+//! Presses that start a move, resize or menu are not delivered to the app (the compositor takes the pointer
+//! grab); button parts get their events as ordinary input too, so the app can draw pressed states.
 
-use crate::shim::{HitKind, HitRegion};
+use crate::shim::{HitKind, HitRegion, hit_test};
 use presto_base::cursor::CursorIcon;
 use presto_base::geom::Point;
 use presto_base::time::{Span, Time};
 
-/// The topmost region under `p` (later regions are on top of earlier ones); `None` over client content,
-/// including `Client` regions cut out of a title bar.
-pub fn hit(regions: &[HitRegion], p: Point) -> Option<HitKind> {
-    Some(crate::shim::hit_test(regions, p)).filter(|k| *k != HitKind::Client)
-}
-
-/// The cursor a region shows while hovered, overriding the app's.
-pub fn cursor_for(kind: HitKind) -> Option<CursorIcon> {
-    Some(match kind {
-        HitKind::ResizeTop => CursorIcon::NResize,
-        HitKind::ResizeBottom => CursorIcon::SResize,
-        HitKind::ResizeLeft => CursorIcon::WResize,
-        HitKind::ResizeRight => CursorIcon::EResize,
-        HitKind::ResizeTopLeft => CursorIcon::NwResize,
-        HitKind::ResizeTopRight => CursorIcon::NeResize,
-        HitKind::ResizeBottomLeft => CursorIcon::SwResize,
-        HitKind::ResizeBottomRight => CursorIcon::SeResize,
-        _ => return None,
-    })
-}
-
-/// The xdg-shell resize edge of a region.
-pub fn resize_edge(kind: HitKind) -> Option<ResizeEdge> {
-    Some(match kind {
-        HitKind::ResizeTop => ResizeEdge::Top,
-        HitKind::ResizeBottom => ResizeEdge::Bottom,
-        HitKind::ResizeLeft => ResizeEdge::Left,
-        HitKind::ResizeRight => ResizeEdge::Right,
-        HitKind::ResizeTopLeft => ResizeEdge::TopLeft,
-        HitKind::ResizeTopRight => ResizeEdge::TopRight,
-        HitKind::ResizeBottomLeft => ResizeEdge::BottomLeft,
-        HitKind::ResizeBottomRight => ResizeEdge::BottomRight,
-        _ => return None,
-    })
-}
-
 pub use wayland_protocols::xdg::shell::client::xdg_toplevel::ResizeEdge;
+
+/// The resize border's width inside the window edge, and the corner extent along each edge (points).
+pub const BORDER: f32 = 6.0;
+pub const CORNER: f32 = 16.0;
+
+/// The double-click window and slop, as GTK's defaults (`gtk-double-click-time` 400 ms, distance 5 px).
+pub const DOUBLE_CLICK: Span = Span::from_millis(400);
+pub const DOUBLE_CLICK_SLOP: f32 = 5.0;
+
+/// The part of the decorations under the pointer.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum CsdHit {
+    Region(HitKind),
+    Edge(ResizeEdge),
+}
+
+/// What the decorations need to know about the window.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CsdFrame {
+    /// The window's size in points.
+    pub size: (f32, f32),
+    /// The resize border is active (CSD, floating, resizable).
+    pub border: bool,
+}
+
+/// The resize edge at `p`, if it is on the border.
+pub fn edge(frame: CsdFrame, p: Point) -> Option<ResizeEdge> {
+    if !frame.border {
+        return None;
+    }
+    let (w, h) = frame.size;
+    let (l, r, t, b) = (p.x < BORDER, p.x >= w - BORDER, p.y < BORDER, p.y >= h - BORDER);
+    let (near_l, near_r, near_t, near_b) = (p.x < CORNER, p.x >= w - CORNER, p.y < CORNER, p.y >= h - CORNER);
+    Some(match () {
+        _ if (t && near_l) || (l && near_t) => ResizeEdge::TopLeft,
+        _ if (t && near_r) || (r && near_t) => ResizeEdge::TopRight,
+        _ if (b && near_l) || (l && near_b) => ResizeEdge::BottomLeft,
+        _ if (b && near_r) || (r && near_b) => ResizeEdge::BottomRight,
+        _ if t => ResizeEdge::Top,
+        _ if b => ResizeEdge::Bottom,
+        _ if l => ResizeEdge::Left,
+        _ if r => ResizeEdge::Right,
+        _ => return None,
+    })
+}
+
+/// The decoration part under `p`: the border first, then the topmost region; `None` over client content,
+/// including `Client` regions cut out of a title bar.
+pub fn hit(regions: &[HitRegion], frame: CsdFrame, p: Point) -> Option<CsdHit> {
+    if let Some(e) = edge(frame, p) {
+        return Some(CsdHit::Edge(e));
+    }
+    Some(hit_test(regions, p)).filter(|k| *k != HitKind::Client).map(CsdHit::Region)
+}
+
+/// The cursor a part shows while hovered, overriding the app's.
+pub fn cursor_for(hit: CsdHit) -> Option<CursorIcon> {
+    let CsdHit::Edge(e) = hit else { return None };
+    Some(match e {
+        ResizeEdge::Top => CursorIcon::NResize,
+        ResizeEdge::Bottom => CursorIcon::SResize,
+        ResizeEdge::Left => CursorIcon::WResize,
+        ResizeEdge::Right => CursorIcon::EResize,
+        ResizeEdge::TopLeft => CursorIcon::NwResize,
+        ResizeEdge::TopRight => CursorIcon::NeResize,
+        ResizeEdge::BottomLeft => CursorIcon::SwResize,
+        ResizeEdge::BottomRight => CursorIcon::SeResize,
+        _ => return None,
+    })
+}
 
 /// What a press or release on the decorations asks for.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CsdAction {
     Move,
-    Resize(HitKind),
+    Resize(ResizeEdge),
     WindowMenu,
     ToggleMaximize,
     Minimize,
     Close,
 }
-
-/// The double-click window and slop, as GTK's defaults (`gtk-double-click-time` 400 ms, distance 5 px).
-pub const DOUBLE_CLICK: Span = Span::from_millis(400);
-pub const DOUBLE_CLICK_SLOP: f32 = 5.0;
 
 /// Per-window decoration pointer state.
 #[derive(Default)]
@@ -80,10 +111,14 @@ pub struct CsdState {
 impl CsdState {
     /// A primary (`primary == true`) or secondary press at `p`. Returns the action and whether the press is
     /// consumed (not delivered to the app).
-    pub fn press(&mut self, regions: &[HitRegion], p: Point, primary: bool, now: Time) -> (Option<CsdAction>, bool) {
-        let Some(kind) = hit(regions, p) else {
-            self.pressed = None;
-            return (None, false);
+    pub fn press(&mut self, regions: &[HitRegion], frame: CsdFrame, p: Point, primary: bool, now: Time) -> (Option<CsdAction>, bool) {
+        let kind = match hit(regions, frame, p) {
+            None => {
+                self.pressed = None;
+                return (None, false);
+            }
+            Some(CsdHit::Edge(e)) => return if primary { (Some(CsdAction::Resize(e)), true) } else { (None, false) },
+            Some(CsdHit::Region(k)) => k,
         };
         if !primary {
             return match kind {
@@ -106,15 +141,14 @@ impl CsdState {
                 }
             }
             HitKind::SystemMenu => (Some(CsdAction::WindowMenu), true),
-            k if resize_edge(k).is_some() => (Some(CsdAction::Resize(k)), true),
             _ => (None, false),
         }
     }
 
     /// A primary release at `p`: window buttons act when pressed and released on the same region.
-    pub fn release(&mut self, regions: &[HitRegion], p: Point) -> Option<CsdAction> {
+    pub fn release(&mut self, regions: &[HitRegion], frame: CsdFrame, p: Point) -> Option<CsdAction> {
         let pressed = self.pressed.take()?;
-        if hit(regions, p) != Some(pressed) {
+        if hit(regions, frame, p) != Some(CsdHit::Region(pressed)) {
             return None;
         }
         match pressed {
@@ -131,13 +165,13 @@ mod tests {
     use super::*;
     use presto_base::geom::Rect;
 
+    const FRAME: CsdFrame = CsdFrame { size: (800.0, 600.0), border: true };
+
     fn regions() -> Vec<HitRegion> {
         vec![
             HitRegion { rect: Rect::new(0.0, 0.0, 800.0, 32.0), kind: HitKind::Caption },
             HitRegion { rect: Rect::new(700.0, 0.0, 740.0, 32.0), kind: HitKind::Maximize },
             HitRegion { rect: Rect::new(760.0, 0.0, 800.0, 32.0), kind: HitKind::Close },
-            HitRegion { rect: Rect::new(0.0, 0.0, 800.0, 4.0), kind: HitKind::ResizeTop },
-            HitRegion { rect: Rect::new(0.0, 0.0, 8.0, 8.0), kind: HitKind::ResizeTopLeft },
             HitRegion { rect: Rect::new(300.0, 8.0, 400.0, 28.0), kind: HitKind::Client },
             HitRegion { rect: Rect::new(8.0, 8.0, 28.0, 28.0), kind: HitKind::SystemMenu },
         ]
@@ -148,65 +182,61 @@ mod tests {
     }
 
     #[test]
-    fn later_regions_win() {
-        let r = regions();
-        assert_eq!(hit(&r, Point::new(400.0, 16.0)), Some(HitKind::Caption));
-        assert_eq!(hit(&r, Point::new(780.0, 16.0)), Some(HitKind::Close));
-        assert_eq!(hit(&r, Point::new(400.0, 2.0)), Some(HitKind::ResizeTop));
-        assert_eq!(hit(&r, Point::new(2.0, 2.0)), Some(HitKind::ResizeTopLeft));
-        assert_eq!(hit(&r, Point::new(400.0, 300.0)), None);
-        // A client cut-out (a search box in the title bar) blocks the caption.
-        assert_eq!(hit(&r, Point::new(350.0, 16.0)), None);
+    fn border_edges_and_corners() {
+        assert_eq!(edge(FRAME, Point::new(400.0, 2.0)), Some(ResizeEdge::Top));
+        assert_eq!(edge(FRAME, Point::new(400.0, 598.0)), Some(ResizeEdge::Bottom));
+        assert_eq!(edge(FRAME, Point::new(1.0, 300.0)), Some(ResizeEdge::Left));
+        assert_eq!(edge(FRAME, Point::new(799.0, 300.0)), Some(ResizeEdge::Right));
+        assert_eq!(edge(FRAME, Point::new(2.0, 2.0)), Some(ResizeEdge::TopLeft));
+        assert_eq!(edge(FRAME, Point::new(10.0, 2.0)), Some(ResizeEdge::TopLeft));
+        assert_eq!(edge(FRAME, Point::new(798.0, 595.0)), Some(ResizeEdge::BottomRight));
+        assert_eq!(edge(FRAME, Point::new(400.0, 300.0)), None);
+        assert_eq!(edge(CsdFrame { border: false, ..FRAME }, Point::new(400.0, 2.0)), None);
     }
 
     #[test]
-    fn system_menu_opens_the_window_menu() {
+    fn regions_under_the_border() {
         let r = regions();
-        let mut s = CsdState::default();
-        assert_eq!(s.press(&r, Point::new(16.0, 16.0), true, t(0)), (Some(CsdAction::WindowMenu), true));
+        assert_eq!(hit(&r, FRAME, Point::new(400.0, 16.0)), Some(CsdHit::Region(HitKind::Caption)));
+        assert_eq!(hit(&r, FRAME, Point::new(780.0, 16.0)), Some(CsdHit::Region(HitKind::Close)));
+        assert_eq!(hit(&r, FRAME, Point::new(400.0, 2.0)), Some(CsdHit::Edge(ResizeEdge::Top)));
+        assert_eq!(hit(&r, FRAME, Point::new(400.0, 300.0)), None);
+        // A client cut-out (a search box in the title bar) blocks the caption.
+        assert_eq!(hit(&r, FRAME, Point::new(350.0, 16.0)), None);
+        assert_eq!(cursor_for(CsdHit::Edge(ResizeEdge::Top)), Some(CursorIcon::NResize));
+        assert_eq!(cursor_for(CsdHit::Region(HitKind::Caption)), None);
     }
 
     #[test]
     fn caption_press_moves_and_double_click_maximizes() {
         let r = regions();
         let mut s = CsdState::default();
-        assert_eq!(s.press(&r, Point::new(100.0, 16.0), true, t(0)), (Some(CsdAction::Move), true));
-        assert_eq!(s.press(&r, Point::new(102.0, 17.0), true, t(300)), (Some(CsdAction::ToggleMaximize), true));
-        // A third click starts over.
-        assert_eq!(s.press(&r, Point::new(102.0, 17.0), true, t(500)), (Some(CsdAction::Move), true));
-        // Too slow, or too far.
-        assert_eq!(s.press(&r, Point::new(102.0, 17.0), true, t(1000)), (Some(CsdAction::Move), true));
-        assert_eq!(s.press(&r, Point::new(150.0, 17.0), true, t(1100)), (Some(CsdAction::Move), true));
+        assert_eq!(s.press(&r, FRAME, Point::new(100.0, 16.0), true, t(0)), (Some(CsdAction::Move), true));
+        assert_eq!(s.press(&r, FRAME, Point::new(102.0, 17.0), true, t(300)), (Some(CsdAction::ToggleMaximize), true));
+        assert_eq!(s.press(&r, FRAME, Point::new(102.0, 17.0), true, t(500)), (Some(CsdAction::Move), true));
+        assert_eq!(s.press(&r, FRAME, Point::new(102.0, 17.0), true, t(1000)), (Some(CsdAction::Move), true));
+        assert_eq!(s.press(&r, FRAME, Point::new(150.0, 17.0), true, t(1100)), (Some(CsdAction::Move), true));
     }
 
     #[test]
-    fn secondary_press_on_caption_opens_the_window_menu() {
+    fn menus_and_resizes() {
         let r = regions();
         let mut s = CsdState::default();
-        assert_eq!(s.press(&r, Point::new(100.0, 16.0), false, t(0)), (Some(CsdAction::WindowMenu), true));
-        assert_eq!(s.press(&r, Point::new(100.0, 300.0), false, t(0)), (None, false));
-    }
-
-    #[test]
-    fn edges_resize() {
-        let r = regions();
-        let mut s = CsdState::default();
-        assert_eq!(s.press(&r, Point::new(3.0, 3.0), true, t(0)), (Some(CsdAction::Resize(HitKind::ResizeTopLeft)), true));
-        assert_eq!(resize_edge(HitKind::ResizeTopLeft), Some(ResizeEdge::TopLeft));
-        assert_eq!(cursor_for(HitKind::ResizeTop), Some(CursorIcon::NResize));
-        assert_eq!(cursor_for(HitKind::Caption), None);
+        assert_eq!(s.press(&r, FRAME, Point::new(100.0, 16.0), false, t(0)), (Some(CsdAction::WindowMenu), true));
+        assert_eq!(s.press(&r, FRAME, Point::new(16.0, 16.0), true, t(0)), (Some(CsdAction::WindowMenu), true));
+        assert_eq!(s.press(&r, FRAME, Point::new(100.0, 300.0), false, t(0)), (None, false));
+        assert_eq!(s.press(&r, FRAME, Point::new(3.0, 3.0), true, t(0)), (Some(CsdAction::Resize(ResizeEdge::TopLeft)), true));
     }
 
     #[test]
     fn buttons_act_on_release_inside() {
         let r = regions();
         let mut s = CsdState::default();
-        assert_eq!(s.press(&r, Point::new(780.0, 16.0), true, t(0)), (None, false));
-        assert_eq!(s.release(&r, Point::new(781.0, 15.0)), Some(CsdAction::Close));
-        // Released outside: nothing.
-        s.press(&r, Point::new(720.0, 16.0), true, t(0));
-        assert_eq!(s.release(&r, Point::new(400.0, 16.0)), None);
-        s.press(&r, Point::new(720.0, 16.0), true, t(0));
-        assert_eq!(s.release(&r, Point::new(721.0, 16.0)), Some(CsdAction::ToggleMaximize));
+        assert_eq!(s.press(&r, FRAME, Point::new(780.0, 16.0), true, t(0)), (None, false));
+        assert_eq!(s.release(&r, FRAME, Point::new(781.0, 15.0)), Some(CsdAction::Close));
+        s.press(&r, FRAME, Point::new(720.0, 16.0), true, t(0));
+        assert_eq!(s.release(&r, FRAME, Point::new(400.0, 16.0)), None);
+        s.press(&r, FRAME, Point::new(720.0, 16.0), true, t(0));
+        assert_eq!(s.release(&r, FRAME, Point::new(721.0, 16.0)), Some(CsdAction::ToggleMaximize));
     }
 }
