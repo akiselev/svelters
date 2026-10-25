@@ -296,6 +296,12 @@ fn hdoc() -> (Document, NodeId) {
     (d, root)
 }
 
+/// The centre of `n`'s box in window points (from the last frame).
+fn at(d: &Document, n: NodeId) -> (f32, f32) {
+    let r = d.world_rect(n).expect("laid out");
+    ((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0)
+}
+
 fn anchor(d: &mut Document, n: NodeId, a: &str) {
     d.set_prop(n, common::ANCHOR, Value::from(a)).unwrap();
 }
@@ -438,8 +444,8 @@ fn checking_a_radio_unchecks_its_peers() {
     d.set_prop(g[0], RADIO_CHECKED, Value::Bool(true)).unwrap();
     d.set_prop(other, RADIO_CHECKED, Value::Bool(true)).unwrap();
     frame(&mut d);
-    // the second radio of the row is at x = 16
-    click(&mut d, 20.0, 5.0);
+    let (x, y) = at(&d, g[1]);
+    click(&mut d, x, y);
     let checked: Vec<bool> = g.iter().map(|&r| d.view(r).unwrap().prop_bool(RADIO_CHECKED)).collect();
     assert_eq!(checked, [false, true, false]);
     assert!(d.view(other).unwrap().prop_bool(RADIO_CHECKED), "another group is untouched");
@@ -615,14 +621,15 @@ fn a_drag_moves_from_source_to_target() {
         p.buttons = 1;
     }
     assert!(d.dispatch(&mv).events.iter().all(|e| e.signal != common::DRAG_BEGIN), "within the threshold: no drag");
-    let mut mv = pointer(PointerPhase::Move, 50.0, 5.0, 20);
+    let (tx, ty) = (d.world_rect(dst).unwrap().min.x + 10.0, d.world_rect(dst).unwrap().min.y + 5.0);
+    let mut mv = pointer(PointerPhase::Move, tx, ty, 20);
     if let presto_base::event::InputEvent::Pointer(p) = &mut mv.event {
         p.buttons = 1;
     }
     events.extend(d.dispatch(&mv).events);
     assert!(d.state(src).contains(StateMask::DRAGGING));
     assert!(d.state(dst).contains(StateMask::DROP_TARGET));
-    events.extend(d.dispatch(&pointer(PointerPhase::Up, 50.0, 5.0, 30)).events);
+    events.extend(d.dispatch(&pointer(PointerPhase::Up, tx, ty, 30)).events);
     let order: Vec<(NodeId, SignalId)> = events.iter().map(|e| (e.target, e.signal)).collect();
     assert_eq!(order, [(src, common::DRAG_BEGIN), (dst, common::DRAG_ENTER), (dst, common::DRAG_LEAVE), (dst, common::DROP), (src, common::DRAG_END)]);
     let drop = events.iter().find(|e| e.signal == common::DROP).unwrap().arg.clone().unwrap();
@@ -790,10 +797,12 @@ fn a_press_outside_an_open_surface_dismisses_it() {
     let outside = child(&mut d, root, TOGGLE, "");
     d.set_prop(pop, POP_OPEN, Value::Bool(true)).unwrap();
     frame(&mut d);
-    click(&mut d, 5.0, 5.0);
+    let (x, y) = at(&d, inner);
+    click(&mut d, x, y);
     assert!(d.view(pop).unwrap().prop_bool(POP_OPEN), "a press inside keeps it open");
     assert!(d.view(inner).unwrap().prop_bool(testkinds::TOGGLE_CHECKED));
-    click(&mut d, 45.0, 5.0);
+    let (x, y) = at(&d, outside);
+    click(&mut d, x, y);
     assert!(!d.view(pop).unwrap().prop_bool(POP_OPEN), "a press outside closes it");
     assert!(d.view(outside).unwrap().prop_bool(testkinds::TOGGLE_CHECKED), "and is dispatched as usual");
 }
@@ -805,11 +814,41 @@ fn one_selection_owner_under_the_gtk_rule() {
     let b = child(&mut d, root, SEL, "");
     frame(&mut d);
     let on = |d: &Document, n| d.view(n).unwrap().prop_bool(SEL_ON);
-    click(&mut d, 5.0, 5.0);
-    click(&mut d, 25.0, 5.0);
+    let ((ax, ay), (bx, by)) = (at(&d, a), at(&d, b));
+    click(&mut d, ax, ay);
+    click(&mut d, bx, by);
     assert!(on(&d, a) && on(&d, b), "off by default: both keep their selection");
     d.set_single_selection(true);
-    click(&mut d, 5.0, 5.0);
-    click(&mut d, 25.0, 5.0);
+    click(&mut d, ax, ay);
+    click(&mut d, bx, by);
     assert!(!on(&d, a) && on(&d, b), "claiming collapses the previous owner");
+}
+
+#[test]
+fn a_drag_started_from_outside_the_tree_drops_like_any_other() {
+    let (mut d, root) = hdoc();
+    let island = child(&mut d, root, BOX, "width: 40px; height: 40px");
+    let dst = child(&mut d, root, BOX, "width: 40px; height: 40px");
+    d.set_prop(dst, common::DROP_TYPES, Value::from("cad/*")).unwrap();
+    d.listen(island, common::DRAG_BEGIN, ListenFlags::EMPTY);
+    d.listen(dst, common::DROP, ListenFlags::EMPTY);
+    frame(&mut d);
+    // the press went to the island (an egui drag), then presto takes the drag over
+    let (x, y) = at(&d, island);
+    d.dispatch(&pointer(PointerPhase::Down, x, y, 0));
+    assert!(d.start_drag(W, 0, island, "cad/part", "7"));
+    assert!(!d.start_drag(W, 0, island, "cad/part", "7"), "one drag at a time");
+    assert!(d.state(island).contains(StateMask::DRAGGING));
+    assert!(d.take_events().iter().any(|e| e.signal == common::DRAG_BEGIN));
+    let (tx, ty) = at(&d, dst);
+    let mut mv = pointer(PointerPhase::Move, tx, ty, 10);
+    if let presto_base::event::InputEvent::Pointer(p) = &mut mv.event {
+        p.buttons = 1;
+    }
+    d.dispatch(&mv);
+    assert!(d.state(dst).contains(StateMask::DROP_TARGET));
+    let up = d.dispatch(&pointer(PointerPhase::Up, tx, ty, 20));
+    let drop = up.events.iter().find(|e| e.signal == common::DROP).expect("drop").arg.clone().unwrap();
+    assert_eq!(drop.field("type"), Some(&Value::from("cad/part")));
+    assert_eq!(drop.field("data"), Some(&Value::from("7")));
 }

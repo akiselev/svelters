@@ -71,6 +71,11 @@ In-app drag and drop (`input/dnd.rs`, svelters WG4b semantics): a primary press 
 `drag-end`), Escape or a pointer cancel ends it undropped. Actions from the modifiers as Qt (copy: Ctrl,
 Option on macOS; link: Ctrl+Shift, Cmd+Option). Cursor `grabbing`/`no-drop` during the drag.
 
+`Document::start_drag(window, pointer, source, ty, data) -> bool` (EGUI-ISLAND Q5): starts an in-app drag
+for a pointer already held (a drag begun inside an egui island becomes a presto drag); the target under the
+pointer's last position is entered at once, events queued (`take_events`). Test
+`hooks::a_drag_started_from_outside_the_tree_drops_like_any_other`.
+
 Not done here: OS file drops onto targets (`text/uri-list`; `InputEvent::FileHovered/FileDropped` still
 dispatch nothing), auto-scroll near a scroll container's edge during a drag, the drag ghost
 (`::part(ghost)`: a widget's), the `grab` cursor over an idle source.
@@ -153,10 +158,24 @@ with fast scroll and caret, padding and window transform; in `dispatch.rs` the I
 the moved node (local bounds, parent-relative transform), an inserted subtree joining incrementally, and a
 name from children.
 
-## Built / not run
+## Built / run
 
-`cargo check -p presto-core -p presto-widgets --all-targets` after each part. No test run, no clippy, no
-other OS. CI on the pushed sha is in the coordinator message.
+`cargo check -p presto-core -p presto-widgets --all-targets` after each part. Once at the end, when the
+coordinator asked me to check RENDER's failing `paint_transitions_sample_on_the_ui_thread`: `cargo test
+-p presto-core --lib` (119 passed after the fixes below) and `cargo test -p presto-widgets` (245 passed;
+3 failed: `controls::slider::tests::{dragging_the_thumb_changes_the_value,
+escape_while_dragging_restores_without_a_commit, inverted_page_clicks_and_commit_mode}`, float equality
+on the shim's test driver, no presto-core involved: WIDGETS-BASIC's). Not run: clippy, other OSes.
+
+Fixes from that run:
+- `paint_transitions_sample_on_the_ui_thread` was not wall-clock: svelters-style keeps transition times
+  as f32 seconds, so `100ms` became 100 000 001 ns and the transition was still running at +100 ms.
+  Durations and delays are now rounded to whole microseconds, and a UI transition ends by exact time
+  arithmetic (`start + delay + duration`), not by the sampled float progress.
+- Native prop writes a kind made during its own handler skipped `prop_state` (the kind was out of its
+  slot): the document now refreshes prop state and inert children when the kind is put back, and only
+  JS writes (not the kind's own) are replayed to `prop_changed`.
+- Four new tests assumed a row layout; the test root is a column: they click node centres now.
 
 ## For WIDGETS-BASIC (host.rs bridge)
 
@@ -167,6 +186,22 @@ core's (the shim's `PeerMsg::Checked(args)` → `PeerMsg::Notify(Some(Value::Lis
 `chrome_padding`, `child_layout` (+ `places_children: true` in the spec), `children_inert`;
 `prop_state` with the widget's bit mask in `prop_states`; `focus_anchor`; `scale` into the shim contexts;
 `Document::set_auto_default(policy.auto_default)` where the policy is installed.
+
+## Absolute boxes (CADATOMIC's blocking bug, coordinator 2026-10-25)
+
+Taffy locates an absolute box relative to its containing block: the nearest **positioned** ancestor
+(`relative` *or* `absolute`), else the window root. `layout::positional_parent` only accepted `relative`
+ancestors, so a box inside an absolute box was placed in the window root's space: nested absolute
+boxes did not accumulate (berth's dock at the window origin). Fixed there (`position != Static`), which
+the dirty walk (transform nodes) and the rebuild walk (world rects, hit list) both use; CSS `position:
+static` now maps to taffy's `Static` (it was `Relative`). Clips: an absolute box now takes its containing
+block's child clip, in the dirty walk (clip node parent) and the rebuild walk (hit clip), so an
+`overflow` clip between the box and its containing block no longer clips it (CSS), which is the likely
+cause of berth's empty tab labels; effects and layers still follow the tree. Tests:
+`src/tests/absolute.rs` (nested absolute in absolute, absolute under a static box at an offset, under a
+relative box, the paint transform node, a clip between box and containing block, a clipping containing
+block); `cargo test -p presto-core --lib`: 126 passed. Note for the style track: svelters-style has no
+`overflow` shorthand, so `overflow: hidden` sets nothing; `overflow-x`/`overflow-y` work.
 
 ## Fixed on the way
 
