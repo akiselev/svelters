@@ -12,7 +12,7 @@
 //! | [`cell`] | [`CellEditor`]: the table's cell editor |
 //! | [`keys`] | the IME-first key route (architecture §11.2) and the per-platform key maps |
 //! | [`policy`] | [`TextPolicy`]: per-platform field behaviour (FX1's text rows) |
-//! | [`caret`] | the caret as a compositor fast commit, and the blink rule |
+//! | [`caret`] | the caret as a compositor fast commit |
 //! | [`geometry`] | presto-text's `TextLayout` as a field's geometry; the `TextSystem` layouter |
 //! | [`lines`] | quire-text's `VisualLines` over a layout (Up/Down on wrapped rows) |
 //! | [`shown`] | the shown text (password mask, preedit) and its byte mapping |
