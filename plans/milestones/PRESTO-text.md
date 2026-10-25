@@ -64,7 +64,9 @@ size). Everything else is CI's (`presto.yml`, three OSes). `cargo check -p prest
 
 ## Dependencies
 
-`parley` (workspace), `skrifa = "0.44"` and `png = "0.18"` in `crates/presto-text/Cargo.toml` (kept out of
+`parley` (workspace), `fontique = "0.12"` with `fontconfig-dlopen` (so Linux builds without
+`libfontconfig-dev`; fontconfig is loaded at runtime only when system fonts are on), `skrifa = "0.44"`
+and `png = "0.18"` in `crates/presto-text/Cargo.toml` (kept out of
 the workspace table to avoid conflicts with other lanes; the coordinator may move them).
 
 ## Questions for the coordinator
@@ -80,4 +82,10 @@ the workspace table to avoid conflicts with other lanes; the coordinator may mov
 
 ## CI
 
-See the last section, updated after each push.
+- `9221fcc` (presto-base `7a947d45` merged): js, linux-gtk, linux-qt, macos-appkit, windows-winui green
+  (run ids 40223218359, …416, …386, …360, …402). presto (40223218361): all 39 presto-text tests pass on
+  macOS and Windows, goldens included (byte-identical masks across OSes). Linux failed in `cargo
+  check`: parley's default `system` feature links fontconfig via pkg-config and the runner has no
+  `libfontconfig-dev` — fixed in the next push with fontique's `fontconfig-dlopen`. The other presto
+  failures (`presto-anim`, `presto-frame`, `presto-platform` lib tests, `presto-render --test gpu`
+  missing reference PNGs) are other lanes' crates, not touched here.
