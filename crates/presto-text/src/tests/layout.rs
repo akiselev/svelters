@@ -205,3 +205,31 @@ fn empty_text_has_one_line_of_height() {
     let caret = l.caret_rect(0);
     assert!(caret.height() > 0.0);
 }
+
+#[cfg(feature = "core")]
+#[test]
+fn presto_core_shaper_matches_layout() {
+    use presto_core::TextShaper;
+    let mut ts = system();
+    let spec = TextSpec {
+        text: "Tab title",
+        family: "",
+        size: 13.0,
+        weight: 400,
+        italic: false,
+        line_height: None,
+        letter_spacing: 0.0,
+        wrap: true,
+    };
+    let shaped = TextShaper::shape(&mut ts, &spec, None);
+    let l = lay(&mut ts, "Tab title", 13.0, None);
+    assert_eq!(shaped.size, l.size());
+    assert_eq!(shaped.runs.len(), l.runs().len());
+    for ((run, origin), placed) in shaped.runs.iter().zip(l.runs()) {
+        assert_eq!(**run, *placed.run);
+        assert_eq!(*origin, placed.origin);
+    }
+    assert!(!shaped.runs.is_empty() && !shaped.runs[0].0.glyphs.is_empty());
+    // A document can own it as its shaper.
+    let _boxed: Box<dyn TextShaper> = Box::new(system());
+}

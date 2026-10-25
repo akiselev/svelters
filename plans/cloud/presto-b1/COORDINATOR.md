@@ -187,3 +187,35 @@ when the five svelters workflows plus `presto` are green.
 - CI triage on integration 2f22c1e9/0890801c: the qt and winui workflows passed. js failed on a stale @svelters/style golden (diagnostics now
   list presto); consolidation 1 regenerates it. presto failed only in presto-test: automation (presto.yml lacked the JS install,
   fixed 67df412a) and island_render an_island_pass_reaches_the_pixels (real; sent to TEST-V2). gtk and appkit still running.
+- Prepared: CONSOLIDATION-2.md (skelter rename, master merges for svelters, berth and quire) and cadatomic batch 12 plan (cadatomic claude/b12-plan: 12 cadatomic lanes plus the svelters lane skelter-fixes).
+- Late heads for consolidation 2 (after round 5's CI on 6a93efd2 reports):
+  - compositor f783d719: black window fixed, a full target copy every frame, with a six-image swapchain test;
+  - text c53d506: impl presto_core::TextShaper for TextSystem, behind default feature `core`;
+  - svelters-presto e605ad54: PrestoBackend::over/shared, adopt, Embed::adopt_slot;
+  - test-v2 8cf13d81 (9a4f1213 green on all OSes; island_render was the harness's frame sequence, fixed with App::request_dirty_frames);
+  - macos c36101b4 (all six green).
+  Compositor and text are merged into base.
+- CADATOMIC done 73c6ee2 (record docs/notes/presto-adoption.md): the model tree and ribbon in their own islands
+  (CADATOMIC_PRESTO_REGIONS=1); presto_shell 5/5 with CORE-3's fix. Not grafted yet: AccessKit and tour anchors of the
+  pane and region islands.
+- To batch 12 skelter-fixes:
+  - TEST-V2 Q1: Commit::a11y_subtrees, so island subtrees reach the platform adapter;
+  - TEST-V2 Q2: a SceneSource trait in svelters-automation for skelter-native UI;
+  - COMPOSITOR: core sends no FastCommit::Caret for an editor that isn't rendered;
+  - IslandHost::bridge_events wiring.
+- **Decided (user, 2026-10-25): SVG items 1 and 2** ("Do 1 and 2"): SVG drawn as GPU vectors above a small-size
+  threshold (resvg rasters below), and live colour slots (`currentColor`, the icon slots) as a compositor property. It is
+  batch 12's svelters lane **skelter-svg** (`ci/skelter-svg` from master after the rename; brief cadatomic
+  `docs/notes/batch12/LANE-skelter-svg.md`). Proposed to the user, not yet decided: the X8 JS canvas port to skelter
+  (`<canvas>` is a draw-nothing placeholder in svelters-presto today), inline `<svg>` as nodes, compositor SVG
+  animation, vector goldens, vector export.
+- Late heads for consolidation 2 (23:10): **compiler 012047d0** replaces dc3e8187. It fixes provider member ids
+  setting bit 31, which overlaps the signal listen flags (`SVL_SIGNAL_FLAGS_SHIFT` = 28), so `cx.emit` events never
+  matched; the 4 red egui-kinds-example tests on linux-gtk came from that. APP-TEST is done (7bd9ee8f: its crates are
+  green on all three OSes). To skelter-fixes: Windows `presto-widgets` `dialogs::native::tests::
+  an_installed_backend_answers_and_cancel_is_none` (dialogs/native.rs:271, WIDGETS-TIER1's) fails on windows-latest.
+- 23:25: consolidation 1 final: 6a93efd2, 5 of 6 green (linux-gtk red only on F20, fixed by compiler 012047d0).
+  **Consolidation 2 launched:** `session_01G2wHdFUFPtVnsN9F7zf8Ma` (`ci/skelter-integration`: late heads, rename,
+  master merges; berth claude/presto-berth 12d66b6, quire claude/presto-quire faafb7b8). Decided (coordinator):
+  counter-mac green on the final head counts as green; it stays open in the FIX-QUEUE; one re-run, a second failure
+  is red.

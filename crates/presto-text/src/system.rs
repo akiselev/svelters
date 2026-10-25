@@ -669,3 +669,13 @@ impl TextMeasure for TextSystem {
         (min, max)
     }
 }
+
+/// Documents shape their text leaves through this: a plain run of `spec` at `max_width`, glyph runs
+/// placed at their baseline origins.
+#[cfg(feature = "core")]
+impl presto_core::TextShaper for TextSystem {
+    fn shape(&mut self, spec: &TextSpec<'_>, max_width: Option<f32>) -> presto_core::ShapedText {
+        let l = self.layout(&rich_from_spec(spec), max_width);
+        presto_core::ShapedText { size: l.size(), runs: l.runs().iter().map(|r| (r.run.clone(), r.origin)).collect() }
+    }
+}

@@ -4375,6 +4375,7 @@ dependencies = [
  "parley",
  "png 0.18.1",
  "presto-base",
+ "presto-core",
  "skrifa",
 ]
 

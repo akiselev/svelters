@@ -1,23 +1,21 @@
 //! Damage (architecture §7.4): which device pixels of a surface must be redrawn this frame.
 //!
 //! Every frame that draws flattens the scene anyway, so damage is computed by diffing the flattened
-//! items against the previous frame's: an item whose list, resolved transform, clip, opacity or paint
-//! predecessor changed damages its old and new bounds; an item that appeared or went away damages its
-//! bounds. An item that survived but moved in paint order relative to the other survivors damages
-//! its bounds too (a removal or insertion alone does not reorder anyone). That covers the journal's dirty nodes, changed property nodes and running animations
-//! without separate bookkeeping, and it is the full-scene check the architecture asks for as a debug
-//! mode, run always. Explicit rects (`LayerDelta::Damage`, the caret) are added on top.
-//!
-//! Per surface image: the compositor redraws damage into a persistent target and copies to the
-//! acquired swapchain image the union of this frame's damage and the damage of the frames that image
-//! has not seen ([`DamageHistory`]), which is correct for any buffer age up to the history length.
+//! items against the previous frame's: an item whose list, resolved transform, clip or opacity
+//! changed damages its old and new bounds; an item that appeared or went away damages its bounds; an
+//! item that survived but moved in paint order relative to the other survivors damages its bounds (a
+//! removal or insertion alone reorders no one). That covers the journal's dirty nodes, changed
+//! property nodes and running animations without separate bookkeeping, and it is the full-scene check
+//! the architecture asks for as a debug mode, run always. Explicit rects (`LayerDelta::Damage`, the
+//! caret) are added on top. Damage limits what is rendered; presenting is the GPU side's
+//! (`crate::gpu`).
 
 use crate::tree::{FlatItem, SurfaceKey};
 use presto_base::display::DisplayList;
 use presto_base::geom::{Affine, DeviceRect, DeviceSize, Rect, Scale};
 use presto_base::ids::{LayerId, NodeId};
 use presto_base::props::ClipShape;
-use std::collections::{HashMap, VecDeque};
+use std::collections::HashMap;
 use std::sync::Arc;
 
 /// More rects than this are merged into their bounding box (the renderer scissors per rect).
@@ -143,49 +141,6 @@ fn touches(a: &DeviceRect, b: &DeviceRect) -> bool {
 /// Whether `rects` cover the whole surface (a full redraw).
 pub fn covers(rects: &[DeviceRect], size: DeviceSize) -> bool {
     rects.iter().any(|r| r.x <= 0 && r.y <= 0 && r.x + r.w as i32 >= size.w as i32 && r.y + r.h as i32 >= size.h as i32)
-}
-
-/// The damage of the last frames of one surface, for copying the persistent target into a swapchain
-/// image that last saw an older frame.
-#[derive(Debug)]
-pub struct DamageHistory {
-    frames: VecDeque<Vec<DeviceRect>>,
-    /// Swapchain images the surface may cycle through (the history keeps `images − 1` frames).
-    images: usize,
-    /// Until `images` frames were presented after a reset, a fresh image may hold garbage.
-    fresh: usize,
-}
-
-impl DamageHistory {
-    pub fn new(images: usize) -> Self {
-        DamageHistory { frames: VecDeque::new(), images: images.max(1), fresh: images.max(1) }
-    }
-
-    /// Forget everything: the next `images` presents copy the whole target (resize, reconfigure,
-    /// device reset).
-    pub fn reset(&mut self) {
-        self.frames.clear();
-        self.fresh = self.images;
-    }
-
-    /// The region to copy into the acquired image for a frame with `damage` (`None` = everything).
-    pub fn copy_region(&self, damage: &[DeviceRect]) -> Option<Vec<DeviceRect>> {
-        if self.fresh > 0 {
-            return None;
-        }
-        let mut all: Vec<DeviceRect> = damage.to_vec();
-        for f in &self.frames {
-            all.extend_from_slice(f);
-        }
-        Some(merge(all))
-    }
-
-    /// Records a presented frame's damage.
-    pub fn presented(&mut self, damage: Vec<DeviceRect>) {
-        self.fresh = self.fresh.saturating_sub(1);
-        self.frames.push_front(damage);
-        self.frames.truncate(self.images.saturating_sub(1));
-    }
 }
 
 /// The damage a surface has accumulated since it last drew, in device pixels, plus the flag for a

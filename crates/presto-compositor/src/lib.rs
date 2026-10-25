@@ -9,7 +9,7 @@
 //! | Module | What |
 //! |---|---|
 //! | [`tree`] | a window's committed state: commits and fast commits applied, flattening per surface |
-//! | [`damage`] | damage by diffing flattened frames, device rects, buffer-age history |
+//! | [`damage`] | damage by diffing flattened frames, device rects |
 //! | [`caret`] | the caret blink rule and its per-OS defaults |
 //! | [`core`] | the engine: messages, frame clocks, animations, scroll motions, caret, drawing |
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
@@ -75,8 +75,6 @@ pub struct CompositorConfig {
     /// The caret blink of new windows (the OS setting; [`CaretBlink::platform_default`]); `None` = a
     /// steady caret. Per window: [`CompositorHandle::set_caret_blink`].
     pub caret_blink: Option<CaretBlink>,
-    /// Swapchain images assumed per surface for buffer-age-correct damage copies.
-    pub swap_images: usize,
 }
 
 impl CompositorConfig {
@@ -94,8 +92,6 @@ impl CompositorConfig {
             clear: Some(Color::TRANSPARENT),
             caret_color: Color::BLACK,
             caret_blink: Some(CaretBlink::platform_default()),
-            // Mesa's Wayland WSI uses up to 4 images even at latency 1 (`round2/wgpu-integration.md` §3.1).
-            swap_images: 4,
         }
     }
 }
@@ -124,7 +120,6 @@ impl Compositor {
             glyphs,
             tx.clone(),
             cfg.clock.clone(),
-            cfg.swap_images,
         );
         backend.set_selection(cfg.adapter, cfg.limits);
         let engine = Engine::new(

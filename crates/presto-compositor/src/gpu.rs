@@ -3,17 +3,18 @@
 //! here, a persistent render target per surface, late acquire, GPU-completion timing and rebuilding
 //! after device loss.
 //!
-//! Every surface draws its damage into a persistent target, then copies the damage plus what older
-//! swapchain images missed ([`DamageHistory`]) into the acquired image and presents it, which is
-//! correct for any buffer age without driver copy-forward. A surface whose images cannot be copied
-//! into (no `COPY_DST` usage) is redrawn whole into the acquired image instead. wgpu 30 has no
+//! Every surface draws its damage into a persistent target, then the whole target is copied into the
+//! acquired swapchain image and presented. The copy is one blit; what the damage saves is rendering.
+//! It does not depend on buffer age: a WSI may cycle through more images than the latency asks for
+//! (Mesa's X11 and Wayland WSIs do) or hand them out in any order, and an image that missed frames
+//! would show stale or empty pixels outside the damage. A surface whose images cannot be copied into
+//! (no `COPY_DST` usage) is redrawn whole into the acquired image instead. wgpu 30 has no
 //! present-with-damage (patch P1 of the notes), so presents are full presents.
 
 use crate::core::{Backend, DrawOutcome, Msg};
-use crate::damage::DamageHistory;
 use crate::seams::{RendererFactory, SceneRenderer};
 use crate::tree::SurfaceKey;
-use presto_base::geom::{DeviceRect, DeviceSize};
+use presto_base::geom::DeviceSize;
 use presto_base::ids::{CanvasId, FrameId, ImageId, PathId, TextureId, WindowId};
 use presto_base::scene::FrameScene;
 use presto_base::text::GlyphRasterizer;
@@ -137,7 +138,14 @@ struct Surf {
     /// Swapchain images accept copies; otherwise the frame renders straight into the image.
     copy: bool,
     target: Option<(wgpu::Texture, wgpu::TextureView, DeviceSize)>,
-    history: DamageHistory,
+    /// Offscreen only: images standing in for a swapchain, presented in turn (tests of the copy path).
+    chain: Option<Chain>,
+}
+
+struct Chain {
+    images: Vec<wgpu::Texture>,
+    next: usize,
+    last: Option<usize>,
 }
 
 pub struct GpuBackend {
@@ -154,7 +162,6 @@ pub struct GpuBackend {
     glyphs: Arc<dyn GlyphRasterizer>,
     notify: Sender<Msg>,
     clock: Arc<dyn Clock>,
-    swap_images: usize,
     select: Option<AdapterSelect>,
     limits: Option<DeviceLimits>,
     /// Set when no adapter could be created, so every draw does not retry the enumeration.
@@ -171,7 +178,6 @@ impl GpuBackend {
         glyphs: Arc<dyn GlyphRasterizer>,
         notify: Sender<Msg>,
         clock: Arc<dyn Clock>,
-        swap_images: usize,
     ) -> Self {
         GpuBackend {
             instance,
@@ -186,7 +192,6 @@ impl GpuBackend {
             glyphs,
             notify,
             clock,
-            swap_images,
             select: None,
             limits: None,
             unavailable: false,
@@ -268,7 +273,6 @@ impl GpuBackend {
     fn configure(gpu: &Gpu, s: &mut Surf) {
         s.configured = false;
         s.target = None;
-        s.history.reset();
         if s.size.w == 0 || s.size.h == 0 {
             return;
         }
@@ -330,18 +334,39 @@ impl GpuBackend {
         if !self.ensure_gpu(None) {
             return false;
         }
-        let mut s = Surf {
-            surface: None,
-            size,
-            configured: false,
-            copy: true,
-            target: None,
-            history: DamageHistory::new(1),
-        };
+        let mut s = Surf { surface: None, size, configured: false, copy: true, target: None, chain: None };
         if let Some(gpu) = &self.gpu {
             Self::configure(gpu, &mut s);
         }
         self.surfaces.insert((window, key), s);
+        true
+    }
+
+    /// Like [`Self::attach_offscreen`], with `images` textures standing in for a swapchain: each frame
+    /// goes through the same copy into the next image as a real surface, and [`Self::read_pixels`]
+    /// reads the last one presented.
+    pub fn attach_offscreen_chain(&mut self, window: WindowId, key: SurfaceKey, size: DeviceSize, images: usize) -> bool {
+        if !self.attach_offscreen(window, key, size) {
+            return false;
+        }
+        let Some(gpu) = &self.gpu else { return false };
+        let images = (0..images.max(1))
+            .map(|_| {
+                gpu.ctx.device.create_texture(&wgpu::TextureDescriptor {
+                    label: Some("presto-compositor emulated swapchain image"),
+                    size: wgpu::Extent3d { width: size.w, height: size.h, depth_or_array_layers: 1 },
+                    mip_level_count: 1,
+                    sample_count: 1,
+                    dimension: wgpu::TextureDimension::D2,
+                    format: gpu.ctx.format,
+                    usage: wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::COPY_SRC,
+                    view_formats: &[],
+                })
+            })
+            .collect();
+        if let Some(s) = self.surfaces.get_mut(&(window, key)) {
+            s.chain = Some(Chain { images, next: 0, last: None });
+        }
         true
     }
 
@@ -350,7 +375,11 @@ impl GpuBackend {
     pub fn read_pixels(&self, window: WindowId, key: SurfaceKey) -> Option<(DeviceSize, wgpu::TextureFormat, Vec<u8>)> {
         let gpu = self.gpu.as_ref()?;
         let s = self.surfaces.get(&(window, key))?;
-        let (tex, _, size) = s.target.as_ref()?;
+        let (target, _, size) = s.target.as_ref()?;
+        let tex = match &s.chain {
+            Some(c) => &c.images[c.last?],
+            None => target,
+        };
         let bpp = gpu.ctx.format.block_copy_size(None)?;
         let row = size.w * bpp;
         let padded = row.div_ceil(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT) * wgpu::COPY_BYTES_PER_ROW_ALIGNMENT;
@@ -406,9 +435,22 @@ impl GpuBackend {
         });
         let view = tex.create_view(&wgpu::TextureViewDescriptor::default());
         s.target = Some((tex, view, s.size));
-        s.history.reset();
         true
     }
+}
+
+/// Copies the whole persistent target into a presentable image.
+fn copy_whole(encoder: &mut wgpu::CommandEncoder, target: &wgpu::Texture, image: &wgpu::Texture, size: DeviceSize) {
+    let w = size.w.min(image.width()).min(target.width());
+    let h = size.h.min(image.height()).min(target.height());
+    if w == 0 || h == 0 {
+        return;
+    }
+    encoder.copy_texture_to_texture(
+        target.as_image_copy(),
+        image.as_image_copy(),
+        wgpu::Extent3d { width: w, height: h, depth_or_array_layers: 1 },
+    );
 }
 
 /// A thread that blocks on each submission and so fires its `on_submitted_work_done` callback as soon
@@ -438,7 +480,7 @@ impl Backend for GpuBackend {
             configured: false,
             copy: false,
             target: None,
-            history: DamageHistory::new(self.swap_images),
+            chain: None,
         };
         if let Some(gpu) = &self.gpu {
             Self::configure(gpu, &mut s);
@@ -514,17 +556,14 @@ impl Backend for GpuBackend {
         let device = &gpu.ctx.device;
         let queue = &gpu.ctx.queue;
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("presto frame") });
-        let full = [DeviceRect { x: 0, y: 0, w: s.size.w, h: s.size.h }];
 
         // Encode into the persistent target before acquiring: hold the swapchain image as briefly as
         // possible (acquire late).
-        let mut drawn: &[DeviceRect] = if scene.damage.is_empty() { &full } else { scene.damage };
         if s.copy {
             let fresh = Self::persistent_target(gpu, s);
             let whole;
             let scene = if fresh && !scene.damage.is_empty() {
                 // A new target holds nothing: redraw all of it.
-                drawn = &full;
                 whole = FrameScene { damage: &[], ..*scene };
                 &whole
             } else {
@@ -535,6 +574,11 @@ impl Backend for GpuBackend {
         }
 
         let Some(surface) = &s.surface else {
+            if let (Some(c), Some((tex, _, _))) = (&mut s.chain, &s.target) {
+                copy_whole(&mut encoder, tex, &c.images[c.next], s.size);
+                c.last = Some(c.next);
+                c.next = (c.next + 1) % c.images.len();
+            }
             let index = queue.submit([encoder.finish()]);
             if let Some(frame) = frame {
                 Self::report_done(&self.notify, &self.clock, gpu, window, frame, index);
@@ -575,24 +619,11 @@ impl Backend for GpuBackend {
 
         if s.copy {
             let (tex, _, _) = s.target.as_ref().expect("persistent target");
-            let region = s.history.copy_region(drawn).unwrap_or_else(|| full.to_vec());
-            for r in region {
-                let r = r.clip_to(s.size);
-                if r.is_empty() {
-                    continue;
-                }
-                let origin = wgpu::Origin3d { x: r.x as u32, y: r.y as u32, z: 0 };
-                encoder.copy_texture_to_texture(
-                    wgpu::TexelCopyTextureInfo { origin, ..tex.as_image_copy() },
-                    wgpu::TexelCopyTextureInfo { origin, ..st.texture.as_image_copy() },
-                    wgpu::Extent3d { width: r.w, height: r.h, depth_or_array_layers: 1 },
-                );
-            }
+            copy_whole(&mut encoder, tex, &st.texture, s.size);
         } else {
             let view = st.texture.create_view(&wgpu::TextureViewDescriptor::default());
             let whole = FrameScene { damage: &[], ..*scene };
             gpu.renderer.render(device, queue, &mut encoder, &view, &whole);
-            drawn = &full;
         }
 
         let index = queue.submit([encoder.finish()]);
@@ -600,7 +631,6 @@ impl Backend for GpuBackend {
             Self::report_done(&self.notify, &self.clock, gpu, window, frame, index);
         }
         queue.present(st);
-        s.history.presented(drawn.to_vec());
         gpu.renderer.end_frame();
         if suboptimal {
             Self::configure(gpu, s);
