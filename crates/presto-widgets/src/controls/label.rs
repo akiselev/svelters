@@ -52,7 +52,7 @@ pub const SIGNALS: &[SignalSpec] = &[
     SignalSpec::new("open-url", &[("url", ValueType::Str), ("new-tab", ValueType::Bool)], "The default of a `link-clicked` whose run has a target: the host opens `url` (presto never opens anything itself)."),
 ];
 
-pub static SPEC: KindSpec = KindSpec { tag: "label", props: LabelProps::SPECS, signals: SIGNALS, slots: &[], children: false, role: accesskit::Role::Label, name_from: NameFrom::Prop("text"), text_prop: Some("text"), focusable: false };
+pub static SPEC: KindSpec = KindSpec { tag: "label", props: LabelProps::SPECS, signals: SIGNALS, slots: &[], children: true, role: accesskit::Role::Label, name_from: NameFrom::Prop("text"), text_prop: Some("text"), focusable: false };
 
 /// What a label shows, from its props: the input to [`measure`], [`place`] and [`paint`] (also for
 /// foreign painters that draw a label without a node).
@@ -164,15 +164,26 @@ pub struct Label {
     lit: Option<usize>,
     /// The paragraph as placed after the last layout (for hit-testing links and the text rect).
     placed: Option<Placed>,
+    /// The run children folded at the last prepare (`controls::run`), for events.
+    child_runs: Vec<Value>,
 }
 
 impl Label {
-    /// The runs, when the label has any (`set_prop` rejects runs that don't parse).
+    /// The runs, when the label has any: its `runs` prop, then its run children (`children`, as
+    /// `runs` records). `set_prop` rejects runs that don't parse; children always do.
     pub fn rich(&self) -> Option<Rich> {
-        if self.props.runs.is_empty() {
+        self.rich_with(&self.child_runs)
+    }
+
+    fn rich_with(&self, children: &[Value]) -> Option<Rich> {
+        if self.props.runs.is_empty() && children.is_empty() {
             return None;
         }
-        rich::from_value(&self.props.text, &self.props.runs).ok()
+        if children.is_empty() {
+            return rich::from_value(&self.props.text, &self.props.runs).ok();
+        }
+        let all: Vec<Value> = self.props.runs.iter().chain(children).cloned().collect();
+        rich::from_value(&self.props.text, &all).ok()
     }
 
     fn look<'a>(&'a self, rich: Option<&'a Rich>) -> Look<'a> {
@@ -217,12 +228,13 @@ impl Kind for Label {
             taffy::AvailableSpace::Definite(w) => Some(w),
             _ => None,
         });
-        let rich = self.rich();
+        let rich = self.rich_with(cx.style.children);
         let s = measure(cx.text, &self.view(&cx.style), &self.look(rich.as_ref()), width);
         taffy::Size { width: s.w, height: s.h }
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.child_runs = cx.style.children.to_vec();
         let rich = self.rich();
         let r = Rect::from_origin_size(Point::ZERO, cx.size);
         let placed = place(cx.text, &self.view(&cx.style), &self.look(rich.as_ref()), r, 1.0);
@@ -230,7 +242,7 @@ impl Kind for Label {
     }
 
     fn record(&self, cx: &mut RecordCx) {
-        let rich = self.rich();
+        let rich = self.rich_with(cx.style.children);
         let look = self.look(rich.as_ref());
         let s = self.view(&cx.style);
         let r = cx.rect();
@@ -328,7 +340,7 @@ mod tests {
 
     fn measure_at(l: &Label, w: f32) -> Size {
         let mut text = MonoShaper;
-        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], state: StateBits::NONE, dark: true }, text: &mut text, scale: 1.0 };
+        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true }, text: &mut text, scale: 1.0 };
         let avail = taffy::Size { width: taffy::AvailableSpace::Definite(w), height: taffy::AvailableSpace::MaxContent };
         let s = l.measure(&mut cx, taffy::Size { width: None, height: None }, avail);
         Size::new(s.width, s.height)

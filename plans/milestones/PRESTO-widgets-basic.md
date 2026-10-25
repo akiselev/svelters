@@ -14,7 +14,7 @@ at ac7cc8c4 by the coordinator; the rest of this record is on the branch only.
 | `interact/` | `Tracker` (egui 0.37's click/drag/double-click/Space-Enter/AccessKit rules as a per-node state machine), `StateBits` (svelters' bit numbers = `svelters_style::StateMask`), `Policy` rows (GTK, Qt, Windows, macOS, egui), `Unit` trait; units Hoverable, Pressable, Focusable, Toggleable, Draggable, DragToValue, Steppable, Resizable, Expandable, Roving, RovingList, Dismissable, Typeahead, Anchored, Tooltipable | `interact/`, `native/mod.rs`, `provider/state.rs` |
 | `paint/` | `StyleView` over the engine's `ComputedStyle` with per-kind UA tables; box/outline (quads, shadows, linear gradients, per-side borders), text (layout, measure, elide, runs), paint parts (P3), image (object-fit, crop), icon (+ `icon/registry.rs`: ICR1 registry, masters, slots, resvg rasterising into A8/RGBA images, icon fonts) | `paint/`, `icons.rs` |
 | `theme/` | the DS1 token map with presto `Color` and CSS-semantics shadows; `base.css`, `data/*.json` | `theme/mod.rs`, data (not `egui_style.rs`) |
-| `controls/` | `kind_props!`, `common`, `testkit`; kinds: button, toggle-button, checkbox, radio-button, switch, slider (+ rail, numfmt), label (+ rich runs), hyperlink, separator, progress-bar, spinner, icon, image, box (`FlexBox`), frame, stack, sides, grid | `widgets/`, `elements/`, `layout.rs`, `kinds/` |
+| `controls/` | `kind_props!`, `common`, `testkit`; kinds: button, toggle-button, checkbox, radio-button, switch, slider (+ rail, numfmt), label (+ rich runs, and the run child kinds span/b/i/code/a it folds: `controls/run.rs`, SVELTERS-PRESTO Q7), hyperlink, separator, progress-bar, spinner, icon, image, box (`FlexBox`), frame, stack, sides, grid | `widgets/`, `elements/`, `layout.rs`, `kinds/` |
 
 Every kind has spec, record (display-list golden) and interaction tests; units carry their ported tests.
 
@@ -48,6 +48,10 @@ Open (all additive):
 6. Prop-derived state bits after a prop write (`:checked`, `:busy`, `:indeterminate` without an event).
 7. `scale` in `PrepareCx`.
 8. Light-dismiss presses routed to open floating surfaces (`Dismissable`).
+9. (h) A kind sees its children while measuring and recording (`NodeView::child`/`cx.view`), a child's change
+   dirties a folding parent's measure and paint, and the folding parent's children are skipped by layout,
+   recording and hit testing (and the parent is still measured as a leaf: taffy only measures nodes
+   without children). Until then the bridge folds a label's run children only in `event`.
 
 Until 1–6 land, the bridge ignores the shim's peer requests, `listen` and the container hooks: radio groups
 are not exclusive inside a real document, icon/image clicks need (2), and stack shows every child.

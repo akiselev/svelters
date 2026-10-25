@@ -280,6 +280,9 @@ pub mod core {
     pub struct Styles<'a> {
         pub computed: Option<&'a ComputedStyle>,
         pub parts: &'a [(&'static str, &'a ComputedStyle)],
+        /// The inline run children a `label` folds into its paragraph, as `runs` records
+        /// (`controls::run`; empty for other kinds).
+        pub children: &'a [Value],
         pub state: StateBits,
         pub dark: bool,
     }
