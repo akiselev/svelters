@@ -132,7 +132,8 @@ impl TextMeasure for NoText {
 }
 
 pub struct Inner {
-    pub(crate) doc: RefCell<Document>,
+    /// The tree: the backend's own, or the host's ([`PrestoBackend::shared`]), shared with it.
+    pub(crate) doc: Rc<RefCell<Document>>,
     pub(crate) kinds: Arc<Kinds>,
     /// Surface props with no core prop, by (node, wire prop id).
     pub(crate) side: RefCell<HashMap<(NodeId, svl_id), surface::Value>>,
@@ -165,6 +166,8 @@ pub struct Inner {
     pub(crate) closes: RefCell<Vec<svl_handle>>,
     /// Nodes the embedder owns (slots): JS mounts into them but cannot destroy them.
     pub(crate) borrowed: RefCell<HashSet<svl_handle>>,
+    /// Borrowed handles of host nodes ([`PrestoBackend::adopt`]): released, never destroyed.
+    pub(crate) adopted: RefCell<HashSet<svl_handle>>,
     /// Observe counts per (handle, wire prop id).
     pub(crate) observed: RefCell<HashMap<(svl_handle, svl_id), u32>>,
     pub(crate) wake: Arc<WakeState>,
@@ -186,8 +189,40 @@ impl PrestoBackend {
     }
 
     pub fn with_text(kinds: Arc<Kinds>, text: Box<dyn TextMeasure>) -> PrestoBackend {
+        let doc = Document::new(kinds.registry().clone(), text);
+        PrestoBackend::build(kinds, Rc::new(RefCell::new(doc)))
+    }
+
+    /// A backend over the host's `doc` (built on [`crate::builtin_kinds`]'s registry, or one with the
+    /// same kinds): JS's nodes are nodes of the host's tree, and embed slots can be host nodes
+    /// ([`PrestoBackend::adopt`], `Embed::adopt_slot`). The host reaches the tree with
+    /// [`PrestoBackend::with_doc`] or [`PrestoBackend::document`].
+    pub fn over(doc: Document) -> StrResult<PrestoBackend> {
+        PrestoBackend::shared(crate::builtin_kinds(), Rc::new(RefCell::new(doc)))
+    }
+
+    /// [`PrestoBackend::over`] on a document the host keeps a handle to (its own `Rc`), with `kinds`.
+    /// The document's registry must have every concrete kind of `kinds`, under the same tag. The
+    /// backend installs its sync deliverer on it (`Document::set_sync_delivery`): the cancelable
+    /// events of the host's dispatches reach JS listeners.
+    pub fn shared(kinds: Arc<Kinds>, doc: Rc<RefCell<Document>>) -> StrResult<PrestoBackend> {
+        {
+            let d = doc.borrow();
+            let reg = d.registry();
+            for m in kinds.iter() {
+                if let Some(k) = m.core
+                    && reg.get(k).is_none_or(|e| Some(e.spec.name) != m.surface.tag)
+                {
+                    return Err(format!("the host document's registry lacks <{}>: build it on svelters_presto::builtin_kinds().registry()", m.tag()));
+                }
+            }
+        }
+        Ok(PrestoBackend::build(kinds, doc))
+    }
+
+    fn build(kinds: Arc<Kinds>, doc: Rc<RefCell<Document>>) -> PrestoBackend {
         let b = PrestoBackend(Rc::new(Inner {
-            doc: RefCell::new(Document::new(kinds.registry().clone(), text)),
+            doc,
             kinds,
             side: RefCell::new(HashMap::new()),
             styles: RefCell::new(HashMap::new()),
@@ -206,6 +241,7 @@ impl PrestoBackend {
             window_ids: RefCell::new(HashMap::new()),
             closes: RefCell::new(Vec::new()),
             borrowed: RefCell::new(HashSet::new()),
+            adopted: RefCell::new(HashSet::new()),
             observed: RefCell::new(HashMap::new()),
             wake: Arc::new(WakeState::default()),
             deadline: Cell::new(None),
@@ -344,10 +380,56 @@ impl PrestoBackend {
         Ok(h)
     }
 
-    /// Frees an embedder-owned node.
+    /// Frees an embedder-owned node (an adopted one is only released: the host owns it).
     pub fn destroy_borrowed(&self, h: svl_handle) {
         self.0.borrowed.borrow_mut().remove(&h);
+        if self.0.adopted.borrow_mut().remove(&h) {
+            self.release(h);
+            return;
+        }
         self.destroy(h);
+    }
+
+    /// Gives a node of the host's tree a handle JS can mount into (an embed slot that is a host node:
+    /// a dock pane body, a status-bar cell). JS cannot destroy it; [`PrestoBackend::release`] or
+    /// `destroy_borrowed` forgets the handle and leaves the node. Its kind must be one JS knows.
+    pub fn adopt(&self, node: NodeId) -> StrResult<svl_handle> {
+        if let Some(h) = self.handle(node) {
+            return Ok(h);
+        }
+        let k = self.doc().kind_of(node).ok_or("adopt: not a live node of the backend's document")?;
+        let m = self.0.kinds.by_core(k).ok_or("adopt: the node's kind is not one JS knows")?;
+        let mut hs = self.0.handles.borrow_mut();
+        let h = hs.reserve(1);
+        hs.bind(h, node);
+        hs.set_kind(h, m.wire);
+        drop(hs);
+        self.0.borrowed.borrow_mut().insert(h);
+        self.0.adopted.borrow_mut().insert(h);
+        Ok(h)
+    }
+
+    /// Forgets `h` without touching its node (an adopted host node). Children JS put in it stay
+    /// until JS removes them.
+    pub fn release(&self, h: svl_handle) {
+        self.0.borrowed.borrow_mut().remove(&h);
+        self.0.adopted.borrow_mut().remove(&h);
+        if let Some(n) = self.0.handles.borrow_mut().unbind(h) {
+            self.0.side.borrow_mut().retain(|&(x, _), _| x != n);
+            self.0.styles.borrow_mut().remove(&n);
+            self.0.visuals.borrow_mut().remove(&n);
+        }
+        self.forget(h);
+    }
+
+    /// `h` is a host node given to JS ([`PrestoBackend::adopt`]).
+    pub fn is_adopted(&self, h: svl_handle) -> bool {
+        self.0.adopted.borrow().contains(&h)
+    }
+
+    /// The document, shared with the host that handed it over (or the backend's own).
+    pub fn document(&self) -> Rc<RefCell<Document>> {
+        self.0.doc.clone()
     }
 
     /// The node behind a live handle and its kind's member map.
