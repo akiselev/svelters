@@ -50,7 +50,7 @@ jobs:
         id: crates
         shell: bash
         run: |
-          crates=$( (ls -d crates/presto-* crates/svelters-presto 2>/dev/null || true) | xargs -n1 basename | sed 's/^/-p /' | tr '\n' ' ')
+          crates=$( (ls -d crates/presto crates/presto-* crates/svelters-presto 2>/dev/null || true) | xargs -n1 basename | sed 's/^/-p /' | tr '\n' ' ')
           echo "list=$crates" >> "$GITHUB_OUTPUT"
           echo "$crates"
       - name: cargo check (all targets)

@@ -84,6 +84,17 @@ pub struct Document {
     pub(crate) timers: HashMap<NodeId, presto_base::time::Time>,
     /// The realised rows of virtualising nodes ([`crate::VirtualChildren`]).
     pub(crate) virt: HashMap<NodeId, crate::virt::VirtState>,
+    /// Peer requests ([`EventCx::peer_request`](crate::EventCx::peer_request)) not applied yet.
+    pub(crate) peer_queue: std::collections::VecDeque<(NodeId, crate::kind::PeerTarget, crate::kind::PeerMsg)>,
+    pub(crate) peer_running: bool,
+    /// Delivers a JS event at event time and answers what its listeners did.
+    pub(crate) sync_delivery: Option<Box<dyn FnMut(&crate::input::JsEvent) -> crate::kind::Outcome>>,
+    /// The nodes with a non-empty `anchor`.
+    pub(crate) anchors: HashMap<NodeId, Arc<str>>,
+    /// The nodes with a non-empty `for` prop (labels), and the anchor it names.
+    pub(crate) label_for: HashMap<NodeId, Arc<str>>,
+    /// The focused push button of a dialog scope is its default (`Policy::auto_default`).
+    pub(crate) auto_default: bool,
 }
 
 impl Document {
@@ -120,7 +131,41 @@ impl Document {
             services: Default::default(),
             timers: HashMap::new(),
             virt: HashMap::new(),
+            peer_queue: Default::default(),
+            peer_running: false,
+            sync_delivery: None,
+            anchors: HashMap::new(),
+            label_for: HashMap::new(),
+            auto_default: false,
         }
+    }
+
+    /// Installs the deliverer of JS events at event time (svelters-presto's `call_sync`): cancelable
+    /// events then reach their listeners before the native default, which honours `preventDefault`
+    /// ([`EventCx::emit_sync`](crate::EventCx::emit_sync), and the DOM pointer, key and wheel events
+    /// of [`Document::dispatch`]). Events it delivered are not listed in [`Dispatched::events`](crate::Dispatched::events).
+    /// It runs while the document is borrowed: the caller queues the listeners' writes and applies
+    /// them after the dispatch (with [`Document::js_transaction`]).
+    pub fn set_sync_delivery(&mut self, f: Box<dyn FnMut(&crate::input::JsEvent) -> crate::kind::Outcome>) {
+        self.sync_delivery = Some(f);
+    }
+
+    /// The focused push button of a `dialog` focus scope is the scope's default (`:default`, Enter
+    /// activates it), as Windows, KDE and GTK do (`Policy::auto_default`); off (macOS), Enter goes to
+    /// the button whose `default` prop is set whatever has focus.
+    pub fn set_auto_default(&mut self, on: bool) {
+        if self.auto_default != on {
+            self.auto_default = on;
+            let focused: Vec<NodeId> = self.windows.iter().filter_map(|w| w.focus).collect();
+            for f in focused {
+                crate::input::scope::refresh_default(self, f);
+            }
+        }
+    }
+
+    /// The node of `window` whose `anchor` is `anchor`.
+    pub fn find_anchor(&self, window: WindowId, anchor: &str) -> Option<NodeId> {
+        self.anchors.iter().find(|(n, a)| &***a == anchor && self.window_of(**n) == Some(window)).map(|(n, _)| *n)
     }
 
     /// Gives the document a text shaper, so text kinds record glyph runs.
@@ -311,6 +356,7 @@ impl Document {
             self.core[i].flags.insert(NodeFlags::VIRTUAL);
             self.virt.insert(id, crate::virt::VirtState::default());
         }
+        self.refresh_prop_state(i);
         self.journal.push(Change::Created { node: id, kind, revision: rev });
         id
     }
@@ -442,6 +488,7 @@ impl Document {
         if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
             self.refresh_desc_nonpassive(pi);
         }
+        self.refresh_inert(ci);
         self.journal.push(Change::Inserted { parent, child, revision: rev });
         Ok(())
     }
@@ -476,6 +523,7 @@ impl Document {
         if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
             self.refresh_desc_nonpassive(pi);
         }
+        self.refresh_inert(ci);
     }
 
     /// Destroys `node` and its subtree (removing it from its parent first). Stale ids are ignored.
@@ -508,6 +556,9 @@ impl Document {
         self.scroll.remove(&id);
         self.timers.remove(&id);
         self.virt.remove(&id);
+        self.anchors.remove(&id);
+        self.label_for.remove(&id);
+        self.peer_queue.retain(|(n, ..)| *n != id);
         self.slots.free(i);
     }
 
@@ -607,7 +658,8 @@ impl Document {
     fn write_prop(&mut self, node: NodeId, prop: PropId, v: Option<Value>, native: bool) -> Result<ChangeClass, PropError> {
         let i = self.idx(node).ok_or(PropError::Stale(node))?;
         let kind = self.core[i].kind;
-        let entry = self.registry.get(kind).expect("registered kind");
+        let registry = self.registry.clone();
+        let entry = registry.get(kind).expect("registered kind");
         let spec = entry.prop(prop).or_else(|| common::prop(prop)).ok_or(PropError::Unknown(prop))?;
         let v = match v {
             Some(v) => {
@@ -666,9 +718,52 @@ impl Document {
         }
         // common props with their own effects
         if prop == common::DISABLED {
-            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
+            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false) || self.core[i].flags.contains(NodeFlags::INERT);
             self.set_state(node, StateMask::DISABLED, on);
+        } else if prop == common::INVALID {
+            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
+            self.set_state(node, StateMask::INVALID, on);
+        } else if prop == common::ANCHOR {
+            match v.as_ref().and_then(Value::as_str).filter(|a| !a.is_empty()) {
+                Some(a) => self.anchors.insert(node, Arc::from(a)),
+                None => self.anchors.remove(&node),
+            };
+            // its `labelled_by` follows the labels naming the new anchor
+            self.mark(node, Dirty::A11Y);
+        } else if prop == common::DIALOG_ROLE || prop == common::STATUS_SECTION {
+            // the containers that order their children by it
+            if let Some(p) = self.core[i].parent {
+                self.mark_layout(p);
+                self.mark(p, Dirty::PAINT);
+            }
+        } else if spec.name == "default" && spec.ty == crate::value::ValueType::Bool && entry.prop(prop).is_some() {
+            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
+            self.set_state(node, StateMask::DEFAULT, on);
+            if self.core[i].window.is_some() {
+                crate::input::scope::refresh_default(self, node);
+            }
+        } else if spec.name == "for" && entry.prop(prop).is_some() {
+            let named = v.as_ref().and_then(Value::as_str).filter(|a| !a.is_empty()).map(Arc::<str>::from);
+            let old = match named.clone() {
+                Some(a) => self.label_for.insert(node, a),
+                None => self.label_for.remove(&node),
+            };
+            for a in old.into_iter().chain(named) {
+                if let Some(t) = self.core[i].window.and_then(|w| self.find_anchor(w, &a)) {
+                    self.mark(t, Dirty::A11Y);
+                }
+            }
         }
+        // a kind that derives layout from props (orientation, chrome) gets its layout style again
+        if class == ChangeClass::Layout && !is_text {
+            self.core[i].dirty.insert(Dirty::STYLE);
+            self.mark_up(i, Dirty::DESC_STYLE);
+            if entry.spec.places_children {
+                self.replace_children(i);
+            }
+        }
+        self.refresh_prop_state(i);
+        self.refresh_children_inert(i);
         // attribute selectors may match the prop
         self.restyle_attr(i, spec.name);
         self.fold_up(i);
@@ -715,19 +810,111 @@ impl Document {
     /// Adds a listener (replacing one for the same signal and capture flag).
     pub fn listen(&mut self, node: NodeId, signal: SignalId, flags: ListenFlags) {
         let Some(i) = self.idx(node) else { return };
+        let was = self.listeners[i].iter().any(|l| l.signal == signal);
         let capture = flags.contains(ListenFlags::CAPTURE);
         let ls = &mut self.listeners[i];
         ls.retain(|l| !(l.signal == signal && l.flags.contains(ListenFlags::CAPTURE) == capture));
         ls.push(Listener { signal, flags });
         self.update_passive(i);
+        if !was {
+            self.listen_changed(i, signal, true);
+        }
     }
 
     /// Removes a listener.
     pub fn unlisten(&mut self, node: NodeId, signal: SignalId, capture: bool) {
         let Some(i) = self.idx(node) else { return };
+        let was = self.listeners[i].iter().any(|l| l.signal == signal);
         self.listeners[i].retain(|l| !(l.signal == signal && l.flags.contains(ListenFlags::CAPTURE) == capture));
         self.update_passive(i);
+        if was && !self.listeners[i].iter().any(|l| l.signal == signal) {
+            self.listen_changed(i, signal, false);
+        }
     }
+
+    /// Tells node `i`'s kind that JS started or stopped listening to `signal`.
+    fn listen_changed(&mut self, i: usize, signal: SignalId, listened: bool) {
+        let Some(mut k) = self.kinds[i].take() else { return };
+        let request = {
+            let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
+            k.listen_changed(&mut cx, signal, listened);
+            cx.request
+        };
+        self.kinds[i] = Some(k);
+        self.apply_request(i, request);
+    }
+
+    /// The extra work a kind asked for in a [`PropCx`].
+    fn apply_request(&mut self, i: usize, request: Dirty) {
+        if request.is_empty() {
+            return;
+        }
+        if request.contains(Dirty::MEASURE) {
+            self.mark_measure(i);
+        }
+        if request.contains(Dirty::LAYOUT) {
+            self.invalidate_style(i);
+        }
+        let node = self.slots.id_at(i).expect("live");
+        self.mark(node, request);
+    }
+
+    /// Sets the bits of the kind's [`KindSpec::prop_states`](crate::KindSpec::prop_states) as its
+    /// [`Kind::prop_state`] says.
+    pub(crate) fn refresh_prop_state(&mut self, i: usize) {
+        let mask = self.registry.get(self.core[i].kind).map_or(StateMask::NONE, |e| e.spec.prop_states);
+        if mask == StateMask::NONE {
+            return;
+        }
+        let Some(bits) = self.kinds[i].as_deref().map(|k| k.prop_state(&self.view_at(i))) else { return };
+        let node = self.slots.id_at(i).expect("live");
+        self.set_state(node, StateMask(mask.0 & bits.0), true);
+        self.set_state(node, StateMask(mask.0 & !bits.0), false);
+    }
+
+    /// The kind of node `i` may have started or stopped making its descendants inert.
+    fn refresh_children_inert(&mut self, i: usize) {
+        let inert = self.kinds[i].as_deref().is_some_and(|k| k.children_inert());
+        if inert == self.core[i].flags.contains(NodeFlags::INERT_CHILDREN) {
+            return;
+        }
+        if inert {
+            self.core[i].flags.insert(NodeFlags::INERT_CHILDREN);
+        } else {
+            self.core[i].flags.remove(NodeFlags::INERT_CHILDREN);
+        }
+        for c in self.children[i].clone() {
+            let ci = self.ix(c);
+            self.refresh_inert(ci);
+        }
+    }
+
+    /// Recomputes [`NodeFlags::INERT`] (and so `:disabled`) on `i`'s subtree from its ancestors.
+    pub(crate) fn refresh_inert(&mut self, i: usize) {
+        let mut stack = vec![i];
+        while let Some(n) = stack.pop() {
+            let inherited = self.core[n].parent.is_some_and(|p| {
+                let pi = self.ix(p);
+                self.core[pi].flags.intersects(NodeFlags::INERT.union(NodeFlags::INERT_CHILDREN))
+            });
+            if inherited == self.core[n].flags.contains(NodeFlags::INERT) && n != i {
+                continue;
+            }
+            if inherited {
+                self.core[n].flags.insert(NodeFlags::INERT);
+            } else {
+                self.core[n].flags.remove(NodeFlags::INERT);
+            }
+            let id = self.slots.id_at(n).expect("live");
+            let own = self.view_at(n).prop_bool(common::DISABLED);
+            self.set_state(id, StateMask::DISABLED, own || inherited);
+            if inherited && self.core[n].window.is_some_and(|w| self.focused(w) == Some(id)) {
+                crate::input::focus::clear_focus(self, self.core[n].window.expect("in a window"));
+            }
+            stack.extend(self.children[n].iter().map(|&c| self.ix(c)));
+        }
+    }
+
 
     pub fn listeners(&self, node: NodeId) -> &[Listener] {
         self.idx(node).map_or(&[], |i| &self.listeners[i])
@@ -992,6 +1179,9 @@ impl Document {
         });
         if let Some(i) = self.idx(node) {
             self.kinds[i] = Some(k);
+        }
+        if !self.peer_queue.is_empty() {
+            self.transaction(|doc| crate::input::peers::run(doc, &mut emitted));
         }
         for e in emitted {
             crate::input::dispatch::queue_emitted(self, e);

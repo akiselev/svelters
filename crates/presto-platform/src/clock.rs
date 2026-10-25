@@ -53,8 +53,12 @@ mod tests {
 
     #[test]
     fn os_time_is_in_the_past() {
+        // Run late enough after the epoch that "3 ms ago" does not clamp to it.
+        let before = now();
+        std::thread::sleep(std::time::Duration::from_millis(10));
         let t = time_from_os(1_000, 3_000_000);
-        assert!(t <= now());
-        assert!(now() - t >= Span::from_micros(2_999));
+        let after = now();
+        assert!(t > before && t <= after, "{before:?} < {t:?} <= {after:?}");
+        assert!(after - t >= Span::from_micros(2_999));
     }
 }
