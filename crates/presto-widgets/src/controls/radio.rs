@@ -65,7 +65,7 @@ kind_props! {
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
-    SignalSpec::new("changed", &[("checked", ValueType::Bool), ("group", ValueType::Str)], "The user's click (or an arrow key) changed it, or a sibling's unchecked it."),
+    SignalSpec::new("changed", &[("checked", ValueType::Bool), ("group", ValueType::Str)], "The user's click (or an arrow key) changed it, or a sibling's unchecked it. Preventing the user's check keeps the group as it was.").cancelable(),
     SignalSpec::new("clicked", &[], "Pressed and released (or Space, Enter, AccessKit `Click`)."),
 ];
 
@@ -134,7 +134,10 @@ impl RadioButton {
             return;
         }
         // EV1: the signal goes out before the default action (the prop writes)
-        common::emit(cx, &SPEC, "changed", Self::changed_args(true, &new_group));
+        if common::emit_sync(cx, &SPEC, "changed", Self::changed_args(true, &new_group)) {
+            return;
+        }
+        let p = &mut self.props;
         if !p.checked {
             p.checked = true;
             cx.prop_changed(P::checked.id());
@@ -443,5 +446,16 @@ mod tests {
         assert!(n.supports_action(accesskit::Action::Click));
         r.props.checked = true;
         assert_eq!(testkit::a11y(&r, StateBits::NONE, SIZE).toggled(), Some(accesskit::Toggled::True));
+    }
+
+    #[test]
+    fn a_prevented_changed_keeps_the_group() {
+        let mut r = RadioButton::default();
+        r.props.value = "a".into();
+        let mut d = testkit::Driver::new(r, presto_base::geom::Size::new(80.0, 20.0));
+        d.prevent = vec!["changed"];
+        d.click();
+        assert!(d.names().contains(&"changed"));
+        assert!(!d.kind.props.checked && d.kind.props.group.is_empty());
     }
 }

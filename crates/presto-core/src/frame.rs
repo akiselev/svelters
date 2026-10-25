@@ -100,14 +100,22 @@ impl Document {
         self.dirty_walk(window, root, &mut commit, &mut runs, &mut images, &mut a11y_dirty, &mut stats);
         self.run_counter = runs.next;
         commit.runs = runs.added;
-        commit.resources = ResourceDelta { images: std::mem::take(&mut images.added), removed_images: std::mem::take(&mut images.removed), ..Default::default() };
+        commit.resources = ResourceDelta {
+            images: std::mem::take(&mut images.added),
+            removed_images: std::mem::take(&mut images.removed),
+            paths: std::mem::take(&mut images.paths),
+            removed_paths: std::mem::take(&mut images.removed_paths),
+        };
         self.images = images;
         let rebuild = self.window(window).is_some_and(|w| w.rebuild);
         if rebuild {
             self.rebuild_walk(window, root, &mut commit);
             stats.rebuilt = true;
         }
-        commit.a11y = self.a11y_update(window, root, rebuild, &a11y_dirty);
+        if rebuild {
+            a11y_dirty.extend(std::mem::take(&mut self.window_mut(window).expect("window").a11y_moved));
+        }
+        commit.a11y = self.a11y_update(window, root, &a11y_dirty);
         // what left the window since the last frame
         let orphaned = std::mem::take(&mut self.anim.orphaned);
         let ws = self.window_mut(window).expect("window");
@@ -133,6 +141,8 @@ impl Document {
             && commit.dropped_runs.is_empty()
             && commit.resources.images.is_empty()
             && commit.resources.removed_images.is_empty()
+            && commit.resources.paths.is_empty()
+            && commit.resources.removed_paths.is_empty()
             && commit.animations.is_empty()
             && commit.a11y.is_none()
             && commit.cursor.is_none()
@@ -444,7 +454,9 @@ impl Document {
             p.list = Some(list.clone());
             commit.lists.push((node, list));
         }
-        if had != self.record[i].list.is_some()
+        // a layer's `opaque` follows its owner's list
+        let owns_layer = self.record[i].layer.is_some() || self.core[i].flags.contains(crate::tree::NodeFlags::ROOT);
+        if (had != self.record[i].list.is_some() || owns_layer)
             && let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w))
         {
             w.rebuild = true;
@@ -462,6 +474,22 @@ impl Document {
             return Some(LayerKind::Content);
         }
         None
+    }
+
+    /// Node `i` paints every pixel of its bounds opaquely: its display list starts with a square,
+    /// solid, opaque quad covering its box (`draw_box` of an opaque background), at full opacity.
+    fn opaque_box(&self, i: usize) -> bool {
+        let s = self.style.computed(i);
+        let l = &self.layout[i].layout;
+        let bounds = Rect::new(0.0, 0.0, l.size.width, l.size.height);
+        let covers = self.record[i].list.as_ref().and_then(|list| list.items.first()).is_some_and(|p| {
+            matches!(p, presto_base::display::Prim::Quad(q)
+                if q.radii.is_zero()
+                    && matches!(&q.fill, presto_base::color::Fill::Solid(c) if c.a >= 1.0)
+                    && q.rect.min.x <= bounds.min.x && q.rect.min.y <= bounds.min.y
+                    && q.rect.max.x >= bounds.max.x && q.rect.max.y >= bounds.max.y)
+        });
+        covers && s.opacity >= 1.0 && !s.visibility_hidden
     }
 
     /// Children of node `i` in paint order: tree order, stably sorted by `z-index`.
@@ -496,7 +524,7 @@ impl Document {
             effect: None,
             z: 0,
             bounds: Rect::from_origin_size(Point::ZERO, size),
-            opaque: false,
+            opaque: self.idx(root).is_some_and(|ri| self.opaque_box(ri)),
         }];
         let mut items: std::collections::HashMap<LayerId, Vec<ItemRef>> = Default::default();
         items.insert(root_layer, Vec::new());
@@ -514,6 +542,7 @@ impl Document {
         let mut stack = vec![Frame { i: ri, parent_world: Affine::IDENTITY, clip_world: None, layer: root_layer, clip: None, effect: None }];
         let mut z_next = 1;
         let mut used_layers = vec![root_layer];
+        let mut moved = Vec::new();
         while let Some(f) = stack.pop() {
             let i = f.i;
             let node = self.slots.id_at(i).expect("live");
@@ -551,7 +580,9 @@ impl Document {
                     }
                     _ => (p.transform.expect("transform node"), f.clip, bounds),
                 };
-                layers.push(LayerDesc { id, parent: Some(f.layer), kind, transform, clip, effect: own_effect, z: z_next, bounds: lbounds, opaque: false });
+                // a content layer whose own box paints all of it, unblended, hides what is below
+                let opaque = matches!(kind, LayerKind::Content) && own_effect.is_none() && self.opaque_box(i);
+                layers.push(LayerDesc { id, parent: Some(f.layer), kind, transform, clip, effect: own_effect, z: z_next, bounds: lbounds, opaque });
                 z_next += 1;
                 items.entry(id).or_default();
                 if matches!(kind, LayerKind::Scroll { .. }) {
@@ -574,6 +605,15 @@ impl Document {
                 hits.push(HitEntry { node, inverse, world: world_rect, clip: f.clip_world });
             }
             self.record[i].world = world_rect;
+            self.record[i].world_tf = world;
+            // the accessibility node carries its transform relative to its parent
+            let rel = match self.core[i].parent {
+                Some(p) => self.record[self.ix(p)].world_tf.inverse().map_or(Affine::IDENTITY, |pi| pi.then(&world)),
+                None => world,
+            };
+            if self.record[i].a11y_tf != Some(rel) {
+                moved.push(node);
+            }
             // what children see
             let mut child_world = world;
             if let Some(_sc) = p.scroll {
@@ -597,7 +637,21 @@ impl Document {
             };
             for c in self.paint_order(i).into_iter().rev() {
                 let ci = self.ix(c);
-                stack.push(Frame { i: ci, ..child });
+                // an absolute box is placed in its containing block's space (as in the dirty walk)
+                let parent_world = match crate::layout::positional_parent(self, ci) {
+                    Some(pp) if pp != i => {
+                        let ppn = self.slots.id_at(pp).expect("live");
+                        let w = self.record[pp].world_tf;
+                        if self.record[pp].scroll.is_some() {
+                            let off = self.scroll_offset(ppn);
+                            w.then(&Affine::translate(-off.x, -off.y))
+                        } else {
+                            w
+                        }
+                    }
+                    _ => child.parent_world,
+                };
+                stack.push(Frame { i: ci, parent_world, ..child });
             }
         }
         // diff the layers and items against what was sent
@@ -625,6 +679,7 @@ impl Document {
             }
         }
         ws.hits = Arc::new(HitList { entries: hits });
+        ws.a11y_moved = moved;
     }
 
     /// The last frame's hit list of `window` (for the compositor's scroll hit tests and tests).

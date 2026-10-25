@@ -35,9 +35,7 @@ pub(crate) fn call_kind(doc: &mut Document, node: NodeId, ev: &Event, emitted: &
         let mut cx = EventCx { doc, node, emitted, pointer };
         k.event(&mut cx, ev)
     };
-    if let Some(i) = doc.idx(node) {
-        doc.kinds[i] = Some(k);
-    }
+    doc.restore_kind(node, k);
     if !doc.peer_queue.is_empty() {
         crate::input::peers::run(doc, emitted);
     }
@@ -110,7 +108,7 @@ pub(crate) fn deliver_now(doc: &mut Document, target: NodeId, signal: SignalId, 
     }
     let Some(ev) = js_event(doc, target, signal, arg) else { return Ok(Default::default()) };
     let mut f = doc.sync_delivery.take().expect("checked");
-    let o = f(&ev);
+    let o = f(doc, &ev);
     if doc.sync_delivery.is_none() {
         doc.sync_delivery = Some(f);
     }
@@ -368,7 +366,8 @@ impl Document {
                 let input = self.pointer_input(window, t, p, count);
                 // EV1: a prevented pointerdown keeps the press from the tree (no press, focus or click)
                 let pre = self.pre_js(t, common::POINTERDOWN, Some(pointer_record(&input)));
-                if pre.prevented() {
+                // listeners may have removed the target
+                if pre.prevented() || !self.contains(t) {
                     return;
                 }
                 crate::input::dnd::pressed(self, window, t, p);

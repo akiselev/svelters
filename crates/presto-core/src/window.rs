@@ -90,7 +90,9 @@ pub(crate) struct WindowState {
     pub a11y_sent: HashSet<NodeId>,
     /// The IME area the last commit carried.
     pub ime_sent: Option<presto_base::geom::Rect>,
-    pub a11y_removed: bool,
+    /// Nodes whose transform relative to their parent changed at the last rebuild (their
+    /// accessibility nodes are re-sent).
+    pub a11y_moved: Vec<NodeId>,
     /// Structure, layout or properties changed: rebuild layer items and the hit list.
     pub rebuild: bool,
     /// The revision of the last commit built, and of the last one the compositor applied.
@@ -121,7 +123,7 @@ impl WindowState {
             scroll_nodes: HashMap::new(),
             a11y_sent: HashSet::new(),
             ime_sent: None,
-            a11y_removed: false,
+            a11y_moved: Vec::new(),
             rebuild: true,
             built: None,
             applied: None,
