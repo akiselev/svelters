@@ -304,11 +304,12 @@ fn a_fling_keeps_producing_frames_without_commits_then_goes_idle() {
     let curve = Fling::new(FlingCurve::Chromium, Vec2::new(0.0, 2000.0), PPI, Size::new(400.0, 300.0));
     let expect = curve.offset_at(Span::from_millis(60_000)).y.min(2700.0);
     let duration_frames = (0..).find(|k| curve.done_at(Span(INTERVAL.0 * k))).unwrap();
-    // Every fling frame comes from the compositor alone, one per vsync.
-    assert!(frames as i64 + 2 >= duration_frames, "{frames} frames for a {duration_frames}-frame fling");
     assert!(e.next_wakeup().is_none(), "idle after the fling: no wakeups");
+    // Every fling frame is sampled by the compositor alone, one per vsync; frames whose content has
+    // scrolled out of view have no damage and present nothing.
     let moved = scroll_moves(&sent);
-    assert!(moved.len() >= 5, "{moved:?}");
+    assert!(moved.len() as i64 + 2 >= duration_frames, "{} sampled frames for a {duration_frames}-frame fling", moved.len());
+    assert!(frames >= 2, "the frames with visible movement were drawn");
     assert!(moved.windows(2).all(|w| w[1] >= w[0]), "monotonic: {moved:?}");
     assert!((moved.last().unwrap() - expect).abs() < 0.5, "rests at the curve's distance {expect}: {moved:?}");
     assert_eq!(e.tree(W).unwrap().revision, Revision(1), "no commits during the fling");

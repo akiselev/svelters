@@ -207,9 +207,12 @@ impl Document {
             }
             self.kinds[i] = Some(k);
             self.apply_request(i, request);
-            return;
+        } else {
+            self.kinds[i] = Some(k);
         }
-        self.kinds[i] = Some(k);
+        // the state its props imply and its inert children follow writes made while it was out
+        self.refresh_prop_state(i);
+        self.refresh_children_inert(i);
     }
 
     /// The focused push button of a `dialog` focus scope is the scope's default (`:default`, Enter
@@ -770,7 +773,7 @@ impl Document {
         }
         // the kind sees the stored value; it may reject it (undo) or ask for more work
         let mut request = Dirty::EMPTY;
-        if self.kinds[i].is_none() {
+        if self.kinds[i].is_none() && !native {
             // the kind is mid-handler (JS runs inside it): it hears of the write when it is back
             self.missed_props.push((node, prop));
         }

@@ -249,6 +249,9 @@ impl Frame {
 }
 
 impl Kind for Frame {
+    fn parts() -> &'static [&'static str] {
+        &["caption", "indicator", "mark"]
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         { let mut s = crate::interact::StateBits::NONE; self.mirror(&mut s); s }
     }

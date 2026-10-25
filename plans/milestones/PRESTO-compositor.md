@@ -20,7 +20,9 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   deadline), then every queued message, then what is due. The `Instance` is created on the calling
   thread so the main thread creates surfaces at once; the device is created with the first surface.
 - **GPU** (`gpu.rs`): backends DX12 only on Windows, Metal on Apple, Vulkan then GL elsewhere; adapters
-  ranked by power preference, software (lavapipe/WARP/llvmpipe) last; non-sRGB format; Fifo,
+  ranked by power preference, software (lavapipe/WARP/llvmpipe) last, or chosen by
+  `CompositorConfig::adapter` (cadatomic's `adapter::select`) with `CompositorConfig::limits` for
+  `required_limits`, the same after device loss; non-sRGB format; Fifo,
   `desired_maximum_frame_latency = 1`; a persistent target per surface, encode first and **acquire late**,
   copy damage ∪ what older images missed (`DamageHistory`, `swap_images` = 4) into the image; surfaces
   without `COPY_DST` redraw whole; `Outdated` reconfigures, `Suboptimal` reconfigures after present;
@@ -79,6 +81,13 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 - Tiles for scroll layers (architecture §7.5: only after a measurement).
 
 ## Not run
+
+Run locally once, filtered, to diagnose CI's failures on a9503acb (and passing after the fix):
+`cargo test -p presto-compositor --test engine --test tree_damage --test caret`. Fixed: damage no
+longer counts a removal as reordering its successor (only survivors that change relative order are
+damaged); the fling test counted presents, but frames whose content scrolled out of view rightly
+present nothing, so it counts sampled frames.
+
 
 Per the batch rule, nothing was run locally beyond `cargo check -p presto-compositor --all-targets`.
 Tests written, run only by CI: `tests/engine.rs` (virtual clock + recording backend: first frame,
