@@ -869,10 +869,8 @@ impl Dispatch<ZwpTextInputV3, SeatKey> for State {
                     if ti.preedit {
                         out.push((w, ImeEvent::Preedit { text: String::new(), cursor: None }));
                     }
+                    // The leave disabled it; the compositor ignores requests until the next enter.
                     out.push((w, ImeEvent::Disabled));
-                    // The compositor disabled it with the leave; this keeps our request count in step.
-                    ti.ti.disable();
-                    ti.ti.commit();
                 }
                 ti.focus = None;
                 ti.enabled = false;

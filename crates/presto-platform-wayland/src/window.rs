@@ -104,6 +104,7 @@ impl Window {
 impl Drop for Window {
     fn drop(&mut self) {
         // Layers and per-surface extension objects go before the surface itself.
+        self.lock.clear_children();
         self.layers.clear();
         if let Some(f) = self.fractional.take() {
             f.destroy();

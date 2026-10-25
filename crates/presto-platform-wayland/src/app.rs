@@ -57,6 +57,7 @@ pub(crate) enum Pending {
 }
 
 /// Messages from helper threads (the portal), delivered through the wake pipe.
+#[cfg_attr(not(feature = "portal"), allow(dead_code))]
 pub(crate) enum Internal {
     Theme(Theme),
 }

@@ -65,6 +65,7 @@ struct LockInner {
     pending: Option<Geometry>,
     applied: Option<DeviceSize>,
     applied_scale: i32,
+    applied_logical: (i32, i32),
     children: Vec<WlSubsurface>,
     /// The children are in sync mode until the parent presents this size.
     sync_until: Option<DeviceSize>,
@@ -81,7 +82,9 @@ impl SurfaceLock {
     /// Records the state the next buffer of `g.buffer` size must carry.
     pub fn set_geometry(&self, g: Geometry) {
         let mut l = self.0.lock().unwrap();
-        if l.applied == Some(g.buffer) && l.applied_scale == g.buffer_scale && g.viewport.is_none() {
+        let scale = if g.viewport.is_some() { 1 } else { g.buffer_scale };
+        if l.applied == Some(g.buffer) && l.applied_scale == scale && l.applied_logical == g.logical {
+            // Already on screen: nothing waits for a present that may never come.
             l.pending = None;
             return;
         }
@@ -106,6 +109,10 @@ impl SurfaceLock {
 
     pub fn remove_child(&self, sub: &WlSubsurface) {
         self.0.lock().unwrap().children.retain(|c| c != sub);
+    }
+
+    pub fn clear_children(&self) {
+        self.0.lock().unwrap().children.clear();
     }
 
     /// A resize to `buffer` starts (`interactive` while the user drags an edge): children go to sync mode so
@@ -157,6 +164,7 @@ impl SurfaceLock {
                 x.set_window_geometry(0, 0, g.logical.0.max(1), g.logical.1.max(1));
             }
             l.applied = Some(size);
+            l.applied_logical = g.logical;
         }
     }
 
