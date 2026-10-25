@@ -119,3 +119,4 @@ when the five svelters workflows plus `presto` are green.
   (966d4d75, base c65b2e79); F7 done (svelters-presto 80189479); F8 TextServices + F9 backend selection to APP-TEST;
   F10 presto.yml checks presto-widgets `dialogs` (this commit); F11 berth/quire at consolidation 2; F13 at consolidation 2.
 - CORE-3 final ceaf16b8 and COMPOSITOR 9a58f1c4 merged (177731fd): F1–F5 fixed (presto-core --lib 119/119 locally). Slider tests disputed (CORE-3: fail; WIDGETS-BASIC: 19/19 pass after 966d4d75); consolidation 1 settles it. Done lanes now: CORE, CORE-2, CORE-3, PLATFORM, RENDER, RUNTIME, WIDGETS-BASIC, BERTH, QUIRE.
+- MACOS a706b24f (code bef22840): presto CI check green on all OSes, its unit tests pass on macOS; nothing run on Mac hardware. Q1–Q7 decided as recommended (coordinator, 2026-10-25); MACOS adds PlatformCx::set_text_input, WindowDesc.custom_title_bar and the key-code/Moved docs; WIN32/WAYLAND adopt after.
