@@ -167,3 +167,10 @@ when the five svelters workflows plus `presto` are green.
 - CADATOMIC: lock on integration 0890801c; REVISIT [local] gates committed (a0fb8da); CORE-3 8ca53bee verified (presto_shell 3/3, dock placed correctly live). CADATOMIC fixes the empty presto_berth tab title on berth's branch, then does the palette modal.
 - WAYLAND done 3c81128a: all six workflows green (presto 40239616922, js 40239616939, gtk 40239616899, qt 40239616920, appkit 40239616889, winui 40239616903). The head contains base, the backend and CANVAS ae46a5b1. Its questions 2–8 go to consolidation 2.
 - WIDGETS-TIER1 final ce2f4ecc: presto green on all three OSes (40239360492), js/gtk/qt/winui green; macos-appkit 40239360509 red in step 'appkit -> counter-mac backend', the second time (also FRAME-ANIM on a9503acb), while WAYLAND 3c81128a (which contains base) was green there. Intermittent; consolidation 1 checks the log and records it as a flake candidate with its cause.
+- CADATOMIC 738f931: empty tab title fixed (the document had no presto_core::TextShaper; host::DocShaper adapter); native palette
+  modal landed (presto_shell 4/4). Bug sent to COMPOSITOR: with a text-edit node in the window, the live window draws
+  black except the caret (suspect caret-only damage against buffer age). TEXT adds impl presto_core::TextShaper for
+  TextSystem.
+- Naming: "presto" is taken on crates.io. The user proposed **skelter** (svelters-skelter); skelter and skelter-{core,base,
+  render,widgets,platform,text,compositor,test} are free on crates.io, and skelter on npm. The rename is planned for
+  consolidation 2, once, before the master merge, pending the user's confirmation.
