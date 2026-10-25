@@ -124,7 +124,8 @@ struct Gpu {
 }
 
 struct Surf {
-    surface: wgpu::Surface<'static>,
+    /// `None`: an offscreen target (headless tests, screenshots) that is rendered and never presented.
+    surface: Option<wgpu::Surface<'static>>,
     size: DeviceSize,
     configured: bool,
     /// Swapchain images accept copies; otherwise the frame renders straight into the image.
@@ -231,12 +232,17 @@ impl GpuBackend {
         if s.size.w == 0 || s.size.h == 0 {
             return;
         }
-        let caps = s.surface.get_capabilities(&gpu.ctx.adapter);
+        let Some(surface) = &s.surface else {
+            s.copy = true;
+            s.configured = true;
+            return;
+        };
+        let caps = surface.get_capabilities(&gpu.ctx.adapter);
         if !caps.formats.contains(&gpu.ctx.format) {
             log::error!("presto-compositor: surface does not support {:?} ({:?})", gpu.ctx.format, caps.formats);
             return;
         }
-        let Some(mut config) = s.surface.get_default_config(&gpu.ctx.adapter, s.size.w, s.size.h) else {
+        let Some(mut config) = surface.get_default_config(&gpu.ctx.adapter, s.size.w, s.size.h) else {
             log::error!("presto-compositor: surface is not supported by the adapter");
             return;
         };
@@ -250,8 +256,89 @@ impl GpuBackend {
             config.alpha_mode = *a;
         }
         config.view_formats = Vec::new();
-        s.surface.configure(&gpu.ctx.device, &config);
+        surface.configure(&gpu.ctx.device, &config);
         s.configured = true;
+    }
+
+    /// Posts `GpuDone` for `frame` when the GPU finishes submission `index`.
+    fn report_done(
+        notify: &Sender<Msg>,
+        clock: &Arc<dyn Clock>,
+        gpu: &Gpu,
+        window: WindowId,
+        frame: FrameId,
+        index: wgpu::SubmissionIndex,
+    ) {
+        let tx = notify.clone();
+        let clock = clock.clone();
+        gpu.ctx.queue.on_submitted_work_done(move || {
+            let _ = tx.send(Msg::GpuDone { window, frame, at: clock.now() });
+        });
+        let _ = gpu.waiter.send((gpu.ctx.device.clone(), index));
+    }
+
+    /// Adds an offscreen target for `key` of `window`: frames render into it and are never presented
+    /// (headless runs, screenshots). Creates the device if needed; `false` without a GPU.
+    pub fn attach_offscreen(&mut self, window: WindowId, key: SurfaceKey, size: DeviceSize) -> bool {
+        if !self.ensure_gpu(None) {
+            return false;
+        }
+        let mut s = Surf {
+            surface: None,
+            size,
+            configured: false,
+            copy: true,
+            target: None,
+            history: DamageHistory::new(1),
+        };
+        if let Some(gpu) = &self.gpu {
+            Self::configure(gpu, &mut s);
+        }
+        self.surfaces.insert((window, key), s);
+        true
+    }
+
+    /// Reads back a surface's persistent target as tightly packed rows of its format's texels (BGRA or
+    /// RGBA 8-bit). Blocks until the GPU is done.
+    pub fn read_pixels(&self, window: WindowId, key: SurfaceKey) -> Option<(DeviceSize, wgpu::TextureFormat, Vec<u8>)> {
+        let gpu = self.gpu.as_ref()?;
+        let s = self.surfaces.get(&(window, key))?;
+        let (tex, _, size) = s.target.as_ref()?;
+        let bpp = gpu.ctx.format.block_copy_size(None)?;
+        let row = size.w * bpp;
+        let padded = row.div_ceil(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT) * wgpu::COPY_BYTES_PER_ROW_ALIGNMENT;
+        let buf = gpu.ctx.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("presto-compositor readback"),
+            size: padded as u64 * size.h as u64,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let mut enc = gpu.ctx.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+        enc.copy_texture_to_buffer(
+            tex.as_image_copy(),
+            wgpu::TexelCopyBufferInfo {
+                buffer: &buf,
+                layout: wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(padded), rows_per_image: Some(size.h) },
+            },
+            wgpu::Extent3d { width: size.w, height: size.h, depth_or_array_layers: 1 },
+        );
+        let index = gpu.ctx.queue.submit([enc.finish()]);
+        let slice = buf.slice(..);
+        let (tx, rx) = mpsc::channel();
+        slice.map_async(wgpu::MapMode::Read, move |r| {
+            let _ = tx.send(r);
+        });
+        let _ = gpu.ctx.device.poll(wgpu::PollType::Wait { submission_index: Some(index), timeout: Some(Duration::from_secs(10)) });
+        rx.recv().ok()?.ok()?;
+        let data = slice.get_mapped_range().ok()?;
+        let mut out = Vec::with_capacity((row * size.h) as usize);
+        for y in 0..size.h as usize {
+            let start = y * padded as usize;
+            out.extend_from_slice(&data[start..start + row as usize]);
+        }
+        drop(data);
+        buf.unmap();
+        Some((*size, gpu.ctx.format, out))
     }
 
     fn persistent_target(gpu: &Gpu, s: &mut Surf) -> bool {
@@ -299,7 +386,7 @@ impl Backend for GpuBackend {
     fn attach(&mut self, window: WindowId, key: SurfaceKey, surface: wgpu::Surface<'static>, size: DeviceSize) {
         self.ensure_gpu(Some(&surface));
         let mut s = Surf {
-            surface,
+            surface: Some(surface),
             size,
             configured: false,
             copy: false,
@@ -373,7 +460,15 @@ impl Backend for GpuBackend {
             gpu.renderer.render(device, queue, &mut encoder, view, scene);
         }
 
-        let st = match s.surface.get_current_texture() {
+        let Some(surface) = &s.surface else {
+            let index = queue.submit([encoder.finish()]);
+            if let Some(frame) = frame {
+                Self::report_done(&self.notify, &self.clock, gpu, window, frame, index);
+            }
+            gpu.renderer.end_frame();
+            return DrawOutcome::Presented;
+        };
+        let st = match surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(st) => (st, false),
             wgpu::CurrentSurfaceTexture::Suboptimal(st) => (st, true),
             wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => return DrawOutcome::Skipped,
@@ -414,12 +509,7 @@ impl Backend for GpuBackend {
 
         let index = queue.submit([encoder.finish()]);
         if let Some(frame) = frame {
-            let tx = self.notify.clone();
-            let clock = self.clock.clone();
-            queue.on_submitted_work_done(move || {
-                let _ = tx.send(Msg::GpuDone { window, frame, at: clock.now() });
-            });
-            let _ = gpu.waiter.send((device.clone(), index));
+            Self::report_done(&self.notify, &self.clock, gpu, window, frame, index);
         }
         queue.present(st);
         s.history.presented(drawn.to_vec());
@@ -437,10 +527,11 @@ impl Backend for GpuBackend {
         self.gpu = None;
         *self.shared.write().unwrap_or_else(|e| e.into_inner()) = None;
         let first = self.surfaces.keys().next().copied();
+        let first = self.surfaces.iter().find(|(_, s)| s.surface.is_some()).map(|(k, _)| *k).or(first);
         let ok = match first {
             Some(k) => {
                 let s = self.surfaces.remove(&k).expect("surface");
-                let ok = self.ensure_gpu(Some(&s.surface));
+                let ok = self.ensure_gpu(s.surface.as_ref());
                 self.surfaces.insert(k, s);
                 ok
             }

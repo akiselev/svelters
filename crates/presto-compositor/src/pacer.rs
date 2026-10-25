@@ -24,6 +24,7 @@ pub struct IntervalPacer {
     animating: bool,
     in_flight: Option<FrameId>,
     frame: u64,
+    last_drawn: Option<u64>,
     target: Option<Time>,
     drawn_for: Option<Time>,
     timer: Option<Time>,
@@ -42,6 +43,7 @@ impl IntervalPacer {
             animating: false,
             in_flight: None,
             frame: 0,
+            last_drawn: None,
             target: None,
             drawn_for: None,
             timer: None,
@@ -63,6 +65,11 @@ impl IntervalPacer {
         if self.hidden || self.in_flight.is_some() || self.drawn_for == Some(target) {
             return;
         }
+        // A draw outside a tick (an urgent commit) gets its own id.
+        if self.last_drawn == Some(self.frame) {
+            self.frame += 1;
+        }
+        self.last_drawn = Some(self.frame);
         let frame = FrameId(self.frame);
         self.in_flight = Some(frame);
         self.drawn_for = Some(target);

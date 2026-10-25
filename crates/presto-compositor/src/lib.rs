@@ -124,7 +124,6 @@ impl Compositor {
                 clear: cfg.clear,
                 caret_color: cfg.caret_color,
                 caret_blink: cfg.caret_blink,
-                swap_images: cfg.swap_images,
             },
             cfg.pacer,
             cfg.anim,

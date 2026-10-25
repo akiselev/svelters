@@ -88,8 +88,6 @@ pub struct EngineConfig {
     pub caret_color: Color,
     /// Half period of the caret blink; `None` = a steady caret.
     pub caret_blink: Option<Span>,
-    /// Swapchain images assumed per surface for buffer-age damage (the history keeps `images − 1`).
-    pub swap_images: usize,
 }
 
 struct Anim {
