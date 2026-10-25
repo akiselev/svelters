@@ -135,4 +135,7 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     fn type_property(&self, ty: &TypeRef, prop: &str) -> Option<TypeProp> {
         self.inner.type_property(ty, prop)
     }
+    fn capabilities(&self) -> &[String] {
+        self.inner.capabilities()
+    }
 }

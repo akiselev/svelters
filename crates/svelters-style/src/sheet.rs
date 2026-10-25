@@ -146,6 +146,11 @@ impl<'o> Ctx<'o> {
 
 static ANON_LAYERS: AtomicU32 = AtomicU32::new(0);
 
+/// A fresh internal name for an anonymous `@layer` block.
+pub(crate) fn anon_layer_name() -> String {
+    format!("\u{0}anon{}", ANON_LAYERS.fetch_add(1, Ordering::Relaxed))
+}
+
 struct RulesParser<'a, 'o> {
     cx: &'a Ctx<'o>,
     /// The enclosing style rule's selectors: set inside a style rule (declarations allowed,
@@ -387,7 +392,7 @@ impl<'i> AtRuleParser<'i> for RulesParser<'_, '_> {
             }
             AtPrelude::Layer(names) => {
                 let name = match names.len() {
-                    0 => Atom::new(&format!("\u{0}anon{}", ANON_LAYERS.fetch_add(1, Ordering::Relaxed))),
+                    0 => Atom::new(&anon_layer_name()),
                     1 => names[0].clone(),
                     _ => return Err(ParseError::custom(StyleParseError::Other("@layer with a block takes one name".into()))),
                 };

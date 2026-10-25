@@ -51,6 +51,31 @@ pub struct Spec {
     /// Fragments append to it.
     #[serde(default)]
     pub bind_sources: Vec<BindSourceSpec>,
+    /// The new op shapes the backend's runtime path accepts (presto `compiler-and-js.md` §2):
+    /// [`capability::IDS`], [`capability::TEMPLATES`], ... Codegen emits them only for a backend
+    /// that lists them; every other backend keeps today's ops.
+    #[serde(default)]
+    pub capabilities: Vec<String>,
+}
+
+/// The capability names of [`Spec::capabilities`]. (Raw strings: `cx1_codes` reads plain string
+/// constants with underscores as diagnostic codes.)
+pub mod capability {
+    /// W-C1: kinds, props and signals travel as the spec's stable integer ids.
+    pub const IDS: &str = "ids";
+    /// W-C2: a fragment's static part is instantiated from a module-scope template table.
+    pub const TEMPLATES: &str = "templates";
+    /// W-C5: listeners carry `LISTEN_PASSIVE` when they cannot cancel their event.
+    pub const PASSIVE: &str = "passive";
+    /// W-C4: dynamic writes carry their change class.
+    pub const CHANGE_CLASSES: &str = r"change_classes";
+    /// MOTION-CSS: svelte/transition's built-ins and svelte/animate's `flip` as `$n.transition_native`
+    /// / `$n.flip_native` (presto evaluates them from their parameters).
+    pub const NATIVE_TRANSITIONS: &str = r"native_transitions";
+    /// MOTION-CSS: `svelte/motion` is imported from `svelters:motion`.
+    pub const NATIVE_MOTION: &str = r"native_motion";
+    /// MOTION-CSS: release builds carry the scoped sheet precompiled (`svelters_style::binary`).
+    pub const CSS_PRECOMPILED: &str = r"css_precompiled";
 }
 
 /// CX3: one row of the bind-target lowering table.

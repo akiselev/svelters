@@ -266,6 +266,10 @@ impl PlatformSemantics for SpecBackend {
         self.spec.row_outlet.as_deref()
     }
 
+    fn capabilities(&self) -> &[String] {
+        &self.spec.capabilities
+    }
+
     fn resolve_element(&self, tag: &str) -> Result<ElementRef, Unresolved> {
         if let Some(kind) = self.spec.tags.get(tag) {
             return Ok(ElementRef { tag: tag.to_string(), kind: kind.clone() });

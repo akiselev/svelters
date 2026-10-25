@@ -3,9 +3,14 @@
 // MIT, Copyright (c) 2016-2025 Svelte Contributors) with the same signatures, defaults and CSS
 // text; only what they read from the DOM changed: `getComputedStyle(node)` is the node's native
 // computed visuals (./motion.js `computed`: inline opacity, no transform, size from the host's
-// `bounds`), `getBoundingClientRect()` is the runtime node's (ABI v2.8 `bounds`). `draw` is SVG
-// only and not provided.
-import { computed } from './motion.js';
+// `bounds`), `getBoundingClientRect()` is the runtime node's (ABI v2.8 `bounds`), and `draw`'s
+// `getTotalLength()` is the node's own when it has one (0 otherwise).
+//
+// MOTION-CSS: `nativeTransition(kind)` is the built-in with its parameters, easing name and the
+// computed style it read attached for a backend that evaluates the formulas natively
+// (./motion.js `describeNative`; the compiler emits `$n.transition_native` for these on a backend
+// with the `native_transitions` capability).
+import { computed, describeNative, easingName, nameEasing } from './motion.js';
 
 /** @param {number} x */
 const linear = (x) => x;
@@ -21,6 +26,20 @@ function cubic_in_out(t) {
   return t < 0.5 ? 4.0 * t * t * t : 0.5 * Math.pow(2.0 * t - 2.0, 3.0) + 1.0;
 }
 
+nameEasing(linear, 'linear');
+nameEasing(cubic_out, 'cubicOut');
+nameEasing(cubic_in_out, 'cubicInOut');
+
+/** The node and the computed style the last built-in read (for its native descriptor). */
+let lastRead = null;
+
+/** `getComputedStyle(node)`, remembered for `nativeTransition`. */
+function read(node) {
+  const style = computed(node);
+  lastRead = { node, style };
+  return style;
+}
+
 /** @param {number | string} value @returns {[number, string]} */
 function split_css_unit(value) {
   const split = typeof value === 'string' && value.match(/^\s*(-?[\d.]+)([^\s]*)\s*$/);
@@ -34,7 +53,7 @@ function css_dimension(property, value, t) {
 
 /** Svelte's `blur`. Natively the blur channel is not animated yet: the opacity part plays. */
 export function blur(node, { delay = 0, duration = 400, easing = cubic_in_out, amount = 5, opacity = 0 } = {}) {
-  const style = computed(node);
+  const style = read(node);
   const target_opacity = +style.opacity;
   const f = style.filter === 'none' ? '' : style.filter;
   const od = target_opacity * (1 - opacity);
@@ -49,7 +68,7 @@ export function blur(node, { delay = 0, duration = 400, easing = cubic_in_out, a
 
 /** Svelte's `fade`: the opacity channel (every backend). */
 export function fade(node, { delay = 0, duration = 400, easing = linear } = {}) {
-  const o = +computed(node).opacity;
+  const o = +read(node).opacity;
   return {
     delay,
     duration,
@@ -60,7 +79,7 @@ export function fade(node, { delay = 0, duration = 400, easing = linear } = {}) 
 
 /** Svelte's `fly`: the transform and opacity channels. */
 export function fly(node, { delay = 0, duration = 400, easing = cubic_out, x = 0, y = 0, opacity = 0 } = {}) {
-  const style = computed(node);
+  const style = read(node);
   const target_opacity = +style.opacity;
   const transform = style.transform === 'none' ? '' : style.transform;
   const od = target_opacity * (1 - opacity);
@@ -82,7 +101,7 @@ export function fly(node, { delay = 0, duration = 400, easing = cubic_out, x = 0
  * part plays.
  */
 export function slide(node, { delay = 0, duration = 400, easing = cubic_out, axis = 'y' } = {}) {
-  const style = computed(node);
+  const style = read(node);
   const opacity = +style.opacity;
   const primary_property = axis === 'y' ? 'height' : 'width';
   const primary_property_value = parseFloat(style[primary_property]);
@@ -114,7 +133,7 @@ export function slide(node, { delay = 0, duration = 400, easing = cubic_out, axi
 
 /** Svelte's `scale`: the transform and opacity channels. */
 export function scale(node, { delay = 0, duration = 400, easing = cubic_out, start = 0, opacity = 0 } = {}) {
-  const style = computed(node);
+  const style = read(node);
   const target_opacity = +style.opacity;
   const transform = style.transform === 'none' ? '' : style.transform;
   const sd = 1 - start;
@@ -139,6 +158,36 @@ function assign(tar, src) {
  * Svelte's `crossfade`: a deferred pair of transitions; the element that is received flies from
  * where the sent one was (`getBoundingClientRect`: the host's `bounds`).
  */
+/**
+ * Svelte's `draw`: the stroke dash channels. The path length is the node's `getTotalLength()`
+ * when the backend has one (presto's path kinds), else 0.
+ */
+export function draw(node, { delay = 0, speed, duration, easing = cubic_in_out } = {}) {
+  let len = typeof node.getTotalLength === 'function' ? node.getTotalLength() : 0;
+  const style = read(node);
+  if (style.strokeLinecap !== 'butt') {
+    len += parseInt(style.strokeWidth);
+  }
+  if (duration === undefined) {
+    if (speed === undefined) {
+      duration = 800;
+    } else {
+      duration = len / speed;
+    }
+  } else if (typeof duration === 'function') {
+    duration = duration(len);
+  }
+  return {
+    delay,
+    duration,
+    easing,
+    css: (_, u) => `
+			stroke-dasharray: ${len};
+			stroke-dashoffset: ${u * len};
+		`,
+  };
+}
+
 export function crossfade({ fallback, ...defaults }) {
   const to_receive = new Map();
   const to_send = new Map();
@@ -185,4 +234,68 @@ export function crossfade({ fallback, ...defaults }) {
   }
 
   return [transition(to_send, to_receive, false), transition(to_receive, to_send, true)];
+}
+
+// ---------------------------------------------------------------------------------------------
+// MOTION-CSS: the built-ins with their native descriptors
+
+const BUILTINS = { fade, fly, slide, scale, blur, draw };
+
+/** The JSON-able parameters the native formulas read (functions resolve in JS). */
+const PARAM_KEYS = ['delay', 'duration', 'x', 'y', 'opacity', 'start', 'amount', 'axis', 'speed'];
+
+/** What the built-ins read from the computed style. */
+const STYLE_KEYS = [
+  'opacity',
+  'transform',
+  'filter',
+  'width',
+  'height',
+  'paddingTop',
+  'paddingBottom',
+  'paddingLeft',
+  'paddingRight',
+  'marginTop',
+  'marginBottom',
+  'marginLeft',
+  'marginRight',
+  'borderTopWidth',
+  'borderBottomWidth',
+  'borderLeftWidth',
+  'borderRightWidth',
+  'strokeLinecap',
+  'strokeWidth',
+];
+
+const natives = new Map();
+
+/**
+ * The built-in `kind` (`fade`, `fly`, `slide`, `scale`, `blur`, `draw`) as a transition function
+ * whose config carries its native descriptor. A custom easing keeps it a plain built-in.
+ */
+export function nativeTransition(kind) {
+  let fn = natives.get(kind);
+  if (fn) return fn;
+  const builtin = BUILTINS[kind];
+  if (!builtin) throw new Error(`[svelters] no native transition '${kind}' (svelte/transition's fade, fly, slide, scale, blur, draw)`);
+  fn = (node, params) => {
+    lastRead = null;
+    const cfg = builtin(node, params);
+    const easing = easingName(cfg.easing);
+    if (easing === null || lastRead?.node !== node) return cfg;
+    const p = { easing };
+    for (const k of PARAM_KEYS) {
+      const v = params?.[k];
+      if (typeof v === 'number' || typeof v === 'string') p[k] = v;
+    }
+    const style = {};
+    for (const k of STYLE_KEYS) {
+      const v = lastRead.style[k];
+      if (v != null) style[k] = String(v);
+    }
+    if (kind === 'draw' && typeof node.getTotalLength === 'function') style.totalLength = node.getTotalLength();
+    return describeNative(node, cfg, { kind, params: p, computed: style });
+  };
+  natives.set(kind, fn);
+  return fn;
 }
