@@ -206,6 +206,11 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             },
         );
         self.doc.resize(id, size_pt, scale);
+        if let Some(blink) = self.doc.caret_blink()
+            && let Some(c) = &self.compositor
+        {
+            c.set_caret_blink(id, blink);
+        }
         self.request_frame(id);
         Ok(id)
     }
@@ -387,11 +392,15 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
                 comp.fast(f);
             }
             comp.commit(c);
-            if let Some(r) = report
-                && let Some(f) = r.frame
-            {
-                comp.ui_cost(w, f, r.cost, r.input);
-            }
+        }
+        if let Some(menu) = self.doc.take_menu_bar() {
+            cx.set_menu_bar(menu.as_ref());
+        }
+        if let Some(comp) = &self.compositor
+            && let Some(r) = report
+            && let Some(f) = r.frame
+        {
+            comp.ui_cost(w, f, r.cost, r.input);
         }
         // The frame clock clears its request on a commit: ask again when the tree is still dirty.
         self.request_if_dirty(w);
@@ -688,6 +697,20 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
 
     fn timer(&mut self, cx: &mut dyn PlatformCx, _now: Time) {
         self.pump(cx);
+    }
+
+    fn menu_activated(&mut self, cx: &mut dyn PlatformCx, id: &str) {
+        self.doc.menu_activated(id);
+        let windows: Vec<WindowId> = self.windows.keys().copied().collect();
+        for w in windows {
+            if self.doc.needs_frame(w) {
+                self.urgent(cx, w);
+            }
+        }
+        if let Some(menu) = self.doc.take_menu_bar() {
+            cx.set_menu_bar(menu.as_ref());
+        }
+        self.flush_fast();
     }
 
     fn a11y_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: A11yEvent) {

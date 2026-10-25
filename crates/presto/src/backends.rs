@@ -25,7 +25,13 @@ pub struct CoreDocument {
     pub doc: Document,
     root_kind: KindId,
     js_events: Vec<JsEvent>,
+    caret_blink: Option<Option<presto_compositor::CaretBlink>>,
+    menu_bar: Option<Option<presto_platform::MenuDesc>>,
+    on_menu: Option<MenuHandler>,
 }
+
+/// Handles a chosen native menu item (`id`) on the document; true when it did.
+pub type MenuHandler = Box<dyn FnMut(&mut Document, &str) -> bool>;
 
 impl CoreDocument {
     pub fn new(doc: Document, root_kind: KindId) -> Self {
@@ -33,6 +39,9 @@ impl CoreDocument {
             doc,
             root_kind,
             js_events: Vec::new(),
+            caret_blink: None,
+            menu_bar: None,
+            on_menu: None,
         }
     }
     /// A document whose built-in kinds have their services: the text system, the platform's interaction
@@ -45,8 +54,32 @@ impl CoreDocument {
         policy: presto_widgets::interact::Policy,
         theme: presto_widgets::theme::Theme,
     ) -> Self {
+        // GTK's one app-wide text selection follows the policy.
+        doc.set_single_selection(policy.one_selection_owner);
+        let tp = presto_widgets::text::TextPolicy::from_policy(
+            presto_widgets::text::Platform::current(),
+            &policy,
+        );
+        let blink = (tp.caret_blink_ms > 0).then(|| presto_compositor::CaretBlink {
+            cycle: std::time::Duration::from_millis(tp.caret_blink_ms as u64),
+            timeout: tp
+                .caret_blink_timeout_ms
+                .map(|ms| std::time::Duration::from_millis(ms as u64)),
+        });
         presto_widgets::host::install(&mut doc, text, policy, theme);
-        Self::new(doc, root_kind)
+        let mut d = Self::new(doc, root_kind);
+        d.caret_blink = Some(blink);
+        d
+    }
+    /// Publishes the native menu bar (the menu-bar kind's `MenuModel::to_menu_desc`; `None` removes it).
+    /// The app hands it to `PlatformCx::set_menu_bar` after its next frame or menu event.
+    pub fn publish_menu_bar(&mut self, menu: Option<presto_platform::MenuDesc>) {
+        self.menu_bar = Some(menu);
+    }
+    /// Where chosen native menu items go (the menu-bar kind's dispatch, once presto-widgets' views
+    /// expose it).
+    pub fn on_menu(&mut self, handler: MenuHandler) {
+        self.on_menu = Some(handler);
     }
     /// The JS-facing events of the last dispatch, then those queued outside dispatch (focus moves,
     /// hover enter/leave, AccessKit actions).
@@ -82,6 +115,18 @@ impl DocumentApi for CoreDocument {
     }
     fn take_fast_commits(&mut self) -> Vec<FastCommit> {
         self.doc.take_fast_commits()
+    }
+    fn caret_blink(&self) -> Option<Option<presto_compositor::CaretBlink>> {
+        self.caret_blink
+    }
+    fn menu_activated(&mut self, id: &str) -> bool {
+        match self.on_menu.as_mut() {
+            Some(h) => h(&mut self.doc, id),
+            None => false,
+        }
+    }
+    fn take_menu_bar(&mut self) -> Option<Option<presto_platform::MenuDesc>> {
+        self.menu_bar.take()
     }
     fn install_clipboard(&mut self, clipboard: Box<dyn presto_platform::Clipboard>) {
         // presto-widgets' text kinds read it as `cx.service::<Box<dyn presto_platform::Clipboard>>()`.
@@ -175,6 +220,9 @@ impl CompositorApi for CompositorHandle {
     }
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId) {
         CompositorHandle::ui_frame_skipped(self, window, frame);
+    }
+    fn set_caret_blink(&self, window: WindowId, blink: Option<presto_compositor::CaretBlink>) {
+        CompositorHandle::set_caret_blink(self, window, blink);
     }
     fn frame_args(&self, window: WindowId) -> Option<presto_frame::FrameArgs> {
         CompositorHandle::frame_args(self, window)

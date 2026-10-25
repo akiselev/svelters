@@ -51,6 +51,7 @@ struct Doc {
     frames: u32,
     duplicates: bool,
     hovers: Vec<Point>,
+    menu: Vec<String>,
 }
 
 impl Doc {
@@ -263,6 +264,18 @@ impl DocumentApi for Doc {
     }
 
     fn window_event(&mut self, _window: WindowId, _ev: &WindowEvent) {}
+
+    fn menu_activated(&mut self, id: &str) -> bool {
+        self.menu.push(id.to_owned());
+        if id == "inc" {
+            self.activate(BUTTON);
+        }
+        true
+    }
+
+    fn caret_blink(&self) -> Option<Option<presto::compositor_crate::CaretBlink>> {
+        Some(Some(presto::compositor_crate::CaretBlink::GTK))
+    }
 
     fn hover(&mut self, _window: WindowId, pos: Point) -> bool {
         self.hovers.push(pos);
@@ -608,4 +621,22 @@ fn the_ime_follows_the_focused_field() {
         "focus left the field: the IME is off"
     );
     assert_eq!(ime.len(), 2, "sent only when it changed");
+}
+
+#[test]
+fn menu_items_reach_the_document_with_an_urgent_frame() {
+    let mut h = harness();
+    h.menu_activated("inc");
+    assert_eq!(h.state().menu, vec!["inc".to_owned()]);
+    h.run();
+    assert!(h.query_by_label("Count: 1").is_some());
+}
+
+#[test]
+fn new_windows_get_the_policy_caret_blink() {
+    let h = harness();
+    assert_eq!(
+        h.compositor().caret_blinks(),
+        vec![(h.window(), Some(presto::compositor_crate::CaretBlink::GTK))]
+    );
 }
