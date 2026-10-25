@@ -26,6 +26,7 @@ pub mod column;
 pub mod text_painter;
 pub mod geom;
 pub mod item_keys;
+pub mod kinds;
 pub mod resize;
 pub mod selection;
 pub mod shim;

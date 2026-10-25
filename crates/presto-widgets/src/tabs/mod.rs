@@ -16,6 +16,8 @@
 //! [`TabView`] is the kind's native state (selection, hover, press, scroll); [`TabStrip`] is the
 //! caption geometry, rebuilt when captions, look or width change.
 
+pub mod kinds;
+
 use crate::table::shim::{self, Emit, HAlign, TextPainter, TextStyle, Value};
 use presto_base::accesskit;
 use presto_base::color::Color;

@@ -15,8 +15,15 @@ registered on presto-core through `host::register` (`Hosted<W>`). `table/text_pa
 tier-1 `TextPainter` over the substrate's `TextShaper` (presto-text), honouring the requested family,
 size, weight and colour, with the shaper's own one-line ellipsis. The picker look comes from the built-in
 theme's tokens (`PickerLook::from_theme`).
-The container and popup kinds (`table`, `tab-view`, `date-picker`, `color-picker`) have no `Kind` impl
-yet: see "presto-core gaps". Nothing here returns a fake success.
+After CORE-3's hooks landed (ci/presto-base 0ef700c1, merged at `c9e8694e`), the container kinds
+implement `presto_core::Kind` directly (the hosted interface carries no child props and hard-codes its
+placing kinds): `tabs/kinds.rs` has `tab-view` (`places_children`: the strip as `chrome_padding`, the
+selected page shown and the others `display: none` through `child_layout`; captions read through
+`NodeView::child`) and `tab`; `table/kinds.rs` has `table` (`folds_children`: its `table-column`
+children are data it reads in `measure`/`prepare`; JS methods `set-rows`, `set-ids`, `clear-rows`,
+`scroll-to-row`, `fit-columns` through `Kind::call`) and `table-column`. Both shape with the document's
+presto-text service (`text_painter::{with_text, record_core}`). Only the popup kinds (`date-picker`,
+`color-picker`) have no `Kind` impl (gap 4). Nothing here returns a fake success.
 
 ## What landed
 
@@ -73,13 +80,12 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
 
 ## presto-core gaps (for lane CORE / the consolidation)
 
-1. **Children's props in `prepare`/`record`/`measure`.** `NodeView::children` gives ids only; `tab-view`
-   needs its `tab` children's `title`/`closable`, `table` its `table-column` children's props. Ask: a
-   `NodeView` for a child (`PrepareCx::child(i)` or `view(node)` as `EventCx` has).
+1. **Children's props.** Closed: `NodeView::child`/`view` (CORE-3); `tab-view` and `table` read their
+   children through them. (The hosted interface, `shim::core`, still carries none, so these kinds
+   implement `presto_core::Kind` directly.)
 2. **Styled text.** Closed through the substrate: `host.rs` shapes `RichText` with any style through the
    thread's presto-text `TextSystem` (`table/text_painter.rs`).
-3. **Parent-placed children.** `tab-view` lays out only the selected page and hides the others; core's
-   layout is not written yet. Ask: a hook for a container kind to place or hide its children.
+3. **Parent-placed children.** Closed: `places_children` + `child_layout` and `chrome_padding` (CORE-3).
 4. **Popups.** `date-picker`/`color-picker` popups need an overlay layer anchored to the node
    (architecture §14; views lane's placement).
 5. **Focus stops inside a kind.** `color-editor` has several inner controls (square, strips, channel
@@ -89,6 +95,20 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
    core). `dnd::DragSession`/`DragSource` then become a reference for that plumbing (their tests state the
    event order to keep); what stays here for core to call: `accepts`/`type_matches`, `DragPayload::best`,
    `DropAction::from_modifiers`, `uri_list`, `edge_scroll`, and the ghost and drop-line recording.
+   Now (0ef700c1) core runs in-app drags (`presto_core::input::dnd`); `dnd/mod.rs`'s doc marks what that
+   supersedes. Still open: OS file drags (core ignores `FileHovered`/`FileDropped`), JS-side id payloads
+   (core's `drag-data` is a string), and a drag-layer / drop-indication hook from which to record
+   `dnd::ghost` (the target only gets `:drop-target` for CSS).
+7. **Emitting from `prepare`.** `table`'s `range` (and a restored `header-state`'s events) come out of
+   its `prepare`, which cannot emit: the kind holds them and delivers them with the table's next event
+   or method call. Ask: an emit queue (or `wake_at`) in `PrepareCx`.
+8. **Emitting on, and writing props of, another node.** `close-requested` belongs on the `tab`, but
+   `EventCx::emit` emits only from the tab-view (it carries the page index instead); a column resize
+   cannot write the `table-column`'s `width` (it stays in the table; `column-resized` reports it). Ask:
+   `EventCx::emit_on(child)` and `set_native_on(child)`.
+9. **Smaller ones.** `record` has no clock (the table's resize-edge hover delay uses the last event's
+   time); a `tab`'s `title` change does not tell its tab-view (the strip refreshes at the tab-view's next
+   layout); captions are not AccessKit nodes (core builds one node per tree node).
 
 ## Cross-lane edits
 
@@ -106,10 +126,10 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
 2. **dialog-buttons.** WIDGETS-VIEWS' list has the `dialog-buttons` kind; this lane has "dialog button
    order per OS". Recommendation: as done: the order logic lives in `dialogs/` and the views kind calls
    `order_buttons`.
-3. **Remaining Kind glue.** Recommendation: once the core gaps above are closed, a fresh session adds
-   the `Kind` impls of table, table-column, tab-view, tab, date-picker and color-picker (the models are
-   done; the glue follows `pickers/kinds.rs`: a `shim::core::Kind` registered with `host::register`).
-   The substrate's contexts also lack children's props (gap 1).
+3. **Remaining Kind glue.** Only `date-picker` and `color-picker` (gap 4: overlay layers). Their models
+   and specs are done; the glue follows `pickers/kinds.rs`. Recommendation: WIDGETS-BASIC either adds
+   child views and a placing list to `shim::core`/`host.rs`, or the container kinds stay on
+   `presto_core::Kind` as `tabs/kinds.rs` and `table/kinds.rs` do now.
 4. **rfd default.** svelters-egui had `dialogs` on by default; here it is off (fewer CI dependencies).
    Recommendation: the presto app crate (`presto` facade or svelters-presto) turns `presto-widgets/dialogs`
    on.
