@@ -69,6 +69,7 @@ pub struct FontStore {
     faces: RwLock<Faces>,
     coords: RwLock<HashMap<u64, Arc<[i16]>>>,
     default_family: String,
+    system_fonts: bool,
 }
 
 impl std::fmt::Debug for FontStore {
@@ -90,6 +91,7 @@ impl FontStore {
             faces: RwLock::default(),
             coords: RwLock::default(),
             default_family: cfg.default_family,
+            system_fonts: cfg.system_fonts,
         };
         for bytes in cfg.bundled {
             store.register_font_inner(bytes, !cfg.system_fonts);
@@ -107,7 +109,7 @@ impl FontStore {
 
     /// Registers the faces in a font file. Returns the families it added to. Bumps the generation.
     pub fn register_font(&self, bytes: Vec<u8>) -> Vec<String> {
-        let names = self.register_font_inner(bytes, false);
+        let names = self.register_font_inner(bytes, !self.system_fonts);
         self.generation.fetch_add(1, Ordering::Relaxed);
         names
     }

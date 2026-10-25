@@ -272,13 +272,7 @@ impl TextSystem {
             key,
             Shaped { layout, bytes, last_used: self.generation, broken: None, widths: None, placed: Vec::new() },
         );
-        self.evict_if_over();
-    }
-
-    fn evict_if_over(&mut self) {
-        if self.bytes > self.budget {
-            self.evict();
-        }
+        self.evict();
     }
 
     /// Families of the symbol chain to append for the Common-script symbols in `text`.
@@ -448,7 +442,8 @@ fn place(
     let line_count = layout.len();
     let visible = text.max_lines.map(|m| (m.max(1) as usize).min(line_count)).unwrap_or(line_count);
     let mut out = TextLayout { text_len: text.text.len(), rtl, ..Default::default() };
-    out.truncated = visible < line_count;
+    let dropped = visible < line_count;
+    out.truncated = dropped;
 
     for (li, line) in layout.lines().enumerate().take(visible) {
         let m = *line.metrics();
@@ -488,7 +483,7 @@ fn place(
 
         // Cut this line for max_lines or an overflowing width.
         let content_w: f32 = raw.iter().map(|c| if c.tab { tab } else { c.advance }).sum();
-        let cut_by_lines = out.truncated && li + 1 == visible;
+        let cut_by_lines = dropped && li + 1 == visible;
         let overflow = max_width.is_some_and(|w| content_w > w + 0.01);
         let ellipsis = if text.ellipsis && (cut_by_lines || overflow) { aux.and_then(|a| a.ellipsis.clone()) } else { None };
         if text.ellipsis && overflow {
