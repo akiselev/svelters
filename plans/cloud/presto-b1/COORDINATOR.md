@@ -47,6 +47,10 @@ brief's signatures until the wave-1 skeletons are merged into `ci/presto-base`.
 | CORE-2 | `ci/presto-core-2` | `session_01QDYxkmxLL2rFtDDfSbu4ow` | style table, DESC_NONPASSIVE, CORE's not-done list (CORE's a07c3189 wins on overlap) |
 | BERTH | berth `claude/presto-berth` | `session_01FfrTeoE8knLYGyFeFf9Ss3` | presto_berth |
 | QUIRE | quire `claude/presto-quire` | `session_01VFabqgKPiq5AmCkua2ntGG` | presto_quire |
+| CADATOMIC (b3) | cadatomic `claude/presto-adoption` | `session_01EHpySAKp1WzwLa6e6y6vV8` | W-D1, brief `plans/cloud/presto-b3/LANE-cadatomic.md` |
+| CANVAS (b3) | `ci/presto-canvas` | `session_01RS7HGPNSY8j4mR36Fty4ZJ` | W-V1/W-V2 presto side |
+| TEST-V2 (b3) | `ci/presto-test-v2` | `session_01FZ1DXSABohru158URTe1mR` | W-T2 |
+| CONSOLIDATION-1 | `ci/presto-integration` | `session_016SQDMJubiR73cQAPuXCT1k` | brief `CONSOLIDATION-1.md` |
 | CORE-3 | `ci/presto-core-3` | `session_012X4RdtAUrgfNuRfD1Vh4ge` | WIDGETS-BASIC core requests (a)–(j) plus the shared drag/anchor members |
 
 Merged into `ci/presto-base` so far: platform skeleton, frame-anim, compositor skeleton, core (full batch-1 scope and
@@ -100,3 +104,26 @@ when the five svelters workflows plus `presto` are green.
 - WIDGETS-BASIC stopped at 03eb08df (merged). Open: cancelable `changed` after CORE-3's two-phase dispatch (message session_012eauTkCP7to4arcKCPJvRq), OutsidePress core half (CORE-3), questions 1–5 in its record; its tests have no CI result yet.
 - CORE-3 d39eaf4b merged. Sync delivery decided (coordinator, 2026-10-25), overruling two-phase: the lent document (`set_sync_delivery(FnMut(&mut Document, &JsEvent) -> Outcome)`, deliverer taken out for the call), because a kind's own cancelable signals are raised inside the native default and two-phase couldn't prevent them.
 - 19:53 UTC: consolidation 1 launched, session_016SQDMJubiR73cQAPuXCT1k, branch ci/presto-integration, brief CONSOLIDATION-1.md.
+- 19:55 UTC: wave-3 lanes CADATOMIC, CANVAS, TEST-V2 launched. Not launched: wgpu fork patches P1–P4 (a fork is made only when a release blocks work; none does yet). CORE-3 e2b96936 merged (96426b4a).
+- RENDER final 054196d7 (merged f0c33126). CI 40225795440: presto-render's 26 unit and 13 GPU tests pass on lavapipe,
+  WARP/DX12 and Metal. Decided (coordinator, 2026-10-25): upload references as CI artifacts; colourless coverage
+  icons take currentColor; per-layer instance caching only after a measurement. Red in that run, routed:
+  presto-core `paint_transitions_sample_on_the_ui_thread` (CORE-3); three presto-widgets slider float-equality
+  tests (WIDGETS-BASIC); presto-platform `os_time_is_in_the_past` (fixed in 47bbd1e4, which postdates that run).
+- CORE-3 342cf6be merged: nested sync events are queued and delivered (not cancelable) after the causing listener
+  returns; light dismiss core half (`Kind::light_dismiss`, `outside_press`). Not done: compaction, incremental
+  layers/hits, OS file drops, GTK single selection owner.
+- CADATOMIC decisions (coordinator, 2026-10-25): cadatomic and presto_berth name presto-* by branch ci/presto-integration (CADATOMIC may push that manifest change to berth claude/presto-berth); adapter/limits hooks in CompositorConfig (sent to COMPOSITOR); berth pin moves to claude/presto-berth on claude/presto-adoption only, in its own commit.
+- Consolidation 1 interim: ci/presto-integration 65ead449 (code f5d7ab0c, from base 82e166e2), all 11 lanes merged,
+  workspace check clean. FIX-QUEUE routed (coordinator, 2026-10-25): F1/F2 COMPOSITOR; F3–F5 CORE-3; F6 already fixed
+  (966d4d75, base c65b2e79); F7 done (svelters-presto 80189479); F8 TextServices + F9 backend selection to APP-TEST;
+  F10 presto.yml checks presto-widgets `dialogs` (this commit); F11 berth/quire at consolidation 2; F13 at consolidation 2.
+- CORE-3 final ceaf16b8 and COMPOSITOR 9a58f1c4 merged (177731fd): F1–F5 fixed (presto-core --lib 119/119 locally). Slider tests disputed (CORE-3: fail; WIDGETS-BASIC: 19/19 pass after 966d4d75); consolidation 1 settles it. Done lanes now: CORE, CORE-2, CORE-3, PLATFORM, RENDER, RUNTIME, WIDGETS-BASIC, BERTH, QUIRE.
+- MACOS a706b24f (code bef22840): presto CI check green on all OSes, its unit tests pass on macOS; nothing run on Mac hardware. Q1–Q7 decided as recommended (coordinator, 2026-10-25); MACOS adds PlatformCx::set_text_input, WindowDesc.custom_title_bar and the key-code/Moved docs; WIN32/WAYLAND adopt after.
+- APP-TEST c091234d closes F8 (widget services via CoreDocument::with_widgets, clipboard service, fast-commit drain) and F9 (presto::run backend selection, winit fallback, PRESTO_BACKEND). It contains integration 65ead449, so it merges into ci/presto-integration, not base.
+- WIN32 a051ddbd (own backend, no winit; CI 40226717129 on 07bb50d1: crate tests pass on all three OSes). Decided (coordinator, 2026-10-25): (a) WIN32 adds OsLayerCommitter::new; (b) DXGI waitable through before_present/wait, no FrameSource widening; (c) DeleteSurrounding-before-Commit documented in presto-base; (d) DwmExtendFrameIntoClientArea [local]. Open for consolidation 2: drag-source, popup and fullscreen APIs in presto-platform. WAYLAND 880ec338 adopted the shared API.
+- FRAME-ANIM final (a9503acb, fully in base): presto-frame and presto-anim pass on all three OSes (run 40226563028). Same run: svelters macos-appkit failed (counter-mac backend). Consolidation 1 must check whether integration reproduces it. Left out: filter values (AnimValue::Filter), 3-D transforms, invariant 6, EDF GPU ordering.
+- EGUI-ISLAND b1a9d379 (code 0dd5a347): every target passes on all three OSes. Decided: Rotate clockwise-positive (doc in presto-base), UI-thread island rendering, Q4 EguiIslandKind + mount API now (for CADATOMIC/presto_berth), PrestoDrag shim onto core DnD. linux-gtk eframe_idle idle-CPU failure called load flake by the lane; consolidation to confirm.
+- WIDGETS-VIEWS ae617f24: 19 view kinds; presto-widgets 370/3 in run 40227999085 (the 3 are the since-fixed slider tests). Decided (coordinator, 2026-10-25): Q1 300 ms latch (consolidation 2 checks it against Chromium's source), Q2 inner windows in the overlay stack, Q3 NSMenu owned by MACOS from MenuModel (menu-bar hidden on macOS), Q4 disabled rows reachable (disabled_focusable=false skips), Q5 platforms emit AltLeft/AltRight, Q6 common scroll event, Q7 menu roots not in Tab order, Q8 anchor prop kept. host.rs PLACING/parts_of to spec-driven: WIDGETS-BASIC.
+- MACOS ff854b58 merged: native menu bar API in presto-platform (MenuDesc/MenuNode, PlatformCx::set_menu_bar -> bool, AppHandler::menu_activated). Consolidation 2: crates/presto routes menu_activated to the menu-bar kind; WIN32/WAYLAND keep the default (false).
+- CADATOMIC milestone 1 (claude/presto-adoption): the whole app in one EguiIsland under presto, seen live under Xvfb; native status bar; CancelClose bridge; key pre-dispatch; adapter/limits ported; builds on ci/presto-integration. WIDGETS-BASIC df3c476d merged (spec-driven parts/places_children, host tests 12/12). EGUI-ISLAND gets physical_key mapping and the device-reset path.

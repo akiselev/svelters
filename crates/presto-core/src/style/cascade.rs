@@ -448,12 +448,15 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
         b.outline_offset = px(c.get("outline-offset")).unwrap_or(0.0);
     }
     if let Some(ComputedValue::Transitions(ts)) = c.get("transition") {
+        // the engine keeps seconds as f32 (`0.1` is 0.100000001…): round to whole microseconds so
+        // `100ms` lasts exactly 100 ms
+        let span = |s: f32| Span::from_micros((s as f64 * 1e6).round() as i64);
         b.transitions = ts
             .iter()
             .map(|t| super::TransitionSpec {
                 property: Arc::from(&*t.property),
-                duration: Span::from_secs_f64(t.duration as f64),
-                delay: Span::from_secs_f64(t.delay as f64),
+                duration: span(t.duration),
+                delay: span(t.delay),
                 easing: easing(&t.timing),
             })
             .collect();
@@ -792,8 +795,9 @@ impl Document {
         let new_box = if *old_box == new_box { old_box } else { Arc::new(new_box) };
         self.style.nodes[i].computed = new_box;
         self.style.nodes[i].css = Some(Arc::new(css));
-        if first || self.layout[i].style != tstyle {
-            self.layout[i].style = tstyle;
+        if first || *self.layout[i].style != tstyle {
+            let key = crate::compact::style_key(&tstyle);
+            self.layout[i].style = self.styles.intern(tstyle, key);
             self.invalidate_style(i);
             self.layout[i].intrinsic = None;
         }
@@ -922,7 +926,7 @@ impl Document {
                 keyframes: vec![Keyframe { offset: 0.0, value: from, easing: None }, Keyframe { offset: 1.0, value: to.clone(), easing: None }],
                 timing,
             };
-            list.push(UiTransition { prop, generator, start: None, to });
+            list.push(UiTransition { prop, generator, start: None, to, length: t.delay + t.duration });
         }
     }
 
@@ -942,11 +946,12 @@ impl Document {
             let mut ended = Vec::new();
             for mut t in list {
                 let start = *t.start.get_or_insert(now);
-                let s = presto_anim::sample(&t.generator, start, now);
+                let mut s = presto_anim::sample(&t.generator, start, now);
+                s.done |= now - start >= t.length;
                 let v = if s.done { t.to.clone() } else { s.value.clone().unwrap_or_else(|| t.to.clone()) };
                 match (t.prop, &v) {
                     (UiProp::Width | UiProp::Height, AnimValue::Length(l)) => {
-                        let size = &mut self.layout[i].style.size;
+                        let size = &mut std::sync::Arc::make_mut(&mut self.layout[i].style).size;
                         let d = if t.prop == UiProp::Width { &mut size.width } else { &mut size.height };
                         if d.into_option() != Some(*l) {
                             *d = taffy::Dimension::length(*l);

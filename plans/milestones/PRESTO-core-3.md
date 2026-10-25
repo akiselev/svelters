@@ -37,8 +37,12 @@ delivery is a plain call:
   (the caller checks `Document::contains`); a target that a `pointerdown` listener removed gets no
   native default;
 - a write to the node whose kind is mid-handler (the kind is out of its slot) is stored and replayed
-  to the kind's `prop_changed` when the handler returns; a cancelable signal raised while the deliverer
-  runs (nested) is queued, not delivered.
+  to the kind's `prop_changed` when the handler returns;
+- **nested delivery** (coordinator's rule to pin, 2026-10-25): a sync event raised while the deliverer
+  runs (`el.click()`, a `focus()`'s focus events, a kind's `emit_sync`) is never dropped and never
+  re-enters the deliverer: it is delivered, **not cancelable**, right after the listener call that
+  caused it returns, before the outer event's default runs, repeatedly until none is left (test
+  `hooks::nested_sync_events_follow_the_listener`).
 
 ## 2. (i) scope activation, (j) label `for`
 
@@ -101,7 +105,7 @@ dispatch nothing), auto-scroll near a scroll container's edge during a drag, the
 | event time | `EventCx::time()` (the event's OS time; a timer's deadline). Not duplicated into `Event`. |
 | padding edges, window transform | `NodeView::{padding, content_box, window_transform, from_window}`. |
 | IME-first route | `Document::set_ime_source(window, active)`: during a composition every key goes to the IME, and with an IME source active printable keys without a chord do, before the command keymap (`Dispatched::to_ime`), as `keys::route`. |
-| GTK's one selection owner | Not done (not in the coordinator's list); a `Kind` hook "selection lost" is the shape when asked. |
+| GTK's one selection owner | `Document::set_single_selection(on)` (GTK policy; off by default); a text kind calls `EventCx::claim_selection()` when it selects something and `release_selection()` when it collapses; the previous owner gets `Kind::selection_lost(cx)` (the field's `collapse_to_start`). One owner per document. |
 
 ### QUIRE: kind-owned scrolling
 
@@ -111,15 +115,26 @@ recorded in content space and placed in that layer, and `EventCx::scroll_fast` m
 at once (the next commit carries the same offset as a property op; no re-record). Wheel defaults work on
 it like any scroll container. Pointer positions stay in the border box (add `scroll_offset`). Recording
 now runs before the property refresh in the dirty walk, so the scroll node exists from the first frame.
-Not done: a kind creating several layers of its own (gutter, minimap); the shape would be child nodes
-with `will-change` today.
+Not done: a kind creating several layers of its own (gutter, minimap). Not cheap: lists, items and
+layers are one per node, so it needs per-kind sub-lists through the recorder, the rebuild walk and the
+commit. Today the shape is child nodes with `will-change: transform` (each gets its own layer) or a
+self-scrolling child.
+
+### WIDGETS-BASIC: light dismiss
+
+`Kind::light_dismiss(&NodeView) -> bool` (asked after every prop write and every call into the kind; the
+document keeps the set) and `Kind::outside_press(&mut self, cx, &PointerInput) -> Handled`: on a pointer
+down in a window, before the press is dispatched (it is not consumed), every light-dismiss node of that
+window whose subtree does not hold the hit target hears of it, topmost (latest in paint order) first,
+`local` in its own space. A method rather than an `Event::OutsidePress` variant, so the bridge's
+exhaustive `Event` match keeps compiling.
 
 ## 4. The rest of CORE-2's list
 
 | Item | State |
 |---|---|
 | Queries (svelters-egui `scene/query.rs`) | Done (`query.rs`): kind sets kept by create/free (`Document::kinds_of`), `Document::query()` → `Query` with `kind`, `in_window`, `within`, `anchor`, `state`, `prop_eq`, `changed_since`, then `collect`/`first`/`count` (it walks the kind set, else the scope in pre-order, else the anchors, else every node); `Document::select(root, css)` and `matches(node, css)` through svelters-style's selector matcher. Anchors: `find_anchor` (one anchor map, filtered by window; `anchor-scope` qualification is not applied). |
-| Interner/compaction (`compact.rs`) | Not done. `ComputedBox` is already shared (`Arc`); the taffy style per node (`LayoutBox::style`, inline) is what an interner would shrink. Recommendation: do it when a 10k-node screen is profiled; it touches every `layout[i].style` writer. |
+| Interner/compaction (`compact.rs`) | Done for the layout column: `LayoutBox::style` is an `Arc<taffy::Style>` interned at restyle (svelters-egui's `Interner` and `style_key`, pruned as the table grows); the few in-place writers (window root size, virtual rows, size transitions) copy on write. `ComputedBox` was already shared. svelters-egui's boxed leaf cache and `BoxRect` are not ported (taffy's `Layout` stays whole: the a11y and padding reads use it). |
 | `resources.paths` | Done: `PrepareCx::upload_path(Arc<PathData>) -> PathId`, `release_path`; the commit carries `paths`/`removed_paths`. |
 | Layer `opaque` | Done: a content layer (or the root) whose owner's list starts with a square opaque solid quad covering its box, at full opacity, with no effect node. Re-recording a layer owner rebuilds so the flag follows. |
 | Layer `Damage` | Not filled, on purpose: the compositor derives damage from changed lists and property ops (`presto-compositor` `damage.rs`); `LayerDelta::Damage` is for extra damage only (canvas chunks), which no core kind produces. |
@@ -133,15 +148,29 @@ Also: `NameSource::Children` now computes the name from the descendants' text (C
 Written, not run (the brief's rule): `src/tests/hooks.rs` (parts, listened, prop state, scale, chrome,
 child layout, inert, peers and Tab stop and roving, Enter/Escape and auto-default, label for and
 `labelled_by`, `invalid`, enum attributes, status tip, `emit_sync` and a prevented `pointerdown` through
-the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/runner.rs`; in `hooks.rs` the lent deliverer, self-scroll
+the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/runner.rs`; in `hooks.rs` the lent deliverer, nested delivery, light dismiss, self-scroll
 with fast scroll and caret, padding and window transform; in `dispatch.rs` the IME-source route; `src/tests/query.rs`; in `src/tests/a11y.rs` a move re-sending only
 the moved node (local bounds, parent-relative transform), an inserted subtree joining incrementally, and a
 name from children.
 
-## Built / not run
+## Built / run
 
-`cargo check -p presto-core -p presto-widgets --all-targets` after each part. No test run, no clippy, no
-other OS. CI on the pushed sha is in the coordinator message.
+`cargo check -p presto-core -p presto-widgets --all-targets` after each part. Once at the end, when the
+coordinator asked me to check RENDER's failing `paint_transitions_sample_on_the_ui_thread`: `cargo test
+-p presto-core --lib` (119 passed after the fixes below) and `cargo test -p presto-widgets` (245 passed;
+3 failed: `controls::slider::tests::{dragging_the_thumb_changes_the_value,
+escape_while_dragging_restores_without_a_commit, inverted_page_clicks_and_commit_mode}`, float equality
+on the shim's test driver, no presto-core involved: WIDGETS-BASIC's). Not run: clippy, other OSes.
+
+Fixes from that run:
+- `paint_transitions_sample_on_the_ui_thread` was not wall-clock: svelters-style keeps transition times
+  as f32 seconds, so `100ms` became 100 000 001 ns and the transition was still running at +100 ms.
+  Durations and delays are now rounded to whole microseconds, and a UI transition ends by exact time
+  arithmetic (`start + delay + duration`), not by the sampled float progress.
+- Native prop writes a kind made during its own handler skipped `prop_state` (the kind was out of its
+  slot): the document now refreshes prop state and inert children when the kind is put back, and only
+  JS writes (not the kind's own) are replayed to `prop_changed`.
+- Four new tests assumed a row layout; the test root is a column: they click node centres now.
 
 ## For WIDGETS-BASIC (host.rs bridge)
 
