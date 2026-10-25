@@ -414,7 +414,7 @@ unsafe extern "C" fn wrap_op(ctx: *mut qjs::JSContext, _this: qjs::JSValue, _arg
             2 => {
                 let slot = node_slot(c, cx, arg(0))?;
                 let i = match number(arg(1)) {
-                    Some(n) if n >= 0.0 && n < 4096.0 && n.fract() == 0.0 => n as usize,
+                    Some(n) if (0.0..4096.0).contains(&n) && n.fract() == 0.0 => n as usize,
                     _ => return Err(Exception::throw_range(c, "wrapHandler: index out of range")),
                 };
                 let f = arg(2);
