@@ -364,7 +364,7 @@ fn folded_of(node: NodeView<'_>, tag: &str) -> Vec<w::Value> {
     if !FOLDING.contains(&tag) {
         return Vec::new();
     }
-    run::fold(&run_nodes(&|id| node.view(id), node.children()))
+    run::fold(&run_nodes(&|id| node.view(id), node.children(), css_color(node.css(), "color")))
 }
 
 /// The state bits presto-core writes itself; the bridge never writes them back.
@@ -424,15 +424,33 @@ fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, parts: &'a [(&'sta
     w::Styles { computed: css, parts, children, state: StateBits(state.0), dark }
 }
 
-/// The run children under `ids` (`controls::run`), read through `view_of`.
-fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId]) -> Vec<RunNode> {
+/// A computed colour of `css`.
+fn css_color(css: Option<&svelters_style::ComputedStyle>, name: &str) -> Option<presto_base::color::Color> {
+    match css?.get(name)? {
+        svelters_style::ComputedValue::Color(c) => Some(crate::paint::color_of(*c)),
+        _ => None,
+    }
+}
+
+/// The run children under `ids` (`controls::run`), read through `view_of`, with what their computed
+/// style sets: a colour other than `parent`'s, a weight, italic.
+fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId], parent: Option<presto_base::color::Color>) -> Vec<RunNode> {
     ids.iter()
         .filter_map(|&id| {
             let v = view_of(id)?;
             let spec = v.kind().spec;
+            let css = v.css();
             let href = spec.prop_named("href").and_then(|p| v.prop_str(p)).unwrap_or("").to_owned();
-            let weight = spec.prop_named("font-weight").and_then(|p| v.prop(p)).and_then(Value::as_i64).unwrap_or(0);
-            Some(RunNode { tag: spec.name.to_owned(), text: v.text().to_owned(), href, weight, children: run_nodes(view_of, v.children()) })
+            let prop_weight = spec.prop_named("font-weight").and_then(|p| v.prop(p)).and_then(Value::as_i64).unwrap_or(0);
+            let css_weight = match css.and_then(|c| c.get("font-weight")) {
+                Some(svelters_style::ComputedValue::FontWeight(w)) => *w as i64,
+                _ => 0,
+            };
+            let italic = matches!(css.and_then(|c| c.get("font-style")), Some(svelters_style::ComputedValue::Keyword("italic" | "oblique")));
+            let own = css_color(css, "color");
+            let color = own.filter(|c| Some(*c) != parent);
+            let children = run_nodes(view_of, v.children(), own.or(parent));
+            Some(RunNode { tag: spec.name.to_owned(), text: v.text().to_owned(), href, weight: prop_weight.max(css_weight), italic, color, children })
         })
         .collect()
 }
