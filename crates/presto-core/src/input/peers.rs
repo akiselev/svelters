@@ -56,9 +56,7 @@ fn call_peer(doc: &mut Document, to: NodeId, from: NodeId, msg: &PeerMsg, emitte
         let mut cx = EventCx { doc, node: to, emitted, pointer: None };
         k.peer(&mut cx, from, msg)
     };
-    if let Some(i) = doc.idx(to) {
-        doc.kinds[i] = Some(k);
-    }
+    doc.restore_kind(to, k);
     h
 }
 

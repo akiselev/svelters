@@ -80,7 +80,7 @@ kind_props! {
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
-    SignalSpec::new("changed", &[("checked", ValueType::Bool)], "The user toggled it; carries the new `checked` (`indeterminate` is announced as a prop)."),
+    SignalSpec::new("changed", &[("checked", ValueType::Bool)], "The user toggled it; carries the new `checked` (`indeterminate` is announced as a prop). Preventing it keeps the value.").cancelable(),
     SignalSpec::new("clicked", &[], "Pressed and released (or Space, Enter, AccessKit `Click`)."),
 ];
 
@@ -284,6 +284,9 @@ impl Checkbox {
 }
 
 impl Kind for Checkbox {
+    fn parts() -> &'static [&'static str] {
+        &["indicator", "mark", "icon", "label"]
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         self.mirror(crate::interact::StateBits::NONE)
     }
@@ -335,7 +338,10 @@ impl Kind for Checkbox {
         }
         for Toggle::Toggled { checked, indeterminate } in toggled.iter().copied() {
             // EV1: the signal goes out before the default action (the prop writes)
-            common::emit(cx, &SPEC, "changed", vec![Value::Bool(checked)]);
+            if common::emit_sync(cx, &SPEC, "changed", vec![Value::Bool(checked)]) {
+                // prevented: the value stays (the toggle unit's bits are put back below)
+                continue;
+            }
             if self.props.checked != checked {
                 self.props.checked = checked;
                 cx.prop_changed(P::checked.id());
@@ -345,6 +351,8 @@ impl Kind for Checkbox {
                 cx.prop_changed(P::indeterminate.id());
             }
         }
+        // a prevented toggle leaves the unit's bits at the new value: back to the props
+        *cx.state = self.mirror(*cx.state);
         if pass.resp.hovered || pass.resp.down_on || !pressed.is_empty() || !toggled.is_empty() { Handled::Yes } else { Handled::No }
     }
 
@@ -550,5 +558,15 @@ mod tests {
         assert_eq!(testkit::a11y(&c, StateBits::NONE, SIZE).toggled(), Some(accesskit::Toggled::Mixed));
         c.props.disabled = true;
         assert!(testkit::a11y(&c, StateBits::NONE, SIZE).is_disabled());
+    }
+
+    #[test]
+    fn a_prevented_changed_keeps_the_value() {
+        let mut d = Driver::new(Checkbox::default(), presto_base::geom::Size::new(80.0, 20.0));
+        d.prevent = vec!["changed"];
+        d.click();
+        assert!(d.names().contains(&"changed"));
+        assert!(!d.kind.props.checked && !d.state.contains(StateBits::CHECKED), "the toggle did not happen");
+        assert!(!d.changed.contains(&"checked"));
     }
 }
