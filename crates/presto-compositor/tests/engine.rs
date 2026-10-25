@@ -1,9 +1,10 @@
-//! The compositor engine driven with a virtual clock and a recording backend: commit folding, fast
-//! commits, damage per frame, the frame loop of a fling with no commits, animations.
+//! The compositor engine driven with a virtual clock and a recording backend, with the real frame
+//! clock (presto-frame) and animation math (presto-anim): commit folding, fast commits, damage per
+//! frame, the frame loop of a fling with no commits, animations, resize, visibility.
 
 use presto_base::anim::{
     AnimProperty, AnimValue, AnimationCmd, AnimationEvent, AnimationSpec, Easing, FillMode, FlingCurve, Generator,
-    Keyframe, PlaybackDirection, StartTime, Timing, TransformFn,
+    Keyframe, PlaybackDirection, StartTime, Timing,
 };
 use presto_base::color::{Color, Fill};
 use presto_base::commit::{Commit, FastCommit, ToUi};
@@ -15,8 +16,7 @@ use presto_base::props::{EffectNode, OverscrollBehavior, PropOp, ScrollNode, Tra
 use presto_base::scene::FrameScene;
 use presto_base::time::{Span, Time};
 use presto_compositor::core::{Backend, DrawOutcome, Engine, EngineConfig, Msg};
-use presto_compositor::pacer::IntervalPacer;
-use presto_compositor::seams::{AnimSampler, Sample, ScrollMotion};
+use presto_compositor::seams::{self, ScrollMotion};
 use presto_compositor::tree::SurfaceKey;
 use std::sync::{Arc, Mutex};
 
@@ -29,6 +29,8 @@ const EFFECT: PropNodeId = PropNodeId(4);
 const A: NodeId = NodeId::new(1, 1);
 const B: NodeId = NodeId::new(2, 1);
 const INTERVAL: Span = Span::from_micros(16_667);
+/// 1 ms after a tick of the timer's vsync grid, so test events land well before the next tick.
+const T0: Time = Time(INTERVAL.0 as u64 * 60 + 1_000_000);
 
 #[derive(Debug, Clone)]
 struct Drawn {
@@ -50,7 +52,7 @@ impl Backend for FakeGpu {
     fn unregister_texture(&mut self, _: TextureId) {}
     fn draw(&mut self, _: WindowId, _: SurfaceKey, frame: Option<FrameId>, scene: &FrameScene<'_>) -> DrawOutcome {
         self.draws.push(Drawn { frame, damage: scene.damage.to_vec(), items: scene.items.len() });
-        DrawOutcome::Presented
+        DrawOutcome::Presented { submitted: Time(0) }
     }
     fn recover(&mut self) -> bool {
         true
@@ -59,7 +61,7 @@ impl Backend for FakeGpu {
 
 type Sent = Arc<Mutex<Vec<ToUi>>>;
 
-fn engine(anim: Option<Arc<dyn AnimSampler>>, fling: bool) -> (Engine, Sent) {
+fn engine(fling: bool) -> (Engine, Sent) {
     let sent: Sent = Arc::default();
     let s = sent.clone();
     let fling: Option<presto_compositor::seams::FlingFactory> = fling.then(|| {
@@ -68,8 +70,7 @@ fn engine(anim: Option<Arc<dyn AnimSampler>>, fling: bool) -> (Engine, Sent) {
     });
     let e = Engine::new(
         EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_color: Color::BLACK, caret_blink: None },
-        Box::new(|i| Box::new(IntervalPacer::new(i))),
-        anim,
+        Box::new(seams::frame_clock),
         fling,
         None,
         Box::new(move |m| s.lock().unwrap().push(m)),
@@ -93,24 +94,6 @@ impl ScrollMotion for LinearFling {
     }
     fn done_at(&self, t: Time) -> bool {
         (t - self.at).as_secs_f64() >= 0.3
-    }
-}
-
-/// Keyframes of numbers sampled linearly in time (no easing, one iteration).
-struct LinearSampler;
-
-impl AnimSampler for LinearSampler {
-    fn sample(&self, g: &Generator, start: Time, now: Time) -> Sample {
-        let Generator::Keyframes { keyframes, timing } = g else { unreachable!() };
-        let p = ((now - start).0 as f64 / timing.duration.0.max(1) as f64).clamp(0.0, 1.0) as f32;
-        let (AnimValue::Number(a), AnimValue::Number(b)) = (&keyframes[0].value, &keyframes[keyframes.len() - 1].value)
-        else {
-            unreachable!()
-        };
-        Sample { value: AnimValue::Number(a + (b - a) * p), done: p >= 1.0, velocity: 0.0 }
-    }
-    fn compose(&self, _: &[TransformFn]) -> Affine {
-        Affine::IDENTITY
     }
 }
 
@@ -182,8 +165,8 @@ fn base_commit(revision: u64) -> Commit {
     c
 }
 
-fn new_window(e: &mut Engine, now: Time) {
-    e.insert_window(W, DeviceSize { w: 400, h: 300 }, Scale(1.0), now);
+fn new_window(e: &mut Engine) {
+    e.insert_window(W, DeviceSize { w: 400, h: 300 }, Scale(1.0));
 }
 
 /// Advances to the next wakeup, then completes the GPU work of every frame drawn there 1 ms later.
@@ -207,10 +190,10 @@ fn complete(e: &mut Engine, gpu: &mut FakeGpu, now: Time) {
 
 #[test]
 fn first_commit_draws_the_whole_window_and_acks() {
-    let (mut e, sent) = engine(None, false);
+    let (mut e, sent) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     assert_eq!(gpu.draws.len(), 1, "an urgent commit draws at once");
     assert!(gpu.draws[0].damage.is_empty(), "the first frame is a full redraw");
@@ -220,10 +203,10 @@ fn first_commit_draws_the_whole_window_and_acks() {
 
 #[test]
 fn commits_arriving_before_a_draw_fold_into_one_frame() {
-    let (mut e, sent) = engine(None, false);
+    let (mut e, sent) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     assert_eq!(gpu.draws.len(), 1);
 
@@ -263,10 +246,10 @@ fn commits_arriving_before_a_draw_fold_into_one_frame() {
 
 #[test]
 fn stale_fast_commits_are_rejected_and_win_over_older_commits() {
-    let (mut e, _) = engine(None, false);
+    let (mut e, _) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(5))), t0, &mut gpu);
     let fast = |rev: u64, y: f32| {
         Msg::Fast(FastCommit::ScrollOffset {
@@ -286,8 +269,9 @@ fn stale_fast_commits_are_rejected_and_win_over_older_commits() {
     // A JS commit built before the scroll (revision 5) lands late: the offset stays the fast one.
     complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
     e.handle(Msg::Commit(Box::new(base_commit(5))), t0 + Span::from_millis(2), &mut gpu);
-    while e.tree(W).unwrap().revision < Revision(5) || gpu.draws.len() < 2 {
-        step(&mut e, &mut gpu).unwrap();
+    let mut last = t0;
+    while gpu.draws.len() < 2 {
+        last = step(&mut e, &mut gpu).expect("a tick for the waiting commit");
     }
     assert_eq!(e.tree(W).unwrap().props.scrolls[&SCROLL].offset.y, 30.0);
 
@@ -295,23 +279,22 @@ fn stale_fast_commits_are_rejected_and_win_over_older_commits() {
     let mut c7 = base_commit(7);
     let PropOp::Scroll(_, s) = &mut c7.props.ops[1] else { panic!() };
     s.offset = Vec2::new(0.0, 50.0);
-    complete(&mut e, &mut gpu, t0 + Span::from_millis(40));
-    e.handle(Msg::Commit(Box::new(c7)), t0 + Span::from_millis(41), &mut gpu);
+    e.handle(Msg::Commit(Box::new(c7)), last + Span::from_millis(2), &mut gpu);
     for _ in 0..10 {
         if e.tree(W).unwrap().revision == Revision(7) {
             break;
         }
-        step(&mut e, &mut gpu).unwrap();
+        step(&mut e, &mut gpu).expect("a tick for the waiting commit");
     }
     assert_eq!(e.tree(W).unwrap().props.scrolls[&SCROLL].offset.y, 50.0);
 }
 
 #[test]
 fn a_fling_keeps_producing_frames_without_commits_then_goes_idle() {
-    let (mut e, sent) = engine(None, true);
+    let (mut e, sent) = engine(true);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
     let at = t0 + Span::from_millis(2);
@@ -352,10 +335,10 @@ fn a_fling_keeps_producing_frames_without_commits_then_goes_idle() {
 
 #[test]
 fn a_scroll_fast_commit_stops_a_fling() {
-    let (mut e, _) = engine(None, true);
+    let (mut e, _) = engine(true);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     complete(&mut e, &mut gpu, t0);
     e.handle(
@@ -385,10 +368,10 @@ fn a_scroll_fast_commit_stops_a_fling() {
 
 #[test]
 fn idle_window_does_not_wake() {
-    let (mut e, _) = engine(None, false);
+    let (mut e, _) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
     for _ in 0..5 {
@@ -402,13 +385,13 @@ fn idle_window_does_not_wake() {
 
 #[test]
 fn begin_frame_follows_a_request_and_waits_for_the_commit() {
-    let (mut e, sent) = engine(None, false);
+    let (mut e, sent) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     complete(&mut e, &mut gpu, t0);
-    e.handle(Msg::RequestUiFrame(W), t0, &mut gpu);
+    e.handle(Msg::NeedsUiFrame { window: W, on: true }, t0, &mut gpu);
     for _ in 0..3 {
         step(&mut e, &mut gpu);
     }
@@ -418,10 +401,10 @@ fn begin_frame_follows_a_request_and_waits_for_the_commit() {
 
 #[test]
 fn compositor_opacity_animation_runs_and_holds_with_fill_forwards() {
-    let (mut e, sent) = engine(Some(Arc::new(LinearSampler)), false);
+    let (mut e, sent) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     let mut c = base_commit(1);
     c.animations = vec![AnimationCmd::Start(AnimationSpec {
         id: AnimationId(9),
@@ -470,17 +453,17 @@ fn compositor_opacity_animation_runs_and_holds_with_fill_forwards() {
 }
 
 #[test]
-fn animations_abort_without_a_sampler() {
-    let (mut e, sent) = engine(None, false);
+fn ui_thread_animations_are_not_run_here() {
+    let (mut e, sent) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     let mut c = base_commit(1);
     c.animations = vec![AnimationCmd::Start(AnimationSpec {
         id: AnimationId(3),
         node: A,
         target: Some(EFFECT),
-        property: AnimProperty::Opacity,
+        property: AnimProperty::BackgroundColor,
         generator: Generator::Spring {
             params: presto_base::anim::SpringParams::DurationBounce { duration: Span::from_millis(300), bounce: 0.0 },
             from: AnimValue::Number(0.0),
@@ -498,10 +481,10 @@ fn animations_abort_without_a_sampler() {
 
 #[test]
 fn resize_draws_the_new_size_and_answers() {
-    let (mut e, sent) = engine(None, false);
+    let (mut e, sent) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     complete(&mut e, &mut gpu, t0);
     let size = DeviceSize { w: 800, h: 600 };
@@ -513,10 +496,10 @@ fn resize_draws_the_new_size_and_answers() {
 
 #[test]
 fn hidden_windows_do_not_draw_and_redraw_fully_when_shown() {
-    let (mut e, _) = engine(None, false);
+    let (mut e, _) = engine(false);
     let mut gpu = FakeGpu::default();
-    let t0 = Time(1_000_000_000);
-    new_window(&mut e, t0);
+    let t0 = T0;
+    new_window(&mut e);
     e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
     complete(&mut e, &mut gpu, t0);
     e.handle(Msg::SetVisible { window: W, visible: false }, t0, &mut gpu);

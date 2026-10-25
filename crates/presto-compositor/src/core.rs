@@ -1,21 +1,21 @@
 //! The compositor's engine: every window's committed tree, frame clock, animations, scroll motions,
 //! caret and damage, driven by messages and time (architecture §7.2, `round2/scheduler-latency.md`
-//! §2.12). It never blocks and never reads a clock: the thread loop ([`crate::thread`]) passes `now`
+//! §2.12). It never blocks and never reads a clock: the thread loop (`run` in the crate root) passes `now`
 //! and does the one blocking wait, and the GPU sits behind [`Backend`], so tests drive the engine with
 //! a virtual clock and a recording backend.
 
 use crate::damage::{self, Pending, Snapshots};
-use crate::seams::{Action, AnimSampler, FlingFactory, FramePacer, PacerFactory, ScrollMotion, Signal};
+use crate::seams::{Action, FlingFactory, FramePacer, PacerFactory, ScrollMotion, Signal};
 use crate::tree::{FlatItem, SurfaceKey, WindowTree};
 use presto_base::anim::{
-    AnimProperty, AnimValue, AnimationCmd, AnimationEvent, AnimationSpec, FillMode, FlingCurve, Generator, Keyframe,
+    Placement, AnimProperty, AnimValue, AnimationCmd, AnimationEvent, AnimationSpec, FillMode, FlingCurve, Generator, Keyframe,
     StartTime,
 };
 use presto_base::color::{Color, Fill};
 use presto_base::commit::{Commit, FastCommit, ToUi};
 use presto_base::display::{DisplayList, Prim, Quad};
 use presto_base::geom::{Corners, DeviceSize, Insets, Rect, Scale, Vec2};
-use presto_base::ids::{FrameId, InputSeq, LayerId, NodeId, PropNodeId, SurfaceId, TextureId, WindowId};
+use presto_base::ids::{FrameId, InputSeq, LayerId, NodeId, PropNodeId, Revision, SurfaceId, TextureId, WindowId};
 use presto_base::scene::{DrawItem, FrameScene};
 use presto_base::time::{Span, Time};
 use std::collections::{BTreeMap, HashMap};
@@ -38,8 +38,8 @@ pub trait Backend {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum DrawOutcome {
-    /// Submitted and presented.
-    Presented,
+    /// Submitted and presented; `submitted` is when the CPU side finished.
+    Presented { submitted: Time },
     /// Nothing reached the screen (timeout, occluded, outdated): keep the damage, try next frame.
     Skipped,
     /// No surface (not attached, or no device).
@@ -60,7 +60,11 @@ pub enum Msg {
     SetRefresh { window: WindowId, interval: Span },
     RegisterTexture { id: TextureId, texture: wgpu::Texture },
     UnregisterTexture(TextureId),
-    RequestUiFrame(WindowId),
+    /// The UI thread's scene is dirty (`true`) or it has nothing more to commit (`false`).
+    NeedsUiFrame { window: WindowId, on: bool },
+    /// The UI answered a `BeginFrame` without a commit.
+    UiFrameSkipped { window: WindowId, frame: FrameId },
+    UiInputCost { window: WindowId, frame: FrameId, cost: Span },
     HighRateInput(WindowId),
     UiCost { window: WindowId, frame: FrameId, cost: Span },
     Fling { window: WindowId, node: PropNodeId, velocity: Vec2, curve: FlingCurve, at: Time },
@@ -116,6 +120,8 @@ struct Win {
     visible: bool,
     os_layers: HashMap<SurfaceId, DeviceSize>,
     commits: Vec<Commit>,
+    /// The frame clock's `ApplyCommit`: pending commits up to this revision go into the next draw.
+    apply_upto: Option<Revision>,
     pending: HashMap<SurfaceKey, Pending>,
     snapshots: Snapshots,
     anims: Vec<Anim>,
@@ -143,7 +149,6 @@ pub struct Engine {
     cfg: EngineConfig,
     windows: BTreeMap<WindowId, Win>,
     new_pacer: PacerFactory,
-    anim: Option<Arc<dyn AnimSampler>>,
     fling: Option<FlingFactory>,
     source: Option<Box<dyn FrameSource>>,
     to_ui: Box<dyn Fn(ToUi) + Send>,
@@ -161,7 +166,6 @@ impl Engine {
     pub fn new(
         cfg: EngineConfig,
         new_pacer: PacerFactory,
-        anim: Option<Arc<dyn AnimSampler>>,
         fling: Option<FlingFactory>,
         source: Option<Box<dyn FrameSource>>,
         to_ui: Box<dyn Fn(ToUi) + Send>,
@@ -171,7 +175,6 @@ impl Engine {
             cfg,
             windows: BTreeMap::new(),
             new_pacer,
-            anim,
             fling,
             source,
             to_ui,
@@ -194,8 +197,9 @@ impl Engine {
         }
     }
 
-    /// Registers a window without a surface (the backend attaches one separately).
-    pub fn insert_window(&mut self, window: WindowId, size: DeviceSize, scale: Scale, now: Time) {
+    /// Registers a window without a surface (the backend attaches one separately). Its first frame
+    /// is drawn when its first commit arrives.
+    pub fn insert_window(&mut self, window: WindowId, size: DeviceSize, scale: Scale) {
         let interval = self.cfg.refresh;
         let mut pending = HashMap::new();
         pending.insert(SurfaceKey::Main, Pending { rects: Vec::new(), full: true });
@@ -208,6 +212,7 @@ impl Engine {
             visible: true,
             os_layers: HashMap::new(),
             commits: Vec::new(),
+            apply_upto: None,
             pending,
             snapshots: Snapshots::default(),
             anims: Vec::new(),
@@ -221,7 +226,6 @@ impl Engine {
             in_flight: HashMap::new(),
         };
         self.windows.insert(window, w);
-        self.signal(window, now, Signal::CompositorDamage, None);
     }
 
     pub fn has_window(&self, window: WindowId) -> bool {
@@ -237,7 +241,7 @@ impl Engine {
         match msg {
             Msg::AddWindow { window, surface, size, scale } => {
                 gpu.attach(window, SurfaceKey::Main, surface, size);
-                self.insert_window(window, size, scale, now);
+                self.insert_window(window, size, scale);
             }
             Msg::AddOsLayer { window, surface_id, surface, size } => {
                 if let Some(w) = self.windows.get_mut(&window) {
@@ -299,7 +303,11 @@ impl Engine {
             }
             Msg::RegisterTexture { id, texture } => gpu.register_texture(id, texture),
             Msg::UnregisterTexture(id) => gpu.unregister_texture(id),
-            Msg::RequestUiFrame(window) => self.signal(window, now, Signal::NeedsUiFrame, Some(gpu)),
+            Msg::NeedsUiFrame { window, on } => self.signal(window, now, Signal::NeedsUiFrame(on), Some(gpu)),
+            Msg::UiFrameSkipped { window, frame } => self.signal(window, now, Signal::UiFrameSkipped { frame }, Some(gpu)),
+            Msg::UiInputCost { window, frame, cost } => {
+                self.signal(window, now, Signal::UiInputCost { frame, cost }, Some(gpu))
+            }
             Msg::HighRateInput(window) => self.signal(window, now, Signal::HighRateInput, Some(gpu)),
             Msg::UiCost { window, frame, cost } => self.signal(window, now, Signal::UiCost { frame, cost }, Some(gpu)),
             Msg::Fling { window, node, velocity, curve, at } => self.start_fling(window, node, velocity, curve, at, now, gpu),
@@ -335,6 +343,7 @@ impl Engine {
                 }
                 let ids: Vec<_> = self.windows.keys().copied().collect();
                 for id in ids {
+                    self.signal(id, now, Signal::DeviceLost, Some(gpu));
                     self.signal(id, now, Signal::CompositorDamage, Some(gpu));
                 }
             }
@@ -411,7 +420,9 @@ impl Engine {
         for p in w.pending.values_mut() {
             p.full = true;
         }
-        // The handshake draws now, outside the frame clock, and answers when the frame is presented.
+        // The handshake draws now, outside the frame clock, with every commit that has arrived, and
+        // answers once the frame is presented.
+        w.apply_upto = Some(Revision(u64::MAX));
         let target = now;
         self.draw(window, None, target, now, gpu);
         self.send(ToUi::ResizeDone { window, seq, size, scale });
@@ -461,6 +472,27 @@ impl Engine {
                         None => w.next_vsync = on.then(|| next_grid(now, w.interval)),
                     }
                 }
+                Action::ApplyCommit { revision } => {
+                    if let Some(w) = self.windows.get_mut(&window) {
+                        w.apply_upto = Some(w.apply_upto.map_or(revision, |r| r.max(revision)));
+                    }
+                }
+                Action::ForceFullRedraw => {
+                    if let Some(w) = self.windows.get_mut(&window) {
+                        w.snapshots.clear();
+                        for p in w.pending.values_mut() {
+                            p.full = true;
+                        }
+                    }
+                }
+                // Re-presenting the last image needs a present without a new acquire, which wgpu does
+                // not offer; the keep-alive is skipped (the panel may lower its rate).
+                Action::Represent { .. } => {}
+                Action::ClearTimer => {
+                    if let Some(w) = self.windows.get_mut(&window) {
+                        w.timer = None;
+                    }
+                }
                 Action::BeginUiFrame { frame, target, start_at, deadline } => {
                     let m = ToUi::BeginFrame { window, frame, target, deadline };
                     if start_at <= now {
@@ -472,10 +504,9 @@ impl Engine {
                 Action::Draw { frame, target } => match gpu.as_deref_mut() {
                     Some(g) => self.draw(window, Some(frame), target, now, g),
                     None => {
-                        // Only `insert_window` signals without a backend, and its first signal is damage
-                        // the pacer may answer with a draw: there is no surface yet, so nothing to draw.
+                        // No backend to draw with: nothing reaches the screen.
                         let Some(w) = self.windows.get_mut(&window) else { return };
-                        let acts = w.pacer.on_signal(now, Signal::DidNotDraw { frame });
+                        let acts = w.pacer.on_signal(now, Signal::Discarded { frame });
                         debug_assert!(acts.iter().all(|a| !matches!(a, Action::Draw { .. })));
                     }
                 },
@@ -494,11 +525,16 @@ impl Engine {
         let Some(w) = self.windows.get_mut(&window) else { return };
         let mut cmds = Vec::new();
         let mut applied = None;
-        for c in std::mem::take(&mut w.commits) {
-            w.inputs.push(c.input_seq);
-            applied = Some(c.revision);
-            cmds.extend(w.tree.apply_commit(c));
-            self.stats.commits_applied += 1;
+        if let Some(upto) = w.apply_upto.take() {
+            let (now_, later): (Vec<Commit>, Vec<Commit>) =
+                std::mem::take(&mut w.commits).into_iter().partition(|c| c.revision <= upto);
+            w.commits = later;
+            for c in now_ {
+                w.inputs.push(c.input_seq);
+                applied = Some(c.revision);
+                cmds.extend(w.tree.apply_commit(c));
+                self.stats.commits_applied += 1;
+            }
         }
         if let Some(revision) = applied {
             self.send(ToUi::CommitApplied { window, revision });
@@ -515,7 +551,8 @@ impl Engine {
         for (k, r) in w.tree.take_layer_damage() {
             extra.entry(k).or_default().push(r);
         }
-        let mut drew = false;
+        let mut drew = None;
+        let mut failed = false;
         let keys: Vec<SurfaceKey> = std::iter::once(SurfaceKey::Main).chain(w.os_layers.keys().map(|s| SurfaceKey::Os(*s))).collect();
         for key in keys {
             let size = match key {
@@ -546,24 +583,32 @@ impl Engine {
                 resources: &w.tree.resources,
             };
             match gpu.draw(window, key, frame, &scene) {
-                DrawOutcome::Presented => drew = true,
-                DrawOutcome::Skipped => pending.add(dmg),
+                DrawOutcome::Presented { submitted } => drew = Some(drew.map_or(submitted, |d: Time| d.max(submitted))),
+                DrawOutcome::Skipped => {
+                    pending.add(dmg);
+                    failed = true;
+                }
                 DrawOutcome::NoSurface => {}
             }
         }
-        if drew {
+        if drew.is_some() {
             self.stats.frames_drawn += 1;
         } else {
             self.stats.frames_without_damage += 1;
         }
         let inputs = std::mem::take(&mut w.inputs);
         if let Some(frame) = frame {
-            if drew {
-                w.in_flight.insert(frame, inputs);
-            } else {
-                // Nothing reached the screen: the inputs ride on the next frame that draws.
-                w.inputs = inputs;
-                self.signal(window, now, Signal::DidNotDraw { frame }, Some(gpu));
+            match drew {
+                Some(at) => {
+                    w.in_flight.insert(frame, inputs);
+                    self.signal(window, now, Signal::Submitted { frame, at }, Some(gpu));
+                }
+                None => {
+                    // Nothing reached the screen: the inputs ride on the next frame that draws.
+                    w.inputs = inputs;
+                    let sig = if failed { Signal::DrawFailed { frame } } else { Signal::Discarded { frame } };
+                    self.signal(window, now, sig, Some(gpu));
+                }
             }
         } else {
             w.inputs = inputs;
@@ -581,18 +626,14 @@ impl Engine {
     }
 
     fn run_cmds(&mut self, window: WindowId, cmds: Vec<AnimationCmd>, now: Time) {
-        let has_sampler = self.anim.is_some();
         let mut events = Vec::new();
         let Some(w) = self.windows.get_mut(&window) else { return };
         for cmd in cmds {
             match cmd {
                 AnimationCmd::Start(spec) => {
-                    let compositor = matches!(
-                        spec.property,
-                        AnimProperty::Opacity | AnimProperty::Transform | AnimProperty::Clip | AnimProperty::ScrollOffset
-                    );
-                    if !has_sampler || !compositor || spec.target.is_none() {
-                        // Not runnable here: no sampler yet, a UI-thread property, or no node to drive.
+                    let compositor = presto_anim::placement(spec.property) == Placement::Compositor;
+                    if !compositor || spec.target.is_none() {
+                        // Not runnable here: a UI-thread property, or no property node to drive.
                         events.push(AnimationEvent::Aborted { id: spec.id });
                         continue;
                     }
@@ -640,34 +681,37 @@ impl Engine {
     fn sample(&mut self, window: WindowId, target: Time) {
         let mut out = Vec::new();
         let Some(w) = self.windows.get_mut(&window) else { return };
-        if let Some(sampler) = &self.anim {
-            let mut finished = Vec::new();
-            for (i, a) in w.anims.iter_mut().enumerate() {
-                if a.holding {
-                    continue;
+        let mut finished = Vec::new();
+        for (i, a) in w.anims.iter_mut().enumerate() {
+            if a.holding {
+                continue;
+            }
+            let start = *a.start.get_or_insert(target);
+            if !a.started {
+                a.started = true;
+                out.push(ToUi::Animation { window, event: AnimationEvent::Started { id: a.spec.id, at: start } });
+            }
+            let t = a.paused_at.unwrap_or(target);
+            let s = presto_anim::sample(&a.spec.generator, start, t);
+            match &s.value {
+                Some(v) => {
+                    a.last = Some((v.clone(), s.velocity));
+                    apply_value(&mut w.tree, &a.spec, v, &mut out, window);
                 }
-                let start = *a.start.get_or_insert(target);
-                if !a.started {
-                    a.started = true;
-                    out.push(ToUi::Animation { window, event: AnimationEvent::Started { id: a.spec.id, at: start } });
-                }
-                let t = a.paused_at.unwrap_or(target);
-                let s = sampler.sample(&a.spec.generator, start, t);
-                a.last = Some((s.value.clone(), s.velocity));
-                apply_value(&mut w.tree, &a.spec, &s.value, sampler.as_ref(), &mut out, window);
-                if s.done && a.paused_at.is_none() {
-                    out.push(ToUi::Animation { window, event: AnimationEvent::Finished { id: a.spec.id, at: target } });
-                    if holds(&a.spec.generator) {
-                        a.holding = true;
-                    } else {
-                        finished.push(i);
-                    }
+                None => clear_override(&mut w.tree, &a.spec),
+            }
+            if s.done && a.paused_at.is_none() {
+                out.push(ToUi::Animation { window, event: AnimationEvent::Finished { id: a.spec.id, at: target } });
+                if s.value.is_some() && holds(&a.spec.generator) {
+                    a.holding = true;
+                } else {
+                    finished.push(i);
                 }
             }
-            for i in finished.into_iter().rev() {
-                let a = w.anims.remove(i);
-                clear_override(&mut w.tree, &a.spec);
-            }
+        }
+        for i in finished.into_iter().rev() {
+            let a = w.anims.remove(i);
+            clear_override(&mut w.tree, &a.spec);
         }
         let mut done = Vec::new();
         for (node, m) in &w.motions {
@@ -751,7 +795,6 @@ fn apply_value(
     tree: &mut WindowTree,
     spec: &AnimationSpec,
     v: &AnimValue,
-    sampler: &dyn AnimSampler,
     out: &mut Vec<ToUi>,
     window: WindowId,
 ) {
@@ -761,7 +804,7 @@ fn apply_value(
             tree.props.anim_opacity.insert(node, *o);
         }
         (AnimProperty::Transform, AnimValue::Transform(fns)) => {
-            tree.props.anim_transform.insert(node, sampler.compose(fns));
+            tree.props.anim_transform.insert(node, presto_anim::interp::compose(fns));
         }
         (AnimProperty::Clip, AnimValue::Rect(r)) => {
             tree.props.anim_clip.insert(node, *r);
@@ -800,11 +843,11 @@ fn holds(g: &Generator) -> bool {
     }
 }
 
-/// Heads for `to` from where the animation is now: a spring keeps its velocity; keyframes restart
-/// from the current value with the same timing.
+/// Heads for `to` from where the animation is now: a spring keeps its velocity
+/// (`presto_anim::retarget`); keyframes restart from the current value with the same timing.
 fn retarget(a: &mut Anim, to: AnimValue, now: Time) {
-    let Some((current, velocity)) = a.last.clone() else {
-        // Not sampled yet: only the end value changes.
+    let Some(start) = a.start else {
+        // Not started yet: only the end value changes.
         match &mut a.spec.generator {
             Generator::Spring { to: t, .. } => *t = to,
             Generator::Keyframes { keyframes, .. } => {
@@ -816,12 +859,13 @@ fn retarget(a: &mut Anim, to: AnimValue, now: Time) {
         return;
     };
     match &mut a.spec.generator {
-        Generator::Spring { from, to: t, velocity: v, .. } => {
-            *from = current;
-            *t = to;
-            *v = velocity;
+        Generator::Spring { .. } => {
+            if let Some(g) = presto_anim::retarget(&a.spec.generator, start, now, to) {
+                a.spec.generator = g;
+            }
         }
         Generator::Keyframes { keyframes, .. } => {
+            let Some((current, _)) = a.last.clone() else { return };
             let easing = keyframes.first().and_then(|k| k.easing.clone());
             *keyframes = vec![
                 Keyframe { offset: 0.0, value: current, easing },

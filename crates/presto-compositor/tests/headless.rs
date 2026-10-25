@@ -13,8 +13,7 @@ use presto_base::text::{GlyphImage, GlyphKey, GlyphRasterizer};
 use presto_base::time::{Clock, Span, Time};
 use presto_compositor::core::{Engine, EngineConfig, Msg};
 use presto_compositor::gpu::GpuBackend;
-use presto_compositor::pacer::IntervalPacer;
-use presto_compositor::seams::SceneRenderer;
+use presto_compositor::seams::{self, SceneRenderer};
 use presto_compositor::tree::SurfaceKey;
 use std::sync::{mpsc, Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -93,14 +92,13 @@ fn headless_frame_renders_and_reports_gpu_completion() {
     let red = Color::rgba(1.0, 0.0, 0.0, 1.0);
     let mut engine = Engine::new(
         EngineConfig { refresh: Span::from_micros(16_667), clear: Some(red), caret_color: Color::BLACK, caret_blink: None },
-        Box::new(|i| Box::new(IntervalPacer::new(i))),
-        None,
+        Box::new(seams::frame_clock),
         None,
         None,
         Box::new(move |m: ToUi| s.lock().unwrap().push(m)),
         Box::new(|| {}),
     );
-    engine.insert_window(w, size, Scale(1.0), clock.now());
+    engine.insert_window(w, size, Scale(1.0));
     let mut c = Commit { window: w, revision: Revision(1), ..Default::default() };
     c.layers = vec![LayerDelta::Add(LayerDesc {
         id: LayerId(1),

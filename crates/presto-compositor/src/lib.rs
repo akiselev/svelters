@@ -12,13 +12,11 @@
 //! | [`damage`] | damage by diffing flattened frames, device rects, buffer-age history |
 //! | [`core`] | the engine: messages, frame clocks, animations, scroll motions, caret, drawing |
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
-//! | [`pacer`] | the interval frame clock used until `presto-frame` is wired in |
-//! | [`seams`] | the renderer, frame-clock and animation interfaces the compositor codes against |
+//! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces the compositor codes against |
 
 pub mod core;
 pub mod damage;
 pub mod gpu;
-pub mod pacer;
 pub mod seams;
 pub mod tree;
 
@@ -28,7 +26,7 @@ pub use presto_base::commit::ToUi;
 
 use crate::core::{Engine, EngineConfig, Msg};
 use crate::gpu::{GpuBackend, SharedGpu};
-use crate::seams::{AnimSampler, FlingFactory, PacerFactory, RendererFactory};
+use crate::seams::{FlingFactory, PacerFactory, RendererFactory};
 use presto_base::anim::FlingCurve;
 use presto_base::color::Color;
 use presto_base::commit::{Commit, FastCommit};
@@ -41,18 +39,16 @@ use std::sync::{Arc, Mutex, RwLock};
 use std::thread::JoinHandle;
 use std::time::Duration;
 
-/// How the compositor is set up. The renderer, animation sampler and scroll physics come from
-/// presto-render and presto-anim; until they are wired in by default, the caller passes them.
+/// How the compositor is set up. The renderer and the scroll physics come from presto-render and
+/// presto-anim; until those are written, the caller passes them.
 pub struct CompositorConfig {
     /// The process clock every thread shares (the platform's).
     pub clock: Arc<dyn Clock>,
     /// Builds the renderer on the compositor thread (again after device loss).
     pub renderer: RendererFactory,
-    /// Samples compositor animations; `None` aborts them (reported as `AnimationEvent::Aborted`).
-    pub anim: Option<Arc<dyn AnimSampler>>,
     /// Scroll physics for [`CompositorHandle::fling`]; `None` ignores flings.
     pub fling: Option<FlingFactory>,
-    /// Builds each window's frame clock; defaults to [`pacer::IntervalPacer`].
+    /// Builds each window's frame clock; defaults to [`presto_frame::FrameClock`].
     pub pacer: PacerFactory,
     /// A platform display clock; `None` = a timer at the refresh interval and presentation estimated
     /// from GPU completion.
@@ -76,9 +72,8 @@ impl CompositorConfig {
         CompositorConfig {
             clock,
             renderer,
-            anim: None,
             fling: None,
-            pacer: Box::new(|interval| Box::new(pacer::IntervalPacer::new(interval))),
+            pacer: Box::new(seams::frame_clock),
             frame_source: None,
             refresh,
             display: None,
@@ -126,7 +121,6 @@ impl Compositor {
                 caret_blink: cfg.caret_blink,
             },
             cfg.pacer,
-            cfg.anim,
             cfg.fling,
             cfg.frame_source,
             to_ui,
@@ -257,9 +251,15 @@ impl CompositorHandle {
         self.post(Msg::UnregisterTexture(id));
     }
 
-    /// The UI thread has dirty state: send a `ToUi::BeginFrame` for the next frame.
-    pub fn request_ui_frame(&self, window: WindowId) {
-        self.post(Msg::RequestUiFrame(window));
+    /// The UI thread's scene is dirty and wants a `ToUi::BeginFrame` (`true`), or it has nothing
+    /// more to commit (`false`). A level, not a counter.
+    pub fn needs_ui_frame(&self, window: WindowId, on: bool) {
+        self.post(Msg::NeedsUiFrame { window, on });
+    }
+
+    /// The UI answered `BeginFrame { frame }` without a commit (nothing changed).
+    pub fn ui_frame_skipped(&self, window: WindowId, frame: FrameId) {
+        self.post(Msg::UiFrameSkipped { window, frame });
     }
 
     /// Continuous input arrived (pointer moves, touchpad scroll): keeps variable-refresh displays up.
@@ -270,6 +270,11 @@ impl CompositorHandle {
     /// How long the UI phases of `frame` took (the frame clock's estimator).
     pub fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span) {
         self.post(Msg::UiCost { window, frame, cost });
+    }
+
+    /// Like [`Self::ui_cost`], for a UI frame that handled discrete input.
+    pub fn ui_input_cost(&self, window: WindowId, frame: FrameId, cost: Span) {
+        self.post(Msg::UiInputCost { window, frame, cost });
     }
 
     /// Starts a compositor-owned fling on a scroll node; offsets come back as `ToUi::ScrollMoved`. A

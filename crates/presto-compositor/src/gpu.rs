@@ -466,7 +466,7 @@ impl Backend for GpuBackend {
                 Self::report_done(&self.notify, &self.clock, gpu, window, frame, index);
             }
             gpu.renderer.end_frame();
-            return DrawOutcome::Presented;
+            return DrawOutcome::Presented { submitted: self.clock.now() };
         };
         let st = match surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(st) => (st, false),
@@ -517,7 +517,7 @@ impl Backend for GpuBackend {
         if suboptimal {
             Self::configure(gpu, s);
         }
-        DrawOutcome::Presented
+        DrawOutcome::Presented { submitted: self.clock.now() }
     }
 
     fn recover(&mut self) -> bool {
