@@ -248,7 +248,7 @@ impl Engine {
                     gpu.attach(window, SurfaceKey::Os(surface_id), surface, size);
                     w.os_layers.insert(surface_id, size);
                     w.pending.entry(SurfaceKey::Os(surface_id)).or_default().full = true;
-                    self.signal(window, now, Signal::CompositorDamage, Some(gpu));
+                    self.signal(window, now, Signal::CompositorDamage, gpu);
                 }
             }
             Msg::ResizeOsLayer { window, surface_id, size } => {
@@ -257,7 +257,7 @@ impl Engine {
                         *s = size;
                         gpu.resize(window, SurfaceKey::Os(surface_id), size);
                         w.pending.entry(SurfaceKey::Os(surface_id)).or_default().full = true;
-                        self.signal(window, now, Signal::CompositorDamage, Some(gpu));
+                        self.signal(window, now, Signal::CompositorDamage, gpu);
                     }
                 }
             }
@@ -293,7 +293,7 @@ impl Engine {
                             p.full = true;
                         }
                     }
-                    self.signal(window, now, Signal::Visible(visible), Some(gpu));
+                    self.signal(window, now, Signal::Visible(visible), gpu);
                 }
             }
             Msg::SetRefresh { window, interval } => {
@@ -303,23 +303,23 @@ impl Engine {
             }
             Msg::RegisterTexture { id, texture } => gpu.register_texture(id, texture),
             Msg::UnregisterTexture(id) => gpu.unregister_texture(id),
-            Msg::NeedsUiFrame { window, on } => self.signal(window, now, Signal::NeedsUiFrame(on), Some(gpu)),
-            Msg::UiFrameSkipped { window, frame } => self.signal(window, now, Signal::UiFrameSkipped { frame }, Some(gpu)),
+            Msg::NeedsUiFrame { window, on } => self.signal(window, now, Signal::NeedsUiFrame(on), gpu),
+            Msg::UiFrameSkipped { window, frame } => self.signal(window, now, Signal::UiFrameSkipped { frame }, gpu),
             Msg::UiInputCost { window, frame, cost } => {
-                self.signal(window, now, Signal::UiInputCost { frame, cost }, Some(gpu))
+                self.signal(window, now, Signal::UiInputCost { frame, cost }, gpu)
             }
-            Msg::HighRateInput(window) => self.signal(window, now, Signal::HighRateInput, Some(gpu)),
-            Msg::UiCost { window, frame, cost } => self.signal(window, now, Signal::UiCost { frame, cost }, Some(gpu)),
+            Msg::HighRateInput(window) => self.signal(window, now, Signal::HighRateInput, gpu),
+            Msg::UiCost { window, frame, cost } => self.signal(window, now, Signal::UiCost { frame, cost }, gpu),
             Msg::Fling { window, node, velocity, curve, at } => self.start_fling(window, node, velocity, curve, at, now, gpu),
             Msg::Vsync { window, target, interval } => {
                 if let Some(w) = self.windows.get_mut(&window) {
                     w.interval = interval;
-                    self.signal(window, now, Signal::Vsync { target, interval }, Some(gpu));
+                    self.signal(window, now, Signal::Vsync { target, interval }, gpu);
                 }
             }
             Msg::Presented { window, frame, at } => self.presented(window, frame, at, false, now, gpu),
             Msg::GpuDone { window, frame, at } => {
-                self.signal(window, now, Signal::GpuDone { frame, at }, Some(gpu));
+                self.signal(window, now, Signal::GpuDone { frame, at }, gpu);
                 if self.source.is_none() {
                     // No presentation feedback: the frame is shown at the first vblank after the GPU
                     // finished, on the timer's vsync grid.
@@ -343,8 +343,8 @@ impl Engine {
                 }
                 let ids: Vec<_> = self.windows.keys().copied().collect();
                 for id in ids {
-                    self.signal(id, now, Signal::DeviceLost, Some(gpu));
-                    self.signal(id, now, Signal::CompositorDamage, Some(gpu));
+                    self.signal(id, now, Signal::DeviceLost, gpu);
+                    self.signal(id, now, Signal::CompositorDamage, gpu);
                 }
             }
             Msg::Shutdown => return false,
@@ -360,7 +360,7 @@ impl Engine {
         };
         let (revision, frame) = (c.revision, c.frame);
         w.commits.push(c);
-        self.signal(window, now, Signal::CommitArrived { revision, frame }, Some(gpu));
+        self.signal(window, now, Signal::CommitArrived { revision, frame }, gpu);
     }
 
     fn fast(&mut self, f: FastCommit, now: Time, gpu: &mut dyn Backend) {
@@ -408,7 +408,7 @@ impl Engine {
                 }
             }
         }
-        self.signal(window, now, Signal::CompositorDamage, Some(gpu));
+        self.signal(window, now, Signal::CompositorDamage, gpu);
     }
 
     fn resize(&mut self, window: WindowId, size: DeviceSize, scale: Scale, seq: u64, now: Time, gpu: &mut dyn Backend) {
@@ -454,14 +454,13 @@ impl Engine {
         let Some(w) = self.windows.get_mut(&window) else { return };
         let inputs = w.in_flight.remove(&frame).unwrap_or_default();
         self.send(ToUi::Presented { window, frame, at, estimated, inputs });
-        self.signal(window, now, Signal::Presented { frame, at, estimated }, Some(gpu));
+        self.signal(window, now, Signal::Presented { frame, at, estimated }, gpu);
     }
 
     /// Feeds a signal to the window's pacer and carries out its actions.
-    fn signal(&mut self, window: WindowId, now: Time, sig: Signal, gpu: Option<&mut dyn Backend>) {
+    fn signal(&mut self, window: WindowId, now: Time, sig: Signal, gpu: &mut dyn Backend) {
         let Some(w) = self.windows.get_mut(&window) else { return };
         let actions = w.pacer.on_signal(now, sig);
-        let mut gpu = gpu;
         for a in actions {
             match a {
                 Action::SubscribeVsync(on) => {
@@ -501,15 +500,7 @@ impl Engine {
                         self.scheduled.push((start_at, m));
                     }
                 }
-                Action::Draw { frame, target } => match gpu.as_deref_mut() {
-                    Some(g) => self.draw(window, Some(frame), target, now, g),
-                    None => {
-                        // No backend to draw with: nothing reaches the screen.
-                        let Some(w) = self.windows.get_mut(&window) else { return };
-                        let acts = w.pacer.on_signal(now, Signal::Discarded { frame });
-                        debug_assert!(acts.iter().all(|a| !matches!(a, Action::Draw { .. })));
-                    }
-                },
+                Action::Draw { frame, target } => self.draw(window, Some(frame), target, now, gpu),
                 Action::SetTimer(t) => {
                     if let Some(w) = self.windows.get_mut(&window) {
                         w.timer = Some(t);
@@ -601,13 +592,13 @@ impl Engine {
             match drew {
                 Some(at) => {
                     w.in_flight.insert(frame, inputs);
-                    self.signal(window, now, Signal::Submitted { frame, at }, Some(gpu));
+                    self.signal(window, now, Signal::Submitted { frame, at: at.max(now) }, gpu);
                 }
                 None => {
                     // Nothing reached the screen: the inputs ride on the next frame that draws.
                     w.inputs = inputs;
                     let sig = if failed { Signal::DrawFailed { frame } } else { Signal::Discarded { frame } };
-                    self.signal(window, now, sig, Some(gpu));
+                    self.signal(window, now, sig, gpu);
                 }
             }
         } else {
@@ -621,7 +612,7 @@ impl Engine {
         let active = w.anims.iter().any(|a| !a.holding && a.paused_at.is_none()) || !w.motions.is_empty();
         if active != w.animating {
             w.animating = active;
-            self.signal(window, now, Signal::AnimationsActive(active), Some(gpu));
+            self.signal(window, now, Signal::AnimationsActive(active), gpu);
         }
     }
 
@@ -752,7 +743,7 @@ impl Engine {
             if let Some(t) = w.caret.next_toggle.filter(|t| *t <= now) {
                 w.caret.on = !w.caret.on;
                 w.caret.next_toggle = self.cfg.caret_blink.map(|b| next_after(t, b, now));
-                self.signal(id, now, Signal::CompositorDamage, Some(gpu));
+                self.signal(id, now, Signal::CompositorDamage, gpu);
             }
             let Some(w) = self.windows.get_mut(&id) else { continue };
             if let Some(t) = w.next_vsync.filter(|t| *t <= now) {
@@ -760,13 +751,13 @@ impl Engine {
                 // A late wake skips to the latest tick; never two frames back to back to catch up.
                 let tick = latest_tick(t, interval, now);
                 w.next_vsync = Some(tick + interval);
-                self.signal(id, now, Signal::Vsync { target: tick + interval, interval }, Some(gpu));
+                self.signal(id, now, Signal::Vsync { target: tick + interval, interval }, gpu);
             }
             let Some(w) = self.windows.get_mut(&id) else { continue };
             let pacer_due = w.timer.filter(|t| *t <= now).is_some() || w.pacer.next_wakeup().is_some_and(|t| t <= now);
             if pacer_due {
                 w.timer = None;
-                self.signal(id, now, Signal::Timer, Some(gpu));
+                self.signal(id, now, Signal::Timer, gpu);
             }
         }
         self.flush();
