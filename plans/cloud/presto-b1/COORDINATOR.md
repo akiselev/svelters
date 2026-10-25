@@ -68,3 +68,21 @@ One consolidation per wave: merge lane branches into `ci/presto-integration` in 
 → text → render → frame-anim → compositor → platform → compiler → runtime; fix build breaks; run the presto
 and svelters CI; record failures in `plans/cloud/presto-b1/FIX-QUEUE.md`; the coordinator merges to master
 when the five svelters workflows plus `presto` are green.
+
+## For the consolidation (running list)
+
+- BERTH done at berth `claude/presto-berth` a49111b: run `presto_berth` tests (tests/dock.rs, 11) and berth's
+  check.sh, neither run yet. Gaps and 4 questions in berth `docs/PRESTO-BERTH.md` (pointer capture, window rects and
+  z-order in PlatformCx, service access from A11yCx).
+- TEXT-INPUT at 0030df69. Answered (coordinator, 2026-10-25): Q1 Monaco undo grouping on Windows/macOS, Q2 caret blink as
+  per-window compositor config (sent to COMPOSITOR), Q3 pin floors after the first green run, Q4 text-edit stays on
+  `presto_core::Kind`. Routed: R1/R2 to QUIRE, R4 to CORE-3, R6 (PRIMARY) to WAYLAND, TextServices install to APP-TEST.
+- COMPOSITOR 2b98a948 merged into base (d58a0fa0) before its CI finished; check it.
+- APP-TEST 30dd49e2: TextServices not wired (TODO in `crates/presto/src/app.rs` App::init, request 11). Decided
+  (coordinator, 2026-10-25): TextServices owns its own `SystemClipboard` (`MemoryClipboard` headless) and a compositor
+  handle clone for caret fast commits; the consolidation wires it.
+- APP-TEST requests 1–10 (`plans/milestones/PRESTO-app-test.md`), decided (coordinator, 2026-10-25): 1–5 to CORE-3
+  (additive Document entries; IME purpose rides with the area), 6–8 and 10 to COMPOSITOR (`frame_args`, a new
+  `ToUi::FrameTimings` variant for compositor-side stamps, confirm BeginFrame back-pressure, `ui_frame_skipped` →
+  `Signal::UiFrameSkipped`; then drop APP-TEST's empty-commit stopgap), 9 fixed in the workflow (crates/presto added).
+- CI load (coordinator, 2026-10-25): the five svelters workflows skip pushes that touch only presto crates and presto lane records (paths-ignore); presto.yml covers those. A consolidation's or master's push still runs all six.
