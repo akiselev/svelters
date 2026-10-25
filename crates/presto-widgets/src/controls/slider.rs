@@ -86,6 +86,7 @@ pub const SIGNALS: &[SignalSpec] = &[
     SignalSpec::new("changed", VALUE_ARG, "The value changed (dragging, a key, the wheel, AccessKit)."),
     SignalSpec::new("input", VALUE_ARG, "Sent after `changed`, with the value written."),
     SignalSpec::new("commit", VALUE_ARG, "A commit point: the release of a drag that changed the value, or a step."),
+    SignalSpec::new("submit", VALUE_ARG, "The user committed a value: the release of a drag, or Enter while focused."),
     SignalSpec::new("drag-started", &[], ""),
     SignalSpec::new("drag-stopped", &[], ""),
 ];
@@ -412,6 +413,8 @@ impl Kind for Slider {
         let mut val = self.current();
         let mut input: Option<f64> = None;
         let mut commit: Option<f64> = None;
+        // `submit`: the user committed a value: the release of a drag, or Enter while focused
+        let mut submit: Option<f64> = None;
         let (mut started, mut stopped) = (false, false);
         if let Some(n) = page_dir {
             let v = stp.apply(val, Step::By { n, page: true });
@@ -440,6 +443,7 @@ impl Kind for Slider {
                         input = Some(v);
                     }
                     commit = Some(v);
+                    submit = Some(v);
                 }
                 Scrub::Cancel { restore } => {
                     if self.draft.take().is_none() {
@@ -459,7 +463,10 @@ impl Kind for Slider {
                 val = v;
             }
         }
-        // signals: drag-started, changed/input, commit, drag-stopped
+        if cx.focused && pass.input.key_pressed(Key::Enter) {
+            submit = Some(self.draft.unwrap_or(val));
+        }
+        // signals: drag-started, changed/input, commit, submit, drag-stopped
         if started {
             common::emit(cx, &SPEC, "drag-started", Vec::new());
         }
@@ -470,6 +477,9 @@ impl Kind for Slider {
         }
         if let Some(v) = commit {
             common::emit(cx, &SPEC, "commit", vec![Value::F64(v)]);
+        }
+        if let Some(v) = submit {
+            common::emit(cx, &SPEC, "submit", vec![Value::F64(v)]);
         }
         if stopped {
             common::emit(cx, &SPEC, "drag-stopped", Vec::new());
@@ -544,7 +554,7 @@ mod tests {
         for (p, c) in [("min", ChangeClass::Layout), ("orientation", ChangeClass::Layout), ("show-value", ChangeClass::Layout), ("inverted", ChangeClass::Paint), ("page-step", ChangeClass::Property)] {
             assert_eq!(s.prop_spec(s.prop(p).unwrap()).unwrap().change, c, "{p}");
         }
-        for sig in ["changed", "input", "commit", "drag-started", "drag-stopped"] {
+        for sig in ["changed", "input", "commit", "submit", "drag-started", "drag-stopped"] {
             assert!(s.signal(sig).is_some(), "{sig}");
         }
         let mut k = Slider::default();
@@ -630,7 +640,7 @@ mod tests {
         assert!(d.state.contains(StateBits::PRESSED) && d.state.contains(StateBits::DRAGGING));
         d.advance(30);
         d.up(60.0, 12.0);
-        assert_eq!(d.take(), ["drag-started", "changed", "input", "commit", "drag-stopped"]);
+        assert_eq!(d.take(), ["drag-started", "changed", "input", "commit", "submit", "drag-stopped"]);
         assert_eq!(d.changed, ["value"]);
         assert!(!d.focused, "egui's row does not focus on click");
     }
@@ -649,7 +659,7 @@ mod tests {
         assert_eq!(changed, Some(vec![Value::F64(70.0)]));
         d.advance(20);
         d.up(80.0, 12.0);
-        assert_eq!(d.take(), ["changed", "input", "commit", "drag-stopped"]);
+        assert_eq!(d.take(), ["changed", "input", "commit", "submit", "drag-stopped"]);
         assert_eq!(d.changed, ["value"]);
     }
 
@@ -667,6 +677,19 @@ mod tests {
         d.up(100.0, 12.0);
         assert_eq!(value(&d), 10.0);
         assert!(!d.names().contains(&"commit"));
+    }
+
+    #[test]
+    fn enter_submits_the_value() {
+        let mut d = driver();
+        d.set("step", Value::F64(1.0));
+        d.focus(true);
+        d.key(Key::ArrowRight);
+        d.take();
+        d.key(Key::Enter);
+        let subs: Vec<_> = d.signals.iter().filter(|(n, _)| *n == "submit").map(|(_, a)| a.clone()).collect();
+        assert_eq!(subs, [vec![Value::F64(1.0)]], "one submit with the value");
+        assert_eq!(value(&d), 1.0, "Enter does not move it");
     }
 
     #[test]
@@ -725,7 +748,7 @@ mod tests {
         d.advance(20);
         d.up(60.0, 12.0);
         assert_eq!(value(&d), 50.0);
-        assert_eq!(d.take(), ["changed", "input", "commit", "drag-stopped"]);
+        assert_eq!(d.take(), ["changed", "input", "commit", "submit", "drag-stopped"]);
     }
 
     #[test]

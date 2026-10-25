@@ -122,7 +122,20 @@ impl LayoutRich for presto_text::TextSystem {
         };
         let l = presto_text::TextSystem::layout(self, &rich, max_width);
         let runs = l.runs().iter().map(|r| PlacedRun { run: r.run.clone(), origin: r.origin, style: r.style }).collect();
-        Arc::new(TextLayout { size: l.size(), runs, lines: l.lines().len() as u32 })
+        let geometry = Some(crate::shim::text::Geometry(Arc::new(PrestoGeometry(l.clone()))));
+        Arc::new(TextLayout { size: l.size(), runs, lines: l.lines().len() as u32, geometry })
+    }
+}
+
+/// presto-text's layout as caret and selection geometry.
+struct PrestoGeometry(Arc<presto_text::TextLayout>);
+
+impl crate::shim::text::TextGeometry for PrestoGeometry {
+    fn hit_byte(&self, p: Point) -> usize {
+        self.0.hit_test(p).byte
+    }
+    fn selection_rects(&self, range: std::ops::Range<usize>) -> Vec<presto_base::geom::Rect> {
+        self.0.selection_rects(range)
     }
 }
 

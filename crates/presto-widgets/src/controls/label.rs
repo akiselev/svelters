@@ -12,6 +12,16 @@
 //! on its glyphs: the pointer on it underlines it (DESIGN R18) and shows the pointer cursor (R10),
 //! and a click on it sends `link-clicked` (and `open-url` when it has a target) instead of
 //! `clicked`. The hit area and drawn rect are the text's, as egui's label.
+//!
+//! Selection (`selectable`, WIDGET-PARITY §2.10): a selectable label is `:read-only`, shows the
+//! I-beam, selects by drag (a double click a word, a triple click everything), takes focus on press,
+//! and while focused selects all with Ctrl/Cmd+A, extends with Shift+arrows and sends `copy` with the
+//! selected text on Ctrl/Cmd+C (writing the clipboard is the host's). `bind:selection-start` /
+//! `bind:selection-end` are the selection in chars of the shown text (equal: none; a negative end is
+//! the end of the text). Leaving focus collapses it unless the platform keeps unfocused selections.
+//!
+//! `for` (a buddy label): a click on the label moves focus to the node with that anchor (presto-core
+//! resolves anchors).
 
 use crate::controls::common::{self, Units};
 use crate::controls::rich::{self, Rich};
@@ -43,12 +53,21 @@ kind_props! {
     /// It takes clicks and sends `clicked` (set while a runtime listens to `clicked`).
     clickable "clickable": bool = Bool(false) ; Bool, Property;
     disabled "disabled": bool = Bool(false) ; Bool, Paint;
+    /// The text can be selected and copied; off by default.
+    selectable "selectable": bool = Bool(false) ; Bool, Paint;
+    /// The selection's start, in chars of the shown text (`bind:`).
+    selection_start "selection-start": i64 = I64(0) ; I64, Paint, bindable;
+    /// The selection's end, in chars (`bind:`); a negative end is the end of the text.
+    selection_end "selection-end": i64 = I64(0) ; I64, Paint, bindable;
+    /// The anchor of the node a click on this label focuses (a buddy label).
+    for_anchor "for": String = Str("") ; Str, Property;
 }
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
     SignalSpec::new("clicked", &[], "Clicked (only while `clickable`), not on a link run."),
     SignalSpec::new("link-clicked", &[("index", ValueType::I64), ("href", ValueType::Str)], "A link run was clicked: its index in `runs` and its `href`.").cancelable(),
+    SignalSpec::new("copy", &[("text", ValueType::Str)], "Ctrl/Cmd+C on a focused selectable label: the selected text, for the host's clipboard."),
     SignalSpec::new("open-url", &[("url", ValueType::Str), ("new-tab", ValueType::Bool)], "The default of a `link-clicked` whose run has a target: the host opens `url` (presto never opens anything itself)."),
 ];
 
@@ -166,9 +185,122 @@ pub struct Label {
     placed: Option<Placed>,
     /// The run children folded at the last prepare (`controls::run`), for events.
     child_runs: Vec<Value>,
+    /// A pointer selection is in progress (the press began on the text).
+    selecting: bool,
+    /// The selection's fixed end while selecting, in bytes of the placed text.
+    sel_anchor: usize,
+}
+
+/// The byte offset of char `c` in `t` (its end past the last char).
+fn byte_of(t: &str, c: usize) -> usize {
+    t.char_indices().nth(c).map_or(t.len(), |(b, _)| b)
+}
+
+/// The char index of byte `b` in `t`.
+fn char_of(t: &str, b: usize) -> usize {
+    t[..b.min(t.len())].chars().count()
+}
+
+/// The word around byte `b` of `t` (alphanumerics and `_`; a lone other char otherwise).
+fn word_at(t: &str, b: usize) -> std::ops::Range<usize> {
+    let word = |c: char| c.is_alphanumeric() || c == '_';
+    let b = b.min(t.len());
+    let at = t[b..].chars().next().or_else(|| t[..b].chars().next_back());
+    let Some(c0) = at else { return b..b };
+    if !word(c0) {
+        let start = if t[b..].starts_with(c0) { b } else { b - c0.len_utf8() };
+        return start..start + c0.len_utf8();
+    }
+    let start = t[..b].char_indices().rev().take_while(|(_, c)| word(*c)).last().map_or(b, |(i, _)| i);
+    let end = t[b..].char_indices().find(|(_, c)| !word(*c)).map_or(t.len(), |(i, _)| b + i);
+    start..end
 }
 
 impl Label {
+    /// The selection as a byte range of `text` (the placed text), when it selects anything.
+    fn selection_bytes(&self, text: &str) -> Option<std::ops::Range<usize>> {
+        if !self.props.selectable {
+            return None;
+        }
+        let n = text.chars().count() as i64;
+        let end = if self.props.selection_end < 0 { n } else { self.props.selection_end.min(n) };
+        let start = self.props.selection_start.clamp(0, n);
+        let (a, b) = (start.min(end), start.max(end));
+        (a < b).then(|| byte_of(text, a as usize)..byte_of(text, b as usize))
+    }
+
+    /// Writes the selection (bytes of `text`, `anchor` → `caret`) to the props, if it changed.
+    fn set_selection(&mut self, cx: &mut EventCx, text: &str, anchor: usize, caret: usize) {
+        let (s, e) = (char_of(text, anchor) as i64, char_of(text, caret) as i64);
+        if (s, e) != (self.props.selection_start, self.props.selection_end) {
+            self.props.selection_start = s;
+            self.props.selection_end = e;
+            cx.prop_changed(P::selection_start.id());
+            cx.prop_changed(P::selection_end.id());
+        }
+    }
+
+    /// Pointer and keyboard selection on one pass (`selectable`).
+    fn select(&mut self, cx: &mut EventCx, pass: &crate::interact::Pass, ev: &Event) {
+        let Some(pl) = self.placed.clone() else { return };
+        let Some(geom) = pl.layout.geometry.clone() else { return };
+        let text = pl.text.text.as_str();
+        let hit = |p: Point| geom.0.hit_byte(Point::new(p.x - pl.rect.min.x, p.y - pl.rect.min.y));
+        if pass.input.pointer.any_pressed() && pass.resp.down_on {
+            if let Some(p) = pass.input.pointer.latest_pos() {
+                let b = hit(p);
+                let r = match self.units.tracker.press_click_count() {
+                    2 => word_at(text, b),
+                    3 => 0..text.len(),
+                    _ => b..b,
+                };
+                self.sel_anchor = r.start;
+                self.selecting = true;
+                self.set_selection(cx, text, r.start, r.end);
+                if !cx.focused {
+                    cx.focus_request = Some(true);
+                }
+            }
+        } else if self.selecting && pass.resp.down_on && pass.input.pointer.is_moving()
+            && let Some(p) = pass.input.pointer.latest_pos()
+        {
+            let anchor = self.sel_anchor;
+            self.set_selection(cx, text, anchor, hit(p));
+        }
+        if !pass.resp.down_on {
+            self.selecting = false;
+        }
+        if let Event::Focus { gained: false, .. } = ev
+            && !cx.policy.keep_selection_unfocused
+        {
+            let caret = byte_of(text, self.props.selection_end.max(0) as usize);
+            self.set_selection(cx, text, caret, caret);
+        }
+        if !cx.focused {
+            return;
+        }
+        let n = text.chars().count() as i64;
+        for e in pass.input.events.iter() {
+            let crate::interact::FrameEvent::Key { key, pressed: true, modifiers: m, .. } = e else { continue };
+            match key {
+                presto_base::key::Key::A if m.command => self.set_selection(cx, text, 0, text.len()),
+                presto_base::key::Key::C if m.command => {
+                    if let Some(r) = self.selection_bytes(text) {
+                        common::emit(cx, &SPEC, "copy", vec![Value::str(&text[r])]);
+                    }
+                }
+                presto_base::key::Key::ArrowLeft | presto_base::key::Key::ArrowRight if m.shift => {
+                    let d = if *key == presto_base::key::Key::ArrowLeft { -1 } else { 1 };
+                    let end = if self.props.selection_end < 0 { n } else { self.props.selection_end.min(n) };
+                    let caret = (end + d).clamp(0, n) as usize;
+                    let anchor = byte_of(text, self.props.selection_start.clamp(0, n) as usize);
+                    self.set_selection(cx, text, anchor, byte_of(text, caret));
+                }
+                _ => {}
+            }
+        }
+    }
+
     /// The runs, when the label has any: its `runs` prop, then its run children (`children`, as
     /// `runs` records). `set_prop` rejects runs that don't parse; children always do.
     pub fn rich(&self) -> Option<Rich> {
@@ -247,6 +379,15 @@ impl Kind for Label {
         let s = self.view(&cx.style);
         let r = cx.rect();
         let placed = place(cx.text, &s, &look, r, cx.scale);
+        // the selection lies under the text
+        if let (Some(range), Some(geom)) = (self.selection_bytes(&placed.text.text), placed.layout.geometry.as_ref()) {
+            let fill = paint::ua_token(s.is_dark(), "selection").unwrap_or(Color::rgba(0.2, 0.4, 0.8, 0.4));
+            for rect in geom.0.selection_rects(range) {
+                let rect = rect.translate(placed.rect.min.to_vec());
+                let q = presto_base::display::Quad { rect, radii: Default::default(), fill: presto_base::color::Fill::Solid(fill), border_widths: Default::default(), border_color: Color::TRANSPARENT, border_style: Default::default() };
+                cx.list.push(presto_base::display::Prim::Quad(q), rect);
+            }
+        }
         paint(&mut PaintCx::of(cx), &s, &look, &placed);
     }
 
@@ -262,9 +403,13 @@ impl Kind for Label {
         cx.state.set(StateBits::DISABLED, self.props.disabled);
         cx.enabled = !self.props.disabled;
         let rich = self.rich();
-        let clickable = self.props.clickable || rich.as_ref().is_some_and(Rich::has_links);
+        let clickable = self.props.clickable || rich.as_ref().is_some_and(Rich::has_links) || !self.props.for_anchor.is_empty();
         let params = PressParams::default();
-        let sense = if clickable { Sense::HOVER.union(self.press.sense(&params)) } else { Sense::HOVER };
+        let mut sense = if clickable { Sense::HOVER.union(self.press.sense(&params)) } else { Sense::HOVER };
+        if self.props.selectable {
+            sense = sense.union(Sense::CLICK_AND_DRAG);
+        }
+        cx.state.set(StateBits::READ_ONLY, self.props.selectable);
         let mut fired = Intents::default();
         let (hover, press) = (&mut self.hover, &mut self.press);
         let pass = self.units.run(cx, ev, sense, |icx| {
@@ -273,6 +418,9 @@ impl Kind for Label {
                 press.input(&params, icx, &mut fired);
             }
         });
+        if self.props.selectable && cx.enabled {
+            self.select(cx, &pass, ev);
+        }
         let placed = self.placed.as_ref();
         let link_at = |p: Point| rich.as_ref().zip(placed).and_then(|(r, pl)| rich::link_at(r, &pl.layout, pl.rect.min, p));
         let lit = if pass.resp.hovered { pass.input.pointer.latest_pos().and_then(link_at) } else { None };
@@ -282,6 +430,8 @@ impl Kind for Label {
         }
         if lit.is_some() && cx.enabled {
             cx.cursor = Some(CursorIcon::Pointer);
+        } else if self.props.selectable && pass.resp.hovered {
+            cx.cursor = Some(CursorIcon::Text);
         }
         let mut handled = pass.resp.down_on;
         for _ in fired.iter().filter(|p| p.is_click()) {
@@ -299,8 +449,14 @@ impl Kind for Label {
                         common::emit(cx, &SPEC, "open-url", vec![Value::str(&href), Value::Bool(false)]);
                     }
                 }
-                _ if self.props.clickable => common::emit(cx, &SPEC, "clicked", Vec::new()),
-                _ => {}
+                _ => {
+                    if self.props.clickable {
+                        common::emit(cx, &SPEC, "clicked", Vec::new());
+                    }
+                    if !self.props.for_anchor.is_empty() {
+                        cx.focus_anchor = Some(self.props.for_anchor.clone());
+                    }
+                }
             }
         }
         if handled || pass.resp.hovered { Handled::Yes } else { Handled::No }
@@ -316,6 +472,9 @@ impl Kind for Label {
         }
         if self.props.clickable {
             self.press.a11y(&PressParams::default(), cx.node);
+        }
+        if self.props.selectable {
+            cx.node.add_action(accesskit::Action::Focus);
         }
     }
 }
@@ -536,5 +695,114 @@ mod tests {
         assert_eq!(n.role(), accesskit::Role::Label);
         assert_eq!(n.value(), Some("Name"));
         assert!(n.supports_action(accesskit::Action::Click));
+    }
+
+    fn selectable(text: &str) -> Driver<Label> {
+        let mut l = Label::default();
+        l.props.text = text.into();
+        l.props.selectable = true;
+        let size = Size::new(200.0, 20.0);
+        testkit::prepare(&mut l, size, StateBits::NONE);
+        Driver::new(l, size)
+    }
+
+    fn sel(d: &Driver<Label>) -> (i64, i64) {
+        (d.kind.props.selection_start, d.kind.props.selection_end)
+    }
+
+    fn col(k: f32) -> f32 {
+        k * MonoShaper::advance(font_size())
+    }
+
+    #[test]
+    fn selection_spec() {
+        let s = Label::spec();
+        for p in ["selectable", "selection-start", "selection-end", "for"] {
+            assert!(s.prop(p).is_some(), "{p}");
+        }
+        assert!(s.prop_spec(s.prop("selection-start").unwrap()).unwrap().bindable);
+        assert!(s.signal("copy").is_some());
+    }
+
+    #[test]
+    fn word_bounds() {
+        assert_eq!(word_at("hello world", 2), 0..5);
+        assert_eq!(word_at("hello world", 5), 5..6, "a lone space");
+        assert_eq!(word_at("hello world", 11), 6..11, "at the end: the last word");
+        assert_eq!(word_at("", 0), 0..0);
+    }
+
+    #[test]
+    fn drag_selects_and_focuses() {
+        let mut d = selectable("hello world");
+        d.hover(true);
+        d.down(col(0.0), 10.0);
+        assert!(d.focused, "a press focuses a selectable label");
+        assert!(d.state.contains(StateBits::READ_ONLY));
+        d.advance(20);
+        d.move_to(col(3.0), 10.0);
+        d.move_to(col(5.0), 10.0);
+        d.up(col(5.0), 10.0);
+        assert_eq!(sel(&d), (0, 5));
+        assert!(d.changed.contains(&"selection-start") && d.changed.contains(&"selection-end"));
+    }
+
+    #[test]
+    fn double_and_triple_click() {
+        let mut d = selectable("hello world");
+        d.hover(true);
+        for _ in 0..2 {
+            d.down(col(8.0), 10.0);
+            d.advance(20);
+            d.up(col(8.0), 10.0);
+            d.advance(20);
+        }
+        assert_eq!(sel(&d), (6, 11), "a double click selects the word");
+        d.down(col(8.0), 10.0);
+        d.advance(20);
+        d.up(col(8.0), 10.0);
+        assert_eq!(sel(&d), (0, 11), "a triple click selects everything");
+    }
+
+    #[test]
+    fn keyboard_select_all_copy_and_extend() {
+        let mut d = selectable("hello world");
+        d.focus(true);
+        d.key_with(presto_base::key::Key::A, presto_base::event::Modifiers::CTRL);
+        assert_eq!(sel(&d), (0, 11));
+        d.key_with(presto_base::key::Key::C, presto_base::event::Modifiers::CTRL);
+        assert_eq!(d.signals.last(), Some(&("copy", vec![Value::str("hello world")])));
+        d.key_with(presto_base::key::Key::ArrowLeft, presto_base::event::Modifiers::SHIFT);
+        assert_eq!(sel(&d), (0, 10));
+    }
+
+    #[test]
+    fn focus_loss_collapses_on_the_egui_row() {
+        let mut d = selectable("hello world");
+        d.focus(true);
+        d.key_with(presto_base::key::Key::A, presto_base::event::Modifiers::CTRL);
+        d.focus(false);
+        let (s, e) = sel(&d);
+        assert_eq!(s, e, "egui's row does not keep an unfocused selection");
+    }
+
+    #[test]
+    fn records_the_selection_under_the_text() {
+        let mut l = Label::default();
+        l.props.text = "hello".into();
+        l.props.selectable = true;
+        l.props.selection_start = 1;
+        l.props.selection_end = 3;
+        let (list, _) = testkit::record(&l, Size::new(200.0, 20.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&list), ["quad", "glyphs"]);
+        let Prim::Quad(q) = &list.items[0] else { unreachable!() };
+        assert!((q.rect.min.x - col(1.0)).abs() < 1e-3 && (q.rect.max.x - col(3.0)).abs() < 1e-3);
+        // a negative end is the end of the text; not selectable draws none
+        l.props.selection_end = -1;
+        let (list, _) = testkit::record(&l, Size::new(200.0, 20.0), StateBits::NONE);
+        let Prim::Quad(q) = &list.items[0] else { unreachable!() };
+        assert!((q.rect.max.x - col(5.0)).abs() < 1e-3);
+        l.props.selectable = false;
+        assert_eq!(testkit::kinds(&testkit::record(&l, Size::new(200.0, 20.0), StateBits::NONE).0), ["glyphs"]);
     }
 }
