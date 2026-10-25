@@ -92,21 +92,44 @@ impl presto_base::text::TextMeasure for NoMeasure {
     }
 }
 
-/// The measure of a leaf: its kind's `measure` with the node's view.
-fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: Size<AvailableSpace>) -> Size<f32> {
-    let Some(k) = doc.kinds[i].take() else { return Size::ZERO };
-    // the kind sees the whole document (its children's views): the services it uses mutably are
-    // lent out of it for the call
+/// Calls `f` with node `i`'s kind and a measure context (its view, with `style` standing in for its
+/// computed box while a restyle computes it). The kind sees the whole document (its children's
+/// views): the services it uses mutably are lent out of it for the call.
+pub(crate) fn with_measure_cx<R>(doc: &mut Document, i: usize, style: Option<&crate::style::ComputedBox>, f: impl FnOnce(&dyn crate::Kind, &mut MeasureCx) -> R) -> Option<R> {
+    let k = doc.kinds[i].take()?;
     let mut text = std::mem::replace(&mut doc.text, Box::new(NoMeasure));
     let mut services = std::mem::take(&mut doc.services);
     let out = {
-        let mut cx = MeasureCx { node: doc.view_at(i), text: &mut *text, services: &mut services };
-        k.measure(&mut cx, known, avail)
+        let view = doc.view_at(i);
+        let view = match style {
+            Some(s) => crate::cx::NodeView { style: s, ..view },
+            None => view,
+        };
+        let mut cx = MeasureCx { node: view, text: &mut *text, services: &mut services };
+        f(&*k, &mut cx)
     };
     doc.text = text;
     doc.services = services;
     doc.kinds[i] = Some(k);
-    out
+    Some(out)
+}
+
+/// The measure of a leaf: its kind's `measure` with the node's view.
+fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: Size<AvailableSpace>) -> Size<f32> {
+    with_measure_cx(doc, i, None, |k, cx| k.measure(cx, known, avail)).unwrap_or(Size::ZERO)
+}
+
+/// Adds `pad` (points) to the length parts of `style`'s padding (a kind's chrome).
+pub(crate) fn add_padding(style: &mut Style, pad: presto_base::geom::Insets) {
+    let add = |lp: &mut taffy::LengthPercentage, v: f32| {
+        if let taffy::style::ExpandedLengthPercentage::Length(l) = lp.expand() {
+            *lp = taffy::LengthPercentage::length(l + v);
+        }
+    };
+    add(&mut style.padding.left, pad.left);
+    add(&mut style.padding.right, pad.right);
+    add(&mut style.padding.top, pad.top);
+    add(&mut style.padding.bottom, pad.bottom);
 }
 
 impl LayoutPartialTree for Tree<'_> {
