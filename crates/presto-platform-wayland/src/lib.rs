@@ -13,7 +13,7 @@
 //! | [`ime`] | `zwp_text_input_v3`: surrounding text, purpose, hints, the `done` batches |
 //! | [`csd`] | our client-side decorations: hit-test regions → move, resize, window menu |
 //! | [`layers`] | OS layers as subsurfaces, locked with the toplevel's state |
-//! | [`present`] | the frame source: frame callbacks, `wp_presentation`, `fifo-v1`, `commit-timing-v1`, 100 ms rule |
+//! | [`present`] | surface locking and the frame source: frame callbacks, `wp_presentation`, `fifo-v1`, 100 ms rule |
 //! | [`data`] | clipboard, primary selection, drag and drop, `xdg-toplevel-drag-v1` tear-off |
 //! | [`portal`] | the XDG desktop portal (ashpd): colour scheme, accent, file dialogs |
 //! | [`time`] | presto time on `CLOCK_MONOTONIC` and Wayland timestamps |
