@@ -95,6 +95,9 @@ pub struct Document {
     /// Prop writes made while their node's kind was out (JS run during the kind's own handler):
     /// the kind gets `prop_changed` for them when it is back.
     pub(crate) missed_props: Vec<(NodeId, PropId)>,
+    /// The deliverer is running (its depth), and the sync events raised meanwhile.
+    pub(crate) delivering: u32,
+    pub(crate) nested: Vec<crate::input::JsEvent>,
     /// The nodes with a non-empty `anchor`.
     pub(crate) anchors: HashMap<NodeId, Arc<str>>,
     /// The nodes with a non-empty `for` prop (labels), and the anchor it names.
@@ -105,6 +108,13 @@ pub struct Document {
     pub(crate) kind_sets: crate::query::KindSets,
     /// Kinds that scroll their own content ([`Kind::self_scroll`]).
     pub(crate) self_scroll: HashMap<NodeId, crate::kind::SelfScroll>,
+    /// The one selection's owner while single selection is on (GTK), and whether it is.
+    pub(crate) selection_owner: Option<NodeId>,
+    pub(crate) single_selection: bool,
+    /// The shared taffy styles of the layout column.
+    pub(crate) styles: crate::compact::Interner<taffy::Style>,
+    /// Nodes whose kind asks for light dismiss now ([`Kind::light_dismiss`]).
+    pub(crate) light_dismiss: std::collections::HashSet<NodeId>,
     /// Fast commits queued for the compositor ([`Document::take_fast_commits`]).
     pub(crate) fast: Vec<presto_base::commit::FastCommit>,
 }
@@ -147,11 +157,17 @@ impl Document {
             peer_running: false,
             sync_delivery: None,
             missed_props: Vec::new(),
+            delivering: 0,
+            nested: Vec::new(),
             anchors: HashMap::new(),
             label_for: HashMap::new(),
             auto_default: false,
             kind_sets: Default::default(),
             self_scroll: HashMap::new(),
+            light_dismiss: Default::default(),
+            styles: Default::default(),
+            selection_owner: None,
+            single_selection: false,
             fast: Vec::new(),
         }
     }
@@ -165,8 +181,10 @@ impl Document {
     /// The deliverer gets the document lent to it: listeners read the tree, write props and build
     /// nodes directly (writes belong in [`Document::js_transaction`] with the event's revision). The
     /// path is the one computed when the event was built: a listener node that is gone when its turn
-    /// comes is skipped (`Document::contains`). While the deliverer runs, a cancelable signal another
-    /// listener's action raises is queued, not delivered (no nested delivery), and a write to the node
+    /// comes is skipped (`Document::contains`). While the deliverer runs, a sync event a
+    /// listener's action raises (`el.click()`, a `focus()`'s focus events) is not delivered inside
+    /// the listener: it is delivered, not cancelable, right after the listener call that caused it
+    /// returns (before the outer default runs), and so on until none is left. A write to the node
     /// whose kind is mid-handler reaches that kind's `prop_changed` when the handler returns.
     pub fn set_sync_delivery(&mut self, f: SyncDelivery) {
         self.sync_delivery = Some(f);
@@ -175,6 +193,7 @@ impl Document {
     /// Puts node `node`'s kind back after a call and replays the prop writes it missed meanwhile.
     pub(crate) fn restore_kind(&mut self, node: NodeId, mut k: Box<dyn Kind>) {
         let Some(i) = self.idx(node) else { return };
+        self.refresh_light_dismiss(node, &*k);
         if self.missed_props.iter().any(|(n, _)| *n == node) {
             let missed: Vec<PropId> = self.missed_props.iter().filter(|(n, _)| *n == node).map(|(_, p)| *p).collect();
             self.missed_props.retain(|(n, _)| *n != node);
@@ -203,6 +222,16 @@ impl Document {
             for f in focused {
                 crate::input::scope::refresh_default(self, f);
             }
+        }
+    }
+
+    /// GTK's rule: one text selection in the whole app. A text kind that selects something calls
+    /// [`EventCx::claim_selection`](crate::EventCx::claim_selection); the previous owner gets
+    /// [`Kind::selection_lost`] and collapses its selection. Off (the default) on other platforms.
+    pub fn set_single_selection(&mut self, on: bool) {
+        self.single_selection = on;
+        if !on {
+            self.selection_owner = None;
         }
     }
 
@@ -606,6 +635,10 @@ impl Document {
         self.peer_queue.retain(|(n, ..)| *n != id);
         self.missed_props.retain(|(n, _)| *n != id);
         self.self_scroll.remove(&id);
+        self.light_dismiss.remove(&id);
+        if self.selection_owner == Some(id) {
+            self.selection_owner = None;
+        }
         self.slots.free(i);
     }
 
@@ -817,6 +850,10 @@ impl Document {
         }
         self.refresh_prop_state(i);
         self.refresh_children_inert(i);
+        if let Some(k) = self.kinds[i].take() {
+            self.refresh_light_dismiss(node, &*k);
+            self.kinds[i] = Some(k);
+        }
         // ancestors named by their descendants' text re-project
         if is_text || prop == common::ARIA_LABEL {
             let mut a = self.core[i].parent;
@@ -921,6 +958,16 @@ impl Document {
         }
         let node = self.slots.id_at(i).expect("live");
         self.mark(node, request);
+    }
+
+    /// Whether `node`'s kind `k` asks for light dismiss now.
+    pub(crate) fn refresh_light_dismiss(&mut self, node: NodeId, k: &dyn Kind) {
+        let Some(i) = self.idx(node) else { return };
+        if k.light_dismiss(&self.view_at(i)) {
+            self.light_dismiss.insert(node);
+        } else {
+            self.light_dismiss.remove(&node);
+        }
     }
 
     /// Sets the bits of the kind's [`KindSpec::prop_states`](crate::KindSpec::prop_states) as its
