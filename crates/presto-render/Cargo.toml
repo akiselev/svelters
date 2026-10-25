@@ -8,3 +8,11 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+wgpu = { workspace = true }
+etagere = { workspace = true }
+lyon = { workspace = true }
+bytemuck = { workspace = true }
+smallvec = { workspace = true }
+
+[dev-dependencies]
+pollster = "0.4"
