@@ -10,25 +10,32 @@
 //!   message-only window (the compositor's wake through [`Waker`], deadlines from a
 //!   high-resolution waitable timer on a timer thread) rather than from this loop's own wait. Frames
 //!   therefore keep coming from the compositor's wake through every modal loop.
-//! - **Native modals from the app** (an OLE drag) start after the handler returns, never inside it.
+//! - **Native modals from the app** (a window move from `drag_window`) start after the handler
+//!   returns, never inside it.
+//! - **IME edits** (TSF, `WM_IME_REQUEST`) reach the app as `ImeEvent`s queued while the OS call
+//!   runs and delivered when it returns ([`App::flush`]).
 //! - **Keys** pass through the TSF keystroke manager before `TranslateMessage`, so the active TIP
 //!   sees them first (IME-first routing, architecture §11.2).
 
 use crate::clipboard::Win32Clipboard;
 use crate::dcomp::DComp;
-use crate::drag;
-use crate::frame::Win32FrameSource;
 use crate::keyboard::KeyTranslator;
 use crate::monitor;
-use crate::shim::*;
 use crate::tsf::{ClientAccess, Tsf, TsfDocument};
-use crate::util::{QpcClock, wide};
+use crate::util::wide;
 use crate::window::{self, Window};
+use presto_base::accesskit;
 use presto_base::cursor::CursorIcon;
 use presto_base::event::{InputEnvelope, InputEvent, WindowEvent};
+use presto_base::geom::{Rect, Scale, Vec2};
 use presto_base::ids::{InputSeq, SurfaceId, WindowId};
 use presto_base::input::TextInputClient;
 use presto_base::time::{Clock, Time};
+use presto_platform::clock::OsClock;
+use presto_platform::{
+    A11yEvent, AppHandler, Clipboard, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx,
+    PlatformError, SurfaceTarget, Waker, WindowDesc,
+};
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, VecDeque};
 use std::rc::{Rc, Weak};
@@ -52,6 +59,8 @@ use windows::Win32::UI::WindowsAndMessaging::{
 pub(crate) const WM_PRESTO_WAKE: u32 = WM_APP + 1;
 /// Posted to the message window when the timer's deadline passes.
 pub(crate) const WM_PRESTO_TIMER: u32 = WM_APP + 2;
+/// Posted to the message window when an accessibility event is queued (they arrive on any thread).
+pub(crate) const WM_PRESTO_A11Y: u32 = WM_APP + 3;
 
 thread_local! {
     static APP: RefCell<Option<Rc<App>>> = const { RefCell::new(None) };
@@ -69,7 +78,8 @@ pub(crate) enum Pending {
     Window(WindowId, WindowEvent),
     Wake,
     Timer,
-    DragFinished(DragResult),
+    RawMotion(WindowId, Vec2),
+    A11y(WindowId, A11yEvent),
 }
 
 pub(crate) struct Inner {
@@ -97,11 +107,12 @@ pub(crate) struct App {
     /// A high surrogate from a lone `WM_CHAR`, waiting for its low half.
     pub high_surrogate: Cell<Option<u16>>,
     wake_pending: Arc<AtomicBool>,
+    /// Accessibility events from any thread, for the main thread.
+    pub a11y_queue: Arc<Mutex<Vec<(WindowId, A11yEvent)>>>,
     timer: TimerThread,
-    clock: Arc<QpcClock>,
+    clock: Arc<OsClock>,
     exit: Cell<bool>,
     seq: Cell<u64>,
-    drag: RefCell<Option<DragData>>,
     weak: Weak<App>,
 }
 
@@ -118,8 +129,35 @@ impl App {
         self.deliver(Pending::Input(env));
     }
 
+    /// Queues an input event without running the handler (IME edits made inside an OS call);
+    /// [`App::flush`] delivers it.
+    pub fn enqueue_input(&self, window: WindowId, event: InputEvent) {
+        let seq = self.seq.get() + 1;
+        self.seq.set(seq);
+        let now = self.now();
+        let env = InputEnvelope { seq: InputSeq(seq), window, os_time: now, recv_time: now, event };
+        self.queue.borrow_mut().push_back(Pending::Input(env));
+    }
+
     pub fn window_event(&self, window: WindowId, ev: WindowEvent) {
         self.deliver(Pending::Window(window, ev));
+    }
+
+    /// Delivers what was queued without running the handler.
+    pub fn flush(&self) {
+        if !self.queue.borrow().is_empty() {
+            self.drain();
+        }
+    }
+
+    /// Asks the app whether the user may quit (logoff/shutdown); `true` while the handler is busy.
+    pub fn quit_requested(&self) -> bool {
+        let Some(this) = self.weak.upgrade() else { return true };
+        let Some(mut handler) = self.handler.borrow_mut().take() else { return true };
+        let mut cx = Cx { app: &this, clipboard: Win32Clipboard { owner: self.msg_hwnd.get() } };
+        let ok = handler.quit_requested(&mut cx);
+        *self.handler.borrow_mut() = Some(handler);
+        ok
     }
 
     pub fn deliver(&self, ev: Pending) {
@@ -143,16 +181,12 @@ impl App {
                     Pending::Window(w, e) => handler.window_event(&mut cx, w, e),
                     Pending::Wake => handler.wake(&mut cx),
                     Pending::Timer => handler.timer(&mut cx, self.now()),
-                    Pending::DragFinished(r) => handler.drag_finished(&mut cx, r),
+                    Pending::RawMotion(w, d) => handler.raw_mouse_motion(&mut cx, w, d),
+                    Pending::A11y(w, e) => handler.a11y_event(&mut cx, w, e),
                 }
             }
             *self.handler.borrow_mut() = Some(handler);
             self.after_handler();
-            let drag = self.drag.borrow_mut().take();
-            if let Some(data) = drag {
-                let result = drag::run_drag(data);
-                self.queue.borrow_mut().push_back(Pending::DragFinished(result));
-            }
             if self.queue.borrow().is_empty() {
                 break;
             }
@@ -174,17 +208,23 @@ impl App {
         }
     }
 
-    /// The handler's text field in `window`, while the handler is not running.
+    /// The IME's view of `window`'s text field ([`crate::shadow`]); the edits `f` makes are queued as
+    /// input events. `false` when the window has none.
     pub fn with_text_client(&self, window: WindowId, f: &mut dyn FnMut(&mut dyn TextInputClient)) -> bool {
-        let Ok(mut slot) = self.handler.try_borrow_mut() else { return false };
-        let Some(handler) = slot.as_mut() else { return false };
-        match handler.text_input(window) {
-            Some(client) => {
-                f(client);
-                true
-            }
-            None => false,
+        let shadow = match self.inner.try_borrow() {
+            Ok(inner) => inner.windows.get(&window).map(|w| w.shadow.clone()),
+            Err(_) => None,
+        };
+        let Some(shadow) = shadow else { return false };
+        let events = {
+            let Ok(mut client) = shadow.try_borrow_mut() else { return false };
+            f(&mut *client);
+            client.take_events()
+        };
+        for ev in events {
+            self.enqueue_input(window, InputEvent::Ime(ev));
         }
+        true
     }
 
     pub fn client_access(&self) -> ClientAccess {
@@ -216,9 +256,25 @@ impl App {
         self.deliver(Pending::Wake);
     }
 
+    pub fn on_a11y(&self) {
+        let events = std::mem::take(&mut *self.a11y_queue.lock().unwrap_or_else(|e| e.into_inner()));
+        for (w, e) in events {
+            self.queue.borrow_mut().push_back(Pending::A11y(w, e));
+        }
+        self.flush();
+    }
+
+    pub fn raw_motion(&self, window: WindowId, delta: Vec2) {
+        self.deliver(Pending::RawMotion(window, delta));
+    }
+
     pub fn on_timer(&self) {
         self.deliver(Pending::Timer);
     }
+}
+
+pub(crate) fn os_err(call: &str, e: windows_core::Error) -> PlatformError {
+    PlatformError::Os(format!("{call}: {e}"))
 }
 
 /// The deadline thread: a high-resolution waitable timer whose expiry is posted to the message
@@ -246,15 +302,15 @@ unsafe impl Send for SendHandle {}
 unsafe impl Sync for SendHandle {}
 
 impl TimerThread {
-    fn spawn(msg_hwnd: HWND, clock: Arc<QpcClock>) -> Result<Self, PlatformError> {
-        let rearm = unsafe { CreateEventW(None, false, false, None) }.map_err(|e| PlatformError::win("CreateEventW", e))?;
+    fn spawn(msg_hwnd: HWND, clock: Arc<OsClock>) -> Result<Self, PlatformError> {
+        let rearm = unsafe { CreateEventW(None, false, false, None) }.map_err(|e| os_err("CreateEventW", e))?;
         let shared = Arc::new(TimerShared { state: Mutex::new(TimerState::default()), rearm: SendHandle(rearm) });
         let target = msg_hwnd.0 as isize;
         let s = shared.clone();
         let thread = std::thread::Builder::new()
             .name("presto-timer".into())
             .spawn(move || timer_loop(&s, target, &*clock))
-            .map_err(|_| PlatformError::Os { call: "spawn timer thread", code: 0 })?;
+            .map_err(|e| PlatformError::Os(format!("timer thread: {e}")))?;
         Ok(Self { shared, thread: Some(thread) })
     }
 
@@ -344,7 +400,7 @@ impl PlatformCx for Cx<'_> {
             None => SurfaceTarget::None,
             Some(w) => match &w.tree {
                 Some(tree) => SurfaceTarget::CompositionVisual(tree.main_visual_ptr()),
-                None => SurfaceTarget::Win32 { hwnd: w.hwnd.0 as isize, hinstance: self.app.hinstance.0 as isize },
+                None => window::raw_target(w.hwnd, self.app.hinstance),
             },
         }
     }
@@ -361,13 +417,13 @@ impl PlatformCx for Cx<'_> {
         Some((surface, SurfaceTarget::CompositionVisual(ptr)))
     }
 
-    fn update_os_layer(&mut self, id: WindowId, layer: SurfaceId, desc: OsLayerDesc) {
+    fn set_os_layer_bounds(&mut self, id: WindowId, layer: SurfaceId, bounds: Rect) {
         let Some(dcomp) = self.app.dcomp.as_ref() else { return };
         let mut inner = self.app.inner.borrow_mut();
         if let Some(w) = inner.windows.get_mut(&id) {
             let scale = w.scale;
             if let Some(tree) = w.tree.as_mut() {
-                let _ = tree.update_layer(dcomp, layer, desc, scale);
+                let _ = tree.set_layer_bounds(dcomp, layer, bounds, scale);
             }
         }
     }
@@ -380,12 +436,22 @@ impl PlatformCx for Cx<'_> {
         }
     }
 
+    /// `None`: `OsLayerCommitter` has no public constructor yet (see the lane record); the
+    /// compositor can use [`crate::dcomp::CommitHandle`] directly once wired.
+    fn os_layer_committer(&self, _id: WindowId) -> Option<OsLayerCommitter> {
+        None
+    }
+
     fn set_cursor(&mut self, id: WindowId, c: CursorIcon) {
         window::set_cursor(self.app, id, c);
     }
 
     fn set_ime(&mut self, id: WindowId, state: Option<ImeState>) {
         window::set_ime(self.app, id, state);
+    }
+
+    fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool {
+        window::end_composition(self.app, id, commit)
     }
 
     fn clipboard(&mut self) -> &mut dyn Clipboard {
@@ -424,23 +490,8 @@ impl PlatformCx for Cx<'_> {
         }
     }
 
-    fn exit(&mut self) {
-        self.app.exit.set(true);
-    }
-
-    fn frame_source(&mut self, id: WindowId) -> Option<Box<dyn FrameSource>> {
-        self.app.hwnd(id)?;
-        Some(Box::new(Win32FrameSource::new()))
-    }
-
-    fn start_drag(&mut self, id: WindowId, data: DragData) {
-        if self.app.hwnd(id).is_some() {
-            *self.app.drag.borrow_mut() = Some(data);
-        }
-    }
-
-    fn set_pointer_capture(&mut self, id: WindowId, capture: bool) {
-        window::set_pointer_capture(self.app, id, capture);
+    fn set_mouse_capture(&mut self, id: WindowId, capture: bool) {
+        window::set_mouse_capture(self.app, id, capture);
     }
 
     fn set_title(&mut self, id: WindowId, title: &str) {
@@ -451,24 +502,29 @@ impl PlatformCx for Cx<'_> {
         window::set_visible(self.app, id, visible);
     }
 
-    fn set_window_state(&mut self, id: WindowId, state: WindowState) {
-        window::set_state(self.app, id, state);
+    fn drag_window(&mut self, id: WindowId) {
+        window::drag_window(self.app, id);
     }
 
-    fn end_composition(&mut self, id: WindowId, commit: bool) {
-        let doc = self.app.inner.borrow().windows.get(&id).and_then(|w| w.tsf.clone());
-        if let Some(doc) = doc {
-            doc.end_composition(commit);
-        }
+    fn update_a11y(&mut self, id: WindowId, update: accesskit::TreeUpdate) {
+        window::update_a11y(self.app, id, update);
+    }
+
+    fn window_scale(&self, id: WindowId) -> Option<Scale> {
+        self.app.inner.borrow().windows.get(&id).map(|w| w.scale)
+    }
+
+    fn exit(&mut self) {
+        self.app.exit.set(true);
     }
 }
 
 /// Runs the app until it calls [`PlatformCx::exit`] (or the last `WM_QUIT`).
 pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
     if current().is_some() {
-        return Err(PlatformError::Unsupported("run is already running on this thread"));
+        return Err(PlatformError::EventLoop("already running on this thread".into()));
     }
-    unsafe { OleInitialize(None) }.map_err(|e| PlatformError::win("OleInitialize", e))?;
+    unsafe { OleInitialize(None) }.map_err(|e| os_err("OleInitialize", e))?;
     let result = run_inner(handler);
     unsafe { OleUninitialize() };
     result
@@ -481,7 +537,7 @@ fn run_inner(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
         // Fails when the process already enabled it; mouse input then still comes as WM_POINTER.
         let _ = EnableMouseInPointer(true);
     }
-    let hinstance: HINSTANCE = unsafe { GetModuleHandleW(None) }.map_err(|e| PlatformError::win("GetModuleHandleW", e))?.into();
+    let hinstance: HINSTANCE = unsafe { GetModuleHandleW(None) }.map_err(|e| os_err("GetModuleHandleW", e))?.into();
     window::register_class(hinstance)?;
     let class = wide(window::CLASS_NAME);
     let msg_hwnd = unsafe {
@@ -500,8 +556,8 @@ fn run_inner(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
             None,
         )
     }
-    .map_err(|e| PlatformError::win("CreateWindowExW (message window)", e))?;
-    let clock = Arc::new(QpcClock);
+    .map_err(|e| os_err("CreateWindowExW (message window)", e))?;
+    let clock = Arc::new(OsClock);
     let timer = TimerThread::spawn(msg_hwnd, clock.clone())?;
     let app = Rc::new_cyclic(|weak| App {
         handler: RefCell::new(Some(handler)),
@@ -514,11 +570,11 @@ fn run_inner(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
         keys: RefCell::new(KeyTranslator::default()),
         high_surrogate: Cell::new(None),
         wake_pending: Arc::new(AtomicBool::new(false)),
+        a11y_queue: Arc::new(Mutex::new(Vec::new())),
         timer,
         clock,
         exit: Cell::new(false),
         seq: Cell::new(0),
-        drag: RefCell::new(None),
         weak: weak.clone(),
     });
     APP.with(|a| *a.borrow_mut() = Some(app.clone()));
@@ -531,12 +587,21 @@ fn run_inner(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
             break;
         }
         if app.tsf.as_ref().is_some_and(|t| t.filter_key(&msg)) {
+            app.flush();
             continue;
         }
         unsafe {
             let _ = TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }
+        app.flush();
+    }
+
+    let exiting = app.handler.borrow_mut().take();
+    if let Some(mut handler) = exiting {
+        let mut cx = Cx { app: &app, clipboard: Win32Clipboard { owner: msg_hwnd } };
+        handler.exiting(&mut cx);
+        *app.handler.borrow_mut() = Some(handler);
     }
 
     let hwnds: Vec<HWND> = app.inner.borrow().windows.values().map(|w| w.hwnd).collect();

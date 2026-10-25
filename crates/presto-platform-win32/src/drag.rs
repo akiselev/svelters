@@ -9,7 +9,6 @@
 //!   `FileHovered`/`FileDropped`/`FileHoverCancelled` events.
 
 use crate::clipboard::{clipboard_utf16, hdrop_paths};
-use crate::shim::{DragData, DragResult};
 use presto_base::event::InputEvent;
 use std::cell::RefCell;
 use std::path::PathBuf;
@@ -31,6 +30,23 @@ use windows::Win32::System::Ole::{
 use windows::Win32::System::SystemServices::{MK_LBUTTON, MODIFIERKEYS_FLAGS};
 use windows::Win32::UI::Shell::{DROPFILES, HDROP, SHCreateStdEnumFmtEtc};
 use windows_core::{BOOL, HRESULT, implement};
+
+/// What an OS drag carries. (presto-platform has no drag-source call yet; [`run_drag`] is ready for
+/// one.)
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct DragData {
+    pub text: Option<String>,
+    pub files: Vec<PathBuf>,
+    /// Allow the target to move instead of copy.
+    pub allow_move: bool,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DragResult {
+    Copied,
+    Moved,
+    Cancelled,
+}
 
 /// `DROPFILES` followed by the double-NUL-terminated wide path list.
 pub fn hdrop_bytes(files: &[PathBuf]) -> Vec<u8> {

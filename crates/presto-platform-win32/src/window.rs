@@ -1,20 +1,21 @@
 //! Windows: the class, the window procedure, and the per-window state.
 //!
-//! - **Frames.** System frames are the OS's. Custom frames keep `WS_OVERLAPPEDWINDOW` (so snapping,
-//!   the shadow and the resize borders stay native) and drop only the caption in `WM_NCCALCSIZE`;
-//!   `WM_NCHITTEST` then answers the top resize band and the app's [`HitRegion`]s, and the caption
-//!   buttons (`HTMINBUTTON`/`HTMAXBUTTON`/`HTCLOSE`) get the app's pointer events while the OS
-//!   shows Windows 11's snap layouts over `HTMAXBUTTON`.
+//! - **Frames.** With `decorations` the frame is the OS's. Without, the window keeps
+//!   `WS_OVERLAPPEDWINDOW` (so snapping, the shadow and the resize borders stay native) and drops
+//!   only the caption in `WM_NCCALCSIZE`; `WM_NCHITTEST` answers the top resize band and the app's
+//!   [`HitRegion`]s, the caption buttons (`HTMINBUTTON`/`HTMAXBUTTON`/`HTCLOSE`) get the app's
+//!   pointer events and act on release, and Windows 11 shows snap layouts over `HTMAXBUTTON`.
 //! - **DPI.** Per-monitor v2: `WM_GETDPISCALEDSIZE` keeps the content size in points across
 //!   monitors, `WM_DPICHANGED` applies the OS's rectangle and reports the new scale before the
 //!   resize it causes.
-//! - **Painting.** None: the window has no redirection bitmap and its content is DirectComposition
-//!   visuals, so `WM_PAINT` only validates.
+//! - **Painting.** None: with `os_compositing` the window has no redirection bitmap and its content
+//!   is DirectComposition visuals; otherwise wgpu presents to the HWND. `WM_PAINT` only validates.
 //! - **Input.** `WM_POINTER*` ([`crate::pointer`]), keys ([`crate::keyboard`]), DirectManipulation
-//!   gestures ([`crate::dmanip`]), `WM_IME_REQUEST` ([`crate::imm`]) and file drops
-//!   ([`crate::drag`]).
+//!   gestures ([`crate::dmanip`]), raw mouse motion while captured, the IME (TSF over the
+//!   [`crate::shadow`] field, `WM_IME_REQUEST`), file drops ([`crate::drag`]) and UI Automation
+//!   (AccessKit's subclassing adapter).
 
-use crate::app::{App, WM_PRESTO_TIMER, WM_PRESTO_WAKE, current};
+use crate::app::{App, WM_PRESTO_A11Y, WM_PRESTO_TIMER, WM_PRESTO_WAKE, current, os_err};
 use crate::cursor;
 use crate::dcomp::WindowTree;
 use crate::dmanip::{DirectManipulation, os_modifiers};
@@ -23,29 +24,34 @@ use crate::hit_test;
 use crate::imm;
 use crate::monitor::{BASE_DPI, dpi_to_scale};
 use crate::pointer::{self, ClientMap, PointerMsg};
-use crate::shim::*;
+use crate::shadow::ShadowClient;
 use crate::tsf::TsfDocument;
 use crate::util::{hiword, loword, lparam_point, message_time_to_time, wheel_delta, wide};
+use presto_base::accesskit::{self, ActionHandler, ActionRequest, ActivationHandler, TreeUpdate};
 use presto_base::cursor::CursorIcon;
-use presto_base::event::{
-    ImeEvent, InputEvent, MouseButton, PointerEvent, PointerPhase, PointerType, Theme, WindowEvent,
-};
+use presto_base::event::{ImeEvent, InputEvent, MouseButton, PointerEvent, PointerPhase, PointerType, Theme, WindowEvent};
 use presto_base::geom::{DeviceSize, Point, Rect, Scale, Size, Vec2};
 use presto_base::ids::WindowId;
+use presto_platform::{A11yEvent, HitKind, HitRegion, ImeState, PlatformError, SurfaceTarget, WindowDesc};
+use raw_window_handle::{RawDisplayHandle, RawWindowHandle, Win32WindowHandle, WindowsDisplayHandle};
 use smallvec::SmallVec;
+use std::cell::RefCell;
+use std::num::NonZeroIsize;
 use std::rc::Rc;
+use std::sync::{Arc, Mutex};
 use windows::Win32::Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, POINT, RECT, SIZE, WPARAM};
 use windows::Win32::Graphics::Dwm::{DWMWA_USE_IMMERSIVE_DARK_MODE, DwmSetWindowAttribute};
-use windows::Win32::Graphics::Gdi::{
-    ClientToScreen, GetMonitorInfoW, MONITOR_DEFAULTTONEAREST, MONITORINFO, MonitorFromWindow, ScreenToClient,
-    ValidateRect,
-};
+use windows::Win32::Graphics::Gdi::{ClientToScreen, ScreenToClient, ValidateRect};
 use windows::Win32::System::Ole::{RegisterDragDrop, RevokeDragDrop};
 use windows::Win32::System::Registry::{HKEY_CURRENT_USER, RRF_RT_REG_DWORD, RegGetValueW};
 use windows::Win32::UI::Controls::WM_MOUSELEAVE;
 use windows::Win32::UI::HiDpi::{AdjustWindowRectExForDpi, GetDpiForWindow, GetSystemMetricsForDpi};
 use windows::Win32::UI::Input::KeyboardAndMouse::{
-    ReleaseCapture, SetCapture, TME_LEAVE, TME_NONCLIENT, TRACKMOUSEEVENT, TrackMouseEvent, VK_F4, VK_SPACE,
+    ReleaseCapture, TME_LEAVE, TME_NONCLIENT, TRACKMOUSEEVENT, TrackMouseEvent, VK_F4, VK_SPACE,
+};
+use windows::Win32::UI::Input::{
+    GetRawInputData, HRAWINPUT, MOUSE_MOVE_ABSOLUTE, RAWINPUT, RAWINPUTDEVICE, RAWINPUTDEVICE_FLAGS, RAWINPUTHEADER,
+    RID_INPUT, RIDEV_REMOVE, RIM_TYPEMOUSE, RegisterRawInputDevices,
 };
 use windows::Win32::UI::WindowsAndMessaging::*;
 use windows_core::{BOOL, PCWSTR, w};
@@ -61,14 +67,17 @@ pub(crate) struct Window {
     pub scale: Scale,
     /// Client size in physical pixels.
     pub size: DeviceSize,
-    pub decorations: Decorations,
-    pub kind: WindowKind,
+    /// No OS caption: the app draws it (`WindowDesc::decorations` off).
+    pub custom_frame: bool,
     pub resizable: bool,
     pub min_size: Option<Size>,
+    pub max_size: Option<Size>,
     pub regions: Vec<HitRegion>,
     pub cursor: CursorIcon,
     pub tree: Option<WindowTree>,
     pub dm: Option<Rc<DirectManipulation>>,
+    /// The IME's copy of the focused field.
+    pub shadow: Rc<RefCell<ShadowClient>>,
     pub tsf: Option<Rc<TsfDocument>>,
     pub ime: Option<ImeState>,
     pub focused: bool,
@@ -77,46 +86,32 @@ pub(crate) struct Window {
     pub minimized: bool,
     /// The mouse is over the client area (pointer enter seen, leave not yet).
     pub hovering: bool,
-    /// The caption button pressed (custom frames), released over the same button = click.
+    /// The caption button pressed (custom frames); released over the same button = click.
     pub nc_pressed: Option<HitKind>,
     pub nc_hovering: bool,
     pub dm_timer: bool,
-    /// Style and placement to restore when leaving fullscreen.
-    pub restore: Option<(WINDOW_STYLE, WINDOWPLACEMENT)>,
+    /// The pointer is locked and hidden, raw motion on.
+    pub mouse_captured: bool,
     pub drop_target: Option<windows::Win32::System::Ole::IDropTarget>,
+    pub a11y: Option<accesskit_windows::SubclassingAdapter>,
 }
 
-/// Window and extended styles for a description.
+/// Window and extended styles.
 pub fn styles(desc: &WindowDesc) -> (WINDOW_STYLE, WINDOW_EX_STYLE) {
-    let mut ex = WS_EX_NOREDIRECTIONBITMAP;
-    let style = match desc.kind {
-        WindowKind::Normal => match desc.decorations {
-            Decorations::System | Decorations::Custom => {
-                let mut s = WS_OVERLAPPEDWINDOW;
-                if !desc.resizable {
-                    s &= !(WS_THICKFRAME | WS_MAXIMIZEBOX);
-                }
-                s
-            }
-            Decorations::None => WS_POPUP,
-        },
-        WindowKind::Popup | WindowKind::Tooltip => {
-            ex |= WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST;
-            WS_POPUP
-        }
-    };
+    let ex = if desc.os_compositing { WS_EX_NOREDIRECTIONBITMAP } else { WINDOW_EX_STYLE(0) };
+    let mut style = WS_OVERLAPPEDWINDOW;
+    if !desc.resizable {
+        style &= !(WS_THICKFRAME | WS_MAXIMIZEBOX);
+    }
     (style | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, ex)
 }
 
 /// The frame around the client area at `dpi` (left, top, right, bottom), as `AdjustWindowRectEx`
 /// computes it; custom frames have no top (the caption is gone).
-pub fn frame_insets(style: WINDOW_STYLE, ex: WINDOW_EX_STYLE, dpi: u32, decorations: Decorations) -> (i32, i32, i32, i32) {
-    if style.0 & WS_POPUP.0 != 0 && style.0 & WS_THICKFRAME.0 == 0 {
-        return (0, 0, 0, 0);
-    }
+pub fn frame_insets(style: WINDOW_STYLE, ex: WINDOW_EX_STYLE, dpi: u32, custom_frame: bool) -> (i32, i32, i32, i32) {
     let mut r = RECT::default();
     let _ = unsafe { AdjustWindowRectExForDpi(&mut r, style, false, ex, dpi) };
-    let top = if decorations == Decorations::Custom { 0 } else { -r.top };
+    let top = if custom_frame { 0 } else { -r.top };
     (-r.left, top, r.right, r.bottom)
 }
 
@@ -159,6 +154,25 @@ pub fn caption_button(ht: u32) -> Option<HitKind> {
     }
 }
 
+/// The IME on/off transitions a `set_ime` call means.
+pub fn ime_transition(was: bool, now: bool) -> Option<ImeEvent> {
+    match (was, now) {
+        (false, true) => Some(ImeEvent::Enabled),
+        (true, false) => Some(ImeEvent::Disabled),
+        _ => None,
+    }
+}
+
+pub(crate) fn raw_target(hwnd: HWND, hinstance: HINSTANCE) -> SurfaceTarget {
+    let Some(h) = NonZeroIsize::new(hwnd.0 as isize) else { return SurfaceTarget::None };
+    let mut handle = Win32WindowHandle::new(h);
+    handle.hinstance = NonZeroIsize::new(hinstance.0 as isize);
+    SurfaceTarget::Raw {
+        window: RawWindowHandle::Win32(handle),
+        display: RawDisplayHandle::Windows(WindowsDisplayHandle::new()),
+    }
+}
+
 pub fn register_class(hinstance: HINSTANCE) -> Result<(), PlatformError> {
     let class = wide(CLASS_NAME);
     let wc = WNDCLASSEXW {
@@ -174,7 +188,7 @@ pub fn register_class(hinstance: HINSTANCE) -> Result<(), PlatformError> {
     if unsafe { RegisterClassExW(&wc) } == 0 {
         let e = windows_core::Error::from_thread();
         if e.code() != windows::Win32::Foundation::ERROR_CLASS_ALREADY_EXISTS.to_hresult() {
-            return Err(PlatformError::win("RegisterClassExW", e));
+            return Err(os_err("RegisterClassExW", e));
         }
     }
     Ok(())
@@ -205,10 +219,37 @@ fn apply_dark_title_bar(hwnd: HWND, theme: Theme) {
     };
 }
 
+/// AccessKit's callbacks, posted to the main thread.
+struct A11ySink {
+    window: WindowId,
+    queue: Arc<Mutex<Vec<(WindowId, A11yEvent)>>>,
+    target: isize,
+}
+
+impl A11ySink {
+    fn post(&self, ev: A11yEvent) {
+        self.queue.lock().unwrap_or_else(|e| e.into_inner()).push((self.window, ev));
+        let _ = unsafe { PostMessageW(Some(HWND(self.target as *mut _)), WM_PRESTO_A11Y, WPARAM(0), LPARAM(0)) };
+    }
+}
+
+impl ActivationHandler for A11ySink {
+    fn request_initial_tree(&mut self) -> Option<TreeUpdate> {
+        // The tree lives on the UI side; it arrives through `update_a11y` once the app hears this.
+        self.post(A11yEvent::Activated);
+        None
+    }
+}
+
+impl ActionHandler for A11ySink {
+    fn do_action(&mut self, request: ActionRequest) {
+        self.post(A11yEvent::Action(request));
+    }
+}
+
 pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
     let id = app.alloc_window_id();
     let (style, ex) = styles(&desc);
-    let owner = desc.parent.and_then(|p| app.hwnd(p));
     let class = wide(CLASS_NAME);
     let title = wide(&desc.title);
     let (x, y) = desc.position.unwrap_or((CW_USEDEFAULT, CW_USEDEFAULT));
@@ -222,7 +263,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
             y,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            owner,
+            None,
             None,
             Some(app.hinstance),
             None,
@@ -234,7 +275,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
     };
     let dpi = unsafe { GetDpiForWindow(hwnd) }.max(1);
     let scale = dpi_to_scale(dpi);
-    let tree = app.dcomp.as_ref().and_then(|dc| dc.window_tree(hwnd).ok());
+    let tree = if desc.os_compositing { app.dcomp.as_ref().and_then(|dc| dc.window_tree(hwnd).ok()) } else { None };
     let dm = DirectManipulation::new(hwnd, scale.0).ok().map(Rc::new);
     let drop_target = {
         let weak = Rc::downgrade(app);
@@ -247,6 +288,8 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
         let target = DropTarget::create(emit);
         unsafe { RegisterDragDrop(hwnd, &target) }.ok().map(|_| target)
     };
+    let sink = || A11ySink { window: id, queue: app.a11y_queue.clone(), target: app.msg_hwnd.get().0 as isize };
+    let a11y = Some(accesskit_windows::SubclassingAdapter::new(accesskit_windows::HWND(hwnd.0), sink(), sink()));
     {
         let mut inner = app.inner.borrow_mut();
         inner.by_hwnd.insert(hwnd.0 as isize, id);
@@ -257,14 +300,15 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
                 id,
                 scale,
                 size: DeviceSize { w: 0, h: 0 },
-                decorations: desc.decorations,
-                kind: desc.kind,
+                custom_frame: !desc.decorations,
                 resizable: desc.resizable,
                 min_size: desc.min_size,
+                max_size: desc.max_size,
                 regions: Vec::new(),
                 cursor: CursorIcon::Default,
                 tree,
                 dm,
+                shadow: Rc::new(RefCell::new(ShadowClient::default())),
                 tsf: None,
                 ime: None,
                 focused: false,
@@ -274,15 +318,16 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
                 nc_pressed: None,
                 nc_hovering: false,
                 dm_timer: false,
-                restore: None,
+                mouse_captured: false,
                 drop_target,
+                a11y,
             },
         );
     }
-    if desc.decorations == Decorations::System && desc.kind == WindowKind::Normal {
+    if desc.decorations {
         apply_dark_title_bar(hwnd, system_theme());
     }
-    let insets = frame_insets(style, ex, dpi, desc.decorations);
+    let insets = frame_insets(style, ex, dpi, !desc.decorations);
     let client = ((desc.size.w * scale.0).round() as i32, (desc.size.h * scale.0).round() as i32);
     let (ow, oh) = outer_for_client(client, insets);
     let mut flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED;
@@ -292,16 +337,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
     let _ = unsafe { SetWindowPos(hwnd, None, x, y, ow, oh, flags) };
     app.window_event(id, WindowEvent::ThemeChanged(system_theme()));
     if desc.visible {
-        let cmd = match (desc.kind, desc.state) {
-            (WindowKind::Popup | WindowKind::Tooltip, _) => SW_SHOWNOACTIVATE,
-            (_, WindowState::Maximized) => SW_SHOWMAXIMIZED,
-            (_, WindowState::Minimized) => SW_SHOWMINIMIZED,
-            _ => SW_SHOW,
-        };
-        let _ = unsafe { ShowWindow(hwnd, cmd) };
-        if desc.state == WindowState::Fullscreen {
-            set_state(app, id, WindowState::Fullscreen);
-        }
+        let _ = unsafe { ShowWindow(hwnd, if desc.maximized { SW_SHOWMAXIMIZED } else { SW_SHOW }) };
     }
     id
 }
@@ -311,7 +347,7 @@ pub(crate) fn set_cursor(app: &App, id: WindowId, c: CursorIcon) {
         let mut inner = app.inner.borrow_mut();
         let Some(w) = inner.windows.get_mut(&id) else { return };
         w.cursor = c;
-        w.hovering
+        w.hovering && !w.mouse_captured
     };
     if hovering {
         unsafe { SetCursor(cursor::load(c)) };
@@ -319,13 +355,18 @@ pub(crate) fn set_cursor(app: &App, id: WindowId, c: CursorIcon) {
 }
 
 pub(crate) fn set_ime(app: &App, id: WindowId, state: Option<ImeState>) {
-    let Some(tsf) = app.tsf.as_ref() else { return };
-    let (doc, refocus) = {
+    let (doc, refocus, transition) = {
         let mut inner = app.inner.borrow_mut();
         let Some(w) = inner.windows.get_mut(&id) else { return };
+        let transition = ime_transition(w.ime.is_some(), state.is_some());
         w.ime = state.clone();
+        if let Some(s) = &state {
+            w.shadow.borrow_mut().set_state(s);
+        }
         if state.is_some() && w.tsf.is_none() {
-            w.tsf = tsf.create_document(w.hwnd, id, app.client_access()).ok().map(Rc::new);
+            if let Some(tsf) = app.tsf.as_ref() {
+                w.tsf = tsf.create_document(w.hwnd, id, app.client_access()).ok().map(Rc::new);
+            }
             if let Some(d) = &w.tsf {
                 d.set_scale(w.scale.0);
             }
@@ -335,24 +376,74 @@ pub(crate) fn set_ime(app: &App, id: WindowId, state: Option<ImeState>) {
         if w.focused {
             w.ime_focused = want;
         }
-        (w.tsf.clone(), refocus)
+        (w.tsf.clone(), refocus, transition)
     };
+    if let Some(ev) = transition {
+        app.enqueue_input(id, InputEvent::Ime(ev));
+    }
     if let (Some(doc), Some(s)) = (&doc, &state) {
         doc.set_field(s.area, s.purpose);
+        doc.sync();
     }
-    if refocus {
+    if refocus && let Some(tsf) = app.tsf.as_ref() {
         tsf.focus(if state.is_some() { doc.as_deref() } else { None });
     }
 }
 
-pub(crate) fn set_pointer_capture(app: &App, id: WindowId, capture: bool) {
-    let Some(hwnd) = app.hwnd(id) else { return };
-    unsafe {
-        if capture {
-            SetCapture(hwnd);
-        } else {
-            let _ = ReleaseCapture();
+/// Commits or cancels the composition; `false` without a TSF document.
+pub(crate) fn end_composition(app: &App, id: WindowId, commit: bool) -> bool {
+    let Some((doc, shadow)) = app.inner.borrow().windows.get(&id).and_then(|w| w.tsf.clone().map(|d| (d, w.shadow.clone())))
+    else {
+        return false;
+    };
+    if !commit {
+        // Drop the preedit first, so the TIP's termination has nothing left to commit.
+        let events = {
+            let mut s = shadow.borrow_mut();
+            s.cancel_composition();
+            s.take_events()
+        };
+        for ev in events {
+            app.enqueue_input(id, InputEvent::Ime(ev));
         }
+    }
+    doc.end_composition();
+    doc.sync();
+    true
+}
+
+pub(crate) fn set_mouse_capture(app: &App, id: WindowId, capture: bool) {
+    let Some((hwnd, was)) = app.inner.borrow().windows.get(&id).map(|w| (w.hwnd, w.mouse_captured)) else { return };
+    if was == capture {
+        return;
+    }
+    let device = RAWINPUTDEVICE {
+        usUsagePage: 0x01, // generic desktop
+        usUsage: 0x02,     // mouse
+        dwFlags: if capture { RAWINPUTDEVICE_FLAGS(0) } else { RIDEV_REMOVE },
+        hwndTarget: if capture { hwnd } else { HWND::default() },
+    };
+    unsafe {
+        let _ = RegisterRawInputDevices(&[device], std::mem::size_of::<RAWINPUTDEVICE>() as u32);
+        if capture {
+            let mut r = RECT::default();
+            let _ = GetClientRect(hwnd, &mut r);
+            let mut tl = POINT { x: r.left, y: r.top };
+            let mut br = POINT { x: r.right, y: r.bottom };
+            let _ = ClientToScreen(hwnd, &mut tl);
+            let _ = ClientToScreen(hwnd, &mut br);
+            let _ = ClipCursor(Some(&RECT { left: tl.x, top: tl.y, right: br.x, bottom: br.y }));
+            SetCursor(None);
+        } else {
+            let _ = ClipCursor(None);
+        }
+    }
+    if let Some(w) = app.inner.borrow_mut().windows.get_mut(&id) {
+        w.mouse_captured = capture;
+    }
+    if !capture {
+        let c = app.inner.borrow().windows.get(&id).map(|w| w.cursor).unwrap_or_default();
+        unsafe { SetCursor(cursor::load(c)) };
     }
 }
 
@@ -364,59 +455,33 @@ pub(crate) fn set_title(app: &App, id: WindowId, title: &str) {
 }
 
 pub(crate) fn set_visible(app: &App, id: WindowId, visible: bool) {
-    let Some((hwnd, kind)) = app.inner.borrow().windows.get(&id).map(|w| (w.hwnd, w.kind)) else { return };
-    let cmd = match (visible, kind) {
-        (false, _) => SW_HIDE,
-        (true, WindowKind::Normal) => SW_SHOW,
-        (true, _) => SW_SHOWNOACTIVATE,
-    };
-    let _ = unsafe { ShowWindow(hwnd, cmd) };
+    if let Some(hwnd) = app.hwnd(id) {
+        let _ = unsafe { ShowWindow(hwnd, if visible { SW_SHOW } else { SW_HIDE }) };
+    }
 }
 
-pub(crate) fn set_state(app: &App, id: WindowId, state: WindowState) {
-    let Some((hwnd, restore)) = app.inner.borrow().windows.get(&id).map(|w| (w.hwnd, w.restore)) else { return };
-    // Leaving fullscreen first restores the style and placement it replaced.
-    if let Some((style, placement)) = restore
-        && state != WindowState::Fullscreen
-    {
-        unsafe {
-            SetWindowLongPtrW(hwnd, GWL_STYLE, style.0 as isize);
-            let _ = SetWindowPlacement(hwnd, &placement);
-            let _ = SetWindowPos(hwnd, None, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-        }
-        if let Some(w) = app.inner.borrow_mut().windows.get_mut(&id) {
-            w.restore = None;
-        }
+/// Starts the OS move loop from the current press. It is posted, so the loop (a modal loop) runs
+/// after the handler returns, with the handler free to keep receiving events.
+pub(crate) fn drag_window(app: &App, id: WindowId) {
+    let Some(hwnd) = app.hwnd(id) else { return };
+    let mut p = POINT::default();
+    unsafe {
+        let _ = GetCursorPos(&mut p);
+        let _ = ReleaseCapture();
+        let packed = ((p.x as u16 as u32) | ((p.y as u16 as u32) << 16)) as isize;
+        let _ = PostMessageW(Some(hwnd), WM_NCLBUTTONDOWN, WPARAM(HTCAPTION as usize), LPARAM(packed));
     }
-    match state {
-        WindowState::Normal => {
-            let _ = unsafe { ShowWindow(hwnd, SW_RESTORE) };
-        }
-        WindowState::Minimized => {
-            let _ = unsafe { ShowWindow(hwnd, SW_MINIMIZE) };
-        }
-        WindowState::Maximized => {
-            let _ = unsafe { ShowWindow(hwnd, SW_MAXIMIZE) };
-        }
-        WindowState::Fullscreen if restore.is_none() => {
-            let style = WINDOW_STYLE(unsafe { GetWindowLongPtrW(hwnd, GWL_STYLE) } as u32);
-            let mut placement = WINDOWPLACEMENT { length: std::mem::size_of::<WINDOWPLACEMENT>() as u32, ..Default::default() };
-            let _ = unsafe { GetWindowPlacement(hwnd, &mut placement) };
-            let mon = unsafe { MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST) };
-            let mut info = MONITORINFO { cbSize: std::mem::size_of::<MONITORINFO>() as u32, ..Default::default() };
-            if !unsafe { GetMonitorInfoW(mon, &mut info) }.as_bool() {
-                return;
-            }
-            if let Some(w) = app.inner.borrow_mut().windows.get_mut(&id) {
-                w.restore = Some((style, placement));
-            }
-            let r = info.rcMonitor;
-            unsafe {
-                SetWindowLongPtrW(hwnd, GWL_STYLE, ((style.0 & !WS_OVERLAPPEDWINDOW.0) | WS_POPUP.0) as isize);
-                let _ = SetWindowPos(hwnd, Some(HWND_TOP), r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_FRAMECHANGED | SWP_NOOWNERZORDER);
-            }
-        }
-        WindowState::Fullscreen => {}
+}
+
+pub(crate) fn update_a11y(app: &App, id: WindowId, update: accesskit::TreeUpdate) {
+    let events = {
+        let mut inner = app.inner.borrow_mut();
+        let Some(adapter) = inner.windows.get_mut(&id).and_then(|w| w.a11y.as_mut()) else { return };
+        adapter.update_if_active(|| update)
+    };
+    // Raising sends UIA events, which may call back into the window: outside the borrow.
+    if let Some(events) = events {
+        events.raise();
     }
 }
 
@@ -474,12 +539,36 @@ fn screen_to_points(hwnd: HWND, scale: Scale, lparam: LPARAM) -> Point {
     Point::new(p.x as f32 / scale.0, p.y as f32 / scale.0)
 }
 
+/// The relative motion of a `WM_INPUT` mouse report.
+fn raw_mouse_delta(lparam: LPARAM) -> Option<Vec2> {
+    let mut raw = RAWINPUT::default();
+    let mut size = std::mem::size_of::<RAWINPUT>() as u32;
+    let got = unsafe {
+        GetRawInputData(
+            HRAWINPUT(lparam.0 as *mut _),
+            RID_INPUT,
+            Some(&mut raw as *mut RAWINPUT as *mut _),
+            &mut size,
+            std::mem::size_of::<RAWINPUTHEADER>() as u32,
+        )
+    };
+    if got == u32::MAX || raw.header.dwType != RIM_TYPEMOUSE.0 {
+        return None;
+    }
+    let mouse = unsafe { raw.data.mouse };
+    if mouse.usFlags.0 & MOUSE_MOVE_ABSOLUTE.0 != 0 {
+        return None;
+    }
+    Some(Vec2::new(mouse.lLastX as f32, mouse.lLastY as f32))
+}
+
 unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
     let Some(app) = current() else { return unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) } };
     if hwnd == app.msg_hwnd.get() {
         match msg {
             WM_PRESTO_WAKE => app.on_wake(),
             WM_PRESTO_TIMER => app.on_timer(),
+            WM_PRESTO_A11Y => app.on_a11y(),
             WM_SETTINGCHANGE => on_setting_change(&app, lparam),
             _ => return unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) },
         }
@@ -505,13 +594,8 @@ fn on_setting_change(app: &App, lparam: LPARAM) {
         return;
     }
     let theme = system_theme();
-    let windows: Vec<(WindowId, HWND, bool)> = app
-        .inner
-        .borrow()
-        .windows
-        .values()
-        .map(|w| (w.id, w.hwnd, w.decorations == Decorations::System && w.kind == WindowKind::Normal))
-        .collect();
+    let windows: Vec<(WindowId, HWND, bool)> =
+        app.inner.borrow().windows.values().map(|w| (w.id, w.hwnd, !w.custom_frame)).collect();
     for (id, hwnd, system) in windows {
         if system {
             apply_dark_title_bar(hwnd, theme);
@@ -523,15 +607,14 @@ fn on_setting_change(app: &App, lparam: LPARAM) {
 /// A snapshot of what message handling needs, taken without holding the borrow across OS calls.
 struct State {
     scale: Scale,
-    decorations: Decorations,
-    kind: WindowKind,
+    custom_frame: bool,
     resizable: bool,
 }
 
 fn state(app: &App, id: WindowId) -> Option<State> {
     let inner = app.inner.try_borrow().ok()?;
     let w = inner.windows.get(&id)?;
-    Some(State { scale: w.scale, decorations: w.decorations, kind: w.kind, resizable: w.resizable })
+    Some(State { scale: w.scale, custom_frame: w.custom_frame, resizable: w.resizable })
 }
 
 fn with_window<R>(app: &App, id: WindowId, f: impl FnOnce(&mut Window) -> R) -> Option<R> {
@@ -542,7 +625,7 @@ fn with_window<R>(app: &App, id: WindowId, f: impl FnOnce(&mut Window) -> R) -> 
 fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lparam: LPARAM) -> Option<isize> {
     let st = state(app, id)?;
     match msg {
-        WM_NCCALCSIZE if wparam.0 != 0 && st.decorations == Decorations::Custom => {
+        WM_NCCALCSIZE if wparam.0 != 0 && st.custom_frame => {
             // Keep the OS's side and bottom borders; drop the caption.
             let params = unsafe { &mut *(lparam.0 as *mut NCCALCSIZE_PARAMS) };
             let top = params.rgrc[0].top;
@@ -561,10 +644,7 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             Some(0)
         }
         WM_NCHITTEST => {
-            if st.kind == WindowKind::Tooltip {
-                return Some(HTTRANSPARENT as isize);
-            }
-            if st.decorations != Decorations::Custom {
+            if !st.custom_frame {
                 return None;
             }
             let r = unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) };
@@ -579,7 +659,7 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             let (regions, width) = with_window(app, id, |w| (w.regions.clone(), w.size.w as f32 / w.scale.0))?;
             Some(hit_test::hit_test(&regions, width, p, top) as isize)
         }
-        WM_NCMOUSEMOVE if st.decorations == Decorations::Custom => {
+        WM_NCMOUSEMOVE if st.custom_frame => {
             if caption_button(wparam.0 as u32).is_some() {
                 let first = with_window(app, id, |w| !std::mem::replace(&mut w.nc_hovering, true))?;
                 if first {
@@ -597,7 +677,7 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             }
             None
         }
-        WM_NCLBUTTONDOWN | WM_NCLBUTTONDBLCLK if st.decorations == Decorations::Custom => {
+        WM_NCLBUTTONDOWN | WM_NCLBUTTONDBLCLK if st.custom_frame => {
             let button = caption_button(wparam.0 as u32)?;
             with_window(app, id, |w| w.nc_pressed = Some(button));
             let p = screen_to_points(hwnd, st.scale, lparam);
@@ -605,7 +685,7 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             app.input(id, t, mouse_event(PointerPhase::Down, Some(MouseButton::Primary), 1, p, app));
             Some(0)
         }
-        WM_NCLBUTTONUP if st.decorations == Decorations::Custom => {
+        WM_NCLBUTTONUP if st.custom_frame => {
             let pressed = with_window(app, id, |w| w.nc_pressed.take())??;
             let p = screen_to_points(hwnd, st.scale, lparam);
             let t = message_time_to_time(unsafe { GetMessageTime() });
@@ -768,7 +848,7 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             let scaled = scaled_client((client.right, client.bottom), old_dpi, new_dpi);
             let style = WINDOW_STYLE(unsafe { GetWindowLongPtrW(hwnd, GWL_STYLE) } as u32);
             let ex = WINDOW_EX_STYLE(unsafe { GetWindowLongPtrW(hwnd, GWL_EXSTYLE) } as u32);
-            let (w, h) = outer_for_client(scaled, frame_insets(style, ex, new_dpi, st.decorations));
+            let (w, h) = outer_for_client(scaled, frame_insets(style, ex, new_dpi, st.custom_frame));
             let out = unsafe { &mut *(lparam.0 as *mut SIZE) };
             out.cx = w;
             out.cy = h;
@@ -797,25 +877,39 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             Some(0)
         }
         WM_GETMINMAXINFO => {
-            let min = with_window(app, id, |w| w.min_size)??;
+            let (min, max) = with_window(app, id, |w| (w.min_size, w.max_size))?;
+            if min.is_none() && max.is_none() {
+                return None;
+            }
             let dpi = unsafe { GetDpiForWindow(hwnd) };
             let style = WINDOW_STYLE(unsafe { GetWindowLongPtrW(hwnd, GWL_STYLE) } as u32);
             let ex = WINDOW_EX_STYLE(unsafe { GetWindowLongPtrW(hwnd, GWL_EXSTYLE) } as u32);
             let s = dpi as f32 / BASE_DPI as f32;
-            let (w, h) = outer_for_client(
-                ((min.w * s).round() as i32, (min.h * s).round() as i32),
-                frame_insets(style, ex, dpi, st.decorations),
-            );
+            let insets = frame_insets(style, ex, dpi, st.custom_frame);
+            let outer = |size: Size| outer_for_client(((size.w * s).round() as i32, (size.h * s).round() as i32), insets);
             let info = unsafe { &mut *(lparam.0 as *mut MINMAXINFO) };
-            info.ptMinTrackSize = POINT { x: w, y: h };
+            if let Some(min) = min {
+                let (w, h) = outer(min);
+                info.ptMinTrackSize = POINT { x: w, y: h };
+            }
+            if let Some(max) = max {
+                let (w, h) = outer(max);
+                info.ptMaxTrackSize = POINT { x: w, y: h };
+            }
             Some(0)
         }
+        WM_INPUT => {
+            if let Some(delta) = raw_mouse_delta(lparam) {
+                app.raw_motion(id, delta);
+            }
+            None
+        }
+        WM_QUERYENDSESSION => Some(app.quit_requested() as isize),
         WM_SETCURSOR if loword(lparam.0 as usize) as u32 == HTCLIENT => {
-            let c = with_window(app, id, |w| w.cursor)?;
-            unsafe { SetCursor(cursor::load(c)) };
+            let (c, captured) = with_window(app, id, |w| (w.cursor, w.mouse_captured))?;
+            unsafe { SetCursor(if captured { None } else { cursor::load(c) }) };
             Some(1)
         }
-        WM_MOUSEACTIVATE if matches!(st.kind, WindowKind::Popup | WindowKind::Tooltip) => Some(MA_NOACTIVATE as isize),
         WM_PAINT => {
             let _ = unsafe { ValidateRect(Some(hwnd), None) };
             Some(0)
@@ -841,6 +935,7 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             app.with_text_client(id, &mut |c| {
                 result = Some(unsafe { imm::handle_request(wparam.0 as u32, lparam.0, c, to_screen, field) });
             });
+            app.flush();
             result
         }
         WM_DESTROY => {
@@ -849,7 +944,12 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
                 inner.by_hwnd.remove(&(hwnd.0 as isize));
                 inner.windows.remove(&id)
             };
-            if let Some(w) = removed {
+            if let Some(mut w) = removed {
+                // The adapter un-subclasses the window: drop it while the window still exists.
+                w.a11y.take();
+                if w.mouse_captured {
+                    let _ = unsafe { ClipCursor(None) };
+                }
                 if w.drop_target.is_some() {
                     let _ = unsafe { RevokeDragDrop(hwnd) };
                 }
@@ -872,18 +972,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn styles_per_kind() {
-        let normal = WindowDesc::default();
-        let (s, ex) = styles(&normal);
+    fn styles_follow_the_description() {
+        let (s, ex) = styles(&WindowDesc::default());
         assert!(s.contains(WS_OVERLAPPEDWINDOW));
-        assert!(ex.contains(WS_EX_NOREDIRECTIONBITMAP));
-        let fixed = WindowDesc { resizable: false, ..WindowDesc::default() };
-        let (s, _) = styles(&fixed);
+        assert!(ex.contains(WS_EX_NOREDIRECTIONBITMAP), "os_compositing is on by default");
+        let fixed = WindowDesc { resizable: false, os_compositing: false, ..WindowDesc::default() };
+        let (s, ex) = styles(&fixed);
         assert!(!s.contains(WS_THICKFRAME) && !s.contains(WS_MAXIMIZEBOX));
-        let popup = WindowDesc { kind: WindowKind::Popup, ..WindowDesc::default() };
-        let (s, ex) = styles(&popup);
-        assert!(s.contains(WS_POPUP));
-        assert!(ex.contains(WS_EX_NOACTIVATE) && ex.contains(WS_EX_TOOLWINDOW));
+        assert!(!ex.contains(WS_EX_NOREDIRECTIONBITMAP));
+    }
+
+    #[test]
+    fn ime_transitions() {
+        assert_eq!(ime_transition(false, true), Some(ImeEvent::Enabled));
+        assert_eq!(ime_transition(true, false), Some(ImeEvent::Disabled));
+        assert_eq!(ime_transition(true, true), None);
     }
 
     #[test]

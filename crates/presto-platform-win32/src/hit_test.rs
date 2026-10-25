@@ -1,12 +1,11 @@
-//! Custom title bars: the app's [`HitRegion`]s answer `WM_NCHITTEST`, so the OS drags, resizes,
-//! snaps and shows Windows 11's snap-layout flyout (over a region answering `HTMAXBUTTON`) while the
-//! app draws everything.
+//! Custom title bars: the app's [`HitRegion`]s answer `WM_NCHITTEST`, so the OS drags, snaps and
+//! shows Windows 11's snap-layout flyout (over a region answering `HTMAXBUTTON`) while the app draws
+//! everything.
 
-use crate::shim::{HitKind, HitRegion};
 use presto_base::geom::Point;
+use presto_platform::{HitKind, HitRegion};
 use windows::Win32::UI::WindowsAndMessaging::{
-    HTBOTTOM, HTBOTTOMLEFT, HTBOTTOMRIGHT, HTCAPTION, HTCLIENT, HTCLOSE, HTLEFT, HTMAXBUTTON, HTMINBUTTON,
-    HTRIGHT, HTSYSMENU, HTTOP, HTTOPLEFT, HTTOPRIGHT,
+    HTCAPTION, HTCLIENT, HTCLOSE, HTMAXBUTTON, HTMINBUTTON, HTSYSMENU, HTTOP, HTTOPLEFT, HTTOPRIGHT,
 };
 
 pub fn ht_code(kind: HitKind) -> u32 {
@@ -17,46 +16,34 @@ pub fn ht_code(kind: HitKind) -> u32 {
         HitKind::Minimize => HTMINBUTTON,
         HitKind::Maximize => HTMAXBUTTON,
         HitKind::Close => HTCLOSE,
-        HitKind::ResizeTop => HTTOP,
-        HitKind::ResizeBottom => HTBOTTOM,
-        HitKind::ResizeLeft => HTLEFT,
-        HitKind::ResizeRight => HTRIGHT,
-        HitKind::ResizeTopLeft => HTTOPLEFT,
-        HitKind::ResizeTopRight => HTTOPRIGHT,
-        HitKind::ResizeBottomLeft => HTBOTTOMLEFT,
-        HitKind::ResizeBottomRight => HTBOTTOMRIGHT,
     }
-}
-
-/// The region kind at `p` (window points): later regions are above earlier ones.
-pub fn region_at(regions: &[HitRegion], p: Point) -> Option<HitKind> {
-    regions.iter().rev().find(|r| r.rect.contains(p)).map(|r| r.kind)
 }
 
 /// The top resize band of a custom-framed window. Its `WM_NCCALCSIZE` removes only the caption, so
 /// the OS keeps the side and bottom borders as non-client area; the top border lies inside the
 /// client area and is answered here (with the top corners), `border` points tall and, at the
 /// corners, wide.
-pub fn top_band(width: f32, p: Point, border: f32) -> Option<HitKind> {
+pub fn top_band(width: f32, p: Point, border: f32) -> Option<u32> {
     if p.y >= border {
         return None;
     }
     Some(if p.x < border {
-        HitKind::ResizeTopLeft
+        HTTOPLEFT
     } else if p.x >= width - border {
-        HitKind::ResizeTopRight
+        HTTOPRIGHT
     } else {
-        HitKind::ResizeTop
+        HTTOP
     })
 }
 
 /// `WM_NCHITTEST` inside the client area of a custom-framed window: the top resize band (when
-/// `top_border` is given: resizable and not maximised), then the app's regions, else client.
+/// `top_border` is given: resizable and not maximised), then the app's regions (later ones win),
+/// else client.
 pub fn hit_test(regions: &[HitRegion], width: f32, p: Point, top_border: Option<f32>) -> u32 {
-    if let Some(k) = top_border.and_then(|b| top_band(width, p, b)) {
-        return ht_code(k);
+    if let Some(code) = top_border.and_then(|b| top_band(width, p, b)) {
+        return code;
     }
-    region_at(regions, p).map(ht_code).unwrap_or(HTCLIENT)
+    ht_code(presto_platform::hit_test(regions, p))
 }
 
 #[cfg(test)]
@@ -74,18 +61,11 @@ mod tests {
     }
 
     #[test]
-    fn later_regions_win() {
+    fn regions_map_to_codes() {
         let r = regions();
-        assert_eq!(region_at(&r, Point::new(50.0, 10.0)), Some(HitKind::Caption));
-        assert_eq!(region_at(&r, Point::new(150.0, 10.0)), Some(HitKind::Client), "a tab in the caption");
-        assert_eq!(region_at(&r, Point::new(720.0, 10.0)), Some(HitKind::Maximize));
-        assert_eq!(region_at(&r, Point::new(50.0, 100.0)), None);
-    }
-
-    #[test]
-    fn snap_layouts_need_htmaxbutton() {
-        let r = regions();
-        assert_eq!(hit_test(&r, 800.0, Point::new(720.0, 16.0), Some(6.0)), HTMAXBUTTON);
+        assert_eq!(hit_test(&r, 800.0, Point::new(50.0, 10.0), None), HTCAPTION);
+        assert_eq!(hit_test(&r, 800.0, Point::new(150.0, 10.0), None), HTCLIENT, "a tab in the caption");
+        assert_eq!(hit_test(&r, 800.0, Point::new(720.0, 16.0), Some(6.0)), HTMAXBUTTON, "snap layouts");
         assert_eq!(hit_test(&r, 800.0, Point::new(400.0, 300.0), Some(6.0)), HTCLIENT);
     }
 

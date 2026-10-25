@@ -142,15 +142,11 @@ impl TsfDocument {
         self.state.grant_pending();
     }
 
-    /// Ends the composition from the app: committed as it stands, or cancelled (its text removed).
-    pub fn end_composition(&self, commit: bool) {
-        let marked = if commit { None } else { self.state.with_client(|c| c.marked_range()).flatten() };
+    /// Ends the composition from the app: the TIP terminates it, which unmarks (commits) whatever
+    /// marked text the field still has.
+    pub fn end_composition(&self) {
         if let Ok(services) = self.context.cast::<ITfContextOwnerCompositionServices>() {
             let _ = unsafe { services.TerminateComposition(None::<&ITfCompositionView>) };
-        }
-        if let Some(range) = marked {
-            self.state.with_client(|c| c.replace_text_in_range(Some(range), ""));
-            self.state.sync();
         }
     }
 }

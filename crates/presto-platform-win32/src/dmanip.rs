@@ -1,6 +1,6 @@
 // Ported from Zed's `crates/gpui_windows/src/direct_manipulation.rs` at commit a5c4ca8
 // (https://github.com/zed-industries/zed), Copyright 2022 - 2025 Zed Industries, Inc.,
-// licensed under the Apache License, Version 2.0. Modifications by the svelters authors:
+// licensed under the Apache License, Version 2.0 (`crates/presto-render/LICENSES/Apache-2.0-GPUI.txt`). Modifications by the svelters authors:
 // presto's event types, gesture-activity tracking for the update timer, no logging.
 
 //! DirectManipulation for precision touchpads: two-finger pan with inertia and pinch, which plain

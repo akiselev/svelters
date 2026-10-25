@@ -1,32 +1,26 @@
-//! Small Win32 helpers: the QPC clock presto's [`Time`] is read from, conversions from message
-//! timestamps, wide strings and `LPARAM`/`WPARAM` unpacking.
+//! Small Win32 helpers: QPC and message timestamps on presto's clock, wide strings and `LPARAM`/`WPARAM` unpacking.
 
-use presto_base::time::{Clock, Time};
+use presto_base::time::Time;
+use presto_platform::clock::{now, time_from_os};
 use std::sync::OnceLock;
 use windows::Win32::System::Performance::{QueryPerformanceCounter, QueryPerformanceFrequency};
 use windows::Win32::System::SystemInformation::GetTickCount;
 
-struct QpcBase {
-    epoch: i64,
-    freq: i64,
-}
-
-fn qpc_base() -> &'static QpcBase {
-    static BASE: OnceLock<QpcBase> = OnceLock::new();
-    BASE.get_or_init(|| {
-        let (mut epoch, mut freq) = (0i64, 0i64);
-        // Both always succeed on Windows XP and later (documented).
+fn qpc_freq() -> i64 {
+    static FREQ: OnceLock<i64> = OnceLock::new();
+    *FREQ.get_or_init(|| {
+        let mut freq = 0i64;
+        // Always succeeds on Windows XP and later (documented).
         unsafe {
             let _ = QueryPerformanceFrequency(&mut freq);
-            let _ = QueryPerformanceCounter(&mut epoch);
         }
-        QpcBase { epoch, freq: freq.max(1) }
+        freq.max(1)
     })
 }
 
 /// The QPC frequency in counts per second.
 pub fn qpc_frequency() -> i64 {
-    qpc_base().freq
+    qpc_freq()
 }
 
 /// The current QPC count.
@@ -39,10 +33,10 @@ pub fn qpc_now() -> i64 {
 }
 
 /// A QPC count (`POINTER_INFO::PerformanceCount`, DXGI frame statistics, DComp frame times) on
-/// presto's clock; counts before the process epoch clamp to zero.
+/// presto's clock (`presto_platform::clock`), by sampling both clocks now.
 pub fn qpc_to_time(count: i64) -> Time {
-    let base = qpc_base();
-    Time(counts_to_nanos(count - base.epoch, base.freq))
+    let freq = qpc_freq();
+    time_from_os(counts_to_nanos(count, freq), counts_to_nanos(qpc_now(), freq))
 }
 
 /// `counts / freq` seconds in nanoseconds, without overflow; negative counts give 0.
@@ -57,19 +51,9 @@ pub fn counts_to_nanos(counts: i64, freq: i64) -> u64 {
 /// current time minus the message's age.
 pub fn message_time_to_time(msg_ms: i32) -> Time {
     let age_ms = unsafe { GetTickCount() }.wrapping_sub(msg_ms as u32);
-    let now = qpc_to_time(qpc_now());
+    let t = now();
     // A message older than ten seconds means the tick count wrapped or the time is bogus.
-    if age_ms > 10_000 { now } else { Time(now.0.saturating_sub(age_ms as u64 * 1_000_000)) }
-}
-
-/// The real clock: QPC.
-#[derive(Clone, Copy, Debug, Default)]
-pub struct QpcClock;
-
-impl Clock for QpcClock {
-    fn now(&self) -> Time {
-        qpc_to_time(qpc_now())
-    }
+    if age_ms > 10_000 { t } else { Time(t.0.saturating_sub(age_ms as u64 * 1_000_000)) }
 }
 
 /// A NUL-terminated UTF-16 copy of `s`.
@@ -120,12 +104,5 @@ mod tests {
         let packed = ((-3i16 as u16 as usize) | ((-7i16 as u16 as usize) << 16)) as isize;
         assert_eq!(lparam_point(packed), (-3, -7));
         assert_eq!(wheel_delta(((-120i16 as u16 as usize) << 16) | 0x8), -120);
-    }
-
-    #[test]
-    fn qpc_clock_is_monotonic() {
-        let a = QpcClock.now();
-        let b = QpcClock.now();
-        assert!(b >= a);
     }
 }

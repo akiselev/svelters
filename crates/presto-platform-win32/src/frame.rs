@@ -11,7 +11,6 @@
 //! that returns in under 1 ms sleeps one refresh interval instead and reports an estimated frame
 //! (GPUI's rule, `gpui_windows/src/vsync.rs`).
 
-use crate::shim::{FrameSource, FrameWake};
 use crate::util::{counts_to_nanos, qpc_frequency, qpc_now, qpc_to_time};
 use presto_base::time::Span;
 use std::time::{Duration, Instant};
@@ -20,6 +19,15 @@ use windows::Win32::Graphics::Dwm::{DWM_TIMING_INFO, DwmFlush, DwmGetComposition
 use windows::Win32::System::LibraryLoader::{GetProcAddress, LoadLibraryW};
 use windows::Win32::System::Threading::{INFINITE, WaitForSingleObject};
 use windows_core::{BOOL, HRESULT, s, w};
+
+/// What a frame wait woke for.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum FrameWake {
+    /// A frame boundary; `estimated` when it came from a sleep rather than the OS.
+    Frame { at: presto_base::time::Time, estimated: bool },
+    /// The timeout passed first.
+    Timeout,
+}
 
 /// Waits shorter than this mean the OS did not actually wait for a frame.
 pub const EARLY_RETURN: Duration = Duration::from_millis(1);
@@ -191,19 +199,21 @@ impl Default for Win32FrameSource {
     }
 }
 
-impl FrameSource for Win32FrameSource {
-    fn wait(&mut self, timeout: Option<Span>) -> FrameWake {
+/// The compositor thread's interface (presto-platform's `FrameSource` trait is still being written;
+/// the consolidation implements it with these).
+impl Win32FrameSource {
+    pub fn wait(&mut self, timeout: Option<Span>) -> FrameWake {
         match self.wait_with(&[], timeout) {
             Wake::Frame(f) => f,
             Wake::Handle(_) => FrameWake::Timeout,
         }
     }
 
-    fn interval(&self) -> Span {
+    pub fn interval(&self) -> Span {
         self.interval
     }
 
-    fn set_boost(&mut self, on: bool) {
+    pub fn set_boost(&mut self, on: bool) {
         if on == self.boosted {
             return;
         }

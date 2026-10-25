@@ -1,15 +1,14 @@
 //! Monitors: bounds, work areas, per-monitor DPI and refresh rates.
 
 use crate::clipboard::utf16_until_nul;
-use crate::shim::Monitor;
-use presto_base::geom::{DeviceRect, Scale};
+use presto_platform::Monitor;
+use presto_base::geom::{DeviceRect, DeviceSize, Scale};
 use windows::Win32::Foundation::{LPARAM, RECT};
 use windows::Win32::Graphics::Gdi::{
     DEVMODEW, ENUM_CURRENT_SETTINGS, EnumDisplayMonitors, EnumDisplaySettingsW, GetMonitorInfoW, HDC, HMONITOR,
     MONITORINFO, MONITORINFOEXW,
 };
 use windows::Win32::UI::HiDpi::{GetDpiForMonitor, MDT_EFFECTIVE_DPI};
-use windows::Win32::UI::WindowsAndMessaging::MONITORINFOF_PRIMARY;
 use windows_core::{BOOL, PCWSTR};
 
 /// Windows' baseline DPI (scale 1.0).
@@ -38,13 +37,14 @@ pub fn monitor_info(hmon: HMONITOR) -> Option<Monitor> {
         .then_some(mode.dmDisplayFrequency)
         .filter(|&hz| hz > 1)
         .map(|hz| hz * 1000);
+    let rect = device_rect(&info.monitorInfo.rcMonitor);
     Some(Monitor {
-        name: utf16_until_nul(&info.szDevice),
-        rect: device_rect(&info.monitorInfo.rcMonitor),
-        work_area: device_rect(&info.monitorInfo.rcWork),
+        name: Some(utf16_until_nul(&info.szDevice)),
+        position: (rect.x, rect.y),
+        size: DeviceSize { w: rect.w, h: rect.h },
+        work_area: Some(device_rect(&info.monitorInfo.rcWork)),
         scale: dpi_to_scale(dx),
-        refresh_millihz: refresh,
-        primary: info.monitorInfo.dwFlags & MONITORINFOF_PRIMARY != 0,
+        refresh_millihertz: refresh,
     })
 }
 

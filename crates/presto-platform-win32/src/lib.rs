@@ -1,6 +1,7 @@
 //! presto's own Win32 platform backend (`plans/research/presto/platform.md` §5, package W-P3).
 //!
-//! It implements the presto-platform contract ([`shim`] until PLATFORM's crate lands) without winit:
+//! It implements presto-platform's [`presto_platform::AppHandler`] / [`presto_platform::PlatformCx`]
+//! contract without winit:
 //!
 //! | Module | What |
 //! |---|---|
@@ -9,6 +10,7 @@
 //! | [`pointer`] | `WM_POINTER` for mouse, pen and touch with history and QPC timestamps |
 //! | [`keyboard`] | scancodes, layout characters, dead keys, AltGr, egui key names |
 //! | [`tsf`] | the TSF text store (`ITextStoreACP`) over [`presto_base::input::TextInputClient`] |
+//! | [`shadow`] | the IME's copy of the focused field, built from `ImeState`, editing through `ImeEvent`s |
 //! | [`imm`] | `WM_IME_REQUEST` (reconversion, document feed, character positions) for IMM32 TIPs |
 //! | [`dmanip`] | DirectManipulation: precision touchpad pan, pinch and inertia |
 //! | [`dcomp`] | the DirectComposition device and per-window visual tree |
@@ -33,7 +35,7 @@ pub mod imm;
 pub mod keyboard;
 pub mod monitor;
 pub mod pointer;
-pub mod shim;
+pub mod shadow;
 pub mod tsf;
 pub mod util;
 pub mod window;

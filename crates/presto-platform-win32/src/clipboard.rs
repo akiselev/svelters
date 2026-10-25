@@ -1,6 +1,7 @@
-//! The clipboard: Unicode text and Explorer's file lists (`CF_HDROP`).
+//! The clipboard: Unicode text, and Explorer's file lists (`CF_HDROP`) through [`Win32Clipboard::get_files`].
+//! Windows has no primary selection.
 
-use crate::shim::{Clipboard, PlatformError};
+use presto_platform::{Clipboard, ClipboardKind};
 use std::path::PathBuf;
 use windows::Win32::Foundation::{HANDLE, HGLOBAL, HWND};
 use windows::Win32::System::DataExchange::{
@@ -20,16 +21,16 @@ struct Open;
 
 impl Open {
     /// Another process may hold the clipboard for a moment (clipboard managers, RDP): retry briefly.
-    fn new(owner: HWND) -> Result<Self, PlatformError> {
+    fn new(owner: HWND) -> Option<Self> {
         for attempt in 0..5 {
             if unsafe { OpenClipboard(Some(owner)) }.is_ok() {
-                return Ok(Open);
+                return Some(Open);
             }
             if attempt < 4 {
                 std::thread::sleep(std::time::Duration::from_millis(2));
             }
         }
-        Err(PlatformError::ClipboardBusy)
+        None
     }
 }
 
@@ -61,57 +62,63 @@ pub fn clipboard_utf16(text: &str) -> Vec<u16> {
     out
 }
 
-impl Clipboard for Win32Clipboard {
-    fn get_text(&mut self) -> Result<Option<String>, PlatformError> {
-        if unsafe { IsClipboardFormatAvailable(CF_UNICODETEXT.0 as u32) }.is_err() {
-            return Ok(None);
-        }
+impl Win32Clipboard {
+    fn read_text(&self) -> Option<String> {
+        unsafe { IsClipboardFormatAvailable(CF_UNICODETEXT.0 as u32) }.ok()?;
         let _open = Open::new(self.owner)?;
-        let handle = match unsafe { GetClipboardData(CF_UNICODETEXT.0 as u32) } {
-            Ok(h) => h,
-            Err(_) => return Ok(None),
-        };
+        let handle = unsafe { GetClipboardData(CF_UNICODETEXT.0 as u32) }.ok()?;
         let mem = HGLOBAL(handle.0);
         let ptr = unsafe { GlobalLock(mem) } as *const u16;
         if ptr.is_null() {
-            return Ok(None);
+            return None;
         }
         let units = unsafe { std::slice::from_raw_parts(ptr, GlobalSize(mem) / 2) };
         let text = utf16_until_nul(units);
         let _ = unsafe { GlobalUnlock(mem) };
-        Ok(Some(text))
+        Some(text)
     }
 
-    fn set_text(&mut self, text: &str) -> Result<(), PlatformError> {
+    fn write_text(&self, text: &str) -> Option<()> {
         let units = clipboard_utf16(text);
         let _open = Open::new(self.owner)?;
-        unsafe { EmptyClipboard() }.map_err(|e| PlatformError::win("EmptyClipboard", e))?;
-        let mem = unsafe { GlobalAlloc(GMEM_MOVEABLE, units.len() * 2) }
-            .map_err(|e| PlatformError::win("GlobalAlloc", e))?;
+        unsafe { EmptyClipboard() }.ok()?;
+        let mem = unsafe { GlobalAlloc(GMEM_MOVEABLE, units.len() * 2) }.ok()?;
         let ptr = unsafe { GlobalLock(mem) } as *mut u16;
         if ptr.is_null() {
-            return Err(PlatformError::Os { call: "GlobalLock", code: 0 });
+            return None;
         }
         unsafe {
             std::ptr::copy_nonoverlapping(units.as_ptr(), ptr, units.len());
             let _ = GlobalUnlock(mem);
         }
         // On success the clipboard owns the memory.
-        unsafe { SetClipboardData(CF_UNICODETEXT.0 as u32, Some(HANDLE(mem.0))) }
-            .map_err(|e| PlatformError::win("SetClipboardData", e))?;
-        Ok(())
+        unsafe { SetClipboardData(CF_UNICODETEXT.0 as u32, Some(HANDLE(mem.0))) }.ok()?;
+        Some(())
     }
 
-    fn get_files(&mut self) -> Result<Vec<PathBuf>, PlatformError> {
+    /// Files on the clipboard (an Explorer copy); empty when there are none or it is busy.
+    pub fn get_files(&self) -> Vec<PathBuf> {
         if unsafe { IsClipboardFormatAvailable(CF_HDROP.0 as u32) }.is_err() {
-            return Ok(Vec::new());
+            return Vec::new();
         }
-        let _open = Open::new(self.owner)?;
-        let handle = match unsafe { GetClipboardData(CF_HDROP.0 as u32) } {
-            Ok(h) => h,
-            Err(_) => return Ok(Vec::new()),
-        };
-        Ok(hdrop_paths(HDROP(handle.0)))
+        let Some(_open) = Open::new(self.owner) else { return Vec::new() };
+        match unsafe { GetClipboardData(CF_HDROP.0 as u32) } {
+            Ok(h) => hdrop_paths(HDROP(h.0)),
+            Err(_) => Vec::new(),
+        }
+    }
+}
+
+impl Clipboard for Win32Clipboard {
+    fn get_text(&mut self, kind: ClipboardKind) -> Option<String> {
+        match kind {
+            ClipboardKind::Clipboard => self.read_text(),
+            ClipboardKind::Primary => None,
+        }
+    }
+
+    fn set_text(&mut self, kind: ClipboardKind, text: &str) -> bool {
+        kind == ClipboardKind::Clipboard && self.write_text(text).is_some()
     }
 }
 
