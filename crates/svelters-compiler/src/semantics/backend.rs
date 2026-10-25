@@ -282,6 +282,10 @@ impl PlatformSemantics for SpecBackend {
         self.spec.kinds.values().any(|k| k.props.contains_key(super::SOURCE_LOC))
     }
 
+    fn has_capability(&self, name: &str) -> bool {
+        self.spec.has_capability(name)
+    }
+
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan {
         let k = self.kind(el);
         LifetimePlan { lifetime: k.lifetime, present: k.present.clone() }

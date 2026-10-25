@@ -316,6 +316,11 @@ pub trait PlatformSemantics {
     fn source_locs(&self) -> bool {
         false
     }
+    /// Whether the backend accepts op shape `name` beyond the generic path (`native_transitions`,
+    /// `native_motion`, `css_precompiled`, ...: the spec's `capabilities`).
+    fn has_capability(&self, _name: &str) -> bool {
+        false
+    }
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan;
     /// Kind id or (Qt) class name in the element's chain; also accepts native type names.
     fn is_a(&self, el: &ElementRef, kind_or_class: &str) -> bool;

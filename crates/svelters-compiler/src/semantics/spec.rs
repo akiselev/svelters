@@ -3,7 +3,7 @@
 
 use serde::Deserialize;
 use serde_json::Value;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 pub const SCHEMA: &str = "svelters-semantics/v0";
 
@@ -30,6 +30,10 @@ pub struct Spec {
     /// `annotated` (Qt: only listed methods exist); empty in older specs.
     #[serde(default)]
     pub method_lookup: String,
+    /// presto (compiler-and-js.md §2): the op shapes this backend accepts beyond the generic path
+    /// (`ids`, `templates`, `native_transitions`, `native_motion`, `native_expr`, `css_precompiled`).
+    #[serde(default)]
+    pub capabilities: BTreeSet<String>,
     /// Optional: the backend has text nodes (the DOM conformance backend, `metadata/semantics/dom.json`).
     /// Text and `{expression}` runs outside text-content elements then lower to elements of
     /// `kind` (a tag) whose `prop` holds the text, with Svelte's whitespace rules. Absent on GTK/Qt:
@@ -630,6 +634,10 @@ pub struct StylePropSpec {
 }
 
 impl Spec {
+    pub fn has_capability(&self, name: &str) -> bool {
+        self.capabilities.contains(name)
+    }
+
     pub fn parse(json: &str) -> Result<Spec, String> {
         let mut spec: Spec = serde_json::from_str(json).map_err(|e| format!("semantic spec: {e}"))?;
         if spec.schema != SCHEMA {

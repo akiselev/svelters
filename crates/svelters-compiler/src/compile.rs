@@ -202,6 +202,7 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     let t = Instant::now();
     let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename, opts.hmr);
     rw.strip_typescript(ts_strip);
+    rw.set_native_motion(opts.backend.has_capability("native_transitions"), opts.backend.has_capability("native_motion"));
     let name = rw.component_name(&component_name(&opts.filename));
     let out = if check {
         crate::codegen::component::traverse(src, &ir, &rw, &name, &opts.target.runtime_imports());

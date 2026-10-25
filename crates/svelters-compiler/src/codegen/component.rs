@@ -93,6 +93,17 @@ pub trait Rewriter {
     fn dev_location(&self, _pos: u32) -> Option<String> {
         None
     }
+    /// MOTION-CSS (`native_transitions`): the svelte/transition built-in (`fade`, `fly`, `slide`,
+    /// `scale`, `blur`, `draw`) a `transition:`/`in:`/`out:` name is imported as, emitted as
+    /// `$n.transition_native`; `None` for anything else (`$n.transition`).
+    fn native_transition(&self, _name: &str) -> Option<&'static str> {
+        None
+    }
+    /// MOTION-CSS (`native_transitions`): an `animate:` name is svelte/animate's `flip`, emitted as
+    /// `$n.flip_native`.
+    fn native_flip(&self, _name: &str) -> bool {
+        false
+    }
     /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
@@ -956,8 +967,13 @@ impl Codegen<'_, '_> {
             // runtime node (after `bind:this`, as Svelte's `after_update`)
             Op::Transition { flags, name, arg, span } => {
                 self.w.map(span.start);
-                let f = self.rw.directive_name(name);
-                self.w.write(&format!("$n.transition({flags}, {n}, () => {f}"));
+                // MOTION-CSS: a built-in the backend evaluates natively from its parameters
+                if let Some(kind) = self.rw.native_transition(name) {
+                    self.w.write(&format!("$n.transition_native({flags}, {n}, {}", js_str(kind)));
+                } else {
+                    let f = self.rw.directive_name(name);
+                    self.w.write(&format!("$n.transition({flags}, {n}, () => {f}"));
+                }
                 if let Some(a) = arg {
                     self.w.write(", () => ");
                     self.paren_expr(a, Mode::Read);
@@ -966,8 +982,12 @@ impl Codegen<'_, '_> {
             }
             Op::Animate { name, arg, span } => {
                 self.w.map(span.start);
-                let f = self.rw.directive_name(name);
-                self.w.write(&format!("$n.animation({n}, () => {f}, "));
+                if self.rw.native_flip(name) {
+                    self.w.write(&format!("$n.flip_native({n}, "));
+                } else {
+                    let f = self.rw.directive_name(name);
+                    self.w.write(&format!("$n.animation({n}, () => {f}, "));
+                }
                 match arg {
                     Some(a) => {
                         self.w.write("() => ");
