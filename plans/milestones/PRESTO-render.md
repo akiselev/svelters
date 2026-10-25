@@ -60,7 +60,8 @@ Deliverables:
 - GPU (`tests/gpu.rs`, gated on `PRESTO_GPU_TESTS=1`): one image per primitive group (rounded quad with
   borders, dashed/dotted, gradient, shadows, lines, glyphs, images/icons, paths, surfaces + rounded
   clips) with exact-pixel asserts plus a reference comparison; 10k quads in one draw; damage-only redraw
-  leaves every other pixel untouched and clears empty damage; atlas churn over 50 frames.
+  leaves every other pixel untouched and clears empty damage; atlas churn over 50 frames; real text
+  through presto-text's `TextSystem` and `FontRasterizer` (`FontConfig::testing()`).
 - **References don't exist yet.** The first CI run records them and fails with "reference recorded,
   inspect it"; each PNG is also printed as `PRESTO_REFERENCE <name> <base64>` in the test log, so the
   consolidation can recover them from the CI log, inspect, and commit them to
