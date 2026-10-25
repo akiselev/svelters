@@ -555,6 +555,24 @@ pub trait Kind: 'static {
         None
     }
 
+    /// Another node claimed the one selection ([`EventCx::claim_selection`](crate::EventCx::claim_selection)
+    /// with [`Document::set_single_selection`](crate::Document::set_single_selection) on, GTK's rule):
+    /// collapse this node's selection (to its start).
+    fn selection_lost(&mut self, cx: &mut EventCx) {}
+
+    /// An open floating surface (popup, menu, select list, tooltip) that a press outside it closes:
+    /// while true, a primary-or-other pointer press in the window outside the node's subtree first
+    /// reaches [`Kind::outside_press`]. Asked after every prop write and every call into the kind.
+    fn light_dismiss(&self, node: &NodeView) -> bool {
+        false
+    }
+
+    /// A press outside the node's subtree while [`Kind::light_dismiss`] is true (`p.local` in the
+    /// node's space), before the press is dispatched as usual (it is not consumed).
+    fn outside_press(&mut self, cx: &mut EventCx, p: &PointerInput) -> Handled {
+        Handled::No
+    }
+
     /// JS started (`listened`) or stopped listening to `signal` on this node (an icon takes clicks
     /// only while its click signal is listened). [`NodeView::listened`](crate::NodeView::listened)
     /// answers the same at any time.

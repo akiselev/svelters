@@ -105,3 +105,12 @@ when the five svelters workflows plus `presto` are green.
 - CORE-3 d39eaf4b merged. Sync delivery decided (coordinator, 2026-10-25), overruling two-phase: the lent document (`set_sync_delivery(FnMut(&mut Document, &JsEvent) -> Outcome)`, deliverer taken out for the call), because a kind's own cancelable signals are raised inside the native default and two-phase couldn't prevent them.
 - 19:53 UTC: consolidation 1 launched, session_016SQDMJubiR73cQAPuXCT1k, branch ci/presto-integration, brief CONSOLIDATION-1.md.
 - 19:55 UTC: wave-3 lanes CADATOMIC, CANVAS, TEST-V2 launched. Not launched: wgpu fork patches P1–P4 (a fork is made only when a release blocks work; none does yet). CORE-3 e2b96936 merged (96426b4a).
+- RENDER final 054196d7 (merged f0c33126). CI 40225795440: presto-render's 26 unit and 13 GPU tests pass on lavapipe,
+  WARP/DX12 and Metal. Decided (coordinator, 2026-10-25): upload references as CI artifacts; colourless coverage
+  icons take currentColor; per-layer instance caching only after a measurement. Red in that run, routed:
+  presto-core `paint_transitions_sample_on_the_ui_thread` (CORE-3); three presto-widgets slider float-equality
+  tests (WIDGETS-BASIC); presto-platform `os_time_is_in_the_past` (fixed in 47bbd1e4, which postdates that run).
+- CORE-3 342cf6be merged: nested sync events are queued and delivered (not cancelable) after the causing listener
+  returns; light dismiss core half (`Kind::light_dismiss`, `outside_press`). Not done: compaction, incremental
+  layers/hits, OS file drops, GTK single selection owner.
+- CADATOMIC decisions (coordinator, 2026-10-25): cadatomic and presto_berth name presto-* by branch ci/presto-integration (CADATOMIC may push that manifest change to berth claude/presto-berth); adapter/limits hooks in CompositorConfig (sent to COMPOSITOR); berth pin moves to claude/presto-berth on claude/presto-adoption only, in its own commit.
