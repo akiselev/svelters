@@ -103,12 +103,33 @@ fn js_event(doc: &Document, target: NodeId, signal: SignalId, arg: Option<Value>
 /// the listeners did (`Ok(default)` when nobody listens). `Err(arg)` hands the argument back when
 /// the document has no deliverer: the caller queues the event instead.
 pub(crate) fn deliver_now(doc: &mut Document, target: NodeId, signal: SignalId, arg: Option<Value>) -> Result<crate::kind::Outcome, Option<Value>> {
+    if doc.delivering > 0 {
+        // nested (JS inside the deliverer clicked or focused something): delivered, not cancelable,
+        // once the listener call that caused it returns
+        if let Some(mut ev) = js_event(doc, target, signal, arg) {
+            ev.cancelable = false;
+            doc.nested.push(ev);
+        }
+        return Ok(Default::default());
+    }
     if doc.sync_delivery.is_none() {
         return Err(arg);
     }
     let Some(ev) = js_event(doc, target, signal, arg) else { return Ok(Default::default()) };
     let mut f = doc.sync_delivery.take().expect("checked");
+    doc.delivering += 1;
     let o = f(doc, &ev);
+    // the sync events its listeners caused, in order, until none is left
+    loop {
+        let batch = std::mem::take(&mut doc.nested);
+        if batch.is_empty() {
+            break;
+        }
+        for e in batch {
+            f(doc, &e);
+        }
+    }
+    doc.delivering -= 1;
     if doc.sync_delivery.is_none() {
         doc.sync_delivery = Some(f);
     }
@@ -358,6 +379,8 @@ impl Document {
             }
             PointerPhase::Down => {
                 self.update_hover(window, p, hit, out, emitted);
+                // open surfaces a press outside them dismisses hear of it first, topmost first
+                self.outside_press(window, p, target, emitted);
                 let Some(t) = target else {
                     crate::input::focus::clear_focus(self, window);
                     return;
@@ -443,6 +466,28 @@ impl Document {
                     self.emit_js(out, n, common::POINTERCANCEL, Some(pointer_record(&input)));
                 }
             }
+        }
+    }
+
+    /// Calls [`Kind::outside_press`](crate::Kind::outside_press) on the light-dismiss nodes of
+    /// `window` whose subtree does not hold `target`, topmost (latest in paint order) first.
+    fn outside_press(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, emitted: &mut Vec<Emitted>) {
+        if self.light_dismiss.is_empty() {
+            return;
+        }
+        let hits = self.window(window).map(|w| w.hits.clone());
+        let order = |n: NodeId| hits.as_ref().and_then(|h| h.entries.iter().rposition(|e| e.node == n));
+        let mut open: Vec<NodeId> = self.light_dismiss.iter().copied().filter(|&n| self.window_of(n) == Some(window) && target.is_none_or(|t| !self.is_ancestor_or_self(n, t))).collect();
+        open.sort_by_key(|&n| std::cmp::Reverse(order(n)));
+        for n in open {
+            let Some(i) = self.idx(n) else { continue };
+            let Some(mut k) = self.kinds[i].take() else { continue };
+            let input = self.pointer_input(window, n, p, 1);
+            {
+                let mut cx = EventCx { doc: self, node: n, emitted, pointer: Some(p.pointer) };
+                k.outside_press(&mut cx, &input);
+            }
+            self.restore_kind(n, k);
         }
     }
 

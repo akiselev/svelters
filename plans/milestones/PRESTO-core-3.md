@@ -37,8 +37,12 @@ delivery is a plain call:
   (the caller checks `Document::contains`); a target that a `pointerdown` listener removed gets no
   native default;
 - a write to the node whose kind is mid-handler (the kind is out of its slot) is stored and replayed
-  to the kind's `prop_changed` when the handler returns; a cancelable signal raised while the deliverer
-  runs (nested) is queued, not delivered.
+  to the kind's `prop_changed` when the handler returns;
+- **nested delivery** (coordinator's rule to pin, 2026-10-25): a sync event raised while the deliverer
+  runs (`el.click()`, a `focus()`'s focus events, a kind's `emit_sync`) is never dropped and never
+  re-enters the deliverer: it is delivered, **not cancelable**, right after the listener call that
+  caused it returns, before the outer event's default runs, repeatedly until none is left (test
+  `hooks::nested_sync_events_follow_the_listener`).
 
 ## 2. (i) scope activation, (j) label `for`
 
@@ -114,6 +118,15 @@ now runs before the property refresh in the dirty walk, so the scroll node exist
 Not done: a kind creating several layers of its own (gutter, minimap); the shape would be child nodes
 with `will-change` today.
 
+### WIDGETS-BASIC: light dismiss
+
+`Kind::light_dismiss(&NodeView) -> bool` (asked after every prop write and every call into the kind; the
+document keeps the set) and `Kind::outside_press(&mut self, cx, &PointerInput) -> Handled`: on a pointer
+down in a window, before the press is dispatched (it is not consumed), every light-dismiss node of that
+window whose subtree does not hold the hit target hears of it, topmost (latest in paint order) first,
+`local` in its own space. A method rather than an `Event::OutsidePress` variant, so the bridge's
+exhaustive `Event` match keeps compiling.
+
 ## 4. The rest of CORE-2's list
 
 | Item | State |
@@ -133,7 +146,7 @@ Also: `NameSource::Children` now computes the name from the descendants' text (C
 Written, not run (the brief's rule): `src/tests/hooks.rs` (parts, listened, prop state, scale, chrome,
 child layout, inert, peers and Tab stop and roving, Enter/Escape and auto-default, label for and
 `labelled_by`, `invalid`, enum attributes, status tip, `emit_sync` and a prevented `pointerdown` through
-the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/runner.rs`; in `hooks.rs` the lent deliverer, self-scroll
+the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/runner.rs`; in `hooks.rs` the lent deliverer, nested delivery, light dismiss, self-scroll
 with fast scroll and caret, padding and window transform; in `dispatch.rs` the IME-source route; `src/tests/query.rs`; in `src/tests/a11y.rs` a move re-sending only
 the moved node (local bounds, parent-relative transform), an inserted subtree joining incrementally, and a
 name from children.

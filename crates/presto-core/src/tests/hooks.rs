@@ -214,6 +214,35 @@ impl Kind for Lbl {
     }
 }
 
+const POP: KindId = KindId::of("pop");
+const POP_OPEN: PropId = PropId::of("pop", "open", "bool");
+
+static POP_SPEC: KindSpec = KindSpec {
+    props: &[PropSpec::new("open", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)).native()],
+    container: true,
+    ..KindSpec::new("pop")
+};
+
+/// A popup: while `open`, a press outside closes it.
+#[derive(Default)]
+struct Pop;
+
+impl Kind for Pop {
+    fn spec() -> &'static KindSpec {
+        &POP_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+    fn light_dismiss(&self, node: &crate::NodeView) -> bool {
+        node.prop_bool(POP_OPEN)
+    }
+    fn outside_press(&mut self, cx: &mut EventCx, _p: &crate::PointerInput) -> Handled {
+        let _ = cx.set_native(POP_OPEN, Value::Bool(false));
+        Handled::Yes
+    }
+}
+
 fn hdoc() -> (Document, NodeId) {
     let mut r = KindRegistry::new();
     r.register::<testkinds::BoxKind>().unwrap();
@@ -223,6 +252,7 @@ fn hdoc() -> (Document, NodeId) {
     r.register::<Deck>().unwrap();
     r.register::<Btn>().unwrap();
     r.register::<Lbl>().unwrap();
+    r.register::<Pop>().unwrap();
     let mut d = Document::new(Arc::new(r), Box::new(FixedText));
     d.set_text_shaper(Box::new(FixedText));
     let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(2.0));
@@ -688,4 +718,45 @@ fn views_carry_padding_and_the_window_transform() {
     assert_eq!(v.content_box().min.x, 5.0, "border, then padding");
     assert_eq!(v.window_transform().e, 20.0);
     assert_eq!(v.from_window(Point::new(25.0, 0.0)).x, 5.0);
+}
+
+#[test]
+fn nested_sync_events_follow_the_listener() {
+    let (mut d, root) = hdoc();
+    let b = child(&mut d, root, BTN, "");
+    let t = child(&mut d, root, TOGGLE, "");
+    d.listen(b, BTN_CHANGED, ListenFlags::EMPTY);
+    d.listen(t, common::FOCUS, ListenFlags::EMPTY);
+    let seen: Rc<RefCell<Vec<(SignalId, bool)>>> = Rc::default();
+    let log = seen.clone();
+    d.set_sync_delivery(Box::new(move |doc, ev| {
+        log.borrow_mut().push((ev.signal, ev.cancelable));
+        if ev.signal == BTN_CHANGED {
+            // a listener moves focus: its focus events come after this call, not inside it
+            doc.focus(t, crate::FocusReason::Programmatic);
+            assert_eq!(log.borrow().len(), 1, "not re-entered");
+        }
+        Outcome { prevented: ev.signal == common::FOCUS, stopped: false }
+    }));
+    d.focus(b, crate::FocusReason::Keyboard);
+    d.take_events();
+    d.dispatch(&key(Key::Space, Modifiers::default()));
+    assert_eq!(*seen.borrow(), [(BTN_CHANGED, true), (common::FOCUS, false)], "delivered, not cancelable");
+    assert_eq!(d.focused(W), Some(t));
+}
+
+#[test]
+fn a_press_outside_an_open_surface_dismisses_it() {
+    let (mut d, root) = hdoc();
+    let pop = child(&mut d, root, POP, "width: 40px; height: 40px");
+    let inner = child(&mut d, pop, TOGGLE, "");
+    let outside = child(&mut d, root, TOGGLE, "");
+    d.set_prop(pop, POP_OPEN, Value::Bool(true)).unwrap();
+    frame(&mut d);
+    click(&mut d, 5.0, 5.0);
+    assert!(d.view(pop).unwrap().prop_bool(POP_OPEN), "a press inside keeps it open");
+    assert!(d.view(inner).unwrap().prop_bool(testkinds::TOGGLE_CHECKED));
+    click(&mut d, 45.0, 5.0);
+    assert!(!d.view(pop).unwrap().prop_bool(POP_OPEN), "a press outside closes it");
+    assert!(d.view(outside).unwrap().prop_bool(testkinds::TOGGLE_CHECKED), "and is dispatched as usual");
 }
