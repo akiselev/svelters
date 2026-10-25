@@ -13,6 +13,11 @@
 //!   IdleBarrier). Timeouts count virtual time (frames × the driver's step).
 //! - **Capture**: [`Session::screenshot`] (drivers with a renderer), and the snapshot.
 //! - **Journal**: [`Session::journal_subscribe`] / [`Session::journal_take`] over SG2's observers.
+//! - **Waits on anything** (AU7, cadatomic WAITS §3): the app's event [`journal`] with cursors
+//!   ([`Session::wait_event`], [`Session::never`], [`Session::arm_seen`]), named [`busy`] sources
+//!   (foreground blocks settle, background never does), actionability checks named at the timeout,
+//!   clock domains (a busy wall-clock source holds the virtual clock), [`replay`] of external
+//!   sources, and one [`WaitReport`] on every wait timeout.
 //! - [`Driver`]: what runs the frames; kittest's harnesses implement it (feature `kittest`).
 //! - [`Session::call`]: the same methods as JSON (`scene.query {selector}` …), the schema AU2's
 //!   IPC transport and cadatomic's socket server carry unchanged.
@@ -26,12 +31,15 @@
 //! [`enable`] (cadatomic: its settings page; tests: [`Session::for_test`]), and each session gets
 //! only the [`Grants`] it is given.
 
+pub mod busy;
 pub mod client;
 pub mod clock;
 pub mod driver;
 #[cfg(feature = "run")]
 pub mod e2e;
 pub mod engine;
+pub mod journal;
+pub mod replay;
 pub mod role;
 pub mod rpc;
 pub mod selector;
@@ -43,10 +51,12 @@ pub use driver::{A11yNode, Driver};
 /// AU1b: `#[svelters_automation::test]`, one body in process or out of process (see [`e2e`]).
 #[cfg(feature = "run")]
 pub use svelters_macros::test;
+pub use busy::{BusyKind, BusyRegistry, BusyReport, BusySource, BusyStatus};
+pub use journal::{ClockDomain, Cursor, Event, EventKind, FieldType, Journal, Matcher};
 pub use selector::{Selector, TextMatch};
 pub use session::{
-    ActOptions, ActResult, At, Drag, DragTo, Expect, Grants, NodeInfo, Ref, RootInfo, Session, Target, Tier,
-    WaitState, Wheel,
+    ActOptions, ActResult, Actionability, At, Budget, Condition, Drag, DragTo, Expect, Grants, NeverId, NodeInfo, Ref,
+    RootInfo, SeenId, Session, Target, Tier, Unmet, WaitReport, WaitState, Wheel,
 };
 
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -73,11 +83,15 @@ pub fn is_enabled() -> bool {
 
 /// A protocol error: a stable `code` (`selector.invalid`, `node.not_found`, `node.ambiguous`,
 /// `node.stale`, `node.not_actionable`, `timeout`, `capability.absent`, `grant.denied`,
-/// `automation.disabled`, `method.unknown`, `params.invalid`) and a message for people.
+/// `automation.disabled`, `method.unknown`, `params.invalid`; AU7: `journal.overflow`,
+/// `event.unregistered`, `event.invalid`, `event.kind_conflict`, `wait.never`, `busy.invalid`,
+/// `replay.*`) and a message for people. AU7: a wait's timeout carries its [`WaitReport`] as `data`.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Error {
     pub code: &'static str,
     pub message: String,
+    /// Structured detail (a wait's [`WaitReport::to_json`]); `None` for most errors.
+    pub data: Option<serde_json::Value>,
 }
 
 impl Error {
@@ -85,11 +99,21 @@ impl Error {
         Error {
             code,
             message: message.into(),
+            data: None,
         }
     }
 
+    pub fn with_data(mut self, data: serde_json::Value) -> Error {
+        self.data = Some(data);
+        self
+    }
+
     pub fn to_json(&self) -> serde_json::Value {
-        serde_json::json!({ "code": self.code, "message": self.message })
+        let mut v = serde_json::json!({ "code": self.code, "message": self.message });
+        if let Some(d) = &self.data {
+            v["data"] = d.clone();
+        }
+        v
     }
 }
 

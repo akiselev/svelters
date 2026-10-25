@@ -1,7 +1,14 @@
 //! [`Session`]: one client's view of the app: grants, tooling roots, the host's idle predicate,
-//! element refs with their epoch, and every method (Rust API and [`Session::call`]).
+//! element refs with their epoch, and every method (Rust API and [`Session::call`]). AU7's waits
+//! (event journal, busy sources, clocks, reports) are in [`waits`].
 
+mod waits;
+pub use waits::{Actionability, Budget, Condition, NeverId, SeenId, Unmet, WaitReport};
+use waits::{Deadline, SeenLatch};
+
+use crate::busy::BusyRegistry;
 use crate::driver::{A11yNode, Driver};
+use crate::journal::{Cursor, Journal, Matcher};
 use crate::engine::{Roots, resolve};
 use crate::role::{has_state, role_of, states_of};
 use crate::selector::{Selector, TextMatch, parse};
@@ -9,6 +16,8 @@ use crate::snapshot::{value_of, yaml};
 use crate::{Error, PROTOCOL, is_enabled};
 use egui::accesskit::{Action, ActionData, ActionRequest};
 use serde_json::{Value, json};
+use std::collections::BTreeSet;
+use std::time::{Duration, Instant};
 use svelters_egui::accessible_name;
 use svelters_egui::scene::{ChangeFilter, NodeId, NodeRef, Observer, SceneRef};
 
@@ -264,6 +273,20 @@ pub struct Session<D: Driver> {
     now_ms: f64,
     pending_input: bool,
     journal: Option<Observer>,
+    // ---- AU7 ----
+    /// The app's event journal (shared: [`Session::set_journal`]).
+    events: Journal,
+    busy: BusyRegistry,
+    /// Events consumed by [`Session::wait_event`]: two identical waits match two events.
+    consumed: BTreeSet<u64>,
+    nevers: Vec<(NeverId, Matcher, Cursor)>,
+    seen: Vec<SeenLatch>,
+    next_id: u64,
+    /// Wall time of the frames run while a foreground wall-clock source held the virtual clock.
+    held_wall: Duration,
+    clock_held: bool,
+    /// [`Session::bridge_scene_changes`]: SG2's journal as `scene.changed` events.
+    scene_bridge: Option<Observer>,
 }
 
 impl<D: Driver> Session<D> {
@@ -283,6 +306,15 @@ impl<D: Driver> Session<D> {
             now_ms: 0.0,
             pending_input: false,
             journal: None,
+            events: Journal::default(),
+            busy: BusyRegistry::new(),
+            consumed: BTreeSet::new(),
+            nevers: Vec::new(),
+            seen: Vec::new(),
+            next_id: 1,
+            held_wall: Duration::ZERO,
+            clock_held: false,
+            scene_bridge: None,
         })
     }
 
@@ -294,6 +326,9 @@ impl<D: Driver> Session<D> {
 
     /// The host's idle predicate (§6, agreed with cadatomic): waits never answer while it is
     /// `false` (cadatomic's IdleBarrier: jobs, sessions, `BusyProbe`).
+    ///
+    /// **Deprecated (AU7):** register named sources with [`Session::register_busy_source`] instead;
+    /// a timeout can then say which source was busy. Kept until cadatomic moves.
     pub fn set_idle(&mut self, idle: impl Fn() -> bool + 'static) {
         self.idle = Some(Box::new(idle));
     }
@@ -383,7 +418,8 @@ impl<D: Driver> Session<D> {
             "grants": {"read": self.grants.read, "act": self.grants.act, "tooling": self.grants.tooling, "clock": self.grants.clock},
             "capabilities": ["scene.query", "scene.node", "scene.snapshot", "a11y.tree", "app.roots", "input.click", "input.focus",
                 "input.fill", "input.set_value", "input.press", "input.type", "input.hover", "input.pointer_move", "input.wheel", "input.drag", "wait.settled", "wait.for",
-                "journal.subscribe", "journal.take", "capture.screenshot", "clock.now", "clock.advance"],
+                "journal.subscribe", "journal.take", "capture.screenshot", "clock.now", "clock.advance",
+                "journal.cursor", "journal.events", "journal.kinds", "wait.event", "wait.never", "wait.seen", "wait.step_end", "busy.sources"],
             "clock": self.clock_json(),
         }))
     }
@@ -509,11 +545,26 @@ impl<D: Driver> Session<D> {
 
     // ---- wait ----
 
+    /// Runs one frame. While a foreground wall-clock source is busy the virtual clock is held
+    /// (AU7, Compose's `autoAdvance`): the frame runs, its time counts as wall time, not virtual.
     fn step(&mut self) {
+        let hold = self.wall_work_busy();
+        if hold != self.clock_held {
+            self.driver.hold_clock(hold);
+            self.clock_held = hold;
+        }
+        let t0 = Instant::now();
         self.driver.step();
         self.frame += 1;
-        self.now_ms += self.frame_ms();
+        if hold {
+            // the work runs on other threads: give it time rather than spinning frames
+            std::thread::sleep(Duration::from_millis(1));
+            self.held_wall += t0.elapsed();
+        } else {
+            self.now_ms += self.frame_ms();
+        }
         self.pending_input = false;
+        self.after_frame();
     }
 
     fn frame_ms(&self) -> f64 {
@@ -521,13 +572,18 @@ impl<D: Driver> Session<D> {
         if ms > 0.0 { ms } else { 16.0 }
     }
 
-    /// Why the app is not settled (`None`: settled): the embed, pending input, the host predicate.
+    /// Why the app is not settled (`None`: settled): pending input, the embed, the foreground
+    /// busy sources (AU7), the host predicate.
     fn not_settled(&self) -> Option<String> {
         if self.pending_input {
             return Some("INPUT".into());
         }
         if let Some(b) = self.driver.busy() {
             return Some(b);
+        }
+        let fg = self.foreground_busy();
+        if !fg.is_empty() {
+            return Some(fg.iter().map(|b| format!("{}×{}", b.id, b.count)).collect::<Vec<_>>().join(", "));
         }
         match &self.idle {
             Some(idle) if !idle() => Some("HOST".into()),
@@ -571,10 +627,29 @@ impl<D: Driver> Session<D> {
     }
 
     /// `wait.settled` (§1.6): steps frames until the app is settled; returns the frames it ran.
-    /// Fails with `timeout` and the chain of busy reasons after `timeout_ms` virtual ms.
+    /// Fails with `timeout` and the chain of busy reasons after `timeout_ms` virtual ms (AU7: and
+    /// a [`WaitReport`] naming every busy foreground source, longest first).
     pub fn wait_settled(&mut self, timeout_ms: f64) -> Result<u32, Error> {
+        self.wait_settled_within(Budget::from(timeout_ms))
+    }
+
+    /// [`Session::wait_settled`] with a budget per clock domain (AU7).
+    pub fn wait_settled_within(&mut self, budget: Budget) -> Result<u32, Error> {
         self.check(false)?;
-        let (start, mut frames, mut chain) = (self.now_ms, 0u32, Vec::<String>::new());
+        self.check_nevers()?;
+        let d = self.deadline(budget, false);
+        match self.settle(&d) {
+            Ok(frames) => Ok(frames),
+            Err(chain) => {
+                let head = format!("not settled after {} ms: {}", budget.virtual_ms, chain.join(" → "));
+                Err(self.timeout("timeout", head, "wait.settled".into(), &d, Vec::new(), None))
+            }
+        }
+    }
+
+    /// Steps until settled or `d` runs out; `Err`: the chain of busy reasons.
+    fn settle(&mut self, d: &Deadline) -> Result<u32, Vec<String>> {
+        let (mut frames, mut chain) = (0u32, Vec::<String>::new());
         loop {
             match self.not_settled() {
                 None => return Ok(frames),
@@ -584,11 +659,8 @@ impl<D: Driver> Session<D> {
                     }
                 }
             }
-            if self.now_ms - start >= timeout_ms {
-                return Err(Error::new(
-                    "timeout",
-                    format!("not settled after {timeout_ms} ms: {}", chain.join(" → ")),
-                ));
+            if self.expired(d).is_some() {
+                return Err(chain);
             }
             self.step();
             frames += 1;
@@ -604,94 +676,85 @@ impl<D: Driver> Session<D> {
         expect: Option<&Expect>,
         timeout_ms: f64,
     ) -> Result<Vec<NodeInfo>, Error> {
+        self.wait_for_within(&Condition::new(selector, state, expect.cloned()), Budget::from(timeout_ms))
+    }
+
+    /// [`Session::wait_for`] on a [`Condition`], with a budget per clock domain (AU7).
+    pub fn wait_for_within(&mut self, cond: &Condition, budget: Budget) -> Result<Vec<NodeInfo>, Error> {
         self.check(false)?;
-        let sel = parse(selector)?;
-        let start = self.now_ms;
+        let sel = parse(&cond.selector)?;
+        let d = self.deadline(budget, false);
         let mut last = String::new();
         loop {
-            let left = (timeout_ms - (self.now_ms - start)).max(0.0);
+            self.check_nevers()?;
             // a busy app gets the rest of the time to settle; the check runs on settled frames
-            let settled = self.wait_settled(left).is_ok();
-            if settled {
-                let (ok, why, infos) = self.with_scene(|s, roots| -> Result<_, Error> {
-                    let ids = resolve(s, &sel, roots)?;
-                    let nodes: Vec<NodeRef<'_>> = ids.iter().filter_map(|&id| s.get(id)).collect();
-                    let in_state = match state {
-                        WaitState::Attached => !nodes.is_empty(),
-                        WaitState::Detached => nodes.is_empty(),
-                        WaitState::Visible => {
-                            !nodes.is_empty() && nodes.iter().all(|n| n.is_visible())
-                        }
-                        WaitState::Hidden => nodes.iter().all(|n| !n.is_visible()),
-                        WaitState::Enabled => {
-                            !nodes.is_empty() && nodes.iter().all(|&n| has_state(n, "enabled"))
-                        }
-                    };
-                    let (met, why) = match expect {
-                        None => (true, String::new()),
-                        Some(Expect::Count(c)) => (
-                            nodes.len() == *c,
-                            format!("count {} (want {c})", nodes.len()),
-                        ),
-                        Some(Expect::Text(t)) => {
-                            let texts: Vec<String> = nodes.iter().map(|&n| text_of(n)).collect();
-                            (
-                                texts.iter().any(|x| t.matches(x)),
-                                format!("texts {texts:?} (want {t:?})"),
-                            )
-                        }
-                        Some(Expect::Value(t)) => {
-                            let vals: Vec<Option<String>> =
-                                nodes.iter().map(|&n| value_of(n)).collect();
-                            (
-                                vals.iter().flatten().any(|x| t.matches(x)),
-                                format!("values {vals:?} (want {t:?})"),
-                            )
-                        }
-                    };
-                    let why = if in_state {
-                        why
-                    } else {
-                        format!("{} matches, not {state:?}; {why}", nodes.len())
-                    };
-                    Ok((
-                        in_state && met,
-                        why,
-                        nodes.iter().map(|&n| self.info(s, n)).collect::<Vec<_>>(),
-                    ))
-                })?;
+            if self.settle(&d).is_ok() {
+                let (ok, why, infos) = self.evaluate(&sel, cond)?;
                 if ok {
                     return Ok(infos);
                 }
                 last = why;
             }
-            if self.now_ms - start >= timeout_ms {
-                return Err(Error::new(
-                    "timeout",
-                    format!("`{selector}` after {timeout_ms} ms: {last}"),
-                ));
+            if self.expired(&d).is_some() {
+                let unmet = vec![Unmet { condition: cond.describe(), last: last.clone() }];
+                let head = format!("`{}` after {} ms: {last}", cond.selector, budget.virtual_ms);
+                return Err(self.timeout("timeout", head, format!("wait.for {}", cond.describe()), &d, unmet, None));
             }
             self.step();
         }
     }
 
+    /// Whether `cond` holds now: `(met, last value for reports, the matches)`.
+    fn evaluate(&self, sel: &Selector, cond: &Condition) -> Result<(bool, String, Vec<NodeInfo>), Error> {
+        let (state, expect) = (cond.state, cond.expect.as_ref());
+        self.with_scene(|s, roots| -> Result<_, Error> {
+            let ids = resolve(s, sel, roots)?;
+            let nodes: Vec<NodeRef<'_>> = ids.iter().filter_map(|&id| s.get(id)).collect();
+            let in_state = match state {
+                WaitState::Attached => !nodes.is_empty(),
+                WaitState::Detached => nodes.is_empty(),
+                WaitState::Visible => !nodes.is_empty() && nodes.iter().all(|n| n.is_visible()),
+                WaitState::Hidden => nodes.iter().all(|n| !n.is_visible()),
+                WaitState::Enabled => !nodes.is_empty() && nodes.iter().all(|&n| has_state(n, "enabled")),
+            };
+            let (met, why) = match expect {
+                None => (true, String::new()),
+                Some(Expect::Count(c)) => (nodes.len() == *c, format!("count {} (want {c})", nodes.len())),
+                Some(Expect::Text(t)) => {
+                    let texts: Vec<String> = nodes.iter().map(|&n| text_of(n)).collect();
+                    (texts.iter().any(|x| t.matches(x)), format!("texts {texts:?} (want {t:?})"))
+                }
+                Some(Expect::Value(t)) => {
+                    let vals: Vec<Option<String>> = nodes.iter().map(|&n| value_of(n)).collect();
+                    (vals.iter().flatten().any(|x| t.matches(x)), format!("values {vals:?} (want {t:?})"))
+                }
+            };
+            let why = if in_state { why } else { format!("{} matches, not {state:?}; {why}", nodes.len()) };
+            Ok((in_state && met, why, nodes.iter().map(|&n| self.info(s, n)).collect::<Vec<_>>()))
+        })
+    }
+
     // ---- act ----
 
-    /// Resolves `target` (a selector, strictly, or a ref) and waits until it is actionable (§1.5):
-    /// attached, visible, stable over two frames, enabled, and it (or a descendant or ancestor)
-    /// is what `hit_test` finds at its centre. Returns the node and its centre.
+    /// Resolves `target` (a selector, strictly, or a ref) and waits until it is actionable (§1.5,
+    /// AU7 WAITS §3.4): attached, visible, stable (the same rect over two consecutive frames),
+    /// enabled, editable (`fill`), and it (or a descendant or ancestor) is what `hit_test` finds at
+    /// its centre. Returns the node and its rect. At the timeout the failing check is named ("still
+    /// moving", "covered by …") in the error and its [`WaitReport`].
     fn actionable(
         &mut self,
         target: &Target,
         opts: &ActOptions,
+        editable: bool,
     ) -> Result<(NodeId, egui::Rect), Error> {
         if let Target::Invalid(e) = target {
             return Err(e.clone());
         }
-        let start = self.now_ms;
+        let d = self.deadline(Budget::from(opts.timeout_ms), false);
         let mut prev: Option<egui::Rect> = None;
-        let mut why;
+        let mut failed: Actionability;
         loop {
+            self.check_nevers()?;
             let found: Result<Probe, Error> = self.with_scene(|s, roots| {
                 let id = match target {
                     Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
@@ -706,9 +769,11 @@ impl<D: Driver> Session<D> {
                 let n = s.get(id).expect("resolved");
                 let rect = node_rect(s, n);
                 let check = if !n.is_visible() || rect.is_none_or(|r| r.area() <= 0.0) {
-                    Err("not visible".to_string())
+                    Err(Actionability::new("visible", "not visible"))
                 } else if !has_state(n, "enabled") {
-                    Err("disabled".to_string())
+                    Err(Actionability::new("enabled", "disabled"))
+                } else if editable && !is_editable(n) {
+                    Err(Actionability::new("editable", format!("not editable (a {}{})", role_of(n), if has_state(n, "read-only") { ", read-only" } else { "" })))
                 } else {
                     let c = rect.expect("checked").center();
                     match s.hit_node(egui::ViewportId::ROOT, c) {
@@ -717,11 +782,12 @@ impl<D: Driver> Session<D> {
                                 && !h.ancestors().any(|a| a.id() == id)
                                 && !n.ancestors().any(|a| a.id() == h.id()) =>
                         {
-                            Err(format!(
-                                "{} {} receives the events at {c:?}",
-                                h.tag(),
-                                h.id()
-                            ))
+                            let mut a = Actionability::new(
+                                "hit",
+                                format!("covered by {} at ({:.0}, {:.0})", describe_node(h), c.x, c.y),
+                            );
+                            a.cover = Some(h.id());
+                            Err(a)
                         }
                         _ => Ok(()),
                     }
@@ -732,9 +798,10 @@ impl<D: Driver> Session<D> {
                 Ok(f) => f,
                 // a selector that does not match yet may match after the next settle
                 Err(e) if e.code == "node.not_found" => {
-                    why = e.message;
-                    if self.now_ms - start >= opts.timeout_ms {
-                        return Err(Error::new("timeout", why));
+                    failed = Actionability::new("attached", format!("not attached: {}", e.message));
+                    if self.expired(&d).is_some() {
+                        let head = e.message.clone();
+                        return Err(self.timeout("timeout", head, format!("actionable {}", target.describe()), &d, Vec::new(), Some(failed)));
                     }
                     self.step();
                     continue;
@@ -747,15 +814,21 @@ impl<D: Driver> Session<D> {
             let stable = rect.is_some() && prev == rect;
             match check {
                 Ok(()) if stable => return Ok((id, rect.expect("stable"))),
-                Ok(()) => why = "not stable yet".to_string(),
-                Err(w) => why = w,
+                Ok(()) => {
+                    failed = match (prev, rect) {
+                        (Some(p), Some(r)) => Actionability::new(
+                            "stable",
+                            format!("still moving: from {:?} to {:?} in the last frame", [p.min.x, p.min.y, p.width(), p.height()], [r.min.x, r.min.y, r.width(), r.height()]),
+                        ),
+                        _ => Actionability::new("stable", "still moving: first frame drawn"),
+                    }
+                }
+                Err(a) => failed = a,
             }
             prev = rect;
-            if self.now_ms - start >= opts.timeout_ms {
-                return Err(Error::new(
-                    "node.not_actionable",
-                    format!("{} after {} ms: {why}", target.describe(), opts.timeout_ms),
-                ));
+            if self.expired(&d).is_some() {
+                let head = format!("{} after {} ms: {}", target.describe(), opts.timeout_ms, failed.detail);
+                return Err(self.timeout("node.not_actionable", head, format!("actionable {}", target.describe()), &d, Vec::new(), Some(failed)));
             }
             self.step();
         }
@@ -821,8 +894,19 @@ impl<D: Driver> Session<D> {
         opts: ActOptions,
         inject: impl FnOnce(&mut Self, NodeId, egui::Rect) -> Tier,
     ) -> Result<ActResult, Error> {
+        self.act_on(target, opts, false, inject)
+    }
+
+    /// [`Session::act`]; `editable`: the target must also take text (`fill`).
+    fn act_on(
+        &mut self,
+        target: Target,
+        opts: ActOptions,
+        editable: bool,
+        inject: impl FnOnce(&mut Self, NodeId, egui::Rect) -> Tier,
+    ) -> Result<ActResult, Error> {
         self.check(true)?;
-        let (id, rect) = self.actionable(&target, &opts)?;
+        let (id, rect) = self.actionable(&target, &opts, editable)?;
         let scene = self.driver.scene();
         let obs = scene.observe(ChangeFilter::all());
         let tier = inject(self, id, rect);
@@ -1004,7 +1088,7 @@ impl<D: Driver> Session<D> {
         opts: ActOptions,
     ) -> Result<ActResult, Error> {
         let text = text.to_string();
-        self.act(target.into(), opts, move |me, _, rect| {
+        self.act_on(target.into(), opts, true, move |me, _, rect| {
             if opts.tier == Tier::Semantic
                 && let Some(n) = me.a11y_target(rect)
             {
@@ -1245,21 +1329,9 @@ impl<D: Driver> Session<D> {
             }
             "input.press" => act_json(self.press(str_param(p, "key")?)?),
             "input.type" => act_json(self.type_text(str_param(p, "text")?)?),
-            "wait.settled" => json!({"frames": self.wait_settled(timeout(p))?}),
+            "wait.settled" => json!({"frames": self.wait_settled_within(waits::budget(p))?}),
             "wait.for" => {
-                let state = match p.get("state").and_then(Value::as_str).unwrap_or("visible") {
-                    "attached" => WaitState::Attached,
-                    "detached" => WaitState::Detached,
-                    "visible" => WaitState::Visible,
-                    "hidden" => WaitState::Hidden,
-                    "enabled" => WaitState::Enabled,
-                    s => return Err(Error::new("params.invalid", format!("unknown state `{s}`"))),
-                };
-                let expect = match p.get("expect") {
-                    None | Some(Value::Null) => None,
-                    Some(e) => Some(expect_param(e)?),
-                };
-                let found = self.wait_for(str_param(p, "selector")?, state, expect.as_ref(), timeout(p))?;
+                let found = self.wait_for_within(&Condition::from_json(p)?, waits::budget(p))?;
                 json!(found.iter().map(NodeInfo::to_json).collect::<Vec<_>>())
             }
             "capture.screenshot" => {
@@ -1283,13 +1355,36 @@ impl<D: Driver> Session<D> {
                 let (changes, overflowed) = self.journal_take()?;
                 json!({"changes": changes.iter().map(|(n, m)| json!({"id": n.to_raw(), "what": m})).collect::<Vec<_>>(), "overflowed": overflowed})
             }
+            m if waits::METHODS.contains(&m) => self.call_waits(m, p)?,
             m => return Err(Error::new("method.unknown", format!("`{m}`"))),
         })
     }
 }
 
-/// One actionability probe: the node, its screen rect, and why it is not actionable yet.
-type Probe = (NodeId, Option<egui::Rect>, Result<(), String>);
+/// One actionability probe: the node, its screen rect, and the check it fails.
+type Probe = (NodeId, Option<egui::Rect>, Result<(), Actionability>);
+
+/// `fill`'s editable check: not read-only, and not a role that never takes text.
+fn is_editable(n: NodeRef<'_>) -> bool {
+    !has_state(n, "read-only")
+        && !matches!(
+            role_of(n),
+            "button" | "checkbox" | "radio" | "switch" | "label" | "link" | "img" | "separator" | "slider" | "progressbar" | "menu" | "tab"
+        )
+}
+
+/// `button #12 "Overlay" (anchor=cover)`, for reports.
+fn describe_node(n: NodeRef<'_>) -> String {
+    let mut s = format!("{} {}", n.tag(), n.id());
+    let name = accessible_name(n);
+    if !name.is_empty() {
+        s.push_str(&format!(" {name:?}"));
+    }
+    if let Some(a) = n.anchor() {
+        s.push_str(&format!(" (anchor={a})"));
+    }
+    s
+}
 
 /// What an act aims at: a selector (resolved strictly before each try) or an element ref.
 #[derive(Clone, Debug)]
