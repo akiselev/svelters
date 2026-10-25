@@ -156,6 +156,10 @@ pub struct Inner {
     pub(crate) host: Cell<*const svl_host>,
     /// Presented windows, in order.
     pub(crate) windows: RefCell<Vec<svl_handle>>,
+    /// Presented windows the runner has not opened yet.
+    pub(crate) presents: RefCell<Vec<svl_handle>>,
+    /// Presented windows' presto ids, once attached.
+    pub(crate) window_ids: RefCell<HashMap<svl_handle, WindowId>>,
     /// `close` calls the driver has not applied yet.
     pub(crate) closes: RefCell<Vec<svl_handle>>,
     /// Nodes the embedder owns (slots): JS mounts into them but cannot destroy them.
@@ -196,6 +200,8 @@ impl PrestoBackend {
             handles: RefCell::new(Handles::default()),
             host: Cell::new(std::ptr::null()),
             windows: RefCell::new(Vec::new()),
+            presents: RefCell::new(Vec::new()),
+            window_ids: RefCell::new(HashMap::new()),
             closes: RefCell::new(Vec::new()),
             borrowed: RefCell::new(HashSet::new()),
             observed: RefCell::new(HashMap::new()),
@@ -472,6 +478,8 @@ impl PrestoBackend {
         self.0.observed.borrow_mut().retain(|&(x, _), _| x != h);
         self.0.windows.borrow_mut().retain(|&w| w != h);
         self.0.closes.borrow_mut().retain(|&w| w != h);
+        self.0.presents.borrow_mut().retain(|&w| w != h);
+        self.0.window_ids.borrow_mut().remove(&h);
     }
 
     /// Frees `n` and everything under it natively (an embed disposing what a root left behind);
@@ -499,9 +507,52 @@ impl PrestoBackend {
         freed
     }
 
-    /// The presto window of a presented `window` handle.
-    pub fn window_id(h: svl_handle) -> WindowId {
-        WindowId(h as u32)
+    /// `present` calls the runner has not opened a window for yet, in order.
+    pub fn take_presents(&self) -> Vec<svl_handle> {
+        std::mem::take(&mut self.0.presents.borrow_mut())
+    }
+
+    /// The initial size (points) and title of a presented window (its `default-width`,
+    /// `default-height` and `title`).
+    pub fn window_desc(&self, h: svl_handle) -> (Size, String) {
+        let num = |name: &str, d: f64| match self.get_prop(h, self.resolve(NameKind::Prop, self.kind_map(h).map_or(0, |m| m.wire), name)) {
+            Ok(Value::F64(f)) => f,
+            Ok(Value::I64(i)) => i as f64,
+            _ => d,
+        };
+        let title = match self.get_prop(h, self.resolve(NameKind::Prop, self.kind_map(h).map_or(0, |m| m.wire), "title")) {
+            Ok(Value::Str(s)) => s,
+            _ => String::new(),
+        };
+        (Size::new(num("default-width", 480.0) as f32, num("default-height", 360.0) as f32), title)
+    }
+
+    /// The runner opened `window` for presented handle `h`: the JS-built node becomes its root.
+    pub fn attach_presented(&self, h: svl_handle, window: WindowId, size: Size, scale: Scale) -> StrResult<()> {
+        let (n, _) = self.live(h)?;
+        self.0.doc.borrow_mut().attach_window(window, n, size, scale).map_err(|e| e.to_string())?;
+        self.0.window_ids.borrow_mut().insert(h, window);
+        Ok(())
+    }
+
+    /// The presto window of a presented, attached `window` handle.
+    pub fn window_id(&self, h: svl_handle) -> Option<WindowId> {
+        self.0.window_ids.borrow().get(&h).copied()
+    }
+
+    /// The handle whose node is `window`'s root.
+    pub fn window_handle(&self, window: WindowId) -> Option<svl_handle> {
+        self.0.window_ids.borrow().iter().find(|(_, w)| **w == window).map(|(h, _)| *h)
+    }
+
+    /// The document's revision (one per transaction).
+    pub fn revision(&self) -> Revision {
+        self.0.doc.borrow().revision()
+    }
+
+    /// JS asked for a frame that has not run yet.
+    pub fn frame_pending(&self) -> bool {
+        self.0.frame_pending.get()
     }
 
     /// Frees the node behind `h` and its handle. Children JS knows are detached first, not freed:
@@ -635,15 +686,9 @@ impl Backend for PrestoBackend {
                 let mut ws = self.0.windows.borrow_mut();
                 if !ws.contains(&h) {
                     ws.push(h);
-                    // the JS-built node becomes the window's root (its id is the handle's); the driver
-                    // opens the OS window and reports its real size with `resize_window`
-                    let (n, km) = self.live(h)?;
-                    let num = |name: &str, d: f64| match km.prop_named(name).map(|p| p.target) {
-                        Some(PropTarget::Native(p)) => self.0.doc.borrow().get_prop(n, p).and_then(|v| v.as_f64()).unwrap_or(d),
-                        _ => d,
-                    };
-                    let size = Size::new(num("default-width", 480.0) as f32, num("default-height", 360.0) as f32);
-                    self.0.doc.borrow_mut().attach_window(Self::window_id(h), n, size, Scale(1.0)).map_err(|e| e.to_string())?;
+                    // the runner opens the OS window and attaches the node as its root
+                    // (`attach_presented`); until then it is a detached tree
+                    self.0.presents.borrow_mut().push(h);
                 }
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),

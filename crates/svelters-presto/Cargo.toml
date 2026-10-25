@@ -9,9 +9,19 @@ publish.workspace = true
 [dependencies]
 presto-base = { workspace = true }
 presto-core = { workspace = true }
+presto = { workspace = true }
+presto-platform = { workspace = true }
+presto-compositor = { workspace = true }
+presto-text = { workspace = true }
 presto-widgets = { workspace = true }
 smallvec = { workspace = true }
 svelters-abi = { workspace = true }
 svelters-host = { workspace = true }
+# `svelters-presto-run --entry`: apps compiled from source
+svelters-modules = { workspace = true, features = ["source"] }
 serde_json = { workspace = true }
 svelters-style = { workspace = true }
+
+[dev-dependencies]
+# `tests/run.rs`: the app runner on the headless platform and compositor
+presto-test = { workspace = true }

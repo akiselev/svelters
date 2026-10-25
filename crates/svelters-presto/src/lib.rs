@@ -2,6 +2,7 @@
 //!
 //! | Module | What |
 //! |---|---|
+//! | [`app`] | the presto app runner's tree ([`app::PrestoDocument`]) and handler ([`app::SveltersApp`]): windows JS presents |
 //! | [`backend`] | [`PrestoBackend`]: the backend ABI (`impl svelters_abi::Backend`) on presto's tree, and the [`Driver`] seam to whoever runs the loop |
 //! | [`deliver`] | event-time delivery of what an input produced in the tree (architecture §11.1) |
 //! | [`template`] | native templates: `instantiate` and `destroy_range` (compiler-and-js §3.2) |
@@ -13,6 +14,7 @@
 //! | [`value`] | ABI values ↔ surface values ↔ presto-core values |
 //! | [`surface`] | the JS-facing kind specs presto-core's `KindSpec` does not carry yet (Q3) |
 
+pub mod app;
 pub mod backend;
 pub mod css;
 pub mod deliver;

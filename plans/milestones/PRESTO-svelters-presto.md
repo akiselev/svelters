@@ -136,6 +136,25 @@ as above.
   tree, sets stop/prevent on the `Dispatch`), and the op queue, the "reads fail" path and the sync-delivery
   hook go; `take_deferred_errors` stays only if something still defers.
 
+### The run path on APP-TEST's `presto` (2026-10-25, ci/presto-base 4d94409a)
+
+- `app.rs`: `PrestoDocument` (presto's `DocumentApi` over the backend: dispatch with event-time delivery,
+  frame = rAF callbacks + `pump` + `Document::frame`, resize attaches the next presented window's node,
+  close frees its handle, a11y actions via `Document::a11y_action`), `SveltersApp` (the platform's
+  `AppHandler` around `presto::App`: after every callback runs `Embed::logic`, pumps, opens a platform window
+  for each `present` with the node's title and default size, closes on `close`, asks the compositor for frames
+  when JS changed the tree outside input, moves the platform timer to the host's deadline, installs the
+  platform waker as the host's cross-thread wake, exits on `quit` or the last window), and
+  `install_widget_services` (presto-widgets' text system, OS policy, theme into the document).
+- `present` no longer attaches at once: it queues the handle (`take_presents`); the runner opens the window
+  and `attach_presented(h, window, size, scale)` makes the node its root (window ids are the platform's).
+- `src/bin/svelters-presto-run.rs`: `--bundle <dist/app.js>` or `--entry <dir|file> [--dev]` (compiled for
+  `presto`), presto-text over the system fonts, presto's real compositor, `presto_platform::run`.
+- `tests/run.rs` (written, not run): on presto-test's `Harness`, a presented window opens with the JS-built
+  node as root and a click on its button reaches the host; closing frees the handle.
+- Not yet: the `Driver` path (`Backend::run`) is unused by the runner (the host is attached); text-edit's text
+  services wait for TEXT-INPUT; `close-request` is not asked before a user close.
+
 ## Not done
 
 - **`svelters-presto-run`**: `crates/presto` and `crates/presto-test` are still one-line stubs in `ci/presto-base`
@@ -158,9 +177,8 @@ as above.
 
 ## Hand-off (next session, in order)
 
-1. When APP-TEST's `presto::App` is in `ci/presto-base`: `src/bin/svelters-presto-run.rs` implementing `Driver`
-   (open windows for `windows()`, feed input through `PrestoBackend::dispatch`, `pump` after frames, presto-text
-   via `with_text` and `presto_widgets::host::install_text_system`).
+1. Run `svelters-presto-run --entry fixtures/counter-egui` under `tools/dev/headless` once a GPU/lavapipe is at
+   hand; `close-request` before a user close; text services for `text-edit` (TEXT-INPUT).
 2. `bounds` and `scroll-into-view` on attached windows (layout runs in `Document::frame`).
 3. As presto-widgets lands kinds: add them to `kinds::register_hosted`, regenerate presto.json.
 4. When CORE's `KindSpec` grows (Q3): drop `surface/tier0.rs`, generate from the registry.
