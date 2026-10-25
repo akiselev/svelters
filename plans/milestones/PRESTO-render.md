@@ -60,17 +60,17 @@ Deliverables:
 - GPU (`tests/gpu.rs`, gated on `PRESTO_GPU_TESTS=1`): one image per primitive group (rounded quad with
   borders, dashed/dotted, gradient, shadows, lines, glyphs, images/icons, paths, surfaces + rounded
   clips) with exact-pixel asserts plus a reference comparison; 10k quads in one draw; damage-only redraw
-  leaves every other pixel untouched and clears empty damage; atlas churn over 50 frames.
-- **References don't exist yet.** The first CI run records them and fails with "reference recorded,
-  inspect it"; each PNG is also printed as `PRESTO_REFERENCE <name> <base64>` in the test log, so the
-  consolidation can recover them from the CI log, inspect, and commit them to
-  `crates/presto-render/tests/reference/` (or run with `PRESTO_BLESS=1` on a machine with an adapter).
-  Expect the eight image tests to fail on every OS until then.
+  leaves every other pixel untouched and clears empty damage; atlas churn over 50 frames; real text
+  through presto-text's `TextSystem` and `FontRasterizer` (`FontConfig::testing()`).
+- **References** (`tests/reference/*.png`, 64×64) were recorded by the WARP/DX12 job of CI run
+  40223192601 (decoded from its `PRESTO_REFERENCE` log lines), inspected by eye (contact sheet: every
+  primitive as intended), and committed. In that run every exact-pixel assert passed on Metal (Apple
+  Paravirtual) and on WARP, with no wgpu validation errors. `PRESTO_BLESS=1` rewrites them.
 
 ## Not run
 
-Everything but `shaders_parse_and_validate` and `cargo check -p presto-render --all-targets`. No GPU in
-this container (no Vulkan ICD), so pipeline creation against a real device is first exercised by CI.
+Locally only `shaders_parse_and_validate` and `cargo check -p presto-render --all-targets` (no GPU in this
+container). Everything else runs in CI; see the CI section below.
 
 ## Stubbed / left out (none pretends to work)
 
@@ -91,7 +91,7 @@ this container (no Vulkan ICD), so pipeline creation against a real device is fi
 - `THIRD_PARTY_NOTICES.md`: a new "presto-render (Apache-2.0 and MIT ports)" section (GPUI shaders and
   bounds tree, Windows Terminal gamma), and the Apache-2.0 text at
   `crates/presto-render/LICENSES/Apache-2.0-GPUI.txt`.
-- `Cargo.lock` (wgpu, etagere, lyon, naga, png, pollster for presto-render).
+- `Cargo.lock` (wgpu, etagere, lyon, naga, png, pollster, presto-text as a dev-dependency).
 - presto-base: no changes.
 - `.github/workflows/presto.yml` (base's file), one line: the "Which presto crates exist" step ran
   `ls -d crates/presto-* crates/svelters-presto` under `pipefail`; `crates/svelters-presto` doesn't exist,

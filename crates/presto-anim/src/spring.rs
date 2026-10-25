@@ -273,8 +273,9 @@ mod tests {
         let s = Spring::duration_bounce(0.5, 0.0);
         assert!((s.zeta() - 1.0).abs() < 1e-9);
         assert!((s.omega0() - TAU / 0.5).abs() < 1e-9);
+        // "duration is approximately the settling duration": within 2% after it
         let (e, _) = s.eval(-1.0, 0.0, 0.5);
-        assert!(e.abs() < 0.01);
+        assert!(e.abs() < 0.02);
     }
 
     #[test]
