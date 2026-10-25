@@ -79,7 +79,9 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
    layout is not written yet. Ask: a hook for a container kind to place or hide its children.
 4. **Popups.** `date-picker`/`color-picker` popups need an overlay layer anchored to the node
    (architecture §14; views lane's placement).
-5. **DnD.** The DnD props belong on presto-core's common props, and dispatch must feed `dnd::DragSession`
+5. **Focus stops inside a kind.** `color-editor` has several inner controls (square, strips, channel
+   boxes); Tab between them needs sub-node focus stops or Tab routing to the kind.
+6. **DnD.** The DnD props belong on presto-core's common props, and dispatch must feed `dnd::DragSession`
    (hit-test candidates deepest first, pointer capture by the source, Escape cancel, OS file events).
 
 ## Cross-lane edits
