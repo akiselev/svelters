@@ -4055,6 +4055,7 @@ name = "presto-core"
 version = "0.0.0"
 dependencies = [
  "accesskit",
+ "presto-anim",
  "presto-base",
  "smallvec",
  "svelters-style",
@@ -4171,6 +4172,12 @@ dependencies = [
  "presto-base",
  "presto-core",
  "presto-text",
+ "resvg",
+ "roxmltree 0.20.0",
+ "serde_json",
+ "smallvec",
+ "svelters-style",
+ "taffy",
 ]
 
 [[package]]

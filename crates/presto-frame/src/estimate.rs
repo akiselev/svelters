@@ -33,30 +33,37 @@ pub struct Series {
     next: usize,
     seed: Span,
     last: Span,
+    tracks_spikes: bool,
     provisional: u32,
-    cached: Option<Span>,
 }
 
 impl Series {
     pub fn new(seed: Span) -> Self {
-        Series { ring: [0; RING], len: 0, next: 0, seed, last: Span::ZERO, provisional: 0, cached: None }
+        Series { ring: [0; RING], len: 0, next: 0, seed, last: Span::ZERO, tracks_spikes: false, provisional: 0 }
+    }
+
+    /// A series whose spikes make the next [`PROVISIONAL_FRAMES`] estimates `max(q, last)` (the UI
+    /// series: a heavy panel that opens costs the same next frame).
+    pub fn with_spike_tracking(seed: Span) -> Self {
+        Series { tracks_spikes: true, ..Series::new(seed) }
     }
 
     /// Adds a sample, capped at `2 × interval` so one hitch cannot pin the estimate.
     pub fn record(&mut self, sample: Span, interval: Span) {
         let cap = Span(interval.0.saturating_mul(2).max(FLOOR.0));
         let s = Span(sample.0.clamp(0, cap.0));
-        let est = self.estimate();
-        if est.0 > 0 && s.0 > est.0.saturating_mul(PROVISIONAL_FACTOR) {
-            self.provisional = PROVISIONAL_FRAMES;
-        } else if self.provisional > 0 {
-            self.provisional -= 1;
+        if self.tracks_spikes {
+            let est = self.estimate();
+            if est.0 > 0 && s.0 > est.0.saturating_mul(PROVISIONAL_FACTOR) {
+                self.provisional = PROVISIONAL_FRAMES;
+            } else if self.provisional > 0 {
+                self.provisional -= 1;
+            }
         }
         self.ring[self.next] = s.0;
         self.next = (self.next + 1) % RING;
         self.len = (self.len + 1).min(RING);
         self.last = s;
-        self.cached = None;
     }
 
     pub fn samples(&self) -> usize {
@@ -68,10 +75,7 @@ impl Series {
         if self.len == 0 {
             return self.seed;
         }
-        let q = match self.cached {
-            Some(q) => q,
-            None => self.percentile(PERCENTILE),
-        };
+        let q = self.percentile(PERCENTILE);
         let q = if self.provisional > 0 { q.max(self.last) } else { q };
         q.max(FLOOR)
     }
@@ -88,7 +92,7 @@ impl Series {
     }
 
     pub fn reset(&mut self) {
-        *self = Series::new(self.seed);
+        *self = Series { tracks_spikes: self.tracks_spikes, ..Series::new(self.seed) };
     }
 }
 
@@ -139,6 +143,9 @@ pub struct Estimator {
     pub comp_cpu: Series,
     pub gpu: Series,
     pub margin: Margin,
+    /// How late the scheduler's timer wakes (`wake_error = actual − armed`); its p95 floors the
+    /// margin, so a coarse timer means an earlier start rather than missed frames (§4).
+    pub wake_error: Series,
 }
 
 /// One target's schedule: when the UI starts, when it must commit, when the compositor draws.
@@ -153,12 +160,19 @@ pub struct Schedule {
 impl Estimator {
     pub fn new() -> Self {
         Estimator {
-            ui_input: Series::new(SEED_UI),
-            ui_other: Series::new(SEED_UI),
+            ui_input: Series::with_spike_tracking(SEED_UI),
+            ui_other: Series::with_spike_tracking(SEED_UI),
             comp_cpu: Series::new(SEED_COMP_CPU),
             gpu: Series::new(SEED_GPU),
             margin: Margin::new(),
+            wake_error: Series::new(Span::ZERO),
         }
+    }
+
+    /// The margin in use: `max(m, p95(wake_error))`.
+    pub fn margin(&self) -> Span {
+        let wake = if self.wake_error.samples() == 0 { Span::ZERO } else { self.wake_error.percentile(0.95) };
+        self.margin.value.max(wake)
     }
 
     pub fn est_ui(&self) -> Span {
@@ -176,16 +190,22 @@ impl Estimator {
 
     /// Everything from the UI start to the latch, clamped to two intervals (KWin, Mutter).
     pub fn est_total(&self, latch: Span, interval: Span) -> Span {
-        let t = latch + self.margin.value + self.est_comp() + EPS_COMMIT + self.est_ui();
+        let t = latch + self.margin() + self.est_comp() + EPS_COMMIT + self.est_ui();
         t.min(Span(interval.0.saturating_mul(2)))
     }
 
     /// `D_comp = T − (L_latch + m) − est_gpu − est_comp_cpu`, `D_ui = D_comp − ε_commit`,
     /// `S_ui = D_ui − est_ui`.
     pub fn schedule(&self, target: Time, latch: Span) -> Schedule {
-        let d_comp = target - (latch + self.margin.value) - self.gpu.estimate() - self.comp_cpu.estimate();
+        self.schedule_with(target, latch, self.est_ui())
+    }
+
+    /// [`Estimator::schedule`] for a UI frame of cost `est_ui` (frames with discrete input use
+    /// `est_ui_input`).
+    pub fn schedule_with(&self, target: Time, latch: Span, est_ui: Span) -> Schedule {
+        let d_comp = target - (latch + self.margin()) - self.gpu.estimate() - self.comp_cpu.estimate();
         let d_ui = d_comp - EPS_COMMIT;
-        let s_ui = d_ui - self.est_ui();
+        let s_ui = d_ui - est_ui;
         Schedule { target, s_ui, d_ui, d_comp }
     }
 
