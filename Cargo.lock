@@ -3917,6 +3917,9 @@ name = "presto-platform-win32"
 version = "0.0.0"
 dependencies = [
  "presto-base",
+ "smallvec",
+ "windows",
+ "windows-core 0.62.2",
 ]
 
 [[package]]
