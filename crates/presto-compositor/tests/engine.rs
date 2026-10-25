@@ -585,3 +585,138 @@ fn occlusion_stops_drawing_and_is_reported() {
     assert_eq!(occl, vec![true, false]);
     link.gate.close();
 }
+
+#[test]
+fn caret_blinks_and_every_caret_commit_restarts_it() {
+    let (mut e, _) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
+    let blink = presto_compositor::CaretBlink { cycle: std::time::Duration::from_millis(1000), timeout: None };
+    e.handle(Msg::SetCaretBlink { window: W, blink: Some(blink) }, t0, &mut gpu);
+    let caret = |rev: u64| {
+        Msg::Fast(FastCommit::Caret { window: W, rect: Some(Rect::new(50.0, 50.0, 51.0, 66.0)), revision: Revision(rev) })
+    };
+    let at = t0 + Span::from_millis(2);
+    e.handle(caret(2), at, &mut gpu);
+    // The blink toggles at 500 ms; a caret move at 400 ms restarts the cycle.
+    let mut t = at;
+    while t < at + Span::from_millis(400) {
+        t = step(&mut e, &mut gpu).unwrap();
+    }
+    let moved = t;
+    e.handle(caret(3), moved, &mut gpu);
+    let mut toggles = Vec::new();
+    let mut drawn = gpu.draws.len();
+    for _ in 0..400 {
+        let Some(t) = step(&mut e, &mut gpu) else { break };
+        if gpu.draws.len() > drawn {
+            toggles.push(t);
+            drawn = gpu.draws.len();
+        }
+        if toggles.len() >= 3 {
+            break;
+        }
+    }
+    // The caret move's own frame, then off at +500 ms and on at +1000 ms (each drawn on the next tick).
+    let off = toggles.iter().find(|t| **t >= moved + Span::from_millis(500)).copied().expect("a blink-off frame");
+    assert!(off - moved < Span::from_millis(500) + Span(INTERVAL.0 * 2), "off at {:?}", off - moved);
+    assert!(off - moved >= Span::from_millis(500));
+}
+
+fn begin_frames(sent: &Sent) -> Vec<FrameId> {
+    sent.lock()
+        .unwrap()
+        .iter()
+        .filter_map(|m| match m {
+            ToUi::BeginFrame { frame, .. } => Some(*frame),
+            _ => None,
+        })
+        .collect()
+}
+
+#[test]
+fn a_skipped_ui_frame_lets_the_next_begin_frame_through() {
+    let (mut e, sent) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    complete(&mut e, &mut gpu, t0);
+    e.handle(Msg::NeedsUiFrame { window: W, on: true }, t0, &mut gpu);
+    let mut first = None;
+    for _ in 0..5 {
+        step(&mut e, &mut gpu);
+        if let Some(f) = begin_frames(&sent).first() {
+            first = Some(*f);
+            break;
+        }
+    }
+    let first = first.expect("a BeginFrame");
+    // The UI had nothing to commit after all, but stays dirty.
+    let now = e.next_wakeup().unwrap();
+    e.handle(Msg::UiFrameSkipped { window: W, frame: first }, now, &mut gpu);
+    e.handle(Msg::NeedsUiFrame { window: W, on: true }, now, &mut gpu);
+    for _ in 0..5 {
+        if begin_frames(&sent).len() >= 2 {
+            break;
+        }
+        step(&mut e, &mut gpu);
+    }
+    assert_eq!(begin_frames(&sent).len(), 2, "the skip released the clock");
+}
+
+#[test]
+fn begin_frame_waits_for_the_in_flight_commit_to_be_applied() {
+    let (mut e, sent) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    // Frame 1 is in flight; the UI commits again and stays dirty.
+    e.handle(Msg::Commit(Box::new(base_commit(2))), t0, &mut gpu);
+    e.handle(Msg::NeedsUiFrame { window: W, on: true }, t0, &mut gpu);
+    assert!(begin_frames(&sent).is_empty(), "not while a commit is unapplied");
+    complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
+    for _ in 0..6 {
+        if !begin_frames(&sent).is_empty() {
+            break;
+        }
+        step(&mut e, &mut gpu);
+    }
+    let sent = sent.lock().unwrap();
+    let applied = sent.iter().position(|m| *m == ToUi::CommitApplied { window: W, revision: Revision(2) });
+    let begin = sent.iter().position(|m| matches!(m, ToUi::BeginFrame { .. }));
+    assert!(applied.is_some() && begin.is_some(), "{sent:?}");
+    assert!(applied < begin, "BeginFrame only after revision 2 was applied");
+}
+
+#[test]
+fn frame_timings_follow_each_present_and_frame_args_are_published() {
+    let (mut e, sent) = engine();
+    let shared: presto_compositor::core::SharedFrameArgs = Arc::default();
+    e.publish_frame_args(shared.clone());
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    let frame = gpu.draws[0].frame.unwrap();
+    let done = t0 + Span::from_millis(3);
+    e.handle(Msg::GpuDone { window: W, frame, at: done }, done, &mut gpu);
+    let timings = sent.lock().unwrap().iter().find_map(|m| match m {
+        ToUi::FrameTimings { frame: f, draw, submit, gpu_done, present, estimated, .. } if *f == frame => {
+            Some((*draw, *submit, *gpu_done, *present, *estimated))
+        }
+        _ => None,
+    });
+    let (draw, submit, gpu_done, present, estimated) = timings.expect("FrameTimings");
+    assert_eq!(draw, t0);
+    assert!(submit >= draw);
+    assert_eq!(gpu_done, Some(done));
+    assert!(present >= done && estimated);
+    let args = shared.read().unwrap()[&W];
+    assert!(args.visible);
+    assert!(args.next_target > t0);
+}
