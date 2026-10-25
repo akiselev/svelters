@@ -6,7 +6,8 @@
 //! `PointerGone`. Keys, text and IME reach egui only while the island has keyboard focus.
 //!
 //! The key, text and clipboard-shortcut rules follow egui-winit 0.37.0 (`src/lib.rs`,
-//! `on_keyboard_input`, `is_cut_command`/`is_copy_command`/`is_paste_command`, `is_printable_char`;
+//! `on_keyboard_input`, `is_cut_command`/`is_copy_command`/`is_paste_command`, `is_printable_char`,
+//! `key_from_key_code`;
 //! MIT OR Apache-2.0, Copyright (c) 2018-2021 Emil Ernerfeldt), so panels behave as they did under
 //! eframe. Modifications by the svelters authors.
 
@@ -280,7 +281,10 @@ impl InputTranslator {
     fn key(&mut self, k: &KeyEvent, out: &mut Vec<egui::Event>) -> bool {
         let pressed = k.state == KeyState::Pressed;
         let mods = modifiers(k.modifiers, self.macos);
-        if let Some(key) = k.key.and_then(egui_key) {
+        let physical_key = physical_key(k.physical);
+        // egui-winit's "logical or physical" fallback: layouts without Latin letters still get Cmd+C and
+        // keybindings, from the key at the US-layout position.
+        if let Some(key) = k.key.and_then(egui_key).or(physical_key) {
             if pressed {
                 if is_cut(mods, key) {
                     out.push(egui::Event::Cut);
@@ -294,8 +298,7 @@ impl InputTranslator {
                     return true;
                 }
             }
-            // presto's physical code is a USB HID usage, which egui has no names for.
-            out.push(egui::Event::Key { key, physical_key: None, pressed, repeat: k.repeat, modifiers: mods });
+            out.push(egui::Event::Key { key, physical_key, pressed, repeat: k.repeat, modifiers: mods });
         }
         if let Some(text) = &k.text {
             let is_cmd = mods.ctrl || mods.command || mods.mac_cmd;
@@ -310,6 +313,63 @@ impl InputTranslator {
 /// presto and egui name keys identically (`presto_base::key` copies egui's table).
 pub fn egui_key(k: presto_base::key::Key) -> Option<egui::Key> {
     egui::Key::from_name(k.name())
+}
+
+/// The egui key at a physical key's US-layout position. presto's `KeyEvent::physical` is the USB HID usage,
+/// `page << 16 | usage` (presto-platform `keys::hid_usage`); this is egui-winit's `key_from_key_code` over
+/// the HID Keyboard/Keypad page (HID Usage Tables 1.4 §10), numpad keys folded as egui-winit folds them.
+pub fn physical_key(hid: u32) -> Option<egui::Key> {
+    use egui::Key as K;
+    if hid >> 16 != 0x07 {
+        return None;
+    }
+    let u = hid & 0xFFFF;
+    const LETTERS: [K; 26] = [
+        K::A, K::B, K::C, K::D, K::E, K::F, K::G, K::H, K::I, K::J, K::K, K::L, K::M,
+        K::N, K::O, K::P, K::Q, K::R, K::S, K::T, K::U, K::V, K::W, K::X, K::Y, K::Z,
+    ];
+    // Digit1..Digit9, Digit0 (0x1E..0x27) and Numpad1..Numpad9, Numpad0 (0x59..0x62) share this order.
+    const DIGITS: [K; 10] = [K::Num1, K::Num2, K::Num3, K::Num4, K::Num5, K::Num6, K::Num7, K::Num8, K::Num9, K::Num0];
+    const F1_F12: [K; 12] = [K::F1, K::F2, K::F3, K::F4, K::F5, K::F6, K::F7, K::F8, K::F9, K::F10, K::F11, K::F12];
+    const F13_F24: [K; 12] = [K::F13, K::F14, K::F15, K::F16, K::F17, K::F18, K::F19, K::F20, K::F21, K::F22, K::F23, K::F24];
+    Some(match u {
+        0x04..=0x1D => LETTERS[(u - 0x04) as usize],
+        0x1E..=0x27 => DIGITS[(u - 0x1E) as usize],
+        0x59..=0x62 => DIGITS[(u - 0x59) as usize],
+        0x3A..=0x45 => F1_F12[(u - 0x3A) as usize],
+        0x68..=0x73 => F13_F24[(u - 0x68) as usize],
+        0x28 | 0x58 => K::Enter,
+        0x29 => K::Escape,
+        0x2A => K::Backspace,
+        0x2B => K::Tab,
+        0x2C => K::Space,
+        0x2D | 0x56 => K::Minus,
+        0x2E => K::Equals,
+        0x2F => K::OpenBracket,
+        0x30 => K::CloseBracket,
+        0x31 => K::Backslash,
+        0x33 => K::Semicolon,
+        0x34 => K::Quote,
+        0x35 => K::Backtick,
+        0x36 => K::Comma,
+        0x37 => K::Period,
+        0x38 | 0x54 => K::Slash,
+        0x57 => K::Plus,
+        0x49 => K::Insert,
+        0x4A => K::Home,
+        0x4B => K::PageUp,
+        0x4C => K::Delete,
+        0x4D => K::End,
+        0x4E => K::PageDown,
+        0x4F => K::ArrowRight,
+        0x50 => K::ArrowLeft,
+        0x51 => K::ArrowDown,
+        0x52 => K::ArrowUp,
+        0x7B => K::Cut,
+        0x7C => K::Copy,
+        0x7D => K::Paste,
+        _ => return None,
+    })
 }
 
 pub fn modifiers(m: Modifiers, macos: bool) -> egui::Modifiers {

@@ -70,6 +70,17 @@ had them; egui pinned exactly like svelters-egui):
   centre), `drag_leave` and, on `drop`, the payload with its data at the drop point plus `drag_drop`. The node
   is a core drop target when the app sets its `drop-types`.
 
+- **Physical keys** (CADATOMIC's bug, coordinator 2026-10-25): `input::physical_key` maps presto's
+  `KeyEvent::physical` (HID `page << 16 | usage`) to egui's key at the US-layout position, as egui-winit's
+  `key_from_key_code` does (numpad folded the same way); every egui `Key` event carries it, and a key with no
+  Latin logical key falls back to it, so Ctrl+(the key at C) copies on a Cyrillic layout (cadatomic's KL1).
+- **Device reset** (same report): `EguiIsland::device_reset` (and `IslandHost::device_reset(doc)` for all
+  mounted islands, next to `Document::device_reset` on `ToUi::DeviceReset`) drops the renderer and texture and
+  asks for a pass; the next `render` creates the renderer on the device it is given, re-uploads egui's textures
+  from the island's CPU mirror of them (egui sends each texture once, as deltas, and has no public way to
+  resend its font atlas), and registers a new texture. Paint callbacks' `callback_resources` and native
+  textures belonged to the old renderer: the host sets them up again (`init_renderer_on`).
+
 ## Tests (written, not run locally)
 
 - `tests/island.rs` (no GPU): button and label clickable through presto input (scale 1 and 2); input outside
@@ -83,18 +94,19 @@ had them; egui pinned exactly like svelters-egui):
   through `Document::dispatch` (press focuses the node); mount refusals; the node is the graft point in the
   commit's AccessKit tree and the island's subtree uses the node's tree id; detach and remount on another node;
   presto-core's drag from a `drag-type` box drops on an egui drop zone in the island with its data.
-- `tests/input.rs`: key names, modifiers per platform, clipboard shortcuts, focus gating and text filtering,
+- `tests/input.rs`: physical keys by US position and the Latin fallback for shortcuts; key names, modifiers per platform, clipboard shortcuts, focus gating and text filtering,
   IME char ranges, wheel routing and sign, pinch.
 - `tests/render.rs` (GPU, `PRESTO_GPU_TESTS` + an adapter): renders into a registered 64×48 `Rgba8Unorm`
   texture, reads back egui's red rect and the transparent clear, a paint callback's `prepare`,
   `finish_prepare` and `paint` each run once, no render without a pass, a resize to scale 2 re-registers a
-  128×128 texture, `release` unregisters.
+  128×128 texture, `release` unregisters; a device reset re-renders on a second device with the font atlas
+  replayed (egui's red rect samples its white texel) and registers the new texture.
 
 Run locally: `cargo check -p presto-egui-island --all-targets`. After CI run 40223175641 (on `15ec9267`) failed
 two test assertions on Windows and macOS (wrong test expectations: egui's display key names, and Super is no
 command key off macOS), one filtered local run of `--test input --test island` to debug them: 7 and 11 passed
 after the fix. `--test render` passed on CI's Windows (WARP). After the host work, one filtered run of
-`--test host --test island`: 3 and 11 passed. **Not run locally:** `render`, `input` (unchanged), clippy.
+`--test host --test island`: 3 and 11 passed; after the physical-key work, `--test input`: 9 passed. **Not run locally:** `render`, `input` (unchanged), clippy.
 
 **CI on `0dd5a347`** (merged `ci/presto-base` `cc4f184d`; runs 40226671183 js, 40226671201 linux-gtk,
 40226671185 linux-qt, 40226671215 macos-appkit, 40226671186 presto, 40226671179 windows-winui): every
@@ -125,8 +137,6 @@ none of it this crate's:
   (svelters' `ondrop` on an `<egui-island>`) removes them too.
 - egui `OutputCommand::CopyImage` and `TextSelectionSettled`: no presto counterpart; ignored.
 - presto `ImeEvent::DeleteSurrounding` (bytes of text the island can't see) is dropped: egui wants chars.
-- Physical keys: presto carries USB HID usages, egui wants `Key` names; `physical_key` is `None` (egui-winit's
-  layout fallback for non-Latin layouts' clipboard shortcuts is therefore missing).
 - egui deferred/immediate viewports inside an island are not supported (an island is one egui root viewport).
 
 ## Cross-lane edits
@@ -144,7 +154,8 @@ none of it this crate's:
 2. ~~`CompositorHandle::unregister_texture`~~: the compositor skeleton has it.
 3. ~~Island render thread~~: decided, UI thread.
 4. ~~How an island becomes a node~~: decided and built (`host`).
-5. **Starting a core drag for a held pointer.** For island → presto drags, presto-core needs something like
+5. ~~Starting a core drag for a held pointer~~: decided (coordinator, 2026-10-25), CORE-3 adds
+   `Document::start_drag`; until it lands, `drag_out` goes to the runner. Original question: For island → presto drags, presto-core needs something like
    `Document::start_drag(window, pointer, source: NodeId, ty, data)` that enters its drag state for a pointer
    already pressed (the island node as source), so `IslandHost` can turn `drag_out` into a core drag.
    Recommendation: add it to presto-core (additive, about 20 lines over `dnd::pointer`'s start branch); until

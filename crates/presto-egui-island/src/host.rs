@@ -22,7 +22,8 @@
 //! 3. [`IslandHost::bridge_events`] with each `Dispatched`'s events: presto-core's in-app drags over an
 //!    island reach egui's `DragAndDrop`.
 //!
-//! [`IslandHost::next_wakeup`] joins `Document::next_timer` in the runner's wait.
+//! [`IslandHost::next_wakeup`] joins `Document::next_timer` in the runner's wait; on `ToUi::DeviceReset` the
+//! runner calls [`IslandHost::device_reset`] next to `Document::device_reset`.
 
 use crate::a11y::island_tree_id;
 use crate::dnd::DragData;
@@ -324,6 +325,16 @@ impl IslandHost {
             buffers.extend(island.render(device, queue, encoder, registry));
         }
         buffers
+    }
+
+    /// The GPU device was lost and recreated (`ToUi::DeviceReset`; call it with `Document::device_reset`):
+    /// every island re-renders on the new device at its next pass ([`EguiIsland::device_reset`]).
+    pub fn device_reset(doc: &mut Document) {
+        if let Some(host) = doc.service::<IslandHost>() {
+            for island in host.islands.values_mut() {
+                island.device_reset();
+            }
+        }
     }
 
     /// The earliest time an island needs a pass without input.
