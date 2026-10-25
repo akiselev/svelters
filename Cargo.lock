@@ -3859,7 +3859,11 @@ dependencies = [
 name = "presto-core"
 version = "0.0.0"
 dependencies = [
+ "accesskit",
  "presto-base",
+ "smallvec",
+ "svelters-style",
+ "taffy",
 ]
 
 [[package]]
