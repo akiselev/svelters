@@ -108,12 +108,14 @@ pub struct Clocked<D> {
     // Dropped first: the host goes before the scheduler its hooks point at.
     pub driver: D,
     clock: VirtualClock,
+    /// AU7: [`Driver::hold_clock`].
+    held: bool,
 }
 
 impl<D: Driver> Clocked<D> {
     /// `driver`'s host must have been made with `clock.config(..)` (or `clock.host_sched()`).
     pub fn new(driver: D, clock: VirtualClock) -> Clocked<D> {
-        Clocked { driver, clock }
+        Clocked { driver, clock, held: false }
     }
 
     pub fn clock(&self) -> &VirtualClock {
@@ -159,9 +161,14 @@ macro_rules! delegate {
 impl<D: Driver> Driver for Clocked<D> {
     delegate!();
     fn step(&mut self) {
-        let ms = self.driver.frame_ms();
-        self.clock.advance(if ms > 0.0 { ms } else { 16.0 });
+        if !self.held {
+            let ms = self.driver.frame_ms();
+            self.clock.advance(if ms > 0.0 { ms } else { 16.0 });
+        }
         self.driver.step();
+    }
+    fn hold_clock(&mut self, held: bool) {
+        self.held = held;
     }
     fn clock_ms(&self) -> Option<f64> {
         Some(self.clock.now_ms())
@@ -184,5 +191,8 @@ impl<D: Driver> Driver for RealTime<D> {
         }
         self.last = Some(Instant::now());
         self.driver.step();
+    }
+    fn hold_clock(&mut self, held: bool) {
+        self.driver.hold_clock(held)
     }
 }

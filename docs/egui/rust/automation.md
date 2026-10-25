@@ -181,8 +181,9 @@ assert!(s.snapshot(None)?.contains(r#"- label "Count: 1""#));
   `wheel(target, Wheel::lines(v) | Wheel::points(v), opts)` (egui's direction: positive `y` scrolls
   up; `.at(..)`, `.modifiers(..)`). Points are the target's local points (from the top left of its
   rect; outside it is allowed); `At::Center` is the default. See "Canvases" below.
-- Settled means `Embed::settled()` is empty, no injected input is pending, and the host's idle predicate
-  holds. A timeout names the busy reasons.
+- Settled means `Embed::settled()` is empty, no injected input is pending, no foreground busy source is
+  busy, and the host's idle predicate holds. A timeout names the busy reasons. Events, busy sources,
+  latched conditions, clocks and the failure report: [Waiting on anything](waiting.md) (AU7).
 - `set_tooling_roots(..)` hides tooling roots from queries unless `include_tooling(true)` (needs the
   `tooling` grant).
 - Refs (`Ref { id, epoch }`) go stale after `bump_epoch()` or a reset (`node.stale`).
@@ -277,10 +278,11 @@ server.pump(&mut session);
 
 - Forgetting `enable()` in a shipped app and getting `automation.disabled`. It is meant to be off until
   the user opts in.
-- Polling with sleeps: use `expect(…)` or `wait_for`. They run in the app on virtual time.
+- Polling with sleeps: use `expect(…)` or `wait_for`. They run in the app on virtual time. For jobs,
+  workers and network, wait on an event after a cursor: see [Waiting on anything](waiting.md).
 - `getByText('Count: 1')` matching `Count: 10`: bare `text=` is a substring. Pass `exact: true`.
 
 ## Not done
 
-Traces on failure and `toHaveScreenshot`; `events`/`log`/`perf` streams; windowed `svelters-run`;
+Traces on failure and `toHaveScreenshot`; `log`/`perf` streams (the `events` stream is AU7's journal); windowed `svelters-run`;
 `Origin::Tool` on writes a session causes; several mounts per host.
