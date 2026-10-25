@@ -16,3 +16,5 @@ egui-wgpu = { version = "=0.37.0", default-features = false }
 
 [dev-dependencies]
 pollster = "0.4"
+# The AccessKit graft test applies the island's updates to a consumer tree, as the platform adapters do.
+accesskit_consumer = "0.39.1"

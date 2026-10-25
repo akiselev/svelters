@@ -6,8 +6,9 @@
 //!   `drag_leave`. The bridge puts the payload into egui's `DragAndDrop` through its [`PayloadCodec`],
 //!   so egui drop zones (`Response::dnd_hover_payload`/`dnd_release_payload`) see it. A drop is a
 //!   pointer release with no press before it: egui's `any_released` is true, so drop zones take the
-//!   payload, and no widget sees a click. Taking the payload (or calling [`IslandDrag::accept`]) is
-//!   the acceptance the host reads back.
+//!   payload, and no widget sees a click. The target calls [`IslandDrag::accept`] (svelters-egui's
+//!   `DragPayload::accept` contract): egui's own `DragAndDrop` clears the payload on every release, so
+//!   a payload gone after the drop doesn't tell a taken drop from an ignored one.
 //! - **island → presto.** When an egui drag the codec can export leaves the island's rect with its
 //!   button held, the pass output carries it ([`DndOutput::drag_out`]) and the host starts a presto
 //!   drag with it; the host reports the outcome with
@@ -134,9 +135,7 @@ impl DndBridge {
         let mut out = DndOutput::default();
         if let Some(i) = &self.incoming {
             if i.dropping {
-                // A target took the payload out of `DragAndDrop`, or accepted it in place.
-                let taken = !egui::DragAndDrop::has_any_payload(ctx);
-                out.dropped = Some(taken || i.accepted.load(Ordering::Relaxed));
+                out.dropped = Some(i.accepted.load(Ordering::Relaxed));
                 egui::DragAndDrop::clear_payload(ctx);
                 self.incoming = None;
             }
