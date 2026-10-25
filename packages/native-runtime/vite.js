@@ -463,7 +463,10 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
         // U4: egui with `@apply`: the svelters compiler expands it before scoping (stock Svelte can't)
         const scope = scopeOf(file);
         res = run(['--css', '--css-scope', scope]);
-        css = res.css && !res.css.injected && res.css.code.trim() ? { scope, sheets: { css: res.css.code } } : null;
+        // DZ0b2 (dev): the component's path and the sheet's map to its `<style>` text, as the Rust
+        // loader passes them, for matched-rule source offsets. Stock Svelte's sheets (below) have no map.
+        const source = dev && res.css?.map != null ? { file, map: res.css.map } : {};
+        css = res.css && !res.css.injected && res.css.code.trim() ? { scope, sheets: { css: res.css.code, ...source } } : null;
       } else {
         css = style ? nativeSheets(code, file, backend, warn, specFragments) : null;
         res = run(css ? ['--css-scope', css.scope] : []);

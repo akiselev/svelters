@@ -16,7 +16,8 @@
 //! namespaced `id`, byte and line/column `range` and `fixes` (text edits). `--explain <code or id>`
 //! prints a code's registry row; `--list-codes` prints `id code severity` per registered code.
 //! `--css` (Q3w) scopes the `<style>` with the Rust port of Svelte's CSS pipeline: the JSON gets
-//! `css: {code, hash, hasGlobal, injected, scopedElements}`, hashed with `--css-scope` (else Svelte's
+//! `css: {code, hash, hasGlobal, injected, scopedElements, map}` (DZ0b2: `map`, the `out,src,len` runs of
+//! untouched `<style>` text), hashed with `--css-scope` (else Svelte's
 //! default hash of the filename, which then also scopes the elements); `css_*` errors and
 //! `css_unused_selector` warnings are diagnostics.
 //! U4 (egui): `--utilities` checks utility classes (`utility_*` codes), `--utilities-prefix tw` sets

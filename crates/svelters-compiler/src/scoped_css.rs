@@ -36,9 +36,9 @@ pub struct ScopedCss {
     /// DZ0: which bytes of `code` are untouched `<style>` text: `(offset in code, offset from the
     /// start of the `<style>` content, length)` runs, in order. Offsets relative to the style
     /// content stay right while the template above it is edited; the designer adds the content
-    /// start of the file as it is now. [`ScopedCss::source_offset`] reads it. Not in the JSON
-    /// output (`--json`).
-    #[serde(skip)]
+    /// start of the file as it is now. [`ScopedCss::source_offset`] reads it. DZ0b2: in the JSON
+    /// output (`--json`) as `map`, the [`ScopedCss::source_map_text`] text.
+    #[serde(rename = "map", serialize_with = "map_text")]
     pub source_map: Vec<(u32, u32, u32)>,
 }
 
@@ -51,8 +51,16 @@ impl ScopedCss {
     /// DZ0: [`ScopedCss::source_map`] as text: `out,src,len` runs joined by `;` (what the loader
     /// hands the runtime's `registerStyles`).
     pub fn source_map_text(&self) -> String {
-        self.source_map.iter().map(|(o, s, l)| format!("{o},{s},{l}")).collect::<Vec<_>>().join(";")
+        runs_text(&self.source_map)
     }
+}
+
+fn runs_text(map: &[(u32, u32, u32)]) -> String {
+    map.iter().map(|(o, s, l)| format!("{o},{s},{l}")).collect::<Vec<_>>().join(";")
+}
+
+fn map_text<S: serde::Serializer>(map: &[(u32, u32, u32)], s: S) -> Result<S::Ok, S::Error> {
+    s.serialize_str(&runs_text(map))
 }
 
 /// DZ0: the source offset of output byte `at` in a `(out, src, len)` run map, if `at` is in a run.
