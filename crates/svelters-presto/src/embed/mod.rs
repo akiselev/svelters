@@ -483,6 +483,22 @@ impl Embed {
         slot
     }
 
+    /// Makes `node`, a node of the host's tree (the backend is [`PrestoBackend::over`] the host's
+    /// document), the slot with this key (or returns the existing one): roots mount into it as into a
+    /// created slot; destroying the slot leaves the node to the host.
+    pub fn adopt_slot(&self, key: impl Into<SlotKey>, node: NodeId) -> Result<SlotId, String> {
+        let key = key.into().0;
+        if let Some(&s) = self.inner.st.borrow().slot_keys.get(&key) {
+            return Ok(s);
+        }
+        let h = self.inner.backend.adopt(node)?;
+        let slot = SlotId(h);
+        let mut st = self.inner.st.borrow_mut();
+        st.slot_keys.insert(key.clone(), slot);
+        st.slots.insert(slot, Slot::new(key));
+        Ok(slot)
+    }
+
     pub fn slot(&self, key: &str) -> Option<SlotId> {
         self.inner.st.borrow().slot_keys.get(key).copied()
     }
@@ -819,10 +835,14 @@ impl Embed {
         }
         // what a failed dispose left behind (a root interrupted mid-update) goes natively
         let b = &self.inner.backend;
-        let kids: Vec<NodeId> = match b.node(slot.0) {
+        let mut kids: Vec<NodeId> = match b.node(slot.0) {
             Some(n) => b.with_doc(|d| d.children(n).to_vec()),
             None => Vec::new(),
         };
+        // an adopted host node keeps the host's own children
+        if b.is_adopted(slot.0) {
+            kids.retain(|&k| b.handle(k).is_some());
+        }
         let dead: Vec<svl_handle> = kids.into_iter().flat_map(|k| b.free_subtree(k)).collect();
         if let Some(host) = b.host() {
             for (i, &h) in dead.iter().enumerate() {
@@ -883,10 +903,14 @@ impl Embed {
         }
         let b = &self.inner.backend;
         // what JS left under it goes with it; the slot node itself is the embedder's
-        let kids: Vec<NodeId> = match b.node(slot.0) {
+        let mut kids: Vec<NodeId> = match b.node(slot.0) {
             Some(n) => b.with_doc(|d| d.children(n).to_vec()),
             None => Vec::new(),
         };
+        // an adopted host node keeps the host's own children
+        if b.is_adopted(slot.0) {
+            kids.retain(|&k| b.handle(k).is_some());
+        }
         let dead: Vec<svl_handle> = kids.into_iter().flat_map(|k| b.free_subtree(k)).collect();
         if let Some(host) = b.host() {
             for (i, &h) in dead.iter().enumerate() {

@@ -147,6 +147,19 @@ as above.
   `Document::preload_utilities` (document.rs, style/mod.rs). For CORE to keep or reshape at consolidation.
 - Tests: `tests/motion.rs` (4, **run once, pass**); `tests/ops.rs` follows (a bad ANIMATE payload errors).
 
+### The host's own Document (CADATOMIC blocker 1, 2026-10-25)
+
+- `PrestoBackend::over(doc)` (the built-in kinds) and `PrestoBackend::shared(kinds, Rc<RefCell<Document>>)` (the
+  host keeps its handle): the backend's tree is the host's; the registry must hold every concrete kind under
+  its tag (else an error naming the kind). `new`/`with_text` stay the convenience (the backend's own document).
+  `with_doc` and `PrestoBackend::document()` reach the shared document; the sync deliverer is installed on it.
+- `PrestoBackend::adopt(node)` gives a host node a borrowed handle JS mounts into; `release`/`destroy_borrowed`
+  forget it without destroying the node. `Embed::adopt_slot(key, node)` makes a host node an embed slot;
+  disposing a root or destroying the slot frees only what JS put there (host children without handles stay).
+- Tests: `tests/host_document.rs`: adopt/insert/release on a host document and the registry check (**run, pass**);
+  `a_svelte_root_mounts_into_a_node_of_the_host_document` (a component compiled for presto from source, mounted
+  into an adopted host `box`; needs `pnpm install`, **not run** here).
+
 ## Not done
 
 - **`svelters-presto-run`**: `crates/presto` and `crates/presto-test` are still one-line stubs in `ci/presto-base`
