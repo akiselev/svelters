@@ -12,7 +12,9 @@ sources:
   - crates/svelters-egui/src/overrides.rs               # set_override, clear_override
   - crates/svelters-egui/tests/{source_loc,style_source,overrides,hmr_sites}.rs
   - crates/svelters-automation/tests/source_loc.rs
+  - crates/svelters-compiler/src/design/{mod,edit}.rs  # Design, Intent, Plan, rebase
   - plans/milestones/DZ0-designer-seams.md
+  - plans/milestones/DZR-design-resolver.md
 ---
 
 # Designer seams
@@ -94,6 +96,32 @@ The usual sequence:
 2. On release, write the source through the loader's overlay.
 3. Call `apply_changes`. A template change swaps the nodes, which drops the overrides. For a style-only
    change, clear the overrides yourself.
+
+## Writing the edit
+
+`svelters_compiler::design` turns a designer intent into source edits. It needs no running app.
+`Design::parse(src)` returns:
+- the outline: template nodes with their attributes, each marked editable, structural or opaque with a
+  reason;
+- the `<style>` rules with their declaration spans.
+
+`plan(&Intent)` returns `TextEdit`s in the file's own style, or a `Refusal` that carries the span to
+edit by hand:
+
+```rust
+use svelters_compiler::design::{Design, Intent, Literal};
+
+let d = Design::parse(&src)?;
+let plan = d.plan(&Intent::SetAttr { node: offset, name: "gap".into(), value: Literal::Num(16.0) })?;
+// plan.edits: [TextEdit { start, end, text: "{16}" }]; plan.text: the new file
+```
+
+- `node` is the element offset from `source-loc`. `rule` is a matched rule's `style_offset`.
+- The intents are `SetAttr`, `ClearAttr`, `SetDecl` and `ClearDecl`.
+- `rebase(offset, &plan.edits)` keeps a held selection pointing at the same node after the edit.
+- Only literal attributes are written (`"row"`, `{12}`, `{true}`), and only rules whose selectors are
+  kinds, classes and pseudo-classes. Expressions, handlers, spreads and blocks are refused with their
+  span.
 
 ## State across the designer's edits
 

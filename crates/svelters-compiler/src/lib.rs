@@ -7,6 +7,7 @@ pub mod acorn;
 pub mod check;
 pub mod codegen;
 pub mod codes;
+pub mod design;
 pub mod compile;
 pub mod diag;
 pub mod estree;
