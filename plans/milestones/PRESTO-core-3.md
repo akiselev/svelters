@@ -105,7 +105,7 @@ dispatch nothing), auto-scroll near a scroll container's edge during a drag, the
 | event time | `EventCx::time()` (the event's OS time; a timer's deadline). Not duplicated into `Event`. |
 | padding edges, window transform | `NodeView::{padding, content_box, window_transform, from_window}`. |
 | IME-first route | `Document::set_ime_source(window, active)`: during a composition every key goes to the IME, and with an IME source active printable keys without a chord do, before the command keymap (`Dispatched::to_ime`), as `keys::route`. |
-| GTK's one selection owner | Not done (not in the coordinator's list); a `Kind` hook "selection lost" is the shape when asked. |
+| GTK's one selection owner | `Document::set_single_selection(on)` (GTK policy; off by default); a text kind calls `EventCx::claim_selection()` when it selects something and `release_selection()` when it collapses; the previous owner gets `Kind::selection_lost(cx)` (the field's `collapse_to_start`). One owner per document. |
 
 ### QUIRE: kind-owned scrolling
 
@@ -115,8 +115,10 @@ recorded in content space and placed in that layer, and `EventCx::scroll_fast` m
 at once (the next commit carries the same offset as a property op; no re-record). Wheel defaults work on
 it like any scroll container. Pointer positions stay in the border box (add `scroll_offset`). Recording
 now runs before the property refresh in the dirty walk, so the scroll node exists from the first frame.
-Not done: a kind creating several layers of its own (gutter, minimap); the shape would be child nodes
-with `will-change` today.
+Not done: a kind creating several layers of its own (gutter, minimap). Not cheap: lists, items and
+layers are one per node, so it needs per-kind sub-lists through the recorder, the rebuild walk and the
+commit. Today the shape is child nodes with `will-change: transform` (each gets its own layer) or a
+self-scrolling child.
 
 ### WIDGETS-BASIC: light dismiss
 
@@ -132,7 +134,7 @@ exhaustive `Event` match keeps compiling.
 | Item | State |
 |---|---|
 | Queries (svelters-egui `scene/query.rs`) | Done (`query.rs`): kind sets kept by create/free (`Document::kinds_of`), `Document::query()` → `Query` with `kind`, `in_window`, `within`, `anchor`, `state`, `prop_eq`, `changed_since`, then `collect`/`first`/`count` (it walks the kind set, else the scope in pre-order, else the anchors, else every node); `Document::select(root, css)` and `matches(node, css)` through svelters-style's selector matcher. Anchors: `find_anchor` (one anchor map, filtered by window; `anchor-scope` qualification is not applied). |
-| Interner/compaction (`compact.rs`) | Not done. `ComputedBox` is already shared (`Arc`); the taffy style per node (`LayoutBox::style`, inline) is what an interner would shrink. Recommendation: do it when a 10k-node screen is profiled; it touches every `layout[i].style` writer. |
+| Interner/compaction (`compact.rs`) | Done for the layout column: `LayoutBox::style` is an `Arc<taffy::Style>` interned at restyle (svelters-egui's `Interner` and `style_key`, pruned as the table grows); the few in-place writers (window root size, virtual rows, size transitions) copy on write. `ComputedBox` was already shared. svelters-egui's boxed leaf cache and `BoxRect` are not ported (taffy's `Layout` stays whole: the a11y and padding reads use it). |
 | `resources.paths` | Done: `PrepareCx::upload_path(Arc<PathData>) -> PathId`, `release_path`; the commit carries `paths`/`removed_paths`. |
 | Layer `opaque` | Done: a content layer (or the root) whose owner's list starts with a square opaque solid quad covering its box, at full opacity, with no effect node. Re-recording a layer owner rebuilds so the flag follows. |
 | Layer `Damage` | Not filled, on purpose: the compositor derives damage from changed lists and property ops (`presto-compositor` `damage.rs`); `LayerDelta::Damage` is for extra damage only (canvas chunks), which no core kind produces. |

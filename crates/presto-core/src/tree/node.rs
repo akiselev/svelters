@@ -176,7 +176,9 @@ pub(crate) struct NodeCore {
 /// What layout keeps per node.
 #[derive(Clone, Debug, Default)]
 pub(crate) struct LayoutBox {
-    pub style: taffy::Style,
+    /// Shared with every node whose style is equal ([`crate::compact::Interner`]): most nodes share
+    /// one of a few dozen styles, so the column holds 8 bytes per node, not a whole `taffy::Style`.
+    pub style: std::sync::Arc<taffy::Style>,
     pub cache: taffy::Cache,
     pub unrounded: taffy::Layout,
     pub layout: taffy::Layout,

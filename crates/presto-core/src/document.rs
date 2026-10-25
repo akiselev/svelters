@@ -108,6 +108,11 @@ pub struct Document {
     pub(crate) kind_sets: crate::query::KindSets,
     /// Kinds that scroll their own content ([`Kind::self_scroll`]).
     pub(crate) self_scroll: HashMap<NodeId, crate::kind::SelfScroll>,
+    /// The one selection's owner while single selection is on (GTK), and whether it is.
+    pub(crate) selection_owner: Option<NodeId>,
+    pub(crate) single_selection: bool,
+    /// The shared taffy styles of the layout column.
+    pub(crate) styles: crate::compact::Interner<taffy::Style>,
     /// Nodes whose kind asks for light dismiss now ([`Kind::light_dismiss`]).
     pub(crate) light_dismiss: std::collections::HashSet<NodeId>,
     /// Fast commits queued for the compositor ([`Document::take_fast_commits`]).
@@ -160,6 +165,9 @@ impl Document {
             kind_sets: Default::default(),
             self_scroll: HashMap::new(),
             light_dismiss: Default::default(),
+            styles: Default::default(),
+            selection_owner: None,
+            single_selection: false,
             fast: Vec::new(),
         }
     }
@@ -214,6 +222,16 @@ impl Document {
             for f in focused {
                 crate::input::scope::refresh_default(self, f);
             }
+        }
+    }
+
+    /// GTK's rule: one text selection in the whole app. A text kind that selects something calls
+    /// [`EventCx::claim_selection`](crate::EventCx::claim_selection); the previous owner gets
+    /// [`Kind::selection_lost`] and collapses its selection. Off (the default) on other platforms.
+    pub fn set_single_selection(&mut self, on: bool) {
+        self.single_selection = on;
+        if !on {
+            self.selection_owner = None;
         }
     }
 
@@ -618,6 +636,9 @@ impl Document {
         self.missed_props.retain(|(n, _)| *n != id);
         self.self_scroll.remove(&id);
         self.light_dismiss.remove(&id);
+        if self.selection_owner == Some(id) {
+            self.selection_owner = None;
+        }
         self.slots.free(i);
     }
 
