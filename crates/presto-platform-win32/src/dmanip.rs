@@ -56,8 +56,8 @@ impl DirectManipulation {
                 DIRECTMANIPULATION_VIEWPORT_OPTIONS_MANUALUPDATE
                     | DIRECTMANIPULATION_VIEWPORT_OPTIONS_DISABLEPIXELSNAPPING,
             )?;
-            let mut rect = RECT { left: 0, top: 0, right: VIEWPORT_SIZE, bottom: VIEWPORT_SIZE };
-            viewport.SetViewportRect(&mut rect)?;
+            let rect = RECT { left: 0, top: 0, right: VIEWPORT_SIZE, bottom: VIEWPORT_SIZE };
+            viewport.SetViewportRect(&rect)?;
             manager.Activate(window)?;
             viewport.Enable()?;
 
@@ -210,11 +210,11 @@ impl IDirectManipulationViewportEventHandler_Impl for ViewportHandler_Impl {
             self.end_gesture();
             // Reset the content transform for the next gesture. ZoomToRect itself causes another
             // RUNNING -> READY cycle, hence the check.
-            if self.last_scale.get() != 1.0 || self.last_x.get() != 0.0 || self.last_y.get() != 0.0 {
-                if let Some(viewport) = viewport.as_ref() {
-                    unsafe {
-                        let _ = viewport.ZoomToRect(0.0, 0.0, VIEWPORT_SIZE as f32, VIEWPORT_SIZE as f32, false);
-                    }
+            if (self.last_scale.get() != 1.0 || self.last_x.get() != 0.0 || self.last_y.get() != 0.0)
+                && let Some(viewport) = viewport.as_ref()
+            {
+                unsafe {
+                    let _ = viewport.ZoomToRect(0.0, 0.0, VIEWPORT_SIZE as f32, VIEWPORT_SIZE as f32, false);
                 }
             }
             self.last_scale.set(1.0);

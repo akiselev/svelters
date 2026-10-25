@@ -40,8 +40,8 @@ fn load_clock() -> Option<ClockFns> {
     let boost = unsafe { GetProcAddress(dcomp, s!("DCompositionBoostCompositorClock")) };
     // SAFETY: the signatures are dcomp.h's.
     Some(ClockFns {
-        wait: unsafe { std::mem::transmute::<_, WaitForCompositorClock>(wait) },
-        boost: boost.map(|b| unsafe { std::mem::transmute::<_, BoostCompositorClock>(b) }),
+        wait: unsafe { std::mem::transmute::<unsafe extern "system" fn() -> isize, WaitForCompositorClock>(wait) },
+        boost: boost.map(|b| unsafe { std::mem::transmute::<unsafe extern "system" fn() -> isize, BoostCompositorClock>(b) }),
     })
 }
 
@@ -174,11 +174,11 @@ impl Win32FrameSource {
             let r = unsafe { WaitForSingleObject(w.0, timeout_ms(timeout)) };
             return if r == WAIT_OBJECT_0 { self.frame_now() } else { Wake::Frame(FrameWake::Timeout) };
         }
-        if let Some(t) = timeout {
-            if t < self.interval {
-                std::thread::sleep(Duration::from_nanos(t.0.max(0) as u64));
-                return Wake::Frame(FrameWake::Timeout);
-            }
+        if let Some(t) = timeout
+            && t < self.interval
+        {
+            std::thread::sleep(Duration::from_nanos(t.0.max(0) as u64));
+            return Wake::Frame(FrameWake::Timeout);
         }
         let ok = unsafe { DwmFlush() }.is_ok();
         if ok && start.elapsed() >= EARLY_RETURN { self.frame_now() } else { self.sleep_frame() }

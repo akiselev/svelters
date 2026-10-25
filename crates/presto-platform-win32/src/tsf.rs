@@ -421,10 +421,10 @@ impl StoreState {
         if self.lock.get().held != 0 {
             return;
         }
-        if let Some((sink, mask)) = self.sink() {
-            if mask & TS_AS_LAYOUT_CHANGE != 0 {
-                let _ = unsafe { sink.OnLayoutChange(TS_LC_CHANGE, VIEW) };
-            }
+        if let Some((sink, mask)) = self.sink()
+            && mask & TS_AS_LAYOUT_CHANGE != 0
+        {
+            let _ = unsafe { sink.OnLayoutChange(TS_LC_CHANGE, VIEW) };
         }
     }
 
