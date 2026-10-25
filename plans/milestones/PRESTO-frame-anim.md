@@ -122,8 +122,9 @@ Date: 2026-10-25.
    interpolates per function (same list) else discrete. Not done because presto-base is the contract.
 2. **Document units in presto-base::anim**: `TransformFn` angles in radians, `Keyframe.offset` NaN for a
    missing offset (or make it `Option<f32>`). Recommend: doc comments now, `Option` at consolidation.
-3. **Apache-2.0 text**: the notices file links the license; RENDER's GPUI port is Apache-2.0 too.
-   Recommend: consolidation adds the full Apache-2.0 text once to `THIRD_PARTY_NOTICES.md`.
+3. **Apache-2.0 text**: the notices entry for the AOSP port links the license; RENDER ships the text as
+   `crates/presto-render/LICENSES/Apache-2.0-GPUI.txt`. Recommend: consolidation moves it to one
+   repository-level `LICENSES/Apache-2.0.txt` that both entries cite.
 4. **Defaults chosen from the research's open questions**: wheel latch 300 ms (no source); Linux wheel
    browser-like (120 px per detent, animated); a missed latch with positive slack raises the margin by the
    0.25 ms floor. Recommend: keep, revisit with the hardware rig.

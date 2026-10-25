@@ -9,6 +9,15 @@ members = [
     "crates/presto-render",
     "crates/presto-compositor",
     "crates/presto-platform",
+    "crates/presto-widgets",
+    "crates/presto-motion",
+    "crates/presto-egui-island",
+    "crates/presto-test",
+    "crates/presto",
+    "crates/svelters-presto",
+    "crates/presto-platform-win32",
+    "crates/presto-platform-wayland",
+    "crates/presto-platform-macos",
     "crates/svelters-abi",
     "crates/svelters-host",
     "crates/svelters-backend-log",
@@ -52,6 +61,12 @@ presto-text = { path = "crates/presto-text" }
 presto-render = { path = "crates/presto-render" }
 presto-compositor = { path = "crates/presto-compositor" }
 presto-platform = { path = "crates/presto-platform" }
+presto-widgets = { path = "crates/presto-widgets" }
+presto-motion = { path = "crates/presto-motion" }
+presto-egui-island = { path = "crates/presto-egui-island" }
+presto-test = { path = "crates/presto-test" }
+presto = { path = "crates/presto" }
+svelters-presto = { path = "crates/svelters-presto" }
 svelters-abi = { path = "crates/svelters-abi" }
 svelters-host = { path = "crates/svelters-host" }
 svelters-style = { path = "crates/svelters-style" }

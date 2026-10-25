@@ -68,6 +68,29 @@ Chromium's license:
 
 ---
 
+## presto-render (Apache-2.0 and MIT ports)
+
+`crates/presto-render` ports code from GPUI, Zed's UI framework. These files are under the Apache License, Version 2.0, not MIT; the licence text is in `crates/presto-render/LICENSES/Apache-2.0-GPUI.txt` (Zed's `LICENSE-APACHE`, "Copyright 2022 - 2025 Zed Industries, Inc."). Zed ships no NOTICE file. Each ported file keeps a header naming its source file and commit and stating that the svelters authors modified it. Only GPUI's Apache-2.0 crates (`crates/gpui`, `crates/gpui_wgpu`) were used, never Zed's GPL crates.
+
+| Project | Version | Where | Copyright, licence |
+|---|---|---|---|
+| [GPUI](https://github.com/zed-industries/zed) `crates/gpui_wgpu/src/shaders.wgsl`, `shaders_storage.wgsl` | zed @ a5c4ca8bf6c4717a328a4a61b42d6d1d38949bcc | `crates/presto-render/src/shaders.wgsl` | Copyright 2022 - 2025 Zed Industries, Inc.; Apache-2.0 |
+| [GPUI](https://github.com/zed-industries/zed) `crates/gpui/src/bounds_tree.rs` | zed @ a5c4ca8bf6c4717a328a4a61b42d6d1d38949bcc | `crates/presto-render/src/bounds_tree.rs` | Copyright 2022 - 2025 Zed Industries, Inc.; Apache-2.0 |
+| [Windows Terminal](https://github.com/microsoft/terminal) text gamma/contrast (`src/renderer/atlas/dwrite.hlsl`, `dwrite.cpp`), via GPUI's `shaders.wgsl` and `platform.rs` | terminal @ 1283c0f5b99a2961673249fa77c6b986efb5086c | the gamma functions in `crates/presto-render/src/shaders.wgsl`, `crates/presto-render/src/gamma.rs` | Copyright (c) Microsoft Corporation; MIT (text below) |
+
+---
+
+## presto-text (lane TEXT)
+
+Ported code (each file names its source in its header comment):
+
+| Project | License | Where | Copyright |
+|---|---|---|---|
+| [font-rs](https://github.com/raphlinus/font-rs) accumulation rasteriser (`src/raster.rs`) | Apache-2.0 | `crates/presto-text/src/raster/coverage.rs` | Copyright 2015 Google Inc. |
+| [fontations](https://github.com/googlefonts/fontations) skrifa 0.49.0 `RasterPolicy` (`skrifa/src/outline/glyf/hint/cleartype.rs`) | MIT OR Apache-2.0 | `crates/presto-text/src/raster/mod.rs` (`raster_policy`) | Copyright the fontations authors |
+
+Bundled fonts (test data, `crates/presto-text/fonts/`, subsets made with fonttools `pyftsubset`; see `fonts/README.md`): Noto Sans, Noto Sans Hebrew and Noto Color Emoji, SIL Open Font License 1.1 (`fonts/OFL.txt`), Copyright 2022 The Noto Project Authors.
+
 ## MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:

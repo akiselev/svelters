@@ -1,0 +1,20 @@
+[package]
+name = "presto-widgets"
+description = "presto's built-in kinds: interaction units, paint helpers, theme tokens, Tier 0 and Tier 1 widgets, views, text editing."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }
+presto-core = { workspace = true }
+presto-text = { workspace = true }
+presto-anim = { workspace = true }
+# The CSS engine presto uses as its style system (architecture §3, §5): widgets read computed values.
+svelters-style = { workspace = true }
+taffy = { workspace = true }
+smallvec = { workspace = true }
+serde_json = { workspace = true }
+# Icon kit SVGs rasterised into images (EGUI.md §5 `icon`).
+resvg = { version = "=0.45.1", default-features = false }
