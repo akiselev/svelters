@@ -269,6 +269,155 @@ impl<'a> RawValues<'a> {
     }
 }
 
+/// ABI v2.9 (W-C2): a borrowed [`svl_template`].
+#[derive(Clone, Copy)]
+pub struct TemplateRef<'a> {
+    pub id: u64,
+    pub nodes: &'a [svl_tpl_node],
+    pub props: &'a [svl_tpl_prop],
+    pub listens: &'a [svl_tpl_listen],
+}
+
+unsafe fn slice_of<'a, T>(ptr: *const T, n: usize) -> &'a [T] {
+    if n == 0 || ptr.is_null() { &[] } else { unsafe { std::slice::from_raw_parts(ptr, n) } }
+}
+
+impl<'a> TemplateRef<'a> {
+    /// # Safety
+    /// `t`'s arrays must be valid for `'a`.
+    pub unsafe fn from_raw(t: &'a svl_template) -> TemplateRef<'a> {
+        unsafe {
+            TemplateRef {
+                id: t.id,
+                nodes: slice_of(t.nodes, t.n_nodes),
+                props: slice_of(t.props, t.n_props),
+                listens: slice_of(t.listens, t.n_listens),
+            }
+        }
+    }
+
+    /// The static props of node `k`.
+    pub fn node_props(&self, k: usize) -> &'a [svl_tpl_prop] {
+        let n = &self.nodes[k];
+        let (a, b) = (n.first_prop as usize, n.first_prop as usize + n.n_props as usize);
+        self.props.get(a..b).unwrap_or(&[])
+    }
+
+    /// The value of a prop entry as a borrowed view.
+    pub fn value(p: &'a svl_tpl_prop) -> ValueRef<'a> {
+        unsafe { ValueRef::from_raw(&p.value) }
+    }
+
+    /// Whether the nodes are in pre-order (each parent is the previous node or one of its
+    /// ancestors), each prop range is in the table and each listener names a node.
+    pub fn is_well_formed(&self) -> bool {
+        let mut open: Vec<usize> = Vec::new();
+        for (k, n) in self.nodes.iter().enumerate() {
+            if n.first_prop as usize + n.n_props as usize > self.props.len() {
+                return false;
+            }
+            match (n.parent as usize).checked_sub(1) {
+                None => open.clear(),
+                Some(p) => {
+                    while open.last().is_some_and(|&t| t != p) {
+                        open.pop();
+                    }
+                    if open.is_empty() {
+                        return false;
+                    }
+                }
+            }
+            open.push(k);
+        }
+        self.listens.iter().all(|l| (l.node as usize) < self.nodes.len())
+    }
+
+    /// The order a template expands in (see [`svl_template`]): `Create(k)` (with its props) in
+    /// pre-order, then `Place(k)` (its insert into the template parent, then its listeners) once
+    /// the subtree of `k` is complete. Nodes are stored in pre-order, so a node's subtree ends
+    /// where the next node that is not its descendant starts.
+    pub fn expansion(&self) -> Vec<TplStep> {
+        let mut out = Vec::with_capacity(self.nodes.len() * 2);
+        let mut open: Vec<usize> = Vec::new();
+        for (k, n) in self.nodes.iter().enumerate() {
+            let parent = (n.parent as usize).checked_sub(1);
+            while let Some(&top) = open.last() {
+                if Some(top) == parent {
+                    break;
+                }
+                open.pop();
+                out.push(TplStep::Place(top));
+            }
+            out.push(TplStep::Create(k));
+            open.push(k);
+        }
+        while let Some(top) = open.pop() {
+            out.push(TplStep::Place(top));
+        }
+        out
+    }
+}
+
+/// One step of a template's expansion ([`TemplateRef::expansion`]).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TplStep {
+    /// `create` node k and set its static props.
+    Create(usize),
+    /// Insert node k into its template parent (not for roots), then its listeners.
+    Place(usize),
+}
+
+/// An [`svl_template`] that owns its values (the host's registered templates).
+pub struct OwnedTemplate {
+    id: u64,
+    nodes: Vec<svl_tpl_node>,
+    raw_props: Vec<svl_tpl_prop>,
+    listens: Vec<svl_tpl_listen>,
+    // `raw_props` points into these: the boxed slice's heap buffer and the list buffers never move.
+    _values: Box<[Value]>,
+    _lists: Vec<Vec<svl_value>>,
+}
+
+impl OwnedTemplate {
+    /// `props[i]` is `(prop id, value)`; `nodes[k].first_prop`/`n_props` index into it.
+    pub fn new(id: u64, nodes: Vec<svl_tpl_node>, props: Vec<(svl_id, Value)>, listens: Vec<svl_tpl_listen>) -> OwnedTemplate {
+        let (ids, values): (Vec<svl_id>, Vec<Value>) = props.into_iter().unzip();
+        let values = values.into_boxed_slice();
+        let mut lists = Vec::new();
+        let raw_props = ids.iter().zip(values.iter()).map(|(&prop, v)| svl_tpl_prop { prop, value: build_raw(v, &mut lists) }).collect();
+        OwnedTemplate { id, nodes, raw_props, listens, _values: values, _lists: lists }
+    }
+
+    pub fn id(&self) -> u64 {
+        self.id
+    }
+
+    pub fn len(&self) -> usize {
+        self.nodes.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.nodes.is_empty()
+    }
+
+    /// The raw table; valid while `self` lives.
+    pub fn raw(&self) -> svl_template {
+        svl_template {
+            id: self.id,
+            nodes: self.nodes.as_ptr(),
+            n_nodes: self.nodes.len(),
+            props: self.raw_props.as_ptr(),
+            n_props: self.raw_props.len(),
+            listens: self.listens.as_ptr(),
+            n_listens: self.listens.len(),
+        }
+    }
+
+    pub fn as_ref(&self) -> TemplateRef<'_> {
+        TemplateRef { id: self.id, nodes: &self.nodes, props: &self.raw_props, listens: &self.listens }
+    }
+}
+
 /// Reads the text of a `STR` value (UTF-8 or UTF-16), replacing invalid sequences.
 ///
 /// # Safety
@@ -1046,6 +1195,32 @@ impl<'a> BackendRef<'a> {
 
     /// ABI v2.8: the layout rect of `h` (x, y, width, height); `Ok(None)` when the backend has no
     /// geometry (`bounds` is NULL).
+    /// ABI v2.9: whether the backend builds templates itself (`instantiate`/`destroy_range`).
+    pub fn has_templates(&self) -> bool {
+        let b = self.b();
+        b.instantiate.is_some() && b.destroy_range.is_some()
+    }
+
+    /// ABI v2.9: builds `t`; node k gets `base + k`. `Ok(None)` when the backend has no
+    /// `instantiate` (the caller expands the template).
+    pub fn instantiate(&self, t: &svl_template) -> AbiResult<Option<svl_handle>> {
+        let b = self.b();
+        let Some(f) = b.instantiate else { return Ok(None) };
+        let mut base: svl_handle = 0;
+        self.check(unsafe { f(b.self_, t, &mut base) })?;
+        Ok(Some(base))
+    }
+
+    /// ABI v2.9: destroys the handles `base..base + n` of one `instantiate`. Without the member,
+    /// destroys each, last first.
+    pub fn destroy_range(&self, base: svl_handle, n: u32) {
+        let b = self.b();
+        match b.destroy_range {
+            Some(f) => unsafe { f(b.self_, base, n) },
+            None => (base..base + n as u64).rev().for_each(|h| self.destroy(h)),
+        }
+    }
+
     pub fn bounds(&self, h: svl_handle) -> AbiResult<Option<[f64; 4]>> {
         let b = self.b();
         let Some(f) = b.bounds else { return Ok(None) };
@@ -1303,6 +1478,27 @@ impl<'a> HostRef<'a> {
         }
     }
 
+    /// ABI v2.9 (W-H1): delivers a signal now and drains the JS jobs it queued. `Err` carries
+    /// `SVL_SYNC_BUSY` (JS was running: the host queued it) or `SVL_SYNC_FAILED` (also for a host
+    /// without the member).
+    pub fn dispatch_now(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> AbiResult<()> {
+        let host = self.h();
+        let Some(f) = host.dispatch_now else {
+            return Err(AbiError::plain(SVL_SYNC_FAILED, "this host has no dispatch_now"));
+        };
+        let raw = RawValues::new(args);
+        match unsafe { f(host.self_, h, signal, raw.as_ptr(), raw.len()) } {
+            SVL_SYNC_OK => Ok(()),
+            SVL_SYNC_BUSY => Err(AbiError::plain(SVL_SYNC_BUSY, "dispatch_now: JS is running, event queued")),
+            rc => Err(AbiError::plain(rc, "dispatch_now failed")),
+        }
+    }
+
+    /// Whether the host has `dispatch_now` (ABI v2.9).
+    pub fn has_dispatch_now(&self) -> bool {
+        self.h().dispatch_now.is_some()
+    }
+
     /// `reason` is one of the `SVL_GONE_*` constants.
     pub fn on_destroyed(&self, h: svl_handle, reason: u32) {
         let host = self.h();
@@ -1469,6 +1665,25 @@ pub trait Backend: 'static {
     /// px); a widget not laid out yet reports 0, 0 and its natural size.
     fn bounds(&self, _h: svl_handle) -> StrResult<[f64; 4]> {
         Err("bounds is not supported by this backend".into())
+    }
+
+    // ---- v2.9 ----
+
+    /// Whether this backend implements [`Backend::instantiate`] and [`Backend::destroy_range`];
+    /// the vtable publishes the members only when this is true.
+    fn supports_templates(&self) -> bool {
+        false
+    }
+    /// ABI v2.9: builds template `t` (already checked [`TemplateRef::is_well_formed`]) and returns
+    /// the base handle: node k is `base + k`. A failure leaves nothing behind.
+    fn instantiate(&self, _t: TemplateRef<'_>) -> StrResult<svl_handle> {
+        Err("templates are not supported by this backend".into())
+    }
+    /// ABI v2.9: destroys the handles `base..base + n` of one instantiation, children first.
+    fn destroy_range(&self, base: svl_handle, n: u32) {
+        for h in (base..base + n as u64).rev() {
+            self.destroy(h);
+        }
     }
 
     // ---- v3 ----
@@ -1801,6 +2016,30 @@ unsafe extern "C" fn t_request_frame(s: *mut c_void) {
     let _ = catch_unwind(AssertUnwindSafe(|| s.backend.request_frame()));
 }
 
+unsafe extern "C" fn t_instantiate(s: *mut c_void, t: *const svl_template, out: *mut svl_handle) -> c_int {
+    let s = unsafe { shim(s) };
+    if t.is_null() || out.is_null() {
+        return s.fail("instantiate: null template or out");
+    }
+    let t = unsafe { TemplateRef::from_raw(&*t) };
+    if !t.is_well_formed() {
+        return s.fail("instantiate: malformed template (a parent after its child, or an index out of range)");
+    }
+    match catch_unwind(AssertUnwindSafe(|| s.backend.instantiate(t))) {
+        Ok(Ok(base)) => {
+            unsafe { *out = base };
+            0
+        }
+        Ok(Err(e)) => s.fail(&e),
+        Err(_) => s.fail("instantiate panicked"),
+    }
+}
+
+unsafe extern "C" fn t_destroy_range(s: *mut c_void, base: svl_handle, n: u32) {
+    let s = unsafe { shim(s) };
+    let _ = catch_unwind(AssertUnwindSafe(|| s.backend.destroy_range(base, n)));
+}
+
 unsafe extern "C" fn t_quit(s: *mut c_void) {
     let s = unsafe { shim(s) };
     let _ = catch_unwind(AssertUnwindSafe(|| s.backend.quit()));
@@ -1859,6 +2098,7 @@ impl BackendVtable {
         let observes = backend.supports_observe();
         let starts = backend.supports_start();
         let bounds = backend.supports_bounds();
+        let templates = backend.supports_templates();
         let shim = Box::into_raw(Box::new(Shim {
             waker,
             backend: Box::new(backend),
@@ -1898,6 +2138,8 @@ impl BackendVtable {
             observe: observes.then_some(t_observe as _),
             start: starts.then_some(t_start as _),
             bounds: bounds.then_some(t_bounds as _),
+            instantiate: templates.then_some(t_instantiate as _),
+            destroy_range: templates.then_some(t_destroy_range as _),
         });
         BackendVtable { raw, shim }
     }
@@ -1938,6 +2180,12 @@ pub trait HostCallbacks: 'static {
     fn frame(&self);
     /// ABI v2.6: an observed property of `h` may have changed. The default ignores it.
     fn prop_changed(&self, _h: svl_handle, _prop: svl_id) {}
+    /// ABI v2.9 (W-H1): delivers a signal now and drains the JS jobs it queued.
+    /// `Err(SyncError::Busy)` when JS is running (the event was queued instead). The default
+    /// refuses.
+    fn dispatch_now(&self, _h: svl_handle, _signal: svl_id, _args: &[Value]) -> Result<(), SyncError> {
+        Err(SyncError::Failed("dispatch_now is not supported by this host".into()))
+    }
 }
 
 /// Why [`HostCallbacks::call_sync`] produced no result.
@@ -2037,6 +2285,16 @@ unsafe extern "C" fn h_prop_changed(s: *mut c_void, h: svl_handle, prop: svl_id)
     let _ = catch_unwind(AssertUnwindSafe(|| s.cb.prop_changed(h, prop)));
 }
 
+unsafe extern "C" fn h_dispatch_now(s: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize) -> c_int {
+    let s = unsafe { hshim(s) };
+    let args = unsafe { Value::vec_from_raw_wide(args, n) };
+    match catch_unwind(AssertUnwindSafe(|| s.cb.dispatch_now(h, sig, &args))) {
+        Ok(Ok(())) => SVL_SYNC_OK,
+        Ok(Err(SyncError::Busy)) => SVL_SYNC_BUSY,
+        _ => SVL_SYNC_FAILED,
+    }
+}
+
 /// An `svl_host` backed by a [`HostCallbacks`] implementation.
 pub struct HostVtable {
     raw: Box<svl_host>,
@@ -2059,6 +2317,7 @@ impl HostVtable {
             invoke_callback: h_invoke_callback,
             release_callback: h_release_callback,
             prop_changed: Some(h_prop_changed),
+            dispatch_now: Some(h_dispatch_now),
         });
         HostVtable { raw, shim }
     }

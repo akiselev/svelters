@@ -91,6 +91,7 @@ fn run_steps(steps: Vec<Step>) {
         release_callback,
         frame,
         prop_changed: Some(prop_changed),
+        dispatch_now: None,
     }));
     unsafe { counter_qt::set_host(host) };
 

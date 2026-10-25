@@ -102,6 +102,7 @@ fn qt_a_busy_timer_does_not_starve_wake() {
         release_callback,
         frame,
         prop_changed: None,
+        dispatch_now: None,
     }));
     unsafe { counter_qt::set_host(host) };
     hooks::run_later(0, Box::new(busy_tick));

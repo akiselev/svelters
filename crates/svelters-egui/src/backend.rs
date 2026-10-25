@@ -97,6 +97,11 @@ pub(crate) struct Inner {
     /// viewport's `pixels_per_point` the leaves were last measured at (0: none yet).
     pub zoom_pending: Cell<Option<f32>>,
     pub scale_seen: Cell<f32>,
+    /// W-H1 (`EmbedConfig::same_frame_reactions`): a pass whose walk sent events or changes to JS
+    /// is discarded and rerun with logic, so the reaction is drawn in the frame of the input.
+    pub same_frame: Cell<bool>,
+    /// The pass being rerun after such a discard runs logic (ARCH-SCENE R17's relaxation).
+    pub rerun_logic: Cell<bool>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -150,6 +155,8 @@ impl EguiBackend {
             ev: RefCell::new(Default::default()),
             zoom_pending: Cell::new(None),
             scale_seen: Cell::new(0.0),
+            same_frame: Cell::new(true),
+            rerun_logic: Cell::new(false),
         }))
     }
 

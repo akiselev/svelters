@@ -1647,6 +1647,8 @@ impl GtkBackend {
             observe: Some(b_observe),
             start: Some(b_start),
             bounds: Some(b_bounds),
+            instantiate: None,
+            destroy_range: None,
         });
         Ok(GtkBackend { vtable, ctl })
     }
