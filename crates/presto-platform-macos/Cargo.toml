@@ -1,6 +1,6 @@
 [package]
 name = "presto-platform-macos"
-description = "presto platform backend (presto-platform-macos)."
+description = "presto's own macOS platform backend: AppKit windows, NSTextInputClient, keyboard, pointer, CAMetalLayer surfaces and display-link frame sources."
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -8,3 +8,21 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+
+# Everything below builds only on macOS; other targets compile an empty crate (src/lib.rs).
+[target.'cfg(target_os = "macos")'.dependencies]
+presto-platform = { workspace = true }
+accesskit = { workspace = true }
+accesskit_macos = "0.27.1"
+raw-window-handle = { workspace = true }
+muda = { version = "0.21.2", default-features = false }
+objc2 = "0.6.5"
+block2 = "0.6.2"
+dispatch2 = "0.3.1"
+objc2-foundation = "0.3.2"
+objc2-app-kit = "0.3.2"
+objc2-quartz-core = "0.3.2"
+objc2-core-foundation = "0.3.2"
+objc2-core-graphics = "0.3.2"
+objc2-core-video = "0.3.2"
+objc2-metal = "0.3.2"
