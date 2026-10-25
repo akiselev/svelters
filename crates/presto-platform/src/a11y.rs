@@ -4,7 +4,9 @@
 //! and updates (`Commit.a11y`) through [`A11yAdapter::update`].
 
 use crate::api::A11yEvent;
-use presto_base::accesskit::{ActionHandler, ActionRequest, ActivationHandler, DeactivationHandler, TreeUpdate};
+use presto_base::accesskit::{
+    ActionHandler, ActionRequest, ActivationHandler, DeactivationHandler, TreeUpdate,
+};
 use std::sync::Arc;
 use winit::window::Window;
 
@@ -39,7 +41,10 @@ pub struct A11yAdapter {
     inner: accesskit_windows::SubclassingAdapter,
     #[cfg(target_os = "macos")]
     inner: accesskit_macos::SubclassingAdapter,
-    #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
+    #[cfg(all(
+        unix,
+        not(any(target_os = "macos", target_os = "ios", target_os = "android"))
+    ))]
     inner: accesskit_unix::Adapter,
 }
 
@@ -50,23 +55,44 @@ impl A11yAdapter {
         #[cfg(target_os = "windows")]
         {
             use raw_window_handle::{HasWindowHandle, RawWindowHandle};
-            let RawWindowHandle::Win32(h) = window.window_handle().ok()?.as_raw() else { return None };
+            let RawWindowHandle::Win32(h) = window.window_handle().ok()?.as_raw() else {
+                return None;
+            };
             let hwnd = accesskit_windows::HWND(h.hwnd.get() as *mut _);
-            let inner = accesskit_windows::SubclassingAdapter::new(hwnd, Handler(sink.clone()), Handler(sink));
+            let inner = accesskit_windows::SubclassingAdapter::new(
+                hwnd,
+                Handler(sink.clone()),
+                Handler(sink),
+            );
             return Some(A11yAdapter { inner });
         }
         #[cfg(target_os = "macos")]
         {
             use raw_window_handle::{HasWindowHandle, RawWindowHandle};
-            let RawWindowHandle::AppKit(h) = window.window_handle().ok()?.as_raw() else { return None };
+            let RawWindowHandle::AppKit(h) = window.window_handle().ok()?.as_raw() else {
+                return None;
+            };
             // SAFETY: `ns_view` is winit's live NSView for this window; the adapter is dropped with
             // the window's state, before winit releases the view.
-            let inner = unsafe { accesskit_macos::SubclassingAdapter::new(h.ns_view.as_ptr(), Handler(sink.clone()), Handler(sink)) };
+            let inner = unsafe {
+                accesskit_macos::SubclassingAdapter::new(
+                    h.ns_view.as_ptr(),
+                    Handler(sink.clone()),
+                    Handler(sink),
+                )
+            };
             return Some(A11yAdapter { inner });
         }
-        #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
+        #[cfg(all(
+            unix,
+            not(any(target_os = "macos", target_os = "ios", target_os = "android"))
+        ))]
         {
-            let inner = accesskit_unix::Adapter::new(Handler(sink.clone()), Handler(sink.clone()), Handler(sink));
+            let inner = accesskit_unix::Adapter::new(
+                Handler(sink.clone()),
+                Handler(sink.clone()),
+                Handler(sink),
+            );
             return Some(A11yAdapter { inner });
         }
         None
@@ -79,7 +105,10 @@ impl A11yAdapter {
         if let Some(events) = self.inner.update_if_active(|| update) {
             events.raise();
         }
-        #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
+        #[cfg(all(
+            unix,
+            not(any(target_os = "macos", target_os = "ios", target_os = "android"))
+        ))]
         self.inner.update_if_active(|| update);
     }
 
@@ -92,7 +121,10 @@ impl A11yAdapter {
                 events.raise();
             }
         }
-        #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
+        #[cfg(all(
+            unix,
+            not(any(target_os = "macos", target_os = "ios", target_os = "android"))
+        ))]
         match ev {
             winit::event::WindowEvent::Focused(f) => self.inner.update_window_focus_state(*f),
             winit::event::WindowEvent::Moved(_) | winit::event::WindowEvent::Resized(_) => {
@@ -101,8 +133,14 @@ impl A11yAdapter {
                 let inner_pos = window.inner_position().unwrap_or_default().cast::<f64>();
                 let inner_size = window.inner_size().cast::<f64>();
                 self.inner.set_root_window_bounds(
-                    presto_base::accesskit::Rect::from_origin_size((outer_pos.x, outer_pos.y), (outer_size.width, outer_size.height)),
-                    presto_base::accesskit::Rect::from_origin_size((inner_pos.x, inner_pos.y), (inner_size.width, inner_size.height)),
+                    presto_base::accesskit::Rect::from_origin_size(
+                        (outer_pos.x, outer_pos.y),
+                        (outer_size.width, outer_size.height),
+                    ),
+                    presto_base::accesskit::Rect::from_origin_size(
+                        (inner_pos.x, inner_pos.y),
+                        (inner_size.width, inner_size.height),
+                    ),
                 );
             }
             _ => {}

@@ -52,6 +52,14 @@ Public main-thread extras: `set_text_input_client`, `text_input_changed`, `set_o
 
 ## Additions outside the crate
 
+- Decided by the coordinator (2026-10-25), made here as additive changes:
+  - `presto_platform::PlatformCx::set_text_input(id, Option<Box<dyn TextInputClient>>)`, whose default
+    falls back to `set_ime` with the client's caret rect and purpose; this backend bridges it to
+    `NSTextInputClient`.
+  - `WindowDesc.custom_title_bar` (default false); this backend applies it at creation.
+  - presto-base docs: `KeyEvent.physical` is `page << 16 | usage`; `WindowEvent::Moved` is the content's
+    top-left in global points.
+
 - `THIRD_PARTY_NOTICES.md`: an "Apache-2.0 ported source" table with the GPUI row (other platform lanes
   will add rows; merge them into one table).
 - `Cargo.lock`: muda 0.21.2, objc2-* 0.3.2 crates, dispatch2, block2 (macOS target only).

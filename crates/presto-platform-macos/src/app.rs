@@ -448,6 +448,15 @@ impl PlatformCx for MacCx {
         window::invalidate_character_coordinates(&view);
     }
 
+    /// The full `NSTextInputClient` bridge ([`crate::set_text_input_client`]).
+    fn set_text_input(
+        &mut self,
+        id: WindowId,
+        client: Option<Box<dyn presto_base::input::TextInputClient>>,
+    ) {
+        crate::set_text_input_client(id, client);
+    }
+
     fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool {
         let Some(view) = with_window(id, |w| w.view.clone()) else {
             return false;

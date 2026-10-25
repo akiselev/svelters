@@ -5,8 +5,9 @@
 use crate::keys;
 use presto_base::cursor::CursorIcon;
 use presto_base::event::{
-    GestureEvent, GesturePhase, ImeEvent, InputEvent, KeyEvent, KeyState, Modifiers, MouseButton, PointerEvent,
-    PointerPhase, PointerSample, PointerType, ScrollDelta, Theme, WheelEvent, WindowEvent,
+    GestureEvent, GesturePhase, ImeEvent, InputEvent, KeyEvent, KeyState, Modifiers, MouseButton,
+    PointerEvent, PointerPhase, PointerSample, PointerType, ScrollDelta, Theme, WheelEvent,
+    WindowEvent,
 };
 use presto_base::geom::{DeviceSize, Point, Scale, Vec2};
 use smallvec::SmallVec;
@@ -32,11 +33,20 @@ pub struct WindowInput {
 
 impl WindowInput {
     pub fn new(scale: f32) -> Self {
-        WindowInput { scale, buttons: 0, modifiers: Modifiers::default(), pos: Point::ZERO, pending_history: SmallVec::new() }
+        WindowInput {
+            scale,
+            buttons: 0,
+            modifiers: Modifiers::default(),
+            pos: Point::ZERO,
+            pending_history: SmallVec::new(),
+        }
     }
 
     fn point(&self, x: f64, y: f64) -> Point {
-        Point::new((x / self.scale as f64) as f32, (y / self.scale as f64) as f32)
+        Point::new(
+            (x / self.scale as f64) as f32,
+            (y / self.scale as f64) as f32,
+        )
     }
 
     fn pointer(&mut self, phase: PointerPhase, button: Option<MouseButton>) -> PointerEvent {
@@ -50,7 +60,11 @@ impl WindowInput {
             modifiers: self.modifiers,
             pressure: if self.buttons & 1 != 0 { 0.5 } else { 0.0 },
             tilt: Vec2::ZERO,
-            history: if phase == PointerPhase::Move { std::mem::take(&mut self.pending_history) } else { SmallVec::new() },
+            history: if phase == PointerPhase::Move {
+                std::mem::take(&mut self.pending_history)
+            } else {
+                SmallVec::new()
+            },
         }
     }
 
@@ -58,12 +72,18 @@ impl WindowInput {
     pub fn translate(&mut self, ev: &we::WindowEvent) -> Option<Translated> {
         use we::WindowEvent as W;
         Some(match ev {
-            W::Resized(s) => {
-                Translated::Window(WindowEvent::Resized { size: DeviceSize { w: s.width, h: s.height }, scale: Scale(self.scale) })
-            }
+            W::Resized(s) => Translated::Window(WindowEvent::Resized {
+                size: DeviceSize {
+                    w: s.width,
+                    h: s.height,
+                },
+                scale: Scale(self.scale),
+            }),
             W::ScaleFactorChanged { scale_factor, .. } => {
                 self.scale = *scale_factor as f32;
-                Translated::Window(WindowEvent::ScaleChanged { scale: Scale(self.scale) })
+                Translated::Window(WindowEvent::ScaleChanged {
+                    scale: Scale(self.scale),
+                })
             }
             W::Moved(p) => Translated::Window(WindowEvent::Moved { x: p.x, y: p.y }),
             W::CloseRequested => Translated::Window(WindowEvent::CloseRequested),
@@ -99,8 +119,12 @@ impl WindowInput {
                 self.pos = self.point(position.x, position.y);
                 Translated::Input(InputEvent::Pointer(self.pointer(PointerPhase::Move, None)))
             }
-            W::CursorEntered { .. } => Translated::Input(InputEvent::Pointer(self.pointer(PointerPhase::Enter, None))),
-            W::CursorLeft { .. } => Translated::Input(InputEvent::Pointer(self.pointer(PointerPhase::Leave, None))),
+            W::CursorEntered { .. } => {
+                Translated::Input(InputEvent::Pointer(self.pointer(PointerPhase::Enter, None)))
+            }
+            W::CursorLeft { .. } => {
+                Translated::Input(InputEvent::Pointer(self.pointer(PointerPhase::Leave, None)))
+            }
             W::MouseInput { state, button, .. } => {
                 let b = mouse_button(*button);
                 let bit = button_bit(b);
@@ -118,29 +142,52 @@ impl WindowInput {
             }
             W::MouseWheel { delta, phase, .. } => {
                 let (delta, phase) = match delta {
-                    MouseScrollDelta::LineDelta(x, y) => (ScrollDelta::Lines(Vec2::new(*x, *y)), None),
+                    MouseScrollDelta::LineDelta(x, y) => {
+                        (ScrollDelta::Lines(Vec2::new(*x, *y)), None)
+                    }
                     MouseScrollDelta::PixelDelta(p) => (
-                        ScrollDelta::Pixels(Vec2::new((p.x / self.scale as f64) as f32, (p.y / self.scale as f64) as f32)),
+                        ScrollDelta::Pixels(Vec2::new(
+                            (p.x / self.scale as f64) as f32,
+                            (p.y / self.scale as f64) as f32,
+                        )),
                         Some(gesture_phase(*phase)),
                     ),
                 };
-                Translated::Input(InputEvent::Wheel(WheelEvent { pos: self.pos, delta, phase, momentum: None, modifiers: self.modifiers }))
+                Translated::Input(InputEvent::Wheel(WheelEvent {
+                    pos: self.pos,
+                    delta,
+                    phase,
+                    momentum: None,
+                    modifiers: self.modifiers,
+                }))
             }
-            W::PanGesture { delta, phase, .. } => Translated::Input(InputEvent::Wheel(WheelEvent {
-                pos: self.pos,
-                delta: ScrollDelta::Pixels(Vec2::new(delta.x / self.scale, delta.y / self.scale)),
-                phase: Some(gesture_phase(*phase)),
-                momentum: None,
-                modifiers: self.modifiers,
-            })),
+            W::PanGesture { delta, phase, .. } => {
+                Translated::Input(InputEvent::Wheel(WheelEvent {
+                    pos: self.pos,
+                    delta: ScrollDelta::Pixels(Vec2::new(
+                        delta.x / self.scale,
+                        delta.y / self.scale,
+                    )),
+                    phase: Some(gesture_phase(*phase)),
+                    momentum: None,
+                    modifiers: self.modifiers,
+                }))
+            }
             W::PinchGesture { delta, phase, .. } => {
-                Translated::Input(InputEvent::Gesture(GestureEvent::Pinch { delta: *delta as f32, phase: gesture_phase(*phase) }))
+                Translated::Input(InputEvent::Gesture(GestureEvent::Pinch {
+                    delta: *delta as f32,
+                    phase: gesture_phase(*phase),
+                }))
             }
-            W::RotationGesture { delta, phase, .. } => Translated::Input(InputEvent::Gesture(GestureEvent::Rotate {
-                delta_rad: delta.to_radians(),
-                phase: gesture_phase(*phase),
-            })),
-            W::DoubleTapGesture { .. } => Translated::Input(InputEvent::Gesture(GestureEvent::DoubleTap)),
+            W::RotationGesture { delta, phase, .. } => {
+                Translated::Input(InputEvent::Gesture(GestureEvent::Rotate {
+                    delta_rad: delta.to_radians(),
+                    phase: gesture_phase(*phase),
+                }))
+            }
+            W::DoubleTapGesture { .. } => {
+                Translated::Input(InputEvent::Gesture(GestureEvent::DoubleTap))
+            }
             W::Touch(t) => {
                 let pos = self.point(t.location.x, t.location.y);
                 let phase = match t.phase {
@@ -154,11 +201,14 @@ impl WindowInput {
                     phase,
                     pointer: touch_pointer_id(t.id),
                     kind: PointerType::Touch,
-                    button: matches!(phase, PointerPhase::Down | PointerPhase::Up).then_some(MouseButton::Primary),
+                    button: matches!(phase, PointerPhase::Down | PointerPhase::Up)
+                        .then_some(MouseButton::Primary),
                     buttons: down as u32,
                     pos,
                     modifiers: self.modifiers,
-                    pressure: t.force.map_or(if down { 0.5 } else { 0.0 }, |f| f.normalized() as f32),
+                    pressure: t
+                        .force
+                        .map_or(if down { 0.5 } else { 0.0 }, |f| f.normalized() as f32),
                     tilt: Vec2::ZERO,
                     history: SmallVec::new(),
                 }))
@@ -237,7 +287,10 @@ pub fn gesture_phase(p: TouchPhase) -> GesturePhase {
 pub fn ime(i: &we::Ime) -> ImeEvent {
     match i {
         we::Ime::Enabled => ImeEvent::Enabled,
-        we::Ime::Preedit(text, cursor) => ImeEvent::Preedit { text: text.clone(), cursor: *cursor },
+        we::Ime::Preedit(text, cursor) => ImeEvent::Preedit {
+            text: text.clone(),
+            cursor: *cursor,
+        },
         we::Ime::Commit(s) => ImeEvent::Commit(s.clone()),
         we::Ime::Disabled => ImeEvent::Disabled,
     }
@@ -305,7 +358,10 @@ mod tests {
     #[test]
     fn positions_are_in_points_and_buttons_accumulate() {
         let mut w = WindowInput::new(2.0);
-        let p = pointer(w.translate(&W::CursorMoved { device_id: dev(), position: PhysicalPosition::new(200.0, 100.0) }));
+        let p = pointer(w.translate(&W::CursorMoved {
+            device_id: dev(),
+            position: PhysicalPosition::new(200.0, 100.0),
+        }));
         assert_eq!(p.pos, Point::new(100.0, 50.0));
         assert_eq!(p.phase, PointerPhase::Move);
 
@@ -314,7 +370,10 @@ mod tests {
             state: ElementState::Pressed,
             button: we::MouseButton::Left,
         }));
-        assert_eq!((p.phase, p.button, p.buttons), (PointerPhase::Down, Some(MouseButton::Primary), 1));
+        assert_eq!(
+            (p.phase, p.button, p.buttons),
+            (PointerPhase::Down, Some(MouseButton::Primary), 1)
+        );
         let p = pointer(w.translate(&W::MouseInput {
             device_id: dev(),
             state: ElementState::Pressed,
@@ -326,7 +385,10 @@ mod tests {
             state: ElementState::Released,
             button: we::MouseButton::Left,
         }));
-        assert_eq!((p.phase, p.buttons, p.pos), (PointerPhase::Up, 2, Point::new(100.0, 50.0)));
+        assert_eq!(
+            (p.phase, p.buttons, p.pos),
+            (PointerPhase::Up, 2, Point::new(100.0, 50.0))
+        );
         // Losing focus forgets held buttons (their release goes to another window).
         w.translate(&W::Focused(false));
         assert_eq!(w.buttons, 0);
@@ -335,17 +397,31 @@ mod tests {
     #[test]
     fn coalesced_history_rides_on_the_next_move_only() {
         let mut w = WindowInput::new(1.0);
-        w.pending_history.push(PointerSample { pos: Point::new(1.0, 1.0), time: presto_base::time::Time(5), pressure: 0.0 });
-        let p = pointer(w.translate(&W::CursorMoved { device_id: dev(), position: PhysicalPosition::new(2.0, 2.0) }));
+        w.pending_history.push(PointerSample {
+            pos: Point::new(1.0, 1.0),
+            time: presto_base::time::Time(5),
+            pressure: 0.0,
+        });
+        let p = pointer(w.translate(&W::CursorMoved {
+            device_id: dev(),
+            position: PhysicalPosition::new(2.0, 2.0),
+        }));
         assert_eq!(p.history.len(), 1);
-        let p = pointer(w.translate(&W::CursorMoved { device_id: dev(), position: PhysicalPosition::new(3.0, 3.0) }));
+        let p = pointer(w.translate(&W::CursorMoved {
+            device_id: dev(),
+            position: PhysicalPosition::new(3.0, 3.0),
+        }));
         assert!(p.history.is_empty());
     }
 
     #[test]
     fn wheel_lines_stay_lines_and_pixels_become_points_with_a_phase() {
         let mut w = WindowInput::new(2.0);
-        match w.translate(&W::MouseWheel { device_id: dev(), delta: MouseScrollDelta::LineDelta(0.0, 1.0), phase: TouchPhase::Moved }) {
+        match w.translate(&W::MouseWheel {
+            device_id: dev(),
+            delta: MouseScrollDelta::LineDelta(0.0, 1.0),
+            phase: TouchPhase::Moved,
+        }) {
             Some(Translated::Input(InputEvent::Wheel(e))) => {
                 assert_eq!(e.delta, ScrollDelta::Lines(Vec2::new(0.0, 1.0)));
                 assert_eq!(e.phase, None);
@@ -370,15 +446,24 @@ mod tests {
         let mut w = WindowInput::new(1.5);
         assert_eq!(
             w.translate(&W::Resized(PhysicalSize::new(300, 150))),
-            Some(Translated::Window(WindowEvent::Resized { size: DeviceSize { w: 300, h: 150 }, scale: Scale(1.5) }))
+            Some(Translated::Window(WindowEvent::Resized {
+                size: DeviceSize { w: 300, h: 150 },
+                scale: Scale(1.5)
+            }))
         );
-        assert_eq!(w.translate(&W::CloseRequested), Some(Translated::Window(WindowEvent::CloseRequested)));
+        assert_eq!(
+            w.translate(&W::CloseRequested),
+            Some(Translated::Window(WindowEvent::CloseRequested))
+        );
         assert_eq!(w.translate(&W::RedrawRequested), None);
         let m = winit::keyboard::ModifiersState::SHIFT | winit::keyboard::ModifiersState::SUPER;
         assert_eq!(modifiers(m), Modifiers::SHIFT.union(Modifiers::SUPER));
         assert_eq!(
             w.translate(&W::Ime(we::Ime::Preedit("かな".into(), Some((0, 3))))),
-            Some(Translated::Input(InputEvent::Ime(ImeEvent::Preedit { text: "かな".into(), cursor: Some((0, 3)) })))
+            Some(Translated::Input(InputEvent::Ime(ImeEvent::Preedit {
+                text: "かな".into(),
+                cursor: Some((0, 3))
+            })))
         );
     }
 
@@ -390,7 +475,10 @@ mod tests {
 
     #[test]
     fn every_cursor_but_none_maps() {
-        assert_eq!(cursor_icon(CursorIcon::Text), Some(winit::window::CursorIcon::Text));
+        assert_eq!(
+            cursor_icon(CursorIcon::Text),
+            Some(winit::window::CursorIcon::Text)
+        );
         assert_eq!(cursor_icon(CursorIcon::None), None);
     }
 }

@@ -27,7 +27,11 @@ impl Modifiers {
     }
     /// The platform's primary shortcut modifier: Cmd on macOS, Ctrl elsewhere.
     pub const fn primary(self, macos: bool) -> bool {
-        if macos { self.contains(Self::SUPER) } else { self.contains(Self::CTRL) }
+        if macos {
+            self.contains(Self::SUPER)
+        } else {
+            self.contains(Self::CTRL)
+        }
     }
 }
 
@@ -129,7 +133,8 @@ pub enum KeyLocation {
 pub struct KeyEvent {
     /// The logical key (layout-mapped), egui-named; `None` when it has no egui name.
     pub key: Option<Key>,
-    /// The physical key's platform-independent code (USB HID usage when known).
+    /// The physical key's platform-independent code: the USB HID usage as `page << 16 | usage`
+    /// (Chromium's form; keyboard keys are page 7, so A is `0x0007_0004`), 0 when unknown.
     pub physical: u32,
     /// Text this key press produces (after dead keys), if any.
     pub text: Option<String>,
@@ -143,10 +148,16 @@ pub struct KeyEvent {
 pub enum ImeEvent {
     Enabled,
     /// The composition text and the cursor range in it (byte offsets).
-    Preedit { text: String, cursor: Option<(usize, usize)> },
+    Preedit {
+        text: String,
+        cursor: Option<(usize, usize)>,
+    },
     Commit(String),
     /// Delete text around the cursor (bytes before, bytes after).
-    DeleteSurrounding { before: usize, after: usize },
+    DeleteSurrounding {
+        before: usize,
+        after: usize,
+    },
     Disabled,
 }
 
@@ -175,7 +186,10 @@ impl InputEvent {
     pub fn is_discrete(&self) -> bool {
         !matches!(
             self,
-            InputEvent::Pointer(PointerEvent { phase: PointerPhase::Move, .. }) | InputEvent::Wheel(_)
+            InputEvent::Pointer(PointerEvent {
+                phase: PointerPhase::Move,
+                ..
+            }) | InputEvent::Wheel(_)
         )
     }
 }
@@ -199,9 +213,18 @@ pub enum Theme {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum WindowEvent {
-    Resized { size: DeviceSize, scale: Scale },
-    ScaleChanged { scale: Scale },
-    Moved { x: i32, y: i32 },
+    Resized {
+        size: DeviceSize,
+        scale: Scale,
+    },
+    ScaleChanged {
+        scale: Scale,
+    },
+    /// The window's new position: the content's top-left in global points.
+    Moved {
+        x: i32,
+        y: i32,
+    },
     Focused(bool),
     /// Hidden, minimised or fully covered (or the compositor stopped frame callbacks for 100 ms).
     Occluded(bool),

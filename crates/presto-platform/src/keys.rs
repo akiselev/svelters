@@ -276,7 +276,9 @@ const DESKTOP: u32 = 0x01 << 16;
 /// The USB HID usage of a physical key (HID Usage Tables 1.4: §10 Keyboard/Keypad, §15 Consumer,
 /// §4 Generic Desktop), `page << 16 | usage`; 0 when the key has none.
 pub fn hid_usage(physical: PhysicalKey) -> u32 {
-    let PhysicalKey::Code(code) = physical else { return 0 };
+    let PhysicalKey::Code(code) = physical else {
+        return 0;
+    };
     use KeyCode as K;
     let kb = |u: u32| KEYBOARD | u;
     match code {
@@ -465,16 +467,42 @@ mod tests {
     #[test]
     fn delivered_keys_round_trip_through_egui_names() {
         let codes = [
-            KeyCode::KeyA, KeyCode::KeyZ, KeyCode::Digit0, KeyCode::Digit9, KeyCode::F1, KeyCode::F35,
-            KeyCode::ArrowUp, KeyCode::Enter, KeyCode::NumpadEnter, KeyCode::Backquote, KeyCode::Minus,
-            KeyCode::Equal, KeyCode::BracketLeft, KeyCode::ShiftLeft, KeyCode::SuperRight,
-            KeyCode::IntlBackslash, KeyCode::ContextMenu, KeyCode::MediaPlayPause, KeyCode::Sleep,
+            KeyCode::KeyA,
+            KeyCode::KeyZ,
+            KeyCode::Digit0,
+            KeyCode::Digit9,
+            KeyCode::F1,
+            KeyCode::F35,
+            KeyCode::ArrowUp,
+            KeyCode::Enter,
+            KeyCode::NumpadEnter,
+            KeyCode::Backquote,
+            KeyCode::Minus,
+            KeyCode::Equal,
+            KeyCode::BracketLeft,
+            KeyCode::ShiftLeft,
+            KeyCode::SuperRight,
+            KeyCode::IntlBackslash,
+            KeyCode::ContextMenu,
+            KeyCode::MediaPlayPause,
+            KeyCode::Sleep,
         ];
         for c in codes {
             let k = key_from_code(c).unwrap_or_else(|| panic!("{c:?} has no key"));
-            assert_eq!(Key::from_name(k.name()), Some(k), "{c:?} → {k:?} → {:?}", k.name());
+            assert_eq!(
+                Key::from_name(k.name()),
+                Some(k),
+                "{c:?} → {k:?} → {:?}",
+                k.name()
+            );
         }
-        for n in [NamedKey::Escape, NamedKey::Tab, NamedKey::Space, NamedKey::PageDown, NamedKey::Standby] {
+        for n in [
+            NamedKey::Escape,
+            NamedKey::Tab,
+            NamedKey::Space,
+            NamedKey::PageDown,
+            NamedKey::Standby,
+        ] {
             let k = key_from_named(n).unwrap();
             assert_eq!(Key::from_name(k.name()), Some(k));
         }
@@ -483,26 +511,53 @@ mod tests {
     #[test]
     fn logical_wins_and_physical_backs_up_non_latin_layouts() {
         // Dvorak: the physical KeyB position types "x".
-        let k = key_from_winit(&WKey::Character(SmolStr::new("x")), PhysicalKey::Code(KeyCode::KeyB));
+        let k = key_from_winit(
+            &WKey::Character(SmolStr::new("x")),
+            PhysicalKey::Code(KeyCode::KeyB),
+        );
         assert_eq!(k, Some(Key::X));
         // Russian: "с" on the physical C key still reaches Key::C (Ctrl+C).
-        let k = key_from_winit(&WKey::Character(SmolStr::new("с")), PhysicalKey::Code(KeyCode::KeyC));
+        let k = key_from_winit(
+            &WKey::Character(SmolStr::new("с")),
+            PhysicalKey::Code(KeyCode::KeyC),
+        );
         assert_eq!(k, Some(Key::C));
-        let k = key_from_winit(&WKey::Named(NamedKey::Enter), PhysicalKey::Code(KeyCode::NumpadEnter));
+        let k = key_from_winit(
+            &WKey::Named(NamedKey::Enter),
+            PhysicalKey::Code(KeyCode::NumpadEnter),
+        );
         assert_eq!(k, Some(Key::Enter));
-        assert_eq!(key_from_winit(&WKey::Dead(Some('´')), PhysicalKey::Code(KeyCode::Equal)), Some(Key::Equals));
+        assert_eq!(
+            key_from_winit(&WKey::Dead(Some('´')), PhysicalKey::Code(KeyCode::Equal)),
+            Some(Key::Equals)
+        );
     }
 
     #[test]
     fn hid_usages_are_distinct_and_on_the_keyboard_page() {
         assert_eq!(hid_usage(PhysicalKey::Code(KeyCode::KeyA)), 0x0007_0004);
         assert_eq!(hid_usage(PhysicalKey::Code(KeyCode::Enter)), 0x0007_0028);
-        assert_eq!(hid_usage(PhysicalKey::Code(KeyCode::SuperRight)), 0x0007_00E7);
+        assert_eq!(
+            hid_usage(PhysicalKey::Code(KeyCode::SuperRight)),
+            0x0007_00E7
+        );
         let mut seen: HashMap<u32, KeyCode> = HashMap::new();
         let all = [
-            KeyCode::KeyA, KeyCode::KeyM, KeyCode::Digit1, KeyCode::Digit0, KeyCode::F12, KeyCode::F13,
-            KeyCode::Numpad0, KeyCode::NumpadEnter, KeyCode::Enter, KeyCode::ControlLeft, KeyCode::ControlRight,
-            KeyCode::BrowserBack, KeyCode::MediaStop, KeyCode::Sleep, KeyCode::AudioVolumeUp,
+            KeyCode::KeyA,
+            KeyCode::KeyM,
+            KeyCode::Digit1,
+            KeyCode::Digit0,
+            KeyCode::F12,
+            KeyCode::F13,
+            KeyCode::Numpad0,
+            KeyCode::NumpadEnter,
+            KeyCode::Enter,
+            KeyCode::ControlLeft,
+            KeyCode::ControlRight,
+            KeyCode::BrowserBack,
+            KeyCode::MediaStop,
+            KeyCode::Sleep,
+            KeyCode::AudioVolumeUp,
         ];
         for c in all {
             let u = hid_usage(PhysicalKey::Code(c));

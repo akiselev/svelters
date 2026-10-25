@@ -5,7 +5,9 @@ use crate::anim::{AnimationCmd, AnimationEvent};
 use crate::cursor::CursorIcon;
 use crate::display::DisplayList;
 use crate::geom::{Affine, DeviceSize, Rect, Scale, Vec2};
-use crate::ids::{CanvasId, FrameId, ImageId, InputSeq, NodeId, PathId, PropNodeId, Revision, RunId, WindowId};
+use crate::ids::{
+    CanvasId, FrameId, ImageId, InputSeq, NodeId, PathId, PropNodeId, Revision, RunId, WindowId,
+};
 use crate::layer::LayerDelta;
 use crate::props::PropertyTreeDelta;
 use crate::text::GlyphRun;
@@ -88,28 +90,80 @@ pub struct ResourceDelta {
 /// (architecture §7.3). The same write is recorded in the tree, so the next [`Commit`] agrees.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum FastCommit {
-    ScrollOffset { window: WindowId, node: PropNodeId, offset: Vec2, revision: Revision, input_seq: InputSeq },
-    Transform { window: WindowId, node: PropNodeId, local: Affine, revision: Revision, input_seq: InputSeq },
-    Opacity { window: WindowId, node: PropNodeId, opacity: f32, revision: Revision },
-    CanvasView { window: WindowId, canvas: CanvasId, view: Affine, input_seq: InputSeq },
+    ScrollOffset {
+        window: WindowId,
+        node: PropNodeId,
+        offset: Vec2,
+        revision: Revision,
+        input_seq: InputSeq,
+    },
+    Transform {
+        window: WindowId,
+        node: PropNodeId,
+        local: Affine,
+        revision: Revision,
+        input_seq: InputSeq,
+    },
+    Opacity {
+        window: WindowId,
+        node: PropNodeId,
+        opacity: f32,
+        revision: Revision,
+    },
+    CanvasView {
+        window: WindowId,
+        canvas: CanvasId,
+        view: Affine,
+        input_seq: InputSeq,
+    },
     /// Show or move the caret (the compositor blinks it).
-    Caret { window: WindowId, rect: Option<Rect>, revision: Revision },
+    Caret {
+        window: WindowId,
+        rect: Option<Rect>,
+        revision: Revision,
+    },
 }
 
 /// Compositor → UI thread.
 #[derive(Clone, Debug, PartialEq)]
 pub enum ToUi {
     /// Run the UI phases now for a frame presenting at `target`; commit before `deadline`.
-    BeginFrame { window: WindowId, frame: FrameId, target: Time, deadline: Time },
+    BeginFrame {
+        window: WindowId,
+        frame: FrameId,
+        target: Time,
+        deadline: Time,
+    },
     /// The commit with this revision is applied (back-pressure release).
-    CommitApplied { window: WindowId, revision: Revision },
+    CommitApplied {
+        window: WindowId,
+        revision: Revision,
+    },
     /// A frame reached the screen at `at` (presentation feedback, or an estimate when the OS gives none).
-    Presented { window: WindowId, frame: FrameId, at: Time, estimated: bool, inputs: Vec<InputSeq> },
-    Animation { window: WindowId, event: AnimationEvent },
+    Presented {
+        window: WindowId,
+        frame: FrameId,
+        at: Time,
+        estimated: bool,
+        inputs: Vec<InputSeq>,
+    },
+    Animation {
+        window: WindowId,
+        event: AnimationEvent,
+    },
     /// The compositor moved a scroll offset (fling, smooth scroll); the tree takes it as native state.
-    ScrollMoved { window: WindowId, node: PropNodeId, offset: Vec2 },
+    ScrollMoved {
+        window: WindowId,
+        node: PropNodeId,
+        offset: Vec2,
+    },
     /// The resize handshake finished (architecture §7.6).
-    ResizeDone { window: WindowId, seq: u64, size: DeviceSize, scale: Scale },
+    ResizeDone {
+        window: WindowId,
+        seq: u64,
+        size: DeviceSize,
+        scale: Scale,
+    },
     /// The GPU device was lost and recreated: re-send every resource.
     DeviceReset,
     /// The compositor side of a frame's latency (architecture §16.3), sent when it was presented:

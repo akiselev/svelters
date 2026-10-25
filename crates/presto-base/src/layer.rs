@@ -53,7 +53,13 @@ pub enum LayerDelta {
     Update(LayerDesc),
     Remove(LayerId),
     /// The layer's items in paint order (sent when structure changed in it).
-    Items { layer: LayerId, items: Vec<ItemRef> },
+    Items {
+        layer: LayerId,
+        items: Vec<ItemRef>,
+    },
     /// Extra damage in layer space (e.g. a canvas whose chunks changed).
-    Damage { layer: LayerId, rects: Vec<Rect> },
+    Damage {
+        layer: LayerId,
+        rects: Vec<Rect>,
+    },
 }

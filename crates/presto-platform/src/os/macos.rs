@@ -18,10 +18,10 @@ use presto_base::event::PointerSample;
 use presto_base::geom::{DeviceRect, Rect};
 use presto_base::ids::SurfaceId;
 use presto_base::time::{Span, Time};
-use std::sync::Arc;
 use raw_window_handle::{HasWindowHandle, RawWindowHandle};
 use smallvec::SmallVec;
 use std::ffi::c_void;
+use std::sync::Arc;
 use std::sync::OnceLock;
 use winit::platform::macos::MonitorHandleExtMacOS;
 use winit::window::{Window, WindowAttributes};
@@ -39,7 +39,9 @@ pub struct WindowShim {
 }
 
 fn view_of(window: &Window) -> Option<Retained<NSView>> {
-    let RawWindowHandle::AppKit(h) = window.window_handle().ok()?.as_raw() else { return None };
+    let RawWindowHandle::AppKit(h) = window.window_handle().ok()?.as_raw() else {
+        return None;
+    };
     // SAFETY: `ns_view` is winit's live NSView for this window; retaining keeps it alive for as
     // long as the shim holds it.
     unsafe { Retained::retain(h.ns_view.as_ptr() as *mut NSView) }
@@ -55,7 +57,11 @@ fn without_animation(f: impl FnOnce()) {
 
 impl WindowShim {
     pub fn install(window: &Window, _desc: &WindowDesc, _hooks: ShimHooks) -> Self {
-        WindowShim { view: view_of(window), layers: Vec::new(), scale: window.scale_factor() as f32 }
+        WindowShim {
+            view: view_of(window),
+            layers: Vec::new(),
+            scale: window.scale_factor() as f32,
+        }
     }
 
     fn host_layer(&self) -> Option<Retained<CALayer>> {
@@ -67,12 +73,21 @@ impl WindowShim {
 
     /// The frame of `bounds` (window points, top-left origin) in the host layer's coordinates.
     fn frame_in(host: &CALayer, bounds: Rect) -> CGRect {
-        let y = if host.isGeometryFlipped() { bounds.min.y as f64 } else { host.bounds().size.height - bounds.max.y as f64 };
-        CGRect::new(CGPoint::new(bounds.min.x as f64, y), CGSize::new(bounds.width() as f64, bounds.height() as f64))
+        let y = if host.isGeometryFlipped() {
+            bounds.min.y as f64
+        } else {
+            host.bounds().size.height - bounds.max.y as f64
+        };
+        CGRect::new(
+            CGPoint::new(bounds.min.x as f64, y),
+            CGSize::new(bounds.width() as f64, bounds.height() as f64),
+        )
     }
 
     fn relayout(&self) {
-        let Some(host) = self.host_layer() else { return };
+        let Some(host) = self.host_layer() else {
+            return;
+        };
         without_animation(|| {
             for l in &self.layers {
                 l.layer.setFrame(Self::frame_in(&host, l.bounds));
@@ -97,7 +112,13 @@ impl WindowShim {
         None
     }
 
-    pub fn create_layer(&mut self, _window: &Window, id: SurfaceId, desc: OsLayerDesc, scale: f32) -> Option<SurfaceTarget> {
+    pub fn create_layer(
+        &mut self,
+        _window: &Window,
+        id: SurfaceId,
+        desc: OsLayerDesc,
+        scale: f32,
+    ) -> Option<SurfaceTarget> {
         let host = self.host_layer()?;
         // SAFETY: creating a layer on the main thread.
         let layer = unsafe { CAMetalLayer::new() };
@@ -109,13 +130,21 @@ impl WindowShim {
         });
         let ptr = Retained::as_ptr(&layer) as *mut c_void;
         self.scale = scale;
-        self.layers.push(Layer { id, layer, bounds: desc.bounds });
+        self.layers.push(Layer {
+            id,
+            layer,
+            bounds: desc.bounds,
+        });
         Some(SurfaceTarget::CoreAnimationLayer(ptr))
     }
 
     pub fn set_layer_bounds(&mut self, id: SurfaceId, bounds: Rect, _scale: f32) {
-        let Some(host) = self.host_layer() else { return };
-        let Some(l) = self.layers.iter_mut().find(|l| l.id == id) else { return };
+        let Some(host) = self.host_layer() else {
+            return;
+        };
+        let Some(l) = self.layers.iter_mut().find(|l| l.id == id) else {
+            return;
+        };
         l.bounds = bounds;
         without_animation(|| l.layer.setFrame(Self::frame_in(&host, bounds)));
     }
@@ -146,7 +175,9 @@ impl WindowShim {
         // SAFETY: plain property reads.
         let (ts, uptime) = unsafe { (ev.timestamp(), NSProcessInfo::processInfo().systemUptime()) };
         let age = uptime - ts;
-        (0.0..10.0).contains(&age).then(|| clock::time_from_os((ts * 1e9) as u64, (uptime * 1e9) as u64))
+        (0.0..10.0)
+            .contains(&age)
+            .then(|| clock::time_from_os((ts * 1e9) as u64, (uptime * 1e9) as u64))
     }
 
     pub fn set_hit_regions(&mut self, _regions: &[HitRegion]) {}
@@ -154,8 +185,12 @@ impl WindowShim {
     pub fn set_ime(&mut self, _state: Option<&ImeState>) {}
 
     /// One display link per process, started on first use (it follows the active displays).
-    pub fn frame_source(&mut self, _interval: Option<Span>) -> Option<Arc<dyn crate::frame::FrameSource>> {
-        static SOURCE: std::sync::Mutex<Option<Arc<crate::frame::macos::DisplayLinkSource>>> = std::sync::Mutex::new(None);
+    pub fn frame_source(
+        &mut self,
+        _interval: Option<Span>,
+    ) -> Option<Arc<dyn crate::frame::FrameSource>> {
+        static SOURCE: std::sync::Mutex<Option<Arc<crate::frame::macos::DisplayLinkSource>>> =
+            std::sync::Mutex::new(None);
         let mut g = SOURCE.lock().unwrap_or_else(|e| e.into_inner());
         if g.is_none() {
             *g = crate::frame::macos::DisplayLinkSource::new().map(Arc::new);
@@ -194,14 +229,24 @@ pub fn install_app_hooks(quit: Box<dyn Fn() + Send + Sync>) {
     unsafe {
         let cls = objc2::ffi::objc_getClass(name.as_ptr()) as *mut objc2::ffi::objc_class;
         if cls.is_null() {
-            log::warn!("presto-platform: winit's app delegate class is missing; Cmd-Q cannot be vetoed");
+            log::warn!(
+                "presto-platform: winit's app delegate class is missing; Cmd-Q cannot be vetoed"
+            );
             return;
         }
-        let imp: unsafe extern "C" fn() =
-            std::mem::transmute(should_terminate as extern "C" fn(*mut AnyObject, Sel, *mut AnyObject) -> usize);
-        let added = objc2::ffi::class_addMethod(cls, sel!(applicationShouldTerminate:).as_ptr(), Some(imp), c"Q@:@".as_ptr());
+        let imp: unsafe extern "C" fn() = std::mem::transmute(
+            should_terminate as extern "C" fn(*mut AnyObject, Sel, *mut AnyObject) -> usize,
+        );
+        let added = objc2::ffi::class_addMethod(
+            cls,
+            sel!(applicationShouldTerminate:).as_ptr(),
+            Some(imp),
+            c"Q@:@".as_ptr(),
+        );
         if added == objc2::ffi::NO {
-            log::warn!("presto-platform: winit's app delegate already answers applicationShouldTerminate:; Cmd-Q is not routed");
+            log::warn!(
+                "presto-platform: winit's app delegate already answers applicationShouldTerminate:; Cmd-Q is not routed"
+            );
         }
     }
 }

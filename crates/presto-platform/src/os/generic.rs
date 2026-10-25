@@ -3,13 +3,13 @@
 
 use super::ShimHooks;
 use crate::api::{HitRegion, ImeState, OsLayerCommitter, OsLayerDesc, SurfaceTarget, WindowDesc};
+use crate::frame::FrameSource;
 use presto_base::event::PointerSample;
 use presto_base::geom::Rect;
 use presto_base::ids::SurfaceId;
-use crate::frame::FrameSource;
 use presto_base::time::{Span, Time};
-use std::sync::Arc;
 use smallvec::SmallVec;
+use std::sync::Arc;
 use winit::window::{Window, WindowAttributes};
 
 pub struct WindowShim;
@@ -23,7 +23,13 @@ impl WindowShim {
     pub fn surface_target(&self) -> Option<SurfaceTarget> {
         None
     }
-    pub fn create_layer(&mut self, window: &Window, id: SurfaceId, desc: OsLayerDesc, scale: f32) -> Option<SurfaceTarget> {
+    pub fn create_layer(
+        &mut self,
+        window: &Window,
+        id: SurfaceId,
+        desc: OsLayerDesc,
+        scale: f32,
+    ) -> Option<SurfaceTarget> {
         None
     }
     pub fn set_layer_bounds(&mut self, id: SurfaceId, bounds: Rect, scale: f32) {}
@@ -60,7 +66,9 @@ pub fn prepare_attributes(a: WindowAttributes, desc: &WindowDesc) -> WindowAttri
     a
 }
 
-pub fn monitor_work_area(m: &winit::monitor::MonitorHandle) -> Option<presto_base::geom::DeviceRect> {
+pub fn monitor_work_area(
+    m: &winit::monitor::MonitorHandle,
+) -> Option<presto_base::geom::DeviceRect> {
     let _ = m;
     None
 }
