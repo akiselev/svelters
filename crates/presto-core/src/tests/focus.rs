@@ -96,3 +96,14 @@ fn focus_moves_queue_focus_events() {
     assert_eq!(names, [(common::FOCUSIN, t[0]), (common::BLUR, t[0]), (common::FOCUSIN, t[1])]);
     assert!(!d.busy().contains(crate::Busy::EVENTS));
 }
+
+#[test]
+fn the_keymap_hook_runs_before_the_focused_kind() {
+    let (mut d, root) = doc();
+    let t = toggles(&mut d, root, 1)[0];
+    d.focus(t, FocusReason::Keyboard);
+    d.set_key_hook(Box::new(|_, k| k.key == Some(Key::Space)));
+    let out = d.dispatch(&key(Key::Space, Modifiers::default()));
+    assert!(out.handled);
+    assert_eq!(d.get_prop(t, crate::testkinds::TOGGLE_CHECKED), Some(Value::Bool(false)), "the keymap took Space");
+}

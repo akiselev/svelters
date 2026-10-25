@@ -78,6 +78,7 @@ pub struct Document {
     /// Run and image ids are unique per document (the compositor holds them per window).
     pub(crate) run_counter: u64,
     pub(crate) images: crate::cx::ImageSink,
+    pub(crate) key_hook: Option<Box<dyn FnMut(WindowId, &presto_base::event::KeyEvent) -> bool>>,
 }
 
 impl Document {
@@ -110,6 +111,7 @@ impl Document {
             last_change: Revision(0),
             run_counter: 0,
             images: Default::default(),
+            key_hook: None,
         }
     }
 
