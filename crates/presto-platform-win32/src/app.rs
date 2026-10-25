@@ -210,18 +210,18 @@ impl App {
         }
     }
 
-    /// The IME's view of `window`'s text field ([`crate::shadow`]); the edits `f` makes are queued as
-    /// input events. `false` when the window has none.
+    /// The IME's view of `window`'s text field ([`crate::shadow::Field`]); edits `f` makes to a shadow
+    /// are queued as input events. `false` when the window has none.
     pub fn with_text_client(&self, window: WindowId, f: &mut dyn FnMut(&mut dyn TextInputClient)) -> bool {
         let shadow = match self.inner.try_borrow() {
-            Ok(inner) => inner.windows.get(&window).map(|w| w.shadow.clone()),
+            Ok(inner) => inner.windows.get(&window).map(|w| w.field.clone()),
             Err(_) => None,
         };
         let Some(shadow) = shadow else { return false };
         let events = {
-            let Ok(mut client) = shadow.try_borrow_mut() else { return false };
-            f(&mut *client);
-            client.take_events()
+            let Ok(mut field) = shadow.try_borrow_mut() else { return false };
+            f(field.client());
+            field.take_events()
         };
         for ev in events {
             self.enqueue_input(window, InputEvent::Ime(ev));
@@ -450,6 +450,10 @@ impl PlatformCx for Cx<'_> {
 
     fn set_ime(&mut self, id: WindowId, state: Option<ImeState>) {
         window::set_ime(self.app, id, state);
+    }
+
+    fn set_text_input(&mut self, id: WindowId, client: Option<Box<dyn TextInputClient>>) {
+        window::set_text_input(self.app, id, client);
     }
 
     fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool {

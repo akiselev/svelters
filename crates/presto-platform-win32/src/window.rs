@@ -1,6 +1,7 @@
 //! Windows: the class, the window procedure, and the per-window state.
 //!
-//! - **Frames.** With `decorations` the frame is the OS's. Without, the window keeps
+//! - **Frames.** With `decorations` the frame is the OS's; without, a bare popup. With
+//!   `custom_title_bar` the window keeps
 //!   `WS_OVERLAPPEDWINDOW` (so snapping, the shadow and the resize borders stay native) and drops
 //!   only the caption in `WM_NCCALCSIZE`; `WM_NCHITTEST` answers the top resize band and the app's
 //!   [`HitRegion`]s, the caption buttons (`HTMINBUTTON`/`HTMAXBUTTON`/`HTCLOSE`) get the app's
@@ -24,7 +25,8 @@ use crate::hit_test;
 use crate::imm;
 use crate::monitor::{BASE_DPI, dpi_to_scale};
 use crate::pointer::{self, ClientMap, PointerMsg};
-use crate::shadow::ShadowClient;
+use crate::shadow::Field;
+use presto_base::input::TextInputClient;
 use crate::tsf::TsfDocument;
 use crate::util::{hiword, loword, lparam_point, message_time_to_time, wheel_delta, wide};
 use presto_base::accesskit::{self, ActionHandler, ActionRequest, ActivationHandler, TreeUpdate};
@@ -76,8 +78,8 @@ pub(crate) struct Window {
     pub cursor: CursorIcon,
     pub tree: Option<WindowTree>,
     pub dm: Option<Rc<DirectManipulation>>,
-    /// The IME's copy of the focused field.
-    pub shadow: Rc<RefCell<ShadowClient>>,
+    /// The focused field as the IME sees it (the app's client, or a shadow of `ImeState`).
+    pub field: Rc<RefCell<Field>>,
     pub tsf: Option<Rc<TsfDocument>>,
     pub ime: Option<ImeState>,
     pub focused: bool,
@@ -96,9 +98,13 @@ pub(crate) struct Window {
     pub a11y: Option<accesskit_windows::SubclassingAdapter>,
 }
 
-/// Window and extended styles.
+/// Window and extended styles: an OS frame (also kept, minus the caption, for `custom_title_bar`),
+/// or a bare popup without `decorations`.
 pub fn styles(desc: &WindowDesc) -> (WINDOW_STYLE, WINDOW_EX_STYLE) {
     let ex = if desc.os_compositing { WS_EX_NOREDIRECTIONBITMAP } else { WINDOW_EX_STYLE(0) };
+    if !desc.decorations && !desc.custom_title_bar {
+        return (WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, ex);
+    }
     let mut style = WS_OVERLAPPEDWINDOW;
     if !desc.resizable {
         style &= !(WS_THICKFRAME | WS_MAXIMIZEBOX);
@@ -109,6 +115,9 @@ pub fn styles(desc: &WindowDesc) -> (WINDOW_STYLE, WINDOW_EX_STYLE) {
 /// The frame around the client area at `dpi` (left, top, right, bottom), as `AdjustWindowRectEx`
 /// computes it; custom frames have no top (the caption is gone).
 pub fn frame_insets(style: WINDOW_STYLE, ex: WINDOW_EX_STYLE, dpi: u32, custom_frame: bool) -> (i32, i32, i32, i32) {
+    if style.contains(WS_POPUP) && !style.contains(WS_THICKFRAME) {
+        return (0, 0, 0, 0);
+    }
     let mut r = RECT::default();
     let _ = unsafe { AdjustWindowRectExForDpi(&mut r, style, false, ex, dpi) };
     let top = if custom_frame { 0 } else { -r.top };
@@ -299,7 +308,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, Platfo
                 id,
                 scale,
                 size: DeviceSize { w: 0, h: 0 },
-                custom_frame: !desc.decorations,
+                custom_frame: desc.custom_title_bar,
                 resizable: desc.resizable,
                 min_size: desc.min_size,
                 max_size: desc.max_size,
@@ -307,7 +316,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, Platfo
                 cursor: CursorIcon::Default,
                 tree,
                 dm,
-                shadow: Rc::new(RefCell::new(ShadowClient::default())),
+                field: Rc::new(RefCell::new(Field::default())),
                 tsf: None,
                 ime: None,
                 focused: false,
@@ -323,10 +332,10 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, Platfo
             },
         );
     }
-    if desc.decorations {
+    if desc.decorations && !desc.custom_title_bar {
         apply_dark_title_bar(hwnd, system_theme());
     }
-    let insets = frame_insets(style, ex, dpi, !desc.decorations);
+    let insets = frame_insets(style, ex, dpi, desc.custom_title_bar);
     let client = ((desc.size.w * scale.0).round() as i32, (desc.size.h * scale.0).round() as i32);
     let (ow, oh) = outer_for_client(client, insets);
     let mut flags = SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED;
@@ -360,7 +369,7 @@ pub(crate) fn set_ime(app: &App, id: WindowId, state: Option<ImeState>) {
         let transition = ime_transition(w.ime.is_some(), state.is_some());
         w.ime = state.clone();
         if let Some(s) = &state {
-            w.shadow.borrow_mut().set_state(s);
+            w.field.borrow_mut().shadow().set_state(s);
         }
         if state.is_some() && w.tsf.is_none() {
             if let Some(tsf) = app.tsf.as_ref() {
@@ -389,18 +398,56 @@ pub(crate) fn set_ime(app: &App, id: WindowId, state: Option<ImeState>) {
     }
 }
 
+/// The app hands over its editor: TSF and `WM_IME_REQUEST` read and edit it directly (no
+/// `ImeEvent`s). `None` turns text input off.
+pub(crate) fn set_text_input(app: &App, id: WindowId, client: Option<Box<dyn TextInputClient>>) {
+    let Some(client) = client else {
+        set_ime(app, id, None);
+        return;
+    };
+    let area = client.selected_range().and_then(|r| client.bounds_for_range(r)).unwrap_or_default();
+    let purpose = client.purpose();
+    let (doc, refocus) = {
+        let mut inner = app.inner.borrow_mut();
+        let Some(w) = inner.windows.get_mut(&id) else { return };
+        w.ime = Some(ImeState::new(area, purpose));
+        *w.field.borrow_mut() = Field::Client(client);
+        if w.tsf.is_none() {
+            if let Some(tsf) = app.tsf.as_ref() {
+                w.tsf = tsf.create_document(w.hwnd, id, app.client_access()).ok().map(Rc::new);
+            }
+            if let Some(d) = &w.tsf {
+                d.set_scale(w.scale.0);
+            }
+        }
+        let want = w.focused && w.tsf.is_some();
+        let refocus = w.focused && want != w.ime_focused;
+        if w.focused {
+            w.ime_focused = want;
+        }
+        (w.tsf.clone(), refocus)
+    };
+    if let Some(doc) = &doc {
+        doc.set_field(area, purpose);
+        doc.sync();
+    }
+    if refocus && let Some(tsf) = app.tsf.as_ref() {
+        tsf.focus(doc.as_deref());
+    }
+}
+
 /// Commits or cancels the composition; `false` without a TSF document.
 pub(crate) fn end_composition(app: &App, id: WindowId, commit: bool) -> bool {
-    let Some((doc, shadow)) = app.inner.borrow().windows.get(&id).and_then(|w| w.tsf.clone().map(|d| (d, w.shadow.clone())))
+    let Some((doc, field)) = app.inner.borrow().windows.get(&id).and_then(|w| w.tsf.clone().map(|d| (d, w.field.clone())))
     else {
         return false;
     };
     if !commit {
         // Drop the preedit first, so the TIP's termination has nothing left to commit.
         let events = {
-            let mut s = shadow.borrow_mut();
-            s.cancel_composition();
-            s.take_events()
+            let mut f = field.borrow_mut();
+            f.cancel_composition();
+            f.take_events()
         };
         for ev in events {
             app.enqueue_input(id, InputEvent::Ime(ev));
@@ -834,9 +881,10 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             Some(0)
         }
         WM_MOVE => {
-            let mut r = RECT::default();
-            let _ = unsafe { GetWindowRect(hwnd, &mut r) };
-            app.window_event(id, WindowEvent::Moved { x: r.left, y: r.top });
+            // The client area's top-left on screen, in global points.
+            let (x, y) = lparam_point(lparam.0);
+            let s = st.scale.0;
+            app.window_event(id, WindowEvent::Moved { x: (x as f32 / s).round() as i32, y: (y as f32 / s).round() as i32 });
             Some(0)
         }
         WM_GETDPISCALEDSIZE => {
@@ -979,6 +1027,10 @@ mod tests {
         let (s, ex) = styles(&fixed);
         assert!(!s.contains(WS_THICKFRAME) && !s.contains(WS_MAXIMIZEBOX));
         assert!(!ex.contains(WS_EX_NOREDIRECTIONBITMAP));
+        let bare = WindowDesc { decorations: false, ..WindowDesc::default() };
+        assert!(styles(&bare).0.contains(WS_POPUP));
+        let custom = WindowDesc { decorations: false, custom_title_bar: true, ..WindowDesc::default() };
+        assert!(styles(&custom).0.contains(WS_OVERLAPPEDWINDOW), "custom title bars keep the OS frame");
     }
 
     #[test]
