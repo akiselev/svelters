@@ -13,10 +13,11 @@
 //!   actions name the island's tree (the island maps them back for egui);
 //! - `screenshot`: presto's render of the window, cropped to the island.
 
+use crate::a11y::AkNode;
 use crate::harness::Harness;
 use presto::seams::DocumentApi;
 use presto_base::accesskit::TreeId;
-use presto_base::geom::Vec2;
+use presto_base::geom::{Rect, Vec2};
 use svelters_automation::{A11yNode, Driver};
 use svelters_egui::scene::SceneHandle;
 
@@ -47,15 +48,19 @@ impl<D: DocumentApi + 'static> PrestoDriver<D> {
         self
     }
 
-    /// The island's origin in window points: where its subtree's root sits (`None`: not grafted yet).
-    pub fn origin(&self) -> Option<Vec2> {
+    /// The island's window-space bounds: its subtree root's (`None`: not grafted yet).
+    pub fn island_bounds(&self) -> Option<Rect> {
         self.harness
             .a11y()
             .walk()
             .into_iter()
             .find(|n| n.tree == self.island && n.parent.is_none_or(|p| p.0 != self.island))
             .and_then(|n| n.bounds)
-            .map(|b| Vec2::new(b.min.x, b.min.y))
+    }
+
+    /// The island's origin in window points.
+    pub fn origin(&self) -> Option<Vec2> {
+        self.island_bounds().map(|b| Vec2::new(b.min.x, b.min.y))
     }
 
     fn to_window(&self, e: egui::Event) -> egui::Event {
@@ -120,17 +125,17 @@ impl<D: DocumentApi + 'static> Driver for PrestoDriver<D> {
 
     fn a11y_nodes(&self) -> Vec<A11yNode> {
         let o = self.origin().unwrap_or(Vec2::ZERO);
-        self.harness
-            .root()
-            .children_recursive()
-            .filter(|n| n.tree() == self.island)
+        let tree = self.harness.a11y();
+        tree.walk()
+            .into_iter()
+            .filter(|n| n.tree == self.island)
             .filter_map(|n| {
-                let b = n.bounds()?;
+                let b = n.bounds?;
                 Some(A11yNode {
-                    node: n.id(),
-                    tree: n.tree(),
+                    node: n.id,
+                    tree: n.tree,
                     role: n.role(),
-                    label: n.label(),
+                    label: AkNode { info: n, tree }.label(),
                     author_id: n.author_id().map(str::to_owned),
                     rect: egui::Rect::from_min_max(
                         egui::pos2(b.min.x - o.x, b.min.y - o.y),
@@ -148,21 +153,12 @@ impl<D: DocumentApi + 'static> Driver for PrestoDriver<D> {
             [img.width as usize, img.height as usize],
             rgba.as_raw(),
         );
-        let scale = self.harness.scale();
-        let o = self.origin().unwrap_or(Vec2::ZERO);
-        let island = self
-            .harness
-            .a11y()
-            .walk()
-            .into_iter()
-            .find(|n| n.tree == self.island && n.parent.is_none_or(|p| p.0 != self.island))
-            .and_then(|n| n.bounds);
-        Some(match island {
-            Some(b) if o != Vec2::ZERO || b.width() * scale < img.width as f32 => full.region(
+        Some(match self.island_bounds() {
+            Some(b) => full.region(
                 &egui::Rect::from_min_max(egui::pos2(b.min.x, b.min.y), egui::pos2(b.max.x, b.max.y)),
-                Some(scale),
+                Some(self.harness.scale()),
             ),
-            _ => full,
+            None => full,
         })
     }
 
