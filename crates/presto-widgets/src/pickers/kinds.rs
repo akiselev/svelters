@@ -279,6 +279,16 @@ impl w::Kind for CalendarKind {
     fn kind_spec(&self) -> &'static KindSpec {
         &CALENDAR
     }
+    // drawn from `PickerLook` (theme tokens), not from `::part` styles; a leaf: no children to place or fold
+    fn parts() -> &'static [&'static str] {
+        &[]
+    }
+    fn places_children() -> bool {
+        false
+    }
+    fn folds_children() -> bool {
+        false
+    }
 
     fn set_prop(&mut self, prop: PropId, v: &w::Value) -> Result<(), PropError> {
         let before = self.props.clone();
@@ -414,6 +424,16 @@ impl w::Kind for ColorEditorKind {
     }
     fn kind_spec(&self) -> &'static KindSpec {
         &COLOR_EDITOR
+    }
+    // drawn from `PickerLook` (theme tokens), not from `::part` styles; a leaf: no children to place or fold
+    fn parts() -> &'static [&'static str] {
+        &[]
+    }
+    fn places_children() -> bool {
+        false
+    }
+    fn folds_children() -> bool {
+        false
     }
 
     fn set_prop(&mut self, prop: PropId, v: &w::Value) -> Result<(), PropError> {

@@ -268,7 +268,9 @@ mod tests {
         assert_eq!(ready(open_files(None)), Ok(Some(vec!["/a.step".to_string(), "/b.step".to_string()])));
         assert_eq!(ready(open_file(None)), Ok(None), "cancelled");
         let o = FileDialogOptions { file_name: Some("x.kicad_pcb".into()), ..Default::default() };
-        assert_eq!(ready(save_file(Some(o))), Ok(Some("/out/x.kicad_pcb".to_string())));
+        // the backend joins with the OS separator (`\` on Windows)
+        let saved = PathBuf::from("/out").join("x.kicad_pcb").to_string_lossy().into_owned();
+        assert_eq!(ready(save_file(Some(o))), Ok(Some(saved)));
         let m = MessageBoxOptions { labels: Some(vec!["Save".into(), "Discard".into()]), ..Default::default() };
         assert_eq!(ready(message_box(m)), Ok("Discard".to_string()));
         set_dialog_backend(None);
