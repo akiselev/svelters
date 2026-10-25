@@ -1,7 +1,8 @@
 //! The JS-facing kinds ([`crate::surface`]) on presto-core's kinds, and the wire ids the ABI and
 //! `presto.json` speak.
 //!
-//! **Kinds.** A surface kind whose widget presto-widgets has written (`button` today) is registered
+//! **Kinds.** A surface kind whose widget presto-widgets has written (the Tier 0 controls and
+//! containers; not yet `window`, `slider`, `text-edit` and the inline runs) is registered
 //! through `presto_widgets::host::register`; every other concrete kind gets a core kind synthesized
 //! from its surface spec ([`Placeholder`]: the props, signals and slots are real tree members, the
 //! node draws nothing) until its widget lands. Abstract bases (`Widget`, `Run`) have no core kind.
@@ -135,8 +136,27 @@ pub const COMMON_ALIASES: &[(&str, &str, bool)] = &[
 
 /// The kinds presto-widgets has written, registered through its host bridge.
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
+    use presto_widgets::controls as c;
     use presto_widgets::host::register;
-    Ok(vec![register::<presto_widgets::controls::Button>(reg)?])
+    Ok(vec![
+        register::<c::Button>(reg)?,
+        register::<c::box_::FlexBox>(reg)?,
+        register::<c::checkbox::Checkbox>(reg)?,
+        register::<c::frame::Frame>(reg)?,
+        register::<c::grid::Grid>(reg)?,
+        register::<c::hyperlink::Hyperlink>(reg)?,
+        register::<c::icon::Icon>(reg)?,
+        register::<c::image::Image>(reg)?,
+        register::<c::label::Label>(reg)?,
+        register::<c::progress::ProgressBar>(reg)?,
+        register::<c::radio::RadioButton>(reg)?,
+        register::<c::separator::Separator>(reg)?,
+        register::<c::sides::Sides>(reg)?,
+        register::<c::spinner::Spinner>(reg)?,
+        register::<c::stack::Stack>(reg)?,
+        register::<c::switch::Switch>(reg)?,
+        register::<c::toggle_button::ToggleButton>(reg)?,
+    ])
 }
 
 /// The core type of a surface type (lists are lists, colours colours).
@@ -187,10 +207,7 @@ pub fn signal_wire(decl: &KindSpec, s: &SignalSpec) -> svl_id {
 }
 
 pub fn method_wire(decl: &KindSpec, m: &MethodSpec) -> svl_id {
-    let params: Vec<&str> = m.params.iter().map(|(_, t)| core_type(*t).name()).collect();
-    let ret = m.ret.map_or("void", |t| core_type(t).name());
-    let sig = format!("({}){ret}", params.join(","));
-    core::fingerprint(&["method", &decl_key(decl), m.name, &sig])
+    core::MethodId::of(&decl_key(decl), m.name, m.ret.map_or("void", |t| core_type(t).name())).0
 }
 
 pub fn slot_wire(decl: &KindSpec, s: &SlotSpec) -> svl_id {
@@ -255,7 +272,10 @@ fn synthesize(k: &'static KindSpec) -> &'static core::KindSpec {
             if p.native {
                 c = c.native();
             }
-            props.push(c);
+            if p.nullable {
+                c = c.nullable();
+            }
+            props.push(c.doc(p.doc));
         }
     }
     let mut signals: Vec<core::SignalSpec> = Vec::new();
@@ -270,12 +290,33 @@ fn synthesize(k: &'static KindSpec) -> &'static core::KindSpec {
                     f = f.union(flag);
                 }
             }
-            signals.push(core::SignalSpec::new(s.name, signal_arg_type(s.args), f));
+            signals.push(core::SignalSpec::new(s.name, signal_arg_type(s.args), f).args(core_args(s.args)).doc(s.doc));
+        }
+    }
+    let mut methods: Vec<core::MethodSpec> = Vec::new();
+    for decl in k.chain() {
+        for m in decl.methods {
+            if !methods.iter().any(|q| q.name == m.name) {
+                let ret = m.ret.map(|t| core::ArgSpec::new("return", core_type(t)));
+                methods.push(core::MethodSpec::new(m.name, core_args(m.params), ret).doc(m.doc));
+            }
         }
     }
     let owner = slot_owner(k);
     let slots: Vec<core::SlotSpec> = owner.map_or(&[][..], |o| &o.slots[1..]).iter().map(|s| core::SlotSpec { name: s.name, single: !s.many }).collect();
     let text_prop = k.text_content.filter(|t| props.iter().any(|p| p.name == *t));
+    // egui's name sources, as far as they name a source (descriptions like "tooltip (when …)" do not)
+    let a11y = k.chain().find(|c| !c.a11y.name_from.is_empty()).map_or(&[][..], |c| c.a11y.name_from);
+    let mut name_from: Vec<core::NameSource> = Vec::new();
+    for src in a11y {
+        let n = match *src {
+            "accessible-name" => core::NameSource::AriaLabel,
+            t if Some(t) == text_prop => core::NameSource::Text,
+            t if props.iter().any(|p| p.name == t) => core::NameSource::Prop(props.iter().find(|p| p.name == t).expect("found").name),
+            _ => continue,
+        };
+        name_from.push(n);
+    }
     Box::leak(Box::new(core::KindSpec {
         name: k.tag.expect("concrete kind"),
         props: Box::leak(props.into_boxed_slice()),
@@ -285,7 +326,18 @@ fn synthesize(k: &'static KindSpec) -> &'static core::KindSpec {
         text_prop,
         focusable: k.signals.iter().any(|s| s.name == "clicked") || matches!(k.a11y.role, "TextInput" | "Slider"),
         container: owner.is_some(),
+        methods: Box::leak(methods.into_boxed_slice()),
+        name_from: if name_from.is_empty() { core::kind::DEFAULT_NAME_FROM } else { Box::leak(name_from.into_boxed_slice()) },
+        doc: k.doc,
     }))
+}
+
+/// Named, typed arguments in core's form.
+fn core_args(args: &[(&'static str, ValueType)]) -> &'static [core::ArgSpec] {
+    if args.is_empty() {
+        return &[];
+    }
+    Box::leak(args.iter().map(|(n, t)| core::ArgSpec::new(n, core_type(*t))).collect::<Vec<_>>().into_boxed_slice())
 }
 
 /// The node value of a synthesized kind: lays out by the default rules, draws nothing.
@@ -432,7 +484,8 @@ mod tests {
         // inherited members have one id on every kind
         let label = k.by_tag("label").unwrap();
         assert_eq!(label.prop_named("enabled").unwrap().wire, button.prop_named("enabled").unwrap().wire);
-        assert!(!label.hosted);
+        assert!(label.hosted);
+        assert!(!k.by_tag("slider").unwrap().hosted, "slider is a placeholder until presto-widgets has it");
         assert!(k.by_tag("window").unwrap().core.is_some());
     }
 }

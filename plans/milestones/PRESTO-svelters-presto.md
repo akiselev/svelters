@@ -63,12 +63,30 @@ only run: 4 passed). Tests updated (written, not run): `tests/common` queues nat
 reports it (`target_event`, a set plus a reported change), `tests/spec.rs` checks the hash ids and Q2 names
 instead of the table, `kinds.rs` has a unit test.
 
+### Session 2, second part: presto-base e58a6d8a (CORE-2's additions, presto-widgets' Tier 0)
+
+- Merged `origin/ci/presto-base` at e58a6d8a. presto-widgets now has 17 Tier 0 kinds; all are registered
+  (`kinds::register_hosted`). Still placeholders: `window`, `slider`, `text-edit` and the inline runs. A surface
+  member a hosted kind lacks falls to `Side` (props) or never fires (signals).
+- Synthesized core specs now carry CORE's new fields: prop `nullable`/`doc`, signal `args`/`doc`, `methods`
+  (`ArgSpec`s), `name_from` (egui's sources mapped to `NameSource`), kind `doc`. Method wire ids are
+  `MethodId::of(decl, name, ret)`.
+- Q4 wired: `present` attaches the JS-built `window` node with `Document::attach_window(WindowId(handle),
+  node, default size, scale 1)`; freeing a window root closes its window (`close_window`), and
+  `window_closed` frees the handle. The driver resizes with the real size when it opens the OS window.
+- A hosted kind's own methods go through `Document::call` (their events are queued for `pump`).
+- presto-widgets' `label` is a leaf, so inserting runs (`<label>a <b>b</b></label>`) into it now fails with
+  an error that says so. No Tier 0 fixture does it. **Q7** (recommendation): presto-widgets' label takes
+  run children (its `rich` module), or presto-widgets keeps a `rich-label` kind that svelters-presto maps a
+  label with runs onto.
+- Not done: dropping `surface/tier0.rs` (Q3). Core's `KindSpec` has no base chain and presto-widgets' names
+  are core's, not egui's, so the JS-facing surface still comes from the table. Once WIDGETS names follow Q2,
+  `spec.rs` can generate from the registry plus a `Widget` table.
+
 ## Not done
 
 - **`svelters-presto-run`**: `crates/presto` and `crates/presto-test` are still one-line stubs in `ci/presto-base`
   (APP-TEST not merged). The `Driver` trait is the seam; `PrestoBackend::with_text` takes presto-text's system.
-- **Windows (Q4)**: `present` only records the window; once CORE's `attach_window` lands, `present` asks the
-  driver for an OS window and attaches the JS-created node as its root (then focus, layout, `bounds` work).
 - **Q3**: when CORE's `KindSpec` has docs, methods, named args, nullable and a11y name sources, `surface/tier0.rs`
   goes and `spec.rs` reads the registry; presto-widgets' remaining Tier 0 kinds replace the placeholders as they
   land (add each to `kinds::register_hosted`; members it lacks fall to `Side` automatically).
@@ -90,7 +108,7 @@ instead of the table, `kinds.rs` has a unit test.
 1. When APP-TEST's `presto::App` is in `ci/presto-base`: `src/bin/svelters-presto-run.rs` implementing `Driver`
    (open windows for `windows()`, feed input through `PrestoBackend::dispatch`, `pump` after frames, presto-text
    via `with_text` and `presto_widgets::host::install_text_system`).
-2. When CORE's `attach_window` lands (Q4): wire `present`/`close` to it.
+2. `bounds` and `scroll-into-view` on attached windows (layout runs in `Document::frame`).
 3. As presto-widgets lands kinds: add them to `kinds::register_hosted`, regenerate presto.json.
 4. When CORE's `KindSpec` grows (Q3): drop `surface/tier0.rs`, generate from the registry.
 

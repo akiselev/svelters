@@ -15,8 +15,8 @@ use crate::deliver::Output;
 use crate::kinds::{KindMap, Kinds, PropTarget};
 use crate::surface::{self, ColorScheme, Visual};
 use crate::value;
-use presto_base::geom::Size;
-use presto_base::ids::{NodeId, Revision};
+use presto_base::geom::{Scale, Size};
+use presto_base::ids::{NodeId, Revision, WindowId};
 use presto_base::text::{TextMeasure, TextSpec};
 use presto_core::{Document, ListenFlags, StyleInput};
 use std::cell::{Cell, RefCell};
@@ -267,6 +267,7 @@ impl PrestoBackend {
     /// The driver closed window `h` (by `close` or by the user after `close-request`).
     pub fn window_closed(&self, h: svl_handle) {
         self.0.windows.borrow_mut().retain(|&w| w != h);
+        self.free(h);
         if let Some(host) = self.host() {
             host.on_destroyed(h, SVL_GONE_CLOSED);
         }
@@ -416,6 +417,9 @@ impl PrestoBackend {
         let (c, _) = self.live(child)?;
         let b = before.map(|b| self.node(b).ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))).transpose()?;
         let s = pm.slot(slot).ok_or_else(|| format!("unknown slot id {slot} on <{}>", pm.tag()))?;
+        if pm.hosted && !pm.slots.is_empty() && pm.core.and_then(|k| self.0.kinds.registry().get(k)).is_some_and(|e| !e.spec.container) {
+            return Err(format!("<{}> takes no children on presto yet: presto-widgets' {} is a leaf (its text goes in `text`)", pm.tag(), pm.tag()));
+        }
         self.0.doc.borrow_mut().insert(p, c, b, s).map_err(|e| e.to_string())
     }
 
@@ -450,6 +454,11 @@ impl PrestoBackend {
         freed
     }
 
+    /// The presto window of a presented `window` handle.
+    pub fn window_id(h: svl_handle) -> WindowId {
+        WindowId(h as u32)
+    }
+
     /// Frees the node behind `h` and its handle. Children JS knows are detached first, not freed:
     /// the ABI leaves them to the host (presto-core's `destroy` takes the subtree).
     pub(crate) fn free(&self, h: svl_handle) {
@@ -460,7 +469,10 @@ impl PrestoBackend {
             for c in known {
                 let _ = doc.remove(n, c);
             }
-            doc.destroy(n);
+            match doc.window_of(n).filter(|&w| doc.window_root(w) == Some(n)) {
+                Some(w) => doc.close_window(w),
+                None => doc.destroy(n),
+            }
         }
         self.0.side.borrow_mut().retain(|&(x, _), _| x != n);
         self.0.styles.borrow_mut().remove(&n);
@@ -536,6 +548,15 @@ impl Backend for PrestoBackend {
                 let mut ws = self.0.windows.borrow_mut();
                 if !ws.contains(&h) {
                     ws.push(h);
+                    // the JS-built node becomes the window's root (its id is the handle's); the driver
+                    // opens the OS window and reports its real size with `resize_window`
+                    let (n, km) = self.live(h)?;
+                    let num = |name: &str, d: f64| match km.prop_named(name).map(|p| p.target) {
+                        Some(PropTarget::Native(p)) => self.0.doc.borrow().get_prop(n, p).and_then(|v| v.as_f64()).unwrap_or(d),
+                        _ => d,
+                    };
+                    let size = Size::new(num("default-width", 480.0) as f32, num("default-height", 360.0) as f32);
+                    self.0.doc.borrow_mut().attach_window(Self::window_id(h), n, size, Scale(1.0)).map_err(|e| e.to_string())?;
                 }
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
@@ -547,6 +568,22 @@ impl Backend for PrestoBackend {
                     return Err(format!("<{}>.request-focus(): the node is not in a window", km.tag()));
                 }
                 doc.focus(n, presto_core::FocusReason::Programmatic);
+            }
+            // a presto-widgets kind's own method (presto-core `Kind::call`)
+            (_, name) if km.hosted && km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.method_named(name)).is_some() => {
+                let (n, _) = self.live(h)?;
+                let mid = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.method_named(name)).expect("checked");
+                let mut core_args = Vec::new();
+                for (a, (pname, ty)) in args.iter().zip(m.spec.params) {
+                    let v = value::from_abi(a, *ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
+                    core_args.extend(value::to_core(v));
+                }
+                let (ret, events) = self.0.doc.borrow_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;
+                self.queue(Output { events, ..Output::default() });
+                return Ok(match (ret, m.spec.ret) {
+                    (Some(v), Some(ty)) => value::to_abi(&value::from_core(&v), ty),
+                    _ => Value::Null,
+                });
             }
             // scrolling a node into view needs presto-core's scroll model on a laid-out window
             (_, other) => return Err(format!("<{}>.{other}() is not implemented on presto yet", km.tag())),

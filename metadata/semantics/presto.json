@@ -19,7 +19,7 @@
   "framework": "presto (svelters-presto; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "presto-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "40e1357eca51f4fa"
+    "spec_hash": "7ae3f18e8fc020c7"
   },
   "inline_text": {
     "kind": "span",
@@ -425,7 +425,7 @@
         "children": 3000409185
       },
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Button": {
       "a11y": {
@@ -931,7 +931,7 @@
       },
       "slot_ids": {},
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Code": {
       "a11y": {
@@ -1163,7 +1163,7 @@
         "children": 2021429405
       },
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Grid": {
       "a11y": {
@@ -1364,7 +1364,7 @@
         "children": 1481297698
       },
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Hyperlink": {
       "a11y": {
@@ -1490,7 +1490,7 @@
       },
       "slot_ids": {},
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Icon": {
       "a11y": {
@@ -1752,7 +1752,7 @@
       },
       "slot_ids": {},
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Image": {
       "a11y": {
@@ -1850,7 +1850,7 @@
       },
       "slot_ids": {},
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Italic": {
       "a11y": {
@@ -2185,7 +2185,7 @@
         "runs": 2434408757
       },
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "ProgressBar": {
       "a11y": {
@@ -2445,7 +2445,7 @@
       "signals": {},
       "slot_ids": {},
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "RadioButton": {
       "a11y": {
@@ -2663,7 +2663,7 @@
       },
       "slot_ids": {},
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Run": {
       "a11y": {
@@ -2830,7 +2830,7 @@
       "signals": {},
       "slot_ids": {},
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Sides": {
       "a11y": {
@@ -2945,7 +2945,7 @@
         "children": 3701678262
       },
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Slider": {
       "a11y": {
@@ -3607,7 +3607,7 @@
       "signals": {},
       "slot_ids": {},
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Stack": {
       "a11y": {
@@ -3735,7 +3735,7 @@
         "children": 320460426
       },
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Switch": {
       "a11y": {
@@ -3869,7 +3869,7 @@
       },
       "slot_ids": {},
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "TextEdit": {
       "a11y": {
@@ -3921,8 +3921,8 @@
         "request-focus": {
           "dispatch": "generated",
           "doc": "Moves keyboard focus here on the next frame.",
-          "fingerprint": "1ae43117",
-          "id": 451162391,
+          "fingerprint": "846bea56",
+          "id": 2221664854,
           "native": "request-focus",
           "params": [],
           "returns": {
@@ -4349,7 +4349,7 @@
       },
       "slot_ids": {},
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Widget": {
       "a11y": {
@@ -4374,8 +4374,8 @@
         "scroll-into-view": {
           "dispatch": "generated",
           "doc": "`scroll-into-view(align?)`: scrolls the scroll areas around the node so it is visible on the next frame, innermost first; `align` is `nearest` (the default: the least scrolling, keeping the area's `scroll-margin`) or `center`. Qt's `ensureWidgetVisible`, the DOM's `scrollIntoView`.",
-          "fingerprint": "bfe06a0b",
-          "id": 3219155467,
+          "fingerprint": "254d24aa",
+          "id": 625812650,
           "native": "scroll-into-view",
           "params": [],
           "returns": {
@@ -5723,8 +5723,8 @@
         "close": {
           "dispatch": "generated",
           "doc": "Closes the window as the user would (no close-request).",
-          "fingerprint": "57d76bbb",
-          "id": 1473735611,
+          "fingerprint": "c1e8335a",
+          "id": 3253220186,
           "native": "close",
           "params": [],
           "returns": {
@@ -5735,8 +5735,8 @@
         "present": {
           "dispatch": "generated",
           "doc": "Shows the window (the first one presented is the root viewport).",
-          "fingerprint": "f9242d88",
-          "id": 4179897736,
+          "fingerprint": "fcb6c181",
+          "id": 4239835521,
           "native": "present",
           "params": [],
           "returns": {
