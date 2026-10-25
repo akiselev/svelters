@@ -120,3 +120,42 @@ fn headless_frame_renders_and_reports_gpu_completion() {
     assert_eq!(at(8, 16), [255, 0, 0, 255], "inside the quad");
     assert_eq!(at(56, 16), [255, 255, 255, 255], "the clear colour outside it");
 }
+
+#[test]
+fn adapter_selection_and_limits_hooks_are_used() {
+    let clock: Arc<dyn Clock> = Arc::new(InstantClock(Instant::now()));
+    let (tx, _rx) = mpsc::channel();
+    let shared = Arc::new(std::sync::RwLock::new(None));
+    let mut gpu = GpuBackend::new(
+        presto_compositor::gpu::create_instance(None),
+        wgpu::PowerPreference::LowPower,
+        shared.clone(),
+        seams::presto_renderer(),
+        Arc::new(NoGlyphs),
+        tx,
+        clock,
+        1,
+    );
+    let seen = Arc::new(Mutex::new(0usize));
+    let s = seen.clone();
+    let limits_called = Arc::new(Mutex::new(false));
+    let l = limits_called.clone();
+    gpu.set_selection(
+        Some(Arc::new(move |adapters: &[wgpu::Adapter]| {
+            *s.lock().unwrap() = adapters.len();
+            adapters.first().cloned().ok_or_else(|| "no adapters".to_string())
+        })),
+        Some(Arc::new(move |a: &wgpu::Adapter| {
+            *l.lock().unwrap() = true;
+            a.limits()
+        })),
+    );
+    if !gpu.attach_offscreen(WindowId(1), SurfaceKey::Main, DeviceSize { w: 8, h: 8 }) {
+        assert_eq!(*seen.lock().unwrap(), 0, "the hook saw no adapter");
+        eprintln!("no GPU adapter: skipping");
+        return;
+    }
+    assert!(*seen.lock().unwrap() >= 1);
+    assert!(*limits_called.lock().unwrap());
+    assert!(shared.read().unwrap().is_some(), "the device is published");
+}

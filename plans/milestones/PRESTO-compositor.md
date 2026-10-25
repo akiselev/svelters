@@ -20,7 +20,9 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   deadline), then every queued message, then what is due. The `Instance` is created on the calling
   thread so the main thread creates surfaces at once; the device is created with the first surface.
 - **GPU** (`gpu.rs`): backends DX12 only on Windows, Metal on Apple, Vulkan then GL elsewhere; adapters
-  ranked by power preference, software (lavapipe/WARP/llvmpipe) last; non-sRGB format; Fifo,
+  ranked by power preference, software (lavapipe/WARP/llvmpipe) last, or chosen by
+  `CompositorConfig::adapter` (cadatomic's `adapter::select`) with `CompositorConfig::limits` for
+  `required_limits`, the same after device loss; non-sRGB format; Fifo,
   `desired_maximum_frame_latency = 1`; a persistent target per surface, encode first and **acquire late**,
   copy damage ∪ what older images missed (`DamageHistory`, `swap_images` = 4) into the image; surfaces
   without `COPY_DST` redraw whole; `Outdated` reconfigures, `Suboptimal` reconfigures after present;
