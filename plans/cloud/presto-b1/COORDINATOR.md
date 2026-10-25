@@ -47,6 +47,10 @@ brief's signatures until the wave-1 skeletons are merged into `ci/presto-base`.
 | CORE-2 | `ci/presto-core-2` | `session_01QDYxkmxLL2rFtDDfSbu4ow` | style table, DESC_NONPASSIVE, CORE's not-done list (CORE's a07c3189 wins on overlap) |
 | BERTH | berth `claude/presto-berth` | `session_01FfrTeoE8knLYGyFeFf9Ss3` | presto_berth |
 | QUIRE | quire `claude/presto-quire` | `session_01VFabqgKPiq5AmCkua2ntGG` | presto_quire |
+| CADATOMIC (b3) | cadatomic `claude/presto-adoption` | `session_01EHpySAKp1WzwLa6e6y6vV8` | W-D1, brief `plans/cloud/presto-b3/LANE-cadatomic.md` |
+| CANVAS (b3) | `ci/presto-canvas` | `session_01RS7HGPNSY8j4mR36Fty4ZJ` | W-V1/W-V2 presto side |
+| TEST-V2 (b3) | `ci/presto-test-v2` | `session_01FZ1DXSABohru158URTe1mR` | W-T2 |
+| CONSOLIDATION-1 | `ci/presto-integration` | `session_016SQDMJubiR73cQAPuXCT1k` | brief `CONSOLIDATION-1.md` |
 | CORE-3 | `ci/presto-core-3` | `session_012X4RdtAUrgfNuRfD1Vh4ge` | WIDGETS-BASIC core requests (a)–(j) plus the shared drag/anchor members |
 
 Merged into `ci/presto-base` so far: platform skeleton, frame-anim, compositor skeleton, core (full batch-1 scope and
@@ -100,3 +104,4 @@ when the five svelters workflows plus `presto` are green.
 - WIDGETS-BASIC stopped at 03eb08df (merged). Open: cancelable `changed` after CORE-3's two-phase dispatch (message session_012eauTkCP7to4arcKCPJvRq), OutsidePress core half (CORE-3), questions 1–5 in its record; its tests have no CI result yet.
 - CORE-3 d39eaf4b merged. Sync delivery decided (coordinator, 2026-10-25), overruling two-phase: the lent document (`set_sync_delivery(FnMut(&mut Document, &JsEvent) -> Outcome)`, deliverer taken out for the call), because a kind's own cancelable signals are raised inside the native default and two-phase couldn't prevent them.
 - 19:53 UTC: consolidation 1 launched, session_016SQDMJubiR73cQAPuXCT1k, branch ci/presto-integration, brief CONSOLIDATION-1.md.
+- 19:55 UTC: wave-3 lanes CADATOMIC, CANVAS, TEST-V2 launched. Not launched: wgpu fork patches P1–P4 (a fork is made only when a release blocks work; none does yet). CORE-3 e2b96936 merged (96426b4a).
