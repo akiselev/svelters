@@ -18,7 +18,8 @@
 //! Invariant 6 (revisions of native-owned properties) belongs to presto-core's commit and is not
 //! modelled here.
 //!
-//! Reproduce a failure with `PRESTO_SEED=<n>`; `PRESTO_ITERATIONS=<k>` widens [`seeds`].
+//! Reproduce a failure with `PRESTO_SEED=<n>` (and `PRESTO_TRACE=1` for the timeline);
+//! `PRESTO_ITERATIONS=<k>` widens [`seeds`].
 
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap};
@@ -31,7 +32,8 @@ use crate::clock::{Action, ClockConfig, ClockStats, DeadlineMode, FrameClock, Si
 use crate::estimate::FLOOR;
 use crate::ui::{UiFrameState, UiPhase, Urgency};
 
-/// The commit hand-off delay between threads.
+/// The hand-off delay between threads. Every UI → compositor message takes it, so they stay in
+/// order (the clock relies on a commit arriving before the dirt announced after it).
 const HANDOFF: Span = Span::from_micros(50);
 
 /// SplitMix64: small, seedable, and the same on every platform.
@@ -173,6 +175,8 @@ pub enum Fault {
     DropFeedback { p: f64 },
     /// A present is discarded with probability `p` (not shown; `Discarded` is reported).
     Discard { p: f64 },
+    /// The platform never reports buffer availability (only feedback releases a frame).
+    NoBufferRelease,
     /// The window moves to an output with another refresh interval.
     OutputChange { window: usize, at: Time, interval: Span },
     Hide { window: usize, at: Time, until: Time },
@@ -384,7 +388,9 @@ struct Sim {
 
 /// Runs one simulation.
 pub fn run(cfg: &SimConfig) -> SimReport {
-    let mut sim = Sim::new(cfg.clone());
+    let mut cfg = cfg.clone();
+    cfg.trace |= std::env::var_os("PRESTO_TRACE").is_some();
+    let mut sim = Sim::new(cfg);
     sim.schedule_initial();
     while let Some(Reverse((t, _, idx))) = sim.queue.pop() {
         if t > sim.end {
@@ -514,7 +520,7 @@ impl Sim {
                 Fault::DeviceLost { window, at, failed_draws } => self.at(at, Ev::DeviceLost { w: window, failed_draws }),
                 Fault::SlowUiFrame { window, at, cost } => self.windows[window].slow_frame = Some((at, cost)),
                 Fault::GpuSpike { at, cost } => self.gpu_spike = Some((at, cost)),
-                Fault::SlowUi { .. } | Fault::DropFeedback { .. } | Fault::Discard { .. } => {}
+                Fault::SlowUi { .. } | Fault::DropFeedback { .. } | Fault::Discard { .. } | Fault::NoBufferRelease => {}
             }
         }
     }
@@ -538,9 +544,7 @@ impl Sim {
                 if generation != win.generation || !win.visible || !win.subscribed {
                     return;
                 }
-                self.windows[w].report.ticks_delivered += 1;
                 self.deliver(w, Signal::Vsync { target, interval });
-                self.check_quiet(w);
             }
             Ev::Timer { w, armed } => {
                 if self.windows[w].armed == Some(armed) {
@@ -558,14 +562,15 @@ impl Sim {
                     self.at(t, Ev::UiBegin { w, frame, target, deadline });
                     return;
                 }
-                if self.windows[w].unapplied.is_some() {
-                    self.violate(w, 2, format!("BeginUiFrame {frame:?} reached the UI with commit {:?} unapplied", self.windows[w].unapplied));
-                }
+                // A BeginUiFrame can cross an urgent commit in flight; the UI must refuse it then.
                 let now = self.now;
                 if self.windows[w].ui.on_begin_frame(now, frame, target, deadline) {
+                    if self.windows[w].unapplied.is_some() {
+                        self.violate(w, 2, format!("UI started {frame:?} with commit {:?} unapplied", self.windows[w].unapplied));
+                    }
                     self.start_ui_frame(w, false);
                 } else if self.windows[w].ui.phase() == UiPhase::Idle {
-                    self.at(now, Ev::Comp { w, sig: Signal::UiFrameSkipped { frame } });
+                    self.at(now + HANDOFF, Ev::Comp { w, sig: Signal::UiFrameSkipped { frame } });
                 }
             }
             Ev::UiInput { w, input } => {
@@ -592,8 +597,9 @@ impl Sim {
                     }
                     Urgency::Wait => {
                         if notify {
-                            self.at(now, Ev::Comp { w, sig: Signal::NeedsUiFrame(true) });
+                            self.at(now + HANDOFF, Ev::Comp { w, sig: Signal::NeedsUiFrame(true) });
                         }
+                        self.at(now + HANDOFF, Ev::Comp { w, sig: Signal::UrgentInput });
                     }
                 }
             }
@@ -610,7 +616,7 @@ impl Sim {
                 } else {
                     Signal::UiCost { frame, cost: report.cost }
                 };
-                self.at(now, Ev::Comp { w, sig: cost });
+                self.at(now + HANDOFF, Ev::Comp { w, sig: cost });
                 self.at(now + HANDOFF, Ev::Comp { w, sig: Signal::CommitArrived { revision: report.revision, frame: report.frame } });
             }
             Ev::UiApplied { w, revision } => {
@@ -621,7 +627,7 @@ impl Sim {
                     notify |= win.ui.mark_dirty();
                 }
                 if notify {
-                    self.at(now, Ev::Comp { w, sig: Signal::NeedsUiFrame(true) });
+                    self.at(now + HANDOFF, Ev::Comp { w, sig: Signal::NeedsUiFrame(true) });
                 }
             }
             Ev::Shown { w, frame } => self.on_shown(w, frame),
@@ -629,7 +635,8 @@ impl Sim {
             Ev::UiAnim { w, on } => {
                 self.windows[w].ui_anim_on = on;
                 if on && self.windows[w].ui.mark_dirty() {
-                    self.deliver(w, Signal::NeedsUiFrame(true));
+                    let t = self.now + HANDOFF;
+                    self.at(t, Ev::Comp { w, sig: Signal::NeedsUiFrame(true) });
                 }
             }
             Ev::HighRate { w } => self.deliver(w, Signal::HighRateInput),
@@ -690,7 +697,9 @@ impl Sim {
         }
         let now = self.now;
         let prev = self.windows[w].clock.in_flight();
+        let timeouts = self.windows[w].clock.stats().feedback_timeouts;
         let actions = self.windows[w].clock.on_signal(now, sig);
+        let timed_out = self.windows[w].clock.stats().feedback_timeouts > timeouts;
         let args = self.windows[w].clock.frame_args();
         self.windows[w].ui.set_args(args);
         if self.cfg.trace {
@@ -702,9 +711,11 @@ impl Sim {
         }
         if draws == 1 && prev.is_some() {
             let released = match sig {
-                Signal::Presented { frame, .. } | Signal::Discarded { frame } | Signal::DrawFailed { frame } => Some(frame) == prev,
-                Signal::Timer => true,
-                _ => false,
+                Signal::Presented { frame, .. }
+                | Signal::Discarded { frame }
+                | Signal::DrawFailed { frame }
+                | Signal::BufferAvailable { frame } => Some(frame) == prev || timed_out,
+                _ => timed_out,
             };
             if !released {
                 self.violate(w, 1, format!("draw while {prev:?} is in flight ({sig:?})"));
@@ -714,6 +725,10 @@ impl Sim {
             self.apply(w, a);
         }
         self.check_state(w);
+        if let Signal::Vsync { .. } = sig {
+            self.windows[w].report.ticks_delivered += 1;
+            self.check_quiet(w);
+        }
     }
 
     fn apply(&mut self, w: usize, a: Action) {
@@ -721,9 +736,6 @@ impl Sim {
         match a {
             Action::SubscribeVsync(on) => self.windows[w].subscribed = on,
             Action::BeginUiFrame { frame, target, deadline, .. } => {
-                if self.windows[w].unapplied.is_some() {
-                    self.violate(w, 2, format!("BeginUiFrame {frame:?} sent with a commit unapplied"));
-                }
                 self.at(now, Ev::UiBegin { w, frame, target, deadline });
             }
             Action::ApplyCommit { revision } => {
@@ -821,6 +833,10 @@ impl Sim {
         self.windows[w].last_shown = Some(shown);
         self.windows[w].drawn.insert(frame, Drawn { target, inputs });
         self.at(shown, Ev::Shown { w, frame });
+        // the swapchain gets the buffer back once the frame is latched, feedback or not
+        if !self.cfg.faults.contains(&Fault::NoBufferRelease) {
+            self.at(shown, Ev::Comp { w, sig: Signal::BufferAvailable { frame } });
+        }
         if !self.rng.chance(drop_p) {
             self.at(feedback, Ev::Comp { w, sig: Signal::Presented { frame, at: shown, estimated: false } });
         }
@@ -829,7 +845,10 @@ impl Sim {
     fn on_shown(&mut self, w: usize, frame: FrameId) {
         let now = self.now;
         let Some(d) = self.windows[w].drawn.remove(&frame) else { return };
-        let _ = d.target;
+        // a frame shown before its target frees the vblanks up to it
+        if d.target > now && self.windows[w].last_target == Some(d.target) {
+            self.windows[w].last_target = Some(now);
+        }
         self.windows[w].report.shown += 1;
         let (epoch, interval) = (self.windows[w].epoch, self.windows[w].interval);
         for i in d.inputs {

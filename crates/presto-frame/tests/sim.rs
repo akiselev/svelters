@@ -30,7 +30,22 @@ fn seeded_runs_hold_every_invariant() {
 }
 
 #[test]
-fn discrete_input_presents_on_the_next_or_second_vblank() {
+fn lost_feedback_without_buffer_release_times_out() {
+    // A platform that reports neither feedback nor buffer availability still makes progress.
+    let mut c = SimConfig::single(4);
+    c.windows[0].comp_anim = vec![(ms(0), ms(1_000))];
+    c.faults = vec![Fault::DropFeedback { p: 1.0 }, Fault::NoBufferRelease];
+    let r = sim::run(&c);
+    r.assert_ok();
+    let w = &r.windows[0];
+    assert!(w.stats.feedback_timeouts > 0);
+    // one draw per feedback timeout (3 intervals) at worst: about 15 in a second at 60 Hz
+    assert!(w.stats.draws >= 12, "{} draws", w.stats.draws);
+}
+
+#[test]
+fn discrete_input_presents_within_one_or_two_vblanks() {
+    let mut all = Vec::new();
     for seed in sim::seeds(12) {
         let mut c = SimConfig::single(seed);
         c.windows[0].input.discrete_hz = 5.0;
@@ -39,9 +54,17 @@ fn discrete_input_presents_on_the_next_or_second_vblank() {
         r.assert_ok();
         assert!(r.inputs.len() > 10);
         assert!(r.inputs.iter().all(|i| i.presented.is_some() || i.at > ms(5_750)), "seed {seed}");
-        let p99 = r.frames_percentile(0.99).unwrap();
-        assert!(p99 <= 1, "seed {seed}: p99 latency {p99} frames");
+        let p90 = r.frames_percentile(0.90).unwrap();
+        assert!(p90 <= 1, "seed {seed}: p90 latency {p90} frames");
+        all.extend(r.inputs.iter().filter_map(|i| i.frames));
     }
+    // §5.6: ≤ +1 vblank typically; ≤ +2 for an input that arrives while the UI is still busy
+    // with the previous one (its commit already drawn for the next vblank); a cost overrun on
+    // top of that adds one more, rarely.
+    all.sort_unstable();
+    let p99 = all[(all.len() * 99).div_ceil(100) - 1];
+    assert!(p99 <= 2, "p99 latency {p99} frames");
+    assert!(*all.last().unwrap() <= 3, "max latency {} frames", all.last().unwrap());
 }
 
 #[test]
@@ -119,9 +142,9 @@ fn dropped_and_discarded_feedback_never_wedge() {
         c.faults = vec![Fault::DropFeedback { p: 0.1 }, Fault::Discard { p: 0.05 }];
         let r = sim::run(&c);
         r.assert_ok();
+        // buffer availability releases the frame when its feedback is lost
         let w = &r.windows[0];
-        assert!(w.stats.feedback_timeouts > 0, "seed {seed}");
-        assert!(w.stats.draws > 120, "seed {seed}: {} draws", w.stats.draws);
+        assert!(w.stats.draws > 160, "seed {seed}: {} draws", w.stats.draws);
     }
 }
 
