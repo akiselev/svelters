@@ -3,6 +3,8 @@ name: windows-winui
 on:
   push:
     branches: [master, 'ci/**']
+    # presto-only pushes (crates/presto*, lane records) are covered by presto.yml (coordinator, 2026-10-25)
+    paths-ignore: ['crates/presto/**', 'crates/presto-*/**', 'plans/cloud/presto-*/**', 'plans/milestones/PRESTO-*', 'plans/research/presto/**']
   pull_request:
   workflow_dispatch:
 

@@ -85,3 +85,4 @@ when the five svelters workflows plus `presto` are green.
   (additive Document entries; IME purpose rides with the area), 6–8 and 10 to COMPOSITOR (`frame_args`, a new
   `ToUi::FrameTimings` variant for compositor-side stamps, confirm BeginFrame back-pressure, `ui_frame_skipped` →
   `Signal::UiFrameSkipped`; then drop APP-TEST's empty-commit stopgap), 9 fixed in the workflow (crates/presto added).
+- CI load (coordinator, 2026-10-25): the five svelters workflows skip pushes that touch only presto crates and presto lane records (paths-ignore); presto.yml covers those. A consolidation's or master's push still runs all six.
