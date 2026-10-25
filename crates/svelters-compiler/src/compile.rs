@@ -173,8 +173,18 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     // U4: `@apply` expanded before scoping and the engine's check
     let no_utilities = crate::utilities::UtilityCheck::default();
     let apply = crate::utilities::apply::expand(src, &root, opts.backend, opts.utilities.as_ref().unwrap_or(&no_utilities), &mut diags);
+    // presto `css_precompiled`: release builds get the sheet as bytes too (dev keeps the text path
+    // for HMR CSS edits)
+    let utility_tokens = opts.utilities.as_ref().map(|u| u.utility_tokens());
+    let precompile = (opts.scoped_css && !opts.dev && opts.backend.has_capability("css_precompiled")).then(|| crate::scoped_css::Precompile {
+        utilities: opts.utilities.as_ref().zip(utility_tokens.as_ref()).zip(svelters_style::Table::for_toolkit(opts.backend.backend())).map(|((u, tokens), table)| {
+            let mut r = svelters_style::Resolver::new(table, tokens);
+            r.prefix = u.prefix.as_deref();
+            r
+        }),
+    });
     let css = if opts.scoped_css {
-        crate::scoped_css::scoped_css(src, &root, &analysis, &opts.filename, opts.css_scope.as_deref(), opts.dev, apply.as_ref(), &mut diags)
+        crate::scoped_css::scoped_css(src, &root, &analysis, &opts.filename, opts.css_scope.as_deref(), opts.dev, apply.as_ref(), precompile.as_ref(), &mut diags)
     } else {
         None
     };

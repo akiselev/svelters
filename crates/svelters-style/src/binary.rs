@@ -341,7 +341,7 @@ pub fn decode(bytes: &[u8], opts: &ParseOptions<'_>) -> Result<Precompiled, Stri
 /// attributes.
 pub fn compound_matches(selector: &str, tag: &str, classes: &[&str], id: Option<&str>) -> Option<bool> {
     let s = selector.trim();
-    if s.is_empty() || s.contains(|c: char| c.is_whitespace() || matches!(c, '>' | '+' | '~' | ':' | '[' | '\\' | '(' | '|' | ',')) {
+    if s.is_empty() || s.contains(|c: char| c.is_whitespace() || matches!(c, '>' | '+' | '~' | ':' | '[' | '\\' | '(' | ')' | '|' | ',')) {
         return None;
     }
     let mut ok = true;
@@ -368,4 +368,40 @@ pub fn compound_matches(selector: &str, tag: &str, classes: &[&str], id: Option<
         rest = &rest[end..];
     }
     Some(ok)
+}
+
+const B64: &[u8; 64] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+/// Standard base64 with padding: how a precompiled sheet travels in a JS module (`registerStyles(id, { bin })`).
+pub fn to_base64(bytes: &[u8]) -> String {
+    let mut out = String::with_capacity(bytes.len().div_ceil(3) * 4);
+    for chunk in bytes.chunks(3) {
+        let n = (chunk[0] as u32) << 16 | (*chunk.get(1).unwrap_or(&0) as u32) << 8 | *chunk.get(2).unwrap_or(&0) as u32;
+        for i in 0..4 {
+            if i <= chunk.len() {
+                out.push(B64[(n >> (18 - 6 * i) & 63) as usize] as char);
+            } else {
+                out.push('=');
+            }
+        }
+    }
+    out
+}
+
+/// [`to_base64`]'s inverse.
+pub fn from_base64(text: &str) -> Result<Vec<u8>, String> {
+    let text = text.trim_end_matches('=');
+    let mut out = Vec::with_capacity(text.len() * 3 / 4);
+    let mut acc: u32 = 0;
+    let mut bits = 0;
+    for c in text.bytes() {
+        let v = B64.iter().position(|&b| b == c).ok_or_else(|| format!("base64: unexpected {:?}", c as char))? as u32;
+        acc = acc << 6 | v;
+        bits += 6;
+        if bits >= 8 {
+            bits -= 8;
+            out.push((acc >> bits & 0xff) as u8);
+        }
+    }
+    Ok(out)
 }
