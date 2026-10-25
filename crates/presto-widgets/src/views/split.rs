@@ -699,6 +699,12 @@ impl SplitView {
 }
 
 impl Kind for SplitView {
+    fn parts() -> &'static [&'static str] {
+        &["sash", "guide"]
+    }
+    fn places_children() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
@@ -1126,12 +1132,14 @@ pub(crate) struct Probe {
     pub wake: Option<Time>,
     pub cursor: Option<CursorIcon>,
     pub repaint: bool,
+    /// The scroll offsets the kind handed the host (`EventCx::scroll_to`), one per event that moved it.
+    pub scroll_to: Vec<presto_base::geom::Vec2>,
 }
 
 #[cfg(test)]
 impl Probe {
     pub fn new(policy: Policy, size: Size) -> Probe {
-        Probe { policy, size, now: Time(1_000_000_000), state: StateBits::NONE, focused: false, signals: Vec::new(), changed: Vec::new(), capture: None, wake: None, cursor: None, repaint: false }
+        Probe { policy, size, now: Time(1_000_000_000), state: StateBits::NONE, focused: false, signals: Vec::new(), changed: Vec::new(), capture: None, wake: None, cursor: None, repaint: false, scroll_to: Vec::new() }
     }
     /// Sends `ev` to `k`; capture, wake, cursor and repaint are this event's.
     pub fn send<K: Kind>(&mut self, k: &mut K, ev: Event) -> Handled {
@@ -1142,6 +1150,7 @@ impl Probe {
         let h = k.event(&mut cx, &ev);
         let (emitted, changed) = (std::mem::take(&mut cx.emitted), std::mem::take(&mut cx.changed));
         let (capture, wake, cursor, repaint) = (cx.capture, cx.wake, cx.cursor, cx.repaint);
+        self.scroll_to.extend(cx.scroll_to);
         self.signals.extend(emitted.into_iter().map(|e| (spec.signals[e.signal.0 as usize].name, e.args)));
         self.changed.extend(changed.into_iter().map(|p| spec.props[p.0 as usize].name));
         if capture.is_some() {

@@ -156,6 +156,12 @@ impl Modal {
 }
 
 impl Kind for Modal {
+    fn parts() -> &'static [&'static str] {
+        &["dialog", "heading"]
+    }
+    fn places_children() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

@@ -1278,6 +1278,9 @@ impl VirtualList {
 }
 
 impl Kind for VirtualList {
+    fn parts() -> &'static [&'static str] {
+        &["row"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

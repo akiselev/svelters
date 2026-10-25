@@ -421,6 +421,9 @@ fn label(pc: &mut PaintCx, s: &StyleView, text: &str, content: Rect) {
 }
 
 impl Kind for Select {
+    fn parts() -> &'static [&'static str] {
+        &["list", "option"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

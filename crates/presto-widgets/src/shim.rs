@@ -401,6 +401,10 @@ pub mod core {
         pub peers: Vec<PeerRequest>,
         /// Move keyboard focus to the node with this anchor (a `label`'s `for`); core resolves it.
         pub focus_anchor: Option<String>,
+        /// The kind moved its scroll container's offset to this (content points scrolled out at the top
+        /// left): the host writes it to the document as a fast commit (`presto_core::EventCx::scroll_fast`)
+        /// and emits the common `scroll` event.
+        pub scroll_to: Option<presto_base::geom::Vec2>,
         /// Delivers a signal to JS now and reports whether a listener prevented its default
         /// ([`EventCx::emit_sync`]); `None`: signals are queued and nothing is prevented.
         pub sync: Option<&'a mut SyncEmit<'a>>,
@@ -409,7 +413,7 @@ pub mod core {
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, sync: None }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });

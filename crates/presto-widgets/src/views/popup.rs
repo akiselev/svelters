@@ -206,6 +206,9 @@ impl Popup {
 }
 
 impl Kind for Popup {
+    fn places_children() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

@@ -35,7 +35,7 @@ use crate::interact::{Platform, StateBits};
 use crate::paint::{self, Align, Elide, PaintCx, StyleView, Ua, UaRule, UaValue::{Px, Token}};
 use crate::shim::core::{
     A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, Resources,
-    SignalSpec, Styles, Value, ValueType,
+    SignalSpec, StyleCx, Styles, Value, ValueType,
 };
 use crate::shim::text::TextShaper;
 use presto_base::accesskit;
@@ -758,6 +758,9 @@ pub mod bar_props {
         /// `menu-bar`'s props.
         pub struct BarProps;
         enabled "enabled": bool = Bool(true) ; Bool, Paint;
+        /// A native menu bar shows these menus (the runner sets it from `PlatformCx::set_menu_bar`'s
+        /// result): this one is not laid out and takes no input.
+        native_bar "native-bar": bool = Bool(false) ; Bool, Layout;
     }
 }
 
@@ -809,12 +812,34 @@ impl Default for MenuBar {
     }
 }
 
+impl MenuBar {
+    /// The native menu bar picked item `id` (the runner's `AppHandler::menu_activated`): picks it as a
+    /// click would (check and radio state, then `toggled` and `activate`). The runner sends the bar
+    /// again afterwards (`to_menu_desc`) so the native checkmarks follow.
+    pub fn menu_activated(&mut self, cx: &mut EventCx<'_>, id: &str) -> Handled {
+        let Some(ix) = self.menus.model.find(id) else { return Handled::No };
+        let Some(p) = self.menus.model.pick(ix) else { return Handled::No };
+        self.menus.report(cx, &MENU_BAR_SPEC, None, vec![MenuOut::Picked(p)]);
+        Handled::Yes
+    }
+}
+
 impl Kind for MenuBar {
+    fn parts() -> &'static [&'static str] {
+        &["menu", "title", "item", "separator", "group-label"]
+    }
     fn spec() -> &'static KindSpec {
         &MENU_BAR_SPEC
     }
     fn kind_spec(&self) -> &'static KindSpec {
         &MENU_BAR_SPEC
+    }
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        if self.props.native_bar {
+            s.display = taffy::Display::None;
+        }
+        s
     }
     fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
         self.props.set(prop, v)?;
@@ -839,10 +864,13 @@ impl Kind for MenuBar {
         self.menus.record_bar(&mut PaintCx::of(cx), &style);
     }
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        if self.props.native_bar {
+            return Handled::No;
+        }
         self.menus.event(cx, ev, &MENU_BAR_SPEC, None)
     }
     fn light_dismiss(&self) -> bool {
-        self.menus.wants_outside()
+        !self.props.native_bar && self.menus.wants_outside()
     }
     fn a11y(&self, cx: &mut A11yCx) {
         cx.node.set_role(accesskit::Role::MenuBar);
@@ -851,7 +879,7 @@ impl Kind for MenuBar {
         }
     }
     fn claims_key(&self, key: Key, m: Modifiers) -> bool {
-        self.menus.claims(key, m)
+        !self.props.native_bar && self.menus.claims(key, m)
     }
 }
 
@@ -885,6 +913,9 @@ impl ContextMenu {
 }
 
 impl Kind for ContextMenu {
+    fn parts() -> &'static [&'static str] {
+        &["menu", "title", "item", "separator", "group-label"]
+    }
     fn spec() -> &'static KindSpec {
         &CONTEXT_MENU_SPEC
     }
@@ -1466,5 +1497,62 @@ mod tests {
         assert!(towards(Point::new(150.0, 105.0), Vec2::new(10.0, 5.0), sub));
         assert!(!towards(Point::new(150.0, 105.0), Vec2::new(-10.0, 5.0), sub), "moving away");
         assert!(!towards(Point::new(150.0, 105.0), Vec2::ZERO, sub));
+    }
+
+    #[test]
+    fn a_native_bar_hides_this_one() {
+        let mut b = bar();
+        prepare(&mut b.menus);
+        let policy = policy(Platform::Macos);
+        let sc = StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None };
+        assert_eq!(b.layout_style(&sc).display, taffy::Display::Flex, "shown while no native bar has the menus");
+        b.set_prop(bar_props::P::native_bar.id(), &Value::Bool(true)).unwrap();
+        assert_eq!(b.layout_style(&sc).display, taffy::Display::None);
+        let file_title = b.menus.titles()[0].1;
+        let (h, sig, _) = send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(file_title)));
+        assert_eq!(h, Handled::No);
+        assert!(sig.is_empty() && !b.menus.nav.is_open(), "no input while the native bar shows the menus");
+        assert!(!b.light_dismiss());
+        assert!(!b.claims_key(Key::F10, Modifiers::default()));
+    }
+
+    #[test]
+    fn a_native_pick_picks_as_a_click_would() {
+        let mut b = bar();
+        let edit = b.menus.model.find("edit").unwrap();
+        b.menus.model.add(edit, Entry::item("wrap", "Word &Wrap").checkable(false));
+        let policy = policy(Platform::Macos);
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(ms(0), Size::new(800.0, 30.0), &mut state, &policy);
+        assert_eq!(b.menu_activated(&mut cx, "wrap"), Handled::Yes);
+        let names: Vec<_> = cx.emitted.iter().map(|e| (MENU_BAR_SPEC.signals[e.signal.0 as usize].name, e.args.clone())).collect();
+        assert_eq!(
+            names,
+            [("toggled", vec![Value::str("wrap"), Value::Bool(true)]), ("activate", vec![Value::str("wrap"), Value::Bool(true)])]
+        );
+        assert!(b.menus.model.get(b.menus.model.find("wrap").unwrap()).checked);
+        assert_eq!(b.menu_activated(&mut cx, "nope"), Handled::No);
+    }
+
+    #[cfg(feature = "native-menu")]
+    #[test]
+    fn the_model_describes_the_native_bar() {
+        use presto_platform::MenuNode;
+        let mut b = bar();
+        let edit = b.menus.model.find("edit").unwrap();
+        b.menus.model.add(edit, Entry::group_label("View"));
+        b.menus.model.add(edit, Entry::item("wrap", "Word &Wrap").checkable(true));
+        b.menus.model.add(edit, Entry::item("secret", "Secret").hidden());
+        let d = b.menus.model.to_menu_desc();
+        assert_eq!(d.menus.len(), 2);
+        let MenuNode::Submenu { label, items, .. } = &d.menus[0] else { panic!("file is a submenu") };
+        assert_eq!(label, "File", "no mnemonic marker");
+        assert_eq!(items[0], MenuNode::Item { id: "new".into(), label: "New".into(), shortcut: "Primary+N".into(), enabled: true, checked: None });
+        assert_eq!(items[1], MenuNode::Separator);
+        assert!(matches!(&items[2], MenuNode::Submenu { label, items, .. } if label == "Recent" && items.len() == 2));
+        let MenuNode::Submenu { items, .. } = &d.menus[1] else { panic!("edit is a submenu") };
+        assert_eq!(items.len(), 3, "the hidden item is left out");
+        assert_eq!(items[1], MenuNode::Item { id: String::new(), label: "View".into(), shortcut: String::new(), enabled: false, checked: None });
+        assert_eq!(items[2], MenuNode::Item { id: "wrap".into(), label: "Word Wrap".into(), shortcut: String::new(), enabled: true, checked: Some(true) });
     }
 }

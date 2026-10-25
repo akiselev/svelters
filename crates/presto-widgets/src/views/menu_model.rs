@@ -248,6 +248,33 @@ impl MenuModel {
         e.enabled && e.is_row() && (e.kind != EntryKind::Menu || !self.rows(ix).is_empty())
     }
 
+    /// The native menu bar's description of this model (presto-platform's `MenuDesc`): the root's
+    /// visible submenus as the bar's menus. Items keep their authored shortcut and report their id;
+    /// check and radio items carry their state; a group label is a disabled item with no id; hidden
+    /// entries are left out. Labels are without mnemonic markers.
+    #[cfg(feature = "native-menu")]
+    pub fn to_menu_desc(&self) -> presto_platform::MenuDesc {
+        presto_platform::MenuDesc { menus: self.rows(MenuModel::ROOT).into_iter().map(|ix| self.menu_node(ix)).collect() }
+    }
+
+    #[cfg(feature = "native-menu")]
+    fn menu_node(&self, ix: EntryIx) -> presto_platform::MenuNode {
+        use presto_platform::MenuNode;
+        let e = &self.entries[ix];
+        match e.kind {
+            EntryKind::Menu => MenuNode::Submenu { label: e.label.clone(), enabled: e.enabled, items: self.rows(ix).into_iter().map(|c| self.menu_node(c)).collect() },
+            EntryKind::Item => MenuNode::Item {
+                id: e.id.clone(),
+                label: e.label.clone(),
+                shortcut: e.shortcut.clone(),
+                enabled: e.enabled,
+                checked: (e.check != Check::None).then_some(e.checked),
+            },
+            EntryKind::Separator => MenuNode::Separator,
+            EntryKind::GroupLabel => MenuNode::Item { id: String::new(), label: e.label.clone(), shortcut: String::new(), enabled: false, checked: None },
+        }
+    }
+
     /// Picks item `ix`: a check item toggles, a radio item checks itself and unchecks the visible
     /// and hidden items of its group under the same parent. A disabled item or a submenu is not
     /// picked (`None`).
