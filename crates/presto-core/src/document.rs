@@ -219,6 +219,7 @@ impl Document {
             children: &self.children[i],
             window: core.window,
             css: self.style.nodes[i].css.as_deref(),
+            doc: self,
         }
     }
 
@@ -269,6 +270,7 @@ impl Document {
         let entry = self.registry.get(kind).unwrap_or_else(|| panic!("presto-core: unregistered kind {kind:?}"));
         let mut value = (entry.factory)();
         let virtual_kind = value.virtual_children().is_some();
+        let folds = entry.spec.folds_children;
         let rev = self.stamp();
         let (id, fresh) = self.slots.alloc();
         let core = NodeCore {
@@ -301,6 +303,9 @@ impl Document {
             self.state[i] = StateMask::NONE;
             self.record[i] = Default::default();
             self.style.reset(i);
+        }
+        if folds {
+            self.core[i].flags.insert(NodeFlags::FOLDS);
         }
         if virtual_kind {
             self.core[i].flags.insert(NodeFlags::VIRTUAL);
@@ -548,8 +553,33 @@ impl Document {
         }
     }
 
+    /// The children layout, recording and hit testing see: none for a folding kind.
+    pub(crate) fn layout_children(&self, i: usize) -> &[NodeId] {
+        if self.core[i].flags.contains(NodeFlags::FOLDS) { &[] } else { &self.children[i] }
+    }
+
+    /// Node `i` (a folded child, its props, style or text) changed: the folding ancestors directly
+    /// above it remeasure and repaint.
+    pub(crate) fn fold_up(&mut self, mut i: usize) {
+        while let Some(p) = self.core[i].parent {
+            let pi = self.ix(p);
+            if !self.core[pi].flags.contains(NodeFlags::FOLDS) {
+                return;
+            }
+            self.mark_measure(pi);
+            self.mark(p, Dirty::PAINT | Dirty::A11Y);
+            i = pi;
+        }
+    }
+
     /// The children of `pi` changed.
     fn structure_changed(&mut self, pi: usize) {
+        if self.core[pi].flags.contains(NodeFlags::FOLDS) {
+            self.mark_measure(pi);
+            let id = self.slots.id_at(pi).expect("live");
+            self.mark(id, Dirty::PAINT);
+        }
+        self.fold_up(pi);
         self.core[pi].dirty.insert(Dirty::CHILDREN | Dirty::A11Y);
         self.mark_up(pi, Dirty::DESC_RECORD);
         self.invalidate_content(pi);
@@ -641,6 +671,7 @@ impl Document {
         }
         // attribute selectors may match the prop
         self.restyle_attr(i, spec.name);
+        self.fold_up(i);
         self.journal.push(Change::Prop { node, prop, revision: rev, native });
         Ok(class)
     }

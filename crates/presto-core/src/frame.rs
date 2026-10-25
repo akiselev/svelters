@@ -292,7 +292,7 @@ impl Document {
             self.core[i].dirty.remove(Dirty::RECORD.union(Dirty::DESC_RECORD).union(Dirty::LAYOUT).union(Dirty::DESC_LAYOUT));
             let p = &self.record[i];
             let child = Ctx { space: p.content.or(p.transform), clip: p.clip.or(ctx.clip), effect: p.effect.or(ctx.effect) };
-            for &c in self.children[i].iter().rev() {
+            for &c in self.layout_children(i).to_vec().iter().rev() {
                 let ci = self.ix(c);
                 // absolute boxes are placed in their containing block's space
                 let cctx = match crate::layout::positional_parent(self, ci) {
@@ -466,7 +466,7 @@ impl Document {
 
     /// Children of node `i` in paint order: tree order, stably sorted by `z-index`.
     fn paint_order(&self, i: usize) -> Vec<NodeId> {
-        let mut kids = self.children[i].clone();
+        let mut kids = self.layout_children(i).to_vec();
         if kids.iter().any(|&c| self.style.computed(self.ix(c)).z_index.is_some()) {
             kids.sort_by_key(|&c| self.style.computed(self.ix(c)).z_index.unwrap_or(0));
         }

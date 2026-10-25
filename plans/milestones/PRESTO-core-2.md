@@ -34,6 +34,17 @@ Added on top of base:
   upward walk that stops at the first unchanged node). A scroll node is passive only when neither its
   path nor its subtree has a non-passive wheel/pointermove listener.
 
+## WIDGETS-BASIC (h): children in the contexts, folding kinds (done)
+
+- `NodeView` carries the document: `view.view(id)` and `view.child(k)` in every context (Measure,
+  Prepare, Record, Style, Hit, A11y). For the call, measuring lends the text measure and the services out of the
+  document, so the kind sees the whole tree.
+- `KindSpec::folds_children` (cached as `NodeFlags::FOLDS`): the node is a taffy leaf (its `measure`
+  runs); its children are skipped by layout, recording, paint order and so hit testing
+  (`Document::layout_children`); a child's prop write, restyle (text or paint) or a structure change
+  under it remeasures and repaints the folding ancestors (`fold_up`). Children are still restyled
+  (the kind reads their computed style) and still in the a11y tree (zero bounds). Test: `tests/folds.rs`.
+
 ## D: the not-done list
 
 | Item | State |
@@ -78,6 +89,24 @@ clippy, other OSes. CI on the pushed sha is reported in the coordinator message.
    the signature (`(int,string?)->int`) before any spec ships.
 
 ## Hand-off (next session)
+
+Coordinator decisions received (19:04–19:20): Q2 decided (core keeps DOM-style native names;
+svelters-presto publishes egui's js names); CORE is stopped, this lane owns presto-core. Approved queue,
+in order, after (h) (done):
+1. WIDGETS-BASIC (a)–(g): (a) `::part(name)` computed styles in the contexts; (b) whether JS listens to a
+   signal (`cx.listened(signal)`); (c) emitting a cancelable signal reports `prevented`, so defaults honour
+   `preventDefault`; (d) peer groups (radio exclusivity, one Tab stop per group, roving focus), shaped like
+   `PeerGroup`/`Kind::peer` in `crates/presto-widgets/src/shim.rs`; (e) container hooks: chrome padding,
+   per-child layout/visibility (stack), inert children; (f) a hook asking a kind for prop-derived state
+   bits after a prop write; (g) the scale factor in `PrepareCx`.
+2. (i) scope activation: Enter/Escape in a focus scope → AccessKit Click on the scope's `default`/`cancel`
+   button, `:default` per `Policy::auto_default`; (j) label `for`: `EventCx::focus_anchor(&str)`, and
+   `labelled_by` on the target's AccessKit node. Details: `plans/milestones/PRESTO-widgets-basic.md` on
+   `ci/presto-widgets-basic` 2dcedb93.
+3. Common (`"*"`) members from SVELTERS-PRESTO: props `anchor`, `anchor-scope`, `invalid` (:invalid +
+   a11y), `dialog-role`, `status-tip`, `status-section`, `drag-data`, `drag-type`, `drop-types`; signals
+   `drag-begin`, `drag-end`, `drag-enter`, `drag-leave`, `drop` (core does pointer capture and hit testing).
+4. Then the rest of D:
 
 Remaining from D: the query/anchor port (svelters-egui `scene/query.rs`), the interner/compaction port
 (`compact.rs`), `resources.paths`, layer `opaque` and `Damage` in the commit, and the incremental rebuild

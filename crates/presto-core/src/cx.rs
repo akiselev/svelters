@@ -73,6 +73,7 @@ pub struct NodeView<'a> {
     pub(crate) children: &'a [NodeId],
     pub(crate) window: Option<WindowId>,
     pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
+    pub(crate) doc: &'a Document,
 }
 
 impl<'a> NodeView<'a> {
@@ -137,6 +138,14 @@ impl<'a> NodeView<'a> {
     }
     pub fn children(&self) -> &'a [NodeId] {
         self.children
+    }
+    /// A read view of another live node (a child whose runs a folding kind lays out, a sibling).
+    pub fn view(&self, node: NodeId) -> Option<NodeView<'a>> {
+        self.doc.view(node)
+    }
+    /// The `k`-th child's view.
+    pub fn child(&self, k: usize) -> Option<NodeView<'a>> {
+        self.children.get(k).and_then(|&c| self.doc.view(c))
     }
 }
 

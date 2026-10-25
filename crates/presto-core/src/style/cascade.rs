@@ -770,6 +770,9 @@ impl Document {
         if text {
             self.mark_measure(i);
         }
+        if text || paint {
+            self.fold_up(i);
+        }
         if first || paint {
             self.mark(node, Dirty::PAINT | Dirty::A11Y);
         }

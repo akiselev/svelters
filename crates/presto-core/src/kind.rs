@@ -184,6 +184,10 @@ pub struct KindSpec {
     pub focusable: bool,
     /// Has children (a leaf kind rejects inserts).
     pub container: bool,
+    /// Its children are content it lays out, records, hit-tests and names itself (a label's inline
+    /// runs): the node is a layout leaf (its `measure` is called), its children are not laid out,
+    /// recorded or hit, and a child's prop, style or structure change remeasures and repaints it.
+    pub folds_children: bool,
     pub methods: &'static [MethodSpec],
     /// The accessible name's sources, in order.
     pub name_from: &'static [NameSource],
@@ -201,6 +205,7 @@ impl KindSpec {
             text_prop: None,
             focusable: false,
             container: false,
+            folds_children: false,
             methods: &[],
             name_from: DEFAULT_NAME_FROM,
             doc: "",
