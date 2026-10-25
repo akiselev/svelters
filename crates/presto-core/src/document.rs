@@ -265,7 +265,7 @@ impl Document {
             slot: None,
             window: None,
             flags: NodeFlags::EMPTY,
-            dirty: Dirty::STYLE | Dirty::LAYOUT | Dirty::MEASURE | Dirty::RECORD,
+            dirty: Dirty::STYLE | Dirty::LAYOUT | Dirty::RECORD,
             changed: rev,
         };
         let i = id.index() as usize;

@@ -44,7 +44,8 @@ fn the_first_update_is_a_valid_full_tree() {
 #[test]
 fn later_updates_send_only_changed_nodes_and_the_focus() {
     let (mut d, root) = doc();
-    let a = child(&mut d, root, BOX, "width: 50px; height: 20px");
+    // it paints already, so the tint changes its list, not the layer's items
+    let a = child(&mut d, root, BOX, "width: 50px; height: 20px; background-color: #000000");
     let g = child(&mut d, root, TOGGLE, "");
     frame(&mut d);
     d.set_prop(a, BOX_TINT, Value::Color(Color::WHITE)).unwrap();

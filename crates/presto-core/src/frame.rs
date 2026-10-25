@@ -95,8 +95,8 @@ impl Document {
         let orphaned = std::mem::take(&mut self.anim.orphaned);
         let ws = self.window_mut(window).expect("window");
         let p = std::mem::take(&mut ws.pending);
-        commit.removed = p.removed_lists;
-        commit.dropped_runs = p.dropped_runs;
+        commit.removed.extend(p.removed_lists);
+        commit.dropped_runs.extend(p.dropped_runs);
         for id in p.removed_props {
             commit.props.ops.push(PropOp::Remove(id));
         }

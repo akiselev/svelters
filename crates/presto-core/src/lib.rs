@@ -26,6 +26,7 @@
 //! | [`journal`] | the change journal |
 //! | [`a11y`] | the AccessKit projection and its validating builder |
 //! | [`testkinds`] | minimal kinds and fixed-metric text for tests |
+//! | [`virt`] | the row-height model and the row pool of virtualising kinds |
 //! | [`settle`] | [`Busy`]: why the document is not idle |
 
 pub mod a11y;
@@ -48,6 +49,7 @@ pub mod style;
 pub mod testkinds;
 mod tree;
 pub mod value;
+pub mod virt;
 mod window;
 mod anim;
 #[cfg(test)]
