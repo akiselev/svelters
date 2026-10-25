@@ -45,6 +45,10 @@ impl A11yGraft {
         self.placement = placement;
     }
 
+    pub fn placement(&self) -> Affine {
+        self.placement
+    }
+
     /// Mark the host's node for the island as the graft point.
     pub fn graft_node(&self, node: &mut Node) {
         node.set_tree_id(self.tree);

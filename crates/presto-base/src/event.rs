@@ -154,6 +154,7 @@ pub enum ImeEvent {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum GestureEvent {
     Pinch { delta: f32, phase: GesturePhase },
+    /// `delta_rad` is clockwise-positive (egui's convention); backends convert the OS's sign.
     Rotate { delta_rad: f32, phase: GesturePhase },
     DoubleTap,
 }
