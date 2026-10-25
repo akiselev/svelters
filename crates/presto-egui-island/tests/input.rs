@@ -36,9 +36,11 @@ fn wheel(pos: Point) -> InputEvent {
 
 #[test]
 fn every_presto_key_has_its_egui_name() {
-    for name in ["ArrowDown", "Escape", "Tab", "A", "Z", "Num0", "F1", "F35", "OpenBracket", "Questionmark"] {
+    for name in ["ArrowDown", "Escape", "Tab", "A", "Z", "0", "F1", "F35", "OpenBracket", "Questionmark"] {
         let k = Key::from_name(name).unwrap_or_else(|| panic!("presto has {name}"));
-        assert_eq!(egui_key(k).map(|e| e.name()), Some(name));
+        // egui's `name()` gives display names ("Down"); `from_name` takes the variant names presto keeps.
+        assert_eq!(egui_key(k), egui::Key::from_name(name));
+        assert!(egui_key(k).is_some());
     }
 }
 

@@ -65,7 +65,13 @@ had them; egui pinned exactly like svelters-egui):
   `finish_prepare` and `paint` each run once, no render without a pass, a resize to scale 2 re-registers a
   128×128 texture, `release` unregisters.
 
-Run locally: `cargo check -p presto-egui-island --all-targets` only (clean). **Not run:** any test, clippy.
+Run locally: `cargo check -p presto-egui-island --all-targets`. After CI run 40223175641 (on `15ec9267`) failed
+two test assertions on Windows and macOS (wrong test expectations: egui's display key names, and Super is no
+command key off macOS), one filtered local run of `--test input --test island` to debug them: 7 and 11 passed
+after the fix. `--test render` passed on CI's Windows (WARP). **Not run locally:** `render`, clippy.
+
+CI's Linux presto job fails earlier, in `cargo check`: `yeslogic-fontconfig-sys` needs `libfontconfig1-dev`,
+which the presto workflow's apt step doesn't install (a presto-base/workflow issue, not this crate's).
 
 ## Wave-1 APIs used, and the shim left (`src/shim.rs`)
 

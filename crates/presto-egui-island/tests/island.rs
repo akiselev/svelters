@@ -217,9 +217,11 @@ fn a_focused_island_takes_keys_and_text() {
     rig.key(Key::H, Some("h"), Modifiers::default());
     rig.key(Key::I, Some("i"), Modifiers::default());
     rig.pass(&mut ui);
-    // A command chord types nothing.
+    // A command chord (Ctrl, and Cmd on macOS) types nothing; Super elsewhere is no command key.
     rig.key(Key::S, Some("s"), Modifiers::CTRL);
-    rig.key(Key::S, Some("s"), Modifiers::SUPER);
+    if cfg!(target_os = "macos") {
+        rig.key(Key::S, Some("s"), Modifiers::SUPER);
+    }
     rig.pass(&mut ui);
     drop(ui);
     assert_eq!(text, "hi");
