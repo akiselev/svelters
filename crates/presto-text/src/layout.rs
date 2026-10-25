@@ -75,6 +75,20 @@ pub struct LineInfo {
     pub(crate) rtl: bool,
 }
 
+/// One grapheme cluster of a line, as [`TextLayout::clusters`] yields it.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ClusterInfo {
+    /// Logical byte range in the text.
+    pub range: Range<usize>,
+    /// Left edge, points from the layout's left.
+    pub x: f32,
+    /// Horizontal advance (0 for a hard line break).
+    pub advance: f32,
+    pub rtl: bool,
+    /// A hard line break (draws nothing).
+    pub newline: bool,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct ClusterBox {
     pub range: Range<u32>,
@@ -122,6 +136,19 @@ impl TextLayout {
     /// The baseline of the first line (for CSS baseline alignment), 0 for an empty layout.
     pub fn first_baseline(&self) -> f32 {
         self.lines.first().map(|l| l.baseline).unwrap_or(0.0)
+    }
+
+    /// The clusters of line `line` (an index into [`Self::lines`]) in visual order, left to right;
+    /// empty for an index past the last line.
+    pub fn clusters(&self, line: usize) -> impl Iterator<Item = ClusterInfo> + '_ {
+        let boxes = self.lines.get(line).map(|l| self.line_clusters(l)).unwrap_or(&[]);
+        boxes.iter().map(|c| ClusterInfo {
+            range: c.range.start as usize..c.range.end as usize,
+            x: c.x0,
+            advance: c.x1 - c.x0,
+            rtl: c.rtl,
+            newline: c.newline,
+        })
     }
 
     fn line_clusters(&self, line: &LineInfo) -> &[ClusterBox] {

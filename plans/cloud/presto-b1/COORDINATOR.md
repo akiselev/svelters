@@ -87,3 +87,13 @@ when the five svelters workflows plus `presto` are green.
   `Signal::UiFrameSkipped`; then drop APP-TEST's empty-commit stopgap), 9 fixed in the workflow (crates/presto added).
 - CI load (coordinator, 2026-10-25): the five svelters workflows skip pushes that touch only presto crates and presto lane records (paths-ignore); presto.yml covers those. A consolidation's or master's push still runs all six.
 - 19:35 UTC: 65 runs queued; cancelling the stale runs of done lanes failed (403, the session lacks actions write). Superseded runs on a lane branch are still cancelled by each workflow's concurrency group.
+- WAYLAND 755fcaf6 (R6 PRIMARY in Clipboard, cross-lane in presto-platform). Q1 decided (coordinator, 2026-10-25): the
+  facade `crates/presto` selects the backend (target-cfg deps on presto-platform-{win32,wayland,macos}, default-on
+  features, winit fallback); no presto-platform-api split now. Consolidation wires the selection in `App`.
+- QUIRE done at quire `claude/presto-quire` 676b49bc (crate presto_quire, 43 tests not run; quire has no CI, so the
+  consolidation runs them). Decided: Q1 kind-owned layers/fast commits (to CORE-3), Q2 TextLayout cluster accessor (to
+  TEXT), Q3 4 new host events approved, Q4 egui-free quire view crate as a follow-up, Q5 svelters git dep OK.
+- FRAME-ANIM done once presto CI on a9503acb passes its crates.
+- QUIRE R1/R2 at quire 35b5063a; R2 (composition over a selection replaces it) approved (coordinator, 2026-10-25). TEXT-INPUT re-pins quire-text to it. Consolidation merges quire claude/presto-quire and berth claude/presto-berth into their masters after their tests and checks pass.
+- CORE-3 checkpoint eb669f1e merged (eb833fe0). Decided (coordinator, 2026-10-25): Q1 svelters-presto queues JS writes from call_sync and applies them after dispatch; Q2 Layout writes restyle, no skip flag yet. CORE-3 order now: APP-TEST 1–5, TEXT-INPUT R4, QUIRE kind layers, then its item 4.
+- SVELTERS-PRESTO ea2074dc (ignore CI on b03c384b). Q8 decided (coordinator, 2026-10-25): two-phase dispatch (Document::begin_dispatch → Dispatch::next(&mut doc) → finish_dispatch runs the default unless prevented), superseding the CORE-3 Q1 answer; CORE-3 does it first.
