@@ -282,6 +282,9 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         let Some(ws) = self.windows.get_mut(&w) else {
             return;
         };
+        if let Some(args) = self.compositor.as_ref().and_then(|c| c.frame_args(w)) {
+            ws.frame.state.set_args(args);
+        }
         match ws.frame.urgent(now) {
             (Urgency::RunNow { target }, _) => {
                 self.latency.counters_mut(w).urgent += 1;
@@ -374,6 +377,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
                 comp.ui_cost(w, f, r.cost, r.input);
             }
         }
+        // The frame clock clears its request on a commit: ask again when the tree is still dirty.
+        self.request_if_dirty(w);
     }
 
     /// The window was hidden (its in-flight inputs are dropped) or shown again (one frame if dirty).
@@ -453,6 +458,25 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             ToUi::ResizeDone { .. } => {}
             // The platform's frame source saw the window covered or shown (the compositor knows).
             ToUi::Occluded { window, occluded } => self.occlusion(window, occluded),
+            ToUi::FrameTimings {
+                window,
+                frame,
+                draw,
+                submit,
+                gpu_done,
+                present,
+                estimated: _,
+            } => {
+                let mut stages = vec![
+                    (Stage::Draw, draw),
+                    (Stage::Submit, submit),
+                    (Stage::Present, present),
+                ];
+                if let Some(g) = gpu_done {
+                    stages.push((Stage::GpuDone, g));
+                }
+                self.latency.frame_stages(window, frame, &stages);
+            }
             ToUi::DeviceReset => {
                 self.doc.device_reset();
                 let ws: Vec<_> = self.windows.keys().copied().collect();

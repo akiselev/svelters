@@ -384,3 +384,53 @@ fn discrete_events_are_never_coalesced() {
     );
     assert_eq!(c.take(W).len(), 2);
 }
+
+#[test]
+fn frame_timings_after_presented_amend_the_record() {
+    let mut r = LatencyRecorder::default();
+    let t0 = ms(100);
+    r.begin(&key(1, t0));
+    r.stamp(InputSeq(1), Stage::DispatchEnd, t0 + Span::from_millis(1));
+    r.stamp_pending(
+        W,
+        Stage::DispatchEnd,
+        Stage::UiFrameStart,
+        t0 + Span::from_millis(2),
+    );
+    r.commit_sent(W, Revision(1), t0 + Span::from_millis(3));
+    r.commit_applied(W, Revision(1), t0 + Span::from_millis(4));
+    r.presented(
+        W,
+        FrameId(5),
+        t0 + Span::from_millis(16),
+        false,
+        &[InputSeq(1)],
+    );
+    assert!(
+        r.histogram((Segment::DrawToSubmit, InputClass::Key, W))
+            .is_none()
+    );
+    // The compositor's `FrameTimings` follows `Presented`.
+    r.frame_stages(
+        W,
+        FrameId(5),
+        &[
+            (Stage::Draw, t0 + Span::from_millis(5)),
+            (Stage::Submit, t0 + Span::from_millis(7)),
+            (Stage::Present, t0 + Span::from_millis(9)),
+        ],
+    );
+    let rec = r.record(InputSeq(1)).unwrap();
+    assert_eq!(rec.at(Stage::Submit), Some(t0 + Span::from_millis(7)));
+    let h = r
+        .histogram((Segment::DrawToSubmit, InputClass::Key, W))
+        .unwrap();
+    assert_eq!((h.count(), h.max()), (1, Some(Span::from_millis(2))));
+    assert_eq!(
+        r.histogram((Segment::InputToPresented, InputClass::Key, W))
+            .unwrap()
+            .count(),
+        1
+    );
+    assert!(r.violations().is_empty());
+}

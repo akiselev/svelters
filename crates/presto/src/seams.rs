@@ -81,5 +81,10 @@ pub trait CompositorApi {
     fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, input: bool);
     /// The UI answered `BeginFrame` `frame` with nothing to commit (`UiFrameSkipped`).
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
+    /// The window's frame-clock snapshot for the urgent-frame rule; `None` = not known (the frame
+    /// state then runs urgent frames for `now`).
+    fn frame_args(&self, _window: WindowId) -> Option<presto_frame::FrameArgs> {
+        None
+    }
     fn shutdown(&self);
 }

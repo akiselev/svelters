@@ -176,3 +176,7 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
   `ui_frame_skipped` (request 10 is done, the empty-commit stopgap is gone), `ui_input_cost` for frames
   that handled discrete input; `ToUi::Occluded` from the frame source hides/shows the window like
   `WindowEvent::Occluded`.
+- COMPOSITOR's answers adopted (base merge of 3cbd9595): `frame_args` feeds `UiFrameState::set_args`
+  before each urgent decision (request 6 done); `ToUi::FrameTimings` stamps draw/submit/gpu_done/present,
+  amending records `Presented` already ended and adding the segments it completes (request 7 done); after
+  each commit the app asks for a frame again when the tree is still dirty (the caveat to request 8).

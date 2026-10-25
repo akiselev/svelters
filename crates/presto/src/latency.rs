@@ -616,6 +616,9 @@ impl LatencyRecorder {
 
     /// Compositor-side stage times of one frame (draw, submit, gpu_done, present), applied to every
     /// committed, unterminated input of the window whose commit the frame can contain.
+    ///
+    /// The compositor sends them after `Presented`, so records that frame already presented are
+    /// amended too, and the segments the new stamps complete go into the histograms.
     pub fn frame_stages(&mut self, window: WindowId, frame: FrameId, stages: &[(Stage, Time)]) {
         for r in self.live.values_mut() {
             if r.window == window
@@ -625,6 +628,36 @@ impl LatencyRecorder {
                 r.frame = Some(frame);
                 for &(s, t) in stages {
                     r.stamp(s, t);
+                }
+            }
+        }
+        let recent = self.cfg.recent;
+        for r in self.done.iter_mut().rev() {
+            if r.window != window
+                || r.frame != Some(frame)
+                || r.end != Some(Termination::Presented(frame))
+            {
+                continue;
+            }
+            let before: Vec<bool> = Segment::ALL
+                .iter()
+                .map(|seg| seg.span(r).is_some())
+                .collect();
+            for &(s, t) in stages {
+                r.stamp(s, t);
+            }
+            let at = r.last_stamp().unwrap_or(Time::ZERO);
+            for (seg, had) in Segment::ALL.iter().zip(before) {
+                if had {
+                    continue;
+                }
+                if let Some(s) = seg.span(r) {
+                    let key = (*seg, r.class, r.window);
+                    self.session.entry(key).or_default().record(s);
+                    self.recent
+                        .entry(key)
+                        .or_insert_with(|| Rolling::new(recent))
+                        .record(at, s);
                 }
             }
         }

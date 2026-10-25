@@ -163,6 +163,9 @@ impl CompositorApi for CompositorHandle {
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId) {
         CompositorHandle::ui_frame_skipped(self, window, frame);
     }
+    fn frame_args(&self, window: WindowId) -> Option<presto_frame::FrameArgs> {
+        CompositorHandle::frame_args(self, window)
+    }
     fn shutdown(&self) {
         self.clone().shutdown();
     }
