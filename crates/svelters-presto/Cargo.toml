@@ -8,3 +8,6 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+svelters-abi = { workspace = true }
+svelters-host = { workspace = true }
+serde_json = { workspace = true }
