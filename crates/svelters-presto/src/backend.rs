@@ -327,6 +327,31 @@ impl PrestoBackend {
         self.0.closes.borrow_mut().retain(|&w| w != h);
     }
 
+    /// Frees `n` and everything under it natively (an embed disposing what a root left behind);
+    /// returns the freed handles JS knew, parents first.
+    pub fn free_subtree(&self, n: NodeId) -> Vec<svl_handle> {
+        let mut order = Vec::new();
+        let mut stack = vec![n];
+        while let Some(x) = stack.pop() {
+            order.push(x);
+            let kids = self.0.doc.borrow().children(x).to_vec();
+            stack.extend(kids.into_iter().rev());
+        }
+        let mut freed = Vec::new();
+        for x in order.iter().rev() {
+            let h = self.0.handles.borrow_mut().handle(*x);
+            match h {
+                Some(h) => {
+                    self.free(h);
+                    freed.push(h);
+                }
+                None => self.0.doc.borrow_mut().destroy(*x),
+            }
+        }
+        freed.reverse();
+        freed
+    }
+
     /// Frees the node behind `h` and its handle.
     pub(crate) fn free(&self, h: svl_handle) {
         let Some(n) = self.0.handles.borrow_mut().unbind(h) else { return };
