@@ -24,6 +24,12 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | 13 | `ci/presto-widgets-tier1` | d3f510ef | clean |
 | 15 | `ci/presto-app-test` | c091234d | clean (after base 4aa01eb3) |
 | 14 | `ci/presto-svelters-presto` | 80189479 | conflict in `sync.rs`: took the lane's (it ports to the lent document, superseding B2) |
+| — | `ci/presto-base` | bf119bdf | conflict in `presto-platform-wayland/src/time.rs` (my B4 vs WAYLAND's dd66a164): took WAYLAND's |
+| 16 | `ci/presto-egui-island` | ac6d7385 | clean |
+| 17 | `ci/presto-widgets-views` | 2226e000 | conflict in `presto-widgets/Cargo.toml` (optional presto-platform + `native-menu` vs TEXT-INPUT/TIER1 entries): kept all, then B5 |
+| 18 | `ci/presto-macos` ff854b58, `ci/presto-win32` 305eb732, `ci/presto-wayland` dd66a164 | — | already in through base |
+| 19 | `ci/presto-test-v2` | b0754e75 | conflict in `presto/src/app.rs`: test-v2's `AppHandler` (`arm_timer`, `*_one` helpers, timer pass) with APP-TEST's clipboard install in `init`, `flush_fast` after input and window events, and the hover-at-event-time branch in `input_one` |
+| 20 | `ci/presto-canvas` | f208b779 | clean |
 
 ## Build fixes made
 
@@ -33,6 +39,7 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | B2 | svelters-presto | `sync.rs` `install_sync_delivery`: CORE-3's `SyncDelivery` is now `FnMut(&mut Document, &JsEvent)`; the closure takes `_doc` and ignores it (E0593). Commit 095d27dc. |
 | B3 | @svelters/native-runtime | `setp` exported twice (COMPILER's `ids.js` W-C1 id write vs RUNTIME's W-C3 typed scalar write in `index.js`); rolldown rejected the bundle ("Export has already been declared"), failing every workflow's JS build at bc7215cb. One `setp` now: an id a module declared with `ids()` goes through COMPILER's path (`setp_id`, by name through `set`), everything else through RUNTIME's. |
 | B4 | presto-platform-wayland | `time.rs` test `presentation_and_commit_timer_round_trip`: `((7 << 32) + 11) s` in u64 nanoseconds overflows (deny `arithmetic_overflow`, lib test didn't compile on ubuntu presto). Now `(3 << 32) + 11` (still a non-zero high word). |
+| B5 | presto-widgets | `Cargo.toml` duplicate key `presto-platform` (APP-TEST made it a required dependency for the clipboard; WIDGETS-VIEWS added it as optional for `native-menu`). Kept the required one; `native-menu = []` now only gates the code. |
 
 ## Queue
 
@@ -54,6 +61,8 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | F13 (routed to consolidation 2) | presto-widgets | warning: unused import `StateBits` (`controls/box_.rs:12`) | WIDGETS-BASIC | Remove it (clippy is advisory now). |
 | F14 | presto-widgets | Windows only (presto windows-latest, run 40229342780): `dialogs::native::tests::an_installed_backend_answers_and_cancel_is_none` at `dialogs/native.rs:271`: `left: Ok(Some("/out\\x.kicad_pcb"))`, `right: Ok(Some("/out/x.kicad_pcb"))`; lib 502 / 1 | WIDGETS-TIER1 | The test joins with `Path::join` (backslash on Windows) but expects `/`; build the expected value with `Path::new("/out").join("x.kicad_pcb")` or compare as paths. |
 | F15 | @svelters/native-runtime, svelters-compiler | B3 settles the `setp` clash by routing; the two lanes should agree on one contract (do spec stable ids reach `host.setp` directly once hosts take them, and is W-C3's typed-scalar `setp` a separate op name?) | COMPILER + RUNTIME | Decide whether the compiler emits a distinct op for W-C3 writes (e.g. `$n.setv`) and keep `setp` for W-C1 ids, or retire `setp_id` once `host.setp` takes spec ids. |
+| F16 | svelters-testkit (macos-appkit) | bc7215cb, run 40229342651: `vis1` `own_widgets_match_vscode` panicked at `crates/svelters-testkit/tests/vis1.rs:54`: `fixtures/gallery-egui/dist/embed.js is missing: run pnpm --filter ./fixtures/gallery-egui build` | consolidation (recheck) | Most likely downstream of B3 (the bundle builds failed). Recheck on the next run; if it stays, the appkit job needs the gallery-egui build step. |
+| F17 | svelters-winui (windows-winui) | bc7215cb, run 40229342723: `cargo test -p svelters-winui --test generated`: `WinUI init failed: LoadLibraryW(Microsoft.WindowsAppRuntime.Bootstrap.dll): The specified module could not be found. (HRESULT 0x8007007E)` | consolidation (recheck) | Green on master. Recheck on the next run; if it stays, compare the bootstrap fetch step with master's. |
 
 ## Local results (one run, f5d7ab0c)
 
@@ -91,6 +100,13 @@ deliver 6, oplog_replay 1, ops 11, run 2, spec 4, template 4 / 0. The other crat
 
 Workspace check clean (GTK/Qt crates excluded). `cargo test -p presto -p presto-test`: latency 14 / 0, harness 20 / 0,
 render 2 / 0.
+
+## After base bf119bdf and the second lane heads (crates the merges touched)
+
+presto latency 14; presto-canvas 13, million 2, text 3; compositor caret 4, engine 17, headless 2, tree_damage 10, viewport 4;
+presto-core 120; presto-egui-island host 3, input 9, island 11, render 2; presto-platform 21; presto-platform-wayland 54;
+presto-render 26, canvas 4, gpu 13; presto-test automation 2, harness 20, island 7, island_render 3, queries 8, render 2,
+snapshot 2; presto-widgets 505, text_pins 1. All 0 failed. macOS/Win32 crates are cfg-gated (CI only).
 
 ## CI
 
