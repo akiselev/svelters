@@ -187,3 +187,4 @@ when the five svelters workflows plus `presto` are green.
 - CI triage on integration 2f22c1e9/0890801c: the qt and winui workflows passed. js failed on a stale @svelters/style golden (diagnostics now
   list presto); consolidation 1 regenerates it. presto failed only in presto-test: automation (presto.yml lacked the JS install,
   fixed 67df412a) and island_render an_island_pass_reaches_the_pixels (real; sent to TEST-V2). gtk and appkit still running.
+- Prepared: CONSOLIDATION-2.md (skelter rename, master merges for svelters, berth and quire) and cadatomic batch 12 plan (cadatomic claude/b12-plan: 12 cadatomic lanes plus the svelters lane skelter-fixes).
