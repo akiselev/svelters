@@ -39,7 +39,16 @@ pub trait AppHandler: 'static {
 
 /// What the app asks of the platform. Main thread only.
 pub trait PlatformCx {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId;
+    /// Creates a window; the error says why the OS refused.
+    fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError>;
+    /// [`PlatformCx::try_create_window`] for apps that cannot run without the window: panics with
+    /// the OS's reason.
+    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
+        match self.try_create_window(desc) {
+            Ok(id) => id,
+            Err(e) => panic!("presto-platform: the OS refused to create a window: {e}"),
+        }
+    }
     fn close_window(&mut self, id: WindowId);
     /// The raw handles wgpu creates the window's surface from (create it on the main thread). On
     /// Windows with DirectComposition on, it is the window's content visual.
@@ -77,6 +86,9 @@ pub trait PlatformCx {
     /// Feeds the window's accessibility tree (a `Commit.a11y` update) to the OS adapter.
     fn update_a11y(&mut self, id: WindowId, update: accesskit::TreeUpdate);
     fn window_scale(&self, id: WindowId) -> Option<Scale>;
+    /// What the compositor paces this window's frames by (`Send + Sync`, for the compositor
+    /// thread). `None` where the platform has none (headless).
+    fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn crate::frame::FrameSource>>;
     fn exit(&mut self);
 }
 
