@@ -53,7 +53,7 @@ pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
         let p = poster.clone();
         os::install_app_hooks(Box::new(move || p.post(UserEvent::QuitRequested)));
     }
-    let mut app = WinitApp { handler, state: State::new(poster) };
+    let mut app = WinitApp { handler, state: State::new(poster), started: false };
     event_loop.run_app(&mut app).map_err(|e| PlatformError::EventLoop(e.to_string()))
 }
 
@@ -111,6 +111,7 @@ impl State {
 struct WinitApp {
     handler: Box<dyn AppHandler>,
     state: State,
+    started: bool,
 }
 
 struct Cx<'a> {
@@ -140,14 +141,19 @@ impl WinitApp {
 }
 
 impl ApplicationHandler<UserEvent> for WinitApp {
-    fn new_events(&mut self, el: &ActiveEventLoop, cause: StartCause) {
-        if matches!(cause, StartCause::Init) {
-            self.with_cx(el, |h, cx| h.init(cx));
+    fn new_events(&mut self, el: &ActiveEventLoop, _cause: StartCause) {
+        if self.started {
+            self.run_due_timers(el);
         }
-        self.run_due_timers(el);
     }
 
-    fn resumed(&mut self, _el: &ActiveEventLoop) {}
+    /// winit's place to create windows; it comes once on desktops, after `Init`.
+    fn resumed(&mut self, el: &ActiveEventLoop) {
+        if !self.started {
+            self.started = true;
+            self.with_cx(el, |h, cx| h.init(cx));
+        }
+    }
 
     fn user_event(&mut self, el: &ActiveEventLoop, ev: UserEvent) {
         match ev {
