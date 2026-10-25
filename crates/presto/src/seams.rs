@@ -41,6 +41,13 @@ pub trait DocumentApi {
     fn ime_state(&mut self, _window: WindowId) -> Option<(Rect, InputPurpose)> {
         None
     }
+    /// Native-owned writes queued outside dispatch (a caret placed while preparing a frame, a scroll a
+    /// kind moved): sent to the compositor before the next commit.
+    fn take_fast_commits(&mut self) -> Vec<FastCommit> {
+        Vec::new()
+    }
+    /// The app's clipboard, for kinds that copy and paste (installed once, at `init`).
+    fn install_clipboard(&mut self, _clipboard: Box<dyn presto_platform::Clipboard>) {}
     /// A window opened or got a new size (points) and scale.
     fn resize(&mut self, window: WindowId, size: Size, scale: Scale);
     fn close_window(&mut self, window: WindowId);

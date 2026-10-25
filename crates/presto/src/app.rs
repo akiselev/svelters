@@ -25,7 +25,9 @@ use presto_base::ids::{FrameId, InputSeq, Revision, WindowId};
 use presto_base::input::InputPurpose;
 use presto_base::time::{Clock, Span, Time};
 use presto_frame::Urgency;
-use presto_platform::{A11yEvent, AppHandler, ImeState, PlatformCx, Waker, WindowDesc};
+use presto_platform::{
+    A11yEvent, AppHandler, ImeState, PlatformCx, SurfaceTarget, Waker, WindowDesc,
+};
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, RecvTimeoutError, Sender, channel};
@@ -380,6 +382,10 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             self.latency.counters_mut(w).ui_missed += 1;
         }
         if let Some(comp) = &self.compositor {
+            // Fast commits queued while the frame ran (a caret placed in prepare) go first.
+            for f in self.doc.take_fast_commits() {
+                comp.fast(f);
+            }
             comp.commit(c);
             if let Some(r) = report
                 && let Some(f) = r.frame
@@ -507,6 +513,17 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         }
         let now = self.now();
         self.latency.sweep(now);
+        self.flush_fast();
+    }
+
+    /// Send the document's queued fast commits (carets, kinds' scrolls) to the compositor.
+    fn flush_fast(&mut self) {
+        let fast = self.doc.take_fast_commits();
+        if let Some(c) = &self.compositor {
+            for f in fast {
+                c.fast(f);
+            }
+        }
     }
 
     /// The resize handshake: commit the new-size frame, tell the compositor, wait for its `ResizeDone`.
@@ -551,6 +568,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         if self.doc.needs_frame(w) {
             self.urgent(cx, w);
         }
+        self.flush_fast();
         handled
     }
 }
@@ -566,31 +584,8 @@ fn fast_revision(f: &FastCommit) -> Revision {
     }
 }
 
-impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D, C> {
-    fn init(&mut self, cx: &mut dyn PlatformCx) {
-        let clock = cx.clock();
-        self.clock = Some(clock.clone());
-        if let Some(spawn) = self.spawn.take() {
-            let sink = ToUiSink {
-                tx: self.tx.clone(),
-                waker: cx.waker(),
-            };
-            self.compositor = Some(spawn(sink, clock));
-        }
-        // TODO(consolidation, TEXT-INPUT request): install presto-widgets' text services here
-        // (`presto_widgets::text::shim::install_services`), beside the widget services
-        // `CoreDocument::with_widgets` installs (`presto_widgets::host::install`): the services own a
-        // `presto_platform::SystemClipboard` (`MemoryClipboard` headless) and a clone of the compositor
-        // handle for caret fast commits (decided, coordinator, 2026-10-25). Without them, text-edit draws
-        // only its box.
-        for desc in std::mem::take(&mut self.cfg.windows) {
-            if let Err(e) = self.open_window(cx, desc) {
-                eprintln!("presto: cannot open window: {e}");
-            }
-        }
-    }
-
-    fn input(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
+impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
+    fn on_input(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
         let w = ev.window;
         if !self.windows.contains_key(&w) {
             return;
@@ -621,7 +616,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
         }
     }
 
-    fn window_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: WindowEvent) {
+    fn on_window_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: WindowEvent) {
         match ev {
             WindowEvent::Resized { size, scale } => self.resize(cx, window, size, scale),
             WindowEvent::ScaleChanged { scale } => {
@@ -641,6 +636,50 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
                 self.request_if_dirty(window);
             }
         }
+    }
+}
+
+impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D, C> {
+    fn init(&mut self, cx: &mut dyn PlatformCx) {
+        let clock = cx.clock();
+        self.clock = Some(clock.clone());
+        if let Some(spawn) = self.spawn.take() {
+            let sink = ToUiSink {
+                tx: self.tx.clone(),
+                waker: cx.waker(),
+            };
+            self.compositor = Some(spawn(sink, clock));
+        }
+        for desc in std::mem::take(&mut self.cfg.windows) {
+            if let Err(e) = self.open_window(cx, desc) {
+                eprintln!("presto: cannot open window: {e}");
+            }
+        }
+        // The kinds' clipboard: the OS one for the display the first window lives on (a Wayland
+        // clipboard needs the connection), else an in-process one (headless, or no window yet).
+        let display = self
+            .windows
+            .keys()
+            .next()
+            .and_then(|w| match cx.surface_target(*w) {
+                SurfaceTarget::Raw { display, .. } => Some(display),
+                _ => None,
+            });
+        let clipboard: Box<dyn presto_platform::Clipboard> = match display {
+            Some(d) => Box::new(presto_platform::SystemClipboard::new(Some(d))),
+            None => Box::new(presto_platform::MemoryClipboard::default()),
+        };
+        self.doc.install_clipboard(clipboard);
+    }
+
+    fn input(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
+        self.on_input(cx, ev);
+        self.flush_fast();
+    }
+
+    fn window_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: WindowEvent) {
+        self.on_window_event(cx, window, ev);
+        self.flush_fast();
     }
 
     fn wake(&mut self, cx: &mut dyn PlatformCx) {

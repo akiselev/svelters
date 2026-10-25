@@ -189,3 +189,24 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
   coalesced pointer moves at event time (`DocumentApi::hover`) and sends the platform the focused
   field's IME area and purpose (`DocumentApi::ime_state`, falling back to `Commit::ime_area`) only when
   it changes. New harness tests: event-time hover, the IME following focus.
+
+## Consolidation items F8 and F9 (coordinator, 2026-10-25 20:02)
+
+Branch `ci/presto-app-test` with `ci/presto-base` 4756b7ca, `ci/presto-text-input` 300b2660 and
+`ci/presto-integration` 65ead449 merged in (all clean, no conflicts).
+
+- **F8 (text services).** TEXT-INPUT's text kind no longer has a `TextServices` trait: it reads the
+  document's services (`TextSystem`, `Policy`, `Box<dyn presto_platform::Clipboard>`) and sends the caret
+  through presto-core's fast channel. So: `CoreDocument::with_widgets` calls `presto_widgets::host::install`
+  (text system, policy, theme); `App::init` installs the clipboard (`DocumentApi::install_clipboard` →
+  `Document::set_service::<Box<dyn Clipboard>>`): `SystemClipboard::new(display)` for the first window's
+  display, `MemoryClipboard` when there is none (headless). `App` drains `Document::take_fast_commits()`
+  to the compositor after each input, window event, AccessKit action and compositor message, and before
+  each commit. The TODO is gone. (The decided "compositor handle clone" is not needed: core's fast
+  channel replaced it.)
+- **F9 (backend selection).** `presto::run(handler) -> Result<Backend, PlatformError>` (`run.rs`): Win32 on
+  Windows, AppKit on macOS, Wayland on Linux/BSD with `WAYLAND_DISPLAY`, each behind a default-on feature
+  (`win32`, `wayland`, `macos`; target-cfg optional dependencies), else presto-platform's winit backend.
+  An own backend that errors before calling `init` falls back to winit (the app is shared through a
+  forwarding handler, so it is not lost); `PRESTO_BACKEND=winit` forces winit, `PRESTO_BACKEND=native`
+  disables the fallback. No test (it needs a display); CI builds it on all three OSes.

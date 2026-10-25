@@ -36,8 +36,8 @@ impl CoreDocument {
         }
     }
     /// A document whose built-in kinds have their services: the text system, the platform's interaction
-    /// policy and the theme (`presto_widgets::host::install`). Text editing also needs presto-widgets'
-    /// text services, which the app installs beside these (see the TODO in `App::init`).
+    /// policy and the theme (`presto_widgets::host::install`). The clipboard service follows at
+    /// `App::init` (`DocumentApi::install_clipboard`), once the platform's display is known.
     pub fn with_widgets(
         mut doc: Document,
         root_kind: KindId,
@@ -79,6 +79,13 @@ impl DocumentApi for CoreDocument {
     }
     fn ime_state(&mut self, window: WindowId) -> Option<(Rect, InputPurpose)> {
         self.doc.ime_state(window)
+    }
+    fn take_fast_commits(&mut self) -> Vec<FastCommit> {
+        self.doc.take_fast_commits()
+    }
+    fn install_clipboard(&mut self, clipboard: Box<dyn presto_platform::Clipboard>) {
+        // presto-widgets' text kinds read it as `cx.service::<Box<dyn presto_platform::Clipboard>>()`.
+        self.doc.set_service(clipboard);
     }
     fn resize(&mut self, window: WindowId, size: Size, scale: Scale) {
         if self.doc.window_root(window).is_some() {
