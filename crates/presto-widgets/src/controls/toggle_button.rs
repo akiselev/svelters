@@ -131,6 +131,9 @@ impl ToggleButton {
 }
 
 impl Kind for ToggleButton {
+    fn parts() -> &'static [&'static str] {
+        &["icon", "label"]
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         self.mirror(crate::interact::StateBits::NONE)
     }

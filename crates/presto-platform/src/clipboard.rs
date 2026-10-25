@@ -16,6 +16,20 @@ pub trait Clipboard {
     fn has_primary(&self) -> bool {
         false
     }
+    /// The primary selection (Linux desktops: select to copy, middle-click to paste); `None` where there
+    /// is none or it is empty.
+    fn get_primary(&mut self) -> Option<String> {
+        if self.has_primary() { self.get_text(ClipboardKind::Primary) } else { None }
+    }
+    /// Takes the primary selection with `text` (a selection was made); `false` where there is none or the
+    /// OS refused.
+    fn set_primary(&mut self, text: &str) -> bool {
+        self.has_primary() && self.set_text(ClipboardKind::Primary, text)
+    }
+    /// Gives up the primary selection (the selection was cleared); `false` where this backend cannot.
+    fn clear_primary(&mut self) -> bool {
+        false
+    }
 }
 
 /// An in-process clipboard (tests, headless, and the fallback when the OS clipboard fails to open).
@@ -40,6 +54,10 @@ impl Clipboard for MemoryClipboard {
         true
     }
     fn has_primary(&self) -> bool {
+        true
+    }
+    fn clear_primary(&mut self) -> bool {
+        self.primary = None;
         true
     }
 }
@@ -135,11 +153,37 @@ impl Clipboard for SystemClipboard {
             Inner::Memory(_) => true,
         }
     }
+
+    fn clear_primary(&mut self) -> bool {
+        match &mut self.inner {
+            #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
+            Inner::Arboard(c) => {
+                use arboard::{ClearExtLinux, LinuxClipboardKind};
+                c.clear_with().clipboard(LinuxClipboardKind::Primary).is_ok()
+            }
+            #[cfg(any(target_os = "windows", target_os = "macos"))]
+            Inner::Arboard(_) => false,
+            // smithay-clipboard has no way to give up a selection.
+            #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
+            Inner::Wayland(_) => false,
+            Inner::Memory(m) => m.clear_primary(),
+        }
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn primary_methods_use_the_primary_selection() {
+        let mut c = MemoryClipboard::default();
+        assert!(c.set_primary("sel"));
+        assert_eq!(c.get_primary().as_deref(), Some("sel"));
+        assert_eq!(c.get_text(ClipboardKind::Clipboard), None);
+        assert!(c.clear_primary());
+        assert_eq!(c.get_primary(), None);
+    }
 
     #[test]
     fn memory_clipboard_keeps_selections_apart() {

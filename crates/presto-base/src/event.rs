@@ -143,10 +143,14 @@ pub struct KeyEvent {
 #[derive(Clone, Debug, PartialEq)]
 pub enum ImeEvent {
     Enabled,
-    /// The composition text and the cursor range in it (byte offsets).
+    /// The composition text and the cursor range in it (byte offsets). `cursor: None` means "hide the
+    /// caret" while the composition shows (text-input-v3 sends negative offsets for that); an empty
+    /// `text` ends the composition display.
     Preedit { text: String, cursor: Option<(usize, usize)> },
     Commit(String),
-    /// Delete text around the cursor (bytes before, bytes after).
+    /// Delete text around the cursor (bytes before, bytes after). With a selection, the bytes are
+    /// counted from the selection's start and end, and the deletion comes before the `Commit` that
+    /// then replaces the selection.
     DeleteSurrounding { before: usize, after: usize },
     Disabled,
 }
