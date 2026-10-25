@@ -108,7 +108,11 @@ fn kind_fingerprint(k: &KindDef) -> String {
 /// W-C1: every stable id of the built-in kinds with its fingerprint, as `(what, id, fingerprint)`
 /// rows (`kind:Label`, `prop:Label.text`, ...), sorted.
 pub fn id_rows() -> Vec<(String, u32, String)> {
-    let reg = KindRegistry::global();
+    id_rows_of(KindRegistry::global())
+}
+
+/// [`id_rows`] of a registry (the global one is built through this, `KindRegistry::global`).
+pub fn id_rows_of(reg: &KindRegistry) -> Vec<(String, u32, String)> {
     let mut rows = Vec::new();
     for i in 0..KINDS.len() {
         let k = reg.spec_kind(i);
@@ -130,7 +134,12 @@ pub fn id_rows() -> Vec<(String, u32, String)> {
 /// W-C1: the spec hash: a hash of every stable id and its fingerprint. Compiled code that carries
 /// ids records it; a host whose hash differs refuses those ids (`$n.ids`).
 pub fn spec_hash() -> String {
-    let lines: Vec<String> = id_rows().into_iter().map(|(what, id, fp)| format!("{what}={id}:{fp}")).collect();
+    spec_hash_of(KindRegistry::global())
+}
+
+/// [`spec_hash`] of a registry.
+pub fn spec_hash_of(reg: &KindRegistry) -> String {
+    let lines: Vec<String> = id_rows_of(reg).into_iter().map(|(what, id, fp)| format!("{what}={id}:{fp}")).collect();
     let mut parts: Vec<&str> = vec!["egui"];
     parts.extend(lines.iter().map(String::as_str));
     kinds::ids::hex(kinds::ids::fnv(&parts))

@@ -33,8 +33,9 @@ pub trait IdSource {
     fn spec_hash(&self) -> &str;
     /// The kind id of the elements `tag` creates, and the kind's name (for the constant's name).
     fn kind(&self, tag: &str) -> Option<(u32, String)>;
-    /// The id of prop `prop` (its canonical JS name) of elements `tag`, and its declaring kind.
-    fn prop(&self, tag: &str, prop: &str) -> Option<(u32, String)>;
+    /// The id of prop `prop` (its canonical JS name) of elements `tag`, its declaring kind, and
+    /// whether its type is a scalar (bool, number, string, enum).
+    fn prop(&self, tag: &str, prop: &str) -> Option<(u32, String, bool)>;
 }
 
 /// How an expression is evaluated.
@@ -180,6 +181,9 @@ pub struct Codegen<'a, 's> {
     id_consts: BTreeMap<String, (u32, String, Option<String>)>,
     /// W-C1: the tag of each element variable (prop ids depend on the element's kind).
     node_tags: HashMap<String, String>,
+    /// W-C1: (element variable, prop) pairs that a track, token, style rule or binding also uses:
+    /// written with `$n.set`, which keeps their bookkeeping, not the `$n.setp` fast path.
+    shared_props: std::collections::HashSet<(String, String)>,
     /// W-C2: the template tables the module declares, by template number.
     tables: Vec<template::Table>,
     _p: std::marker::PhantomData<&'a ()>,
@@ -225,6 +229,7 @@ impl<'a, 's> Codegen<'a, 's> {
             features,
             id_consts: BTreeMap::new(),
             node_tags: HashMap::new(),
+            shared_props: std::collections::HashSet::new(),
             tables: Vec::new(),
             _p: std::marker::PhantomData,
         }
@@ -601,6 +606,7 @@ impl Codegen<'_, '_> {
             self.w.write(&format!("const {n} = {kind};"));
         }
         self.node_tags.insert(n.clone(), e.kind.clone());
+        self.note_shared_props(&n, &e.ops);
         if self.locs.is_some_and(|has| has(&e.kind)) {
             self.src_used = true;
             self.w.write(&format!(" $n.source_loc({n}, $$src, {});", e.span.start));
@@ -871,16 +877,31 @@ impl Codegen<'_, '_> {
         }
     }
 
-    /// W-C1: the head of a prop write on element variable `n`, up to its value:
-    /// `$n.set(n, "prop", `, or with ids `$n.setp(n, $$P_Kind_prop, `.
+    /// W-C1: the (element, prop) pairs of `ops` that keep `$n.set` (see `shared_props`).
+    fn note_shared_props(&mut self, n: &str, ops: &[Op]) {
+        for op in ops {
+            let prop = match op {
+                Op::Track { prop, .. } | Op::Token { prop, .. } | Op::StyleProp { prop, .. } => prop,
+                Op::StyleSetter { target, .. } => target,
+                Op::Bind { prop, .. } | Op::BindProp { prop, .. } | Op::BindReadonly { prop, .. } | Op::BindOnce { prop, .. } | Op::BindCommit { prop, .. } | Op::BindLink { prop, .. } => prop,
+                _ => continue,
+            };
+            self.shared_props.insert((n.to_string(), prop.clone()));
+        }
+    }
+
+    /// W-C1: the head of a prop write on element variable `n`, up to the value:
+    /// `$n.set(n, "prop", `, or with ids, for a scalar prop that nothing else on the element uses,
+    /// index.js's fast path `$n.setp(n, $$P_Kind_prop, `.
     fn set_head(&mut self, n: &str, prop: &str) -> String {
+        let shared = prop == "anchor" || self.shared_props.contains(&(n.to_string(), prop.to_string()));
         let found = self.features.ids.zip(self.node_tags.get(n).cloned()).and_then(|(ids, tag)| ids.prop(&tag, prop).map(|p| (p, tag)));
         match found {
-            Some(((id, owner), tag)) => {
+            Some(((id, owner, true), tag)) if !shared => {
                 let c = self.id_const(format!("$$P_{}_{}", ident(&owner), ident(prop)), id, &tag, Some(prop));
                 format!("$n.setp({n}, {c}, ")
             }
-            None => format!("$n.set({n}, {}, ", js_str(prop)),
+            _ => format!("$n.set({n}, {}, ", js_str(prop)),
         }
     }
 

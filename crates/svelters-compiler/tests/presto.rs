@@ -58,6 +58,15 @@ fn ids_name_kinds_and_props_by_the_specs_ids() {
 }
 
 #[test]
+fn ids_keep_set_for_props_with_bookkeeping() {
+    // a prop the native side also edits (tracked) keeps `$n.set`, as does a non-scalar one
+    let src = "<script>let v = $state(0); let items = $state(['a']);</script><window><box><slider value={v} /><combo-box options={items} hint-text=\"Pick\" /></box></window>";
+    let out = js(src, &["ids"]);
+    assert!(out.contains("$n.set($$n3, \"value\""), "{out}");
+    assert!(out.contains("$n.set($$n4, \"options\""), "{out}");
+}
+
+#[test]
 fn without_the_capability_names_stay() {
     let out = js("<window><box><label text=\"hi\" /></box></window>", &[]);
     assert!(out.contains("$n.element(\"box\")") && out.contains("$n.set($$n3, \"text\", \"hi\")"), "{out}");

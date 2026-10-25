@@ -40,6 +40,7 @@ mod quickjs;
 mod reload;
 pub mod sched;
 mod sourcemap;
+mod spec_hash;
 pub mod testing;
 
 pub use crate::core::{BudgetInterrupt, ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timing};
@@ -54,6 +55,7 @@ pub use svelters_sched;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
 pub use hooks::ModuleHooks;
+pub use spec_hash::{register_spec_hash, spec_hash};
 pub use platform::{ClipboardBackend, ClipboardKind, MimeData, Platform, ShellBackend};
 pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
 /// IN1: locale-aware formatting and parsing (ICU4X), the same the host's `Intl` uses.

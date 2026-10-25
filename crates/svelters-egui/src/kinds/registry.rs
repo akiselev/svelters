@@ -219,7 +219,12 @@ fn leak<T>(v: Vec<T>) -> &'static [T] {
 impl KindRegistry {
     /// The process's registry (built on first use).
     pub fn global() -> &'static KindRegistry {
-        REGISTRY.get_or_init(KindRegistry::build)
+        REGISTRY.get_or_init(|| {
+            let reg = KindRegistry::build();
+            // W-C1: the runtime compares compiled modules' ids against it (`host.specHash`)
+            svelters_host::register_spec_hash("egui", crate::spec::spec_hash_of(&reg));
+            reg
+        })
     }
 
     fn build() -> KindRegistry {

@@ -1471,6 +1471,11 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
     // W-C3/ABI v2.9: the backend drops unchanged scalar writes itself (`$n.setp` keeps no `last`)
     host.set("dedupes", core.upgrade().is_some_and(|c| c.dedupes()))?;
     install_templates(ctx, &host, &core, &cbs)?;
+    // W-C1: the spec hash a backend registered (`register_spec_hash`), or undefined
+    host.set(
+        "specHash",
+        Function::new(ctx.clone(), |backend: String| -> Option<String> { crate::spec_hash::spec_hash(&backend) })?,
+    )?;
     platform::install(ctx, &host, &core)?;
     fast::install(ctx, &host, core.clone(), cbs.clone())?;
     globals.set("__svelters_host", host)?;

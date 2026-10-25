@@ -96,6 +96,11 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
 - egui spec `a11y`: `requires_name` (WAI-ARIA name-required roles whose every name source is a
   prop), `name_props` (from `name_from`), `icon_props`.
 
+- The provider-kind fragments the generators write carry the new fields too:
+  `examples/egui-kinds/app/.svelters/app/kinds.json`, `fixtures/gallery-egui/.svelters/app/kinds.json`
+  (regenerated with `SVELTERS_UPDATE=1` on `egui-kinds-example --test kinds` and
+  `svelters-egui --test wg4b`).
+
 ### Codes and docs
 
 - `codes.rs` rows for the six new codes; `docs/site/src/content/docs/guides/diagnostics.md`
@@ -115,15 +120,51 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
   Risk to watch in CI: the a11y warnings now appear on egui compiles (tests that expect no
   warnings on egui sources would see them).
 
+## Integration with RUNTIME and MOTION-CSS (coordinator, 2026-10-25)
+
+Merged `origin/ci/presto-runtime` (4c65de8d) and `origin/ci/presto-motion-css` (1a016796). The
+conflicts were all in `semantics/` (both lanes added `Spec.capabilities`): kept this lane's shape
+and added MOTION-CSS's three constants (`NATIVE_TRANSITIONS`, `NATIVE_MOTION`, `CSS_PRECOMPILED`).
+
+- **`setp` (the duplicated export that broke `pnpm -r build`):** one export, RUNTIME's scalar
+  fast path in `index.js` (name or id). `ids.js` no longer has one. Codegen with `ids` emits
+  `$n.setp(n, $$P_…, v)` only for a scalar-typed prop (bool, number, string, enum) other than
+  `anchor` that no track, token, style rule or binding on the same element uses; every other
+  write stays `$n.set(n, "name", v)`, which keeps that bookkeeping (`IdSource::prop` returns
+  whether the type is scalar). `pnpm -r --filter '!@svelters/docs' build` exits 0 (the docs site
+  needs `tools/docs/build_ir.py` first, which CI runs).
+- **(c) `LISTEN_PASSIVE` (cross-lane, `index.js`):** exported; `hkey` leaves the bit out, so a
+  passive listener is found by dispatch; a (signal, phase) connection is passive while all its
+  handlers are (`Native.passiveConn`): a handler that can cancel joining one makes the runtime
+  listen again without the flag; `off` unlistens with the flags it listened with.
+- **(d) `adopt` (cross-lane, `index.js`):** records the nodes a host built from a template as
+  `create` and `attach` would, without host ops. `template.js` uses RUNTIME's `host.template` /
+  `host.instantiate` when `host.templates` is true (a backend that builds templates) and the table
+  holds only static scalar props, classes, styles and ids (no holes, thunks, child attributes,
+  tokens, tracks, source locations); the registration is cached per host; classes, styles and ids
+  go through `attr`, then the root is appended. Everything else expands as before. Teardown stays
+  per node (`destroyRange` is not used: dispose destroys natives one by one).
+- **(e) `specHash` (cross-lane, `svelters-host`, `svelters-egui`):** `svelters_host::
+  register_spec_hash(backend, hash)` / `spec_hash(backend)` (new `src/spec_hash.rs`) and
+  `host.specHash(backend)` in `quickjs.rs`; svelters-egui registers `spec::spec_hash_of(&registry)`
+  when its kind registry is built. `ids()` checks at declaration when a host exists (by the hash,
+  else per id through `kindId`/`propId`), else before the first `element_id`.
+- Tests: `packages/native-runtime/test/template.test.mjs` (6: expansion op log, `at`, `element_id`,
+  refused ids, passive keying and re-listen, the host-template path with a TestHost that builds
+  templates); `tests/presto.rs` `ids_keep_set_for_props_with_bookkeeping`; the host's
+  `spec_hash` unit test. Ran: those, `cargo test -p svelters-egui --test spec`, the whole
+  native-runtime package suite (157 pass), `pnpm -r` build as above. Not run: everything else.
+- Note: the TestHost resolves prop ids only on nodes it created by kind id, while `element_id`
+  creates by tag (the runtime's node keeps its tag); the real host resolves ids by the node's
+  kind. Nothing advertises `ids` yet; when egui does, RUNTIME's create-by-id fast path (create by
+  id, keep the tag on the node) covers both.
+
 ## Stubbed / left out (honestly unimplemented)
 
-- **Host-side `instantiate` / `destroy_range`.** `template.js` always expands; calling a host
-  `instantiate` needs the runtime to adopt the nodes it creates (Native wrappers, the scope's node
-  list, the handle table) — RUNTIME's `index.js` internals and their deliverable 4. Teardown stays
-  per node (the expanded nodes are registered as today), so codegen emits no `destroy_range`.
-- **Ids on the fast path.** `setp`/`element_id` resolve to names and call `set`/`element`; RUNTIME's
-  W-J1 (`setp` by id as a raw host function) replaces them. Signal ids (`$n.on` by id) and ids in
-  template tables are not emitted (tables keep names; the host would resolve them once per table).
+- **`destroy_range` in teardown** is not used (dispose destroys natives one by one, adopted ones
+  included), and host-built templates cover only static tables (see above).
+- **`element_id`** creates by tag; signal ids (`$n.on` by id) and ids in template tables are not
+  emitted (tables keep names; the host resolves them once per registration).
 - **No backend advertises a capability yet** (see questions).
 - The `layout_write_per_frame` fix-it (rewrite to `transform`) is not written (only the help line).
 - Passive inference does not follow handlers imported from other modules, or `let` bindings
@@ -131,9 +172,12 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
 
 ## Cross-lane edits
 
-- `packages/native-runtime/src/index.js` (RUNTIME's file): two re-export lines only
-  (`export { ids, element_id, setp } from './ids.js'; export { template, instantiate, at,
-  template_listen } from './template.js';`), no existing function touched.
+- `packages/native-runtime/src/index.js` (RUNTIME's file): the re-exports of `ids.js`
+  (`ids`, `element_id`) and `template.js`; `LISTEN_PASSIVE` and its keying in `hkey`,
+  `addHandler`, `off`, `Native.passiveConn` (Q2); `adopt` (Q3) — both decided by the coordinator
+  (2026-10-25) as this lane's.
+- `crates/svelters-host` (RUNTIME's crate): `src/spec_hash.rs`, its `lib.rs` exports, and
+  `host.specHash` in `quickjs.rs` (Q4, coordinator 2026-10-25).
 - New runtime file `packages/native-runtime/src/ids.js` (the lane file named only `template.js`; ids
   need their own runtime entry points).
 - `crates/svelters-egui/src/kinds/registry.rs` (RUSTAPI's writer lane, listed as this lane's for the
@@ -142,21 +186,12 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
 
 ## Questions for the coordinator
 
-1. **Which capabilities should egui advertise, and when?** Recommendation: none until consolidation;
-   then `templates` first (the expansion is op-log identical; flip it and let the 6 egui op-log
-   fixtures prove it), `ids` once RUNTIME's `setp` fast path lands, `passive` and `change_classes`
-   only for presto (egui dispatches every listener synchronously anyway).
-2. **RUNTIME: `LISTEN_PASSIVE` in `on`'s handler key.** `index.js` keys handlers by
-   `signal\0flags` and dispatch looks them up with the phase flags the host reports; with bit 4 in
-   the registration key a passive listener would never be found. Recommendation: `on`/`off` strip
-   `LISTEN_PASSIVE` from the key and pass it to `host.listen` only.
-3. **RUNTIME: an adopt entry for host-built nodes** (`adoptRange(base, kinds)` or `instantiate`
-   returning handles the runtime wraps lazily), so `template.js` can call `host.instantiate`.
-   Recommendation: RUNTIME exports it from `index.js` with its lazy-node work; COMPILER then wires
-   `template.js` (a few lines).
-4. **`specHash` on the host.** `ids.js` uses `host.specHash()` when present (one compare per module
-   instead of one resolver call per id). Recommendation: the host returns the backend's hash
-   (`svelters_egui::spec::spec_hash()` for egui, presto's own) from RUNTIME's host work.
+1. Decided (coordinator, 2026-10-25): egui advertises no capability yet; at consolidation 2,
+   `templates` first (the six egui op-log fixtures prove it), then `ids` after the `setp` fast
+   path; `passive` and `change_classes` for presto only.
+2.–4. Decided (coordinator, 2026-10-25) as this lane's work: done above.
+5. Decided (coordinator, 2026-10-25): this lane's `Spec.capabilities` shape, with MOTION-CSS's
+   three constants: done in the merge.
 
 ## Handoff
 

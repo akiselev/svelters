@@ -275,10 +275,12 @@ impl IdSource for SpecIds<'_> {
         let el = self.backend.resolve_element(tag).ok()?;
         Some((self.backend.kind_id(&el)?, el.kind))
     }
-    fn prop(&self, tag: &str, prop: &str) -> Option<(u32, String)> {
+    fn prop(&self, tag: &str, prop: &str) -> Option<(u32, String, bool)> {
+        use crate::semantics::PropType as T;
         let el = self.backend.resolve_element(tag).ok()?;
         let p = self.backend.property(&el, prop).ok()?;
-        Some((p.id?, p.owner.clone()))
+        let scalar = matches!(p.ty, T::Bool | T::I32 | T::U32 | T::I64 | T::F64 | T::String | T::Enum);
+        Some((p.id?, p.owner.clone(), scalar))
     }
 }
 
