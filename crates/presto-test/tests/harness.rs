@@ -4,7 +4,7 @@
 //! invariant that every injected input terminates exactly once.
 
 use presto::latency::{InputClass, Segment, Termination};
-use presto::shim::{Dispatched, DocumentApi};
+use presto::seams::{Dispatched, DocumentApi};
 use presto_base::accesskit::{
     self, Action, ActionRequest, Node as AkNode, Role, Toggled, TreeInfo, TreeUpdate,
 };
@@ -263,6 +263,12 @@ impl DocumentApi for Doc {
 
     fn window_event(&mut self, _window: WindowId, _ev: &WindowEvent) {}
 
+    fn close_window(&mut self, _window: WindowId) {}
+
+    fn accessibility_activated(&mut self, _window: WindowId) {
+        self.dirty = true;
+    }
+
     fn device_reset(&mut self) {
         self.dirty = true;
     }
@@ -520,7 +526,7 @@ fn closing_the_last_window_exits() {
     let mut h = harness();
     h.window_event(WindowEvent::CloseRequested);
     h.step();
-    assert!(h.platform().exited);
+    assert!(h.exited());
     assert!(h.compositor().is_shut_down());
 }
 

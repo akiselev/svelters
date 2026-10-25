@@ -3,7 +3,7 @@
 //! | Module | What |
 //! |---|---|
 //! | [`harness`] | [`Harness`]: kittest's verbs (`run`, `step`, `get_by_label`, `click`, `key_press`, …) on a real `presto::App` |
-//! | [`headless`] | the virtual clock, the headless platform context and the GPU-less compositor it runs on |
+//! | [`headless`] | the GPU-less compositor the harness runs on (with `presto_platform::HeadlessPlatform`) |
 //! | [`a11y`] | the AccessKit snapshot and its queries (by label, role, value, author id) |
 //! | [`egui_event`] | the `egui::Event`-shaped injection adapter for tests moving off egui_kittest |
 //!
@@ -16,5 +16,6 @@ pub mod headless;
 
 pub use a11y::{A11yTree, By, NodeInfo};
 pub use harness::{Harness, HarnessBuilder, Node, NotSettled};
-pub use headless::{HeadlessCompositor, HeadlessCx, VirtualClock};
+pub use headless::HeadlessCompositor;
+pub use presto::platform::{HeadlessPlatform, PlatformCall, VirtualClock};
 pub use presto_base::accesskit::Role;

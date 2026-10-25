@@ -1,7 +1,8 @@
 //! [`Harness`]: kittest's verbs on presto (architecture §16.1). It runs a real [`presto::App`] on
-//! [`HeadlessCx`] and [`HeadlessCompositor`] with a [`VirtualClock`]; input is injected where the
-//! platform delivers it (`AppHandler::input`), so tests take the production dispatch path, and queries
-//! read the AccessKit snapshot folded from the applied commits.
+//! `presto_platform::HeadlessPlatform` and the [`HeadlessCompositor`], on the platform's virtual clock.
+//! Input is scripted into the headless platform, which delivers it as an OS backend would
+//! (`AppHandler::input`, `a11y_event`), so tests take the production dispatch path; queries read the
+//! AccessKit snapshot folded from the app's `update_a11y` calls.
 //!
 //! - `step` = one vsync on the virtual clock: queued input is delivered, the clock moves one interval,
 //!   the compositor applies commits and presents, the UI answers `BeginFrame`.
@@ -10,20 +11,26 @@
 
 use crate::a11y::{A11yTree, By, NodeInfo};
 use crate::egui_event::{EguiAdapter, Injected};
-use crate::headless::{HeadlessCompositor, HeadlessCx, VirtualClock};
-use presto::shim::{AppHandler, DocumentApi, PlatformCx, WindowDesc};
+use crate::headless::HeadlessCompositor;
+use presto::platform::{
+    A11yEvent, ClipboardKind, HeadlessPlatform, PlatformCall, PlatformCx, Scripted, VirtualClock,
+    WindowDesc,
+};
+use presto::seams::DocumentApi;
 use presto::{App, AppConfig};
 use presto_base::accesskit::{Action, ActionRequest, NodeId, Role, TreeId};
 use presto_base::event::{
-    ImeEvent, InputEnvelope, InputEvent, KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton,
-    PointerEvent, PointerPhase, PointerType, ScrollDelta, WheelEvent, WindowEvent,
+    ImeEvent, InputEvent, KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton, PointerEvent,
+    PointerPhase, PointerType, ScrollDelta, WheelEvent, WindowEvent,
 };
 use presto_base::geom::{DeviceSize, Point, Rect, Scale, Size, Vec2};
-use presto_base::ids::{InputSeq, WindowId};
+use presto_base::ids::WindowId;
 use presto_base::key::Key;
 use presto_base::smallvec::SmallVec;
-use presto_base::time::{Span, Time};
+use presto_base::time::{Clock, Span, Time};
 use std::cell::RefCell;
+use std::rc::Rc;
+use std::sync::Arc;
 
 /// The harness did not settle within its step budget.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -63,6 +70,9 @@ impl Default for HarnessBuilder {
 }
 
 impl HarnessBuilder {
+    pub fn new() -> Self {
+        Self::default()
+    }
     /// The window's inner size in points.
     pub fn with_size(mut self, size: Size) -> Self {
         self.size = size;
@@ -81,12 +91,14 @@ impl HarnessBuilder {
         self.max_steps = n;
         self
     }
+    /// The app's configuration (its window list is replaced by the harness window).
     pub fn with_config(mut self, config: AppConfig) -> Self {
         self.config = config;
         self
     }
 
     /// Build the harness around `doc` and run it until settled.
+    #[track_caller]
     pub fn build<D: DocumentApi + 'static>(self, doc: D) -> Harness<D> {
         let mut h = self.build_unsettled(doc);
         h.run();
@@ -95,44 +107,52 @@ impl HarnessBuilder {
 
     /// Build without running (to assert on the first frames).
     pub fn build_unsettled<D: DocumentApi + 'static>(self, doc: D) -> Harness<D> {
-        let clock = VirtualClock::new(self.start);
-        let mut cx = HeadlessCx::new(clock.clone());
+        let mut platform = HeadlessPlatform::new();
+        platform.cx().default_scale = Scale(self.scale);
+        let clock = platform.virtual_clock();
+        clock.set(self.start);
         let mut config = self.config;
-        config.windows = vec![WindowDesc {
-            title: "presto-test".into(),
-            size: self.size,
-            ..WindowDesc::default()
-        }];
-        config.interval = self.interval;
-        let mut app = App::new(config, doc, Box::new(HeadlessCompositor::new));
-        app.init(&mut cx);
+        config.windows = vec![WindowDesc::new("presto-test", self.size)];
+        let slot: Rc<RefCell<Option<HeadlessCompositor>>> = Rc::default();
+        let keep = slot.clone();
+        let spawn = Box::new(move |sink, _clock| {
+            let c = HeadlessCompositor::new(sink);
+            *keep.borrow_mut() = Some(c.clone());
+            c
+        });
+        let mut app = App::new(config, doc, spawn);
+        platform.run_until(&mut app, Some(self.start));
         let window = app.windows().next().expect("the harness window opened");
+        let compositor = slot
+            .borrow_mut()
+            .take()
+            .expect("init spawned the compositor");
         let mut h = Harness {
             app,
-            cx,
+            platform,
+            compositor,
             clock,
             window,
             interval: self.interval,
             max_steps: self.max_steps,
             queue: RefCell::new(Vec::new()),
-            next_seq: 1,
             modifiers: Modifiers::default(),
             egui: EguiAdapter::default(),
             a11y: A11yTree::default(),
+            calls: Vec::new(),
             steps: 0,
         };
+        h.collect_calls();
+        // The platform reports the window's size once it exists, as an OS backend does.
         let device = DeviceSize {
             w: (self.size.w * self.scale).round() as u32,
             h: (self.size.h * self.scale).round() as u32,
         };
-        h.app.window_event(
-            &mut h.cx,
-            window,
-            WindowEvent::Resized {
-                size: device,
-                scale: Scale(self.scale),
-            },
-        );
+        h.window_event(WindowEvent::Resized {
+            size: device,
+            scale: Scale(self.scale),
+        });
+        h.deliver();
         h
     }
 }
@@ -148,17 +168,20 @@ enum Queued {
 
 pub struct Harness<D: DocumentApi + 'static> {
     app: App<D, HeadlessCompositor>,
-    cx: HeadlessCx,
-    clock: VirtualClock,
+    platform: HeadlessPlatform,
+    /// The harness's handle on the compositor's state (it outlives the app's on exit).
+    compositor: HeadlessCompositor,
+    clock: Arc<VirtualClock>,
     window: WindowId,
     interval: Span,
     max_steps: u64,
     /// Interior mutability so node handles (borrowing the harness) can queue input, as kittest's do.
     queue: RefCell<Vec<Queued>>,
-    next_seq: u64,
     modifiers: Modifiers,
     egui: EguiAdapter,
     a11y: A11yTree,
+    /// Every platform call the app made, in order.
+    calls: Vec<PlatformCall>,
     steps: u64,
 }
 
@@ -168,6 +191,7 @@ impl<D: DocumentApi + 'static> Harness<D> {
     }
 
     /// Build with the defaults (800×600 points, 60 Hz) and run until settled.
+    #[track_caller]
     pub fn new(doc: D) -> Self {
         HarnessBuilder::default().build(doc)
     }
@@ -188,18 +212,22 @@ impl<D: DocumentApi + 'static> Harness<D> {
         &mut self.app
     }
     pub fn compositor(&self) -> &HeadlessCompositor {
-        self.app
-            .compositor()
-            .expect("the harness spawns its compositor in init")
+        &self.compositor
     }
-    pub fn platform(&self) -> &HeadlessCx {
-        &self.cx
+    pub fn platform(&self) -> &HeadlessPlatform {
+        &self.platform
+    }
+    /// Every platform call the app made so far (windows, cursors, IME, a11y updates, exit).
+    pub fn calls(&self) -> &[PlatformCall] {
+        &self.calls
+    }
+    pub fn exited(&self) -> bool {
+        self.platform.exited()
     }
     pub fn window(&self) -> WindowId {
         self.window
     }
     pub fn now(&self) -> Time {
-        use presto_base::time::Clock;
         self.clock.now()
     }
     pub fn steps(&self) -> u64 {
@@ -214,28 +242,68 @@ impl<D: DocumentApi + 'static> Harness<D> {
     /// One vsync on the virtual clock.
     pub fn step(&mut self) {
         self.deliver();
-        let now = self.clock.advance(self.interval);
-        self.compositor().vsync(now, self.interval);
-        self.app.wake(&mut self.cx);
-        self.cx.take_wake();
-        for (w, u) in self.compositor().take_a11y() {
-            if w == self.window {
-                self.a11y.apply(&u);
-            }
-        }
+        self.clock.advance(self.interval);
+        let now = self.now();
+        self.compositor.vsync(now, self.interval);
+        // The vsync's messages woke the UI thread; the platform delivers the wake.
+        self.platform.run_until(&mut self.app, Some(now));
+        self.collect_calls();
         self.steps += 1;
     }
 
-    /// Why the harness is not settled, or `None` when it is.
+    fn collect_calls(&mut self) {
+        for c in self.platform.take_calls() {
+            if let PlatformCall::UpdateA11y(w, u) = &c
+                && *w == self.window
+            {
+                self.a11y.apply(u);
+            }
+            self.calls.push(c);
+        }
+    }
+
+    /// Script the queued input into the headless platform at the current time and let it deliver.
+    fn deliver(&mut self) {
+        let queued = std::mem::take(&mut *self.queue.borrow_mut());
+        let now = self.now();
+        for q in queued {
+            match q {
+                Queued::Input(w, event) => self.platform.push_input(now, w, event),
+                Queued::A11y(w, req) => self.platform.push(
+                    now,
+                    Scripted::A11y {
+                        window: w,
+                        event: A11yEvent::Action(req),
+                    },
+                ),
+                Queued::Window(w, ev) => self.platform.push_window_event(now, w, ev),
+                Queued::Clipboard(text) => {
+                    // Deliver what came before, then set the clipboard for the paste chord after it.
+                    self.platform.run_until(&mut self.app, Some(now));
+                    self.platform
+                        .cx()
+                        .clipboard()
+                        .set_text(ClipboardKind::Clipboard, &text);
+                }
+            }
+        }
+        self.platform.run_until(&mut self.app, Some(now));
+        self.collect_calls();
+    }
+
+    /// Why the harness is not settled, or `None` when it is (or the app exited).
     pub fn busy(&self) -> Option<String> {
+        if self.exited() {
+            return None;
+        }
         if !self.queue.borrow().is_empty() {
             return Some("queued input".into());
         }
         if !self.app.is_idle() {
             return Some("the app has a frame to run".into());
         }
-        if !self.compositor().is_idle() {
-            let endless = self.compositor().endless_animations();
+        if !self.compositor.is_idle() {
+            let endless = self.compositor.endless_animations();
             if !endless.is_empty() {
                 return Some(format!(
                     "animations {endless:?} have no end the headless compositor can compute (physical springs need presto-anim)"
@@ -275,38 +343,13 @@ impl<D: DocumentApi + 'static> Harness<D> {
     }
 
     /// Advance the clock by `span` in steps (timers, animations), then settle.
+    #[track_caller]
     pub fn run_for(&mut self, span: Span) {
         let end = self.now() + span;
         while self.now() < end {
             self.step();
         }
         self.run();
-    }
-
-    fn deliver(&mut self) {
-        let queued = std::mem::take(&mut *self.queue.borrow_mut());
-        for q in queued {
-            match q {
-                Queued::Input(w, event) => {
-                    let now = self.now();
-                    let seq = InputSeq(self.next_seq);
-                    self.next_seq += 1;
-                    let env = InputEnvelope {
-                        seq,
-                        window: w,
-                        os_time: now,
-                        recv_time: now,
-                        event,
-                    };
-                    self.app.input(&mut self.cx, env);
-                }
-                Queued::A11y(w, req) => {
-                    self.app.accessibility_action(&mut self.cx, w, &req);
-                }
-                Queued::Window(w, ev) => self.app.window_event(&mut self.cx, w, ev),
-                Queued::Clipboard(text) => self.cx.clipboard().set_text(&text),
-            }
-        }
     }
 
     // ---- input ----------------------------------------------------------------------------------

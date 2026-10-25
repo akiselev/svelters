@@ -1,134 +1,23 @@
-//! The headless platform context and compositor the [`crate::Harness`] drives on a virtual clock.
+//! The GPU-less compositor the [`crate::Harness`] drives on the headless platform's virtual clock.
 //!
-//! [`HeadlessCx`] stands in for `presto_platform::HeadlessPlatform` (lane PLATFORM) until it is merged:
-//! no OS windows, an in-memory clipboard, and every platform request recorded for assertions.
-//! [`HeadlessCompositor`] implements `presto::shim::CompositorApi` without a GPU: it applies commits at
+//! [`HeadlessCompositor`] implements `presto::seams::CompositorApi` without a GPU: it applies commits at
 //! each simulated vsync, reports `CommitApplied` and `Presented`, sends `BeginFrame` when the UI asked
 //! for one or an animation runs, and answers resizes at once. Drawing goes through the real compositor
 //! on lavapipe once `presto-compositor` is merged (`Harness::render`, not here yet).
 
 use presto::ToUiSink;
-use presto::shim::{
-    Clipboard, CompositorApi, ImeState, PlatformCx, SurfaceTarget, Waker, WindowDesc,
-};
+use presto::platform::SurfaceTarget;
+use presto::seams::CompositorApi;
 use presto_base::accesskit::TreeUpdate;
 use presto_base::anim::{
     AnimationCmd, AnimationEvent, AnimationSpec, Generator, SpringParams, StartTime,
 };
 use presto_base::commit::{Commit, FastCommit, ToUi};
-use presto_base::cursor::CursorIcon;
 use presto_base::geom::{DeviceSize, Scale};
 use presto_base::ids::{AnimationId, FrameId, InputSeq, WindowId};
-use presto_base::time::{Clock, Span, Time};
-use std::collections::{BTreeMap, HashMap};
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use presto_base::time::{Span, Time};
+use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
-
-/// A clock that moves only when told.
-#[derive(Clone, Default)]
-pub struct VirtualClock(Arc<AtomicU64>);
-
-impl VirtualClock {
-    pub fn new(start: Time) -> Self {
-        Self(Arc::new(AtomicU64::new(start.0)))
-    }
-    pub fn set(&self, t: Time) {
-        self.0.store(t.0, Ordering::SeqCst);
-    }
-    pub fn advance(&self, s: Span) -> Time {
-        let t = self.now() + s;
-        self.set(t);
-        t
-    }
-}
-
-impl Clock for VirtualClock {
-    fn now(&self) -> Time {
-        Time(self.0.load(Ordering::SeqCst))
-    }
-}
-
-#[derive(Default)]
-struct MemClipboard(Option<String>);
-
-impl Clipboard for MemClipboard {
-    fn get_text(&mut self) -> Option<String> {
-        self.0.clone()
-    }
-    fn set_text(&mut self, text: &str) {
-        self.0 = Some(text.to_owned());
-    }
-}
-
-/// The platform side of the harness.
-pub struct HeadlessCx {
-    clock: VirtualClock,
-    next_window: u32,
-    pub windows: BTreeMap<WindowId, WindowDesc>,
-    pub cursors: HashMap<WindowId, CursorIcon>,
-    pub ime: HashMap<WindowId, Option<ImeState>>,
-    pub timer: Option<Time>,
-    pub exited: bool,
-    clipboard: MemClipboard,
-    woken: Arc<AtomicBool>,
-}
-
-impl HeadlessCx {
-    pub fn new(clock: VirtualClock) -> Self {
-        Self {
-            clock,
-            next_window: 1,
-            windows: BTreeMap::new(),
-            cursors: HashMap::new(),
-            ime: HashMap::new(),
-            timer: None,
-            exited: false,
-            clipboard: MemClipboard::default(),
-            woken: Arc::new(AtomicBool::new(false)),
-        }
-    }
-    /// Whether something woke the UI thread since the last call.
-    pub fn take_wake(&self) -> bool {
-        self.woken.swap(false, Ordering::SeqCst)
-    }
-}
-
-impl PlatformCx for HeadlessCx {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
-        let id = WindowId(self.next_window);
-        self.next_window += 1;
-        self.windows.insert(id, desc);
-        id
-    }
-    fn close_window(&mut self, id: WindowId) {
-        self.windows.remove(&id);
-    }
-    fn surface_target(&self, id: WindowId) -> SurfaceTarget {
-        SurfaceTarget(Box::new(id))
-    }
-    fn set_cursor(&mut self, id: WindowId, c: CursorIcon) {
-        self.cursors.insert(id, c);
-    }
-    fn set_ime(&mut self, id: WindowId, state: Option<ImeState>) {
-        self.ime.insert(id, state);
-    }
-    fn clipboard(&mut self) -> &mut dyn Clipboard {
-        &mut self.clipboard
-    }
-    fn set_timer(&mut self, at: Option<Time>) {
-        self.timer = at;
-    }
-    fn waker(&self) -> Waker {
-        let woken = self.woken.clone();
-        Waker(Arc::new(move || woken.store(true, Ordering::SeqCst)))
-    }
-    fn clock(&self) -> Arc<dyn Clock> {
-        Arc::new(self.clock.clone())
-    }
-    fn exit(&mut self) {
-        self.exited = true;
-    }
-}
 
 struct CompWindow {
     size: DeviceSize,
@@ -154,6 +43,8 @@ struct CompState {
     a11y: Vec<(WindowId, TreeUpdate)>,
     applied: Vec<Commit>,
     resizes: Vec<(WindowId, DeviceSize, Scale, u64)>,
+    ui_costs: Vec<(WindowId, FrameId, Span)>,
+    high_rate: u64,
     shut_down: bool,
 }
 
@@ -177,16 +68,17 @@ fn end_of(spec: &AnimationSpec) -> Option<Span> {
     }
 }
 
-/// The GPU-less compositor.
+/// The GPU-less compositor. Clones share one state (the harness keeps one after the app drops its own).
+#[derive(Clone)]
 pub struct HeadlessCompositor {
-    state: Mutex<CompState>,
+    state: Arc<Mutex<CompState>>,
     sink: ToUiSink,
 }
 
 impl HeadlessCompositor {
     pub fn new(sink: ToUiSink) -> Self {
         Self {
-            state: Mutex::new(CompState::default()),
+            state: Arc::new(Mutex::new(CompState::default())),
             sink,
         }
     }
@@ -359,6 +251,14 @@ impl HeadlessCompositor {
     pub fn window_size(&self, w: WindowId) -> Option<(DeviceSize, Scale)> {
         self.lock().windows.get(&w).map(|cw| (cw.size, cw.scale))
     }
+    /// UI costs reported for answered `BeginFrame`s.
+    pub fn ui_costs(&self) -> Vec<(WindowId, FrameId, Span)> {
+        self.lock().ui_costs.clone()
+    }
+    /// How many continuous inputs were reported.
+    pub fn high_rate_inputs(&self) -> u64 {
+        self.lock().high_rate
+    }
     pub fn is_shut_down(&self) -> bool {
         self.lock().shut_down
     }
@@ -425,10 +325,16 @@ impl CompositorApi for HeadlessCompositor {
             cw.visible = visible;
         }
     }
-    fn request_frame(&self, window: WindowId) {
+    fn request_ui_frame(&self, window: WindowId) {
         if let Some(cw) = self.lock().windows.get_mut(&window) {
             cw.frame_requested = true;
         }
+    }
+    fn high_rate_input(&self, _window: WindowId) {
+        self.lock().high_rate += 1;
+    }
+    fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span) {
+        self.lock().ui_costs.push((window, frame, cost));
     }
     fn shutdown(&self) {
         self.lock().shut_down = true;

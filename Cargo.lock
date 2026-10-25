@@ -3955,6 +3955,11 @@ name = "presto"
 version = "0.0.0"
 dependencies = [
  "presto-base",
+ "presto-compositor",
+ "presto-core",
+ "presto-frame",
+ "presto-platform",
+ "wgpu",
 ]
 
 [[package]]

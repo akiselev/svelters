@@ -7,14 +7,20 @@
 //! | Module | What |
 //! |---|---|
 //! | [`app`] | the [`App`] runner, the resize handshake, the compositor's [`ToUiSink`] |
+//! | [`seams`] | what the runner needs from the tree, the compositor and the script host |
+//! | [`backends`] | those seams for `presto_core::Document`, `presto_compositor::CompositorHandle`, `presto_frame::UiFrameState` |
 //! | [`coalesce`] | per-frame coalescing of pointer moves and wheel deltas |
 //! | [`latency`] | stage records per `InputSeq`, histograms, Chrome JSON trace export |
-//! | [`shim`] | stand-ins for wave-1 APIs not merged yet (replaced at consolidation) |
 
 pub mod app;
+pub mod backends;
 pub mod coalesce;
 pub mod latency;
-pub mod shim;
+pub mod seams;
 
-pub use app::{App, AppConfig, ToUiSink};
+pub use app::{App, AppConfig, SpawnCompositor, ToUiSink};
+pub use backends::{CoreDocument, UiFrame, compositor};
 pub use presto_base as base;
+pub use presto_compositor as compositor_crate;
+pub use presto_core as core;
+pub use presto_platform as platform;

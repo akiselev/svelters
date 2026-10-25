@@ -7,18 +7,16 @@
 //! - **Continuous input** (pointer moves, wheel deltas) is coalesced per window and dispatched at the
 //!   start of the next UI frame.
 //! - **Compositor messages** ([`ToUi`]) arrive on a channel the compositor fills from its thread; the
-//!   platform wakes the UI thread and [`App::wake`] drains it.
+//!   platform wakes the UI thread and [`AppHandler::wake`] drains it.
 //! - **Resize** is the one synchronous handshake: the new-size frame is committed, the compositor is
 //!   told, and the UI thread waits up to [`AppConfig::resize_wait`] for `ResizeDone` (architecture §7.6).
 //!
 //! Every input is stamped through [`LatencyRecorder`] from `os` to its termination.
 
+use crate::backends::UiFrame;
 use crate::coalesce::{Coalescer, Pushed};
 use crate::latency::{LatencyConfig, LatencyRecorder, Stage, Track};
-use crate::shim::{
-    AppHandler, CompositorApi, Dispatched, DocumentApi, FrameStateApi, ImeState, PlatformCx,
-    ScriptHost, ShimUiFrameState, Urgency, Waker, WindowDesc,
-};
+use crate::seams::{CompositorApi, Dispatched, DocumentApi, ScriptHost};
 use presto_base::accesskit::ActionRequest;
 use presto_base::commit::{Commit, FastCommit, ToUi};
 use presto_base::event::{InputEnvelope, WindowEvent};
@@ -26,6 +24,8 @@ use presto_base::geom::{DeviceSize, Scale, Size};
 use presto_base::ids::{FrameId, InputSeq, Revision, WindowId};
 use presto_base::input::InputPurpose;
 use presto_base::time::{Clock, Span, Time};
+use presto_frame::Urgency;
+use presto_platform::{A11yEvent, AppHandler, ImeState, PlatformCx, Waker, WindowDesc};
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, RecvTimeoutError, Sender, channel};
@@ -34,8 +34,6 @@ use std::sync::mpsc::{Receiver, RecvTimeoutError, Sender, channel};
 pub struct AppConfig {
     /// Windows opened at `init`.
     pub windows: Vec<WindowDesc>,
-    /// The display interval assumed until presentation feedback says otherwise.
-    pub interval: Span,
     /// How long a resize waits for `ResizeDone` (about one refresh).
     pub resize_wait: Span,
     /// Exit when the last window closes.
@@ -46,8 +44,7 @@ pub struct AppConfig {
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
-            windows: vec![WindowDesc::default()],
-            interval: Span::from_micros(16_667),
+            windows: vec![WindowDesc::new("presto", Size::new(800.0, 600.0))],
             resize_wait: Span::from_micros(16_667),
             exit_on_last_window: true,
             latency: LatencyConfig::default(),
@@ -55,8 +52,12 @@ impl Default for AppConfig {
     }
 }
 
-/// The compositor's way back to the UI thread: `to_ui` queues a message, `wake_ui` wakes the platform
-/// loop. Hand [`ToUiSink::callbacks`] to `Compositor::spawn`.
+/// `Compositor::spawn`'s `to_ui` callback.
+pub type ToUiFn = Box<dyn Fn(ToUi) + Send>;
+/// `Compositor::spawn`'s `wake_ui` callback.
+pub type WakeFn = Box<dyn Fn() + Send>;
+
+/// The compositor's way back to the UI thread: `send` queues a message and wakes the platform loop.
 #[derive(Clone)]
 pub struct ToUiSink {
     tx: Sender<ToUi>,
@@ -80,31 +81,22 @@ impl ToUiSink {
     }
 }
 
-/// `Compositor::spawn`'s `to_ui` callback.
-pub type ToUiFn = Box<dyn Fn(ToUi) + Send>;
-/// `Compositor::spawn`'s `wake_ui` callback.
-pub type WakeFn = Box<dyn Fn() + Send>;
-/// Builds the compositor once the platform's waker exists (in `init`).
-pub type SpawnCompositor<C> = Box<dyn FnOnce(ToUiSink) -> C>;
-/// Builds a window's UI frame state.
-pub type MakeFrameState = Box<dyn FnMut(WindowId) -> Box<dyn FrameStateApi>>;
+/// Builds the compositor in `init`, once the platform's waker and clock exist.
+pub type SpawnCompositor<C> = Box<dyn FnOnce(ToUiSink, Arc<dyn Clock>) -> C>;
 
 struct WindowState {
-    frame: Box<dyn FrameStateApi>,
+    frame: UiFrame,
     size: DeviceSize,
     scale: Scale,
     visible: bool,
-    /// A `BeginFrame` was asked for and has not arrived.
-    frame_requested: bool,
 }
 
 pub struct App<D: DocumentApi, C: CompositorApi> {
     cfg: AppConfig,
     doc: D,
-    script: Option<Box<dyn ScriptHost>>,
+    script: Option<Box<dyn ScriptHost<D>>>,
     spawn: Option<SpawnCompositor<C>>,
     compositor: Option<C>,
-    make_frame_state: MakeFrameState,
     tx: Sender<ToUi>,
     rx: Receiver<ToUi>,
     /// Messages that arrived while a resize waited for its `ResizeDone`.
@@ -119,7 +111,6 @@ pub struct App<D: DocumentApi, C: CompositorApi> {
 impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
     pub fn new(cfg: AppConfig, doc: D, spawn: SpawnCompositor<C>) -> Self {
         let (tx, rx) = channel();
-        let interval = cfg.interval;
         let latency = LatencyRecorder::new(cfg.latency);
         Self {
             cfg,
@@ -127,7 +118,6 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             script: None,
             spawn: Some(spawn),
             compositor: None,
-            make_frame_state: Box::new(move |_| Box::new(ShimUiFrameState::new(interval))),
             tx,
             rx,
             deferred: VecDeque::new(),
@@ -139,13 +129,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         }
     }
 
-    pub fn with_script(mut self, script: Box<dyn ScriptHost>) -> Self {
+    pub fn with_script(mut self, script: Box<dyn ScriptHost<D>>) -> Self {
         self.script = Some(script);
-        self
-    }
-
-    pub fn with_frame_state(mut self, make: MakeFrameState) -> Self {
-        self.make_frame_state = make;
         self
     }
 
@@ -171,15 +156,15 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         self.windows.get(&w).map(|s| (s.size, s.scale))
     }
 
-    /// Nothing is waiting: no coalesced input, no frame asked for, no window with uncommitted changes,
-    /// no compositor message unread.
+    /// Nothing is waiting on the UI side: no coalesced input, no unread compositor message, no visible
+    /// window with uncommitted changes.
     pub fn is_idle(&self) -> bool {
         self.deferred.is_empty()
             && self.coalescer.windows().next().is_none()
             && self
                 .windows
                 .iter()
-                .all(|(w, s)| !s.frame_requested && !self.doc.needs_frame(*w))
+                .all(|(w, s)| !s.visible || (!s.frame.is_dirty() && !self.doc.needs_frame(*w)))
     }
 
     fn now(&self) -> Time {
@@ -195,25 +180,24 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
     ) -> Result<WindowId, String> {
         let size_pt = desc.size;
         let id = cx.create_window(desc);
-        // The platform reports the real scale with the first `Resized`; until then, 1.
-        let scale = Scale(1.0);
+        let scale = cx.window_scale(id).unwrap_or(Scale(1.0));
         let size = DeviceSize {
-            w: size_pt.w.round() as u32,
-            h: size_pt.h.round() as u32,
+            w: (size_pt.w * scale.0).round() as u32,
+            h: (size_pt.h * scale.0).round() as u32,
         };
-        let target = cx.surface_target(id);
-        if let Some(c) = &self.compositor {
-            c.add_window(id, target, size, scale)?;
+        if let Some(c) = &self.compositor
+            && let Err(e) = c.add_window(id, cx.surface_target(id), size, scale)
+        {
+            cx.close_window(id);
+            return Err(e);
         }
-        let frame = (self.make_frame_state)(id);
         self.windows.insert(
             id,
             WindowState {
-                frame,
+                frame: UiFrame::new(),
                 size,
                 scale,
                 visible: true,
-                frame_requested: false,
             },
         );
         self.doc.resize(id, size_pt, scale);
@@ -230,11 +214,9 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         }
         self.coalescer.take(id);
         self.latency.drop_window(id);
+        self.doc.close_window(id);
         cx.close_window(id);
         if self.windows.is_empty() && self.cfg.exit_on_last_window {
-            if let Some(c) = &self.compositor {
-                c.shutdown();
-            }
             cx.exit();
         }
     }
@@ -243,12 +225,11 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         let Some(ws) = self.windows.get_mut(&w) else {
             return;
         };
-        if ws.frame_requested || !ws.visible {
-            return;
-        }
-        ws.frame_requested = true;
-        if let Some(c) = &self.compositor {
-            c.request_frame(w);
+        if ws.frame.mark_dirty()
+            && ws.visible
+            && let Some(c) = &self.compositor
+        {
+            c.request_ui_frame(w);
         }
     }
 
@@ -258,8 +239,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         }
     }
 
-    /// Native defaults and JS for one input; stamps `dispatch_end` and `js_end`. Returns whether
-    /// anything must reach the screen (a tree change, or a fast commit the compositor applies itself).
+    /// Native defaults and JS for one input; stamps `dispatch_end` and `js_end`. Returns whether the
+    /// tree changed. An input that changed nothing and wrote no fast commit terminates here.
     fn dispatch_one(&mut self, ev: &InputEnvelope) -> bool {
         let start = self.now();
         let d: Dispatched = self.doc.dispatch(ev);
@@ -267,14 +248,10 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         self.latency.stamp(ev.seq, Stage::DispatchEnd, t);
         self.latency
             .slice(Track::Ui, "dispatch", ev.window, start, t);
-        if !d.fast.is_empty() {
-            for f in &d.fast {
-                self.latency.fast_sent(ev.seq, fast_revision(f), t);
-            }
+        for f in &d.fast {
+            self.latency.fast_sent(ev.seq, fast_revision(f), t);
             if let Some(c) = &self.compositor {
-                for f in d.fast.iter().copied() {
-                    c.fast(f);
-                }
+                c.fast(*f);
             }
         }
         let mut dirty = d.dirty;
@@ -299,32 +276,51 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         }
     }
 
-    /// Run the UI phases for `w` and commit. `frame` is the `BeginFrame` answered (`None` = urgent).
+    /// An urgent frame for `w` when the frame state allows one now, else a `BeginFrame` request.
+    fn urgent(&mut self, cx: &mut dyn PlatformCx, w: WindowId) {
+        let now = self.now();
+        let Some(ws) = self.windows.get_mut(&w) else {
+            return;
+        };
+        match ws.frame.urgent(now) {
+            (Urgency::RunNow { target }, _) => {
+                self.latency.counters_mut(w).urgent += 1;
+                self.run_frame(cx, w, None, target);
+            }
+            (Urgency::Wait, notify) => {
+                if notify
+                    && ws.visible
+                    && let Some(c) = &self.compositor
+                {
+                    c.request_ui_frame(w);
+                }
+            }
+        }
+    }
+
+    /// Run the UI phases for `w` (the frame state is already Running) and commit. `frame` is the
+    /// `BeginFrame` answered (`None` = urgent).
     fn run_frame(
         &mut self,
         cx: &mut dyn PlatformCx,
         w: WindowId,
         frame: Option<FrameId>,
         target: Time,
-        deadline: Time,
     ) {
         let start = self.now();
         self.flush_coalesced(w);
         self.latency
             .stamp_pending(w, Stage::DispatchEnd, Stage::UiFrameStart, start);
-        if let Some(ws) = self.windows.get_mut(&w) {
-            ws.frame_requested = false;
-        }
         let commit = self.doc.frame(w, target);
         let now = self.now();
         self.latency.slice(Track::Ui, "ui_frame", w, start, now);
         match commit {
-            Some(c) => self.send_commit(cx, w, frame, c, deadline),
+            Some(c) => self.send_commit(cx, w, frame, c),
             None => {
                 self.latency.frame_without_commit(w);
                 self.latency.counters_mut(w).no_damage += 1;
                 if let Some(ws) = self.windows.get_mut(&w) {
-                    ws.frame.frame_skipped(now);
+                    ws.frame.skipped();
                 }
             }
         }
@@ -336,7 +332,6 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         w: WindowId,
         frame: Option<FrameId>,
         mut c: Commit,
-        deadline: Time,
     ) {
         let now = self.now();
         c.window = w;
@@ -345,28 +340,30 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         if let Some(&max) = seqs.iter().max() {
             c.input_seq = c.input_seq.max(max);
         }
-        if now > deadline {
-            self.latency.counters_mut(w).ui_missed += 1;
-        }
         if let Some(cursor) = c.cursor {
             cx.set_cursor(w, cursor);
         }
         if let Some(area) = c.ime_area {
-            // The commit carries the area only; the purpose comes with focus (CORE request in the record).
-            cx.set_ime(
-                w,
-                Some(ImeState {
-                    area,
-                    purpose: InputPurpose::Text,
-                }),
-            );
+            // The commit carries the area only; the purpose comes with focus (a CORE request in the record).
+            cx.set_ime(w, Some(ImeState::new(area, InputPurpose::Text)));
         }
-        let revision = c.revision;
-        if let Some(ws) = self.windows.get_mut(&w) {
-            ws.frame.commit_sent(now, revision);
+        if let Some(u) = &c.a11y {
+            cx.update_a11y(w, u.clone());
+        }
+        let report = self
+            .windows
+            .get_mut(&w)
+            .and_then(|ws| ws.frame.committed(now, c.revision));
+        if report.is_some_and(|r| r.late) {
+            self.latency.counters_mut(w).ui_missed += 1;
         }
         if let Some(comp) = &self.compositor {
             comp.commit(c);
+            if let Some(r) = report
+                && let Some(f) = r.frame
+            {
+                comp.ui_cost(w, f, r.cost);
+            }
         }
     }
 
@@ -382,24 +379,27 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
                 let Some(ws) = self.windows.get_mut(&window) else {
                     return;
                 };
-                ws.frame_requested = false;
-                if !ws.frame.on_begin_frame(now, frame, target, deadline) {
-                    // A commit is unapplied: ask again once it is (CommitApplied below).
+                if !ws.frame.begin(now, frame, target, deadline) {
+                    // A commit is unapplied: asked again once it is (CommitApplied below).
                     return;
                 }
                 if self.doc.needs_frame(window) || self.coalescer.has_pending(window) {
-                    self.run_frame(cx, window, Some(frame), target, deadline);
+                    self.run_frame(cx, window, Some(frame), target);
                 } else {
                     self.latency.counters_mut(window).no_damage += 1;
                     if let Some(ws) = self.windows.get_mut(&window) {
-                        ws.frame.frame_skipped(now);
+                        ws.frame.skipped();
                     }
                 }
             }
             ToUi::CommitApplied { window, revision } => {
                 self.latency.commit_applied(window, revision, now);
-                if let Some(ws) = self.windows.get_mut(&window) {
-                    ws.frame.commit_applied(now, revision);
+                let again = self
+                    .windows
+                    .get_mut(&window)
+                    .is_some_and(|ws| ws.frame.applied(revision));
+                if again && let Some(c) = &self.compositor {
+                    c.request_ui_frame(window);
                 }
                 self.request_if_dirty(window);
             }
@@ -412,9 +412,6 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             } => {
                 self.latency
                     .presented(window, frame, at, estimated, &inputs);
-                if let Some(ws) = self.windows.get_mut(&window) {
-                    ws.frame.presented(frame, at);
-                }
             }
             ToUi::Animation { window, event } => {
                 self.doc.animation_event(window, event);
@@ -454,7 +451,6 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
 
     /// The resize handshake: commit the new-size frame, tell the compositor, wait for its `ResizeDone`.
     fn resize(&mut self, cx: &mut dyn PlatformCx, w: WindowId, size: DeviceSize, scale: Scale) {
-        let now = self.now();
         let Some(ws) = self.windows.get_mut(&w) else {
             return;
         };
@@ -462,9 +458,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         ws.scale = scale;
         let pts = Size::new(size.w as f32 / scale.0, size.h as f32 / scale.0);
         self.doc.resize(w, pts, scale);
-        if let Urgency::RunNow { target } = ws.frame.on_urgent_input(now) {
-            self.run_frame(cx, w, None, target, target);
-        }
+        self.urgent(cx, w);
         let Some(comp) = &self.compositor else { return };
         self.resize_seq += 1;
         let seq = self.resize_seq;
@@ -495,27 +489,9 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
     ) -> bool {
         let handled = self.doc.accessibility_action(w, req);
         if self.doc.needs_frame(w) {
-            let now = self.now();
-            let urgency = self
-                .windows
-                .get_mut(&w)
-                .map(|ws| ws.frame.on_urgent_input(now));
-            match urgency {
-                Some(Urgency::RunNow { target }) => {
-                    self.run_frame(cx, w, None, target, target.max(now))
-                }
-                Some(Urgency::Wait) => self.request_frame(w),
-                None => {}
-            }
+            self.urgent(cx, w);
         }
         handled
-    }
-
-    fn sink(&self, waker: Waker) -> ToUiSink {
-        ToUiSink {
-            tx: self.tx.clone(),
-            waker,
-        }
     }
 }
 
@@ -532,13 +508,16 @@ fn fast_revision(f: &FastCommit) -> Revision {
 
 impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D, C> {
     fn init(&mut self, cx: &mut dyn PlatformCx) {
-        self.clock = Some(cx.clock());
+        let clock = cx.clock();
+        self.clock = Some(clock.clone());
         if let Some(spawn) = self.spawn.take() {
-            let sink = self.sink(cx.waker());
-            self.compositor = Some(spawn(sink));
+            let sink = ToUiSink {
+                tx: self.tx.clone(),
+                waker: cx.waker(),
+            };
+            self.compositor = Some(spawn(sink, clock));
         }
         for desc in std::mem::take(&mut self.cfg.windows) {
-            // A window the compositor cannot take (no surface) is closed again rather than left blank.
             if let Err(e) = self.open_window(cx, desc) {
                 eprintln!("presto: cannot open window: {e}");
             }
@@ -556,24 +535,16 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
             if let Pushed::Merged { old } = self.coalescer.push(ev) {
                 self.latency.merged(old, seq);
             }
+            if let Some(c) = &self.compositor {
+                c.high_rate_input(w);
+            }
             self.request_frame(w);
             return;
         }
         self.flush_coalesced(w);
         let dirty = self.dispatch_one(&ev);
-        if !dirty && !self.doc.needs_frame(w) {
-            return;
-        }
-        let now = self.now();
-        let Some(ws) = self.windows.get_mut(&w) else {
-            return;
-        };
-        match ws.frame.on_urgent_input(now) {
-            Urgency::RunNow { target } => {
-                self.latency.counters_mut(w).urgent += 1;
-                self.run_frame(cx, w, None, target, target.max(now));
-            }
-            Urgency::Wait => self.request_frame(w),
+        if dirty || self.doc.needs_frame(w) {
+            self.urgent(cx, w);
         }
     }
 
@@ -590,18 +561,18 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
                     return;
                 };
                 ws.visible = !occluded;
-                if occluded {
-                    ws.frame_requested = false;
-                }
+                let dirty = ws.frame.is_dirty();
                 if let Some(c) = &self.compositor {
                     c.set_visible(window, !occluded);
                 }
                 if occluded {
                     self.coalescer.take(window);
                     self.latency.drop_window(window);
-                } else {
+                } else if (dirty || self.doc.needs_frame(window))
+                    && let Some(c) = &self.compositor
+                {
                     // One frame when visible again (the compositor kept the damage).
-                    self.request_frame(window);
+                    c.request_ui_frame(window);
                 }
             }
             WindowEvent::CloseRequested => self.close_window(cx, window),
@@ -618,5 +589,24 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
 
     fn timer(&mut self, cx: &mut dyn PlatformCx, _now: Time) {
         self.pump(cx);
+    }
+
+    fn a11y_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: A11yEvent) {
+        match ev {
+            A11yEvent::Action(req) => {
+                self.accessibility_action(cx, window, &req);
+            }
+            A11yEvent::Activated => {
+                self.doc.accessibility_activated(window);
+                self.request_if_dirty(window);
+            }
+            A11yEvent::Deactivated => {}
+        }
+    }
+
+    fn exiting(&mut self, _cx: &mut dyn PlatformCx) {
+        if let Some(c) = self.compositor.take() {
+            c.shutdown();
+        }
     }
 }
