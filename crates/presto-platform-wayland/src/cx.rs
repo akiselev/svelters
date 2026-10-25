@@ -355,4 +355,8 @@ impl Clipboard for Cx<'_> {
     fn has_primary(&self) -> bool {
         crate::data::has_primary(self.state)
     }
+
+    fn clear_primary(&mut self) -> bool {
+        crate::data::clear_primary(self.state)
+    }
 }

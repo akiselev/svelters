@@ -205,6 +205,15 @@ pub fn set_primary(state: &mut State, text: String) -> Result<(), PlatformError>
     Ok(())
 }
 
+/// Gives up the primary selection: `unset_selection` with the latest input serial.
+pub fn clear_primary(state: &mut State) -> bool {
+    let Some((dev, Some(serial))) = current_device(state) else { return false };
+    let Some(device) = dev.primary.as_ref() else { return false };
+    device.unset_selection(serial);
+    state.data.primary = None;
+    true
+}
+
 pub fn start_drag(state: &mut State, window: WindowId, data: DragData) -> Result<DragId, PlatformError> {
     let manager = state.data.manager.as_ref().ok_or(PlatformError::Os("the compositor lacks wl_data_device_manager".into()))?;
     let (dev, serial) = current_device(state).ok_or(PlatformError::Os("drag without a seat".into()))?;

@@ -98,6 +98,16 @@ warnings). I ran no tests, no clippy, and nothing against a compositor. CI resul
 
 ## Cross-lane edits
 
-None. `Cargo.lock` gained the new dependencies: ashpd 0.13 (async-io, settings, file_chooser),
+At the coordinator's request (TEXT-INPUT's R6):
+- `crates/presto-platform/src/clipboard.rs`: `Clipboard::{get_primary, set_primary, clear_primary}`
+  were added as default methods. The get/set defaults delegate to `get_text`/`set_text(Primary)` when
+  `has_primary`, so a default never claims a success it did not have. `clear_primary` defaults to
+  `false`. It is implemented for `MemoryClipboard`, for arboard on X11 (`clear_with`) and here
+  (`zwp_primary_selection_device_v1.set_selection(null)`). smithay-clipboard cannot give up a selection,
+  so it returns `false`. There is a test with `MemoryClipboard`.
+- `crates/presto-base/src/event.rs`: doc only. `ImeEvent::Preedit` with `cursor: None` means "hide the
+  caret".
+
+`Cargo.lock` gained this crate's dependencies: ashpd 0.13 (async-io, settings, file_chooser),
 wayland-cursor, xkbcommon-dl, wayland-protocols staging/unstable, and wayland-backend `client_system` +
 `dlopen`.
