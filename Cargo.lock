@@ -4061,7 +4061,11 @@ name = "presto-compositor"
 version = "0.0.0"
 dependencies = [
  "log",
+ "presto-anim",
  "presto-base",
+ "presto-frame",
+ "presto-platform",
+ "presto-render",
  "smallvec",
  "wgpu",
 ]
@@ -4071,6 +4075,7 @@ name = "presto-core"
 version = "0.0.0"
 dependencies = [
  "accesskit",
+ "presto-anim",
  "presto-base",
  "smallvec",
  "svelters-style",
@@ -4108,6 +4113,7 @@ dependencies = [
  "accesskit_unix",
  "accesskit_windows",
  "arboard",
+ "libc",
  "log",
  "objc2 0.5.3",
  "objc2-app-kit 0.2.2",
@@ -4170,6 +4176,7 @@ dependencies = [
  "png 0.18.1",
  "pollster 0.4.0",
  "presto-base",
+ "presto-text",
  "smallvec",
  "wgpu",
 ]
@@ -4200,6 +4207,7 @@ dependencies = [
  "presto-core",
  "presto-text",
  "resvg",
+ "roxmltree 0.20.0",
  "serde_json",
  "smallvec",
  "svelters-style",

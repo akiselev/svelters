@@ -78,6 +78,11 @@ bits! {
         const IN_REMEASURE = 1 << 3;
         /// Has listeners whose signal is not passive on a scroll or wheel path.
         const NONPASSIVE = 1 << 4;
+        /// A descendant has [`NodeFlags::NONPASSIVE`]: wheel scrolling of this node (a scroll
+        /// container) waits for JS too, since the listener may cancel it (§11.5).
+        const DESC_NONPASSIVE = 1 << 7;
+        /// Its kind folds its children into its own content ([`KindSpec::folds_children`](crate::KindSpec::folds_children)).
+        const FOLDS = 1 << 8;
         /// Has a kind with virtual children (rows bound on demand).
         const VIRTUAL = 1 << 5;
         /// A virtual row realised by its host (not a light child JS created).
@@ -169,6 +174,8 @@ pub(crate) struct LayoutBox {
     pub layout: taffy::Layout,
     /// A leaf's last measured max-content size (the measure guard compares against it).
     pub intrinsic: Option<Size>,
+    /// The out-of-flow boxes this node is the containing block of (taffy's hoisted children).
+    pub hoisted: Vec<NodeId>,
 }
 
 /// The props written to a node (defaults are not stored).

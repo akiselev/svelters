@@ -174,6 +174,9 @@ pub struct InputFrame {
     pub pointer: PointerFrame,
     /// The wheel delta in points this pass (sum of the `Wheel` events).
     pub smooth_scroll_delta: Vec2,
+    /// The wheel step in notches when the device reported lines or pages (egui's
+    /// `MouseWheelUnit::Line`/`Page`: one per detent); `None` for precise point deltas (touchpads).
+    pub wheel_notches: Option<Vec2>,
 }
 
 impl InputFrame {
@@ -386,6 +389,10 @@ impl Tracker {
                     ScrollDelta::Lines(v) => v * policy.scroll.line,
                     ScrollDelta::Pages(v) => Vec2::new(v.x * size.w, v.y * size.h),
                 };
+                pass.input.wheel_notches = match w.delta {
+                    ScrollDelta::Lines(v) | ScrollDelta::Pages(v) => Some(v),
+                    ScrollDelta::Pixels(_) => None,
+                };
                 let ended = matches!(w.phase, Some(presto_base::event::GesturePhase::Ended | presto_base::event::GesturePhase::Cancelled));
                 pass.input.smooth_scroll_delta = delta;
                 pass.input.events.push(FrameEvent::Wheel { delta, touchpad: w.phase.is_some(), ended });
@@ -407,10 +414,14 @@ impl Tracker {
                         count = 1;
                     }
                 }
-                if pressed && let Some(text) = &k.text {
-                    if !text.is_empty() && !text.chars().all(char::is_control) && !mods.command && !mods.ctrl {
-                        pass.input.events.push(FrameEvent::Text(text.clone()));
-                    }
+                if pressed
+                    && let Some(text) = &k.text
+                    && !text.is_empty()
+                    && !text.chars().all(char::is_control)
+                    && !mods.command
+                    && !mods.ctrl
+                {
+                    pass.input.events.push(FrameEvent::Text(text.clone()));
                 }
             }
             Event::Focus { gained, .. } => {
@@ -622,5 +633,104 @@ mod tests {
         let s = Size::new(10.0, 10.0);
         t.pass_at(at(0), s, false, false, &p, &ptr(PointerPhase::Down, 5.0, 5.0, 1));
         assert!(!t.pass_at(at(10), s, false, false, &p, &ptr(PointerPhase::Up, 5.0, 5.0, 0)).resp.clicked);
+    }
+}
+
+/// A harness for unit tests: one host's [`Tracker`] and state bits on a virtual clock, feeding one
+/// event per call (10 ms apart) and running the caller's units on the pass through [`super::run`],
+/// so focus requests and the policy's Escape rule apply as on a node.
+#[cfg(test)]
+pub(crate) mod testing {
+    use super::*;
+    use crate::interact::{FocusReason, InputCx};
+    use presto_base::event::{GesturePhase, KeyEvent, KeyLocation, PointerEvent, PointerType, WheelEvent};
+
+    pub struct Rig {
+        pub tracker: Tracker,
+        pub state: StateBits,
+        pub policy: Policy,
+        pub size: Size,
+        /// The virtual clock in milliseconds.
+        pub now_ms: u64,
+        pub focused: bool,
+        pub enabled: bool,
+        held: u32,
+    }
+
+    impl Rig {
+        pub fn new(sense: Sense) -> Rig {
+            Rig { tracker: Tracker::new(sense), state: StateBits::NONE, policy: Policy::default(), size: Size::new(100.0, 20.0), now_ms: 1000, focused: false, enabled: true, held: 0 }
+        }
+
+        pub fn advance(&mut self, ms: u64) {
+            self.now_ms += ms;
+        }
+
+        /// Feeds `ev` 10 ms after the previous one and runs `f` on the pass; applies the focus the
+        /// units asked for.
+        pub fn send(&mut self, ev: Event, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.now_ms += 10;
+            let now = Time(self.now_ms * 1_000_000);
+            if let Event::Focus { gained, .. } = &ev {
+                self.focused = *gained;
+            }
+            let pass = self.tracker.pass_at(now, self.size, self.enabled, self.focused, &self.policy, &ev);
+            let policy = self.policy;
+            let mut state = self.state;
+            let mut cx = EventCx::new(now, self.size, &mut state, &policy);
+            cx.enabled = self.enabled;
+            cx.focused = self.focused;
+            super::super::run(&mut cx, &pass, f);
+            if let Some(on) = cx.focus_request {
+                self.focused = on;
+            }
+            self.state = state;
+            pass
+        }
+
+        fn pointer(&mut self, phase: PointerPhase, x: f32, y: f32, button: Option<MouseButton>, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            let buttons = self.held;
+            self.send(Event::Pointer(PointerEvent { phase, pointer: 0, kind: PointerType::Mouse, button, buttons, pos: Point::new(x, y), modifiers: Modifiers::default(), pressure: 0.0, tilt: Vec2::ZERO, history: SmallVec::new() }), f)
+        }
+
+        pub fn hover(&mut self, on: bool, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.send(Event::Hover(on), f)
+        }
+        pub fn down(&mut self, x: f32, y: f32, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.held = 1;
+            self.pointer(PointerPhase::Down, x, y, Some(MouseButton::Primary), f)
+        }
+        pub fn move_to(&mut self, x: f32, y: f32, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.pointer(PointerPhase::Move, x, y, None, f)
+        }
+        pub fn up(&mut self, x: f32, y: f32, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.held = 0;
+            self.pointer(PointerPhase::Up, x, y, Some(MouseButton::Primary), f)
+        }
+        pub fn key(&mut self, key: Key, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.key_with(key, Modifiers::default(), None, f)
+        }
+        /// A key press with modifiers and the text it types.
+        pub fn key_with(&mut self, key: Key, modifiers: Modifiers, text: Option<&str>, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.send(Event::Key(KeyEvent { key: Some(key), physical: 0, text: text.map(str::to_owned), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers }), f)
+        }
+        /// A key press that types `text` (no named key).
+        pub fn text(&mut self, text: &str, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.send(Event::Key(KeyEvent { key: None, physical: 0, text: Some(text.to_owned()), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::default() }), f)
+        }
+        /// A wheel event; `touchpad` gives it a gesture phase.
+        pub fn wheel(&mut self, delta: ScrollDelta, touchpad: bool, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            let phase = touchpad.then_some(GesturePhase::Moved);
+            self.send(Event::Wheel(WheelEvent { pos: Point::new(5.0, 5.0), delta, phase, momentum: None, modifiers: Modifiers::default() }), f)
+        }
+        pub fn focus(&mut self, on: bool, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.send(Event::Focus { gained: on, reason: FocusReason::Keyboard }, f)
+        }
+        pub fn a11y(&mut self, action: accesskit::Action, data: Option<accesskit::ActionData>, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.send(Event::A11y(accesskit::ActionRequest { action, target_tree: accesskit::TreeId::ROOT, target_node: accesskit::NodeId(1), data }), f)
+        }
+        pub fn timer(&mut self, f: impl FnOnce(&mut InputCx<'_>)) -> Pass {
+            self.send(Event::Timer, f)
+        }
     }
 }
