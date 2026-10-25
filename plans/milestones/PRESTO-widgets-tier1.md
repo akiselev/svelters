@@ -84,8 +84,11 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
    (architecture §14; views lane's placement).
 5. **Focus stops inside a kind.** `color-editor` has several inner controls (square, strips, channel
    boxes); Tab between them needs sub-node focus stops or Tab routing to the kind.
-6. **DnD.** The DnD props belong on presto-core's common props, and dispatch must feed `dnd::DragSession`
-   (hit-test candidates deepest first, pointer capture by the source, Escape cancel, OS file events).
+6. **DnD.** Coordinator (2026-10-25): CORE-2 adds the common DnD members to presto-core (`drag-type`,
+   `drag-data`, `drop-types`; `drag-begin/end/enter/leave/drop` with pointer capture and hit testing in
+   core). `dnd::DragSession`/`DragSource` then become a reference for that plumbing (their tests state the
+   event order to keep); what stays here for core to call: `accepts`/`type_matches`, `DragPayload::best`,
+   `DropAction::from_modifiers`, `uri_list`, `edge_scroll`, and the ghost and drop-line recording.
 
 ## Cross-lane edits
 
