@@ -117,6 +117,19 @@ for (const f of ['f', 'b', 'first', 'last', 'next', 'prev', 'parent']) {
   check(typeof $.raf?.tick === 'function' && typeof $.raf?.now === 'function' && $.raf?.tasks instanceof Set, 'svelte/internal/client `raf` no longer has tick/now/tasks');
 }
 
+// 7. MOTION-CSS: what svelters:motion (src/svelters-motion.js) takes from svelte/motion's hidden
+//    modules, and the svelte/easing exports the native descriptors name (crates/presto-motion `easing::ALL`)
+{
+  const motion = path.join(pkgPath, 'src/motion');
+  const spring = await import(pathToFileURL(path.join(motion, 'spring.js')).href);
+  const tweened = await import(pathToFileURL(path.join(motion, 'tweened.js')).href);
+  check(typeof spring.spring === 'function' && typeof spring.Spring === 'function', 'src/motion/spring.js no longer exports `spring` / `Spring`');
+  check(typeof tweened.Tween === 'function' && typeof tweened.tweened === 'function', 'src/motion/tweened.js no longer exports `Tween` / `tweened`');
+  check(/const acceleration = \(spring - damper\) \* ctx\.inv_mass;/.test(fs.readFileSync(path.join(motion, 'spring.js'), 'utf8')), "spring.js's tick_spring changed: re-derive svelters:motion's closed form (crates/presto-motion shim::spring)");
+  const easings = await import(pathToFileURL(path.join(pkgPath, 'src/easing/index.js')).href);
+  check(Object.keys(easings).length === 31, `svelte/easing exports ${Object.keys(easings).length} curves, presto-motion knows 31`);
+}
+
 if (failures.length) {
   console.error(`check-svelte-internals: ${failures.length} problem(s) with svelte ${version}:\n  ${failures.join('\n  ')}`);
   process.exit(1);
