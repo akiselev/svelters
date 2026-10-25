@@ -1,0 +1,10 @@
+[package]
+name = "svelters-presto"
+description = "The svelters backend on presto: the backend ABI on presto's tree, the generated presto.json spec, the embed model."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }

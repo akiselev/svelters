@@ -8,3 +8,7 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+parley = { workspace = true }
+# The skrifa parley 0.12 pins (one copy of read-fonts in the binary; text-stack.md §2.6 option (c)).
+skrifa = "0.44"
+png = "0.18"

@@ -1,0 +1,17 @@
+{
+  "source": "The affordance overlay's token values (plans/research/DESIGN.md §1.5 'aff.' values, R1, R4, R8): raised controls never transparent, control boundaries of at least 3:1, a focus colour of at least 3:1 on every dark surface. Applied over the VS Code base when `Theme::affordances` is on (the default); off gives the exact VS Code colours (VIS1's base). The affordance sheet itself (`@layer sv.affordance`, R1-R18) is DS3's.",
+  "dark": {
+    "focus": "#2488DB",
+    "button2-bg": "#313131",
+    "button2-hover": "#3B3B3B",
+    "control-border": "#6B6B6B"
+  },
+  "notes": {
+    "button2-hover": "Not in DESIGN.md's table: with the raised #313131 rest fill, Dark Modern's #2B2B2B hover would darken. #3B3B3B is VS Code's own derivation of the secondary hover (lighten(button.secondaryBackground, .2)) applied to #313131. VIS1 tunes it."
+  },
+  "light": {
+    "control-border": "#8A8A8A"
+  },
+  "hc-dark": {},
+  "hc-light": {}
+}

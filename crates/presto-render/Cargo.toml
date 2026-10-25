@@ -8,3 +8,14 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+wgpu = { workspace = true }
+etagere = { workspace = true }
+lyon = { workspace = true }
+bytemuck = { workspace = true }
+smallvec = { workspace = true }
+
+[dev-dependencies]
+pollster = "0.4"
+# Shader validation without an adapter, and reference images for the GPU tests.
+naga = { version = "30.0.1", features = ["wgsl-in"] }
+png = "0.18"

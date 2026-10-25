@@ -1,0 +1,10 @@
+[package]
+name = "presto"
+description = "presto: the app runner tying the platform, the tree, text and the compositor together on the UI thread."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }

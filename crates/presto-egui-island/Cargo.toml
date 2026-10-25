@@ -1,0 +1,10 @@
+[package]
+name = "presto-egui-island"
+description = "presto's egui island: an egui 0.37 context rendered on presto's device and composited as a layer."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }
