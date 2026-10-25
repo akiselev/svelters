@@ -32,6 +32,8 @@ pub(crate) struct NodeStyle {
     /// The engine's computed style (kept for inheritance and the inspector).
     pub css: Option<Arc<svelters_style::ComputedStyle>>,
     pub computed: Arc<ComputedBox>,
+    /// The computed style of each of the kind's paint parts ([`KindSpec::parts`](crate::KindSpec::parts)).
+    pub parts: Vec<(&'static str, Arc<svelters_style::ComputedStyle>)>,
 }
 
 /// The document's style state: the stylist with its sheets, and the per-node column.

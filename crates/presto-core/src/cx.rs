@@ -147,6 +147,42 @@ impl<'a> NodeView<'a> {
     pub fn child(&self, k: usize) -> Option<NodeView<'a>> {
         self.children.get(k).and_then(|&c| self.doc.view(c))
     }
+    /// The computed style of the kind's paint part `name` (`::part(name)`, inheriting from the
+    /// node's): `None` for a name not in [`KindSpec::parts`](crate::KindSpec::parts) or before the
+    /// first restyle.
+    pub fn part(&self, name: &str) -> Option<&'a svelters_style::ComputedStyle> {
+        let i = self.doc.idx(self.id)?;
+        self.doc.style.nodes[i].parts.iter().find(|(n, _)| *n == name).map(|(_, c)| &**c)
+    }
+    /// JS listens to `signal` on this node (capture or not).
+    pub fn listened(&self, signal: SignalId) -> bool {
+        self.doc.listeners(self.id).iter().any(|l| l.signal == signal)
+    }
+    /// Device pixels per point of the node's window (1 when detached).
+    pub fn scale(&self) -> f32 {
+        self.window.and_then(|w| self.doc.window(w)).map_or(1.0, |w| w.scale.0)
+    }
+    /// The common `anchor` prop (`""` when unset).
+    pub fn anchor(&self) -> &'a str {
+        self.prop_str(common::ANCHOR).unwrap_or("")
+    }
+}
+
+/// [`Kind::child_layout`](crate::Kind::child_layout): the container and the child it places.
+pub struct ChildLayoutCx<'a> {
+    pub parent: NodeView<'a>,
+    pub child: NodeView<'a>,
+    /// The child's index among the container's children.
+    pub index: usize,
+    pub count: usize,
+}
+
+impl<'a> ChildLayoutCx<'a> {
+    /// The `anchor` of child `k` (`""` when it has none): a stack shows the child its `current`
+    /// names.
+    pub fn anchor_of(&self, k: usize) -> &'a str {
+        self.parent.child(k).map_or("", |v| v.anchor())
+    }
 }
 
 /// [`Kind::prop_changed`](crate::Kind::prop_changed): ask for more work than the prop's class.
@@ -476,9 +512,36 @@ impl EventCx<'_> {
     pub fn set_state(&mut self, bits: StateMask, on: bool) {
         self.doc.set_state(self.node, bits, on);
     }
-    /// Emits `signal` with `arg` from this node.
+    /// Emits `signal` with `arg` from this node (delivered after the event).
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node, signal, arg });
+    }
+    /// Emits `signal` and, when JS listens and the document has a sync deliverer
+    /// ([`Document::set_sync_delivery`]), delivers it now and reports what the listeners did, so a
+    /// default action can honour `preventDefault` (a checkbox keeps its state when its cancelable
+    /// `changed` is prevented). Without a deliverer it is queued as [`EventCx::emit`] does and the
+    /// outcome is empty.
+    pub fn emit_sync(&mut self, signal: SignalId, arg: Option<Value>) -> crate::kind::Outcome {
+        match crate::input::dispatch::deliver_now(self.doc, self.node, signal, arg) {
+            Ok(o) => o,
+            Err(arg) => {
+                self.emit(signal, arg);
+                crate::kind::Outcome::default()
+            }
+        }
+    }
+    /// Asks the document to deliver `msg` to the members of the node's peer group that `to` picks
+    /// ([`Kind::peer`](crate::Kind::peer)), after this event, in order.
+    pub fn peer_request(&mut self, to: crate::kind::PeerTarget, msg: crate::kind::PeerMsg) {
+        self.doc.peer_queue.push_back((self.node, to, msg));
+    }
+    /// Moves keyboard focus to the node of this window whose `anchor` is `anchor` (a label's
+    /// `for`); false when none can take it.
+    pub fn focus_anchor(&mut self, anchor: &str) -> bool {
+        let Some(w) = self.doc.window_of(self.node) else { return false };
+        let Some(n) = self.doc.find_anchor(w, anchor) else { return false };
+        self.doc.focus(n, crate::kind::FocusReason::Programmatic);
+        self.doc.focused(w) == Some(n)
     }
     /// Keeps the current pointer on this node until release.
     pub fn capture_pointer(&mut self) {
