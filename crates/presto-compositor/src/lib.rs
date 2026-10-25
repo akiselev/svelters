@@ -10,11 +10,13 @@
 //! |---|---|
 //! | [`tree`] | a window's committed state: commits and fast commits applied, flattening per surface |
 //! | [`damage`] | damage by diffing flattened frames, device rects, buffer-age history |
+//! | [`caret`] | the caret blink rule and its per-OS defaults |
 //! | [`core`] | the engine: messages, frame clocks, animations, scroll motions, caret, drawing |
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
 //! | [`vsync`] | a thread per platform frame source, posting ticks, occlusion and feedback |
 //! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces (real crates behind traits) |
 
+pub mod caret;
 pub mod core;
 pub mod damage;
 pub mod gpu;
@@ -22,6 +24,7 @@ pub mod seams;
 pub mod tree;
 pub mod vsync;
 
+pub use crate::caret::CaretBlink;
 pub use crate::core::Stats;
 pub use crate::gpu::GpuContext;
 pub use presto_base::commit::ToUi;
@@ -61,8 +64,9 @@ pub struct CompositorConfig {
     /// Clear colour of damaged areas; `None` = draw over the previous frame.
     pub clear: Option<Color>,
     pub caret_color: Color,
-    /// Half period of the caret blink (the OS setting); `None` = a steady caret.
-    pub caret_blink: Option<Span>,
+    /// The caret blink of new windows (the OS setting; [`CaretBlink::platform_default`]); `None` = a
+    /// steady caret. Per window: [`CompositorHandle::set_caret_blink`].
+    pub caret_blink: Option<CaretBlink>,
     /// Swapchain images assumed per surface for buffer-age-correct damage copies.
     pub swap_images: usize,
 }
@@ -79,7 +83,7 @@ impl CompositorConfig {
             power: wgpu::PowerPreference::HighPerformance,
             clear: Some(Color::TRANSPARENT),
             caret_color: Color::BLACK,
-            caret_blink: None,
+            caret_blink: Some(CaretBlink::platform_default()),
             // Mesa's Wayland WSI uses up to 4 images even at latency 1 (`round2/wgpu-integration.md` §3.1).
             swap_images: 4,
         }
@@ -124,6 +128,9 @@ impl Compositor {
             to_ui,
             wake_ui,
         );
+        let frame_args: core::SharedFrameArgs = Arc::default();
+        let mut engine = engine;
+        engine.publish_frame_args(frame_args.clone());
         let clock = cfg.clock;
         let thread = std::thread::Builder::new()
             .name("presto-compositor".into())
@@ -133,6 +140,7 @@ impl Compositor {
             tx,
             instance: Arc::new(instance),
             gpu: shared,
+            frame_args,
             thread: Arc::new(Mutex::new(Some(thread))),
         }
     }
@@ -173,6 +181,7 @@ pub struct CompositorHandle {
     tx: Sender<Msg>,
     instance: Arc<wgpu::Instance>,
     gpu: SharedGpu,
+    frame_args: core::SharedFrameArgs,
     thread: Arc<Mutex<Option<JoinHandle<()>>>>,
 }
 
@@ -186,6 +195,12 @@ impl CompositorHandle {
     /// The instance to create surfaces with, on the main thread.
     pub fn instance(&self) -> &wgpu::Instance {
         &self.instance
+    }
+
+    /// The window's frame-clock snapshot (next target, `D_ui`, `est_ui_input`, idle, visible), as of
+    /// the clock's last update: what the UI thread's urgent-frame rule reads without a round trip.
+    pub fn frame_args(&self, window: WindowId) -> Option<presto_frame::FrameArgs> {
+        self.frame_args.read().unwrap_or_else(|e| e.into_inner()).get(&window).copied()
     }
 
     /// The device and queue, once the first surface created them (`None` before that and while a lost
@@ -232,6 +247,11 @@ impl CompositorHandle {
 
     pub fn set_visible(&self, window: WindowId, visible: bool) {
         self.post(Msg::SetVisible { window, visible });
+    }
+
+    /// The window's caret blink (the user's OS setting); `None` = a steady caret.
+    pub fn set_caret_blink(&self, window: WindowId, blink: Option<CaretBlink>) {
+        self.post(Msg::SetCaretBlink { window, blink });
     }
 
     /// The display refresh interval of the window's monitor.

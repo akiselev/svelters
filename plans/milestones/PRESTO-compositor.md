@@ -14,7 +14,8 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   `ui_input_cost`, `high_rate_input`, `fling`, `smooth_scroll`, `set_frame_source` (a
   `presto_platform::FrameSource` per window, waited on by a `presto-vsync-<id>` thread that posts ticks,
   occlusion and feedback), `set_os_layer_committer` (DComp `Commit` after every configure),
-  `os_compositing()` (true only with DX12, for `WindowDesc::os_compositing`).
+  `os_compositing()` (true only with DX12, for `WindowDesc::os_compositing`), `frame_args(window)`
+  (the frame clock's `FrameArgs` snapshot, republished after every clock update; APP-TEST #6), `set_caret_blink`.
 - **Thread** (`lib.rs::run`): one per process; one blocking wait (`recv_timeout` to the engine's next
   deadline), then every queued message, then what is due. The `Instance` is created on the calling
   thread so the main thread creates surfaces at once; the device is created with the first surface.
@@ -47,8 +48,13 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   sampled with `presto_anim::sample` at the frame target, `Started`/`Finished`/`Aborted` events, fill
   forwards holds, pause/resume, retarget (springs through `presto_anim::retarget`). Flings own their
   scroll node and report `ToUi::ScrollMoved` per frame; a scroll fast commit stops them. Caret from
-  `FastCommit::Caret`, blinking at `caret_blink`. `ToUi::Presented` carries the input seqs applied in
-  that frame. Resize handshake: reconfigure, draw every arrived commit, present, `ResizeDone`.
+  `FastCommit::Caret`, blinking per window by `CaretBlink { cycle, timeout }` (on for the first half of
+  each cycle from the last caret change, steady after the timeout; defaults GTK 1200 ms/10 s, Qt 1000 ms,
+  Windows and macOS 1060 ms; `set_caret_blink`; TEXT-INPUT R3, decided as Q2). `ToUi::Presented` carries the input seqs applied in
+  that frame, followed by `ToUi::FrameTimings` (draw, submit, GPU done, present; APP-TEST #7).
+  APP-TEST #8 holds: a `BeginFrame` is not sent while a commit is unapplied and goes out after the draw
+  that applies it if the UI is still dirty (test); #10: the interval pacer is gone, `ui_frame_skipped`
+  → `Signal::UiFrameSkipped` frees the clock (test). Resize handshake: reconfigure, draw every arrived commit, present, `ResizeDone`.
 
 ## Seams (stubbed until other lanes land)
 
@@ -80,12 +86,14 @@ commit folding, smooth scroll with retarget, fast-commit revision rejection, fli
 by a scroll, idle does not wake, BeginFrame back-pressure, opacity animation with fill forwards,
 UI-thread animations aborted here, resize handshake, hidden windows, occlusion from a platform
 frame source), `tests/tree_damage.rs`
-(paint order, folding, scroll and clip resolution, OS-layer surfaces, texture layers, damage diff,
+(`tests/caret.rs`: the blink rule; paint order, folding, scroll and clip resolution, OS-layer surfaces, texture layers, damage diff,
 device rects, buffer-age history), `tests/headless.rs` (GPU-gated: a one-quad scene through presto-render into an offscreen target, GPU
 completion, readback; skips without an adapter).
 
 ## Cross-lane edits
 
+- `presto-base/src/commit.rs`: additive `ToUi::FrameTimings { window, frame, draw, submit, gpu_done,
+  present, estimated }` (coordinator decision for APP-TEST #7).
 - `presto-base/src/commit.rs`: additive `ToUi::Occluded { window, occluded }` (decided by the coordinator
   with PLATFORM, 2026-10-25), sent when the platform frame source reports occlusion; the compositor stops
   drawing an occluded window and redraws it whole when it comes back.
