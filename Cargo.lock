@@ -3949,6 +3949,7 @@ dependencies = [
  "presto-core",
  "presto-text",
  "rfd",
+ "serde_json",
 ]
 
 [[package]]
