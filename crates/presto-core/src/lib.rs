@@ -28,10 +28,12 @@
 //! | [`a11y`] | the AccessKit projection and its validating builder |
 //! | [`testkinds`] | minimal kinds and fixed-metric text for tests |
 //! | [`virt`] | the row-height model and the row pool of virtualising kinds |
+//! | `runner` | entries the app runner drives: `needs_frame`, `hover`, `accessibility_action`, `window_event`, `device_reset`, `ime_state` |
 //! | [`settle`] | [`Busy`]: why the document is not idle |
 
 pub mod a11y;
 pub mod common;
+mod compact;
 pub mod cx;
 mod document;
 pub mod error;
@@ -45,6 +47,7 @@ pub mod layout;
 pub mod query;
 mod record;
 pub mod registry;
+mod runner;
 mod scroll;
 pub mod settle;
 pub mod style;
@@ -66,7 +69,7 @@ pub use settle::Busy;
 pub use ids::{KindId, MethodId, PropId, SignalId, SlotId, fingerprint};
 pub use input::{Delivery, Dispatched, JsEvent, Phase};
 pub use input::focus::{next_focus, open_dialog};
-pub use kind::{ArgSpec, DEFAULT_NAME_FROM, Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameSource, NativeState, Outcome, PeerGroup, PeerMsg, PeerTarget, PointerInput, PropSpec, Rove, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
+pub use kind::{ArgSpec, DEFAULT_NAME_FROM, Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameSource, NativeState, Outcome, PeerGroup, PeerMsg, PeerTarget, PointerInput, PropSpec, Rove, SelfScroll, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
 pub use registry::{KindEntry, KindRegistry, RegistryError};
 pub use style::{ComputedBox, StyleInput};
 pub use tree::{Dirty, ListenFlags, Listener, NodeFlags};

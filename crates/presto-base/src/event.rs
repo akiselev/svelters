@@ -129,7 +129,8 @@ pub enum KeyLocation {
 pub struct KeyEvent {
     /// The logical key (layout-mapped), egui-named; `None` when it has no egui name.
     pub key: Option<Key>,
-    /// The physical key's platform-independent code (USB HID usage when known).
+    /// The physical key's platform-independent code: the USB HID usage as `page << 16 | usage`
+    /// (Chromium's form; keyboard keys are page 7, so A is `0x0007_0004`), 0 when unknown.
     pub physical: u32,
     /// Text this key press produces (after dead keys), if any.
     pub text: Option<String>,
@@ -145,7 +146,9 @@ pub enum ImeEvent {
     /// The composition text and the cursor range in it (byte offsets).
     Preedit { text: String, cursor: Option<(usize, usize)> },
     Commit(String),
-    /// Delete text around the cursor (bytes before, bytes after).
+    /// Delete text around the cursor (bytes before, bytes after). With a selection, the bytes are
+    /// counted from the selection's start and end, and the deletion comes before the `Commit` that
+    /// then replaces the selection.
     DeleteSurrounding { before: usize, after: usize },
     Disabled,
 }
@@ -201,6 +204,7 @@ pub enum Theme {
 pub enum WindowEvent {
     Resized { size: DeviceSize, scale: Scale },
     ScaleChanged { scale: Scale },
+    /// The window's new position: the content's top-left in global points.
     Moved { x: i32, y: i32 },
     Focused(bool),
     /// Hidden, minimised or fully covered (or the compositor stopped frame callbacks for 100 ms).

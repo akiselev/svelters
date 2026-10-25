@@ -387,6 +387,15 @@ pub enum PeerMsg {
     Notify(Option<Value>),
 }
 
+/// A kind that scrolls its own content ([`Kind::self_scroll`]): the node is a scroll container of
+/// `content` (points), scrolling on the axes set, whatever its CSS `overflow`.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SelfScroll {
+    pub content: presto_base::geom::Size,
+    pub x: bool,
+    pub y: bool,
+}
+
 /// What JS listeners did with a signal delivered at event time
 /// ([`EventCx::emit_sync`](crate::EventCx::emit_sync)).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -533,6 +542,34 @@ pub trait Kind: 'static {
     /// A member of the node's peer group (`from`) sent it `msg`; the context is an event's (signals,
     /// native props, focus, its own peer requests).
     fn peer(&mut self, cx: &mut EventCx, from: presto_base::ids::NodeId, msg: &PeerMsg) -> Handled {
+        Handled::No
+    }
+
+    /// The kind scrolls its own content (a code editor): its node gets a scroll node, a content
+    /// space and a scroll layer as an `overflow: auto` box does, and its own display list is
+    /// recorded in content space and placed in that layer, so a scroll is a compositor offset
+    /// ([`EventCx::scroll_fast`](crate::EventCx::scroll_fast)) and never a re-record. Pointer
+    /// positions stay in the border box: add [`Document::scroll_offset`](crate::Document::scroll_offset).
+    /// Asked after each `prepare`.
+    fn self_scroll(&self, node: &NodeView) -> Option<SelfScroll> {
+        None
+    }
+
+    /// Another node claimed the one selection ([`EventCx::claim_selection`](crate::EventCx::claim_selection)
+    /// with [`Document::set_single_selection`](crate::Document::set_single_selection) on, GTK's rule):
+    /// collapse this node's selection (to its start).
+    fn selection_lost(&mut self, cx: &mut EventCx) {}
+
+    /// An open floating surface (popup, menu, select list, tooltip) that a press outside it closes:
+    /// while true, a primary-or-other pointer press in the window outside the node's subtree first
+    /// reaches [`Kind::outside_press`]. Asked after every prop write and every call into the kind.
+    fn light_dismiss(&self, node: &NodeView) -> bool {
+        false
+    }
+
+    /// A press outside the node's subtree while [`Kind::light_dismiss`] is true (`p.local` in the
+    /// node's space), before the press is dispatched as usual (it is not consumed).
+    fn outside_press(&mut self, cx: &mut EventCx, p: &PointerInput) -> Handled {
         Handled::No
     }
 

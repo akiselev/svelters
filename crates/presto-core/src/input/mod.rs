@@ -92,6 +92,8 @@ pub(crate) struct InputState {
     pub last_pos: HashMap<WindowId, Point>,
     /// An IME composition is active (keys go to the IME first).
     pub composing: bool,
+    /// Windows with an input method source active (printable keys go to the IME first).
+    pub ime_source: std::collections::HashSet<WindowId>,
     /// The time of the event being handled (`EventCx::time`).
     pub now: Time,
     /// A press on a drag source that may become a drag, and the drag in progress.
