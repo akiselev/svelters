@@ -80,9 +80,17 @@ impl DocStyle {
     }
     pub fn add_sheet(&mut self, css: &str) -> SheetId {
         let sheet = svelters_style::Stylesheet::parse(css, &Default::default());
-        let (id, _diags) = self.stylist.add_sheet(&sheet, svelters_style::Origin::Author);
+        self.add_parsed(&sheet)
+    }
+    pub fn add_parsed(&mut self, sheet: &svelters_style::Stylesheet) -> SheetId {
+        let (id, _diags) = self.stylist.add_sheet(sheet, svelters_style::Origin::Author);
         self.caches.clear();
         id
+    }
+    pub fn preload_utilities(&mut self, utilities: &[svelters_style::Utility]) -> usize {
+        let n = self.stylist.preload_utilities(utilities, &Default::default());
+        self.caches.clear();
+        n
     }
     pub fn remove_sheet(&mut self, id: SheetId) {
         self.stylist.remove_sheet(id);

@@ -102,11 +102,19 @@ impl PrestoBackend {
     /// Delivers whatever native code produced outside an input (a kind's timer, an animation end, a
     /// programmatic focus move).
     pub fn pump(&self) -> Delivered {
+        let ends = self.deliver_animation_ends();
         let out = self.collect();
         if out.is_empty() {
-            return Delivered::default();
+            if ends > 0
+                && let Some(h) = self.host()
+            {
+                h.checkpoint();
+            }
+            return Delivered { events: ends, ..Delivered::default() };
         }
-        self.deliver(out)
+        let mut d = self.deliver(out);
+        d.events += ends;
+        d
     }
 
     /// The event presto-core lists for `signal` emitted on `node` by its kind: target phase, `node`'s

@@ -9,6 +9,7 @@ publish.workspace = true
 [dependencies]
 presto-base = { workspace = true }
 presto-core = { workspace = true }
+presto-motion = { workspace = true }
 presto = { workspace = true }
 presto-platform = { workspace = true }
 presto-compositor = { workspace = true }

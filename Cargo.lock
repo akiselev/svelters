@@ -5275,6 +5275,7 @@ dependencies = [
  "presto-base",
  "presto-compositor",
  "presto-core",
+ "presto-motion",
  "presto-platform",
  "presto-test",
  "presto-text",

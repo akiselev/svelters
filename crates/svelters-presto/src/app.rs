@@ -114,7 +114,10 @@ impl DocumentApi for PrestoDocument {
         self.backend.with_doc(|d| d.apply_scroll(window, node, offset));
     }
 
-    fn animation_event(&mut self, _window: WindowId, _ev: AnimationEvent) {}
+    fn animation_event(&mut self, _window: WindowId, ev: AnimationEvent) {
+        self.backend.animation_event(ev);
+        self.backend.pump();
+    }
 
     fn accessibility_action(&mut self, window: WindowId, req: &ActionRequest) -> bool {
         let d = self.backend.with_doc(|doc| doc.a11y_action(window, req));

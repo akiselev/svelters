@@ -159,8 +159,8 @@ fn style_ops_reach_the_tree() {
     assert_eq!(r.backend.sheets().get("app.svelte").cloned(), Some(".column { gap: 8px }".into()));
     r.br().style(SVL_STYLE_SHEET, 0, None).unwrap();
     assert!(r.backend.sheets().is_empty());
-    // the runtime plays animations itself until presto-motion is wired
-    assert_eq!(r.br().style(SVL_STYLE_ANIMATE, b, Some("x")).unwrap(), 0);
+    // presto plays animations itself (tests/motion.rs); a bad payload is an error
+    assert!(r.br().style(SVL_STYLE_ANIMATE, b, Some("x")).is_err());
 }
 
 #[test]

@@ -4,8 +4,9 @@
 //! sheets and per-node inputs today; the colour scheme and the visual channels are kept by the
 //! backend ([`PrestoBackend::color_scheme`], [`PrestoBackend::visual`]) until it takes them.
 //!
-//! `SVL_STYLE_ANIMATE` answers 0, so the runtime plays the animation itself through the visual
-//! channels, until presto-motion's native animations are wired here (lane MOTION-CSS).
+//! `SVL_STYLE_ANIMATE` plays the animation on the compositor (`motion.rs`); `SVL_STYLE_SHEET_BIN`
+//! loads a precompiled sheet (`svelters_style::binary`) and its resolved utilities. The rule hints
+//! per element are not used yet (they need the template-node → element map of lane COMPILER).
 
 use crate::backend::PrestoBackend;
 use crate::surface::{ColorScheme, Visual};
@@ -20,7 +21,21 @@ impl PrestoBackend {
     pub(crate) fn style_op(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<i32> {
         match op {
             SVL_STYLE_TARGET => return Ok(SVL_STYLE_TARGET_ENGINE),
-            SVL_STYLE_ANIMATE => return Ok(0),
+            SVL_STYLE_ANIMATE => return self.animate(h, text),
+            SVL_STYLE_SHEET_BIN => {
+                // `id SEP base64` of `svelters_style::binary` (CSS_PRECOMPILED)
+                let t = text.ok_or("SVL_STYLE_SHEET_BIN without a sheet")?;
+                let (name, b64) = t.split_once(SVL_STYLE_SEP).ok_or("SVL_STYLE_SHEET_BIN: expected `id SEP base64`")?;
+                let bytes = svelters_style::binary::from_base64(b64)?;
+                let pre = svelters_style::binary::decode(&bytes, &Default::default())?;
+                let mut doc = self.doc_mut();
+                let id = doc.add_parsed_sheet(&pre.sheet);
+                doc.preload_utilities(&pre.utilities);
+                if let Some((old, _)) = self.0.sheets.borrow_mut().insert(name.to_string(), (id, String::from("(precompiled)"))) {
+                    doc.remove_sheet(old);
+                }
+                return Ok(0);
+            }
             SVL_STYLE_SHEET => {
                 // `id SEP css [SEP file SEP map]`; a bare id removes that sheet, none clears them all
                 match text {
