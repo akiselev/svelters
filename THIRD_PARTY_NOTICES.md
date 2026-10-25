@@ -31,6 +31,16 @@ npm and Cargo dependencies are not bundled in this repository. Each one is insta
 - **`metadata/appkit/`** holds facts derived from the macOS SDK headers: class, property and method names, types, enum values and availability versions. It is generated with Xcode on macOS (Apple hardware, GitHub's macOS runner; currently Xcode 26.1.1, macOS 26.1 SDK) by `tools/metadata/appkit/ingest.py`, and CI regenerates and checks it. It contains no header text or documentation comments, and the SDK itself is not redistributed.
 - **`metadata/winui/`** holds facts derived from the Windows App SDK `Microsoft.UI.Xaml.winmd`: names, types and attributes. The SDK packages are downloaded by `tools/metadata/winui/fetch.py` and are not redistributed.
 
+## presto-render (Apache-2.0 and MIT ports)
+
+`crates/presto-render` ports code from GPUI, Zed's UI framework. These files are under the Apache License, Version 2.0, not MIT; the licence text is in `crates/presto-render/LICENSES/Apache-2.0-GPUI.txt` (Zed's `LICENSE-APACHE`, "Copyright 2022 - 2025 Zed Industries, Inc."). Zed ships no NOTICE file. Each ported file keeps a header naming its source file and commit and stating that the svelters authors modified it. Only GPUI's Apache-2.0 crates (`crates/gpui`, `crates/gpui_wgpu`) were used, never Zed's GPL crates.
+
+| Project | Version | Where | Copyright, licence |
+|---|---|---|---|
+| [GPUI](https://github.com/zed-industries/zed) `crates/gpui_wgpu/src/shaders.wgsl`, `shaders_storage.wgsl` | zed @ a5c4ca8bf6c4717a328a4a61b42d6d1d38949bcc | `crates/presto-render/src/shaders.wgsl` | Copyright 2022 - 2025 Zed Industries, Inc.; Apache-2.0 |
+| [GPUI](https://github.com/zed-industries/zed) `crates/gpui/src/bounds_tree.rs` | zed @ a5c4ca8bf6c4717a328a4a61b42d6d1d38949bcc | `crates/presto-render/src/bounds_tree.rs` | Copyright 2022 - 2025 Zed Industries, Inc.; Apache-2.0 |
+| [Windows Terminal](https://github.com/microsoft/terminal) text gamma/contrast (`src/renderer/atlas/dwrite.hlsl`, `dwrite.cpp`), via GPUI's `shaders.wgsl` and `platform.rs` | terminal @ 1283c0f5b99a2961673249fa77c6b986efb5086c | the gamma functions in `crates/presto-render/src/shaders.wgsl`, `crates/presto-render/src/gamma.rs` | Copyright (c) Microsoft Corporation; MIT (text below) |
+
 ---
 
 ## presto-text (lane TEXT)
