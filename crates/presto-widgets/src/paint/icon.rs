@@ -1,7 +1,8 @@
 //! The icon primitive. A key of the default family (`icons`) that the icon registry has draws from it
 //! (an SVG rasterised for its optical size, tinted by `color`); anything else is a glyph of an icon
 //! font (the family named in the key), tinted by `color`, sized by `font-size`; an icon that cannot be
-//! drawn is an outlined square (never a missing-glyph box).
+//! drawn is an outlined square (never a missing-glyph box). The registry, its rasters and the icon
+//! font families are [`registry`]'s.
 
 use super::{PaintCx, StyleView, text_style};
 use crate::shim::text::{RichText, TextShaper};
@@ -89,33 +90,43 @@ pub fn icon_side(s: &StyleView) -> f32 {
     }
 }
 
-/// The glyph text of an icon-font icon: the name itself (icon fonts map names to glyphs through
-/// ligatures; presto-text resolves the family).
+/// The glyph text of an icon-font icon: the name from the family's table, else the name itself
+/// (icon fonts without a table map names to glyphs through ligatures; presto-text resolves the
+/// family). `None` when the family is not a registered icon font or the name is not in its table.
 fn glyph_text(key: &IconKey) -> Option<RichText> {
-    if key.family.is_empty() || key.name.is_empty() {
+    if key.family.is_empty() || key.name.is_empty() || !registry::has_font(&key.family) {
         return None;
     }
-    Some(RichText::plain(&key.name, Default::default()))
+    let text = registry::icon_text(&key.family, &key.name, "")?;
+    Some(RichText::plain(&text, Default::default()))
 }
 
-/// The icon's box: a registry icon's square, else its font glyph's size at `font-size`, else a
-/// square of that side when it cannot be drawn.
+/// The icon's box: a registry icon's square (or its glyph), else its font glyph's size at
+/// `font-size`, else a square of that side when it cannot be drawn.
 pub fn icon_size(shaper: &mut dyn TextShaper, s: &StyleView, key: &IconKey) -> Vec2 {
-    if let Some(reg) = registry::registered(key) {
-        let side = icon_side(s);
-        if reg.contains(&key.name) {
-            return Vec2::new(side, side);
-        }
-    }
-    if let Some(mut t) = glyph_text(key)
-        && registry::has_font(&key.family)
+    icon_size_sized(shaper, s, key, None)
+}
+
+/// [`icon_size`] with a registry icon's side given (a kind's `size` prop) instead of the style's
+/// `width`/`height`/`font-size`.
+pub fn icon_size_sized(shaper: &mut dyn TextShaper, s: &StyleView, key: &IconKey, side: Option<f32>) -> Vec2 {
+    if let Some(reg) = registry::registered(key)
+        && let Some(v) = registry::size(shaper, &reg, &key.name, side.unwrap_or_else(|| icon_side(s)))
     {
+        return v;
+    }
+    if let Some(mut t) = glyph_text(key) {
         t.base = text_style(s);
         t.base.family = Arc::from(key.family.as_str());
         let l = shaper.layout(&t, None);
         return Vec2::new(l.size().w, l.size().h);
     }
     Vec2::new(s.font_size(), s.font_size())
+}
+
+/// Whether `key` draws from the global icon registry (the default family, a registered key).
+pub fn is_registered(key: &IconKey) -> bool {
+    registry::registered(key).is_some()
 }
 
 /// Paints icon `key` centred in `rect`, tinted by `color`; an outlined square when it cannot be
@@ -131,14 +142,12 @@ pub fn paint_icon_sized(cx: &mut PaintCx, s: &StyleView, key: &IconKey, rect: Re
     let color = s.color("color").unwrap_or(Color::BLACK);
     let center = Point::new((rect.min.x + rect.max.x) / 2.0, (rect.min.y + rect.max.y) / 2.0);
     if let Some(reg) = registry::registered(&key) {
-        let side = side.unwrap_or_else(|| icon_side(s));
-        if registry::paint(cx, &reg, &key.name, center, side, color, &registry::Slots::of(s)) {
+        let style = registry::IconStyle { size: side.unwrap_or_else(|| icon_side(s)), color, slots: registry::Slots::of(s), high_contrast: false };
+        if registry::paint(cx, &reg, &key.name, rect, &style).is_some() {
             return;
         }
     }
-    if let Some(mut t) = glyph_text(&key)
-        && registry::has_font(&key.family)
-    {
+    if let Some(mut t) = glyph_text(&key) {
         t.base = text_style(s);
         t.base.family = Arc::from(key.family.as_str());
         let l = cx.text.layout(&t, None);
@@ -146,7 +155,12 @@ pub fn paint_icon_sized(cx: &mut PaintCx, s: &StyleView, key: &IconKey, rect: Re
         super::paint_runs(cx, &l, pos, &|_| color);
         return;
     }
-    let side = s.font_size().min(rect.width()).min(rect.height());
+    paint_missing(cx, color, s.font_size().min(rect.width()).min(rect.height()), center);
+}
+
+/// The outlined square of side `side` centred at `center` that stands for an icon that cannot be
+/// drawn (never a missing-glyph box).
+pub fn paint_missing(cx: &mut PaintCx, color: Color, side: f32, center: Point) {
     let r = cx.snap_rect(Rect::from_origin_size(Point::new(center.x - side / 2.0, center.y - side / 2.0), Size::new(side, side)));
     let w = cx.snap_width(1.0);
     cx.push(Prim::Quad(Quad { rect: r, radii: Corners::all(1.0), fill: Fill::Solid(Color::TRANSPARENT), border_widths: Insets::all(w), border_color: color, border_style: BorderStyle::Solid }), r);

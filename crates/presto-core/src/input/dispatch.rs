@@ -38,6 +38,9 @@ pub(crate) fn call_kind(doc: &mut Document, node: NodeId, ev: &Event, emitted: &
     if let Some(i) = doc.idx(node) {
         doc.kinds[i] = Some(k);
     }
+    if !doc.peer_queue.is_empty() {
+        crate::input::peers::run(doc, emitted);
+    }
     h
 }
 
@@ -96,6 +99,34 @@ fn js_event(doc: &Document, target: NodeId, signal: SignalId, arg: Option<Value>
     let cancelable = flags.contains(crate::kind::SignalFlags::CANCELABLE) && path.iter().any(|d| !d.flags.contains(ListenFlags::PASSIVE));
     let sync = flags.contains(crate::kind::SignalFlags::SYNC) || path.iter().any(|d| d.flags.contains(ListenFlags::SYNC));
     Some(JsEvent { signal, target, arg, path, cancelable, sync })
+}
+
+/// Delivers `signal` at `target` to JS now through the document's sync deliverer and reports what
+/// the listeners did (`Ok(default)` when nobody listens). `Err(arg)` hands the argument back when
+/// the document has no deliverer: the caller queues the event instead.
+pub(crate) fn deliver_now(doc: &mut Document, target: NodeId, signal: SignalId, arg: Option<Value>) -> Result<crate::kind::Outcome, Option<Value>> {
+    if doc.sync_delivery.is_none() {
+        return Err(arg);
+    }
+    let Some(ev) = js_event(doc, target, signal, arg) else { return Ok(Default::default()) };
+    let mut f = doc.sync_delivery.take().expect("checked");
+    let o = f(&ev);
+    if doc.sync_delivery.is_none() {
+        doc.sync_delivery = Some(f);
+    }
+    Ok(crate::kind::Outcome { prevented: o.prevented && ev.cancelable, stopped: o.stopped })
+}
+
+/// A DOM event delivered before its native default (with a sync deliverer), or listed after it.
+enum Pre {
+    Delivered(crate::kind::Outcome),
+    Later(Option<Value>),
+}
+
+impl Pre {
+    fn prevented(&self) -> bool {
+        matches!(self, Pre::Delivered(o) if o.prevented)
+    }
 }
 
 /// A kind's emitted signal, as a JS event queued on the document.
@@ -183,6 +214,7 @@ impl Document {
     pub fn dispatch(&mut self, ev: &InputEnvelope) -> Dispatched {
         let before = self.revision;
         self.consumed_input(ev.seq);
+        self.input.now = ev.os_time;
         let mut out = Dispatched { seq: ev.seq, window: ev.window, revision: self.revision, ..Default::default() };
         let mut emitted = Vec::new();
         self.transaction(|doc| match &ev.event {
@@ -256,9 +288,24 @@ impl Document {
         }
     }
 
-    fn emit_js(&mut self, out: &mut Dispatched, target: NodeId, signal: SignalId, arg: Option<Value>) {
+    pub(crate) fn emit_js(&mut self, out: &mut Dispatched, target: NodeId, signal: SignalId, arg: Option<Value>) {
         if let Some(e) = js_event(self, target, signal, arg) {
             out.events.push(e);
+        }
+    }
+
+    /// Delivers a cancelable DOM event before the native default when the document has a sync
+    /// deliverer; otherwise keeps it for [`Document::post_js`] after the default.
+    fn pre_js(&mut self, target: NodeId, signal: SignalId, arg: Option<Value>) -> Pre {
+        match deliver_now(self, target, signal, arg) {
+            Ok(o) => Pre::Delivered(o),
+            Err(arg) => Pre::Later(arg),
+        }
+    }
+
+    fn post_js(&mut self, out: &mut Dispatched, target: NodeId, signal: SignalId, pre: Pre) {
+        if let Pre::Later(arg) = pre {
+            self.emit_js(out, target, signal, arg);
         }
     }
 
@@ -290,6 +337,10 @@ impl Document {
     }
 
     fn dispatch_pointer(&mut self, window: WindowId, time: Time, p: &PointerEvent, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
+        // an in-app drag takes the pointer until it ends
+        if crate::input::dnd::pointer(self, window, p, out) {
+            return;
+        }
         let captured = self.input.capture.get(&p.pointer).copied().filter(|&n| self.contains(n));
         let hit = self.hit_test(window, p.pos);
         let target = captured.or(hit);
@@ -314,6 +365,13 @@ impl Document {
                     return;
                 };
                 let count = self.click_count(t, time, p.pos);
+                let input = self.pointer_input(window, t, p, count);
+                // EV1: a prevented pointerdown keeps the press from the tree (no press, focus or click)
+                let pre = self.pre_js(t, common::POINTERDOWN, Some(pointer_record(&input)));
+                if pre.prevented() {
+                    return;
+                }
+                crate::input::dnd::pressed(self, window, t, p);
                 self.input.press.insert(p.pointer, t);
                 self.set_state(t, StateMask::PRESSED, true);
                 // focus the nearest focusable ancestor-or-self; a press elsewhere blurs
@@ -330,34 +388,45 @@ impl Document {
                     Some(f) => crate::input::focus::set_focus(self, Some(f), FocusReason::Pointer),
                     None => crate::input::focus::clear_focus(self, window),
                 }
-                let input = self.pointer_input(window, t, p, count);
                 out.handled |= bubble_native(self, t, &Event::PointerDown(&input), emitted, Some(p.pointer)).is_some();
-                self.emit_js(out, t, common::POINTERDOWN, Some(pointer_record(&input)));
+                self.post_js(out, t, common::POINTERDOWN, pre);
             }
             PointerPhase::Up => {
                 let pressed = self.input.press.remove(&p.pointer).filter(|&n| self.contains(n));
                 if let Some(n) = pressed {
                     self.set_state(n, StateMask::PRESSED, false);
                 }
+                crate::input::dnd::released(self, p.pointer);
+                let mut prevented = false;
                 if let Some(t) = target {
                     let input = self.pointer_input(window, t, p, 0);
-                    out.handled |= bubble_native(self, t, &Event::PointerUp(&input), emitted, Some(p.pointer)).is_some();
-                    self.emit_js(out, t, common::POINTERUP, Some(pointer_record(&input)));
+                    // EV1: a prevented pointerup cancels the click
+                    let pre = self.pre_js(t, common::POINTERUP, Some(pointer_record(&input)));
+                    prevented = pre.prevented();
+                    if !prevented {
+                        out.handled |= bubble_native(self, t, &Event::PointerUp(&input), emitted, Some(p.pointer)).is_some();
+                    }
+                    self.post_js(out, t, common::POINTERUP, pre);
                 }
                 self.input.release(p.pointer);
                 // a click is a release over the pressed node (or inside it): egui's semantics
                 if let (Some(n), Some(h)) = (pressed, hit)
                     && self.is_ancestor_or_self(n, h)
+                    && !prevented
                 {
                     let count = self.input.last_click.filter(|c| c.0 == n).map_or(1, |c| c.3);
                     let input = self.pointer_input(window, n, p, count);
                     if p.button == Some(MouseButton::Secondary) {
                         self.emit_js(out, n, common::CONTEXTMENU, Some(pointer_record(&input)));
                     } else if matches!(p.button, Some(MouseButton::Primary) | None) {
-                        out.handled |= bubble_native(self, n, &Event::Click(&input), emitted, Some(p.pointer)).is_some();
-                        self.emit_js(out, n, common::CLICK, Some(pointer_record(&input)));
+                        let pre = self.pre_js(n, common::CLICK, Some(pointer_record(&input)));
+                        if !pre.prevented() {
+                            out.handled |= bubble_native(self, n, &Event::Click(&input), emitted, Some(p.pointer)).is_some();
+                        }
+                        self.post_js(out, n, common::CLICK, pre);
                         if count == 2 {
-                            self.emit_js(out, n, common::DBLCLICK, Some(pointer_record(&input)));
+                            let pre = self.pre_js(n, common::DBLCLICK, Some(pointer_record(&input)));
+                            self.post_js(out, n, common::DBLCLICK, pre);
                         }
                     }
                 }
@@ -365,6 +434,7 @@ impl Document {
                 self.update_hover(window, p, hit, out, emitted);
             }
             PointerPhase::Cancel => {
+                crate::input::dnd::released(self, p.pointer);
                 let pressed = self.input.press.remove(&p.pointer);
                 self.input.release(p.pointer);
                 if let Some(n) = pressed.filter(|&n| self.contains(n)) {
@@ -402,9 +472,14 @@ impl Document {
         let Some(t) = self.hit_test_ex(window, w.pos, true) else { return };
         out.target = Some(t);
         let input = WheelInput { pos: w.pos, local: self.to_local(window, t, w.pos), delta: w.delta, modifiers: w.modifiers };
+        // EV1: a prevented wheel never scrolls
+        let pre = self.pre_js(t, common::WHEEL, Some(wheel_record(&input)));
+        if pre.prevented() {
+            return;
+        }
         let native = bubble_native(self, t, &Event::Wheel(&input), emitted, None);
         out.handled |= native.is_some();
-        self.emit_js(out, t, common::WHEEL, Some(wheel_record(&input)));
+        self.post_js(out, t, common::WHEEL, pre);
         if native.is_none() {
             // the default: scroll the nearest scroll container that can move in this direction
             out.handled |= self.scroll_by_wheel(t, &input, out);
@@ -450,16 +525,41 @@ impl Document {
         }
         let Some(target) = self.focused(window).or_else(|| self.window_root(window)) else { return };
         out.target = Some(target);
+        // outside a composition the command layer's keymap comes first, then the focused kind, then JS
+        if let Some(mut hook) = self.key_hook.take() {
+            let taken = hook(window, k);
+            self.key_hook = Some(hook);
+            if taken {
+                out.handled = true;
+                return;
+            }
+        }
+        // Escape ends an in-app drag
+        if k.state == KeyState::Pressed && k.key == Some(Key::Escape) && crate::input::dnd::cancel(self, window, out) {
+            out.handled = true;
+            return;
+        }
+        let signal = if k.state == KeyState::Pressed { common::KEYDOWN } else { common::KEYUP };
+        // EV1: a prevented keydown never reaches the focused kind (nor Tab or scope activation)
+        let pre = self.pre_js(target, signal, Some(key_record(k)));
+        if pre.prevented() {
+            out.handled = true;
+            return;
+        }
         let native = bubble_native(self, target, &Event::Key(k), emitted, None);
         out.handled |= native.is_some();
-        let signal = if k.state == KeyState::Pressed { common::KEYDOWN } else { common::KEYUP };
-        self.emit_js(out, target, signal, Some(key_record(k)));
-        if native.is_none() && k.state == KeyState::Pressed && k.key == Some(Key::Tab) && !k.modifiers.contains(Modifiers::CTRL) && !k.modifiers.contains(Modifiers::ALT) {
+        self.post_js(out, target, signal, pre);
+        let plain = !k.modifiers.contains(Modifiers::CTRL) && !k.modifiers.contains(Modifiers::ALT) && !k.modifiers.contains(Modifiers::SUPER);
+        if native.is_none() && k.state == KeyState::Pressed && k.key == Some(Key::Tab) && plain {
             let back = k.modifiers.contains(Modifiers::SHIFT);
             if let Some(n) = crate::input::focus::next_focus(self, window, back) {
                 crate::input::focus::set_focus(self, Some(n), FocusReason::Keyboard);
                 out.handled = true;
             }
+        }
+        // Enter and Escape that the focused kind left go to its scope's default and cancel buttons
+        if native.is_none() && k.state == KeyState::Pressed && plain && !k.modifiers.contains(Modifiers::SHIFT) && matches!(k.key, Some(Key::Enter | Key::Escape)) {
+            out.handled |= crate::input::scope::activate(self, window, target, k.key == Some(Key::Enter), emitted);
         }
     }
 
@@ -472,6 +572,44 @@ impl Document {
         let Some(target) = self.focused(window) else { return };
         out.target = Some(target);
         out.handled |= call_kind(self, target, &Event::Ime(ev), emitted, None) == Handled::Yes;
+    }
+
+    /// Calls `f` with the text-input client of `window`'s focused node, when its kind edits text: the
+    /// platform's IME bridge (IMM32/TSF, NSTextInputClient, text-input-v3) talks to it (§11.3).
+    pub fn with_text_input<R>(&mut self, window: WindowId, f: impl FnOnce(&mut dyn presto_base::input::TextInputClient) -> R) -> Option<R> {
+        let node = self.focused(window)?;
+        let i = self.idx(node)?;
+        let mut k = self.kinds[i].take()?;
+        let r = k.text_input().map(f);
+        self.kinds[i] = Some(k);
+        if r.is_some() {
+            self.mark(node, crate::tree::Dirty::PAINT | crate::tree::Dirty::A11Y);
+        }
+        r
+    }
+
+    /// The status bar text of `window` (`status-tip`): the innermost hovered node with one, else,
+    /// with nothing hovered that has one, the focused node or its nearest ancestor with one.
+    pub fn status_tip(&self, window: WindowId) -> Option<&str> {
+        let tip = |n: NodeId| self.view(n).and_then(|v| v.prop_str(common::STATUS_TIP)).filter(|t| !t.is_empty());
+        let mut hovered = self.input.hover.values().filter(|path| path.first().is_some_and(|&n| self.window_of(n) == Some(window)));
+        if let Some(t) = hovered.find_map(|path| path.iter().find_map(|&n| tip(n))) {
+            return Some(t);
+        }
+        let mut a = self.focused(window);
+        while let Some(n) = a {
+            if let Some(t) = tip(n) {
+                return Some(t);
+            }
+            a = self.parent(n);
+        }
+        None
+    }
+
+    /// The command layer's keymap (cadatomic's one command path): called for every key outside a
+    /// composition before the focused kind; returning true consumes the key.
+    pub fn set_key_hook(&mut self, hook: Box<dyn FnMut(WindowId, &KeyEvent) -> bool>) {
+        self.key_hook = Some(hook);
     }
 
     /// Whether anything changed since `rev` (a dispatch that hit no handler keeps its revision).

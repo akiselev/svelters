@@ -219,6 +219,9 @@ pub mod core {
         Type { prop: &'static str, expected: ValueType },
         /// Native code changed this state since the event JS saw (architecture §4.5).
         Stale,
+        /// The value has the right type but the kind rejects it (a `grid-template-columns` that is
+        /// not a track list); `message` says why.
+        Invalid { prop: &'static str, message: String },
     }
 
     /// Stands in for `presto_core::Handled`.
@@ -277,6 +280,9 @@ pub mod core {
     pub struct Styles<'a> {
         pub computed: Option<&'a ComputedStyle>,
         pub parts: &'a [(&'static str, &'a ComputedStyle)],
+        /// The inline run children a `label` folds into its paragraph, as `runs` records
+        /// (`controls::run`; empty for other kinds).
+        pub children: &'a [Value],
         pub state: StateBits,
         pub dark: bool,
     }
@@ -284,6 +290,19 @@ pub mod core {
     impl<'a> Styles<'a> {
         pub fn part_css(&self, name: &str) -> Option<&'a ComputedStyle> {
             self.parts.iter().find(|(n, _)| *n == name).map(|(_, c)| *c)
+        }
+    }
+
+    /// What a container that places or hides its children itself reads about one child in
+    /// [`Kind::child_layout`]: its index and the `anchor` of every child (empty when it has none).
+    pub struct ChildCx<'a> {
+        pub index: usize,
+        pub anchors: &'a [&'a str],
+    }
+
+    impl ChildCx<'_> {
+        pub fn count(&self) -> usize {
+            self.anchors.len()
         }
     }
 
@@ -347,6 +366,9 @@ pub mod core {
         pub args: Vec<Value>,
     }
 
+    /// Delivers a signal now; returns whether a listener prevented its default.
+    pub type SyncEmit<'a> = dyn FnMut(SignalId, &[Value]) -> bool + 'a;
+
     /// Stands in for `presto_core::EventCx`: what a kind's native default reads and writes.
     pub struct EventCx<'a> {
         pub now: Time,
@@ -372,15 +394,33 @@ pub mod core {
         pub cursor: Option<CursorIcon>,
         /// The kind asked for pointer capture (`true`) or released it.
         pub capture: Option<bool>,
+        /// Requests to the node's peer group ([`PeerRequest`]), applied by core after the event, in order.
+        pub peers: Vec<PeerRequest>,
+        /// Move keyboard focus to the node with this anchor (a `label`'s `for`); core resolves it.
+        pub focus_anchor: Option<String>,
+        /// Delivers a signal to JS now and reports whether a listener prevented its default
+        /// ([`EventCx::emit_sync`]); `None`: signals are queued and nothing is prevented.
+        pub sync: Option<&'a mut SyncEmit<'a>>,
     }
 
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, sync: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
+        }
+        /// Emits `signal` at event time when the host can deliver it now (a cancelable signal whose
+        /// default action follows); returns whether a listener prevented that default.
+        pub fn emit_sync(&mut self, signal: SignalId, args: Vec<Value>) -> bool {
+            match self.sync.as_mut() {
+                Some(f) => f(signal, &args),
+                None => {
+                    self.emit(signal, args);
+                    false
+                }
+            }
         }
         pub fn prop_changed(&mut self, prop: PropId) {
             if !self.changed.contains(&prop) {
@@ -392,6 +432,58 @@ pub mod core {
         pub fn wake_at(&mut self, t: Time) {
             self.wake = Some(self.wake.map_or(t, |w| w.min(t)));
         }
+        /// Asks core to deliver `msg` to the members of the node's peer group that `to` picks.
+        pub fn peer_request(&mut self, to: PeerTarget, msg: PeerMsg) {
+            self.peers.push(PeerRequest { to, msg });
+        }
+    }
+
+    /// Stands in for presto-core's peer groups: sibling nodes of one kind that act as one control (the
+    /// radio buttons of a parent, the toggle buttons of a `group`), what svelters-egui reached through
+    /// `WidgetCx::sibling_ids`/`with_peer`. A kind declares its group with [`Kind::peer_group`]; what
+    /// core must do with it:
+    /// - **members**: the node's siblings (same parent, tree order, the node included) whose kind tag
+    ///   is [`PeerGroup::tag`] and, when [`PeerGroup::key`] is `(prop, value)`, whose `prop` equals
+    ///   `value` (read with [`Kind::get_prop`]);
+    /// - **Tab order**: a group of two or more members is one Tab stop, the first member whose bool
+    ///   prop [`PeerGroup::stop`] is true, else the first member (WIDGET-PARITY §2.3, Qt and GTK);
+    /// - **requests** ([`EventCx::peer_request`]), after the event that made them, in order: for
+    ///   [`PeerTarget::Others`] every other member gets [`Kind::peer`] with the message; for
+    ///   [`PeerTarget::Rove`] the member the move lands on (from the node's index among the members,
+    ///   [`Rove::target`](crate::interact::Rove::target)), unless that is the node itself, first takes
+    ///   keyboard focus (an [`Event::Focus`] with [`FocusReason::Keyboard`], the node losing it) and
+    ///   then gets the message. A member's own `peer` handling is applied as an event's would be
+    ///   (signals, native prop changes, focus, its own peer requests, queued after the current ones).
+    #[derive(Clone, Debug, PartialEq)]
+    pub struct PeerGroup {
+        pub tag: &'static str,
+        pub key: Option<(&'static str, Value)>,
+        pub stop: &'static str,
+    }
+
+    /// Which members of the peer group a [`PeerRequest`] goes to.
+    #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+    pub enum PeerTarget {
+        /// Every member but the node.
+        Others,
+        /// The member a roving move lands on (it takes focus first).
+        Rove(crate::interact::Rove),
+    }
+
+    /// What a peer is told ([`Kind::peer`]).
+    #[derive(Clone, Debug, PartialEq)]
+    pub enum PeerMsg {
+        /// A roving move landed on it: it has focus and checks itself as a click would (no `clicked`).
+        Roved,
+        /// Another member was checked; the arguments are the kind's (a radio button's group value).
+        Checked(Vec<Value>),
+    }
+
+    /// A request to a node's peer group, made during an event.
+    #[derive(Clone, Debug, PartialEq)]
+    pub struct PeerRequest {
+        pub to: PeerTarget,
+        pub msg: PeerMsg,
     }
 
     /// Stands in for `presto_core::A11yCx`.
@@ -416,6 +508,27 @@ pub mod core {
         fn measure(&self, _cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
             taffy::Size::ZERO
         }
+        /// Stands in for presto-core's padded layout (svelters-egui `LayoutCx::padded_layout`): room
+        /// `[left, right, top, bottom]` in points for chrome the kind paints itself (a frame's
+        /// border and caption row), which core adds to the length parts of the padding of
+        /// [`Kind::layout_style`] before laying out the children. `None`: nothing to add. It reads
+        /// the measure context because the chrome can hold text.
+        fn chrome_padding(&self, _cx: &mut MeasureCx) -> Option<[f32; 4]> {
+            None
+        }
+        /// Stands in for presto-core's per-child layout hook: a container that places or hides its
+        /// children itself (`stack`) adjusts child `cx.index`'s taffy style, after core mapped the
+        /// child's computed style. Returns whether the child is shown (painted, hit and in the
+        /// accessibility tree); a child that is not shown but keeps its layout still sizes the
+        /// container.
+        fn child_layout(&self, _cx: &ChildCx, _style: &mut taffy::Style) -> bool {
+            true
+        }
+        /// Stands in for presto-core's subtree enablement: `true` makes every descendant inert (no
+        /// input, `:disabled`), as an unchecked `checkable` frame does to its content.
+        fn children_inert(&self) -> bool {
+            false
+        }
         fn prepare(&mut self, _cx: &mut PrepareCx) {}
         fn record(&self, cx: &mut RecordCx);
         fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
@@ -428,6 +541,30 @@ pub mod core {
         /// EV3: while focused, whether the kind takes `key` with `m` itself (keymaps and Tab skip it).
         fn claims_key(&self, _key: presto_base::key::Key, _m: presto_base::event::Modifiers) -> bool {
             false
+        }
+        /// The peer group the node belongs to ([`PeerGroup`]), if any.
+        fn peer_group(&self) -> Option<PeerGroup> {
+            None
+        }
+        /// A member of its peer group sent it `msg` (core applies [`PeerRequest`]s through this).
+        fn peer(&mut self, _cx: &mut EventCx, _msg: &PeerMsg) -> Handled {
+            Handled::No
+        }
+        /// Stands in for core telling the kind that JS now listens to `signal` (`listened`) or no
+        /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:
+        /// an `icon` or `image` takes clicks only while one of its click signals is listened.
+        fn listen(&mut self, _signal: SignalId, _listened: bool) {}
+        /// The state bits the kind derives from its props alone (`:checked`, `:busy`); presto-core sets
+        /// them after every prop write (bits outside [`Kind::prop_states`] are ignored).
+        fn prop_state(&self) -> StateBits {
+            StateBits::NONE
+        }
+        /// The bits [`Kind::prop_state`] owns.
+        fn prop_states() -> StateBits
+        where
+            Self: Sized,
+        {
+            StateBits::NONE
         }
     }
 
@@ -530,6 +667,31 @@ pub mod text {
         pub style: u32,
     }
 
+    /// Caret and selection geometry of a laid-out text (presto-text's `TextLayout::hit_test` and
+    /// `selection_rects`), in the layout's coordinates; offsets are UTF-8 bytes of the text.
+    pub trait TextGeometry: Send + Sync {
+        /// The caret offset nearest `p`.
+        fn hit_byte(&self, p: Point) -> usize;
+        /// The rects that highlight `range`, one or more per line.
+        fn selection_rects(&self, range: Range<usize>) -> Vec<presto_base::geom::Rect>;
+    }
+
+    /// A layout's geometry, shared (compared by identity).
+    #[derive(Clone)]
+    pub struct Geometry(pub Arc<dyn TextGeometry>);
+
+    impl std::fmt::Debug for Geometry {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.write_str("Geometry")
+        }
+    }
+
+    impl PartialEq for Geometry {
+        fn eq(&self, o: &Geometry) -> bool {
+            Arc::ptr_eq(&self.0, &o.0)
+        }
+    }
+
     /// Stands in for `presto_text::TextLayout`.
     #[derive(Clone, Debug, Default, PartialEq)]
     pub struct TextLayout {
@@ -537,6 +699,8 @@ pub mod text {
         pub runs: Vec<PlacedRun>,
         /// Number of laid-out lines.
         pub lines: u32,
+        /// Caret and selection geometry (`None`: the shaper gives none).
+        pub geometry: Option<Geometry>,
     }
 
     impl TextLayout {
@@ -559,9 +723,9 @@ pub mod testing {
     //! char's code point, one run per line) and an in-memory [`Resources`]. For tests only.
 
     use super::core::Resources;
-    use super::text::{PlacedRun, RichText, TextLayout, TextShaper};
+    use super::text::{Geometry, PlacedRun, RichText, TextGeometry, TextLayout, TextShaper};
     use presto_base::commit::ImageData;
-    use presto_base::geom::{Point, Size};
+    use presto_base::geom::{Point, Rect, Size};
     use presto_base::ids::{FontId, ImageId, RunId};
     use presto_base::text::{AaMode, Glyph, GlyphRun, HintMode};
     use std::collections::HashMap;
@@ -582,16 +746,32 @@ pub mod testing {
             let adv = Self::advance(size);
             let line_h = t.base.line_height.unwrap_or((size * 1.25).round());
             let per_line = max_width.map(|w| ((w / adv).floor() as usize).max(1));
+            // each line with the byte offset it starts at
             let mut lines: Vec<String> = Vec::new();
+            let mut starts: Vec<usize> = Vec::new();
+            let mut at = 0;
             for para in t.text.split('\n') {
                 let chars: Vec<char> = para.chars().collect();
                 match per_line {
-                    Some(n) if chars.len() > n => lines.extend(chars.chunks(n).map(|c| c.iter().collect())),
-                    _ => lines.push(para.to_owned()),
+                    Some(n) if chars.len() > n => {
+                        let mut b = at;
+                        for c in chars.chunks(n) {
+                            let s: String = c.iter().collect();
+                            starts.push(b);
+                            b += s.len();
+                            lines.push(s);
+                        }
+                    }
+                    _ => {
+                        starts.push(at);
+                        lines.push(para.to_owned());
+                    }
                 }
+                at += para.len() + 1;
             }
             if let Some(m) = t.max_lines {
                 lines.truncate(m.max(1) as usize);
+                starts.truncate(lines.len());
             }
             let mut runs = Vec::new();
             let mut width: f32 = 0.0;
@@ -603,7 +783,41 @@ pub mod testing {
                 let baseline = i as f32 * line_h + (line_h - size) / 2.0 + size * 0.8;
                 runs.push(PlacedRun { run: Arc::new(run), origin: Point::new(0.0, baseline), style: 0 });
             }
-            Arc::new(TextLayout { size: Size::new(width, line_h * lines.len() as f32), runs, lines: lines.len() as u32 })
+            let geometry = MonoGeometry { lines: lines.iter().zip(&starts).map(|(l, s)| (*s, l.clone())).collect(), adv, line_h };
+            Arc::new(TextLayout { size: Size::new(width, line_h * lines.len() as f32), runs, lines: lines.len() as u32, geometry: Some(Geometry(Arc::new(geometry))) })
+        }
+    }
+
+    /// [`MonoShaper`]'s geometry: lines of fixed height, chars of fixed advance.
+    struct MonoGeometry {
+        /// (start byte, text) per line.
+        lines: Vec<(usize, String)>,
+        adv: f32,
+        line_h: f32,
+    }
+
+    impl TextGeometry for MonoGeometry {
+        fn hit_byte(&self, p: Point) -> usize {
+            if self.lines.is_empty() {
+                return 0;
+            }
+            let i = ((p.y / self.line_h).floor().max(0.0) as usize).min(self.lines.len() - 1);
+            let (start, text) = &self.lines[i];
+            let col = (p.x / self.adv).round().max(0.0) as usize;
+            start + text.char_indices().nth(col).map_or(text.len(), |(b, _)| b)
+        }
+        fn selection_rects(&self, range: std::ops::Range<usize>) -> Vec<Rect> {
+            let mut out = Vec::new();
+            for (i, (start, text)) in self.lines.iter().enumerate() {
+                let (a, b) = (range.start.max(*start), range.end.min(start + text.len()));
+                if a >= b {
+                    continue;
+                }
+                let col = |byte: usize| text[..byte - start].chars().count() as f32;
+                let y = i as f32 * self.line_h;
+                out.push(Rect::new(col(a) * self.adv, y, col(b) * self.adv, y + self.line_h));
+            }
+            out
         }
     }
 

@@ -6,9 +6,15 @@
 //! | `mod.rs` | [`InputState`] (hover, capture, press), [`Dispatched`] and its events |
 //! | `dispatch.rs` | [`Document::dispatch`](crate::Document::dispatch): routing per event type |
 //! | `focus.rs` | focus moves, tab order, `contain`/`dialog` scopes, `:focus-visible` |
+//! | `scope.rs` | Enter/Escape to a scope's default and cancel buttons, `:default` |
+//! | `peers.rs` | peer groups: one Tab stop, peer requests, roving focus |
+//! | [`dnd`] | in-app drag and drop (`drag-type`, `drop-types`) |
 
 pub(crate) mod dispatch;
+pub mod dnd;
 pub(crate) mod focus;
+pub(crate) mod peers;
+pub(crate) mod scope;
 
 use crate::ids::SignalId;
 use crate::tree::ListenFlags;
@@ -86,6 +92,11 @@ pub(crate) struct InputState {
     pub last_pos: HashMap<WindowId, Point>,
     /// An IME composition is active (keys go to the IME first).
     pub composing: bool,
+    /// The time of the event being handled (`EventCx::time`).
+    pub now: Time,
+    /// A press on a drag source that may become a drag, and the drag in progress.
+    pub drag_press: Option<dnd::DragPress>,
+    pub drag: Option<dnd::Drag>,
 }
 
 impl InputState {
@@ -111,6 +122,17 @@ impl InputState {
         }
         if self.last_click.is_some_and(|(n, ..)| nodes.contains(&n)) {
             self.last_click = None;
+        }
+        if self.drag_press.as_ref().is_some_and(|d| nodes.contains(&d.source)) {
+            self.drag_press = None;
+        }
+        if let Some(d) = self.drag.as_mut() {
+            if d.target.is_some_and(|t| nodes.contains(&t)) {
+                d.target = None;
+            }
+            if nodes.contains(&d.source) {
+                self.drag = None;
+            }
         }
     }
 }

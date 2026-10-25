@@ -3,8 +3,8 @@
 //! plus a [`Kind`] value per node that lays out, records, hit-tests, handles input and projects
 //! accessibility through the contexts in [`crate::cx`].
 
-use crate::cx::{A11yCx, EventCx, HitCx, MeasureCx, PrepareCx, PropCx, RecordCx, StyleCx};
-use crate::ids::{KindId, PropId, SignalId, SlotId};
+use crate::cx::{A11yCx, ChildLayoutCx, EventCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, StyleCx};
+use crate::ids::{KindId, MethodId, PropId, SignalId, SlotId};
 use crate::value::{PropDefault, Value, ValueType};
 use presto_base::change::ChangeClass;
 use presto_base::event::{ImeEvent, KeyEvent, Modifiers, MouseButton, PointerType, ScrollDelta};
@@ -26,11 +26,22 @@ pub struct PropSpec {
     /// The kind owns this prop's live value (scroll offset, selection, a slider during a drag): a JS
     /// write older than the kind's last change of it is rejected (architecture §4.5).
     pub native_owned: bool,
+    /// The prop may be unset (`null`/`undefined` in JS) after it was set.
+    pub nullable: bool,
+    pub doc: &'static str,
 }
 
 impl PropSpec {
     pub const fn new(name: &'static str, ty: ValueType, change: ChangeClass) -> Self {
-        PropSpec { name, ty, change, default: PropDefault::Unset, enum_values: &[], native_owned: false }
+        PropSpec { name, ty, change, default: PropDefault::Unset, enum_values: &[], native_owned: false, nullable: false, doc: "" }
+    }
+    pub const fn nullable(mut self) -> Self {
+        self.nullable = true;
+        self
+    }
+    pub const fn doc(mut self, d: &'static str) -> Self {
+        self.doc = d;
+        self
     }
     pub const fn default(mut self, d: PropDefault) -> Self {
         self.default = d;
@@ -67,20 +78,87 @@ impl SignalFlags {
     }
 }
 
+/// A named, typed argument of a signal or method.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ArgSpec {
+    pub name: &'static str,
+    pub ty: ValueType,
+    pub nullable: bool,
+}
+
+impl ArgSpec {
+    pub const fn new(name: &'static str, ty: ValueType) -> Self {
+        ArgSpec { name, ty, nullable: false }
+    }
+    pub const fn nullable(mut self) -> Self {
+        self.nullable = true;
+        self
+    }
+}
+
 /// One signal of a kind (an event the kind emits: `onchange`, `onactivate`).
 #[derive(Clone, Copy, Debug)]
 pub struct SignalSpec {
     pub name: &'static str,
-    /// The type of the argument (`None`: no argument).
+    /// The type of the argument as it travels (`None`: no argument; several named args travel as a
+    /// `Record` of `args`). Its id hashes this type.
     pub arg: Option<ValueType>,
     pub flags: SignalFlags,
+    /// The named arguments, for the spec and typings (empty: `arg` alone, unnamed).
+    pub args: &'static [ArgSpec],
+    pub doc: &'static str,
 }
 
 impl SignalSpec {
     pub const fn new(name: &'static str, arg: Option<ValueType>, flags: SignalFlags) -> Self {
-        SignalSpec { name, arg, flags }
+        SignalSpec { name, arg, flags, args: &[], doc: "" }
+    }
+    pub const fn args(mut self, a: &'static [ArgSpec]) -> Self {
+        self.args = a;
+        self
+    }
+    pub const fn doc(mut self, d: &'static str) -> Self {
+        self.doc = d;
+        self
     }
 }
+
+/// One method a kind exposes to JS (`focusAt(index)`, `scrollToRow(row)`), called through
+/// [`Document::call`](crate::Document::call).
+#[derive(Clone, Copy, Debug)]
+pub struct MethodSpec {
+    pub name: &'static str,
+    pub params: &'static [ArgSpec],
+    /// `None`: returns nothing.
+    pub ret: Option<ArgSpec>,
+    pub doc: &'static str,
+}
+
+impl MethodSpec {
+    pub const fn new(name: &'static str, params: &'static [ArgSpec], ret: Option<ArgSpec>) -> Self {
+        MethodSpec { name, params, ret, doc: "" }
+    }
+    pub const fn doc(mut self, d: &'static str) -> Self {
+        self.doc = d;
+        self
+    }
+}
+
+/// Where a node's accessible name comes from, tried in order.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NameSource {
+    /// The common `aria-label` prop.
+    AriaLabel,
+    /// One of the kind's props.
+    Prop(&'static str),
+    /// The text-content prop.
+    Text,
+    /// The concatenated labels of the node's children (a button with a text child).
+    Children,
+}
+
+/// The default name sources: `aria-label`, then the text content.
+pub const DEFAULT_NAME_FROM: &[NameSource] = &[NameSource::AriaLabel, NameSource::Text];
 
 /// One named slot of a container kind.
 #[derive(Clone, Copy, Debug)]
@@ -106,6 +184,24 @@ pub struct KindSpec {
     pub focusable: bool,
     /// Has children (a leaf kind rejects inserts).
     pub container: bool,
+    /// Its children are content it lays out, records, hit-tests and names itself (a label's inline
+    /// runs): the node is a layout leaf (its `measure` is called), its children are not laid out,
+    /// recorded or hit, and a child's prop, style or structure change remeasures and repaints it.
+    pub folds_children: bool,
+    pub methods: &'static [MethodSpec],
+    /// The accessible name's sources, in order.
+    pub name_from: &'static [NameSource],
+    /// The paint parts it draws (`::part(name)`): the document computes each part's style with the
+    /// node's (inheriting from it), and kinds read it with [`NodeView::part`](crate::NodeView::part).
+    pub parts: &'static [&'static str],
+    /// Its [`Kind::child_layout`] adjusts its children (a stack shows one): the document calls it for
+    /// every child when the child is restyled, and again for all children after a `Layout`-class
+    /// write to this node or a restyle of it.
+    pub places_children: bool,
+    /// The state bits [`Kind::prop_state`] derives from props (`:checked`, `:indeterminate`): after
+    /// every prop write the document sets these bits as the hook says.
+    pub prop_states: svelters_style::StateMask,
+    pub doc: &'static str,
 }
 
 impl KindSpec {
@@ -119,6 +215,13 @@ impl KindSpec {
             text_prop: None,
             focusable: false,
             container: false,
+            folds_children: false,
+            methods: &[],
+            name_from: DEFAULT_NAME_FROM,
+            parts: &[],
+            places_children: false,
+            prop_states: svelters_style::StateMask::NONE,
+            doc: "",
         }
     }
     pub const fn id(&self) -> KindId {
@@ -131,6 +234,13 @@ impl KindSpec {
     pub fn signal_id(&self, i: usize) -> SignalId {
         let s = &self.signals[i];
         SignalId::of(self.name, s.name, s.arg.map_or("void", ValueType::name))
+    }
+    pub fn method_id(&self, i: usize) -> MethodId {
+        let m = &self.methods[i];
+        MethodId::of(self.name, m.name, m.ret.map_or("void", |r| r.ty.name()))
+    }
+    pub fn method_named(&self, name: &str) -> Option<MethodId> {
+        self.methods.iter().position(|m| m.name == name).map(|i| self.method_id(i))
     }
     pub fn slot_id(&self, i: usize) -> SlotId {
         SlotId::of(self.name, self.slots[i].name, "slot")
@@ -217,6 +327,74 @@ pub enum Event<'a> {
     Ime(&'a ImeEvent),
     FocusIn(FocusReason),
     FocusOut,
+    /// A deadline the kind set with [`EventCx::wake_at`](crate::EventCx::wake_at) passed (press
+    /// repeat, press-held → drag).
+    Timer,
+    /// An assistive technology asked for an action on this node.
+    A11y(&'a accesskit::ActionRequest),
+}
+
+/// A node's peer group: the siblings (same parent, tree order, the node included) of the node's own
+/// kind that act as one control, as the radio buttons of a parent or the toggle buttons of a group
+/// do. The document gives a group of two or more focusable members one Tab stop (the first member
+/// whose [`PeerGroup::stop`] prop is true, else the first member) and applies the members'
+/// [`EventCx::peer_request`](crate::EventCx::peer_request)s through [`Kind::peer`].
+#[derive(Clone, Debug, PartialEq)]
+pub struct PeerGroup {
+    /// Only the siblings whose prop `key.0` equals `key.1` are members (a radio button's `group`
+    /// name); `None`: every sibling of the kind.
+    pub key: Option<(PropId, Value)>,
+    /// The bool prop that makes a member the group's Tab stop (`checked`).
+    pub stop: Option<PropId>,
+}
+
+/// A roving focus move inside a peer group, over its focusable members.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Rove {
+    /// By `n` members (−1 previous, +1 next), wrapping.
+    By(i32),
+    First,
+    Last,
+}
+
+impl Rove {
+    /// The member index this move lands on, from `at` in a group of `len` (`len > 0`).
+    pub fn target(self, at: usize, len: usize) -> usize {
+        match self {
+            Rove::First => 0,
+            Rove::Last => len - 1,
+            Rove::By(n) => (at as i64 + n as i64).rem_euclid(len as i64) as usize,
+        }
+    }
+}
+
+/// Which members of the node's peer group a request goes to.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PeerTarget {
+    /// Every member but the node.
+    Others,
+    /// The focusable member a roving move lands on: unless that is the node itself, it takes
+    /// keyboard focus first, then gets the message.
+    Rove(Rove),
+}
+
+/// What a peer is told ([`Kind::peer`]).
+#[derive(Clone, Debug, PartialEq)]
+pub enum PeerMsg {
+    /// A roving move landed on it: it has focus and acts as a click would (a radio checks itself).
+    Roved,
+    /// The kind's own message (another member was checked: its group value).
+    Notify(Option<Value>),
+}
+
+/// What JS listeners did with a signal delivered at event time
+/// ([`EventCx::emit_sync`](crate::EventCx::emit_sync)).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Outcome {
+    /// A listener called `preventDefault` (cancelable signals only): skip the default action.
+    pub prevented: bool,
+    /// A listener stopped propagation.
+    pub stopped: bool,
 }
 
 /// State a kind owns natively (architecture §4.5). The document checks writes of `native_owned` props
@@ -239,6 +417,19 @@ pub trait VirtualChildren {
     fn row_rect(&self, i: usize) -> Rect;
     /// The content size (scroll extent).
     fn content_extent(&self) -> Vec2;
+    /// Binds `rows` (the range [`VirtualChildren::visible`] gave, clamped to the row count) to child
+    /// nodes of [`RealizeCx::node`](crate::cx::RealizeCx::node): recycled through a
+    /// [`RowPool`](crate::virt::RowPool), or created and inserted with
+    /// [`RealizeCx::doc`](crate::cx::RealizeCx::doc), their props written for the row. Returns them as
+    /// `(row, node)`. The document marks them [`NodeFlags::ROW`](crate::NodeFlags::ROW), places each
+    /// absolutely at [`VirtualChildren::row_rect`] in the node's content space, and hides (`display:
+    /// none`) the rows it bound before that are not returned (pooled rows stay alive). Called before
+    /// layout when the range, the row count or the extent changed, and after
+    /// [`Document::refresh_virtual`](crate::Document::refresh_virtual).
+    fn realize(&mut self, cx: &mut crate::cx::RealizeCx, rows: Range<usize>) -> Vec<(usize, presto_base::ids::NodeId)> {
+        let _ = (cx, rows);
+        Vec::new()
+    }
 }
 
 /// The retained behaviour of one node.
@@ -281,6 +472,11 @@ pub trait Kind: 'static {
         Handled::No
     }
 
+    /// A method call from JS ([`KindSpec::methods`]); `args` are checked against the spec's params.
+    fn call(&mut self, cx: &mut EventCx, method: MethodId, args: &[Value]) -> Result<Option<Value>, crate::PropError> {
+        Err(crate::PropError::Rejected(format!("{method:?} is not implemented by this kind")))
+    }
+
     /// Text input client, for kinds that edit text (§11.3).
     fn text_input(&mut self) -> Option<&mut dyn TextInputClient> {
         None
@@ -300,6 +496,50 @@ pub trait Kind: 'static {
     fn a11y(&self, cx: &mut A11yCx) {
         cx.default_a11y();
     }
+
+    /// Room in points for chrome the kind paints itself around its children (a frame's border and
+    /// caption row): added to the padding of [`Kind::layout_style`]'s style before the children are
+    /// laid out. It may measure text. A kind whose chrome follows a prop gets its new padding after
+    /// a `Layout`-class write of it.
+    fn chrome_padding(&self, cx: &mut MeasureCx) -> Option<presto_base::geom::Insets> {
+        None
+    }
+
+    /// For a kind with [`KindSpec::places_children`]: adjusts child `cx.index`'s taffy style (after
+    /// the child's own cascade and kind) and returns whether the child is shown. A child that is not
+    /// shown keeps its layout (it still sizes the container) but is not painted, hit or in the
+    /// accessibility tree.
+    fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
+        true
+    }
+
+    /// The node's descendants are inert (no input, `:disabled`), as an unchecked checkable frame's
+    /// content. Asked after every prop write.
+    fn children_inert(&self) -> bool {
+        false
+    }
+
+    /// The state bits of [`KindSpec::prop_states`] that the node's props imply now (`:checked` for
+    /// `checked`), asked after every prop write and when the node is created.
+    fn prop_state(&self, node: &NodeView) -> svelters_style::StateMask {
+        svelters_style::StateMask::NONE
+    }
+
+    /// The node's peer group ([`PeerGroup`]), if any.
+    fn peer_group(&self, node: &NodeView) -> Option<PeerGroup> {
+        None
+    }
+
+    /// A member of the node's peer group (`from`) sent it `msg`; the context is an event's (signals,
+    /// native props, focus, its own peer requests).
+    fn peer(&mut self, cx: &mut EventCx, from: presto_base::ids::NodeId, msg: &PeerMsg) -> Handled {
+        Handled::No
+    }
+
+    /// JS started (`listened`) or stopped listening to `signal` on this node (an icon takes clicks
+    /// only while its click signal is listened). [`NodeView::listened`](crate::NodeView::listened)
+    /// answers the same at any time.
+    fn listen_changed(&mut self, cx: &mut PropCx, signal: SignalId, listened: bool) {}
 }
 
 /// Constructs a node's kind value.
