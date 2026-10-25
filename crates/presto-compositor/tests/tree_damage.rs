@@ -1,5 +1,5 @@
 //! The committed tree (folding, flattening, OS-layer surfaces, scroll transforms) and damage (frame
-//! diffs, device rects, buffer-age history).
+//! diffs, device rects).
 
 use presto_base::color::{Color, Fill};
 use presto_base::commit::Commit;
@@ -8,7 +8,7 @@ use presto_base::geom::{Affine, Corners, DeviceRect, DeviceSize, Insets, Point, 
 use presto_base::ids::{LayerId, NodeId, PropNodeId, Revision, SurfaceId, WindowId};
 use presto_base::layer::{ItemRef, LayerDelta, LayerDesc, LayerKind};
 use presto_base::props::{ClipNode, ClipShape, OverscrollBehavior, PropOp, ScrollNode, TransformNode};
-use presto_compositor::damage::{self, DamageHistory, Snapshot};
+use presto_compositor::damage::{self, Snapshot};
 use presto_compositor::tree::{SurfaceKey, WindowTree};
 use std::sync::Arc;
 
@@ -244,25 +244,6 @@ fn device_rects_merge_and_cap() {
     let r = damage::to_device(&many, Scale(1.0), size);
     assert_eq!(r.len(), 1, "more than {} rects become one", damage::MAX_RECTS);
     assert!(damage::to_device(&[Rect::new(2000.0, 0.0, 2100.0, 10.0)], Scale(1.0), size).is_empty(), "off-surface");
-}
-
-#[test]
-fn history_copies_what_older_images_missed() {
-    let a = DeviceRect { x: 0, y: 0, w: 10, h: 10 };
-    let b = DeviceRect { x: 100, y: 100, w: 10, h: 10 };
-    let c = DeviceRect { x: 200, y: 200, w: 10, h: 10 };
-    let mut h = DamageHistory::new(3);
-    for _ in 0..3 {
-        assert_eq!(h.copy_region(&[a]), None, "fresh images copy everything");
-        h.presented(vec![a]);
-    }
-    h.presented(vec![b]);
-    h.presented(vec![c]);
-    let mut region = h.copy_region(&[a]).unwrap();
-    region.sort_by_key(|r| r.x);
-    assert_eq!(region, vec![a, b, c], "this frame plus the two the oldest image missed");
-    h.reset();
-    assert_eq!(h.copy_region(&[a]), None);
 }
 
 #[test]

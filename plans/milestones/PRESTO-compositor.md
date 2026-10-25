@@ -24,7 +24,8 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   `CompositorConfig::adapter` (cadatomic's `adapter::select`) with `CompositorConfig::limits` for
   `required_limits`, the same after device loss; non-sRGB format; Fifo,
   `desired_maximum_frame_latency = 1`; a persistent target per surface, encode first and **acquire late**,
-  copy damage ∪ what older images missed (`DamageHistory`, `swap_images` = 4) into the image; surfaces
+  copy the whole target into the acquired image (one blit; damage limits rendering, not the copy, so
+  no buffer-age assumption); surfaces
   without `COPY_DST` redraw whole; `Outdated` reconfigures, `Suboptimal` reconfigures after present;
   GPU completion through `on_submitted_work_done` fired by a waiter thread blocking on each submission
   (no polling in the loop); device loss: `set_device_lost_callback` → rebuild device/queue/renderer,
@@ -79,6 +80,24 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   renderer cannot use it yet.
 - A surface reported `Lost` must be recreated by the UI thread; there is no `ToUi` message to ask for it.
 - Tiles for scroll layers (architecture §7.5: only after a measurement).
+
+## Fixed: black window with a caret (CADATOMIC, 2026-10-25)
+
+The copy into the swapchain image used to be damage ∪ the damage of the last `swap_images − 1`
+frames, full only for the first 4 presents. A WSI that cycles through more images than that (or hands
+them out in another order) presented images that had missed frames, so caret-only frames left
+everything but the caret black. Now the whole persistent target is copied every frame.
+`tests/headless.rs::caret_only_frames_keep_the_content_on_every_swapchain_image` (an emulated
+six-image swapchain via `GpuBackend::attach_offscreen_chain`) reads `[0,0,0,0]` in the content area
+under the old policy and passes with the fix; run locally on lavapipe with the rest of the crate's
+tests (all pass). Separately, presto-core should not send `FastCommit::Caret` for an editor that is not
+rendered (`display: none`): the compositor draws the caret rect it is given.
+
+## CI
+
+presto run 40228927630 on 9a58f1c4 (Linux, Windows, macOS): every presto-compositor target passes,
+including the GPU-gated headless tests; the run is red only for `presto-core --lib` (lane CORE). The
+five svelters workflows skip presto-only pushes since base cc4f184d.
 
 ## Not run
 
