@@ -24,10 +24,20 @@ pub(crate) fn can_focus(doc: &Document, node: NodeId) -> bool {
     focusable && !v.disabled() && !v.prop_bool(common::HIDDEN) && !hidden_by_ancestor(doc, i)
 }
 
+/// `node` and its ancestors are shown (not hidden, invisible, `display: none` or concealed by a
+/// container that places its children).
+pub(crate) fn shown(doc: &Document, node: NodeId) -> bool {
+    doc.idx(node).is_some_and(|i| !hidden_by_ancestor(doc, i))
+}
+
 fn hidden_by_ancestor(doc: &Document, mut i: usize) -> bool {
     loop {
         let v = doc.view_at(i);
-        if v.prop_bool(common::HIDDEN) || v.style().visibility_hidden || doc.layout[i].style.display == taffy::Display::None {
+        if v.prop_bool(common::HIDDEN)
+            || v.style().visibility_hidden
+            || doc.layout[i].style.display == taffy::Display::None
+            || doc.core[i].flags.contains(crate::tree::NodeFlags::CONCEALED)
+        {
             return true;
         }
         match doc.core[i].parent {
@@ -62,7 +72,8 @@ pub(crate) fn tab_sequence(doc: &Document, top: NodeId) -> Vec<NodeId> {
     let mut normal = Vec::new();
     let mut stack = vec![top];
     while let Some(n) = stack.pop() {
-        if can_focus(doc, n) {
+        // a peer group is one Tab stop
+        if can_focus(doc, n) && crate::input::peers::tab_stop(doc, n).is_none_or(|s| s == n) {
             match tabindex(doc, n) {
                 Some(t) if t > 0 => positive.push((t, n)),
                 Some(t) if t < 0 => {}
@@ -84,7 +95,8 @@ pub fn next_focus(doc: &Document, window: WindowId, backwards: bool) -> Option<N
     if seq.is_empty() {
         return None;
     }
-    let at = current.and_then(|c| seq.iter().position(|&n| n == c));
+    // a focused member of a peer group that is not its Tab stop counts as the stop
+    let at = current.and_then(|c| seq.iter().position(|&n| n == c).or_else(|| crate::input::peers::tab_stop(doc, c).and_then(|s| seq.iter().position(|&n| n == s))));
     let n = seq.len();
     Some(match (at, backwards) {
         (Some(i), false) => seq[(i + 1) % n],
@@ -128,6 +140,7 @@ pub(crate) fn set_focus(doc: &mut Document, node: Option<NodeId>, reason: FocusR
     queue(doc, node, common::FOCUSIN, true);
     // the a11y tree's focus changed
     doc.mark(node, crate::tree::Dirty::A11Y);
+    crate::input::scope::focus_moved(doc, old, Some(node));
 }
 
 /// Clears the window's focus.
@@ -137,6 +150,7 @@ pub(crate) fn clear_focus(doc: &mut Document, window: WindowId) {
         if let Some(w) = doc.window_mut(window) {
             w.focus = None;
         }
+        crate::input::scope::focus_moved(doc, Some(o), None);
     }
 }
 
@@ -184,7 +198,12 @@ fn queue(doc: &mut Document, target: NodeId, signal: crate::ids::SignalId, bubbl
         return;
     }
     let ev = JsEvent { signal, target, arg: None, path, cancelable: false, sync: true };
-    doc.input_events.push(ev);
+    // a focus move JS made inside the sync deliverer is delivered when its listener returns
+    if doc.delivering > 0 {
+        doc.nested.push(ev);
+    } else {
+        doc.input_events.push(ev);
+    }
 }
 
 /// Opens a `dialog` scope: remembers the focus to give back and focuses the scope's first tab stop.

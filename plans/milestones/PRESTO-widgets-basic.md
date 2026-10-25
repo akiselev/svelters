@@ -35,36 +35,23 @@ Everything else is written, not run: CI runs it.
   child nodes. `focus-scope` and the common widget props (presto-core's). Locale number formatting.
 - Theme shadows follow CSS (blur radius as written); svelters-egui halved it for egui's blur.
 
-## Requests for presto-core (sent to the coordinator; CORE-2 landed the first six at cb47b49d and host.rs uses them)
+## Requests for presto-core
 
-Landed: computed style per node, kind timers, AccessKit actions, blur, services, event time.
-Open (all additive):
-1. Computed style of paint parts (`::part(name)`) in the contexts.
-2. Whether JS listens to a signal (icon/image take clicks only while `clicked` is listened; shim `Kind::listen`).
-3. Cancelable default actions: emit reports `prevented` (checkbox/radio/frame/slider `changed`, hyperlink/label `open-url`).
-4. Peer groups: radio exclusivity, toggle-button groups, roving focus, one Tab stop per group (shim `PeerGroup`,
-   `Kind::peer`; a reference implementation is the test-only `interact::roving::group::Group`).
-5. Container hooks: chrome padding (frame caption), per-child layout and visibility (stack), inert children.
-6. Prop-derived state bits after a prop write (`:checked`, `:busy`, `:indeterminate` without an event).
-7. `scale` in `PrepareCx`.
-8. Light-dismiss presses routed to open floating surfaces (`Dismissable`).
-9. (h) A kind sees its children while measuring and recording (`NodeView::child`/`cx.view`), a child's change
-   dirties a folding parent's measure and paint, and the folding parent's children are skipped by layout,
-   recording and hit testing (and the parent is still measured as a leaf: taffy only measures nodes
-   without children). Until then the bridge folds a label's run children only in `event`.
-10. (i) Scope activation: Enter (Escape) in a focus scope, unclaimed by the focused kind, sends the scope's
-    `default` (`cancel`) button an AccessKit `Click`; the auto-default rule (`Policy::auto_default`) moves
-    `:default` to the focused push button in a dialog scope.
-11. (j) `label for`: resolve the shim's `EventCx::focus_anchor` (focus the node with that anchor) and set
-    `labelled_by` on the target's AccessKit node. The bridge drops `focus_anchor` until then.
+All landed and used by `host.rs`: CORE (computed style, timers, AccessKit actions, blur, services, event
+time), CORE-2 (h: child views, `folds_children`), CORE-3 at ci/presto-core-3 eb669f1e, merged into this
+branch (a: part styles; b: listened signals; c: `emit_sync`, used by hyperlink `clicked` and label
+`link-clicked` before `open-url`; d: peer groups; e: chrome padding, `places_children` + `child_layout`,
+`children_inert`; f: `prop_state`/`prop_states`; g: scale; i: scope default/cancel activation, `:default`,
+`Document::set_auto_default` (call `host::install`); j: `focus_anchor`, `for` → `labelled_by`).
 
-Parity items from SVELTERS-PRESTO (coordinator, 2026-10-25), done on this branch: button `default`/`cancel`
-(props, `:default`), label `selectable`/`selection-start`/`selection-end` (drag, double/triple click, Ctrl+A,
-Ctrl+C → `copy` signal, Shift+arrows; geometry from presto-text's `hit_test`/`selection_rects` through the
-shim's `TextGeometry`) and `for`, slider `submit` (drag release or Enter), label run children.
-
-Until 1–6 land, the bridge ignores the shim's peer requests, `listen` and the container hooks: radio groups
-are not exclusive inside a real document, icon/image clicks need (2), and stack shows every child.
+Still open:
+- (done, on CORE-3's sync delivery at ci/presto-base b387ef42) `changed` of checkbox, radio-button, switch,
+  toggle-button, frame and slider is cancelable: emitted through `emit_sync` before the write, which a
+  prevented `changed` skips (a sibling's follow-up `changed` in a radio or toggle group stays a plain signal).
+- (done) Light dismiss: CORE-3's `Kind::light_dismiss`/`outside_press` (ci/presto-core-3 342cf6be) map to the
+  widget's `light_dismiss` and `Event::OutsidePress`, which `Dismissable` reads.
+- Run children: computed colour, weight and italic fold (done); per-run size and background do not (the
+  records have no field).
 
 ## Questions for the coordinator (with recommendations)
 

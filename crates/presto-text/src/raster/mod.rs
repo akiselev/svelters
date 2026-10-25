@@ -59,15 +59,13 @@ pub fn raster_policy(font: &FontRef<'_>, ppem: u16) -> RasterPolicy {
         font.maxp().map(|maxp| maxp.max_size_of_instructions().unwrap_or_default() != 0).unwrap_or_default();
     let mut policy =
         RasterPolicy { symmetric_smoothing: !has_glyph_instructions || ppem > 20, grid_fit: has_glyph_instructions };
-    if let Ok(gasp) = font.gasp() {
-        if gasp.version() >= 1 {
-            if let Some(range) = gasp.gasp_ranges().iter().find(|range| ppem <= range.range_max_ppem()) {
+    if let Ok(gasp) = font.gasp()
+        && gasp.version() >= 1
+            && let Some(range) = gasp.gasp_ranges().iter().find(|range| ppem <= range.range_max_ppem()) {
                 let behavior = range.range_gasp_behavior();
                 policy.symmetric_smoothing = behavior.contains(GaspRangeBehavior::GASP_SYMMETRIC_SMOOTHING);
                 policy.grid_fit = behavior.contains(GaspRangeBehavior::GASP_SYMMETRIC_GRIDFIT);
             }
-        }
-    }
     policy
 }
 
