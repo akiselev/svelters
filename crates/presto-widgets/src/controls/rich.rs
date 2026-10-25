@@ -268,7 +268,7 @@ pub(crate) mod testing {
                 }
                 width = width.max(x);
             }
-            Arc::new(TextLayout { size: Size::new(width, line_h * lines.len() as f32), runs, lines: lines.len() as u32 })
+            Arc::new(TextLayout { size: Size::new(width, line_h * lines.len() as f32), runs, lines: lines.len() as u32, geometry: None })
         }
     }
 
