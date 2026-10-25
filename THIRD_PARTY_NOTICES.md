@@ -97,6 +97,10 @@ Ported code (each file names its source in its header comment):
 
 Bundled fonts (test data, `crates/presto-text/fonts/`, subsets made with fonttools `pyftsubset`; see `fonts/README.md`): Noto Sans, Noto Sans Hebrew and Noto Color Emoji, SIL Open Font License 1.1 (`fonts/OFL.txt`), Copyright 2022 The Noto Project Authors.
 
+## presto-canvas (lane CANVAS)
+
+Canvas text follows Eric Lengyel's Slug method (JCGT 2017; US patent 10,373,352, dedicated to the public domain on 2026-03-17) and its MIT reference shaders ([EricLengyel/Slug](https://github.com/EricLengyel/Slug), `SlugPixelShader.hlsl`), which ask distributed software to give credit. presto's WGSL (`crates/presto-canvas/src/shaders.wgsl`, `fs_glyph`) and its Rust mirror (`crates/presto-canvas/src/slug.rs`) were written from the method, not copied. They reuse the reference shader's root-classification table (`0x2E74`), its root solve and its weighted combination of the horizontal and vertical rays. Copyright Eric Lengyel; MIT (text below). The arc distance in `fs_shape` follows Inigo Quílez's `sdArc` (MIT).
+
 ## MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
