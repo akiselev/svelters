@@ -6,7 +6,7 @@
 //! | [`easing`] | svelte/easing's curves, bit-for-bit, and as presto easings |
 //! | [`transition`] | svelte/transition's `fade`, `fly`, `slide`, `scale`, `blur`, `draw` from their parameters: Svelte's `css(t, u)` and presto tracks |
 //! | [`flip`] | svelte/animate's `flip` from presto's layout |
-//! | [`shim::spring`] | svelte/motion's spring in closed form (exact at 60 Hz, frame-rate independent) |
+//! | [`spring`] | svelte/motion's spring motion on presto-anim's closed form: Svelte's settle frame and retarget (exact at 60 Hz, frame-rate independent) |
 //! | [`waapi`] | the Web Animations slice Svelte uses, timed on presto's clock |
 //! | [`op`] | the `OP_ANIMATE` payload: channel keyframes plus the native descriptor |
 //!
@@ -18,5 +18,6 @@ pub mod easing;
 pub mod flip;
 pub mod op;
 pub mod shim;
+pub mod spring;
 pub mod transition;
 pub mod waapi;

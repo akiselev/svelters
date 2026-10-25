@@ -10,10 +10,10 @@ Design: `plans/research/presto/compiler-and-js.md` §3.6, §3.7.
 
 | Module | What |
 |---|---|
-| `easing` | svelte/easing's 31 curves in `f64`, same operations as the JS; `to_presto(tol)`: `Linear` exactly, other curves as CSS `linear()` points within `tol` (adaptive subdivision) |
+| `easing` | svelte/easing's 31 curves by name, evaluated with `presto_anim::easing::svelte`; `to_presto(tol)`: `Linear` exactly, other curves as CSS `linear()` points within `tol` (adaptive subdivision) |
 | `transition` | `fade fly slide scale blur draw` from their JSON parameters and the computed style (`Transition::new`); `css(t, u)` as numbers (`Frame`); `Run {t1, t2, duration, delay}` with Svelte's 60 Hz keyframe `t`s; `plan(run)` → per-channel two-keyframe tracks (slide's opacity knee as a third keyframe at eased offset), timing easing = the transition's, fill forwards; `NotNative` for what presto can't resolve (em/vw units, a computed filter, an unknown easing) so the host plays the frames |
 | `flip` | Svelte's `flip` from rects + layout size + origin; **the scale bug is fixed** (`sx = clientWidth / to.width / zoom`, svelters had `to.width / to.width`) |
-| `shim::spring` | svelte/motion's spring in closed form: the 60 Hz recurrence `e[n+1] = (2-k-c) e[n] - (1-c) e[n-1]` solved (complex, real, repeated, damping = 1 cases), evaluated at `n = 60 s`; exact at 60 Hz, frame-rate independent; Svelte's settle frame; `retarget` keeps position and last step; `physical()` gives the continuous (stiffness, damping) and `velocity()` the matching start velocity |
+| `spring` | svelte/motion's spring as a motion on `presto_anim::spring::Spring::svelte` (start velocity from Svelte's last two values): exact at 60 Hz, frame-rate independent; Svelte's settle frame; `retarget` keeps position and last step; `physical()` and `velocity()` for a compositor spring |
 | `shim::css` | the computed `transform` parser the built-ins need (matrix, translate, scale, rotate, skew) |
 | `waapi` | the Web Animations slice Svelte uses: `Animation` (play/pause/cancel/finish, `currentTime` get/set, `playState`, `effect = null`, fill forwards, progress), `Animations<N>` per document (`of_node` = `getAnimations`, `poll` raises each finish once → `animationend`, `next_finish` for the clock) |
 | `op` | the `OP_ANIMATE` payload: channel frames plus the optional `native` descriptor; `plan()` prefers the descriptor, falls back to the frames |
@@ -37,8 +37,10 @@ Design: `plans/research/presto/compiler-and-js.md` §3.6, §3.7.
 
 ### Compiler
 
-- `Spec.capabilities` (`#[serde(default)]` set) + `Spec::has_capability`, `PlatformSemantics::has_capability`
-  (default false; SpecBackend and Overlay answer). No checked-in spec has capabilities, so every
+- Capabilities in lane COMPILER's shape (its message, 2026-10-25): `Spec.capabilities: Vec<String>`,
+  `semantics::capability::{.., NATIVE_TRANSITIONS, NATIVE_MOTION, CSS_PRECOMPILED}` (raw strings for
+  `cx1_codes`), `PlatformSemantics::capabilities()` / `has_capability()`; my copy of their hunks is a
+  subset of theirs (no `spec_hash`, ids, a11y), so the consolidation keeps theirs and adds my three constants. No checked-in spec has capabilities, so every
   existing backend's output is unchanged (conformance and op-log goldens untouched).
 - `native_transitions`: a `transition:`/`in:`/`out:` whose name is an import of fade/fly/slide/scale/
   blur/draw from `svelte/transition` (renamed imports too) → `$n.transition_native(flags, n, "fade", ...)`;
@@ -85,9 +87,9 @@ Not run locally: any of the above (cargo check only, per the batch rule). CI res
 
 ## Shims and cross-lane edits
 
-- `presto-motion::shim::spring` stands in for `presto_anim::spring`'s Svelte mapping and
-  `shim::css` for `presto_anim::css` (both FRAME-ANIM's; empty on `ci/presto-base`). The consolidation
-  should keep one: the 60 Hz derivation and the golden test transfer as they are.
+- Merged `ci/presto-base` ac7cc8c4 (wave-1 APIs): easings and the spring now use presto-anim's.
+  `presto-motion::shim::css` stands in for `presto_anim::css` (still empty): the computed `transform`
+  parser.
 - Cross-lane edits (all additive): `svelters-compiler` semantics/codegen/transform/compile and the
   CSS pruner (COMPILER lane works in the same crate; I told it the exact `capabilities` field text by
   message), `svelters-modules` source/mod.rs (sheet module), `svelters-style` (binary, utility),
@@ -114,5 +116,3 @@ Not run locally: any of the above (cargo check only, per the batch rule). CI res
    `presto_anim::easing::eval` with `presto_motion::easing::SvelteEasing::eval`'s formulas?
    Recommendation: yes, additive (FRAME-ANIM adds one match arm); then `to_presto` returns it and
    compositor tracks are exact instead of within 1e-4.
-2. **Keep the closed-form spring in presto-anim or presto-motion?** Recommendation: presto-anim
-   (`spring::svelte`), moving `shim::spring` there at consolidation with its golden test.

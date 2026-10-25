@@ -56,9 +56,6 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     fn source_locs(&self) -> bool {
         self.inner.source_locs()
     }
-    fn has_capability(&self, name: &str) -> bool {
-        self.inner.has_capability(name)
-    }
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan {
         self.inner.lifetime(el)
     }
@@ -137,5 +134,8 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     }
     fn type_property(&self, ty: &TypeRef, prop: &str) -> Option<TypeProp> {
         self.inner.type_property(ty, prop)
+    }
+    fn capabilities(&self) -> &[String] {
+        self.inner.capabilities()
     }
 }

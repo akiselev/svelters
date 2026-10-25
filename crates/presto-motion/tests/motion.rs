@@ -4,7 +4,7 @@
 use presto_base::anim::{AnimValue, FillMode};
 use presto_base::time::Time;
 use presto_motion::op::AnimateOp;
-use presto_motion::shim::spring::{SpringMotion, SvelteSpring};
+use presto_motion::spring::{SpringMotion, SvelteSpring};
 use presto_motion::transition::{Channel, Computed, CssLength, NotNative, Params, Run, Transition, TransitionKind};
 use presto_motion::waapi::{Animation, Animations, PlayState};
 
@@ -158,7 +158,7 @@ fn spring_retarget_continues_like_svelte() {
 #[test]
 fn spring_has_a_physical_equivalent() {
     let m = SpringMotion::new(SvelteSpring { stiffness: 0.1, damping: 0.25, precision: 0.01 }, 0.0, 0.0, 100.0);
-    let (k, c) = m.physical().unwrap();
+    let (k, c) = m.physical();
     assert!(k > 0.0 && c > 0.0);
     // integrate the physical spring from the motion's start state; it follows the closed form
     let (mut x, mut v) = (m.raw(0.0) - 100.0, m.velocity(0.0));

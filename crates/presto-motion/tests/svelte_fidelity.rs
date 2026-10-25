@@ -6,7 +6,7 @@ use presto_base::anim::{AnimValue, TransformFn};
 use presto_motion::easing::SvelteEasing;
 use presto_motion::flip::{DomRect, Flip, FlipInput, FlipParams};
 use presto_motion::shim::css::parse_transform;
-use presto_motion::shim::spring::{SpringMotion, SvelteSpring};
+use presto_motion::spring::{SpringMotion, SvelteSpring};
 use presto_motion::transition::{Channel, Computed, Params, Run, Transition, TransitionKind};
 use serde::Deserialize;
 
@@ -270,7 +270,7 @@ fn spring_closed_form_equals_svelte_at_60hz() {
 fn spring_oracle_matches_the_js_goldens() {
     for case in goldens().springs {
         let params = SvelteSpring { stiffness: case.params.stiffness, damping: case.params.damping, precision: case.params.precision };
-        let ours = presto_motion::shim::spring::svelte_frames(params, case.from, case.to, 10_000);
+        let ours = presto_motion::spring::svelte_frames(params, case.from, case.to, 10_000);
         assert_eq!(ours.len(), case.frames.len(), "{params:?}");
         for (a, b) in ours.iter().zip(&case.frames) {
             assert!(close(*a, *b, 1e-9), "{params:?}: {a} vs {b}");

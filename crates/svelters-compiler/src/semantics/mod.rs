@@ -20,7 +20,7 @@ pub use observe::{BindLowering, BindPlan, Observability, plan_bind, plan_bind_co
 pub use overlay::Overlay;
 pub use types::{TypeProp, TypeRef, TypeTable};
 pub use spec::{
-    AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, ObsClass, ObsTiming,
+    capability, AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, ObsClass, ObsTiming,
     ObsVerified, ObserveSpec, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
     StylePropSpec, ValueCost, ValueKind, Via,
 };
@@ -316,11 +316,6 @@ pub trait PlatformSemantics {
     fn source_locs(&self) -> bool {
         false
     }
-    /// Whether the backend accepts op shape `name` beyond the generic path (`native_transitions`,
-    /// `native_motion`, `css_precompiled`, ...: the spec's `capabilities`).
-    fn has_capability(&self, _name: &str) -> bool {
-        false
-    }
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan;
     /// Kind id or (Qt) class name in the element's chain; also accepts native type names.
     fn is_a(&self, el: &ElementRef, kind_or_class: &str) -> bool;
@@ -421,6 +416,15 @@ pub trait PlatformSemantics {
     /// A property of a non-GUI class by its JS getter name (`cursorPosition`), with its observability.
     fn type_property(&self, _ty: &TypeRef, _prop: &str) -> Option<TypeProp> {
         None
+    }
+
+    /// The new op shapes the backend's runtime path accepts (spec `capabilities`,
+    /// [`spec::capability`]); none by default.
+    fn capabilities(&self) -> &[String] {
+        &[]
+    }
+    fn has_capability(&self, name: &str) -> bool {
+        self.capabilities().iter().any(|c| c == name)
     }
 }
 
