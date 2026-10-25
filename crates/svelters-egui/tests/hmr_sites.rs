@@ -35,6 +35,22 @@ const PANEL: &str = r#"<script>
 </box>
 "#;
 
+/// DZ0b2: dynamic calls and `{@render}` tags carry call sites too.
+const DYNAMIC: &str = r#"<script>
+  import Counter from './Counter.svelte';
+  let Comp = $state(Counter);
+</script>
+
+{#snippet one(name)}
+  <Counter {name} />
+{/snippet}
+
+<box>
+  <Comp name="d" />
+  {@render one('r')}
+</box>
+"#;
+
 fn scratch(name: &str) -> PathBuf {
     let fixture = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/embed-egui").canonicalize().unwrap();
     assert!(fixture.join("node_modules").exists(), "run `pnpm install` first");
@@ -46,7 +62,7 @@ fn scratch(name: &str) -> PathBuf {
         r#"{ "name": "dz0sites", "private": true, "type": "module", "svelters": { "toolkit": "egui", "embed": { "Panel": "src/Panel.svelte" } } }"#,
     )
     .unwrap();
-    std::fs::write(dir.join("src/Panel.svelte"), PANEL).unwrap();
+    std::fs::write(dir.join("src/Panel.svelte"), if name.starts_with("dyn") { DYNAMIC } else { PANEL }).unwrap();
     std::fs::write(dir.join("src/Counter.svelte"), COUNTER).unwrap();
     #[cfg(unix)]
     std::os::unix::fs::symlink(fixture.join("node_modules"), dir.join("node_modules")).unwrap();
@@ -132,4 +148,25 @@ fn a_reordered_keyed_list_keeps_each_items_state() {
     swap(&mut eh, &dir, &PANEL.replace("text=\"Flip\"", "text=\"Reverse\""));
     assert!(shown(&eh, "Reverse"));
     assert!(shown(&eh, "y 2") && shown(&eh, "x 0"), "y keeps 2, x keeps 0");
+}
+
+#[test]
+fn inserting_a_dynamic_call_before_another_keeps_its_state() {
+    let dir = scratch("dyn-component");
+    let mut eh = mounted(&dir);
+    click(&mut eh, "d 0", 2);
+    swap(&mut eh, &dir, &DYNAMIC.replace("  <Comp name=\"d\" />", "  <Comp name=\"new\" />\n  <Comp name=\"d\" />"));
+    assert!(shown(&eh, "new 0"), "the new dynamic call starts fresh");
+    assert!(shown(&eh, "d 2"), "d keeps its count by call site");
+}
+
+#[test]
+fn inserting_a_render_before_another_keeps_its_state() {
+    let dir = scratch("dyn-render");
+    let mut eh = mounted(&dir);
+    click(&mut eh, "r 0", 3);
+    // the same snippet (one `<Counter>` call site) rendered again, before: the render tag tells them apart
+    swap(&mut eh, &dir, &DYNAMIC.replace("  {@render one('r')}", "  {@render one('q')}\n  {@render one('r')}"));
+    assert!(shown(&eh, "q 0"), "the new render starts fresh");
+    assert!(shown(&eh, "r 3"), "r keeps its count by render site");
 }

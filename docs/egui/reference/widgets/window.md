@@ -34,6 +34,7 @@ A native window (the root viewport, or an immediate viewport); its children are 
 | `default-width` | `number` | `480` | no | Initial inner width in points. |
 | `gap` | `number` | `0` | no | Space between the window's children, in points. |
 | `padding` | `number` | `8` | no | Inner spacing of the content area, in points. |
+| `source-loc` | `string` | `""` | no | Set by the runtime in dev builds: where the window was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set. |
 | `title` | `string` | `""` | no | Window title. |
 <!-- END GENERATED -->
 

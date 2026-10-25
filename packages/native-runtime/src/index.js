@@ -1880,7 +1880,9 @@ const rootCounters = new Map();
  *  parent instance since its current version started (call order is the positional key).
  *
  *  DZ0: in a dev build for a backend with `source-loc`, the call site is known (`anchor.site`,
- *  `file#offset`): the key is `<parent path>/<component id>` U+001F `<site>` and the keys of the keyed
+ *  `file#offset`; DZ0b2: for `<svelte:component>` and `<X>` with a dynamic `X`, the site of the
+ *  region the block is placed in, and after it the sites of the `{@render}` tags between the call
+ *  and the parent instance, each U+001F-separated): the key is `<parent path>/<component id>` U+001F `<site>` and the keys of the keyed
  *  `{#each}` items around the call inside the parent (`[k1,k2]`), then `#<n>` counting only the
  *  calls with that same key. Inserting another call of the component elsewhere, or reordering a
  *  keyed list, then keeps every instance's state; a swap translates the parked sites through the
@@ -1890,18 +1892,22 @@ function instancePath(owner, id, anchor) {
   while (s && !s.hmr) s = s.parent;
   const counters = s ? s.hmr.counters : rootCounters;
   let base = id;
-  if (anchor instanceof Region && anchor.site !== undefined) {
-    const keys = [];
+  // the call sites between the anchor and the parent instance, innermost first: the call's own
+  // (DZ0b2: a dynamic component's is on the region its block is placed in), then `{@render}` tags
+  const sites = [];
+  const keys = [];
+  if (anchor instanceof Region) {
     const top = s ? s.hmr.top : null;
-    for (let c = anchor.owner; c && c !== top; ) {
+    for (let c = anchor; c && c !== top; ) {
       if (c instanceof Region) {
+        if (c.site !== undefined) sites.push(c.site);
         if (c.keyed) keys.push(keyText(c.key));
         c = c.owner;
       } else if (c instanceof Slot) c = c.node.owner;
       else break;
     }
-    base = `${id}\u001f${anchor.site}${keys.length ? `[${keys.reverse().join(',')}]` : ''}`;
   }
+  if (sites.length) base = `${id}\u001f${sites.join('\u001f')}${keys.length ? `[${keys.reverse().join(',')}]` : ''}`;
   const n = counters.get(base) ?? 0;
   counters.set(base, n + 1);
   return `${s ? s.hmr.path : ''}/${base}#${n}`;

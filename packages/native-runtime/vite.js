@@ -443,7 +443,8 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
       };
       // CSS declarations of <style> go to the X6 translator (GTK CSS / QSS / decl), scoped like Svelte's.
       // Q3w: the svelters compiler scopes the <style> itself (`--css`, the Rust port of Svelte's CSS
-      // pipeline, `@native` blocks lifted out); egui still takes stock Svelte's scoped CSS (CS5e).
+      // pipeline, `@native` blocks lifted out); egui release builds without `@apply` still take stock
+      // Svelte's scoped CSS (CS5e).
       const style = isModule ? null : styleBlock(code);
       let css = null;
       let res;
@@ -459,11 +460,16 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
             res = { ...res, js: plain.js, map: plain.map };
           }
         }
-      } else if (style && /@apply\s/.test(style[2])) {
-        // U4: egui with `@apply`: the svelters compiler expands it before scoping (stock Svelte can't)
+      } else if (style && (dev || /@apply\s/.test(style[2]))) {
+        // U4: egui with `@apply`: the svelters compiler expands it before scoping (stock Svelte can't).
+        // DZ0b2 (decided, coordinator, 2026-10-25): in dev every egui sheet goes through it, so dev
+        // through Vite gets the same `<style>` offsets as the Rust loader
         const scope = scopeOf(file);
         res = run(['--css', '--css-scope', scope]);
-        css = res.css && !res.css.injected && res.css.code.trim() ? { scope, sheets: { css: res.css.code } } : null;
+        // DZ0b2 (dev): the component's path and the sheet's map to its `<style>` text, as the Rust
+        // loader passes them, for matched-rule source offsets. Stock Svelte's sheets (below) have no map.
+        const source = dev && res.css?.map != null ? { file, map: res.css.map } : {};
+        css = res.css && !res.css.injected && res.css.code.trim() ? { scope, sheets: { css: res.css.code, ...source } } : null;
       } else {
         css = style ? nativeSheets(code, file, backend, warn, specFragments) : null;
         res = run(css ? ['--css-scope', css.scope] : []);

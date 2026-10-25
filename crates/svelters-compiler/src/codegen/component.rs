@@ -1566,6 +1566,21 @@ impl Codegen<'_, '_> {
         self.w.write(if dev { "});" } else { "};" });
     }
 
+    /// The region a component call or `{@render}` at `start` is placed in: `$n.region(container)`,
+    /// with the call site (`$$src`, `start`) in a dev build for a backend with `source-loc`.
+    /// `block`: a dynamic component or a reactive snippet, whose block takes the container itself
+    /// unless there is a site to carry (DZ0b2).
+    fn site_region(&mut self, container: &str, start: u32, block: bool) -> String {
+        if self.locs.is_some() {
+            self.src_used = true;
+            format!("$n.region({container}, $$src, {start})")
+        } else if block {
+            container.to_string()
+        } else {
+            format!("$n.region({container})")
+        }
+    }
+
     fn render(&mut self, r: &RenderCall, container: &str) {
         // arguments that call something are memoized (Svelte's RenderTag `Memoizer`): the snippet
         // reads them through a derived, so the call runs once per change, not once per read
@@ -1585,9 +1600,12 @@ impl Codegen<'_, '_> {
         }
         self.line();
         self.w.map(r.span.start);
-        if self.rw.is_reactive(r.callee) {
+        // DZ0b2: the render tag is a call site, as a component call is
+        let reactive = self.rw.is_reactive(r.callee);
+        let site = self.site_region(container, r.span.start, reactive);
+        if reactive {
             // the snippet function itself can change (a prop): re-render when it does
-            self.w.write(&format!("$n.snippet({container}, () => "));
+            self.w.write(&format!("$n.snippet({site}, () => "));
             if r.optional {
                 self.paren_expr(r.callee, Mode::Read);
                 self.w.write(" ?? $.noop");
@@ -1597,7 +1615,7 @@ impl Codegen<'_, '_> {
         } else {
             self.paren_expr(r.callee, Mode::Read);
             self.w.write(if r.optional { "?.(" } else { "(" });
-            self.w.write(&format!("$n.region({container})"));
+            self.w.write(&site);
         }
         for (a, m) in r.args.iter().zip(&memo) {
             self.w.write(", () => ");
@@ -1663,20 +1681,19 @@ impl Codegen<'_, '_> {
         if this_bind.is_some() && !dynamic {
             self.w.write("$.bind_this(");
         }
+        // DZ0: in a dev build for a backend with `source-loc`, the call site goes on the region the
+        // component (or, DZ0b2, the dynamic component's block) is placed in
+        let site = self.site_region(container, c.span.start, dynamic);
         if let Some(this) = c.this {
             // `<svelte:component this>`: re-created when the function changes, nothing if nullish
-            self.w.write(&format!("{open}({container}, () => "));
+            self.w.write(&format!("{open}({site}, () => "));
             self.paren_expr(this, Mode::Read);
             self.w.write(", ");
         } else {
             match dynamic_get {
                 // re-created when the component function changes (Svelte's `$.component`)
-                Some(get) => self.w.write(&format!("{open}({container}, () => {get}, ")),
-                None if self.locs.is_some() => {
-                    self.src_used = true;
-                    self.w.write(&format!("{}($n.region({container}, $$src, {}), ", c.name, c.span.start))
-                }
-                None => self.w.write(&format!("{}($n.region({container}), ", c.name)),
+                Some(get) => self.w.write(&format!("{open}({site}, () => {get}, ")),
+                None => self.w.write(&format!("{}({site}, ", c.name)),
             }
         }
         let spread = c.props.iter().any(|p| matches!(p, ComponentProp::Spread(_)));

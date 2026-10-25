@@ -370,6 +370,27 @@ impl Stylist {
         self.order_decls(&matched, inline)
     }
 
+    /// DZ0b2: the declaration that wins each property `el` declares (rules and `inline`), keyed by
+    /// property name; a shorthand is keyed by each of its longhands. Declarations of one property
+    /// share the cascade order of [`Stylist::cascaded`], so the last one wins. For an inspector's
+    /// "which declaration wins" and "is this inherited"; not per frame.
+    pub fn winners<'s, E: Element>(&'s self, el: E, inline: Option<&'s DeclBlock>, caches: &mut MatchCaches) -> std::collections::BTreeMap<String, &'s Declaration> {
+        let mut out = std::collections::BTreeMap::new();
+        for d in self.cascaded(el, inline, caches) {
+            match crate::shorthand::longhands_in(self.table, &d.name) {
+                Some(longs) => {
+                    for l in longs {
+                        out.insert(l.to_string(), d);
+                    }
+                }
+                None => {
+                    out.insert(d.name.to_string(), d);
+                }
+            }
+        }
+        out
+    }
+
     /// The rules whose selector ends in `pseudo` and whose host part matches `el`, in cascade
     /// order.
     pub fn matched_pseudo_rules<E: Element>(&self, el: E, pseudo: &PseudoElement, caches: &mut MatchCaches) -> Vec<MatchedRule> {

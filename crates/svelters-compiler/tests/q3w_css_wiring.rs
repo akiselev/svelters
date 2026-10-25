@@ -174,4 +174,16 @@ fn cli_css_flag() {
     assert_eq!(res["css"]["injected"], false);
     assert!(res["css"]["scopedElements"].as_array().is_some_and(|a| !a.is_empty()));
     assert!(res["js"].as_str().unwrap().contains("svelte-xyz"));
+    // DZ0b2: the map to the `<style>` text (`out,src,len` runs) that the Vite plugin hands
+    // `registerStyles` in dev, as the Rust loader does
+    let map = res["css"]["map"].as_str().expect("css.map");
+    let code = res["css"]["code"].as_str().unwrap();
+    let src = c["source"].as_str().unwrap();
+    let style = &src[src.find("<style").unwrap()..];
+    let style = &style[style.find('>').unwrap() + 1..];
+    assert!(!map.is_empty());
+    for run in map.split(';') {
+        let n: Vec<usize> = run.split(',').map(|x| x.parse().unwrap()).collect();
+        assert_eq!(&code[n[0]..n[0] + n[2]], &style[n[1]..n[1] + n[2]], "run {run}: untouched style text");
+    }
 }
