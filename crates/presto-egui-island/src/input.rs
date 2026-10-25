@@ -48,6 +48,9 @@ pub struct InputTranslator {
     modifiers: Modifiers,
     focused: bool,
     macos: bool,
+    /// The pointer that pressed inside the island, and where egui last saw a pointer (island points).
+    pointer: u32,
+    last: egui::Pos2,
     pub files: FileDrops,
 }
 
@@ -60,6 +63,8 @@ impl InputTranslator {
             modifiers: Modifiers::default(),
             focused: false,
             macos: cfg!(target_os = "macos"),
+            pointer: 0,
+            last: egui::Pos2::ZERO,
             files: FileDrops::default(),
         }
     }
@@ -89,6 +94,24 @@ impl InputTranslator {
     /// A button pressed inside the island is held.
     pub fn captured(&self) -> bool {
         self.captured != 0
+    }
+
+    /// The pointer holding the island's capture (the last one pressed inside it).
+    pub fn pointer_id(&self) -> u32 {
+        self.pointer
+    }
+
+    /// Another owner took the held pointer (presto's drag took over an egui drag): egui sees its buttons
+    /// released where it last saw the pointer, then the pointer leave.
+    pub fn release_capture(&mut self, out: &mut Vec<egui::Event>) {
+        let held = std::mem::take(&mut self.captured);
+        let mods = self.egui_modifiers();
+        for (button, bit) in BUTTONS {
+            if held & bit != 0 {
+                out.push(egui::Event::PointerButton { pos: self.last, button, pressed: false, modifiers: mods });
+            }
+        }
+        self.gone(out);
     }
 
     /// Keyboard focus entered or left the island.
@@ -167,6 +190,9 @@ impl InputTranslator {
         let over = self.rect.contains(p.pos);
         let pos = self.local(p.pos);
         let mods = modifiers(p.modifiers, self.macos);
+        if over || self.captured != 0 {
+            self.last = pos;
+        }
         if p.kind == PointerType::Touch {
             if let Some(phase) = touch_phase(p.phase) {
                 if over || self.captured != 0 {
@@ -196,6 +222,7 @@ impl InputTranslator {
                     return false;
                 }
                 self.inside = true;
+                self.pointer = p.pointer;
                 out.push(egui::Event::PointerMoved(pos));
                 if let Some((button, bit)) = p.button.and_then(pointer_button) {
                     self.captured |= bit;
