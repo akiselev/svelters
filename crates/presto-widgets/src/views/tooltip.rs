@@ -13,7 +13,7 @@
 
 use super::draw;
 use super::placement::{AnchorParams, Placed, Placement, place};
-use super::shim::{Event, EventCx, Kind, KindSpec, Labels, Palette, Policy, PropError, PropType, RecordCx, Value, prop};
+use super::legacy::{Event, EventCx, Kind, KindSpec, Labels, Palette, Policy, PropError, PropType, RecordCx, Value, prop};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::geom::{Point, Rect, Size};
@@ -209,8 +209,8 @@ impl Kind for Tooltip {
     }
 
     /// Tooltips take no input (click-through).
-    fn event(&mut self, _cx: &mut EventCx<'_>, _ev: &Event) -> super::shim::Handled {
-        super::shim::Handled::No
+    fn event(&mut self, _cx: &mut EventCx<'_>, _ev: &Event) -> super::legacy::Handled {
+        super::legacy::Handled::No
     }
 
     fn a11y(&self, node: &mut accesskit::Node) {
@@ -223,7 +223,7 @@ impl Kind for Tooltip {
 mod tests {
     use super::*;
     use crate::views::placement::Side;
-    use crate::views::shim::{FixedLabels, Os};
+    use crate::views::legacy::{FixedLabels, Os};
 
     fn ms(n: i64) -> Time {
         Time(n as u64 * 1_000_000)

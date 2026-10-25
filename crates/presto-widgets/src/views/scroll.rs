@@ -11,7 +11,7 @@
 //!   event). A new gesture chains. A wheel without phases latches per burst
 //!   ([`WHEEL_LATCH_TIMEOUT`]).
 //! - [`ScrollArea`]: the kind. Wheel steps animate per OS through
-//!   [`shim::scroll_physics`](super::shim::scroll_physics) (Chromium's curve on Windows and Linux,
+//!   [`shim::scroll_physics`](super::legacy::scroll_physics) (Chromium's curve on Windows and Linux,
 //!   none on macOS), touchpads move 1:1 and fling on release where the OS has no momentum. While
 //!   every listener on the area is passive, each step is also a [`FastCommit::ScrollOffset`]: the
 //!   compositor moves the content without waiting for the UI phases. The offset is native-owned
@@ -22,8 +22,8 @@
 //! [`ScrollArea::record`](Kind::record) draws only the bars over the content.
 
 use super::draw;
-use super::shim::scroll_physics::{self, Fling, ScrollAnimation, SmoothScroll, VelocityTracker};
-use super::shim::{
+use super::legacy::scroll_physics::{self, Fling, ScrollAnimation, SmoothScroll, VelocityTracker};
+use super::legacy::{
     Event, EventCx, Handled, Kind, KindSpec, Kinetic, Os, Policy, PropError, PropType, RecordCx, Scrollbars, TrackClick, Value,
     prop, signal,
 };

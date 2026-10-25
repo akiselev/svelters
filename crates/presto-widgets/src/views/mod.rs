@@ -7,7 +7,9 @@
 //! without a tree: the logic (latching, row recycling, placement, menu navigation) is what the
 //! consolidation keeps when `shim` gives way to `presto-core`.
 
+pub mod legacy;
 pub mod shim;
+pub mod common;
 pub(crate) mod draw;
 pub mod placement;
 pub mod menu_model;
@@ -26,4 +28,3 @@ pub mod select;
 pub mod panel;
 pub mod status_bar;
 pub mod dialog_buttons;
-pub mod bridge;

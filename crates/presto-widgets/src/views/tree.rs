@@ -20,7 +20,7 @@
 //! `expanded`, selection and position over the whole flattened list.
 
 use super::draw;
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
 use super::virtual_list::{Mods, SELECTION, VirtualChildren, VirtualList, id_list, set_list_prop};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
@@ -432,7 +432,7 @@ impl Kind for TreeView {
     }
 
     fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        let macos = cx.policy.os == super::shim::Os::MacOs;
+        let macos = cx.policy.os == super::legacy::Os::MacOs;
         match ev {
             Event::Key(k) if k.state == KeyState::Pressed => {
                 let m = Mods { shift: k.modifiers.contains(presto_base::event::Modifiers::SHIFT), ctrl: k.modifiers.primary(macos) };
@@ -481,7 +481,7 @@ impl Kind for TreeView {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::views::shim::{Os, Policy};
+    use crate::views::legacy::{Os, Policy};
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerEvent, PointerType};
     use presto_base::geom::Size;
     use presto_base::time::Span;

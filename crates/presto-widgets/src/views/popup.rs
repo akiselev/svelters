@@ -10,7 +10,7 @@
 
 use super::overlay::{Closed, Dismiss, DismissReason, OverlayClass};
 use super::placement::{AnchorParams, Placed, Placement, place};
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
 use super::draw;
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
@@ -246,7 +246,7 @@ mod tests {
     use super::*;
     use crate::views::overlay::{Closed, OverlayId};
     use crate::views::placement::Side;
-    use crate::views::shim::{Os, Policy};
+    use crate::views::legacy::{Os, Policy};
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers};
     use presto_base::time::Time;
 

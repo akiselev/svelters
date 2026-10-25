@@ -6,7 +6,7 @@
 //! tree's. A click reports `clicked(role)` (and `help`); an accept or reject closes the enclosing
 //! `modal` or `inner-window` with that result ([`DialogButtons::child_clicked`]).
 
-use super::shim::{ButtonOrder, Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{ButtonOrder, Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 
@@ -155,7 +155,7 @@ impl Kind for DialogButtons {
 
 #[cfg(test)]
 mod tests {
-    use super::super::shim::{Os, Policy};
+    use super::super::legacy::{Os, Policy};
     use super::*;
     use presto_base::geom::Size;
     use presto_base::time::Time;

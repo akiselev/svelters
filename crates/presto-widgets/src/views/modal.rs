@@ -9,7 +9,7 @@
 //! opener when it closes.
 
 use super::draw;
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::event::{KeyState, MouseButton, PointerPhase};
@@ -193,7 +193,7 @@ impl Kind for Modal {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::views::shim::{Os, Policy};
+    use crate::views::legacy::{Os, Policy};
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerEvent, PointerType};
     use presto_base::time::Time;
 

@@ -15,7 +15,7 @@
 //!   without JS (architecture §4.5: a splitter's position during a drag is native-owned).
 
 use super::draw;
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, Policy, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, Policy, PropError, PropType, RecordCx, Value, prop, signal};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::cursor::CursorIcon;
@@ -755,7 +755,7 @@ mod tests {
     use super::*;
     use presto_base::event::{KeyEvent, KeyLocation, PointerEvent, PointerType};
     use presto_base::geom::Vec2;
-    use super::super::shim::Os;
+    use super::super::legacy::Os;
 
     fn lim(n: usize) -> Vec<PaneLimits> {
         vec![PaneLimits { min: 32.0, ..Default::default() }; n]

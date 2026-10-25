@@ -16,7 +16,7 @@
 use super::draw;
 use super::menu_model::{Typeahead, next_by, typeahead_find};
 use super::placement::{AnchorParams, Placement, place};
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, Labels, Os, Palette, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, Labels, Os, Palette, PropError, PropType, RecordCx, Value, prop, signal};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::display::DisplayList;
@@ -444,7 +444,7 @@ impl Kind for Select {
 
 #[cfg(test)]
 mod tests {
-    use super::super::shim::{FixedLabels, Policy};
+    use super::super::legacy::{FixedLabels, Policy};
     use super::*;
     use presto_base::event::{KeyLocation, MouseButton, PointerEvent, PointerType};
     use presto_base::time::Time;
@@ -475,14 +475,14 @@ mod tests {
 
     const SIZE: Size = Size::new(120.0, 26.0);
 
-    fn send(s: &mut Select, policy: &Policy, ms: u64, ev: Event) -> (Handled, Vec<super::super::shim::Emitted>) {
+    fn send(s: &mut Select, policy: &Policy, ms: u64, ev: Event) -> (Handled, Vec<super::super::legacy::Emitted>) {
         let mut cx = EventCx::new(Time(ms * 1_000_000), SIZE, policy);
         let h = s.event(&mut cx, &ev);
         s.prepare(SIZE, &mut FixedLabels, &Palette::default());
         (h, cx.emitted)
     }
 
-    fn changed(sig: &[super::super::shim::Emitted]) -> Option<i64> {
+    fn changed(sig: &[super::super::legacy::Emitted]) -> Option<i64> {
         sig.iter().find(|e| e.signal == "changed").and_then(|e| e.detail.field("selected")).and_then(Value::as_i64)
     }
 

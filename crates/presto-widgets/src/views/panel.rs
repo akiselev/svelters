@@ -5,7 +5,7 @@
 //! size. The separator is a 1 pt line inside the panel along its inner edge.
 
 use super::draw;
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
 use super::split::{Sash, SashIntent, SashParams, record_sash};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
@@ -246,7 +246,7 @@ impl Kind for Panel {
 
 #[cfg(test)]
 mod tests {
-    use super::super::shim::{Os, Policy};
+    use super::super::legacy::{Os, Policy};
     use super::*;
     use presto_base::event::{Modifiers, PointerEvent, PointerType};
     use presto_base::geom::{Point, Vec2};

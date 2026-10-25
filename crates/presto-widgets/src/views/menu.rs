@@ -22,8 +22,8 @@
 use super::draw;
 use super::menu_model::{EntryIx, EntryKind, KeyIn, MenuModel, MenuNav, MenuOut, Picked, shortcut_text};
 use super::placement::{AnchorParams, Placement, place};
-use super::shim::{
-    self, Event, EventCx, Handled, Kind, KindSpec, Labels, Os, Palette, PropError, PropType, RecordCx, Value, prop,
+use super::legacy::{
+    self as shim, Event, EventCx, Handled, Kind, KindSpec, Labels, Os, Palette, PropError, PropType, RecordCx, Value, prop,
     signal,
 };
 use presto_base::accesskit;
@@ -907,7 +907,7 @@ entry_kind!(MenuSeparatorKind, MENU_SEPARATOR_SPEC);
 #[cfg(test)]
 mod tests {
     use super::super::menu_model::Entry;
-    use super::super::shim::{FixedLabels, Policy};
+    use super::super::legacy::{FixedLabels, Policy};
     use super::*;
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerType};
     use presto_base::time::Span;

@@ -10,7 +10,7 @@
 //! - the stacking rects and their parts (close button, action buttons) for hit testing and recording.
 
 use super::draw;
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, Labels, Palette, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, Labels, Palette, PropError, PropType, RecordCx, Value, prop, signal};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::color::Color;
@@ -487,7 +487,7 @@ impl Kind for ToastHost {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::views::shim::{FixedLabels, Os, Policy};
+    use crate::views::legacy::{FixedLabels, Os, Policy};
     use presto_base::event::{Modifiers, PointerEvent, PointerType};
     use presto_base::geom::Vec2;
 

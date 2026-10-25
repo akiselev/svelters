@@ -29,7 +29,7 @@
 //! ([`VirtualList::take_reveal`]: `scrollTo`, the keyboard cursor, scroll anchoring after a splice).
 
 use super::draw;
-use super::shim::{
+use super::legacy::{
     Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal,
 };
 use presto_base::accesskit;
@@ -843,7 +843,7 @@ impl VirtualList {
     /// The selection, keyboard and pointer defaults shared with `tree-view` (which handles its own
     /// Left/Right first).
     pub fn handle(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        let macos = cx.policy.os == super::shim::Os::MacOs;
+        let macos = cx.policy.os == super::legacy::Os::MacOs;
         match ev {
             Event::Focus(f) => {
                 self.focused = *f;
@@ -1197,7 +1197,7 @@ pub fn intrinsic_size(l: &VirtualList, width: f32) -> Size {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::views::shim::{FixedLabels, Os, Palette, Policy};
+    use crate::views::legacy::{FixedLabels, Os, Palette, Policy};
     use presto_base::display::DisplayList;
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerEvent, PointerType};
     use presto_base::time::Span;

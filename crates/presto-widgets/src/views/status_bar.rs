@@ -13,7 +13,7 @@
 //! [`StatusTips`] and shown by every status bar of the window.
 
 use super::draw;
-use super::shim::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::geom::{Point, Rect};
@@ -208,7 +208,7 @@ impl StatusTips {
 
 #[cfg(test)]
 mod tests {
-    use super::super::shim::{Os, Policy};
+    use super::super::legacy::{Os, Policy};
     use super::*;
     use presto_base::geom::Size;
 
