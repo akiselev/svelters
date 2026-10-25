@@ -187,3 +187,65 @@ impl<K: Kind> Driver<K> {
         self.kind.kind_spec().prop(name).unwrap()
     }
 }
+
+/// One element with no tree around it, for computing a style from inline declarations.
+#[derive(Clone, Copy, Debug)]
+struct Lone;
+
+impl svelters_style::Element for Lone {
+    fn key(&self) -> std::num::NonZeroU64 {
+        std::num::NonZeroU64::MIN
+    }
+    fn parent(&self) -> Option<Self> {
+        None
+    }
+    fn prev_sibling(&self) -> Option<Self> {
+        None
+    }
+    fn next_sibling(&self) -> Option<Self> {
+        None
+    }
+    fn first_child(&self) -> Option<Self> {
+        None
+    }
+    fn tag(&self) -> &str {
+        "box"
+    }
+    fn id(&self) -> Option<&str> {
+        None
+    }
+    fn has_class(&self, _name: &str) -> bool {
+        false
+    }
+    fn for_each_class(&self, _f: &mut dyn FnMut(&str)) {}
+    fn attr(&self, _name: &str) -> Option<std::borrow::Cow<'_, str>> {
+        None
+    }
+    fn state(&self) -> svelters_style::StateMask {
+        svelters_style::StateMask::NONE
+    }
+}
+
+/// The computed style of the inline declarations `decls` (egui's style table, no sheets), for
+/// tests that record or lay out a kind under CSS.
+pub fn css(decls: &str) -> svelters_style::ComputedStyle {
+    let (block, diags) = svelters_style::DeclBlock::parse_inline(decls);
+    assert!(diags.is_empty(), "{decls}: {diags:?}");
+    let stylist = svelters_style::Stylist::new(&svelters_style::tables::EGUI);
+    stylist.compute(Lone, None, Some(&block), &svelters_style::ComputeContext::default(), &mut svelters_style::MatchCaches::new())
+}
+
+/// [`record`] under the computed style `css`.
+pub fn record_css(k: &dyn Kind, size: Size, state: StateBits, css: &svelters_style::ComputedStyle) -> (DisplayList, MemResources) {
+    let mut list = DisplayList::new();
+    let mut res = MemResources::default();
+    let mut text = MonoShaper;
+    let mut cx = RecordCx { size, style: Styles { computed: Some(css), parts: &[], state, dark: true }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
+    k.record(&mut cx);
+    (list, res)
+}
+
+/// The kind's [`Kind::layout_style`] under the computed style `css` (`None`: no CSS).
+pub fn layout_style(k: &dyn Kind, css: Option<&svelters_style::ComputedStyle>, state: StateBits) -> taffy::Style {
+    k.layout_style(&crate::shim::core::StyleCx { computed: css, state, dark: true, base: None })
+}

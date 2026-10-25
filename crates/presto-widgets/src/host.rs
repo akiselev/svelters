@@ -1,8 +1,10 @@
 //! The bridge from the built-in kinds to presto-core: [`Hosted<W>`] implements [`presto_core::Kind`] for
 //! any widget written against this crate's kind interface ([`crate::shim::core::Kind`]: typed props kept
 //! by the kind, the egui-semantics [`Tracker`](crate::interact::Tracker) fed from presto events), and
-//! [`register`] adds it to a [`KindRegistry`]. Text goes through presto-text's [`TextSystem`], which the
-//! app installs per thread ([`install_text_system`]).
+//! [`register`] adds it to a [`KindRegistry`]. The document's services carry what the kinds share: the
+//! text system (`presto_text::TextSystem`, without which kinds measure and record no text), the platform
+//! [`Policy`] (default: the OS's row) and the [`Theme`](crate::theme::Theme) whose scheme UA tokens
+//! resolve in (default: dark).
 //!
 //! What the bridge maps:
 //! - the spec: this crate's [`KindSpec`](crate::shim::core::KindSpec) becomes presto-core's (built once
@@ -18,11 +20,10 @@
 //!   to the node;
 //! - images: uploaded in [`Kind::prepare`] (presto-core's image service), referenced when recording.
 //!
-//! What presto-core does not offer yet (each listed in `plans/milestones/PRESTO-widgets-basic.md`): the
-//! engine's computed style per node (the UA tables apply, author CSS on the built-in kinds' own
-//! drawing does not), timers for a kind (press repeat, a press held past the click time becoming a
-//! drag), AccessKit actions routed to the kind, blurring from a kind, and a rich-text shaper in its
-//! contexts (hence the per-thread text system).
+//! What presto-core does not offer yet (listed in `plans/milestones/PRESTO-widgets-basic.md`): the
+//! computed style of a kind's paint parts (`::part(name)`), whether JS listens to a signal, cancelable
+//! default actions, peer groups (radio exclusivity, roving focus), and the container hooks (chrome
+//! padding, per-child layout, inert children).
 
 use crate::interact::{FocusReason as WFocus, Native, Policy, StateBits};
 use crate::shim::core as w;
@@ -33,41 +34,18 @@ use presto_base::event::{PointerEvent, PointerPhase, WheelEvent};
 use presto_base::geom::{Point, Vec2};
 use presto_base::ids::{ImageId, RunId};
 use presto_base::text::GlyphRun;
-use presto_base::time::Time;
 use presto_core::{
     A11yCx, Event, EventCx, FocusReason, Handled, HitCx, HitResult, Kind, KindRegistry, KindSpec, MeasureCx, PrepareCx, PropCx, PropDefault, PropError, PropId, PropSpec, RecordCx, RegistryError,
     SignalFlags, SignalSpec, SlotSpec, StateMask, StyleCx, Value, ValueType,
 };
-use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, OnceLock};
 
-// ---- per-thread services ----
+// ---- services ----
 
-thread_local! {
-    static TEXT: RefCell<Option<presto_text::TextSystem>> = const { RefCell::new(None) };
-    static POLICY: Cell<Option<Policy>> = const { Cell::new(None) };
-}
-
-/// Installs the text system the built-in kinds measure and shape with on this thread (the UI thread).
-/// Without one they measure and record no text.
-pub fn install_text_system(ts: presto_text::TextSystem) {
-    TEXT.with(|t| *t.borrow_mut() = Some(ts));
-}
-
-/// Runs `f` with this thread's text system, if one is installed.
-pub fn with_text<R>(f: impl FnOnce(&mut dyn TextShaper) -> R) -> Option<R> {
-    TEXT.with(|t| t.borrow_mut().as_mut().map(|ts| f(ts as &mut dyn TextShaper)))
-}
-
-/// Sets the platform policy the kinds follow on this thread (default: the OS's row).
-pub fn set_policy(p: Policy) {
-    POLICY.with(|c| c.set(Some(p)));
-}
-
-/// The policy the kinds follow on this thread.
-pub fn policy() -> Policy {
-    POLICY.with(|c| c.get()).unwrap_or_else(|| *Native::for_os(os()).policy())
+/// The policy the kinds follow when the document has none as a service: the OS's row.
+pub fn os_policy() -> Policy {
+    *Native::for_os(os()).policy()
 }
 
 fn os() -> crate::interact::Platform {
@@ -89,11 +67,17 @@ impl TextShaper for NoText {
     }
 }
 
-fn with_shaper<R>(f: impl FnOnce(&mut dyn TextShaper) -> R) -> R {
-    TEXT.with(|t| match t.borrow_mut().as_mut() {
-        Some(ts) => f(ts),
-        None => f(&mut NoText),
-    })
+fn shaper(ts: Option<&mut presto_text::TextSystem>) -> Box<dyn TextShaper + '_> {
+    match ts {
+        Some(ts) => Box::new(ts),
+        None => Box::new(NoText),
+    }
+}
+
+impl TextShaper for &mut presto_text::TextSystem {
+    fn layout(&mut self, t: &RichText, max_width: Option<f32>) -> Arc<TextLayout> {
+        (**self).layout_rich(t, max_width)
+    }
 }
 
 /// presto-text's text system as this crate's shaper: styles map one to one (line height in points
@@ -101,6 +85,17 @@ fn with_shaper<R>(f: impl FnOnce(&mut dyn TextShaper) -> R) -> R {
 /// `spans[i]`).
 impl TextShaper for presto_text::TextSystem {
     fn layout(&mut self, t: &RichText, max_width: Option<f32>) -> Arc<TextLayout> {
+        self.layout_rich(t, max_width)
+    }
+}
+
+/// [`TextShaper::layout`] for presto-text's system, as a named function so `&mut TextSystem` shares it.
+trait LayoutRich {
+    fn layout_rich(&mut self, t: &RichText, max_width: Option<f32>) -> Arc<TextLayout>;
+}
+
+impl LayoutRich for presto_text::TextSystem {
+    fn layout_rich(&mut self, t: &RichText, max_width: Option<f32>) -> Arc<TextLayout> {
         let style = |s: &crate::shim::text::TextStyle, paint: u32| presto_text::TextStyle {
             family: s.family.to_string(),
             size: s.size,
@@ -231,6 +226,7 @@ fn spec_of(ws: &'static w::KindSpec) -> &'static Spec {
             text_prop: ws.text_prop,
             focusable: ws.focusable,
             container: ws.children,
+            ..KindSpec::new(ws.tag)
         }));
         Box::leak(Box::new(Spec { core, to_core, disabled }))
     })
@@ -252,7 +248,7 @@ fn to_core_value(p: &w::PropSpec, v: &w::Value) -> Option<Value> {
             _ => Value::Str(Arc::from(*name)),
         },
         w::Value::Color(c) => Value::Color(*c),
-        w::Value::List(l) => Value::List(l.iter().filter_map(|v| plain_to_core(v)).collect::<Vec<_>>().into()),
+        w::Value::List(l) => Value::List(l.iter().filter_map(plain_to_core).collect::<Vec<_>>().into()),
         w::Value::Record(r) => Value::Record(r.iter().filter_map(|(k, v)| Some((k.clone(), plain_to_core(v)?))).collect::<Vec<_>>().into()),
     })
 }
@@ -336,18 +332,23 @@ pub fn register<W: w::Kind + Default>(registry: &mut KindRegistry) -> Result<pre
     registry.register_with(spec_of(W::spec()).core, make::<W>)
 }
 
-fn styles<'a>(state: StateMask) -> w::Styles<'a> {
-    w::Styles { computed: None, parts: &[], state: StateBits(state.0), dark: true }
+fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, state: StateMask, dark: bool) -> w::Styles<'a> {
+    w::Styles { computed: css, parts: &[], state: StateBits(state.0), dark }
 }
 
-/// Resources for the prepare pass: images are uploaded through presto-core, runs are not kept.
-struct PrepareRes<'a, 'b> {
-    cx: &'a mut PrepareCx<'b>,
-    images: &'a mut HashMap<String, ImageId>,
+fn is_dark(theme: Option<&mut crate::theme::Theme>) -> bool {
+    theme.is_none_or(|t| t.is_dark())
+}
+
+/// Resources for the prepare pass: new images are rasterised and kept for upload after the pass;
+/// runs are not kept.
+struct PrepareRes<'a> {
+    images: &'a HashMap<String, ImageId>,
+    new: Vec<(String, ImageData)>,
     used: Vec<String>,
 }
 
-impl w::Resources for PrepareRes<'_, '_> {
+impl w::Resources for PrepareRes<'_> {
     fn run(&mut self, _run: &Arc<GlyphRun>) -> RunId {
         RunId(0)
     }
@@ -356,21 +357,25 @@ impl w::Resources for PrepareRes<'_, '_> {
         if let Some(id) = self.images.get(key) {
             return Some(*id);
         }
-        let id = self.cx.upload_image(Arc::new(make()?));
-        self.images.insert(key.to_owned(), id);
-        Some(id)
+        if !self.new.iter().any(|(k, _)| k == key) {
+            self.new.push((key.to_owned(), make()?));
+        }
+        // the dry pass's lists are dropped: any id will do
+        Some(ImageId(0))
     }
 }
 
-/// Resources for recording: runs go to presto-core, images are the ones `prepare` uploaded.
-struct RecordRes<'a, 'b> {
-    cx: &'a mut RecordCx<'b>,
+/// Resources for recording: runs are kept (by index) and handed to presto-core after the pass; images
+/// are the ones `prepare` uploaded.
+struct RecordRes<'a> {
+    runs: Vec<Arc<GlyphRun>>,
     images: &'a HashMap<String, ImageId>,
 }
 
-impl w::Resources for RecordRes<'_, '_> {
+impl w::Resources for RecordRes<'_> {
     fn run(&mut self, run: &Arc<GlyphRun>) -> RunId {
-        self.cx.add_run(run.clone())
+        self.runs.push(run.clone());
+        RunId(self.runs.len() as u64)
     }
     fn image(&mut self, key: &str, _make: &mut dyn FnMut() -> Option<ImageData>) -> Option<ImageId> {
         self.images.get(key).copied()
@@ -405,6 +410,8 @@ impl<W: w::Kind + Default> Hosted<W> {
                 },
             },
             Event::FocusOut => w::Event::Focus { gained: false, reason: WFocus::Program },
+            Event::Timer => w::Event::Timer,
+            Event::A11y(r) => w::Event::A11y((*r).clone()),
             // clicks are the tracker's; IME is the text kinds'
             Event::Click(_) | Event::Ime(_) => return None,
         })
@@ -445,43 +452,63 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         let base = cx.default_layout();
-        self.widget.layout_style(&w::StyleCx { computed: None, state: StateBits(cx.state().0), dark: true, base: Some(base) })
+        self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark: true, base: Some(base) })
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
-        let state = cx.state();
-        with_shaper(|text| self.widget.measure(&mut w::MeasureCx { style: styles(state), text, scale: 1.0 }, known, avail))
+        let node = cx.node;
+        let dark = is_dark(cx.service::<crate::theme::Theme>());
+        let mut text = shaper(cx.service::<presto_text::TextSystem>());
+        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), node.state(), dark), text: &mut *text, scale: 1.0 }, known, avail)
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
-        // a dry recording finds the images the list will reference and uploads the new ones
-        let (size, state) = (cx.size(), cx.state());
-        let mut images = std::mem::take(&mut self.images);
-        let mut list = DisplayList::new();
-        let used = with_shaper(|text| {
-            let mut res = PrepareRes { cx, images: &mut images, used: Vec::new() };
-            self.widget.record(&mut w::RecordCx { size, style: styles(state), list: &mut list, text, res: &mut res, scale: 1.0 });
-            res.used
-        });
-        images.retain(|k, id| {
+        // a dry recording finds the images the list will reference; the new ones are uploaded
+        let node = cx.node;
+        let dark = is_dark(cx.service::<crate::theme::Theme>());
+        let (new, used) = {
+            let mut text = shaper(cx.service::<presto_text::TextSystem>());
+            let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
+            let mut list = DisplayList::new();
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            (res.new, res.used)
+        };
+        for (key, data) in new {
+            let id = cx.upload_image(Arc::new(data));
+            self.images.insert(key, id);
+        }
+        let mut released = Vec::new();
+        self.images.retain(|k, id| {
             let keep = used.iter().any(|u| u == k);
             if !keep {
-                cx.release_image(*id);
+                released.push(*id);
             }
             keep
         });
-        self.images = images;
+        for id in released {
+            cx.release_image(id);
+        }
     }
 
     fn record(&self, cx: &mut RecordCx) {
-        let (size, state) = (cx.size(), cx.state());
+        let node = cx.node;
+        let dark = is_dark(cx.service::<crate::theme::Theme>());
         let mut list = DisplayList::new();
-        with_shaper(|text| {
-            let mut res = RecordRes { cx, images: &self.images };
-            self.widget.record(&mut w::RecordCx { size, style: styles(state), list: &mut list, text, res: &mut res, scale: 1.0 });
-        });
+        let runs = {
+            let mut text = shaper(cx.service::<presto_text::TextSystem>());
+            let mut res = RecordRes { runs: Vec::new(), images: &self.images };
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            res.runs
+        };
+        // the pass's run indices become presto-core's run ids
+        let ids: Vec<RunId> = runs.into_iter().map(|r| cx.add_run(r)).collect();
         let bounds = list.bounds;
-        for p in list.items {
+        for mut p in list.items {
+            if let Prim::Glyphs(g) = &mut p
+                && let Some(id) = (g.run.0 as usize).checked_sub(1).and_then(|i| ids.get(i))
+            {
+                g.run = *id;
+            }
             let ink = match &p {
                 Prim::PushClip(_) | Prim::PopClip => presto_base::geom::Rect::ZERO,
                 _ => bounds,
@@ -503,14 +530,13 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let Some(view) = cx.view(node) else { return Handled::No };
         let (size, mask) = (view.size(), view.state());
         self.sync_disabled(view.disabled());
-        let policy = policy();
+        let policy = cx.service::<Policy>().copied().unwrap_or_else(os_policy);
         let mut state = StateBits(mask.0);
         let before = state;
-        let mut wcx = w::EventCx::new(Time(0), size, &mut state, &policy);
-        wcx.now = presto_time();
+        let mut wcx = w::EventCx::new(cx.time(), size, &mut state, &policy);
         wcx.focused = mask.contains(StateMask::FOCUSED);
         let handled = self.widget.event(&mut wcx, &wev);
-        let w::EventCx { emitted, changed, focus_request, cursor, repaint, .. } = wcx;
+        let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, .. } = wcx;
         // egui's interaction keeps the pointer on the pressed widget until release
         if matches!(ev, Event::PointerDown(_)) {
             cx.capture_pointer();
@@ -536,8 +562,13 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             let Some(sig) = ws.signals.get(i) else { continue };
             cx.emit(s.core.signal_id(i), signal_arg(sig, &e.args));
         }
-        if focus_request == Some(true) {
-            cx.focus(FocusReason::Pointer);
+        match focus_request {
+            Some(true) => cx.focus(FocusReason::Pointer),
+            Some(false) => cx.blur(),
+            None => {}
+        }
+        if let Some(t) = wake {
+            cx.wake_at(t);
         }
         if let Some(c) = cursor {
             cx.set_cursor(c);
@@ -553,13 +584,6 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let (state, size) = (StateBits(cx.state().0), cx.size());
         self.widget.a11y(&mut w::A11yCx { node: cx.out, state, size });
     }
-}
-
-/// The time kinds see: presto-core passes none with an event yet, so the process's monotonic clock.
-fn presto_time() -> Time {
-    static START: OnceLock<std::time::Instant> = OnceLock::new();
-    let start = *START.get_or_init(std::time::Instant::now);
-    Time(start.elapsed().as_nanos() as u64 + 1)
 }
 
 #[cfg(test)]

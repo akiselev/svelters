@@ -219,6 +219,9 @@ pub mod core {
         Type { prop: &'static str, expected: ValueType },
         /// Native code changed this state since the event JS saw (architecture §4.5).
         Stale,
+        /// The value has the right type but the kind rejects it (a `grid-template-columns` that is
+        /// not a track list); `message` says why.
+        Invalid { prop: &'static str, message: String },
     }
 
     /// Stands in for `presto_core::Handled`.
@@ -284,6 +287,19 @@ pub mod core {
     impl<'a> Styles<'a> {
         pub fn part_css(&self, name: &str) -> Option<&'a ComputedStyle> {
             self.parts.iter().find(|(n, _)| *n == name).map(|(_, c)| *c)
+        }
+    }
+
+    /// What a container that places or hides its children itself reads about one child in
+    /// [`Kind::child_layout`]: its index and the `anchor` of every child (empty when it has none).
+    pub struct ChildCx<'a> {
+        pub index: usize,
+        pub anchors: &'a [&'a str],
+    }
+
+    impl ChildCx<'_> {
+        pub fn count(&self) -> usize {
+            self.anchors.len()
         }
     }
 
@@ -372,12 +388,14 @@ pub mod core {
         pub cursor: Option<CursorIcon>,
         /// The kind asked for pointer capture (`true`) or released it.
         pub capture: Option<bool>,
+        /// Requests to the node's peer group ([`PeerRequest`]), applied by core after the event, in order.
+        pub peers: Vec<PeerRequest>,
     }
 
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new() }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
@@ -392,6 +410,58 @@ pub mod core {
         pub fn wake_at(&mut self, t: Time) {
             self.wake = Some(self.wake.map_or(t, |w| w.min(t)));
         }
+        /// Asks core to deliver `msg` to the members of the node's peer group that `to` picks.
+        pub fn peer_request(&mut self, to: PeerTarget, msg: PeerMsg) {
+            self.peers.push(PeerRequest { to, msg });
+        }
+    }
+
+    /// Stands in for presto-core's peer groups: sibling nodes of one kind that act as one control (the
+    /// radio buttons of a parent, the toggle buttons of a `group`), what svelters-egui reached through
+    /// `WidgetCx::sibling_ids`/`with_peer`. A kind declares its group with [`Kind::peer_group`]; what
+    /// core must do with it:
+    /// - **members**: the node's siblings (same parent, tree order, the node included) whose kind tag
+    ///   is [`PeerGroup::tag`] and, when [`PeerGroup::key`] is `(prop, value)`, whose `prop` equals
+    ///   `value` (read with [`Kind::get_prop`]);
+    /// - **Tab order**: a group of two or more members is one Tab stop, the first member whose bool
+    ///   prop [`PeerGroup::stop`] is true, else the first member (WIDGET-PARITY §2.3, Qt and GTK);
+    /// - **requests** ([`EventCx::peer_request`]), after the event that made them, in order: for
+    ///   [`PeerTarget::Others`] every other member gets [`Kind::peer`] with the message; for
+    ///   [`PeerTarget::Rove`] the member the move lands on (from the node's index among the members,
+    ///   [`Rove::target`](crate::interact::Rove::target)), unless that is the node itself, first takes
+    ///   keyboard focus (an [`Event::Focus`] with [`FocusReason::Keyboard`], the node losing it) and
+    ///   then gets the message. A member's own `peer` handling is applied as an event's would be
+    ///   (signals, native prop changes, focus, its own peer requests, queued after the current ones).
+    #[derive(Clone, Debug, PartialEq)]
+    pub struct PeerGroup {
+        pub tag: &'static str,
+        pub key: Option<(&'static str, Value)>,
+        pub stop: &'static str,
+    }
+
+    /// Which members of the peer group a [`PeerRequest`] goes to.
+    #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+    pub enum PeerTarget {
+        /// Every member but the node.
+        Others,
+        /// The member a roving move lands on (it takes focus first).
+        Rove(crate::interact::Rove),
+    }
+
+    /// What a peer is told ([`Kind::peer`]).
+    #[derive(Clone, Debug, PartialEq)]
+    pub enum PeerMsg {
+        /// A roving move landed on it: it has focus and checks itself as a click would (no `clicked`).
+        Roved,
+        /// Another member was checked; the arguments are the kind's (a radio button's group value).
+        Checked(Vec<Value>),
+    }
+
+    /// A request to a node's peer group, made during an event.
+    #[derive(Clone, Debug, PartialEq)]
+    pub struct PeerRequest {
+        pub to: PeerTarget,
+        pub msg: PeerMsg,
     }
 
     /// Stands in for `presto_core::A11yCx`.
@@ -416,6 +486,27 @@ pub mod core {
         fn measure(&self, _cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
             taffy::Size::ZERO
         }
+        /// Stands in for presto-core's padded layout (svelters-egui `LayoutCx::padded_layout`): room
+        /// `[left, right, top, bottom]` in points for chrome the kind paints itself (a frame's
+        /// border and caption row), which core adds to the length parts of the padding of
+        /// [`Kind::layout_style`] before laying out the children. `None`: nothing to add. It reads
+        /// the measure context because the chrome can hold text.
+        fn chrome_padding(&self, _cx: &mut MeasureCx) -> Option<[f32; 4]> {
+            None
+        }
+        /// Stands in for presto-core's per-child layout hook: a container that places or hides its
+        /// children itself (`stack`) adjusts child `cx.index`'s taffy style, after core mapped the
+        /// child's computed style. Returns whether the child is shown (painted, hit and in the
+        /// accessibility tree); a child that is not shown but keeps its layout still sizes the
+        /// container.
+        fn child_layout(&self, _cx: &ChildCx, _style: &mut taffy::Style) -> bool {
+            true
+        }
+        /// Stands in for presto-core's subtree enablement: `true` makes every descendant inert (no
+        /// input, `:disabled`), as an unchecked `checkable` frame does to its content.
+        fn children_inert(&self) -> bool {
+            false
+        }
         fn prepare(&mut self, _cx: &mut PrepareCx) {}
         fn record(&self, cx: &mut RecordCx);
         fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
@@ -429,6 +520,18 @@ pub mod core {
         fn claims_key(&self, _key: presto_base::key::Key, _m: presto_base::event::Modifiers) -> bool {
             false
         }
+        /// The peer group the node belongs to ([`PeerGroup`]), if any.
+        fn peer_group(&self) -> Option<PeerGroup> {
+            None
+        }
+        /// A member of its peer group sent it `msg` (core applies [`PeerRequest`]s through this).
+        fn peer(&mut self, _cx: &mut EventCx, _msg: &PeerMsg) -> Handled {
+            Handled::No
+        }
+        /// Stands in for core telling the kind that JS now listens to `signal` (`listened`) or no
+        /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:
+        /// an `icon` or `image` takes clicks only while one of its click signals is listened.
+        fn listen(&mut self, _signal: SignalId, _listened: bool) {}
     }
 
     /// Checks a value against a prop's spec type (what `set_prop` implementations call first).

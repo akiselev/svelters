@@ -19,39 +19,52 @@
 //! | `document` | [`Document`]: tree edits, props, listeners, style inputs, state, transactions |
 //! | `tree` | the slot table, flags and dirty bits |
 //! | [`style`] | the cascade (svelters-style) and the computed style |
-//! | `layout` | taffy on the tree, invalidation and the measure guard |
-//! | `frame` | the UI phases and the commit builder |
+//! | [`layout`] | taffy on the tree, invalidation and the measure guard |
+//! | [`frame`] | the UI phases and the commit builder |
 //! | [`input`] | hit testing, dispatch, hover, capture, focus |
 //! | [`hit`] | hit lists |
 //! | [`journal`] | the change journal |
+//! | [`a11y`] | the AccessKit projection and its validating builder |
+//! | [`testkinds`] | minimal kinds and fixed-metric text for tests |
+//! | [`virt`] | the row-height model and the row pool of virtualising kinds |
+//! | [`settle`] | [`Busy`]: why the document is not idle |
 
+pub mod a11y;
 pub mod common;
 pub mod cx;
 mod document;
 pub mod error;
-mod frame;
+pub mod frame;
 pub mod hit;
 pub mod ids;
 pub mod input;
 pub mod journal;
 pub mod kind;
-mod layout;
+pub mod layout;
 mod record;
 pub mod registry;
 mod scroll;
+pub mod settle;
 pub mod style;
+pub mod testkinds;
 mod tree;
 pub mod value;
+pub mod virt;
 mod window;
 mod anim;
+#[cfg(test)]
+mod tests;
 
-pub use cx::{A11yCx, EventCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
+pub use cx::{Services, A11yCx, EventCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
 pub use document::{Document, Writer};
 pub use error::{PropError, TreeError};
-pub use ids::{KindId, PropId, SignalId, SlotId, fingerprint};
+pub use frame::FrameStats;
+pub use layout::LayoutRun;
+pub use settle::Busy;
+pub use ids::{KindId, MethodId, PropId, SignalId, SlotId, fingerprint};
 pub use input::{Delivery, Dispatched, JsEvent, Phase};
 pub use input::focus::{next_focus, open_dialog};
-pub use kind::{Event, FocusReason, Handled, HitResult, Kind, KindSpec, NativeState, PointerInput, PropSpec, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
+pub use kind::{ArgSpec, DEFAULT_NAME_FROM, Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameSource, NativeState, PointerInput, PropSpec, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
 pub use registry::{KindEntry, KindRegistry, RegistryError};
 pub use style::{ComputedBox, StyleInput};
 pub use tree::{Dirty, ListenFlags, Listener, NodeFlags};

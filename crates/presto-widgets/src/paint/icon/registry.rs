@@ -1,36 +1,1067 @@
-//! The icon registry (being ported from svelters-egui `icons.rs`).
+//! The icon registry and how registry icons are drawn (plans/research/ICON-STYLE.md §5–§6), ported
+//! from svelters-egui `icons.rs` onto display lists.
+//!
+//! An [`IconRegistry`] maps a **key** (`file.save`, `debug.step-over`, `mcad.extrude+remove`) to an
+//! [`Icon`]: an SVG with one drawing per optical size (12, 14, 16, 20, 24, 32+), or a glyph of an
+//! icon font. Rust registers icons (the host or the app); Svelte looks them up by key
+//! (`<icon name="file.save">`, `content: icon(check)`, `::part(icon)`). One registry is the
+//! process's ([`IconRegistry::global`]); [`set_global`] swaps it (an embed that keeps its icons
+//! apart).
+//!
+//! Keys are lowercase dotted segments of kebab-case (`[a-z0-9]+(-[a-z0-9]+)*`), with an optional
+//! `+<badge>` suffix for IC1's composed ids. The `ext.` prefix belongs to extensions: an extension
+//! registers only under `ext.<its id>.`, and nothing else registers there. That is a namespace rule
+//! with a register-time diagnostic, not a security check.
+//!
+//! Drawing ([`paint`]) follows ICON-STYLE: the box snaps to whole device pixels (Z1), the master is
+//! chosen by the physical size (Z2, [`choose_master`]), and the colours are:
+//! - no slot set: the SVG is rasterised to an `A8` coverage mask (`currentColor` white) and drawn as
+//!   [`Prim::Icon`] tinted by `color` (a glyph tints the same way);
+//! - a slot set (`--icon-subject`, `--icon-accent`, `--icon-badge`): it is rasterised to
+//!   premultiplied RGBA with `color` as the root colour and the slots injected as a usvg style sheet
+//!   on the classes `subject`, `accent` and `badge` (only `color` declarations), and drawn untinted
+//!   (`color: None`), so a warning yellow is not darkened by the text colour.
+//!
+//! Rasters enter the commit through [`Resources::image`](crate::shim::core::Resources::image) under
+//! a key made of the registry key, its registration, the master, the physical size and (with slots)
+//! the colours: one raster per distinct key; the commit builder owns their lifetime.
+//!
+//! usvg resolves `currentColor` at the element that *declares* the paint, so a classed group whose
+//! stroke is inherited from the root would keep the root's colour. Before rasterising with slots,
+//! [`slot_svg`] gives each classed element an explicit `fill`/`stroke="currentColor"` where it
+//! inherits one, which makes its own (slot) `color` apply (ICON-STYLE §6's open question).
+//!
+//! Icon fonts: presto-text owns fonts. This module keeps the families registered as icon fonts
+//! ([`register_icon_font`], with an optional name → glyph table, [`register_icon_names`]); loading
+//! the font into presto-text under that family is the caller's.
 
 use super::super::{PaintCx, StyleView};
+use crate::shim::text::{RichText, TextShaper, TextStyle};
 use presto_base::color::Color;
-use presto_base::geom::Point;
-use std::sync::Arc;
+use presto_base::commit::{ImageData, ImageFormat};
+use presto_base::display::{Icon as IconPrim, Prim};
+use presto_base::geom::{DeviceSize, Point, Rect, Size, Vec2};
+use std::collections::{BTreeMap, HashMap, HashSet};
+use std::fmt;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, LazyLock, Mutex, MutexGuard, RwLock};
 
-pub struct IconRegistry;
+fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
+    m.lock().unwrap_or_else(|p| p.into_inner())
+}
+
+// ---- keys ----
+
+/// The prefix extensions register under: `ext.<id>.<name>`.
+pub const EXTENSION_PREFIX: &str = "ext.";
+
+fn segment_ok(s: &str) -> bool {
+    !s.is_empty() && s.split('-').all(|p| !p.is_empty() && p.bytes().all(|b| b.is_ascii_lowercase() || b.is_ascii_digit()))
+}
+
+/// Checks a key: dotted kebab-case segments, optionally `+<badge>` (one kebab segment).
+pub fn validate_key(key: &str) -> Result<(), IconError> {
+    let bad = |why: &str| Err(IconError::BadKey { key: key.to_string(), why: why.to_string() });
+    let (base, badge) = match key.split_once('+') {
+        Some((b, g)) => (b, Some(g)),
+        None => (key, None),
+    };
+    if base.is_empty() {
+        return bad("empty");
+    }
+    if !base.split('.').all(segment_ok) {
+        return bad("segments are lowercase kebab-case ([a-z0-9]+(-[a-z0-9]+)*) separated by '.'");
+    }
+    if let Some(g) = badge
+        && !segment_ok(g)
+    {
+        return bad("the badge after '+' is one lowercase kebab-case segment");
+    }
+    Ok(())
+}
+
+/// Who registers an icon.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum Owner {
+    /// The host or the app: any key outside `ext.`.
+    Host,
+    /// An extension by id (one kebab segment): only `ext.<id>.<name>`.
+    Extension(String),
+}
+
+impl Owner {
+    /// Whether this owner may register `key` (already a valid key).
+    fn check(&self, key: &str) -> Result<(), IconError> {
+        let refuse = |why: String| Err(IconError::Namespace { key: key.to_string(), owner: self.clone(), why });
+        match self {
+            Owner::Host if key.starts_with(EXTENSION_PREFIX) => refuse("`ext.*` keys belong to extensions".into()),
+            Owner::Host => Ok(()),
+            Owner::Extension(id) if !segment_ok(id) => refuse(format!("extension id {id:?} is not one kebab-case segment")),
+            Owner::Extension(id) => {
+                let prefix = format!("{EXTENSION_PREFIX}{id}.");
+                match key.strip_prefix(&prefix) {
+                    Some(rest) if !rest.is_empty() && !rest.starts_with('+') => Ok(()),
+                    _ => refuse(format!("an extension registers only under `{prefix}<name>`")),
+                }
+            }
+        }
+    }
+}
+
+/// Why a registration was refused, or what drawing found.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum IconError {
+    BadKey { key: String, why: String },
+    Namespace { key: String, owner: Owner, why: String },
+    /// An icon with no master, or a master of size 0.
+    BadIcon { key: String, why: String },
+    /// Drawing: no icon is registered under the key (reported once per key).
+    Missing { key: String },
+    /// Drawing: the SVG did not load or rasterise, or a glyph's font is not registered (reported
+    /// once per key and reason).
+    Load { key: String, why: String },
+}
+
+impl fmt::Display for IconError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            IconError::BadKey { key, why } => write!(f, "icon key {key:?}: {why}"),
+            IconError::Namespace { key, owner, why } => write!(f, "icon key {key:?} refused for {owner:?}: {why}"),
+            IconError::BadIcon { key, why } => write!(f, "icon {key:?}: {why}"),
+            IconError::Missing { key } => write!(f, "no icon is registered under {key:?}"),
+            IconError::Load { key, why } => write!(f, "icon {key:?} did not load: {why}"),
+        }
+    }
+}
+
+impl std::error::Error for IconError {}
+
+#[derive(Default)]
+struct Reported {
+    seen: HashSet<String>,
+    queue: Vec<IconError>,
+}
+
+static REPORTED: LazyLock<Mutex<Reported>> = LazyLock::new(Mutex::default);
+
+fn report(e: IconError) {
+    let mut r = lock(&REPORTED);
+    let once = match &e {
+        IconError::Missing { key } => Some(format!("missing:{key}")),
+        IconError::Load { key, why } => Some(format!("load:{key}:{why}")),
+        _ => None,
+    };
+    if let Some(k) = once
+        && !r.seen.insert(k)
+    {
+        return;
+    }
+    r.queue.push(e);
+}
+
+/// The registration refusals and drawing problems since the last call (the embedder logs or shows
+/// them; tests assert on them). A missing key or a failed load is reported once.
+pub fn take_diagnostics() -> Vec<IconError> {
+    std::mem::take(&mut lock(&REPORTED).queue)
+}
+
+// ---- icons ----
+
+/// An SVG drawing's bytes.
+#[derive(Clone)]
+pub enum IconData {
+    /// Embedded in the binary (`include_bytes!`).
+    Static(&'static [u8]),
+    Shared(Arc<[u8]>),
+}
+
+impl fmt::Debug for IconData {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            IconData::Static(b) => write!(f, "Static({} bytes)", b.len()),
+            IconData::Shared(b) => write!(f, "Shared({} bytes)", b.len()),
+        }
+    }
+}
+
+impl IconData {
+    pub fn bytes(&self) -> &[u8] {
+        match self {
+            IconData::Static(b) => b,
+            IconData::Shared(b) => b,
+        }
+    }
+}
+
+impl From<&'static [u8]> for IconData {
+    fn from(b: &'static [u8]) -> IconData {
+        IconData::Static(b)
+    }
+}
+
+impl From<Arc<[u8]>> for IconData {
+    fn from(b: Arc<[u8]>) -> IconData {
+        IconData::Shared(b)
+    }
+}
+
+impl From<Vec<u8>> for IconData {
+    fn from(b: Vec<u8>) -> IconData {
+        IconData::Shared(b.into())
+    }
+}
+
+/// What a key draws.
+#[derive(Clone, Debug)]
+pub enum Icon {
+    /// One SVG per optical size (pixels at 1x), and optionally High Contrast copies (IC1's `hc/`:
+    /// the subject tone at .6).
+    Svg { masters: BTreeMap<u32, IconData>, hc: BTreeMap<u32, IconData> },
+    /// A glyph of a registered icon font ([`register_icon_font`]), sized by the box.
+    Glyph { family: String, text: String },
+}
+
+impl Icon {
+    /// An SVG icon with its `size` master.
+    pub fn svg(size: u32, data: impl Into<IconData>) -> Icon {
+        Icon::Svg { masters: BTreeMap::from([(size, data.into())]), hc: BTreeMap::new() }
+    }
+
+    /// Adds (or replaces) the `size` master of an SVG icon; no-op on a glyph.
+    pub fn master(mut self, size: u32, data: impl Into<IconData>) -> Icon {
+        if let Icon::Svg { masters, .. } = &mut self {
+            masters.insert(size, data.into());
+        }
+        self
+    }
+
+    /// Adds the High Contrast copy of the `size` master; no-op on a glyph.
+    pub fn hc_master(mut self, size: u32, data: impl Into<IconData>) -> Icon {
+        if let Icon::Svg { hc, .. } = &mut self {
+            hc.insert(size, data.into());
+        }
+        self
+    }
+
+    /// A glyph of icon font `family`.
+    pub fn glyph(family: impl Into<String>, text: impl Into<String>) -> Icon {
+        Icon::Glyph { family: family.into(), text: text.into() }
+    }
+
+    /// The optical sizes (SVG masters); empty for a glyph.
+    pub fn sizes(&self) -> Vec<u32> {
+        match self {
+            Icon::Svg { masters, .. } => masters.keys().copied().collect(),
+            Icon::Glyph { .. } => Vec::new(),
+        }
+    }
+}
+
+// ---- master choice (ICON-STYLE §5.3) ----
+
+/// How a master fills a box of `P` physical pixels.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Fit {
+    /// A master of exactly `P` (crisp).
+    Exact,
+    /// Master `m` drawn at `2m = P` (crisp).
+    Double,
+    /// The largest master (or ×2 master) at most 2 pixels smaller, at its own size, centred.
+    Padded,
+    /// The nearest master (or ×2 master), scaled to `P` (soft, accepted).
+    Scaled,
+}
+
+/// Which master draws a box of `p` physical pixels, and how.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Choice {
+    /// The master's optical size.
+    pub master: u32,
+    /// The raster's side in physical pixels.
+    pub px: u32,
+    /// The raster's offset from the box's top left, in physical pixels (both axes).
+    pub offset: u32,
+    pub fit: Fit,
+}
+
+/// ICON-STYLE rule Z2: a master of exactly `p`; else `p = 2m`; else the largest master or ×2
+/// master `m ≤ p` with `p − m ≤ 2`, centred with `floor((p − m) / 2)`; else the nearest master or
+/// ×2 master, scaled (a tie goes to the larger). `None` when there are no masters.
+pub fn choose_master(masters: &[u32], p: u32) -> Option<Choice> {
+    let p = p.max(1);
+    if masters.contains(&p) {
+        return Some(Choice { master: p, px: p, offset: 0, fit: Fit::Exact });
+    }
+    if p.is_multiple_of(2) && masters.contains(&(p / 2)) {
+        return Some(Choice { master: p / 2, px: p, offset: 0, fit: Fit::Double });
+    }
+    // (drawn size, master) for every master and its ×2
+    let drawn: Vec<(u32, u32)> = masters.iter().flat_map(|&m| [(m, m), (2 * m, m)]).collect();
+    if let Some(&(d, m)) = drawn.iter().filter(|(d, _)| *d <= p && p - d <= 2).max_by_key(|(d, m)| (*d, *m)) {
+        return Some(Choice { master: m, px: d, offset: (p - d) / 2, fit: Fit::Padded });
+    }
+    let &(_, m) = drawn.iter().min_by_key(|(d, m)| (d.abs_diff(p), std::cmp::Reverse(*d), std::cmp::Reverse(*m)))?;
+    Some(Choice { master: m, px: p, offset: 0, fit: Fit::Scaled })
+}
+
+// ---- the registry ----
+
+struct Entry {
+    icon: Icon,
+    owner: Owner,
+    generation: u64,
+}
+
+/// Keys to icons. One is the process's ([`IconRegistry::global`], swapped by [`set_global`]).
+#[derive(Default)]
+pub struct IconRegistry {
+    entries: RwLock<HashMap<String, Entry>>,
+    generation: AtomicU64,
+}
+
+impl fmt::Debug for IconRegistry {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("IconRegistry").field("keys", &self.keys().len()).finish()
+    }
+}
+
+static GLOBAL: LazyLock<RwLock<Arc<IconRegistry>>> = LazyLock::new(|| RwLock::new(Arc::new(IconRegistry::default())));
+
+/// Makes `registry` the process's (what [`IconRegistry::global`] returns from now on); returns the
+/// one it replaces.
+pub fn set_global(registry: Arc<IconRegistry>) -> Arc<IconRegistry> {
+    std::mem::replace(&mut *GLOBAL.write().unwrap_or_else(|p| p.into_inner()), registry)
+}
 
 impl IconRegistry {
-    pub fn contains(&self, _key: &str) -> bool {
-        false
+    pub fn new() -> Arc<IconRegistry> {
+        Arc::new(IconRegistry::default())
+    }
+
+    /// The process's registry: what every kind draws from.
+    pub fn global() -> Arc<IconRegistry> {
+        GLOBAL.read().unwrap_or_else(|p| p.into_inner()).clone()
+    }
+
+    /// Registers `icon` under `key` for `owner`, replacing an earlier one. A bad key, a key outside
+    /// the owner's namespace or an icon without masters is refused, returned and reported
+    /// ([`take_diagnostics`]).
+    pub fn register(&self, owner: Owner, key: &str, icon: Icon) -> Result<(), IconError> {
+        let r = self.try_register(owner, key, icon);
+        if let Err(e) = &r {
+            report(e.clone());
+        }
+        r
+    }
+
+    fn try_register(&self, owner: Owner, key: &str, icon: Icon) -> Result<(), IconError> {
+        validate_key(key)?;
+        owner.check(key)?;
+        if let Icon::Svg { masters, .. } = &icon
+            && (masters.is_empty() || masters.contains_key(&0))
+        {
+            return Err(IconError::BadIcon { key: key.to_string(), why: "an SVG icon needs at least one master of a nonzero size".into() });
+        }
+        let generation = self.generation.fetch_add(1, Ordering::Relaxed) + 1;
+        self.entries.write().unwrap_or_else(|p| p.into_inner()).insert(key.to_string(), Entry { icon, owner, generation });
+        Ok(())
+    }
+
+    /// Removes `key` if `owner` registered it.
+    pub fn unregister(&self, owner: &Owner, key: &str) -> bool {
+        let mut e = self.entries.write().unwrap_or_else(|p| p.into_inner());
+        if e.get(key).is_some_and(|x| &x.owner == owner) {
+            e.remove(key);
+            self.generation.fetch_add(1, Ordering::Relaxed);
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Removes every icon of `owner` (an extension unloading); returns how many.
+    pub fn unregister_owner(&self, owner: &Owner) -> usize {
+        let mut e = self.entries.write().unwrap_or_else(|p| p.into_inner());
+        let before = e.len();
+        e.retain(|_, x| &x.owner != owner);
+        before - e.len()
+    }
+
+    pub fn contains(&self, key: &str) -> bool {
+        self.entries.read().unwrap_or_else(|p| p.into_inner()).contains_key(key)
+    }
+
+    pub fn get(&self, key: &str) -> Option<Icon> {
+        self.entries.read().unwrap_or_else(|p| p.into_inner()).get(key).map(|e| e.icon.clone())
+    }
+
+    /// Every key, sorted.
+    pub fn keys(&self) -> Vec<String> {
+        let mut k: Vec<_> = self.entries.read().unwrap_or_else(|p| p.into_inner()).keys().cloned().collect();
+        k.sort();
+        k
+    }
+
+    fn entry(&self, key: &str) -> Option<(Icon, u64)> {
+        self.entries.read().unwrap_or_else(|p| p.into_inner()).get(key).map(|e| (e.icon.clone(), e.generation))
+    }
+
+    /// The master that draws `key` in a box of `box_pt` points at `scale` device pixels per point
+    /// (P = round(box_pt × scale), rule Z2). `None` for an unknown key or a glyph icon.
+    pub fn resolve(&self, key: &str, box_pt: f32, scale: f32) -> Option<Choice> {
+        let (icon, _) = self.entry(key)?;
+        choose_master(&icon.sizes(), physical(box_pt, scale))
     }
 }
 
-pub struct Slots;
+/// `round(pt × scale)`, at least 1.
+fn physical(pt: f32, scale: f32) -> u32 {
+    (pt * scale).round().max(1.0) as u32
+}
+
+/// The box side of an `icon` with no `size`: 16 points, the default chrome size (ICON-STYLE §5.1).
+pub const DEFAULT_SIZE: f32 = 16.0;
+
+/// The global registry when it has `key` (the default family, a registered key).
+pub fn registered(key: &super::IconKey) -> Option<Arc<IconRegistry>> {
+    let k = key.registry_key().filter(|k| !k.is_empty())?;
+    let reg = IconRegistry::global();
+    reg.contains(k).then_some(reg)
+}
+
+// ---- icon fonts ----
+
+/// Icon font families, each with its name → glyph table (empty: names are ligatures).
+static FONTS: LazyLock<RwLock<HashMap<String, HashMap<String, String>>>> = LazyLock::new(RwLock::default);
+
+/// Registers `family` as an icon font: `family:name` icon keys and [`Icon::Glyph`]s of it draw as
+/// text in that family. Loading the font into presto-text under `family` is the caller's.
+pub fn register_icon_font(family: &str) {
+    FONTS.write().unwrap_or_else(|p| p.into_inner()).entry(family.to_string()).or_default();
+}
+
+/// Registers `family` as an icon font with a name → glyph table (codicons' `check` → `"\u{eab2}"`),
+/// added to any it has.
+pub fn register_icon_names(family: &str, names: impl IntoIterator<Item = (String, String)>) {
+    FONTS.write().unwrap_or_else(|p| p.into_inner()).entry(family.to_string()).or_default().extend(names);
+}
+
+/// Forgets icon font `family`; whether it was registered.
+pub fn unregister_icon_font(family: &str) -> bool {
+    FONTS.write().unwrap_or_else(|p| p.into_inner()).remove(family).is_some()
+}
+
+/// Whether an icon font of `family` is registered.
+pub fn has_font(family: &str) -> bool {
+    FONTS.read().unwrap_or_else(|p| p.into_inner()).contains_key(family)
+}
+
+/// The text an icon of `family` draws: `name` from the family's table, else `glyph`, else `name`
+/// itself when the family has no table (a ligature font, or no icon font). `None`: `name` is not in
+/// the family's table (a typo, or a name the embedder did not register).
+pub fn icon_text(family: &str, name: &str, glyph: &str) -> Option<String> {
+    let fonts = FONTS.read().unwrap_or_else(|p| p.into_inner());
+    let table = fonts.get(family).filter(|t| !t.is_empty());
+    if !name.is_empty()
+        && let Some(g) = table.and_then(|n| n.get(name))
+    {
+        return Some(g.clone());
+    }
+    if !glyph.is_empty() {
+        return Some(glyph.to_string());
+    }
+    if name.is_empty() || table.is_none() { Some(name.to_string()) } else { None }
+}
+
+// ---- colours ----
+
+/// The named colour slots (ICON-STYLE §6); `None` keeps the part on `currentColor`.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Slots {
+    pub subject: Option<Color>,
+    pub accent: Option<Color>,
+    pub badge: Option<Color>,
+}
 
 impl Slots {
-    pub fn of(_s: &StyleView) -> Slots {
-        Slots
+    pub fn is_empty(&self) -> bool {
+        self.subject.is_none() && self.accent.is_none() && self.badge.is_none()
+    }
+
+    /// The slots a style sets (`--icon-subject`, `--icon-accent`, `--icon-badge`; custom
+    /// properties inherit, so a part's computed style carries its host's).
+    pub fn of(s: &StyleView) -> Slots {
+        let c = s.computed();
+        let get = |n: &str| c.and_then(|c| c.custom(n));
+        Slots::from_css(get("--icon-subject"), get("--icon-accent"), get("--icon-badge"))
+    }
+
+    /// From CSS custom property values (`--icon-subject` etc., as computed text); a value that is
+    /// not a colour is ignored.
+    pub fn from_css(subject: Option<&str>, accent: Option<&str>, badge: Option<&str>) -> Slots {
+        Slots { subject: subject.and_then(parse_css_color), accent: accent.and_then(parse_css_color), badge: badge.and_then(parse_css_color) }
     }
 }
 
-/// The global registry when it has `key` (none is registered yet).
-pub fn registered(_key: &super::IconKey) -> Option<Arc<IconRegistry>> {
-    None
+/// A CSS colour (`#rgb`, `#rrggbb`, `#rrggbbaa`, `rgb()`, `rgba()`, a named colour) as svgtypes
+/// reads it, through usvg (no direct svgtypes dependency): a one-pixel SVG with the colour as
+/// `color`, read back.
+pub fn parse_css_color(s: &str) -> Option<Color> {
+    let s = s.trim();
+    if s.is_empty() || s.contains(['"', '<', '>', ';', '{', '}']) {
+        return None;
+    }
+    let svg = format!(r#"<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1" color="{s}"><rect width="1" height="1" fill="currentColor"/></svg>"#);
+    let tree = resvg::usvg::Tree::from_str(&svg, &resvg::usvg::Options::default()).ok()?;
+    let resvg::usvg::Node::Path(p) = tree.root().children().first()? else { return None };
+    let f = p.fill()?;
+    let resvg::usvg::Paint::Color(c) = f.paint() else { return None };
+    let a = (f.opacity().get() * 255.0).round() as u8;
+    // an unparsable `color` falls back to black in usvg: accept black only when asked for
+    if (c.red, c.green, c.blue, a) == (0, 0, 0, 255) && !is_black(s) {
+        return None;
+    }
+    Some(Color::from_rgba8(c.red, c.green, c.blue, a))
 }
 
-/// Whether an icon font of `family` is registered (none yet).
-pub fn has_font(_family: &str) -> bool {
-    false
+fn is_black(s: &str) -> bool {
+    let s = s.to_ascii_lowercase().replace(' ', "");
+    matches!(s.as_str(), "black" | "#000" | "#000000" | "#000f" | "#000000ff" | "rgb(0,0,0)" | "rgba(0,0,0,1)")
 }
 
-pub fn paint(_cx: &mut PaintCx, _reg: &IconRegistry, _key: &str, _center: Point, _side: f32, _color: Color, _slots: &Slots) -> bool {
-    false
+/// How an icon is drawn: its box side in points, the tint (`color`), the slots and the theme's
+/// contrast.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct IconStyle {
+    pub size: f32,
+    pub color: Color,
+    pub slots: Slots,
+    /// Use the High Contrast masters when the icon has them.
+    pub high_contrast: bool,
+}
+
+impl IconStyle {
+    pub fn new(size: f32, color: Color) -> IconStyle {
+        IconStyle { size, color, slots: Slots::default(), high_contrast: false }
+    }
+}
+
+fn rgba8(c: Color) -> [u8; 4] {
+    [c.r, c.g, c.b, c.a].map(|v| (v.clamp(0.0, 1.0) * 255.0).round() as u8)
+}
+
+fn css_rgba(c: Color) -> String {
+    let [r, g, b, a] = rgba8(c);
+    format!("rgba({r},{g},{b},{:.3})", a as f32 / 255.0)
+}
+
+/// The usvg style sheet for `color` and `slots`: `svg{color:…}` (opaque) plus one `color`
+/// declaration per set slot on its class. Nothing but `color` ever reaches an icon (ICON-STYLE §6,
+/// L3/L4).
+pub fn slot_style_sheet(color: Color, slots: &Slots) -> String {
+    let mut s = format!("svg{{color:{}}}", css_rgba(color.with_alpha(1.0)));
+    for (class, c) in [("subject", slots.subject), ("accent", slots.accent), ("badge", slots.badge)] {
+        if let Some(c) = c {
+            s.push_str(&format!(".{class}{{color:{}}}", css_rgba(c)));
+        }
+    }
+    s
+}
+
+/// `svg` with an explicit `fill`/`stroke="currentColor"` on each element of class `subject`,
+/// `accent` or `badge` that inherits that paint as `currentColor` from an ancestor, so usvg
+/// resolves it against the element's own (slot) `color`. Unchanged when nothing needs it.
+pub fn slot_svg(svg: &[u8]) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(svg).map_err(|e| e.to_string())?;
+    let doc = roxmltree::Document::parse(text).map_err(|e| e.to_string())?;
+    let mut inserts: Vec<(usize, String)> = Vec::new();
+    for n in doc.descendants().filter(|n| n.is_element()) {
+        let classed = n.attribute("class").is_some_and(|c| c.split_whitespace().any(|c| matches!(c, "subject" | "accent" | "badge")));
+        if !classed {
+            continue;
+        }
+        let mut add = String::new();
+        for attr in ["fill", "stroke"] {
+            if n.attribute(attr).is_some() {
+                continue;
+            }
+            let inherited = n.ancestors().skip(1).filter(|a| a.is_element()).find_map(|a| a.attribute(attr));
+            if inherited.is_some_and(|v| v.trim().eq_ignore_ascii_case("currentcolor")) {
+                add.push_str(&format!(r#" {attr}="currentColor""#));
+            }
+        }
+        if !add.is_empty() {
+            // after `<tag`
+            let start = n.range().start;
+            let name_len = text[start + 1..].find(|c: char| c.is_whitespace() || c == '>' || c == '/').unwrap_or(0);
+            inserts.push((start + 1 + name_len, add));
+        }
+    }
+    if inserts.is_empty() {
+        return Ok(svg.to_vec());
+    }
+    let mut out = text.to_string();
+    inserts.sort_by_key(|(at, _)| std::cmp::Reverse(*at));
+    for (at, s) in inserts {
+        out.insert_str(at, &s);
+    }
+    Ok(out.into_bytes())
+}
+
+// ---- rasterising ----
+
+/// The style sheet of a tinted (monochrome) raster: `currentColor` white.
+pub const MONO_STYLE: &str = "svg { color: #fff }";
+
+/// usvg options: the injected `style_sheet`, and no reads outside the document.
+fn svg_options(style_sheet: &str) -> resvg::usvg::Options<'static> {
+    let mut o = resvg::usvg::Options { style_sheet: Some(style_sheet.to_string()), ..Default::default() };
+    o.image_href_resolver.resolve_string = Box::new(|_, _| None);
+    o
+}
+
+/// The size of an SVG drawing in its own units (points), or why it does not parse.
+pub fn svg_size(svg: &[u8]) -> Result<Size, String> {
+    let tree = resvg::usvg::Tree::from_data(svg, &svg_options(MONO_STYLE)).map_err(|e| e.to_string())?;
+    let s = tree.size();
+    if s.width() <= 0.0 || s.height() <= 0.0 {
+        return Err("empty svg".into());
+    }
+    Ok(Size::new(s.width(), s.height()))
+}
+
+/// Renders `svg` under `style_sheet` into `w`×`h` pixels: stretched to fill them, or (`keep_aspect`)
+/// scaled to fit them keeping its aspect ratio, centred. Premultiplied RGBA.
+fn render(svg: &[u8], w: u32, h: u32, style_sheet: &str, keep_aspect: bool) -> Result<ImageData, String> {
+    use resvg::tiny_skia::{Pixmap, Transform};
+    let tree = resvg::usvg::Tree::from_data(svg, &svg_options(style_sheet)).map_err(|e| e.to_string())?;
+    let (sw, sh) = (tree.size().width(), tree.size().height());
+    if sw <= 0.0 || sh <= 0.0 {
+        return Err("empty svg".into());
+    }
+    let (w, h) = (w.max(1), h.max(1));
+    let mut pixmap = Pixmap::new(w, h).ok_or_else(|| format!("svg of {w}x{h} pixels cannot be rasterised"))?;
+    let t = if keep_aspect {
+        let k = (w as f32 / sw).min(h as f32 / sh);
+        Transform::from_row(k, 0.0, 0.0, k, (w as f32 - sw * k) / 2.0, (h as f32 - sh * k) / 2.0)
+    } else {
+        Transform::from_scale(w as f32 / sw, h as f32 / sh)
+    };
+    resvg::render(&tree, t, &mut pixmap.as_mut());
+    Ok(ImageData { size: DeviceSize { w, h }, format: ImageFormat::Rgba8Premul, pixels: pixmap.take() })
+}
+
+/// Renders an image `svg` stretched to `w`×`h` pixels as it is (its own colours), premultiplied
+/// RGBA; the `image` kind's SVG sources.
+pub fn render_svg(svg: &[u8], w: u32, h: u32) -> Result<ImageData, String> {
+    render(svg, w, h, "", false)
+}
+
+/// Renders `svg` stretched to `w`×`h` pixels with `currentColor` white, as an `A8` coverage mask
+/// (to be tinted).
+pub fn render_svg_mask(svg: &[u8], w: u32, h: u32) -> Result<ImageData, String> {
+    render(svg, w, h, MONO_STYLE, false).map(|i| coverage(&i))
+}
+
+/// The alpha of a premultiplied RGBA image as an `A8` coverage mask (an `A8` image is kept).
+pub fn coverage(img: &ImageData) -> ImageData {
+    match img.format {
+        ImageFormat::A8 => img.clone(),
+        ImageFormat::Rgba8Premul => ImageData { size: img.size, format: ImageFormat::A8, pixels: img.pixels.chunks_exact(4).map(|p| p[3]).collect() },
+    }
+}
+
+/// Rasterises one master into a `px`-pixel square (the drawing fitted and centred): an `A8`
+/// coverage mask of white `currentColor` (to be tinted) when `slots` is empty, else premultiplied
+/// RGBA in `color` (its alpha applied to the whole raster) and the slots, drawn untinted.
+pub fn rasterize(svg: &[u8], px: u32, color: Color, slots: &Slots) -> Result<ImageData, String> {
+    let px = px.max(1);
+    if slots.is_empty() {
+        return render(svg, px, px, MONO_STYLE, true).map(|i| coverage(&i));
+    }
+    let mut img = render(&slot_svg(svg)?, px, px, &slot_style_sheet(color, slots), true)?;
+    let a = color.a.clamp(0.0, 1.0);
+    if a < 1.0 {
+        for v in &mut img.pixels {
+            *v = (*v as f32 * a).round() as u8;
+        }
+    }
+    Ok(img)
+}
+
+// ---- drawing ----
+
+/// The [`Resources::image`](crate::shim::core::Resources::image) key of a raster: the registry key,
+/// its registration, the master (and whether High Contrast), the physical size, and the colours
+/// when slots are set (a tinted mask does not depend on them).
+fn raster_key(key: &str, generation: u64, choice: &Choice, hc: bool, style: &IconStyle) -> String {
+    let mut k = format!("icon:{key}#{generation}@{}{}/{}", choice.master, if hc { "hc" } else { "" }, choice.px);
+    if !style.slots.is_empty() {
+        let hex = |c: Option<Color>| c.map_or("-".to_string(), |c| rgba8(c).iter().map(|b| format!("{b:02x}")).collect());
+        k.push_str(&format!(";{},{},{},{}", hex(Some(style.color)), hex(style.slots.subject), hex(style.slots.accent), hex(style.slots.badge)));
+    }
+    k
+}
+
+/// What [`paint`] drew.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Painted {
+    /// The drawn rect in points (on the device pixel grid).
+    pub rect: Rect,
+    /// The master and fit, for an SVG icon.
+    pub choice: Option<Choice>,
+    /// The tint the raster or glyph was painted with (`None`: the raster's own colours, slots set).
+    pub tint: Option<Color>,
+}
+
+fn glyph_style(family: &str, size: f32) -> TextStyle {
+    TextStyle { family: Arc::from(family), size, ..TextStyle::default() }
+}
+
+/// The size of `key`'s box at `size_pt` points: a square for SVG icons, the glyph's size for a
+/// glyph icon (a square when its font is not registered). `None` for an unknown key.
+pub fn size(shaper: &mut dyn TextShaper, registry: &IconRegistry, key: &str, size_pt: f32) -> Option<Vec2> {
+    match registry.get(key)? {
+        Icon::Svg { .. } => Some(Vec2::new(size_pt, size_pt)),
+        Icon::Glyph { family, text } => {
+            if !has_font(&family) {
+                return Some(Vec2::new(size_pt, size_pt));
+            }
+            let l = shaper.layout(&RichText::plain(&text, glyph_style(&family, size_pt)), None);
+            Some(Vec2::new(l.size().w, l.size().h))
+        }
+    }
+}
+
+/// Paints `key` from `registry` centred in `rect` (rules Z1 and Z2). `None` when the key is not
+/// registered (reported once) or the icon cannot be drawn (reported once; nothing is painted).
+pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, style: &IconStyle) -> Option<Painted> {
+    let Some((icon, generation)) = registry.entry(key) else {
+        report(IconError::Missing { key: key.to_string() });
+        return None;
+    };
+    let center = Point::new((rect.min.x + rect.max.x) / 2.0, (rect.min.y + rect.max.y) / 2.0);
+    match icon {
+        Icon::Glyph { family, text } => {
+            if !has_font(&family) {
+                report(IconError::Load { key: key.to_string(), why: format!("font family {family:?} is not registered as an icon font") });
+                return None;
+            }
+            let l = cx.text.layout(&RichText::plain(&text, glyph_style(&family, style.size)), None);
+            let pos = cx.snap_point(Point::new(center.x - l.size().w / 2.0, center.y - l.size().h / 2.0));
+            let color = style.color;
+            super::super::paint_runs(cx, &l, pos, &|_| color);
+            Some(Painted { rect: Rect::from_origin_size(pos, l.size()), choice: None, tint: Some(color) })
+        }
+        Icon::Svg { masters, hc } => {
+            // Z1: the box on whole device pixels, centred in `rect`
+            let scale = cx.scale;
+            let p = physical(style.size, scale);
+            let origin = Point::new((center.x * scale - p as f32 / 2.0).round(), (center.y * scale - p as f32 / 2.0).round());
+            let sizes: Vec<u32> = masters.keys().copied().collect();
+            let choice = choose_master(&sizes, p)?;
+            let use_hc = style.high_contrast && hc.contains_key(&choice.master);
+            let data = if use_hc { &hc[&choice.master] } else { &masters[&choice.master] };
+            let ck = raster_key(key, generation, &choice, use_hc, style);
+            let mut failed = None;
+            let image = cx.res.image(&ck, &mut || match rasterize(data.bytes(), choice.px, style.color, &style.slots) {
+                Ok(i) => Some(i),
+                Err(why) => {
+                    failed = Some(why);
+                    None
+                }
+            });
+            let Some(image) = image else {
+                report(IconError::Load { key: key.to_string(), why: failed.unwrap_or_else(|| "the raster was not registered".into()) });
+                return None;
+            };
+            let side = choice.px as f32 / scale;
+            let min = Point::new((origin.x + choice.offset as f32) / scale, (origin.y + choice.offset as f32) / scale);
+            let r = Rect::from_origin_size(min, Size::new(side, side));
+            let tint = style.slots.is_empty().then_some(style.color);
+            cx.push(Prim::Icon(IconPrim { image, rect: r, color: tint }), r);
+            Some(Painted { rect: r, choice: Some(choice), tint })
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::shim::testing::{MemResources, MonoShaper};
+    use presto_base::display::DisplayList;
+
+    const SQUARE: &[u8] = br#"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><rect width="16" height="16" fill="currentColor"/></svg>"#;
+    const SLOTTED: &[u8] = br#"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"><rect class="subject" width="8" height="16"/><rect x="8" width="8" height="16"/></svg>"#;
+
+    #[test]
+    fn keys() {
+        for k in ["file.save", "debug.step-over", "check", "mcad.extrude+remove", "ecad.via-stitch", "a1.b2-c3"] {
+            assert_eq!(validate_key(k), Ok(()), "{k}");
+        }
+        for k in ["", "File.save", "file..save", ".file", "file.", "file_save", "file.-x", "file.x-", "a+", "a+b+c", "a b", "+x"] {
+            assert!(validate_key(k).is_err(), "{k}");
+        }
+    }
+
+    #[test]
+    fn namespaces() {
+        let ext = Owner::Extension("acme".into());
+        assert!(ext.check("ext.acme.gear").is_ok());
+        assert!(ext.check("ext.acme.tools.gear+add").is_ok());
+        assert!(ext.check("ext.acme").is_err());
+        assert!(ext.check("ext.other.gear").is_err());
+        assert!(ext.check("file.save").is_err());
+        assert!(Owner::Host.check("ext.acme.gear").is_err());
+        assert!(Owner::Host.check("file.save").is_ok());
+        assert!(Owner::Extension("Bad.Id".into()).check("ext.Bad.Id.x").is_err());
+    }
+
+    #[test]
+    fn register_get_unregister() {
+        let reg = IconRegistry::new();
+        let acme = Owner::Extension("acme".into());
+        reg.register(Owner::Host, "file.save", Icon::svg(16, SQUARE).master(24, SQUARE)).unwrap();
+        reg.register(acme.clone(), "ext.acme.gear", Icon::svg(16, SQUARE)).unwrap();
+        reg.register(acme.clone(), "ext.acme.cog", Icon::glyph("codicons", "x")).unwrap();
+        assert!(reg.contains("file.save"));
+        assert_eq!(reg.get("file.save").unwrap().sizes(), [16, 24]);
+        assert_eq!(reg.keys(), ["ext.acme.cog", "ext.acme.gear", "file.save"]);
+        assert!(!reg.unregister(&acme, "file.save"), "not acme's");
+        assert!(reg.unregister(&Owner::Host, "file.save"));
+        assert_eq!(reg.unregister_owner(&acme), 2);
+        assert!(reg.keys().is_empty());
+    }
+
+    #[test]
+    fn resolve_by_physical_size() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "file.save", Icon::svg(16, SQUARE).master(24, SQUARE)).unwrap();
+        // 16pt at 1.5x: 24 physical pixels, the 24 master
+        assert_eq!(reg.resolve("file.save", 16.0, 1.5).map(|c| (c.master, c.fit)), Some((24, Fit::Exact)));
+        // 16pt at 2x: the 16 master doubled
+        assert_eq!(reg.resolve("file.save", 16.0, 2.0).map(|c| (c.master, c.fit)), Some((16, Fit::Double)));
+        reg.register(Owner::Host, "glyph.icon", Icon::glyph("codicons", "x")).unwrap();
+        assert_eq!(reg.resolve("glyph.icon", 16.0, 1.0), None);
+        assert_eq!(reg.resolve("nothing", 16.0, 1.0), None);
+    }
+
+    #[test]
+    fn z2_matches_icon_style_table() {
+        // ICON-STYLE §5.3: a 16pt icon with the 16, 20 and 24 masters
+        let m = [16, 20, 24];
+        let case = |p| {
+            let c = choose_master(&m, p).unwrap();
+            (c.master, c.px, c.offset, c.fit)
+        };
+        assert_eq!(case(16), (16, 16, 0, Fit::Exact));
+        assert_eq!(case(18), (16, 16, 1, Fit::Padded));
+        assert_eq!(case(19), (20, 19, 0, Fit::Scaled));
+        assert_eq!(case(20), (20, 20, 0, Fit::Exact));
+        assert_eq!(case(21), (20, 20, 0, Fit::Padded));
+        assert_eq!(case(22), (20, 20, 1, Fit::Padded));
+        assert_eq!(case(24), (24, 24, 0, Fit::Exact));
+        assert_eq!(case(26), (24, 24, 1, Fit::Padded));
+        assert_eq!(case(27), (24, 27, 0, Fit::Scaled));
+        assert_eq!(case(29), (16, 29, 0, Fit::Scaled));
+        assert_eq!(case(32), (16, 32, 0, Fit::Double));
+        assert_eq!(choose_master(&[], 16), None);
+    }
+
+    #[test]
+    fn slot_rewrite_makes_inherited_paints_local() {
+        let svg = br#"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"><g class="accent"><path d="M1 1H2"/></g><path class="subject" fill="currentColor" d="M3 3H4"/></svg>"#;
+        let out = String::from_utf8(slot_svg(svg).unwrap()).unwrap();
+        assert!(out.contains(r#"<g stroke="currentColor" class="accent">"#), "{out}");
+        // fill is inherited as `none`: untouched; stroke inherited currentColor: made local
+        assert!(out.contains(r#"<path stroke="currentColor" class="subject" fill="currentColor""#), "{out}");
+    }
+
+    #[test]
+    fn slot_style_sheet_has_only_colours() {
+        let slots = Slots { subject: Some(Color::from_rgba8(0xCC, 0xA7, 0, 255)), accent: None, badge: None };
+        assert_eq!(slot_style_sheet(Color::from_rgba8(255, 255, 255, 128), &slots), "svg{color:rgba(255,255,255,1.000)}.subject{color:rgba(204,167,0,1.000)}");
+    }
+
+    #[test]
+    fn css_colours() {
+        assert_eq!(parse_css_color("#CCA700"), Some(Color::from_rgba8(0xCC, 0xA7, 0x00, 255)));
+        assert_eq!(parse_css_color("rgb(255, 0, 0)"), Some(Color::from_rgba8(255, 0, 0, 255)));
+        assert_eq!(parse_css_color("black"), Some(Color::BLACK));
+        assert_eq!(parse_css_color("nonsense"), None);
+        assert_eq!(parse_css_color("red;}x{"), None);
+        let s = Slots::from_css(Some("#f00"), Some("nonsense"), None);
+        assert_eq!((s.subject, s.accent, s.badge), (Some(Color::from_rgba8(255, 0, 0, 255)), None, None));
+        assert!(Slots::default().is_empty() && !s.is_empty());
+    }
+
+    #[test]
+    fn rasterise_is_deterministic_coverage() {
+        let a = rasterize(SQUARE, 16, Color::WHITE, &Slots::default()).unwrap();
+        let b = rasterize(SQUARE, 16, Color::WHITE, &Slots::default()).unwrap();
+        assert_eq!(a, b);
+        assert_eq!((a.format, a.size), (ImageFormat::A8, DeviceSize { w: 16, h: 16 }));
+        assert_eq!(a.pixels.len(), 256);
+        assert!(a.pixels.iter().all(|&v| v == 255), "a full square covers every pixel");
+        // a scaled master stays square and full
+        let c = rasterize(SQUARE, 20, Color::WHITE, &Slots::default()).unwrap();
+        assert_eq!(c.size, DeviceSize { w: 20, h: 20 });
+        assert!(c.pixels.iter().all(|&v| v == 255));
+    }
+
+    #[test]
+    fn rasterise_with_slots_is_premultiplied_rgba() {
+        let slots = Slots { subject: Some(Color::from_rgba8(255, 0, 0, 255)), accent: None, badge: None };
+        let img = rasterize(SLOTTED, 16, Color::from_rgba8(0, 0, 255, 255), &slots).unwrap();
+        assert_eq!((img.format, img.size), (ImageFormat::Rgba8Premul, DeviceSize { w: 16, h: 16 }));
+        let px = |x: usize, y: usize| &img.pixels[(y * 16 + x) * 4..(y * 16 + x) * 4 + 4];
+        assert_eq!(px(2, 8), [255, 0, 0, 255], "the subject in its slot colour");
+        assert_eq!(px(12, 8), [0, 0, 255, 255], "the rest in `color`");
+        // `color`'s alpha applies to the whole raster (premultiplied)
+        let half = rasterize(SLOTTED, 16, Color::from_rgba8(0, 0, 255, 128), &slots).unwrap();
+        let a = (128.0f32 / 255.0 * 255.0).round() as u8;
+        assert_eq!(half.pixels[(8 * 16 + 2) * 4 + 3], a);
+        assert!(rasterize(b"not svg", 16, Color::WHITE, &Slots::default()).is_err());
+    }
+
+    #[test]
+    fn paints_a_tinted_mask_on_the_pixel_grid() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "file.save", Icon::svg(16, SQUARE).master(24, SQUARE)).unwrap();
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let red = Color::from_rgba8(255, 0, 0, 255);
+        // 16pt at 1.5x, centred at (10.1, 10.1): 24 device pixels from round(15.15 - 12) = 3
+        let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.5);
+        let p = paint(&mut cx, &reg, "file.save", Rect::new(0.0, 0.0, 20.2, 20.2), &IconStyle::new(16.0, red)).unwrap();
+        assert_eq!(p.choice.map(|c| (c.master, c.px)), Some((24, 24)));
+        assert_eq!(p.rect, Rect::new(2.0, 2.0, 18.0, 18.0));
+        let Prim::Icon(i) = &list.items[0] else { panic!("{:?}", list.items) };
+        assert_eq!((i.rect, i.color), (p.rect, Some(red)));
+        assert_eq!(res.images.len(), 1);
+        let (id, data) = res.images.values().next().unwrap();
+        assert_eq!((*id, data.format, data.size), (i.image, ImageFormat::A8, DeviceSize { w: 24, h: 24 }));
+        // the same icon in another tint reuses the mask
+        let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.5);
+        paint(&mut cx, &reg, "file.save", Rect::new(0.0, 0.0, 20.2, 20.2), &IconStyle::new(16.0, Color::WHITE)).unwrap();
+        assert_eq!(res.images.len(), 1);
+    }
+
+    #[test]
+    fn paint_snaps_the_box_to_device_pixels() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "mcad.extrude", Icon::svg(16, SQUARE).master(20, SQUARE).master(24, SQUARE)).unwrap();
+        let grey = Color::from_rgba8(0xCC, 0xCC, 0xCC, 255);
+        // a rect at a fractional offset
+        let rect = Rect::from_origin_size(Point::new(10.3, 7.7), Size::new(20.0, 20.0));
+        for (scale, master) in [(1.0, 16), (1.25, 20), (1.5, 24)] {
+            let mut list = DisplayList::new();
+            let mut res = MemResources::default();
+            let mut text = MonoShaper;
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, scale);
+            let p = paint(&mut cx, &reg, "mcad.extrude", rect, &IconStyle::new(16.0, grey)).unwrap();
+            let c = p.choice.unwrap();
+            let on_grid = |v: f32| (v * scale - (v * scale).round()).abs() < 1e-3;
+            assert!(on_grid(p.rect.min.x) && on_grid(p.rect.min.y), "Z1: the raster's origin is on a device pixel at {scale}: {:?}", p.rect);
+            assert!((p.rect.width() * scale - c.px as f32).abs() < 1e-3, "painted 1:1 at {scale}");
+            assert_eq!((c.master, p.tint), (master, Some(grey)));
+            assert_eq!(res.images.values().next().unwrap().1.size, DeviceSize { w: c.px, h: c.px });
+        }
+    }
+
+    #[test]
+    fn paints_slots_untinted_one_raster_per_colour_set() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "debug.warn", Icon::svg(16, SLOTTED)).unwrap();
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let mut style = IconStyle::new(16.0, Color::WHITE);
+        style.slots.subject = Some(Color::from_rgba8(0xCC, 0xA7, 0, 255));
+        let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+        let p = paint(&mut cx, &reg, "debug.warn", Rect::new(0.0, 0.0, 16.0, 16.0), &style).unwrap();
+        assert_eq!(p.tint, None);
+        let Prim::Icon(i) = &list.items[0] else { panic!() };
+        assert_eq!(i.color, None);
+        assert_eq!(res.images.values().next().unwrap().1.format, ImageFormat::Rgba8Premul);
+        style.slots.subject = Some(Color::from_rgba8(255, 0, 0, 255));
+        let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+        paint(&mut cx, &reg, "debug.warn", Rect::new(0.0, 0.0, 16.0, 16.0), &style).unwrap();
+        assert_eq!(res.images.len(), 2);
+    }
+
+    #[test]
+    fn re_registering_draws_a_new_raster() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "file.new", Icon::svg(16, SQUARE)).unwrap();
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let r = Rect::new(0.0, 0.0, 16.0, 16.0);
+        paint(&mut PaintCx::new(&mut list, &mut res, &mut text, 1.0), &reg, "file.new", r, &IconStyle::new(16.0, Color::WHITE)).unwrap();
+        reg.register(Owner::Host, "file.new", Icon::svg(16, SLOTTED)).unwrap();
+        paint(&mut PaintCx::new(&mut list, &mut res, &mut text, 1.0), &reg, "file.new", r, &IconStyle::new(16.0, Color::WHITE)).unwrap();
+        assert_eq!(res.images.len(), 2);
+    }
+
+    /// One test takes the diagnostics: the queue is the process's, and a second taker running in
+    /// parallel would take the other's.
+    #[test]
+    fn refusals_missing_and_broken_icons_are_reported() {
+        let reg = IconRegistry::new();
+        assert!(matches!(reg.register(Owner::Host, "Bad", Icon::svg(16, SQUARE)), Err(IconError::BadKey { .. })));
+        assert!(matches!(reg.register(Owner::Host, "ext.acme.gear", Icon::svg(16, SQUARE)), Err(IconError::Namespace { .. })));
+        let empty = Icon::Svg { masters: BTreeMap::new(), hc: BTreeMap::new() };
+        assert!(matches!(reg.register(Owner::Host, "reg-test.empty", empty), Err(IconError::BadIcon { .. })));
+        assert!(matches!(reg.register(Owner::Host, "reg-test.zero", Icon::svg(0, SQUARE)), Err(IconError::BadIcon { .. })));
+        assert!(reg.keys().is_empty());
+        reg.register(Owner::Host, "reg-test.broken", Icon::svg(16, b"<svg".to_vec())).unwrap();
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let r = Rect::new(0.0, 0.0, 16.0, 16.0);
+        let st = IconStyle::new(16.0, Color::WHITE);
+        for _ in 0..2 {
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+            assert!(paint(&mut cx, &reg, "reg-test.nothing", r, &st).is_none());
+            assert!(paint(&mut cx, &reg, "reg-test.broken", r, &st).is_none());
+        }
+        assert!(list.items.is_empty());
+        let d = take_diagnostics();
+        assert!(d.iter().any(|e| matches!(e, IconError::BadKey { key, .. } if key == "Bad")));
+        assert!(d.iter().any(|e| matches!(e, IconError::Namespace { key, .. } if key == "ext.acme.gear")));
+        assert!(d.iter().any(|e| matches!(e, IconError::BadIcon { key, .. } if key == "reg-test.zero")));
+        assert_eq!(d.iter().filter(|e| matches!(e, IconError::Missing { key } if key == "reg-test.nothing")).count(), 1, "once");
+        assert_eq!(d.iter().filter(|e| matches!(e, IconError::Load { key, .. } if key == "reg-test.broken")).count(), 1, "once");
+    }
+
+    #[test]
+    fn glyph_icons_need_a_registered_font() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "reg-test.glyph", Icon::glyph("reg-test-font", "ab")).unwrap();
+        let mut text = MonoShaper;
+        assert_eq!(size(&mut text, &reg, "reg-test.glyph", 16.0), Some(Vec2::new(16.0, 16.0)), "unregistered font: a square");
+        register_icon_font("reg-test-font");
+        assert!(has_font("reg-test-font"));
+        let adv = MonoShaper::advance(16.0);
+        assert_eq!(size(&mut text, &reg, "reg-test.glyph", 16.0), Some(Vec2::new(2.0 * adv, 20.0)));
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+        let p = paint(&mut cx, &reg, "reg-test.glyph", Rect::new(0.0, 0.0, 40.0, 40.0), &IconStyle::new(16.0, Color::WHITE)).unwrap();
+        assert_eq!(p.choice, None);
+        assert!(matches!(list.items[0], Prim::Glyphs(_)));
+        assert!(unregister_icon_font("reg-test-font"));
+    }
+
+    #[test]
+    fn icon_font_names() {
+        register_icon_names("reg-test-codicons", [("check".to_string(), "\u{eab2}".to_string())]);
+        assert_eq!(icon_text("reg-test-codicons", "check", ""), Some("\u{eab2}".into()));
+        assert_eq!(icon_text("reg-test-codicons", "nope", ""), None, "not in the table");
+        assert_eq!(icon_text("reg-test-codicons", "nope", "x"), Some("x".into()), "the glyph");
+        assert_eq!(icon_text("reg-test-ligatures", "home", ""), Some("home".into()), "no table: the name");
+        unregister_icon_font("reg-test-codicons");
+    }
 }
