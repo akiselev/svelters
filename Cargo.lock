@@ -3949,6 +3949,8 @@ dependencies = [
  "presto-core",
  "presto-text",
  "resvg",
+ "roxmltree",
+ "serde_json",
  "smallvec",
  "svelters-style",
  "taffy",
