@@ -20,6 +20,12 @@ mod lists;
 pub mod native_reads;
 pub mod portability;
 pub mod template_await;
+// presto (`plans/research/presto/compiler-and-js.md` §3): W-C2 templates, W-C4 change classes,
+// W-C5 passive listeners, W-C9 accessibility checks
+pub mod templates;
+pub mod change;
+mod passive;
+pub mod a11y;
 
 use crate::diag::Diagnostics;
 use crate::estree::{ArrayElement, Expression, Pattern, Span, Spanned};
@@ -67,6 +73,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
         const_ok: false,
         snippet_roots,
         script: ScriptFacts::collect([root.instance.as_ref(), root.module.as_ref()]),
+        handlers: passive::declared([root.instance.as_ref(), root.module.as_ref()]),
         list_views: lists::list_view_names(root),
         kinds: false,
         animate_hosts: HashSet::new(),
@@ -149,6 +156,8 @@ struct Lower<'a, 's, 'd> {
     snippet_roots: HashMap<String, Option<Vec<&'a AstElement>>>,
     /// Imports of the scripts (renderer `listen`).
     script: ScriptFacts,
+    /// W-C5: the scripts' top-level handler functions, by name (passive inference sees into them).
+    handlers: HashMap<String, passive::Declared<'a>>,
     /// Local names of `ListView` imported from `@svelters/lists` (virtualized lists, `lists.rs`).
     list_views: HashSet<String>,
     /// Some element resolves attributes at run time (the module imports `$$kinds`).
@@ -469,7 +478,7 @@ impl<'a> Lower<'a, '_, '_> {
             let text: String = parts.iter().map(|p| if let TemplatePart::Text(t) = p { t.as_str() } else { "" }).collect();
             Op::Set { prop: prop.to_string(), value: Json::String(text), span }
         } else {
-            Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), span }
+            Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), change: None, span }
         };
         Some(Element { id, span, kind: er.tag.clone(), present: None, toplevel: false, show: None, attached: false, slot, class_expr: None, id_expr: None, ops: vec![op], children: Fragment::default() })
     }
@@ -995,6 +1004,22 @@ impl<'a> Lower<'a, '_, '_> {
                         ops.extend(op);
                     }
                 }
+                // W-C5: `on:name|passive={h}` / `|nonpassive` on a backend that takes passive
+                // listeners (with `|capture`, the capture listener)
+                AttributeLike::OnDirective(d) if self.sem.has_capability(crate::semantics::capability::PASSIVE) && forward::passive_modifiers(d).is_some() => {
+                    let (capture, passive, at) = forward::passive_modifiers(d).expect("matched");
+                    let ns = d.name_span.map_or(sp(d.span()), sp);
+                    let key = if capture { format!("on{}capture", d.name) } else { format!("on{}", d.name) };
+                    let op = self.listen_op_with(&er, &key, Handler::Expr(d.expression.as_ref().unwrap()), d.span(), ns, Some((passive, at)));
+                    if runtime_attrs {
+                        if op.is_some() {
+                            spread_at.get_or_insert(ops.len());
+                            entries.push(SpreadEntry::Event { key, handler: d.expression.as_ref().unwrap() });
+                        }
+                    } else {
+                        ops.extend(op);
+                    }
+                }
                 // EV1: `on:name|capture={h}` is the capture listener `onnamecapture={h}` (a listen
                 // phase the backend must have for the signal, as for the attribute)
                 AttributeLike::OnDirective(d) if forward::capture_only(d) => {
@@ -1078,7 +1103,7 @@ impl<'a> Lower<'a, '_, '_> {
                         }
                         _ => {
                             let value = dynamic_of(at).expect("not a bare attribute");
-                            ops.push(Op::SetDynamic { prop: prop.js.clone(), value, span: at.span() });
+                            ops.push(Op::SetDynamic { prop: prop.js.clone(), value, change: None, span: at.span() });
                         }
                     }
                     // a one-way prop the native side also edits: mirror native edits (no echo)
@@ -1187,11 +1212,11 @@ impl<'a> Lower<'a, '_, '_> {
                     base.push(sc.clone());
                 }
                 let toggles = subject.cond_classes.clone();
-                ops.push(Op::Classes { base: base.join(" "), dynamic: subject.dynamic, toggles, span: el.span() });
+                ops.push(Op::Classes { base: base.join(" "), dynamic: subject.dynamic, toggles, change: None, span: el.span() });
             }
             if !inline_css.is_empty() || inline_dynamic.is_some() || !inline_dirs.is_empty() {
                 let span = style_span.unwrap_or(el.span());
-                ops.push(Op::InlineStyle { base: inline_css, dynamic: inline_dynamic, directives: inline_dirs, span });
+                ops.push(Op::InlineStyle { base: inline_css, dynamic: inline_dynamic, directives: inline_dirs, change: None, span });
             }
         }
 
@@ -1287,7 +1312,7 @@ impl<'a> Lower<'a, '_, '_> {
         match parts.as_slice() {
             [] => {}
             [TemplatePart::Text(t)] => ops.push(Op::Set { prop: prop.to_string(), value: Json::String(t.clone()), span }),
-            _ => ops.push(Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), span }),
+            _ => ops.push(Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), change: None, span }),
         }
     }
 

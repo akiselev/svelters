@@ -2,7 +2,8 @@
 //! native style sheet -> native lowering (backend semantics) -> JS generation; and
 //! [`compile_module`] for `.svelte.js` modules (parse -> module scope analysis -> rune transform).
 
-use crate::codegen::component::generate;
+use crate::codegen::component::{Features, IdSource, generate};
+use crate::semantics::capability;
 use crate::diag::{Diagnostic, Diagnostics};
 use crate::lower::lower;
 use crate::semantics::PlatformSemantics;
@@ -173,15 +174,32 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     // U4: `@apply` expanded before scoping and the engine's check
     let no_utilities = crate::utilities::UtilityCheck::default();
     let apply = crate::utilities::apply::expand(src, &root, opts.backend, opts.utilities.as_ref().unwrap_or(&no_utilities), &mut diags);
+    // presto `css_precompiled`: release builds get the sheet as bytes too (dev keeps the text path
+    // for HMR CSS edits)
+    let utility_tokens = opts.utilities.as_ref().map(|u| u.utility_tokens());
+    let precompile = (opts.scoped_css && !opts.dev && opts.backend.has_capability(capability::CSS_PRECOMPILED)).then(|| crate::scoped_css::Precompile {
+        utilities: opts.utilities.as_ref().zip(utility_tokens.as_ref()).zip(svelters_style::Table::for_toolkit(opts.backend.backend())).map(|((u, tokens), table)| {
+            let mut r = svelters_style::Resolver::new(table, tokens);
+            r.prefix = u.prefix.as_deref();
+            r
+        }),
+    });
     let css = if opts.scoped_css {
-        crate::scoped_css::scoped_css(src, &root, &analysis, &opts.filename, opts.css_scope.as_deref(), opts.dev, apply.as_ref(), &mut diags)
+        crate::scoped_css::scoped_css(src, &root, &analysis, &opts.filename, opts.css_scope.as_deref(), opts.dev, apply.as_ref(), precompile.as_ref(), &mut diags)
     } else {
         None
     };
     let css_scope = opts.css_scope.as_deref().or(css.as_ref().map(|c| c.hash.as_str()));
     let is_setter = |name: &str| opts.backend.is_setter_property(name);
     let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags, &is_setter));
-    let ir = lower(&root, opts.backend, sheet.as_ref(), css_scope, apply.as_ref(), &mut diags);
+    let mut ir = lower(&root, opts.backend, sheet.as_ref(), css_scope, apply.as_ref(), &mut diags);
+    // presto (`plans/research/presto/compiler-and-js.md` §3): change classes (W-C4), the
+    // accessibility checks (W-C9), then templates (W-C2) for a backend that takes them
+    crate::lower::change::tag(&mut ir.root, opts.backend, src, &root, &mut diags, opts.dev);
+    crate::lower::a11y::check(&ir.root, opts.backend, &mut diags);
+    if opts.backend.has_capability(capability::TEMPLATES) {
+        crate::lower::templates::wrap(&mut ir.root, &mut 0);
+    }
     if let Some(u) = &opts.utilities {
         crate::utilities::check(&root, src, opts.backend, u, &mut diags);
     }
@@ -202,6 +220,7 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     let t = Instant::now();
     let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename, opts.hmr);
     rw.strip_typescript(ts_strip);
+    rw.set_native_motion(opts.backend.has_capability(capability::NATIVE_TRANSITIONS), opts.backend.has_capability(capability::NATIVE_MOTION));
     let name = rw.component_name(&component_name(&opts.filename));
     let out = if check {
         crate::codegen::component::traverse(src, &ir, &rw, &name, &opts.target.runtime_imports());
@@ -214,7 +233,12 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
             *cache.borrow_mut().entry(tag.to_string()).or_insert_with(|| opts.backend.resolve_element(tag).is_ok_and(|el| opts.backend.source_loc(&el)))
         };
         let locs: Option<&dyn Fn(&str) -> bool> = (opts.dev && opts.backend.source_locs()).then_some(&has_loc);
-        Some(generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports(), opts.hmr, locs))
+        let ids = SpecIds::new(opts.backend);
+        let features = Features {
+            ids: ids.as_ref().map(|i| i as &dyn IdSource),
+            change_classes: opts.backend.has_capability(capability::CHANGE_CLASSES),
+        };
+        Some(generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports(), opts.hmr, locs, &features))
     }
     };
     let diags = rw.into_diagnostics();
@@ -224,6 +248,38 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
         _ => done(None, None, diags, timings),
     };
     CompileResult { css, ..res }
+}
+
+/// W-C1: the stable ids of a backend with the `ids` capability and a spec hash, as codegen asks
+/// for them.
+struct SpecIds<'b> {
+    backend: &'b dyn PlatformSemantics,
+    hash: &'b str,
+}
+
+impl<'b> SpecIds<'b> {
+    fn new(backend: &'b dyn PlatformSemantics) -> Option<SpecIds<'b>> {
+        let hash = backend.spec_hash().filter(|_| backend.has_capability(capability::IDS))?;
+        Some(SpecIds { backend, hash })
+    }
+}
+
+impl IdSource for SpecIds<'_> {
+    fn backend(&self) -> &str {
+        self.backend.backend()
+    }
+    fn spec_hash(&self) -> &str {
+        self.hash
+    }
+    fn kind(&self, tag: &str) -> Option<(u32, String)> {
+        let el = self.backend.resolve_element(tag).ok()?;
+        Some((self.backend.kind_id(&el)?, el.kind))
+    }
+    fn prop(&self, tag: &str, prop: &str) -> Option<(u32, String)> {
+        let el = self.backend.resolve_element(tag).ok()?;
+        let p = self.backend.property(&el, prop).ok()?;
+        Some((p.id?, p.owner.clone()))
+    }
 }
 
 /// Parses a module, with TypeScript on and stripped when `filename` is TypeScript

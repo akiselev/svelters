@@ -45,6 +45,8 @@ import {
 import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty, styleInserted } from './style.js';
 // TR1: transitions (the runtime node's Element facade, the animation player, the visual channels)
 import { RUNTIME_EVENTS, defineFacade } from './motion.js';
+import { nativeTransition } from './transition.js';
+import { flipNative } from './animate.js';
 import { ROW_OUTLETS, TOPLEVELS } from './bindings.generated.js';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
 // ABI v2.6 property observation (REACTIVITY.md section 7): installs `__svelters_changed` and the
@@ -54,6 +56,10 @@ export { observeProp, trackProp, trackLocal, invalidateProp } from './observe.js
 export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
 // CX3: a `bind:` on a Rust store field linked to the prop in the host (no JS per change).
 export { bind_link } from './bind-observe.js';
+// presto W-C1 and W-C2 (lane COMPILER): stable ids and native templates, emitted for backends with
+// the `ids` and `templates` capabilities (./ids.js, ./template.js).
+export { ids, element_id, setp } from './ids.js';
+export { template, instantiate, at, template_listen } from './template.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');
@@ -81,6 +87,12 @@ class Scope {
   }
 }
 
+/** `node.attrs` until the first `attr` write: read-only, so a missed copy-on-write throws. */
+const NO_ATTRS = Object.freeze({});
+
+// W-C3 (plans/research/presto/compiler-and-js.md §3.3): every field a node can carry is an own
+// field set here, so a read never falls through to the provider-method proxy on the prototype; the
+// collections are null until their first write (most nodes of a template never get one).
 class Native {
   constructor(kind, h, top) {
     this.kind = kind;
@@ -96,16 +108,30 @@ class Native {
     this.slotName = null;
     this.dead = null; // reason from __svelters_gone
     this.destroyed = false;
-    this.last = new Map(); // prop -> last value written (or reported by the native side)
-    this.captured = new Map();
-    this.tokens = new Map(); // prop -> Set of tokens
-    this.handlers = new Map(); // `${signal}\0${flags}` -> [fn]
-    this.listening = new Set(); // same keys, while the host listens
-    this.cattrs = new Map(); // `parent:` child attributes, by name (sent after every insert)
-    this.passive = new Map(); // signal -> [fn]: `track` mirrors, run before the handlers, never listened
-    this.slots = new Map(); // slot name (null = default) -> Slot
-    this.attrs = {}; // class / id / style for the X6 styling (`attr`)
+    this.last = null; // Map: prop -> last value written (or reported by the native side)
+    this.captured = null; // Map: prop -> native value before the first `RESTORE`-able write
+    this.tokens = null; // Map: prop -> Set of tokens
+    this.handlers = null; // Map: `${signal}\0${flags}` -> [fn]
+    this.listening = null; // Set: same keys, while the host listens
+    this.cattrs = null; // Map: `parent:` child attributes, by name (sent after every insert)
+    this.passive = null; // Map: signal -> [fn]: `track` mirrors, run before the handlers, never listened
+    this.slots = null; // Map: slot name (null = default) -> Slot
+    this.attrs = NO_ATTRS; // class / id / style for the X6 styling (`attr`)
     this.sc = null; // what styling has been sent (./style.js)
+    this.requested = null; // Map: tracked prop -> the value `set` was last given (`track`)
+    this.snippets = null; // Map: prop -> snippet function (WG5a)
+    this.cellEditor = null; // a table column's mounted cell editor (WG5a)
+    this.inertFlag = false; // TR1: outroing, its events are dropped
+    this.anchorScope = undefined; // SV53: the `anchor-scope` sent (undefined: never computed)
+    this.explicit = null; // { props, attrs } of an element with a dynamic `style={...}`
+    this.ruled = null; // Map: prop -> a rule's value (`rule_set`)
+    this.ruledAttrs = null; // Map: child attribute -> a rule's value (`rule_attr`)
+    this.inlineProps = null; // Set: props the inline style writes
+    this.inlineAttrs = null; // Set: child attributes the inline style writes
+    this.src = undefined; // DZ0: source location (`source_loc`), sent once placed
+    this.srcSent = false;
+    this.vis = null; // TR1: the visual channels (./motion.js)
+    this.styleDecl = null; // TR1: `node.style` (./motion.js)
   }
 
   /** Whether the native object exists (not destroyed by us, not dead natively). */
@@ -445,7 +471,7 @@ function presentTop(node) {
   let m;
   if (mode === 'modal' && spec) {
     m = pickMethod(node, spec.open);
-    if (m === 'present' && spec.modalProp && !node.last.has('modal')) set(node, 'modal', true);
+    if (m === 'present' && spec.modalProp && !node.last?.has('modal')) set(node, 'modal', true);
   } else m = node.top.present ?? pickMethod(node, spec?.modeless ?? ['present']);
   node.host.call(node.h, m, []);
 }
@@ -453,7 +479,7 @@ function presentTop(node) {
 // Sends every `parent:` attribute of `node` to its native parent; called right after an insert
 // (first placement and every re-insert of a keyed move).
 function applyChildAttrs(node) {
-  if (node.cattrs.size === 0 || !node.np || !alive(node) || !alive(node.np)) return;
+  if (node.cattrs === null || node.cattrs.size === 0 || !node.np || !alive(node) || !alive(node.np)) return;
   for (const [name, value] of node.cattrs) node.host.setChildAttr(node.np.h, node.h, name, value);
 }
 
@@ -465,9 +491,10 @@ function applyChildAttrs(node) {
  */
 export function child_attr(node, name, value) {
   if (value === undefined) value = null;
-  if (node.cattrs.has(name) && node.cattrs.get(name) === value) return;
-  if (value === null) node.cattrs.delete(name);
-  else node.cattrs.set(name, value);
+  const cattrs = (node.cattrs ??= new Map());
+  if (cattrs.has(name) && cattrs.get(name) === value) return;
+  if (value === null) cattrs.delete(name);
+  else cattrs.set(name, value);
   if (node.np && alive(node) && alive(node.np)) node.host.setChildAttr(node.np.h, node.h, name, value);
 }
 
@@ -572,8 +599,8 @@ export function nativeBehavior(kind, events = []) {
           if (typeof v === 'function') {
             if (!cbs.has(ev)) {
               const fn = (...args) => cbs.get(ev)?.(...args);
-              b.handlers.set(hkey(ev, 0), [fn]);
-              b.listening.add(hkey(ev, 0));
+              (b.handlers ??= new Map()).set(hkey(ev, 0), [fn]);
+              (b.listening ??= new Set()).add(hkey(ev, 0));
               hostListen(b, ev, true, 0);
             }
             cbs.set(ev, v);
@@ -616,25 +643,31 @@ export function nativeBehavior(kind, events = []) {
 
 export function set(node, prop, value) {
   if (value === RESTORE) {
-    if (!node.captured.has(prop)) throw new Error(`set ${prop}: RESTORE without capture()`);
+    if (!node.captured?.has(prop)) throw new Error(`set ${prop}: RESTORE without capture()`);
     value = node.captured.get(prop);
   }
-  if (!alive(node)) return;
-  // RT1: a `$state` value (or one with `$state` inside) goes to the host as plain data. Its copy
-  // is new on every run, so it is compared by content; any other value by identity.
-  const data = plainData(value);
-  const same = data === value ? Object.is : sameParam;
-  value = data;
+  if (node.dead || node.destroyed) return;
+  // W-C3: a scalar (the common case) needs neither the plain-data copy nor the content compare
+  let same = Object.is;
+  if (typeof value === 'object' && value !== null) {
+    // RT1: a `$state` value (or one with `$state` inside) goes to the host as plain data. Its copy
+    // is new on every run, so it is compared by content; any other value by identity.
+    const data = plainData(value);
+    if (data !== value) same = sameParam;
+    value = data;
+  }
   // a tracked prop (`track`): `last` follows the native edits, so the template effect running
   // again with the value it wrote before (another value of its fragment changed) must not write
   // it over the user's edit. Svelte's DOM setters compare with the last value they were given too.
   const req = node.requested;
-  if (req?.has(prop)) {
+  if (req !== null && req.has(prop)) {
     if (same(req.get(prop), value)) return;
     req.set(prop, value);
   }
-  if (node.last.has(prop) && same(node.last.get(prop), value)) return;
-  node.last.set(prop, value);
+  let last = node.last;
+  if (last === null) last = node.last = new Map();
+  else if (last.has(prop) && same(last.get(prop), value)) return;
+  last.set(prop, value);
   // WG5a: a snippet passed as a prop (`<table-column editor={cellEditor}>`) stays in JS
   if (typeof value === 'function') {
     snippetProp(node, prop, value);
@@ -643,6 +676,28 @@ export function set(node, prop, value) {
   if (value == null) node.snippets?.delete(prop);
   if (prop === 'anchor' && value) anchorWritten(node); // SV53
   node.host.setProp(node.h, prop, value);
+}
+
+/**
+ * W-C3 (compiler-and-js.md §3.3): the write of a typed scalar `value` (number, string, boolean,
+ * null) to a prop no `track`, `capture` or `token` uses, which is what the compiler emits as
+ * `$n.setp(node, prop, value)` behind its own inline compare (`v !== p.x && $n.setp(n, P, p.x = v)`),
+ * so this skips `set`'s plain-data copy and content compare. `prop` is a name or the id the host's
+ * resolvers (or the spec's stable ids) give. On a host that drops unchanged writes in its own
+ * columns (`host.dedupes`, ABI `SVL_CAP_DEDUPE`) nothing is kept in JS; elsewhere `last` dedupes
+ * as for `set`.
+ */
+export function setp(node, prop, value) {
+  if (node.dead || node.destroyed) return;
+  const hs = node.host;
+  if (!hs.dedupes) {
+    let last = node.last;
+    if (last === null) last = node.last = new Map();
+    else if (last.has(prop) && Object.is(last.get(prop), value)) return;
+    last.set(prop, value);
+  }
+  if (typeof prop === 'number' && hs.setp) hs.setp(node.h, prop, value);
+  else hs.setProp(node.h, prop, value);
 }
 
 /**
@@ -767,7 +822,8 @@ function cellEditor(col, prop) {
  * freshly created widget. A later `set` of the same value is then a no-op.
  */
 export function assume(node, prop, value) {
-  if (!node.last.has(prop)) node.last.set(prop, value);
+  const last = (node.last ??= new Map());
+  if (!last.has(prop)) last.set(prop, value);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -826,6 +882,7 @@ export function attr(node, name, value) {
     delete node.attrs[name];
   } else {
     if (node.attrs[name] === value) return;
+    if (node.attrs === NO_ATTRS) node.attrs = {};
     node.attrs[name] = value;
   }
   if (alive(node)) markStyleDirty(node);
@@ -868,21 +925,23 @@ export function setter_value(toolkit, name, value) {
 }
 
 export function capture(node, prop) {
-  if (node.captured.has(prop) || !alive(node)) return;
+  if (node.captured?.has(prop) || !alive(node)) return;
   const v = node.host.getProp(node.h, prop);
-  node.captured.set(prop, v);
-  if (!node.last.has(prop)) node.last.set(prop, v);
+  (node.captured ??= new Map()).set(prop, v);
+  const last = (node.last ??= new Map());
+  if (!last.has(prop)) last.set(prop, v);
 }
 
 export function token(node, prop, tok, on) {
   if (!alive(node)) return;
-  let t = node.tokens.get(prop);
+  let t = node.tokens?.get(prop);
   if (!t) {
-    if (!node.last.has(prop)) node.last.set(prop, node.host.getProp(node.h, prop));
-    const init = node.last.get(prop);
+    const last = (node.last ??= new Map());
+    if (!last.has(prop)) last.set(prop, node.host.getProp(node.h, prop));
+    const init = last.get(prop);
     // ABI v3: a token list prop (GTK GStrv) travels as a list of strings
     t = new Set(Array.isArray(init) ? init : String(init ?? '').split(/\s+/).filter(Boolean));
-    node.tokens.set(prop, t);
+    (node.tokens ??= new Map()).set(prop, t);
   }
   if (t.has(tok) === !!on) return;
   if (on) t.add(tok);
@@ -912,36 +971,36 @@ function hostListen(node, signal, on, flags) {
  * plain). Each (signal, flags) is its own native connection: `host.listen` on its first handler.
  */
 export function on(node, signal, fn, flags = 0) {
-  const k = hkey(signal, flags);
-  let list = node.handlers.get(k);
-  if (!list) node.handlers.set(k, (list = []));
-  list.push(fn);
+  addHandler(node, signal, fn, flags);
   scope?.handlers.push([node, signal, fn, flags]);
-  if (!node.listening.has(k) && alive(node)) {
-    node.listening.add(k);
+}
+
+/** Appends `fn` to the (signal, flags) handlers of `node`; the first one makes the host listen. */
+function addHandler(node, signal, fn, flags) {
+  const k = hkey(signal, flags);
+  const handlers = (node.handlers ??= new Map());
+  let list = handlers.get(k);
+  if (!list) handlers.set(k, (list = []));
+  list.push(fn);
+  const listening = (node.listening ??= new Set());
+  if (!listening.has(k) && alive(node)) {
+    listening.add(k);
     hostListen(node, signal, true, flags);
   }
 }
 
 /** TR2: `on` for the runtime's own handlers: not tied to the current scope (it outlives the transition that asked). */
 function listenOutsideScope(node, signal, fn) {
-  const k = hkey(signal, 0);
-  let list = node.handlers.get(k);
-  if (!list) node.handlers.set(k, (list = []));
-  list.push(fn);
-  if (!node.listening.has(k) && alive(node)) {
-    node.listening.add(k);
-    hostListen(node, signal, true, 0);
-  }
+  addHandler(node, signal, fn, 0);
 }
 
 function off(node, signal, fn, flags = 0) {
   const k = hkey(signal, flags);
-  const list = node.handlers.get(k);
+  const list = node.handlers?.get(k);
   const i = list ? list.indexOf(fn) : -1;
   if (i < 0) return;
   list.splice(i, 1);
-  if (list.length === 0 && node.listening.has(k)) {
+  if (list.length === 0 && node.listening?.has(k)) {
     node.listening.delete(k);
     if (alive(node)) hostListen(node, signal, false, flags);
   }
@@ -985,7 +1044,7 @@ export function bind(node, prop, signal, arg, get, setv) {
   $.template_effect(() => set(node, prop, get()));
   on(node, signal, (...args) => {
     const v = reported(node, prop, arg, args);
-    node.last.set(prop, v);
+    (node.last ??= new Map()).set(prop, v);
     if (!Object.is(v, $.untrack(get))) setv(v);
   });
   // the binding updates its state before the element's own handlers of the signal run, as with
@@ -1014,12 +1073,13 @@ export function bind_commit(node, prop, get, setv, signal, arg) {
 export function track(node, prop, signal, arg) {
   // `set` compares with the last value it was given (no value yet: NOT_REQUESTED)
   (node.requested ??= new Map()).set(prop, NOT_REQUESTED);
-  let list = node.passive.get(signal);
-  if (!list) node.passive.set(signal, (list = []));
-  list.push((...args) => void node.last.set(prop, reported(node, prop, arg, args)));
+  const passive = (node.passive ??= new Map());
+  let list = passive.get(signal);
+  if (!list) passive.set(signal, (list = []));
+  list.push((...args) => void (node.last ??= new Map()).set(prop, reported(node, prop, arg, args)));
 }
 
-const handlersOf = (node, signal, flags) => [...(node.handlers.get(hkey(signal, flags)) ?? [])];
+const handlersOf = (node, signal, flags) => (node.handlers === null ? [] : [...(node.handlers.get(hkey(signal, flags)) ?? [])]);
 
 // TR1: the `Element` slice Svelte's transition code uses (src/motion.js)
 defineFacade(Native.prototype, { handlers: (node, type) => handlersOf(node, type, 0), listen: listenOutsideScope });
@@ -1182,7 +1242,7 @@ function dispatchTo(node, signal, args, deferred, flags) {
     }
     return;
   }
-  if (flags === 0) for (const fn of node.passive.get(signal) ?? []) fn.apply(node, args);
+  if (flags === 0 && node.passive !== null) for (const fn of node.passive.get(signal) ?? []) fn.apply(node, args);
   for (const fn of handlersOf(node, signal, flags)) fn.apply(node, args);
 }
 
@@ -1338,8 +1398,9 @@ export function nodeFor(h) {
 // Containers, regions and blocks
 
 export function slot(node, name = null) {
-  let s = node.slots.get(name);
-  if (!s) node.slots.set(name, (s = new Slot(node, name)));
+  const slots = (node.slots ??= new Map());
+  let s = slots.get(name);
+  if (!s) slots.set(name, (s = new Slot(node, name)));
   return s;
 }
 
@@ -1418,7 +1479,7 @@ function dispose(s, region) {
   if (region) for (const n of natives(region)) detach(n);
   for (const c of s.children) dispose(c, null);
   const walk = (n) => {
-    for (const sl of n.slots.values()) for (const c of allNatives(sl)) if (c.scope === s && !c.destroyed) walk(c);
+    if (n.slots !== null) for (const sl of n.slots.values()) for (const c of allNatives(sl)) if (c.scope === s && !c.destroyed) walk(c);
     n.destroyed = true;
     n.np = null;
     if (n.sc) forgetStyle(n);
@@ -2712,7 +2773,7 @@ function setProp(st, p, value, gone = false) {
   }
   if (value == null) {
     if (p.def != null) set(node, p.js, p.def);
-    else if (node.captured.has(p.js)) set(node, p.js, RESTORE);
+    else if (node.captured?.has(p.js)) set(node, p.js, RESTORE);
     else set(node, p.js, null);
     return;
   }
@@ -2748,8 +2809,8 @@ function setProp(st, p, value, gone = false) {
  * value read may be a property the host derives from something else, as a DOM input's `type`).
  */
 function captureOnly(node, prop) {
-  if (node.captured.has(prop) || !alive(node)) return;
-  node.captured.set(prop, node.host.getProp(node.h, prop));
+  if (node.captured?.has(prop) || !alive(node)) return;
+  (node.captured ??= new Map()).set(prop, node.host.getProp(node.h, prop));
 }
 
 function spreadEvent(st, key, value) {
@@ -2855,6 +2916,24 @@ export function transition(flags, node, getFn, getParams) {
 export function animation(node, getFn, getParams) {
   ensureNodes(active());
   svelteAnimation(node, getFn, getParams ?? null);
+}
+
+/**
+ * MOTION-CSS (`native_transitions`): `transition:fade` & co. imported from svelte/transition. The
+ * same built-in as `$n.transition`, with its parameters, easing and the style it read sent in the
+ * OP_ANIMATE payload so a backend evaluates the formula natively (`kind`: `fade`, `fly`, `slide`,
+ * `scale`, `blur`, `draw`).
+ */
+export function transition_native(flags, node, kind, getParams) {
+  ensureNodes(active());
+  const fn = nativeTransition(kind);
+  svelteTransition(flags, node, () => fn, getParams ?? null);
+}
+
+/** MOTION-CSS (`native_transitions`): `animate:flip` imported from svelte/animate, with its native descriptor. */
+export function flip_native(node, getParams) {
+  ensureNodes(active());
+  svelteAnimation(node, () => flipNative, getParams ?? null);
 }
 
 export { NativeAnimation, computed, setReducedMotion } from './motion.js';

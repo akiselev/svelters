@@ -139,7 +139,8 @@ impl EguiBackend {
             }
         }
         crate::events::install(self, &ctx); // EV1: the input hook (once per context)
-        if ctx.current_pass_index() == 0 {
+        let rerun = self.0.rerun_logic.take();
+        if ctx.current_pass_index() == 0 || rerun {
             self.logic_pass(&ctx);
         }
         // the presented windows are all drawn in this pass (root and immediate viewports)
@@ -400,6 +401,11 @@ impl EguiBackend {
     /// Flushes `out` to the host (queues only: `post_event`/`prop_changed` run no JS) and requests
     /// the repaints pending work needs. Also called by `Embed` after its logic and each slot.
     pub(crate) fn after_pass(&self, ctx: &egui::Context, mut out: Vec<Out>) {
+        // W-H1: the walk sent input to JS; the rerun pass runs logic first (`same_frame_reactions`)
+        if !out.is_empty() && self.0.same_frame.get() && !ctx.will_discard() {
+            ctx.request_discard("svelters: a widget signal reached JS");
+            self.0.rerun_logic.set(ctx.will_discard());
+        }
         // RA3: kind methods' writes since the last pass go first
         let pending = std::mem::take(&mut *self.0.pending_out.borrow_mut());
         if !pending.is_empty() {

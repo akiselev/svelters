@@ -54,3 +54,8 @@ intl = ["dep:svelters-intl"]
 [lints.clippy]
 # ZU3: allowed for tests, examples and bins; lib.rs denies it for the library (see clippy.toml).
 disallowed_methods = "allow"
+
+[[bench]]
+# W-J0: the JS→Rust crossing per binding shape (prints ns per call; run on a quiet machine).
+name = "boundary"
+harness = false

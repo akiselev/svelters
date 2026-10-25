@@ -135,4 +135,16 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     fn type_property(&self, ty: &TypeRef, prop: &str) -> Option<TypeProp> {
         self.inner.type_property(ty, prop)
     }
+    fn capabilities(&self) -> &[String] {
+        self.inner.capabilities()
+    }
+    fn spec_hash(&self) -> Option<&str> {
+        self.inner.spec_hash()
+    }
+    fn kind_id(&self, el: &ElementRef) -> Option<u32> {
+        self.inner.kind_id(el)
+    }
+    fn a11y(&self, el: &ElementRef) -> Option<&A11ySpec> {
+        self.inner.a11y(el)
+    }
 }

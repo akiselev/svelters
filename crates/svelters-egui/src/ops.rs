@@ -206,6 +206,24 @@ impl Backend for EguiBackend {
         self.touched(r);
     }
 
+    fn caps(&self) -> u32 {
+        // W-C3: `set_prop_ref` drops unchanged scalar writes (`Scene::js_write_unchanged`)
+        SVL_CAP_DEDUPE
+    }
+
+    /// The borrowed write: an unchanged scalar (`SVL_CAP_DEDUPE`) costs a compare against the
+    /// typed field and no owned copy; anything else is copied once and written.
+    fn set_prop_ref(&self, h: svl_handle, prop: svl_id, v: ValueRef<'_>) -> StrResult<()> {
+        {
+            let scene = self.0.scene.borrow();
+            let id = scene.live(h)?;
+            if !self.0.overrides.borrow().contains_key(&(id, prop)) && scene.js_write_unchanged(id, prop, v) {
+                return Ok(());
+            }
+        }
+        self.set_prop(h, prop, &v.to_value())
+    }
+
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
         {
             let mut scene = self.0.scene.borrow_mut();

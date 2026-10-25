@@ -40,12 +40,29 @@ pub struct ScopedCss {
     /// output (`--json`) as `map`, the [`ScopedCss::source_map_text`] text.
     #[serde(rename = "map", serialize_with = "map_text")]
     pub source_map: Vec<(u32, u32, u32)>,
+    /// presto `css_precompiled` (release builds): the sheet as `svelters_style::binary` bytes,
+    /// with rule hints per element and the resolved utility rules; `None` in dev, on other
+    /// backends, or when the engine's parser reports something about the sheet (the text path
+    /// then carries it, with its diagnostics).
+    #[serde(skip)]
+    pub precompiled: Option<Vec<u8>>,
+}
+
+/// What [`scoped_css`] needs to precompile the sheet.
+pub(crate) struct Precompile<'r> {
+    /// Resolves the static utility classes (U4's resolver), when utilities are checked.
+    pub utilities: Option<svelters_style::Resolver<'r>>,
 }
 
 impl ScopedCss {
     /// DZ0: the `<style>`-relative offset of byte `at` of `code`, if it is untouched style text.
     pub fn source_offset(&self, at: u32) -> Option<u32> {
         style_offset(&self.source_map, at)
+    }
+
+    /// [`ScopedCss::precompiled`] as base64 (`registerStyles(id, { bin })`).
+    pub fn precompiled_base64(&self) -> Option<String> {
+        self.precompiled.as_deref().map(svelters_style::binary::to_base64)
     }
 
     /// DZ0: [`ScopedCss::source_map`] as text: `out,src,len` runs joined by `;` (what the loader
@@ -83,6 +100,83 @@ pub fn parse_source_map(text: &str) -> Option<Vec<(u32, u32, u32)>> {
         .collect()
 }
 
+/// presto `css_precompiled`: the scoped sheet `code` parsed by the engine and written as bytes, with
+/// per element the rules Svelte's pruning says might apply (`candidates`) and those that match it
+/// in any context (`always`). A rule maps to the Svelte rule whose selector list holds its start
+/// (through the sheet's source map); a rule that maps to none, or that has an entirely global
+/// selector, goes to the global rules every element tests. `None` when the engine reports anything
+/// about the sheet (an unknown `:state()`, ...).
+fn precompiled(
+    code: &str,
+    hash: &str,
+    source_map: &[(u32, u32, u32)],
+    content_start: u32,
+    matches: &crate::svelte::css::SelectorMatches,
+    element_start: impl Fn(u32) -> u32,
+    p: &Precompile<'_>,
+) -> Option<Vec<u8>> {
+    use svelters_style::binary::{ElementHints, Precompiled, compound_matches, encode};
+    let sheet = svelters_style::Stylesheet::parse(code, &svelters_style::ParseOptions::default());
+    if !sheet.diagnostics.is_empty() {
+        return None;
+    }
+    let line_starts: Vec<usize> = std::iter::once(0).chain(code.match_indices('\n').map(|(i, _)| i + 1)).collect();
+    // cssparser's columns count UTF-16 units from 1
+    let offset_of = |line: u32, column: u32| -> Option<u32> {
+        let start = *line_starts.get(line.checked_sub(1)? as usize)?;
+        let mut units = 1;
+        for (i, c) in code[start..].char_indices() {
+            if units >= column {
+                return Some((start + i) as u32);
+            }
+            units += c.len_utf16() as u32;
+        }
+        None
+    };
+    let svelte_rule = |r: &svelters_style::Rule| -> Option<usize> {
+        let at = content_start + style_offset(source_map, offset_of(r.line, r.column)?)?;
+        matches.preludes.iter().enumerate().filter(|(_, (s, e))| *s <= at && at < *e).min_by_key(|(_, (s, e))| e - s).map(|(i, _)| i)
+    };
+    let owners: Vec<Option<usize>> = sheet.rules.iter().map(svelte_rule).collect();
+    let global_rules: Vec<u32> =
+        owners.iter().enumerate().filter(|(_, o)| o.is_none_or(|r| matches.global_rules.binary_search(&r).is_ok())).map(|(i, _)| i as u32).collect();
+    let mut hints = Vec::new();
+    let mut classes_seen = std::collections::BTreeSet::new();
+    for el in &matches.elements {
+        let candidates: Vec<u32> = owners
+            .iter()
+            .enumerate()
+            .filter(|(i, o)| o.is_some_and(|r| matches.pairs.binary_search(&(r, el.start)).is_ok()) && global_rules.binary_search(&(*i as u32)).is_err())
+            .map(|(i, _)| i as u32)
+            .collect();
+        let mut always = Vec::new();
+        if let (Some(classes), Ok(id), false) = (&el.classes, &el.id, el.tag.is_empty()) {
+            let mut all: Vec<&str> = classes.iter().map(String::as_str).collect();
+            // every native element carries the scope class
+            all.push(hash);
+            for &i in &candidates {
+                let rule = &sheet.rules[i as usize];
+                if rule.media.is_empty() && rule.selector_text().split(", ").any(|s| compound_matches(s, &el.tag, &all, id.as_deref()) == Some(true)) {
+                    always.push(i);
+                }
+            }
+            classes_seen.extend(classes.iter().cloned());
+        }
+        hints.push(ElementHints { element: element_start(el.start), candidates, always });
+    }
+    let utilities = match &p.utilities {
+        Some(res) => classes_seen
+            .iter()
+            .filter_map(|c| match res.resolve(c) {
+                svelters_style::Resolved::Utility(u) => Some(u),
+                _ => None,
+            })
+            .collect(),
+        None => Vec::new(),
+    };
+    Some(encode(&Precompiled { sheet, hints, global_rules, utilities }))
+}
+
 /// Runs the Q3 port over the component's `<style>`: `None` when there is none or when the CSS
 /// step failed (its error is in `diags`).
 ///
@@ -97,6 +191,7 @@ pub(crate) fn scoped_css<'a>(
     hash: Option<&str>,
     dev: bool,
     apply: Option<&crate::utilities::apply::Expansion>,
+    precompile: Option<&Precompile<'_>>,
     diags: &mut Diagnostics,
 ) -> Option<ScopedCss> {
     let block = root.css.as_ref()?;
@@ -130,7 +225,9 @@ pub(crate) fn scoped_css<'a>(
                         .collect()
                 }
             };
-            Some(ScopedCss { code: out.code, hash: out.hash, has_global: out.has_global, injected: out.injected, scoped_elements: out.scoped_elements, source_map })
+            let element_start = |s: u32| map((s, s)).0;
+            let precompiled = precompile.and_then(|p| precompiled(&out.code, &out.hash, &source_map, block.content.start, &out.matches, element_start, p));
+            Some(ScopedCss { code: out.code, hash: out.hash, has_global: out.has_global, injected: out.injected, scoped_elements: out.scoped_elements, source_map, precompiled })
         }
         Ok(None) => None,
         Err(e) => {
