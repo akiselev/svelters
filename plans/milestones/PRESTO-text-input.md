@@ -1,7 +1,8 @@
 # PRESTO-text-input: text editing on quire-text (presto batch 2, lane TEXT-INPUT)
 
 Lane file: `plans/cloud/presto-b2/LANE-text-input.md`. Branch `ci/presto-text-input` (from `ci/presto-base`
-at `e34079e6`). Owns `crates/presto-widgets/src/text/**` and `crates/presto-widgets/tests/text_pins.rs`.
+at `e34079e6`; `ci/presto-base` at `622aef24`, with the presto-core, presto-text and presto-platform
+skeletons, merged in). Owns `crates/presto-widgets/src/text/**` and `crates/presto-widgets/tests/text_pins.rs`.
 
 ## What landed
 
@@ -10,6 +11,8 @@ at `e34079e6`). Owns `crates/presto-widgets/src/text/**` and `crates/presto-widg
 | Module | What |
 |---|---|
 | `editor.rs` | `TextEditor`: one field's quire-text `TextDocument` + `TextView` (quire-text at cadatomic's pin `3e78dcd3`), per-platform `TextPolicy`, keys through `keys.rs`, IME events (winit-style `ImeEvent`) and the `TextInputClient` operations in document-wide UTF-16 offsets (the IME document is the text with the preedit spliced in), pointer selection (click, double/triple click, drags by word and line, Shift+click), the middle-click PRIMARY paste, focus rules (select-all on keyboard/programmatic focus, unfocused selection kept or collapsed, GTK's one selection owner), clipboard/PRIMARY/beep requests (`TextRequest`), input filters |
+| `kind.rs` | `TextEdit`: `impl presto_core::Kind` for `text-edit` (spec with change classes, `text` native-owned; `prop_changed`, `measure`, `prepare`, `record` through `RecordCx`, `event` for keys, IME, pointer, focus; `text_input`; `a11y`), signals emitted with `EventCx::emit` |
+| `geometry.rs` | presto-text's `TextLayout` as the field's geometry (`LaidOut`: lines without their line feed, affinity, runs recorded through `RecordCx::draw_run`) and `SystemLayouter` over `TextSystem` |
 | `field.rs` | `TextField`: the `text-edit` kind's state: layout (through the shim), horizontal/vertical scroll to the caret, `record` (selection quads behind the glyphs, placeholder, preedit underline with the active clause thicker, clipped to the content box), the caret as `FastCommit::Caret`, the IME candidate area, `impl TextInputClient` (bounds and character index through the layout, password-aware), AccessKit role/value/placeholder/actions, signals (`changed`, `commit`, `submit`, `cancel`, `select`, kept from svelters' `text-edit` names), `TEXT_EDIT_PROPS` with change classes |
 | `keys.rs` | the §11.2 IME-first route (`route`: composing → IME; IME source active and a printable key without a chord → IME) and the key maps: GTK/Qt/Windows (Ctrl words, Ctrl+Backspace/Delete, Shift+Delete/Insert, Ctrl+Insert, Ctrl+Y and Ctrl+Shift+Z, Ctrl+Shift+U hex entry on GTK) and AppKit's standard bindings (Option words, Cmd line/document, Emacs Ctrl keys, Home/End scroll only) |
 | `policy.rs` | `TextPolicy::of(Platform)`: FX1's text rows from svelters-egui `native/mod.rs` (word rules, word-move collapse, focus selection rules, PRIMARY, undo grouping, blink, double-click time, password mask) |
@@ -32,16 +35,16 @@ job summary. It is a measurement (fails only when the harness breaks), like `egu
 
 ## Shims (the consolidation replaces them)
 
-- `shim::TextGeometry` for `presto_text::TextLayout` (`size`, `hit_test` → `Cursor { byte, upstream }`,
-  `caret_rect(byte, upstream)`, `selection_rects`, plus `line_count`/`line(i)` (range, top, height,
-  baseline) and `record_glyphs(list, origin, color)`). The b1 API has `caret_rect(byte)` without affinity
-  and no line table; both are needed (R5).
-- `shim::Layouter` for `presto_text::TextSystem::layout` with the field's style.
-- `shim::Clipboard` for `presto_platform::Clipboard`, with PRIMARY (`get_primary`, `set_primary`,
-  `clear_primary`).
-- No presto-core `Kind` yet: `TextField` exposes the §4.2 hooks as methods (`measure`, `prepare`, `record`,
-  `key`/`ime`/`pointer`/`focus_in`/`focus_out`, `a11y`, `a11y_action`, `impl TextInputClient`), taking a
-  `Layouter` and node/window coordinates as arguments. The consolidation writes `impl Kind for TextField`.
+`text/shim.rs`:
+- `TextServices` (installed per UI thread with `install_services`): what presto-core's contexts do not
+  hand a kind yet: a layouter over the `TextSystem` (`PrepareCx::shape_text` gives runs without
+  geometry, and `EventCx` has no text system), the clipboard, the caret's fast-commit channel, the event
+  time. The app runner (lane APP-TEST / svelters-presto) installs it; without it `text-edit` records
+  its box only and takes no input. Request R4.
+- `Clipboard`: presto-platform's `Clipboard` is by `ClipboardKind` and presto-widgets does not depend on
+  presto-platform; the app adapts it.
+- `TextGeometry`, `Layouter`, `RecordSink` are the field's own interfaces (implemented for presto-text's
+  `TextLayout`/`TextSystem`, presto-core's `RecordCx`, and the test `MonoGeometry`/`ListSink`).
 
 ## Cross-lane edits
 
@@ -66,12 +69,14 @@ No change to `presto-base` or any wave-1 crate.
   `FastCommit::CaretBlink { window, cycle, timeout }` variant, a breaking change for exhaustive matches), and
   applies `text::caret::blink_visible`'s rule (on for the first half of each cycle, steady after the timeout,
   restarted by every `Caret` commit).
-- **R4 (presto-core):** for the text kinds: the text system (a `Layouter`) reachable from the event context
-  (a key can move over rows the previous key changed); the focus reason (keyboard, pointer, programmatic) in
-  focus events; GTK's one selection owner as a document rule (`TextEditor::collapse_to_start` is the hook;
+- **R4 (presto-core):** for the text kinds: the text system (layouts with geometry, `TextLayout`) in
+  `PrepareCx` and `EventCx` (a key can move over rows the previous key changed), the clipboard and the
+  fast-commit channel in `EventCx`, the event time in `Event`, the node's padding edges and its
+  window transform in `NodeView` (the kind uses the padding box and `pos - local`/the sum of layout rects
+  meanwhile); GTK's one selection owner as a document rule (`TextEditor::collapse_to_start` is the hook;
   the pins fixture does it in `settle`); the IME-first route (`keys::route`) before the command keymap.
-- **R5 (presto-text):** `TextLayout` with a line table (byte range, top, height, baseline per row),
-  `caret_rect` with affinity, and `hit_test` returning affinity at a soft wrap.
+- **R5 (presto-text):** done by lane TEXT (`lines()`, `caret_rect_at(Cursor)`, affinity); its lines
+  include the trailing line feed, which `geometry::LaidOut` strips.
 - **R6 (presto-platform):** `Clipboard` with PRIMARY get/set/clear (X11, Wayland); `ImeEvent::Preedit`
   cursor `None` read as "hide the caret" (the field does so).
 
@@ -99,5 +104,5 @@ No change to `presto-base` or any wave-1 crate.
 
 ## What I ran and did not run
 
-- Ran: `cargo check -p presto-widgets` and `cargo check -p presto-widgets --tests` (clean, no warnings).
+- Ran: `cargo check -p presto-widgets --tests` (clean, no warnings in presto-widgets).
 - Not run: every test (unit and `text_pins`), clippy, other crates. GitHub CI runs them on push.

@@ -19,15 +19,15 @@ use super::editor::{EditorConfig, FocusReason, TextEditor, TextRequest};
 use super::keys::KeyAction;
 use super::lines::GeometryLines;
 use super::policy::TextPolicy;
-use super::shim::{Clipboard, Layouter, TextGeometry};
+use super::shim::{Clipboard, Layouter, RecordSink, TextGeometry};
 use super::shown::Shown;
 use super::utf16::{floor_boundary, str_byte_to_utf16, str_utf16_to_byte};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::color::{Color, Fill};
 use presto_base::commit::FastCommit;
-use presto_base::display::{DisplayList, Line, LineCap, Prim, Quad};
-use presto_base::event::{ImeEvent, KeyEvent, MouseButton, PointerEvent, PointerPhase};
+use presto_base::display::{Line, LineCap, Prim, Quad};
+use presto_base::event::{ImeEvent, KeyEvent, Modifiers, MouseButton, PointerPhase};
 use presto_base::geom::{Corners, Insets, Point, Rect, RoundedRect, Size, Vec2};
 use presto_base::ids::{Revision, WindowId};
 use presto_base::input::{InputPurpose, TextInputClient, Utf16Range};
@@ -90,6 +90,29 @@ pub struct FieldColors {
     /// The selection of an unfocused field (GTK, AppKit keep it, dimmed).
     pub selection_inactive: Color,
     pub preedit_underline: Color,
+}
+
+/// Pointer input as the field takes it.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct FieldPointer {
+    pub phase: PointerPhase,
+    pub button: Option<MouseButton>,
+    /// Buttons held after the event (primary = 1, secondary = 2, middle = 4).
+    pub buttons: u32,
+    pub modifiers: Modifiers,
+    /// Node coordinates.
+    pub local: Point,
+    /// The click count of a press, when the dispatcher counts clicks (presto-core does); `None`: the
+    /// field counts with the platform's double-click time.
+    pub count: Option<u32>,
+    /// The node's origin in window coordinates (`pos - local`), for the IME's window-space queries.
+    pub window_origin: Option<Point>,
+}
+
+impl FieldPointer {
+    pub fn new(phase: PointerPhase, button: Option<MouseButton>, buttons: u32, local: Point) -> Self {
+        FieldPointer { phase, button, buttons, modifiers: Modifiers::default(), local, count: None, window_origin: None }
+    }
 }
 
 /// Counts the clicks of double and triple clicks.
@@ -195,6 +218,25 @@ impl TextField {
             self.wrap = wrap;
             self.stale = true;
         }
+    }
+
+    /// Multi-line text wraps at the content width.
+    pub fn wraps(&self) -> bool {
+        self.wrap
+    }
+
+    /// The text as laid out and drawn (masked, with the preedit).
+    pub fn shown_text(&self) -> &str {
+        &self.shown.text
+    }
+
+    /// The node's origin in window coordinates, as last known.
+    pub fn window_origin(&self) -> Point {
+        self.origin
+    }
+
+    pub fn set_window_origin(&mut self, o: Point) {
+        self.origin = o;
     }
 
     pub fn scroll_offset(&self) -> Vec2 {
@@ -370,7 +412,7 @@ impl TextField {
 
     /// Records the field's content (node coordinates): the selection behind the text, the glyphs or
     /// the placeholder, and the preedit underline, clipped to the content box.
-    pub fn record(&self, list: &mut DisplayList, colors: &FieldColors) {
+    pub fn record(&self, list: &mut dyn RecordSink, colors: &FieldColors) {
         let Some(g) = &self.geom else { return };
         let o = self.to_node();
         let clip = self.content;
@@ -396,10 +438,10 @@ impl TextField {
         }
         if self.editor.is_empty() && !self.editor.composing() {
             if let Some(p) = &self.placeholder_geom {
-                p.record_glyphs(list, Point::ZERO + o, colors.placeholder);
+                p.record_glyphs(&mut *list, Point::ZERO + o, colors.placeholder);
             }
         } else {
-            g.record_glyphs(list, Point::ZERO + o, colors.text);
+            g.record_glyphs(&mut *list, Point::ZERO + o, colors.text);
         }
         if let (Some(p), Some(pre)) = (self.shown.preedit_range(), self.editor.preedit()) {
             let mask = self.editor.config().password.then(|| self.editor.policy().mask.len_utf8());
@@ -478,15 +520,21 @@ impl TextField {
         self.relayout(lay);
     }
 
-    /// A pointer event at node point `local`. Returns whether the field took it.
-    pub fn pointer(&mut self, ev: &PointerEvent, local: Point, now: Time, lay: &mut dyn Layouter) -> bool {
+    /// A pointer event (node coordinates). Returns whether the field took it.
+    pub fn pointer(&mut self, ev: &FieldPointer, now: Time, lay: &mut dyn Layouter) -> bool {
         self.begin(now, lay);
+        if let Some(o) = ev.window_origin {
+            self.origin = o;
+        }
+        let local = ev.local;
         let took = match (ev.phase, ev.button) {
             (PointerPhase::Down, Some(MouseButton::Primary)) => {
-                let n = self.clicks.press(now, local, self.editor.policy().double_click_ms);
+                let n = match ev.count {
+                    Some(n) => n,
+                    None => self.clicks.press(now, local, self.editor.policy().double_click_ms),
+                };
                 let at = self.hit(lay, local);
-                let shift = ev.modifiers.contains(presto_base::event::Modifiers::SHIFT);
-                self.editor.pointer_down(at, n, shift);
+                self.editor.pointer_down(at, n, ev.modifiers.contains(Modifiers::SHIFT));
                 true
             }
             (PointerPhase::Down, Some(MouseButton::Middle)) => {
@@ -687,7 +735,7 @@ mod tests {
     use crate::text::shim::MonoLayouter;
     use presto_base::event::{KeyLocation, KeyState, Modifiers};
     use presto_base::key::Key;
-    use presto_base::smallvec::SmallVec;
+    use crate::text::shim::ListSink;
 
     const LAY: MonoLayouter = MonoLayouter { advance: 10.0, line_height: 20.0 };
 
@@ -704,19 +752,8 @@ mod tests {
         f.key(&ev, Time(0), lay)
     }
 
-    fn ptr(phase: PointerPhase, button: Option<MouseButton>, buttons: u32, pos: Point) -> PointerEvent {
-        PointerEvent {
-            phase,
-            pointer: 0,
-            kind: presto_base::event::PointerType::Mouse,
-            button,
-            buttons,
-            pos,
-            modifiers: Modifiers::default(),
-            pressure: 0.5,
-            tilt: Vec2::ZERO,
-            history: SmallVec::new(),
-        }
+    fn ptr(phase: PointerPhase, button: Option<MouseButton>, buttons: u32, local: Point) -> FieldPointer {
+        FieldPointer::new(phase, button, buttons, local)
     }
 
     #[test]
@@ -766,9 +803,9 @@ mod tests {
         f.focus_in(FocusReason::Pointer);
         // double click on "world" (node x = 4 + 7.5 cells)
         let p = Point::new(4.0 + 75.0, 10.0);
-        f.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), 1, p), p, Time(0), &mut lay);
-        f.pointer(&ptr(PointerPhase::Up, Some(MouseButton::Primary), 0, p), p, Time(1_000_000), &mut lay);
-        f.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), 1, p), p, Time(50_000_000), &mut lay);
+        f.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), 1, p), Time(0), &mut lay);
+        f.pointer(&ptr(PointerPhase::Up, Some(MouseButton::Primary), 0, p), Time(1_000_000), &mut lay);
+        f.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), 1, p), Time(50_000_000), &mut lay);
         let s = f.editor.selection();
         assert_eq!((s.anchor, s.head), (6, 11));
         assert_eq!(f.caret_rect(), None, "no caret over a selection");
@@ -779,8 +816,9 @@ mod tests {
             selection_inactive: Color::rgba(0.5, 0.5, 0.5, 1.0),
             preedit_underline: Color::BLACK,
         };
-        let mut list = DisplayList::new();
-        f.record(&mut list, &colors);
+        let mut sink = ListSink::default();
+        f.record(&mut sink, &colors);
+        let list = sink.list;
         assert!(matches!(list.items[0], Prim::PushClip(_)));
         match &list.items[1] {
             Prim::Quad(q) => assert_eq!(q.rect, Rect::new(64.0, 2.0, 114.0, 22.0)),
@@ -796,8 +834,9 @@ mod tests {
         f.editor.set_selection(1, 1);
         f.ime(&ImeEvent::Preedit { text: "かな".into(), cursor: Some((0, 3)) }, Time(0), &mut lay);
         let colors = FieldColors { text: Color::BLACK, placeholder: Color::BLACK, selection: Color::BLACK, selection_inactive: Color::BLACK, preedit_underline: Color::WHITE };
-        let mut list = DisplayList::new();
-        f.record(&mut list, &colors);
+        let mut sink = ListSink::default();
+        f.record(&mut sink, &colors);
+        let list = sink.list;
         let lines: Vec<f32> = list.items.iter().filter_map(|p| if let Prim::Line(l) = p { Some(l.width) } else { None }).collect();
         assert_eq!(lines, vec![1.0, 2.0], "the composition, then its active clause");
         // the IME places its candidates under the composition: chars 1..3 of the IME document

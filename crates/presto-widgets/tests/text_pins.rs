@@ -17,15 +17,15 @@
 //! A measurement, like `egui_text_edit_against_windows_goldens`: it fails only when the harness
 //! breaks. A floor (a ratchet per pin) follows the first CI run (`plans/milestones/PRESTO-text-input.md`).
 
-use presto_base::event::{KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton, PointerEvent, PointerPhase, PointerType};
+use presto_base::event::{KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton, PointerPhase};
 use presto_base::event::ImeEvent;
-use presto_base::geom::{Point, Rect, Vec2};
+use presto_base::geom::{Point, Rect};
 use presto_base::key::Key;
-use presto_base::smallvec::SmallVec;
 use presto_base::time::{Span, Time};
 use presto_widgets::text::editor::{EditorConfig, FocusReason};
 use presto_widgets::text::keys::KeyAction;
 use presto_widgets::text::shim::{Clipboard, MonoLayouter};
+use presto_widgets::text::field::FieldPointer;
 use presto_widgets::text::{Platform, TextField, TextPolicy};
 use std::fmt::Write as _;
 use svelters_conformance::golden::{PinResult, compare, goldens, out_dir};
@@ -235,18 +235,18 @@ impl Presto {
         Point::new(at as f32 * CELL, ROW / 2.0)
     }
 
-    fn ptr(phase: PointerPhase, button: Option<MouseButton>, buttons: u32, pos: Point) -> PointerEvent {
-        PointerEvent { phase, pointer: 0, kind: PointerType::Mouse, button, buttons, pos, modifiers: Modifiers::default(), pressure: 0.5, tilt: Vec2::ZERO, history: SmallVec::new() }
+    fn ptr(phase: PointerPhase, button: Option<MouseButton>, buttons: u32, local: Point) -> FieldPointer {
+        FieldPointer::new(phase, button, buttons, local)
     }
 
     fn press(&mut self, i: usize, p: Point, button: MouseButton) {
         let bits = if button == MouseButton::Middle { 4 } else { 1 };
-        self.fields[i].pointer(&Self::ptr(PointerPhase::Down, Some(button), bits, p), p, self.now, &mut self.lay);
+        self.fields[i].pointer(&Self::ptr(PointerPhase::Down, Some(button), bits, p), self.now, &mut self.lay);
         self.settle(i);
     }
 
     fn release(&mut self, i: usize, p: Point, button: MouseButton) {
-        self.fields[i].pointer(&Self::ptr(PointerPhase::Up, Some(button), 0, p), p, self.now, &mut self.lay);
+        self.fields[i].pointer(&Self::ptr(PointerPhase::Up, Some(button), 0, p), self.now, &mut self.lay);
         self.settle(i);
     }
 }
@@ -378,7 +378,7 @@ impl Driver for Presto {
         for s in 1..=6 {
             let p = a + (b - a) * (s as f32 / 6.0);
             self.tick(16);
-            self.fields[i].pointer(&Self::ptr(PointerPhase::Move, None, 1, p), p, self.now, &mut self.lay);
+            self.fields[i].pointer(&Self::ptr(PointerPhase::Move, None, 1, p), self.now, &mut self.lay);
             self.settle(i);
         }
         self.release(i, b, MouseButton::Primary);

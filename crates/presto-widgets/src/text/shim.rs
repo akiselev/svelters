@@ -1,21 +1,33 @@
-//! Stand-ins for wave-1 APIs the text kinds need before those crates have them. Each item names the
-//! API it stands for; the consolidation replaces it with the real one (and this module goes).
+//! Stand-ins for wave-1 APIs the text kinds need before those crates have them, and the small
+//! interfaces the field records and lays out through. Each stand-in names the API it stands for; the
+//! consolidation replaces it with the real one.
 //!
-//! - [`TextGeometry`] stands for `presto_text::TextLayout` (lane TEXT's `hit_test`, `caret_rect`,
-//!   `selection_rects`, `size`, plus the line table its `lines` field holds and the glyph recording
-//!   that presto-core's record context will do for a layout's `runs`). The consolidation implements
-//!   it for `TextLayout`, or replaces the trait with `TextLayout` itself.
-//! - [`Layouter`] stands for `presto_text::TextSystem::layout` with the field's text style (the
-//!   `RichText` the kind builds from its computed style), as presto-core's prepare and event
-//!   contexts will hand it out.
-//! - [`Clipboard`] stands for `presto_platform::Clipboard` (`PlatformCx::clipboard`), with PRIMARY.
+//! - [`TextGeometry`]: the field's view of a layout. `presto_text::TextLayout` implements it
+//!   ([`super::geometry`]); so does [`MonoGeometry`]. Not a stand-in: it lets tests lay out without
+//!   fonts.
+//! - [`Layouter`]: lays out a field's shown text in its style; [`super::geometry::SystemLayouter`]
+//!   implements it over `presto_text::TextSystem`, [`MonoLayouter`] over [`MonoGeometry`].
+//! - [`Clipboard`] stands for `presto_platform::Clipboard` (`get_text`/`set_text` by
+//!   `ClipboardKind`), which presto-widgets does not depend on; the app adapts it (giving PRIMARY up is
+//!   setting it empty there).
+//! - [`RecordSink`] stands for the part of presto-core's `RecordCx` a field records through (`push`,
+//!   `draw_run`); [`ListSink`] collects into a `DisplayList` for tests.
+//! - [`TextServices`] stands for what presto-core's contexts do not hand a kind yet: the text system
+//!   (for layouts with geometry, not only shaped runs), the clipboard, the caret fast-commit channel and
+//!   the event time. The app installs them per UI thread ([`install_services`]); the consolidation
+//!   moves them into `PrepareCx`/`EventCx`.
 //! - [`MonoGeometry`] is a real layout of its own (fixed advance, fixed line height): what the tests
 //!   and the conformance pins lay text out with, and a fallback for headless use. It has no font, so
 //!   it records no glyphs.
 
 use presto_base::color::Color;
-use presto_base::display::DisplayList;
+use presto_base::commit::FastCommit;
+use presto_base::display::{DisplayList, Prim};
 use presto_base::geom::{Point, Rect, Size};
+use presto_base::text::GlyphRun;
+use presto_base::time::Time;
+use presto_text::TextStyle;
+use std::cell::RefCell;
 use std::ops::Range;
 use std::sync::Arc;
 
@@ -49,7 +61,59 @@ pub trait TextGeometry {
     fn line_count(&self) -> usize;
     fn line(&self, i: usize) -> LineInfo;
     /// Records the glyph runs at `origin` in `color`.
-    fn record_glyphs(&self, list: &mut DisplayList, origin: Point, color: Color);
+    fn record_glyphs(&self, sink: &mut dyn RecordSink, origin: Point, color: Color);
+}
+
+/// Where a field records: display-list primitives and shaped runs.
+pub trait RecordSink {
+    fn push(&mut self, p: Prim, ink: Rect);
+    /// A run with its baseline origin at `origin`.
+    fn draw_run(&mut self, run: Arc<GlyphRun>, origin: Point, color: Color);
+}
+
+/// A [`RecordSink`] that keeps the list and the runs (tests, headless dumps).
+#[derive(Clone, Debug, Default)]
+pub struct ListSink {
+    pub list: DisplayList,
+    pub runs: Vec<(Arc<GlyphRun>, Point, Color)>,
+}
+
+impl RecordSink for ListSink {
+    fn push(&mut self, p: Prim, ink: Rect) {
+        self.list.push(p, ink);
+    }
+    fn draw_run(&mut self, run: Arc<GlyphRun>, origin: Point, color: Color) {
+        self.runs.push((run, origin, color));
+    }
+}
+
+/// The services a text kind needs from the app (see the module docs).
+pub trait TextServices {
+    /// Lays out in `style` (the node's computed text style).
+    fn layouter(&mut self, style: &TextStyle) -> &mut dyn Layouter;
+    fn clipboard(&mut self) -> &mut dyn Clipboard;
+    /// Sends a fast commit (the caret) to the window's compositor.
+    fn fast_commit(&mut self, c: FastCommit);
+    /// Now, on presto's clock (undo grouping, double clicks).
+    fn now(&self) -> Time;
+}
+
+thread_local! {
+    static SERVICES: RefCell<Option<Box<dyn TextServices>>> = const { RefCell::new(None) };
+}
+
+/// Installs the UI thread's text services (the app runner does, once).
+pub fn install_services(s: Box<dyn TextServices>) {
+    SERVICES.with(|c| *c.borrow_mut() = Some(s));
+}
+
+/// Runs `f` with the installed services; `None` when none are installed (a document without text).
+pub fn with_services<R>(f: impl FnOnce(&mut dyn TextServices) -> R) -> Option<R> {
+    SERVICES.with(|c| {
+        let mut b = c.borrow_mut();
+        let s: &mut dyn TextServices = b.as_mut()?.as_mut();
+        Some(f(s))
+    })
 }
 
 /// Lays out a field's shown text in its style; `max_width` wraps (`None`: rows end at line feeds).
@@ -187,7 +251,7 @@ impl TextGeometry for MonoGeometry {
         LineInfo { range: self.rows[i].clone(), top, height: self.line_height, baseline: top + self.line_height * 0.8 }
     }
 
-    fn record_glyphs(&self, _list: &mut DisplayList, _origin: Point, _color: Color) {}
+    fn record_glyphs(&self, _sink: &mut dyn RecordSink, _origin: Point, _color: Color) {}
 }
 
 #[cfg(test)]
