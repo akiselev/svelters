@@ -1,8 +1,8 @@
-//! The Tier 0 kinds' specs (shim for presto-widgets `controls`, plus `text-edit` from `text` and the
-//! base `Widget` and `Window` from presto-core), transcribed from `metadata/semantics/egui.json` so the
+//! The Tier 0 kinds' JS-facing specs (presto-widgets `controls`, `text-edit` from `text`, the base
+//! `Widget` and `Window`), transcribed from `metadata/semantics/egui.json` so the
 //! JS-facing names, types and defaults are egui's. Change classes, passivity and cancelability are
-//! presto's (architecture §4.3, §11.5). Generated once by the lane's transcription script; the
-//! consolidation replaces this file with the kinds' own `KindSpec`s.
+//! presto's (architecture §4.3, §11.5). Generated once by the lane's transcription script; it goes
+//! when presto-core's `KindSpec` carries what it adds (coordinator Q3).
 
 use super::*;
 use presto_base::change::ChangeClass;
@@ -862,12 +862,3 @@ pub static ANCHOR: KindSpec = KindSpec {
 
 /// Every kind here, bases first.
 pub static ALL: &[&KindSpec] = &[&WIDGET, &WINDOW, &BOX, &FRAME, &LABEL, &BUTTON, &TOGGLEBUTTON, &CHECKBOX, &RADIOBUTTON, &SWITCH, &SLIDER, &PROGRESSBAR, &SPINNER, &SEPARATOR, &ICON, &IMAGE, &HYPERLINK, &STACK, &SIDES, &GRID, &TEXTEDIT, &RUN, &SPAN, &BOLD, &ITALIC, &CODE, &ANCHOR];
-
-/// A registry of the Tier 0 kinds (shim for `presto_widgets::registry()`).
-pub fn registry() -> KindRegistry {
-    let mut r = KindRegistry::new();
-    for k in ALL {
-        r.register(k);
-    }
-    r
-}

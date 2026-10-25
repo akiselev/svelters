@@ -25,7 +25,8 @@ fn resolve_names_round_trip_to_stable_ids() {
 #[test]
 fn abstract_kinds_are_not_created() {
     let r = Rig::new();
-    let widget = r.backend.wire().ids().get(&svelters_presto::ids::Key::kind("Widget")).unwrap();
+    let widget = svelters_presto::kinds::kind_wire(&svelters_presto::surface::tier0::WIDGET);
+    assert!(r.backend.kinds().by_wire(widget).is_some());
     assert!(r.br().create(widget).is_err());
 }
 
@@ -121,9 +122,11 @@ fn present_and_close_windows() {
     r.backend.window_closed(w);
     assert!(r.backend.windows().is_empty());
     assert_eq!(r.take().gone, [(w, SVL_GONE_CLOSED)]);
-    // methods presto-core does not offer yet say so
+    // focus needs a window; scrolling into view is not on presto yet
     let t = r.create("text-edit");
     let m = r.br().resolve(NameKind::Method, r.kind(t), "request-focus");
+    assert!(r.br().call(t, m, &[]).unwrap_err().message.contains("not in a window"));
+    let m = r.br().resolve(NameKind::Method, r.kind(t), "scroll-into-view");
     assert!(r.br().call(t, m, &[]).unwrap_err().message.contains("not implemented"));
 }
 
@@ -147,15 +150,15 @@ fn style_ops_reach_the_tree() {
     r.br().style(SVL_STYLE_NAME, b, Some("main")).unwrap();
     r.br().style(SVL_STYLE_OPACITY, b, Some("0.5")).unwrap();
     let n = r.backend.node(b).unwrap();
-    let (style, vis) = r.backend.with_doc(|d| (d.style(n).cloned().unwrap(), d.visual(n).unwrap()));
-    assert_eq!(style.classes, ["column", "svelte-1"]);
+    let (style, vis) = (r.backend.style_input(n).unwrap(), r.backend.visual(n));
+    assert_eq!(style.classes.iter().map(|c| &**c).collect::<Vec<_>>(), ["column", "svelte-1"]);
     assert_eq!(style.id.as_deref(), Some("main"));
     assert_eq!(vis.opacity, Some(0.5));
     let sheet = format!("app.svelte{SVL_STYLE_SEP}.column {{ gap: 8px }}");
     r.br().style(SVL_STYLE_SHEET, 0, Some(&sheet)).unwrap();
-    assert_eq!(r.backend.with_doc(|d| d.sheets().get("app.svelte").cloned()), Some(".column { gap: 8px }".into()));
+    assert_eq!(r.backend.sheets().get("app.svelte").cloned(), Some(".column { gap: 8px }".into()));
     r.br().style(SVL_STYLE_SHEET, 0, None).unwrap();
-    assert!(r.backend.with_doc(|d| d.sheets().is_empty()));
+    assert!(r.backend.sheets().is_empty());
     // the runtime plays animations itself until presto-motion is wired
     assert_eq!(r.br().style(SVL_STYLE_ANIMATE, b, Some("x")).unwrap(), 0);
 }

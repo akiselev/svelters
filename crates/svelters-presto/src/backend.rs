@@ -1,19 +1,26 @@
 //! [`PrestoBackend`]: the backend ABI on presto's tree (`plans/architecture/backend-abi.md`; the egui
-//! backend's `ops.rs` is the template). Every op is a call on the one [`Document`] with typed, by-id
-//! props; handles are this backend's own, allocated in order so a template's nodes are `base + k`
-//! (compiler-and-js §3.2).
+//! backend's `ops.rs` is the template). Every op is a call on the one [`presto_core::Document`] with
+//! typed, by-id props, through the member maps of [`crate::kinds`]; handles are this backend's own,
+//! allocated in order so a template's nodes are `base + k` (compiler-and-js §3.2).
+//!
+//! What presto-core does not hold yet is kept here: surface props with no core prop
+//! ([`PropTarget::Side`]), each node's style inputs (so one op can change classes without the inline
+//! style), the TR1 visual channels and `prefers-color-scheme`, and the sheets by name.
 //!
 //! The toolkit loop is not here: whoever runs presto (the `presto` facade's app, a test harness)
 //! installs a [`Driver`], and [`Backend::run`] hands it the loop. JS-facing events come back through
 //! [`PrestoBackend::deliver`] (`deliver.rs`).
 
-use crate::ids::What;
-use crate::shim::{Document, KindId, KindRegistry, KindSpec, ListenFlags};
+use crate::deliver::Output;
+use crate::kinds::{KindMap, Kinds, PropTarget};
+use crate::surface::{self, ColorScheme, Visual};
 use crate::value;
-use crate::wire::Wire;
-use presto_base::ids::NodeId;
+use presto_base::geom::Size;
+use presto_base::ids::{NodeId, Revision};
+use presto_base::text::{TextMeasure, TextSpec};
+use presto_core::{Document, ListenFlags, StyleInput};
 use std::cell::{Cell, RefCell};
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
@@ -100,10 +107,34 @@ impl Handles {
     }
 }
 
+/// Measures no text: the backend's document until the runner installs presto-text's system.
+pub struct NoText;
+
+impl TextMeasure for NoText {
+    fn measure(&mut self, _spec: &TextSpec<'_>, _max_width: Option<f32>) -> Size {
+        Size::ZERO
+    }
+    fn content_widths(&mut self, _spec: &TextSpec<'_>) -> (f32, f32) {
+        (0.0, 0.0)
+    }
+}
+
 pub struct Inner {
     pub(crate) doc: RefCell<Document>,
-    pub(crate) registry: Arc<KindRegistry>,
-    pub(crate) wire: Wire,
+    pub(crate) kinds: Arc<Kinds>,
+    /// Surface props with no core prop, by (node, wire prop id).
+    pub(crate) side: RefCell<HashMap<(NodeId, svl_id), surface::Value>>,
+    /// Each styled node's style inputs (presto-core takes them whole).
+    pub(crate) styles: RefCell<HashMap<NodeId, StyleInput>>,
+    pub(crate) visuals: RefCell<HashMap<NodeId, Visual>>,
+    pub(crate) scheme: Cell<Option<ColorScheme>>,
+    /// Sheets by the runtime's id: presto-core's id and the text.
+    pub(crate) sheets: RefCell<BTreeMap<String, (svelters_style::SheetId, String)>>,
+    /// Native output queued outside the tree (an embedder's, a test's), delivered by the next pump.
+    pub(crate) pending: RefCell<Output>,
+    /// While events dispatched at this revision are delivered: JS writes are a JS task that saw it
+    /// (native-owned props the kind changed since are not overwritten, architecture §4.5).
+    pub(crate) seen: Cell<Option<Revision>>,
     pub(crate) handles: RefCell<Handles>,
     pub(crate) host: Cell<*const svl_host>,
     /// Presented windows, in order.
@@ -126,14 +157,23 @@ pub struct Inner {
 pub struct PrestoBackend(pub(crate) Rc<Inner>);
 
 impl PrestoBackend {
-    /// A backend over a fresh [`Document`] of `registry`'s kinds, with wire ids from the checked-in
-    /// table.
-    pub fn new(registry: Arc<KindRegistry>) -> PrestoBackend {
-        let wire = Wire::new(&registry, crate::ids::Ids::builtin());
+    /// A backend over a fresh [`Document`] of `kinds`, measuring no text (the runner gives it
+    /// presto-text's system with [`PrestoBackend::with_text`]).
+    pub fn new(kinds: Arc<Kinds>) -> PrestoBackend {
+        PrestoBackend::with_text(kinds, Box::new(NoText))
+    }
+
+    pub fn with_text(kinds: Arc<Kinds>, text: Box<dyn TextMeasure>) -> PrestoBackend {
         PrestoBackend(Rc::new(Inner {
-            doc: RefCell::new(Document::new(registry.clone())),
-            registry,
-            wire,
+            doc: RefCell::new(Document::new(kinds.registry().clone(), text)),
+            kinds,
+            side: RefCell::new(HashMap::new()),
+            styles: RefCell::new(HashMap::new()),
+            visuals: RefCell::new(HashMap::new()),
+            scheme: Cell::new(None),
+            sheets: RefCell::new(BTreeMap::new()),
+            pending: RefCell::new(Output::default()),
+            seen: Cell::new(None),
             handles: RefCell::new(Handles::default()),
             host: Cell::new(std::ptr::null()),
             windows: RefCell::new(Vec::new()),
@@ -150,7 +190,7 @@ impl PrestoBackend {
 
     /// A backend of the built-in kinds.
     pub fn builtin() -> PrestoBackend {
-        PrestoBackend::new(Arc::new(crate::builtin_registry()))
+        PrestoBackend::new(crate::builtin_kinds())
     }
 
     /// Installs who runs the loop ([`Driver`]).
@@ -171,12 +211,28 @@ impl PrestoBackend {
         f(&mut self.0.doc.borrow_mut())
     }
 
-    pub fn registry(&self) -> &Arc<KindRegistry> {
-        &self.0.registry
+    pub fn kinds(&self) -> &Arc<Kinds> {
+        &self.0.kinds
     }
 
-    pub fn wire(&self) -> &Wire {
-        &self.0.wire
+    /// The style inputs JS gave `n` (classes, `#id`, inline style).
+    pub fn style_input(&self, n: NodeId) -> Option<StyleInput> {
+        self.0.styles.borrow().get(&n).cloned()
+    }
+
+    /// `n`'s TR1 visual channels.
+    pub fn visual(&self, n: NodeId) -> Visual {
+        self.0.visuals.borrow().get(&n).copied().unwrap_or_default()
+    }
+
+    /// The `prefers-color-scheme` JS asked for (`None`: the platform's).
+    pub fn color_scheme(&self) -> Option<ColorScheme> {
+        self.0.scheme.get()
+    }
+
+    /// The installed sheets by the runtime's id, with their text.
+    pub fn sheets(&self) -> BTreeMap<String, String> {
+        self.0.sheets.borrow().iter().map(|(k, (_, css))| (k.clone(), css.clone())).collect()
     }
 
     /// The node behind a live handle.
@@ -264,25 +320,18 @@ impl PrestoBackend {
         self.destroy(h);
     }
 
-    pub(crate) fn live(&self, h: svl_handle) -> StrResult<(NodeId, KindId, &'static KindSpec)> {
+    /// The node behind a live handle and its kind's member map.
+    pub(crate) fn live(&self, h: svl_handle) -> StrResult<(NodeId, &KindMap)> {
         let n = self.node(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        let doc = self.0.doc.borrow();
-        let k = doc.kind(n).ok_or_else(|| format!("stale handle {h}"))?;
-        let spec = self.0.registry.spec(k).ok_or_else(|| format!("handle {h} has an unregistered kind"))?;
-        Ok((n, k, spec))
-    }
-
-    fn tag(spec: &KindSpec) -> &'static str {
-        spec.tag.unwrap_or(spec.name)
+        let k = self.0.doc.borrow().kind_of(n).ok_or_else(|| format!("stale handle {h}"))?;
+        let m = self.0.kinds.by_core(k).ok_or_else(|| format!("handle {h} has a kind JS does not know"))?;
+        Ok((n, m))
     }
 
     /// Creates a node of wire kind `kind` at handle `h` (reserved by the caller).
     pub(crate) fn create_at(&self, h: svl_handle, kind: svl_id) -> StrResult<NodeId> {
-        let k = self.0.wire.kind(kind).ok_or_else(|| format!("unknown kind id {kind}"))?;
-        let spec = self.0.registry.spec(k).ok_or_else(|| format!("unknown kind id {kind}"))?;
-        if spec.tag.is_none() {
-            return Err(format!("{} is abstract: no element creates it", spec.name));
-        }
+        let m = self.0.kinds.by_wire(kind).ok_or_else(|| format!("unknown kind id {kind}"))?;
+        let k = m.core.ok_or_else(|| format!("{} is abstract: no element creates it", m.surface.name))?;
         let n = self.0.doc.borrow_mut().create(k);
         self.0.handles.borrow_mut().bind(h, n);
         Ok(n)
@@ -290,35 +339,84 @@ impl PrestoBackend {
 
     /// The prop write behind `set_prop`, shared with templates.
     pub(crate) fn write_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
-        let (n, k, spec) = self.live(h)?;
-        let (pid, ps) = self.0.wire.core_prop(&self.0.registry, k, prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", Self::tag(spec)))?;
-        let v = value::from_abi(v, ps.ty, ps.nullable).map_err(|e| format!("<{}> {}: {e}", Self::tag(spec), ps.name))?;
-        self.0.doc.borrow_mut().set_prop(n, pid, v).map_err(|e| e.to_string())?;
-        Ok(())
+        let (n, m) = self.live(h)?;
+        let pm = m.prop(prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", m.tag()))?;
+        let v = value::from_abi(v, pm.spec.ty, pm.spec.nullable).map_err(|e| format!("<{}> {}: {e}", m.tag(), pm.spec.name))?;
+        let (pid, v) = match pm.target {
+            PropTarget::Side => {
+                let mut side = self.0.side.borrow_mut();
+                match v {
+                    surface::Value::Null => side.remove(&(n, prop)),
+                    v => side.insert((n, prop), v),
+                };
+                return Ok(());
+            }
+            PropTarget::Native(pid) => (pid, value::to_core(v)),
+            PropTarget::Inverted(pid) => (pid, value::to_core(v).map(|v| presto_core::Value::Bool(!v.as_bool().unwrap_or(false)))),
+        };
+        let write = |d: &mut Document| match v {
+            Some(v) => d.set_prop(n, pid, v),
+            None => d.reset_prop(n, pid),
+        };
+        let mut doc = self.0.doc.borrow_mut();
+        let r = match self.0.seen.get() {
+            Some(seen) => doc.js_transaction(seen, write),
+            None => write(&mut doc),
+        };
+        match r {
+            // the kind changed it after the event this task saw: the native value stands (§4.5)
+            Ok(_) | Err(presto_core::PropError::Superseded { .. }) => Ok(()),
+            Err(e) => Err(format!("<{}> {}: {e}", m.tag(), pm.spec.name)),
+        }
     }
 
     /// The listener registration behind `listen`/`listen_ex`, shared with templates.
     pub(crate) fn write_listen(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> StrResult<()> {
-        let (n, k, spec) = self.live(h)?;
-        let (sid, ss) = self.0.wire.core_signal(&self.0.registry, k, signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", Self::tag(spec)))?;
+        let (n, m) = self.live(h)?;
+        let sm = m.signal(signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", m.tag()))?;
+        let ss = sm.spec;
         if flags & !(SVL_LISTEN_CAPTURE | SVL_LISTEN_PASSIVE) != 0 {
-            return Err(format!("`{}` of <{}>: presto has no listen flags {flags:#x} (capture and passive only)", ss.name, Self::tag(spec)));
+            return Err(format!("`{}` of <{}>: presto has no listen flags {flags:#x} (capture and passive only)", ss.name, m.tag()));
         }
-        if flags & SVL_LISTEN_CAPTURE != 0 && !ss.bubbles {
-            return Err(format!("`{}` of <{}> has no capture phase: only the DOM-style events propagate", ss.name, Self::tag(spec)));
+        let capture = flags & SVL_LISTEN_CAPTURE != 0;
+        if capture && !ss.bubbles {
+            return Err(format!("`{}` of <{}> has no capture phase: only the DOM-style events propagate", ss.name, m.tag()));
         }
-        let f = on.then_some(ListenFlags { capture: flags & SVL_LISTEN_CAPTURE != 0, passive: flags & SVL_LISTEN_PASSIVE != 0 || ss.passive && !ss.cancelable });
-        self.0.doc.borrow_mut().listen(n, sid, f);
+        // a signal presto does not produce yet is accepted and never fires
+        let Some(sid) = sm.native else { return Ok(()) };
+        let mut doc = self.0.doc.borrow_mut();
+        if on {
+            let mut f = ListenFlags::EMPTY;
+            if capture {
+                f.insert(ListenFlags::CAPTURE);
+            }
+            if flags & SVL_LISTEN_PASSIVE != 0 || ss.passive && !ss.cancelable {
+                f.insert(ListenFlags::PASSIVE);
+            }
+            if ss.sync {
+                f.insert(ListenFlags::SYNC);
+            }
+            doc.listen(n, sid, f);
+        } else {
+            doc.unlisten(n, sid, capture);
+        }
         Ok(())
+    }
+
+    /// Whether `h` listens to surface signal `name` in the tree (tests, the inspector).
+    pub fn listening(&self, h: svl_handle, name: &str) -> bool {
+        let Ok((n, m)) = self.live(h) else { return false };
+        let Some(sid) = m.signal_named(name).and_then(|s| s.native) else { return false };
+        self.0.doc.borrow().listeners(n).iter().any(|l| l.signal == sid)
     }
 
     /// The insert behind `insert`, shared with templates.
     pub(crate) fn write_insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
-        let (p, _, pspec) = self.live(parent)?;
-        let (c, _, _) = self.live(child)?;
+        let (p, pm) = self.live(parent)?;
+        let (c, _) = self.live(child)?;
         let b = before.map(|b| self.node(b).ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))).transpose()?;
-        let s = self.0.wire.slot(pspec, slot).ok_or_else(|| format!("unknown slot id {slot} on <{}>", Self::tag(pspec)))?;
-        self.0.doc.borrow_mut().insert(p, c, b, Some(s)).map_err(|e| e.to_string())
+        let s = pm.slot(slot).ok_or_else(|| format!("unknown slot id {slot} on <{}>", pm.tag()))?;
+        self.0.doc.borrow_mut().insert(p, c, b, s).map_err(|e| e.to_string())
     }
 
     fn forget(&self, h: svl_handle) {
@@ -352,29 +450,39 @@ impl PrestoBackend {
         freed
     }
 
-    /// Frees the node behind `h` and its handle.
+    /// Frees the node behind `h` and its handle. Children JS knows are detached first, not freed:
+    /// the ABI leaves them to the host (presto-core's `destroy` takes the subtree).
     pub(crate) fn free(&self, h: svl_handle) {
         let Some(n) = self.0.handles.borrow_mut().unbind(h) else { return };
-        self.0.doc.borrow_mut().destroy(n);
+        {
+            let mut doc = self.0.doc.borrow_mut();
+            let known: Vec<NodeId> = doc.children(n).iter().copied().filter(|&c| self.0.handles.borrow().handle(c).is_some()).collect();
+            for c in known {
+                let _ = doc.remove(n, c);
+            }
+            doc.destroy(n);
+        }
+        self.0.side.borrow_mut().retain(|&(x, _), _| x != n);
+        self.0.styles.borrow_mut().remove(&n);
+        self.0.visuals.borrow_mut().remove(&n);
         self.forget(h);
     }
 }
 
 impl Backend for PrestoBackend {
     fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
-        let reg = &self.0.registry;
+        let kinds = &self.0.kinds;
         if what == NameKind::Kind {
-            return reg.by_tag(name).map(|k| self.0.wire.kind_id(k)).unwrap_or(0);
+            return kinds.by_tag(name).map_or(0, |m| m.wire);
         }
-        let Some(spec) = self.0.wire.kind(kind).and_then(|k| reg.spec(k)) else { return 0 };
-        let w = match what {
-            NameKind::Prop => What::Prop,
-            NameKind::Signal => What::Signal,
-            NameKind::Method => What::Method,
-            NameKind::Slot => What::Slot,
-            _ => return 0,
-        };
-        self.0.wire.resolve(spec, w, name)
+        let Some(m) = kinds.by_wire(kind) else { return 0 };
+        match what {
+            NameKind::Prop => m.prop_named(name).map_or(0, |p| p.wire),
+            NameKind::Signal => m.signal_named(name).map_or(0, |s| s.wire),
+            NameKind::Method => m.methods.iter().find(|x| x.spec.name == name).map_or(0, |x| x.wire),
+            NameKind::Slot => m.slots.iter().find(|x| x.spec.name == name).map_or(0, |x| x.wire),
+            _ => 0,
+        }
     }
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
@@ -406,15 +514,20 @@ impl Backend for PrestoBackend {
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
-        let (n, k, spec) = self.live(h)?;
-        let (pid, ps) = self.0.wire.core_prop(&self.0.registry, k, prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", Self::tag(spec)))?;
-        let v = self.0.doc.borrow().get_prop(n, pid).ok_or_else(|| format!("stale handle {h}"))?;
-        Ok(value::to_abi(&v, ps.ty))
+        let (n, km) = self.live(h)?;
+        let pm = km.prop(prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", km.tag()))?;
+        let stored = match pm.target {
+            PropTarget::Side => self.0.side.borrow().get(&(n, prop)).cloned(),
+            PropTarget::Native(pid) => self.0.doc.borrow().get_prop(n, pid).map(|v| value::from_core(&v)),
+            PropTarget::Inverted(pid) => self.0.doc.borrow().get_prop(n, pid).and_then(|v| v.as_bool()).map(|b| surface::Value::Bool(!b)),
+        };
+        let v = stored.unwrap_or_else(|| pm.spec.default.value());
+        Ok(value::to_abi(&v, pm.spec.ty))
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
-        let (_, _, spec) = self.live(h)?;
-        let m = self.0.wire.method(spec, method).ok_or_else(|| format!("unknown method id {method} on <{}>", Self::tag(spec)))?;
+        let (_, km) = self.live(h)?;
+        let m = km.method(method).ok_or_else(|| format!("unknown method id {method} on <{}>", km.tag()))?;
         if !args.is_empty() && m.spec.params.is_empty() {
             return Err(format!("{} takes no arguments", m.spec.name));
         }
@@ -426,9 +539,17 @@ impl Backend for PrestoBackend {
                 }
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
-            // focus (`request-focus`) and scrolling (`scroll-into-view`) are presto-core's focus and
-            // scroll models, not in the tree API this crate builds on yet (shim)
-            (_, other) => return Err(format!("<{}>.{other}() is not implemented on presto yet", Self::tag(spec))),
+            (_, "request-focus") => {
+                let (n, _) = self.live(h)?;
+                let mut doc = self.0.doc.borrow_mut();
+                // a node gets a window when its tree is a window's (presto-core `attach_window`, Q4)
+                if doc.window_of(n).is_none() {
+                    return Err(format!("<{}>.request-focus(): the node is not in a window", km.tag()));
+                }
+                doc.focus(n, presto_core::FocusReason::Programmatic);
+            }
+            // scrolling a node into view needs presto-core's scroll model on a laid-out window
+            (_, other) => return Err(format!("<{}>.{other}() is not implemented on presto yet", km.tag())),
         }
         Ok(Value::Null)
     }
@@ -443,12 +564,12 @@ impl Backend for PrestoBackend {
     }
 
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
-        let (_, k, spec) = self.live(h)?;
+        let (_, km) = self.live(h)?;
         Ok(svl_handle_info {
-            kind: self.0.wire.kind_id(k),
+            kind: km.wire,
             lifetime: if self.0.borrowed.borrow().contains(&h) {
                 SVL_LIFE_BORROWED
-            } else if spec.chain().any(|s| s.toplevel) {
+            } else if km.surface.chain().any(|s| s.toplevel) {
                 SVL_LIFE_TOPLEVEL
             } else {
                 SVL_LIFE_OWNED
@@ -503,10 +624,10 @@ impl Backend for PrestoBackend {
     }
 
     fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> Result<(), ObserveError> {
-        let (_, k, spec) = self.live(h).map_err(ObserveError::Failed)?;
-        self.0.wire.core_prop(&self.0.registry, k, prop).ok_or_else(|| ObserveError::Failed(format!("unknown prop id {prop} on <{}>", Self::tag(spec))))?;
+        let (_, km) = self.live(h).map_err(ObserveError::Failed)?;
+        km.prop(prop).ok_or_else(|| ObserveError::Failed(format!("unknown prop id {prop} on <{}>", km.tag())))?;
         // Every prop is exact: the tree is the only place a value changes, and a native change is
-        // announced by the kind that makes it (`Dispatched::changed`).
+        // in presto-core's change journal (`Change::Prop { native: true }`).
         let mut o = self.0.observed.borrow_mut();
         let c = o.entry((h, prop)).or_insert(0);
         if on {
@@ -535,13 +656,12 @@ impl Backend for PrestoBackend {
         if what != NameKind::Prop {
             return None;
         }
-        let spec = self.0.registry.spec(self.0.wire.kind(kind)?)?;
-        let p = self.0.wire.prop(spec, member)?.spec;
+        let p = self.0.kinds.by_wire(kind)?.prop(member)?.spec;
         let mut slot = SlotDesc::new(value::tag_of(p.ty)).named(p.name);
         if p.nullable {
             slot = slot.flags(SVL_D_NULLABLE);
         }
-        if p.ty == crate::shim::ValueType::I64 {
+        if p.ty == surface::ValueType::I64 {
             slot = slot.flags(SVL_D_INTEGRAL);
         }
         Some(MemberDesc { name: p.name.to_string(), params: vec![slot.clone()], ret: slot, flags: SVL_M_OBSERVABLE })

@@ -1,13 +1,15 @@
 //! Shared test plumbing: the presto backend behind its real vtable, attached to a recording host
-//! (no JS). Native output (a kind's signal, a native-owned prop change) is produced through the tree's
-//! `emit`/`native_set`, the calls presto-core's `EventCx` makes, and delivered with `pump`.
+//! (no JS). Native output (a kind's signal, a native-owned prop change) is queued as presto-core
+//! reports it (a `JsEvent` with its path, a native prop change) and delivered with `pump`.
 #![allow(dead_code)]
 
 use std::cell::RefCell;
 use std::rc::Rc;
 use svelters_abi::*;
 use svelters_presto::PrestoBackend;
-use svelters_presto::shim::Value as PValue;
+use svelters_presto::Output;
+use svelters_presto::kinds::PropTarget;
+use svelters_presto::surface::Value as PValue;
 
 #[derive(Default)]
 pub struct Log {
@@ -115,26 +117,25 @@ impl Rig {
         self.br().call(h, m, &[]).unwrap();
     }
 
-    /// A kind's native default emitted `signal` on `h` (as presto-core's `EventCx::emit` does).
+    /// A kind's native default emitted `signal` on `h` (as presto-core lists it: target phase, the
+    /// node's own listeners; nothing when it has none).
     pub fn emit(&self, h: svl_handle, signal: &str, args: Vec<PValue>) {
         let n = self.backend.node(h).unwrap();
-        let reg = self.backend.registry().clone();
-        self.backend.with_doc(|d| {
-            let k = d.kind(n).unwrap();
-            let (s, _) = reg.signal(k, signal).unwrap_or_else(|| panic!("no signal {signal}"));
-            d.emit(n, s, args);
-        });
+        if let Some(ev) = self.backend.target_event(n, signal, args) {
+            self.backend.queue(Output { events: vec![ev], ..Output::default() });
+        }
     }
 
-    /// A kind changed native-owned `prop` on `h` itself (as presto-core's `EventCx::set` does).
+    /// A kind changed native-owned `prop` on `h` itself: the value is in the tree and the change is
+    /// reported, as presto-core's journal does for `EventCx::set_native`.
     pub fn native_set(&self, h: svl_handle, prop: &str, v: PValue) {
         let n = self.backend.node(h).unwrap();
-        let reg = self.backend.registry().clone();
-        self.backend.with_doc(|d| {
-            let k = d.kind(n).unwrap();
-            let (p, _) = reg.prop(k, prop).unwrap_or_else(|| panic!("no prop {prop}"));
-            d.native_set(n, p, v).unwrap();
-        });
+        let k = self.backend.with_doc(|d| d.kind_of(n)).unwrap();
+        let kinds = self.backend.kinds().clone();
+        let pm = kinds.by_core(k).unwrap().prop_named(prop).unwrap_or_else(|| panic!("no prop {prop}"));
+        let PropTarget::Native(p) = pm.target else { panic!("{prop} is not a tree prop") };
+        self.backend.with_doc(|d| d.set_prop(n, p, svelters_presto::value::to_core(v).unwrap())).unwrap();
+        self.backend.queue(Output { changed: vec![(n, p)], ..Output::default() });
     }
 
     /// Takes what the host recorded so far.

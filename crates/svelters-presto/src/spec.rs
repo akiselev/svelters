@@ -3,19 +3,22 @@
 //! [`semantics`] writes `metadata/semantics/presto.json`, which the compiler embeds.
 //!
 //! What it adds over egui's:
-//! - **stable ids** per kind, prop, signal, method and slot (`ids.rs`), each with a `fingerprint`,
-//!   and the spec's `ids.spec_hash`;
+//! - **stable ids** per kind, prop, signal, method and slot: presto-core's FNV-1a hashes of (declaring
+//!   kind, member, type) (`kinds.rs`; coordinator Q1), each with its `fingerprint` (the same hash in
+//!   hex), and the spec's `ids.spec_hash` over all of them;
+//! - `native` per prop: presto-core's name for it (`disabled` for `enabled`, coordinator Q2), and
+//!   `widget` per kind: whether presto-widgets draws it or a placeholder kind holds its members;
 //! - `change` per prop and per engine CSS property (architecture §4.3);
 //! - `passive` and `cancelable` per signal (§11.5);
 //! - `native_state` per kind and `a11y` (role, name sources, whether a name is required);
 //! - `capabilities`: the op shapes presto accepts (`ids templates native_transitions native_motion
 //!   css_precompiled`).
 //!
-//! `tests/spec.rs` fails when `presto.json` or `ids.txt` is stale (`SVELTERS_UPDATE=1 cargo test -p
-//! svelters-presto --test spec` rewrites them).
+//! `tests/spec.rs` fails when `presto.json` is stale (`SVELTERS_UPDATE=1 cargo test -p
+//! svelters-presto --test spec` rewrites it).
 
-use crate::ids::{Ids, Key, What, fingerprint, own_fingerprints, type_text};
-use crate::shim::{DefaultValue, KindRegistry, KindSpec, PropSpec, SignalSpec, ValueType};
+use crate::kinds::{self, COMMON_ALIASES, Kinds};
+use crate::surface::{DefaultValue, KindSpec, PropSpec, SignalSpec, ValueType};
 use serde_json::{Map, Value as J, json};
 
 /// Where the checked-in spec lives, relative to the workspace root.
@@ -46,12 +49,32 @@ fn spec_type(ty: ValueType) -> &'static str {
     }
 }
 
-fn id_fields(m: &mut Map<String, J>, ids: &Ids, key: Key, fp: u64) {
-    m.insert("id".into(), json!(ids.get(&key)));
-    m.insert("fingerprint".into(), json!(format!("{fp:016x}")));
+fn id_fields(m: &mut Map<String, J>, id: u32) {
+    m.insert("id".into(), json!(id));
+    m.insert("fingerprint".into(), json!(format!("{id:08x}")));
 }
 
-fn prop_json(ids: &Ids, k: &KindSpec, p: &PropSpec) -> J {
+/// FNV-1a, 64 bits, over the spec's ids in order.
+fn spec_hash(ids: &[u32]) -> u64 {
+    let mut h: u64 = 0xcbf2_9ce4_8422_2325;
+    for id in ids {
+        for b in id.to_le_bytes() {
+            h ^= b as u64;
+            h = h.wrapping_mul(0x0000_0100_0000_01b3);
+        }
+    }
+    h
+}
+
+/// presto-core's name of a surface prop declared on `k`.
+fn native_name(k: &KindSpec, p: &PropSpec) -> &'static str {
+    match COMMON_ALIASES.iter().find(|a| a.0 == p.name) {
+        Some(a) if k.name == "Widget" => a.1,
+        _ => p.name,
+    }
+}
+
+fn prop_json(k: &KindSpec, p: &PropSpec) -> J {
     let fact = format!("presto:{}:{}", k.name, p.name);
     let observe = if p.native {
         // the kind announces each change it makes (`Dispatched::changed`)
@@ -65,9 +88,9 @@ fn prop_json(ids: &Ids, k: &KindSpec, p: &PropSpec) -> J {
     m.insert("construct_only".into(), json!(false));
     m.insert("default".into(), default_json(p.default, p.ty));
     m.insert("doc".into(), json!(p.doc));
-    id_fields(&mut m, ids, Key::member(What::Prop, k.name, p.name), fingerprint(k.name, p.name, &type_text(p.ty)));
+    id_fields(&mut m, kinds::prop_wire(k, p));
     m.insert("js".into(), json!(p.name));
-    m.insert("native".into(), json!(p.name));
+    m.insert("native".into(), json!(native_name(k, p)));
     m.insert("nullable".into(), json!(p.nullable));
     m.insert("observe".into(), observe);
     m.insert("readable".into(), json!(true));
@@ -85,16 +108,15 @@ fn prop_json(ids: &Ids, k: &KindSpec, p: &PropSpec) -> J {
     J::Object(m)
 }
 
-fn signal_json(ids: &Ids, k: &KindSpec, s: &SignalSpec) -> J {
+fn signal_json(k: &KindSpec, s: &SignalSpec) -> J {
     let args: Vec<J> = s.args.iter().map(|(n, t)| json!({"name": n, "type": spec_type(*t)})).collect();
-    let sig: Vec<String> = s.args.iter().map(|(n, t)| format!("{n}:{}", type_text(*t))).collect();
     let mut m = Map::new();
     m.insert("args".into(), J::Array(args));
     m.insert("cancelable".into(), json!(s.cancelable));
     m.insert("disconnect_on_drop".into(), json!(true));
     m.insert("doc".into(), json!(s.doc));
     m.insert("handler_result".into(), json!(if s.sync { "bool_stop" } else { "none" }));
-    id_fields(&mut m, ids, Key::member(What::Signal, k.name, s.name), fingerprint(k.name, s.name, &sig.join(",")));
+    id_fields(&mut m, kinds::signal_wire(k, s));
     m.insert("js_event".into(), json!(s.name));
     m.insert("name".into(), json!(s.name));
     m.insert("passive".into(), json!(s.passive));
@@ -153,10 +175,11 @@ fn children_json(k: &'static KindSpec) -> J {
     json!({"default_slot": owner.slots[0].name, "policy": "ordered", "slots": slots})
 }
 
-fn kind_json(ids: &Ids, k: &'static KindSpec) -> J {
+fn kind_json(km: &kinds::KindMap) -> J {
+    let k = km.surface;
     let chain: Vec<&str> = k.chain().map(|c| c.name).collect();
-    let props: Map<String, J> = k.props.iter().map(|p| (p.name.to_string(), prop_json(ids, k, p))).collect();
-    let signals: Map<String, J> = k.signals.iter().map(|s| (s.name.to_string(), signal_json(ids, k, s))).collect();
+    let props: Map<String, J> = k.props.iter().map(|p| (p.name.to_string(), prop_json(k, p))).collect();
+    let signals: Map<String, J> = k.signals.iter().map(|s| (s.name.to_string(), signal_json(k, s))).collect();
     let methods: Map<String, J> = k
         .methods
         .iter()
@@ -167,13 +190,17 @@ fn kind_json(ids: &Ids, k: &'static KindSpec) -> J {
                 Some(t) => json!({"nullable": false, "type": spec_type(t)}),
             };
             let mut j = json!({"dispatch": "generated", "doc": m.doc, "native": m.name, "params": params, "returns": returns});
-            let fp = own_fingerprints(k).into_iter().find(|(key, _)| key.what == What::Method && key.member.as_deref() == Some(m.name)).map_or(0, |(_, fp)| fp);
             let o = j.as_object_mut().expect("method object");
-            id_fields(o, ids, Key::member(What::Method, k.name, m.name), fp);
+            id_fields(o, kinds::method_wire(k, m));
             (m.name.to_string(), j)
         })
         .collect();
-    let slot_ids: Map<String, J> = k.slots.iter().map(|s| (s.name.to_string(), json!(ids.get(&Key::member(What::Slot, k.name, s.name))))).collect();
+    let slot_ids: Map<String, J> = k.slots.iter().map(|s| (s.name.to_string(), json!(kinds::slot_wire(k, s)))).collect();
+    let widget = match (km.core, km.hosted) {
+        (None, _) => J::Null,
+        (Some(_), true) => json!("presto-widgets"),
+        (Some(_), false) => json!("placeholder"),
+    };
     json!({
         "a11y": {"name_from": k.a11y.name_from, "name_required": k.a11y.name_required, "role": if k.a11y.role.is_empty() { J::Null } else { json!(k.a11y.role) }},
         "abstract": k.tag.is_none(),
@@ -181,8 +208,8 @@ fn kind_json(ids: &Ids, k: &'static KindSpec) -> J {
         "chain": chain,
         "children": children_json(k),
         "doc": k.doc,
-        "fingerprint": format!("{:016x}", fingerprint(k.name, "", k.tag.unwrap_or(""))),
-        "id": ids.get(&Key::kind(k.name)),
+        "fingerprint": format!("{:08x}", km.wire),
+        "id": km.wire,
         "interface": false,
         "lifetime": if k.toplevel { "toplevel" } else { "owned" },
         "methods": methods,
@@ -190,10 +217,11 @@ fn kind_json(ids: &Ids, k: &'static KindSpec) -> J {
         "native_state": k.native_state,
         "present": if k.toplevel { json!("present") } else { J::Null },
         "props": props,
-        "provenance": {"kind": "crates/svelters-presto/src/shim/tier0.rs"},
+        "provenance": {"kind": "crates/svelters-presto/src/surface/tier0.rs"},
         "signals": signals,
         "slot_ids": slot_ids,
         "text_content": k.text_content,
+        "widget": widget,
     })
 }
 
@@ -211,9 +239,9 @@ fn range_json(name: &str) -> Option<J> {
 
 /// The style table: the kind props that read as CSS are setters (so `<style>` rules can use the CSS
 /// names, as on egui), and the engine's own properties are `via: css` with their change class.
-fn style_json(registry: &KindRegistry) -> J {
+fn style_json(all: &[&'static KindSpec]) -> J {
     let mut props: Map<String, J> = Map::new();
-    for (_, k) in registry.kinds() {
+    for &k in all {
         for p in k.props.iter().filter(|p| STYLE_SETTERS.contains(&p.name) && crate::css::ENGINE_PROPS.iter().all(|e| e.0 != p.name)) {
             // only props that read as CSS: lengths, numbers, keywords
             let value = match p.ty {
@@ -225,7 +253,7 @@ fn style_json(registry: &KindRegistry) -> J {
                 ValueType::I64 => "int",
                 _ => continue,
             };
-            let tags: Vec<&str> = registry.kinds().filter(|(_, kk)| kk.tag.is_some() && kk.chain().any(|c| std::ptr::eq(c, k))).map(|(_, kk)| kk.tag.unwrap()).collect();
+            let tags: Vec<&str> = all.iter().filter(|kk| kk.tag.is_some() && kk.chain().any(|c| std::ptr::eq(c, k))).map(|kk| kk.tag.unwrap()).collect();
             let e = props.entry(p.name.to_string()).or_insert_with(|| {
                 let mut m = Map::new();
                 m.insert("change".into(), json!(p.change.name()));
@@ -307,37 +335,50 @@ const STYLE_SETTERS: &[&str] = &[
     "width",
 ];
 
-/// The whole spec for `registry`, with ids from `ids`.
-pub fn semantics(registry: &KindRegistry, ids: &Ids) -> J {
+/// Every id the spec publishes, in kind order.
+fn all_ids(k: &KindSpec) -> Vec<u32> {
+    let mut v = vec![kinds::kind_wire(k)];
+    v.extend(k.props.iter().map(|p| kinds::prop_wire(k, p)));
+    v.extend(k.signals.iter().map(|s| kinds::signal_wire(k, s)));
+    v.extend(k.methods.iter().map(|m| kinds::method_wire(k, m)));
+    v.extend(k.slots.iter().map(|s| kinds::slot_wire(k, s)));
+    v
+}
+
+/// The whole spec for `all`.
+pub fn semantics(all: &Kinds) -> J {
     let mut kinds = Map::new();
     let mut tags = Map::new();
-    for (_, k) in registry.kinds() {
-        kinds.insert(k.name.to_string(), kind_json(ids, k));
+    let mut ids = Vec::new();
+    for km in all.iter() {
+        let k = km.surface;
+        kinds.insert(k.name.to_string(), kind_json(km));
+        ids.extend(all_ids(k));
         if let Some(t) = k.tag {
             tags.insert(t.to_string(), json!(k.name));
         }
     }
+    let surface: Vec<&'static KindSpec> = all.surface().collect();
     json!({
         "backend": "presto",
         "bind_sources": [{"doc": "A writable field of a Rust store (#[svelters::store]) bound to a native prop: linked in the host, both ways, with no JS per change.", "export": "*", "lowering": "link", "module": "svelters:app/*"}],
         "capabilities": CAPABILITIES,
         "event_aliases": {},
         "framework": "presto (svelters-presto; retained tree, taffy layout, wgpu compositor)",
-        "ids": {"spec_hash": format!("{:016x}", ids.spec_hash(registry)), "table": crate::ids::TABLE_PATH},
+        "ids": {"scheme": "presto-core FNV-1a-32 of (declaring kind, member, type)", "spec_hash": format!("{:016x}", spec_hash(&ids))},
         "inline_text": {"kind": "span", "prop": "text"},
         "kinds": kinds,
         "method_lookup": "annotated",
         "schema": "svelters-semantics/v0",
-        "source": {"generator": "crates/svelters-presto/src/spec.rs", "kinds": "crates/svelters-presto/src/shim/tier0.rs"},
-        "style": style_json(registry),
+        "source": {"generator": "crates/svelters-presto/src/spec.rs", "kinds": "crates/svelters-presto/src/surface/tier0.rs", "widgets": "crates/presto-widgets"},
+        "style": style_json(&surface),
         "tags": tags,
     })
 }
 
 /// The checked-in text for the built-in registry: pretty JSON with a trailing newline.
 pub fn builtin_text() -> String {
-    let reg = crate::builtin_registry();
-    let mut s = serde_json::to_string_pretty(&semantics(&reg, Ids::builtin())).expect("spec serializes");
+    let mut s = serde_json::to_string_pretty(&semantics(&crate::builtin_kinds())).expect("spec serializes");
     s.push('\n');
     s
 }

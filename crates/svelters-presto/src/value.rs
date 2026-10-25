@@ -1,8 +1,11 @@
-//! Conversions between the ABI's [`svelters_abi::Value`] and presto's prop [`Value`], typed by the
-//! spec: the host sends what JS had (a number may arrive as `I64` or `F64`, an enum as its name), the
-//! tree stores exactly the prop's type.
+//! Conversions between the ABI's [`svelters_abi::Value`], the surface [`Value`] (what JS sees, typed by
+//! the surface spec) and presto-core's [`core::Value`] (what the tree stores): the host sends what JS
+//! had (a number may arrive as `I64` or `F64`, an enum as its name), the tree stores exactly the
+//! prop's type, and `null` is no value (a reset).
 
-use crate::shim::{Value, ValueType};
+use crate::surface::{SignalSpec, Value, ValueType};
+use presto_core as core;
+use std::sync::Arc;
 use presto_base::color::Color;
 use svelters_abi::{SVL_BOOL, SVL_F64, SVL_I64, SVL_LIST, SVL_RECORD, SVL_STR, Value as Abi};
 
@@ -68,6 +71,71 @@ pub fn to_abi(v: &Value, ty: ValueType) -> Abi {
         }
         Value::Record(fields) => Abi::Map(fields.iter().map(|(k, v)| (k.clone(), to_abi(v, ValueType::Record))).collect()),
     }
+}
+
+/// `v` for the tree; `None` for `null` (the prop is reset to its default).
+pub fn to_core(v: Value) -> Option<core::Value> {
+    Some(match v {
+        Value::Null => return None,
+        Value::Bool(b) => core::Value::Bool(b),
+        Value::I64(i) => core::Value::I64(i),
+        Value::F64(f) => core::Value::F64(f),
+        Value::Str(s) => core::Value::Str(s.into()),
+        Value::Enum(i) => core::Value::Enum(i as u32),
+        Value::Color(c) => core::Value::Color(c),
+        Value::List(items) => core::Value::List(items.into_iter().filter_map(to_core).collect::<Vec<_>>().into()),
+        Value::Record(fields) => core::Value::Record(fields.into_iter().filter_map(|(k, v)| Some((Arc::from(k), to_core(v)?))).collect::<Vec<_>>().into()),
+    })
+}
+
+/// A tree value as a surface value.
+pub fn from_core(v: &core::Value) -> Value {
+    match v {
+        core::Value::Bool(b) => Value::Bool(*b),
+        core::Value::I64(i) => Value::I64(*i),
+        core::Value::F64(f) => Value::F64(*f),
+        core::Value::Str(s) => Value::Str(s.to_string()),
+        core::Value::Enum(i) => Value::Enum(*i as u16),
+        core::Value::Color(c) => Value::Color(*c),
+        core::Value::List(items) => Value::List(items.iter().map(from_core).collect()),
+        core::Value::Record(fields) => Value::Record(fields.iter().map(|(k, v)| (k.to_string(), from_core(v))).collect()),
+    }
+}
+
+/// A signal's surface arguments as presto-core's one argument (none, the one value, or a record by
+/// the spec's argument names), as presto-widgets' host bridge emits them.
+pub fn signal_arg(s: &SignalSpec, args: Vec<Value>) -> Option<core::Value> {
+    match args.len() {
+        0 => None,
+        1 if s.args.len() <= 1 => to_core(args.into_iter().next().expect("one")),
+        _ => to_core(Value::Record(s.args.iter().zip(args).map(|((n, _), v)| (n.to_string(), v)).collect())),
+    }
+}
+
+/// The DOM `eventPhase` numbers.
+pub const PHASE_CAPTURE: i64 = 1;
+pub const PHASE_TARGET: i64 = 2;
+pub const PHASE_BUBBLE: i64 = 3;
+
+/// A core event argument as the surface signal's argument list for JS: a record's fields by the
+/// spec's names, `target` and `phase` from the delivery (EV1), a single value as the one argument.
+pub fn signal_args(s: &SignalSpec, arg: Option<&core::Value>, target: i64, phase: i64) -> Vec<Abi> {
+    s.args
+        .iter()
+        .enumerate()
+        .map(|(i, (name, ty))| match *name {
+            "target" if s.bubbles => Abi::I64(target),
+            "phase" if s.bubbles => Abi::I64(phase),
+            _ => {
+                let v = match arg {
+                    Some(r @ core::Value::Record(_)) => r.field(name).map(from_core),
+                    Some(v) if i == 0 => Some(from_core(v)),
+                    _ => None,
+                };
+                v.map_or(Abi::Null, |v| to_abi(&v, *ty))
+            }
+        })
+        .collect()
 }
 
 /// The ABI value tag a prop of type `ty` reads back as (`describe`).

@@ -13,7 +13,7 @@ mod common;
 use common::Rig;
 use std::collections::{HashMap, HashSet};
 use svelters_abi::*;
-use svelters_presto::shim::Value as PValue;
+use svelters_presto::surface::Value as PValue;
 
 fn value_for(rig: &Rig, h: svl_handle, prop: &str, j: &serde_json::Value) -> Value {
     let id = rig.prop_id(h, prop);
@@ -134,11 +134,12 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                     })
                     .collect();
                 // a kind that emits its new value has written it first (a text field's `changed`)
-                let reg = rig.backend.registry().clone();
-                let kind = rig.backend.with_doc(|d| d.kind(rig.backend.node(h).unwrap())).unwrap();
-                if let Some((_, spec)) = reg.signal(kind, sig) {
-                    for ((arg, _), v) in spec.args.iter().zip(&want) {
-                        if reg.prop(kind, arg).is_some_and(|(_, p)| p.native) {
+                let kinds = rig.backend.kinds().clone();
+                let kind = rig.backend.with_doc(|d| d.kind_of(rig.backend.node(h).unwrap())).unwrap();
+                let km = kinds.by_core(kind).unwrap();
+                if let Some(sm) = km.signal_named(sig) {
+                    for ((arg, _), v) in sm.spec.args.iter().zip(&want) {
+                        if km.prop_named(arg).is_some_and(|p| p.spec.native) {
                             rig.native_set(h, arg, pvalue(v));
                         }
                     }

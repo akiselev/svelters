@@ -6,29 +6,33 @@
 //! | [`deliver`] | event-time delivery of what an input produced in the tree (architecture §11.1) |
 //! | [`template`] | native templates: `instantiate` and `destroy_range` (compiler-and-js §3.2) |
 //! | [`style`] | the `style` op: CSS engine inputs and the TR1 visual channels |
-//! | [`ids`], [`wire`] | stable wire ids with fingerprints, and the registry seen through them |
+//! | [`kinds`] | the JS-facing kinds on presto-core's (presto-widgets' or synthesized), with the wire ids |
 //! | [`spec`] | the generated semantic spec `metadata/semantics/presto.json` |
 //! | [`embed`] | many Svelte roots in one host: roots, slots, faults, settle (ARCH-EMBED, minus egui) |
-//! | [`value`] | ABI values ↔ presto prop values |
-//! | [`shim`] | stand-ins for presto-core and presto-widgets API not merged yet |
+//! | [`value`] | ABI values ↔ surface values ↔ presto-core values |
+//! | [`surface`] | the JS-facing kind specs presto-core's `KindSpec` does not carry yet (Q3) |
 
 pub mod backend;
 pub mod css;
 pub mod deliver;
 pub mod embed;
-pub mod ids;
-pub mod shim;
+pub mod kinds;
 pub mod spec;
 pub mod style;
+pub mod surface;
 pub mod template;
 pub mod value;
-pub mod wire;
 
 pub use backend::{Driver, PrestoBackend, SVL_LISTEN_PASSIVE, WakeState};
-pub use deliver::Delivered;
+pub use deliver::{Delivered, Output};
+pub use kinds::Kinds;
 pub use template::{Template, TemplateNode};
 
-/// The built-in kinds: presto-core's base kinds and presto-widgets' (shim: the Tier 0 table).
-pub fn builtin_registry() -> shim::KindRegistry {
-    shim::tier0::registry()
+/// The built-in kinds: presto-widgets' where it has them, synthesized from the Tier 0 surface table
+/// otherwise. Built once per thread (the registry is shared by every document on it).
+pub fn builtin_kinds() -> std::sync::Arc<Kinds> {
+    thread_local! {
+        static KINDS: std::sync::Arc<Kinds> = std::sync::Arc::new(Kinds::builtin().expect("the built-in kinds register"));
+    }
+    KINDS.with(|k| k.clone())
 }

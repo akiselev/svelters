@@ -37,13 +37,8 @@ fn instantiate_builds_the_same_tree_as_the_ops() {
     let kids: Vec<svl_handle> = r.backend.with_doc(|d| d.children(n).iter().map(|&k| r.backend.handle(k).unwrap()).collect());
     assert_eq!(kids, [label, button]);
     let bn = r.backend.node(button).unwrap();
-    let reg = r.backend.registry().clone();
-    let listening = r.backend.with_doc(|d| {
-        let (s, _) = reg.signal(d.kind(bn).unwrap(), "clicked").unwrap();
-        d.listening(bn, s).is_some()
-    });
-    assert!(listening);
-    assert_eq!(r.backend.with_doc(|d| d.style(bn).unwrap().classes.clone()), ["svelte-1"]);
+    assert!(r.backend.listening(button, "clicked"));
+    assert_eq!(r.backend.style_input(bn).unwrap().classes.iter().map(|c| &**c).collect::<Vec<_>>(), ["svelte-1"]);
     // the root is the caller's to insert
     assert_eq!(r.backend.with_doc(|d| d.parent(n)), None);
     // a second instance follows the first

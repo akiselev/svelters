@@ -5125,7 +5125,10 @@ name = "svelters-presto"
 version = "0.0.0"
 dependencies = [
  "presto-base",
+ "presto-core",
+ "presto-widgets",
  "serde_json",
+ "smallvec",
  "svelters-abi",
  "svelters-host",
  "svelters-style",

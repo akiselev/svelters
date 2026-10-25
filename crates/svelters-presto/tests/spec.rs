@@ -1,9 +1,7 @@
-//! `metadata/semantics/presto.json` and the wire id table `crates/svelters-presto/ids.txt` match the
-//! kind registry. `SVELTERS_UPDATE=1 cargo test -p svelters-presto --test spec` appends missing ids
-//! and rewrites the spec.
+//! `metadata/semantics/presto.json` matches the kinds (`SVELTERS_UPDATE=1 cargo test -p
+//! svelters-presto --test spec` rewrites it), and its ids are presto-core's hashes.
 
 use std::path::PathBuf;
-use svelters_presto::ids::{Ids, TABLE, TABLE_PATH};
 use svelters_presto::spec::{SPEC_PATH, builtin_text};
 
 fn root() -> PathBuf {
@@ -12,21 +10,6 @@ fn root() -> PathBuf {
 
 fn update() -> bool {
     std::env::var_os("SVELTERS_UPDATE").is_some()
-}
-
-#[test]
-fn id_table_is_complete() {
-    let reg = svelters_presto::builtin_registry();
-    let ids = Ids::parse(TABLE).unwrap();
-    let missing = ids.missing(&reg);
-    if missing.is_empty() {
-        return;
-    }
-    if update() {
-        std::fs::write(root().join(TABLE_PATH), ids.appended(TABLE, &missing)).unwrap();
-        return;
-    }
-    panic!("{TABLE_PATH} lacks {} ids (first: {:?}); run with SVELTERS_UPDATE=1", missing.len(), missing[0]);
 }
 
 #[test]
@@ -46,7 +29,7 @@ fn spec_is_current() {
 
 #[test]
 fn ids_are_unique_and_every_member_has_one() {
-    let reg = svelters_presto::builtin_registry();
+    let kinds = svelters_presto::builtin_kinds();
     let spec: serde_json::Value = serde_json::from_str(&builtin_text()).unwrap();
     let mut seen = std::collections::HashSet::new();
     for (name, k) in spec["kinds"].as_object().unwrap() {
@@ -56,24 +39,32 @@ fn ids_are_unique_and_every_member_has_one() {
             for (m, j) in k[section].as_object().unwrap() {
                 let id = j["id"].as_u64().unwrap_or_else(|| panic!("{name}.{m} has no id"));
                 assert!(seen.insert(id), "{name}.{m}: id {id} used twice");
-                assert_eq!(j["fingerprint"].as_str().map(str::len), Some(16), "{name}.{m}");
+                assert_eq!(j["fingerprint"].as_str(), Some(format!("{id:08x}").as_str()), "{name}.{m}");
             }
         }
     }
-    assert!(reg.kinds().count() > 20);
+    assert!(kinds.iter().count() > 20);
     assert_eq!(spec["ids"]["spec_hash"].as_str().map(str::len), Some(16));
 }
 
 #[test]
-fn a_new_row_moves_no_id() {
-    let ids = Ids::parse(TABLE).unwrap();
-    let extra = [svelters_presto::ids::Key::member(svelters_presto::ids::What::Prop, "Button", "zz-new")];
-    let text = ids.appended(TABLE, &extra);
-    let grown = Ids::parse(&text).unwrap();
-    assert_eq!(grown.len(), ids.len() + 1);
-    for (id, key) in (1..=ids.len() as u32).filter_map(|i| ids.key(i).map(|k| (i, k))) {
-        assert_eq!(grown.get(key), Some(id));
-    }
+fn ids_are_presto_core_hashes() {
+    use presto_core::{KindId, PropId, SignalId, common};
+    let spec: serde_json::Value = serde_json::from_str(&builtin_text()).unwrap();
+    let button = &spec["kinds"]["Button"];
+    assert_eq!(button["id"].as_u64(), Some(KindId::of("button").0 as u64));
+    // a kind's own native member: its core id
+    assert_eq!(button["props"]["text"]["id"].as_u64(), Some(PropId::of("button", "text", "string").0 as u64));
+    assert_eq!(button["signals"]["clicked"]["id"].as_u64(), Some(SignalId::of("button", "clicked", "void").0 as u64));
+    // `Widget` members hash under core's common pseudo-kind; same-named ones are core's
+    let widget = &spec["kinds"]["Widget"];
+    assert_eq!(widget["props"]["autofocus"]["id"].as_u64(), Some(common::AUTOFOCUS.0 as u64));
+    assert_eq!(widget["signals"]["click"]["id"].as_u64(), Some(common::CLICK.0 as u64));
+    // Q2: egui's names, core's native names
+    assert_eq!(widget["props"]["enabled"]["native"], "disabled");
+    assert_eq!(widget["props"]["accessible-name"]["native"], "aria-label");
+    assert_eq!(button["widget"], "presto-widgets");
+    assert_eq!(spec["kinds"]["Label"]["widget"], "placeholder");
 }
 
 #[test]

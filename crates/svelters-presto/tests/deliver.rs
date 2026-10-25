@@ -5,7 +5,7 @@ mod common;
 
 use common::Rig;
 use svelters_abi::*;
-use svelters_presto::shim::Value as PValue;
+use svelters_presto::surface::Value as PValue;
 
 #[test]
 fn unlistened_events_and_unobserved_changes_stay_native() {

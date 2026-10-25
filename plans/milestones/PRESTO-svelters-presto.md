@@ -5,7 +5,7 @@ Lane SVELTERS-PRESTO of batch presto-b2 (`plans/cloud/presto-b2/LANE-svelters-pr
 context limit (see "Hand-off" below); the branch builds (`cargo check -p svelters-presto --all-targets`)
 after merging `ci/presto-base` at 7a947d45 (CORE, TEXT, RENDER, COMPOSITOR, FRAME-ANIM skeletons).
 
-## What landed (`crates/svelters-presto/**`)
+## What landed (`crates/svelters-presto/**`, session 1; `ids`/`wire`/`shim` superseded in session 2 below)
 
 | Module | What |
 |---|---|
@@ -41,38 +41,61 @@ presto: ops succeed and read back; `event`/`changed` lines produced natively thr
 | `tools/metadata/style/gen_props.py` + `packages/style/src/props.generated.js`, `crates/svelters-style/src/tables.generated.rs` | presto in `TOOLKITS` (regenerated: a `PRESTO` table in `tables::ALL`). Rerun whenever presto.json's style section changes. |
 | `tools/metadata/style/gen_utilities.py` | `--report` lists the utility rows presto's style table cannot apply (none today); outputs unchanged. |
 
-## Shim (replaced at consolidation)
+## Session 2 (2026-10-25): the port to the real presto-core
 
-All in `src/shim/`; each item names the API it stands in for.
-- `shim::{KindId, PropId, SignalId, MethodId, SlotId, Value, ValueType, DefaultValue, KindSpec, PropSpec, SignalSpec, MethodSpec, SlotSpec, A11ySpec, KindRegistry, ListenFlags, StyleInput, TreeError, PropError, JsEvent, Dispatched, ColorScheme, Visual}`: presto-core's vocabulary as the b1 brief sketched it.
-- `shim::Document`: the tree half of `presto_core::Document` (create/insert/remove/destroy/set_prop/get_prop/listen/set_style/transaction, sheets, colour scheme, visual channels) plus `emit`/`native_set`/`take_dispatched` for native output. No style, layout, recording, hit testing, dispatch or frame.
-- `shim::tier0`: the Tier 0 kinds' specs (Widget base, Window, Box, Frame, Label with runs, Button, ToggleButton, Checkbox, RadioButton, Switch, Slider, ProgressBar, Spinner, Separator, Icon, Image, Hyperlink, Stack, Sides, Grid, TextEdit, Run/Span/Bold/Italic/Code/Anchor), transcribed once from `metadata/semantics/egui.json` so the JS-facing surface is egui's; presto change classes, passive/cancelable and `name_required` added. Stands in for `presto_widgets::registry()`.
+Session `session_012kp44HgxNR751yz6GvNAH5`, after merging `ci/presto-base` at ac7cc8c4 (real presto-core,
+presto-text, the presto-widgets substrate). Coordinator answers applied: Q1 (presto-core's FNV-1a ids on the
+wire, `ids.txt` dropped), Q2 (egui's JS names onto core's DOM names), Q3 (keep the side table until CORE's
+`KindSpec` grows), Q4 (pending: CORE adds `Document::attach_window`).
+
+| Module | What changed |
+|---|---|
+| `kinds.rs` (new) | `Kinds`: the JS-facing kinds on one `presto_core::KindRegistry`. presto-widgets' kinds are registered through `presto_widgets::host::register` (`button` today); every other concrete Tier 0 kind gets a core kind synthesized from its surface spec (`Placeholder`: real props, signals, slots and role, draws nothing) until its widget lands. Per member a map: props `Native(PropId)` / `Inverted(PropId)` (`enabled`↔`disabled`, `visible`↔`hidden`) / `Side` (a surface prop the presto-widgets kind does not take yet, kept by the backend); signals the kind's, else core's common one (`click`, `keydown`), else none (never fires: `drag-*`); slots (first surface slot = core's default). Wire ids: presto-core's hash of (declaring kind, member, type), the declaring kind being the tag, `*` for `Widget` (core's common pseudo-kind) and the lowercased name for `Run`; so own native members have their core id, inherited ones one id on every kind. |
+| `surface/` (was `shim/`) | Only the Q3 side table now: the surface `KindSpec` (docs, methods, named signal args, nullable, a11y name sources, base chain), `Value`/`ValueType`/`DefaultValue`, `tier0`, plus `ColorScheme`/`Visual` (inputs core does not take yet). The shim `Document`, registry, ids, errors and events are gone. |
+| `backend.rs` | On `presto_core::Document` (`Document::new(registry, text)`; `NoText` until the runner installs presto-text). `free` detaches JS-known children before `destroy` (core destroys subtrees; the ABI leaves children to the host). Writes during delivery run in `js_transaction(seen)` (§4.5; `Superseded` is not an error). `request-focus` calls `Document::focus` when the node is in a window (none are until Q4). Side stores: `Side` props, per-node `StyleInput`, visual channels, colour scheme, sheets by name (`add_sheet`/`remove_sheet`). |
+| `deliver.rs` | `Output` (events + native changes + revision) from `Document::dispatch`, `take_events` and `drain_changes` (`Change::Prop { native: true }`); `dispatch(&InputEnvelope)`, `pump`, `queue`, `target_event`. Events go along presto-core's paths (capture/target/bubble, `target`/`phase` args, record fields by the surface arg names); `call_sync` answers egui's bits (1 stop, 2 prevent, 4 immediate) or `true`. |
+| `value.rs` | `to_core`/`from_core`, `signal_arg` (surface args → core's one arg), `signal_args` (core arg → JS args). |
+| `spec.rs` | ids/fingerprints from the hashes (`fingerprint` = the id in hex), `ids.scheme`, `native` = core's name (Q2), `widget` per kind (`presto-widgets` / `placeholder`). Style section unchanged, so `gen_props.py` was not rerun. |
+| `ids.rs`, `wire.rs`, `ids.txt` | Deleted (Q1). |
+
+Regenerated `metadata/semantics/presto.json` (`SVELTERS_UPDATE=1 cargo test -p svelters-presto --test spec`, the
+only run: 4 passed). Tests updated (written, not run): `tests/common` queues native output as presto-core
+reports it (`target_event`, a set plus a reported change), `tests/spec.rs` checks the hash ids and Q2 names
+instead of the table, `kinds.rs` has a unit test.
 
 ## Not done
 
-- **Port to the real presto-core** (merged into `ci/presto-base` after this lane started). See Q1–Q4; the hand-off below.
-- **`svelters-presto-run`** (runner binary through the `presto` facade): lane APP-TEST's `presto::App` was not merged when this lane ended. The `Driver` trait is the seam it implements.
-- `bounds` (needs presto-core layout), `request-focus` and `scroll-into-view` (focus and scroll models): `call` returns "not implemented on presto yet"; `supports_bounds` is false.
-- Native animations (`SVL_STYLE_ANIMATE` → presto-motion, lane MOTION-CSS): answers 0, the runtime plays them.
-- `host.instantiate`/`destroy_range` ABI wiring and the table's wire form (lanes RUNTIME and COMPILER): the backend side is `PrestoBackend::instantiate(&Template)`; the template registry is not held by the backend yet.
-- Event delivery uses `post_event` + `checkpoint`; lane RUNTIME's "dispatch and drain" entry replaces the closing checkpoint.
-- `presto.d.ts` typings, spec fragments for provider kinds, DZ0 overrides, CV1 panes.
+- **`svelters-presto-run`**: `crates/presto` and `crates/presto-test` are still one-line stubs in `ci/presto-base`
+  (APP-TEST not merged). The `Driver` trait is the seam; `PrestoBackend::with_text` takes presto-text's system.
+- **Windows (Q4)**: `present` only records the window; once CORE's `attach_window` lands, `present` asks the
+  driver for an OS window and attaches the JS-created node as its root (then focus, layout, `bounds` work).
+- **Q3**: when CORE's `KindSpec` has docs, methods, named args, nullable and a11y name sources, `surface/tier0.rs`
+  goes and `spec.rs` reads the registry; presto-widgets' remaining Tier 0 kinds replace the placeholders as they
+  land (add each to `kinds::register_hosted`; members it lacks fall to `Side` automatically).
+- `scroll-into-view`, `bounds`, native animations (`SVL_STYLE_ANIMATE` answers 0), colour scheme and TR1 channels
+  into core, `host.instantiate` ABI wiring, `presto.d.ts`, provider kinds, CV1 panes: as before.
+- `oplog_replay.rs` still produces native lines through the backend (not presto-test's `Harness`, not landed).
 
 ## Questions for the coordinator (each with a recommendation)
 
-- **Q1 Wire ids.** presto-core made ids the FNV-1a-32 hash of (kind, member, type), with collisions rejected at registration; this lane made an append-only id table (`ids.txt`) per the compiler doc. *Recommendation:* presto uses presto-core's hash ids on the wire (presto.json publishes them as `id`, the hash doubles as the fingerprint), and `ids.txt`/`wire.rs` go at the port; a type change then changes the id, which the spec-hash check turns into a recompile. Egui keeps lane COMPILER's table.
-- **Q2 JS-facing names.** presto-core's `COMMON` props use DOM names (`disabled`, `hidden`, `aria-label`, `title`); egui's (and cadatomic's `.svelte` sources and the fixtures') are `enabled`, `visible`, `accessible-name`, `tooltip`. *Recommendation:* presto.json publishes egui's names as `js` with core's as `native` (svelters-presto resolves both), so sources stay backend-neutral and the fixtures replay unchanged; or CORE renames to egui's names. Either way one decision for all widget lanes.
-- **Q3 What presto.json needs that presto-core's `KindSpec` lacks:** docs, methods (`present`, `close`, `request-focus`, `scroll-into-view`), named signal arguments (bindings point at an argument by name; core has one `arg: Option<ValueType>`), prop `nullable` and `doc`, a11y name sources, a base-kind chain. *Recommendation:* CORE adds `doc`, `methods`, `SignalSpec.args: &[(&str, ValueType)]`, `PropSpec::{nullable, doc}`, `KindSpec.a11y_name_from`; until then svelters-presto keeps a side table keyed by kind name.
-- **Q4 Windows.** presto-core creates a window root natively (`create_window(WindowId, kind, …)`); JS creates a `window` node, fills it, then calls `present`. *Recommendation:* core adds `Document::attach_window(window, node, size, scale)`; on `present` svelters-presto asks its `Driver` to open the OS window and attaches the JS-created node as its root.
+- **Q5 Common props without a surface name.** core's `tabindex` and `focus-scope` have no egui counterpart, so
+  presto.json does not publish them. *Recommendation:* publish them on `Widget` under core's names (they are
+  DOM names already), once a cadatomic panel needs them.
+- **Q6 Hosted kinds' missing props.** presto-widgets' `button` lacks egui's `default`, `cancel` and the `Widget`
+  layout props (`width`, `margin`, …); they are `Side` (stored, not drawn). *Recommendation:* layout props become
+  CSS-only on presto (the engine already has them) and WIDGETS lanes add the behaviour props to their kinds.
 
 ## Hand-off (next session, in order)
 
-1. Read Q1–Q4 answers. Port `backend.rs`, `deliver.rs`, `style.rs`, `template.rs`, `embed/` from `shim::Document` to `presto_core::Document` (`Document::new(registry, text)`, `listen`/`unlisten`, `add_sheet`/`remove_sheet` returning `SheetId`, `drain_changes` for native changes, `presto_core::Dispatched`); keep the `shim` only for what core still lacks (Q3 side table, Tier 0 kinds until presto-widgets registers them).
-2. Regenerate presto.json from presto-core's and presto-widgets' registries (`spec.rs` reads `KindRegistry::iter()`), rerun `gen_props.py`, update `tests/spec.rs`.
-3. Write `src/bin/svelters-presto-run.rs` on lane APP-TEST's `presto::App` (implement `Driver`), and switch `tests/oplog_replay.rs`'s native lines to presto-test's `Harness` input once it can click and type.
-4. Wire `host.instantiate`/`destroy_range` when lane RUNTIME's ABI op lands; hold the `Templates` registry in the backend.
+1. When APP-TEST's `presto::App` is in `ci/presto-base`: `src/bin/svelters-presto-run.rs` implementing `Driver`
+   (open windows for `windows()`, feed input through `PrestoBackend::dispatch`, `pump` after frames, presto-text
+   via `with_text` and `presto_widgets::host::install_text_system`).
+2. When CORE's `attach_window` lands (Q4): wire `present`/`close` to it.
+3. As presto-widgets lands kinds: add them to `kinds::register_hosted`, regenerate presto.json.
+4. When CORE's `KindSpec` grows (Q3): drop `surface/tier0.rs`, generate from the registry.
 
 ## Not run
 
-Everything except `tests/spec.rs` (once, with `SVELTERS_UPDATE=1`). No CI result observed for the last push
-at hand-off; the coordinator's CI check is the gate.
+Session 1: everything except `tests/spec.rs` (once, with `SVELTERS_UPDATE=1`). Session 2: `cargo check -p
+svelters-presto --all-targets` and `tests/spec.rs` with `SVELTERS_UPDATE=1` only; every other test is written,
+not run. CI is the gate.
