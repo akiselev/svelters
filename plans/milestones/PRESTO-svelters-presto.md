@@ -101,7 +101,7 @@ listed.
 `hyperlink`, `stack`, `sides`, `grid`, `frame`, `box`) takes all its own surface props. Placeholders
 (`window`, `slider`, `text-edit`, runs) are not listed: they are not presto-widgets' yet.
 
-Decided (coordinator, 2026-10-25): Q5 publish core's `tabindex`/`focus-scope` on `Widget` later, not now; Q6
+Decided (coordinator, 2026-10-25): Q7 presto-widgets' label will take inline run children (WIDGETS-BASIC); the explicit error stays until then, then runs map onto it. `surface/tier0.rs` stays the JS-facing table. Q5 publish core's `tabindex`/`focus-scope` on `Widget` later, not now; Q6
 as above.
 
 ## Not done
