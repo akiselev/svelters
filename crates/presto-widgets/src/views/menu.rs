@@ -188,6 +188,8 @@ pub struct Menus {
     titles: Vec<(EntryIx, Rect)>,
     levels: Vec<LevelGeom>,
     metrics: Option<MenuMetrics>,
+    /// The element records the model was last built from ([`Menus::sync_elements`]).
+    pub source: Vec<Value>,
     /// Shortcuts are shown the macOS way (from the last event's policy).
     macos: bool,
     /// The row under the pointer and since when (submenu delays).
@@ -224,11 +226,36 @@ impl Menus {
 
     /// The bar's natural size: its titles in a row inside its padding.
     pub fn bar_size(&self, text: &mut dyn TextShaper, style: &Styles) -> Size {
+        // measure runs before prepare: size the bar from the children it is about to rebuild from
+        let built;
+        let model = if style.children != self.source.as_slice() {
+            built = MenuModel::from_elements(style.children);
+            &built
+        } else {
+            &self.model
+        };
         with_views(style, self.ua(), |v| {
             let mt = MenuMetrics::of(v);
-            let w: f32 = self.model.rows(MenuModel::ROOT).iter().map(|&t| paint::measure_text(text, &v.title, &self.model.get(t).label, None).w + mt.title_pad_x * 2.0).sum();
+            let w: f32 = model.rows(MenuModel::ROOT).iter().map(|&t| paint::measure_text(text, &v.title, &model.get(t).label, None).w + mt.title_pad_x * 2.0).sum();
             Size::new(w + mt.bar_pad * 2.0, mt.title_h + mt.bar_pad * 2.0)
         })
+    }
+
+    /// Rebuilds the model from the root's element children when they changed (`folds_elements`); open
+    /// menus close if the structure changed. Returns whether it rebuilt.
+    pub fn sync_elements(&mut self, els: &[Value]) -> bool {
+        if self.source.as_slice() == els {
+            return false;
+        }
+        self.source = els.to_vec();
+        let m = MenuModel::from_elements(els);
+        let same_shape = m.entries.len() == self.model.entries.len()
+            && m.entries.iter().zip(&self.model.entries).all(|(a, b)| a.kind == b.kind && a.children == b.children);
+        if !same_shape {
+            self.close(&mut Vec::new());
+        }
+        self.model = m;
+        true
     }
 
     /// Lays out the bar's titles and the open levels (after input, before recording).
@@ -841,6 +868,10 @@ impl Kind for MenuBar {
     fn parts() -> &'static [&'static str] {
         &["menu", "title", "item", "separator", "group-label"]
     }
+    /// Its `menu`/`menu-item`/`menu-separator` children are its model ([`Menus::sync_elements`]).
+    fn folds_elements() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &MENU_BAR_SPEC
     }
@@ -879,6 +910,7 @@ impl Kind for MenuBar {
         taffy::Size { width: s.w, height: s.h }
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.menus.sync_elements(cx.style.children);
         self.menus.prepare(cx.text, &cx.style);
     }
     fn record(&self, cx: &mut RecordCx) {
@@ -938,6 +970,10 @@ impl Kind for ContextMenu {
     fn parts() -> &'static [&'static str] {
         &["menu", "title", "item", "separator", "group-label"]
     }
+    /// Its `menu`/`menu-item`/`menu-separator` children are its model ([`Menus::sync_elements`]).
+    fn folds_elements() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &CONTEXT_MENU_SPEC
     }
@@ -968,6 +1004,7 @@ impl Kind for ContextMenu {
         self.props.get(prop)
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.menus.sync_elements(cx.style.children);
         self.menus.prepare(cx.text, &cx.style);
     }
     /// Out of flow: its levels are recorded into the overlay stack ([`Menus::record_levels`]).
@@ -1576,5 +1613,79 @@ mod tests {
         assert_eq!(items.len(), 3, "the hidden item is left out");
         assert_eq!(items[1], MenuNode::Item { id: String::new(), label: "View".into(), shortcut: String::new(), enabled: false, checked: None });
         assert_eq!(items[2], MenuNode::Item { id: "wrap".into(), label: "Word Wrap".into(), shortcut: String::new(), enabled: true, checked: Some(true) });
+    }
+
+    /// An element record as the host folds it in (`{tag, anchor, props, children}`).
+    fn el(tag: &str, anchor: &str, props: &[(&str, Value)], children: Vec<Value>) -> Value {
+        Value::Record(vec![
+            ("tag".into(), Value::str(tag)),
+            ("anchor".into(), Value::str(anchor)),
+            ("props".into(), Value::Record(props.iter().map(|(k, v)| ((*k).into(), v.clone())).collect())),
+            ("children".into(), Value::List(children)),
+        ])
+    }
+
+    fn file_menu_elements() -> Vec<Value> {
+        vec![
+            el(
+                "menu",
+                "",
+                &[("label", Value::str("&File"))],
+                vec![
+                    el("menu-item", "new", &[("label", Value::str("&New")), ("shortcut", Value::str("Primary+N"))], vec![]),
+                    el("menu-separator", "", &[], vec![]),
+                    el("menu-item", "", &[("label", Value::str("Auto Save")), ("checkable", Value::Bool(true)), ("checked", Value::Bool(true))], vec![]),
+                    el("menu-item", "hidden", &[("label", Value::str("Hidden")), ("visible", Value::Bool(false))], vec![]),
+                ],
+            ),
+            el("menu", "edit", &[("label", Value::str("&Edit")), ("enabled", Value::Bool(false))], vec![]),
+        ]
+    }
+
+    #[test]
+    fn the_bar_builds_its_model_from_its_element_children() {
+        let mut b = MenuBar::default();
+        let els = file_menu_elements();
+        assert!(b.menus.sync_elements(&els));
+        let m = &b.menus.model;
+        let titles = m.rows(MenuModel::ROOT);
+        assert_eq!(titles.len(), 2);
+        let file = m.get(titles[0]);
+        assert_eq!((file.id.as_str(), file.label.as_str(), file.mnemonic), ("0", "File", Some('f')), "no anchor: the position path");
+        assert_eq!(m.get(titles[1]).id, "edit");
+        assert!(!m.get(titles[1]).enabled);
+        let new = m.get(m.find("new").unwrap());
+        assert_eq!((new.label.as_str(), new.shortcut.as_str()), ("New", "Primary+N"));
+        let auto = m.get(m.find("0.2").unwrap());
+        assert_eq!((auto.check.clone(), auto.checked), (Check::Check, true));
+        assert!(!m.get(m.find("hidden").unwrap()).visible);
+        // the same children again: no rebuild; a changed prop: rebuilt with the same ids
+        assert!(!b.menus.sync_elements(&els));
+        let new_ix = b.menus.model.find("new");
+        let mut changed = file_menu_elements();
+        if let Value::Record(fs) = &mut changed[1] {
+            fs[2].1 = Value::Record(vec![("label".into(), Value::str("&Edit")), ("enabled".into(), Value::Bool(true))]);
+        }
+        assert!(b.menus.sync_elements(&changed));
+        let edit = b.menus.model.find("edit").unwrap();
+        assert!(b.menus.model.get(edit).enabled);
+        assert_eq!(b.menus.model.find("new"), new_ix, "ids and places survive a rebuild");
+    }
+
+    #[cfg(feature = "native-menu")]
+    #[test]
+    fn a_bar_built_from_elements_describes_the_native_bar() {
+        use presto_platform::MenuNode;
+        let mut b = MenuBar::default();
+        b.menus.sync_elements(&file_menu_elements());
+        let d = b.to_menu_desc();
+        assert_eq!(d.menus.len(), 2);
+        let MenuNode::Submenu { label, items, .. } = &d.menus[0] else { panic!("file is a submenu") };
+        assert_eq!(label, "File");
+        assert_eq!(items.len(), 3, "the hidden item is left out");
+        assert_eq!(items[0], MenuNode::Item { id: "new".into(), label: "New".into(), shortcut: "Primary+N".into(), enabled: true, checked: None });
+        assert_eq!(items[1], MenuNode::Separator);
+        assert_eq!(items[2], MenuNode::Item { id: "0.2".into(), label: "Auto Save".into(), shortcut: String::new(), enabled: true, checked: Some(true) });
+        assert!(matches!(&d.menus[1], MenuNode::Submenu { label, enabled: false, .. } if label == "Edit"));
     }
 }

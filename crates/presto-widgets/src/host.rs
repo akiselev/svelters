@@ -189,12 +189,13 @@ struct Traits {
     parts: &'static [&'static str],
     places_children: bool,
     folds_children: bool,
+    folds_elements: bool,
     methods: &'static [presto_core::MethodSpec],
 }
 
 impl Traits {
     fn of<W: w::Kind>() -> Traits {
-        Traits { prop_states: W::prop_states(), parts: W::parts(), places_children: W::places_children(), folds_children: W::folds_children(), methods: W::methods() }
+        Traits { prop_states: W::prop_states(), parts: W::parts(), places_children: W::places_children(), folds_children: W::folds_children() || W::folds_elements(), folds_elements: W::folds_elements(), methods: W::methods() }
     }
 }
 
@@ -358,11 +359,42 @@ pub fn install(doc: &mut presto_core::Document, text: presto_text::TextSystem, p
 }
 
 /// A folding node's run children as `runs` records; empty for other kinds.
-fn folded_of(node: NodeView<'_>, folds: bool) -> Vec<w::Value> {
+fn folded_of(node: NodeView<'_>, folds: bool, elements: bool) -> Vec<w::Value> {
     if !folds {
         return Vec::new();
     }
+    if elements {
+        return element_records(&|id| node.view(id), node.children());
+    }
     run::fold(&run_nodes(&|id| node.view(id), node.children(), css_color(node.css(), "color")))
+}
+
+/// The children as element records (`Kind::folds_elements`): `{tag, anchor, props, children}`, each prop
+/// of the child's kind by name with its value or default.
+fn element_records<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId]) -> Vec<w::Value> {
+    ids.iter()
+        .filter_map(|&id| {
+            let v = view_of(id)?;
+            let spec = v.kind().spec;
+            let props: Vec<(Arc<str>, w::Value)> = (0..spec.props.len())
+                .filter_map(|i| {
+                    let p = &spec.props[i];
+                    let val = v.prop(spec.prop_id(i))?;
+                    let wv = match val {
+                        Value::Enum(e) => w::Value::Str(Arc::from(*p.enum_values.get(*e as usize)?)),
+                        other => plain_from_core(other)?,
+                    };
+                    Some((Arc::from(p.name), wv))
+                })
+                .collect();
+            Some(w::Value::Record(vec![
+                (Arc::from("tag"), w::Value::str(spec.name)),
+                (Arc::from("anchor"), w::Value::str(v.anchor())),
+                (Arc::from("props"), w::Value::Record(props)),
+                (Arc::from("children"), w::Value::List(element_records(view_of, v.children()))),
+            ]))
+        })
+        .collect()
 }
 
 /// The state bits presto-core writes itself; the bridge never writes them back.
@@ -502,6 +534,9 @@ impl w::Resources for RecordRes<'_> {
 impl<W: w::Kind + Default> Hosted<W> {
     fn spec_ref() -> &'static Spec {
         spec_of(W::spec(), Traits::of::<W>())
+    }
+    fn traits() -> Traits {
+        Traits::of::<W>()
     }
 
     fn pointer_event(phase: PointerPhase, p: &presto_core::PointerInput) -> w::Event {
@@ -662,7 +697,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
         let mut text = shaper(cx.service::<presto_text::TextSystem>());
-        let folded = folded_of(node, Self::spec_ref().core.folds_children);
+        let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, scale: node.scale() }, known, avail)
     }
@@ -671,10 +706,12 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
-        let folded = folded_of(node, Self::spec_ref().core.folds_children);
+        let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let (new, used) = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
+            // the widget's own prepare (layout of what it places or draws itself) runs before the dry recording
+            self.widget.prepare(&mut w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text });
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
             let mut list = DisplayList::new();
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
@@ -700,7 +737,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn record(&self, cx: &mut RecordCx) {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
-        let folded = folded_of(node, Self::spec_ref().core.folds_children);
+        let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let mut list = DisplayList::new();
         let runs = {
