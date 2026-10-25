@@ -278,7 +278,8 @@ fn ow1a3_the_base_sheet_updates_hover_immediately() {
         let end = fill(&rig);
         assert_ne!(rest, end, "hover changes the fill");
         assert_eq!(first, end, "enter paints the final hover colour immediately (reduced {reduced})");
-        rig.harness.remove_cursor();
+        // leave by moving off the control (egui keeps a gone pointer's position for one frame)
+        rig.harness.hover_at(rig.drawn(b).right_bottom() + egui::vec2(8.0, 8.0));
         rig.harness.step();
         assert_eq!(fill(&rig), rest, "leave paints the resting colour immediately (reduced {reduced})");
     }
