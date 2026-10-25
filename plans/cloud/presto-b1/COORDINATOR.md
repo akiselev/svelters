@@ -153,3 +153,4 @@ when the five svelters workflows plus `presto` are green.
 - CORE-3 done fa1d7758 (Document::start_drag), WAYLAND dd66a164 (overflow fix), both merged into base 21d341bb.
 - CANVAS code complete f208b779 (presto-canvas, Viewport OS-layer promotion with resize handshake, Prim::Canvas, Slug text; locally 10^6 primitives = 542 µs CPU plan per frame (debug), orbit test 0 commits). Decided: Q1 camera handle now, FastCommit::CanvasCamera later; Q2 [local] gates into cadatomic REVISIT.md via CADATOMIC's branch; Q3 polygon AA follow-up.
 - MOTION-CSS done ff5f7417: Easing::Svelte(SvelteEasing) in presto-base, presto-anim eval, exact compositor easings. Not mentioned: replacing presto-motion shim::css with presto_anim::css (consolidation 2).
+- EGUI-ISLAND ac6d7385 (6c97eabe green on all six workflows): physical_key mapping (Ctrl+C on Cyrillic layouts), device_reset with a CPU texture mirror and a GPU test. start_drag adoption requested.
