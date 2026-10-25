@@ -5,6 +5,7 @@
 //! | Region | Primary press | Primary release (same region) | Secondary press | Double click |
 //! |---|---|---|---|---|
 //! | caption | `xdg_toplevel.move` | — | `show_window_menu` | toggle maximised |
+//! | system menu (window icon) | `show_window_menu` | — | `show_window_menu` | — |
 //! | resize edges | `xdg_toplevel.resize` | — | — | — |
 //! | minimise / maximise / close | — | minimise / toggle maximised / close request | — | — |
 //!
@@ -16,9 +17,10 @@ use presto_base::cursor::CursorIcon;
 use presto_base::geom::Point;
 use presto_base::time::{Span, Time};
 
-/// The topmost region under `p`: later regions are on top of earlier ones.
+/// The topmost region under `p` (later regions are on top of earlier ones); `None` over client content,
+/// including `Client` regions cut out of a title bar.
 pub fn hit(regions: &[HitRegion], p: Point) -> Option<HitKind> {
-    regions.iter().rev().find(|r| r.rect.contains(p)).map(|r| r.kind)
+    Some(crate::shim::hit_test(regions, p)).filter(|k| *k != HitKind::Client)
 }
 
 /// The cursor a region shows while hovered, overriding the app's.
@@ -85,7 +87,7 @@ impl CsdState {
         };
         if !primary {
             return match kind {
-                HitKind::Caption => (Some(CsdAction::WindowMenu), true),
+                HitKind::Caption | HitKind::SystemMenu => (Some(CsdAction::WindowMenu), true),
                 _ => (None, false),
             };
         }
@@ -103,6 +105,7 @@ impl CsdState {
                     (Some(CsdAction::Move), true)
                 }
             }
+            HitKind::SystemMenu => (Some(CsdAction::WindowMenu), true),
             k if resize_edge(k).is_some() => (Some(CsdAction::Resize(k)), true),
             _ => (None, false),
         }
@@ -135,6 +138,8 @@ mod tests {
             HitRegion { rect: Rect::new(760.0, 0.0, 800.0, 32.0), kind: HitKind::Close },
             HitRegion { rect: Rect::new(0.0, 0.0, 800.0, 4.0), kind: HitKind::ResizeTop },
             HitRegion { rect: Rect::new(0.0, 0.0, 8.0, 8.0), kind: HitKind::ResizeTopLeft },
+            HitRegion { rect: Rect::new(300.0, 8.0, 400.0, 28.0), kind: HitKind::Client },
+            HitRegion { rect: Rect::new(8.0, 8.0, 28.0, 28.0), kind: HitKind::SystemMenu },
         ]
     }
 
@@ -150,6 +155,15 @@ mod tests {
         assert_eq!(hit(&r, Point::new(400.0, 2.0)), Some(HitKind::ResizeTop));
         assert_eq!(hit(&r, Point::new(2.0, 2.0)), Some(HitKind::ResizeTopLeft));
         assert_eq!(hit(&r, Point::new(400.0, 300.0)), None);
+        // A client cut-out (a search box in the title bar) blocks the caption.
+        assert_eq!(hit(&r, Point::new(350.0, 16.0)), None);
+    }
+
+    #[test]
+    fn system_menu_opens_the_window_menu() {
+        let r = regions();
+        let mut s = CsdState::default();
+        assert_eq!(s.press(&r, Point::new(16.0, 16.0), true, t(0)), (Some(CsdAction::WindowMenu), true));
     }
 
     #[test]

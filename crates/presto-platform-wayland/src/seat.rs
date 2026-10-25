@@ -85,7 +85,8 @@ pub struct TextInput {
     pub focus: Option<WindowId>,
     pub enabled: bool,
     pub batch: DoneBatch,
-    pub preedit: bool,
+    /// The preedit showing now (empty: none).
+    pub preedit: String,
 }
 
 pub struct Seat {
@@ -127,7 +128,7 @@ pub fn add_seat(state: &mut State, qh: &QueueHandle<State>, seat: WlSeat) {
         focus: None,
         enabled: false,
         batch: DoneBatch::default(),
-        preedit: false,
+        preedit: String::new(),
     });
     let tablet_seat = state.protocols.tablet.as_ref().map(|m| m.get_tablet_seat(&seat, qh, key));
     crate::data::add_seat(state, qh, &seat);
@@ -866,7 +867,7 @@ impl Dispatch<ZwpTextInputV3, SeatKey> for State {
             }
             zwp_text_input_v3::Event::Leave { .. } => {
                 if let (Some(w), true) = (ti.focus, ti.enabled) {
-                    if ti.preedit {
+                    if !ti.preedit.is_empty() {
                         out.push((w, ImeEvent::Preedit { text: String::new(), cursor: None }));
                     }
                     // The leave disabled it; the compositor ignores requests until the next enter.
@@ -874,7 +875,7 @@ impl Dispatch<ZwpTextInputV3, SeatKey> for State {
                 }
                 ti.focus = None;
                 ti.enabled = false;
-                ti.preedit = false;
+                ti.preedit.clear();
                 ti.batch = DoneBatch::default();
             }
             zwp_text_input_v3::Event::PreeditString { text, cursor_begin, cursor_end } => {
@@ -886,8 +887,12 @@ impl Dispatch<ZwpTextInputV3, SeatKey> for State {
             }
             zwp_text_input_v3::Event::Done { .. } => {
                 let batch = std::mem::take(&mut ti.batch);
-                let (events, showing) = batch.into_events(ti.preedit);
-                ti.preedit = showing;
+                let (events, _) = batch.into_events(!ti.preedit.is_empty());
+                for e in &events {
+                    if let ImeEvent::Preedit { text, .. } = e {
+                        ti.preedit = text.clone();
+                    }
+                }
                 if let Some(w) = ti.focus {
                     out.extend(events.into_iter().map(|e| (w, e)));
                 }
@@ -923,8 +928,8 @@ pub fn update_ime(state: &mut State, window: WindowId) {
                 ti.ti.disable();
                 ti.ti.commit();
                 ti.enabled = false;
-                if ti.preedit {
-                    ti.preedit = false;
+                if !ti.preedit.is_empty() {
+                    ti.preedit.clear();
                     out.push(ImeEvent::Preedit { text: String::new(), cursor: None });
                 }
                 out.push(ImeEvent::Disabled);
@@ -935,6 +940,43 @@ pub fn update_ime(state: &mut State, window: WindowId) {
     for e in out {
         state.push_input(window, now, InputEvent::Ime(e));
     }
+}
+
+/// Ends the composition on `window`: text-input-v3 has no request for it, so the preedit is removed (and
+/// committed as typed text when `commit`) on our side, and the text input is disabled and re-enabled, which
+/// resets the input method's state. `false` when no text input is on the window.
+pub fn end_composition(state: &mut State, window: WindowId, commit: bool) -> bool {
+    let now = time::now();
+    let ime_state = state.windows.get(&window).and_then(|w| w.ime.clone());
+    let mut out = Vec::new();
+    let mut handled = false;
+    for seat in &mut state.seats {
+        let Some(ti) = seat.text_input.as_mut() else { continue };
+        if ti.focus != Some(window) || !ti.enabled {
+            continue;
+        }
+        handled = true;
+        if ti.preedit.is_empty() {
+            continue;
+        }
+        let text = std::mem::take(&mut ti.preedit);
+        out.push(ImeEvent::Preedit { text: String::new(), cursor: None });
+        if commit {
+            out.push(ImeEvent::Commit(text));
+        }
+        ti.batch = DoneBatch::default();
+        ti.ti.disable();
+        ti.ti.commit();
+        ti.ti.enable();
+        match &ime_state {
+            Some(s) => ime::send_state(&ti.ti, s),
+            None => ti.ti.commit(),
+        }
+    }
+    for e in out {
+        state.push_input(window, now, InputEvent::Ime(e));
+    }
+    handled
 }
 
 #[cfg(test)]

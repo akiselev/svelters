@@ -176,6 +176,18 @@ pub fn content_type(purpose: InputPurpose, hints: ImeHints) -> (ContentHint, Con
     (h, p)
 }
 
+/// The byte offset of UTF-16 offset `u16` in `text` (clamped to its end).
+pub fn utf16_to_byte(text: &str, u16: usize) -> usize {
+    let mut units = 0;
+    for (i, c) in text.char_indices() {
+        if units >= u16 {
+            return i;
+        }
+        units += c.len_utf16();
+    }
+    text.len()
+}
+
 /// Clamps surrounding text to the protocol's 4000 bytes on character boundaries, keeping the selection
 /// inside; returns the text and the cursor and anchor byte offsets.
 pub fn clamp_surrounding(text: &str, sel: std::ops::Range<usize>) -> (String, i32, i32) {
@@ -201,7 +213,8 @@ pub fn clamp_surrounding(text: &str, sel: std::ops::Range<usize>) -> (String, i3
 /// Sends an editor's state to the text input and commits it.
 pub fn send_state(ti: &ZwpTextInputV3, state: &ImeState) {
     if let Some((text, sel)) = &state.surrounding {
-        let (text, cursor, anchor) = clamp_surrounding(text, sel.clone());
+        let bytes = utf16_to_byte(text, sel.start)..utf16_to_byte(text, sel.end);
+        let (text, cursor, anchor) = clamp_surrounding(text, bytes);
         ti.set_surrounding_text(text, cursor, anchor);
     }
     let (hint, purpose) = content_type(state.purpose, state.hints);
@@ -290,6 +303,14 @@ mod tests {
         assert!(h.contains(ContentHint::Completion | ContentHint::Spellcheck | ContentHint::AutoCapitalization));
         let (h, _) = content_type(InputPurpose::Text, ImeHints { no_assist: true, ..Default::default() });
         assert!(h.is_empty());
+    }
+
+    #[test]
+    fn utf16_offsets_become_bytes() {
+        assert_eq!(utf16_to_byte("é😀x", 0), 0);
+        assert_eq!(utf16_to_byte("é😀x", 1), 2);
+        assert_eq!(utf16_to_byte("é😀x", 3), 6);
+        assert_eq!(utf16_to_byte("é😀x", 9), 7);
     }
 
     #[test]

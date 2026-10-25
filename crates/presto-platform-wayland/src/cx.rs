@@ -4,14 +4,14 @@ use crate::app::State;
 use crate::layers::Layer;
 use crate::present::{FrameSourceConfig, SurfaceLock, WaylandFrameSource};
 use crate::shim::{
-    Clipboard, DragData, DragId, FrameSource, HitRegion, ImeState, Monitor, OsLayerDesc, PlatformCx, PlatformError, SurfaceTarget, Waker,
-    WindowDesc, WindowStateRequest,
+    Clipboard, ClipboardKind, DragData, DragId, FrameSource, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx,
+    PlatformError, SurfaceTarget, Waker, WindowDesc, WindowStateRequest,
 };
 use crate::time::MonotonicClock;
 use crate::window;
 use presto_base::cursor::CursorIcon;
 use presto_base::event::WindowEvent;
-use presto_base::geom::{DeviceSize, Point, Rect, Scale, Vec2};
+use presto_base::geom::{DeviceSize, Rect, Scale, Vec2};
 use presto_base::ids::{SurfaceId, WindowId};
 use presto_base::time::{Clock, Time};
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle, WaylandDisplayHandle, WaylandWindowHandle};
@@ -37,7 +37,7 @@ impl<'a> Cx<'a> {
         // `wl_proxy`/`wl_display` pointers, valid while the surface (and the connection) live.
         let surface_ptr = NonNull::new(surface.id().as_ptr() as *mut std::ffi::c_void).expect("a live wl_surface has a proxy");
         let display_ptr = NonNull::new(self.state.conn.backend().display_ptr() as *mut std::ffi::c_void).expect("a live connection has a display");
-        SurfaceTarget {
+        SurfaceTarget::Raw {
             window: RawWindowHandle::Wayland(WaylandWindowHandle::new(surface_ptr)),
             display: RawDisplayHandle::Wayland(WaylandDisplayHandle::new(display_ptr)),
         }
@@ -108,8 +108,8 @@ impl PlatformCx for Cx<'_> {
         let layer_id = SurfaceId(self.state.next_layer);
         self.state.next_layer += 1;
         let viewport = self.state.protocols.viewporter.as_ref().map(|v| v.get_viewport(&surface, &self.state.qh, ()));
-        let layer = Layer { id: layer_id, surface: surface.clone(), subsurface: subsurface.clone(), viewport, rect: desc.rect, lock: Arc::new(SurfaceLock::default()) };
-        if desc.opaque {
+        let layer = Layer { id: layer_id, surface: surface.clone(), subsurface: subsurface.clone(), viewport, rect: desc.bounds, lock: Arc::new(SurfaceLock::default()) };
+        if !desc.transparent {
             let (lw, lh) = layer.size();
             let region = self.state.compositor.wl_compositor().create_region(&self.state.qh, ());
             region.add(0, 0, lw as i32, lh as i32);
@@ -171,8 +171,9 @@ impl PlatformCx for Cx<'_> {
                 let pos = info.logical_position.unwrap_or(info.location);
                 Monitor {
                     name: info.name.clone().or_else(|| info.description.clone()),
-                    position: Point::new(pos.0 as f32, pos.1 as f32),
+                    position: pos,
                     size: DeviceSize { w: w.max(0) as u32, h: h.max(0) as u32 },
+                    work_area: None,
                     scale: Scale(info.scale_factor as f32),
                     refresh_millihertz: mode.and_then(|m| u32::try_from(m.refresh_rate).ok()).filter(|&r| r > 0),
                 }
@@ -190,7 +191,51 @@ impl PlatformCx for Cx<'_> {
         self.state.exit = true;
     }
 
-    fn set_os_layer_rect(&mut self, id: WindowId, layer: SurfaceId, rect: Rect) {
+    fn os_layer_committer(&self, _id: WindowId) -> Option<OsLayerCommitter> {
+        // Subsurface position and stacking apply with the window's next commit, which the compositor thread
+        // makes when it presents the window; layer content commits with each layer present.
+        None
+    }
+
+    fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool {
+        crate::seat::end_composition(self.state, id, commit)
+    }
+
+    fn set_mouse_capture(&mut self, _id: WindowId, _capture: bool) {
+        // Wayland has no explicit capture: a pressed button grabs the pointer implicitly until release, and
+        // relative motion (pointer-constraints, relative-pointer) is not bound yet (see the lane record).
+    }
+
+    fn set_title(&mut self, id: WindowId, title: &str) {
+        let Some(w) = self.state.windows.get_mut(&id) else { return };
+        w.desc.title = title.to_owned();
+        if let Some(top) = w.toplevel() {
+            top.set_title(title.to_owned());
+        }
+    }
+
+    fn set_visible(&mut self, _id: WindowId, _visible: bool) {
+        // xdg-shell cannot hide a mapped toplevel short of destroying its role; the app closes and recreates
+        // windows instead (see the lane record).
+    }
+
+    fn drag_window(&mut self, id: WindowId) {
+        let Some((seat, serial)) = crate::seat::latest_press(self.state) else { return };
+        if let Some(top) = self.state.windows.get(&id).and_then(|w| w.toplevel()) {
+            top.move_(&seat, serial);
+        }
+    }
+
+    fn update_a11y(&mut self, _id: WindowId, _update: presto_base::accesskit::TreeUpdate) {
+        // AccessKit on Linux is AT-SPI over D-Bus (accesskit_unix), independent of the display protocol; the
+        // consolidation shares presto-platform's adapter with this backend (see the lane record).
+    }
+
+    fn window_scale(&self, id: WindowId) -> Option<Scale> {
+        self.state.windows.get(&id).map(|w| Scale(w.scale() as f32))
+    }
+
+    fn set_os_layer_bounds(&mut self, id: WindowId, layer: SurfaceId, rect: Rect) {
         let Some(w) = self.state.windows.get_mut(&id) else { return };
         let scale120 = w.scale120.filter(|_| w.viewport.is_some());
         let int_scale = w.int_scale;
@@ -255,19 +300,22 @@ impl PlatformCx for Cx<'_> {
 }
 
 impl Clipboard for Cx<'_> {
-    fn get_text(&mut self) -> Option<String> {
-        crate::data::get_clipboard(self.state)
+    fn get_text(&mut self, kind: ClipboardKind) -> Option<String> {
+        match kind {
+            ClipboardKind::Clipboard => crate::data::get_clipboard(self.state),
+            ClipboardKind::Primary => crate::data::get_primary(self.state),
+        }
     }
 
-    fn set_text(&mut self, text: String) -> Result<(), PlatformError> {
-        crate::data::set_clipboard(self.state, text)
+    fn set_text(&mut self, kind: ClipboardKind, text: &str) -> bool {
+        let r = match kind {
+            ClipboardKind::Clipboard => crate::data::set_clipboard(self.state, text.to_owned()),
+            ClipboardKind::Primary => crate::data::set_primary(self.state, text.to_owned()),
+        };
+        r.is_ok()
     }
 
-    fn get_primary(&mut self) -> Option<String> {
-        crate::data::get_primary(self.state)
-    }
-
-    fn set_primary(&mut self, text: String) -> Result<(), PlatformError> {
-        crate::data::set_primary(self.state, text)
+    fn has_primary(&self) -> bool {
+        crate::data::has_primary(self.state)
     }
 }

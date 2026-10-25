@@ -163,6 +163,9 @@ pub fn create(state: &mut State, id: WindowId, desc: WindowDesc) -> Result<(), c
             if let Some(parent) = desc.parent.and_then(|p| state.windows.get(&p)).and_then(|p| p.toplevel()) {
                 w.set_parent(Some(parent));
             }
+            if desc.maximized {
+                w.set_maximized();
+            }
             (Role::Toplevel(w), surface)
         }
         Some(p) => {
@@ -208,8 +211,8 @@ fn round_size(s: presto_base::geom::Size) -> (u32, u32) {
 }
 
 fn create_popup(state: &mut State, p: &PopupDesc, size: (u32, u32)) -> Result<Popup, crate::shim::PlatformError> {
-    let missing = || crate::shim::PlatformError::MissingProtocol("xdg_wm_base (popup)");
-    let parent = state.windows.get(&p.parent).ok_or(crate::shim::PlatformError::Unsupported("popup without a live parent"))?;
+    let missing = || crate::shim::PlatformError::Os("the compositor lacks xdg_wm_base (popup)".into());
+    let parent = state.windows.get(&p.parent).ok_or(crate::shim::PlatformError::Os("popup without a live parent".into()))?;
     let parent_xdg = parent.xdg_surface().clone();
     let positioner = XdgPositioner::new(&state.xdg).map_err(|_| missing())?;
     positioner.set_size(size.0.max(1) as i32, size.1.max(1) as i32);

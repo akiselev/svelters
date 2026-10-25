@@ -108,8 +108,8 @@ pub struct State {
 impl State {
     fn new(conn: Connection, globals: &GlobalList, qh: QueueHandle<State>) -> Result<Self, PlatformError> {
         let compositor =
-            CompositorState::bind(globals, &qh).map_err(|_| PlatformError::MissingProtocol("wl_compositor"))?;
-        let xdg = XdgShell::bind(globals, &qh).map_err(|_| PlatformError::MissingProtocol("xdg_wm_base"))?;
+            CompositorState::bind(globals, &qh).map_err(|_| PlatformError::Os("the compositor lacks wl_compositor".into()))?;
+        let xdg = XdgShell::bind(globals, &qh).map_err(|_| PlatformError::Os("the compositor lacks xdg_wm_base".into()))?;
         let subcompositor = SubcompositorState::bind(compositor.wl_compositor().clone(), globals, &qh).ok();
         let protocols = Protocols {
             fractional_scale: globals.bind(&qh, 1..=1, ()).ok(),
@@ -229,14 +229,14 @@ impl WakePipe {
 
 /// Runs the Wayland backend until the app calls `exit` or the last window's connection breaks.
 pub fn run(mut handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
-    let conn = Connection::connect_to_env().map_err(|e| PlatformError::NoDisplay(e.to_string()))?;
-    let (globals, mut queue) = registry_queue_init::<State>(&conn).map_err(|e| PlatformError::Connection(e.to_string()))?;
+    let conn = Connection::connect_to_env().map_err(|e| PlatformError::EventLoop(format!("no Wayland display: {e}")))?;
+    let (globals, mut queue) = registry_queue_init::<State>(&conn).map_err(|e| PlatformError::EventLoop(e.to_string()))?;
     let qh = queue.handle();
     let mut state = State::new(conn.clone(), &globals, qh)?;
     // Seats, outputs and the presentation clock arrive in the first roundtrip.
-    queue.roundtrip(&mut state).map_err(|e| PlatformError::Connection(e.to_string()))?;
+    queue.roundtrip(&mut state).map_err(|e| PlatformError::EventLoop(e.to_string()))?;
 
-    let wake = WakePipe::new()?;
+    let wake = WakePipe::new().map_err(|e| PlatformError::EventLoop(e.to_string()))?;
     let waker = wake.waker();
     let (internal_tx, internal_rx) = mpsc::channel::<Internal>();
     #[cfg(feature = "portal")]
@@ -246,7 +246,7 @@ pub fn run(mut handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
 
     handler.init(&mut Cx::new(&mut state, &mut queue, &waker));
     loop {
-        queue.dispatch_pending(&mut state).map_err(|e| PlatformError::Connection(e.to_string()))?;
+        queue.dispatch_pending(&mut state).map_err(|e| PlatformError::EventLoop(e.to_string()))?;
         deliver(&mut *handler, &mut state, &mut queue, &waker);
         if state.exit {
             break;
@@ -261,7 +261,7 @@ pub fn run(mut handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
             continue;
         }
 
-        queue.flush().map_err(|e| PlatformError::Connection(e.to_string()))?;
+        queue.flush().map_err(|e| PlatformError::EventLoop(e.to_string()))?;
         let deadline = [state.timer, crate::seat::next_repeat(&state)].into_iter().flatten().min();
         let timeout = deadline.map(|d| {
             let ns = (d - time::now()).0.max(0);
@@ -274,7 +274,7 @@ pub fn run(mut handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
             match rustix::event::poll(&mut fds, timeout.as_ref()) {
                 Ok(_) => (!fds[0].revents().is_empty(), !fds[1].revents().is_empty()),
                 Err(rustix::io::Errno::INTR) => (false, false),
-                Err(e) => return Err(PlatformError::Io(e.into())),
+                Err(e) => return Err(PlatformError::EventLoop(e.to_string())),
             }
         };
         if wl_ready {
@@ -282,7 +282,7 @@ pub fn run(mut handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
                 use wayland_client::backend::WaylandError;
                 match e {
                     WaylandError::Io(io) if io.kind() == std::io::ErrorKind::WouldBlock => {}
-                    e => return Err(PlatformError::Connection(e.to_string())),
+                    e => return Err(PlatformError::EventLoop(e.to_string())),
                 }
             }
         } else {
@@ -294,7 +294,7 @@ pub fn run(mut handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
                 state.handle_internal(msg);
             }
             if app_wake {
-                queue.dispatch_pending(&mut state).map_err(|e| PlatformError::Connection(e.to_string()))?;
+                queue.dispatch_pending(&mut state).map_err(|e| PlatformError::EventLoop(e.to_string()))?;
                 deliver(&mut *handler, &mut state, &mut queue, &waker);
                 handler.wake(&mut Cx::new(&mut state, &mut queue, &waker));
             }

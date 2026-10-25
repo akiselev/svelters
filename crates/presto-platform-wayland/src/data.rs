@@ -168,14 +168,18 @@ pub fn get_clipboard(state: &mut State) -> Option<String> {
 }
 
 pub fn set_clipboard(state: &mut State, text: String) -> Result<(), PlatformError> {
-    let manager = state.data.manager.as_ref().ok_or(PlatformError::MissingProtocol("wl_data_device_manager"))?;
-    let (dev, serial) = current_device(state).ok_or(PlatformError::Unsupported("clipboard without a seat"))?;
-    let serial = serial.ok_or(PlatformError::Unsupported("setting the clipboard before any input event"))?;
-    let device = dev.data.as_ref().ok_or(PlatformError::MissingProtocol("wl_data_device"))?;
+    let manager = state.data.manager.as_ref().ok_or(PlatformError::Os("the compositor lacks wl_data_device_manager".into()))?;
+    let (dev, serial) = current_device(state).ok_or(PlatformError::Os("clipboard without a seat".into()))?;
+    let serial = serial.ok_or(PlatformError::Os("setting the clipboard before any input event".into()))?;
+    let device = dev.data.as_ref().ok_or(PlatformError::Os("the compositor lacks wl_data_device".into()))?;
     let source = manager.create_copy_paste_source(&state.qh, TEXT_MIMES);
     source.set_selection(device, serial);
     state.data.clipboard = Some((source, text));
     Ok(())
+}
+
+pub fn has_primary(state: &State) -> bool {
+    state.data.primary_manager.is_some()
 }
 
 pub fn get_primary(state: &mut State) -> Option<String> {
@@ -191,10 +195,10 @@ pub fn get_primary(state: &mut State) -> Option<String> {
 }
 
 pub fn set_primary(state: &mut State, text: String) -> Result<(), PlatformError> {
-    let manager = state.data.primary_manager.as_ref().ok_or(PlatformError::MissingProtocol("zwp_primary_selection_device_manager_v1"))?;
-    let (dev, serial) = current_device(state).ok_or(PlatformError::Unsupported("primary selection without a seat"))?;
-    let serial = serial.ok_or(PlatformError::Unsupported("setting the primary selection before any input event"))?;
-    let device = dev.primary.as_ref().ok_or(PlatformError::MissingProtocol("zwp_primary_selection_device_v1"))?;
+    let manager = state.data.primary_manager.as_ref().ok_or(PlatformError::Os("the compositor lacks zwp_primary_selection_device_manager_v1".into()))?;
+    let (dev, serial) = current_device(state).ok_or(PlatformError::Os("primary selection without a seat".into()))?;
+    let serial = serial.ok_or(PlatformError::Os("setting the primary selection before any input event".into()))?;
+    let device = dev.primary.as_ref().ok_or(PlatformError::Os("the compositor lacks zwp_primary_selection_device_v1".into()))?;
     let source = manager.create_selection_source(&state.qh, TEXT_MIMES);
     source.set_selection(device, serial);
     state.data.primary = Some((source, text));
@@ -202,11 +206,11 @@ pub fn set_primary(state: &mut State, text: String) -> Result<(), PlatformError>
 }
 
 pub fn start_drag(state: &mut State, window: WindowId, data: DragData) -> Result<DragId, PlatformError> {
-    let manager = state.data.manager.as_ref().ok_or(PlatformError::MissingProtocol("wl_data_device_manager"))?;
-    let (dev, serial) = current_device(state).ok_or(PlatformError::Unsupported("drag without a seat"))?;
-    let serial = serial.ok_or(PlatformError::Unsupported("drag without a pointer press"))?;
-    let device = dev.data.as_ref().ok_or(PlatformError::MissingProtocol("wl_data_device"))?;
-    let origin = state.windows.get(&window).ok_or(PlatformError::Unsupported("drag from a closed window"))?.surface.clone();
+    let manager = state.data.manager.as_ref().ok_or(PlatformError::Os("the compositor lacks wl_data_device_manager".into()))?;
+    let (dev, serial) = current_device(state).ok_or(PlatformError::Os("drag without a seat".into()))?;
+    let serial = serial.ok_or(PlatformError::Os("drag without a pointer press".into()))?;
+    let device = dev.data.as_ref().ok_or(PlatformError::Os("the compositor lacks wl_data_device".into()))?;
+    let origin = state.windows.get(&window).ok_or(PlatformError::Os("drag from a closed window".into()))?.surface.clone();
     let mimes: Vec<String> = data.items.iter().map(|(m, _)| m.clone()).collect();
     let source = manager.create_drag_and_drop_source(&state.qh, mimes, DndAction::Copy | DndAction::Move);
     // The toplevel drag must exist before the drag starts.
@@ -223,10 +227,10 @@ pub fn start_drag(state: &mut State, window: WindowId, data: DragData) -> Result
 
 /// Tab tear-off: the compositor moves `window` with the pointer, which sits at `offset` inside it.
 pub fn attach_window(state: &mut State, drag: DragId, window: WindowId, offset: Vec2) -> Result<(), PlatformError> {
-    let d = state.data.drag.as_ref().filter(|d| d.id == drag).ok_or(PlatformError::Unsupported("attach to a finished drag"))?;
-    let td = d.toplevel_drag.as_ref().ok_or(PlatformError::MissingProtocol("xdg_toplevel_drag_manager_v1"))?;
-    let w = state.windows.get(&window).ok_or(PlatformError::Unsupported("attach a closed window"))?;
-    let top = w.toplevel().ok_or(PlatformError::Unsupported("attach a popup"))?;
+    let d = state.data.drag.as_ref().filter(|d| d.id == drag).ok_or(PlatformError::Os("attach to a finished drag".into()))?;
+    let td = d.toplevel_drag.as_ref().ok_or(PlatformError::Os("the compositor lacks xdg_toplevel_drag_manager_v1".into()))?;
+    let w = state.windows.get(&window).ok_or(PlatformError::Os("attach a closed window".into()))?;
+    let top = w.toplevel().ok_or(PlatformError::Os("attach a popup".into()))?;
     td.attach(top.xdg_toplevel(), offset.x.round() as i32, offset.y.round() as i32);
     Ok(())
 }
