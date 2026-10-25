@@ -95,3 +95,4 @@ when the five svelters workflows plus `presto` are green.
   TEXT), Q3 4 new host events approved, Q4 egui-free quire view crate as a follow-up, Q5 svelters git dep OK.
 - FRAME-ANIM done once presto CI on a9503acb passes its crates.
 - QUIRE R1/R2 at quire 35b5063a; R2 (composition over a selection replaces it) approved (coordinator, 2026-10-25). TEXT-INPUT re-pins quire-text to it. Consolidation merges quire claude/presto-quire and berth claude/presto-berth into their masters after their tests and checks pass.
+- CORE-3 checkpoint eb669f1e merged (eb833fe0). Decided (coordinator, 2026-10-25): Q1 svelters-presto queues JS writes from call_sync and applies them after dispatch; Q2 Layout writes restyle, no skip flag yet. CORE-3 order now: APP-TEST 1–5, TEXT-INPUT R4, QUIRE kind layers, then its item 4.
