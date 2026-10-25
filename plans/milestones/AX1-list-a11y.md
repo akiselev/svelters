@@ -86,8 +86,23 @@ egui ids once (as SV53's upgrade did for keyed eaches).
 
 ## CI
 
-(filled in below as runs complete)
+All five workflows green on `be0b1574` (code as of `5617212b`, the merge of `origin/master` with AU7; `be0b1574`
+adds only the STATUS queue row): js 40148233506, linux-gtk 40148233439, linux-qt 40148233431, macos-appkit
+40148233504, windows-winui 40148233497. (The runs on `5617212b` itself were cancelled when `be0b1574` replaced them.)
+This record commit changes docs only.
+
+Not run locally: the full workspace, conformance, the GTK/Qt/AppKit/WinUI suites (CI ran them);
+`vlist::list_view_runs_on_egui` (needs the built `fixtures/lists-egui/dist`; CI builds it and passed).
 
 ## Handoff
 
-(at the end)
+Done; nothing left in AX1's scope. Follow-ups:
+- EV1: activation (Space, Enter, AccessKit `Click`) fires a DOM `click` (decided, queued in `STATUS.md`).
+- `key=` for an unrealised list row would need app keys in the native list (`splice` gets serial ids). Not
+  asked for; `scroll_to_row` by position covers tours today.
+- The `SceneRef::shown` fallback (a node with no hit-list entry, no culled ancestor and no closed overlay above
+  it) still answers its last `drawn` rect, which can be stale for nodes drawn outside the walk (toasts). A
+  per-pass stamp on `drawn` would remove it if it ever matters.
+- cadatomic: tours can now click Jobs' Cancel rows (any act scrolls them in), find Output rows by
+  `key=<item key> >> anchor=…` after `input.scroll_into_view {row}`, and open Problems' context menu with
+  `input.click {button: "secondary"}` and pick `Waive`/`Unwaive`.
