@@ -9,3 +9,6 @@ publish.workspace = true
 [dependencies]
 presto-base = { workspace = true }
 presto-anim = { workspace = true }
+# the OP_ANIMATE payload and the native transition descriptor are JSON (motion.js)
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }

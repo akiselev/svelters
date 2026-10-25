@@ -4099,6 +4099,8 @@ version = "0.0.0"
 dependencies = [
  "presto-anim",
  "presto-base",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

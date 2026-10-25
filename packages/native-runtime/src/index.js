@@ -45,6 +45,8 @@ import {
 import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty, styleInserted } from './style.js';
 // TR1: transitions (the runtime node's Element facade, the animation player, the visual channels)
 import { RUNTIME_EVENTS, defineFacade } from './motion.js';
+import { nativeTransition } from './transition.js';
+import { flipNative } from './animate.js';
 import { ROW_OUTLETS, TOPLEVELS } from './bindings.generated.js';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
 // ABI v2.6 property observation (REACTIVITY.md section 7): installs `__svelters_changed` and the
@@ -2914,6 +2916,24 @@ export function transition(flags, node, getFn, getParams) {
 export function animation(node, getFn, getParams) {
   ensureNodes(active());
   svelteAnimation(node, getFn, getParams ?? null);
+}
+
+/**
+ * MOTION-CSS (`native_transitions`): `transition:fade` & co. imported from svelte/transition. The
+ * same built-in as `$n.transition`, with its parameters, easing and the style it read sent in the
+ * OP_ANIMATE payload so a backend evaluates the formula natively (`kind`: `fade`, `fly`, `slide`,
+ * `scale`, `blur`, `draw`).
+ */
+export function transition_native(flags, node, kind, getParams) {
+  ensureNodes(active());
+  const fn = nativeTransition(kind);
+  svelteTransition(flags, node, () => fn, getParams ?? null);
+}
+
+/** MOTION-CSS (`native_transitions`): `animate:flip` imported from svelte/animate, with its native descriptor. */
+export function flip_native(node, getParams) {
+  ensureNodes(active());
+  svelteAnimation(node, () => flipNative, getParams ?? null);
 }
 
 export { NativeAnimation, computed, setReducedMotion } from './motion.js';

@@ -1039,10 +1039,37 @@ impl Stylist {
             l.negative.clear();
         }
         l.negative.extend(rejected);
-        if fresh.is_empty() {
-            return issues;
+        self.insert_utilities(fresh);
+        issues
+    }
+
+    /// Adds utility rules the compiler resolved already (a precompiled sheet's, `binary`): no
+    /// vocabulary lookup at run time. Classes that have a rule keep it. Does nothing while
+    /// utilities are off. Returns how many were added.
+    pub fn preload_utilities(&mut self, utilities: &[Utility], opts: &ParseOptions<'_>) -> usize {
+        if !self.utilities.config.enabled {
+            return 0;
         }
-        l.stats.batches += 1;
+        let fresh: Vec<(Utility, Stylesheet)> = utilities
+            .iter()
+            .filter(|u| !self.utilities.known.contains_key(&u.class))
+            .map(|u| (u.clone(), Stylesheet::parse(&u.css(), opts)))
+            .filter(|(_, s)| s.diagnostics.is_empty() && !s.rules.is_empty())
+            .collect();
+        let n = fresh.len();
+        for (u, _) in &fresh {
+            self.utilities.negative.remove(&u.class);
+        }
+        self.insert_utilities(fresh);
+        n
+    }
+
+    /// Appends generated utility rules to the utility layer (one batch).
+    fn insert_utilities(&mut self, fresh: Vec<(Utility, Stylesheet)>) {
+        if fresh.is_empty() {
+            return;
+        }
+        self.utilities.stats.batches += 1;
         let mut need_rebuild = false;
         for (_, sheet) in &fresh {
             for name in &sheet.layers {
@@ -1071,7 +1098,6 @@ impl Stylist {
             // the first utility rule declares the layer (unless the theme declared it): ranks change
             self.rebuild();
         }
-        issues
     }
 
     /// Whether `class` has a generated utility rule.

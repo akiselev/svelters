@@ -155,6 +155,11 @@ export const inert = (effect) => effect !== null && (effect.f & INERT) !== 0;
 export const set_intro = set_should_intro;
 /** TR1: Svelte's `raf` (timing.js: `tick` = requestAnimationFrame, `now` = performance.now in the browser build). */
 export const raf = $.raf;
+/** MOTION-CSS: svelters:motion's `Spring.of`. */
+export const render_effect = $.render_effect;
+/** MOTION-CSS: svelte/motion's Tween and legacy stores, re-exported by svelters:motion. */
+export { Tween, tweened } from 'svelte/internal/motion/tweened';
+export { spring as spring_store } from 'svelte/internal/motion/spring';
 /** TR1: Svelte's `loop(fn)`: `fn(now)` on every frame of `raf` until it returns false; `{ abort }`. */
 export const loop = svelteLoop;
 /** TR1: Svelte's `$.transition` / `$.animation` (dom/elements/transitions.js) on a runtime node. */

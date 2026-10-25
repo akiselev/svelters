@@ -229,6 +229,8 @@ pub struct ScopeRewriter<'a> {
     /// TypeScript to remove from the emitted text (`svelte::ts`; empty for JavaScript).
     ts_strip: crate::svelte::ts::TsStrip,
     component_scopes: &'a HashMap<NodeKey, crate::svelte::scope::ComponentScopes>,
+    /// MOTION-CSS: the backend has the `native_transitions` capability.
+    native_transitions: bool,
 }
 
 impl<'a> ScopeRewriter<'a> {
@@ -287,7 +289,7 @@ impl<'a> ScopeRewriter<'a> {
             }
         }
 
-        let mut rw = ScopeRewriter { cx, root, script: Edits::new(), module: Edits::new(), exports, has_stores: false, ts_strip: Default::default(), component_scopes: &an.template.component_scopes };
+        let mut rw = ScopeRewriter { cx, root, script: Edits::new(), module: Edits::new(), exports, has_stores: false, ts_strip: Default::default(), component_scopes: &an.template.component_scopes, native_transitions: false };
         let has = rw.store_subs().next().is_some();
         rw.has_stores = has;
 
@@ -312,6 +314,43 @@ impl<'a> ScopeRewriter<'a> {
             rw.script = edits;
         }
         rw
+    }
+
+    /// MOTION-CSS: the backend's `native_transitions` (built-in transitions and `flip` are emitted as
+    /// `$n.transition_native` / `$n.flip_native`) and `native_motion` (`svelte/motion` is imported
+    /// from `svelters:motion`, the same API with a closed-form spring) capabilities.
+    pub fn set_native_motion(&mut self, transitions: bool, motion: bool) {
+        self.native_transitions = transitions;
+        if !motion {
+            return;
+        }
+        for (script, edits) in [(&self.root.module, &mut self.module), (&self.root.instance, &mut self.script)] {
+            let Some(script) = script else { continue };
+            for stmt in &script.content.body {
+                let Statement::ImportDeclaration(i) = stmt else { continue };
+                let LiteralNode::Literal(lit) = &i.source;
+                if matches!(&lit.value, LiteralValue::String(s) if s == "svelte/motion") {
+                    let s = lit.span();
+                    edits.overwrite(s.start, s.end, js_str("svelters:motion"));
+                }
+            }
+        }
+    }
+
+    /// The module and exported name `name` is imported as (`fade` -> (`svelte/transition`, `fade`)),
+    /// when it is an import of the component's scripts.
+    fn import_of(&self, name: &str) -> Option<(&str, &str)> {
+        let b = self.cx.arena.get(self.cx.instance_scope?, name)?;
+        let Some(Initial::ImportDeclaration(i)) = self.cx.arena.binding(b).initial else { return None };
+        let LiteralNode::Literal(lit) = &i.source;
+        let LiteralValue::String(from) = &lit.value else { return None };
+        i.specifiers.iter().find_map(|sp| match sp {
+            ImportSpecifierKind::ImportSpecifier(sp) if sp.local.name == name => match &sp.imported {
+                ModuleExportName::Identifier(id) => Some((from.as_str(), id.name.as_str())),
+                ModuleExportName::Literal(_) => None,
+            },
+            _ => None,
+        })
     }
 
     pub fn into_diagnostics(self) -> Diagnostics {
@@ -640,6 +679,20 @@ impl Rewriter for ScopeRewriter<'_> {
         Walker::walk(NodeRef::VariableDeclaration(d), &scope, &mut v);
         let s = d.span();
         edits.apply(self.cx.src, s.start, s.end).trim_end().trim_end_matches(';').to_string()
+    }
+
+    fn native_transition(&self, name: &str) -> Option<&'static str> {
+        if !self.native_transitions {
+            return None;
+        }
+        match self.import_of(name)? {
+            ("svelte/transition", kind) => ["fade", "fly", "slide", "scale", "blur", "draw"].into_iter().find(|k| *k == kind),
+            _ => None,
+        }
+    }
+
+    fn native_flip(&self, name: &str) -> bool {
+        self.native_transitions && self.import_of(name) == Some(("svelte/animate", "flip"))
     }
 
     fn directive_name(&self, name: &str) -> String {
