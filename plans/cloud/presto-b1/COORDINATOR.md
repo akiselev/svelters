@@ -139,3 +139,19 @@ when the five svelters workflows plus `presto` are green.
   compositor transform animation runs); core never sends UI-placed animations; a11y, cursor and ime_area stay on the
   UI thread (APP-TEST confirms); UiFrameState answers every BeginFrame; APP-TEST sets refresh and ppi from the
   monitor.
+- APP-TEST CI on c091234d (contains integration 65ead449): its own crates pass (latency 14, harness 20, render 2 on
+  Metal, lib 13). Integration breaks found: (1) pnpm build "Duplicated export 'setp'" in
+  experiments/native-compiler/handwritten breaks all five svelters workflows (consolidation 1 fixes it);
+  (2) presto-platform-wayland time.rs:84 u64 overflow in a test (WAYLAND).
+- WIDGETS-TIER1 done 0876a38f (table, tabs, pickers, dnd, dialogs, zoom; tier-1 tests pass on Linux and macOS; a Windows
+  path test fixed in 0876a38f). Open items for consolidation 2 in its record: picker overlay layers, prepare can't emit,
+  EventCx can't emit on a child, drag-preview hook, table scrollbars on the views scroll layer, hex/cell editors.
+- WIDGETS-VIEWS done 2226e000: spec-driven parts/places_children, scroll through EventCx::scroll_to → core scroll_fast,
+  MenuModel::to_menu_desc behind `native-menu`, menu-bar `native-bar`. Runner wiring sent to APP-TEST (via Kind::call).
+- TEXT-INPUT done 093ae50f (base merged; code as green 300b2660). Q5 for consolidation 2: a RecordCx::fixed() (or similar)
+  so a self_scroll kind can record its box outside the scroll layer; until then a field scroll re-records the node.
+- CORE-3 done fa1d7758 (Document::start_drag), WAYLAND dd66a164 (overflow fix), both merged into base 21d341bb.
+- CANVAS code complete f208b779 (presto-canvas, Viewport OS-layer promotion with resize handshake, Prim::Canvas, Slug text; locally 10^6 primitives = 542 µs CPU plan per frame (debug), orbit test 0 commits). Decided: Q1 camera handle now, FastCommit::CanvasCamera later; Q2 [local] gates into cadatomic REVISIT.md via CADATOMIC's branch; Q3 polygon AA follow-up.
+- MOTION-CSS done ff5f7417: Easing::Svelte(SvelteEasing) in presto-base, presto-anim eval, exact compositor easings. Not mentioned: replacing presto-motion shim::css with presto_anim::css (consolidation 2).
+- EGUI-ISLAND ac6d7385 (6c97eabe green on all six workflows): physical_key mapping (Ctrl+C on Cyrillic layouts), device_reset with a CPU texture mirror and a GPU test. start_drag adoption requested.
+- MOTION-CSS final 1a016796 (shim::css replaced by presto_anim::css; presto-motion has no shims left). CANVAS ae46a5b1 (base merged). Backend resize hooks (begin/end_os_layer_resize) requested from WAYLAND, MACOS and WIN32.

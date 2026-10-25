@@ -896,8 +896,35 @@ impl Dispatch<ZwpTextInputV3, SeatKey> for State {
             _ => {}
         }
         for (w, e) in out {
-            state.push_input(w, now, InputEvent::Ime(e));
+            deliver_ime(state, w, now, e);
         }
+    }
+}
+
+/// An IME event for `window`: composition edits go straight into its text client when the app handed one
+/// over (`set_text_input`), whose new caret and surrounding text then go back to the IME; otherwise (and
+/// for enable/disable) it is queued as input.
+fn deliver_ime(state: &mut State, window: WindowId, now: Time, e: ImeEvent) {
+    let edits = !matches!(e, ImeEvent::Enabled | ImeEvent::Disabled);
+    if let Some(client) = state.windows.get_mut(&window).and_then(|w| w.text_client.as_mut()).filter(|_| edits) {
+        ime::apply_to_client(client.as_mut(), std::slice::from_ref(&e));
+        refresh_from_client(state, window);
+    } else {
+        state.push_input(window, now, InputEvent::Ime(e));
+    }
+}
+
+/// Rebuilds the window's IME state from its text client (caret or composition rectangle, purpose,
+/// surrounding text) and sends it to the text input.
+pub fn refresh_from_client(state: &mut State, window: WindowId) {
+    let Some(w) = state.windows.get_mut(&window) else { return };
+    let Some(c) = w.text_client.as_deref() else { return };
+    let caret = c.marked_range().or_else(|| c.selected_range());
+    let area = caret.and_then(|r| c.bounds_for_range(r)).unwrap_or_default();
+    let next = Some(crate::shim::ime_state_from_client(c, area));
+    if w.ime != next {
+        w.ime = next;
+        update_ime(state, window);
     }
 }
 
