@@ -166,6 +166,13 @@ pub fn caption_button(ht: u32) -> Option<HitKind> {
     }
 }
 
+/// Whether a key message also goes to `DefWindowProc`: only Alt+F4 (close) and Alt+Space (system
+/// menu). A lone Alt or F10 press and release reach the app as key events and never start the menu
+/// loop; `WM_SYSCHAR` is removed with its key-down, so Alt+letter never becomes `SC_KEYMENU` either.
+pub fn sys_key_to_os(msg: u32, vk: u16) -> bool {
+    msg == WM_SYSKEYDOWN && (vk == VK_F4.0 || vk == VK_SPACE.0)
+}
+
 /// The IME on/off transitions a `set_ime` call means.
 pub fn ime_transition(was: bool, now: bool) -> Option<ImeEvent> {
     match (was, now) {
@@ -835,13 +842,8 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             if let Some(ev) = ev {
                 app.input(id, message_time_to_time(unsafe { GetMessageTime() }), InputEvent::Key(ev));
             }
-            if msg == WM_SYSKEYDOWN {
-                // Keep Alt+F4 and Alt+Space (system menu); everything else, Alt and F10 included,
-                // must not enter the menu loop.
-                let vk = wparam.0 as u16;
-                if vk == VK_F4.0 || vk == VK_SPACE.0 {
-                    return None;
-                }
+            if sys_key_to_os(msg, wparam.0 as u16) {
+                return None;
             }
             Some(0)
         }
@@ -1044,6 +1046,17 @@ mod tests {
         assert!(styles(&bare).0.contains(WS_POPUP));
         let custom = WindowDesc { decorations: false, custom_title_bar: true, ..WindowDesc::default() };
         assert!(styles(&custom).0.contains(WS_OVERLAPPEDWINDOW), "custom title bars keep the OS frame");
+    }
+
+    #[test]
+    fn lone_alt_and_f10_stay_with_the_app() {
+        use windows::Win32::UI::Input::KeyboardAndMouse::{VK_F10, VK_MENU};
+        assert!(!sys_key_to_os(WM_SYSKEYDOWN, VK_MENU.0));
+        assert!(!sys_key_to_os(WM_SYSKEYUP, VK_MENU.0), "a lone Alt release must not open the menu loop");
+        assert!(!sys_key_to_os(WM_SYSKEYDOWN, VK_F10.0));
+        assert!(!sys_key_to_os(WM_SYSKEYUP, VK_F10.0));
+        assert!(sys_key_to_os(WM_SYSKEYDOWN, VK_F4.0));
+        assert!(sys_key_to_os(WM_SYSKEYDOWN, VK_SPACE.0));
     }
 
     #[test]
