@@ -51,7 +51,8 @@ Open (all additive):
 9. (h) A kind sees its children while measuring and recording (`NodeView::child`/`cx.view`), a child's change
    dirties a folding parent's measure and paint, and the folding parent's children are skipped by layout,
    recording and hit testing (and the parent is still measured as a leaf: taffy only measures nodes
-   without children). Until then the bridge folds a label's run children only in `event`.
+   without children). Landed (CORE-2, e3946c37): the bridge folds a label's run children in measure, prepare
+   and record.
 10. (i) Scope activation: Enter (Escape) in a focus scope, unclaimed by the focused kind, sends the scope's
     `default` (`cancel`) button an AccessKit `Click`; the auto-default rule (`Policy::auto_default`) moves
     `:default` to the focused push button in a dialog scope.

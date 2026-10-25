@@ -240,6 +240,7 @@ fn spec_of(ws: &'static w::KindSpec) -> &'static Spec {
             text_prop: ws.text_prop,
             focusable: ws.focusable,
             container: ws.children,
+            folds_children: FOLDING.contains(&ws.tag),
             ..KindSpec::new(ws.tag)
         }));
         Box::leak(Box::new(Spec { core, to_core, disabled }))
@@ -322,6 +323,18 @@ fn signal_arg(s: &w::SignalSpec, args: &[w::Value]) -> Option<Value> {
 
 // ---- the hosted kind ----
 
+/// The kinds whose run children fold into their own content: presto-core measures them as leaves and
+/// does not lay out, record or hit-test their children (`KindSpec::folds_children`).
+const FOLDING: &[&str] = &["label"];
+
+/// A folding node's run children as `runs` records; empty for other kinds.
+fn folded_of(node: NodeView<'_>, tag: &str) -> Vec<w::Value> {
+    if !FOLDING.contains(&tag) {
+        return Vec::new();
+    }
+    run::fold(&run_nodes(&|id| node.view(id), node.children()))
+}
+
 /// The state bits presto-core writes itself; the bridge never writes them back.
 const CORE_BITS: StateBits = StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::FOCUSED.0 | StateBits::FOCUS_VISIBLE.0 | StateBits::FOCUS_WITHIN.0 | StateBits::DISABLED.0);
 
@@ -330,13 +343,11 @@ pub struct Hosted<W: w::Kind + Default> {
     pub widget: W,
     /// Images uploaded in `prepare`, by the widget's image key.
     images: HashMap<String, ImageId>,
-    /// A label's run children as `runs` records, folded when the bridge last saw the children.
-    folded: Vec<w::Value>,
 }
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new(), folded: Vec::new() }
+        Hosted { widget: W::default(), images: HashMap::new() }
     }
 }
 
@@ -517,18 +528,20 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
         let mut text = shaper(cx.service::<presto_text::TextSystem>());
-        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &self.folded, node.state(), dark), text: &mut *text, scale: 1.0 }, known, avail)
+        let folded = folded_of(node, W::spec().tag);
+        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &folded, node.state(), dark), text: &mut *text, scale: 1.0 }, known, avail)
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
+        let folded = folded_of(node, W::spec().tag);
         let (new, used) = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
             let mut list = DisplayList::new();
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &self.folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
             (res.new, res.used)
         };
         for (key, data) in new {
@@ -551,11 +564,12 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn record(&self, cx: &mut RecordCx) {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
+        let folded = folded_of(node, W::spec().tag);
         let mut list = DisplayList::new();
         let runs = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
             let mut res = RecordRes { runs: Vec::new(), images: &self.images };
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &self.folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
             res.runs
         };
         // the pass's run indices become presto-core's run ids
@@ -585,14 +599,6 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         let Some(wev) = Self::translate(ev) else { return Handled::No };
         let node = cx.node();
-        let Some(view) = cx.view(node) else { return Handled::No };
-        // a label folds its run children; presto-core shows a kind its children only here so far
-        if W::spec().tag == "label" {
-            let folded = run::fold(&run_nodes(&|id| cx.view(id), view.children()));
-            if folded != self.folded {
-                self.folded = folded;
-            }
-        }
         let Some(view) = cx.view(node) else { return Handled::No };
         let (size, mask) = (view.size(), view.state());
         self.sync_disabled(view.disabled());
@@ -674,6 +680,14 @@ mod tests {
         // no tag or member id collides, and every text prop exists
         let mut reg = KindRegistry::new();
         register_tier0(&mut reg).unwrap();
+    }
+
+    #[test]
+    fn a_label_folds_its_children() {
+        use crate::controls::{Bold, Label};
+        assert!(<Hosted<Label> as Kind>::spec().folds_children);
+        assert!(!<Hosted<Bold> as Kind>::spec().folds_children);
+        assert!(<Hosted<Label> as Kind>::spec().container);
     }
 
     #[test]
