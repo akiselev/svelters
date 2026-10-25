@@ -50,8 +50,9 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 ## Seams (stubbed until other lanes land)
 
 - `seams::SceneRenderer`: implemented by `presto_render::Renderer`, the default (`CompositorConfig::new(clock,
-  refresh)`); the trait stays so tests can record draws. Image and path removals are not forwarded to
-  `Renderer::forget_image` yet (the atlas LRU expires them).
+  refresh)`); the trait stays so tests can record draws. RENDER's contract is kept: non-sRGB
+  targets, `end_frame` once per submitted frame after `submit` (also when acquire fails: the encoder is
+  submitted, not dropped), `ResourceDelta` removals forwarded to `forget_image`/`forget_path`.
 - `seams::ScrollMotion` + `FlingFactory`: presto-anim's `scroll` module is empty in the skeleton; with no
   factory configured, `fling` logs and does nothing.
 

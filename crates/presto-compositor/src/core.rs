@@ -15,7 +15,7 @@ use presto_base::color::{Color, Fill};
 use presto_base::commit::{Commit, FastCommit, ToUi};
 use presto_base::display::{DisplayList, Prim, Quad};
 use presto_base::geom::{Corners, DeviceSize, Insets, Rect, Scale, Vec2};
-use presto_base::ids::{FrameId, InputSeq, LayerId, NodeId, PropNodeId, Revision, SurfaceId, TextureId, WindowId};
+use presto_base::ids::{FrameId, ImageId, InputSeq, PathId, LayerId, NodeId, PropNodeId, Revision, SurfaceId, TextureId, WindowId};
 use presto_base::scene::{DrawItem, FrameScene};
 use presto_base::time::{Span, Time};
 use std::collections::{BTreeMap, HashMap};
@@ -32,6 +32,8 @@ pub trait Backend {
     /// Renders `scene` into the surface and presents it. `frame` is reported back through
     /// [`Msg::GpuDone`] when the GPU finishes (`None`: a resize frame, not reported).
     fn draw(&mut self, window: WindowId, key: SurfaceKey, frame: Option<FrameId>, scene: &FrameScene<'_>) -> DrawOutcome;
+    /// Drops GPU caches of images and paths that commits removed.
+    fn forget(&mut self, images: &[ImageId], paths: &[PathId]);
     /// Rebuilds the device, queue, renderer and surface configurations after device loss.
     fn recover(&mut self) -> bool;
 }
@@ -520,6 +522,15 @@ impl Engine {
             let (now_, later): (Vec<Commit>, Vec<Commit>) =
                 std::mem::take(&mut w.commits).into_iter().partition(|c| c.revision <= upto);
             w.commits = later;
+            let mut images = Vec::new();
+            let mut paths = Vec::new();
+            for c in &now_ {
+                images.extend_from_slice(&c.resources.removed_images);
+                paths.extend_from_slice(&c.resources.removed_paths);
+            }
+            if !images.is_empty() || !paths.is_empty() {
+                gpu.forget(&images, &paths);
+            }
             for c in now_ {
                 w.inputs.push(c.input_seq);
                 applied = Some(c.revision);

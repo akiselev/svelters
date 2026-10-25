@@ -54,6 +54,7 @@ impl Backend for FakeGpu {
         self.draws.push(Drawn { frame, damage: scene.damage.to_vec(), items: scene.items.len() });
         DrawOutcome::Presented { submitted: Time(0) }
     }
+    fn forget(&mut self, _: &[presto_base::ids::ImageId], _: &[presto_base::ids::PathId]) {}
     fn recover(&mut self) -> bool {
         true
     }

@@ -14,7 +14,7 @@ use crate::damage::DamageHistory;
 use crate::seams::{RendererFactory, SceneRenderer};
 use crate::tree::SurfaceKey;
 use presto_base::geom::{DeviceRect, DeviceSize};
-use presto_base::ids::{FrameId, TextureId, WindowId};
+use presto_base::ids::{FrameId, ImageId, PathId, TextureId, WindowId};
 use presto_base::scene::FrameScene;
 use presto_base::text::GlyphRasterizer;
 use presto_base::time::Clock;
@@ -468,22 +468,33 @@ impl Backend for GpuBackend {
             gpu.renderer.end_frame();
             return DrawOutcome::Presented { submitted: self.clock.now() };
         };
-        let st = match surface.get_current_texture() {
-            wgpu::CurrentSurfaceTexture::Success(st) => (st, false),
-            wgpu::CurrentSurfaceTexture::Suboptimal(st) => (st, true),
-            wgpu::CurrentSurfaceTexture::Timeout | wgpu::CurrentSurfaceTexture::Occluded => return DrawOutcome::Skipped,
-            wgpu::CurrentSurfaceTexture::Outdated => {
-                Self::configure(gpu, s);
-                return DrawOutcome::Skipped;
-            }
+        let acquired = match surface.get_current_texture() {
+            wgpu::CurrentSurfaceTexture::Success(st) => Ok((st, false)),
+            wgpu::CurrentSurfaceTexture::Suboptimal(st) => Ok((st, true)),
+            wgpu::CurrentSurfaceTexture::Timeout
+            | wgpu::CurrentSurfaceTexture::Occluded
+            | wgpu::CurrentSurfaceTexture::Validation => Err((DrawOutcome::Skipped, false)),
+            wgpu::CurrentSurfaceTexture::Outdated => Err((DrawOutcome::Skipped, true)),
             wgpu::CurrentSurfaceTexture::Lost => {
                 log::warn!("presto-compositor: surface of {window:?} {key:?} lost; it must be recreated");
-                s.configured = false;
-                return DrawOutcome::NoSurface;
+                Err((DrawOutcome::NoSurface, false))
             }
-            wgpu::CurrentSurfaceTexture::Validation => return DrawOutcome::Skipped,
         };
-        let (st, suboptimal) = st;
+        let (st, suboptimal) = match acquired {
+            Ok(a) => a,
+            Err((outcome, reconfigure)) => {
+                // The renderer's uploads are in this encoder: submit it (the persistent target keeps
+                // the drawn damage; the engine redraws it next frame anyway) and close the frame.
+                queue.submit([encoder.finish()]);
+                gpu.renderer.end_frame();
+                if reconfigure {
+                    Self::configure(gpu, s);
+                } else if outcome == DrawOutcome::NoSurface {
+                    s.configured = false;
+                }
+                return outcome;
+            }
+        };
 
         if s.copy {
             let (tex, _, _) = s.target.as_ref().expect("persistent target");
@@ -518,6 +529,17 @@ impl Backend for GpuBackend {
             Self::configure(gpu, s);
         }
         DrawOutcome::Presented { submitted: self.clock.now() }
+    }
+
+    fn forget(&mut self, images: &[ImageId], paths: &[PathId]) {
+        if let Some(gpu) = &mut self.gpu {
+            for id in images {
+                gpu.renderer.forget_image(*id);
+            }
+            for id in paths {
+                gpu.renderer.forget_path(*id);
+            }
+        }
     }
 
     fn recover(&mut self) -> bool {

@@ -4,7 +4,7 @@
 
 use presto_base::anim::FlingCurve;
 use presto_base::geom::{DeviceSize, Vec2};
-use presto_base::ids::TextureId;
+use presto_base::ids::{ImageId, PathId, TextureId};
 use presto_base::scene::FrameScene;
 use presto_base::text::GlyphRasterizer;
 use presto_base::time::{Span, Time};
@@ -24,8 +24,12 @@ pub trait SceneRenderer: Send {
         target: &wgpu::TextureView,
         scene: &FrameScene<'_>,
     );
-    /// Atlas LRU generation, instance-ring advance.
+    /// Once per submitted frame, after `queue.submit`: atlas LRU generation, staging-belt recall.
     fn end_frame(&mut self);
+    /// Drops the cached atlas tiles of an image a commit removed.
+    fn forget_image(&mut self, id: ImageId);
+    /// Drops the cached tessellation of a path a commit removed.
+    fn forget_path(&mut self, id: PathId);
 }
 
 impl SceneRenderer for presto_render::Renderer {
@@ -47,6 +51,12 @@ impl SceneRenderer for presto_render::Renderer {
     }
     fn end_frame(&mut self) {
         presto_render::Renderer::end_frame(self)
+    }
+    fn forget_image(&mut self, id: ImageId) {
+        presto_render::Renderer::forget_image(self, id)
+    }
+    fn forget_path(&mut self, id: PathId) {
+        presto_render::Renderer::forget_path(self, id)
     }
 }
 
