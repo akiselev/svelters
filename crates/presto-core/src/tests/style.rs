@@ -87,3 +87,17 @@ fn removing_a_sheet_restyles() {
     frame(&mut d);
     assert_eq!(d.computed(a).unwrap().opacity, 1.0);
 }
+
+#[test]
+fn presto_properties_reach_the_computed_box() {
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "z-index: 3; visibility: hidden; pointer-events: none; will-change: transform; transform: translate(4px, 0); transform-origin: left top");
+    frame(&mut d);
+    let c = d.computed(a).unwrap();
+    assert_eq!(c.z_index, Some(3));
+    assert!(c.visibility_hidden);
+    assert!(c.pointer_events_none);
+    assert!(c.will_change);
+    assert_eq!(c.transform.apply(presto_base::geom::Point::ZERO), presto_base::geom::Point::new(4.0, 0.0));
+    assert_eq!(c.transform_origin, presto_base::geom::Point::new(0.0, 0.0));
+}

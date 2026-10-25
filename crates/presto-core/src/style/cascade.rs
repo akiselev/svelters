@@ -201,6 +201,38 @@ fn easing(t: &svelters_style::TimingFunction) -> Easing {
     }
 }
 
+/// Parses `transform-origin` as fractions of the border box: keywords (`left`, `center`, `top right`)
+/// and percentages; one value sets x (or y for `top`/`bottom`), the other axis stays centred. Lengths
+/// are not supported (the box size is not known here): the origin stays the centre.
+pub(crate) fn parse_origin(src: &str) -> Option<presto_base::geom::Point> {
+    let mut x: Option<f32> = None;
+    let mut y: Option<f32> = None;
+    for tok in src.split_whitespace().take(2) {
+        match tok {
+            "left" => x = Some(0.0),
+            "right" => x = Some(1.0),
+            "top" => y = Some(0.0),
+            "bottom" => y = Some(1.0),
+            "center" => {
+                if x.is_none() {
+                    x = Some(0.5);
+                } else {
+                    y = Some(0.5);
+                }
+            }
+            t => {
+                let f = t.strip_suffix('%')?.parse::<f32>().ok()? / 100.0;
+                if x.is_none() {
+                    x = Some(f);
+                } else {
+                    y = Some(f);
+                }
+            }
+        }
+    }
+    Some(presto_base::geom::Point::new(x.unwrap_or(0.5), y.unwrap_or(0.5)))
+}
+
 /// Parses a CSS transform list (`translate(10px, 0) scale(.9) rotate(45deg)`) into an affine.
 /// Unknown functions make the whole list identity (as an invalid value does in CSS).
 pub(crate) fn parse_transform(src: &str) -> Option<(Affine, Vec<TransformFn>)> {
@@ -388,6 +420,9 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
         && let Some((m, _)) = parse_transform(t)
     {
         b.transform = m;
+    }
+    if let Some(o) = text(c.get("transform-origin")).and_then(parse_origin) {
+        b.transform_origin = o;
     }
     b.overflow_x = overflow(kw(c.get("overflow-x")));
     b.overflow_y = overflow(kw(c.get("overflow-y")));
@@ -814,6 +849,10 @@ mod tests {
         assert_eq!(m.apply(Point::new(1.0, 1.0)), Point::new(12.0, 7.0));
         assert_eq!(parse_transform("none").unwrap().0, Affine::IDENTITY);
         assert!(parse_transform("perspective(10px)").is_none());
+        assert_eq!(parse_origin("left top"), Some(Point::new(0.0, 0.0)));
+        assert_eq!(parse_origin("25% 100%"), Some(Point::new(0.25, 1.0)));
+        assert_eq!(parse_origin("bottom"), Some(Point::new(0.5, 1.0)));
+        assert_eq!(parse_origin("10px 4px"), None);
         let (r, _) = parse_transform("rotate(90deg)").unwrap();
         let p = r.apply(Point::new(1.0, 0.0));
         assert!((p.x).abs() < 1e-5 && (p.y - 1.0).abs() < 1e-5);

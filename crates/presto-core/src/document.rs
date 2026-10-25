@@ -426,6 +426,9 @@ impl Document {
         self.structure_changed(pi);
         self.mark_subtree_style(ci);
         self.mark_subtree(ci, Dirty::RECORD);
+        if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
+            self.refresh_desc_nonpassive(pi);
+        }
         self.journal.push(Change::Inserted { parent, child, revision: rev });
         Ok(())
     }
@@ -457,6 +460,9 @@ impl Document {
         }
         self.set_window(ci, None);
         self.structure_changed(pi);
+        if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
+            self.refresh_desc_nonpassive(pi);
+        }
     }
 
     /// Destroys `node` and its subtree (removing it from its parent first). Stale ids are ignored.
@@ -701,6 +707,33 @@ impl Document {
             }
             // the scroll nodes above it change their `passive` bit
             self.mark_ancestors_property(i);
+            if let Some(p) = self.core[i].parent {
+                let pi = self.ix(p);
+                self.refresh_desc_nonpassive(pi);
+            }
+        }
+    }
+
+    /// Recomputes [`NodeFlags::DESC_NONPASSIVE`] on `i` and up its ancestors until a node's bit does
+    /// not change.
+    pub(crate) fn refresh_desc_nonpassive(&mut self, mut i: usize) {
+        let any = NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE);
+        loop {
+            let has = self.children[i].iter().any(|&c| self.core[self.ix(c)].flags.intersects(any));
+            if has == self.core[i].flags.contains(NodeFlags::DESC_NONPASSIVE) {
+                return;
+            }
+            if has {
+                self.core[i].flags.insert(NodeFlags::DESC_NONPASSIVE);
+            } else {
+                self.core[i].flags.remove(NodeFlags::DESC_NONPASSIVE);
+            }
+            self.core[i].dirty.insert(Dirty::PROPERTY);
+            self.mark_up(i, Dirty::DESC_RECORD);
+            match self.core[i].parent {
+                Some(p) => i = self.ix(p),
+                None => return,
+            }
         }
     }
 

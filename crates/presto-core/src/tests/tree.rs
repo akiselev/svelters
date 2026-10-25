@@ -97,7 +97,7 @@ fn the_journal_records_edits_in_order() {
 #[test]
 fn flag_bits_are_distinct() {
     use crate::NodeFlags as F;
-    let all = [F::ROOT, F::LAYOUT_BOUNDARY, F::IN_RELAYOUT, F::IN_REMEASURE, F::NONPASSIVE, F::VIRTUAL, F::ROW, F::WANT_SCROLL, F::SCROLL_BELOW, F::SCROLL_CENTER, F::INK_OVERFLOW];
+    let all = [F::ROOT, F::LAYOUT_BOUNDARY, F::IN_RELAYOUT, F::IN_REMEASURE, F::NONPASSIVE, F::DESC_NONPASSIVE, F::VIRTUAL, F::ROW, F::WANT_SCROLL, F::SCROLL_BELOW, F::SCROLL_CENTER, F::INK_OVERFLOW];
     for (k, a) in all.iter().enumerate() {
         for b in &all[k + 1..] {
             assert!(!a.intersects(*b), "{a:?} and {b:?} share a bit");

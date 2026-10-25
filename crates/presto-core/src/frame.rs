@@ -275,7 +275,8 @@ impl Document {
         let offset = self.scroll_offset(node);
         let wants_clip = s.overflow_x.clips() || s.overflow_y.clips();
         let wants_effect = s.opacity < 1.0 || s.will_change || self.animates(node, AnimProperty::Opacity);
-        let passive = !self.nonpassive_scroll_path(i);
+        // a non-passive listener on the path or inside the container may cancel the scroll
+        let passive = !self.nonpassive_scroll_path(i) && !self.core[i].flags.contains(crate::tree::NodeFlags::DESC_NONPASSIVE);
         let mut ids = std::mem::take(&mut self.window_mut(window).expect("window").props);
         let mut scroll_nodes: Option<(PropNodeId, Option<PropNodeId>)> = None;
         let p = &mut self.record[i];

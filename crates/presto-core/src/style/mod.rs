@@ -7,6 +7,7 @@
 pub(crate) mod cascade;
 mod computed;
 mod invalidate;
+pub mod table;
 
 pub use computed::{BoxShadow, ComputedBox, Overflow, TextAlign, TransitionSpec};
 
@@ -44,7 +45,7 @@ pub(crate) struct DocStyle {
 impl Default for DocStyle {
     fn default() -> Self {
         DocStyle {
-            stylist: Stylist::new(&svelters_style::tables::EGUI),
+            stylist: Stylist::new(table::table()),
             nodes: Vec::new(),
             default: Arc::new(ComputedBox::default()),
             caches: svelters_style::MatchCaches::new(),

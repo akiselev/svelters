@@ -78,6 +78,9 @@ bits! {
         const IN_REMEASURE = 1 << 3;
         /// Has listeners whose signal is not passive on a scroll or wheel path.
         const NONPASSIVE = 1 << 4;
+        /// A descendant has [`NodeFlags::NONPASSIVE`]: wheel scrolling of this node (a scroll
+        /// container) waits for JS too, since the listener may cancel it (§11.5).
+        const DESC_NONPASSIVE = 1 << 7;
         /// Has a kind with virtual children (rows bound on demand).
         const VIRTUAL = 1 << 5;
         /// A virtual row realised by its host (not a light child JS created).
