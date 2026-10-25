@@ -22,7 +22,8 @@
 //! - the hooks presto-core added for the kinds: paint-part styles (`::part(name)`), listened signals,
 //!   signals delivered at event time (a prevented `clicked` skips its default), peer groups (radio
 //!   exclusivity, roving focus), container hooks (chrome padding, per-child layout, inert children),
-//!   prop-derived state bits, the device scale, `label for` focus.
+//!   prop-derived state bits, the device scale, `label for` focus, light dismiss (a press outside an
+//!   open surface reaches the widget as `Event::OutsidePress`).
 
 use crate::controls::run::{self, RunNode};
 use crate::interact::{FocusReason as WFocus, Native, Policy, StateBits};
@@ -181,7 +182,22 @@ fn is_common(name: &str) -> bool {
     presto_core::common::COMMON.props.iter().any(|p| p.name == name)
 }
 
-fn spec_of(ws: &'static w::KindSpec, prop_states: StateBits) -> &'static Spec {
+/// What a widget type declares beyond its spec (the shim `Kind`'s associated functions).
+#[derive(Clone, Copy)]
+struct Traits {
+    prop_states: StateBits,
+    parts: &'static [&'static str],
+    places_children: bool,
+    folds_children: bool,
+}
+
+impl Traits {
+    fn of<W: w::Kind>() -> Traits {
+        Traits { prop_states: W::prop_states(), parts: W::parts(), places_children: W::places_children(), folds_children: W::folds_children() }
+    }
+}
+
+fn spec_of(ws: &'static w::KindSpec, t: Traits) -> &'static Spec {
     static SPECS: OnceLock<Mutex<HashMap<usize, &'static Spec>>> = OnceLock::new();
     let key = ws as *const w::KindSpec as usize;
     let mut map = SPECS.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
@@ -239,10 +255,10 @@ fn spec_of(ws: &'static w::KindSpec, prop_states: StateBits) -> &'static Spec {
             text_prop: ws.text_prop,
             focusable: ws.focusable,
             container: ws.children,
-            folds_children: FOLDING.contains(&ws.tag),
-            parts: parts_of(ws.tag),
-            places_children: PLACING.contains(&ws.tag),
-            prop_states: StateMask(prop_states.0 & !CORE_BITS.0),
+            folds_children: t.folds_children,
+            parts: t.parts,
+            places_children: t.places_children,
+            prop_states: StateMask(t.prop_states.0 & !CORE_BITS.0),
             ..KindSpec::new(ws.tag)
         }));
         Box::leak(Box::new(Spec { core, to_core, disabled }))
@@ -325,29 +341,9 @@ fn signal_arg(s: &w::SignalSpec, args: &[w::Value]) -> Option<Value> {
 
 // ---- the hosted kind ----
 
-/// The kinds whose run children fold into their own content: presto-core measures them as leaves and
-/// does not lay out, record or hit-test their children (`KindSpec::folds_children`).
-const FOLDING: &[&str] = &["label"];
-
-/// The kinds that place or hide their own children (`Kind::child_layout`).
-const PLACING: &[&str] = &["stack"];
-
-/// The paint parts each kind draws (`::part(name)`), computed by presto-core with the node's style.
-fn parts_of(tag: &str) -> &'static [&'static str] {
-    match tag {
-        "button" | "toggle-button" => &["icon", "label"],
-        "checkbox" | "radio-button" => &["indicator", "mark", "icon", "label"],
-        "switch" => &["track", "knob", "label"],
-        "frame" => &["caption", "indicator", "mark"],
-        "progress-bar" => &["track", "fill", "label"],
-        "slider" => &["track", "fill", "rest", "thumb", "tick", "mark-label", "value", "label"],
-        _ => &[],
-    }
-}
-
 /// The node's part styles, for [`w::Styles::parts`].
-fn part_styles<'a>(node: NodeView<'a>, tag: &str) -> Vec<(&'static str, &'a svelters_style::ComputedStyle)> {
-    parts_of(tag).iter().filter_map(|n| Some((*n, node.part(n)?))).collect()
+fn part_styles<'a>(node: NodeView<'a>, parts: &[&'static str]) -> Vec<(&'static str, &'a svelters_style::ComputedStyle)> {
+    parts.iter().filter_map(|n| Some((*n, node.part(n)?))).collect()
 }
 
 /// Installs what the built-in kinds read from `doc`'s services: the text system, the platform policy
@@ -360,8 +356,8 @@ pub fn install(doc: &mut presto_core::Document, text: presto_text::TextSystem, p
 }
 
 /// A folding node's run children as `runs` records; empty for other kinds.
-fn folded_of(node: NodeView<'_>, tag: &str) -> Vec<w::Value> {
-    if !FOLDING.contains(&tag) {
+fn folded_of(node: NodeView<'_>, folds: bool) -> Vec<w::Value> {
+    if !folds {
         return Vec::new();
     }
     run::fold(&run_nodes(&|id| node.view(id), node.children(), css_color(node.css(), "color")))
@@ -388,7 +384,7 @@ pub fn register<W: w::Kind + Default>(registry: &mut KindRegistry) -> Result<pre
     fn make<W: w::Kind + Default>() -> Box<dyn Kind> {
         Box::new(Hosted::<W>::default())
     }
-    registry.register_with(spec_of(W::spec(), W::prop_states()).core, make::<W>)
+    registry.register_with(spec_of(W::spec(), Traits::of::<W>()).core, make::<W>)
 }
 
 /// Registers every Tier 0 kind of [`crate::controls`] in `registry`.
@@ -503,7 +499,7 @@ impl w::Resources for RecordRes<'_> {
 
 impl<W: w::Kind + Default> Hosted<W> {
     fn spec_ref() -> &'static Spec {
-        spec_of(W::spec(), W::prop_states())
+        spec_of(W::spec(), Traits::of::<W>())
     }
 
     fn pointer_event(phase: PointerPhase, p: &presto_core::PointerInput) -> w::Event {
@@ -627,7 +623,7 @@ impl<W: w::Kind + Default> Hosted<W> {
 
 impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn spec() -> &'static KindSpec {
-        spec_of(W::spec(), W::prop_states()).core
+        spec_of(W::spec(), Traits::of::<W>()).core
     }
 
     fn prop_changed(&mut self, cx: &mut PropCx, prop: PropId, value: Option<&Value>) -> Result<(), PropError> {
@@ -659,8 +655,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
         let mut text = shaper(cx.service::<presto_text::TextSystem>());
-        let folded = folded_of(node, W::spec().tag);
-        let parts = part_styles(node, W::spec().tag);
+        let folded = folded_of(node, Self::spec_ref().core.folds_children);
+        let parts = part_styles(node, Self::spec_ref().core.parts);
         self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, scale: node.scale() }, known, avail)
     }
 
@@ -668,8 +664,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
-        let folded = folded_of(node, W::spec().tag);
-        let parts = part_styles(node, W::spec().tag);
+        let folded = folded_of(node, Self::spec_ref().core.folds_children);
+        let parts = part_styles(node, Self::spec_ref().core.parts);
         let (new, used) = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
@@ -697,8 +693,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn record(&self, cx: &mut RecordCx) {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
-        let folded = folded_of(node, W::spec().tag);
-        let parts = part_styles(node, W::spec().tag);
+        let folded = folded_of(node, Self::spec_ref().core.folds_children);
+        let parts = part_styles(node, Self::spec_ref().core.parts);
         let mut list = DisplayList::new();
         let runs = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
@@ -762,6 +758,15 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         self.run(cx, |w, wcx| w.peer(wcx, &msg))
     }
 
+    fn light_dismiss(&self, _node: &NodeView) -> bool {
+        self.widget.light_dismiss()
+    }
+
+    fn outside_press(&mut self, cx: &mut EventCx, p: &presto_core::PointerInput) -> Handled {
+        let ev = w::Event::OutsidePress(p.local);
+        self.run(cx, |w, wcx| w.event(wcx, &ev))
+    }
+
     fn listen_changed(&mut self, _cx: &mut PropCx, signal: SignalId, listened: bool) {
         let s = Self::spec_ref();
         if let Some(i) = (0..s.core.signals.len()).find(|&i| s.core.signal_id(i) == signal) {
@@ -772,7 +777,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn chrome_padding(&self, cx: &mut MeasureCx) -> Option<Insets> {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
-        let parts = part_styles(node, W::spec().tag);
+        let parts = part_styles(node, Self::spec_ref().core.parts);
         let mut text = shaper(cx.service::<presto_text::TextSystem>());
         let [left, right, top, bottom] = self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), dark), text: &mut *text, scale: node.scale() })?;
         Some(Insets { top, right, bottom, left })

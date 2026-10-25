@@ -175,7 +175,7 @@ impl LayoutPartialTree for Tree<'_> {
                 let m = measure_leaf(doc, i, Size::NONE, Size { width: AvailableSpace::MaxContent, height: AvailableSpace::MaxContent });
                 doc.layout[i].intrinsic = Some(PSize::new(m.width, m.height));
             }
-            compute_leaf_layout(inputs, &style, |_, _| 0.0, |known, avail| {
+            compute_leaf_layout(inputs, &*style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(h) } = known {
                     return Size { width: w, height: h };
                 }
@@ -330,7 +330,7 @@ impl Tree<'_> {
         let i = top.index() as usize;
         let want = Size { width: taffy::Dimension::length(size.w), height: taffy::Dimension::length(size.h) };
         if self.doc.layout[i].style.size != want {
-            self.doc.layout[i].style.size = want;
+            std::sync::Arc::make_mut(&mut self.doc.layout[i].style).size = want;
             self.doc.layout[i].cache.clear();
         }
         let id = tid(top);

@@ -583,6 +583,30 @@ impl EventCx<'_> {
         let revision = self.doc.revision;
         self.doc.fast.push(presto_base::commit::FastCommit::Caret { window, rect, revision });
     }
+    /// The node now has a non-empty text selection: with single selection on (GTK), the previous
+    /// owner's [`Kind::selection_lost`](crate::Kind::selection_lost) collapses its own.
+    pub fn claim_selection(&mut self) {
+        if !self.doc.single_selection {
+            return;
+        }
+        let previous = self.doc.selection_owner.replace(self.node);
+        if let Some(p) = previous.filter(|&p| p != self.node && self.doc.contains(p))
+            && let Some(i) = self.doc.idx(p)
+            && let Some(mut k) = self.doc.kinds[i].take()
+        {
+            {
+                let mut cx = EventCx { doc: self.doc, node: p, emitted: self.emitted, pointer: None };
+                k.selection_lost(&mut cx);
+            }
+            self.doc.restore_kind(p, k);
+        }
+    }
+    /// The node's selection collapsed: it no longer owns the one selection.
+    pub fn release_selection(&mut self) {
+        if self.doc.selection_owner == Some(self.node) {
+            self.doc.selection_owner = None;
+        }
+    }
     /// Asks the document to deliver `msg` to the members of the node's peer group that `to` picks
     /// ([`Kind::peer`](crate::Kind::peer)), after this event, in order.
     pub fn peer_request(&mut self, to: crate::kind::PeerTarget, msg: crate::kind::PeerMsg) {

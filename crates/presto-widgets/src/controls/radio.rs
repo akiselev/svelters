@@ -171,6 +171,9 @@ impl RadioButton {
 }
 
 impl Kind for RadioButton {
+    fn parts() -> &'static [&'static str] {
+        &["indicator", "mark", "icon", "label"]
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         self.mirror(crate::interact::StateBits::NONE)
     }

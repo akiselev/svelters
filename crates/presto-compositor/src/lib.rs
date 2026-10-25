@@ -63,6 +63,12 @@ pub struct CompositorConfig {
     /// Passed to the instance for GL/Wayland (winit's `OwnedDisplayHandle`).
     pub display: Option<Box<dyn wgpu::wgt::WgpuHasDisplayHandle>>,
     pub power: wgpu::PowerPreference,
+    /// Chooses the adapter from the enumerated ones (cadatomic's `adapter::select`: drop adapters
+    /// without what the app needs, rank backends); `None` = by `power`, software last. Also used to
+    /// rebuild after device loss.
+    pub adapter: Option<gpu::AdapterSelect>,
+    /// The device's `required_limits` for the chosen adapter; `None` = `adapter.limits()`.
+    pub limits: Option<gpu::DeviceLimits>,
     /// Clear colour of damaged areas; `None` = draw over the previous frame.
     pub clear: Option<Color>,
     pub caret_color: Color,
@@ -83,6 +89,8 @@ impl CompositorConfig {
             refresh,
             display: None,
             power: wgpu::PowerPreference::HighPerformance,
+            adapter: None,
+            limits: None,
             clear: Some(Color::TRANSPARENT),
             caret_color: Color::BLACK,
             caret_blink: Some(CaretBlink::platform_default()),
@@ -108,7 +116,7 @@ impl Compositor {
         let instance = gpu::create_instance(cfg.display);
         let (tx, rx) = mpsc::channel();
         let shared: SharedGpu = Arc::new(RwLock::new(None));
-        let backend = GpuBackend::new(
+        let mut backend = GpuBackend::new(
             instance.clone(),
             cfg.power,
             shared.clone(),
@@ -118,6 +126,7 @@ impl Compositor {
             cfg.clock.clone(),
             cfg.swap_images,
         );
+        backend.set_selection(cfg.adapter, cfg.limits);
         let engine = Engine::new(
             EngineConfig {
                 refresh: cfg.refresh,

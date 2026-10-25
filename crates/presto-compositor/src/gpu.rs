@@ -36,6 +36,12 @@ pub struct GpuContext {
     pub format: wgpu::TextureFormat,
 }
 
+/// Filters and ranks the enumerated adapters (all backends the compositor uses, able to present to
+/// the first surface when there is one) and picks one.
+pub type AdapterSelect = Arc<dyn Fn(&[wgpu::Adapter]) -> Result<wgpu::Adapter, String> + Send + Sync>;
+/// The `required_limits` of the device for an adapter (default: `adapter.limits()`).
+pub type DeviceLimits = Arc<dyn Fn(&wgpu::Adapter) -> wgpu::Limits + Send + Sync>;
+
 /// Where the published [`GpuContext`] lives.
 pub type SharedGpu = Arc<RwLock<Option<GpuContext>>>;
 
@@ -149,6 +155,8 @@ pub struct GpuBackend {
     notify: Sender<Msg>,
     clock: Arc<dyn Clock>,
     swap_images: usize,
+    select: Option<AdapterSelect>,
+    limits: Option<DeviceLimits>,
     /// Set when no adapter could be created, so every draw does not retry the enumeration.
     unavailable: bool,
 }
@@ -179,7 +187,31 @@ impl GpuBackend {
             notify,
             clock,
             swap_images,
+            select: None,
+            limits: None,
             unavailable: false,
+        }
+    }
+
+    /// Replaces the default adapter choice and device limits (used again after device loss).
+    pub fn set_selection(&mut self, select: Option<AdapterSelect>, limits: Option<DeviceLimits>) {
+        self.select = select;
+        self.limits = limits;
+    }
+
+    fn pick_adapter(&self, surface: Option<&wgpu::Surface<'_>>) -> Option<wgpu::Adapter> {
+        let Some(select) = &self.select else { return select_adapter(&self.instance, self.power, surface) };
+        let adapters: Vec<wgpu::Adapter> = backend_order()
+            .iter()
+            .flat_map(|b| block_on(self.instance.enumerate_adapters(*b)))
+            .filter(|a| surface.is_none_or(|s| a.is_surface_supported(s)))
+            .collect();
+        match select(&adapters) {
+            Ok(a) => Some(a),
+            Err(e) => {
+                log::error!("presto-compositor: adapter selection failed: {e}");
+                None
+            }
         }
     }
 
@@ -191,14 +223,14 @@ impl GpuBackend {
         if self.unavailable && surface.is_none() {
             return false;
         }
-        let Some(adapter) = select_adapter(&self.instance, self.power, surface) else {
+        let Some(adapter) = self.pick_adapter(surface) else {
             log::error!("presto-compositor: no GPU adapter for backends {:?}", backend_order());
             self.unavailable = true;
             return false;
         };
         let desc = wgpu::DeviceDescriptor {
             label: Some("presto-compositor"),
-            required_limits: adapter.limits(),
+            required_limits: self.limits.as_ref().map_or_else(|| adapter.limits(), |f| f(&adapter)),
             ..Default::default()
         };
         let (device, queue) = match block_on(adapter.request_device(&desc)) {
