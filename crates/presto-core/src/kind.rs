@@ -201,8 +201,10 @@ pub enum FocusReason {
     Programmatic,
 }
 
-/// An input event delivered to a kind's native default handler.
+/// An input event delivered to a kind's native default handler. New variants may be added: match
+/// with a wildcard arm.
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum Event<'a> {
     PointerDown(&'a PointerInput),
     PointerUp(&'a PointerInput),
@@ -217,6 +219,11 @@ pub enum Event<'a> {
     Ime(&'a ImeEvent),
     FocusIn(FocusReason),
     FocusOut,
+    /// The time the kind asked for with [`EventCx::wake_at`](crate::EventCx::wake_at) came.
+    Timer,
+    /// An assistive-technology action addressed to this node (`Click`, `Increment`, `SetValue`, …).
+    /// Unhandled `Focus`, `Click` and `ScrollIntoView` get the document's defaults.
+    A11y(&'a accesskit::ActionRequest),
 }
 
 /// State a kind owns natively (architecture §4.5). The document checks writes of `native_owned` props

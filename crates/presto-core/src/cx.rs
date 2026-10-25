@@ -49,6 +49,9 @@ pub struct NodeView<'a> {
     pub(crate) size: Size,
     pub(crate) children: &'a [NodeId],
     pub(crate) window: Option<WindowId>,
+    /// The engine's computed style (`None` before the node's first restyle).
+    pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
+    pub(crate) services: &'a crate::service::Services,
 }
 
 impl<'a> NodeView<'a> {
@@ -87,6 +90,15 @@ impl<'a> NodeView<'a> {
     }
     pub fn style(&self) -> &'a ComputedBox {
         self.style
+    }
+    /// The style engine's computed values for the node (every property the cascade knows, by name;
+    /// [`NodeView::style`] is presto's typed digest of them). `None` before the first restyle.
+    pub fn computed_style(&self) -> Option<&'a svelters_style::ComputedStyle> {
+        self.css
+    }
+    /// The document's service of type `T` ([`crate::service`]).
+    pub fn service<T: 'static>(&self) -> Option<&'a T> {
+        self.services.get::<T>()
     }
     pub fn state(&self) -> StateMask {
         self.state
@@ -410,6 +422,42 @@ pub struct EventCx<'a> {
 impl EventCx<'_> {
     pub fn node(&self) -> NodeId {
         self.node
+    }
+    /// The time of the event being handled (the platform's timestamp; for a timer, its due time).
+    pub fn now(&self) -> presto_base::time::Time {
+        self.doc.input.now
+    }
+    /// Asks for an [`Event::Timer`](crate::Event::Timer) at `t` (press repeat, a long press). The node
+    /// keeps its earliest pending time; the app wakes at [`Document::next_timer`].
+    pub fn wake_at(&mut self, t: presto_base::time::Time) {
+        let e = self.doc.timers.entry(self.node).or_insert(t);
+        if t < *e {
+            *e = t;
+        }
+    }
+    /// Cancels the node's pending timer.
+    pub fn cancel_wake(&mut self) {
+        self.doc.timers.remove(&self.node);
+    }
+    /// Gives up keyboard focus, when this node or a node inside it has it.
+    pub fn blur(&mut self) {
+        let Some(w) = self.doc.window_of(self.node) else { return };
+        if let Some(f) = self.doc.focused(w)
+            && self.doc.is_ancestor_or_self(self.node, f)
+        {
+            crate::input::focus::clear_focus(self.doc, w);
+        }
+    }
+    /// The node has keyboard focus.
+    pub fn focused(&self) -> bool {
+        self.doc.window_of(self.node).and_then(|w| self.doc.focused(w)) == Some(self.node)
+    }
+    /// The document's service of type `T` ([`crate::service`]).
+    pub fn service<T: 'static>(&self) -> Option<&T> {
+        self.doc.services.get::<T>()
+    }
+    pub fn service_mut<T: 'static>(&mut self) -> Option<&mut T> {
+        self.doc.services.get_mut::<T>()
     }
     /// A read view of the node (or of any live node).
     pub fn view(&self, node: NodeId) -> Option<NodeView<'_>> {

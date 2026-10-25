@@ -79,6 +79,9 @@ pub struct Document {
     pub(crate) run_counter: u64,
     pub(crate) images: crate::cx::ImageSink,
     pub(crate) key_hook: Option<Box<dyn FnMut(WindowId, &presto_base::event::KeyEvent) -> bool>>,
+    pub(crate) services: crate::service::Services,
+    /// Kinds' pending timers ([`EventCx::wake_at`](crate::EventCx::wake_at)): the earliest per node.
+    pub(crate) timers: HashMap<NodeId, presto_base::time::Time>,
 }
 
 impl Document {
@@ -112,12 +115,29 @@ impl Document {
             run_counter: 0,
             images: Default::default(),
             key_hook: None,
+            services: Default::default(),
+            timers: HashMap::new(),
         }
     }
 
     /// Gives the document a text shaper, so text kinds record glyph runs.
     pub fn set_text_shaper(&mut self, shaper: Box<dyn TextShaper>) {
         self.shaper = Some(shaper);
+    }
+
+    /// Installs the service `v` (one per type), returning the one it replaces. Kinds read it with
+    /// `cx.service::<T>()` in every context ([`crate::service`]).
+    pub fn set_service<T: 'static>(&mut self, v: T) -> Option<T> {
+        self.services.insert(v)
+    }
+    pub fn service<T: 'static>(&self) -> Option<&T> {
+        self.services.get::<T>()
+    }
+    pub fn service_mut<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut::<T>()
+    }
+    pub fn remove_service<T: 'static>(&mut self) -> Option<T> {
+        self.services.remove::<T>()
     }
 
     pub fn registry(&self) -> &Arc<KindRegistry> {
@@ -210,6 +230,8 @@ impl Document {
             size: Size::new(l.size.width, l.size.height),
             children: &self.children[i],
             window: core.window,
+            css: self.style.nodes[i].css.as_deref(),
+            services: &self.services,
         }
     }
 
@@ -461,6 +483,7 @@ impl Document {
         self.style.reset(i);
         self.anim.forget(id);
         self.scroll.remove(&id);
+        self.timers.remove(&id);
         self.slots.free(i);
     }
 

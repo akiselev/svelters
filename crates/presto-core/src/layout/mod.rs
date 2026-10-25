@@ -84,7 +84,7 @@ impl taffy::TraverseTree for Tree<'_> {}
 fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: Size<AvailableSpace>) -> Size<f32> {
     let Some(k) = doc.kinds[i].take() else { return Size::ZERO };
     let out = {
-        let Document { text, registry, core, props, style, state, layout, children, slots, .. } = &mut *doc;
+        let Document { text, registry, core, props, style, state, layout, children, slots, services, .. } = &mut *doc;
         let entry = registry.get(core[i].kind).expect("registered kind");
         let l = &layout[i].layout;
         let view = NodeView {
@@ -96,6 +96,8 @@ fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: S
             size: PSize::new(l.size.width, l.size.height),
             children: &children[i],
             window: core[i].window,
+            css: style.nodes[i].css.as_deref(),
+            services,
         };
         let mut cx = MeasureCx { node: view, text: &mut **text };
         k.measure(&mut cx, known, avail)

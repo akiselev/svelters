@@ -28,6 +28,7 @@
 //! | [`testkinds`] | minimal kinds and fixed-metric text for tests |
 //! | [`virt`] | the row-height model and the row pool of virtualising kinds |
 //! | [`settle`] | [`Busy`]: why the document is not idle |
+//! | [`service`] | [`Services`]: typed values kinds read from their contexts (the text system) |
 
 pub mod a11y;
 pub mod common;
@@ -44,6 +45,7 @@ pub mod layout;
 mod record;
 pub mod registry;
 mod scroll;
+pub mod service;
 pub mod settle;
 pub mod style;
 pub mod testkinds;
@@ -61,6 +63,7 @@ pub use error::{PropError, TreeError};
 pub use frame::FrameStats;
 pub use layout::LayoutRun;
 pub use settle::Busy;
+pub use service::Services;
 pub use ids::{KindId, PropId, SignalId, SlotId, fingerprint};
 pub use input::{Delivery, Dispatched, JsEvent, Phase};
 pub use input::focus::{next_focus, open_dialog};
