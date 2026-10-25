@@ -162,6 +162,24 @@ impl<'a> NodeView<'a> {
     pub fn scale(&self) -> f32 {
         self.window.and_then(|w| self.doc.window(w)).map_or(1.0, |w| w.scale.0)
     }
+    /// The padding widths from the last layout (points).
+    pub fn padding(&self) -> presto_base::geom::Insets {
+        let Some(i) = self.doc.idx(self.id) else { return presto_base::geom::Insets::ZERO };
+        let p = self.doc.layout[i].layout.padding;
+        presto_base::geom::Insets { top: p.top, right: p.right, bottom: p.bottom, left: p.left }
+    }
+    /// The content box in local coordinates (inside the borders and the padding).
+    pub fn content_box(&self) -> Rect {
+        self.padding_box().inset(self.padding())
+    }
+    /// The border box's window transform from the last rebuild (local → window points).
+    pub fn window_transform(&self) -> presto_base::geom::Affine {
+        self.doc.idx(self.id).map_or(presto_base::geom::Affine::IDENTITY, |i| self.doc.record[i].world_tf)
+    }
+    /// A window point in the node's local space (the inverse of [`NodeView::window_transform`]).
+    pub fn from_window(&self, p: Point) -> Point {
+        self.window_transform().inverse().map_or(p, |t| t.apply(p))
+    }
     /// The common `anchor` prop (`""` when unset).
     pub fn anchor(&self) -> &'a str {
         self.prop_str(common::ANCHOR).unwrap_or("")
@@ -267,12 +285,18 @@ impl MeasureCx<'_> {
     }
 }
 
-/// Images a kind uploads; the commit carries them to the compositor's resource store.
+/// Images and paths a kind uploads; the commit carries them to the compositor's resource store.
 #[derive(Default)]
 pub(crate) struct ImageSink {
     pub next: u64,
     pub added: Vec<(ImageId, Arc<ImageData>)>,
     pub removed: Vec<ImageId>,
+    pub next_path: u64,
+    pub paths: Vec<(presto_base::ids::PathId, Arc<presto_base::commit::PathData>)>,
+    pub removed_paths: Vec<presto_base::ids::PathId>,
+    /// Every image and path uploaded and not released (re-sent after a device reset).
+    pub live_images: std::collections::HashMap<ImageId, Arc<ImageData>>,
+    pub live_paths: std::collections::HashMap<presto_base::ids::PathId, Arc<presto_base::commit::PathData>>,
 }
 
 /// [`Kind::prepare`](crate::Kind::prepare).
@@ -301,11 +325,26 @@ impl PrepareCx<'_> {
     pub fn upload_image(&mut self, data: Arc<ImageData>) -> ImageId {
         self.images.next += 1;
         let id = ImageId(self.images.next);
+        self.images.live_images.insert(id, data.clone());
         self.images.added.push((id, data));
         id
     }
     pub fn release_image(&mut self, id: ImageId) {
+        self.images.live_images.remove(&id);
         self.images.removed.push(id);
+    }
+    /// Uploads a path (an icon outline, a chart's curve) for `Prim::Path`; the id stays valid until
+    /// [`PrepareCx::release_path`].
+    pub fn upload_path(&mut self, data: Arc<presto_base::commit::PathData>) -> presto_base::ids::PathId {
+        self.images.next_path += 1;
+        let id = presto_base::ids::PathId(self.images.next_path);
+        self.images.live_paths.insert(id, data.clone());
+        self.images.paths.push((id, data));
+        id
+    }
+    pub fn release_path(&mut self, id: presto_base::ids::PathId) {
+        self.images.live_paths.remove(&id);
+        self.images.removed_paths.push(id);
     }
     /// Re-record after this prepare even if the node was not content-dirty.
     pub fn request_paint(&mut self) {
@@ -530,6 +569,20 @@ impl EventCx<'_> {
             }
         }
     }
+    /// Scrolls the node (a scroll container, or a kind with [`Kind::self_scroll`](crate::Kind::self_scroll))
+    /// to `offset` and sends the offset to the compositor at once, without waiting for a frame.
+    pub fn scroll_fast(&mut self, offset: presto_base::geom::Vec2) {
+        let n = self.node;
+        self.doc.scroll_fast(n, offset);
+    }
+    /// Shows the caret at `rect` (local coordinates; `None` hides it) through a fast commit: the
+    /// compositor draws and blinks it, so a caret move costs no frame.
+    pub fn set_caret(&mut self, rect: Option<Rect>) {
+        let Some(window) = self.doc.window_of(self.node) else { return };
+        let rect = rect.map(|r| self.doc.view(self.node).map_or(r, |v| v.window_transform().apply_rect(&r)));
+        let revision = self.doc.revision;
+        self.doc.fast.push(presto_base::commit::FastCommit::Caret { window, rect, revision });
+    }
     /// Asks the document to deliver `msg` to the members of the node's peer group that `to` picks
     /// ([`Kind::peer`](crate::Kind::peer)), after this event, in order.
     pub fn peer_request(&mut self, to: crate::kind::PeerTarget, msg: crate::kind::PeerMsg) {
@@ -610,6 +663,28 @@ impl RealizeCx<'_> {
     }
 }
 
+/// The text of `v`'s descendants in tree order (their `aria-label`, else their text content),
+/// separated by spaces: the name of a button with a text child.
+fn descendant_text(v: &NodeView) -> String {
+    let mut out = String::new();
+    let mut stack: Vec<NodeView> = v.children().iter().rev().filter_map(|&c| v.view(c)).collect();
+    while let Some(c) = stack.pop() {
+        let own = c.prop_str(common::ARIA_LABEL).filter(|s| !s.is_empty()).unwrap_or(c.text());
+        if !own.is_empty() {
+            if !out.is_empty() {
+                out.push(' ');
+            }
+            out.push_str(own.trim());
+            // a labelled child names its subtree
+            if c.prop_str(common::ARIA_LABEL).is_some_and(|s| !s.is_empty()) {
+                continue;
+            }
+        }
+        stack.extend(c.children().iter().rev().filter_map(|&k| v.view(k)));
+    }
+    out
+}
+
 /// [`Kind::a11y`](crate::Kind::a11y): the node's AccessKit node, prefilled with its role, bounds and
 /// children.
 pub struct A11yCx<'a> {
@@ -629,17 +704,17 @@ impl A11yCx<'_> {
     pub fn default_a11y(&mut self) {
         let v = self.node;
         let label = v.entry.spec.name_from.iter().find_map(|src| {
-            let s = match *src {
-                crate::kind::NameSource::AriaLabel => v.prop_str(common::ARIA_LABEL)?,
-                crate::kind::NameSource::Prop(p) => v.prop_str(v.entry.spec.prop_named(p)?)?,
-                crate::kind::NameSource::Text => v.text(),
-                // the children's own labels are their nodes'; AccessKit computes it from them
-                crate::kind::NameSource::Children => return None,
+            let s: std::borrow::Cow<str> = match *src {
+                crate::kind::NameSource::AriaLabel => v.prop_str(common::ARIA_LABEL)?.into(),
+                crate::kind::NameSource::Prop(p) => v.prop_str(v.entry.spec.prop_named(p)?)?.into(),
+                crate::kind::NameSource::Text => v.text().into(),
+                // accesskit computes names from descendants for a few roles only: concatenate here
+                crate::kind::NameSource::Children => descendant_text(&v).into(),
             };
             (!s.is_empty()).then_some(s)
         });
         if let Some(l) = label {
-            self.out.set_label(l);
+            self.out.set_label(&*l);
         }
         if let Some(t) = self.node.prop_str(common::TITLE) {
             self.out.set_description(t);

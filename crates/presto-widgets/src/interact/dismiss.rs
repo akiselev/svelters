@@ -2,9 +2,9 @@
 //! Escape and on a press outside it and its anchor (ARCH-WIDGETS §1.2). The kind owns `open` (a
 //! prop) and decides; the unit only reports why.
 //!
-//! It reads the presses its host receives: a press outside `inside` reaches the unit only when it is
-//! delivered to the host (a backdrop the surface covers the window with, or presto-core routing
-//! presses outside an open surface to it).
+//! It reads the presses its host receives, inside `inside` or not (a backdrop the surface covers the
+//! window with), and the presses outside the host that presto-core routes to an open surface
+//! (`Event::OutsidePress`, for a kind whose `light_dismiss` is on).
 
 use super::{FrameEvent, InputCx, InputFrame, Intents, Mods, StateBits, Unit};
 use presto_base::geom::{Point, Rect};
@@ -71,12 +71,13 @@ impl Dismissable {
                 return Some(Dismiss { reason: Reason::Escape, at: None });
             }
         }
-        if input.pointer.any_pressed()
-            && p.on_outside == Outside::Close
-            && let Some(pos) = input.pointer.interact_pos()
-            && !p.inside.iter().any(|r| contains(r, pos))
-        {
-            return Some(Dismiss { reason: Reason::OutsidePress, at: Some(pos) });
+        if p.on_outside == Outside::Close {
+            let pressed = if input.pointer.any_pressed() { input.pointer.interact_pos() } else { None };
+            if let Some(pos) = input.outside_press.or(pressed)
+                && !p.inside.iter().any(|r| contains(r, pos))
+            {
+                return Some(Dismiss { reason: Reason::OutsidePress, at: Some(pos) });
+            }
         }
         None
     }
@@ -125,5 +126,17 @@ mod tests {
         rig.up(200.0, 200.0, |_| {});
         rig.key(Key::Escape, |cx| u.input(&keep, cx, &mut out));
         assert!(out.is_empty() && !u.claims(&keep, Key::Escape, Mods::NONE));
+    }
+
+    #[test]
+    fn routed_outside_press() {
+        // presto-core's light-dismiss routing: a press elsewhere in the window, not on the host
+        let p = DismissParams { inside: vec![Rect::new(0.0, 0.0, 100.0, 50.0)], on_outside: Outside::Close, escape: true };
+        let input = InputFrame { outside_press: Some(Point::new(300.0, 10.0)), ..InputFrame::default() };
+        assert_eq!(Dismissable::check(&p, &input), Some(Dismiss { reason: Reason::OutsidePress, at: Some(Point::new(300.0, 10.0)) }));
+        // inside the anchor (a press on the select that opened it): not a dismiss
+        let on_anchor = DismissParams { inside: vec![Rect::new(0.0, 0.0, 100.0, 50.0), Rect::new(250.0, 0.0, 350.0, 20.0)], ..p.clone() };
+        assert_eq!(Dismissable::check(&on_anchor, &input), None);
+        assert_eq!(Dismissable::check(&DismissParams { on_outside: Outside::Ignore, ..p }, &input), None);
     }
 }

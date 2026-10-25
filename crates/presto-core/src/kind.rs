@@ -387,6 +387,15 @@ pub enum PeerMsg {
     Notify(Option<Value>),
 }
 
+/// A kind that scrolls its own content ([`Kind::self_scroll`]): the node is a scroll container of
+/// `content` (points), scrolling on the axes set, whatever its CSS `overflow`.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct SelfScroll {
+    pub content: presto_base::geom::Size,
+    pub x: bool,
+    pub y: bool,
+}
+
 /// What JS listeners did with a signal delivered at event time
 /// ([`EventCx::emit_sync`](crate::EventCx::emit_sync)).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -534,6 +543,16 @@ pub trait Kind: 'static {
     /// native props, focus, its own peer requests).
     fn peer(&mut self, cx: &mut EventCx, from: presto_base::ids::NodeId, msg: &PeerMsg) -> Handled {
         Handled::No
+    }
+
+    /// The kind scrolls its own content (a code editor): its node gets a scroll node, a content
+    /// space and a scroll layer as an `overflow: auto` box does, and its own display list is
+    /// recorded in content space and placed in that layer, so a scroll is a compositor offset
+    /// ([`EventCx::scroll_fast`](crate::EventCx::scroll_fast)) and never a re-record. Pointer
+    /// positions stay in the border box: add [`Document::scroll_offset`](crate::Document::scroll_offset).
+    /// Asked after each `prepare`.
+    fn self_scroll(&self, node: &NodeView) -> Option<SelfScroll> {
+        None
     }
 
     /// JS started (`listened`) or stopped listening to `signal` on this node (an icon takes clicks

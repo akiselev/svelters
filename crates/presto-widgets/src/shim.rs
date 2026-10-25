@@ -257,6 +257,9 @@ pub mod core {
         Timer,
         /// The pointer capture ended without a release (another window took it, the node was hidden).
         CaptureLost,
+        /// A pointer press in the window outside this node and its subtree (node-local position),
+        /// for a node that asks for them while open ([`Kind::light_dismiss`]): a popup closes on it.
+        OutsidePress(Point),
     }
 
     /// Stands in for `presto_core::StyleCx`: the node's computed style and state, for `layout_style`.
@@ -554,6 +557,10 @@ pub mod core {
         /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:
         /// an `icon` or `image` takes clicks only while one of its click signals is listened.
         fn listen(&mut self, _signal: SignalId, _listened: bool) {}
+        /// It wants [`Event::OutsidePress`] now (an open floating surface: light dismiss).
+        fn light_dismiss(&self) -> bool {
+            false
+        }
         /// The state bits the kind derives from its props alone (`:checked`, `:busy`); presto-core sets
         /// them after every prop write (bits outside [`Kind::prop_states`] are ignored).
         fn prop_state(&self) -> StateBits {

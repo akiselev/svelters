@@ -35,9 +35,7 @@ pub(crate) fn call_kind(doc: &mut Document, node: NodeId, ev: &Event, emitted: &
         let mut cx = EventCx { doc, node, emitted, pointer };
         k.event(&mut cx, ev)
     };
-    if let Some(i) = doc.idx(node) {
-        doc.kinds[i] = Some(k);
-    }
+    doc.restore_kind(node, k);
     if !doc.peer_queue.is_empty() {
         crate::input::peers::run(doc, emitted);
     }
@@ -110,7 +108,7 @@ pub(crate) fn deliver_now(doc: &mut Document, target: NodeId, signal: SignalId, 
     }
     let Some(ev) = js_event(doc, target, signal, arg) else { return Ok(Default::default()) };
     let mut f = doc.sync_delivery.take().expect("checked");
-    let o = f(&ev);
+    let o = f(doc, &ev);
     if doc.sync_delivery.is_none() {
         doc.sync_delivery = Some(f);
     }
@@ -310,7 +308,7 @@ impl Document {
     }
 
     /// Hover follows the newest sample: leave the old path's nodes not on the new path, enter the new.
-    fn update_hover(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
+    pub(crate) fn update_hover(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
         let mut path = Vec::new();
         let mut a = target;
         while let Some(n) = a {
@@ -368,7 +366,8 @@ impl Document {
                 let input = self.pointer_input(window, t, p, count);
                 // EV1: a prevented pointerdown keeps the press from the tree (no press, focus or click)
                 let pre = self.pre_js(t, common::POINTERDOWN, Some(pointer_record(&input)));
-                if pre.prevented() {
+                // listeners may have removed the target
+                if pre.prevented() || !self.contains(t) {
                     return;
                 }
                 crate::input::dnd::pressed(self, window, t, p);
@@ -518,8 +517,13 @@ impl Document {
     }
 
     fn dispatch_key(&mut self, window: WindowId, k: &KeyEvent, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
-        // IME first (§11.2): during a composition, printable keys belong to the IME
-        if self.input.composing && k.text.as_deref().is_some_and(|t| !t.is_empty() && !t.chars().any(char::is_control)) {
+        // IME first (§11.2), before any keymap: during a composition every key belongs to the input
+        // method; with an IME input source active, so do printable keys without a chord (so that
+        // `jj`-style chords cannot break Japanese input)
+        let m = k.modifiers;
+        let chord = m.contains(Modifiers::CTRL) || m.contains(Modifiers::SUPER) || m.contains(Modifiers::ALT);
+        let printable = k.text.as_deref().is_some_and(|t| !t.is_empty() && !t.chars().any(char::is_control));
+        if self.input.composing || (self.input.ime_source.contains(&window) && !chord && printable) {
             out.to_ime = true;
             return;
         }
@@ -604,6 +608,16 @@ impl Document {
             a = self.parent(n);
         }
         None
+    }
+
+    /// The platform reports whether an input method source (a CJK IME, not a plain keyboard layout)
+    /// is active for `window`: while it is, printable keys without a chord go to the IME first.
+    pub fn set_ime_source(&mut self, window: WindowId, active: bool) {
+        if active {
+            self.input.ime_source.insert(window);
+        } else {
+            self.input.ime_source.remove(&window);
+        }
     }
 
     /// The command layer's keymap (cadatomic's one command path): called for every key outside a

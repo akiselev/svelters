@@ -65,7 +65,7 @@ kind_props! {
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
-    SignalSpec::new("changed", &[("checked", ValueType::Bool)], "The user toggled it (or an arrow key moved the check), or a group member's check unchecked it."),
+    SignalSpec::new("changed", &[("checked", ValueType::Bool)], "The user toggled it (or an arrow key moved the check), or a group member's check unchecked it. Preventing the user's toggle keeps the state.").cancelable(),
     SignalSpec::new("clicked", &[], "Pressed and released (or Space, Enter, AccessKit `Click`)."),
 ];
 
@@ -183,7 +183,9 @@ impl Kind for ToggleButton {
         }
         for Toggle::Toggled { checked, .. } in toggled.iter().copied() {
             // EV1: the signal goes out before the default action (the prop write)
-            common::emit(cx, &SPEC, "changed", vec![Value::Bool(checked)]);
+            if common::emit_sync(cx, &SPEC, "changed", vec![Value::Bool(checked)]) {
+                continue;
+            }
             if self.props.checked != checked {
                 self.props.checked = checked;
                 cx.prop_changed(P::checked.id());
@@ -192,6 +194,8 @@ impl Kind for ToggleButton {
                 cx.peer_request(PeerTarget::Others, PeerMsg::Checked(Vec::new()));
             }
         }
+        // a prevented toggle leaves the unit's bits at the new value: back to the props
+        *cx.state = self.mirror(*cx.state);
         // Roving: the member the arrow lands on takes focus and checks itself; the others follow
         if let Some(r) = roved.iter().last().copied() {
             cx.peer_request(PeerTarget::Rove(r), PeerMsg::Roved);
@@ -416,5 +420,14 @@ mod tests {
         assert_eq!(testkit::a11y(&t, StateBits::NONE, SIZE).toggled(), Some(accesskit::Toggled::True));
         t.props.group = "g".into();
         assert_eq!(testkit::a11y(&t, StateBits::NONE, SIZE).role(), accesskit::Role::RadioButton);
+    }
+
+    #[test]
+    fn a_prevented_changed_keeps_the_state() {
+        let mut d = Driver::new(ToggleButton::default(), presto_base::geom::Size::new(80.0, 26.0));
+        d.prevent = vec!["changed"];
+        d.click();
+        assert!(d.names().contains(&"changed"));
+        assert!(!d.kind.props.checked && !d.state.contains(StateBits::CHECKED));
     }
 }

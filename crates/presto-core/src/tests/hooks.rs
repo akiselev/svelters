@@ -504,7 +504,7 @@ fn a_prevented_signal_skips_the_default() {
     d.listen(b, BTN_CHANGED, ListenFlags::EMPTY);
     let seen = Rc::new(RefCell::new(Vec::new()));
     let log = seen.clone();
-    d.set_sync_delivery(Box::new(move |ev| {
+    d.set_sync_delivery(Box::new(move |_doc, ev| {
         log.borrow_mut().push(ev.signal);
         Outcome { prevented: true, stopped: false }
     }));
@@ -520,7 +520,7 @@ fn a_prevented_pointerdown_keeps_the_press_from_the_tree() {
     let (mut d, root) = hdoc();
     let t = child(&mut d, root, TOGGLE, "");
     d.listen(t, common::POINTERDOWN, ListenFlags::EMPTY);
-    d.set_sync_delivery(Box::new(|ev| Outcome { prevented: ev.signal == common::POINTERDOWN, stopped: false }));
+    d.set_sync_delivery(Box::new(|_doc, ev| Outcome { prevented: ev.signal == common::POINTERDOWN, stopped: false }));
     frame(&mut d);
     click(&mut d, 5.0, 5.0);
     assert!(!d.view(t).unwrap().prop_bool(testkinds::TOGGLE_CHECKED), "no click");
@@ -595,4 +595,97 @@ fn drop_types_match_by_prefix_and_wildcard() {
     assert!(type_matches("cad/part", "cad/part"));
     assert!(!type_matches("cad/*", "text/plain"));
     assert!(!type_matches("ca*", "cad/part"), "a prefix ends with a slash");
+}
+
+#[test]
+fn the_deliverer_reads_and_writes_the_document() {
+    let (mut d, root) = hdoc();
+    let b = child(&mut d, root, BTN, "");
+    let other = child(&mut d, root, BOX, "");
+    d.set_prop(b, common::TITLE, Value::from("ok")).unwrap();
+    d.listen(b, BTN_CHANGED, ListenFlags::EMPTY);
+    d.set_sync_delivery(Box::new(move |doc, ev| {
+        // a listener reads its target and writes elsewhere, in the event's transaction
+        let title = doc.view(ev.target).and_then(|v| v.prop_str(common::TITLE)).unwrap_or("").to_owned();
+        let rev = doc.revision();
+        doc.js_transaction(rev, |doc| doc.set_prop(other, common::TITLE, Value::from(title.as_str()))).unwrap();
+        doc.js_transaction(rev, |doc| doc.set_prop(ev.target, common::ARIA_LABEL, Value::from("renamed"))).unwrap();
+        Outcome::default()
+    }));
+    d.focus(b, crate::FocusReason::Keyboard);
+    d.dispatch(&key(Key::Space, Modifiers::default()));
+    assert_eq!(d.view(other).unwrap().prop_str(common::TITLE), Some("ok"));
+    assert_eq!(d.view(b).unwrap().prop_str(common::ARIA_LABEL), Some("renamed"), "a write to the node mid-handler is kept");
+    assert!(d.state(b).contains(StateMask::CHECKED), "not prevented: the default ran");
+}
+
+// ---- kinds that scroll themselves, carets, padding ----
+
+const PAGE: KindId = KindId::of("page");
+
+static PAGE_SPEC: KindSpec = KindSpec { focusable: true, ..KindSpec::new("page") };
+
+/// A code-editor stand-in: 1000 points of content it scrolls itself; Down scrolls by 10 fast.
+#[derive(Default)]
+struct Page;
+
+impl Kind for Page {
+    fn spec() -> &'static KindSpec {
+        &PAGE_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+    fn self_scroll(&self, _node: &crate::NodeView) -> Option<crate::SelfScroll> {
+        Some(crate::SelfScroll { content: Size::new(50.0, 1000.0), x: false, y: true })
+    }
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        match ev {
+            Event::Key(k) if k.key == Some(Key::ArrowDown) => {
+                let off = cx.document().scroll_offset(cx.node());
+                cx.scroll_fast(presto_base::geom::Vec2::new(0.0, off.y + 10.0));
+                cx.set_caret(Some(presto_base::geom::Rect::new(1.0, 2.0, 2.0, 12.0)));
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
+    }
+}
+
+#[test]
+fn a_kind_that_scrolls_itself_scrolls_on_the_compositor() {
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<Page>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let page = child(&mut d, root, PAGE, "width: 50px; height: 80px; margin-left: 10px; background-color: #ffffff");
+    let c = frame(&mut d).unwrap();
+    let scroll = c.props.ops.iter().any(|op| matches!(op, presto_base::props::PropOp::Scroll(..)));
+    assert!(scroll, "it has a scroll node");
+    assert!(c.layers.iter().any(|l| matches!(l, presto_base::layer::LayerDelta::Add(desc) if matches!(desc.kind, presto_base::layer::LayerKind::Scroll { .. }))));
+    d.focus(page, crate::FocusReason::Keyboard);
+    d.take_fast_commits();
+    d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+    let fast = d.take_fast_commits();
+    assert!(fast.iter().any(|f| matches!(f, presto_base::commit::FastCommit::ScrollOffset { offset, .. } if offset.y == 10.0)));
+    let caret = fast.iter().find_map(|f| match f {
+        presto_base::commit::FastCommit::Caret { rect, .. } => *rect,
+        _ => None,
+    });
+    assert_eq!(caret.map(|r| r.min.x), Some(11.0), "the caret is in window points");
+    let c = frame(&mut d).unwrap();
+    assert!(c.lists.is_empty(), "a scroll is no re-record");
+}
+
+#[test]
+fn views_carry_padding_and_the_window_transform() {
+    let (mut d, root) = hdoc();
+    let a = child(&mut d, root, BOX, "width: 50px; height: 50px; margin-left: 20px; padding: 3px 4px; border-width: 1px; border-style: solid");
+    frame(&mut d);
+    let v = d.view(a).unwrap();
+    assert_eq!(v.padding().left, 4.0);
+    assert_eq!(v.content_box().min.x, 5.0, "border, then padding");
+    assert_eq!(v.window_transform().e, 20.0);
+    assert_eq!(v.from_window(Point::new(25.0, 0.0)).x, 5.0);
 }
