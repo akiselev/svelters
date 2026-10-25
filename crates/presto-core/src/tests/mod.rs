@@ -9,6 +9,7 @@ mod focus;
 mod folds;
 mod hooks;
 mod ime;
+mod query;
 mod services;
 mod style;
 mod tree;
