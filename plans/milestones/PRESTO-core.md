@@ -1,7 +1,27 @@
 # PRESTO-core: presto-core (presto batch 1, lane CORE)
 
 Branch `ci/presto-core` from `ci/presto-base`. Brief: `plans/cloud/presto-b1/LANE-core.md`. Date: 2026-10-25.
-Owns `crates/presto-core/**` only. No cross-lane edits; no presto-base changes.
+Owns `crates/presto-core/**`. No presto-base changes.
+
+## Cross-lane edits
+
+- `crates/presto-widgets/src/host.rs` (WIDGETS-BASIC), two lines so it builds against the coordinator's
+  presto-core additions: `..KindSpec::new(ws.tag)` in its `KindSpec` literal, and the new `Event::Timer` /
+  `Event::A11y` arms mapped to its `w::Event::Timer` / `w::Event::A11y`. Its widgets still ask for timers
+  through their own shim; wiring that to `EventCx::wake_at` is WIDGETS-BASIC's.
+
+## Coordinator requests (2026-10-25), done
+
+- WIDGETS-BASIC: (1) `NodeView::css()` (the engine's `ComputedStyle`); (2) `EventCx::wake_at`/`cancel_wake`
+  → `Event::Timer`, driven by `Document::next_timer`/`run_timers(now)`; (3) `Document::a11y_action(window,
+  req)` → `Event::A11y(&ActionRequest)` to the kind, then defaults for Focus/Blur/ScrollIntoView;
+  (4) `EventCx::blur`; (5) `Services` (typed map): `Document::set_service::<T>`/`service::<T>`,
+  `cx.service::<T>()` in Measure/Prepare/Record/EventCx; (6) `EventCx::time()`.
+- SVELTERS-PRESTO: (a) ids are unique across kinds: `RegistryError::CrossKindCollision` names both members;
+  (b) `KindSpec.{methods, name_from, doc}`, `MethodSpec`/`ArgSpec` (typed, nullable params and return,
+  `MethodId`, `Kind::call`, `Document::call`), `SignalSpec.{args, doc}`, `PropSpec.{nullable, doc}`,
+  `NameSource` (default a11y names follow `name_from`); (c) `Document::attach_window(window, node, size,
+  scale)` presents a detached JS-created node.
 
 ## Landed
 
@@ -66,7 +86,7 @@ Additions beyond the brief's signatures: `create_window`/`resize_window`/`close_
 ## Not run
 
 Ran locally once, because the presto workflow was failing before building (fixed since on base):
-`cargo test -p presto-core` (59 passed) and `cargo check -p presto-core -p presto-widgets --all-targets`
+`cargo test -p presto-core` (67 passed) and `cargo check -p presto-core -p presto-widgets --all-targets`
 after merging `origin/ci/presto-base` (ac7cc8c4). Not run: clippy, other OSes, any other crate's tests.
 
 ## Questions for the coordinator
