@@ -3,7 +3,8 @@
 //! Every frame that draws flattens the scene anyway, so damage is computed by diffing the flattened
 //! items against the previous frame's: an item whose list, resolved transform, clip, opacity or paint
 //! predecessor changed damages its old and new bounds; an item that appeared or went away damages its
-//! bounds. That covers the journal's dirty nodes, changed property nodes and running animations
+//! bounds. An item that survived but moved in paint order relative to the other survivors damages
+//! its bounds too (a removal or insertion alone does not reorder anyone). That covers the journal's dirty nodes, changed property nodes and running animations
 //! without separate bookkeeping, and it is the full-scene check the architecture asks for as a debug
 //! mode, run always. Explicit rects (`LayerDelta::Damage`, the caret) are added on top.
 //!
@@ -31,7 +32,8 @@ struct ItemSnap {
     clip: Option<ClipShape>,
     opacity: f32,
     list: Arc<DisplayList>,
-    prev: Option<ItemKey>,
+    /// Position in the frame's paint order.
+    order: usize,
 }
 
 /// The previous frame's flattened items of one surface.
@@ -45,8 +47,9 @@ impl Snapshot {
     /// as the new snapshot.
     pub fn diff(&mut self, items: &[FlatItem], out: &mut Vec<Rect>) {
         let mut next = HashMap::with_capacity(items.len());
-        let mut prev: Option<ItemKey> = None;
-        for it in items {
+        // The highest old position among survivors so far: a survivor below it was reordered.
+        let mut max_old: Option<usize> = None;
+        for (order, it) in items.iter().enumerate() {
             let key = (it.layer, it.node);
             let snap = ItemSnap {
                 bounds: if it.opacity > 0.0 { it.bounds } else { Rect::ZERO },
@@ -54,11 +57,13 @@ impl Snapshot {
                 clip: it.clip,
                 opacity: it.opacity,
                 list: it.list.clone(),
-                prev,
+                order,
             };
             match self.items.remove(&key) {
                 Some(old) => {
-                    if !same(&old, &snap) {
+                    let reordered = max_old.is_some_and(|m| old.order < m);
+                    max_old = Some(max_old.map_or(old.order, |m| m.max(old.order)));
+                    if reordered || !same(&old, &snap) {
                         push_nonempty(out, old.bounds);
                         push_nonempty(out, snap.bounds);
                     }
@@ -66,7 +71,6 @@ impl Snapshot {
                 None => push_nonempty(out, snap.bounds),
             }
             next.insert(key, snap);
-            prev = Some(key);
         }
         for (_, old) in self.items.drain() {
             push_nonempty(out, old.bounds);
@@ -84,7 +88,6 @@ fn same(a: &ItemSnap, b: &ItemSnap) -> bool {
         && a.transform == b.transform
         && a.clip == b.clip
         && a.opacity == b.opacity
-        && a.prev == b.prev
         && (Arc::ptr_eq(&a.list, &b.list) || *a.list == *b.list)
 }
 

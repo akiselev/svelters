@@ -43,6 +43,9 @@ pub enum Writer {
     Js { seen: Revision },
 }
 
+/// The deliverer of JS events at event time ([`Document::set_sync_delivery`]).
+pub type SyncDelivery = Box<dyn FnMut(&mut Document, &crate::input::JsEvent) -> crate::kind::Outcome>;
+
 /// The retained tree of one app.
 pub struct Document {
     pub(crate) registry: Arc<KindRegistry>,
@@ -84,6 +87,36 @@ pub struct Document {
     pub(crate) timers: HashMap<NodeId, presto_base::time::Time>,
     /// The realised rows of virtualising nodes ([`crate::VirtualChildren`]).
     pub(crate) virt: HashMap<NodeId, crate::virt::VirtState>,
+    /// Peer requests ([`EventCx::peer_request`](crate::EventCx::peer_request)) not applied yet.
+    pub(crate) peer_queue: std::collections::VecDeque<(NodeId, crate::kind::PeerTarget, crate::kind::PeerMsg)>,
+    pub(crate) peer_running: bool,
+    /// Delivers a JS event at event time and answers what its listeners did.
+    pub(crate) sync_delivery: Option<SyncDelivery>,
+    /// Prop writes made while their node's kind was out (JS run during the kind's own handler):
+    /// the kind gets `prop_changed` for them when it is back.
+    pub(crate) missed_props: Vec<(NodeId, PropId)>,
+    /// The deliverer is running (its depth), and the sync events raised meanwhile.
+    pub(crate) delivering: u32,
+    pub(crate) nested: Vec<crate::input::JsEvent>,
+    /// The nodes with a non-empty `anchor`.
+    pub(crate) anchors: HashMap<NodeId, Arc<str>>,
+    /// The nodes with a non-empty `for` prop (labels), and the anchor it names.
+    pub(crate) label_for: HashMap<NodeId, Arc<str>>,
+    /// The focused push button of a dialog scope is its default (`Policy::auto_default`).
+    pub(crate) auto_default: bool,
+    /// Per kind, its live nodes.
+    pub(crate) kind_sets: crate::query::KindSets,
+    /// Kinds that scroll their own content ([`Kind::self_scroll`]).
+    pub(crate) self_scroll: HashMap<NodeId, crate::kind::SelfScroll>,
+    /// The one selection's owner while single selection is on (GTK), and whether it is.
+    pub(crate) selection_owner: Option<NodeId>,
+    pub(crate) single_selection: bool,
+    /// The shared taffy styles of the layout column.
+    pub(crate) styles: crate::compact::Interner<taffy::Style>,
+    /// Nodes whose kind asks for light dismiss now ([`Kind::light_dismiss`]).
+    pub(crate) light_dismiss: std::collections::HashSet<NodeId>,
+    /// Fast commits queued for the compositor ([`Document::take_fast_commits`]).
+    pub(crate) fast: Vec<presto_base::commit::FastCommit>,
 }
 
 impl Document {
@@ -120,7 +153,94 @@ impl Document {
             services: Default::default(),
             timers: HashMap::new(),
             virt: HashMap::new(),
+            peer_queue: Default::default(),
+            peer_running: false,
+            sync_delivery: None,
+            missed_props: Vec::new(),
+            delivering: 0,
+            nested: Vec::new(),
+            anchors: HashMap::new(),
+            label_for: HashMap::new(),
+            auto_default: false,
+            kind_sets: Default::default(),
+            self_scroll: HashMap::new(),
+            light_dismiss: Default::default(),
+            styles: Default::default(),
+            selection_owner: None,
+            single_selection: false,
+            fast: Vec::new(),
         }
+    }
+
+    /// Installs the deliverer of JS events at event time (svelters-presto's `call_sync`): cancelable
+    /// events then reach their listeners before the native default, which honours `preventDefault`
+    /// ([`EventCx::emit_sync`](crate::EventCx::emit_sync), and the DOM pointer, key and wheel events
+    /// of [`Document::dispatch`]). Events it delivered are not listed in
+    /// [`Dispatched::events`](crate::Dispatched::events).
+    ///
+    /// The deliverer gets the document lent to it: listeners read the tree, write props and build
+    /// nodes directly (writes belong in [`Document::js_transaction`] with the event's revision). The
+    /// path is the one computed when the event was built: a listener node that is gone when its turn
+    /// comes is skipped (`Document::contains`). While the deliverer runs, a sync event a
+    /// listener's action raises (`el.click()`, a `focus()`'s focus events) is not delivered inside
+    /// the listener: it is delivered, not cancelable, right after the listener call that caused it
+    /// returns (before the outer default runs), and so on until none is left. A write to the node
+    /// whose kind is mid-handler reaches that kind's `prop_changed` when the handler returns.
+    pub fn set_sync_delivery(&mut self, f: SyncDelivery) {
+        self.sync_delivery = Some(f);
+    }
+
+    /// Puts node `node`'s kind back after a call and replays the prop writes it missed meanwhile.
+    pub(crate) fn restore_kind(&mut self, node: NodeId, mut k: Box<dyn Kind>) {
+        let Some(i) = self.idx(node) else { return };
+        self.refresh_light_dismiss(node, &*k);
+        if self.missed_props.iter().any(|(n, _)| *n == node) {
+            let missed: Vec<PropId> = self.missed_props.iter().filter(|(n, _)| *n == node).map(|(_, p)| *p).collect();
+            self.missed_props.retain(|(n, _)| *n != node);
+            let mut request = Dirty::EMPTY;
+            for p in missed {
+                let v = self.props[i].get(p).cloned();
+                let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
+                // the write is stored already: a rejection now cannot undo it
+                let _ = k.prop_changed(&mut cx, p, v.as_ref());
+                request.insert(cx.request);
+            }
+            self.kinds[i] = Some(k);
+            self.apply_request(i, request);
+        } else {
+            self.kinds[i] = Some(k);
+        }
+        // the state its props imply and its inert children follow writes made while it was out
+        self.refresh_prop_state(i);
+        self.refresh_children_inert(i);
+    }
+
+    /// The focused push button of a `dialog` focus scope is the scope's default (`:default`, Enter
+    /// activates it), as Windows, KDE and GTK do (`Policy::auto_default`); off (macOS), Enter goes to
+    /// the button whose `default` prop is set whatever has focus.
+    pub fn set_auto_default(&mut self, on: bool) {
+        if self.auto_default != on {
+            self.auto_default = on;
+            let focused: Vec<NodeId> = self.windows.iter().filter_map(|w| w.focus).collect();
+            for f in focused {
+                crate::input::scope::refresh_default(self, f);
+            }
+        }
+    }
+
+    /// GTK's rule: one text selection in the whole app. A text kind that selects something calls
+    /// [`EventCx::claim_selection`](crate::EventCx::claim_selection); the previous owner gets
+    /// [`Kind::selection_lost`] and collapses its selection. Off (the default) on other platforms.
+    pub fn set_single_selection(&mut self, on: bool) {
+        self.single_selection = on;
+        if !on {
+            self.selection_owner = None;
+        }
+    }
+
+    /// The node of `window` whose `anchor` is `anchor`.
+    pub fn find_anchor(&self, window: WindowId, anchor: &str) -> Option<NodeId> {
+        self.anchors.iter().find(|(n, a)| &***a == anchor && self.window_of(**n) == Some(window)).map(|(n, _)| *n)
     }
 
     /// Gives the document a text shaper, so text kinds record glyph runs.
@@ -311,6 +431,8 @@ impl Document {
             self.core[i].flags.insert(NodeFlags::VIRTUAL);
             self.virt.insert(id, crate::virt::VirtState::default());
         }
+        self.kind_sets.add(kind, id);
+        self.refresh_prop_state(i);
         self.journal.push(Change::Created { node: id, kind, revision: rev });
         id
     }
@@ -442,6 +564,7 @@ impl Document {
         if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
             self.refresh_desc_nonpassive(pi);
         }
+        self.refresh_inert(ci);
         self.journal.push(Change::Inserted { parent, child, revision: rev });
         Ok(())
     }
@@ -476,6 +599,7 @@ impl Document {
         if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
             self.refresh_desc_nonpassive(pi);
         }
+        self.refresh_inert(ci);
     }
 
     /// Destroys `node` and its subtree (removing it from its parent first). Stale ids are ignored.
@@ -498,6 +622,7 @@ impl Document {
 
     fn free(&mut self, i: usize) {
         let id = self.slots.id_at(i).expect("live slot");
+        self.kind_sets.remove(self.core[i].kind, id);
         self.kinds[i] = None;
         self.props[i] = PropStore::default();
         self.listeners[i].clear();
@@ -508,6 +633,15 @@ impl Document {
         self.scroll.remove(&id);
         self.timers.remove(&id);
         self.virt.remove(&id);
+        self.anchors.remove(&id);
+        self.label_for.remove(&id);
+        self.peer_queue.retain(|(n, ..)| *n != id);
+        self.missed_props.retain(|(n, _)| *n != id);
+        self.self_scroll.remove(&id);
+        self.light_dismiss.remove(&id);
+        if self.selection_owner == Some(id) {
+            self.selection_owner = None;
+        }
         self.slots.free(i);
     }
 
@@ -549,7 +683,9 @@ impl Document {
         }
         self.input.leave_subtree(&gone);
         if let Some(ws) = self.window_mut(w) {
-            ws.a11y_removed = true;
+            for id in &gone {
+                ws.a11y_sent.remove(id);
+            }
         }
     }
 
@@ -607,7 +743,8 @@ impl Document {
     fn write_prop(&mut self, node: NodeId, prop: PropId, v: Option<Value>, native: bool) -> Result<ChangeClass, PropError> {
         let i = self.idx(node).ok_or(PropError::Stale(node))?;
         let kind = self.core[i].kind;
-        let entry = self.registry.get(kind).expect("registered kind");
+        let registry = self.registry.clone();
+        let entry = registry.get(kind).expect("registered kind");
         let spec = entry.prop(prop).or_else(|| common::prop(prop)).ok_or(PropError::Unknown(prop))?;
         let v = match v {
             Some(v) => {
@@ -636,6 +773,10 @@ impl Document {
         }
         // the kind sees the stored value; it may reject it (undo) or ask for more work
         let mut request = Dirty::EMPTY;
+        if self.kinds[i].is_none() && !native {
+            // the kind is mid-handler (JS runs inside it): it hears of the write when it is back
+            self.missed_props.push((node, prop));
+        }
         if let Some(mut k) = self.kinds[i].take() {
             let res = {
                 let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
@@ -666,8 +807,66 @@ impl Document {
         }
         // common props with their own effects
         if prop == common::DISABLED {
-            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
+            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false) || self.core[i].flags.contains(NodeFlags::INERT);
             self.set_state(node, StateMask::DISABLED, on);
+        } else if prop == common::INVALID {
+            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
+            self.set_state(node, StateMask::INVALID, on);
+        } else if prop == common::ANCHOR {
+            match v.as_ref().and_then(Value::as_str).filter(|a| !a.is_empty()) {
+                Some(a) => self.anchors.insert(node, Arc::from(a)),
+                None => self.anchors.remove(&node),
+            };
+            // its `labelled_by` follows the labels naming the new anchor
+            self.mark(node, Dirty::A11Y);
+        } else if prop == common::DIALOG_ROLE || prop == common::STATUS_SECTION {
+            // the containers that order their children by it
+            if let Some(p) = self.core[i].parent {
+                self.mark_layout(p);
+                self.mark(p, Dirty::PAINT);
+            }
+        } else if spec.name == "default" && spec.ty == crate::value::ValueType::Bool && entry.prop(prop).is_some() {
+            let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
+            self.set_state(node, StateMask::DEFAULT, on);
+            if self.core[i].window.is_some() {
+                crate::input::scope::refresh_default(self, node);
+            }
+        } else if spec.name == "for" && entry.prop(prop).is_some() {
+            let named = v.as_ref().and_then(Value::as_str).filter(|a| !a.is_empty()).map(Arc::<str>::from);
+            let old = match named.clone() {
+                Some(a) => self.label_for.insert(node, a),
+                None => self.label_for.remove(&node),
+            };
+            for a in old.into_iter().chain(named) {
+                if let Some(t) = self.core[i].window.and_then(|w| self.find_anchor(w, &a)) {
+                    self.mark(t, Dirty::A11Y);
+                }
+            }
+        }
+        // a kind that derives layout from props (orientation, chrome) gets its layout style again
+        if class == ChangeClass::Layout && !is_text {
+            self.core[i].dirty.insert(Dirty::STYLE);
+            self.mark_up(i, Dirty::DESC_STYLE);
+            if entry.spec.places_children {
+                self.replace_children(i);
+            }
+        }
+        self.refresh_prop_state(i);
+        self.refresh_children_inert(i);
+        if let Some(k) = self.kinds[i].take() {
+            self.refresh_light_dismiss(node, &*k);
+            self.kinds[i] = Some(k);
+        }
+        // ancestors named by their descendants' text re-project
+        if is_text || prop == common::ARIA_LABEL {
+            let mut a = self.core[i].parent;
+            while let Some(p) = a {
+                let pi = self.ix(p);
+                if self.registry.get(self.core[pi].kind).is_some_and(|e| e.spec.name_from.contains(&crate::kind::NameSource::Children)) {
+                    self.mark(p, Dirty::A11Y);
+                }
+                a = self.core[pi].parent;
+            }
         }
         // attribute selectors may match the prop
         self.restyle_attr(i, spec.name);
@@ -715,19 +914,121 @@ impl Document {
     /// Adds a listener (replacing one for the same signal and capture flag).
     pub fn listen(&mut self, node: NodeId, signal: SignalId, flags: ListenFlags) {
         let Some(i) = self.idx(node) else { return };
+        let was = self.listeners[i].iter().any(|l| l.signal == signal);
         let capture = flags.contains(ListenFlags::CAPTURE);
         let ls = &mut self.listeners[i];
         ls.retain(|l| !(l.signal == signal && l.flags.contains(ListenFlags::CAPTURE) == capture));
         ls.push(Listener { signal, flags });
         self.update_passive(i);
+        if !was {
+            self.listen_changed(i, signal, true);
+        }
     }
 
     /// Removes a listener.
     pub fn unlisten(&mut self, node: NodeId, signal: SignalId, capture: bool) {
         let Some(i) = self.idx(node) else { return };
+        let was = self.listeners[i].iter().any(|l| l.signal == signal);
         self.listeners[i].retain(|l| !(l.signal == signal && l.flags.contains(ListenFlags::CAPTURE) == capture));
         self.update_passive(i);
+        if was && !self.listeners[i].iter().any(|l| l.signal == signal) {
+            self.listen_changed(i, signal, false);
+        }
     }
+
+    /// Tells node `i`'s kind that JS started or stopped listening to `signal`.
+    fn listen_changed(&mut self, i: usize, signal: SignalId, listened: bool) {
+        let Some(mut k) = self.kinds[i].take() else { return };
+        let request = {
+            let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
+            k.listen_changed(&mut cx, signal, listened);
+            cx.request
+        };
+        self.kinds[i] = Some(k);
+        self.apply_request(i, request);
+    }
+
+    /// The extra work a kind asked for in a [`PropCx`].
+    fn apply_request(&mut self, i: usize, request: Dirty) {
+        if request.is_empty() {
+            return;
+        }
+        if request.contains(Dirty::MEASURE) {
+            self.mark_measure(i);
+        }
+        if request.contains(Dirty::LAYOUT) {
+            self.invalidate_style(i);
+        }
+        let node = self.slots.id_at(i).expect("live");
+        self.mark(node, request);
+    }
+
+    /// Whether `node`'s kind `k` asks for light dismiss now.
+    pub(crate) fn refresh_light_dismiss(&mut self, node: NodeId, k: &dyn Kind) {
+        let Some(i) = self.idx(node) else { return };
+        if k.light_dismiss(&self.view_at(i)) {
+            self.light_dismiss.insert(node);
+        } else {
+            self.light_dismiss.remove(&node);
+        }
+    }
+
+    /// Sets the bits of the kind's [`KindSpec::prop_states`](crate::KindSpec::prop_states) as its
+    /// [`Kind::prop_state`] says.
+    pub(crate) fn refresh_prop_state(&mut self, i: usize) {
+        let mask = self.registry.get(self.core[i].kind).map_or(StateMask::NONE, |e| e.spec.prop_states);
+        if mask == StateMask::NONE {
+            return;
+        }
+        let Some(bits) = self.kinds[i].as_deref().map(|k| k.prop_state(&self.view_at(i))) else { return };
+        let node = self.slots.id_at(i).expect("live");
+        self.set_state(node, StateMask(mask.0 & bits.0), true);
+        self.set_state(node, StateMask(mask.0 & !bits.0), false);
+    }
+
+    /// The kind of node `i` may have started or stopped making its descendants inert.
+    fn refresh_children_inert(&mut self, i: usize) {
+        let inert = self.kinds[i].as_deref().is_some_and(|k| k.children_inert());
+        if inert == self.core[i].flags.contains(NodeFlags::INERT_CHILDREN) {
+            return;
+        }
+        if inert {
+            self.core[i].flags.insert(NodeFlags::INERT_CHILDREN);
+        } else {
+            self.core[i].flags.remove(NodeFlags::INERT_CHILDREN);
+        }
+        for c in self.children[i].clone() {
+            let ci = self.ix(c);
+            self.refresh_inert(ci);
+        }
+    }
+
+    /// Recomputes [`NodeFlags::INERT`] (and so `:disabled`) on `i`'s subtree from its ancestors.
+    pub(crate) fn refresh_inert(&mut self, i: usize) {
+        let mut stack = vec![i];
+        while let Some(n) = stack.pop() {
+            let inherited = self.core[n].parent.is_some_and(|p| {
+                let pi = self.ix(p);
+                self.core[pi].flags.intersects(NodeFlags::INERT.union(NodeFlags::INERT_CHILDREN))
+            });
+            if inherited == self.core[n].flags.contains(NodeFlags::INERT) && n != i {
+                continue;
+            }
+            if inherited {
+                self.core[n].flags.insert(NodeFlags::INERT);
+            } else {
+                self.core[n].flags.remove(NodeFlags::INERT);
+            }
+            let id = self.slots.id_at(n).expect("live");
+            let own = self.view_at(n).prop_bool(common::DISABLED);
+            self.set_state(id, StateMask::DISABLED, own || inherited);
+            if inherited && self.core[n].window.is_some_and(|w| self.focused(w) == Some(id)) {
+                crate::input::focus::clear_focus(self, self.core[n].window.expect("in a window"));
+            }
+            stack.extend(self.children[n].iter().map(|&c| self.ix(c)));
+        }
+    }
+
 
     pub fn listeners(&self, node: NodeId) -> &[Listener] {
         self.idx(node).map_or(&[], |i| &self.listeners[i])
@@ -839,8 +1140,13 @@ impl Document {
         }
         self.state[i] = new;
         self.stamp();
-        self.core[i].dirty.insert(Dirty::A11Y);
-        self.mark_up(i, Dirty::DESC_RECORD);
+        // pointer-only states are not in the accessibility tree: a hover over unstyled nodes costs
+        // no frame (`needs_frame`)
+        let pointer_only = StateMask(StateMask::HOVERED.0 | StateMask::PRESSED.0 | StateMask::FOCUS_WITHIN.0);
+        if (old.0 ^ new.0) & !pointer_only.0 != 0 {
+            self.core[i].dirty.insert(Dirty::A11Y);
+            self.mark_up(i, Dirty::DESC_RECORD);
+        }
         self.restyle_state(i, old, new);
         self.journal.push(Change::State { node, state: new });
     }
@@ -990,8 +1296,9 @@ impl Document {
             let mut cx = crate::cx::EventCx { doc, node, emitted: &mut emitted, pointer: None };
             k.call(&mut cx, method, &checked)
         });
-        if let Some(i) = self.idx(node) {
-            self.kinds[i] = Some(k);
+        self.restore_kind(node, k);
+        if !self.peer_queue.is_empty() {
+            self.transaction(|doc| crate::input::peers::run(doc, &mut emitted));
         }
         for e in emitted {
             crate::input::dispatch::queue_emitted(self, e);

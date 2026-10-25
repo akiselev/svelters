@@ -133,10 +133,10 @@ impl Kind for Hyperlink {
         for p in fired.iter() {
             match p {
                 Press::Click { count: 1, button: MouseButton::Primary, mods } => {
-                    // EV1: `clicked` first; presto-core drops the `open-url` that follows when a
-                    // listener prevented it
-                    common::emit(cx, &SPEC, "clicked", Vec::new());
-                    if !self.props.url.is_empty() {
+                    // EV1: `clicked` first; `open-url` is its default, skipped when a listener
+                    // prevented it
+                    let prevented = common::emit_sync(cx, &SPEC, "clicked", Vec::new());
+                    if !prevented && !self.props.url.is_empty() {
                         let new_tab = self.props.new_tab || mods.command;
                         common::emit(cx, &SPEC, "open-url", vec![Value::str(&self.props.url), Value::Bool(new_tab)]);
                     }

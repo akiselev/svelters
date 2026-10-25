@@ -75,6 +75,12 @@ impl Spinner {
 }
 
 impl Kind for Spinner {
+    fn prop_state(&self) -> crate::interact::StateBits {
+        { let mut s = crate::interact::StateBits::NONE; s.set(crate::interact::StateBits::BUSY, self.props.spinning); s }
+    }
+    fn prop_states() -> crate::interact::StateBits {
+        crate::interact::StateBits::BUSY
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

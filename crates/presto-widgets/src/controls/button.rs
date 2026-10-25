@@ -206,6 +206,15 @@ impl Button {
 }
 
 impl Kind for Button {
+    fn parts() -> &'static [&'static str] {
+        &["icon", "label"]
+    }
+    fn prop_state(&self) -> crate::interact::StateBits {
+        { let mut s = crate::interact::StateBits::NONE; self.mirror(&mut s); s }
+    }
+    fn prop_states() -> crate::interact::StateBits {
+        crate::interact::StateBits(crate::interact::StateBits::SELECTED.0 | crate::interact::StateBits::DEFAULT.0)
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
