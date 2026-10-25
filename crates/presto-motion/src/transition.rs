@@ -316,8 +316,19 @@ impl Frame {
         };
         match kind {
             TransitionKind::Fade => out.extend(self.opacity),
-            TransitionKind::Fly | TransitionKind::Scale => {
+            TransitionKind::Fly => {
                 transform(&mut out);
+                out.extend(self.opacity);
+            }
+            TransitionKind::Scale => {
+                // Svelte writes `scale(s)` with one argument
+                let list = self.transform.as_deref().unwrap_or_default();
+                if let Some((last, prefix)) = list.split_last() {
+                    prefix.iter().for_each(|f| f.numbers(&mut out));
+                    if let Transform64::Scale(s, _) = last {
+                        out.push(*s);
+                    }
+                }
                 out.extend(self.opacity);
             }
             TransitionKind::Blur => {
