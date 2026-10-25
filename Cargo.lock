@@ -4148,7 +4148,13 @@ dependencies = [
 name = "presto-platform-win32"
 version = "0.0.0"
 dependencies = [
+ "accesskit_windows",
  "presto-base",
+ "presto-platform",
+ "raw-window-handle",
+ "smallvec",
+ "windows",
+ "windows-core 0.62.2",
 ]
 
 [[package]]

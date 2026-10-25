@@ -85,6 +85,10 @@ Chromium's license:
 | [GPUI](https://github.com/zed-industries/zed) `crates/gpui/src/bounds_tree.rs` | zed @ a5c4ca8bf6c4717a328a4a61b42d6d1d38949bcc | `crates/presto-render/src/bounds_tree.rs` | Copyright 2022 - 2025 Zed Industries, Inc.; Apache-2.0 |
 | [Windows Terminal](https://github.com/microsoft/terminal) text gamma/contrast (`src/renderer/atlas/dwrite.hlsl`, `dwrite.cpp`), via GPUI's `shaders.wgsl` and `platform.rs` | terminal @ 1283c0f5b99a2961673249fa77c6b986efb5086c | the gamma functions in `crates/presto-render/src/shaders.wgsl`, `crates/presto-render/src/gamma.rs` | Copyright (c) Microsoft Corporation; MIT (text below) |
 
+## presto-platform-win32 (Apache-2.0 port)
+
+`crates/presto-platform-win32/src/dmanip.rs` ports GPUI's `crates/gpui_windows/src/direct_manipulation.rs` (zed @ a5c4ca8bf6c4717a328a4a61b42d6d1d38949bcc; Copyright 2022 - 2025 Zed Industries, Inc.; Apache-2.0, licence text as for presto-render above). The file keeps a header naming its source and stating that the svelters authors modified it.
+
 ---
 
 ## presto-text (lane TEXT)
