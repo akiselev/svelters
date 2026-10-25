@@ -7,7 +7,9 @@
 use objc2::rc::Retained;
 use objc2_core_foundation::{CGPoint, CGRect, CGSize};
 use objc2_metal::MTLPixelFormat;
-use objc2_quartz_core::{CAAutoresizingMask, CALayer, CAMetalLayer, CATransaction};
+use objc2_quartz_core::{
+    CAAutoresizingMask, CALayer, CAMetalLayer, CATransaction, kCAGravityTopLeft,
+};
 use presto_base::geom::Rect;
 use presto_platform::{OsLayerDesc, SurfaceTarget};
 use std::ffi::c_void;
@@ -61,6 +63,11 @@ pub(crate) fn create_os_layer(
 ) -> Retained<CAMetalLayer> {
     let layer = CAMetalLayer::new();
     configure(&layer, !desc.transparent, scale);
+    // A drawable of the old size stays pinned to the top-left, clipped, until the compositor presents
+    // the new size (never stretched).
+    // SAFETY: kCAGravityTopLeft is a valid static.
+    layer.setContentsGravity(unsafe { kCAGravityTopLeft });
+    layer.setMasksToBounds(true);
     transaction(|| {
         layer.setFrame(cg_rect(&desc.bounds));
         root.addSublayer(&layer);

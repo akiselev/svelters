@@ -340,6 +340,9 @@ impl PlatformCx for MacCx {
 
     fn close_window(&mut self, id: WindowId) {
         if let Some(w) = with_app(|st| st.windows.remove(&id)).flatten() {
+            for _ in 0..w.layer_resizes.len() {
+                objc2_quartz_core::CATransaction::commit();
+            }
             w.destroy();
         }
     }
@@ -375,8 +378,36 @@ impl PlatformCx for MacCx {
     }
 
     fn remove_os_layer(&mut self, id: WindowId, layer: SurfaceId) {
-        if let Some(l) = with_window(id, |w| w.os_layers.remove(&layer)).flatten() {
+        let Some((l, open)) = with_window(id, |w| {
+            (w.os_layers.remove(&layer), w.layer_resizes.remove(&layer))
+        }) else {
+            return;
+        };
+        if open {
+            objc2_quartz_core::CATransaction::commit();
+        }
+        if let Some(l) = l {
             layer::remove(&l);
+        }
+    }
+
+    /// Opens a Core Animation transaction (implicit animations off) so the bounds set before
+    /// `end_os_layer_resize` and the window's content change in one commit.
+    fn begin_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) -> bool {
+        let open = with_window(id, |w| {
+            w.os_layers.contains_key(&layer) && w.layer_resizes.insert(layer)
+        })
+        .unwrap_or(false);
+        if open {
+            objc2_quartz_core::CATransaction::begin();
+            objc2_quartz_core::CATransaction::setDisableActions(true);
+        }
+        open
+    }
+
+    fn end_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) {
+        if with_window(id, |w| w.layer_resizes.remove(&layer)).unwrap_or(false) {
+            objc2_quartz_core::CATransaction::commit();
         }
     }
 
