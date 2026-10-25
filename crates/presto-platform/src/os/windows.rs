@@ -240,6 +240,11 @@ impl WindowShim {
         *self.shared.ime.lock().unwrap_or_else(|e| e.into_inner()) = state.cloned();
     }
 
+    pub fn frame_source(&mut self, _interval: Option<Span>) -> Option<Arc<dyn crate::frame::FrameSource>> {
+        static SOURCE: std::sync::OnceLock<Arc<crate::frame::windows::DwmSource>> = std::sync::OnceLock::new();
+        Some(SOURCE.get_or_init(|| Arc::new(crate::frame::windows::DwmSource::new())).clone())
+    }
+
     pub fn end_composition(&mut self, commit: bool) -> Option<bool> {
         // SAFETY: IMM calls on this thread's window; the context is released before returning.
         unsafe {

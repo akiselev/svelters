@@ -16,12 +16,15 @@
 //! | [`frame`] | vsync and presentation sources for the compositor thread |
 //! | [`headless`] | the test platform |
 //! | [`clock`] | presto's real clock and OS timestamp conversion |
+//! | `dialogs` | native file and message dialogs (feature `dialogs`) |
 
 pub mod a11y;
 pub mod api;
 pub mod backend;
 pub mod clipboard;
 pub mod clock;
+#[cfg(feature = "dialogs")]
+pub mod dialogs;
 pub mod frame;
 pub mod headless;
 pub mod keys;

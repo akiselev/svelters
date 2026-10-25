@@ -9,6 +9,7 @@ use crate::api::{
 };
 use crate::clipboard::{Clipboard, SystemClipboard};
 use crate::clock::{self, OsClock};
+use crate::frame::{FrameSource, IntervalSource};
 use crate::os::{self, ShimHooks, WindowShim};
 use crate::translate::{self, Translated, WindowInput};
 use presto_base::accesskit;
@@ -17,7 +18,7 @@ use presto_base::event::InputEnvelope;
 use presto_base::input::InputPurpose;
 use presto_base::geom::{DeviceSize, Rect, Scale, Vec2};
 use presto_base::ids::{InputSeq, SurfaceId, WindowId};
-use presto_base::time::{Clock, Time};
+use presto_base::time::{Clock, Span, Time};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -503,6 +504,16 @@ impl PlatformCx for Cx<'_> {
 
     fn window_scale(&self, id: WindowId) -> Option<Scale> {
         self.win(id).map(|w| Scale(w.input.scale))
+    }
+
+    fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn FrameSource>> {
+        let w = self.st.windows.get_mut(&id)?;
+        let refresh = w.window.current_monitor().and_then(|m| m.refresh_rate_millihertz());
+        let interval = refresh.filter(|r| *r >= 1_000).map(|r| Span(1_000_000_000_000 / r as i64));
+        if let Some(s) = w.shim.frame_source(interval) {
+            return Some(s);
+        }
+        Some(Arc::new(IntervalSource::from_refresh(refresh, Arc::new(OsClock))))
     }
 
     fn exit(&mut self) {

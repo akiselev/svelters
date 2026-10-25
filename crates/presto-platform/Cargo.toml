@@ -55,3 +55,4 @@ smithay-clipboard = "0.7.3"
 wayland-client = "0.31.15"
 wayland-backend = { version = "0.3.17", features = ["client_system"] }
 wayland-protocols = { version = "0.32.13", features = ["client"] }
+libc = "0.2"

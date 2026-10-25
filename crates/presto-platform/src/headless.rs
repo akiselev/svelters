@@ -378,6 +378,10 @@ impl PlatformCx for HeadlessCx {
         self.windows.get(&id).map(|w| w.scale)
     }
 
+    fn frame_source(&mut self, _id: WindowId) -> Option<Arc<dyn crate::frame::FrameSource>> {
+        None
+    }
+
     fn exit(&mut self) {
         self.exit = true;
         self.calls.push(PlatformCall::Exit);

@@ -17,7 +17,8 @@ use objc2_quartz_core::{CALayer, CAMetalLayer, CATransaction};
 use presto_base::event::PointerSample;
 use presto_base::geom::{DeviceRect, Rect};
 use presto_base::ids::SurfaceId;
-use presto_base::time::Time;
+use presto_base::time::{Span, Time};
+use std::sync::Arc;
 use raw_window_handle::{HasWindowHandle, RawWindowHandle};
 use smallvec::SmallVec;
 use std::ffi::c_void;
@@ -151,6 +152,16 @@ impl WindowShim {
     pub fn set_hit_regions(&mut self, _regions: &[HitRegion]) {}
 
     pub fn set_ime(&mut self, _state: Option<&ImeState>) {}
+
+    /// One display link per process, started on first use (it follows the active displays).
+    pub fn frame_source(&mut self, _interval: Option<Span>) -> Option<Arc<dyn crate::frame::FrameSource>> {
+        static SOURCE: std::sync::Mutex<Option<Arc<crate::frame::macos::DisplayLinkSource>>> = std::sync::Mutex::new(None);
+        let mut g = SOURCE.lock().unwrap_or_else(|e| e.into_inner());
+        if g.is_none() {
+            *g = crate::frame::macos::DisplayLinkSource::new().map(Arc::new);
+        }
+        g.clone().map(|s| s as Arc<dyn crate::frame::FrameSource>)
+    }
 
     /// winit's NSTextInputClient has no composition control (platform.md §6).
     pub fn end_composition(&mut self, _commit: bool) -> Option<bool> {
