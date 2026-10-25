@@ -24,11 +24,13 @@ pub enum Injected {
 }
 
 /// Tracks what egui events leave implicit: the pointer position (wheel events carry none), the held
-/// buttons and the platform's primary modifier.
+/// buttons and modifiers (pointer moves carry none), and the platform's primary modifier.
 #[derive(Clone, Debug)]
 pub struct EguiAdapter {
     pub pointer: Point,
     buttons: u32,
+    /// The modifiers of the last `ModifiersChanged`, key or button event.
+    pub held: Modifiers,
     /// Cmd is the primary shortcut modifier (egui's `command` maps to it).
     pub macos: bool,
 }
@@ -38,6 +40,7 @@ impl Default for EguiAdapter {
         Self {
             pointer: Point::ZERO,
             buttons: 0,
+            held: Modifiers::default(),
             macos: cfg!(target_os = "macos"),
         }
     }
@@ -65,7 +68,7 @@ pub fn key(k: egui::Key) -> Option<Key> {
     Key::from_name(k.name())
 }
 
-fn button(b: egui::PointerButton) -> MouseButton {
+pub fn button(b: egui::PointerButton) -> MouseButton {
     match b {
         egui::PointerButton::Primary => MouseButton::Primary,
         egui::PointerButton::Secondary => MouseButton::Secondary,
@@ -164,6 +167,7 @@ impl EguiAdapter {
                 modifiers: m,
                 ..
             } => {
+                self.held = modifiers(*m, self.macos);
                 vec![Injected::Input(InputEvent::Key(KeyEvent {
                     key: key(*k),
                     physical: 0,
@@ -178,17 +182,13 @@ impl EguiAdapter {
                     modifiers: modifiers(*m, self.macos),
                 }))]
             }
-            E::ModifiersChanged(m) => vec![Injected::Input(InputEvent::ModifiersChanged(
-                modifiers(*m, self.macos),
-            ))],
+            E::ModifiersChanged(m) => {
+                self.held = modifiers(*m, self.macos);
+                vec![Injected::Input(InputEvent::ModifiersChanged(self.held))]
+            }
             E::PointerMoved(p) => {
                 self.pointer = Point::new(p.x, p.y);
-                let e = self.pointer_event(
-                    PointerPhase::Move,
-                    self.pointer,
-                    None,
-                    Modifiers::default(),
-                );
+                let e = self.pointer_event(PointerPhase::Move, self.pointer, None, self.held);
                 vec![Injected::Input(InputEvent::Pointer(e))]
             }
             E::PointerButton {
@@ -198,6 +198,7 @@ impl EguiAdapter {
                 modifiers: m,
             } => {
                 self.pointer = Point::new(pos.x, pos.y);
+                self.held = modifiers(*m, self.macos);
                 let b = button(*b);
                 if *pressed {
                     self.buttons |= button_bit(b);
@@ -213,12 +214,7 @@ impl EguiAdapter {
                 vec![Injected::Input(InputEvent::Pointer(e))]
             }
             E::PointerGone => {
-                let e = self.pointer_event(
-                    PointerPhase::Leave,
-                    self.pointer,
-                    None,
-                    Modifiers::default(),
-                );
+                let e = self.pointer_event(PointerPhase::Leave, self.pointer, None, self.held);
                 vec![Injected::Input(InputEvent::Pointer(e))]
             }
             E::Zoom(f) => vec![Injected::Input(InputEvent::Gesture(GestureEvent::Pinch {

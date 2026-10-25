@@ -39,6 +39,10 @@ UTF-16 conversion.
 - `WindowDesc.custom_title_bar` requests xdg-decoration client mode, and `client_side_decorations()`
   reports `true`. The CSD resize border and hit regions then apply.
 - `KeyEvent.physical` already used `page << 16 | usage`.
+- `begin_os_layer_resize`/`end_os_layer_resize` (CANVAS, merged from `ci/presto-canvas` ae46a5b1): the layer's
+  subsurface goes to sync mode and back to desync. It stays synced while a window resize holds every layer;
+  the window's lock desyncs it then. The caller presents the window after the layer so the cached layer state
+  lands.
 - `WindowEvent::Moved` is never emitted, because Wayland has no global position.
 
 ## Not run

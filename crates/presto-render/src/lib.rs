@@ -30,7 +30,8 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use presto_base::geom::{DeviceRect, DeviceSize, Rect};
-use presto_base::ids::{ImageId, PathId, TextureId};
+use presto_base::ids::{CanvasId, ImageId, PathId, TextureId};
+use presto_canvas::{Canvas, CanvasRenderer, CanvasStats, CanvasView, Placement};
 use presto_base::scene::FrameScene;
 use presto_base::text::{GlyphKey, GlyphRasterizer};
 
@@ -72,6 +73,8 @@ pub struct RenderStats {
     pub skipped: u32,
     /// CPU time spent in `render`, in microseconds.
     pub cpu_us: u32,
+    /// What the canvas renderer did (architecture §9.5).
+    pub canvas: CanvasStats,
 }
 
 struct RingSlot {
@@ -123,6 +126,10 @@ pub struct Renderer {
     path_scratch: Vec<PathScratch>,
     tree: BoundsTree,
     text: TextParams,
+    canvases: HashMap<CanvasId, Arc<Canvas>>,
+    canvas_views: HashMap<CanvasId, CanvasView>,
+    /// Created with the first canvas drawn.
+    canvas: Option<CanvasRenderer>,
 }
 
 fn align_up(v: u64, a: u64) -> u64 {
@@ -178,6 +185,9 @@ impl Renderer {
             path_scratch: Vec::new(),
             tree: BoundsTree::default(),
             text: TextParams::default(),
+            canvases: HashMap::new(),
+            canvas_views: HashMap::new(),
+            canvas: None,
             pipelines,
         };
         for _ in 0..FRAMES_IN_FLIGHT {
@@ -210,6 +220,22 @@ impl Renderer {
     pub fn unregister_texture(&mut self, id: TextureId) {
         self.textures.remove(&id);
         self.texture_sizes.remove(&id);
+    }
+
+    /// Makes `canvas` drawable by `Prim::Canvas` items naming its id.
+    pub fn register_canvas(&mut self, canvas: Arc<Canvas>) {
+        self.canvases.insert(canvas.id(), canvas);
+    }
+
+    pub fn unregister_canvas(&mut self, id: CanvasId) {
+        self.canvases.remove(&id);
+        self.canvas_views.remove(&id);
+    }
+
+    /// The camera, view transform and LOD settings canvas `id` is drawn with (the compositor's
+    /// properties); a canvas without one uses [`CanvasView::default`].
+    pub fn set_canvas_view(&mut self, id: CanvasId, view: CanvasView) {
+        self.canvas_views.insert(id, view);
     }
 
     /// Drops the atlas tiles of an image the compositor removed.
@@ -480,6 +506,38 @@ impl Renderer {
         }
         stats.upload_bytes += bytes.len() as u64 + size_of::<Globals>() as u64;
 
+        // Canvas placements: plan, upload and render static caches before the main pass. `placement_of`
+        // maps a frame canvas to its prepared placement (`None`: not registered).
+        let mut placement_of = Vec::with_capacity(frame.canvases.len());
+        if !frame.canvases.is_empty() {
+            let mut placements = Vec::with_capacity(frame.canvases.len());
+            for c in &frame.canvases {
+                match self.canvases.get(&c.canvas) {
+                    Some(canvas) => {
+                        placement_of.push(Some(placements.len()));
+                        placements.push(Placement {
+                            canvas: canvas.clone(),
+                            view: self.canvas_views.get(&c.canvas).copied().unwrap_or_default(),
+                            size: c.size,
+                            to_device: c.to_device,
+                            clip: c.clip,
+                            opacity: c.opacity,
+                        });
+                    }
+                    None => {
+                        placement_of.push(None);
+                        stats.skipped += 1;
+                    }
+                }
+            }
+            if !placements.is_empty() {
+                let format = self.format;
+                let cr = self.canvas.get_or_insert_with(|| CanvasRenderer::new(device, format));
+                stats.canvas = cr.prepare(device, queue, encoder, scene.target, &placements);
+                stats.upload_bytes += stats.canvas.upload_bytes;
+            }
+        }
+
         // Path pre-passes: each path batch into its own MSAA intermediate, resolved for compositing.
         let mut scratch_for_target = Vec::with_capacity(frame.path_targets.len());
         for (i, t) in frame.path_targets.iter().enumerate() {
@@ -558,6 +616,26 @@ impl Renderer {
                 if !batch.bounds.intersects(&region_rect) {
                     continue;
                 }
+                if batch.kind == Kind::Canvas {
+                    let Some(cr) = &self.canvas else { continue };
+                    for j in batch.first..batch.first + batch.count {
+                        let Some(pi) = placement_of.get(j as usize).copied().flatten() else { continue };
+                        let clip = frame.canvases[j as usize].clip.intersect(&region_rect);
+                        let (x0, y0) = (clip.min.x.floor().max(0.0), clip.min.y.floor().max(0.0));
+                        let (x1, y1) = (clip.max.x.ceil(), clip.max.y.ceil());
+                        if x1 <= x0 || y1 <= y0 {
+                            continue;
+                        }
+                        pass.set_scissor_rect(x0 as u32, y0 as u32, (x1 - x0) as u32, (y1 - y0) as u32);
+                        cr.draw(&mut pass, pi);
+                        stats.draws += 1;
+                    }
+                    // The canvas renderer bound its own pipelines and groups 0 and 1.
+                    pass.set_scissor_rect(region.x as u32, region.y as u32, region.w, region.h);
+                    pass.set_bind_group(0, &slot.globals_bg, &[]);
+                    pass.set_bind_group(1, &slot.instances_bg, &[]);
+                    continue;
+                }
                 let (pipeline, base) = match batch.kind {
                     Kind::Quad => (&self.pipelines.quad, base_quads),
                     Kind::Shadow => (&self.pipelines.shadow, base_shadows),
@@ -565,6 +643,7 @@ impl Renderer {
                     Kind::Mask => (&self.pipelines.mask, base_masks),
                     Kind::Image => (&self.pipelines.image, base_images),
                     Kind::Path => (&self.pipelines.path_sprite, base_sprites),
+                    Kind::Canvas => continue,
                 };
                 let texture = match batch.tex {
                     Tex::None if batch.kind == Kind::Path => {
@@ -611,6 +690,9 @@ impl Renderer {
         self.mask.end_frame();
         self.color.end_frame();
         self.paths.end_frame();
+        if let Some(c) = &mut self.canvas {
+            c.end_frame();
+        }
     }
 }
 

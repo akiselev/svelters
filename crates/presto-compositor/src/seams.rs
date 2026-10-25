@@ -3,7 +3,7 @@
 //! script one).
 
 use presto_base::geom::DeviceSize;
-use presto_base::ids::{ImageId, PathId, TextureId};
+use presto_base::ids::{CanvasId, ImageId, PathId, TextureId};
 use presto_base::scene::FrameScene;
 use presto_base::text::GlyphRasterizer;
 use presto_base::time::{Span, Time};
@@ -29,6 +29,11 @@ pub trait SceneRenderer: Send {
     fn forget_image(&mut self, id: ImageId);
     /// Drops the cached tessellation of a path a commit removed.
     fn forget_path(&mut self, id: PathId);
+    /// Makes a canvas drawable by `Prim::Canvas` items naming its id.
+    fn register_canvas(&mut self, canvas: Arc<presto_canvas::Canvas>);
+    fn unregister_canvas(&mut self, id: CanvasId);
+    /// The camera, view transform and LOD settings a canvas is drawn with this frame.
+    fn set_canvas_view(&mut self, id: CanvasId, view: presto_canvas::CanvasView);
 }
 
 impl SceneRenderer for presto_render::Renderer {
@@ -56,6 +61,15 @@ impl SceneRenderer for presto_render::Renderer {
     }
     fn forget_path(&mut self, id: PathId) {
         presto_render::Renderer::forget_path(self, id)
+    }
+    fn register_canvas(&mut self, canvas: Arc<presto_canvas::Canvas>) {
+        presto_render::Renderer::register_canvas(self, canvas)
+    }
+    fn unregister_canvas(&mut self, id: CanvasId) {
+        presto_render::Renderer::unregister_canvas(self, id)
+    }
+    fn set_canvas_view(&mut self, id: CanvasId, view: presto_canvas::CanvasView) {
+        presto_render::Renderer::set_canvas_view(self, id, view)
     }
 }
 

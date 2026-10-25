@@ -11,6 +11,8 @@ const APPKIT_JSON: &str = include_str!("../../../../metadata/semantics/appkit.js
 const WINUI_JSON: &str = include_str!("../../../../metadata/semantics/winui.json");
 /// G1: generated from the egui backend's kind table (crates/svelters-egui/src/kinds/builtin.rs).
 const EGUI_JSON: &str = include_str!("../../../../metadata/semantics/egui.json");
+/// Generated from presto's kind registry (crates/svelters-presto/src/spec.rs).
+const PRESTO_JSON: &str = include_str!("../../../../metadata/semantics/presto.json");
 const GTK_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/gtk.json");
 const QT_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/qt.json");
 
@@ -49,7 +51,7 @@ impl SpecBackend {
         SpecBackend::from_json(&text)
     }
 
-    /// The checked-in spec of a built-in backend (`gtk`, `qt`, `appkit` or `winui`), embedded at build time.
+    /// The checked-in spec of a built-in backend (`gtk`, `qt`, `appkit`, `winui`, `egui` or `presto`), embedded at build time.
     pub fn builtin(backend: &str) -> Result<SpecBackend, String> {
         match backend {
             "gtk" => SpecBackend::from_json(GTK_JSON)?.with_types(GTK_TYPES_JSON),
@@ -57,7 +59,8 @@ impl SpecBackend {
             "appkit" => SpecBackend::from_json(APPKIT_JSON),
             "winui" => SpecBackend::from_json(WINUI_JSON),
             "egui" => SpecBackend::from_json(EGUI_JSON),
-            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui, egui)")),
+            "presto" => SpecBackend::from_json(PRESTO_JSON),
+            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui, egui, presto)")),
         }
     }
 

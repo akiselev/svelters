@@ -7,8 +7,9 @@ use presto_base::accesskit::ActionRequest;
 use presto_base::anim::AnimationEvent;
 use presto_base::commit::{Commit, FastCommit};
 use presto_base::event::{InputEnvelope, WindowEvent};
-use presto_base::geom::{DeviceSize, Scale, Size, Vec2};
+use presto_base::geom::{DeviceSize, Point, Rect, Scale, Size, Vec2};
 use presto_base::ids::{FrameId, PropNodeId, WindowId};
+use presto_base::input::InputPurpose;
 use presto_base::time::{Span, Time};
 use presto_platform::SurfaceTarget;
 
@@ -31,6 +32,35 @@ pub trait DocumentApi {
     fn frame(&mut self, window: WindowId, target: Time) -> Option<Commit>;
     /// The window's tree has changes no commit carries yet.
     fn needs_frame(&self, window: WindowId) -> bool;
+    /// Hover at `pos` now, for a coalesced pointer move (its JS `pointermove` waits for the frame);
+    /// true when the hovered path changed (then a frame may be needed).
+    fn hover(&mut self, _window: WindowId, _pos: Point) -> bool {
+        false
+    }
+    /// The focused editable node's IME candidate area and purpose; `None` = the IME is off.
+    fn ime_state(&mut self, _window: WindowId) -> Option<(Rect, InputPurpose)> {
+        None
+    }
+    /// Native-owned writes queued outside dispatch (a caret placed while preparing a frame, a scroll a
+    /// kind moved): sent to the compositor before the next commit.
+    fn take_fast_commits(&mut self) -> Vec<FastCommit> {
+        Vec::new()
+    }
+    /// The caret blink new windows get (the text policy's); `None` = leave the compositor's default.
+    fn caret_blink(&self) -> Option<Option<presto_compositor::CaretBlink>> {
+        None
+    }
+    /// A native menu item was chosen (`AppHandler::menu_activated`); true when something handled it.
+    fn menu_activated(&mut self, _id: &str) -> bool {
+        false
+    }
+    /// A menu bar the document published since the last call (`Some(None)` removes it), for
+    /// `PlatformCx::set_menu_bar`.
+    fn take_menu_bar(&mut self) -> Option<Option<presto_platform::MenuDesc>> {
+        None
+    }
+    /// The app's clipboard, for kinds that copy and paste (installed once, at `init`).
+    fn install_clipboard(&mut self, _clipboard: Box<dyn presto_platform::Clipboard>) {}
     /// A window opened or got a new size (points) and scale.
     fn resize(&mut self, window: WindowId, size: Size, scale: Scale);
     fn close_window(&mut self, window: WindowId);
@@ -46,6 +76,12 @@ pub trait DocumentApi {
     fn window_event(&mut self, window: WindowId, ev: &WindowEvent);
     /// The GPU device was reset: the next commit re-sends every resource.
     fn device_reset(&mut self);
+    /// When the window's tree next wants a frame without input (a delayed repaint, a timer);
+    /// `None` = not until something changes. The runner arms a platform timer for it and asks for a
+    /// frame when it fires and [`DocumentApi::needs_frame`] says so.
+    fn next_wakeup(&self, _window: WindowId) -> Option<Time> {
+        None
+    }
 }
 
 /// The JS side of dispatch (svelters-presto's QuickJS host): delivers the JS-facing events and drains
@@ -81,6 +117,8 @@ pub trait CompositorApi {
     fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, input: bool);
     /// The UI answered `BeginFrame` `frame` with nothing to commit (`UiFrameSkipped`).
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
+    /// The window's caret blink; `None` = a steady caret.
+    fn set_caret_blink(&self, _window: WindowId, _blink: Option<presto_compositor::CaretBlink>) {}
     /// The window's frame-clock snapshot for the urgent-frame rule; `None` = not known (the frame
     /// state then runs urgent frames for `now`).
     fn frame_args(&self, _window: WindowId) -> Option<presto_frame::FrameArgs> {

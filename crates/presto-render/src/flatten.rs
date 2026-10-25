@@ -11,7 +11,7 @@ use presto_base::color::{Color, Fill, GradientStop};
 use presto_base::commit::{ImageData, ImageFormat};
 use presto_base::display::{self, BorderStyle, LineCap, PathPaint, Prim, Sampling};
 use presto_base::geom::{Affine, Corners, DeviceSize, Point, Rect, RoundedRect};
-use presto_base::ids::{ImageId, TextureId};
+use presto_base::ids::{CanvasId, ImageId, TextureId};
 use presto_base::props::ClipShape;
 use presto_base::scene::{DrawItem, FrameScene, SceneResources};
 use presto_base::text::{GlyphFormat, GlyphKey, GlyphRasterizer};
@@ -30,6 +30,8 @@ pub enum Kind {
     Line = 3,
     Mask = 4,
     Image = 5,
+    /// A canvas placement (architecture §9.5), drawn by `presto_canvas::CanvasRenderer`.
+    Canvas = 6,
 }
 
 /// The texture a batch binds.
@@ -59,6 +61,20 @@ pub struct PathDraw {
     pub instance: PathInstance,
 }
 
+/// A canvas placed by a `Prim::Canvas`: its rectangle's transform and where it is visible.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CanvasDraw {
+    pub canvas: CanvasId,
+    /// Canvas points (the rectangle's top-left at the origin) → device pixels.
+    pub to_device: Affine,
+    /// The rectangle's size in points.
+    pub size: (f32, f32),
+    /// Device pixels it may cover: its rectangle and the item's clip, not the frame's damage (the
+    /// static cache stays valid while only the damage moves).
+    pub clip: Rect,
+    pub opacity: f32,
+}
+
 /// A path batch's intermediate: the paths `paths[first..first + count]` drawn into `rect`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct PathTarget {
@@ -79,6 +95,8 @@ pub struct Frame {
     /// One per path batch, in batch order; a `Kind::Path` batch's `first` indexes this.
     pub path_targets: Vec<PathTarget>,
     pub path_sprites: Vec<PathSprite>,
+    /// Canvas placements in paint order; a `Kind::Canvas` batch indexes this.
+    pub canvases: Vec<CanvasDraw>,
     pub batches: Vec<Batch>,
     /// Primitives dropped: missing resources, unregistered textures, atlas overflow, canvas content.
     pub skipped: u32,
@@ -214,7 +232,7 @@ pub fn flatten(scene: &FrameScene<'_>, cull: Rect, ctx: &mut Ctx<'_>) -> Frame {
     let scale = scene.scale.0;
 
     for item in scene.items {
-        flatten_item(item, scale, cull, scene.resources, ctx, &mut b);
+        flatten_item(item, scale, cull, target, scene.resources, ctx, &mut b);
     }
     finish(b)
 }
@@ -237,6 +255,7 @@ fn flatten_item(
     item: &DrawItem<'_>,
     scale: f32,
     cull: Rect,
+    target: Rect,
     res: &dyn SceneResources,
     ctx: &mut Ctx<'_>,
     b: &mut Builder,
@@ -273,8 +292,10 @@ fn flatten_item(
             Prim::Image(i) => image(i, &space, &clip, item.opacity, res, ctx, b),
             Prim::Path(p) => path(p, &space, &clip, item.opacity, res, ctx, b),
             Prim::Surface(s) => surface(s, &space, &clip, item.opacity, ctx, b),
-            // Canvas pipelines (architecture §9.5) are not part of this renderer yet.
-            Prim::Canvas(_) => b.frame.skipped += 1,
+            Prim::Canvas(c) => {
+                let item_clip = item.clip.as_ref().map_or(target, |c| world_clip(c, scale).rect.intersect(&target));
+                canvas(c, &space, &clip, item_clip, item.opacity, ctx, b)
+            }
         }
     }
 }
@@ -754,6 +775,23 @@ fn path(
     b.push(ctx, Kind::Path, Tex::None, idx, dev);
 }
 
+/// A canvas placement. Rounded clips and `PushClip`s inside the list clip it to their bounds only
+/// through the frame's scissor (the canvas renderer clips to `item_clip`).
+fn canvas(c: &display::CanvasPrim, sp: &Space, clip: &ClipState, item_clip: Rect, opacity: f32, ctx: &mut Ctx<'_>, b: &mut Builder) {
+    let Some(dev) = visible(sp.m.apply_rect(&c.rect), clip) else { return };
+    let to_device = sp.m.then(&Affine::translate(c.rect.min.x, c.rect.min.y));
+    let full = sp.m.apply_rect(&c.rect).intersect(&item_clip);
+    let idx = b.frame.canvases.len();
+    b.frame.canvases.push(CanvasDraw {
+        canvas: c.canvas,
+        to_device,
+        size: (c.rect.width(), c.rect.height()),
+        clip: full,
+        opacity,
+    });
+    b.push(ctx, Kind::Canvas, Tex::None, idx, dev);
+}
+
 /// Sorts by (order, kind, texture), reorders each kind's instances to match, and merges runs.
 fn finish(mut b: Builder) -> Frame {
     b.refs.sort_by_key(|r| (r.order, r.kind, r.tex));
@@ -764,6 +802,7 @@ fn finish(mut b: Builder) -> Frame {
     let masks = std::mem::take(&mut f.masks);
     let images = std::mem::take(&mut f.images);
     let paths = std::mem::take(&mut f.paths);
+    let canvases = std::mem::take(&mut f.canvases);
 
     let mut current: Option<Batch> = None;
     for r in &b.refs {
@@ -775,6 +814,7 @@ fn finish(mut b: Builder) -> Frame {
             Kind::Mask => push_len(&mut f.masks, masks[i]),
             Kind::Image => push_len(&mut f.images, images[i]),
             Kind::Path => push_len(&mut f.paths, paths[i]),
+            Kind::Canvas => push_len(&mut f.canvases, canvases[i]),
         };
         match &mut current {
             Some(batch) if batch.kind == r.kind && batch.tex == r.tex => {

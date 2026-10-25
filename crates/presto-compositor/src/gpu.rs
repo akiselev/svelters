@@ -14,7 +14,7 @@ use crate::damage::DamageHistory;
 use crate::seams::{RendererFactory, SceneRenderer};
 use crate::tree::SurfaceKey;
 use presto_base::geom::{DeviceRect, DeviceSize};
-use presto_base::ids::{FrameId, ImageId, PathId, TextureId, WindowId};
+use presto_base::ids::{CanvasId, FrameId, ImageId, PathId, TextureId, WindowId};
 use presto_base::scene::FrameScene;
 use presto_base::text::GlyphRasterizer;
 use presto_base::time::Clock;
@@ -148,6 +148,8 @@ pub struct GpuBackend {
     surfaces: HashMap<(WindowId, SurfaceKey), Surf>,
     textures: HashMap<TextureId, wgpu::Texture>,
     committers: HashMap<WindowId, presto_platform::OsLayerCommitter>,
+    /// Canvases are CPU data: re-registered with the renderer rebuilt after device loss.
+    canvases: HashMap<CanvasId, Arc<presto_canvas::Canvas>>,
     new_renderer: RendererFactory,
     glyphs: Arc<dyn GlyphRasterizer>,
     notify: Sender<Msg>,
@@ -179,6 +181,7 @@ impl GpuBackend {
             surfaces: HashMap::new(),
             textures: HashMap::new(),
             committers: HashMap::new(),
+            canvases: HashMap::new(),
             new_renderer,
             glyphs,
             notify,
@@ -249,7 +252,10 @@ impl GpuBackend {
             }
         });
         device.on_uncaptured_error(Arc::new(|e| log::error!("presto-compositor: wgpu error: {e}")));
-        let renderer = (self.new_renderer)(&device, &queue, format, self.glyphs.clone());
+        let mut renderer = (self.new_renderer)(&device, &queue, format, self.glyphs.clone());
+        for c in self.canvases.values() {
+            renderer.register_canvas(c.clone());
+        }
         let info = adapter.get_info();
         log::info!("presto-compositor: {} on {:?} ({:?})", info.name, info.backend, info.device_type);
         let ctx = GpuContext { adapter, device, queue, format };
@@ -474,6 +480,26 @@ impl Backend for GpuBackend {
             gpu.renderer.unregister_texture(id);
         }
         self.textures.remove(&id);
+    }
+
+    fn register_canvas(&mut self, canvas: Arc<presto_canvas::Canvas>) {
+        if let Some(gpu) = &mut self.gpu {
+            gpu.renderer.register_canvas(canvas.clone());
+        }
+        self.canvases.insert(canvas.id(), canvas);
+    }
+
+    fn unregister_canvas(&mut self, id: CanvasId) {
+        if let Some(gpu) = &mut self.gpu {
+            gpu.renderer.unregister_canvas(id);
+        }
+        self.canvases.remove(&id);
+    }
+
+    fn set_canvas_view(&mut self, id: CanvasId, view: presto_canvas::CanvasView) {
+        if let Some(gpu) = &mut self.gpu {
+            gpu.renderer.set_canvas_view(id, view);
+        }
     }
 
     fn draw(&mut self, window: WindowId, key: SurfaceKey, frame: Option<FrameId>, scene: &FrameScene<'_>) -> DrawOutcome {

@@ -207,6 +207,27 @@ impl WaylandShim {
         Some(SurfaceTarget::Raw { window: RawWindowHandle::Wayland(WaylandWindowHandle::new(ptr)), display: self.display_handle() })
     }
 
+    /// Sync mode: the subsurface's commits (the viewport destination `set_layer_bounds` sets, the
+    /// compositor's new-size buffer) are cached until `end_layer_resize`, which applies them as one.
+    fn begin_layer_resize(&mut self, id: SurfaceId) -> bool {
+        let Some(l) = self.layers.iter().find(|l| l.id == id) else { return false };
+        l.subsurface.set_sync();
+        let _ = self.ctx.conn.flush();
+        true
+    }
+
+    /// Back to desync mode; the commit applies the cached state (wl_subsurface.set_desync: cached
+    /// state is applied with the next commit of the sub-surface).
+    fn end_layer_resize(&mut self, id: SurfaceId) {
+        if let Some(l) = self.layers.iter().find(|l| l.id == id) {
+            l.subsurface.set_desync();
+            l.surface.commit();
+            if let Err(e) = self.ctx.conn.flush() {
+                log::warn!("presto-platform: Wayland flush failed: {e}");
+            }
+        }
+    }
+
     fn set_layer_bounds(&mut self, id: SurfaceId, bounds: Rect, scale: f32) {
         if let Some(l) = self.layers.iter().find(|l| l.id == id) {
             self.place(l, bounds, scale);
@@ -278,6 +299,20 @@ impl WindowShim {
     pub fn remove_layer(&mut self, id: SurfaceId) {
         if let WindowShim::Wayland(w) = self {
             w.remove_layer(id)
+        }
+    }
+
+    pub fn begin_layer_resize(&mut self, id: SurfaceId) -> bool {
+        match self {
+            WindowShim::Wayland(w) => w.begin_layer_resize(id),
+            WindowShim::Other(g) => g.begin_layer_resize(id),
+        }
+    }
+
+    pub fn end_layer_resize(&mut self, id: SurfaceId) {
+        match self {
+            WindowShim::Wayland(w) => w.end_layer_resize(id),
+            WindowShim::Other(g) => g.end_layer_resize(id),
         }
     }
 

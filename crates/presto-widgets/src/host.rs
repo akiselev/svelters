@@ -556,10 +556,10 @@ impl<W: w::Kind + Default> Hosted<W> {
             wcx.focused = mask.contains(StateMask::FOCUSED);
             wcx.sync = Some(&mut sync);
             let handled = f(&mut self.widget, &mut wcx);
-            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, .. } = wcx;
-            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor))
+            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, .. } = wcx;
+            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to))
         };
-        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor) = out;
+        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to) = out;
         let diff = StateBits((state.0 ^ before.0) & !CORE_BITS.0);
         for (_, bit) in StateBits::BUILTIN {
             if diff.contains(*bit) {
@@ -572,6 +572,11 @@ impl<W: w::Kind + Default> Hosted<W> {
             if let Some(cv) = to_core_value(&ws.props[i], &v) {
                 let _ = cx.set_native(s.core.prop_id(*ci), cv);
             }
+        }
+        if let Some(o) = scroll_to {
+            cx.scroll_fast(o);
+            let rec: Vec<(Arc<str>, Value)> = vec![("scrollLeft".into(), Value::F64(o.x as f64)), ("scrollTop".into(), Value::F64(o.y as f64))];
+            cx.emit(presto_core::common::SCROLL, Some(Value::Record(rec.into())));
         }
         for e in emitted {
             let i = e.signal.0 as usize;

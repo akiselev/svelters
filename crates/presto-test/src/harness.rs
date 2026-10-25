@@ -2,24 +2,29 @@
 //! `presto_platform::HeadlessPlatform` and the [`HeadlessCompositor`], on the platform's virtual clock.
 //! Input is scripted into the headless platform, which delivers it as an OS backend would
 //! (`AppHandler::input`, `a11y_event`), so tests take the production dispatch path; queries read the
-//! AccessKit snapshot folded from the app's `update_a11y` calls.
+//! AccessKit snapshot folded from the app's `update_a11y` calls (and grafted subtrees: egui islands).
 //!
 //! - `step` = one vsync on the virtual clock: queued input is delivered, the clock moves one interval,
 //!   the compositor applies commits and presents, the UI answers `BeginFrame`.
 //! - `run` = step until settled (nothing queued, no frame wanted, no commit in flight, no animation
-//!   running), failing after `max_steps`.
+//!   running), failing after `max_steps`; then kittest's accessibility check, when it is on.
+//!
+//! Verbs take presto's or egui's argument types ([`crate::convert`]); `event` takes a presto
+//! `InputEvent` or an `egui::Event` (translated by [`EguiAdapter`]).
 
-use crate::a11y::{A11yTree, By, NodeInfo};
+use crate::a11y::{A11yTree, AkNode, By, NodeInfo, NodeKey};
+use crate::convert::{IntoButton, IntoKey, IntoModifiers, IntoPoint, IntoSize, TestEvent};
 use crate::egui_event::{EguiAdapter, Injected};
 use crate::headless::HeadlessCompositor;
 use crate::render::{GpuRender, Image, RenderError};
+use crate::snapshot::{SnapshotError, SnapshotOptions};
 use presto::platform::{
     A11yEvent, ClipboardKind, HeadlessPlatform, PlatformCall, PlatformCx, Scripted, VirtualClock,
     WindowDesc,
 };
 use presto::seams::DocumentApi;
 use presto::{App, AppConfig};
-use presto_base::accesskit::{Action, ActionRequest, NodeId, Role, TreeId};
+use presto_base::accesskit::{Action, ActionData, ActionRequest, NodeId, Role, TreeId, TreeUpdate};
 use presto_base::color::Color;
 use presto_base::event::{
     ImeEvent, InputEvent, KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton, PointerEvent,
@@ -50,15 +55,39 @@ impl std::fmt::Display for NotSettled {
 
 impl std::error::Error for NotSettled {}
 
+/// Document-specific work the harness does around the production path (set by [`crate::island`]).
+pub(crate) struct Hooks<D> {
+    /// AccessKit updates the document produced outside its commits (an island's grafted subtree),
+    /// drained after every delivery.
+    pub a11y: Option<Box<dyn FnMut(&mut D) -> Vec<TreeUpdate>>>,
+    /// The clipboard text a paste puts on the platform clipboard, for clipboards the document owns.
+    pub clipboard: Option<Box<dyn FnMut(&mut D, &str)>>,
+    /// Before `render`: draw the document's own textures (an island's) on the harness's device.
+    pub textures: Option<Box<dyn FnMut(&mut D, &mut GpuRender)>>,
+}
+
+impl<D> Default for Hooks<D> {
+    fn default() -> Self {
+        Hooks {
+            a11y: None,
+            clipboard: None,
+            textures: None,
+        }
+    }
+}
+
 pub struct HarnessBuilder {
-    size: Size,
-    scale: f32,
-    interval: Span,
-    max_steps: u64,
-    start: Time,
-    config: AppConfig,
-    glyphs: Option<Arc<dyn GlyphRasterizer>>,
-    clear: Color,
+    pub(crate) size: Size,
+    pub(crate) scale: f32,
+    pub(crate) interval: Span,
+    pub(crate) max_steps: u64,
+    pub(crate) start: Time,
+    pub(crate) config: AppConfig,
+    pub(crate) glyphs: Option<Arc<dyn GlyphRasterizer>>,
+    pub(crate) clear: Color,
+    pub(crate) render_every_step: bool,
+    pub(crate) check_accessibility: bool,
+    pub(crate) snapshot: SnapshotOptions,
 }
 
 impl Default for HarnessBuilder {
@@ -72,6 +101,9 @@ impl Default for HarnessBuilder {
             config: AppConfig::default(),
             glyphs: None,
             clear: Color::WHITE,
+            render_every_step: false,
+            check_accessibility: true,
+            snapshot: SnapshotOptions::default(),
         }
     }
 }
@@ -80,19 +112,27 @@ impl HarnessBuilder {
     pub fn new() -> Self {
         Self::default()
     }
-    /// The window's inner size in points.
-    pub fn with_size(mut self, size: Size) -> Self {
-        self.size = size;
+    /// The window's inner size in points (presto `Size` or `egui::Vec2`).
+    pub fn with_size(mut self, size: impl IntoSize) -> Self {
+        self.size = size.into_size();
         self
     }
     pub fn with_scale(mut self, scale: f32) -> Self {
         self.scale = scale;
         self
     }
+    /// kittest's name for [`HarnessBuilder::with_scale`].
+    pub fn with_pixels_per_point(self, ppp: f32) -> Self {
+        self.with_scale(ppp)
+    }
     /// The simulated display interval (one `step`).
     pub fn with_interval(mut self, interval: Span) -> Self {
         self.interval = interval;
         self
+    }
+    /// kittest's name for [`HarnessBuilder::with_interval`], in seconds.
+    pub fn with_step_dt(self, dt: f32) -> Self {
+        self.with_interval(Span::from_nanos((f64::from(dt) * 1e9).round() as i64))
     }
     pub fn with_max_steps(mut self, n: u64) -> Self {
         self.max_steps = n;
@@ -114,6 +154,30 @@ impl HarnessBuilder {
         self.config = config;
         self
     }
+    /// Render after every step (kittest's; paint callbacks then run each step). Needs an adapter.
+    pub fn with_render_every_step(mut self, on: bool) -> Self {
+        self.render_every_step = on;
+        self
+    }
+    /// presto's `render` never draws a pointer cursor; only `false` is accepted.
+    #[track_caller]
+    pub fn with_render_cursor(self, on: bool) -> Self {
+        assert!(
+            !on,
+            "presto-test renders the committed tree; the OS cursor is not part of it"
+        );
+        self
+    }
+    /// kittest's check that every input widget has an accessible name, after each `run` (default on).
+    pub fn with_accessibility_check(mut self, on: bool) -> Self {
+        self.check_accessibility = on;
+        self
+    }
+    /// The options `snapshot` and `try_snapshot` use.
+    pub fn with_options(mut self, options: SnapshotOptions) -> Self {
+        self.snapshot = options;
+        self
+    }
 
     /// Build the harness around `doc` and run it until settled.
     #[track_caller]
@@ -125,10 +189,41 @@ impl HarnessBuilder {
 
     /// Build without running (to assert on the first frames).
     pub fn build_unsettled<D: DocumentApi + 'static>(self, doc: D) -> Harness<D> {
+        self.build_with_hooks(doc, Hooks::default())
+    }
+
+    pub(crate) fn build_with_hooks<D: DocumentApi + 'static>(
+        self,
+        doc: D,
+        hooks: Hooks<D>,
+    ) -> Harness<D> {
+        self.build_with(|_, _| doc, hooks, None)
+    }
+
+    /// The glyph rasteriser `render` uses.
+    pub(crate) fn default_glyphs(&self) -> Arc<dyn GlyphRasterizer> {
+        match &self.glyphs {
+            Some(g) => g.clone(),
+            None => {
+                let fonts = presto_text::FontStore::new(presto_text::FontConfig::testing());
+                Arc::new(presto_text::FontRasterizer::new(fonts))
+            }
+        }
+    }
+
+    /// Build around the document `make_doc` makes with the platform's clock (and the GPU, when one is
+    /// opened up front for it).
+    pub(crate) fn build_with<D: DocumentApi + 'static>(
+        self,
+        make_doc: impl FnOnce(Arc<dyn Clock>, Option<&GpuRender>) -> D,
+        hooks: Hooks<D>,
+        gpu: Option<GpuRender>,
+    ) -> Harness<D> {
         let mut platform = HeadlessPlatform::new();
         platform.cx().default_scale = Scale(self.scale);
         let clock = platform.virtual_clock();
         clock.set(self.start);
+        let doc = make_doc(clock.clone(), gpu.as_ref());
         let mut config = self.config;
         config.windows = vec![WindowDesc::new("presto-test", self.size)];
         let slot: Rc<RefCell<Option<HeadlessCompositor>>> = Rc::default();
@@ -155,13 +250,19 @@ impl HarnessBuilder {
             max_steps: self.max_steps,
             queue: RefCell::new(Vec::new()),
             modifiers: Modifiers::default(),
-            egui: EguiAdapter::default(),
+            egui: RefCell::new(EguiAdapter::default()),
             a11y: A11yTree::default(),
             calls: Vec::new(),
             steps: 0,
             glyphs: self.glyphs,
             clear: self.clear,
-            gpu: None,
+            gpu,
+            render_every_step: self.render_every_step,
+            last_render: None,
+            check_accessibility: self.check_accessibility,
+            snapshot: self.snapshot,
+            snapshot_failures: Vec::new(),
+            hooks,
         };
         h.collect_calls();
         // The platform reports the window's size once it exists, as an OS backend does.
@@ -199,7 +300,7 @@ pub struct Harness<D: DocumentApi + 'static> {
     /// Interior mutability so node handles (borrowing the harness) can queue input, as kittest's do.
     queue: RefCell<Vec<Queued>>,
     modifiers: Modifiers,
-    egui: EguiAdapter,
+    egui: RefCell<EguiAdapter>,
     a11y: A11yTree,
     /// Every platform call the app made, in order.
     calls: Vec<PlatformCall>,
@@ -208,6 +309,22 @@ pub struct Harness<D: DocumentApi + 'static> {
     clear: Color,
     /// Opened by the first `render`.
     gpu: Option<GpuRender>,
+    render_every_step: bool,
+    last_render: Option<Image>,
+    check_accessibility: bool,
+    snapshot: SnapshotOptions,
+    /// `snapshot` failures, reported when the harness drops (kittest's `SnapshotResults`).
+    snapshot_failures: Vec<SnapshotError>,
+    hooks: Hooks<D>,
+}
+
+impl<D: DocumentApi + 'static> Drop for Harness<D> {
+    fn drop(&mut self) {
+        if !self.snapshot_failures.is_empty() && !std::thread::panicking() {
+            let all: Vec<String> = self.snapshot_failures.iter().map(|e| e.to_string()).collect();
+            panic!("{} snapshot(s) failed:\n{}", all.len(), all.join("\n"));
+        }
+    }
 }
 
 impl<D: DocumentApi + 'static> Harness<D> {
@@ -242,6 +359,9 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn platform(&self) -> &HeadlessPlatform {
         &self.platform
     }
+    pub fn platform_mut(&mut self) -> &mut HeadlessPlatform {
+        &mut self.platform
+    }
     /// Every platform call the app made so far (windows, cursors, IME, a11y updates, exit).
     pub fn calls(&self) -> &[PlatformCall] {
         &self.calls
@@ -255,16 +375,28 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn now(&self) -> Time {
         self.clock.now()
     }
+    pub fn clock(&self) -> &Arc<VirtualClock> {
+        &self.clock
+    }
+    /// One step's virtual time.
+    pub fn interval(&self) -> Span {
+        self.interval
+    }
     pub fn steps(&self) -> u64 {
         self.steps
     }
     pub fn a11y(&self) -> &A11yTree {
         &self.a11y
     }
+    /// The image of the last step when built `with_render_every_step(true)`.
+    pub fn last_render(&self) -> Option<&Image> {
+        self.last_render.as_ref()
+    }
 
     // ---- running --------------------------------------------------------------------------------
 
     /// One vsync on the virtual clock.
+    #[track_caller]
     pub fn step(&mut self) {
         self.deliver();
         self.clock.advance(self.interval);
@@ -274,6 +406,20 @@ impl<D: DocumentApi + 'static> Harness<D> {
         self.platform.run_until(&mut self.app, Some(now));
         self.collect_calls();
         self.steps += 1;
+        if self.render_every_step {
+            let img = self
+                .render()
+                .unwrap_or_else(|e| panic!("render_every_step: {e}"));
+            self.last_render = Some(img);
+        }
+    }
+
+    /// `n` steps (kittest's `run_steps`).
+    #[track_caller]
+    pub fn run_steps(&mut self, n: usize) {
+        for _ in 0..n {
+            self.step();
+        }
     }
 
     fn collect_calls(&mut self) {
@@ -284,6 +430,11 @@ impl<D: DocumentApi + 'static> Harness<D> {
                 self.a11y.apply(u);
             }
             self.calls.push(c);
+        }
+        if let Some(f) = &mut self.hooks.a11y {
+            for u in f(self.app.doc_mut()) {
+                self.a11y.apply(&u);
+            }
         }
     }
 
@@ -309,6 +460,9 @@ impl<D: DocumentApi + 'static> Harness<D> {
                         .cx()
                         .clipboard()
                         .set_text(ClipboardKind::Clipboard, &text);
+                    if let Some(f) = &mut self.hooks.clipboard {
+                        f(self.app.doc_mut(), &text);
+                    }
                 }
             }
         }
@@ -330,7 +484,15 @@ impl<D: DocumentApi + 'static> Harness<D> {
             self.gpu = Some(GpuRender::new(glyphs)?);
         }
         let gpu = self.gpu.as_mut().expect("opened above");
+        if let Some(f) = &mut self.hooks.textures {
+            f(self.app.doc_mut(), gpu);
+        }
         self.compositor.render(self.window, gpu, self.clear)
+    }
+
+    /// The harness's GPU, once `render` opened it.
+    pub fn gpu(&mut self) -> Option<&mut GpuRender> {
+        self.gpu.as_mut()
     }
 
     /// Why the harness is not settled, or `None` when it is (or the app exited).
@@ -356,12 +518,23 @@ impl<D: DocumentApi + 'static> Harness<D> {
         None
     }
 
-    /// Step until settled; `Err` after `max_steps`.
+    /// Step until settled; `Err` after `max_steps`. Runs kittest's accessibility check when settled.
+    #[track_caller]
     pub fn try_run(&mut self) -> Result<u64, NotSettled> {
-        self.run_until_settled(self.max_steps)
+        let n = self.run_until_settled(self.max_steps)?;
+        if self.check_accessibility {
+            self.check_accessibility();
+        }
+        Ok(n)
+    }
+
+    /// Step until settled; `None` after `max_steps` (kittest's `run_ok`: no accessibility check).
+    pub fn run_ok(&mut self) -> Option<u64> {
+        self.run_until_settled(self.max_steps).ok()
     }
 
     /// Step until settled, at most `max` steps. Always steps at least once.
+    #[track_caller]
     pub fn run_until_settled(&mut self, max: u64) -> Result<u64, NotSettled> {
         let mut n = 0;
         loop {
@@ -394,35 +567,95 @@ impl<D: DocumentApi + 'static> Harness<D> {
         self.run();
     }
 
-    // ---- input ----------------------------------------------------------------------------------
+    // ---- accessibility --------------------------------------------------------------------------
 
-    /// Queue a presto input event for the harness window (delivered by the next `step`).
-    pub fn event(&self, ev: InputEvent) {
-        self.queue.borrow_mut().push(Queued::Input(self.window, ev));
+    /// Input widgets (egui's `is_input` roles) that are not hidden, not read-only and have neither a
+    /// label nor a placeholder, described as kittest describes them.
+    pub fn unnamed_widgets(&self) -> Vec<String> {
+        let walk = self.a11y.walk();
+        walk.iter()
+            .filter(|n| egui::accessibility::is_input(n.role()) && !n.is_hidden())
+            .filter(|n| !n.node.is_read_only())
+            .filter(|n| {
+                let ak = AkNode { info: **n, tree: &self.a11y };
+                let named = ak.label().is_some_and(|l| !l.trim().is_empty());
+                let placeholder = n.node.placeholder().is_some_and(|p| !p.trim().is_empty());
+                !named && !placeholder
+            })
+            .map(|n| {
+                let inside = std::iter::successors(n.parent, |p| {
+                    walk.iter().find(|w| w.key() == *p).and_then(|w| w.parent)
+                })
+                .find_map(|p| self.a11y.node(p).and_then(|x| x.label()).map(str::to_owned))
+                .map_or_else(String::new, |l| format!(" inside {l:?}"));
+                format!("{:?} at {:?}{inside}", n.role(), n.node.bounds())
+            })
+            .collect()
     }
 
-    /// Queue an egui event, translated as the platform would deliver it.
-    pub fn event_egui(&mut self, ev: egui::Event) {
-        for i in self.egui.translate(&ev) {
-            let q = match i {
-                Injected::Input(e) => Queued::Input(self.window, e),
-                Injected::A11y(r) => Queued::A11y(self.window, r),
-                Injected::Focused(f) => Queued::Window(self.window, WindowEvent::Focused(f)),
-                Injected::SetClipboard(t) => Queued::Clipboard(t),
-            };
-            self.queue.borrow_mut().push(q);
+    /// kittest's check: every input widget has an accessible name.
+    #[track_caller]
+    pub fn check_accessibility(&self) {
+        let unnamed = self.unnamed_widgets();
+        assert!(
+            unnamed.is_empty(),
+            "{} widget(s) lack accessible name. You can disable this check with HarnessBuilder::with_accessibility_check(false). The widgets:\n{}",
+            unnamed.len(),
+            unnamed.join("\n")
+        );
+    }
+
+    // ---- input ----------------------------------------------------------------------------------
+
+    fn push(&self, q: Queued) {
+        self.queue.borrow_mut().push(q);
+    }
+
+    /// Queue an event for the harness window (delivered by the next `step`): a presto `InputEvent`,
+    /// or an `egui::Event` translated as the platform would deliver it.
+    pub fn event(&self, ev: impl Into<TestEvent>) {
+        match ev.into() {
+            TestEvent::Presto(e) => self.push(Queued::Input(self.window, e)),
+            TestEvent::Egui(e) => {
+                let injected = self.egui.borrow_mut().translate(&e);
+                for i in injected {
+                    self.push(match i {
+                        Injected::Input(e) => Queued::Input(self.window, e),
+                        Injected::A11y(r) => Queued::A11y(self.window, r),
+                        Injected::Focused(f) => Queued::Window(self.window, WindowEvent::Focused(f)),
+                        Injected::SetClipboard(t) => Queued::Clipboard(t),
+                    });
+                }
+            }
         }
     }
 
-    pub fn window_event(&self, ev: WindowEvent) {
-        self.queue
-            .borrow_mut()
-            .push(Queued::Window(self.window, ev));
+    /// An egui event (kept for tests written before `event` took both).
+    pub fn event_egui(&self, ev: egui::Event) {
+        self.event(ev);
     }
 
-    /// Resize the window (points), through the resize handshake.
-    pub fn set_size(&self, size: Size) {
-        let scale = self.app.window_size(self.window).map_or(1.0, |(_, s)| s.0);
+    /// `ev` with `m` held: the modifiers change before and are released after (kittest's).
+    pub fn event_modifiers(&self, ev: impl Into<TestEvent>, m: impl IntoModifiers) {
+        let m = m.into_modifiers(self.macos());
+        self.event(InputEvent::ModifiersChanged(m));
+        self.event(ev);
+        self.event(InputEvent::ModifiersChanged(self.modifiers));
+    }
+
+    /// An AccessKit action request, delivered as the platform adapter delivers one.
+    pub fn accesskit_action(&self, req: ActionRequest) {
+        self.push(Queued::A11y(self.window, req));
+    }
+
+    pub fn window_event(&self, ev: WindowEvent) {
+        self.push(Queued::Window(self.window, ev));
+    }
+
+    /// Resize the window (points: presto `Size` or `egui::Vec2`), through the resize handshake.
+    pub fn set_size(&self, size: impl IntoSize) {
+        let size = size.into_size();
+        let scale = self.scale();
         let device = DeviceSize {
             w: (size.w * scale).round() as u32,
             h: (size.h * scale).round() as u32,
@@ -433,10 +666,44 @@ impl<D: DocumentApi + 'static> Harness<D> {
         });
     }
 
-    /// Modifiers held for the following `key_press`, `click` and wheel input.
-    pub fn set_modifiers(&mut self, m: Modifiers) {
-        self.modifiers = m;
-        self.event(InputEvent::ModifiersChanged(m));
+    /// Change the window's scale, keeping its size in points.
+    pub fn set_pixels_per_point(&self, ppp: f32) {
+        let pts = self.size();
+        self.window_event(WindowEvent::Resized {
+            size: DeviceSize {
+                w: (pts.w * ppp).round() as u32,
+                h: (pts.h * ppp).round() as u32,
+            },
+            scale: Scale(ppp),
+        });
+    }
+
+    pub fn scale(&self) -> f32 {
+        self.app.window_size(self.window).map_or(1.0, |(_, s)| s.0)
+    }
+
+    /// The window's size in points.
+    pub fn size(&self) -> Size {
+        self.app
+            .window_size(self.window)
+            .map_or(Size::ZERO, |(d, s)| Size::new(d.w as f32 / s.0, d.h as f32 / s.0))
+    }
+
+    fn macos(&self) -> bool {
+        self.egui.borrow().macos
+    }
+
+    /// A native menu item chosen now (`AppHandler::menu_activated`), as the macOS backend reports it.
+    pub fn menu_activated(&mut self, id: &str) {
+        self.deliver();
+        presto::platform::AppHandler::menu_activated(&mut self.app, self.platform.cx(), id);
+        self.collect_calls();
+    }
+
+    /// Modifiers held for the following keys, clicks and wheel input.
+    pub fn set_modifiers(&mut self, m: impl IntoModifiers) {
+        self.modifiers = m.into_modifiers(self.macos());
+        self.event(InputEvent::ModifiersChanged(self.modifiers));
     }
 
     fn key(&self, key: Key, state: KeyState, m: Modifiers) {
@@ -451,19 +718,50 @@ impl<D: DocumentApi + 'static> Harness<D> {
         }));
     }
 
-    pub fn key_down(&self, key: Key) {
-        self.key(key, KeyState::Pressed, self.modifiers);
+    pub fn key_down(&self, key: impl IntoKey) {
+        self.key(key.into_key(), KeyState::Pressed, self.modifiers);
     }
-    pub fn key_up(&self, key: Key) {
-        self.key(key, KeyState::Released, self.modifiers);
+    pub fn key_up(&self, key: impl IntoKey) {
+        self.key(key.into_key(), KeyState::Released, self.modifiers);
+    }
+    pub fn key_down_modifiers(&self, m: impl IntoModifiers, key: impl IntoKey) {
+        let m = m.into_modifiers(self.macos());
+        self.event(InputEvent::ModifiersChanged(m));
+        self.key(key.into_key(), KeyState::Pressed, m);
+        self.event(InputEvent::ModifiersChanged(self.modifiers));
+    }
+    pub fn key_up_modifiers(&self, m: impl IntoModifiers, key: impl IntoKey) {
+        let m = m.into_modifiers(self.macos());
+        self.event(InputEvent::ModifiersChanged(m));
+        self.key(key.into_key(), KeyState::Released, m);
+        self.event(InputEvent::ModifiersChanged(self.modifiers));
+    }
+    /// Press `keys` in order, release them in reverse (kittest's `key_combination`).
+    pub fn key_combination<K: IntoKey + Copy>(&self, keys: &[K]) {
+        for k in keys {
+            self.key_down(*k);
+        }
+        for k in keys.iter().rev() {
+            self.key_up(*k);
+        }
+    }
+    /// With `m` held: every key down, then every key up (kittest's `key_combination_modifiers`).
+    pub fn key_combination_modifiers<K: IntoKey + Copy>(&self, m: impl IntoModifiers, keys: &[K]) {
+        let m = m.into_modifiers(self.macos());
+        self.event(InputEvent::ModifiersChanged(m));
+        for state in [KeyState::Pressed, KeyState::Released] {
+            for k in keys {
+                self.key(k.into_key(), state, m);
+            }
+        }
+        self.event(InputEvent::ModifiersChanged(self.modifiers));
     }
     /// Press and release `key` with the held modifiers.
-    pub fn key_press(&self, key: Key) {
-        self.key_press_modifiers(self.modifiers, key);
+    pub fn key_press(&self, key: impl IntoKey) {
+        self.key_combination(&[key.into_key()]);
     }
-    pub fn key_press_modifiers(&self, m: Modifiers, key: Key) {
-        self.key(key, KeyState::Pressed, m);
-        self.key(key, KeyState::Released, m);
+    pub fn key_press_modifiers(&self, m: impl IntoModifiers, key: impl IntoKey) {
+        self.key_combination_modifiers(m, &[key.into_key()]);
     }
     /// Type text into the focused node (an IME commit, as egui's `Event::Text`).
     pub fn type_text(&self, text: &str) {
@@ -476,6 +774,7 @@ impl<D: DocumentApi + 'static> Harness<D> {
         pos: Point,
         button: Option<MouseButton>,
         buttons: u32,
+        modifiers: Modifiers,
     ) -> InputEvent {
         InputEvent::Pointer(PointerEvent {
             phase,
@@ -484,44 +783,81 @@ impl<D: DocumentApi + 'static> Harness<D> {
             button,
             buttons,
             pos,
-            modifiers: self.modifiers,
+            modifiers,
             pressure: if buttons != 0 { 0.5 } else { 0.0 },
             tilt: Vec2::ZERO,
             history: SmallVec::new(),
         })
     }
 
-    pub fn hover_at(&self, pos: Point) {
-        self.event(self.pointer(PointerPhase::Move, pos, None, 0));
+    pub fn hover_at(&self, pos: impl IntoPoint) {
+        let pos = pos.into_point();
+        self.egui.borrow_mut().pointer = pos;
+        self.event(self.pointer(PointerPhase::Move, pos, None, 0, self.modifiers));
     }
     /// Move, press and release the primary button at `pos`.
-    pub fn click_at(&self, pos: Point) {
+    pub fn click_at(&self, pos: impl IntoPoint) {
         self.click_button_at(pos, MouseButton::Primary);
     }
-    pub fn click_button_at(&self, pos: Point, b: MouseButton) {
-        let bit = match b {
-            MouseButton::Primary => 1,
-            MouseButton::Secondary => 2,
-            MouseButton::Middle => 4,
-            _ => 0,
-        };
-        self.event(self.pointer(PointerPhase::Move, pos, None, 0));
-        self.event(self.pointer(PointerPhase::Down, pos, Some(b), bit));
-        self.event(self.pointer(PointerPhase::Up, pos, Some(b), 0));
+    pub fn click_button_at(&self, pos: impl IntoPoint, b: impl IntoButton) {
+        self.click_button_modifiers_at(pos, b, self.modifiers);
+    }
+    /// Move, then press and release `b` with `m` held (they change before and are released after).
+    pub fn click_button_modifiers_at(
+        &self,
+        pos: impl IntoPoint,
+        b: impl IntoButton,
+        m: impl IntoModifiers,
+    ) {
+        let (pos, b, m) = (pos.into_point(), b.into_button(), m.into_modifiers(self.macos()));
+        let bit = button_bit(b);
+        self.hover_at(pos);
+        if m != self.modifiers {
+            self.event(InputEvent::ModifiersChanged(m));
+        }
+        self.event(self.pointer(PointerPhase::Down, pos, Some(b), bit, m));
+        self.event(self.pointer(PointerPhase::Up, pos, Some(b), 0, m));
+        if m != self.modifiers {
+            self.event(InputEvent::ModifiersChanged(self.modifiers));
+        }
+    }
+    /// Press the primary button at `pos` (kittest's `drag_at`: the start of a drag; moves follow with
+    /// `hover_at`, the release with `drop_at`).
+    pub fn drag_at(&self, pos: impl IntoPoint) {
+        let pos = pos.into_point();
+        self.egui.borrow_mut().pointer = pos;
+        self.event(self.pointer(PointerPhase::Down, pos, Some(MouseButton::Primary), 1, self.modifiers));
+    }
+    /// Release the primary button at `pos`, then the pointer leaves (kittest's `drop_at`).
+    pub fn drop_at(&self, pos: impl IntoPoint) {
+        let pos = pos.into_point();
+        self.egui.borrow_mut().pointer = pos;
+        self.event(self.pointer(PointerPhase::Up, pos, Some(MouseButton::Primary), 0, self.modifiers));
+        self.remove_cursor();
+    }
+    /// The pointer leaves the window (kittest's `remove_cursor`).
+    pub fn remove_cursor(&self) {
+        let pos = self.egui.borrow().pointer;
+        self.event(self.pointer(PointerPhase::Leave, pos, None, 0, self.modifiers));
     }
     /// A primary-button drag from `from` to `to` in `steps` moves.
-    pub fn drag(&self, from: Point, to: Point, steps: u32) {
-        self.event(self.pointer(PointerPhase::Move, from, None, 0));
-        self.event(self.pointer(PointerPhase::Down, from, Some(MouseButton::Primary), 1));
+    pub fn drag(&self, from: impl IntoPoint, to: impl IntoPoint, steps: u32) {
+        let (from, to) = (from.into_point(), to.into_point());
+        let m = self.modifiers;
+        self.event(self.pointer(PointerPhase::Move, from, None, 0, m));
+        self.event(self.pointer(PointerPhase::Down, from, Some(MouseButton::Primary), 1, m));
         let n = steps.max(1);
         for i in 1..=n {
             let t = i as f32 / n as f32;
             let p = Point::new(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t);
-            self.event(self.pointer(PointerPhase::Move, p, None, 1));
+            self.event(self.pointer(PointerPhase::Move, p, None, 1, m));
         }
-        self.event(self.pointer(PointerPhase::Up, to, Some(MouseButton::Primary), 0));
+        self.event(self.pointer(PointerPhase::Up, to, Some(MouseButton::Primary), 0, m));
+        self.egui.borrow_mut().pointer = to;
     }
-    pub fn wheel_at(&self, pos: Point, delta: ScrollDelta) {
+    pub fn wheel_at(&self, pos: impl IntoPoint, delta: ScrollDelta) {
+        let pos = pos.into_point();
+        self.egui.borrow_mut().pointer = pos;
         self.event(InputEvent::Wheel(WheelEvent {
             pos,
             delta,
@@ -540,114 +876,54 @@ impl<D: DocumentApi + 'static> Harness<D> {
         }
     }
 
-    pub fn query_all(&self, by: By<'_>) -> Vec<Node<'_, D>> {
+    fn find(&self, scope: Option<NodeKey>, by: &By<'_>) -> Vec<Node<'_, D>> {
         self.a11y
-            .walk()
+            .query(scope, by)
             .into_iter()
-            .filter(|n| by.matches(n))
             .map(|n| self.node_ref(n))
             .collect()
     }
 
-    /// The one node matching `by`, if any; panics when several match.
+    /// The root node (the window); queries on it search the whole tree.
     #[track_caller]
-    pub fn query(&self, by: By<'_>) -> Option<Node<'_, D>> {
-        let mut all = self.query_all(by.clone());
-        match all.len() {
-            0 => None,
-            1 => all.pop(),
-            n => panic!("{n} nodes match {by}; expected at most one"),
-        }
+    pub fn root(&self) -> Node<'_, D> {
+        let root = self
+            .a11y
+            .root_key()
+            .unwrap_or_else(|| panic!("no AccessKit tree yet"));
+        self.node_at(root)
+            .expect("the root is in the walk")
     }
 
-    /// The one node matching `by`; panics when none or several match (kittest's `get_by`).
-    #[track_caller]
-    pub fn get(&self, by: By<'_>) -> Node<'_, D> {
-        match self.query(by.clone()) {
-            Some(n) => n,
-            None => panic!("no node matches {by}\n{}", self.a11y_dump()),
-        }
-    }
-
-    #[track_caller]
-    pub fn get_by_label(&self, label: &str) -> Node<'_, D> {
-        self.get(By::new().label(label))
-    }
-    #[track_caller]
-    pub fn query_by_label(&self, label: &str) -> Option<Node<'_, D>> {
-        self.query(By::new().label(label))
-    }
-    pub fn get_all_by_label(&self, label: &str) -> Vec<Node<'_, D>> {
-        self.query_all(By::new().label(label))
-    }
-    #[track_caller]
-    pub fn get_by_label_contains(&self, label: &str) -> Node<'_, D> {
-        self.get(By::new().label_contains(label))
-    }
-    #[track_caller]
-    pub fn get_by_role(&self, role: Role) -> Node<'_, D> {
-        self.get(By::new().role(role))
-    }
-    #[track_caller]
-    pub fn query_by_role(&self, role: Role) -> Option<Node<'_, D>> {
-        self.query(By::new().role(role))
-    }
-    #[track_caller]
-    pub fn get_by_role_and_label(&self, role: Role, label: &str) -> Node<'_, D> {
-        self.get(By::new().role(role).label(label))
-    }
-    #[track_caller]
-    pub fn query_by_role_and_label(&self, role: Role, label: &str) -> Option<Node<'_, D>> {
-        self.query(By::new().role(role).label(label))
-    }
-    #[track_caller]
-    pub fn get_by_value(&self, value: &str) -> Node<'_, D> {
-        self.get(By::new().value(value))
-    }
-    #[track_caller]
-    pub fn query_by_value(&self, value: &str) -> Option<Node<'_, D>> {
-        self.query(By::new().value(value))
-    }
-    /// By author id (EM1), the stable locator agents and tests use.
-    #[track_caller]
-    pub fn get_by_author_id(&self, id: &str) -> Node<'_, D> {
-        self.get(By::new().author_id(id))
-    }
-    #[track_caller]
-    pub fn query_by_author_id(&self, id: &str) -> Option<Node<'_, D>> {
-        self.query(By::new().author_id(id))
+    fn node_at(&self, key: NodeKey) -> Option<Node<'_, D>> {
+        self.a11y
+            .walk()
+            .into_iter()
+            .find(|n| n.key() == key)
+            .map(|n| self.node_ref(n))
     }
 
     /// The focused node, when focus is on something other than the root.
     pub fn focused(&self) -> Option<Node<'_, D>> {
         let f = self.a11y.focus()?;
-        if Some(f) == self.a11y.root() {
+        if Some(f) == self.a11y.root_key() {
             return None;
         }
-        self.a11y
-            .walk()
-            .into_iter()
-            .find(|n| n.id == f)
-            .map(|n| self.node_ref(n))
+        self.node_at(f)
     }
 
     /// The snapshot as an indented outline (role, label, value, author id, bounds), for failure messages.
     pub fn a11y_dump(&self) -> String {
-        let walk = self.a11y.walk();
-        let mut depth = std::collections::HashMap::<NodeId, usize>::new();
         let mut out = String::new();
-        for n in &walk {
-            let d = n
-                .parent
-                .and_then(|p| depth.get(&p).map(|d| d + 1))
-                .unwrap_or(0);
-            depth.insert(n.id, d);
-            out.push_str(&"  ".repeat(d));
+        for n in &self.a11y.walk() {
+            out.push_str(&"  ".repeat(n.depth));
             out.push_str(&format!("{:?}", n.role()));
-            if let Some(l) = n.label() {
+            if let Some(l) = n.match_label() {
                 out.push_str(&format!(" {l:?}"));
             }
-            if let Some(v) = n.value() {
+            if let Some(v) = n.value()
+                && n.role() != Role::Label
+            {
                 out.push_str(&format!(" value={v:?}"));
             }
             if let Some(a) = n.author_id() {
@@ -666,6 +942,227 @@ impl<D: DocumentApi + 'static> Harness<D> {
         }
         out
     }
+
+    // ---- snapshots ------------------------------------------------------------------------------
+
+    /// Render and compare with `{output_path}/{name}.png` under the harness's options (kittest's
+    /// `try_snapshot`; see [`crate::snapshot`]). Runs the accessibility check first when it is on.
+    pub fn try_snapshot(&mut self, name: impl Into<String>) -> Result<(), SnapshotError> {
+        if self.check_accessibility {
+            self.check_accessibility();
+        }
+        let options = self.snapshot.clone();
+        self.try_snapshot_options(name, &options)
+    }
+
+    pub fn try_snapshot_options(
+        &mut self,
+        name: impl Into<String>,
+        options: &SnapshotOptions,
+    ) -> Result<(), SnapshotError> {
+        let img = self.render().map_err(SnapshotError::Render)?;
+        crate::snapshot::try_image_snapshot_options(&img, name, options)
+    }
+
+    /// Like `try_snapshot`; a failure is reported when the harness drops (kittest's `snapshot`).
+    pub fn snapshot(&mut self, name: impl Into<String>) {
+        if let Err(e) = self.try_snapshot(name) {
+            self.snapshot_failures.push(e);
+        }
+    }
+
+    pub fn snapshot_options(&mut self, name: impl Into<String>, options: &SnapshotOptions) {
+        if let Err(e) = self.try_snapshot_options(name, options) {
+            self.snapshot_failures.push(e);
+        }
+    }
+
+    /// The snapshot failures so far, taken (so the drop does not report them).
+    pub fn take_snapshot_results(&mut self) -> Vec<SnapshotError> {
+        std::mem::take(&mut self.snapshot_failures)
+    }
+}
+
+fn button_bit(b: MouseButton) -> u32 {
+    match b {
+        MouseButton::Primary => 1,
+        MouseButton::Secondary => 2,
+        MouseButton::Middle => 4,
+        MouseButton::Back => 8,
+        MouseButton::Forward => 16,
+        MouseButton::Other(_) => 0,
+    }
+}
+
+/// kittest's queries (`Queryable`) on a scope: the harness (the whole tree) or a node (its subtree).
+/// `get_*` panics on none or several matches, `get_all_*` on none; `query_*` panics on several.
+macro_rules! queries {
+    ($h:lifetime) => {
+        /// Every node matching `by` (kittest's `query_all`).
+        pub fn query_all(&self, by: By<'_>) -> std::vec::IntoIter<Node<$h, D>> {
+            self.harness_ref().find(self.scope(), &by).into_iter()
+        }
+        #[track_caller]
+        pub fn get_all(&self, by: By<'_>) -> std::vec::IntoIter<Node<$h, D>> {
+            let all = self.harness_ref().find(self.scope(), &by);
+            if all.is_empty() {
+                panic!("no node matches {by}\n{}", self.harness_ref().a11y_dump());
+            }
+            all.into_iter()
+        }
+        /// The one node matching `by`, if any; panics when several match.
+        #[track_caller]
+        pub fn query(&self, by: By<'_>) -> Option<Node<$h, D>> {
+            let mut all = self.harness_ref().find(self.scope(), &by);
+            match all.len() {
+                0 => None,
+                1 => all.pop(),
+                n => panic!(
+                    "{n} nodes match {by}; expected at most one (use query_all for several)\n{}",
+                    self.harness_ref().a11y_dump()
+                ),
+            }
+        }
+        /// The one node matching `by`; panics when none or several match.
+        #[track_caller]
+        pub fn get(&self, by: By<'_>) -> Node<$h, D> {
+            match self.query(by.clone()) {
+                Some(n) => n,
+                None => panic!("no node matches {by}\n{}", self.harness_ref().a11y_dump()),
+            }
+        }
+
+        pub fn query_all_by_label(&self, label: &str) -> std::vec::IntoIter<Node<$h, D>> {
+            self.query_all(By::new().label(label))
+        }
+        #[track_caller]
+        pub fn get_all_by_label(&self, label: &str) -> std::vec::IntoIter<Node<$h, D>> {
+            self.get_all(By::new().label(label))
+        }
+        #[track_caller]
+        pub fn query_by_label(&self, label: &str) -> Option<Node<$h, D>> {
+            self.query(By::new().label(label))
+        }
+        #[track_caller]
+        pub fn get_by_label(&self, label: &str) -> Node<$h, D> {
+            self.get(By::new().label(label))
+        }
+
+        pub fn query_all_by_label_contains(&self, label: &str) -> std::vec::IntoIter<Node<$h, D>> {
+            self.query_all(By::new().label_contains(label))
+        }
+        #[track_caller]
+        pub fn get_all_by_label_contains(&self, label: &str) -> std::vec::IntoIter<Node<$h, D>> {
+            self.get_all(By::new().label_contains(label))
+        }
+        #[track_caller]
+        pub fn query_by_label_contains(&self, label: &str) -> Option<Node<$h, D>> {
+            self.query(By::new().label_contains(label))
+        }
+        #[track_caller]
+        pub fn get_by_label_contains(&self, label: &str) -> Node<$h, D> {
+            self.get(By::new().label_contains(label))
+        }
+
+        pub fn query_all_by_role_and_label(
+            &self,
+            role: Role,
+            label: &str,
+        ) -> std::vec::IntoIter<Node<$h, D>> {
+            self.query_all(By::new().role(role).label(label))
+        }
+        #[track_caller]
+        pub fn get_all_by_role_and_label(
+            &self,
+            role: Role,
+            label: &str,
+        ) -> std::vec::IntoIter<Node<$h, D>> {
+            self.get_all(By::new().role(role).label(label))
+        }
+        #[track_caller]
+        pub fn query_by_role_and_label(&self, role: Role, label: &str) -> Option<Node<$h, D>> {
+            self.query(By::new().role(role).label(label))
+        }
+        #[track_caller]
+        pub fn get_by_role_and_label(&self, role: Role, label: &str) -> Node<$h, D> {
+            self.get(By::new().role(role).label(label))
+        }
+
+        pub fn query_all_by_role(&self, role: Role) -> std::vec::IntoIter<Node<$h, D>> {
+            self.query_all(By::new().role(role))
+        }
+        #[track_caller]
+        pub fn get_all_by_role(&self, role: Role) -> std::vec::IntoIter<Node<$h, D>> {
+            self.get_all(By::new().role(role))
+        }
+        #[track_caller]
+        pub fn query_by_role(&self, role: Role) -> Option<Node<$h, D>> {
+            self.query(By::new().role(role))
+        }
+        #[track_caller]
+        pub fn get_by_role(&self, role: Role) -> Node<$h, D> {
+            self.get(By::new().role(role))
+        }
+
+        pub fn query_all_by_value(&self, value: &str) -> std::vec::IntoIter<Node<$h, D>> {
+            self.query_all(By::new().value(value))
+        }
+        #[track_caller]
+        pub fn get_all_by_value(&self, value: &str) -> std::vec::IntoIter<Node<$h, D>> {
+            self.get_all(By::new().value(value))
+        }
+        #[track_caller]
+        pub fn query_by_value(&self, value: &str) -> Option<Node<$h, D>> {
+            self.query(By::new().value(value))
+        }
+        #[track_caller]
+        pub fn get_by_value(&self, value: &str) -> Node<$h, D> {
+            self.get(By::new().value(value))
+        }
+
+        /// By predicate over the node (kittest's `*_by`).
+        pub fn query_all_by(
+            &self,
+            f: impl Fn(&AkNode<'_>) -> bool,
+        ) -> std::vec::IntoIter<Node<$h, D>> {
+            self.query_all(By::new().predicate(f))
+        }
+        #[track_caller]
+        pub fn get_all_by(&self, f: impl Fn(&AkNode<'_>) -> bool) -> std::vec::IntoIter<Node<$h, D>> {
+            self.get_all(By::new().predicate(f))
+        }
+        #[track_caller]
+        pub fn query_by(&self, f: impl Fn(&AkNode<'_>) -> bool) -> Option<Node<$h, D>> {
+            self.query(By::new().predicate(f))
+        }
+        #[track_caller]
+        pub fn get_by(&self, f: impl Fn(&AkNode<'_>) -> bool) -> Node<$h, D> {
+            self.get(By::new().predicate(f))
+        }
+
+        /// By author id (EM1), the stable locator agents and tests use.
+        pub fn query_all_by_author_id(&self, id: &str) -> std::vec::IntoIter<Node<$h, D>> {
+            self.query_all(By::new().author_id(id))
+        }
+        #[track_caller]
+        pub fn query_by_author_id(&self, id: &str) -> Option<Node<$h, D>> {
+            self.query(By::new().author_id(id))
+        }
+        #[track_caller]
+        pub fn get_by_author_id(&self, id: &str) -> Node<$h, D> {
+            self.get(By::new().author_id(id))
+        }
+    };
+}
+
+impl<D: DocumentApi + 'static> Harness<D> {
+    fn harness_ref(&self) -> &Self {
+        self
+    }
+    fn scope(&self) -> Option<NodeKey> {
+        None
+    }
+    queries!('_);
 }
 
 /// A node of the snapshot, with kittest's actions. Actions queue input; the next `step`/`run`
@@ -675,24 +1172,61 @@ pub struct Node<'h, D: DocumentApi + 'static> {
     info: NodeInfo<'h>,
 }
 
-impl<D: DocumentApi + 'static> Node<'_, D> {
+impl<D: DocumentApi + 'static> Clone for Node<'_, D> {
+    fn clone(&self) -> Self {
+        Node {
+            harness: self.harness,
+            info: self.info,
+        }
+    }
+}
+
+impl<D: DocumentApi + 'static> std::fmt::Debug for Node<'_, D> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.accesskit_node().fmt(f)
+    }
+}
+
+impl<'h, D: DocumentApi + 'static> Node<'h, D> {
+    fn harness_ref(&self) -> &'h Harness<D> {
+        self.harness
+    }
+    fn scope(&self) -> Option<NodeKey> {
+        Some(self.info.key())
+    }
+    queries!('h);
+
     pub fn id(&self) -> NodeId {
         self.info.id
     }
-    pub fn info(&self) -> &NodeInfo<'_> {
+    pub fn tree(&self) -> TreeId {
+        self.info.tree
+    }
+    pub fn key(&self) -> NodeKey {
+        self.info.key()
+    }
+    pub fn info(&self) -> &NodeInfo<'h> {
         &self.info
     }
-    pub fn label(&self) -> Option<&str> {
-        self.info.label()
+    /// The node as kittest's `accesskit_node()` shows it.
+    pub fn accesskit_node(&self) -> AkNode<'h> {
+        AkNode {
+            info: self.info,
+            tree: &self.harness.a11y,
+        }
     }
-    pub fn value(&self) -> Option<&str> {
-        self.info.value()
+    /// The accessible name (the label, else the labelling nodes' text).
+    pub fn label(&self) -> Option<String> {
+        self.accesskit_node().label()
+    }
+    pub fn value(&self) -> Option<String> {
+        self.info.value().map(str::to_owned)
     }
     pub fn role(&self) -> Role {
         self.info.role()
     }
-    pub fn author_id(&self) -> Option<&str> {
-        self.info.author_id()
+    pub fn author_id(&self) -> Option<&'h str> {
+        self.info.node.author_id()
     }
     pub fn toggled(&self) -> Option<presto_base::accesskit::Toggled> {
         self.info.toggled()
@@ -701,11 +1235,31 @@ impl<D: DocumentApi + 'static> Node<'_, D> {
         self.info.is_disabled()
     }
     pub fn is_focused(&self) -> bool {
-        self.harness.a11y.focus() == Some(self.info.id)
+        self.harness.a11y.focus() == Some(self.info.key())
     }
     /// Window-space bounds (points).
-    pub fn rect(&self) -> Option<Rect> {
+    pub fn bounds(&self) -> Option<Rect> {
         self.info.bounds
+    }
+    /// Window-space bounds in points as an `egui::Rect` (kittest's `rect`); panics without bounds.
+    #[track_caller]
+    pub fn rect(&self) -> egui::Rect {
+        let b = self.info.bounds.unwrap_or_else(|| {
+            panic!("node {:?} ({:?}) has no bounds", self.info.id, self.label())
+        });
+        egui::Rect::from_min_max(egui::pos2(b.min.x, b.min.y), egui::pos2(b.max.x, b.max.y))
+    }
+
+    pub fn parent(&self) -> Option<Node<'h, D>> {
+        self.harness.node_at(self.info.parent?)
+    }
+    /// Direct children (a graft node's: its subtree's root).
+    pub fn children(&self) -> std::vec::IntoIter<Node<'h, D>> {
+        self.query_all(By::new().recursive(false))
+    }
+    /// Every descendant, in tree order.
+    pub fn children_recursive(&self) -> std::vec::IntoIter<Node<'h, D>> {
+        self.query_all(By::new())
     }
 
     #[track_caller]
@@ -715,46 +1269,91 @@ impl<D: DocumentApi + 'static> Node<'_, D> {
             .unwrap_or_else(|| panic!("node {:?} ({:?}) has no bounds", self.info.id, self.label()))
     }
 
-    /// Move, press and release the primary button at the node's centre.
-    #[track_caller]
-    pub fn click(&self) {
-        self.harness.click_at(self.center());
-    }
-    #[track_caller]
-    pub fn click_secondary(&self) {
-        self.harness
-            .click_button_at(self.center(), MouseButton::Secondary);
-    }
+    /// Move to the node's centre.
     #[track_caller]
     pub fn hover(&self) {
         self.harness.hover_at(self.center());
     }
+    /// Move, press and release the primary button at the node's centre.
+    #[track_caller]
+    pub fn click(&self) {
+        self.click_button(MouseButton::Primary);
+    }
+    #[track_caller]
+    pub fn click_secondary(&self) {
+        self.click_button(MouseButton::Secondary);
+    }
+    #[track_caller]
+    pub fn click_button(&self, b: impl IntoButton) {
+        self.harness
+            .click_button_modifiers_at(self.center(), b, self.harness.modifiers);
+    }
+    /// Click with `m` held (they change before and are released after).
+    #[track_caller]
+    pub fn click_modifiers(&self, m: impl IntoModifiers) {
+        self.click_button_modifiers(MouseButton::Primary, m);
+    }
+    #[track_caller]
+    pub fn click_button_modifiers(&self, b: impl IntoButton, m: impl IntoModifiers) {
+        self.harness.click_button_modifiers_at(self.center(), b, m);
+    }
+
     /// An AccessKit action on this node.
     pub fn action(&self, action: Action) {
-        let req = ActionRequest {
+        self.action_with(action, None);
+    }
+    pub fn action_with(&self, action: Action, data: Option<ActionData>) {
+        self.harness.accesskit_action(ActionRequest {
             action,
-            target_tree: TreeId::ROOT,
+            target_tree: self.info.tree,
             target_node: self.info.id,
-            data: None,
-        };
-        self.harness
-            .queue
-            .borrow_mut()
-            .push(Queued::A11y(self.harness.window, req));
+            data,
+        });
     }
     /// The AccessKit `Click` action (no pointer).
     pub fn click_accesskit(&self) {
         self.action(Action::Click);
     }
+    pub fn increment_accesskit(&self) {
+        self.action(Action::Increment);
+    }
+    pub fn decrement_accesskit(&self) {
+        self.action(Action::Decrement);
+    }
+    pub fn set_value_accesskit(&self, value: f64) {
+        self.action_with(Action::SetValue, Some(ActionData::NumericValue(value)));
+    }
+    pub fn set_text_value_accesskit(&self, value: &str) {
+        self.action_with(Action::SetValue, Some(ActionData::Value(value.into())));
+    }
+    pub fn replace_selected_text_accesskit(&self, text: &str) {
+        self.action_with(Action::ReplaceSelectedText, Some(ActionData::Value(text.into())));
+    }
+    pub fn scroll_to_me(&self) {
+        self.action(Action::ScrollIntoView);
+    }
+    pub fn scroll_down(&self) {
+        self.action(Action::ScrollDown);
+    }
+    pub fn scroll_up(&self) {
+        self.action(Action::ScrollUp);
+    }
+    pub fn scroll_left(&self) {
+        self.action(Action::ScrollLeft);
+    }
+    pub fn scroll_right(&self) {
+        self.action(Action::ScrollRight);
+    }
+    /// The AccessKit `Focus` action.
     pub fn focus(&self) {
         self.action(Action::Focus);
     }
-    /// Focus the node, then type `text` into it.
+    /// Type `text` into the focused node (kittest's: no focus change; call `focus` first).
     pub fn type_text(&self, text: &str) {
-        self.focus();
         self.harness.type_text(text);
     }
-    pub fn key_press(&self, key: Key) {
+    /// Focus the node, then press `key`.
+    pub fn key_press(&self, key: impl IntoKey) {
         self.focus();
         self.harness.key_press(key);
     }

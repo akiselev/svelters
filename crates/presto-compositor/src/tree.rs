@@ -9,9 +9,10 @@
 
 use presto_base::anim::AnimationCmd;
 use presto_base::commit::{Commit, FastCommit, ImageData, PathData};
-use presto_base::display::{DisplayList, Prim, SurfacePrim};
+use presto_base::display::{CanvasPrim, DisplayList, Prim, SurfacePrim};
 use presto_base::geom::{Affine, Rect, Vec2};
-use presto_base::ids::{CanvasId, ImageId, InputSeq, LayerId, NodeId, PathId, PropNodeId, Revision, RunId, SurfaceId};
+use presto_base::ids::{CanvasId, ImageId, InputSeq, LayerId, NodeId, PathId, PropNodeId, Revision, RunId, SurfaceId, TextureId};
+use presto_canvas::{Camera, CanvasView, LodParams};
 use presto_base::layer::{ItemRef, LayerDelta, LayerDesc, LayerKind};
 use presto_base::props::{ClipNode, ClipShape, EffectNode, OverscrollBehavior, PropOp, ScrollNode, TransformNode};
 use presto_base::scene::SceneResources;
@@ -248,12 +249,19 @@ pub struct WindowTree {
     pub input_seq: InputSeq,
     /// The canvas view transforms fast commits set (architecture §9.5).
     pub canvas_views: HashMap<CanvasId, Affine>,
+    /// The canvas cameras (`CompositorHandle::set_canvas_camera`) and LOD settings.
+    pub canvas_cameras: HashMap<CanvasId, Camera>,
+    pub canvas_lods: HashMap<CanvasId, LodParams>,
+    /// Canvases whose view or content changed since the last frame: their placements are damaged.
+    pub dirty_canvases: HashSet<CanvasId>,
+    /// Textures re-rendered by their producer since the last frame (a viewport's new image).
+    pub dirty_textures: HashSet<TextureId>,
     /// Scroll nodes whose offset a compositor scroll motion owns while it runs.
     pub compositor_scrolling: HashSet<PropNodeId>,
     fast_owned: HashMap<(PropNodeId, FastField), Revision>,
     /// `LayerDelta::Damage` rects not drawn yet, in layer space.
     pub layer_damage: Vec<(LayerId, Rect)>,
-    /// Lists synthesised for texture layers, kept while their texture and bounds stay the same.
+    /// Lists synthesised for texture and canvas layers, kept while their primitive stays the same.
     texture_lists: HashMap<LayerId, Arc<DisplayList>>,
     layer_seq: u64,
 }
@@ -405,6 +413,7 @@ impl WindowTree {
             }
             FastCommit::CanvasView { canvas, view, input_seq, .. } => {
                 self.canvas_views.insert(canvas, view);
+                self.dirty_canvases.insert(canvas);
                 self.input_seq = self.input_seq.max(input_seq);
                 Ok(())
             }
@@ -461,8 +470,13 @@ impl WindowTree {
                 _ => (surface, base),
             };
             let items = out.entry(surface).or_default();
-            if let LayerKind::Texture(tex) = layer.desc.kind {
-                let list = texture_list(&mut self.texture_lists, id, tex, layer.desc.bounds);
+            let synthetic = match layer.desc.kind {
+                LayerKind::Texture(texture) => Some(Prim::Surface(SurfacePrim { texture, rect: layer.desc.bounds, opacity: 1.0 })),
+                LayerKind::Canvas(canvas) => Some(Prim::Canvas(CanvasPrim { canvas, rect: layer.desc.bounds })),
+                _ => None,
+            };
+            if let Some(prim) = synthetic {
+                let list = synthetic_list(&mut self.texture_lists, id, prim, layer.desc.bounds);
                 let item = ItemRef {
                     node: NodeId(0),
                     transform: layer.desc.transform,
@@ -519,6 +533,49 @@ impl WindowTree {
         (SurfaceKey::Main, Affine::IDENTITY)
     }
 
+    /// A canvas's view state for the renderer: its camera, the fast-commit view transform and its LOD
+    /// settings (defaults where none was set).
+    pub fn canvas_view(&self, id: CanvasId) -> CanvasView {
+        CanvasView {
+            camera: self.canvas_cameras.get(&id).copied().unwrap_or_default(),
+            view: self.canvas_views.get(&id).copied().unwrap_or(Affine::IDENTITY),
+            lod: self.canvas_lods.get(&id).copied().unwrap_or_default(),
+        }
+    }
+
+    /// Every canvas this window has view state for.
+    pub fn canvas_ids(&self) -> Vec<CanvasId> {
+        let mut ids: Vec<CanvasId> =
+            self.canvas_cameras.keys().chain(self.canvas_views.keys()).chain(self.canvas_lods.keys()).copied().collect();
+        ids.sort();
+        ids.dedup();
+        ids
+    }
+
+    /// Damage of content that changed without a new list: the bounds of every flattened item that
+    /// places a dirty canvas or draws a dirty texture. Clears both dirty sets.
+    pub fn take_content_damage(&mut self, flat: &HashMap<SurfaceKey, Vec<FlatItem>>) -> Vec<(SurfaceKey, Rect)> {
+        let mut out = Vec::new();
+        if self.dirty_canvases.is_empty() && self.dirty_textures.is_empty() {
+            return out;
+        }
+        for (key, items) in flat {
+            for it in items {
+                let hit = it.list.items.iter().any(|p| match p {
+                    Prim::Canvas(c) => self.dirty_canvases.contains(&c.canvas),
+                    Prim::Surface(s) => self.dirty_textures.contains(&s.texture),
+                    _ => false,
+                });
+                if hit && !it.bounds.is_empty() {
+                    out.push((*key, it.bounds));
+                }
+            }
+        }
+        self.dirty_canvases.clear();
+        self.dirty_textures.clear();
+        out
+    }
+
     /// Sets a scroll node's offset from a compositor scroll motion: clamped to its range, except under
     /// elastic overscroll, where the motion's rubber band goes past the edges.
     pub fn set_scroll_offset(&mut self, node: PropNodeId, offset: Vec2) -> Option<Vec2> {
@@ -564,13 +621,7 @@ pub fn clip_rect(c: &ClipShape) -> Rect {
     }
 }
 
-fn texture_list(
-    cache: &mut HashMap<LayerId, Arc<DisplayList>>,
-    layer: LayerId,
-    texture: presto_base::ids::TextureId,
-    bounds: Rect,
-) -> Arc<DisplayList> {
-    let prim = Prim::Surface(SurfacePrim { texture, rect: bounds, opacity: 1.0 });
+fn synthetic_list(cache: &mut HashMap<LayerId, Arc<DisplayList>>, layer: LayerId, prim: Prim, bounds: Rect) -> Arc<DisplayList> {
     if let Some(l) = cache.get(&layer) {
         if l.items.len() == 1 && l.items[0] == prim {
             return l.clone();

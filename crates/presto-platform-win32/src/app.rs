@@ -438,6 +438,24 @@ impl PlatformCx for Cx<'_> {
         }
     }
 
+    /// Holds DirectComposition commits so the layer's new bounds and the compositor's present at the new
+    /// size land in one commit at [`PlatformCx::end_os_layer_resize`].
+    fn begin_os_layer_resize(&mut self, id: WindowId, _layer: SurfaceId) -> bool {
+        let Some(dcomp) = self.app.dcomp.as_ref() else { return false };
+        if self.app.inner.borrow().windows.get(&id).and_then(|w| w.tree.as_ref()).is_none() {
+            return false;
+        }
+        dcomp.begin_deferral();
+        true
+    }
+
+    fn end_os_layer_resize(&mut self, id: WindowId, _layer: SurfaceId) {
+        let Some(dcomp) = self.app.dcomp.as_ref() else { return };
+        if self.app.inner.borrow().windows.get(&id).and_then(|w| w.tree.as_ref()).is_some() {
+            let _ = dcomp.end_deferral();
+        }
+    }
+
     /// Commits the DirectComposition device (wgpu sets a visual's content but never commits).
     fn os_layer_committer(&self, id: WindowId) -> Option<OsLayerCommitter> {
         let inner = self.app.inner.borrow();

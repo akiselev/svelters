@@ -200,6 +200,14 @@ impl WindowShim {
         }
     }
 
+    /// DirectComposition shows a composition swap chain at its own size, never stretched to the
+    /// visual: nothing to hold.
+    pub fn begin_layer_resize(&mut self, _id: SurfaceId) -> bool {
+        false
+    }
+
+    pub fn end_layer_resize(&mut self, _id: SurfaceId) {}
+
     pub fn committer(&self) -> Option<OsLayerCommitter> {
         self.dcomp.as_ref()?;
         Some(OsLayerCommitter(self.hooks.commit.clone()))

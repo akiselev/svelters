@@ -133,6 +133,14 @@ and added MOTION-CSS's three constants (`NATIVE_TRANSITIONS`, `NATIVE_MOTION`, `
   write stays `$n.set(n, "name", v)`, which keeps that bookkeeping (`IdSource::prop` returns
   whether the type is scalar). `pnpm -r --filter '!@svelters/docs' build` exits 0 (the docs site
   needs `tools/docs/build_ir.py` first, which CI runs).
+- **F15 (`plans/cloud/presto-b1/FIX-QUEUE.md`), settled: one op.** Merged
+  `origin/ci/presto-integration` (921d51c4), whose B3 routed declared ids from `setp` to an
+  `ids.js` `setp_id` (a `set` by name). The contract is now: `$n.setp(node, prop, value)` is
+  RUNTIME's typed-scalar write, `prop` a name or an id, and a spec stable id goes to `host.setp`
+  as it is (egui's registry ids are the stable ids, and `ids()` checked the spec hash before any
+  use). The compiler decides where it is safe (scalar type, not `anchor`, no track, token, style
+  rule or binding on the prop) and writes `$n.set` by name everywhere else, so no `setv` and no
+  `setp_id`: `has_prop_id`/`setp_id` and the routing in `setp` are gone.
 - **(c) `LISTEN_PASSIVE` (cross-lane, `index.js`):** exported; `hkey` leaves the bit out, so a
   passive listener is found by dispatch; a (signal, phase) connection is passive while all its
   handlers are (`Native.passiveConn`): a handler that can cancel joining one makes the runtime

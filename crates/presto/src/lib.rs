@@ -10,12 +10,14 @@
 //! | [`seams`] | what the runner needs from the tree, the compositor and the script host |
 //! | [`backends`] | those seams for `presto_core::Document`, `presto_compositor::CompositorHandle`, `presto_frame::UiFrameState` |
 //! | [`coalesce`] | per-frame coalescing of pointer moves and wheel deltas |
+//! | [`run`] | the platform backend chosen at start (Win32, AppKit, Wayland; winit otherwise or as the fallback) |
 //! | [`latency`] | stage records per `InputSeq`, histograms, Chrome JSON trace export |
 
 pub mod app;
 pub mod backends;
 pub mod coalesce;
 pub mod latency;
+pub mod run;
 pub mod seams;
 
 pub use app::{App, AppConfig, SpawnCompositor, ToUiSink};
@@ -24,3 +26,4 @@ pub use presto_base as base;
 pub use presto_compositor as compositor_crate;
 pub use presto_core as core;
 pub use presto_platform as platform;
+pub use run::{Backend, run};

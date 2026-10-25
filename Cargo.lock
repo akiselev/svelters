@@ -4146,6 +4146,11 @@ dependencies = [
  "presto-core",
  "presto-frame",
  "presto-platform",
+ "presto-platform-macos",
+ "presto-platform-wayland",
+ "presto-platform-win32",
+ "presto-text",
+ "presto-widgets",
  "wgpu",
 ]
 
@@ -4166,12 +4171,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "presto-canvas"
+version = "0.0.0"
+dependencies = [
+ "bytemuck",
+ "lyon",
+ "naga",
+ "pollster 0.4.0",
+ "presto-base",
+ "skrifa",
+ "wgpu",
+]
+
+[[package]]
 name = "presto-compositor"
 version = "0.0.0"
 dependencies = [
  "log",
  "presto-anim",
  "presto-base",
+ "presto-canvas",
  "presto-frame",
  "presto-platform",
  "presto-render",
@@ -4195,7 +4214,16 @@ dependencies = [
 name = "presto-egui-island"
 version = "0.0.0"
 dependencies = [
+ "accesskit",
+ "accesskit_consumer",
+ "egui",
+ "egui-wgpu",
+ "pollster 0.4.0",
  "presto-base",
+ "presto-compositor",
+ "presto-core",
+ "presto-platform",
+ "wgpu",
 ]
 
 [[package]]
@@ -4308,6 +4336,7 @@ dependencies = [
  "png 0.18.1",
  "pollster 0.4.0",
  "presto-base",
+ "presto-canvas",
  "presto-text",
  "smallvec",
  "wgpu",
@@ -4317,12 +4346,22 @@ dependencies = [
 name = "presto-test"
 version = "0.0.0"
 dependencies = [
+ "dify",
  "egui",
+ "egui-wgpu",
+ "image",
  "pollster 0.4.0",
  "presto",
  "presto-base",
+ "presto-egui-island",
+ "presto-platform",
  "presto-render",
+ "presto-test",
  "presto-text",
+ "svelters-automation",
+ "svelters-egui",
+ "svelters-host",
+ "svelters-modules",
  "wgpu",
 ]
 
@@ -4344,11 +4383,15 @@ dependencies = [
  "presto-anim",
  "presto-base",
  "presto-core",
+ "presto-platform",
  "presto-text",
+ "quire-text",
  "resvg",
+ "rfd",
  "roxmltree 0.20.0",
  "serde_json",
  "smallvec",
+ "svelters-conformance",
  "svelters-style",
  "taffy",
 ]
@@ -4396,6 +4439,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "quire-text"
+version = "0.1.0"
+source = "git+https://github.com/akiselev/quire?rev=35b5063ab149ca8682241324aff8efb28696f491#35b5063ab149ca8682241324aff8efb28696f491"
+dependencies = [
+ "ropey",
+ "smallvec",
+ "unicode-general-category",
+ "unicode-segmentation",
 ]
 
 [[package]]
@@ -4606,6 +4660,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47b34b781b31e5d73e9fbc8689c70551fd1ade9a19e3e28cfec8580a79290cc4"
 dependencies = [
  "bytemuck",
+]
+
+[[package]]
+name = "ropey"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "93411e420bcd1a75ddd1dc3caf18c23155eda2c090631a85af21ba19e97093b5"
+dependencies = [
+ "smallvec",
+ "str_indices",
 ]
 
 [[package]]
@@ -5080,6 +5144,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
 
 [[package]]
+name = "str_indices"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d08889ec5408683408db66ad89e0e1f93dff55c73a4ccc71c427d5b277ee47e6"
+
+[[package]]
 name = "strict-num"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5300,7 +5370,21 @@ dependencies = [
 name = "svelters-presto"
 version = "0.0.0"
 dependencies = [
+ "presto",
  "presto-base",
+ "presto-compositor",
+ "presto-core",
+ "presto-motion",
+ "presto-platform",
+ "presto-test",
+ "presto-text",
+ "presto-widgets",
+ "serde_json",
+ "smallvec",
+ "svelters-abi",
+ "svelters-host",
+ "svelters-modules",
+ "svelters-style",
 ]
 
 [[package]]

@@ -50,6 +50,8 @@ struct Doc {
     animation_events: Vec<AnimationEvent>,
     frames: u32,
     duplicates: bool,
+    hovers: Vec<Point>,
+    menu: Vec<String>,
 }
 
 impl Doc {
@@ -263,6 +265,27 @@ impl DocumentApi for Doc {
 
     fn window_event(&mut self, _window: WindowId, _ev: &WindowEvent) {}
 
+    fn menu_activated(&mut self, id: &str) -> bool {
+        self.menu.push(id.to_owned());
+        if id == "inc" {
+            self.activate(BUTTON);
+        }
+        true
+    }
+
+    fn caret_blink(&self) -> Option<Option<presto::compositor_crate::CaretBlink>> {
+        Some(Some(presto::compositor_crate::CaretBlink::GTK))
+    }
+
+    fn hover(&mut self, _window: WindowId, pos: Point) -> bool {
+        self.hovers.push(pos);
+        false
+    }
+
+    fn ime_state(&mut self, _window: WindowId) -> Option<(Rect, presto_base::input::InputPurpose)> {
+        (self.focus == Some(FIELD)).then_some((FIELD_RECT, presto_base::input::InputPurpose::Email))
+    }
+
     fn close_window(&mut self, _window: WindowId) {}
 
     fn accessibility_activated(&mut self, _window: WindowId) {
@@ -322,10 +345,10 @@ fn queries_by_role_label_value_and_author_id() {
         Some("inc")
     );
     assert_eq!(h.get_by_author_id("enabled").role(), Role::CheckBox);
-    assert_eq!(h.get_by_role(Role::TextInput).label(), Some("Name"));
+    assert_eq!(h.get_by_role(Role::TextInput).label().as_deref(), Some("Name"));
     assert!(h.query_by_role_and_label(Role::Button, "Name").is_none());
     assert!(h.query_by_author_id("missing").is_none());
-    assert_eq!(h.get_by_label("Increment").rect(), Some(BUTTON_RECT));
+    assert_eq!(h.get_by_label("Increment").bounds(), Some(BUTTON_RECT));
     assert_eq!(h.query_all(By::new().label_contains("e")).len(), 3);
 }
 
@@ -363,12 +386,14 @@ fn key_press_moves_focus_and_activates() {
 #[test]
 fn type_text_focuses_through_accesskit_then_commits_text() {
     let mut h = harness();
-    h.get_by_label("Name").type_text("presto");
+    let field = h.get_by_label("Name");
+    field.focus();
+    field.type_text("presto");
     h.run();
-    assert_eq!(h.get_by_label("Name").value(), Some("presto"));
+    assert_eq!(h.get_by_label("Name").value().as_deref(), Some("presto"));
     h.key_press(Key::Backspace);
     h.run();
-    assert_eq!(h.get_by_role(Role::TextInput).value(), Some("prest"));
+    assert_eq!(h.get_by_role(Role::TextInput).value().as_deref(), Some("prest"));
 }
 
 #[test]
@@ -547,5 +572,73 @@ fn hidden_windows_drop_their_inputs() {
     assert!(
         h.query_by_label("Count: 1").is_some(),
         "the change shows once visible"
+    );
+}
+
+#[test]
+fn coalesced_moves_hover_at_event_time() {
+    let mut h = harness();
+    h.hover_at(Point::new(300.0, 300.0));
+    h.hover_at(Point::new(301.0, 300.0));
+    h.run();
+    // Each move hovered when it arrived, though the two merged into one dispatched move.
+    assert_eq!(
+        h.state().hovers,
+        vec![Point::new(300.0, 300.0), Point::new(301.0, 300.0)]
+    );
+}
+
+#[test]
+fn the_ime_follows_the_focused_field() {
+    use presto::platform::PlatformCall;
+    let mut h = harness();
+    h.get_by_label("Name").focus();
+    h.run();
+    let ime: Vec<_> = h
+        .calls()
+        .iter()
+        .filter_map(|c| match c {
+            PlatformCall::SetIme(_, s) => Some(s.clone()),
+            _ => None,
+        })
+        .collect();
+    let last = ime.last().cloned().flatten().expect("the IME turned on");
+    assert_eq!(
+        (last.area, last.purpose),
+        (FIELD_RECT, presto_base::input::InputPurpose::Email)
+    );
+    h.key_press(Key::Tab);
+    h.run();
+    let ime: Vec<_> = h
+        .calls()
+        .iter()
+        .filter_map(|c| match c {
+            PlatformCall::SetIme(_, s) => Some(s.clone()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        ime.last(),
+        Some(&None),
+        "focus left the field: the IME is off"
+    );
+    assert_eq!(ime.len(), 2, "sent only when it changed");
+}
+
+#[test]
+fn menu_items_reach_the_document_with_an_urgent_frame() {
+    let mut h = harness();
+    h.menu_activated("inc");
+    assert_eq!(h.state().menu, vec!["inc".to_owned()]);
+    h.run();
+    assert!(h.query_by_label("Count: 1").is_some());
+}
+
+#[test]
+fn new_windows_get_the_policy_caret_blink() {
+    let h = harness();
+    assert_eq!(
+        h.compositor().caret_blinks(),
+        vec![(h.window(), Some(presto::compositor_crate::CaretBlink::GTK))]
     );
 }
