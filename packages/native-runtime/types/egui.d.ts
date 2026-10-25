@@ -15,7 +15,7 @@ export interface SvlEvent<A extends unknown[] = unknown[]> {
   stopPropagation(): void;
 }
 
-/** EV1: what a DOM-style event's handler gets (`pointerdown`, `click`, `wheel`, `keydown`, `focusin`, ...):
+/** EV1: what a DOM-style event's handler gets (`pointerdown`, `pointermove`, `click`, `wheel`, `keydown`, `focusin`, ...):
  * dispatched along the scene in capture, target and bubble order. */
 export interface SvlUiEvent extends SvlEvent {
   /** The node the event is for; `currentTarget` is the node whose listener runs. */
@@ -32,8 +32,13 @@ export interface SvlUiEvent extends SvlEvent {
   y?: number;
   clientX?: number;
   clientY?: number;
-  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward. */
+  /** Pointer events and `wheel`: the point relative to the top left of the target's drawn rect. */
+  offsetX?: number;
+  offsetY?: number;
+  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward; -1 for `pointermove`. */
   button?: number;
+  /** Pointer events: the buttons held (1 primary, 2 secondary, 4 middle, 8 back, 16 forward). */
+  buttons?: number;
   /** `wheel`: the scroll in points. */
   deltaX?: number;
   deltaY?: number;
@@ -122,6 +127,8 @@ export interface EguiWidgetProps {
   'status-tip'?: string;
   /** Its place in a `status-bar` (QStatusBar): `temporary` (after the start sections; hidden while a message or status tip shows), `start` (permanent, at the start), `end` (permanent, pushed to the end). Also the `[status-section=…]` selector. */
   'status-section'?: 'temporary' | 'start' | 'end';
+  /** Set by the runtime on the top nodes of a keyed `{#each}` item: the item's key, and the keys of the keyed items around it (outermost first, separated by U+001F). An `anchor` inside it takes its egui id from these keys and the anchors of its anchored ancestors, so repeated anchors in a keyed list get one id per row; `key=` selectors match it. Not for apps to set. */
+  'anchor-scope'?: string;
   /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
@@ -164,6 +171,8 @@ export interface EguiWidgetProps {
   /** This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none. */
   onfocusout?: (e: SvlUiEvent) => void;
   onfocusoutcapture?: (e: SvlUiEvent) => void;
+  /** The pointer moved over this node or a descendant (EV1 propagation; CV1): one per frame at the last point, `button` -1, `buttons` the held ones, `offsetX`/`offsetY` relative to the target. Not cancelable: egui always sees the move. */
+  onpointermove?: (e: SvlEvent<[number, number, number, number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, button: number, modifiers: number, ox: number, oy: number, buttons: number) => void;
 }
 
 /** The built-in egui elements, by tag. */
@@ -212,6 +221,8 @@ export interface EguiElements {
     /** This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none. */
     onfocusout?: (e: SvlUiEvent) => void;
     onfocusoutcapture?: (e: SvlUiEvent) => void;
+    /** The pointer moved over this node or a descendant (EV1 propagation; CV1): one per frame at the last point, `button` -1, `buttons` the held ones, `offsetX`/`offsetY` relative to the target. Not cancelable: egui always sees the move. */
+    onpointermove?: (e: SvlEvent<[number, number, number, number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, button: number, modifiers: number, ox: number, oy: number, buttons: number) => void;
   };
   /** A flexbox container laid out by taffy; draws nothing itself. */
   box: EguiWidgetProps & {
@@ -831,6 +842,8 @@ export interface EguiElements {
     'accessible-name'?: string;
     /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
     anchor?: string;
+    /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
+    'anchor-scope'?: string;
     /** The title: the menu-bar button, or the submenu row. */
     label?: string;
   };
@@ -846,6 +859,8 @@ export interface EguiElements {
     'accessible-name'?: string;
     /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
     anchor?: string;
+    /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
+    'anchor-scope'?: string;
     /** The caption. */
     label?: string;
     /** Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error. */
@@ -876,6 +891,8 @@ export interface EguiElements {
     'accessible-name'?: string;
     /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
     anchor?: string;
+    /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
+    'anchor-scope'?: string;
   };
   /** A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn. */
   'context-menu': {
@@ -889,6 +906,8 @@ export interface EguiElements {
     'accessible-name'?: string;
     /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
     anchor?: string;
+    /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
+    'anchor-scope'?: string;
   };
   /** A button that opens a menu of its children (`action`, `menu`, `menu-separator`; a `menu` child's items are shown inline, as GTK's menu-button takes a menu). The shortcuts of its actions are active while it is drawn. */
   'menu-button': EguiWidgetProps & {
@@ -1018,7 +1037,7 @@ export interface EguiElements {
     /** It closed with the result `"reject"`: dismissed by the user or `close("reject")`. */
     onrejected?: () => void;
   };
-  /** A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
+  /** A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
   table: EguiWidgetProps & {
     /** Number of rows (the scroll extent). Rows without data yet are drawn empty. */
     'row-count'?: number;
@@ -1077,7 +1096,7 @@ export interface EguiElements {
     'onheader-context'?: (column: number) => void;
     /** The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable. */
     'oncolumn-resized'?: (column: number, width: number) => void;
-    /** A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS). */
+    /** A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table). */
     'onsort-changed'?: (sort_column: number, sort_order: 'none' | 'ascending' | 'descending') => void;
     /** The column menu hid or showed a column; carries the hidden columns. */
     'oncolumns-changed'?: (hidden_columns: string[]) => void;
@@ -1085,6 +1104,8 @@ export interface EguiElements {
     'onheader-state-changed'?: (header_state: string) => void;
     /** Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds). */
     oncopy?: (ids: number[]) => void;
+    /** A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now. */
+    'onrow-toggled'?: (id: number, expanded: boolean) => void;
   };
   /** A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell. */
   'table-column': EguiWidgetProps & {

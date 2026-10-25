@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel | DialogRole | StatusTip | StatusSection
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel | DialogRole | StatusTip | StatusSection | AnchorScope
     )
 }
 
@@ -127,6 +127,7 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Tooltip, _) => c.tooltip = as_str(v)?,
         (P::AccessibleName, _) => c.accessible_name = as_str(v)?,
         (P::Anchor, _) => c.anchor = as_str(v)?,
+        (P::AnchorScope, _) => c.anchor_scope = Some(as_str(v)?).filter(|t| !t.is_empty()).map(String::into_boxed_str),
         (P::DialogRole, _) => c.dialog_role = as_enum(v, crate::kinds::DIALOG_ROLE)?,
         (P::StatusTip, _) => c.status_tip = Some(as_str(v)?).filter(|t| !t.is_empty()).map(String::into_boxed_str),
         (P::StatusSection, _) => c.status_section = as_enum(v, crate::kinds::STATUS_SECTION)?,
@@ -302,6 +303,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Tooltip, _) => s(&c.tooltip),
         (P::AccessibleName, _) => s(&c.accessible_name),
         (P::Anchor, _) => s(&c.anchor),
+        (P::AnchorScope, _) => Value::Str(c.anchor_scope.as_deref().unwrap_or("").to_string()),
         (P::DialogRole, _) => Value::Str(c.dialog_role.to_string()),
         (P::StatusTip, _) => Value::Str(c.status_tip.as_deref().unwrap_or("").to_string()),
         (P::StatusSection, _) => Value::Str(c.status_section.to_string()),

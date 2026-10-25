@@ -266,6 +266,7 @@ function attach(node) {
     styleInserted(node);
     return;
   }
+  anchorScope(node);
   const before = nextNative(node);
   node.host.insert(parent.h, node.h, before ? before.h : null, t.name ?? undefined);
   node.np = parent;
@@ -273,6 +274,67 @@ function attach(node) {
   node.slotName = t.name;
   applyChildAttrs(node);
   if (pendingTops.length) settle();
+}
+
+/**
+ * SV53 (CV1): a native at the top of a keyed `{#each}` item gets the `anchor-scope` prop: the
+ * item's key, after the keys of the keyed items around it up to its native parent (U+001F
+ * between them). The egui backend scopes the ids of the `anchor`s inside it by these keys, so an
+ * anchor repeated in every row is one egui id per row. Only once the app has written an `anchor`
+ * (egui's prop; other backends never get the scope): from then on at every placement, and at an
+ * anchor write for the items above that node. Kinds without the prop throw once and are not asked
+ * again.
+ */
+function anchorScope(node) {
+  if (!anchorsUsed || node.anchorScope !== undefined || noAnchorScope.has(node.kind)) return;
+  let keys = null;
+  for (let c = node.owner; c instanceof Region; c = c.owner) if (c.keyed) (keys ??= []).push(keyText(c.key));
+  if (!keys) return;
+  const scope = keys.reverse().join('\u001f');
+  node.anchorScope = scope;
+  try {
+    node.host.setProp(node.h, 'anchor-scope', scope);
+  } catch {
+    noAnchorScope.add(node.kind);
+  }
+}
+/**
+ * AX1: a virtualized list's row outlet `node` now shows the item with `key`. Its anchors are
+ * scoped by the key as a keyed each item's are (SV53): an anchor repeated in every row is one egui
+ * id per row (and one AccessKit node), the id follows the item when the slot is recycled, and
+ * automation's `key=<key>` finds the row. Same rules as `anchorScope`: only once the app has
+ * written an `anchor`, and kinds without the prop are not asked again.
+ */
+export function rowScope(node, key) {
+  if (!anchorsUsed || !node || noAnchorScope.has(node.kind)) return;
+  const scope = keyText(key);
+  if (node.anchorScope === scope) return;
+  node.anchorScope = scope;
+  try {
+    node.host.setProp(node.h, 'anchor-scope', scope);
+  } catch {
+    noAnchorScope.add(node.kind);
+  }
+}
+let anchorsUsed = false;
+/** An `anchor` was written on `node`: the keyed items above it get their scope now. */
+function anchorWritten(node) {
+  anchorsUsed = true;
+  for (let n = node; n; ) {
+    anchorScope(n);
+    const t = n.owner && target(n.owner);
+    n = t instanceof Slot ? t.node : null;
+  }
+}
+const noAnchorScope = new Set();
+const keyIds = new WeakMap();
+let keySerial = 0;
+/** An each key as text: primitives as `String(k)`, objects by a serial of their identity. */
+function keyText(k) {
+  if ((typeof k !== 'object' || k === null) && typeof k !== 'function') return String(k);
+  let id = keyIds.get(k);
+  if (id === undefined) keyIds.set(k, (id = ++keySerial));
+  return `#${id}`;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -578,6 +640,7 @@ export function set(node, prop, value) {
     return;
   }
   if (value == null) node.snippets?.delete(prop);
+  if (prop === 'anchor' && value) anchorWritten(node); // SV53
   node.host.setProp(node.h, prop, value);
 }
 
@@ -1147,6 +1210,7 @@ export function dispatch_sync(h, signal, args = [], flags = 0) {
 export const PROPAGATING = new Map([
   ['pointerdown', 'pointer'],
   ['pointerup', 'pointer'],
+  ['pointermove', 'pointer'], // CV1 (SV50)
   ['click', 'pointer'],
   ['dblclick', 'pointer'],
   ['contextmenu', 'pointer'],
@@ -1177,12 +1241,18 @@ function propagatingEvent(ev, node, args, shape) {
     ev.y = ev.clientY = args[3];
     ev.button = args[4];
     mods(args[5]);
+    // CV1: the point relative to the target's rect, and the buttons held
+    ev.offsetX = args[6] ?? ev.x;
+    ev.offsetY = args[7] ?? ev.y;
+    ev.buttons = args[8] ?? 0;
   } else if (shape === 'wheel') {
     ev.x = ev.clientX = args[2];
     ev.y = ev.clientY = args[3];
     ev.deltaX = args[4];
     ev.deltaY = args[5];
     mods(args[6]);
+    ev.offsetX = args[7] ?? ev.x;
+    ev.offsetY = args[8] ?? ev.y;
   } else if (shape === 'key') {
     ev.key = args[2];
     ev.repeat = !!args[3];
@@ -2155,6 +2225,7 @@ function keyed(r, owner, old, arr, key, item, gone) {
     }
     const nb = new Region(r);
     nb.key = k;
+    nb.keyed = true; // SV53: `anchorScope`
     return nb;
   });
   const stay = lis(next.map((b) => (b.effect && oldIndex.has(b) ? oldIndex.get(b) : -1)));

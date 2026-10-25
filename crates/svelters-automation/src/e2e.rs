@@ -355,6 +355,25 @@ impl<'a> Locator<'a> {
         self.act("input.focus", json!({}))
     }
 
+    /// SV51 `input.pointer_move`: `params` takes `at` (`[x, y]`, the node's local points; default
+    /// its centre) and `modifiers` (`"Shift+Ctrl"`).
+    pub fn pointer_move(&self, params: Value) -> Result<Value, Error> {
+        self.act("input.pointer_move", params)
+    }
+
+    /// SV51 `input.wheel`: `params` takes `dx`, `dy` (egui's direction: positive `dy` scrolls up),
+    /// `unit` (`line`, `pixel`, `page`; default `line`), `at`, `modifiers`.
+    pub fn wheel(&self, params: Value) -> Result<Value, Error> {
+        self.act("input.wheel", params)
+    }
+
+    /// SV51 `input.drag`: `params` takes `from` (`[x, y]`, default the centre), one of `to`
+    /// (`[x, y]` in the node's local points), `to_selector` or `to_ref`, `steps` (default 10),
+    /// `button` (`primary`, `secondary`, `middle`), `modifiers`.
+    pub fn drag(&self, params: Value) -> Result<Value, Error> {
+        self.act("input.drag", params)
+    }
+
     pub fn fill(&self, text: &str) -> Result<Value, Error> {
         self.act("input.fill", json!({"text": text}))
     }

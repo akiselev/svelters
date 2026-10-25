@@ -108,7 +108,7 @@ pub fn has_state(n: NodeRef<'_>, name: &str) -> bool {
     match name {
         "focus" => states.contains(&"focused"),
         "enabled" => !states.contains(&"disabled"),
-        "visible" => n.is_visible(),
+        "visible" => n.is_shown(),
         _ => states.contains(&name),
     }
 }

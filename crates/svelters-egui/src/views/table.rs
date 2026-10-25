@@ -7,7 +7,10 @@
 //! Rows are a JS data window, the data half of the virtual-list protocol (M5 / N3): each frame the
 //! table works out the rows it shows plus `overscan` on each side and, when that range changes,
 //! emits `range(first, last)`; JS answers with `set-rows(first, rows)`, which replaces the window.
-//! Rows outside the window draw empty until their data arrives. Only the visible rows **and**
+//! Rows outside the window draw empty until their data arrives. **Or a Rust model** (LS2, SV41):
+//! [`SceneMut::set_table_model`] gives the table a [`RowModel`] (`svelters_host::rows`); the table
+//! reads its cells directly (no `range`, no JS call per page), sorts it on `sort-column`/`sort-order`
+//! and filters it and expands its tree rows through the model's [`RowView`]. Only the visible rows **and**
 //! columns are drawn (virtual on both axes); the header row is frozen at the top, the first
 //! `sticky-columns` columns at the left.
 //!
@@ -25,6 +28,7 @@
 //! | `resize` | N, a header cell's right edge (R11: 1 px line, `focus` hover bar after the delay) | `:hover`, `:dragging` |
 //! | `scrollbar-x`/`-y`, `thumb-x`/`-y` | P, OW2's overlay bars | `:hover`, `:active`, `:dragging` (thumb) |
 //! | `menu`, `menu-item` | P, the column menu (`column-menu`) | `:current`, `:checked`, `:disabled` |
+//! | `expander` | P, a Rust model's tree row chevron (first shown column; `content: icon(…)` replaces it) | the row's, `:hover`, `:checked` when expanded |
 //!
 //! **Rows have ids (WG5a).** `set-ids(ids, labels?)` gives every row (by position) an id; selection
 //! (`selected`), the cursor (`current`) and edits are keyed by id ([`KeySelect`]), so a re-sort or a
@@ -60,11 +64,12 @@ use crate::layout::Metrics;
 use crate::paint::{self, IconKey, PaintCx, StyleView, TraceKind, Ua, UaRule, UaValue::*};
 use crate::provider::StateBits;
 use crate::scene::props::{as_bool, as_enum, as_f64, as_i64, as_str, as_str_list};
-use crate::scene::{Arena, Dirty, NodeId, Origin, Scene, W};
+use crate::scene::{Arena, Dirty, NodeId, Origin, Scene, SceneError, SceneMut, SceneRef, W};
 use crate::walk::Out;
 use egui::{Align, Color32, Id, Layout, Pos2, Rect, Role, Sense, Stroke, Ui, UiBuilder, Vec2, pos2, vec2};
 use std::borrow::Cow;
 use svelters_abi::{StrResult, Value};
+use svelters_host::rows::{CellKind, RowModel, RowView, SortOrder, TreeRow};
 
 /// How long a rejected commit's reason stays on its cell, in seconds.
 const ERROR_SECONDS: f64 = 5.0;
@@ -118,6 +123,13 @@ pub const HEADER_CELL_UA: Ua = Ua(&[
 
 /// `::part(sort)`: the sort arrow (QSS `::up-arrow`/`::down-arrow`); a codicon unless `content:`.
 pub const SORT_UA: Ua = Ua(&[UaRule::base(&[("width", Px(16.0)), ("font-size", Px(14.0)), ("color", Token("icon"))])]);
+
+/// `::part(expander)`: a tree row's disclosure chevron (codicon `chevron-right`/`chevron-down`;
+/// `:checked` while expanded), in the first shown column.
+pub const EXPANDER_UA: Ua = Ua(&[UaRule::base(&[("width", Px(16.0)), ("font-size", Px(14.0)), ("color", Token("icon"))])]);
+
+/// LS2: how far each tree level indents the first shown column (VS Code's tree: 8 + 16 chevron).
+pub const INDENT: f32 = 16.0;
 
 /// `::part(resize)`: R11, the split view's sash (1 px `border` line, `sash-w` hit area and hover bar).
 pub const RESIZE_UA: Ua = crate::widgets::split_view::SASH_UA;
@@ -271,6 +283,62 @@ impl std::fmt::Debug for TableRt {
     }
 }
 
+/// LS2 (SV41): a table's Rust model and what it shows of it (sort, filter, expanded tree rows).
+pub(crate) struct RustTable {
+    pub model: Box<dyn RowModel>,
+    pub view: RowView,
+    /// The model column of each data column (by `name` = [`Column::key`], else by index).
+    pub cols: Vec<usize>,
+}
+
+impl RustTable {
+    fn model_col(&self, data_col: usize) -> usize {
+        self.cols.get(data_col).copied().unwrap_or(data_col)
+    }
+
+    fn cell(&self, pos: u64, data_col: usize) -> Option<Cow<'_, str>> {
+        let row = self.view.row(pos as usize)?;
+        Some(self.model.cell(row, self.model_col(data_col)).into_text())
+    }
+
+    fn tree_row(&self, pos: u64) -> Option<TreeRow> {
+        self.view.is_tree().then(|| self.view.tree_row(&*self.model, pos as usize))
+    }
+}
+
+/// The Rust model slot of a table (`None`: rows come from the JS window). Like [`TableRt`], a
+/// clone starts empty.
+#[derive(Default)]
+pub struct ModelSlot(pub(crate) Option<Box<RustTable>>);
+
+impl ModelSlot {
+    pub fn is_some(&self) -> bool {
+        self.0.is_some()
+    }
+}
+
+impl Clone for ModelSlot {
+    fn clone(&self) -> ModelSlot {
+        ModelSlot(None)
+    }
+}
+
+impl PartialEq for ModelSlot {
+    /// As [`TableRt`]: not part of a table's props.
+    fn eq(&self, _: &ModelSlot) -> bool {
+        true
+    }
+}
+
+impl std::fmt::Debug for ModelSlot {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.0 {
+            Some(m) => f.debug_struct("RustTable").field("rows", &m.model.len()).field("shown", &m.view.len()).finish(),
+            None => f.write_str("None"),
+        }
+    }
+}
+
 /// A table node's props and data.
 #[derive(Clone, Debug, PartialEq)]
 pub struct TableState {
@@ -325,6 +393,8 @@ pub struct TableState {
     /// The error tooltip showed last pass (hidden once the error is gone).
     pub tip_shown: bool,
     pub rt: TableRt,
+    /// LS2 (SV41): rows from a Rust model ([`SceneMut::set_table_model`]) instead of the JS window.
+    pub model: ModelSlot,
 }
 
 impl Default for TableState {
@@ -364,6 +434,7 @@ impl Default for TableState {
             was_focused: false,
             tip_shown: false,
             rt: TableRt::default(),
+            model: ModelSlot::default(),
         }
     }
 }
@@ -449,8 +520,12 @@ impl TableState {
         Ok(Value::Null)
     }
 
-    /// Rows in the table: the ids given by `set-ids`, else `row-count`.
+    /// Rows in the table: a Rust model's shown rows, else the ids given by `set-ids`, else
+    /// `row-count`.
     pub fn len(&self) -> u64 {
+        if let Some(m) = &self.model.0 {
+            return m.view.len() as u64;
+        }
         self.keys.as_ref().map_or(self.row_count.max(0) as u64, |k| k.ids.len() as u64)
     }
 
@@ -460,11 +535,17 @@ impl TableState {
 
     /// The id of the row at `pos`.
     pub fn key_of(&self, pos: u64) -> u64 {
+        if let Some(m) = &self.model.0 {
+            return m.view.row(pos as usize).map_or(pos, |r| m.model.key(r));
+        }
         self.keys.as_ref().and_then(|k| k.ids.get(pos as usize).copied()).unwrap_or(pos)
     }
 
     /// The position of the row with id `key`.
     pub fn pos_of(&self, key: u64) -> Option<u64> {
+        if let Some(m) = &self.model.0 {
+            return m.view.pos_of(key).map(|p| p as u64);
+        }
         match &self.keys {
             Some(k) => k.ids.iter().position(|&x| x == key).map(|p| p as u64),
             None => (key < self.len()).then_some(key),
@@ -472,6 +553,9 @@ impl TableState {
     }
 
     fn all_ids(&self) -> Cow<'_, [u64]> {
+        if let Some(m) = &self.model.0 {
+            return Cow::Owned(m.view.keys(&*m.model));
+        }
         match &self.keys {
             Some(k) => Cow::Borrowed(&k.ids),
             None => Cow::Owned((0..self.len()).collect()),
@@ -480,7 +564,10 @@ impl TableState {
 
     /// Type-ahead text of the row at `pos`: its `set-ids` label, else its first cell (window only).
     fn label(&self, pos: usize) -> Option<String> {
-        self.keys.as_ref().and_then(|k| k.label(pos)).or_else(|| self.cell(pos as u64, 0).map(str::to_string))
+        if let Some(m) = &self.model.0 {
+            return m.view.row(pos).and_then(|r| m.model.label(r)).map(Cow::into_owned);
+        }
+        self.keys.as_ref().and_then(|k| k.label(pos)).or_else(|| self.cell(pos as u64, 0).map(Cow::into_owned))
     }
 
     /// `set-rows(first, rows)`.
@@ -571,20 +658,59 @@ impl TableState {
         }))
     }
 
-    /// The text of cell (`row`, `col`), if its row is in the window.
-    pub fn cell(&self, row: u64, col: usize) -> Option<&str> {
+    /// The text of cell (`row`, `col`) (data column `col`): from the Rust model, else if its row
+    /// is in the JS window.
+    pub fn cell(&self, row: u64, col: usize) -> Option<Cow<'_, str>> {
+        if let Some(m) = &self.model.0 {
+            return m.cell(row, col);
+        }
         let k = row.checked_sub(self.first)? as usize;
-        self.rows.get(k)?.get(col).map(String::as_str)
+        self.rows.get(k)?.get(col).map(|s| Cow::Borrowed(s.as_str()))
     }
 
-    fn set_cell(&mut self, row: u64, col: usize, text: String) {
-        let Some(k) = row.checked_sub(self.first) else { return };
+    /// A committed edit of cell (`row`, `col`): into the Rust model (which may reject it), else
+    /// into the window.
+    pub(crate) fn set_cell(&mut self, row: u64, col: usize, text: String) -> Result<(), String> {
+        if let Some(m) = &mut self.model.0 {
+            let Some(r) = m.view.row(row as usize) else { return Ok(()) };
+            let mc = m.model_col(col);
+            return m.model.commit(r, mc, &text);
+        }
+        let Some(k) = row.checked_sub(self.first) else { return Ok(()) };
         if let Some(r) = self.rows.get_mut(k as usize) {
             if r.len() <= col {
                 r.resize(col + 1, String::new());
             }
             r[col] = text;
         }
+        Ok(())
+    }
+
+    /// LS2: brings a Rust model's view up to date with the columns `all` (model column of each)
+    /// and the sort (`sort-column`/`sort-order` on a sortable model column). True if the shown
+    /// rows were rebuilt.
+    pub(crate) fn sync_model(&mut self, all: &[Col]) -> bool {
+        let Some(m) = self.model.0.as_deref_mut() else { return false };
+        let specs = m.model.columns();
+        m.cols = all.iter().map(|c| specs.iter().position(|s| s.key == c.key).unwrap_or(c.data)).collect();
+        let order = match self.sort_order {
+            "ascending" => Some(SortOrder::Ascending),
+            "descending" => Some(SortOrder::Descending),
+            _ => None,
+        };
+        let sort = (self.sort_column >= 0).then(|| m.model_col(self.sort_column as usize)).filter(|&mc| specs.get(mc).is_none_or(|s| s.sortable)).zip(order);
+        m.view.set_sort(sort);
+        m.view.sync(&*m.model)
+    }
+
+    /// LS2: the tree facts of the row at `pos` (`None`: not a tree).
+    pub fn tree_row(&self, pos: u64) -> Option<TreeRow> {
+        self.model.0.as_ref()?.tree_row(pos)
+    }
+
+    /// LS2: expands or collapses the tree row with key `key`. True if it changed.
+    pub(crate) fn set_expanded(&mut self, key: u64, on: bool) -> bool {
+        self.model.0.as_mut().is_some_and(|m| m.view.set_expanded(key, on))
     }
 }
 
@@ -653,7 +779,7 @@ fn start_edit(t: &mut TableState, cols: &[Col], pos: u64, col: usize, typed: Str
         return false;
     }
     let row = t.key_of(pos);
-    let value = t.cell(pos, t.data_col(col)).unwrap_or("").to_string();
+    let value = t.cell(pos, t.data_col(col)).map(Cow::into_owned).unwrap_or_default();
     let draft = if typed.is_empty() { value.clone() } else { typed.clone() };
     t.edit = Some(Edit { row, col, column: c.node, value, draft, typed, snippet: c.editor, bound: false, focus: true, had_focus: false, size: Vec2::ZERO, widgets: Vec::new(), end: None });
     t.error = None;
@@ -836,6 +962,7 @@ struct Click {
     double: bool,
     /// The column under the pointer.
     col: Option<usize>,
+    at: Pos2,
 }
 
 /// An AccessKit node's bounds (egui fills them only for focusable widgets; rows and cells are
@@ -922,9 +1049,21 @@ fn fit_width(arena: &Arena, i: usize, t: &TableState, c: &Col, ctx: &egui::Conte
     let cc = arena.style.part_computed(node, "cell").cloned();
     let cv = host.part(cc.as_deref(), CELL_UA);
     let pad = paint::box_extra(&cv).x;
-    for row in &t.rows {
-        if let Some(text) = row.get(c.data) {
-            w = w.max(paint::measure_text(ctx, &cv, text, crate::provider::AvailableSpace::MaxContent).x + pad);
+    let fit = |w: f32, text: &str| w.max(paint::measure_text(ctx, &cv, text, crate::provider::AvailableSpace::MaxContent).x + pad);
+    if t.model.is_some() {
+        // a Rust model: the rows in view and as many after (LS2)
+        let first = (t.rt.scroll.offset().y / t.row_height as f32).max(0.0) as u64;
+        let indent = |p: u64| t.tree_row(p).filter(|_| c.data == t.data_col(0)).map_or(0.0, |r| (r.depth + 1) as f32 * INDENT);
+        for p in first..(first + 100).min(t.len()) {
+            if let Some(text) = t.cell(p, c.data) {
+                w = w.max(fit(0.0, &text) + indent(p));
+            }
+        }
+    } else {
+        for row in &t.rows {
+            if let Some(text) = row.get(c.data) {
+                w = fit(w, text);
+            }
         }
     }
     w.ceil().clamp(c.min, c.max)
@@ -968,6 +1107,8 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     }
     let cols: Vec<Col> = all.iter().filter(|c| c.shown && !t.hidden.contains(&c.key)).cloned().collect();
     t.col_map = cols.iter().map(|c| c.data).collect();
+    // LS2: a Rust model's shown rows (sort, filter, expanded tree rows), before anything reads them
+    t.sync_model(&all);
     if !cols.is_empty() && t.cur_col >= cols.len() {
         t.cur_col = cols.len() - 1;
     }
@@ -987,6 +1128,8 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     let mut cur_changed = false;
     let mut activate: Option<u64> = None;
     let mut copy = false;
+    // LS2: tree rows expanded or collapsed this pass (key, expanded)
+    let mut toggled_rows: Vec<(u64, bool)> = Vec::new();
     let W::Table(t) = arena.w_mut(i) else { unreachable!() };
     let t: &mut TableState = t;
     let selectable = t.sel.mode != Mode::None;
@@ -1004,6 +1147,26 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             let cur = t.sel.cursor.and_then(|c| t.pos_of(c));
             match k {
                 TableKey::Column(dir) => {
+                    // LS2: in the first column of a tree row, Right expands, Left collapses or goes
+                    // to the parent row (Qt's QTreeView, VS Code's tree)
+                    let tree = cur.filter(|_| t.cur_col == 0).and_then(|p| Some((p, t.tree_row(p)?)));
+                    if let Some((p, tr)) = tree
+                        && (dir > 0 && tr.has_children && !tr.expanded || dir < 0 && (tr.expanded || tr.depth > 0))
+                    {
+                        let key = t.key_of(p);
+                        if dir > 0 || tr.expanded {
+                            if t.set_expanded(key, dir > 0) {
+                                toggled_rows.push((key, dir > 0));
+                            }
+                        } else if let Some(pp) = t.model.0.as_ref().and_then(|m| m.view.parent_pos(&*m.model, p as usize)) {
+                            let ids = t.all_ids().into_owned();
+                            let ch = t.sel.click(&ids, t.key_of(pp as u64), Mods::default());
+                            sel_changed |= ch.selection;
+                            cur_changed |= ch.cursor;
+                            t.scroll_to = Some(pp as u64);
+                        }
+                        continue;
+                    }
                     if let Some(c) = RovingList::next_by(cols.len(), Some(t.cur_col), dir, false, |_| true) {
                         cur_changed |= c != t.cur_col;
                         t.cur_col = c;
@@ -1041,7 +1204,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             }
             activate = o.activate.map(|p| p as u64);
         }
-        if cur_changed || sel_changed || activate.is_some() {
+        if cur_changed || sel_changed || activate.is_some() || !toggled_rows.is_empty() {
             t.error = None;
             ctx.request_repaint();
         }
@@ -1156,7 +1319,8 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     t.page = ((end - first).saturating_sub(1) as usize).max(1);
     // ---- the body: clicks and hover by position (rows and cells are painted, not widgets) ----
     let bresp = tui.interact(g.body, id.with("body"), if enabled { Sense::click() } else { Sense::hover() });
-    let hover = bresp.hover_pos().filter(|_| enabled && bresp.hovered()).and_then(|p| Some((g.row_at(p.y, len)?, g.col_at(p.x))));
+    let hover_at = bresp.hover_pos().filter(|_| enabled && bresp.hovered());
+    let hover = hover_at.and_then(|p| Some((g.row_at(p.y, len)?, g.col_at(p.x))));
     let pressed = bresp.is_pointer_button_down_on();
     let mut clicks: Vec<Click> = Vec::new();
     if enabled
@@ -1165,7 +1329,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         && let Some(row) = g.row_at(p.y, len)
     {
         let mods = item_keys::mods(tui.input(|inp| inp.modifiers));
-        clicks.push(Click { row, mods, double: bresp.double_clicked(), col: g.col_at(p.x) });
+        clicks.push(Click { row, mods, double: bresp.double_clicked(), col: g.col_at(p.x), at: p });
     }
     // ---- rows and cells ----
     let mut cells: Vec<(u64, usize, Rect, Rect)> = Vec::new();
@@ -1180,9 +1344,12 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     };
     let mut cursor_icon = None;
     let mut error_rect: Option<Rect> = None;
+    // LS2: the expander of each shown tree row with children (position, its clipped rect)
+    let mut expanders: Vec<(u64, Rect)> = Vec::new();
     for pos in first..end {
         let W::Table(t) = arena.w(i) else { unreachable!() };
         let key = t.key_of(pos);
+        let tree = t.tree_row(pos);
         let selected = selectable && t.sel.is_selected(key);
         let current = t.sel.cursor == Some(key);
         let (cur_col, kbd, striped) = (t.cur_col, t.kbd, t.striped);
@@ -1221,6 +1388,12 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             if selectable {
                 b.set_selected(selected);
             }
+            if let Some(tr) = tree {
+                b.set_level(tr.depth as usize + 1);
+                if tr.has_children {
+                    b.set_expanded(tr.expanded);
+                }
+            }
         });
         let cui = tui.new_child(UiBuilder::new().max_rect(rr).accessibility_parent(rresp.id));
         for &k in &visible {
@@ -1238,13 +1411,32 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             let cv = row_v.part(cell_css.as_deref(), CELL_UA).in_state(cbits);
             let W::Table(t) = arena.w(i) else { unreachable!() };
             let editing = t.edit.as_ref().is_some_and(|e| e.row == key && e.col == k);
-            let text = t.cell(pos, t.data_col(k)).unwrap_or("");
+            // owned: the expander's style below borrows the arena mutably
+            let text = t.cell(pos, t.data_col(k)).map(Cow::into_owned).unwrap_or_default();
             let p = if k < g.sticky { &painter } else { &scroll_painter };
             let mut pc = PaintCx::for_node(p, h);
             pc.tag = "table";
             let geom = paint::paint_box(&mut pc.part("cell"), &cv, cr);
+            let mut content = geom.content;
+            // LS2: tree rows indent the first shown column and draw their expander there
+            if k == 0
+                && let Some(tr) = tree
+            {
+                let er = Rect::from_min_size(pos2(content.left() + tr.depth as f32 * INDENT, cr.top()), vec2(INDENT, cr.height()));
+                if tr.has_children {
+                    let mut ebits = rbits;
+                    ebits.set(StateBits::CHECKED, tr.expanded);
+                    ebits.set(StateBits::HOVERED, hover_at.is_some_and(|hp| er.contains(hp)));
+                    let ecss = arena.part_at(node, "expander", ebits, (pos as usize, len as usize));
+                    let ev = row_v.part(ecss.as_deref(), EXPANDER_UA).in_state(ebits);
+                    let icon = if tr.expanded { "chevron-down" } else { "chevron-right" };
+                    paint::paint_icon(&mut pc.part("expander"), &ev, &IconKey::new("codicon", icon), er);
+                    expanders.push((pos, er.intersect(clip)));
+                }
+                content = content.with_min_x(er.right().min(content.right()));
+            }
             if !editing {
-                paint_cell_text(&mut pc.part("cell"), &cv, text, geom.content, c.align, c.elide, &ctx);
+                paint_cell_text(&mut pc.part("cell"), &cv, &text, content, c.align, c.elide, &ctx);
             }
             paint::paint_outline(&mut pc.part("cell"), &cv, cr);
             if error_at == Some((key, k)) {
@@ -1254,7 +1446,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             }
             let cid = cell_id(id, key, k);
             let cresp = cui.interact(cr.intersect(clip), cid, Sense::hover());
-            let (label, editable, cb) = (text.to_string(), c.editable, cresp.rect);
+            let (label, editable, cb) = (text, c.editable, cresp.rect);
             cui.ctx().accesskit_node_builder(cresp.id, |b| {
                 bounds(b, cb);
                 b.set_role(Role::Cell);
@@ -1289,6 +1481,15 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     for c in &clicks {
         ctx.memory_mut(|m| m.request_focus(focus_id));
         t.kbd = false;
+        // LS2: a click on a tree row's expander toggles it (the double click's second press too)
+        if expanders.iter().any(|&(p, er)| p == c.row && er.contains(c.at)) {
+            let key = t.key_of(c.row);
+            let on = !t.tree_row(c.row).is_some_and(|tr| tr.expanded);
+            if !c.double && t.set_expanded(key, on) {
+                toggled_rows.push((key, on));
+            }
+            continue;
+        }
         if c.double {
             let col = c.col.unwrap_or(t.cur_col);
             if t.edit.is_none() && start_edit(t, &cols, c.row, col, String::new()) {
@@ -1403,7 +1604,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     let W::Table(t) = arena.w_mut(i) else { unreachable!() };
     let mut events: Vec<(&str, Vec<Value>)> = Vec::new();
     // the data the table needs: the visible rows and `overscan` on each side
-    if len > 0 && end > first {
+    if len > 0 && end > first && !t.model.is_some() {
         let o = t.overscan.max(0) as u64;
         let (a, b) = (first.saturating_sub(o), (end - 1 + o).min(len - 1));
         if t.asked != Some((a, b)) {
@@ -1417,6 +1618,12 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     }
     if let Some(row) = activate {
         events.push(("activated", vec![Value::I64(row as i64)]));
+    }
+    if !toggled_rows.is_empty() {
+        ctx.request_repaint();
+    }
+    for &(key, on) in &toggled_rows {
+        events.push(("row-toggled", vec![Value::I64(key as i64), Value::Bool(on)]));
     }
     if let Some(col) = hout.clicked {
         events.push(("header-clicked", vec![Value::I64(col as i64)]));
@@ -1981,6 +2188,82 @@ fn paint_editor(arena: &mut Arena, i: usize, cols: &[Col], cells: &[(u64, usize,
     e.end.is_some() || (e.snippet && !e.bound) || e.focus
 }
 
+// ---- LS2: rows from a Rust model (SV41) ----
+
+impl SceneMut<'_> {
+    /// Makes `table` show rows from a Rust model (LS2, SV41) instead of the JS window: no `range`
+    /// events and no JS call per page. `view` holds the filter and the tree rows' expansion (pass
+    /// `RowView::new()`); the table's sort (`sort-column`/`sort-order`, a header click on a
+    /// `sortable` table) sorts it in Rust. Selection, the cursor and edits stay keyed by
+    /// [`RowModel::key`]. A table with no `table-column` children gets one per
+    /// [`RowModel::columns`] (Rust-owned, `name` = the column's key); declared columns map to
+    /// model columns by `name`, else by index.
+    pub fn set_table_model(&mut self, table: NodeId, model: impl RowModel, view: RowView) -> Result<(), SceneError> {
+        let i = self.s.idx(table).ok_or(SceneError::Stale(table.to_raw()))?;
+        if !matches!(self.s.w(i), W::Table(_)) {
+            return Err(SceneError::Invalid("not a <table>".into()));
+        }
+        let has_cols = self.s.children[i].iter().any(|&c| matches!(self.s.w(self.s.ix(c)), W::TableColumn(_)));
+        if !has_cols {
+            for c in model.columns() {
+                let n = self.create_tag("table-column")?;
+                let mut nm = self.node(n).expect("created");
+                let set = |nm: &mut crate::scene::NodeMut<'_>, k: &str, v: Value| nm.set_by_name(k, &v).map_err(|e| SceneError::Invalid(e.to_string()));
+                set(&mut nm, "title", Value::Str(c.header.clone()))?;
+                set(&mut nm, "name", Value::Str(c.key.clone()))?;
+                if let Some(w) = c.width {
+                    set(&mut nm, "width", Value::F64(w as f64))?;
+                }
+                if c.kind == CellKind::Number {
+                    set(&mut nm, "align", Value::Str("end".into()))?;
+                }
+                // the table may be the runtime's: its model columns are the model's (as list rows)
+                self.s.adopt(table, n, self.origin)?;
+            }
+        }
+        let W::Table(t) = self.s.w_mut(i) else { unreachable!() };
+        t.model = ModelSlot(Some(Box::new(RustTable { model: Box::new(model), view, cols: Vec::new() })));
+        t.rows.clear();
+        t.first = 0;
+        t.asked = None;
+        self.s.invalidate_content(table);
+        Ok(())
+    }
+
+    /// The Rust model of `table`, typed, and its view (to change rows, the filter or expansion):
+    /// the table redraws; a model whose [`RowModel::version`] changed is re-sorted and filtered.
+    pub fn with_table_model<T: RowModel, R>(&mut self, table: NodeId, f: impl FnOnce(&mut T, &mut RowView) -> R) -> Option<R> {
+        let i = self.s.idx(table)?;
+        let W::Table(t) = self.s.w_mut(i) else { return None };
+        let m = t.model.0.as_deref_mut()?;
+        let any: &mut dyn std::any::Any = &mut *m.model;
+        let r = f(any.downcast_mut::<T>()?, &mut m.view);
+        self.s.invalidate_content(table);
+        Some(r)
+    }
+
+    /// Back to the JS window (`range` events start again).
+    pub fn clear_table_model(&mut self, table: NodeId) -> Result<(), SceneError> {
+        let i = self.s.idx(table).ok_or(SceneError::Stale(table.to_raw()))?;
+        let W::Table(t) = self.s.w_mut(i) else { return Err(SceneError::Invalid("not a <table>".into())) };
+        t.model = ModelSlot(None);
+        t.asked = None;
+        self.s.invalidate_content(table);
+        Ok(())
+    }
+}
+
+impl SceneRef<'_> {
+    /// Reads the Rust model of `table` and its view (positions as shown: `view.row(pos)`,
+    /// `view.pos_of(key)`).
+    pub fn table_model<T: RowModel, R>(self, table: NodeId, f: impl FnOnce(&T, &RowView) -> R) -> Option<R> {
+        let W::Table(t) = self.s.w(self.s.idx(table)?) else { return None };
+        let m = t.model.0.as_deref()?;
+        let any: &dyn std::any::Any = &*m.model;
+        Some(f(any.downcast_ref::<T>()?, &m.view))
+    }
+}
+
 // ---- table-column methods (the JS runtime's editor protocol) ----
 
 /// `set-editor(outlet)` and `end-edit(commit)` on a `table-column` (`views::call`).
@@ -2125,8 +2408,10 @@ impl EguiBackend {
                 match verdict {
                     Some(reason) => t.error = Some(EditError { row, col, reason, until: None, shown_at: None }),
                     None if commit => {
-                        if let Some(p) = pos {
-                            t.set_cell(p, t.data_col(col), cell_text(&value));
+                        if let Some(p) = pos
+                            && let Err(reason) = t.set_cell(p, t.data_col(col), cell_text(&value))
+                        {
+                            t.error = Some(EditError { row, col, reason, until: None, shown_at: None });
                         }
                     }
                     None => {}

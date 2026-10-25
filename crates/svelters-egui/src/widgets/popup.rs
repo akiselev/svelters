@@ -62,6 +62,14 @@ pub(crate) fn gap(s: &StyleView<'_>, side: Side) -> f32 {
 /// The layer of a new surface `id` in `order`, placed at `rect` (screen). Shown with `add` in the
 /// area's `Ui`; pointer input over it does not reach what is below.
 pub(crate) fn area(ctx: &egui::Context, id: Id, order: Order, rect: Rect, add: impl FnOnce(&mut Ui)) -> egui::InnerResponse<()> {
+    // AX1: svelters placed and sized the surface already; an area egui has not seen would spend
+    // its first frame on an invisible sizing pass (no paint, no AccessKit nodes), so a menu just
+    // opened would be missing from the tree when automation looks
+    let layer = egui::LayerId::new(order, id);
+    if egui::AreaState::load(ctx, id).is_none() {
+        let st = egui::AreaState { pivot_pos: Some(rect.min), size: Some(rect.size()), ..Default::default() };
+        ctx.memory_mut(|m| m.areas_mut().set_state(layer, st));
+    }
     egui::Area::new(id).order(order).fixed_pos(rect.min).constrain(false).interactable(true).show(ctx, |ui| {
         ui.set_max_size(rect.size());
         add(ui)

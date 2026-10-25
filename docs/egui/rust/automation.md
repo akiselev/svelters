@@ -12,6 +12,9 @@ sources:
   - plans/milestones/AU1b-seeds-clock-test-macro.md
   - plans/milestones/AU2-automation-transport.md
   - plans/milestones/AU2b-ts-runner-mount.md
+  - plans/milestones/CV1-canvas-seams.md   # drag, pointer_move, wheel; panes
+  - plans/milestones/AX1-list-a11y.md      # scroll-into-view, list rows, context menus (pending: ci/b10-list-a11y)
+  - crates/svelters-automation/tests/list_a11y.rs
 ---
 
 # Automation and end-to-end tests
@@ -126,6 +129,7 @@ Selectors are the same in Rust, TS and JSON. Engines chain with `>>`:
 | `role=button[name="Save"]` | ARIA role and accessible name (`[name*=…]`, state names) |
 | `text="Exact"` / `text=part` | text, exact, or a case-insensitive substring |
 | `label=`, `anchor=`, `root=` | label text, `anchor` prop, root key |
+| `key=k42` | the rows of the keyed `{#each}` item with key `k42` (`key=k42 >> anchor=row`; CV1) |
 | `pos=x,y`, `nth=` | a point; the n-th match |
 
 `locate` is strict: more than one match fails `node.ambiguous`. Not yet: regex names (`/…/`),
@@ -171,14 +175,87 @@ assert!(s.snapshot(None)?.contains(r#"- label "Count: 1""#));
   first (attached, visible, stable over two frames, enabled, hit at the centre) and reply after the
   settle. `ActOptions { tier, force, timeout_ms }`: `Tier::Synthetic` (default, egui input) or
   `Tier::Semantic` (AccessKit actions).
-- Settled means `Embed::settled()` is empty, no injected input is pending, and the host's idle predicate
-  holds. A timeout names the busy reasons.
+- Canvas acts (CV1, synthetic only, deterministic under the virtual clock): `drag(target, Drag, opts)`
+  (a press, `steps` moves of one frame each, the release; `Drag::to(local).from(At::Local(p)).steps(n)
+  .button(b).modifiers(m)` or `Drag::to_node(other)`), `pointer_move(target, At, modifiers, opts)` and
+  `wheel(target, Wheel::lines(v) | Wheel::points(v), opts)` (egui's direction: positive `y` scrolls
+  up; `.at(..)`, `.modifiers(..)`). Points are the target's local points (from the top left of its
+  rect; outside it is allowed); `At::Center` is the default. See "Canvases" below.
+- Settled means `Embed::settled()` is empty, no injected input is pending, no foreground busy source is
+  busy, and the host's idle predicate holds. A timeout names the busy reasons. Events, busy sources,
+  latched conditions, clocks and the failure report: [Waiting on anything](waiting.md) (AU7).
 - `set_tooling_roots(..)` hides tooling roots from queries unless `include_tooling(true)` (needs the
   `tooling` grant).
 - Refs (`Ref { id, epoch }`) go stale after `bump_epoch()` or a reset (`node.stale`).
 - `Session::call(method, params)` is the JSON schema: `scene.query`, `scene.locate`, `scene.node`,
   `scene.snapshot`, `a11y.tree`, `input.*`, `wait.settled`, `wait.for`, `capture.screenshot`,
   `journal.subscribe/take`, `clock.*`.
+
+## Canvases: drags, moves and wheels at local points
+
+A canvas is either a Svelte node (a `canvas`, a box listening to `onpointerdown`/`onpointermove`)
+or a pane the host paints itself (`Embed::create_pane`, CV1): a pane's key is its `anchor`, so
+`anchor=<key>` addresses it, and events on its parts reach the host's event filters as
+`Target::Virtual`.
+
+```rust
+// not run
+s.drag("anchor=board", Drag::to(egui::pos2(150.0, 140.0)).from(At::Local(egui::pos2(50.0, 100.0)))
+    .steps(4).modifiers(egui::Modifiers::SHIFT), ActOptions::default())?;
+s.wheel("anchor=board", Wheel::lines(egui::vec2(0.0, 2.0)).modifiers(egui::Modifiers::CTRL), ActOptions::default())?;
+```
+
+| JSON method | Params (besides the target and `ActOptions`' `tier`, `force`, `timeout`) |
+|---|---|
+| `input.pointer_move` | `at: [x, y]` (default the centre), `modifiers: "Shift+Ctrl"` or `["Shift"]` |
+| `input.wheel` | `dx`, `dy` (egui's direction), `unit: "line" \| "pixel" \| "page"` (default `line`), `at`, `modifiers` |
+| `input.drag` | `from: [x, y]`, one of `to: [x, y]`, `to_selector`, `to_ref`; `steps` (default 10), `button: "primary" \| "secondary" \| "middle"`, `modifiers` |
+
+TypeScript: `locator.pointerMove({ at, modifiers })`, `locator.wheel({ dx, dy, unit, at, modifiers })`,
+`locator.drag({ from, to: [x, y] | otherLocator, steps, button, modifiers })`.
+
+A drag sends the move to `from`, the press, each step's move and the release in their own frames, so
+a `pointermove` listener sees every step (SV50 coalesces moves within one frame only). Modifiers are
+held with egui's `ModifiersChanged` around the act and carried on the press, release and wheel
+events.
+
+## Scroll areas, lists and menus
+
+AX1 (on `ci/b10-list-a11y`, not merged yet). What automation sees of content that is not all on screen:
+
+| Content | In the scene and `query` | In the AccessKit tree | Acts |
+|---|---|---|---|
+| a `scroll-area`'s children scrolled out | yes; `rect: None`, visible | no (culled) | scrolled into view first, then done |
+| a child cut by the area's edge | yes; `visible_rect` smaller than `rect` | yes, unclipped bounds (the area `clips_children`) | scrolled wholly into view (as much as fits), aimed at the centre of the part in view |
+| `ListView`/`TreeView` rows realised but out of view | yes; `rect: None`, visible | no | the list scrolls to the row first |
+| rows not realised (most of a long list) | no | no | `scroll_to_row(list, pos)` first |
+| entries of a closed `context-menu`/menu | yes; `rect: None`, **hidden** | no | `node.not_actionable` (open it first) |
+| entries of an open menu | yes; drawn rect, visible | `MenuItem`s, in the frame it opens | click (synthetic or semantic) |
+
+- `NodeInfo.rect` is where the node was drawn in the last pass (`None`: not drawn then);
+  `visible_rect` is its part inside its clip.
+- Visible (`to_be_visible`, `WaitState::Visible`) is the browser's sense: a node scrolled out of view
+  is still visible; a closed menu's entries and a closed overlay's content are not.
+- Anchors inside list rows are scoped by the row's item key (as in a keyed `{#each}`, SV53): every row
+  has its own egui id and AccessKit node, and `key=<item key> >> anchor=line` finds a realised row's
+  content. A row option is named by its content.
+
+```rust
+// not run
+s.click(r#"text="Cancel Job 11""#, ActOptions::default())?;            // scrolls the Jobs area first
+s.scroll_to_row("anchor=output", 640, ActOptions::default())?;          // realises row 640
+let line = s.query("key=640 >> anchor=line", None)?;
+s.context_click("key=p1", ActOptions::default())?;                      // opens the row's context menu
+s.click(r#"key=p1 >> role=menu[name="Waive"]"#, ActOptions::default())?;
+s.scroll_into_view(r#"text="Cancel Job 6""#, true, ActOptions::default())?; // centred, no act
+```
+
+JSON: `input.click {button: "secondary"}`, `input.scroll_into_view {selector, align?: "center"}`,
+`input.scroll_into_view {selector: <list>, row: <pos>}`. Rust hosts: `NodeMut::scroll_into_view(center)`,
+`SceneRef::shown(viewport, node)`, `NodeRef::is_shown()`.
+
+Not yet: a semantic (`Tier::Semantic`) click raises `onclicked` but not a DOM `onclick` (EV1 fires
+`click` from pointer releases only); `key=` cannot name an unrealised row.
 
 ## Out of process: `Server`
 
@@ -201,10 +278,11 @@ server.pump(&mut session);
 
 - Forgetting `enable()` in a shipped app and getting `automation.disabled`. It is meant to be off until
   the user opts in.
-- Polling with sleeps: use `expect(…)` or `wait_for`. They run in the app on virtual time.
+- Polling with sleeps: use `expect(…)` or `wait_for`. They run in the app on virtual time. For jobs,
+  workers and network, wait on an event after a cursor: see [Waiting on anything](waiting.md).
 - `getByText('Count: 1')` matching `Count: 10`: bare `text=` is a substring. Pass `exact: true`.
 
 ## Not done
 
-Traces on failure and `toHaveScreenshot`; `events`/`log`/`perf` streams; windowed `svelters-run`;
+Traces on failure and `toHaveScreenshot`; `log`/`perf` streams (the `events` stream is AU7's journal); windowed `svelters-run`;
 `Origin::Tool` on writes a session causes; several mounts per host.

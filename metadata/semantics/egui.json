@@ -6705,6 +6705,23 @@
           "type": "string",
           "writable": true
         },
+        "anchor-scope": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set.",
+          "js": "anchor-scope",
+          "native": "anchor-scope",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:anchor-scope",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "enabled": {
           "construct_only": false,
           "default": true,
@@ -11485,7 +11502,7 @@
       },
       "css_hidden": [],
       "css_note": "Rows, cells and headers follow the theme; the box paints under the whole table.",
-      "doc": "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+      "doc": "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
       "interface": false,
       "lifetime": "owned",
       "methods": {
@@ -12047,6 +12064,26 @@
           "sync": false,
           "sync_required": false
         },
+        "row-toggled": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "expanded",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now.",
+          "handler_result": "none",
+          "js_event": "row-toggled",
+          "name": "row-toggled",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "selectionchange": {
           "args": [
             {
@@ -12075,7 +12112,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS).",
+          "doc": "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table).",
           "handler_result": "none",
           "js_event": "sort-changed",
           "name": "sort-changed",
@@ -14676,6 +14713,23 @@
           "type": "string",
           "writable": true
         },
+        "anchor-scope": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime on the top nodes of a keyed `{#each}` item: the item's key, and the keys of the keyed items around it (outermost first, separated by U+001F). An `anchor` inside it takes its egui id from these keys and the anchors of its anchored ancestors, so repeated anchors in a keyed list get one id per row; `key=` selectors match it. Not for apps to set.",
+          "js": "anchor-scope",
+          "native": "anchor-scope",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:anchor-scope",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "autofocus": {
           "construct_only": false,
           "default": false,
@@ -15185,6 +15239,18 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
             }
           ],
           "disconnect_on_drop": true,
@@ -15223,6 +15289,18 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
             }
           ],
           "disconnect_on_drop": true,
@@ -15260,6 +15338,18 @@
             },
             {
               "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
               "type": "i64"
             }
           ],
@@ -15509,6 +15599,18 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
             }
           ],
           "disconnect_on_drop": true,
@@ -15519,6 +15621,54 @@
           "phases": [
             "capture"
           ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointermove": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The pointer moved over this node or a descendant (EV1 propagation; CV1): one per frame at the last point, `button` -1, `buttons` the held ones, `offsetX`/`offsetY` relative to the target. Not cancelable: egui always sees the move.",
+          "handler_result": "bool_stop",
+          "js_event": "pointermove",
+          "name": "pointermove",
+          "phases": [],
           "sync": true,
           "sync_required": false
         },
@@ -15546,6 +15696,18 @@
             },
             {
               "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
               "type": "i64"
             }
           ],
@@ -15589,6 +15751,14 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
             }
           ],
           "disconnect_on_drop": true,
@@ -15843,6 +16013,18 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
             }
           ],
           "disconnect_on_drop": true,
@@ -15892,6 +16074,18 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
             }
           ],
           "disconnect_on_drop": true,
@@ -15929,6 +16123,18 @@
             },
             {
               "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
               "type": "i64"
             }
           ],
@@ -16088,6 +16294,18 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
             }
           ],
           "disconnect_on_drop": true,
@@ -16098,6 +16316,54 @@
           "phases": [
             "capture"
           ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointermove": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The pointer moved over this node or a descendant (EV1 propagation; CV1): one per frame at the last point, `button` -1, `buttons` the held ones, `offsetX`/`offsetY` relative to the target. Not cancelable: egui always sees the move.",
+          "handler_result": "bool_stop",
+          "js_event": "pointermove",
+          "name": "pointermove",
+          "phases": [],
           "sync": true,
           "sync_required": false
         },
@@ -16125,6 +16391,18 @@
             },
             {
               "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
               "type": "i64"
             }
           ],
@@ -16168,6 +16446,14 @@
             {
               "name": "modifiers",
               "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
             }
           ],
           "disconnect_on_drop": true,

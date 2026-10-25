@@ -104,6 +104,14 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Str("temporary"),
         "Its place in a `status-bar` (QStatusBar): `temporary` (after the start sections; hidden while a message or status tip shows), `start` (permanent, at the start), `end` (permanent, pushed to the end). Also the `[status-section=…]` selector.",
     ),
+    // ---- CV1 (SV53): appended ----
+    prop(
+        "anchor-scope",
+        P::AnchorScope,
+        Ty::Str,
+        Def::Str(""),
+        "Set by the runtime on the top nodes of a keyed `{#each}` item: the item's key, and the keys of the keyed items around it (outermost first, separated by U+001F). An `anchor` inside it takes its egui id from these keys and the anchors of its anchored ancestors, so repeated anchors in a keyed list get one id per row; `key=` selectors match it. Not for apps to set.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[

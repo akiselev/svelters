@@ -86,6 +86,15 @@ pub fn resolve(s: SceneRef<'_>, sel: &Selector, roots: &Roots<'_>) -> Result<Vec
                     .collect();
                 Scope::Below(v)
             }
+            Part::Key(k) => {
+                // the item's top nodes (their own `anchor-scope` ends with the key): the next part
+                // searches them and their subtrees
+                let v = candidates(s, &scope, roots)
+                    .into_iter()
+                    .filter(|n| n.anchor_scope().is_some() && n.item_key() == Some(k.as_str()))
+                    .collect();
+                Scope::Inclusive(v)
+            }
             Part::Anchor(a) => {
                 let v = candidates(s, &scope, roots)
                     .into_iter()

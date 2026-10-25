@@ -48,6 +48,18 @@ export class Locator {
   click(opts?: ActOptions): Promise<unknown>;
   hover(opts?: ActOptions): Promise<unknown>;
   focus(opts?: ActOptions): Promise<unknown>;
+  /** SV51: points are `[x, y]` in the node's local points (default its centre); modifiers `'Shift+Ctrl'`. */
+  pointerMove(opts?: ActOptions & { at?: [number, number]; modifiers?: string }): Promise<unknown>;
+  wheel(opts?: ActOptions & { dx?: number; dy?: number; unit?: 'line' | 'pixel' | 'page'; at?: [number, number]; modifiers?: string }): Promise<unknown>;
+  drag(
+    opts: ActOptions & {
+      from?: [number, number];
+      to: [number, number] | Locator;
+      steps?: number;
+      button?: 'primary' | 'secondary' | 'middle';
+      modifiers?: string;
+    },
+  ): Promise<unknown>;
   fill(text: string, opts?: ActOptions): Promise<unknown>;
   setValue(value: number, opts?: ActOptions & { handle?: string | number }): Promise<unknown>;
   all(): Promise<NodeInfo[]>;

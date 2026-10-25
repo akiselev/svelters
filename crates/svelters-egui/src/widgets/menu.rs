@@ -269,12 +269,19 @@ impl<'a> Menu<'a> {
         self.st.levels[k].roving.set(to);
     }
 
-    /// Keeps levels `..n`; clears the state bits of the rows of the closed ones.
+    /// Keeps levels `..n`; clears the state bits of the rows of the closed ones (and their drawn
+    /// rects, AX1: an entry of a closed menu is not shown).
     fn truncate(&mut self, n: usize) {
         while self.st.levels.len() > n {
             let k = self.st.levels.len() - 1;
             for r in self.level_rows(k) {
                 self.set_bits(r.i, StateBits::NONE);
+                self.arena.core[r.i].drawn = Rect::NOTHING;
+            }
+            if let Some(m) = self.idx(self.st.levels[k].menu)
+                && matches!(self.arena.w(m), W::Menu(MenuW::Context { .. }))
+            {
+                self.arena.core[m].drawn = Rect::NOTHING;
             }
             self.st.levels.pop();
         }
@@ -571,7 +578,14 @@ impl<'a> Menu<'a> {
             let mut current = self.st.levels[k].roving.current();
             // rows: interact first (the pointer may move the current row), then paint
             let mut resps = Vec::with_capacity(rows.len());
+            // AX1: the context menu's own node is the surface; each row is where it was drawn,
+            // in the hit list, so automation finds the entries visible and acts on them
+            if k == 0 && matches!(self.arena.w(host), W::Menu(MenuW::Context { .. })) {
+                self.arena.core[host].drawn = frame;
+            }
             for (n, (r, rect)) in rows.iter().zip(&rects).enumerate() {
+                self.arena.core[r.i].drawn = *rect;
+                crate::scene::hit::record(self.arena, r.i, ui);
                 if r.kind == Kind::Sep {
                     resps.push(None);
                     continue;

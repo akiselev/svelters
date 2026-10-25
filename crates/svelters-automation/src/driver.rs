@@ -57,6 +57,11 @@ pub trait Driver {
     fn seed(&self) -> Option<u64> {
         None
     }
+
+    /// AU7: while `true`, frames do not move the virtual clock (a foreground wall-clock busy
+    /// source is busy: real work runs, a virtual timeout must not cut it off). Drivers without a
+    /// virtual clock ignore it.
+    fn hold_clock(&mut self, _held: bool) {}
 }
 
 /// A boxed driver (`svelters-run` picks its clock at run time).
@@ -87,6 +92,9 @@ impl<D: Driver + ?Sized> Driver for Box<D> {
     }
     fn seed(&self) -> Option<u64> {
         (**self).seed()
+    }
+    fn hold_clock(&mut self, held: bool) {
+        (**self).hold_clock(held)
     }
 }
 

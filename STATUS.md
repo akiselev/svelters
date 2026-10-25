@@ -159,6 +159,36 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
+## Cloud batch 10 for cadatomic (2026-10-24/25)
+
+Coordinated by cloud session `session_01RQkPkX9QqiFN52Rrofmi7z` (svelters-agent is down). Briefs: `plans/cloud/batch10/`.
+- **AU7 waits** (`ci/b10-waits` `669aa79e`, code `1fbe8cfc` green on all five workflows; merged `--no-ff`): the event
+  journal with cursors (`wait.event`, `wait.never`, `wait.seen`), named busy sources (foreground/background) with
+  timeout reports, actionability, virtual/wall clock domains, record/replay hooks. One non-additive change:
+  `svelters_automation::Error` gained a public `data` field. Record: `plans/milestones/AU7-waits.md`.
+- **AX1 list-a11y** (`ci/b10-list-a11y`): running.
+- **Queued: EV1 follow-up, activation fires a DOM `click`** (decided by the coordinator, 2026-10-25: yes, so that tours,
+  assistive tech and the mouse reach the same handlers). A button activated through its `Pressable` (Space, Enter,
+  AccessKit `Click`) also fires a DOM `click`; today EV1 fires `click` only from pointer releases, so a
+  `Tier::Semantic` click raises `onclicked` but not `onclick`. Found by AX1: `plans/milestones/AX1-list-a11y.md`,
+  "Findings and questions".
+cadatomic's svelters pin (`ab8dcfc7`) advances in its batch 10 wave 2 (waits-adopt).
+
+## Cloud batch 8 for cadatomic (2026-10-24)
+
+svelters-agent is down; the user made the cadatomic batch coordinator (cloud session
+`session_01MAioA6KK9ya3iTSXBHf3Q3`) responsible for svelters' cloud lanes. Two lanes ran from
+`plans/cloud/batch8/` and are merged into master (`--no-ff`, each green on all five workflows;
+the merged tree's `cargo test -p svelters-egui --test spec` passes, the generated spec is current):
+- **LS2 Rust row models** (`ci/b8-tables` `5b729740`, merge `f26d1063`): `svelters_host::rows`
+  (`RowModel`, `RowView` with sort, filter and tree rows, `VecModel`), the own `table` reading a Rust
+  model (`set_table_model`), T2 benches. Record: `plans/milestones/LS2-rust-row-models.md`.
+- **CV1 canvas seams** (`ci/b8-canvas-seams` `6f8ce352`, merge `f1006bf1`): SV49 `PaneHit` panes,
+  SV50 `pointermove`, SV51 automation `drag`/`pointer_move`/`wheel` and the `key=` selector, SV53
+  keyed anchor ids (behaviour change: anchored rows in keyed eaches get new egui ids once).
+  Record: `plans/milestones/CV1-canvas-seams.md`.
+No other svelters lane runs. cadatomic's svelters pin (`ab8dcfc7`) is not advanced yet.
+
 ## Handoff (2026-10-23)
 
 **Paused at 90% of the weekly quota (user, 2026-10-23): active lanes finish (and fix bugs they find), no new lanes.**
@@ -198,6 +228,9 @@ cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomi
 | SV48 error path inside serde internally tagged enums | DONE (`ci/sv48`); required before a cadatomic package passes command args through `Json<T>` (main-cadatomic gives notice) | RA2-json-values.md "Open items" |
 | DK3/DK4 secondary windows for berth panes | svelters side done (EM2, 2b0d144f) | EM2-viewports.md |
 | Scene graph with full Rust access | SG1, SG2, SG3 done (SC1 path complete); SG4, SG5 in progress | ARCH-SCENE.md §14 |
+| SV41/SV44/SV47/SV52 Rust row models, columns, tree rows, benches | DONE (LS2, merge `f26d1063`) | LS2-rust-row-models.md |
+| SV49 pane hit tests, SV50 `pointermove`, SV51 automation drag/move/wheel, SV53 keyed anchor ids | DONE (CV1, merge `f1006bf1`) | CV1-canvas-seams.md |
+| Tours (cadatomic TU1–TU10): the generic half, `svelters-tour` (`.tour.md` → JS define phase → IR), `@svelters/tour` overlay components, the gate and placement on SV6/SV7, `capture.frames` and `clock.advance_to`, `svelters-tts` (Kokoro and the narration manifest), `svelters-tour-video` | proposed; the user wants the svelters and cadatomic halves developed in tandem (2026-10-23); not yet placed on TRACKS.md | cadatomic `docs/research/2026-10-23-tours-tests-tutorials-videos.md` §8–§9 |
 
 ## Handoff (2026-10-19, superseded)
 

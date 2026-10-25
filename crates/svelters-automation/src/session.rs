@@ -1,7 +1,14 @@
 //! [`Session`]: one client's view of the app: grants, tooling roots, the host's idle predicate,
-//! element refs with their epoch, and every method (Rust API and [`Session::call`]).
+//! element refs with their epoch, and every method (Rust API and [`Session::call`]). AU7's waits
+//! (event journal, busy sources, clocks, reports) are in [`waits`].
 
+mod waits;
+pub use waits::{Actionability, Budget, Condition, NeverId, SeenId, Unmet, WaitReport};
+use waits::{Deadline, SeenLatch};
+
+use crate::busy::BusyRegistry;
 use crate::driver::{A11yNode, Driver};
+use crate::journal::{Cursor, Journal, Matcher};
 use crate::engine::{Roots, resolve};
 use crate::role::{has_state, role_of, states_of};
 use crate::selector::{Selector, TextMatch, parse};
@@ -9,8 +16,10 @@ use crate::snapshot::{value_of, yaml};
 use crate::{Error, PROTOCOL, is_enabled};
 use egui::accesskit::{Action, ActionData, ActionRequest};
 use serde_json::{Value, json};
+use std::collections::BTreeSet;
+use std::time::{Duration, Instant};
 use svelters_egui::accessible_name;
-use svelters_egui::scene::{ChangeFilter, NodeId, NodeRef, Observer, SceneRef};
+use svelters_egui::scene::{ChangeFilter, NodeId, NodeRef, Observer, ProviderId, SceneRef};
 
 /// What a session may do (§1.2). `os_input`, `clock` and `eval` are test-build grants (§6 Q1);
 /// AU1b adds `clock` (`clock.advance`); `os_input` and `eval` have no method yet.
@@ -64,8 +73,12 @@ pub struct NodeInfo {
     pub value: Option<String>,
     pub anchor: Option<String>,
     pub root: Option<String>,
-    /// Screen rect in egui points (`None`: not drawn).
+    /// Screen rect in egui points, as drawn last pass (`None`: not drawn in that pass: scrolled
+    /// out of view, an unrealised row, a closed menu).
     pub rect: Option<egui::Rect>,
+    /// AX1: the part of `rect` in view (inside its clip): empty when scrolled out of a
+    /// `scroll-area`, smaller than `rect` when partly.
+    pub visible_rect: Option<egui::Rect>,
     pub states: Vec<&'static str>,
 }
 
@@ -76,6 +89,7 @@ impl NodeInfo {
             "tag": self.tag, "role": self.role, "name": self.name, "text": self.text, "value": self.value,
             "anchor": self.anchor, "root": self.root,
             "rect": self.rect.map(|r| json!([r.min.x, r.min.y, r.width(), r.height()])),
+            "visible_rect": self.visible_rect.map(|r| json!([r.min.x, r.min.y, r.width(), r.height()])),
             "states": self.states,
         })
     }
@@ -121,6 +135,117 @@ impl Default for ActOptions {
     }
 }
 
+/// SV51: a point in an act's target, in its local points (from the top left of its rect drawn last
+/// pass; a point outside the rect is allowed: a canvas drag that leaves the node), or its centre.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub enum At {
+    #[default]
+    Center,
+    Local(egui::Pos2),
+}
+
+impl At {
+    /// The point in `rect`; `At::Center` is `center`, the actionable point (AX1: the centre of the
+    /// part in view, for a node partly clipped).
+    fn in_rect(self, rect: egui::Rect, center: egui::Pos2) -> egui::Pos2 {
+        match self {
+            At::Center => center,
+            At::Local(p) => rect.min + p.to_vec2(),
+        }
+    }
+}
+
+/// Where an act aims (AX1): the target's rect as drawn and its actionable point (the centre of
+/// the part in view).
+#[derive(Clone, Copy, Debug)]
+struct Aim {
+    rect: egui::Rect,
+    at: egui::Pos2,
+}
+
+/// SV51: where a drag ends.
+#[derive(Clone, Debug)]
+pub enum DragTo {
+    /// A point in the target's local points.
+    Local(egui::Pos2),
+    /// The centre of another node (resolved when the drag starts).
+    Node(Target),
+}
+
+/// SV51: `input.drag`: a press at `from`, `steps` moves (one frame each) to `to`, a release there.
+#[non_exhaustive]
+#[derive(Clone, Debug)]
+pub struct Drag {
+    pub from: At,
+    pub to: DragTo,
+    /// Moves between the press and the release (at least 1), each in its own frame.
+    pub steps: u32,
+    pub button: egui::PointerButton,
+    /// Held for the whole drag (`ModifiersChanged` before the press, released after).
+    pub modifiers: egui::Modifiers,
+}
+
+impl Drag {
+    /// From the target's centre to `to` (its local points), 10 steps, primary button.
+    pub fn to(to: egui::Pos2) -> Drag {
+        Drag::new(DragTo::Local(to))
+    }
+    /// From the target's centre to `node`'s centre.
+    pub fn to_node(node: impl Into<Target>) -> Drag {
+        Drag::new(DragTo::Node(node.into()))
+    }
+    fn new(to: DragTo) -> Drag {
+        Drag { from: At::Center, to, steps: 10, button: egui::PointerButton::Primary, modifiers: egui::Modifiers::NONE }
+    }
+    pub fn from(mut self, at: At) -> Drag {
+        self.from = at;
+        self
+    }
+    pub fn steps(mut self, n: u32) -> Drag {
+        self.steps = n.max(1);
+        self
+    }
+    pub fn button(mut self, b: egui::PointerButton) -> Drag {
+        self.button = b;
+        self
+    }
+    pub fn modifiers(mut self, m: egui::Modifiers) -> Drag {
+        self.modifiers = m;
+        self
+    }
+}
+
+/// SV51: `input.wheel`: a scroll at a point of the target.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug)]
+pub struct Wheel {
+    pub at: At,
+    /// egui's wheel delta (positive `y` scrolls up, as egui sends it), in `unit`s.
+    pub delta: egui::Vec2,
+    /// `Line` (a mouse wheel's notches), `Point` (a trackpad's pixels) or `Page`.
+    pub unit: egui::MouseWheelUnit,
+    pub modifiers: egui::Modifiers,
+}
+
+impl Wheel {
+    /// `lines` notches (positive `y`: up) at the target's centre.
+    pub fn lines(lines: egui::Vec2) -> Wheel {
+        Wheel { at: At::Center, delta: lines, unit: egui::MouseWheelUnit::Line, modifiers: egui::Modifiers::NONE }
+    }
+    /// `points` of trackpad scroll (positive `y`: up) at the target's centre.
+    pub fn points(points: egui::Vec2) -> Wheel {
+        Wheel { at: At::Center, delta: points, unit: egui::MouseWheelUnit::Point, modifiers: egui::Modifiers::NONE }
+    }
+    pub fn at(mut self, at: At) -> Wheel {
+        self.at = at;
+        self
+    }
+    pub fn modifiers(mut self, m: egui::Modifiers) -> Wheel {
+        self.modifiers = m;
+        self
+    }
+}
+
 /// What an act did, read after the app settled.
 #[derive(Clone, Debug, PartialEq)]
 pub struct ActResult {
@@ -163,6 +288,20 @@ pub struct Session<D: Driver> {
     now_ms: f64,
     pending_input: bool,
     journal: Option<Observer>,
+    // ---- AU7 ----
+    /// The app's event journal (shared: [`Session::set_journal`]).
+    events: Journal,
+    busy: BusyRegistry,
+    /// Events consumed by [`Session::wait_event`]: two identical waits match two events.
+    consumed: BTreeSet<u64>,
+    nevers: Vec<(NeverId, Matcher, Cursor)>,
+    seen: Vec<SeenLatch>,
+    next_id: u64,
+    /// Wall time of the frames run while a foreground wall-clock source held the virtual clock.
+    held_wall: Duration,
+    clock_held: bool,
+    /// [`Session::bridge_scene_changes`]: SG2's journal as `scene.changed` events.
+    scene_bridge: Option<Observer>,
 }
 
 impl<D: Driver> Session<D> {
@@ -182,6 +321,15 @@ impl<D: Driver> Session<D> {
             now_ms: 0.0,
             pending_input: false,
             journal: None,
+            events: Journal::default(),
+            busy: BusyRegistry::new(),
+            consumed: BTreeSet::new(),
+            nevers: Vec::new(),
+            seen: Vec::new(),
+            next_id: 1,
+            held_wall: Duration::ZERO,
+            clock_held: false,
+            scene_bridge: None,
         })
     }
 
@@ -193,6 +341,9 @@ impl<D: Driver> Session<D> {
 
     /// The host's idle predicate (§6, agreed with cadatomic): waits never answer while it is
     /// `false` (cadatomic's IdleBarrier: jobs, sessions, `BusyProbe`).
+    ///
+    /// **Deprecated (AU7):** register named sources with [`Session::register_busy_source`] instead;
+    /// a timeout can then say which source was busy. Kept until cadatomic moves.
     pub fn set_idle(&mut self, idle: impl Fn() -> bool + 'static) {
         self.idle = Some(Box::new(idle));
     }
@@ -281,8 +432,9 @@ impl<D: Driver> Session<D> {
             "roots": roots,
             "grants": {"read": self.grants.read, "act": self.grants.act, "tooling": self.grants.tooling, "clock": self.grants.clock},
             "capabilities": ["scene.query", "scene.node", "scene.snapshot", "a11y.tree", "app.roots", "input.click", "input.focus",
-                "input.fill", "input.set_value", "input.press", "input.type", "input.hover", "wait.settled", "wait.for",
-                "journal.subscribe", "journal.take", "capture.screenshot", "clock.now", "clock.advance"],
+                "input.fill", "input.set_value", "input.press", "input.type", "input.hover", "input.pointer_move", "input.wheel", "input.drag", "input.scroll_into_view", "wait.settled", "wait.for",
+                "journal.subscribe", "journal.take", "capture.screenshot", "clock.now", "clock.advance",
+                "journal.cursor", "journal.events", "journal.kinds", "wait.event", "wait.never", "wait.seen", "wait.step_end", "busy.sources"],
             "clock": self.clock_json(),
         }))
     }
@@ -392,7 +544,8 @@ impl<D: Driver> Session<D> {
             value: value_of(n),
             anchor: n.anchor().map(str::to_string),
             root: s.root_key(n.root()).map(str::to_string),
-            rect: n.screen_rect().map(|(_, r)| r),
+            rect: n.shown().map(|sh| sh.rect),
+            visible_rect: n.shown().map(|sh| sh.visible),
             states: states_of(n),
         }
     }
@@ -408,11 +561,26 @@ impl<D: Driver> Session<D> {
 
     // ---- wait ----
 
+    /// Runs one frame. While a foreground wall-clock source is busy the virtual clock is held
+    /// (AU7, Compose's `autoAdvance`): the frame runs, its time counts as wall time, not virtual.
     fn step(&mut self) {
+        let hold = self.wall_work_busy();
+        if hold != self.clock_held {
+            self.driver.hold_clock(hold);
+            self.clock_held = hold;
+        }
+        let t0 = Instant::now();
         self.driver.step();
         self.frame += 1;
-        self.now_ms += self.frame_ms();
+        if hold {
+            // the work runs on other threads: give it time rather than spinning frames
+            std::thread::sleep(Duration::from_millis(1));
+            self.held_wall += t0.elapsed();
+        } else {
+            self.now_ms += self.frame_ms();
+        }
         self.pending_input = false;
+        self.after_frame();
     }
 
     fn frame_ms(&self) -> f64 {
@@ -420,13 +588,18 @@ impl<D: Driver> Session<D> {
         if ms > 0.0 { ms } else { 16.0 }
     }
 
-    /// Why the app is not settled (`None`: settled): the embed, pending input, the host predicate.
+    /// Why the app is not settled (`None`: settled): pending input, the embed, the foreground
+    /// busy sources (AU7), the host predicate.
     fn not_settled(&self) -> Option<String> {
         if self.pending_input {
             return Some("INPUT".into());
         }
         if let Some(b) = self.driver.busy() {
             return Some(b);
+        }
+        let fg = self.foreground_busy();
+        if !fg.is_empty() {
+            return Some(fg.iter().map(|b| format!("{}×{}", b.id, b.count)).collect::<Vec<_>>().join(", "));
         }
         match &self.idle {
             Some(idle) if !idle() => Some("HOST".into()),
@@ -470,10 +643,29 @@ impl<D: Driver> Session<D> {
     }
 
     /// `wait.settled` (§1.6): steps frames until the app is settled; returns the frames it ran.
-    /// Fails with `timeout` and the chain of busy reasons after `timeout_ms` virtual ms.
+    /// Fails with `timeout` and the chain of busy reasons after `timeout_ms` virtual ms (AU7: and
+    /// a [`WaitReport`] naming every busy foreground source, longest first).
     pub fn wait_settled(&mut self, timeout_ms: f64) -> Result<u32, Error> {
+        self.wait_settled_within(Budget::from(timeout_ms))
+    }
+
+    /// [`Session::wait_settled`] with a budget per clock domain (AU7).
+    pub fn wait_settled_within(&mut self, budget: Budget) -> Result<u32, Error> {
         self.check(false)?;
-        let (start, mut frames, mut chain) = (self.now_ms, 0u32, Vec::<String>::new());
+        self.check_nevers()?;
+        let d = self.deadline(budget, false);
+        match self.settle(&d) {
+            Ok(frames) => Ok(frames),
+            Err(chain) => {
+                let head = format!("not settled after {} ms: {}", budget.virtual_ms, chain.join(" → "));
+                Err(self.timeout("timeout", head, "wait.settled".into(), &d, Vec::new(), None))
+            }
+        }
+    }
+
+    /// Steps until settled or `d` runs out; `Err`: the chain of busy reasons.
+    fn settle(&mut self, d: &Deadline) -> Result<u32, Vec<String>> {
+        let (mut frames, mut chain) = (0u32, Vec::<String>::new());
         loop {
             match self.not_settled() {
                 None => return Ok(frames),
@@ -483,11 +675,8 @@ impl<D: Driver> Session<D> {
                     }
                 }
             }
-            if self.now_ms - start >= timeout_ms {
-                return Err(Error::new(
-                    "timeout",
-                    format!("not settled after {timeout_ms} ms: {}", chain.join(" → ")),
-                ));
+            if self.expired(d).is_some() {
+                return Err(chain);
             }
             self.step();
             frames += 1;
@@ -503,94 +692,89 @@ impl<D: Driver> Session<D> {
         expect: Option<&Expect>,
         timeout_ms: f64,
     ) -> Result<Vec<NodeInfo>, Error> {
+        self.wait_for_within(&Condition::new(selector, state, expect.cloned()), Budget::from(timeout_ms))
+    }
+
+    /// [`Session::wait_for`] on a [`Condition`], with a budget per clock domain (AU7).
+    pub fn wait_for_within(&mut self, cond: &Condition, budget: Budget) -> Result<Vec<NodeInfo>, Error> {
         self.check(false)?;
-        let sel = parse(selector)?;
-        let start = self.now_ms;
+        let sel = parse(&cond.selector)?;
+        let d = self.deadline(budget, false);
         let mut last = String::new();
         loop {
-            let left = (timeout_ms - (self.now_ms - start)).max(0.0);
+            self.check_nevers()?;
             // a busy app gets the rest of the time to settle; the check runs on settled frames
-            let settled = self.wait_settled(left).is_ok();
-            if settled {
-                let (ok, why, infos) = self.with_scene(|s, roots| -> Result<_, Error> {
-                    let ids = resolve(s, &sel, roots)?;
-                    let nodes: Vec<NodeRef<'_>> = ids.iter().filter_map(|&id| s.get(id)).collect();
-                    let in_state = match state {
-                        WaitState::Attached => !nodes.is_empty(),
-                        WaitState::Detached => nodes.is_empty(),
-                        WaitState::Visible => {
-                            !nodes.is_empty() && nodes.iter().all(|n| n.is_visible())
-                        }
-                        WaitState::Hidden => nodes.iter().all(|n| !n.is_visible()),
-                        WaitState::Enabled => {
-                            !nodes.is_empty() && nodes.iter().all(|&n| has_state(n, "enabled"))
-                        }
-                    };
-                    let (met, why) = match expect {
-                        None => (true, String::new()),
-                        Some(Expect::Count(c)) => (
-                            nodes.len() == *c,
-                            format!("count {} (want {c})", nodes.len()),
-                        ),
-                        Some(Expect::Text(t)) => {
-                            let texts: Vec<String> = nodes.iter().map(|&n| text_of(n)).collect();
-                            (
-                                texts.iter().any(|x| t.matches(x)),
-                                format!("texts {texts:?} (want {t:?})"),
-                            )
-                        }
-                        Some(Expect::Value(t)) => {
-                            let vals: Vec<Option<String>> =
-                                nodes.iter().map(|&n| value_of(n)).collect();
-                            (
-                                vals.iter().flatten().any(|x| t.matches(x)),
-                                format!("values {vals:?} (want {t:?})"),
-                            )
-                        }
-                    };
-                    let why = if in_state {
-                        why
-                    } else {
-                        format!("{} matches, not {state:?}; {why}", nodes.len())
-                    };
-                    Ok((
-                        in_state && met,
-                        why,
-                        nodes.iter().map(|&n| self.info(s, n)).collect::<Vec<_>>(),
-                    ))
-                })?;
+            if self.settle(&d).is_ok() {
+                let (ok, why, infos) = self.evaluate(&sel, cond)?;
                 if ok {
                     return Ok(infos);
                 }
                 last = why;
             }
-            if self.now_ms - start >= timeout_ms {
-                return Err(Error::new(
-                    "timeout",
-                    format!("`{selector}` after {timeout_ms} ms: {last}"),
-                ));
+            if self.expired(&d).is_some() {
+                let unmet = vec![Unmet { condition: cond.describe(), last: last.clone() }];
+                let head = format!("`{}` after {} ms: {last}", cond.selector, budget.virtual_ms);
+                return Err(self.timeout("timeout", head, format!("wait.for {}", cond.describe()), &d, unmet, None));
             }
             self.step();
         }
     }
 
+    /// Whether `cond` holds now: `(met, last value for reports, the matches)`.
+    fn evaluate(&self, sel: &Selector, cond: &Condition) -> Result<(bool, String, Vec<NodeInfo>), Error> {
+        let (state, expect) = (cond.state, cond.expect.as_ref());
+        self.with_scene(|s, roots| -> Result<_, Error> {
+            let ids = resolve(s, sel, roots)?;
+            let nodes: Vec<NodeRef<'_>> = ids.iter().filter_map(|&id| s.get(id)).collect();
+            let in_state = match state {
+                WaitState::Attached => !nodes.is_empty(),
+                WaitState::Detached => nodes.is_empty(),
+                WaitState::Visible => !nodes.is_empty() && nodes.iter().all(|n| n.is_shown()),
+                WaitState::Hidden => nodes.iter().all(|n| !n.is_shown()),
+                WaitState::Enabled => !nodes.is_empty() && nodes.iter().all(|&n| has_state(n, "enabled")),
+            };
+            let (met, why) = match expect {
+                None => (true, String::new()),
+                Some(Expect::Count(c)) => (nodes.len() == *c, format!("count {} (want {c})", nodes.len())),
+                Some(Expect::Text(t)) => {
+                    let texts: Vec<String> = nodes.iter().map(|&n| text_of(n)).collect();
+                    (texts.iter().any(|x| t.matches(x)), format!("texts {texts:?} (want {t:?})"))
+                }
+                Some(Expect::Value(t)) => {
+                    let vals: Vec<Option<String>> = nodes.iter().map(|&n| value_of(n)).collect();
+                    (vals.iter().flatten().any(|x| t.matches(x)), format!("values {vals:?} (want {t:?})"))
+                }
+            };
+            let why = if in_state { why } else { format!("{} matches, not {state:?}; {why}", nodes.len()) };
+            Ok((in_state && met, why, nodes.iter().map(|&n| self.info(s, n)).collect::<Vec<_>>()))
+        })
+    }
+
     // ---- act ----
 
-    /// Resolves `target` (a selector, strictly, or a ref) and waits until it is actionable (§1.5):
-    /// attached, visible, stable over two frames, enabled, and it (or a descendant or ancestor)
-    /// is what `hit_test` finds at its centre. Returns the node and its centre.
+    /// Resolves `target` (a selector, strictly, or a ref) and waits until it is actionable (§1.5,
+    /// AU7 WAITS §3.4): attached, visible, stable (the same rect over two consecutive frames),
+    /// enabled, editable (`fill`), and it (or a descendant or ancestor) is what `hit_test` finds at
+    /// its actionable point. AX1: a node out of view (scrolled out of a `scroll-area`, a realised
+    /// list row out of view, or partly clipped) is scrolled into view first, as a user would; the
+    /// point is the centre of its part in view. Returns the node, its rect and that point. At the
+    /// timeout the failing check is named ("still moving", "covered by …") in the error and its
+    /// [`WaitReport`].
     fn actionable(
         &mut self,
         target: &Target,
         opts: &ActOptions,
-    ) -> Result<(NodeId, egui::Rect), Error> {
+        editable: bool,
+    ) -> Result<(NodeId, Aim), Error> {
         if let Target::Invalid(e) = target {
             return Err(e.clone());
         }
-        let start = self.now_ms;
+        let d = self.deadline(Budget::from(opts.timeout_ms), false);
         let mut prev: Option<egui::Rect> = None;
-        let mut why;
+        let mut scrolled = false;
+        let mut failed: Actionability;
         loop {
+            self.check_nevers()?;
             let found: Result<Probe, Error> = self.with_scene(|s, roots| {
                 let id = match target {
                     Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
@@ -603,37 +787,50 @@ impl<D: Driver> Session<D> {
                     }
                 };
                 let n = s.get(id).expect("resolved");
-                let rect = n.screen_rect().map(|(_, r)| r);
-                let check = if !n.is_visible() || rect.is_none_or(|r| r.area() <= 0.0) {
-                    Err("not visible".to_string())
+                let shown = n.shown().filter(|sh| sh.rect.area() > 0.0);
+                // out of view: wholly (not drawn this pass, below a culled container or row) or
+                // partly (clipped); only once for a node larger than its view
+                let out = n.is_visible()
+                    && match shown {
+                        None => n.is_shown(),
+                        Some(sh) => !scrolled && sh.visible.area() + 0.5 < sh.rect.area(),
+                    };
+                let check = if out {
+                    Err(Actionability::new("visible", OUT_OF_VIEW))
+                } else if !n.is_shown() || shown.is_none_or(|sh| sh.visible.area() <= 0.0) {
+                    Err(Actionability::new("visible", "not visible"))
                 } else if !has_state(n, "enabled") {
-                    Err("disabled".to_string())
+                    Err(Actionability::new("enabled", "disabled"))
+                } else if editable && !is_editable(n) {
+                    Err(Actionability::new("editable", format!("not editable (a {}{})", role_of(n), if has_state(n, "read-only") { ", read-only" } else { "" })))
                 } else {
-                    let c = rect.expect("checked").center();
+                    let c = shown.expect("checked").visible.center();
                     match s.hit_node(egui::ViewportId::ROOT, c) {
                         Some(h)
                             if h.id() != id
                                 && !h.ancestors().any(|a| a.id() == id)
                                 && !n.ancestors().any(|a| a.id() == h.id()) =>
                         {
-                            Err(format!(
-                                "{} {} receives the events at {c:?}",
-                                h.tag(),
-                                h.id()
-                            ))
+                            let mut a = Actionability::new(
+                                "hit",
+                                format!("covered by {} at ({:.0}, {:.0})", describe_node(h), c.x, c.y),
+                            );
+                            a.cover = Some(h.id());
+                            Err(a)
                         }
                         _ => Ok(()),
                     }
                 };
-                Ok((id, rect, check))
+                Ok((id, shown.map(|sh| Aim { rect: sh.rect, at: sh.visible.center() }), check))
             });
-            let (id, rect, check) = match found {
+            let (id, aim, check) = match found {
                 Ok(f) => f,
                 // a selector that does not match yet may match after the next settle
                 Err(e) if e.code == "node.not_found" => {
-                    why = e.message;
-                    if self.now_ms - start >= opts.timeout_ms {
-                        return Err(Error::new("timeout", why));
+                    failed = Actionability::new("attached", format!("not attached: {}", e.message));
+                    if self.expired(&d).is_some() {
+                        let head = e.message.clone();
+                        return Err(self.timeout("timeout", head, format!("actionable {}", target.describe()), &d, Vec::new(), Some(failed)));
                     }
                     self.step();
                     continue;
@@ -641,23 +838,48 @@ impl<D: Driver> Session<D> {
                 Err(e) => return Err(e),
             };
             if opts.force {
-                return Ok((id, rect.unwrap_or(egui::Rect::NOTHING)));
+                let rect = aim.map_or(egui::Rect::NOTHING, |a| a.rect);
+                return Ok((id, aim.unwrap_or(Aim { rect, at: rect.center() })));
             }
+            let rect = aim.map(|a| a.rect);
             let stable = rect.is_some() && prev == rect;
             match check {
-                Ok(()) if stable => return Ok((id, rect.expect("stable"))),
-                Ok(()) => why = "not stable yet".to_string(),
-                Err(w) => why = w,
+                Ok(()) if stable => return Ok((id, aim.expect("stable"))),
+                Ok(()) => {
+                    failed = match (prev, rect) {
+                        (Some(p), Some(r)) => Actionability::new(
+                            "stable",
+                            format!("still moving: from {:?} to {:?} in the last frame", [p.min.x, p.min.y, p.width(), p.height()], [r.min.x, r.min.y, r.width(), r.height()]),
+                        ),
+                        _ => Actionability::new("stable", "still moving: first frame drawn"),
+                    }
+                }
+                Err(a) => {
+                    if a.detail == OUT_OF_VIEW {
+                        self.request_scroll(id, false);
+                        scrolled = true;
+                    }
+                    failed = a;
+                }
             }
             prev = rect;
-            if self.now_ms - start >= opts.timeout_ms {
-                return Err(Error::new(
-                    "node.not_actionable",
-                    format!("{} after {} ms: {why}", target.describe(), opts.timeout_ms),
-                ));
+            if self.expired(&d).is_some() {
+                let head = format!("{} after {} ms: {}", target.describe(), opts.timeout_ms, failed.detail);
+                return Err(self.timeout("node.not_actionable", head, format!("actionable {}", target.describe()), &d, Vec::new(), Some(failed)));
             }
             self.step();
         }
+    }
+
+    /// AX1: asks the scrollables around `id` (every `scroll-area`, a `virtual-list` whose realised
+    /// row it is in) to bring it into view at the next pass.
+    fn request_scroll(&mut self, id: NodeId, center: bool) {
+        let _ = self.driver.scene().write(ProviderId::APP, |m| {
+            if let Some(mut n) = m.node(id) {
+                n.scroll_into_view(center);
+            }
+        });
+        self.pending_input = true;
     }
 
     /// The AccessKit node drawn for `rect` (best overlap, at least half), for semantic acts.
@@ -718,13 +940,24 @@ impl<D: Driver> Session<D> {
         &mut self,
         target: Target,
         opts: ActOptions,
-        inject: impl FnOnce(&mut Self, NodeId, egui::Rect) -> Tier,
+        inject: impl FnOnce(&mut Self, NodeId, Aim) -> Tier,
+    ) -> Result<ActResult, Error> {
+        self.act_on(target, opts, false, inject)
+    }
+
+    /// [`Session::act`]; `editable`: the target must also take text (`fill`).
+    fn act_on(
+        &mut self,
+        target: Target,
+        opts: ActOptions,
+        editable: bool,
+        inject: impl FnOnce(&mut Self, NodeId, Aim) -> Tier,
     ) -> Result<ActResult, Error> {
         self.check(true)?;
-        let (id, rect) = self.actionable(&target, &opts)?;
+        let (id, aim) = self.actionable(&target, &opts, editable)?;
         let scene = self.driver.scene();
         let obs = scene.observe(ChangeFilter::all());
-        let tier = inject(self, id, rect);
+        let tier = inject(self, id, aim);
         let settled = self.wait_settled(opts.timeout_ms);
         let set = scene.take_changes(&obs);
         settled?;
@@ -743,15 +976,135 @@ impl<D: Driver> Session<D> {
         target: impl Into<Target>,
         opts: ActOptions,
     ) -> Result<ActResult, Error> {
-        self.act(target.into(), opts, |me, _, rect| {
+        self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
             if opts.tier == Tier::Semantic
                 && let Some(n) = me.a11y_target(rect)
             {
                 me.accesskit(&n, Action::Click, None);
                 return Tier::Semantic;
             }
-            me.pointer_click(rect.center(), egui::PointerButton::Primary);
+            me.pointer_click(aim, egui::PointerButton::Primary);
             Tier::Synthetic
+        })
+    }
+
+    /// AX1 `input.click {button: "secondary"}`: a secondary press and release at the target's
+    /// point (a right click: opens its `context-menu`, raises a list's `row-context`). Synthetic
+    /// only.
+    pub fn context_click(
+        &mut self,
+        target: impl Into<Target>,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        self.act(target.into(), opts, |me, _, Aim { at, .. }| {
+            me.pointer_click(at, egui::PointerButton::Secondary);
+            Tier::Synthetic
+        })
+    }
+
+    /// AX1 `input.scroll_into_view`: scrolls every `scroll-area` around the target (and a
+    /// `virtual-list` whose realised row it is in) until it is wholly in view, or as much of it
+    /// as fits (`center`: centred). The target must be attached and visible (scrolled-out
+    /// counts); it need not be enabled. Replies after the settle, with what changed. Acts do this
+    /// themselves; call it to look at (snapshot, screenshot) a node out of view.
+    pub fn scroll_into_view(
+        &mut self,
+        target: impl Into<Target>,
+        center: bool,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        self.check(true)?;
+        let target = target.into();
+        let scene = self.driver.scene();
+        let obs = scene.observe(ChangeFilter::all());
+        let start = self.now_ms;
+        let mut asked = 0u32;
+        let mut prev = None;
+        loop {
+            let probe = self.with_scene(|s, roots| -> Result<_, Error> {
+                let id = match &target {
+                    Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
+                    Target::Invalid(e) => return Err(e.clone()),
+                    Target::Ref(r) => {
+                        if r.epoch != self.epoch || s.get(r.id).is_none() {
+                            return Err(stale(*r));
+                        }
+                        r.id
+                    }
+                };
+                let n = s.get(id).expect("resolved");
+                Ok((id, n.is_shown(), n.shown().filter(|sh| sh.rect.area() > 0.0)))
+            });
+            let (id, visible, shown) = match probe {
+                Err(e) if e.code == "node.not_found" && self.now_ms - start < opts.timeout_ms => {
+                    self.step();
+                    continue;
+                }
+                p => p?,
+            };
+            let whole = shown.is_some_and(|sh| sh.visible.area() + 0.5 >= sh.rect.area());
+            // in view (or as much as fits, after a request), and still there a frame later
+            if visible && shown.is_some() && (whole || asked > 0) && prev == shown.map(|sh| sh.rect) {
+                break;
+            }
+            if visible && !whole && (asked == 0 || shown.is_none()) {
+                self.request_scroll(id, center);
+                asked += 1;
+            }
+            prev = shown.map(|sh| sh.rect);
+            if self.now_ms - start >= opts.timeout_ms {
+                return Err(Error::new(
+                    "node.not_actionable",
+                    format!("{} after {} ms: {}", target.describe(), opts.timeout_ms, if visible { "not in view" } else { "not visible" }),
+                ));
+            }
+            self.step();
+        }
+        let settled = self.wait_settled(opts.timeout_ms);
+        let set = scene.take_changes(&obs);
+        settled?;
+        Ok(ActResult {
+            frame: self.frame,
+            epoch: self.epoch,
+            tier: Tier::Synthetic,
+            changed: set.by_node().map(|(n, m)| (n, format!("{m:?}"))).collect(),
+        })
+    }
+
+    /// AX1 `input.scroll_into_view {row}`: scrolls `list` (a `virtual-list`, so a `ListView` or
+    /// a `TreeView`) until position `pos` is in view and its row is realised; then its content
+    /// can be found (`key=<item key> >> anchor=…`). Replies after the settle.
+    pub fn scroll_to_row(
+        &mut self,
+        list: impl Into<Target>,
+        pos: usize,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        self.check(true)?;
+        let target = list.into();
+        let id = self.with_scene(|s, roots| match &target {
+            Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?),
+            Target::Invalid(e) => Err(e.clone()),
+            Target::Ref(r) if r.epoch == self.epoch && s.get(r.id).is_some() => Ok(r.id),
+            Target::Ref(r) => Err(stale(*r)),
+        })?;
+        let scene = self.driver.scene();
+        let obs = scene.observe(ChangeFilter::all());
+        let wrote = scene
+            .write(ProviderId::APP, |m| m.scroll_list_to(id, pos))
+            .map_err(|_| Error::new("scene.busy", "the scene is being drawn"))?;
+        wrote.map_err(|e| Error::new("params.invalid", format!("{}: {e}", target.describe())))?;
+        self.pending_input = true;
+        // the offset is decided next pass, the rows bound in it and drawn in the one after
+        self.step();
+        let settled = self.wait_settled(opts.timeout_ms);
+        let set = scene.take_changes(&obs);
+        settled?;
+        Ok(ActResult {
+            frame: self.frame,
+            epoch: self.epoch,
+            tier: Tier::Synthetic,
+            changed: set.by_node().map(|(n, m)| (n, format!("{m:?}"))).collect(),
         })
     }
 
@@ -761,9 +1114,120 @@ impl<D: Driver> Session<D> {
         target: impl Into<Target>,
         opts: ActOptions,
     ) -> Result<ActResult, Error> {
-        self.act(target.into(), opts, |me, _, rect| {
-            me.send(egui::Event::PointerMoved(rect.center()));
+        self.act(target.into(), opts, |me, _, Aim { at: aim, .. }| {
+            me.send(egui::Event::PointerMoved(aim));
             Tier::Synthetic
+        })
+    }
+
+    /// SV51 `input.pointer_move`: the pointer moves to `at` in the target (its local points), with
+    /// `modifiers` held during the move. Synthetic only.
+    pub fn pointer_move(
+        &mut self,
+        target: impl Into<Target>,
+        at: At,
+        modifiers: egui::Modifiers,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
+            me.with_modifiers(modifiers, |me| me.send(egui::Event::PointerMoved(at.in_rect(rect, aim))));
+            Tier::Synthetic
+        })
+    }
+
+    /// SV51 `input.wheel`: the pointer moves to the point, then one wheel event there (egui's
+    /// `MouseWheel`: line, point or page deltas, with its modifiers). Synthetic only.
+    pub fn wheel(
+        &mut self,
+        target: impl Into<Target>,
+        wheel: Wheel,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
+            let p = wheel.at.in_rect(rect, aim);
+            me.send(egui::Event::PointerMoved(p));
+            me.step(); // the wheel scrolls what is hovered
+            me.with_modifiers(wheel.modifiers, |me| {
+                me.send(egui::Event::MouseWheel {
+                    unit: wheel.unit,
+                    delta: wheel.delta,
+                    phase: egui::TouchPhase::Move,
+                    source: egui::MouseWheelSource::Unknown,
+                    modifiers: wheel.modifiers,
+                })
+            });
+            Tier::Synthetic
+        })
+    }
+
+    /// SV51 `input.drag`: a press at `drag.from` in the target, `drag.steps` pointer moves on a
+    /// straight line to `drag.to`, one frame each, and the release there, with `drag.modifiers`
+    /// held throughout. Deterministic: frames run at the driver's step (the virtual clock).
+    /// Synthetic only. A `DragTo::Node` end must resolve (to one node) when the drag starts.
+    pub fn drag(
+        &mut self,
+        target: impl Into<Target>,
+        drag: Drag,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        let end = match &drag.to {
+            DragTo::Local(_) => None,
+            DragTo::Node(t) => Some(self.resolve_rect(t)?),
+        };
+        self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
+            let from = drag.from.in_rect(rect, aim);
+            let to = match (&drag.to, end) {
+                (DragTo::Local(p), _) => rect.min + p.to_vec2(),
+                (_, Some(r)) => r.center(),
+                (_, None) => from,
+            };
+            let (b, m) = (drag.button, drag.modifiers);
+            if m != egui::Modifiers::NONE {
+                me.send(egui::Event::ModifiersChanged(m));
+            }
+            me.send(egui::Event::PointerMoved(from));
+            me.step();
+            me.send(egui::Event::PointerButton { pos: from, button: b, pressed: true, modifiers: m });
+            me.step();
+            let n = drag.steps.max(1);
+            for i in 1..=n {
+                me.send(egui::Event::PointerMoved(from.lerp(to, i as f32 / n as f32)));
+                me.step();
+            }
+            me.send(egui::Event::PointerButton { pos: to, button: b, pressed: false, modifiers: m });
+            if m != egui::Modifiers::NONE {
+                me.send(egui::Event::ModifiersChanged(egui::Modifiers::NONE));
+            }
+            Tier::Synthetic
+        })
+    }
+
+    /// `f`'s events with `m` held (a `ModifiersChanged` before and after, when not none).
+    fn with_modifiers(&mut self, m: egui::Modifiers, f: impl FnOnce(&mut Self)) {
+        if m == egui::Modifiers::NONE {
+            return f(self);
+        }
+        self.send(egui::Event::ModifiersChanged(m));
+        f(self);
+        self.send(egui::Event::ModifiersChanged(egui::Modifiers::NONE));
+    }
+
+    /// The screen rect of `target` now (one node), for a drag's end.
+    fn resolve_rect(&self, target: &Target) -> Result<egui::Rect, Error> {
+        self.with_scene(|s, roots| {
+            let id = match target {
+                Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
+                Target::Invalid(e) => return Err(e.clone()),
+                Target::Ref(r) => {
+                    if r.epoch != self.epoch || s.get(r.id).is_none() {
+                        return Err(stale(*r));
+                    }
+                    r.id
+                }
+            };
+            s.get(id)
+                .and_then(|n| n.shown().map(|sh| sh.rect))
+                .ok_or_else(|| Error::new("node.not_actionable", format!("{} is not drawn", target.describe())))
         })
     }
 
@@ -773,12 +1237,12 @@ impl<D: Driver> Session<D> {
         target: impl Into<Target>,
         opts: ActOptions,
     ) -> Result<ActResult, Error> {
-        self.act(target.into(), opts, |me, _, rect| {
+        self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
             if let Some(n) = me.a11y_target(rect) {
                 me.accesskit(&n, Action::Focus, None);
                 return Tier::Semantic;
             }
-            me.pointer_click(rect.center(), egui::PointerButton::Primary);
+            me.pointer_click(aim, egui::PointerButton::Primary);
             Tier::Synthetic
         })
     }
@@ -792,14 +1256,14 @@ impl<D: Driver> Session<D> {
         opts: ActOptions,
     ) -> Result<ActResult, Error> {
         let text = text.to_string();
-        self.act(target.into(), opts, move |me, _, rect| {
+        self.act_on(target.into(), opts, true, move |me, _, Aim { rect, at: aim }| {
             if opts.tier == Tier::Semantic
                 && let Some(n) = me.a11y_target(rect)
             {
                 me.accesskit(&n, Action::SetValue, Some(ActionData::Value(text.into())));
                 return Tier::Semantic;
             }
-            me.pointer_click(rect.center(), egui::PointerButton::Primary);
+            me.pointer_click(aim, egui::PointerButton::Primary);
             me.step(); // focus lands before the keys
             me.key(egui::Key::A, egui::Modifiers::COMMAND);
             me.send(egui::Event::Text(text));
@@ -814,7 +1278,7 @@ impl<D: Driver> Session<D> {
         value: f64,
         opts: ActOptions,
     ) -> Result<ActResult, Error> {
-        self.act(target.into(), opts, move |me, _, rect| {
+        self.act(target.into(), opts, move |me, _, Aim { rect, .. }| {
             // no AccessKit node: nothing to set, and the reply shows no change
             if let Some(n) = me.a11y_target(rect) {
                 me.accesskit(&n, Action::SetValue, Some(ActionData::NumericValue(value)));
@@ -835,7 +1299,7 @@ impl<D: Driver> Session<D> {
         opts: ActOptions,
     ) -> Result<ActResult, Error> {
         let mut missing = None;
-        let r = self.act(target.into(), opts, |me, _, rect| {
+        let r = self.act(target.into(), opts, |me, _, Aim { rect, .. }| {
             let area = rect.expand(2.0);
             let mut handles: Vec<A11yNode> = me
                 .driver
@@ -987,9 +1451,55 @@ impl<D: Driver> Session<D> {
                     .map(|n| json!({"role": format!("{:?}", n.role), "label": n.label, "author_id": n.author_id, "rect": [n.rect.min.x, n.rect.min.y, n.rect.width(), n.rect.height()]}))
                     .collect::<Vec<_>>()
             ),
-            "input.click" => act_json(self.click(target_param(p)?, opts()?)?),
+            "input.click" => match p.get("button").and_then(Value::as_str).unwrap_or("primary") {
+                "primary" | "left" => act_json(self.click(target_param(p)?, opts()?)?),
+                "secondary" | "right" => act_json(self.context_click(target_param(p)?, opts()?)?),
+                b => return Err(Error::new("params.invalid", format!("unknown button `{b}` (primary, secondary)"))),
+            },
+            "input.scroll_into_view" => match p.get("row") {
+                None | Some(Value::Null) => {
+                    let center = p.get("align").and_then(Value::as_str) == Some("center");
+                    act_json(self.scroll_into_view(target_param(p)?, center, opts()?)?)
+                }
+                Some(r) => {
+                    let pos = r.as_u64().ok_or_else(|| Error::new("params.invalid", "`row` wants a position (0-based)"))?;
+                    act_json(self.scroll_to_row(target_param(p)?, pos as usize, opts()?)?)
+                }
+            },
             "input.hover" => act_json(self.hover(target_param(p)?, opts()?)?),
             "input.focus" => act_json(self.focus(target_param(p)?, opts()?)?),
+            "input.pointer_move" => act_json(self.pointer_move(target_param(p)?, at_param(p, "at")?, modifiers_param(p)?, opts()?)?),
+            "input.wheel" => {
+                let unit = match p.get("unit").and_then(Value::as_str).unwrap_or("line") {
+                    "line" => egui::MouseWheelUnit::Line,
+                    "pixel" | "point" => egui::MouseWheelUnit::Point,
+                    "page" => egui::MouseWheelUnit::Page,
+                    u => return Err(Error::new("params.invalid", format!("unknown wheel unit `{u}` (line, pixel, page)"))),
+                };
+                let num = |k: &str| p.get(k).map_or(Ok(0.0), |v| v.as_f64().ok_or_else(|| Error::new("params.invalid", format!("`{k}` wants a number"))));
+                let wheel = Wheel { at: at_param(p, "at")?, delta: egui::vec2(num("dx")? as f32, num("dy")? as f32), unit, modifiers: modifiers_param(p)? };
+                act_json(self.wheel(target_param(p)?, wheel, opts()?)?)
+            }
+            "input.drag" => {
+                let to = match (p.get("to"), p.get("to_selector"), p.get("to_ref")) {
+                    (Some(_), None, None) => match at_param(p, "to")? {
+                        At::Local(l) => DragTo::Local(l),
+                        At::Center => return Err(Error::new("params.invalid", "`to` wants [x, y]")),
+                    },
+                    (None, Some(_), None) => DragTo::Node(Target::Selector(parse(str_param(p, "to_selector")?)?)),
+                    (None, None, Some(_)) => DragTo::Node(target_param(&json!({"ref": p["to_ref"]}))?),
+                    _ => return Err(Error::new("params.invalid", "input.drag wants one of `to` ([x, y] in the target), `to_selector` or `to_ref`")),
+                };
+                let button = match p.get("button").and_then(Value::as_str).unwrap_or("primary") {
+                    "primary" | "left" => egui::PointerButton::Primary,
+                    "secondary" | "right" => egui::PointerButton::Secondary,
+                    "middle" => egui::PointerButton::Middle,
+                    b => return Err(Error::new("params.invalid", format!("unknown button `{b}`"))),
+                };
+                let steps = p.get("steps").and_then(Value::as_u64).unwrap_or(10) as u32;
+                let drag = Drag { from: at_param(p, "from")?, to, steps: steps.max(1), button, modifiers: modifiers_param(p)? };
+                act_json(self.drag(target_param(p)?, drag, opts()?)?)
+            }
             "input.fill" => act_json(self.fill(target_param(p)?, str_param(p, "text")?, opts()?)?),
             "input.set_value" => {
                 let v = p.get("value").and_then(Value::as_f64).ok_or_else(|| Error::new("params.invalid", "`value` wants a number"))?;
@@ -1001,21 +1511,9 @@ impl<D: Driver> Session<D> {
             }
             "input.press" => act_json(self.press(str_param(p, "key")?)?),
             "input.type" => act_json(self.type_text(str_param(p, "text")?)?),
-            "wait.settled" => json!({"frames": self.wait_settled(timeout(p))?}),
+            "wait.settled" => json!({"frames": self.wait_settled_within(waits::budget(p))?}),
             "wait.for" => {
-                let state = match p.get("state").and_then(Value::as_str).unwrap_or("visible") {
-                    "attached" => WaitState::Attached,
-                    "detached" => WaitState::Detached,
-                    "visible" => WaitState::Visible,
-                    "hidden" => WaitState::Hidden,
-                    "enabled" => WaitState::Enabled,
-                    s => return Err(Error::new("params.invalid", format!("unknown state `{s}`"))),
-                };
-                let expect = match p.get("expect") {
-                    None | Some(Value::Null) => None,
-                    Some(e) => Some(expect_param(e)?),
-                };
-                let found = self.wait_for(str_param(p, "selector")?, state, expect.as_ref(), timeout(p))?;
+                let found = self.wait_for_within(&Condition::from_json(p)?, waits::budget(p))?;
                 json!(found.iter().map(NodeInfo::to_json).collect::<Vec<_>>())
             }
             "capture.screenshot" => {
@@ -1039,13 +1537,39 @@ impl<D: Driver> Session<D> {
                 let (changes, overflowed) = self.journal_take()?;
                 json!({"changes": changes.iter().map(|(n, m)| json!({"id": n.to_raw(), "what": m})).collect::<Vec<_>>(), "overflowed": overflowed})
             }
+            m if waits::METHODS.contains(&m) => self.call_waits(m, p)?,
             m => return Err(Error::new("method.unknown", format!("`{m}`"))),
         })
     }
 }
 
-/// One actionability probe: the node, its screen rect, and why it is not actionable yet.
-type Probe = (NodeId, Option<egui::Rect>, Result<(), String>);
+/// One actionability probe: the node, where to aim, and the check it fails.
+type Probe = (NodeId, Option<Aim>, Result<(), Actionability>);
+
+/// AX1: the probe's detail for a node out of view (it is scrolled in, then probed again).
+const OUT_OF_VIEW: &str = "out of view";
+
+/// `fill`'s editable check: not read-only, and not a role that never takes text.
+fn is_editable(n: NodeRef<'_>) -> bool {
+    !has_state(n, "read-only")
+        && !matches!(
+            role_of(n),
+            "button" | "checkbox" | "radio" | "switch" | "label" | "link" | "img" | "separator" | "slider" | "progressbar" | "menu" | "tab"
+        )
+}
+
+/// `button #12 "Overlay" (anchor=cover)`, for reports.
+fn describe_node(n: NodeRef<'_>) -> String {
+    let mut s = format!("{} {}", n.tag(), n.id());
+    let name = accessible_name(n);
+    if !name.is_empty() {
+        s.push_str(&format!(" {name:?}"));
+    }
+    if let Some(a) = n.anchor() {
+        s.push_str(&format!(" (anchor={a})"));
+    }
+    s
+}
 
 /// What an act aims at: a selector (resolved strictly before each try) or an element ref.
 #[derive(Clone, Debug)]
@@ -1145,6 +1669,38 @@ fn str_param<'v>(p: &'v Value, k: &str) -> Result<&'v str, Error> {
     p.get(k)
         .and_then(Value::as_str)
         .ok_or_else(|| Error::new("params.invalid", format!("`{k}` wants a string")))
+}
+
+/// SV51: `[x, y]` in the target's local points under `k`; absent: its centre.
+fn at_param(p: &Value, k: &str) -> Result<At, Error> {
+    match p.get(k) {
+        None | Some(Value::Null) => Ok(At::Center),
+        Some(Value::Array(a)) if a.len() == 2 && a.iter().all(Value::is_number) => {
+            Ok(At::Local(egui::pos2(a[0].as_f64().unwrap_or(0.0) as f32, a[1].as_f64().unwrap_or(0.0) as f32)))
+        }
+        _ => Err(Error::new("params.invalid", format!("`{k}` wants [x, y] (local points of the target)"))),
+    }
+}
+
+/// SV51: `modifiers`: `"Shift+Ctrl"` (the names of `input.press`'s chords) or `["Shift", "Ctrl"]`.
+fn modifiers_param(p: &Value) -> Result<egui::Modifiers, Error> {
+    let names: Vec<String> = match p.get("modifiers") {
+        None | Some(Value::Null) => return Ok(egui::Modifiers::NONE),
+        Some(Value::String(s)) => s.split('+').map(|x| x.trim().to_string()).filter(|x| !x.is_empty()).collect(),
+        Some(Value::Array(a)) => a.iter().map(|v| v.as_str().unwrap_or("?").to_string()).collect(),
+        _ => return Err(Error::new("params.invalid", "`modifiers` wants \"Shift+Ctrl\" or [\"Shift\", \"Ctrl\"]")),
+    };
+    let mut m = egui::Modifiers::NONE;
+    for n in names {
+        match n.as_str() {
+            "Ctrl" | "Control" => m.ctrl = true,
+            "Cmd" | "Command" | "Mod" => m |= egui::Modifiers::COMMAND,
+            "Shift" => m.shift = true,
+            "Alt" | "Option" => m.alt = true,
+            x => return Err(Error::new("params.invalid", format!("unknown modifier `{x}`"))),
+        }
+    }
+    Ok(m)
 }
 
 fn timeout(p: &Value) -> f64 {
