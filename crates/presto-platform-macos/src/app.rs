@@ -307,14 +307,13 @@ pub(crate) struct MacCx {
 }
 
 impl PlatformCx for MacCx {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
-        let Some(id) = with_app(|st| {
+    fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
+        let id = with_app(|st| {
             let id = WindowId(st.next_window);
             st.next_window += 1;
             id
-        }) else {
-            panic!("create_window: the platform is not running");
-        };
+        })
+        .ok_or_else(|| PlatformError::EventLoop("the platform is not running".into()))?;
         let (visible, maximized) = (desc.visible, desc.maximized);
         let mut state = WindowState::new(self.mtm, id, &desc);
         let (window, size) = (state.ns_window.clone(), state.device_size());
@@ -328,7 +327,7 @@ impl PlatformCx for MacCx {
                 scale: size.1,
             },
         ));
-        id
+        Ok(id)
     }
 
     fn close_window(&mut self, id: WindowId) {
@@ -564,6 +563,17 @@ impl PlatformCx for MacCx {
 
     fn window_scale(&self, id: WindowId) -> Option<Scale> {
         with_window(id, |w| Scale(w.scale() as f32))
+    }
+
+    /// The best timing source this macOS has (`NSView.displayLink` on 14+, else `CVDisplayLink`).
+    fn frame_source(
+        &mut self,
+        id: WindowId,
+    ) -> Option<Arc<dyn presto_platform::frame::FrameSource>> {
+        let config = crate::FrameSourceConfig::new(crate::FrameSourceKind::best_timing());
+        crate::frame_source(id, config)
+            .ok()
+            .map(|s| Arc::new(s) as Arc<dyn presto_platform::frame::FrameSource>)
     }
 
     fn exit(&mut self) {

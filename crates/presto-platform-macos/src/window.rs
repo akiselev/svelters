@@ -51,6 +51,8 @@ pub(crate) struct WindowState {
     pub a11y: A11y,
     pub last_size: Option<(DeviceSize, f32)>,
     pub live_resize: bool,
+    /// The window's frame sources, for occlusion reports.
+    pub frame_sources: Vec<crate::display_link::OcclusionHandle>,
 }
 
 impl WindowState {
@@ -125,6 +127,7 @@ impl WindowState {
             a11y,
             last_size: None,
             live_resize: false,
+            frame_sources: Vec::new(),
         }
     }
 
@@ -291,12 +294,16 @@ define_class!(
         #[unsafe(method(windowDidChangeOcclusionState:))]
         fn did_change_occlusion(&self, _note: &NSNotification) {
             let id = self.ivars().window;
-            let Some(window) = app::with_window(id, |w| w.ns_window.clone()) else {
+            let Some((window, sources)) =
+                app::with_window(id, |w| (w.ns_window.clone(), w.frame_sources.clone()))
+            else {
                 return;
             };
             let visible = window
                 .occlusionState()
                 .contains(NSWindowOcclusionState::Visible);
+            let live: Vec<_> = sources.into_iter().filter(|s| s.notify(!visible)).collect();
+            app::with_window(id, |w| w.frame_sources = live);
             app::post(Pending::Window(id, WindowEvent::Occluded(!visible)));
         }
     }

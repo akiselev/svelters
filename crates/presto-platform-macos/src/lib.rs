@@ -6,8 +6,8 @@
 //! frame sources, live resize with `presentsWithTransaction`, the app delegate (Cmd-Q veto, reopen),
 //! an AccessKit host view, the menu bar through muda, cursors and the clipboard.
 //!
-//! It implements `presto_platform`'s [`AppHandler`] / [`PlatformCx`]; [`shim`] holds the frame-source
-//! trait `presto-platform` doesn't have yet. macOS extras are [`MacAppHandler`] callbacks and the
+//! It implements `presto_platform`'s [`AppHandler`] / [`PlatformCx`] and its `FrameSource` (see
+//! [`display_link`]). macOS extras are [`MacAppHandler`] callbacks and the
 //! main-thread functions below.
 //!
 //! | Module | What |
@@ -31,7 +31,6 @@ pub mod keymap;
 mod layer;
 mod menu;
 mod monitor;
-pub mod shim;
 pub mod text_input;
 mod time;
 mod view;
@@ -39,12 +38,13 @@ mod window;
 
 pub use a11y::a11y_update;
 pub use app::{MacAppHandler, MacConfig, run, run_mac};
-pub use display_link::{FrameSourceConfig, FrameSourceKind, MacFrameSource, MetalDrawable};
+pub use display_link::{
+    FrameSourceConfig, FrameSourceKind, MacFrameSource, MetalDrawable, VsyncTick,
+};
 pub use keymap::OptionAsAlt;
 pub use menu::set_menu_bar;
 pub use muda;
 pub use presto_platform::{AppHandler, PlatformCx, PlatformError};
-pub use shim::{FrameSource, VsyncTick};
 pub use time::MachClock;
 
 use objc2::MainThreadMarker;
@@ -105,7 +105,8 @@ pub fn in_live_resize(window: WindowId) -> bool {
     app::with_window(window, |w| w.live_resize).unwrap_or(false)
 }
 
-/// Creates `window`'s frame source; hand it to the compositor thread. Main thread.
+/// Creates `window`'s frame source (an `Arc` of it goes to `CompositorHandle::set_frame_source`); the
+/// window's occlusion changes reach it as `FrameWait::Occluded`. Main thread.
 pub fn frame_source(
     window: WindowId,
     config: FrameSourceConfig,
@@ -114,5 +115,8 @@ pub fn frame_source(
         MainThreadMarker::new().ok_or_else(|| PlatformError::Os("not the main thread".into()))?;
     let (view, layer) = app::with_window(window, |w| (w.view.clone(), w.layer.clone()))
         .ok_or_else(|| PlatformError::Os(format!("unknown window {window:?}")))?;
-    MacFrameSource::new(mtm, &view, &layer, config)
+    let source = MacFrameSource::new(mtm, &view, &layer, config)?;
+    let handle = source.occlusion_handle();
+    app::with_window(window, |w| w.frame_sources.push(handle));
+    Ok(source)
 }
