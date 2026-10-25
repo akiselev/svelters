@@ -26,8 +26,8 @@ mod parts;
 mod text;
 
 pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint_inset_shadows, paint_outline};
-pub use icon::{IconKey, content_icon, icon_size, paint_icon};
-pub use image::paint_image;
+pub use icon::{IconKey, content_icon, icon_size, icon_size_sized, is_registered, paint_icon, paint_icon_sized, paint_missing};
+pub use image::{fit_rect, paint_image, paint_image_pixels};
 pub use parts::{PartItem, layout_parts, measure_parts};
 pub use text::{Align, Elide, elide, elide_with, measure_text, paint_runs, paint_text, text_layout, text_style};
 
@@ -370,7 +370,7 @@ impl<'a> StyleView<'a> {
     /// The `box-shadow` list: CSS's, else the UA table's (an `elev-*` token or a literal list).
     pub fn shadows(&self) -> Option<Cow<'a, [Shadow]>> {
         if let Some(ComputedValue::Shadows(l)) = self.css("box-shadow") {
-            return (!l.is_empty()).then(|| Cow::Borrowed(&**l));
+            return (!l.is_empty()).then_some(Cow::Borrowed(&**l));
         }
         match self.ua.find_own("box-shadow", self.state)? {
             UaValue::Shadows(l) if !l.is_empty() => Some(Cow::Borrowed(l)),

@@ -9,6 +9,7 @@ use crate::api::{
 };
 use crate::clipboard::{Clipboard, SystemClipboard};
 use crate::clock::{self, OsClock};
+use crate::frame::{FrameSource, IntervalSource};
 use crate::os::{self, ShimHooks, WindowShim};
 use crate::translate::{self, Translated, WindowInput};
 use presto_base::accesskit;
@@ -17,7 +18,7 @@ use presto_base::event::InputEnvelope;
 use presto_base::input::InputPurpose;
 use presto_base::geom::{DeviceSize, Rect, Scale, Vec2};
 use presto_base::ids::{InputSeq, SurfaceId, WindowId};
-use presto_base::time::{Clock, Time};
+use presto_base::time::{Clock, Span, Time};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -52,7 +53,7 @@ pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
         let p = poster.clone();
         os::install_app_hooks(Box::new(move || p.post(UserEvent::QuitRequested)));
     }
-    let mut app = WinitApp { handler, state: State::new(poster) };
+    let mut app = WinitApp { handler, state: State::new(poster), started: false };
     event_loop.run_app(&mut app).map_err(|e| PlatformError::EventLoop(e.to_string()))
 }
 
@@ -68,13 +69,15 @@ impl Poster {
     }
 }
 
+/// Fields drop in order: the accessibility adapter unhooks first (it subclassed last), then the
+/// shim, then the window.
 struct Win {
-    window: Window,
-    input: WindowInput,
     a11y: Option<A11yAdapter>,
     shim: WindowShim,
+    input: WindowInput,
     regions: Vec<HitRegion>,
     captured: bool,
+    window: Window,
 }
 
 struct State {
@@ -108,6 +111,7 @@ impl State {
 struct WinitApp {
     handler: Box<dyn AppHandler>,
     state: State,
+    started: bool,
 }
 
 struct Cx<'a> {
@@ -137,14 +141,19 @@ impl WinitApp {
 }
 
 impl ApplicationHandler<UserEvent> for WinitApp {
-    fn new_events(&mut self, el: &ActiveEventLoop, cause: StartCause) {
-        if matches!(cause, StartCause::Init) {
-            self.with_cx(el, |h, cx| h.init(cx));
+    fn new_events(&mut self, el: &ActiveEventLoop, _cause: StartCause) {
+        if self.started {
+            self.run_due_timers(el);
         }
-        self.run_due_timers(el);
     }
 
-    fn resumed(&mut self, _el: &ActiveEventLoop) {}
+    /// winit's place to create windows; it comes once on desktops, after `Init`.
+    fn resumed(&mut self, el: &ActiveEventLoop) {
+        if !self.started {
+            self.started = true;
+            self.with_cx(el, |h, cx| h.init(cx));
+        }
+    }
 
     fn user_event(&mut self, el: &ActiveEventLoop, ev: UserEvent) {
         match ev {
@@ -181,6 +190,19 @@ impl ApplicationHandler<UserEvent> for WinitApp {
         }
         let os_time = win.shim.event_time().unwrap_or(recv);
         let Some(t) = win.input.translate(&ev) else { return };
+        // Windows answers caption drags in WM_NCHITTEST; elsewhere a caption press starts the move.
+        if !cfg!(target_os = "windows") {
+            if let Translated::Input(presto_base::event::InputEvent::Pointer(p)) = &t {
+                if p.phase == presto_base::event::PointerPhase::Down
+                    && p.button == Some(presto_base::event::MouseButton::Primary)
+                    && crate::api::hit_test(&win.regions, p.pos) == crate::api::HitKind::Caption
+                {
+                    if let Err(e) = win.window.drag_window() {
+                        log::debug!("presto-platform: drag_window: {e}");
+                    }
+                }
+            }
+        }
         match t {
             Translated::Input(event) => {
                 let seq = InputSeq(self.state.next_seq);
@@ -257,8 +279,7 @@ impl Cx<'_> {
         self.st.windows.get_mut(&id)
     }
 
-    /// Creates a window; the error says why the OS refused.
-    pub fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
+    fn create(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
         let window = self.el.create_window(window_attributes(&desc)).map_err(|e| PlatformError::Os(e.to_string()))?;
         let id = WindowId(self.st.next_window);
         self.st.next_window += 1;
@@ -266,7 +287,6 @@ impl Cx<'_> {
             let p = self.st.poster.clone();
             Arc::new(move |ev| p.post(UserEvent::A11y(id, ev)))
         };
-        let a11y = A11yAdapter::new(&window, sink);
         let hooks = ShimHooks {
             tick: {
                 let p = self.st.poster.clone();
@@ -279,6 +299,7 @@ impl Cx<'_> {
         };
         let mut shim = WindowShim::install(&window, &desc, hooks);
         shim.set_timer(self.st.timer);
+        let a11y = A11yAdapter::new(&window, sink);
         let scale = window.scale_factor() as f32;
         if desc.visible {
             window.set_visible(true);
@@ -286,18 +307,15 @@ impl Cx<'_> {
         self.st.by_winit.insert(window.id(), id);
         self.st.windows.insert(
             id,
-            Win { window, input: WindowInput::new(scale), a11y, shim, regions: Vec::new(), captured: false },
+            Win { a11y, shim, input: WindowInput::new(scale), regions: Vec::new(), captured: false, window },
         );
         Ok(id)
     }
 }
 
 impl PlatformCx for Cx<'_> {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
-        match self.try_create_window(desc) {
-            Ok(id) => id,
-            Err(e) => panic!("presto-platform: the OS refused to create a window: {e}"),
-        }
+    fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
+        self.create(desc)
     }
 
     fn close_window(&mut self, id: WindowId) {
@@ -488,6 +506,16 @@ impl PlatformCx for Cx<'_> {
 
     fn window_scale(&self, id: WindowId) -> Option<Scale> {
         self.win(id).map(|w| Scale(w.input.scale))
+    }
+
+    fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn FrameSource>> {
+        let w = self.st.windows.get_mut(&id)?;
+        let refresh = w.window.current_monitor().and_then(|m| m.refresh_rate_millihertz());
+        let interval = refresh.filter(|r| *r >= 1_000).map(|r| Span(1_000_000_000_000 / r as i64));
+        if let Some(s) = w.shim.frame_source(interval) {
+            return Some(s);
+        }
+        Some(Arc::new(IntervalSource::from_refresh(refresh, Arc::new(OsClock))))
     }
 
     fn exit(&mut self) {
