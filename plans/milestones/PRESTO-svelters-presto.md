@@ -130,6 +130,11 @@ as above.
   Reads inside the listener answer props it wrote and otherwise fail with a message (the tree is mid-dispatch);
   failures when applied go to `take_deferred_errors`. Test: `tests/deliver.rs`
   `cancelable_events_inside_dispatch_answer_prevented_and_defer_js_ops` (written, not run).
+  **Interim** (coordinator, 2026-10-25, replacing the queue answer): two-phase dispatch. When CORE-3 lands
+  `Document::begin_dispatch(window, event) -> Dispatch`, `Dispatch::next(&mut doc)` and `finish_dispatch`,
+  `PrestoBackend::dispatch` drives the `Dispatch` with the document free between steps (JS runs on the live
+  tree, sets stop/prevent on the `Dispatch`), and the op queue, the "reads fail" path and the sync-delivery
+  hook go; `take_deferred_errors` stays only if something still defers.
 
 ## Not done
 
