@@ -34,6 +34,7 @@ mod tracker;
 mod focus;
 mod hover;
 mod toggle;
+pub mod roving;
 
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
@@ -41,6 +42,7 @@ pub use policy::{ButtonOrder, Kinetic, Native, Platform, Policy, ScrollPolicy, S
 pub use press::{ACCEL_EVERY, ActivateOn, Press, PressParams, Pressable};
 pub use state::StateBits;
 pub use toggle::{Toggle, ToggleParams, Toggleable};
+pub use roving::{Rove, Roving, RovingParams};
 pub use tracker::{ClickOptions, FrameEvent, InputFrame, Mods, Pass, PointerFrame, Sense, Tracker};
 
 use crate::shim::core::EventCx;
