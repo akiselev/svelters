@@ -61,7 +61,7 @@ pub enum TextRequest {
 /// What changed since [`TextEditor::take_changes`].
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Changes {
-    /// The user changed the text (an `input` event).
+    /// The user changed the text (a `changed` signal).
     pub text: bool,
     /// The text was set from outside ([`TextEditor::set_text`]).
     pub external: bool,
@@ -324,7 +324,7 @@ impl TextEditor {
     }
 
     /// Sets the text from outside (the `text` prop): a new history, the caret kept where it can be.
-    /// Not an `input`.
+    /// Not a `changed`.
     pub fn set_text(&mut self, text: &str) {
         if self.doc.text() == text {
             return;
@@ -359,7 +359,7 @@ impl TextEditor {
         self.paste(text);
     }
 
-    /// Replaces the whole text as a user edit (AccessKit `SetValue`): undoable, an `input`.
+    /// Replaces the whole text as a user edit (AccessKit `SetValue`): undoable, a `changed`.
     pub fn set_value_by_user(&mut self, text: &str) {
         self.run(EditCommand::SelectAll);
         self.run(EditCommand::ReplaceSelection(text.to_string()));

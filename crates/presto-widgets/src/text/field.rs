@@ -8,9 +8,11 @@
 //! [`TextInputClient`]) and `a11y`. presto-core's `Kind` trait and its contexts are not there yet,
 //! so the hooks take what they need as arguments; the consolidation wraps them in `impl Kind`.
 //!
-//! Signals for JS ([`FieldSignal`]) follow the HTML input element: `input` on every user change,
-//! `change` when an edited field is committed (Enter or blur), `submit` on Enter in a single-line
-//! field, `cancel` on Escape, `select` when the selection changes.
+//! Signals for JS ([`FieldSignal`]) keep svelters' `text-edit` names (svelters-egui
+//! `kinds/builtin.rs`): `changed` on every user change, `commit` when an edited field is committed
+//! (Enter or blur; `bind:text|commit` follows it), `submit` on Enter in a single-line field; new
+//! here, `cancel` on Escape and `select` when the selection changes. [`TEXT_EDIT_PROPS`] and
+//! [`TEXT_EDIT_SIGNALS`] are the kind's spec rows for presto-core's `KindSpec`.
 
 use super::caret::CaretState;
 use super::editor::{EditorConfig, FocusReason, TextEditor, TextRequest};
@@ -21,6 +23,7 @@ use super::shim::{Clipboard, Layouter, TextGeometry};
 use super::shown::Shown;
 use super::utf16::{floor_boundary, str_byte_to_utf16, str_utf16_to_byte};
 use presto_base::accesskit;
+use presto_base::change::ChangeClass;
 use presto_base::color::{Color, Fill};
 use presto_base::commit::FastCommit;
 use presto_base::display::{DisplayList, Line, LineCap, Prim, Quad};
@@ -33,16 +36,49 @@ use quire_text::{NoWrap, Rejected};
 use std::ops::Range;
 use std::sync::Arc;
 
+/// The `text-edit` kind's props and their change classes (architecture §4.3), with svelters'
+/// names; `read-only` and `wrap` are new.
+pub const TEXT_EDIT_PROPS: &[(&str, ChangeClass)] = &[
+    ("text", ChangeClass::Layout),
+    ("hint-text", ChangeClass::Layout),
+    ("multiline", ChangeClass::Layout),
+    ("password", ChangeClass::Layout),
+    ("wrap", ChangeClass::Layout),
+    ("char-limit", ChangeClass::Paint),
+    ("read-only", ChangeClass::Paint),
+];
+
+/// The `text-edit` kind's signals, by [`FieldSignal::name`].
+pub const TEXT_EDIT_SIGNALS: &[&str] = &["changed", "commit", "submit", "cancel", "select"];
+
 /// What the field tells JS.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum FieldSignal {
-    Input,
-    Change,
+    /// The user edited the text (an undo too).
+    Changed,
+    /// An edited field was committed: Enter, or focus lost after an edit.
+    Commit,
+    /// Enter in a single-line field (after `Commit`).
     Submit,
+    /// Escape.
     Cancel,
     Select,
     /// A command did nothing or less (read-only, the character limit, a filter): the field may flash.
     Rejected(Rejected),
+}
+
+impl FieldSignal {
+    /// The spec's name; `None` for what stays native (a rejected command flashes the field).
+    pub fn name(&self) -> Option<&'static str> {
+        Some(match self {
+            FieldSignal::Changed => "changed",
+            FieldSignal::Commit => "commit",
+            FieldSignal::Submit => "submit",
+            FieldSignal::Cancel => "cancel",
+            FieldSignal::Select => "select",
+            FieldSignal::Rejected(_) => return None,
+        })
+    }
 }
 
 /// The colours `record` paints with, from the field's computed style and theme tokens.
@@ -124,7 +160,7 @@ impl TextField {
 
     // ---- props ----
 
-    /// The `text` prop (not an `input`).
+    /// The `text` prop (not a `changed`).
     pub fn set_text(&mut self, text: &str) {
         self.editor.set_text(text);
         self.after();
@@ -185,7 +221,7 @@ impl TextField {
         }
         if c.text {
             self.edited = true;
-            self.signals.push(FieldSignal::Input);
+            self.signals.push(FieldSignal::Changed);
         }
         if c.selection && !self.signals.contains(&FieldSignal::Select) {
             self.signals.push(FieldSignal::Select);
@@ -494,7 +530,7 @@ impl TextField {
 
     fn commit_change(&mut self) {
         if std::mem::take(&mut self.edited) {
-            self.signals.push(FieldSignal::Change);
+            self.signals.push(FieldSignal::Commit);
         }
     }
 
@@ -697,7 +733,7 @@ mod tests {
         assert_eq!(f.scroll_offset().x, 51.0);
         let c = f.caret_rect().unwrap();
         assert!(c.max.x <= 50.0 + 104.0 + 0.001);
-        assert!(f.take_signals().iter().filter(|s| **s == FieldSignal::Input).count() == 15);
+        assert!(f.take_signals().iter().filter(|s| **s == FieldSignal::Changed).count() == 15);
         press(&mut f, &mut lay, Key::Home, Modifiers::default(), None);
         assert_eq!(f.scroll_offset().x, 0.0);
     }
@@ -709,13 +745,13 @@ mod tests {
         press(&mut f, &mut lay, Key::C, Modifiers::default(), Some("c"));
         assert_eq!(press(&mut f, &mut lay, Key::Enter, Modifiers::default(), Some("\r")), KeyAction::Submit);
         let s = f.take_signals();
-        assert!(s.contains(&FieldSignal::Input) && s.contains(&FieldSignal::Change) && s.contains(&FieldSignal::Submit));
+        assert!(s.contains(&FieldSignal::Changed) && s.contains(&FieldSignal::Commit) && s.contains(&FieldSignal::Submit));
         // blur after no edit: no change
         f.focus_out();
-        assert!(!f.take_signals().contains(&FieldSignal::Change));
+        assert!(!f.take_signals().contains(&FieldSignal::Commit));
         // a prop write is not an input
         f.set_text("zz");
-        assert!(!f.take_signals().contains(&FieldSignal::Input));
+        assert!(!f.take_signals().contains(&FieldSignal::Changed));
         let mut cfg = EditorConfig::default();
         cfg.read_only = true;
         f.set_config(cfg);

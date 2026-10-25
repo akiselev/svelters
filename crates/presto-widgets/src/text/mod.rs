@@ -32,7 +32,7 @@ pub mod utf16;
 
 pub use cell::{CellEditor, CellEnd};
 pub use editor::{Changes, EditorConfig, FocusReason, TextEditor, TextRequest};
-pub use field::{FieldColors, FieldSignal, TextField};
+pub use field::{FieldColors, FieldSignal, TEXT_EDIT_PROPS, TEXT_EDIT_SIGNALS, TextField};
 pub use hex::{HexField, HexSignal};
 pub use keys::{KeyAction, KeyRoute};
 pub use number::{NumFormat, NumberField, NumberSignal, Steps};

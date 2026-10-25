@@ -150,7 +150,7 @@ impl HexField {
 
     pub fn key(&mut self, ev: &KeyEvent, now: Time, lay: &mut dyn Layouter) -> KeyAction {
         let action = self.field.key(ev, now, lay);
-        let edited = self.field.take_signals().contains(&FieldSignal::Input);
+        let edited = self.field.take_signals().contains(&FieldSignal::Changed);
         match action {
             KeyAction::Submit => self.apply(),
             KeyAction::Cancel => {

@@ -436,7 +436,7 @@ impl NumberField {
             }
         }
         let action = self.field.key(ev, now, lay);
-        let edited = self.field.take_signals().contains(&FieldSignal::Input);
+        let edited = self.field.take_signals().contains(&FieldSignal::Changed);
         match action {
             KeyAction::Submit => {
                 let v = if self.dirty() { self.parse(&self.field.text()).unwrap_or(self.value) } else { self.value };
