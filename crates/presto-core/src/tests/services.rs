@@ -113,3 +113,21 @@ fn ids_are_unique_across_kinds() {
     let e = RegistryError::CrossKindCollision { kind: "a", member: "x", other_kind: "b", other: "y", id: 7 };
     assert!(e.to_string().contains("a.x") && e.to_string().contains("b.y"));
 }
+
+#[test]
+fn wire_ids_decode_and_the_spec_hash_ignores_order() {
+    use crate::KindRegistry;
+    let a = testkinds::registry();
+    let (k, m) = a.member(TOGGLE_CHECKED.0).expect("a registered prop");
+    assert_eq!((k, m), ("toggle", "checked"));
+    assert_eq!(a.member(crate::common::CLICK.0), Some(("*", "click")));
+    assert_eq!(a.member(TOGGLE.0).map(|(k, _)| k), Some("toggle"));
+    let mut b = KindRegistry::new();
+    b.register::<testkinds::ToggleKind>().unwrap();
+    b.register::<testkinds::TextKind>().unwrap();
+    b.register::<testkinds::BoxKind>().unwrap();
+    assert_eq!(a.spec_hash(), b.spec_hash());
+    let mut c = KindRegistry::new();
+    c.register::<testkinds::BoxKind>().unwrap();
+    assert_ne!(a.spec_hash(), c.spec_hash());
+}

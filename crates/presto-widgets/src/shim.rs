@@ -280,6 +280,9 @@ pub mod core {
     pub struct Styles<'a> {
         pub computed: Option<&'a ComputedStyle>,
         pub parts: &'a [(&'static str, &'a ComputedStyle)],
+        /// The inline run children a `label` folds into its paragraph, as `runs` records
+        /// (`controls::run`; empty for other kinds).
+        pub children: &'a [Value],
         pub state: StateBits,
         pub dark: bool,
     }
@@ -390,12 +393,14 @@ pub mod core {
         pub capture: Option<bool>,
         /// Requests to the node's peer group ([`PeerRequest`]), applied by core after the event, in order.
         pub peers: Vec<PeerRequest>,
+        /// Move keyboard focus to the node with this anchor (a `label`'s `for`); core resolves it.
+        pub focus_anchor: Option<String>,
     }
 
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new() }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
@@ -633,6 +638,31 @@ pub mod text {
         pub style: u32,
     }
 
+    /// Caret and selection geometry of a laid-out text (presto-text's `TextLayout::hit_test` and
+    /// `selection_rects`), in the layout's coordinates; offsets are UTF-8 bytes of the text.
+    pub trait TextGeometry: Send + Sync {
+        /// The caret offset nearest `p`.
+        fn hit_byte(&self, p: Point) -> usize;
+        /// The rects that highlight `range`, one or more per line.
+        fn selection_rects(&self, range: Range<usize>) -> Vec<presto_base::geom::Rect>;
+    }
+
+    /// A layout's geometry, shared (compared by identity).
+    #[derive(Clone)]
+    pub struct Geometry(pub Arc<dyn TextGeometry>);
+
+    impl std::fmt::Debug for Geometry {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.write_str("Geometry")
+        }
+    }
+
+    impl PartialEq for Geometry {
+        fn eq(&self, o: &Geometry) -> bool {
+            Arc::ptr_eq(&self.0, &o.0)
+        }
+    }
+
     /// Stands in for `presto_text::TextLayout`.
     #[derive(Clone, Debug, Default, PartialEq)]
     pub struct TextLayout {
@@ -640,6 +670,8 @@ pub mod text {
         pub runs: Vec<PlacedRun>,
         /// Number of laid-out lines.
         pub lines: u32,
+        /// Caret and selection geometry (`None`: the shaper gives none).
+        pub geometry: Option<Geometry>,
     }
 
     impl TextLayout {
@@ -662,9 +694,9 @@ pub mod testing {
     //! char's code point, one run per line) and an in-memory [`Resources`]. For tests only.
 
     use super::core::Resources;
-    use super::text::{PlacedRun, RichText, TextLayout, TextShaper};
+    use super::text::{Geometry, PlacedRun, RichText, TextGeometry, TextLayout, TextShaper};
     use presto_base::commit::ImageData;
-    use presto_base::geom::{Point, Size};
+    use presto_base::geom::{Point, Rect, Size};
     use presto_base::ids::{FontId, ImageId, RunId};
     use presto_base::text::{AaMode, Glyph, GlyphRun, HintMode};
     use std::collections::HashMap;
@@ -685,16 +717,32 @@ pub mod testing {
             let adv = Self::advance(size);
             let line_h = t.base.line_height.unwrap_or((size * 1.25).round());
             let per_line = max_width.map(|w| ((w / adv).floor() as usize).max(1));
+            // each line with the byte offset it starts at
             let mut lines: Vec<String> = Vec::new();
+            let mut starts: Vec<usize> = Vec::new();
+            let mut at = 0;
             for para in t.text.split('\n') {
                 let chars: Vec<char> = para.chars().collect();
                 match per_line {
-                    Some(n) if chars.len() > n => lines.extend(chars.chunks(n).map(|c| c.iter().collect())),
-                    _ => lines.push(para.to_owned()),
+                    Some(n) if chars.len() > n => {
+                        let mut b = at;
+                        for c in chars.chunks(n) {
+                            let s: String = c.iter().collect();
+                            starts.push(b);
+                            b += s.len();
+                            lines.push(s);
+                        }
+                    }
+                    _ => {
+                        starts.push(at);
+                        lines.push(para.to_owned());
+                    }
                 }
+                at += para.len() + 1;
             }
             if let Some(m) = t.max_lines {
                 lines.truncate(m.max(1) as usize);
+                starts.truncate(lines.len());
             }
             let mut runs = Vec::new();
             let mut width: f32 = 0.0;
@@ -706,7 +754,41 @@ pub mod testing {
                 let baseline = i as f32 * line_h + (line_h - size) / 2.0 + size * 0.8;
                 runs.push(PlacedRun { run: Arc::new(run), origin: Point::new(0.0, baseline), style: 0 });
             }
-            Arc::new(TextLayout { size: Size::new(width, line_h * lines.len() as f32), runs, lines: lines.len() as u32 })
+            let geometry = MonoGeometry { lines: lines.iter().zip(&starts).map(|(l, s)| (*s, l.clone())).collect(), adv, line_h };
+            Arc::new(TextLayout { size: Size::new(width, line_h * lines.len() as f32), runs, lines: lines.len() as u32, geometry: Some(Geometry(Arc::new(geometry))) })
+        }
+    }
+
+    /// [`MonoShaper`]'s geometry: lines of fixed height, chars of fixed advance.
+    struct MonoGeometry {
+        /// (start byte, text) per line.
+        lines: Vec<(usize, String)>,
+        adv: f32,
+        line_h: f32,
+    }
+
+    impl TextGeometry for MonoGeometry {
+        fn hit_byte(&self, p: Point) -> usize {
+            if self.lines.is_empty() {
+                return 0;
+            }
+            let i = ((p.y / self.line_h).floor().max(0.0) as usize).min(self.lines.len() - 1);
+            let (start, text) = &self.lines[i];
+            let col = (p.x / self.adv).round().max(0.0) as usize;
+            start + text.char_indices().nth(col).map_or(text.len(), |(b, _)| b)
+        }
+        fn selection_rects(&self, range: std::ops::Range<usize>) -> Vec<Rect> {
+            let mut out = Vec::new();
+            for (i, (start, text)) in self.lines.iter().enumerate() {
+                let (a, b) = (range.start.max(*start), range.end.min(start + text.len()));
+                if a >= b {
+                    continue;
+                }
+                let col = |byte: usize| text[..byte - start].chars().count() as f32;
+                let y = i as f32 * self.line_h;
+                out.push(Rect::new(col(a) * self.adv, y, col(b) * self.adv, y + self.line_h));
+            }
+            out
         }
     }
 

@@ -13,7 +13,7 @@
 
 mod invalidate;
 
-use crate::cx::{MeasureCx, NodeView};
+use crate::cx::MeasureCx;
 use crate::document::Document;
 use crate::tree::{Dirty, NodeFlags};
 use presto_base::geom::Size as PSize;
@@ -68,39 +68,43 @@ impl taffy::TraversePartialTree for Tree<'_> {
         Self: 'b;
 
     fn child_ids(&self, id: NodeId) -> Self::ChildIter<'_> {
-        ChildIter(self.doc.children[ix(id)].iter())
+        ChildIter(self.doc.layout_children(ix(id)).iter())
     }
     fn child_count(&self, id: NodeId) -> usize {
-        self.doc.children[ix(id)].len()
+        self.doc.layout_children(ix(id)).len()
     }
     fn get_child_id(&self, id: NodeId, index: usize) -> NodeId {
-        tid(self.doc.children[ix(id)][index])
+        tid(self.doc.layout_children(ix(id))[index])
     }
 }
 
 impl taffy::TraverseTree for Tree<'_> {}
 
+/// Stands in for the document's text measure while a kind measures with it.
+struct NoMeasure;
+
+impl presto_base::text::TextMeasure for NoMeasure {
+    fn measure(&mut self, _spec: &presto_base::text::TextSpec<'_>, _max_width: Option<f32>) -> presto_base::geom::Size {
+        presto_base::geom::Size::ZERO
+    }
+    fn content_widths(&mut self, _spec: &presto_base::text::TextSpec<'_>) -> (f32, f32) {
+        (0.0, 0.0)
+    }
+}
+
 /// The measure of a leaf: its kind's `measure` with the node's view.
 fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: Size<AvailableSpace>) -> Size<f32> {
     let Some(k) = doc.kinds[i].take() else { return Size::ZERO };
+    // the kind sees the whole document (its children's views): the services it uses mutably are
+    // lent out of it for the call
+    let mut text = std::mem::replace(&mut doc.text, Box::new(NoMeasure));
+    let mut services = std::mem::take(&mut doc.services);
     let out = {
-        let Document { text, registry, core, props, style, state, layout, children, slots, services, .. } = &mut *doc;
-        let entry = registry.get(core[i].kind).expect("registered kind");
-        let l = &layout[i].layout;
-        let view = NodeView {
-            id: slots.id_at(i).expect("live"),
-            entry,
-            props: &props[i],
-            style: style.computed(i),
-            state: state[i],
-            size: PSize::new(l.size.width, l.size.height),
-            children: &children[i],
-            window: core[i].window,
-            css: style.nodes[i].css.as_deref(),
-        };
-        let mut cx = MeasureCx { node: view, text: &mut **text, services };
+        let mut cx = MeasureCx { node: doc.view_at(i), text: &mut *text, services: &mut services };
         k.measure(&mut cx, known, avail)
     };
+    doc.text = text;
+    doc.services = services;
     doc.kinds[i] = Some(k);
     out
 }
@@ -128,7 +132,7 @@ impl LayoutPartialTree for Tree<'_> {
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);
-            let container = !tree.doc.children[i].is_empty();
+            let container = !tree.doc.layout_children(i).is_empty();
             if container {
                 let mut out = match tree.doc.layout[i].style.display {
                     Display::Grid => compute_grid_layout(tree, id, inputs),
