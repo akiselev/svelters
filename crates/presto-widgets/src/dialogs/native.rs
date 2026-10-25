@@ -236,18 +236,11 @@ mod rfd_backend {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Arc;
-    use std::task::{Context, Poll, Wake, Waker};
-
-    struct Noop;
-    impl Wake for Noop {
-        fn wake(self: Arc<Self>) {}
-    }
+    use std::task::{Context, Poll, Waker};
 
     fn ready<T>(f: impl Future<Output = T>) -> T {
-        let waker = Waker::from(Arc::new(Noop));
         let mut f = std::pin::pin!(f);
-        match f.as_mut().poll(&mut Context::from_waker(&waker)) {
+        match f.as_mut().poll(&mut Context::from_waker(Waker::noop())) {
             Poll::Ready(v) => v,
             Poll::Pending => panic!("the test backend answers at once"),
         }

@@ -155,6 +155,7 @@ impl DatePicker {
     }
 
     /// Records the closed button.
+    #[allow(clippy::too_many_arguments)]
     pub fn record_button(&self, list: &mut DisplayList, text: &mut dyn TextPainter, look: &PickerLook, size: Size, today: Date, focus_visible: bool, enabled: bool) {
         popup::record_button(list, look, size, ButtonState { open: self.drop.is_open(), focus_visible, enabled });
         let (_, _, label) = popup::button_parts(look, size);

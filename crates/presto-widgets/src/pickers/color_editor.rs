@@ -45,6 +45,9 @@ pub const ROW_GAP: f32 = 6.0;
 /// The checkerboard's square under alpha.
 pub const CHECKER: f32 = 6.0;
 
+/// A row of colour cells: the colours, their rects and the hit each cell reports.
+type CellList<'a> = (&'a [String], &'a [Rect], fn(usize) -> Hit);
+
 /// What the body is configured with (the props `color-editor` and `color-picker` share).
 #[derive(Clone, Debug, PartialEq)]
 pub struct ColorCfg {
@@ -537,7 +540,7 @@ impl ColorBody {
             }
         }
         let cur = h.to_srgba();
-        let lists: [(&[String], &[Rect], fn(usize) -> Hit); 2] = [(&cfg.swatches, &g.cells, Hit::Swatch), (&cfg.custom, &g.custom_cells, Hit::Custom)];
+        let lists: [CellList<'_>; 2] = [(&cfg.swatches, &g.cells, Hit::Swatch), (&cfg.custom, &g.custom_cells, Hit::Custom)];
         for (colors, rects, hit) in lists {
             for (k, (c, r)) in colors.iter().zip(rects.iter()).enumerate() {
                 let Ok(rgba) = parse_hex(c) else { continue };
