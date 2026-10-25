@@ -64,10 +64,17 @@ impl Stage {
     /// The thread the stage is stamped on, for the trace's tracks.
     pub const fn thread(self) -> Track {
         match self {
-            Stage::Os | Stage::Recv | Stage::DispatchEnd | Stage::JsEnd | Stage::UiFrameStart | Stage::Commit => {
-                Track::Ui
-            }
-            Stage::CommitApplied | Stage::Draw | Stage::Submit | Stage::Present | Stage::Presented => Track::Compositor,
+            Stage::Os
+            | Stage::Recv
+            | Stage::DispatchEnd
+            | Stage::JsEnd
+            | Stage::UiFrameStart
+            | Stage::Commit => Track::Ui,
+            Stage::CommitApplied
+            | Stage::Draw
+            | Stage::Submit
+            | Stage::Present
+            | Stage::Presented => Track::Compositor,
             Stage::GpuDone => Track::Gpu,
         }
     }
@@ -182,9 +189,10 @@ impl Segment {
             Segment::OsToRecv => (r.at(Stage::Os)?, r.at(Stage::Recv)?),
             Segment::RecvToDispatchEnd => (r.at(Stage::Recv)?, r.at(Stage::DispatchEnd)?),
             Segment::DispatchToJsEnd => (r.at(Stage::DispatchEnd)?, r.at(Stage::JsEnd)?),
-            Segment::HandledToFrameStart => {
-                (r.at(Stage::JsEnd).or(r.at(Stage::DispatchEnd))?, r.at(Stage::UiFrameStart)?)
-            }
+            Segment::HandledToFrameStart => (
+                r.at(Stage::JsEnd).or(r.at(Stage::DispatchEnd))?,
+                r.at(Stage::UiFrameStart)?,
+            ),
             Segment::FrameStartToCommit => (r.at(Stage::UiFrameStart)?, r.at(Stage::Commit)?),
             Segment::CommitToDraw => (r.at(Stage::Commit)?, r.at(Stage::Draw)?),
             Segment::DrawToSubmit => (r.at(Stage::Draw)?, r.at(Stage::Submit)?),
@@ -214,7 +222,16 @@ pub struct LatencyRecord {
 
 impl LatencyRecord {
     fn new(seq: InputSeq, window: WindowId, class: InputClass) -> Self {
-        Self { seq, window, class, stamps: [None; Stage::COUNT], revision: None, frame: None, end: None, estimated: false }
+        Self {
+            seq,
+            window,
+            class,
+            stamps: [None; Stage::COUNT],
+            revision: None,
+            frame: None,
+            end: None,
+            estimated: false,
+        }
     }
     pub fn at(&self, s: Stage) -> Option<Time> {
         self.stamps[s as usize]
@@ -250,7 +267,13 @@ const MAX_US: u64 = (1 << 24) - 1;
 
 impl Default for Histogram {
     fn default() -> Self {
-        Self { counts: vec![0; BUCKETS], total: 0, sum_us: 0, min_us: u64::MAX, max_us: 0 }
+        Self {
+            counts: vec![0; BUCKETS],
+            total: 0,
+            sum_us: 0,
+            min_us: u64::MAX,
+            max_us: 0,
+        }
     }
 }
 
@@ -339,7 +362,12 @@ pub struct Rolling {
 
 impl Rolling {
     pub fn new(window: Span) -> Self {
-        Self { window, slot_start: Time::ZERO, current: Histogram::new(), previous: Histogram::new() }
+        Self {
+            window,
+            slot_start: Time::ZERO,
+            current: Histogram::new(),
+            previous: Histogram::new(),
+        }
     }
     fn rotate(&mut self, now: Time) {
         if now - self.slot_start >= self.window + self.window {
@@ -420,7 +448,12 @@ pub struct LatencyConfig {
 
 impl Default for LatencyConfig {
     fn default() -> Self {
-        Self { stale_after: Span::from_millis(2_000), keep_records: 4_096, keep_slices: 16_384, recent: Span::from_millis(10_000) }
+        Self {
+            stale_after: Span::from_millis(2_000),
+            keep_records: 4_096,
+            keep_slices: 16_384,
+            recent: Span::from_millis(10_000),
+        }
     }
 }
 
@@ -430,10 +463,21 @@ pub type HistKey = (Segment, InputClass, WindowId);
 /// A broken invariant: a seq terminated twice, or stamped after it terminated, or unknown.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Violation {
-    TerminatedTwice { seq: InputSeq, first: Termination, second: Termination },
-    StampAfterEnd { seq: InputSeq, stage: Stage },
-    Unknown { seq: InputSeq },
-    DuplicateBegin { seq: InputSeq },
+    TerminatedTwice {
+        seq: InputSeq,
+        first: Termination,
+        second: Termination,
+    },
+    StampAfterEnd {
+        seq: InputSeq,
+        stage: Stage,
+    },
+    Unknown {
+        seq: InputSeq,
+    },
+    DuplicateBegin {
+        seq: InputSeq,
+    },
 }
 
 /// The UI thread's latency recorder.
@@ -477,7 +521,8 @@ impl LatencyRecorder {
     /// Open a record for a platform input (stamps `os` and `recv`).
     pub fn begin(&mut self, ev: &InputEnvelope) {
         if self.live.contains_key(&ev.seq) || self.ended.contains_key(&ev.seq) {
-            self.violations.push(Violation::DuplicateBegin { seq: ev.seq });
+            self.violations
+                .push(Violation::DuplicateBegin { seq: ev.seq });
             return;
         }
         let mut r = LatencyRecord::new(ev.seq, ev.window, InputClass::of(&ev.event));
@@ -489,7 +534,9 @@ impl LatencyRecorder {
     pub fn stamp(&mut self, seq: InputSeq, stage: Stage, t: Time) {
         match self.live.get_mut(&seq) {
             Some(r) => r.stamp(stage, t),
-            None if self.ended.contains_key(&seq) => self.violations.push(Violation::StampAfterEnd { seq, stage }),
+            None if self.ended.contains_key(&seq) => self
+                .violations
+                .push(Violation::StampAfterEnd { seq, stage }),
             None => self.violations.push(Violation::Unknown { seq }),
         }
     }
@@ -502,7 +549,13 @@ impl LatencyRecorder {
 
     /// Stamp `stage` on every live record of `window` that has reached `after` but not `stage`
     /// (e.g. `UiFrameStart` on everything handled and waiting for a frame).
-    pub fn stamp_pending(&mut self, window: WindowId, after: Stage, stage: Stage, t: Time) -> Vec<InputSeq> {
+    pub fn stamp_pending(
+        &mut self,
+        window: WindowId,
+        after: Stage,
+        stage: Stage,
+        t: Time,
+    ) -> Vec<InputSeq> {
         let mut out = Vec::new();
         for r in self.live.values_mut() {
             if r.window == window && r.at(after).is_some() && r.at(stage).is_none() {
@@ -543,7 +596,9 @@ impl LatencyRecorder {
         let seqs: Vec<_> = self
             .live
             .values()
-            .filter(|r| r.window == window && r.at(Stage::UiFrameStart).is_some() && r.revision.is_none())
+            .filter(|r| {
+                r.window == window && r.at(Stage::UiFrameStart).is_some() && r.revision.is_none()
+            })
             .map(|r| r.seq)
             .collect();
         for s in seqs {
@@ -563,7 +618,10 @@ impl LatencyRecorder {
     /// committed, unterminated input of the window whose commit the frame can contain.
     pub fn frame_stages(&mut self, window: WindowId, frame: FrameId, stages: &[(Stage, Time)]) {
         for r in self.live.values_mut() {
-            if r.window == window && r.at(Stage::CommitApplied).is_some() && r.frame.is_none_or(|f| f == frame) {
+            if r.window == window
+                && r.at(Stage::CommitApplied).is_some()
+                && r.frame.is_none_or(|f| f == frame)
+            {
                 r.frame = Some(frame);
                 for &(s, t) in stages {
                     r.stamp(s, t);
@@ -574,13 +632,22 @@ impl LatencyRecorder {
 
     /// A frame reached the screen. `inputs` are the seqs the compositor names; every committed input of
     /// the window up to the newest of them is presented by this frame (commits fold newer over older).
-    pub fn presented(&mut self, window: WindowId, frame: FrameId, at: Time, estimated: bool, inputs: &[InputSeq]) {
+    pub fn presented(
+        &mut self,
+        window: WindowId,
+        frame: FrameId,
+        at: Time,
+        estimated: bool,
+        inputs: &[InputSeq],
+    ) {
         let c = self.counters.entry(window).or_default();
         c.presented += 1;
         if estimated {
             c.estimated += 1;
         }
-        let Some(&newest) = inputs.iter().max() else { return };
+        let Some(&newest) = inputs.iter().max() else {
+            return;
+        };
         let seqs: Vec<_> = self
             .live
             .range(..=newest)
@@ -607,7 +674,12 @@ impl LatencyRecorder {
 
     /// Drop every live record of `window` (hidden, closed).
     pub fn drop_window(&mut self, window: WindowId) {
-        let seqs: Vec<_> = self.live.values().filter(|r| r.window == window).map(|r| r.seq).collect();
+        let seqs: Vec<_> = self
+            .live
+            .values()
+            .filter(|r| r.window == window)
+            .map(|r| r.seq)
+            .collect();
         for s in seqs {
             self.terminate(s, Termination::Dropped(DropReason::WindowGone));
         }
@@ -628,13 +700,21 @@ impl LatencyRecorder {
     }
 
     fn terminate(&mut self, seq: InputSeq, end: Termination) {
-        let at = self.live.get(&seq).and_then(LatencyRecord::last_stamp).unwrap_or(Time::ZERO);
+        let at = self
+            .live
+            .get(&seq)
+            .and_then(LatencyRecord::last_stamp)
+            .unwrap_or(Time::ZERO);
         self.terminate_at(seq, end, at);
     }
 
     fn terminate_at(&mut self, seq: InputSeq, end: Termination, at: Time) {
         if let Some(&first) = self.ended.get(&seq) {
-            self.violations.push(Violation::TerminatedTwice { seq, first, second: end });
+            self.violations.push(Violation::TerminatedTwice {
+                seq,
+                first,
+                second: end,
+            });
             return;
         }
         let Some(mut r) = self.live.remove(&seq) else {
@@ -650,7 +730,10 @@ impl LatencyRecorder {
                     let key = (seg, r.class, r.window);
                     self.session.entry(key).or_default().record(s);
                     let window = self.cfg.recent;
-                    self.recent.entry(key).or_insert_with(|| Rolling::new(window)).record(at, s);
+                    self.recent
+                        .entry(key)
+                        .or_insert_with(|| Rolling::new(window))
+                        .record(at, s);
                 }
             }
         }
@@ -671,8 +754,21 @@ impl LatencyRecorder {
     }
 
     /// Record a phase slice for the trace.
-    pub fn slice(&mut self, track: Track, name: &'static str, window: WindowId, start: Time, end: Time) {
-        self.slices.push_back(TraceSlice { track, name, start, dur: end - start, window });
+    pub fn slice(
+        &mut self,
+        track: Track,
+        name: &'static str,
+        window: WindowId,
+        start: Time,
+        end: Time,
+    ) {
+        self.slices.push_back(TraceSlice {
+            track,
+            name,
+            start,
+            dur: end - start,
+            window,
+        });
         while self.slices.len() > self.cfg.keep_slices {
             self.slices.pop_front();
         }
@@ -685,7 +781,9 @@ impl LatencyRecorder {
         self.terminated
     }
     pub fn record(&self, seq: InputSeq) -> Option<&LatencyRecord> {
-        self.live.get(&seq).or_else(|| self.done.iter().rev().find(|r| r.seq == seq))
+        self.live
+            .get(&seq)
+            .or_else(|| self.done.iter().rev().find(|r| r.seq == seq))
     }
     pub fn termination(&self, seq: InputSeq) -> Option<Termination> {
         self.ended.get(&seq).copied()
@@ -719,7 +817,7 @@ impl LatencyRecorder {
                 "{{\"segment\":\"{}\",\"class\":\"{}\",\"window\":{},\"count\":{},\"p50_ms\":{:.3},\"p95_ms\":{:.3},\"p99_ms\":{:.3},\"max_ms\":{:.3}}}",
                 k.0.name(),
                 k.1.name(),
-                k.2 .0,
+                k.2.0,
                 h.count(),
                 ms(h.quantile(0.5)),
                 ms(h.quantile(0.95)),
@@ -738,10 +836,22 @@ impl LatencyRecorder {
             let _ = write!(
                 out,
                 "{{\"window\":{},\"presented\":{},\"estimated\":{},\"ui_missed\":{},\"urgent\":{},\"no_damage\":{},\"resize_timeouts\":{}}}",
-                w.0, c.presented, c.estimated, c.ui_missed, c.urgent, c.no_damage, c.resize_timeouts
+                w.0,
+                c.presented,
+                c.estimated,
+                c.ui_missed,
+                c.urgent,
+                c.no_damage,
+                c.resize_timeouts
             );
         }
-        let _ = write!(out, "],\"live\":{},\"terminated\":{},\"violations\":{}}}", self.live.len(), self.terminated, self.violations.len());
+        let _ = write!(
+            out,
+            "],\"live\":{},\"terminated\":{},\"violations\":{}}}",
+            self.live.len(),
+            self.terminated,
+            self.violations.len()
+        );
         out
     }
 
@@ -768,7 +878,10 @@ impl LatencyRecorder {
             ));
         }
         for r in &self.done {
-            let stamped: Vec<(Stage, Time)> = Stage::ALL.iter().filter_map(|&s| r.at(s).map(|t| (s, t))).collect();
+            let stamped: Vec<(Stage, Time)> = Stage::ALL
+                .iter()
+                .filter_map(|&s| r.at(s).map(|t| (s, t)))
+                .collect();
             let end = match r.end {
                 Some(Termination::Presented(f)) => format!("presented frame {}", f.0),
                 Some(Termination::MergedInto(s)) => format!("merged into {}", s.0),

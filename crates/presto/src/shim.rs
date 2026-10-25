@@ -32,7 +32,12 @@ pub struct WindowDesc {
 
 impl Default for WindowDesc {
     fn default() -> Self {
-        Self { title: String::new(), size: Size::new(800.0, 600.0), resizable: true, visible: true }
+        Self {
+            title: String::new(),
+            size: Size::new(800.0, 600.0),
+            resizable: true,
+            visible: true,
+        }
     }
 }
 
@@ -132,7 +137,12 @@ pub trait DocumentApi {
 /// microtasks (architecture §11.1, steps 3–4). A pure-Rust app has none.
 pub trait ScriptHost {
     /// Deliver and drain; returns whether the tree changed.
-    fn deliver(&mut self, doc: &mut dyn DocumentApi, ev: &InputEnvelope, dispatched: &Dispatched) -> bool;
+    fn deliver(
+        &mut self,
+        doc: &mut dyn DocumentApi,
+        ev: &InputEnvelope,
+        dispatched: &Dispatched,
+    ) -> bool;
 }
 
 // ---- presto-compositor (lane COMPOSITOR): `CompositorHandle` -------------------------------------
@@ -141,7 +151,13 @@ pub trait ScriptHost {
 pub trait CompositorApi {
     /// Create the window's surface on this (the main) thread and hand it to the compositor (brief:
     /// `instance().create_surface(target)` then `add_window`).
-    fn add_window(&self, window: WindowId, target: SurfaceTarget, size: DeviceSize, scale: Scale) -> Result<(), String>;
+    fn add_window(
+        &self,
+        window: WindowId,
+        target: SurfaceTarget,
+        size: DeviceSize,
+        scale: Scale,
+    ) -> Result<(), String>;
     fn remove_window(&self, window: WindowId);
     fn commit(&self, c: Commit);
     fn fast(&self, f: FastCommit);
@@ -190,12 +206,22 @@ pub struct ShimUiFrameState {
 
 impl ShimUiFrameState {
     pub fn new(interval: presto_base::time::Span) -> Self {
-        Self { interval, in_flight: None, last_present: None }
+        Self {
+            interval,
+            in_flight: None,
+            last_present: None,
+        }
     }
 }
 
 impl FrameStateApi for ShimUiFrameState {
-    fn on_begin_frame(&mut self, _now: Time, _frame: FrameId, _target: Time, _deadline: Time) -> bool {
+    fn on_begin_frame(
+        &mut self,
+        _now: Time,
+        _frame: FrameId,
+        _target: Time,
+        _deadline: Time,
+    ) -> bool {
         self.in_flight.is_none()
     }
     fn on_urgent_input(&mut self, now: Time) -> Urgency {

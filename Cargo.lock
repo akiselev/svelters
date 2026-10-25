@@ -3930,6 +3930,8 @@ dependencies = [
 name = "presto-test"
 version = "0.0.0"
 dependencies = [
+ "egui",
+ "presto",
  "presto-base",
 ]
 
