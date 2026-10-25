@@ -147,6 +147,9 @@ fn fill_quad(r: Rect, radius: f32, color: Color) -> Prim {
 }
 
 impl Kind for ProgressBar {
+    fn parts() -> &'static [&'static str] {
+        &["track", "fill", "label"]
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         { let mut s = crate::interact::StateBits::NONE; self.mirror(&mut s); s }
     }

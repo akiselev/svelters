@@ -103,12 +103,33 @@ fn js_event(doc: &Document, target: NodeId, signal: SignalId, arg: Option<Value>
 /// the listeners did (`Ok(default)` when nobody listens). `Err(arg)` hands the argument back when
 /// the document has no deliverer: the caller queues the event instead.
 pub(crate) fn deliver_now(doc: &mut Document, target: NodeId, signal: SignalId, arg: Option<Value>) -> Result<crate::kind::Outcome, Option<Value>> {
+    if doc.delivering > 0 {
+        // nested (JS inside the deliverer clicked or focused something): delivered, not cancelable,
+        // once the listener call that caused it returns
+        if let Some(mut ev) = js_event(doc, target, signal, arg) {
+            ev.cancelable = false;
+            doc.nested.push(ev);
+        }
+        return Ok(Default::default());
+    }
     if doc.sync_delivery.is_none() {
         return Err(arg);
     }
     let Some(ev) = js_event(doc, target, signal, arg) else { return Ok(Default::default()) };
     let mut f = doc.sync_delivery.take().expect("checked");
+    doc.delivering += 1;
     let o = f(doc, &ev);
+    // the sync events its listeners caused, in order, until none is left
+    loop {
+        let batch = std::mem::take(&mut doc.nested);
+        if batch.is_empty() {
+            break;
+        }
+        for e in batch {
+            f(doc, &e);
+        }
+    }
+    doc.delivering -= 1;
     if doc.sync_delivery.is_none() {
         doc.sync_delivery = Some(f);
     }
@@ -308,7 +329,7 @@ impl Document {
     }
 
     /// Hover follows the newest sample: leave the old path's nodes not on the new path, enter the new.
-    fn update_hover(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
+    pub(crate) fn update_hover(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
         let mut path = Vec::new();
         let mut a = target;
         while let Some(n) = a {
@@ -358,6 +379,8 @@ impl Document {
             }
             PointerPhase::Down => {
                 self.update_hover(window, p, hit, out, emitted);
+                // open surfaces a press outside them dismisses hear of it first, topmost first
+                self.outside_press(window, p, target, emitted);
                 let Some(t) = target else {
                     crate::input::focus::clear_focus(self, window);
                     return;
@@ -446,6 +469,28 @@ impl Document {
         }
     }
 
+    /// Calls [`Kind::outside_press`](crate::Kind::outside_press) on the light-dismiss nodes of
+    /// `window` whose subtree does not hold `target`, topmost (latest in paint order) first.
+    fn outside_press(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, emitted: &mut Vec<Emitted>) {
+        if self.light_dismiss.is_empty() {
+            return;
+        }
+        let hits = self.window(window).map(|w| w.hits.clone());
+        let order = |n: NodeId| hits.as_ref().and_then(|h| h.entries.iter().rposition(|e| e.node == n));
+        let mut open: Vec<NodeId> = self.light_dismiss.iter().copied().filter(|&n| self.window_of(n) == Some(window) && target.is_none_or(|t| !self.is_ancestor_or_self(n, t))).collect();
+        open.sort_by_key(|&n| std::cmp::Reverse(order(n)));
+        for n in open {
+            let Some(i) = self.idx(n) else { continue };
+            let Some(mut k) = self.kinds[i].take() else { continue };
+            let input = self.pointer_input(window, n, p, 1);
+            {
+                let mut cx = EventCx { doc: self, node: n, emitted, pointer: Some(p.pointer) };
+                k.outside_press(&mut cx, &input);
+            }
+            self.restore_kind(n, k);
+        }
+    }
+
     fn click_count(&mut self, node: NodeId, time: Time, pos: Point) -> u32 {
         let count = match self.input.last_click {
             Some((n, t, at, c)) if n == node && time - t <= DOUBLE_CLICK && (pos - at).length() <= DOUBLE_CLICK_SLOP => c + 1,
@@ -517,8 +562,13 @@ impl Document {
     }
 
     fn dispatch_key(&mut self, window: WindowId, k: &KeyEvent, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
-        // IME first (§11.2): during a composition, printable keys belong to the IME
-        if self.input.composing && k.text.as_deref().is_some_and(|t| !t.is_empty() && !t.chars().any(char::is_control)) {
+        // IME first (§11.2), before any keymap: during a composition every key belongs to the input
+        // method; with an IME input source active, so do printable keys without a chord (so that
+        // `jj`-style chords cannot break Japanese input)
+        let m = k.modifiers;
+        let chord = m.contains(Modifiers::CTRL) || m.contains(Modifiers::SUPER) || m.contains(Modifiers::ALT);
+        let printable = k.text.as_deref().is_some_and(|t| !t.is_empty() && !t.chars().any(char::is_control));
+        if self.input.composing || (self.input.ime_source.contains(&window) && !chord && printable) {
             out.to_ime = true;
             return;
         }
@@ -603,6 +653,16 @@ impl Document {
             a = self.parent(n);
         }
         None
+    }
+
+    /// The platform reports whether an input method source (a CJK IME, not a plain keyboard layout)
+    /// is active for `window`: while it is, printable keys without a chord go to the IME first.
+    pub fn set_ime_source(&mut self, window: WindowId, active: bool) {
+        if active {
+            self.input.ime_source.insert(window);
+        } else {
+            self.input.ime_source.remove(&window);
+        }
     }
 
     /// The command layer's keymap (cadatomic's one command path): called for every key outside a
