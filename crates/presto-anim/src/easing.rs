@@ -54,6 +54,17 @@ pub fn cubic_bezier(x1: f64, y1: f64, x2: f64, y2: f64, x: f64) -> f64 {
     bezier(y1, y2, t)
 }
 
+/// dy/dx of `cubic-bezier(x1, y1, x2, y2)` at `x` ∈ [0, 1] (0 where both derivatives vanish).
+pub fn cubic_bezier_slope(x1: f64, y1: f64, x2: f64, y2: f64, x: f64) -> f64 {
+    let t = solve_bezier_x(x1, x2, x.clamp(0.0, 1.0));
+    let dx = bezier_slope(x1, x2, t);
+    let dy = bezier_slope(y1, y2, t);
+    if dx == 0.0 && dy == 0.0 {
+        return 0.0;
+    }
+    dy / dx
+}
+
 /// One coordinate of the curve with end points 0 and 1: `3(1−t)²t·p1 + 3(1−t)t²·p2 + t³`.
 fn bezier(p1: f64, p2: f64, t: f64) -> f64 {
     let a = 1.0 - 3.0 * p2 + 3.0 * p1;
@@ -421,7 +432,8 @@ mod tests {
         assert_eq!(steps(4, StepPosition::Start, 0.0, false), 0.25);
         assert_eq!(steps(4, StepPosition::Start, 0.0, true), 0.0);
         assert_eq!(steps(3, StepPosition::JumpBoth, 0.0, false), 0.25);
-        assert_eq!(steps(3, StepPosition::JumpBoth, 1.0, false), 0.75);
+        assert_eq!(steps(3, StepPosition::JumpBoth, 0.99, false), 0.75);
+        assert_eq!(steps(3, StepPosition::JumpBoth, 1.0, false), 1.0);
         assert_eq!(steps(3, StepPosition::JumpNone, 0.0, false), 0.0);
         assert_eq!(steps(3, StepPosition::JumpNone, 0.5, false), 0.5);
         assert_eq!(steps(3, StepPosition::JumpNone, 1.0, false), 1.0);
