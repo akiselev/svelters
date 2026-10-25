@@ -10,8 +10,7 @@
 //! turns it into two- or three-keyframe tracks whose timing easing is the transition's easing:
 //! presto samples them at the display's refresh rate instead of Svelte's baked 60 Hz frames.
 
-use crate::easing::SvelteEasing;
-use crate::shim::css::{TransformList, parse_transform};
+use crate::easing::{SvelteEasing, SvelteEasingExt};
 use presto_base::anim::{AnimProperty, AnimValue, FillMode, Keyframe, PlaybackDirection, Timing, TransformFn};
 use presto_base::time::Span;
 use serde::Deserialize;
@@ -263,6 +262,32 @@ pub struct Frame {
     pub dims: Vec<(&'static str, f64)>,
     /// draw: `stroke-dasharray`, `stroke-dashoffset`.
     pub dash: Option<(f64, f64)>,
+}
+
+/// A transform list in `f64`.
+pub type TransformList = Vec<Transform64>;
+
+/// A computed `transform` (`matrix(1, 0, 0, 1, 10, 0)`, `translate(10px, 0) scale(.9)`), parsed by
+/// `presto_anim::css`; `None` for what it refuses or a translation that isn't in px.
+pub fn parse_transform(text: &str) -> Option<TransformList> {
+    use presto_anim::css::{CssTransformFn, CssValue, Unit, parse_value};
+    let CssValue::Transform(fns) = parse_value("transform", text).ok()? else { return None };
+    fns.iter()
+        .map(|f| {
+            Some(match *f {
+                CssTransformFn::Translate(x, y) => {
+                    if x.unit != Unit::Px || y.unit != Unit::Px {
+                        return None;
+                    }
+                    Transform64::Translate(x.value as f64, y.value as f64)
+                }
+                CssTransformFn::Scale(x, y) => Transform64::Scale(x as f64, y as f64),
+                CssTransformFn::Rotate(a) => Transform64::Rotate(a as f64),
+                CssTransformFn::Skew(x, y) => Transform64::Skew(x as f64, y as f64),
+                CssTransformFn::Matrix(m) => Transform64::Matrix([m.a, m.b, m.c, m.d, m.e, m.f].map(|v| v as f64)),
+            })
+        })
+        .collect()
 }
 
 /// A transform function in `f64` (presto's [`TransformFn`] is `f32`).
@@ -590,13 +615,10 @@ impl Run {
             direction: PlaybackDirection::Normal,
             // Svelte plays transitions with `fill: 'forwards'`: the last frame holds until it is cancelled
             fill: FillMode::Forwards,
-            easing: easing.to_presto(EASING_TOLERANCE),
+            easing: easing.to_presto(),
         }
     }
 }
-
-/// How far a compositor track's piecewise-linear easing may stray from the svelte/easing curve.
-pub const EASING_TOLERANCE: f64 = 1e-4;
 
 /// What a track drives.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -650,7 +672,7 @@ pub struct Plan {
     /// The transform origin as fractions of the node's size; `None` = the node's own
     /// (`transform-origin`, the centre by default).
     pub origin: Option<(f64, f64)>,
-    /// The exact curve; [`Plan::timing`] holds presto's approximation of it.
+    /// The curve (also [`Plan::timing`]'s easing, as `Easing::Svelte`).
     pub easing: SvelteEasing,
     pub timing: Timing,
 }

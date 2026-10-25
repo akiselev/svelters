@@ -2,7 +2,7 @@
 //! bisection fallback, `steps()` with the before flag, and `linear()` point lists; plus Svelte's
 //! `svelte/easing` functions, which Svelte bakes into 60 Hz keyframes.
 
-use presto_base::anim::{Easing, StepPosition};
+use presto_base::anim::{Easing, StepPosition, SvelteEasing};
 
 pub const EASE: Easing = Easing::CubicBezier(0.25, 0.1, 0.25, 1.0);
 pub const EASE_IN: Easing = Easing::CubicBezier(0.42, 0.0, 1.0, 1.0);
@@ -21,6 +21,7 @@ pub fn eval_with(e: &Easing, t: f32, before: bool) -> f32 {
         Easing::CubicBezier(x1, y1, x2, y2) => cubic_bezier(*x1 as f64, *y1 as f64, *x2 as f64, *y2 as f64, t as f64) as f32,
         Easing::Steps { count, position } => steps(*count, *position, t, before),
         Easing::Points(p) => linear_points(p, t),
+        Easing::Svelte(c) => svelte::eval(*c, t as f64) as f32,
     }
 }
 
@@ -354,6 +355,45 @@ pub mod svelte {
         (t * PI / 2.0).sin()
     }
 
+    /// `c` at `t`.
+    pub fn eval(c: super::SvelteEasing, t: f64) -> f64 {
+        use super::SvelteEasing as S;
+        let f: fn(f64) -> f64 = match c {
+            S::Linear => linear,
+            S::BackInOut => back_in_out,
+            S::BackIn => back_in,
+            S::BackOut => back_out,
+            S::BounceOut => bounce_out,
+            S::BounceInOut => bounce_in_out,
+            S::BounceIn => bounce_in,
+            S::CircInOut => circ_in_out,
+            S::CircIn => circ_in,
+            S::CircOut => circ_out,
+            S::CubicInOut => cubic_in_out,
+            S::CubicIn => cubic_in,
+            S::CubicOut => cubic_out,
+            S::ElasticInOut => elastic_in_out,
+            S::ElasticIn => elastic_in,
+            S::ElasticOut => elastic_out,
+            S::ExpoInOut => expo_in_out,
+            S::ExpoIn => expo_in,
+            S::ExpoOut => expo_out,
+            S::QuadInOut => quad_in_out,
+            S::QuadIn => quad_in,
+            S::QuadOut => quad_out,
+            S::QuartInOut => quart_in_out,
+            S::QuartIn => quart_in,
+            S::QuartOut => quart_out,
+            S::QuintInOut => quint_in_out,
+            S::QuintIn => quint_in,
+            S::QuintOut => quint_out,
+            S::SineInOut => sine_in_out,
+            S::SineIn => sine_in,
+            S::SineOut => sine_out,
+        };
+        f(t)
+    }
+
     /// Looks a function up by its `svelte/easing` export name.
     pub fn by_name(name: &str) -> Option<fn(f64) -> f64> {
         Some(match name {
@@ -453,6 +493,18 @@ mod tests {
             let f = svelte::by_name(name).unwrap();
             assert!(f(0.0).abs() < 1e-3, "{name}(0)");
             assert!((f(1.0) - 1.0).abs() < 1e-3, "{name}(1)");
+        }
+    }
+
+    #[test]
+    fn svelte_variant_evaluates_every_named_curve() {
+        for (c, name) in presto_base::anim::SVELTE_EASINGS {
+            let f = svelte::by_name(name).unwrap_or_else(|| panic!("{name}"));
+            assert_eq!(presto_base::anim::SvelteEasing::from_name(name), Some(c));
+            for i in 0..=20 {
+                let t = i as f32 / 20.0;
+                assert_eq!(eval(&Easing::Svelte(c), t), f(t as f64) as f32, "{name}({t})");
+            }
         }
     }
 }

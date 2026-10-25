@@ -14,7 +14,6 @@ Design: `plans/research/presto/compiler-and-js.md` §3.6, §3.7.
 | `transition` | `fade fly slide scale blur draw` from their JSON parameters and the computed style (`Transition::new`); `css(t, u)` as numbers (`Frame`); `Run {t1, t2, duration, delay}` with Svelte's 60 Hz keyframe `t`s; `plan(run)` → per-channel two-keyframe tracks (slide's opacity knee as a third keyframe at eased offset), timing easing = the transition's, fill forwards; `NotNative` for what presto can't resolve (em/vw units, a computed filter, an unknown easing) so the host plays the frames |
 | `flip` | Svelte's `flip` from rects + layout size + origin; **the scale bug is fixed** (`sx = clientWidth / to.width / zoom`, svelters had `to.width / to.width`) |
 | `spring` | svelte/motion's spring as a motion on `presto_anim::spring::Spring::svelte` (start velocity from Svelte's last two values): exact at 60 Hz, frame-rate independent; Svelte's settle frame; `retarget` keeps position and last step; `physical()` and `velocity()` for a compositor spring |
-| `shim::css` | the computed `transform` parser the built-ins need (matrix, translate, scale, rotate, skew) |
 | `waapi` | the Web Animations slice Svelte uses: `Animation` (play/pause/cancel/finish, `currentTime` get/set, `playState`, `effect = null`, fill forwards, progress), `Animations<N>` per document (`of_node` = `getAnimations`, `poll` raises each finish once → `animationend`, `next_finish` for the clock) |
 | `op` | the `OP_ANIMATE` payload: channel frames plus the optional `native` descriptor; `plan()` prefers the descriptor, falls back to the frames |
 
@@ -88,8 +87,8 @@ Run locally once to fix CI's first report (filtered): presto-motion's tests, sve
 ## Shims and cross-lane edits
 
 - Merged `ci/presto-base` ac7cc8c4 (wave-1 APIs): easings and the spring now use presto-anim's.
-  `presto-motion::shim::css` stands in for `presto_anim::css` (still empty): the computed `transform`
-  parser.
+  The computed `transform` of the built-ins is parsed with `presto_anim::css` (`transition::parse_transform`);
+  presto-motion has no shims left.
 - Cross-lane edits (all additive): `svelters-compiler` semantics/codegen/transform/compile and the
   CSS pruner (COMPILER lane works in the same crate; I told it the exact `capabilities` field text by
   message), `svelters-modules` source/mod.rs (sheet module), `svelters-style` (binary, utility),
@@ -101,8 +100,12 @@ Run locally once to fix CI's first report (filtered): presto-motion's tests, sve
    `presto_motion::op::AnimateOp` + `waapi::Animations` (deliver `poll` as `animationend`), and
    `SVL_STYLE_SHEET_BIN` with `binary::decode(from_base64(..))` into the style engine; use the hints
    (needs a template-node → element-offset map from COMPILER's templates) and `preload_utilities`.
-2. **Compositor easing**: presto-base's `Easing` has no svelte/easing curves, so tracks carry `linear()`
-   points within 1e-4. Question below.
+2. **Compositor easing** (done, coordinator's decision 2026-10-25): `presto_base::anim::Easing::Svelte(SvelteEasing)`
+   (the 31 named curves and `SVELTE_EASINGS` moved to presto-base), evaluated by
+   `presto_anim::easing::svelte::eval`; presto-motion re-exports the enum and plans tracks with it, so
+   they are exact. presto-compositor had no exhaustive match on `Easing`; presto-anim's `eval_with` has
+   the new arm. Tests: presto-anim `svelte_variant_evaluates_every_named_curve`, presto-motion
+   `compositor_easings_are_exact`.
 3. A spring that only feeds `style:` is not yet handed to the compositor (JS evaluates the closed form
    per frame; it is frame-rate independent already).
 4. `svelte/motion` imports in `.svelte.js` modules and plain JS are not rewritten (only components);
@@ -112,10 +115,7 @@ Run locally once to fix CI's first report (filtered): presto-motion's tests, sve
 
 ## Questions for the coordinator
 
-1. **Add `Easing::Svelte(name)` (or `Easing::Fn(u8)`) to `presto-base::anim::Easing`**, evaluated by
-   `presto_anim::easing::eval` with `presto_motion::easing::SvelteEasing::eval`'s formulas?
-   Recommendation: yes, additive (FRAME-ANIM adds one match arm); then `to_presto` returns it and
-   compositor tracks are exact instead of within 1e-4.
+None open (the easing variant was decided yes and is done).
 
 ## CI
 

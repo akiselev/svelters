@@ -24,7 +24,94 @@ pub enum Easing {
     Steps { count: u32, position: StepPosition },
     /// CSS `linear()`: (input, output) points.
     Points(Vec<(f32, f32)>),
+    /// One of svelte/easing's curves (a built-in transition's easing, played natively).
+    Svelte(SvelteEasing),
 }
+
+/// svelte/easing's named curves (svelte@5.57.2 `src/easing/index.js`). `presto_anim::easing::svelte`
+/// evaluates them with Svelte's own formulas, so a compositor track eases exactly as Svelte's keyframes.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub enum SvelteEasing {
+    Linear,
+    BackInOut,
+    BackIn,
+    BackOut,
+    BounceOut,
+    BounceInOut,
+    BounceIn,
+    CircInOut,
+    CircIn,
+    CircOut,
+    CubicInOut,
+    CubicIn,
+    CubicOut,
+    ElasticInOut,
+    ElasticIn,
+    ElasticOut,
+    ExpoInOut,
+    ExpoIn,
+    ExpoOut,
+    QuadInOut,
+    QuadIn,
+    QuadOut,
+    QuartInOut,
+    QuartIn,
+    QuartOut,
+    QuintInOut,
+    QuintIn,
+    QuintOut,
+    SineInOut,
+    SineIn,
+    SineOut,
+}
+
+/// Every curve with its svelte/easing export name.
+pub const SVELTE_EASINGS: [(SvelteEasing, &str); 31] = [
+    (SvelteEasing::Linear, "linear"),
+    (SvelteEasing::BackInOut, "backInOut"),
+    (SvelteEasing::BackIn, "backIn"),
+    (SvelteEasing::BackOut, "backOut"),
+    (SvelteEasing::BounceOut, "bounceOut"),
+    (SvelteEasing::BounceInOut, "bounceInOut"),
+    (SvelteEasing::BounceIn, "bounceIn"),
+    (SvelteEasing::CircInOut, "circInOut"),
+    (SvelteEasing::CircIn, "circIn"),
+    (SvelteEasing::CircOut, "circOut"),
+    (SvelteEasing::CubicInOut, "cubicInOut"),
+    (SvelteEasing::CubicIn, "cubicIn"),
+    (SvelteEasing::CubicOut, "cubicOut"),
+    (SvelteEasing::ElasticInOut, "elasticInOut"),
+    (SvelteEasing::ElasticIn, "elasticIn"),
+    (SvelteEasing::ElasticOut, "elasticOut"),
+    (SvelteEasing::ExpoInOut, "expoInOut"),
+    (SvelteEasing::ExpoIn, "expoIn"),
+    (SvelteEasing::ExpoOut, "expoOut"),
+    (SvelteEasing::QuadInOut, "quadInOut"),
+    (SvelteEasing::QuadIn, "quadIn"),
+    (SvelteEasing::QuadOut, "quadOut"),
+    (SvelteEasing::QuartInOut, "quartInOut"),
+    (SvelteEasing::QuartIn, "quartIn"),
+    (SvelteEasing::QuartOut, "quartOut"),
+    (SvelteEasing::QuintInOut, "quintInOut"),
+    (SvelteEasing::QuintIn, "quintIn"),
+    (SvelteEasing::QuintOut, "quintOut"),
+    (SvelteEasing::SineInOut, "sineInOut"),
+    (SvelteEasing::SineIn, "sineIn"),
+    (SvelteEasing::SineOut, "sineOut"),
+];
+
+impl SvelteEasing {
+    /// The curve exported as `name` from svelte/easing.
+    pub fn from_name(name: &str) -> Option<SvelteEasing> {
+        SVELTE_EASINGS.iter().find(|(_, n)| *n == name).map(|(e, _)| *e)
+    }
+
+    /// Its svelte/easing export name.
+    pub fn name(self) -> &'static str {
+        SVELTE_EASINGS.iter().find(|(e, _)| *e == self).map(|(_, n)| *n).expect("every curve is in SVELTE_EASINGS")
+    }
+}
+
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub enum FillMode {
