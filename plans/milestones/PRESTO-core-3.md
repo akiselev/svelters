@@ -153,10 +153,24 @@ with fast scroll and caret, padding and window transform; in `dispatch.rs` the I
 the moved node (local bounds, parent-relative transform), an inserted subtree joining incrementally, and a
 name from children.
 
-## Built / not run
+## Built / run
 
-`cargo check -p presto-core -p presto-widgets --all-targets` after each part. No test run, no clippy, no
-other OS. CI on the pushed sha is in the coordinator message.
+`cargo check -p presto-core -p presto-widgets --all-targets` after each part. Once at the end, when the
+coordinator asked me to check RENDER's failing `paint_transitions_sample_on_the_ui_thread`: `cargo test
+-p presto-core --lib` (119 passed after the fixes below) and `cargo test -p presto-widgets` (245 passed;
+3 failed: `controls::slider::tests::{dragging_the_thumb_changes_the_value,
+escape_while_dragging_restores_without_a_commit, inverted_page_clicks_and_commit_mode}`, float equality
+on the shim's test driver, no presto-core involved: WIDGETS-BASIC's). Not run: clippy, other OSes.
+
+Fixes from that run:
+- `paint_transitions_sample_on_the_ui_thread` was not wall-clock: svelters-style keeps transition times
+  as f32 seconds, so `100ms` became 100 000 001 ns and the transition was still running at +100 ms.
+  Durations and delays are now rounded to whole microseconds, and a UI transition ends by exact time
+  arithmetic (`start + delay + duration`), not by the sampled float progress.
+- Native prop writes a kind made during its own handler skipped `prop_state` (the kind was out of its
+  slot): the document now refreshes prop state and inert children when the kind is put back, and only
+  JS writes (not the kind's own) are replayed to `prop_changed`.
+- Four new tests assumed a row layout; the test root is a column: they click node centres now.
 
 ## For WIDGETS-BASIC (host.rs bridge)
 

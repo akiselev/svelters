@@ -43,6 +43,9 @@ pub(crate) struct UiTransition {
     pub start: Option<Time>,
     /// The computed value it ends on (a restyle to the same value does not restart it).
     pub to: AnimValue,
+    /// Delay plus duration: it ends at `start + length`, decided in exact time (a float progress
+    /// at the boundary can fall a hair short of the end).
+    pub length: presto_base::time::Span,
 }
 
 #[derive(Default)]
