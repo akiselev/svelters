@@ -103,6 +103,10 @@ pub struct Document {
     pub(crate) auto_default: bool,
     /// Per kind, its live nodes.
     pub(crate) kind_sets: crate::query::KindSets,
+    /// Kinds that scroll their own content ([`Kind::self_scroll`]).
+    pub(crate) self_scroll: HashMap<NodeId, crate::kind::SelfScroll>,
+    /// Fast commits queued for the compositor ([`Document::take_fast_commits`]).
+    pub(crate) fast: Vec<presto_base::commit::FastCommit>,
 }
 
 impl Document {
@@ -147,6 +151,8 @@ impl Document {
             label_for: HashMap::new(),
             auto_default: false,
             kind_sets: Default::default(),
+            self_scroll: HashMap::new(),
+            fast: Vec::new(),
         }
     }
 
@@ -599,6 +605,7 @@ impl Document {
         self.label_for.remove(&id);
         self.peer_queue.retain(|(n, ..)| *n != id);
         self.missed_props.retain(|(n, _)| *n != id);
+        self.self_scroll.remove(&id);
         self.slots.free(i);
     }
 
@@ -1083,8 +1090,13 @@ impl Document {
         }
         self.state[i] = new;
         self.stamp();
-        self.core[i].dirty.insert(Dirty::A11Y);
-        self.mark_up(i, Dirty::DESC_RECORD);
+        // pointer-only states are not in the accessibility tree: a hover over unstyled nodes costs
+        // no frame (`needs_frame`)
+        let pointer_only = StateMask(StateMask::HOVERED.0 | StateMask::PRESSED.0 | StateMask::FOCUS_WITHIN.0);
+        if (old.0 ^ new.0) & !pointer_only.0 != 0 {
+            self.core[i].dirty.insert(Dirty::A11Y);
+            self.mark_up(i, Dirty::DESC_RECORD);
+        }
         self.restyle_state(i, old, new);
         self.journal.push(Change::State { node, state: new });
     }

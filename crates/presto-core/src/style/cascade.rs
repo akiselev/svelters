@@ -819,7 +819,7 @@ impl Document {
             self.replace_children(i);
         }
         // the scroll range may have changed with the overflow axes
-        if property && !self.style.computed(i).overflow_x.scrolls() && !self.style.computed(i).overflow_y.scrolls() {
+        if property && self.scroll_axes(i) == (false, false) {
             self.scroll.remove(&node);
         }
         inherited
