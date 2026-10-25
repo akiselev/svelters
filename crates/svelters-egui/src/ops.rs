@@ -197,6 +197,12 @@ impl Backend for EguiBackend {
             self.0.windows.borrow_mut().retain(|&w| w != h);
         }
         self.0.anim.borrow_mut().forget(h);
+        // DZ0: a freed node's overrides go with it
+        let mut ov = self.0.overrides.borrow_mut();
+        if !ov.is_empty() {
+            ov.retain(|&(n, _), _| n.to_raw() != h);
+        }
+        drop(ov);
         self.touched(r);
     }
 
@@ -204,6 +210,11 @@ impl Backend for EguiBackend {
         {
             let mut scene = self.0.scene.borrow_mut();
             let id = scene.live(h)?;
+            // DZ0 (SV30): while a tool overrides the prop, the runtime's write is held back
+            if let Some(under) = self.0.overrides.borrow_mut().get_mut(&(id, prop)) {
+                *under = v.clone();
+                return Ok(());
+            }
             // Host writes never announce a change: there is no echo to suppress (EGUI.md §1.4).
             scene.set_value(id, prop, v, Origin::Js).map_err(|e| e.to_string())?;
         }

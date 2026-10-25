@@ -77,6 +77,7 @@ mod menus;
 mod overlays;
 pub mod rich;
 mod ops;
+mod overrides;
 mod walk;
 // WG4a: state, layout and paint of the Tier 1 views (`kinds/views.rs`); `toast` is public
 mod views;

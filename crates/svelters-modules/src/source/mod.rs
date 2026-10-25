@@ -197,6 +197,8 @@ struct Cached {
     map: Option<String>,
     /// LD2: the component's scoped sheet (its `svelters-style:` module registers it).
     css: Option<String>,
+    /// DZ0 (dev): the sheet's map to the `<style>` text (`ScopedCss::source_map_text`).
+    css_map: Option<String>,
 }
 
 /// LD2: what an edit of a component changed, by file (`invalidate`), so `modules_at` re-runs only
@@ -410,7 +412,8 @@ impl Inner {
         if let Some(file) = id.strip_prefix(STYLE_PREFIX) {
             let key = build::logical_id(&self.cfg.root, Path::new(file));
             let c = self.compiled(Path::new(file), overlay)?;
-            return Ok(ModuleCode::Source { js: style_module(&key, c.css.as_deref().unwrap_or("")), map: None });
+            let source = c.css_map.as_deref().map(|m| (file, m));
+            return Ok(ModuleCode::Source { js: style_module(&key, c.css.as_deref().unwrap_or(""), source), map: None });
         }
         let c = self.compiled(Path::new(id), overlay)?;
         Ok(ModuleCode::Source { js: c.js.clone(), map: c.map.clone() })
@@ -430,12 +433,13 @@ impl Inner {
             js = expanded;
         }
         self.warnings.extend(warnings);
+        let css_map = css.as_ref().filter(|_| self.cfg.dev).map(|c| c.source_map_text());
         let css = css.map(|c| c.code);
         if css.is_some() {
             let spec = serde_json::Value::String(format!("{STYLE_PREFIX}{}", path.to_string_lossy())).to_string();
             js.push_str(&format!("\nimport {spec};\n"));
         }
-        self.cache.insert(path.to_path_buf(), Cached { hash, js, map, css });
+        self.cache.insert(path.to_path_buf(), Cached { hash, js, map, css, css_map });
         Ok(&self.cache[path])
     }
 
@@ -583,10 +587,13 @@ impl ModuleProvider for SourceProvider {
 /// for egui, `registerStyles(id, { css })`; the backend's style engine parses and installs it, `:state()`
 /// resolved against the host's registry) and accepts its own updates, so an edit replaces the sheet by
 /// id and the backend restyles. Q4b: the id is the component's logical id (`app/src/App.svelte`).
-fn style_module(file: &str, css: &str) -> String {
+/// DZ0 (dev): `source` is the component's path as the compiler got it and the sheet's map to its
+/// `<style>` text, which the egui engine keeps for matched-rule source offsets.
+fn style_module(file: &str, css: &str, source: Option<(&str, &str)>) -> String {
     let lit = |s: &str| serde_json::Value::String(s.to_string()).to_string();
+    let extra = source.map_or(String::new(), |(path, map)| format!(", file: {}, map: {}", lit(path), lit(map)));
     format!(
-        "import {{ registerStyles }} from \"@svelters/native-runtime/style\";\nregisterStyles({}, {{ css: {} }});\nif (import.meta.hot) import.meta.hot.accept();\n",
+        "import {{ registerStyles }} from \"@svelters/native-runtime/style\";\nregisterStyles({}, {{ css: {}{extra} }});\nif (import.meta.hot) import.meta.hot.accept();\n",
         lit(file),
         lit(css)
     )
