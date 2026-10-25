@@ -19,6 +19,7 @@
 
 use crate::clipboard::Win32Clipboard;
 use crate::dcomp::DComp;
+use crate::frame::Win32Frames;
 use crate::keyboard::KeyTranslator;
 use crate::monitor;
 use crate::tsf::{ClientAccess, Tsf, TsfDocument};
@@ -32,6 +33,7 @@ use presto_base::ids::{InputSeq, SurfaceId, WindowId};
 use presto_base::input::TextInputClient;
 use presto_base::time::{Clock, Time};
 use presto_platform::clock::OsClock;
+use presto_platform::frame::FrameSource;
 use presto_platform::{
     A11yEvent, AppHandler, Clipboard, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx,
     PlatformError, SurfaceTarget, Waker, WindowDesc,
@@ -384,7 +386,7 @@ pub(crate) struct Cx<'a> {
 }
 
 impl PlatformCx for Cx<'_> {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
+    fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
         window::create(self.app, desc)
     }
 
@@ -512,6 +514,11 @@ impl PlatformCx for Cx<'_> {
 
     fn window_scale(&self, id: WindowId) -> Option<Scale> {
         self.app.inner.borrow().windows.get(&id).map(|w| w.scale)
+    }
+
+    fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn FrameSource>> {
+        self.app.hwnd(id)?;
+        Some(Arc::new(Win32Frames::new()))
     }
 
     fn exit(&mut self) {

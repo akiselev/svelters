@@ -1,4 +1,5 @@
-//! The frame source the compositor thread waits on (`platform.md` §4, Windows):
+//! The frame source the compositor thread waits on (`platform.md` §4, Windows), as presto-platform's
+//! `FrameSource` ([`Win32Frames`]):
 //!
 //! 1. Windows 11's compositor clock (`DCompositionWaitForCompositorClock`, build 22000+): a
 //!    display-independent heartbeat that also waits on the compositor's own handles, boosted
@@ -12,6 +13,9 @@
 //! (GPUI's rule, `gpui_windows/src/vsync.rs`).
 
 use crate::util::{counts_to_nanos, qpc_frequency, qpc_now, qpc_to_time};
+use presto_base::ids::FrameId;
+use presto_platform::frame::{FrameSource, FrameWait};
+use std::sync::Mutex;
 use presto_base::time::Span;
 use std::time::{Duration, Instant};
 use windows::Win32::Foundation::{HANDLE, HWND, WAIT_OBJECT_0, WAIT_TIMEOUT};
@@ -199,8 +203,6 @@ impl Default for Win32FrameSource {
     }
 }
 
-/// The compositor thread's interface (presto-platform's `FrameSource` trait is still being written;
-/// the consolidation implements it with these).
 impl Win32FrameSource {
     pub fn wait(&mut self, timeout: Option<Span>) -> FrameWake {
         match self.wait_with(&[], timeout) {
@@ -237,6 +239,62 @@ impl Drop for Win32FrameSource {
     }
 }
 
+/// [`Win32FrameSource`] as presto-platform's [`FrameSource`] (shared between the compositor's vsync
+/// thread and its draw thread). The compositor-clock boost is driven through [`Win32Frames::set_boost`].
+pub struct Win32Frames {
+    inner: Mutex<Win32FrameSource>,
+}
+
+impl Win32Frames {
+    pub fn new() -> Self {
+        Self { inner: Mutex::new(Win32FrameSource::new()) }
+    }
+
+    pub fn set_boost(&self, on: bool) {
+        self.inner.lock().unwrap_or_else(|e| e.into_inner()).set_boost(on);
+    }
+
+    pub fn set_waitable(&self, waitable: Option<WaitHandle>) {
+        self.inner.lock().unwrap_or_else(|e| e.into_inner()).set_waitable(waitable);
+    }
+}
+
+impl Default for Win32Frames {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// A [`FrameWake`] as the compositor's [`FrameWait`].
+pub fn frame_wait(wake: FrameWake, interval: Span) -> FrameWait {
+    match wake {
+        FrameWake::Frame { at, estimated } => FrameWait::Vsync { target: at + interval, interval, estimated },
+        FrameWake::Timeout => FrameWait::TimedOut,
+    }
+}
+
+impl FrameSource for Win32Frames {
+    fn name(&self) -> &'static str {
+        if self.inner.lock().unwrap_or_else(|e| e.into_inner()).has_compositor_clock() {
+            "win32-compositor-clock"
+        } else {
+            "win32-dwm"
+        }
+    }
+
+    fn wait(&self, timeout: Span) -> FrameWait {
+        let mut src = self.inner.lock().unwrap_or_else(|e| e.into_inner());
+        let wake = Win32FrameSource::wait(&mut src, Some(timeout));
+        frame_wait(wake, src.interval())
+    }
+
+    fn before_present(&self, _frame: FrameId) {}
+
+    fn interval(&self) -> Option<Span> {
+        Some(self.inner.lock().unwrap_or_else(|e| e.into_inner()).interval())
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -258,6 +316,17 @@ mod tests {
         // The implausible 60-count period falls back to the rational rate.
         assert_eq!(interval_from_timing(60, 10_000_000, 144, 1), Some(Span(6_944_444)));
         assert_eq!(interval_from_timing(60, 10_000_000, 0, 0), None);
+    }
+
+    #[test]
+    fn wakes_become_frame_waits() {
+        let i = Span::from_millis(16);
+        let at = presto_base::time::Time(1_000);
+        assert_eq!(
+            frame_wait(FrameWake::Frame { at, estimated: false }, i),
+            FrameWait::Vsync { target: at + i, interval: i, estimated: false }
+        );
+        assert_eq!(frame_wait(FrameWake::Timeout, i), FrameWait::TimedOut);
     }
 
     #[test]

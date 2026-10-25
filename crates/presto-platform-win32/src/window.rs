@@ -247,7 +247,7 @@ impl ActionHandler for A11ySink {
     }
 }
 
-pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
+pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, PlatformError> {
     let id = app.alloc_window_id();
     let (style, ex) = styles(&desc);
     let class = wide(CLASS_NAME);
@@ -270,8 +270,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
         )
     } {
         Ok(h) => h,
-        // The id stays unknown to every other call (surface_target answers `None`).
-        Err(_) => return id,
+        Err(e) => return Err(os_err("CreateWindowExW", e)),
     };
     let dpi = unsafe { GetDpiForWindow(hwnd) }.max(1);
     let scale = dpi_to_scale(dpi);
@@ -339,7 +338,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
     if desc.visible {
         let _ = unsafe { ShowWindow(hwnd, if desc.maximized { SW_SHOWMAXIMIZED } else { SW_SHOW }) };
     }
-    id
+    Ok(id)
 }
 
 pub(crate) fn set_cursor(app: &App, id: WindowId, c: CursorIcon) {
