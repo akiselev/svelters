@@ -282,6 +282,23 @@ impl PlatformCx for Cx<'_> {
         l.apply_geometry(scale120, int_scale);
     }
 
+    fn begin_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) -> bool {
+        // Sync mode caches the layer's commits until the window's next commit, so the new bounds (parent
+        // state) and the first buffer at the new size appear together.
+        let Some(l) = self.state.windows.get(&id).and_then(|w| w.layers.get(&layer)) else { return false };
+        l.subsurface.set_sync();
+        true
+    }
+
+    fn end_os_layer_resize(&mut self, id: WindowId, layer: SurfaceId) {
+        let Some(w) = self.state.windows.get(&id) else { return };
+        let Some(l) = w.layers.get(&layer) else { return };
+        // A window resize in progress keeps every layer synced; its lock desyncs them when it ends.
+        if !w.lock.is_synced() {
+            l.subsurface.set_desync();
+        }
+    }
+
     fn remove_os_layer(&mut self, id: WindowId, layer: SurfaceId) {
         let Some(w) = self.state.windows.get_mut(&id) else { return };
         if let Some(l) = w.layers.remove(&layer) {

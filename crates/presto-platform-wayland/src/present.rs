@@ -108,6 +108,11 @@ impl SurfaceLock {
         self.0.lock().unwrap().children.retain(|c| c != sub);
     }
 
+    /// The window's children are in sync mode for a resize.
+    pub fn is_synced(&self) -> bool {
+        self.0.lock().unwrap().synced
+    }
+
     pub fn clear_children(&self) {
         self.0.lock().unwrap().children.clear();
     }
