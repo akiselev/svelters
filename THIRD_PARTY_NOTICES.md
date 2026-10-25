@@ -31,6 +31,41 @@ npm and Cargo dependencies are not bundled in this repository. Each one is insta
 - **`metadata/appkit/`** holds facts derived from the macOS SDK headers: class, property and method names, types, enum values and availability versions. It is generated with Xcode on macOS (Apple hardware, GitHub's macOS runner; currently Xcode 26.1.1, macOS 26.1 SDK) by `tools/metadata/appkit/ingest.py`, and CI regenerates and checks it. It contains no header text or documentation comments, and the SDK itself is not redistributed.
 - **`metadata/winui/`** holds facts derived from the Windows App SDK `Microsoft.UI.Xaml.winmd`: names, types and attributes. The SDK packages are downloaded by `tools/metadata/winui/fetch.py` and are not redistributed.
 
+## presto: ported curves and constants (lane FRAME-ANIM)
+
+`crates/presto-anim` ports these sources; each ported file names its upstream file and revision in
+its header comment. They are not all MIT-licensed; their licenses follow.
+
+| Project | Revision | Where | License, copyright |
+|---|---|---|---|
+| [Chromium](https://chromium.googlesource.com/chromium/src) `cc/animation/scroll_offset_animation_curve.cc`, `ui/events/gestures/physics_based_fling_curve.cc` | 521441860f50 | `crates/presto-anim/src/scroll.rs` | BSD-3-Clause; Copyright 2013, 2019 The Chromium Authors (text below) |
+| [Android Open Source Project](https://android.googlesource.com/platform/frameworks/base) `core/java/android/widget/OverScroller.java` | 1cdfff555f4a | `crates/presto-anim/src/scroll.rs` (`android`) | Apache-2.0 (<http://www.apache.org/licenses/LICENSE-2.0>); Copyright (C) 2010 The Android Open Source Project |
+| [Svelte](https://github.com/sveltejs/svelte) `src/easing/index.js` (adapted there from [mattdesl/eases](https://github.com/mattdesl/eases)) | 5.57.2 | `crates/presto-anim/src/easing.rs` (`svelte`) | MIT; Copyright (c) 2016-2025 Svelte Contributors; eases Copyright (c) 2014 Matt DesLauriers |
+
+Chromium's license:
+
+> Copyright 2015 The Chromium Authors
+>
+> Redistribution and use in source and binary forms, with or without modification, are permitted
+> provided that the following conditions are met:
+>
+> - Redistributions of source code must retain the above copyright notice, this list of conditions
+>   and the following disclaimer.
+> - Redistributions in binary form must reproduce the above copyright notice, this list of
+>   conditions and the following disclaimer in the documentation and/or other materials provided
+>   with the distribution.
+> - Neither the name of Google LLC nor the names of its contributors may be used to endorse or
+>   promote products derived from this software without specific prior written permission.
+>
+> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+> IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+> FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+> CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+> DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+> DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+> WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+> WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 ---
 
 ## MIT License

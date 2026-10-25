@@ -432,7 +432,8 @@ mod tests {
         assert_eq!(steps(4, StepPosition::Start, 0.0, false), 0.25);
         assert_eq!(steps(4, StepPosition::Start, 0.0, true), 0.0);
         assert_eq!(steps(3, StepPosition::JumpBoth, 0.0, false), 0.25);
-        assert_eq!(steps(3, StepPosition::JumpBoth, 1.0, false), 0.75);
+        assert_eq!(steps(3, StepPosition::JumpBoth, 0.99, false), 0.75);
+        assert_eq!(steps(3, StepPosition::JumpBoth, 1.0, false), 1.0);
         assert_eq!(steps(3, StepPosition::JumpNone, 0.0, false), 0.0);
         assert_eq!(steps(3, StepPosition::JumpNone, 0.5, false), 0.5);
         assert_eq!(steps(3, StepPosition::JumpNone, 1.0, false), 1.0);

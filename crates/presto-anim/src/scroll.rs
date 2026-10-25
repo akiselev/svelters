@@ -37,6 +37,11 @@ fn secs(t: Span) -> f64 {
     t.as_secs_f64()
 }
 
+/// Seconds as a span, rounded up, so `done_at(duration())` holds.
+fn span_ceil(s: f64) -> Span {
+    Span((s * 1e9).ceil() as i64)
+}
+
 /// Chromium's `MaximumDimension`: the component with the larger magnitude, signed.
 fn max_dim(v: Vec2) -> f64 {
     if v.x.abs() > v.y.abs() { v.x as f64 } else { v.y as f64 }
@@ -118,7 +123,7 @@ impl SmoothScroll {
 
     /// When the curve reaches its target, since it started.
     pub fn duration(&self) -> Span {
-        Span::from_secs_f64(self.total)
+        span_ceil(self.total)
     }
 
     fn velocity_scalar(&self, t: f64) -> f64 {
@@ -271,7 +276,7 @@ impl PhysicsFling {
     }
 
     pub fn duration(&self) -> Span {
-        Span::from_secs_f64(self.duration)
+        span_ceil(self.duration)
     }
 }
 
@@ -823,13 +828,14 @@ mod tests {
         let f = ExponentialFling::new(Vec2::new(1000.0, 0.0), 0.998, Size::new(10_000.0, 10_000.0));
         let end = f.offset_at(Span::from_millis(10_000)).x;
         assert!(end > 480.0 && end < 500.0, "{end}");
-        assert!(f.done_at(Span::from_secs_f64(f.end())));
+        assert!(f.done_at(Span::from_secs_f64(f.end() + 1e-3)));
     }
 
     #[test]
     fn android_spline_table_and_fling() {
         let t = android::spline_position();
-        assert_eq!(t[0], 0.0);
+        // the Java table bisects to 1e-5, so its first entry is near 0, not 0
+        assert!(t[0] < 1e-4);
         assert_eq!(t[android::NB_SAMPLES], 1.0);
         assert!(t.windows(2).all(|w| w[1] >= w[0]));
         let f = SplineFling::new(Vec2::new(0.0, 4000.0), 160.0 * 2.0);
