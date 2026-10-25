@@ -4004,6 +4004,8 @@ dependencies = [
  "egui-wgpu",
  "pollster 0.4.0",
  "presto-base",
+ "presto-compositor",
+ "presto-platform",
  "wgpu",
 ]
 

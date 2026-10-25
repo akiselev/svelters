@@ -10,7 +10,7 @@
 //! | [`input`] | presto events → egui `Event`s (pointer routing and capture, keys, text, IME, wheel, files) |
 //! | [`a11y`] | the AccessKit graft: nested trees, egui's root tree id rewritten, actions mapped back |
 //! | [`dnd`] | the `egui::DragAndDrop` ↔ presto drag-and-drop bridge |
-//! | [`shim`] | stand-ins for wave-1 APIs not published yet (texture registry, clipboard, presto drags) |
+//! | [`shim`] | stand-ins for wave-1 APIs not published yet (presto drags) |
 //!
 //! The island is a layer kind ([`EguiIsland::layer_kind`]): the host node records
 //! [`EguiIsland::display_list`] and places it in a `LayerKind::Texture` layer.
@@ -23,5 +23,5 @@ pub mod shim;
 
 pub use a11y::{A11yGraft, island_tree_id};
 pub use dnd::{DndBridge, DndOutput, IslandDrag, IslandDragCodec, PayloadCodec};
-pub use island::{EguiIsland, ImeArea, IslandDesc, IslandOutput, TARGET_FORMAT};
-pub use shim::{ClipboardText, PrestoDrag, TextureRegistry};
+pub use island::{EguiIsland, ImeArea, IslandDesc, IslandOutput, TARGET_FORMAT, TextureRegistry};
+pub use shim::PrestoDrag;

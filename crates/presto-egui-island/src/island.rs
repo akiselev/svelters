@@ -19,7 +19,8 @@
 use crate::a11y::A11yGraft;
 use crate::dnd::{DndBridge, DndOutput, PayloadCodec};
 use crate::input::{self, InputTranslator, Routed};
-use crate::shim::{ClipboardText, PrestoDrag, TextureRegistry};
+use crate::shim::PrestoDrag;
+use presto_platform::clipboard::{Clipboard, ClipboardKind};
 use presto_base::cursor::CursorIcon;
 use presto_base::display::{DisplayList, Prim, SurfacePrim};
 use presto_base::event::InputEnvelope;
@@ -33,6 +34,23 @@ use std::time::Duration;
 
 /// The island's target format: `Renderer::register_native_texture` and presto's surfaces both want it.
 pub const TARGET_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
+
+/// Where an island's texture is registered for compositing: the compositor, or a test's recorder.
+pub trait TextureRegistry {
+    /// Register (or replace) the texture composited for `id`. The island calls it whenever it
+    /// (re)allocates its target, so after a resize the compositor samples the new texture.
+    fn register_texture(&self, id: TextureId, texture: wgpu::Texture);
+    fn unregister_texture(&self, id: TextureId);
+}
+
+impl TextureRegistry for presto_compositor::CompositorHandle {
+    fn register_texture(&self, id: TextureId, texture: wgpu::Texture) {
+        presto_compositor::CompositorHandle::register_texture(self, id, texture);
+    }
+    fn unregister_texture(&self, id: TextureId) {
+        presto_compositor::CompositorHandle::unregister_texture(self, id);
+    }
+}
 
 pub struct IslandDesc {
     /// The id the island's texture is registered and composited under (the host allocates it).
@@ -110,7 +128,7 @@ pub struct EguiIsland {
     /// The host set its own placement for the AccessKit subtree (else it follows the rect).
     a11y_placement_set: bool,
     dnd: DndBridge,
-    clipboard: Option<Box<dyn ClipboardText>>,
+    clipboard: Option<Box<dyn Clipboard>>,
     max_texture_side: usize,
 }
 
@@ -220,7 +238,7 @@ impl EguiIsland {
         }
     }
 
-    pub fn set_clipboard(&mut self, clipboard: Box<dyn ClipboardText>) {
+    pub fn set_clipboard(&mut self, clipboard: Box<dyn Clipboard>) {
         self.clipboard = Some(clipboard);
     }
 
@@ -245,7 +263,7 @@ impl EguiIsland {
     pub fn handle_input(&mut self, ev: &InputEnvelope) -> bool {
         let Routed { consumed, queued, paste } = self.input.translate(&ev.event, &mut self.events);
         if paste {
-            let text = self.clipboard.as_mut().and_then(|c| c.get_text()).map(|t| t.replace("\r\n", "\n"));
+            let text = self.clipboard.as_mut().and_then(|c| c.get_text(ClipboardKind::Clipboard)).map(|t| t.replace("\r\n", "\n"));
             if let Some(text) = text.filter(|t| !t.is_empty()) {
                 self.events.push(egui::Event::Paste(text));
             }
@@ -408,7 +426,7 @@ impl EguiIsland {
             match cmd {
                 egui::OutputCommand::CopyText(text) => {
                     if let Some(c) = &mut self.clipboard {
-                        c.set_text(text.clone());
+                        c.set_text(ClipboardKind::Clipboard, &text);
                     }
                     out.copied.push(text);
                 }

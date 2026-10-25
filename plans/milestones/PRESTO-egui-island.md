@@ -1,7 +1,7 @@
 # PRESTO-egui-island: the egui island (presto batch 2)
 
 Lane EGUI-ISLAND (`plans/cloud/presto-b2/LANE-egui-island.md`), branch `ci/presto-egui-island`, from
-`ci/presto-base` at `e34079e6`. Owns `crates/presto-egui-island/**`. Design: architecture §13 (egui islands),
+`ci/presto-base` at `e34079e6` (merged up to `3bde04cd`). Owns `crates/presto-egui-island/**`. Design: architecture §13 (egui islands),
 §15 (the island), §11.7 (the DnD bridge).
 
 ## What landed
@@ -67,18 +67,23 @@ had them; egui pinned exactly like svelters-egui):
 
 Run locally: `cargo check -p presto-egui-island --all-targets` only (clean). **Not run:** any test, clippy.
 
-## Shims (`src/shim.rs`, for the consolidation to replace)
+## Wave-1 APIs used, and the shim left (`src/shim.rs`)
 
-- `TextureRegistry { register_texture, unregister_texture }`: `presto_compositor::CompositorHandle::register_texture`
-  (batch 1 brief) **plus an `unregister_texture` the handle doesn't have** (only the renderer has one).
-- `ClipboardText { get_text, set_text }`: `presto_platform::Clipboard` (methods not published yet).
-- `PrestoDrag { entries: Vec<(type, bytes)>, source: Option<NodeId> }`: presto-core's DnD session (§11.7).
+Merged `ci/presto-base` at `3bde04cd`. The island uses the real APIs now:
+- `TextureRegistry` (island.rs) is implemented for `presto_compositor::CompositorHandle`
+  (`register_texture`/`unregister_texture`); tests implement it with a recorder.
+- The clipboard is `presto_platform::clipboard::Clipboard` (`ClipboardKind::Clipboard`).
+
+Still a shim: `PrestoDrag { entries: Vec<(type, bytes)>, source: Option<NodeId> }`, standing in for
+presto-core's DnD session (§11.7), which doesn't exist yet.
 
 ## Not done / left out
 
-- **No `presto_core::Kind` impl.** presto-core has no `Kind` trait yet; the island exposes what a kind needs
-  (`display_list`, `layer_kind`, `handle_input`, `set_rect`, `a11y().graft_node`, `next_wakeup`). The
-  consolidation (or svelters-presto/app-runner) wraps it in a kind once §4.2 lands.
+- **No `presto_core::Kind` impl.** The trait now exists (`presto-core/src/kind.rs`), but a kind is built by a
+  `KindFactory = fn() -> Box<dyn Kind>` with no arguments, while an island needs its descriptor (texture id, tree
+  id) and the host's `ui` callback (`PaneHost::ui`), and `EventCx`/`RecordCx` are still being filled in. The
+  island exposes what a kind needs (`display_list`, `layer_kind`, `handle_input`, `set_rect`,
+  `a11y().graft_node`, `next_wakeup`). See question 4.
 - egui `OutputCommand::CopyImage` and `TextSelectionSettled`: no presto counterpart; ignored.
 - presto `ImeEvent::DeleteSurrounding` (bytes of text the island can't see) is dropped: egui wants chars.
 - Physical keys: presto carries USB HID usages, egui wants `Key` names; `physical_key` is `None` (egui-winit's
@@ -88,8 +93,8 @@ Run locally: `cargo check -p presto-egui-island --all-targets` only (clean). **N
 ## Cross-lane edits
 
 - `THIRD_PARTY_NOTICES.md`: one paragraph for the egui-winit rules adapted in `input.rs` (MIT notice).
-- `Cargo.lock`: the crate's new deps (egui, egui-wgpu, wgpu, accesskit; dev: pollster 0.4, accesskit_consumer
-  0.39.1), all already in the lock.
+- `Cargo.lock`: the crate's new deps (presto-compositor, presto-platform, egui, egui-wgpu, wgpu, accesskit;
+  dev: pollster 0.4, accesskit_consumer 0.39.1), all already in the lock.
 
 ## Questions for the coordinator
 
@@ -97,9 +102,13 @@ Run locally: `cargo check -p presto-egui-island --all-targets` only (clean). **N
    egui-winit negates winit's (counter-clockwise positive) for egui. The island passes presto's value through
    unchanged. Recommendation: document in presto-base that `delta_rad` uses egui's convention (clockwise
    positive), so platform backends convert once and the island stays a pass-through.
-2. **`CompositorHandle::unregister_texture`.** Islands and offscreen viewports come and go; the handle needs it.
-   Recommendation: add it to presto-compositor (additive).
+2. ~~`CompositorHandle::unregister_texture`~~: resolved, the compositor skeleton has it.
 3. **Threading of island renders.** The island renders on the UI thread on presto's device/queue (the commit
    showing the texture is sent after the submit, so queue order makes it visible). If the compositor prefers
    to encode islands itself, `render` already takes `(device, queue, encoder)` and can move to the compositor
    thread with the pending paint jobs. Recommendation: keep UI-thread rendering for now.
+4. **How an island becomes a node.** Recommendation: the app runner keeps islands in a side table keyed by node
+   id and registers one `EguiIslandKind` whose `record` emits the island's `display_list`, `event` forwards to
+   `handle_input`, and `a11y` calls `graft_node`. The kind looks its island up by node id, so the no-argument
+   `KindFactory` still works. The consolidation writes it once presto-core's contexts settle, or the
+   coordinator gives it to this lane in a later batch.

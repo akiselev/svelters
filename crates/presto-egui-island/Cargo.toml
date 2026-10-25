@@ -8,6 +8,8 @@ publish.workspace = true
 
 [dependencies]
 presto-base = { workspace = true }
+presto-compositor = { workspace = true }
+presto-platform = { workspace = true }
 accesskit = { workspace = true }
 wgpu = { workspace = true }
 # One egui minor, pinned exactly, as svelters-egui pins it (D9); egui moves together with cadatomic.
