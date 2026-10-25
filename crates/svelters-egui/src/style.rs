@@ -843,11 +843,7 @@ impl Scene {
         }
         self.core[i].dirty.remove(Dirty::STYLE);
         let parent = self.core[i].parent.and_then(|p| self.style.computed(p).cloned());
-        let inline = self.style.node(id).and_then(|n| match (&n.inline, &n.forced) {
-            (i, None) => i.clone(),
-            (None, Some(f)) => Some(f.clone()),
-            (Some(i), Some(f)) => Some(Arc::new(DeclBlock { decls: i.decls.iter().chain(&f.decls).cloned().collect() })),
-        });
+        let inline = self.effective_inline(id);
         let mut caches = std::mem::take(&mut self.style.caches);
         let n = NodeRef::at(self, id);
         let st = &self.style;
@@ -1848,6 +1844,10 @@ pub struct DeclInfo {
     pub important: bool,
     /// Where it is in the component's `<style>` (dev builds; `None` for theme and host sheets).
     pub source: Option<StyleSource>,
+    /// DZ0b2: it wins the cascade for its property (for a shorthand, for at least one longhand)
+    /// over every other rule and the node's `style=` and forced declarations. A prop the runtime
+    /// set still wins over it (CSS.md §2.8).
+    pub winner: bool,
 }
 
 /// DZ0: a rule that matches a node, as a designer's or inspector's "matched rules" pane shows it.
@@ -2003,6 +2003,96 @@ impl Scene {
         }
         self.style.node_mut(id).name = name.map(Into::into);
         self.mark_reach(id, reach);
+    }
+
+    /// The node's `style=` declarations with a tool's forced ones after them (as the cascade
+    /// takes its inline block).
+    fn effective_inline(&self, id: NodeId) -> Option<Arc<DeclBlock>> {
+        self.style.node(id).and_then(|n| match (&n.inline, &n.forced) {
+            (i, None) => i.clone(),
+            (None, Some(f)) => Some(f.clone()),
+            (Some(i), Some(f)) => Some(Arc::new(DeclBlock { decls: i.decls.iter().chain(&f.decls).cloned().collect() })),
+        })
+    }
+
+    /// DZ0: [`EguiBackend::matched_rules`] for a live node. DZ0b2 marks each property's winning
+    /// declaration ([`DeclInfo::winner`]).
+    pub(crate) fn matched_rules_of(&self, id: NodeId) -> Vec<MatchedRuleInfo> {
+        let st = &self.style;
+        let n = NodeRef::at(self, id);
+        let mut caches = MatchCaches::new();
+        let inline = self.effective_inline(id);
+        let winners = st.stylist.winners(n, inline.as_deref(), &mut caches);
+        caches.clear();
+        st.stylist
+            .matched_rules(n, &mut caches)
+            .into_iter()
+            .map(|m| {
+                let rule = st.stylist.rule(m.rule);
+                let sheet_id = st.stylist.rule_sheet(m.rule);
+                let src = sheet_id.and_then(|i| st.sources.get(&i));
+                let at = |line, column| src.and_then(|x| Some(StyleSource { file: x.file.clone(), style_offset: x.at(line, column)? }));
+                MatchedRuleInfo {
+                    sheet: sheet_id.and_then(|i| st.sheets.iter().find(|(_, x)| *x == i)).map(|(n, _)| n.clone()),
+                    selectors: rule.selector_text(),
+                    specificity: m.specificity,
+                    line: rule.line,
+                    column: rule.column,
+                    source: at(rule.line, rule.column),
+                    decls: rule
+                        .block
+                        .decls
+                        .iter()
+                        .map(|d| DeclInfo {
+                            name: d.name.to_string(),
+                            value: d.value.to_string(),
+                            important: d.important,
+                            source: at(d.line, d.column),
+                            winner: winners.values().any(|w| std::ptr::eq(*w, d)),
+                        })
+                        .collect(),
+                }
+            })
+            .collect()
+    }
+
+    /// DZ0b2: the inherited properties (custom properties included) of `id`'s computed style that
+    /// no declaration of its own sets, each with the nearest ancestor that declares it (`None`: none does; the value is
+    /// the root's default).
+    pub(crate) fn inherited_from(&self, id: NodeId) -> Vec<(String, Option<NodeId>)> {
+        let Some(c) = self.style.computed(id) else { return Vec::new() };
+        let st = &self.style;
+        let mut caches = MatchCaches::new();
+        let declared = |at: NodeId, caches: &mut MatchCaches| {
+            caches.clear();
+            let inline = self.effective_inline(at);
+            st.stylist.winners(NodeRef::at(self, at), inline.as_deref(), caches).into_keys().collect::<std::collections::BTreeSet<String>>()
+        };
+        let own = declared(id, &mut caches);
+        let mut want: Vec<String> = c
+            .iter()
+            .filter(|(p, _)| p.is_inherited())
+            .map(|(p, _)| p.name)
+            .chain(c.customs().map(|(k, _)| k))
+            .filter(|n| !own.contains(*n))
+            .map(str::to_string)
+            .collect();
+        let mut out = Vec::new();
+        let mut at = self.core[self.ix(id)].parent;
+        while let (Some(p), false) = (at, want.is_empty()) {
+            let decl = declared(p, &mut caches);
+            want.retain(|n| {
+                let hit = decl.contains(n);
+                if hit {
+                    out.push((n.clone(), Some(p)));
+                }
+                !hit
+            });
+            at = self.core[self.ix(p)].parent;
+        }
+        out.extend(want.into_iter().map(|n| (n, None)));
+        out.sort_by(|a, b| a.0.cmp(&b.0));
+        out
     }
 
     fn apply_inline(&mut self, id: NodeId, text: Option<&str>) -> Vec<Diagnostic> {
@@ -2392,33 +2482,7 @@ impl EguiBackend {
     pub fn matched_rules(&self, h: Handle) -> Vec<MatchedRuleInfo> {
         let s = self.0.scene.borrow();
         let Ok(id) = s.live(h) else { return Vec::new() };
-        let st = &s.style;
-        let n = NodeRef::at(&s, id);
-        let mut caches = MatchCaches::new();
-        st.stylist
-            .matched_rules(n, &mut caches)
-            .into_iter()
-            .map(|m| {
-                let rule = st.stylist.rule(m.rule);
-                let sheet_id = st.stylist.rule_sheet(m.rule);
-                let src = sheet_id.and_then(|i| st.sources.get(&i));
-                let at = |line, column| src.and_then(|x| Some(StyleSource { file: x.file.clone(), style_offset: x.at(line, column)? }));
-                MatchedRuleInfo {
-                    sheet: sheet_id.and_then(|i| st.sheets.iter().find(|(_, x)| *x == i)).map(|(n, _)| n.clone()),
-                    selectors: rule.selector_text(),
-                    specificity: m.specificity,
-                    line: rule.line,
-                    column: rule.column,
-                    source: at(rule.line, rule.column),
-                    decls: rule
-                        .block
-                        .decls
-                        .iter()
-                        .map(|d| DeclInfo { name: d.name.to_string(), value: d.value.to_string(), important: d.important, source: at(d.line, d.column) })
-                        .collect(),
-                }
-            })
-            .collect()
+        s.matched_rules_of(id)
     }
 
     /// The node's computed style (after the last restyle), `None` before any style input.
@@ -2434,6 +2498,27 @@ impl EguiBackend {
         let s = self.0.scene.borrow();
         let id = s.live(h).ok()?;
         s.style.part_computed(id, part).cloned()
+    }
+}
+
+/// DZ0b2: a node's style reads for tools that hold the scene, not the backend (the automation
+/// session's `style.matched` and `style.computed`).
+impl<'a> NodeRef<'a> {
+    /// [`EguiBackend::matched_rules`] for this node.
+    pub fn matched_rules(self) -> Vec<MatchedRuleInfo> {
+        self.s.matched_rules_of(self.id())
+    }
+
+    /// [`EguiBackend::computed_style`] for this node.
+    pub fn computed_style(self) -> Option<Arc<ComputedStyle>> {
+        self.s.style.computed(self.id()).cloned()
+    }
+
+    /// The inherited properties (custom properties included) of the computed style that this
+    /// node doesn't declare, by name, each with the nearest ancestor that declares it (`None`:
+    /// no ancestor does). For "inherited from" in an inspector.
+    pub fn inherited_from(self) -> Vec<(String, Option<NodeId>)> {
+        self.s.inherited_from(self.id())
     }
 }
 

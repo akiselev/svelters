@@ -20,6 +20,7 @@ use std::collections::BTreeSet;
 use std::time::{Duration, Instant};
 use svelters_egui::accessible_name;
 use svelters_egui::scene::{ChangeFilter, NodeId, NodeRef, Observer, ProviderId, SceneRef};
+use svelters_egui::style::{MatchedRuleInfo, StyleSource};
 
 /// What a session may do (§1.2). `os_input`, `clock` and `eval` are test-build grants (§6 Q1);
 /// AU1b adds `clock` (`clock.advance`); `os_input` and `eval` have no method yet.
@@ -101,6 +102,44 @@ impl SourceInfo {
             "sites": self.sites.iter().map(|(f, o)| json!({"file": f, "offset": o})).collect::<Vec<_>>(),
         })
     }
+}
+
+/// DZ0b2: a node's computed style, as `style.computed` returns it.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ComputedInfo {
+    /// Every set property with its computed value as CSS text, in the backend table's order.
+    pub values: Vec<(String, String)>,
+    /// Custom properties (`--name`) with their computed text, by name.
+    pub custom: Vec<(String, String)>,
+    /// The inherited properties (custom ones included) the node doesn't declare, by name, each
+    /// with the nearest ancestor that declares it (`None`: none does).
+    pub inherited: Vec<(String, Option<Ref>)>,
+    /// The matched rules, as `style.matched` returns them.
+    pub rules: Vec<MatchedRuleInfo>,
+}
+
+impl ComputedInfo {
+    pub fn to_json(&self) -> Value {
+        let map = |v: &[(String, String)]| Value::Object(v.iter().map(|(k, v)| (k.clone(), json!(v))).collect());
+        json!({
+            "values": map(&self.values),
+            "custom": map(&self.custom),
+            "inherited": Value::Object(self.inherited.iter().map(|(k, r)| (k.clone(), r.map_or(Value::Null, ref_json))).collect()),
+            "rules": self.rules.iter().map(rule_json).collect::<Vec<_>>(),
+        })
+    }
+}
+
+/// DZ0b2: one matched rule as JSON (`style.matched`, `style.computed`'s `rules`).
+pub fn rule_json(r: &MatchedRuleInfo) -> Value {
+    let src = |s: &Option<StyleSource>| s.as_ref().map_or(Value::Null, |s| json!({"file": s.file, "style_offset": s.style_offset}));
+    json!({
+        "sheet": r.sheet, "selectors": r.selectors, "specificity": r.specificity,
+        "line": r.line, "column": r.column, "source": src(&r.source),
+        "decls": r.decls.iter().map(|d| json!({
+            "name": d.name, "value": d.value, "important": d.important, "winner": d.winner, "source": src(&d.source),
+        })).collect::<Vec<_>>(),
+    })
 }
 
 impl NodeInfo {
@@ -460,7 +499,7 @@ impl<D: Driver> Session<D> {
             "protocol": PROTOCOL,
             "roots": roots,
             "grants": {"read": self.grants.read, "act": self.grants.act, "tooling": self.grants.tooling, "clock": self.grants.clock},
-            "capabilities": ["scene.query", "scene.node", "scene.snapshot", "a11y.tree", "app.roots", "input.click", "input.focus",
+            "capabilities": ["scene.query", "scene.node", "scene.snapshot", "style.matched", "style.computed", "a11y.tree", "app.roots", "input.click", "input.focus",
                 "input.fill", "input.set_value", "input.press", "input.type", "input.hover", "input.pointer_move", "input.wheel", "input.drag", "input.scroll_into_view", "wait.settled", "wait.for",
                 "journal.subscribe", "journal.take", "capture.screenshot", "clock.now", "clock.advance",
                 "journal.cursor", "journal.events", "journal.kinds", "wait.event", "wait.never", "wait.seen", "wait.step_end", "busy.sources"],
@@ -520,6 +559,34 @@ impl<D: Driver> Session<D> {
         self.live(r)?;
         self.with_scene(|s, _| s.get(r.id).map(|n| self.info(s, n)))
             .ok_or_else(|| stale(r))
+    }
+
+    /// DZ0b2 `style.matched`: the rules that match the node, in cascade order (lowest priority
+    /// first), each declaration marked when it wins its property (egui's
+    /// `NodeRef::matched_rules`).
+    pub fn style_matched(&self, r: Ref) -> Result<Vec<MatchedRuleInfo>, Error> {
+        self.check(false)?;
+        self.live(r)?;
+        self.with_scene(|s, _| s.get(r.id).map(|n| n.matched_rules())).ok_or_else(|| stale(r))
+    }
+
+    /// DZ0b2 `style.computed` (E2E-INSPECTOR §1.4): the computed values, the matched rules and,
+    /// for each inherited property the node doesn't declare, the ancestor it comes from.
+    pub fn style_computed(&self, r: Ref) -> Result<ComputedInfo, Error> {
+        self.check(false)?;
+        self.live(r)?;
+        let epoch = self.epoch;
+        self.with_scene(|s, _| {
+            let n = s.get(r.id)?;
+            let c = n.computed_style();
+            Some(ComputedInfo {
+                values: c.as_deref().map(|c| c.iter().map(|(p, v)| (p.name.to_string(), v.to_string())).collect()).unwrap_or_default(),
+                custom: c.as_deref().map(|c| c.customs().map(|(k, v)| (k.to_string(), v.to_string())).collect()).unwrap_or_default(),
+                inherited: n.inherited_from().into_iter().map(|(k, at)| (k, at.map(|id| Ref { id, epoch }))).collect(),
+                rules: n.matched_rules(),
+            })
+        })
+        .ok_or_else(|| stale(r))
     }
 
     /// A text snapshot of `scope` (every visible non-tooling root when `None`), §1.8.
@@ -1458,6 +1525,15 @@ impl<D: Driver> Session<D> {
 
     // ---- JSON ----
 
+    /// A JSON target (`{"selector"}` or `{"ref"}`) as a ref: a selector must match one node.
+    fn target_ref(&self, p: &Value) -> Result<Ref, Error> {
+        match target_param(p)? {
+            Target::Ref(r) => Ok(r),
+            Target::Selector(s) => self.locate(&s.source),
+            Target::Invalid(e) => Err(e),
+        }
+    }
+
     /// One method by name with JSON params (§1.1's schema; the in-process JSON path and, from AU2,
     /// the IPC transport). Targets are `{"selector": "…"}` or `{"ref": {"id": n, "epoch": e}}`.
     pub fn call(&mut self, method: &str, p: &Value) -> Result<Value, Error> {
@@ -1471,12 +1547,16 @@ impl<D: Driver> Session<D> {
             }
             "scene.locate" => ref_json(self.locate(str_param(p, "selector")?)?),
             "scene.node" => {
-                let r = match target_param(p)? {
-                    Target::Ref(r) => r,
-                    Target::Selector(s) => self.locate(&s.source)?,
-                    Target::Invalid(e) => return Err(e),
-                };
+                let r = self.target_ref(p)?;
                 self.node(r)?.to_json()
+            }
+            "style.matched" => {
+                let r = self.target_ref(p)?;
+                json!(self.style_matched(r)?.iter().map(rule_json).collect::<Vec<_>>())
+            }
+            "style.computed" => {
+                let r = self.target_ref(p)?;
+                self.style_computed(r)?.to_json()
             }
             "scene.snapshot" => json!({"format": "yaml", "text": self.snapshot(p.get("selector").and_then(Value::as_str))?}),
             "a11y.tree" => json!(

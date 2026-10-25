@@ -55,8 +55,8 @@ pub use busy::{BusyKind, BusyRegistry, BusyReport, BusySource, BusyStatus};
 pub use journal::{ClockDomain, Cursor, Event, EventKind, FieldType, Journal, Matcher};
 pub use selector::{Selector, TextMatch};
 pub use session::{
-    ActOptions, ActResult, Actionability, At, Budget, Condition, Drag, DragTo, Expect, Grants, NeverId, NodeInfo, Ref,
-    RootInfo, SeenId, Session, SourceInfo, Target, Tier, Unmet, WaitReport, WaitState, Wheel,
+    ActOptions, ActResult, Actionability, At, Budget, ComputedInfo, Condition, Drag, DragTo, Expect, Grants, NeverId,
+    NodeInfo, Ref, RootInfo, SeenId, Session, SourceInfo, Target, Tier, Unmet, WaitReport, WaitState, Wheel, rule_json,
 };
 
 use std::sync::atomic::{AtomicBool, Ordering};

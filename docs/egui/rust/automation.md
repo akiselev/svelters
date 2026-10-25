@@ -15,7 +15,8 @@ sources:
   - plans/milestones/CV1-canvas-seams.md   # drag, pointer_move, wheel; panes
   - plans/milestones/AX1-list-a11y.md      # scroll-into-view, list rows, context menus (pending: ci/b10-list-a11y)
   - crates/svelters-automation/tests/list_a11y.rs
-  - plans/milestones/DZ0-designer-seams.md  # source= engine, scene.query source (pending)
+  - plans/milestones/DZ0-designer-seams.md  # source= engine, scene.query source; DZ0b2 style.matched/computed (pending)
+  - crates/svelters-automation/tests/style.rs
 ---
 
 # Automation and end-to-end tests
@@ -141,6 +142,25 @@ In dev builds `scene.query` and `scene.node` results carry `source`: `{ file, of
 template element's byte offset and the component call sites the node renders inside (innermost
 first). Release builds leave it out.
 
+### Styles: `style.matched` and `style.computed`
+
+Both take a target like `scene.node` (`{"selector"}` or `{"ref"}`) and need only the `read` grant.
+
+- `style.matched` returns the rules that match the node, in cascade order, lowest priority first:
+  `[{ sheet, selectors, specificity, line, column, source, decls: [{ name, value, important, winner,
+  source }] }]`. `line` and `column` are in the sheet text (after scoping); `source` is
+  `{ file, style_offset }`, the offset from the start of the component's `<style>` content (dev
+  builds; `null` otherwise and for theme sheets). `winner` marks the declaration that wins its
+  property (for a shorthand: at least one longhand) over every other rule and the node's `style=`
+  and forced declarations. A prop the runtime set still wins over all of them.
+- `style.computed` returns `{ values, custom, inherited, rules }`: the computed value of every set
+  property as CSS text, the custom properties, for each inherited property (custom ones included)
+  the node doesn't declare the `ref` of the nearest ancestor that does (`null`: none does), and
+  `rules` as `style.matched` gives them.
+
+In Rust, `Session::style_matched(ref)` and `Session::style_computed(ref)`; over the scene,
+`NodeRef::matched_rules`, `computed_style` and `inherited_from`.
+
 ## Determinism: seeds and the virtual clock
 
 - **Virtual clock** (the default): timers, `performance.now()` and timer wakeups run on a
@@ -194,7 +214,7 @@ assert!(s.snapshot(None)?.contains(r#"- label "Count: 1""#));
   `tooling` grant).
 - Refs (`Ref { id, epoch }`) go stale after `bump_epoch()` or a reset (`node.stale`).
 - `Session::call(method, params)` is the JSON schema: `scene.query`, `scene.locate`, `scene.node`,
-  `scene.snapshot`, `a11y.tree`, `input.*`, `wait.settled`, `wait.for`, `capture.screenshot`,
+  `scene.snapshot`, `style.matched`, `style.computed`, `a11y.tree`, `input.*`, `wait.settled`, `wait.for`, `capture.screenshot`,
   `journal.subscribe/take`, `clock.*`.
 
 ## Canvases: drags, moves and wheels at local points
