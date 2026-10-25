@@ -136,7 +136,7 @@ kind_props! {
 }
 
 /// The signals, in spec order.
-pub const SIGNALS: &[SignalSpec] = &[SignalSpec::new("changed", &[("checked", ValueType::Bool)], "The user toggled the check; carries the new state.")];
+pub const SIGNALS: &[SignalSpec] = &[SignalSpec::new("changed", &[("checked", ValueType::Bool)], "The user toggled the check; carries the new state. Preventing it keeps the state.").cancelable()];
 
 pub static SPEC: KindSpec = KindSpec { tag: "frame", props: FrameProps::SPECS, signals: SIGNALS, slots: &[], children: true, role: accesskit::Role::Group, name_from: NameFrom::Prop("label"), text_prop: None, focusable: false };
 
@@ -359,7 +359,9 @@ impl Kind for Frame {
         let mut changed = false;
         if self.props.checkable && on_head {
             for Toggle::Toggled { checked, .. } in toggled.iter().copied() {
-                common::emit(cx, &SPEC, "changed", vec![Value::Bool(checked)]);
+                if common::emit_sync(cx, &SPEC, "changed", vec![Value::Bool(checked)]) {
+                    continue;
+                }
                 self.props.checked = checked;
                 cx.prop_changed(P::checked.id());
                 changed = true;
@@ -645,5 +647,17 @@ mod tests {
         let n = testkit::a11y(&k, StateBits::NONE, Size::new(100.0, 60.0));
         assert_eq!(n.toggled(), Some(accesskit::Toggled::True));
         assert!(n.supports_action(accesskit::Action::Click) && n.supports_action(accesskit::Action::Focus));
+    }
+
+    #[test]
+    fn a_prevented_changed_keeps_the_check() {
+        let mut f = Frame::default();
+        f.props.checkable = true;
+        let mut d = Driver::new(f, presto_base::geom::Size::new(200.0, 100.0));
+        d.prevent = vec!["changed"];
+        d.focus(true);
+        d.key(presto_base::key::Key::Space);
+        assert!(d.names().contains(&"changed"));
+        assert!(d.kind.props.checked, "still checked (the default)");
     }
 }

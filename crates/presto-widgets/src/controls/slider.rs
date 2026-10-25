@@ -83,7 +83,7 @@ const VALUE_ARG: &[(&str, ValueType)] = &[("value", ValueType::F64)];
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
-    SignalSpec::new("changed", VALUE_ARG, "The value changed (dragging, a key, the wheel, AccessKit)."),
+    SignalSpec::new("changed", VALUE_ARG, "The value changed (dragging, a key, the wheel, AccessKit). Preventing it keeps the value.").cancelable(),
     SignalSpec::new("input", VALUE_ARG, "Sent after `changed`, with the value written."),
     SignalSpec::new("commit", VALUE_ARG, "A commit point: the release of a drag that changed the value, or a step."),
     SignalSpec::new("submit", VALUE_ARG, "The user committed a value: the release of a drag, or Enter while focused."),
@@ -284,7 +284,9 @@ impl Slider {
 
     /// Writes `v` as the value the user set: `changed`, the write, `input`.
     fn write(&mut self, cx: &mut EventCx, v: f64) {
-        common::emit(cx, &SPEC, "changed", vec![Value::F64(v)]);
+        if common::emit_sync(cx, &SPEC, "changed", vec![Value::F64(v)]) {
+            return;
+        }
         self.props.value = v;
         cx.prop_changed(P::value.id());
         common::emit(cx, &SPEC, "input", vec![Value::F64(v)]);
@@ -803,5 +805,16 @@ mod tests {
         let n = testkit::a11y(&k, StateBits::NONE, SIZE);
         assert!(n.supports_action(accesskit::Action::Decrement));
         assert_eq!(n.orientation(), Some(accesskit::Orientation::Vertical));
+    }
+
+    #[test]
+    fn a_prevented_changed_keeps_the_value() {
+        let mut d = driver();
+        d.set("step", Value::F64(1.0));
+        d.prevent = vec!["changed"];
+        d.focus(true);
+        d.key(Key::ArrowRight);
+        assert!(d.names().contains(&"changed") && !d.names().contains(&"input"));
+        assert_eq!(value(&d), 0.0);
     }
 }
