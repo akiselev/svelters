@@ -78,3 +78,6 @@ when the five svelters workflows plus `presto` are green.
   per-window compositor config (sent to COMPOSITOR), Q3 pin floors after the first green run, Q4 text-edit stays on
   `presto_core::Kind`. Routed: R1/R2 to QUIRE, R4 to CORE-3, R6 (PRIMARY) to WAYLAND, TextServices install to APP-TEST.
 - COMPOSITOR 2b98a948 merged into base (d58a0fa0) before its CI finished; check it.
+- APP-TEST 30dd49e2: TextServices not wired (TODO in `crates/presto/src/app.rs` App::init, request 11). Decided
+  (coordinator, 2026-10-25): TextServices owns its own `SystemClipboard` (`MemoryClipboard` headless) and a compositor
+  handle clone for caret fast commits; the consolidation wires it.
