@@ -95,6 +95,18 @@ pub fn resolve(s: SceneRef<'_>, sel: &Selector, roots: &Roots<'_>) -> Result<Vec
                     .collect();
                 Scope::Inclusive(v)
             }
+            Part::Source { file, offset } => {
+                let v = candidates(s, &scope, roots)
+                    .into_iter()
+                    .filter(|n| {
+                        n.source_loc().is_some_and(|l| {
+                            let e = l.element();
+                            crate::selector::path_matches(e.file, file) && offset.is_none_or(|o| o == e.offset)
+                        })
+                    })
+                    .collect();
+                Scope::Below(v)
+            }
             Part::Anchor(a) => {
                 let v = candidates(s, &scope, roots)
                     .into_iter()

@@ -6739,6 +6739,23 @@
           "type": "bool",
           "writable": true
         },
+        "source-loc": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set.",
+          "js": "source-loc",
+          "native": "source-loc",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:source-loc",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "tooltip": {
           "construct_only": false,
           "default": "",
@@ -15083,6 +15100,23 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "source-loc": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime in dev builds: where the node was declared, as `file#offset` (the template element's byte offset in its `.svelte` file), then the component call sites it renders inside, innermost first, separated by U+001F. The visual designer and the inspector map a node to its source with it (`NodeRef::source_loc`, `source=` selectors). Not for apps to set.",
+          "js": "source-loc",
+          "native": "source-loc",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:source-loc",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
           "writable": true
         },
         "status-section": {

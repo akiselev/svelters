@@ -129,6 +129,8 @@ export interface EguiWidgetProps {
   'status-section'?: 'temporary' | 'start' | 'end';
   /** Set by the runtime on the top nodes of a keyed `{#each}` item: the item's key, and the keys of the keyed items around it (outermost first, separated by U+001F). An `anchor` inside it takes its egui id from these keys and the anchors of its anchored ancestors, so repeated anchors in a keyed list get one id per row; `key=` selectors match it. Not for apps to set. */
   'anchor-scope'?: string;
+  /** Set by the runtime in dev builds: where the node was declared, as `file#offset` (the template element's byte offset in its `.svelte` file), then the component call sites it renders inside, innermost first, separated by U+001F. The visual designer and the inspector map a node to its source with it (`NodeRef::source_loc`, `source=` selectors). Not for apps to set. */
+  'source-loc'?: string;
   /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
@@ -844,6 +846,8 @@ export interface EguiElements {
     anchor?: string;
     /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
     'anchor-scope'?: string;
+    /** Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set. */
+    'source-loc'?: string;
     /** The title: the menu-bar button, or the submenu row. */
     label?: string;
   };
@@ -861,6 +865,8 @@ export interface EguiElements {
     anchor?: string;
     /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
     'anchor-scope'?: string;
+    /** Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set. */
+    'source-loc'?: string;
     /** The caption. */
     label?: string;
     /** Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error. */
@@ -893,6 +899,8 @@ export interface EguiElements {
     anchor?: string;
     /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
     'anchor-scope'?: string;
+    /** Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set. */
+    'source-loc'?: string;
   };
   /** A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn. */
   'context-menu': {
@@ -908,6 +916,8 @@ export interface EguiElements {
     anchor?: string;
     /** Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. */
     'anchor-scope'?: string;
+    /** Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set. */
+    'source-loc'?: string;
   };
   /** A button that opens a menu of its children (`action`, `menu`, `menu-separator`; a `menu` child's items are shown inline, as GTK's menu-button takes a menu). The shortcuts of its actions are active while it is drawn. */
   'menu-button': EguiWidgetProps & {

@@ -55,6 +55,14 @@ static ENTRY_PROPS: &[PropDef] = &[
         Def::Str(""),
         "Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set.",
     ),
+    // DZ0: appended
+    prop(
+        "source-loc",
+        P::SourceLoc,
+        Ty::Str,
+        Def::Str(""),
+        "Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set.",
+    ),
 ];
 
 static MENU_PROPS: &[PropDef] = &[prop(

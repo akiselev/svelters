@@ -96,6 +96,9 @@ pub struct Common {
     pub anchor: String,
     /// CV1 (SV53): `anchor-scope` (the keyed each keys, U+001F-separated); `None` while empty.
     pub anchor_scope: Option<Box<str>>,
+    /// DZ0: `source-loc` (dev builds: `file#offset`, then the call sites, U+001F-separated);
+    /// `None` while empty.
+    pub source_loc: Option<Box<str>>,
     pub width: Option<f64>,
     pub height: Option<f64>,
     pub min_width: Option<f64>,
@@ -149,6 +152,7 @@ impl Common {
         accessible_name: String::new(),
         anchor: String::new(),
         anchor_scope: None,
+        source_loc: None,
         width: None,
         height: None,
         min_width: None,

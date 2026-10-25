@@ -33,6 +33,46 @@ pub struct ScopedCss {
     /// Byte offsets (start) of the elements upstream gives the scoping class
     /// (`metadata.scoped`). The codegen does not use them yet (it scopes every native element).
     pub scoped_elements: Vec<u32>,
+    /// DZ0: which bytes of `code` are untouched `<style>` text: `(offset in code, offset from the
+    /// start of the `<style>` content, length)` runs, in order. Offsets relative to the style
+    /// content stay right while the template above it is edited; the designer adds the content
+    /// start of the file as it is now. [`ScopedCss::source_offset`] reads it. Not in the JSON
+    /// output (`--json`).
+    #[serde(skip)]
+    pub source_map: Vec<(u32, u32, u32)>,
+}
+
+impl ScopedCss {
+    /// DZ0: the `<style>`-relative offset of byte `at` of `code`, if it is untouched style text.
+    pub fn source_offset(&self, at: u32) -> Option<u32> {
+        style_offset(&self.source_map, at)
+    }
+
+    /// DZ0: [`ScopedCss::source_map`] as text: `out,src,len` runs joined by `;` (what the loader
+    /// hands the runtime's `registerStyles`).
+    pub fn source_map_text(&self) -> String {
+        self.source_map.iter().map(|(o, s, l)| format!("{o},{s},{l}")).collect::<Vec<_>>().join(";")
+    }
+}
+
+/// DZ0: the source offset of output byte `at` in a `(out, src, len)` run map, if `at` is in a run.
+pub fn style_offset(map: &[(u32, u32, u32)], at: u32) -> Option<u32> {
+    let k = map.partition_point(|&(o, _, _)| o <= at).checked_sub(1)?;
+    let (o, s, l) = map[k];
+    (at < o + l).then_some(s + (at - o))
+}
+
+/// DZ0: parses [`ScopedCss::source_map_text`]; `None` if malformed.
+pub fn parse_source_map(text: &str) -> Option<Vec<(u32, u32, u32)>> {
+    if text.is_empty() {
+        return Some(Vec::new());
+    }
+    text.split(';')
+        .map(|run| {
+            let mut it = run.split(',').map(|x| x.parse::<u32>().ok());
+            Some((it.next()??, it.next()??, it.next()??))
+        })
+        .collect()
 }
 
 /// Runs the Q3 port over the component's `<style>`: `None` when there is none or when the CSS
@@ -66,7 +106,23 @@ pub(crate) fn scoped_css<'a>(
             for w in &out.warnings {
                 diags.warning(w.code, map((w.start, w.end)), w.message.clone());
             }
-            Some(ScopedCss { code: out.code, hash: out.hash, has_global: out.has_global, injected: out.injected, scoped_elements: out.scoped_elements })
+            // with `@apply` expanded the runs are in the expanded text: keep the ones that map
+            // back to the original unchanged in length
+            let source_map = match apply {
+                None => out.source_map,
+                Some(x) => {
+                    let start = block.content.start;
+                    let new_start = x.to_new(start);
+                    out.source_map
+                        .into_iter()
+                        .filter_map(|(o, s, l)| {
+                            let (a, b) = x.to_orig((new_start + s, new_start + s + l));
+                            (b - a == l && a >= start).then_some((o, a - start, l))
+                        })
+                        .collect()
+                }
+            };
+            Some(ScopedCss { code: out.code, hash: out.hash, has_global: out.has_global, injected: out.injected, scoped_elements: out.scoped_elements, source_map })
         }
         Ok(None) => None,
         Err(e) => {

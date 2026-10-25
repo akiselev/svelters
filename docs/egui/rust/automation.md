@@ -15,6 +15,7 @@ sources:
   - plans/milestones/CV1-canvas-seams.md   # drag, pointer_move, wheel; panes
   - plans/milestones/AX1-list-a11y.md      # scroll-into-view, list rows, context menus (pending: ci/b10-list-a11y)
   - crates/svelters-automation/tests/list_a11y.rs
+  - plans/milestones/DZ0-designer-seams.md  # source= engine, scene.query source (pending)
 ---
 
 # Automation and end-to-end tests
@@ -131,9 +132,14 @@ Selectors are the same in Rust, TS and JSON. Engines chain with `>>`:
 | `label=`, `anchor=`, `root=` | label text, `anchor` prop, root key |
 | `key=k42` | the rows of the keyed `{#each}` item with key `k42` (`key=k42 >> anchor=row`; CV1) |
 | `pos=x,y`, `nth=` | a point; the n-th match |
+| `source=src/Panel.svelte#120`, `source=Panel.svelte` | dev builds (DZ0): the nodes declared at that byte offset of that `.svelte` file, or anywhere in it; the file is a path or its suffix at a `/` |
 
 `locate` is strict: more than one match fails `node.ambiguous`. Not yet: regex names (`/…/`),
-`component=`, `source=`, `a11y=` (they answer `capability.absent`).
+`component=`, `a11y=` (they answer `capability.absent`).
+
+In dev builds `scene.query` and `scene.node` results carry `source`: `{ file, offset, sites }`, the
+template element's byte offset and the component call sites the node renders inside (innermost
+first). Release builds leave it out.
 
 ## Determinism: seeds and the virtual clock
 

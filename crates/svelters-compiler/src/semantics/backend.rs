@@ -278,6 +278,10 @@ impl PlatformSemantics for SpecBackend {
         Err(u)
     }
 
+    fn source_locs(&self) -> bool {
+        self.spec.kinds.values().any(|k| k.props.contains_key(super::SOURCE_LOC))
+    }
+
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan {
         let k = self.kind(el);
         LifetimePlan { lifetime: k.lifetime, present: k.present.clone() }

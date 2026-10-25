@@ -50,6 +50,12 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     fn resolve_element(&self, tag: &str) -> Result<ElementRef, Unresolved> {
         self.inner.resolve_element(tag)
     }
+    fn source_loc(&self, el: &ElementRef) -> bool {
+        self.inner.source_loc(el)
+    }
+    fn source_locs(&self) -> bool {
+        self.inner.source_locs()
+    }
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan {
         self.inner.lifetime(el)
     }

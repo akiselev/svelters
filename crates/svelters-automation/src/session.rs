@@ -80,10 +80,39 @@ pub struct NodeInfo {
     /// `scroll-area`, smaller than `rect` when partly.
     pub visible_rect: Option<egui::Rect>,
     pub states: Vec<&'static str>,
+    /// DZ0: where a dev build declared the node (`source-loc`): `None` in release builds.
+    pub source: Option<SourceInfo>,
+}
+
+/// DZ0: a node's template source location, as `scene.query` returns it.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct SourceInfo {
+    /// The `.svelte` path the compiler was given, and the element's byte offset in it.
+    pub file: String,
+    pub offset: u32,
+    /// The component call sites the node renders inside, innermost first.
+    pub sites: Vec<(String, u32)>,
+}
+
+impl SourceInfo {
+    pub fn to_json(&self) -> Value {
+        json!({
+            "file": self.file, "offset": self.offset,
+            "sites": self.sites.iter().map(|(f, o)| json!({"file": f, "offset": o})).collect::<Vec<_>>(),
+        })
+    }
 }
 
 impl NodeInfo {
     pub fn to_json(&self) -> Value {
+        let mut v = self.json();
+        if let Some(src) = &self.source {
+            v["source"] = src.to_json();
+        }
+        v
+    }
+
+    fn json(&self) -> Value {
         json!({
             "ref": ref_json(self.r#ref),
             "tag": self.tag, "role": self.role, "name": self.name, "text": self.text, "value": self.value,
@@ -547,6 +576,11 @@ impl<D: Driver> Session<D> {
             rect: n.shown().map(|sh| sh.rect),
             visible_rect: n.shown().map(|sh| sh.visible),
             states: states_of(n),
+            source: n.source_loc().map(|l| SourceInfo {
+                file: l.element().file.to_string(),
+                offset: l.element().offset,
+                sites: l.sites().map(|x| (x.file.to_string(), x.offset)).collect(),
+            }),
         }
     }
 

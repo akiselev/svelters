@@ -286,6 +286,8 @@ pub(crate) struct NodeStyle {
     classes: Vec<Atom>,
     name: Option<Box<str>>,
     inline: Option<Arc<DeclBlock>>,
+    /// DZ0 (SV30): a tool's forced declarations, above `style=` and every rule (`!important`).
+    forced: Option<Arc<DeclBlock>>,
     computed: Option<Arc<ComputedStyle>>,
     /// Stock widgets: the style in egui's `inactive`, `hovered` and `active` states.
     states: Option<Arc<[Arc<ComputedStyle>; 3]>>,
@@ -304,6 +306,9 @@ pub(crate) struct SceneStyle {
     stylist: Stylist,
     /// Registered sheets by id, in registration order.
     sheets: Vec<(String, SheetId)>,
+    /// DZ0 (dev): the component file and `<style>` map of the sheets the runtime registered with
+    /// one.
+    sources: std::collections::HashMap<SheetId, Arc<SheetSource>>,
     /// By slot index.
     nodes: Vec<NodeStyle>,
     /// Nodes to restyle at the next logic step.
@@ -372,6 +377,7 @@ impl Default for SceneStyle {
             active: false,
             stylist: Stylist::new(&svelters_style::tables::EGUI),
             sheets: Vec::new(),
+            sources: std::collections::HashMap::new(),
             nodes: Vec::new(),
             dirty: Vec::new(),
             all: false,
@@ -837,7 +843,11 @@ impl Scene {
         }
         self.core[i].dirty.remove(Dirty::STYLE);
         let parent = self.core[i].parent.and_then(|p| self.style.computed(p).cloned());
-        let inline = self.style.node(id).and_then(|n| n.inline.clone());
+        let inline = self.style.node(id).and_then(|n| match (&n.inline, &n.forced) {
+            (i, None) => i.clone(),
+            (None, Some(f)) => Some(f.clone()),
+            (Some(i), Some(f)) => Some(Arc::new(DeclBlock { decls: i.decls.iter().chain(&f.decls).cloned().collect() })),
+        });
         let mut caches = std::mem::take(&mut self.style.caches);
         let n = NodeRef::at(self, id);
         let st = &self.style;
@@ -1756,12 +1766,106 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
 
 // ---- inputs ----
 
-/// Splits `id\x01text`.
-fn sheet_payload(text: &str) -> (&str, Option<&str>) {
+/// Splits `id\x01text`, or (DZ0, dev) `id\x01text\x01file\x01map`.
+fn sheet_payload(text: &str) -> (&str, Option<&str>, Option<(&str, &str)>) {
     match text.split_once(SVL_STYLE_SEP) {
-        Some((id, t)) => (id, Some(t)),
-        None => (text, None),
+        Some((id, t)) => match t.split_once(SVL_STYLE_SEP) {
+            Some((css, rest)) => (id, Some(css), rest.split_once(SVL_STYLE_SEP)),
+            None => (id, Some(t), None),
+        },
+        None => (text, None, None),
     }
+}
+
+/// DZ0 (dev): where a component sheet's text came from: the component's `.svelte` path (as the
+/// compiler got it), the runs of the sheet text that are untouched `<style>` text, and the sheet's
+/// line starts (rules and declarations carry a line and a UTF-16 column).
+#[derive(Debug)]
+pub(crate) struct SheetSource {
+    file: String,
+    map: Vec<(u32, u32, u32)>,
+    css: String,
+    lines: Vec<u32>,
+}
+
+impl SheetSource {
+    fn new(file: &str, map: &str, css: &str) -> Option<SheetSource> {
+        let map = parse_map(map)?;
+        let lines = std::iter::once(0).chain(css.match_indices('\n').map(|(i, _)| i as u32 + 1)).collect();
+        Some(SheetSource { file: file.to_string(), map, css: css.to_string(), lines })
+    }
+
+    /// The `<style>`-relative offset of the sheet text at `line` (1-based) and `column` (1-based,
+    /// UTF-16 units, as cssparser counts), if that text is untouched style text.
+    fn at(&self, line: u32, column: u32) -> Option<u32> {
+        let start = *self.lines.get(line.checked_sub(1)? as usize)? as usize;
+        let text = self.css.get(start..)?;
+        let mut units = 1;
+        let mut byte = start;
+        for c in text.chars() {
+            if units >= column || c == '\n' {
+                break;
+            }
+            units += c.len_utf16() as u32;
+            byte += c.len_utf8();
+        }
+        let at = byte as u32;
+        let k = self.map.partition_point(|&(o, _, _)| o <= at).checked_sub(1)?;
+        let (o, s, l) = self.map[k];
+        (at < o + l).then_some(s + (at - o))
+    }
+}
+
+/// `out,src,len;…` runs (svelters-compiler `ScopedCss::source_map_text`; parsed here, as the
+/// egui backend does not depend on the compiler).
+fn parse_map(text: &str) -> Option<Vec<(u32, u32, u32)>> {
+    if text.is_empty() {
+        return Some(Vec::new());
+    }
+    text.split(';')
+        .map(|run| {
+            let mut it = run.split(',').map(|x| x.parse::<u32>().ok());
+            Some((it.next()??, it.next()??, it.next()??))
+        })
+        .collect()
+}
+
+/// DZ0: a place in a component's `<style>`: the component's `.svelte` path (as the compiler got
+/// it) and a byte offset from the start of the `<style>` element's content. Relative to the style
+/// content so it stays right while the template above it is edited: add the content start of the
+/// file as it is now.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct StyleSource {
+    pub file: String,
+    pub style_offset: u32,
+}
+
+/// DZ0: one declaration of a [`MatchedRuleInfo`].
+#[derive(Clone, Debug, PartialEq)]
+pub struct DeclInfo {
+    pub name: String,
+    pub value: String,
+    pub important: bool,
+    /// Where it is in the component's `<style>` (dev builds; `None` for theme and host sheets).
+    pub source: Option<StyleSource>,
+}
+
+/// DZ0: a rule that matches a node, as a designer's or inspector's "matched rules" pane shows it.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MatchedRuleInfo {
+    /// The sheet's name (a component's logical id, `@theme…`, a host sheet); `None` for a
+    /// generated utility rule.
+    pub sheet: Option<String>,
+    /// The selectors as CSS (after nesting; the scoping class included).
+    pub selectors: String,
+    /// The highest specificity among the selectors that matched.
+    pub specificity: u32,
+    /// The rule's position in the sheet text (1-based line, UTF-16 column).
+    pub line: u32,
+    pub column: u32,
+    /// Where the rule is in the component's `<style>` (dev builds).
+    pub source: Option<StyleSource>,
+    pub decls: Vec<DeclInfo>,
 }
 
 impl Scene {
@@ -1918,12 +2022,60 @@ impl Scene {
         diags
     }
 
+    /// DZ0 (SV30): a tool's forced declarations for node `id` (`None` or empty text: none). They
+    /// win over `style=` and every rule.
+    fn apply_forced(&mut self, id: NodeId, text: Option<&str>) -> Vec<Diagnostic> {
+        self.activate_style();
+        let (block, mut diags) = match text {
+            Some(t) if !t.trim().is_empty() => {
+                let (mut b, d) = DeclBlock::parse_inline(t);
+                for x in &mut b.decls {
+                    x.important = true;
+                }
+                (Some(Arc::new(b)), d)
+            }
+            _ => (None, Vec::new()),
+        };
+        if let Some(b) = &block {
+            diags.extend(self.style.stylist.check_inline(b));
+        }
+        self.style.node_mut(id).forced = block;
+        self.mark_style(id);
+        diags
+    }
+
+    /// DZ0: drops every node's forced declarations; returns the roots of the nodes that had some.
+    pub(crate) fn clear_forced(&mut self) -> Vec<crate::scene::RootIx> {
+        let ids: Vec<NodeId> = self.style.nodes.iter().filter(|n| n.forced.is_some()).filter_map(|n| n.id).collect();
+        let mut roots = Vec::new();
+        for id in ids {
+            if self.idx(id).is_some() {
+                self.apply_forced(id, None);
+                roots.push(self.core[self.ix(id)].root);
+            }
+        }
+        roots
+    }
+
     /// Installs (or with `None` removes) sheet `name`; `@tokens…` and `@theme…` sheets are the
     /// theme origin.
     pub(crate) fn apply_sheet(&mut self, name: &str, css: Option<&str>) -> Vec<Diagnostic> {
+        self.apply_sheet_from(name, css, None)
+    }
+
+    /// [`Scene::apply_sheet`], with DZ0's source (dev): the component file and the sheet's map.
+    pub(crate) fn apply_sheet_from(&mut self, name: &str, css: Option<&str>, source: Option<(&str, &str)>) -> Vec<Diagnostic> {
         self.activate_style();
         let diags = match css {
-            Some(css) => self.install_sheet(name, css),
+            Some(css) => {
+                let d = self.install_sheet(name, css);
+                if let (Some((file, map)), Some(&(_, id))) = (source, self.style.sheets.last())
+                    && let Some(src) = SheetSource::new(file, map, css)
+                {
+                    self.style.sources.insert(id, Arc::new(src));
+                }
+                d
+            }
             None => {
                 self.uninstall_sheet(name);
                 Vec::new()
@@ -1938,6 +2090,7 @@ impl Scene {
         if let Some(k) = self.style.sheets.iter().position(|(n, _)| n == name) {
             let (_, id) = self.style.sheets.remove(k);
             self.style.stylist.remove_sheet(id);
+            self.style.sources.remove(&id);
         }
     }
 
@@ -1960,6 +2113,7 @@ impl Scene {
         self.style.sheets = keep;
         for (_, id) in gone {
             self.style.stylist.remove_sheet(id);
+            self.style.sources.remove(&id);
         }
         if self.style.active {
             self.observe_for_style();
@@ -2061,8 +2215,8 @@ impl EguiBackend {
                 match text {
                     None => s.clear_sheets(),
                     Some(t) => {
-                        let (name, css) = sheet_payload(t);
-                        for d in s.apply_sheet(name, css) {
+                        let (name, css, source) = sheet_payload(t);
+                        for d in s.apply_sheet_from(name, css, source) {
                             self.warn_style(name, &d);
                         }
                     }
@@ -2215,6 +2369,56 @@ impl EguiBackend {
     /// The node's inline declarations (as `style=`).
     pub fn set_inline(&self, h: Handle, decls: Option<&str>) -> Result<(), String> {
         self.style_op(SVL_STYLE_INLINE, h, decls).map(|_| ()).map_err(|e| e.to_string())
+    }
+
+    /// DZ0 (SV30): forces declarations on node `h` (`color: red; padding: 4px`), above its
+    /// `style=` and every rule, until replaced or cleared with `None`: a designer's preview while
+    /// a gesture lasts, before it writes the source. Returns the parse problems.
+    pub fn force_style(&self, h: Handle, decls: Option<&str>) -> Result<Vec<Diagnostic>, String> {
+        let r = {
+            let mut s = self.0.scene.borrow_mut();
+            let id = s.live(h).map_err(|e| e.to_string())?;
+            let d = s.apply_forced(id, decls);
+            (d, s.core[s.ix(id)].root)
+        };
+        self.touched(Some(r.1));
+        Ok(r.0)
+    }
+
+    /// DZ0: the rules that match node `h` now, in cascade order (normal declarations: origin,
+    /// layer, specificity, source order), each with its declarations and, in dev builds, where it
+    /// is in its component's `<style>`. For a designer's "matched rules" and for choosing where an
+    /// edited value goes; not per frame.
+    pub fn matched_rules(&self, h: Handle) -> Vec<MatchedRuleInfo> {
+        let s = self.0.scene.borrow();
+        let Ok(id) = s.live(h) else { return Vec::new() };
+        let st = &s.style;
+        let n = NodeRef::at(&s, id);
+        let mut caches = MatchCaches::new();
+        st.stylist
+            .matched_rules(n, &mut caches)
+            .into_iter()
+            .map(|m| {
+                let rule = st.stylist.rule(m.rule);
+                let sheet_id = st.stylist.rule_sheet(m.rule);
+                let src = sheet_id.and_then(|i| st.sources.get(&i));
+                let at = |line, column| src.and_then(|x| Some(StyleSource { file: x.file.clone(), style_offset: x.at(line, column)? }));
+                MatchedRuleInfo {
+                    sheet: sheet_id.and_then(|i| st.sheets.iter().find(|(_, x)| *x == i)).map(|(n, _)| n.clone()),
+                    selectors: rule.selector_text(),
+                    specificity: m.specificity,
+                    line: rule.line,
+                    column: rule.column,
+                    source: at(rule.line, rule.column),
+                    decls: rule
+                        .block
+                        .decls
+                        .iter()
+                        .map(|d| DeclInfo { name: d.name.to_string(), value: d.value.to_string(), important: d.important, source: at(d.line, d.column) })
+                        .collect(),
+                }
+            })
+            .collect()
     }
 
     /// The node's computed style (after the last restyle), `None` before any style input.

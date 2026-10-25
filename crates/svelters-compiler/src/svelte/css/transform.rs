@@ -29,6 +29,12 @@ struct State<'m, 's> {
 
 /// `render_stylesheet(source, analysis, options)`: `inject` is `analysis.inject_styles`.
 pub fn render_stylesheet(source: &str, css: &Css, hash: &str, inject: bool, dev: bool) -> String {
+    render_stylesheet_mapped(source, css, hash, inject, dev).0
+}
+
+/// [`render_stylesheet`], with DZ0's map: the runs of the output that are untouched text of
+/// `<style>`, as `(output offset, offset from the style content's start, length)` bytes.
+pub fn render_stylesheet_mapped(source: &str, css: &Css, hash: &str, inject: bool, dev: bool) -> (String, Vec<(u32, u32, u32)>) {
     let mut code = MagicString::new(source);
     let sheet = css.sheet;
     {
@@ -51,7 +57,9 @@ pub fn render_stylesheet(source: &str, css: &Css, hash: &str, inject: bool, dev:
     if inject && !dev {
         remove_preceding_whitespace(sheet.content_end, &mut code);
     }
-    code.to_string()
+    let start = sheet.content_start;
+    let map = code.segments().into_iter().filter(|&(_, s, _)| s >= start).map(|(o, s, l)| (o as u32, (s - start) as u32, l as u32)).collect();
+    (code.to_string(), map)
 }
 
 fn char_before(s: &str, i: usize) -> Option<char> {

@@ -173,6 +173,12 @@ impl Stylist {
         &self.entries[id.0 as usize].rule
     }
 
+    /// DZ0: the sheet rule `id` came from (`None` for a generated utility rule).
+    pub fn rule_sheet(&self, id: RuleId) -> Option<SheetId> {
+        let s = self.entries[id.0 as usize].sheet;
+        (s != UTILITY_SHEET).then_some(s)
+    }
+
     pub fn rule_count(&self) -> usize {
         self.entries.len()
     }

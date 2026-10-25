@@ -367,6 +367,8 @@ pub enum P {
     Message,
     /// CV1 (SV53): Widget (`anchor-scope`, the keyed each keys around a node)
     AnchorScope,
+    /// DZ0: Widget (`source-loc`, where a dev build declared the node in its `.svelte` file)
+    SourceLoc,
     /// OW5b: `table` header (FM1's QW4: sort, hidden columns, saved state; `stretch-last`) and
     /// `table-column` (`hideable`, `header-align`, `elide`; `name` reuses the icon's key)
     Sortable,

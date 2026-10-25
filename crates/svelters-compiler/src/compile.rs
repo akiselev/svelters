@@ -207,7 +207,15 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
         crate::codegen::component::traverse(src, &ir, &rw, &name, &opts.target.runtime_imports());
         None
     } else {
-        Some(generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports(), opts.hmr))
+        {
+        // DZ0: in dev, the kinds that take the backend's `source-loc` prop (memoized per tag)
+        let cache = std::cell::RefCell::new(std::collections::HashMap::<String, bool>::new());
+        let has_loc = |tag: &str| {
+            *cache.borrow_mut().entry(tag.to_string()).or_insert_with(|| opts.backend.resolve_element(tag).is_ok_and(|el| opts.backend.source_loc(&el)))
+        };
+        let locs: Option<&dyn Fn(&str) -> bool> = (opts.dev && opts.backend.source_locs()).then_some(&has_loc);
+        Some(generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports(), opts.hmr, locs))
+    }
     };
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;

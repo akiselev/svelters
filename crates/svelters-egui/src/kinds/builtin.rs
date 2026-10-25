@@ -112,6 +112,14 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Str(""),
         "Set by the runtime on the top nodes of a keyed `{#each}` item: the item's key, and the keys of the keyed items around it (outermost first, separated by U+001F). An `anchor` inside it takes its egui id from these keys and the anchors of its anchored ancestors, so repeated anchors in a keyed list get one id per row; `key=` selectors match it. Not for apps to set.",
     ),
+    // ---- DZ0: appended ----
+    prop(
+        "source-loc",
+        P::SourceLoc,
+        Ty::Str,
+        Def::Str(""),
+        "Set by the runtime in dev builds: where the node was declared, as `file#offset` (the template element's byte offset in its `.svelte` file), then the component call sites it renders inside, innermost first, separated by U+001F. The visual designer and the inspector map a node to its source with it (`NodeRef::source_loc`, `source=` selectors). Not for apps to set.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[

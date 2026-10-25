@@ -36,7 +36,7 @@ A menu item: plain, a check item (`checkable`) or a radio item (`group`), with a
 | `label` | `string` | `""` | no | The caption. |
 | `shortcut` | `string` | `""` | no | Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error. |
 
-Plus the 6 props every menu entry has, from [`MenuEntry`](menu-entry.md#props): `accessible-name`, `anchor`, `anchor-scope`, `enabled`, `tooltip`, `visible`.
+Plus the 7 props every menu entry has, from [`MenuEntry`](menu-entry.md#props): `accessible-name`, `anchor`, `anchor-scope`, `enabled`, `source-loc`, `tooltip`, `visible`.
 <!-- END GENERATED -->
 
 ## Events

@@ -82,6 +82,13 @@ pub struct Rule {
     pub column: u32,
 }
 
+impl Rule {
+    /// The rule's selectors as CSS text (after nesting was resolved), comma-separated.
+    pub fn selector_text(&self) -> String {
+        self.selectors.slice().iter().map(cssparser::ToCss::to_css_string).collect::<Vec<_>>().join(", ")
+    }
+}
+
 /// A parsed sheet: rules in source order, the layer names in order of first appearance, and what
 /// was dropped.
 #[derive(Clone, Debug, Default)]

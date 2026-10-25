@@ -7,12 +7,14 @@ sources:
   - crates/svelters-host/src/{lib,reload,quickjs}.rs
   - crates/svelters-host/src/hot.js
   - packages/native-runtime/src/index.js   # $n.hmr, hmr_keep, setHmrPreserveState
-  - crates/svelters-egui/tests/{hmr,hmr_state,live_styles}.rs
+  - crates/svelters-egui/tests/{hmr,hmr_state,hmr_sites,live_styles}.rs
+  - crates/svelters-modules/src/source/mod.rs   # source_edits, $n.hmr_edit
   - plans/milestones/H1-component-hmr.md
   - plans/milestones/H3-state-preservation.md
   - plans/milestones/H1b-H3c-propagation-and-child-state.md
   - plans/milestones/LD2-live-styles.md
   - plans/milestones/LD3-loader-fixes.md
+  - plans/milestones/DZ0-designer-seams.md  # call-site keys (pending)
 ---
 
 # Hot reload
@@ -62,7 +64,7 @@ dropped and the old version keeps running.
 | other components, roots and their native widgets | — |
 | top-level `let x = $state(…)` / `$state.raw(…)` in the edited component, per instance | `$state` in functions, blocks, class fields; destructured declarations |
 | top-level `$state`, `writable(…)` stores and `createContext()` in `.svelte.js` (same objects) | `$derived` (recomputed), `$props` (come from the parent) |
-| children of an edited parent, by position (`<parent>/<component>#n`) | children created later by `{#if}`/`{#each}` updates; a sibling inserted before them shifts the numbering |
+| children of an edited parent, by call site: on egui in dev, the component tag's place in the parent's source and the keyed `{#each}` items around it (DZ0); elsewhere by position (`<parent>/<component>#n`) | children created later by `{#if}`/`{#each}` updates; on backends without call sites, a sibling of the same component inserted before them shifts the numbering |
 | `bind:this` objects | native UI state of egui widgets (scroll offsets etc.) |
 
 **The rule is all or nothing per component.** The kept declarations (kind, name and initializer text,
@@ -72,6 +74,12 @@ comment or whitespace changes don't change the signature.
 
 Only values that changed carry over: a `$state` still equal to what its initializer produced runs the new
 initializer, so a changed callee shows. Objects and proxies are always carried.
+
+**Call sites follow the edit (egui, dev).** The loader tells the runtime how the parent's source
+changed (whole lines inserted or removed, or the changed part of each line edited in place), and the
+swap moves each child's call site through it. A call written on a new line starts fresh; the calls
+around it keep their state, and so does a call whose own line changed after its tag (an attribute
+added). A keyed list reordered before the edit keeps each item's state with its key.
 
 **Reset on purpose:** put `// @hmr:reset` anywhere in a component, or call
 `setHmrPreserveState(false)` from `@svelters/native-runtime` for everything.

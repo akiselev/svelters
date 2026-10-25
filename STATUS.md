@@ -127,6 +127,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | H1 component HMR on the Rust loader | DONE | 2026-10-22 | merged (this commit); follow-ups H1b (acceptExports propagation), D10 timers, swap budget |
 | H3 `$state` kept on HMR (SV36) | DONE | 2026-10-22 | merged (this commit); follow-ups H3c (children of an edited parent), $bindable fallback, bind:this exclusion |
 | H1b + H3c acceptExports propagation to importers; children's state kept when a parent is swapped | DONE | 2026-10-22 | merged (this commit) |
+| DZ0 designer seams for cadatomic's visual designer: dev `source-loc` per node (+ `source=` engine), `hit_stack`, `matched_rules` with `<style>` offsets, prop overrides + `force_style` (SV30's effect), HMR keys by call site | IN PROGRESS | 2026-10-25 | built and tested on branch `claude/practical-lamport-y8z11o` (cloud session, user's request), not merged; CI not run; `plans/milestones/DZ0-designer-seams.md`, `docs/egui/rust/designer.md` |
 | TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
 | TR2b exiting (inert) subtrees leave the focus chain | DONE | 2026-10-22 | merged (this commit); exiting widgets use egui's noninteractive style during the outro |
 | TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | DONE | 2026-10-22 | merged (this commit); keyframes stay default, `tick(t)` stays JS; isolate half waits for ISOLATES |

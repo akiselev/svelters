@@ -4,7 +4,8 @@
 //! `overwrite` drop the attached inserts, `update` keeps those of its first chunk.
 //!
 //! SVELTERS: no source maps, no `move`; indices are byte offsets. Splitting an edited chunk
-//! (an error upstream) panics.
+//! (an error upstream) panics. DZ0: [`MagicString::segments`] says which output bytes are
+//! untouched original text.
 
 use std::collections::BTreeMap;
 
@@ -143,6 +144,31 @@ impl<'s> MagicString<'s> {
     }
 }
 
+impl MagicString<'_> {
+    /// DZ0: the runs of the output that are original text, unedited, in output order:
+    /// `(output offset, original offset, length)` in bytes. Inserted and replaced text is in no
+    /// run.
+    pub fn segments(&self) -> Vec<(usize, usize, usize)> {
+        let mut out = Vec::new();
+        let mut at = self.intro.len();
+        for (start, c) in &self.chunks {
+            at += c.intro.len();
+            match &c.content {
+                Some(s) => at += s.len(),
+                None => {
+                    let len = c.end - start;
+                    if len > 0 {
+                        out.push((at, *start, len));
+                    }
+                    at += len;
+                }
+            }
+            at += c.outro.len();
+        }
+        out
+    }
+}
+
 impl std::fmt::Display for MagicString<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(&self.intro)?;
@@ -172,5 +198,19 @@ mod tests {
         assert_eq!(s.to_string(), "abYef");
         s.update(4, 5, "Z");
         assert_eq!(s.to_string(), "abYZf");
+    }
+
+    #[test]
+    fn segments_name_the_untouched_runs() {
+        let mut s = MagicString::new("a.b { c }");
+        s.append_left(3, ".h");
+        s.remove(0, 1);
+        let out = s.to_string();
+        assert_eq!(out, ".b.h { c }");
+        let segs = s.segments();
+        for &(o, src, len) in &segs {
+            assert_eq!(&out[o..o + len], &"a.b { c }"[src..src + len]);
+        }
+        assert_eq!(segs, vec![(0, 1, 2), (4, 3, 6)]);
     }
 }

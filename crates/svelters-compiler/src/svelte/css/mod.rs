@@ -135,6 +135,9 @@ pub struct CssOutput {
     /// Start offsets of the elements (RegularElement / SvelteElement) that get the scoping class
     /// (`metadata.scoped`)
     pub scoped_elements: Vec<u32>,
+    /// DZ0: the runs of `code` that are untouched `<style>` text: `(offset in code, offset from
+    /// the style content's start, length)`, bytes
+    pub source_map: Vec<(u32, u32, u32)>,
 }
 
 /// `hash(str)` of `svelte/src/utils.js`: djb2 over UTF-16 units (without `\r`), base 36.
@@ -281,9 +284,9 @@ pub fn compile_css<'a>(src: &str, root: &'a Root, analysis: &ComponentScopeAnaly
     // or a custom element
     let inject = opts.injected
         || root.options.as_ref().is_some_and(|o| o.custom_element.is_some() || o.css.as_deref() == Some("injected"));
-    let code = transform::render_stylesheet(src, &css, &hash, inject, opts.dev);
+    let (code, source_map) = transform::render_stylesheet_mapped(src, &css, &hash, inject, opts.dev);
     let scoped_elements = tpl.elements.iter().filter(|e| scoped.contains(&e.key())).map(|e| e.span().start).collect();
-    Ok(Some(CssOutput { code, has_global: css.has_global, hash, injected: inject, warnings, scoped_elements }))
+    Ok(Some(CssOutput { code, has_global: css.has_global, hash, injected: inject, warnings, scoped_elements, source_map }))
 }
 
 /// The whole pipeline from source: `parse` (`native`: the svelters native element syntax),

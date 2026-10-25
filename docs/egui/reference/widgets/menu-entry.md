@@ -33,6 +33,7 @@ Common properties of the menu entries (`menu`, `action`, `menu-separator`, `cont
 | `anchor` | `string` | `""` | no | A name unique in its embedded root. |
 | `anchor-scope` | `string` | `""` | no | Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set. |
 | `enabled` | `boolean` | `true` | no | Can be picked when true; drawn greyed out otherwise. |
+| `source-loc` | `string` | `""` | no | Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set. |
 | `tooltip` | `string` | `""` | no | Hover text; empty for none. |
 | `visible` | `boolean` | `true` | no | Shown in its menu when true. |
 <!-- END GENERATED -->

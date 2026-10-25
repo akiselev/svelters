@@ -173,7 +173,9 @@ function pushSheet(id, entry) {
   const text = sheetText(entry);
   if (entry.sent === text) return;
   entry.sent = text;
-  host().style(OP.SHEET, 0, text ? `${id}${SEP}${text}` : id);
+  // DZ0 (dev, the egui engine): the component's path and the sheet's map to its `<style>` text
+  const source = state.target === 'engine' && text && entry.file !== undefined ? `${SEP}${entry.file}${SEP}${entry.map ?? ''}` : '';
+  host().style(OP.SHEET, 0, text ? `${id}${SEP}${text}${source}` : id);
 }
 
 /** Whether any component stylesheet is registered (type selectors then need kind markers). */
@@ -186,7 +188,7 @@ export const hasSheets = () => state.sheets.size > 0;
 export function registerStyles(id, sheets) {
   const first = state.sheets.size === 0;
   const prev = state.sheets.get(id);
-  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', css: sheets.css ?? '', rules: sheets.rules ?? null, decl: sheets.decl ?? null, seq: state.seq++, sent: undefined };
+  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', css: sheets.css ?? '', rules: sheets.rules ?? null, decl: sheets.decl ?? null, file: sheets.file, map: sheets.map, seq: state.seq++, sent: undefined };
   state.sheets.set(id, entry);
   if (!ensureInit()) return;
   if (state.target === 'decl') {

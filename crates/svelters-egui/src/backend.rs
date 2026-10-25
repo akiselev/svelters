@@ -74,6 +74,9 @@ pub(crate) struct Inner {
     pub stats: Cell<Stats>,
     /// TR2: the native animator (keyframes sent once, sampled per frame).
     pub anim: RefCell<crate::anim::Animator>,
+    /// DZ0 (SV30): props a tool overrides, with the value the runtime last wrote under each (held
+    /// back while the override lasts; `EguiBackend::set_override`).
+    pub overrides: RefCell<std::collections::HashMap<(crate::scene::NodeId, u32), Value>>,
     /// EM2 repaint routing (ARCH-EMBED §5.2, §5.5): scene roots changed by host ops during a frame,
     /// drained by `route_repaints` at the end of `Embed::logic`.
     pub touched: RefCell<Vec<RootIx>>,
@@ -137,6 +140,7 @@ impl EguiBackend {
             titles: RefCell::new(Default::default()),
             stats: Cell::new(Stats::default()),
             anim: RefCell::new(Default::default()),
+            overrides: RefCell::new(Default::default()),
             touched: RefCell::new(Vec::new()),
             root_vp: RefCell::new(Default::default()),
             theme: RefCell::new(None),
