@@ -19,7 +19,7 @@
   "framework": "presto (svelters-presto; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "presto-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "7ae3f18e8fc020c7"
+    "spec_hash": "ab06894d63584c44"
   },
   "inline_text": {
     "kind": "span",
@@ -2175,6 +2175,26 @@
           "id": 3965026086,
           "js_event": "clicked",
           "name": "clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Ctrl/Cmd+C on a focused selectable label: the selected text, for the host's clipboard.",
+          "fingerprint": "fe893f59",
+          "handler_result": "none",
+          "id": 4270407513,
+          "js_event": "copy",
+          "name": "copy",
           "passive": false,
           "phases": [],
           "sync": false,

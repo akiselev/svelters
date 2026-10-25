@@ -93,9 +93,9 @@ listed.
 | Kind | Props | Signals |
 |---|---|---|
 | every kind (`Widget`) | `anchor`, `anchor-scope`, `invalid`, `dialog-role`, `status-tip`, `status-section`, `drag-data`, `drag-type`, `drop-types`, `source-loc` (runtime-set, dev builds) | `drag-begin`, `drag-end`, `drag-enter`, `drag-leave`, `drop` |
-| `button` | `default`, `cancel` | |
-| `label` | `selectable`, `selection-start`, `selection-end`, `for` | |
-| `slider` | | `submit` |
+| `button` | ~~`default`, `cancel`~~ mapped (2dcedb93) | |
+| `label` | ~~`selectable`, `selection-start`, `selection-end`, `for`~~ mapped (2dcedb93); `copy(text)` added to the surface (presto-only) | |
+| `slider` | | ~~`submit`~~ mapped (2dcedb93) |
 
 `focus-scope` on `box`/`frame` maps onto core's common `focus-scope`. Every other hosted kind
 (`toggle-button`, `checkbox`, `radio-button`, `switch`, `progress-bar`, `spinner`, `separator`, `icon`, `image`,

@@ -197,6 +197,8 @@ static LABEL_PROPS: &[PropSpec] = &[
 ];
 static LABEL_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "clicked", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Pressed and released (`Response::clicked`)." },
+    // presto's addition (not in egui.json): presto-widgets' selectable label hands copies to the host
+    SignalSpec { name: "copy", args: &[("text", ValueType::Str)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Ctrl/Cmd+C on a focused selectable label: the selected text, for the host's clipboard." },
 ];
 static LABEL_METHODS: &[MethodSpec] = &[
 ];
