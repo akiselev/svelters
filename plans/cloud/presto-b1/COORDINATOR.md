@@ -113,3 +113,4 @@ when the five svelters workflows plus `presto` are green.
 - CORE-3 342cf6be merged: nested sync events are queued and delivered (not cancelable) after the causing listener
   returns; light dismiss core half (`Kind::light_dismiss`, `outside_press`). Not done: compaction, incremental
   layers/hits, OS file drops, GTK single selection owner.
+- CADATOMIC decisions (coordinator, 2026-10-25): cadatomic and presto_berth name presto-* by branch ci/presto-integration (CADATOMIC may push that manifest change to berth claude/presto-berth); adapter/limits hooks in CompositorConfig (sent to COMPOSITOR); berth pin moves to claude/presto-berth on claude/presto-adoption only, in its own commit.
