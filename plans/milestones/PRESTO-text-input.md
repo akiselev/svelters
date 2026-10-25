@@ -119,5 +119,13 @@ No change to `presto-base` or any wave-1 crate.
 
 ## What I ran and did not run
 
-- Ran: `cargo check -p presto-widgets --tests` (clean, no warnings in presto-widgets).
-- Not run: every test (unit and `text_pins`), clippy, other crates. GitHub CI runs them on push.
+- Ran: `cargo check -p presto-widgets --tests` (clean, no warnings in presto-widgets), and once, after CI
+  reported three failing expectations, `cargo test -p presto-widgets --lib text::` (37 passed).
+- CI on `ab3b6934` (run 40223629517): the five svelters workflows green; `presto` red for reasons outside
+  this lane: Linux `cargo check` fails building `yeslogic-fontconfig-sys` (the runner lacks
+  `libfontconfig-dev`; the workflow's apt list needs it, presto-text's dependency), and on macOS/Windows
+  presto-render's GPU references, presto-anim, presto-frame and presto-platform unit tests fail. In
+  presto-widgets, `text_pins` passed (the measurement ran) and three text unit tests failed on wrong
+  expectations (Qt's double click takes the trailing space; the field scrolled to reveal the caret; GTK's
+  keyboard-focus select-all did not set PRIMARY: a real gap, now fixed); fixed in the next commit.
+- Not run: clippy, other crates.

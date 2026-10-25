@@ -821,7 +821,8 @@ mod tests {
         let list = sink.list;
         assert!(matches!(list.items[0], Prim::PushClip(_)));
         match &list.items[1] {
-            Prim::Quad(q) => assert_eq!(q.rect, Rect::new(64.0, 2.0, 114.0, 22.0)),
+            // "world" is 60..110 in the layout; the 100-point box scrolled 11 to show the caret at 110
+            Prim::Quad(q) => assert_eq!(q.rect, Rect::new(53.0, 2.0, 103.0, 22.0)),
             p => panic!("expected the selection quad, got {p:?}"),
         }
         assert!(matches!(list.items.last(), Some(Prim::PopClip)));

@@ -525,8 +525,9 @@ impl TextEditor {
                 FocusReason::Pointer => false,
             };
         if select {
+            // a command, not a view write: the selection owns PRIMARY where the platform says so
             let len = self.doc.text().len_bytes();
-            self.set_selection(0, len);
+            self.run(EditCommand::SetSelection(Selection::single(0, len)));
         }
     }
 
@@ -762,12 +763,13 @@ mod tests {
     #[test]
     fn multi_click_and_drag_by_words() {
         let mut e = ed("alpha beta gamma", Platform::Qt);
+        // Qt's double click takes the word and the space after it
         e.pointer_down(7, 2, false);
-        assert_eq!(sel(&e), (6, 10));
+        assert_eq!(sel(&e), (6, 11));
         e.pointer_drag(13);
         assert_eq!(sel(&e), (6, 16));
         e.pointer_drag(2);
-        assert_eq!(sel(&e), (10, 0));
+        assert_eq!(sel(&e), (11, 0));
         e.pointer_up();
         e.pointer_down(3, 3, false);
         assert_eq!(sel(&e), (0, 16), "triple click in a single-line field selects all");
