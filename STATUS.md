@@ -162,6 +162,15 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
+## Rules rethink (user, 2026-10-25)
+
+Decided (user, 2026-10-25): work runs as Claude Code cloud batches (one lane per container, on its own `ci/<lane>`
+branch; the coordinator, the cadatomic batch coordinator session, also coordinates svelters and merges `master`).
+Retired: `main-cadatomic`, `svelters-agent`, the machines table (WSL PC, thinkpadx1, macbook) and their sessions, local
+paths, machine-wide build slots, disk rules and tmux/pkill rules. Instruction files stay short: keep the rules that
+protect the product, drop process meant for a mature product. GitHub CI stays svelters' gate, unchanged.
+`CLAUDE.md` is rewritten to match; older handoff blocks below and in `plans/HANDOFF.md` are history.
+
 ## Cloud batch 10 for cadatomic (2026-10-24/25)
 
 Coordinated by cloud session `session_01RQkPkX9QqiFN52Rrofmi7z` (svelters-agent is down). Briefs: `plans/cloud/batch10/`.

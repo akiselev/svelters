@@ -7,7 +7,7 @@ a generic backend C ABI. Status comes from `STATUS.md` (handoff block and milest
 
 ## Current focus (user, 2026-10-21)
 
-**svelters + egui for cadatomic** (`~/projects/cadatomic`, the MCAD + ECAD + simulation IDE).
+**svelters + egui for cadatomic** (the MCAD + ECAD + simulation IDE, `github.com/akiselev/cadatomic`).
 cadatomic's UI is built on svelters' egui backend (`crates/svelters-egui`): Rust owns the shell
 plumbing (docking, tabs, toolbars, menus, windows); Svelte renders the contents of panels,
 dialogs, windows and overlays, with many roots at once. AppKit, WinUI and Qt get maintenance only.
@@ -42,45 +42,33 @@ and security must not slow development. APIs only leave room: `#[non_exhaustive]
 principal id where ARCH-SECURITY §5 shows it is cheap now and breaking later. ARCH-SECURITY.md
 (SEC1–SEC4, SEC-O, SEC-C) is deferred until cadatomic loads its first third-party extension.
 
-## Machines and sessions
+## How work runs (user, 2026-10-25)
 
-Rust builds are the bottleneck, so work is spread over three machines. Every machine runs several
-agents (worktree lanes) that share that machine's build slots.
+Work runs as Claude Code cloud batches: each lane is its own cloud session in its own container,
+on its own `ci/<lane>` branch, with a written brief (`plans/cloud/<batch>/`). **The coordinator**
+(the cadatomic batch coordinator session, which also coordinates svelters) plans the batch,
+answers lanes and merges `master`. cadatomic's `CLOUD.md` describes the procedure.
 
-| Machine | svelters checkout | cadatomic checkout | Sessions (Remote Control) |
-|---|---|---|---|
-| WSL PC (16 cores, 31 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `main-cadatomic` (coordinator of cadatomic and svelters) |
-| thinkpadx1 (12 cores, 62 GB) | `/projects/sinbad/svelters` | `/projects/sinbad/cadatomic` | `thinkpad-svelters`, `thinkpad-cadatomic` |
-| macbook (Intel, 12 cores, 32 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `macbook-svelters`, `macbook-cadatomic` |
-
-- The WSL PC can build and test Windows targets: `tools/dev/win sync` fast-forwards a git.exe clone (`C:\Users\dev\projects\svelters-win`) to your branch, `tools/dev/win cargo …` runs cargo.exe there through cargo-slot.
-
-- **There is no separate svelters coordinator** (user, 2026-10-25). The cadatomic coordinator
-  (`main-cadatomic`, or the cadatomic batch coordinator when cloud batches run) also coordinates
-  svelters; older records that name `svelters-agent` mean that role.
-- **The coordinator** owns svelters `master`: it merges lane branches
-  (`--no-ff`) after their gates and CI pass, keeps `STATUS.md` and `MATRIX.md`, pushes, and does
-  its own feature work in between. Other svelters sessions never push `master`; they work in
-  worktrees and push `ci/<lane>` branches, then report to the coordinator.
-- cadatomic's own sessions own cadatomic (its `CLAUDE.md` and decision register). `main-cadatomic` on
-  the WSL PC is the main cadatomic session and merges cadatomic `master`; `thinkpad-cadatomic` and
-  `macbook-cadatomic` work under it. svelters
-  sessions do not edit cadatomic; requests go through cadatomic's `docs/plan/04-kernel-requests.md`
-  (SV table) and svelters' "Requests from cadatomic" table in `STATUS.md`.
+- The coordinator owns svelters `master`: it merges lane branches (`--no-ff`) once all five
+  GitHub CI workflows are green on them, and keeps `STATUS.md` and `MATRIX.md`. Lanes never push
+  `master`; they push their branch and write a record in `plans/milestones/`.
+- svelters sessions do not edit cadatomic. Requests go through cadatomic's
+  `docs/plan/04-kernel-requests.md` (SV table) and svelters' "Requests from cadatomic" table in
+  `STATUS.md`.
+- **A fresh agent for new work;** never reuse a finished or long-context agent. Hand off at about
+  400k tokens, with a handoff note in the milestone file. At most eight subagents at once.
 
 ## Who decides (user, 2026-10-22)
 
 **The coordinator decides; the user is not asked.** The user has delegated decisions to the
-coordinator (`main-cadatomic`, for both svelters and cadatomic; see "Machines and sessions") and does
-not want sessions asking them questions.
+coordinator and does not want sessions asking them questions.
 
-- **Worker sessions and lane agents never ask the user.** They send the question to their
-  coordinator (`main-cadatomic`) with a recommendation,
-  keep working on something else meanwhile, and follow the answer.
+- **Lanes never ask the user.** They write the question with a recommendation into their record
+  (or send it to the coordinator), keep working on something else meanwhile, and follow the answer.
 - **The coordinator decides**, citing the reason in the answer:
-  - routine and procedural questions in svelters: lane assignment and order, scheduling, merges
-    and conflict resolution, pins and pin advances, build and test rules, rules files
-    (`CLAUDE.md`), implementation details inside an agreed design;
+  - routine and procedural questions in svelters: lane scope and order, merges and conflict
+    resolution, pins and pin advances, build and test rules, this file, implementation details
+    inside an agreed design;
   - cross-repo seams between svelters and cadatomic that fix a contradiction or a bug and choose
     no design;
   - the coordinator's message to a session carries this delegated authority. Act on it.
@@ -92,36 +80,24 @@ not want sessions asking them questions.
   - destructive actions on work that isn't yours: force-push, deleting branches or repos with
     unmerged work, discarding uncommitted changes;
   - anything public or paid: publishing crates, making repos public, new paid services.
-- Record each decision where the next session will find it: svelters in `STATUS.md` or the
-  relevant `plans/research/*.md` ("Decided (coordinator, date)"), cadatomic in its register.
+- Record each decision where the next session will find it: `STATUS.md` or the relevant
+  `plans/research/*.md` ("Decided (coordinator, date)").
 
-## Building and testing: as little as possible locally
+## Building and testing: as little as possible
 
-Rust builds are the bottleneck. Every local build or test run takes a shared slot and slows every
-other agent on the machine. **GitHub CI is the gate, not your machine.** The user's rule
-(2026-10-22): no build or test run that doesn't answer a question you have right now.
+**GitHub CI is the gate, not your container.** No build or test run that doesn't answer a question
+you have right now (user, 2026-10-22).
 
-- **Every cargo command goes through `tools/dev/cargo-slot`.** It takes one of the machine's
-  build slots, `${XDG_RUNTIME_DIR:-/tmp}/build-slots/slot-<n>.lock`, shared with cadatomic's and
-  cadabra3's wrappers. Slot count and cores per slot come from `~/.config/build-slots.env`; don't
-  override them. There are **no other locks** (no test lock): never wrap a slot-taking command in
-  another lock. Nested calls are safe (`BUILD_SLOT_HELD`). Builds and tests take a slot;
-  `cargo check`/`clippy` take **none** (they run niced with 3 jobs), so never wait for a slot to
-  type-check. The coordinator checks a merge locally only when it combines lanes that touched the
-  same crate (`cargo check -p <that crate> --all-targets`, once); docs and disjoint merges get
-  nothing.
-- **Disk (WSL PC):** `df /` lies (the WSL disk is a growing file on C:); watch `df -h /mnt/c`.
-  When a lane is merged, delete its worktree's `target/`.
-- **While writing code:** `tools/dev/cargo-slot cargo check -p <crate you changed>` only, and only
-  when you need the compiler's answer. Use `--workspace --all-targets` only after changing an API
-  that other crates use.
+- Plain `cargo` is fine in a cloud container (one lane per container). `tools/dev/cargo-slot`
+  is optional there; set `CARGO_PROFILE_DEV_DEBUG=0` to save disk.
+- **While writing code:** `cargo check -p <crate you changed>` only, and only when you need the
+  compiler's answer. Use `--workspace --all-targets` only after changing an API other crates use.
 - **When the feature and its tests are written:** run only the tests you added or touched,
-  filtered (`tools/dev/cargo-slot cargo nextest run -p <crate> <filter>`, `pnpm --filter <pkg>
-  test`; GTK/Qt under `tools/dev/headless`). Fix all failures in one batch, then rerun those
-  tests once.
-- **Never run locally:** the full workspace nextest, the full gate list, or a full conformance run
-  (see below). Push `ci/<lane>`; the five GitHub workflows run everything. Fix what CI reports, in
-  one batch, and push again.
+  filtered (`cargo nextest run -p <crate> <filter>`, `pnpm --filter <pkg> test`; egui, GTK and Qt
+  tests under `tools/dev/headless`). Fix all failures in one batch, then rerun those tests once.
+- **Never run locally:** the full workspace nextest, the full gate list, or a full conformance run.
+  Push your branch; the five GitHub workflows run everything. Fix what CI reports, in one batch,
+  and push again.
 - **Never rerun anything on unchanged code.** Run nothing for docs-only changes, milestone records,
   or a merge of `origin/master` that conflicts nowhere in code. A result from before your last code
   edit is not a pass, so say "not run" instead.
@@ -130,32 +106,17 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
   samples (`node run.mjs <name-filter>`, see `docs/notes/cf1-handoff.md`). When a lane raises the
   score, it commits `--update-baseline` output from one full run at the end.
 - **Research and docs lanes build nothing.**
-- **Stop when told.** When the coordinator or user says stop, kill your running builds and tests,
-  commit, push and report.
-- `tools/dev/headless` runs GTK/Qt tests under Xvfb. macOS needs `flock` (`brew install flock`).
-- Never run `tmux kill-server` or kill processes you didn't start: other sessions and lanes run in the same tmux
-  server (on 2026-10-22 a `kill-server` killed macbook-svelters mid-lane). Kill only your own named session.
-  Stop a process only by a pid you started; never `pkill -f`/`killall` on a pattern (on 2026-10-22
-  `pkill -f "cargo-slot cargo"` killed every lane's builds on the MacBook).
-- Start Claude sessions inside a repo, never in `~/projects` itself: rust-analyzer there loads every
-  project (23 GB, ~50 parallel `cargo check`s).
-
-## Agents (user, 2026-10-22)
-
-- **Always start a fresh agent for new work; never reuse a finished or long-context agent** (it costs more tokens).
-  The per-machine cap (8 agents) counts agents **running in parallel**: a finished agent frees its slot.
-- Hand off to a fresh agent at about 400k tokens, with a handoff note in the milestone file.
+- **Stop when told:** kill your running builds and tests, commit, push and report.
 
 ## Before reporting a lane done
 
 1. Merge `origin/master` into your branch; on generated-file conflicts rerun only that generator.
-2. `pnpm install --frozen-lockfile` if the lockfile changed, then `tools/dev/cargo-slot cargo check
-   -p <crates you changed> --all-targets`, plus the filtered tests above.
-3. Push `ci/<lane>` and get all five CI workflows green. Wait for CI with one
-   `gh run watch <id> --interval 300` per run (or a `gh run list` loop sleeping 300 s; or `tools/dev/ci-wait <sha>
-   --jobs`, which needs no credentials); never poll faster. Every session on all three machines shares one GitHub
-   API limit (5,000 requests an hour), and faster polling has used it up. Report the sha, the CI run ids, and what
-   you did not run.
+2. `pnpm install --frozen-lockfile` if the lockfile changed, then `cargo check -p <crates you
+   changed> --all-targets`, plus the filtered tests above.
+3. Push `ci/<lane>` and get all five CI workflows green. Wait with `tools/dev/ci-wait <sha> --jobs`
+   (no credentials) or one `gh run watch <id> --interval 300` per run; never poll faster. Every
+   session shares one GitHub API limit (5,000 requests an hour). Report the sha, the CI run ids,
+   and what you did not run.
 
 ## Git safety
 

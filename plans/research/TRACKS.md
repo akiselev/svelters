@@ -824,6 +824,9 @@ ED1 (8–12, cadatomic, from wave 1) ───────────┘
 
 ### 4.1 The machine
 
+> Retired (user, 2026-10-25): §4.1–§4.2 describe the WSL PC, its machine-wide build slots and lane locks. Work now runs as
+> cloud batches, one lane per container; `CLAUDE.md` has the current rules. Kept as history.
+
 - **Hardware:** one WSL2 VM with 31 GB RAM, 8 GB swap, 16 cores and 478 GB free disk when this was written.
 - **History:** three svelters lanes building and running full nextest at once OOM'd it twice. Four lanes have
   worked with `SVELTERS_SLOT_JOBS=4` and the shared nextest lock.

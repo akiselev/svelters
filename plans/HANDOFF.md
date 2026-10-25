@@ -104,7 +104,7 @@ Start each on a fresh agent (CLAUDE.md "Agents"). Lane designs are in the files 
 - licences: svelters MIT; quire MIT OR Apache-2.0 and public; berth, cadatomic, ecadabra declare none until the user
   decides (likely AGPL). No LICENSE files otherwise;
 - committed files never use our credentials; agents may use `gh` interactively;
-- never force-push; no build artifacts in git; hooks never run builds; WSL disk is `df -h /mnt/c`.
+- never force-push; no build artifacts in git; hooks never run builds.
 
 **By the coordinator this session (recorded in the files named):** OW5b split (OW5b milestone, WIDGET-PARITY);
 OW1a3's VIS1c baseline edit (OW1a3 §2.3, VIS1c §7/§8); U2 merged with U1 rather than alone; FX6b's approach (host job
@@ -112,6 +112,10 @@ drain, no Svelte patch; STATUS FX6 row); FM1's `button-order` on any `box` not a
 (STATUS OW row).
 
 ## 6. How the work runs (operations)
+
+> Superseded (user, 2026-10-25): the machines, sessions, `main-cadatomic`, build slots and disk rules below are
+> retired. Work runs as cloud batches under the cadatomic batch coordinator; `CLAUDE.md` has the current rules. The
+> CI, merge-order and generator notes still apply.
 
 - **Machines** (CLAUDE.md table): WSL PC = coordinator + main-cadatomic; thinkpadx1 = thinkpad-svelters (own-widget
   lanes) + thinkpad-cadatomic (berth, CH1 pins); macbook = macbook-svelters (OW4), macbook-gui (macOS GUI checks),
