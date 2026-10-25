@@ -70,8 +70,16 @@ two test assertions on Windows and macOS (wrong test expectations: egui's displa
 command key off macOS), one filtered local run of `--test input --test island` to debug them: 7 and 11 passed
 after the fix. `--test render` passed on CI's Windows (WARP). **Not run locally:** `render`, clippy.
 
-CI's Linux presto job fails earlier, in `cargo check`: `yeslogic-fontconfig-sys` needs `libfontconfig1-dev`,
-which the presto workflow's apt step doesn't install (a presto-base/workflow issue, not this crate's).
+**CI on `0dd5a347`** (merged `ci/presto-base` `cc4f184d`; runs 40226671183 js, 40226671201 linux-gtk,
+40226671185 linux-qt, 40226671215 macos-appkit, 40226671186 presto, 40226671179 windows-winui): every
+`presto-egui-island` target passes on Linux (lavapipe), Windows (WARP) and macOS, `--test render` included. Still red,
+none of it this crate's:
+- presto: `presto-compositor --test engine`, `--test tree_damage`, `presto-core --lib` and `presto-widgets --lib`
+  fail identically on base's own run of `cc4f184d` (40226563028).
+- linux-gtk: `svelters-egui::eframe_idle::eframe_window_draws_then_idles_at_zero_cpu` (idle CPU 810 ms over 2 s,
+  0 frames: load on a backlogged runner). It passed on base's run (40226563040), and this branch changes nothing
+  outside presto except `THIRD_PARTY_NOTICES.md` and its own `Cargo.lock` entry. Base's macos-appkit failed while
+  this branch's passed: the same kind of flake. Not re-run (runners are backlogged).
 
 ## Wave-1 APIs used, and the shim left (`src/shim.rs`)
 
