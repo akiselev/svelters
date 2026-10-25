@@ -17,8 +17,6 @@ impl Busy {
     pub const FRAME: Busy = Busy(32);
     /// Style or layout work is queued.
     pub const LAYOUT: Busy = Busy(128);
-    /// A kind's timer is pending ([`crate::EventCx::wake_at`]; svelters-egui's `TIMER_SOON` bit).
-    pub const TIMER_SOON: Busy = Busy(2048);
     /// A transition or kind animation is running.
     pub const ANIMATING: Busy = Busy(1 << 13);
     /// A commit was built and the compositor has not applied it yet.
@@ -41,9 +39,6 @@ impl Document {
         let mut b = Busy::default();
         if !self.input_events.is_empty() {
             b.insert(Busy::EVENTS);
-        }
-        if !self.timers.is_empty() {
-            b.insert(Busy::TIMER_SOON);
         }
         if !self.anim.running.is_empty() {
             b.insert(Busy::ANIMATING);

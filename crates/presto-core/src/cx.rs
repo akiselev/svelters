@@ -33,6 +33,29 @@ pub struct ShapedText {
     pub runs: Vec<(Arc<GlyphRun>, Point)>,
 }
 
+/// Services the document lends its kinds by type: a rich-text shaping system, an icon registry, an
+/// image cache. Set with [`Document::set_service`]; kinds reach them with `cx.service::<T>()` in
+/// measure, prepare, record and event handling.
+#[derive(Default)]
+pub struct Services {
+    map: std::collections::HashMap<std::any::TypeId, Box<dyn std::any::Any>>,
+}
+
+impl Services {
+    pub fn insert<T: 'static>(&mut self, t: T) -> Option<T> {
+        self.map.insert(std::any::TypeId::of::<T>(), Box::new(t)).and_then(|b| b.downcast().ok().map(|b| *b))
+    }
+    pub fn get<T: 'static>(&self) -> Option<&T> {
+        self.map.get(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast_ref())
+    }
+    pub fn get_mut<T: 'static>(&mut self) -> Option<&mut T> {
+        self.map.get_mut(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast_mut())
+    }
+    pub fn remove<T: 'static>(&mut self) -> Option<T> {
+        self.map.remove(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast().ok().map(|b| *b))
+    }
+}
+
 fn common_defaults() -> &'static [Option<Value>] {
     static D: OnceLock<Vec<Option<Value>>> = OnceLock::new();
     D.get_or_init(|| common::COMMON.props.iter().map(|p| p.default.to_value()).collect())
@@ -49,12 +72,15 @@ pub struct NodeView<'a> {
     pub(crate) size: Size,
     pub(crate) children: &'a [NodeId],
     pub(crate) window: Option<WindowId>,
-    /// The engine's computed style (`None` before the node's first restyle).
     pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
-    pub(crate) services: &'a crate::service::Services,
 }
 
 impl<'a> NodeView<'a> {
+    /// The engine's computed style (every property of the style table, custom properties included),
+    /// for kinds that draw from author CSS beyond [`ComputedBox`]. `None` before the first restyle.
+    pub fn css(&self) -> Option<&'a svelters_style::ComputedStyle> {
+        self.css
+    }
     pub fn id(&self) -> NodeId {
         self.id
     }
@@ -90,15 +116,6 @@ impl<'a> NodeView<'a> {
     }
     pub fn style(&self) -> &'a ComputedBox {
         self.style
-    }
-    /// The style engine's computed values for the node (every property the cascade knows, by name;
-    /// [`NodeView::style`] is presto's typed digest of them). `None` before the first restyle.
-    pub fn computed_style(&self) -> Option<&'a svelters_style::ComputedStyle> {
-        self.css
-    }
-    /// The document's service of type `T` ([`crate::service`]).
-    pub fn service<T: 'static>(&self) -> Option<&'a T> {
-        self.services.get::<T>()
     }
     pub fn state(&self) -> StateMask {
         self.state
@@ -176,6 +193,7 @@ impl StyleCx<'_> {
 pub struct MeasureCx<'a> {
     pub node: NodeView<'a>,
     pub(crate) text: &'a mut dyn TextMeasure,
+    pub(crate) services: &'a mut Services,
 }
 
 impl<'a> std::ops::Deref for MeasureCx<'a> {
@@ -199,6 +217,9 @@ impl MeasureCx<'_> {
     pub fn text_measure(&mut self) -> &mut dyn TextMeasure {
         self.text
     }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut()
+    }
 }
 
 /// Images a kind uploads; the commit carries them to the compositor's resource store.
@@ -215,6 +236,7 @@ pub struct PrepareCx<'a> {
     pub(crate) shaper: Option<&'a mut (dyn TextShaper + 'static)>,
     pub(crate) images: &'a mut ImageSink,
     pub(crate) request: Dirty,
+    pub(crate) services: &'a mut Services,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -244,6 +266,9 @@ impl PrepareCx<'_> {
     pub fn request_paint(&mut self) {
         self.request.insert(Dirty::PAINT);
     }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut()
+    }
 }
 
 /// Glyph runs recorded this frame; the commit sends the new ones.
@@ -261,6 +286,7 @@ pub struct RecordCx<'a> {
     /// The runs this node's list references (replaced runs are dropped when the list is).
     pub(crate) node_runs: &'a mut Vec<RunId>,
     pub(crate) shaper: Option<&'a mut (dyn TextShaper + 'static)>,
+    pub(crate) services: &'a mut Services,
 }
 
 impl<'a> std::ops::Deref for RecordCx<'a> {
@@ -274,6 +300,9 @@ impl RecordCx<'_> {
     /// Adds a primitive with its ink rect.
     pub fn push(&mut self, p: Prim, ink: Rect) {
         self.list.push(p, ink);
+    }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.services.get_mut()
     }
     /// Hands a shaped run to the compositor; the id is valid for this node's list.
     pub fn add_run(&mut self, run: Arc<GlyphRun>) -> RunId {
@@ -423,42 +452,6 @@ impl EventCx<'_> {
     pub fn node(&self) -> NodeId {
         self.node
     }
-    /// The time of the event being handled (the platform's timestamp; for a timer, its due time).
-    pub fn now(&self) -> presto_base::time::Time {
-        self.doc.input.now
-    }
-    /// Asks for an [`Event::Timer`](crate::Event::Timer) at `t` (press repeat, a long press). The node
-    /// keeps its earliest pending time; the app wakes at [`Document::next_timer`].
-    pub fn wake_at(&mut self, t: presto_base::time::Time) {
-        let e = self.doc.timers.entry(self.node).or_insert(t);
-        if t < *e {
-            *e = t;
-        }
-    }
-    /// Cancels the node's pending timer.
-    pub fn cancel_wake(&mut self) {
-        self.doc.timers.remove(&self.node);
-    }
-    /// Gives up keyboard focus, when this node or a node inside it has it.
-    pub fn blur(&mut self) {
-        let Some(w) = self.doc.window_of(self.node) else { return };
-        if let Some(f) = self.doc.focused(w)
-            && self.doc.is_ancestor_or_self(self.node, f)
-        {
-            crate::input::focus::clear_focus(self.doc, w);
-        }
-    }
-    /// The node has keyboard focus.
-    pub fn focused(&self) -> bool {
-        self.doc.window_of(self.node).and_then(|w| self.doc.focused(w)) == Some(self.node)
-    }
-    /// The document's service of type `T` ([`crate::service`]).
-    pub fn service<T: 'static>(&self) -> Option<&T> {
-        self.doc.services.get::<T>()
-    }
-    pub fn service_mut<T: 'static>(&mut self) -> Option<&mut T> {
-        self.doc.services.get_mut::<T>()
-    }
     /// A read view of the node (or of any live node).
     pub fn view(&self, node: NodeId) -> Option<NodeView<'_>> {
         self.doc.view(node)
@@ -478,18 +471,6 @@ impl EventCx<'_> {
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node, signal, arg });
     }
-    /// Emits `signal` with its named arguments ([`SignalSpec::args`](crate::SignalSpec::args)), in
-    /// spec order: one argument is delivered as its value, several as a record with their names.
-    pub fn emit_args(&mut self, signal: SignalId, args: Vec<Value>) {
-        let spec = self.doc.view(self.node).and_then(|v| v.kind().signal(signal)).or_else(|| common::signal(signal));
-        let arg = match (args.len(), spec) {
-            (0, _) => None,
-            (1, _) => args.into_iter().next(),
-            (_, Some(s)) if s.args.len() == args.len() => Some(Value::Record(s.args.iter().map(|p| Arc::<str>::from(p.name)).zip(args).collect::<Vec<_>>().into())),
-            (_, _) => Some(Value::List(args.into())),
-        };
-        self.emit(signal, arg);
-    }
     /// Keeps the current pointer on this node until release.
     pub fn capture_pointer(&mut self) {
         if let Some(p) = self.pointer {
@@ -500,6 +481,28 @@ impl EventCx<'_> {
         if let Some(p) = self.pointer {
             self.doc.input.release(p);
         }
+    }
+    /// The event's time (its OS timestamp; a timer's deadline for [`Event::Timer`](crate::Event::Timer)).
+    pub fn time(&self) -> presto_base::time::Time {
+        self.doc.input.now
+    }
+    /// Delivers [`Event::Timer`](crate::Event::Timer) to this node at `at` (replacing its earlier
+    /// deadline); the app's loop asks [`Document::next_timer`] and calls [`Document::run_timers`].
+    pub fn wake_at(&mut self, at: presto_base::time::Time) {
+        self.doc.set_timer(self.node, Some(at));
+    }
+    pub fn cancel_wake(&mut self) {
+        self.doc.set_timer(self.node, None);
+    }
+    /// Gives up keyboard focus (when this node or a descendant has it).
+    pub fn blur(&mut self) {
+        let Some(w) = self.doc.window_of(self.node) else { return };
+        if self.doc.focused(w).is_some_and(|f| self.doc.is_ancestor_or_self(self.node, f)) {
+            crate::input::focus::clear_focus(self.doc, w);
+        }
+    }
+    pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
+        self.doc.services.get_mut()
     }
     /// Moves keyboard focus to this node.
     pub fn focus(&mut self, reason: crate::kind::FocusReason) {
@@ -522,8 +525,6 @@ impl EventCx<'_> {
 pub struct A11yCx<'a> {
     pub node: NodeView<'a>,
     pub out: &'a mut accesskit::Node,
-    /// The text content of the node's descendants (filled when its spec names [`NameFrom::Contents`](crate::NameFrom::Contents)).
-    pub(crate) contents: Option<String>,
 }
 
 impl<'a> std::ops::Deref for A11yCx<'a> {
@@ -534,44 +535,23 @@ impl<'a> std::ops::Deref for A11yCx<'a> {
 }
 
 impl A11yCx<'_> {
-    /// The text content of the node's descendants, in tree order (`None` unless the kind's spec
-    /// takes its name from its contents).
-    pub fn contents_text(&self) -> Option<&str> {
-        self.contents.as_deref()
-    }
-
-    /// The accessible name: `aria-label`, then the spec's [`KindSpec::name_from`](crate::KindSpec::name_from)
-    /// sources in order (by default the text content, then `title`).
-    pub fn name(&self) -> Option<String> {
-        use crate::kind::NameFrom;
-        let nonempty = |s: Option<&str>| s.filter(|s| !s.trim().is_empty()).map(str::to_owned);
-        if let Some(l) = nonempty(self.node.prop_str(common::ARIA_LABEL)) {
-            return Some(l);
-        }
-        let spec = self.node.entry.spec;
-        let defaults: &[NameFrom] = &[NameFrom::Contents, NameFrom::Title];
-        let sources = if spec.name_from.is_empty() { defaults } else { spec.name_from };
-        for src in sources {
-            let n = match *src {
-                NameFrom::Prop(p) => spec.prop_named(p).and_then(|p| nonempty(self.node.prop_str(p))),
-                // the node's own text content counts as contents
-                NameFrom::Contents => nonempty(Some(self.node.text())).or_else(|| nonempty(self.contents.as_deref())),
-                NameFrom::Title => nonempty(self.node.prop_str(common::TITLE)),
-            };
-            if n.is_some() {
-                return n;
-            }
-        }
-        None
-    }
-
-    /// The defaults: the name ([`A11yCx::name`]), `title` as the description, disabled, focusable.
+    /// The defaults: the label from `aria-label` or the text content, disabled, focusable.
     pub fn default_a11y(&mut self) {
-        let label = self.name();
-        if let Some(l) = &label {
-            self.out.set_label(l.as_str());
+        let v = self.node;
+        let label = v.entry.spec.name_from.iter().find_map(|src| {
+            let s = match *src {
+                crate::kind::NameSource::AriaLabel => v.prop_str(common::ARIA_LABEL)?,
+                crate::kind::NameSource::Prop(p) => v.prop_str(v.entry.spec.prop_named(p)?)?,
+                crate::kind::NameSource::Text => v.text(),
+                // the children's own labels are their nodes'; AccessKit computes it from them
+                crate::kind::NameSource::Children => return None,
+            };
+            (!s.is_empty()).then_some(s)
+        });
+        if let Some(l) = label {
+            self.out.set_label(l);
         }
-        if let Some(t) = self.node.prop_str(common::TITLE).filter(|t| label.as_deref() != Some(*t)) {
+        if let Some(t) = self.node.prop_str(common::TITLE) {
             self.out.set_description(t);
         }
         if self.node.disabled() {

@@ -702,7 +702,7 @@ impl Document {
         let mut tstyle = match self.kinds[i].take() {
             Some(k) => {
                 let st = {
-                    let view = crate::cx::NodeView { style: &new_box, css: Some(&css), ..self.view_at(i) };
+                    let view = crate::cx::NodeView { style: &new_box, ..self.view_at(i) };
                     k.layout_style(&crate::cx::StyleCx { node: view, cascaded: &cascaded })
                 };
                 self.kinds[i] = Some(k);

@@ -97,9 +97,8 @@ fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: S
             children: &children[i],
             window: core[i].window,
             css: style.nodes[i].css.as_deref(),
-            services,
         };
-        let mut cx = MeasureCx { node: view, text: &mut **text };
+        let mut cx = MeasureCx { node: view, text: &mut **text, services };
         k.measure(&mut cx, known, avail)
     };
     doc.kinds[i] = Some(k);

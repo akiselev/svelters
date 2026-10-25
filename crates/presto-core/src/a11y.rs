@@ -23,10 +23,9 @@ impl Document {
     fn a11y_node(&mut self, i: usize) -> Node {
         let role = self.view_at(i).kind().spec.role;
         let mut out = Node::new(role);
-        let contents = self.view_at(i).kind().spec.name_from.contains(&crate::kind::NameFrom::Contents).then(|| self.text_contents(i));
         if let Some(k) = self.kinds[i].take() {
             {
-                let mut cx = A11yCx { node: self.view_at(i), out: &mut out, contents };
+                let mut cx = A11yCx { node: self.view_at(i), out: &mut out };
                 k.a11y(&mut cx);
             }
             self.kinds[i] = Some(k);
@@ -38,24 +37,6 @@ impl Document {
             out.set_hidden();
         }
         out.set_children(self.children[i].iter().map(|&c| ax(c)).collect::<Vec<_>>());
-        out
-    }
-
-    /// The text content of `i`'s descendants, in tree order, joined by spaces.
-    fn text_contents(&self, i: usize) -> String {
-        let mut out = String::new();
-        let mut stack: Vec<NodeId> = self.children[i].iter().rev().copied().collect();
-        while let Some(n) = stack.pop() {
-            let Some(ci) = self.idx(n) else { continue };
-            let t = self.view_at(ci).text();
-            if !t.is_empty() {
-                if !out.is_empty() {
-                    out.push(' ');
-                }
-                out.push_str(t);
-            }
-            stack.extend(self.children[ci].iter().rev().copied());
-        }
         out
     }
 

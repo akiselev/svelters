@@ -60,7 +60,7 @@ member_id!(
     SignalId, "signal"
 );
 member_id!(
-    /// A method of a kind (its type part is the signature, [`crate::MethodSpec::signature`]).
+    /// A method of a kind (its id hashes the return type).
     MethodId, "method"
 );
 member_id!(

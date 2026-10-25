@@ -28,7 +28,6 @@
 //! | [`testkinds`] | minimal kinds and fixed-metric text for tests |
 //! | [`virt`] | the row-height model and the row pool of virtualising kinds |
 //! | [`settle`] | [`Busy`]: why the document is not idle |
-//! | [`service`] | [`Services`]: typed values kinds read from their contexts (the text system) |
 
 pub mod a11y;
 pub mod common;
@@ -45,7 +44,6 @@ pub mod layout;
 mod record;
 pub mod registry;
 mod scroll;
-pub mod service;
 pub mod settle;
 pub mod style;
 pub mod testkinds;
@@ -57,18 +55,17 @@ mod anim;
 #[cfg(test)]
 mod tests;
 
-pub use cx::{A11yCx, EventCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
+pub use cx::{Services, A11yCx, EventCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
 pub use document::{Document, Writer};
 pub use error::{PropError, TreeError};
 pub use frame::FrameStats;
 pub use layout::LayoutRun;
 pub use settle::Busy;
-pub use service::Services;
 pub use ids::{KindId, MethodId, PropId, SignalId, SlotId, fingerprint};
 pub use input::{Delivery, Dispatched, JsEvent, Phase};
 pub use input::focus::{next_focus, open_dialog};
-pub use kind::{Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameFrom, NativeState, ParamSpec, PointerInput, PropSpec, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
-pub use registry::{KindEntry, KindRegistry, Member, MemberKind, RegistryError};
+pub use kind::{ArgSpec, DEFAULT_NAME_FROM, Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameSource, NativeState, PointerInput, PropSpec, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
+pub use registry::{KindEntry, KindRegistry, RegistryError};
 pub use style::{ComputedBox, StyleInput};
 pub use tree::{Dirty, ListenFlags, Listener, NodeFlags};
 pub use value::{PropDefault, Value, ValueType};

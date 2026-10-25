@@ -407,10 +407,14 @@ impl Tracker {
                         count = 1;
                     }
                 }
-                if pressed && let Some(text) = &k.text {
-                    if !text.is_empty() && !text.chars().all(char::is_control) && !mods.command && !mods.ctrl {
-                        pass.input.events.push(FrameEvent::Text(text.clone()));
-                    }
+                if pressed
+                    && let Some(text) = &k.text
+                    && !text.is_empty()
+                    && !text.chars().all(char::is_control)
+                    && !mods.command
+                    && !mods.ctrl
+                {
+                    pass.input.events.push(FrameEvent::Text(text.clone()));
                 }
             }
             Event::Focus { gained, .. } => {

@@ -86,7 +86,7 @@ pub(crate) struct InputState {
     pub last_pos: HashMap<WindowId, Point>,
     /// An IME composition is active (keys go to the IME first).
     pub composing: bool,
-    /// The time of the event being handled ([`crate::EventCx::now`]).
+    /// The time of the event being handled (`EventCx::time`).
     pub now: Time,
 }
 

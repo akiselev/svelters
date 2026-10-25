@@ -197,12 +197,6 @@ impl Document {
             | InputEvent::FileDropped(_)
             | InputEvent::FileHoverCancelled => {}
         });
-        self.finish_dispatch(before, out, emitted)
-    }
-
-    /// Queues the kinds' signals, puts the events queued outside dispatch first, and gives back the
-    /// revision of a dispatch that changed nothing.
-    fn finish_dispatch(&mut self, before: presto_base::ids::Revision, mut out: Dispatched, emitted: Vec<Emitted>) -> Dispatched {
         for e in emitted {
             queue_emitted(self, e);
         }
@@ -217,102 +211,6 @@ impl Document {
         out.changed = dirty;
         out.revision = self.revision;
         out
-    }
-
-    /// The earliest pending kind timer ([`EventCx::wake_at`](crate::EventCx::wake_at)): the app's
-    /// loop wakes then and calls [`Document::fire_timers`].
-    pub fn next_timer(&self) -> Option<Time> {
-        self.timers.values().min().copied()
-    }
-
-    /// Delivers [`Event::Timer`] to every node whose timer is due at `now`, earliest first (a kind may
-    /// ask again from its handler). `window` of the result is the first fired node's.
-    pub fn fire_timers(&mut self, now: Time) -> Dispatched {
-        let before = self.revision;
-        let mut due: Vec<(Time, NodeId)> = self.timers.iter().filter(|&(_, &t)| t <= now).map(|(&n, &t)| (t, n)).collect();
-        let mut out = Dispatched { revision: self.revision, ..Default::default() };
-        if due.is_empty() {
-            return out;
-        }
-        due.sort();
-        out.window = due.iter().find_map(|&(_, n)| self.window_of(n)).unwrap_or_default();
-        out.target = due.first().map(|&(_, n)| n);
-        let mut emitted = Vec::new();
-        self.transaction(|doc| {
-            for (t, n) in due {
-                doc.timers.remove(&n);
-                doc.input.now = t.max(now);
-                out.handled |= call_kind(doc, n, &Event::Timer, &mut emitted, None) == Handled::Yes;
-            }
-        });
-        self.finish_dispatch(before, out, emitted)
-    }
-
-    /// Routes an AccessKit action (from the platform adapter) to its node's kind as [`Event::A11y`]
-    /// (bubbling to ancestors like other native defaults). Unhandled, `Focus` focuses the node,
-    /// `Click` clicks it (the kind's [`Event::Click`] and the JS `click`), `ScrollIntoView` scrolls it
-    /// into view, `Blur` clears focus.
-    pub fn a11y_action(&mut self, req: &accesskit::ActionRequest, now: Time) -> Dispatched {
-        let before = self.revision;
-        let node = NodeId(req.target_node.0);
-        let mut out = Dispatched { revision: self.revision, ..Default::default() };
-        let Some(window) = self.window_of(node) else { return out };
-        out.window = window;
-        out.target = Some(node);
-        if self.state(node).contains(StateMask::DISABLED) {
-            return out;
-        }
-        self.input.now = now;
-        let mut emitted = Vec::new();
-        self.transaction(|doc| {
-            let native = bubble_native(doc, node, &Event::A11y(req), &mut emitted, None);
-            out.handled |= native.is_some();
-            if native.is_some() {
-                return;
-            }
-            match req.action {
-                accesskit::Action::Focus => {
-                    crate::input::focus::set_focus(doc, Some(node), FocusReason::Keyboard);
-                    out.handled = doc.focused(window) == Some(node);
-                }
-                accesskit::Action::Blur => {
-                    if doc.focused(window) == Some(node) {
-                        crate::input::focus::clear_focus(doc, window);
-                        out.handled = true;
-                    }
-                }
-                accesskit::Action::Click => {
-                    let center = doc.world_center(node);
-                    let input = PointerInput {
-                        pointer: 0,
-                        kind: PointerType::Mouse,
-                        button: Some(MouseButton::Primary),
-                        buttons: 0,
-                        pos: center,
-                        local: doc.to_local(window, node, center),
-                        modifiers: Modifiers::default(),
-                        pressure: 0.0,
-                        count: 1,
-                    };
-                    out.handled |= bubble_native(doc, node, &Event::Click(&input), &mut emitted, None).is_some();
-                    doc.emit_js(&mut out, node, common::CLICK, Some(pointer_record(&input)));
-                }
-                accesskit::Action::ScrollIntoView => {
-                    doc.scroll_into_view(node);
-                    out.handled = true;
-                }
-                _ => {}
-            }
-        });
-        self.finish_dispatch(before, out, emitted)
-    }
-
-    /// The centre of `node`'s border box in window points (last frame).
-    fn world_center(&self, node: NodeId) -> Point {
-        self.idx(node).map_or(Point::ZERO, |i| {
-            let w = self.record[i].world;
-            Point::new((w.min.x + w.max.x) / 2.0, (w.min.y + w.max.y) / 2.0)
-        })
     }
 
     /// The hit target at `p` in `window` (window points) on the last frame's hit list.

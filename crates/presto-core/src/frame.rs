@@ -365,8 +365,9 @@ impl Document {
         let Some(mut k) = self.kinds[i].take() else { return };
         let node = self.slots.id_at(i).expect("live");
         let mut shaper = self.shaper.take();
+        let mut services = std::mem::take(&mut self.services);
         let request = {
-            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY };
+            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services };
             k.prepare(&mut cx);
             cx.request
         };
@@ -374,10 +375,11 @@ impl Document {
         let mut node_runs = Vec::new();
         let hidden = self.style.computed(i).visibility_hidden;
         if !hidden {
-            let mut cx = RecordCx { node: self.view_at(i), list: &mut list, runs, node_runs: &mut node_runs, shaper: shaper.as_deref_mut() };
+            let mut cx = RecordCx { node: self.view_at(i), list: &mut list, runs, node_runs: &mut node_runs, shaper: shaper.as_deref_mut(), services: &mut services };
             k.record(&mut cx);
         }
         self.shaper = shaper;
+        self.services = services;
         self.kinds[i] = Some(k);
         let _ = request;
         let p = &mut self.record[i];

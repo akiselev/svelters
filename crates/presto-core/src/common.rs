@@ -3,8 +3,8 @@
 //! keys, focus). They are written as the pseudo-kind `"*"`, so their ids are
 //! `PropId::of("*", name, type)` like any kind's.
 
-use crate::ids::{MethodId, PropId, SignalId};
-use crate::kind::{KindSpec, MethodSpec, PropSpec, SignalFlags, SignalSpec};
+use crate::ids::{PropId, SignalId};
+use crate::kind::{KindSpec, PropSpec, SignalFlags, SignalSpec};
 use crate::value::{PropDefault, ValueType};
 use presto_base::change::ChangeClass;
 
@@ -52,12 +52,6 @@ pub static COMMON: KindSpec = KindSpec {
         SignalSpec::new("transitionend", Some(ValueType::Record), B),
         SignalSpec::new("animationend", Some(ValueType::Record), B),
     ],
-    methods: &[
-        MethodSpec::new("focus").doc("Moves keyboard focus to the node (when it can take focus)."),
-        MethodSpec::new("blur").doc("Gives up keyboard focus, when the node or a node inside it has it."),
-        MethodSpec::new("scroll-into-view").doc("Scrolls the node's scroll containers so it is visible."),
-        MethodSpec::new("bounds").returns(ValueType::Record, true).doc("The node's border box in window points (`{x, y, width, height}`), `null` outside a window."),
-    ],
     ..KindSpec::new("*")
 };
 
@@ -99,18 +93,6 @@ ids!(SignalId:
     ANIMATIONEND = "animationend": "record",
 );
 
-ids!(MethodId:
-    FOCUS_METHOD = "focus": "()->void",
-    BLUR_METHOD = "blur": "()->void",
-    SCROLL_INTO_VIEW = "scroll-into-view": "()->void",
-    BOUNDS = "bounds": "()->record?",
-);
-
-/// The spec of a common method.
-pub fn method(id: MethodId) -> Option<&'static MethodSpec> {
-    (0..COMMON.methods.len()).find(|&i| COMMON.method_id(i) == id).map(|i| &COMMON.methods[i])
-}
-
 /// The spec of a common prop.
 pub fn prop(id: PropId) -> Option<&'static PropSpec> {
     (0..COMMON.props.len()).find(|&i| COMMON.prop_id(i) == id).map(|i| &COMMON.props[i])
@@ -135,9 +117,6 @@ mod tests {
         }
         for id in [POINTERDOWN, CLICK, WHEEL, KEYDOWN, FOCUS, FOCUSIN, SCROLL, ANIMATIONEND] {
             assert!(signal(id).is_some(), "{id:?}");
-        }
-        for id in [FOCUS_METHOD, BLUR_METHOD, SCROLL_INTO_VIEW, BOUNDS] {
-            assert!(method(id).is_some(), "{id:?}");
         }
     }
 }
