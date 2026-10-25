@@ -139,3 +139,10 @@ when the five svelters workflows plus `presto` are green.
   compositor transform animation runs); core never sends UI-placed animations; a11y, cursor and ime_area stay on the
   UI thread (APP-TEST confirms); UiFrameState answers every BeginFrame; APP-TEST sets refresh and ppi from the
   monitor.
+- APP-TEST CI on c091234d (contains integration 65ead449): its own crates pass (latency 14, harness 20, render 2 on
+  Metal, lib 13). Integration breaks found: (1) pnpm build "Duplicated export 'setp'" in
+  experiments/native-compiler/handwritten breaks all five svelters workflows (consolidation 1 fixes it);
+  (2) presto-platform-wayland time.rs:84 u64 overflow in a test (WAYLAND).
+- WIDGETS-TIER1 done 0876a38f (table, tabs, pickers, dnd, dialogs, zoom; tier-1 tests pass on Linux and macOS; a Windows
+  path test fixed in 0876a38f). Open items for consolidation 2 in its record: picker overlay layers, prepare can't emit,
+  EventCx can't emit on a child, drag-preview hook, table scrollbars on the views scroll layer, hex/cell editors.
