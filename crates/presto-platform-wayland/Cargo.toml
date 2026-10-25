@@ -1,10 +1,31 @@
 [package]
 name = "presto-platform-wayland"
-description = "presto platform backend (presto-platform-wayland)."
+description = "presto's own Wayland platform backend on smithay-client-toolkit: xdg-shell windows, seat input, text-input-v3, fractional scale, subsurfaces, presentation feedback, tear-off, data device, portal."
 edition.workspace = true
 version.workspace = true
 license.workspace = true
 publish.workspace = true
 
+[features]
+default = ["portal"]
+# Theme (colour scheme, accent) and file dialogs through the XDG desktop portal.
+portal = ["dep:ashpd", "dep:futures-lite"]
+
 [dependencies]
 presto-base = { workspace = true }
+
+[target.'cfg(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly", target_os = "netbsd", target_os = "openbsd"))'.dependencies]
+smallvec = { workspace = true }
+raw-window-handle = { workspace = true }
+smithay-client-toolkit = { version = "0.20", default-features = false, features = ["calloop"] }
+calloop = "0.14"
+calloop-wayland-source = "0.4"
+wayland-client = "0.31"
+# libwayland-client through dlopen: wgpu's Vulkan surface needs real `wl_display`/`wl_surface` pointers.
+wayland-backend = { version = "0.3", features = ["client_system", "dlopen"] }
+wayland-protocols = { version = "0.32", features = ["client", "staging", "unstable"] }
+xkbcommon-dl = "0.4"
+xkeysym = "0.2"
+rustix = { version = "1", features = ["pipe", "fs", "event", "time"] }
+ashpd = { version = "0.13", default-features = false, features = ["async-io", "settings", "file_chooser"], optional = true }
+futures-lite = { version = "2", optional = true }
