@@ -79,7 +79,8 @@ egui ids once (as SV53's upgrade did for keyed eaches).
   pointer releases only); `onclicked` works. So `Tier::Semantic` clicks on a button with `onclick` do nothing
   (in an embed and in a `TestApp`). Not this lane's (EVENTS). Recommendation: an activation of a node through
   its `Pressable` (Space/Enter, AccessKit `Click`) fires a DOM `click` on it, as browsers do. cadatomic panels
-  using `onclick` are reachable with the default synthetic tier.
+  using `onclick` are reachable with the default synthetic tier. **Decided (coordinator, 2026-10-25): yes**, as an
+  EV1 follow-up outside AX1 (queued in `STATUS.md`, cloud batch 10).
 - Unrealised list rows are reached by position (`scroll_to_row`); a `key=` for an unrealised row would need the
   list to know app keys (it holds serial ids). Not built.
 
