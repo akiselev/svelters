@@ -12,6 +12,7 @@
 //! | [`damage`] | damage by diffing flattened frames, device rects, buffer-age history |
 //! | [`core`] | the engine: messages, frame clocks, animations, scroll motions, caret, drawing |
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
+//! | [`vsync`] | a thread per platform frame source, posting ticks, occlusion and feedback |
 //! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces (real crates behind traits) |
 
 pub mod core;
@@ -19,8 +20,9 @@ pub mod damage;
 pub mod gpu;
 pub mod seams;
 pub mod tree;
+pub mod vsync;
 
-pub use crate::core::{FrameSource, Stats};
+pub use crate::core::Stats;
 pub use crate::gpu::GpuContext;
 pub use presto_base::commit::ToUi;
 
@@ -51,9 +53,6 @@ pub struct CompositorConfig {
     pub ppi: f32,
     /// Builds each window's frame clock; defaults to [`presto_frame::FrameClock`].
     pub pacer: PacerFactory,
-    /// A platform display clock; `None` = a timer at the refresh interval and presentation estimated
-    /// from GPU completion.
-    pub frame_source: Option<Box<dyn FrameSource>>,
     /// The refresh interval of new windows until the platform reports theirs.
     pub refresh: Span,
     /// Passed to the instance for GL/Wayland (winit's `OwnedDisplayHandle`).
@@ -75,7 +74,6 @@ impl CompositorConfig {
             renderer: seams::presto_renderer(),
             ppi: 96.0,
             pacer: Box::new(seams::frame_clock),
-            frame_source: None,
             refresh,
             display: None,
             power: wgpu::PowerPreference::HighPerformance,
@@ -123,7 +121,6 @@ impl Compositor {
                 ppi: cfg.ppi,
             },
             cfg.pacer,
-            cfg.frame_source,
             to_ui,
             wake_ui,
         );
@@ -291,14 +288,25 @@ impl CompositorHandle {
         self.post(Msg::SmoothScroll { window, node, to, behavior, at });
     }
 
-    /// A display-clock tick from a platform [`FrameSource`].
-    pub fn vsync(&self, window: WindowId, target: Time, interval: Span) {
-        self.post(Msg::Vsync { window, target, interval });
+    /// Paces `window` by the platform's frame source (`PlatformCx::frame_source`) instead of a timer
+    /// at the refresh interval; its presentation feedback replaces the estimate from GPU completion,
+    /// and its occlusion reports become `ToUi::Occluded`.
+    pub fn set_frame_source(&self, window: WindowId, source: Arc<dyn presto_platform::FrameSource>) {
+        let link = vsync::spawn(window, source, self.tx.clone());
+        self.post(Msg::SetFrameSource { window, link });
     }
 
-    /// Presentation feedback from the platform.
-    pub fn presented(&self, window: WindowId, frame: FrameId, at: Time) {
-        self.post(Msg::Presented { window, frame, at });
+    /// The platform's committer for `window`'s OS compositor tree (`PlatformCx::os_layer_committer`):
+    /// called after each configure of a DirectComposition surface, which wgpu does not commit. Set it
+    /// before `add_window`.
+    pub fn set_os_layer_committer(&self, window: WindowId, committer: presto_platform::OsLayerCommitter) {
+        self.post(Msg::SetCommitter { window, committer });
+    }
+
+    /// Whether windows should present through the OS compositor tree (`WindowDesc::os_compositing`):
+    /// only with wgpu's DX12 backend, which the compositor uses on Windows and nowhere else.
+    pub fn os_compositing(&self) -> bool {
+        gpu::backend_order() == [wgpu::Backends::DX12]
     }
 
     /// Stops the thread and waits for it.

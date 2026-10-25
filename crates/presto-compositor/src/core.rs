@@ -8,6 +8,8 @@ use crate::damage::{self, Pending, Snapshots};
 use crate::seams::{Action, FramePacer, PacerFactory, Signal};
 use presto_anim::scroll::{DurationBehavior, Fling, ScrollAnimation, SmoothScroll};
 use crate::tree::{self, FlatItem, SurfaceKey, WindowTree};
+use crate::vsync::VsyncLink;
+use presto_platform::OsLayerCommitter;
 use presto_base::anim::{
     Placement, AnimProperty, AnimValue, AnimationCmd, AnimationEvent, AnimationSpec, FillMode, FlingCurve, Generator, Keyframe,
     StartTime,
@@ -35,6 +37,8 @@ pub trait Backend {
     fn draw(&mut self, window: WindowId, key: SurfaceKey, frame: Option<FrameId>, scene: &FrameScene<'_>) -> DrawOutcome;
     /// Drops GPU caches of images and paths that commits removed.
     fn forget(&mut self, images: &[ImageId], paths: &[PathId]);
+    /// Makes OS-compositor changes visible after configuring a surface of `window` (DComp `Commit`).
+    fn set_committer(&mut self, _window: WindowId, _committer: OsLayerCommitter) {}
     /// Rebuilds the device, queue, renderer and surface configurations after device loss.
     fn recover(&mut self) -> bool;
 }
@@ -72,21 +76,17 @@ pub enum Msg {
     UiCost { window: WindowId, frame: FrameId, cost: Span },
     Fling { window: WindowId, node: PropNodeId, velocity: Vec2, curve: FlingCurve, at: Time },
     SmoothScroll { window: WindowId, node: PropNodeId, to: Vec2, behavior: DurationBehavior, at: Time },
-    /// A display-clock tick from a platform [`FrameSource`].
+    /// A display-clock tick (from the window's frame source, [`crate::vsync`]).
     Vsync { window: WindowId, target: Time, interval: Span },
     /// Presentation feedback from the platform.
-    Presented { window: WindowId, frame: FrameId, at: Time },
+    Presented { window: WindowId, frame: FrameId, at: Time, estimated: bool },
+    Occluded { window: WindowId, occluded: bool },
+    SetFrameSource { window: WindowId, link: VsyncLink },
+    /// Makes DirectComposition changes visible after a surface of `window` is configured.
+    SetCommitter { window: WindowId, committer: OsLayerCommitter },
     GpuDone { window: WindowId, frame: FrameId, at: Time },
     DeviceLost,
     Shutdown,
-}
-
-/// A platform display clock (DXGI waitable, display link, frame callbacks) that posts ticks with
-/// [`crate::CompositorHandle::vsync`] and presentation feedback with
-/// [`crate::CompositorHandle::presented`]. Without one, the compositor estimates vsync with a timer
-/// at the window's refresh interval and presentation from GPU completion.
-pub trait FrameSource: Send {
-    fn subscribe(&mut self, window: WindowId, on: bool);
 }
 
 /// Engine settings (the thread-independent part of [`crate::CompositorConfig`]).
@@ -135,6 +135,11 @@ struct Win {
     animating: bool,
     caret: Caret,
     vsync_on: bool,
+    /// The platform frame source; without one, a timer on the refresh interval.
+    source: Option<VsyncLink>,
+    /// The source reports real presentation times (otherwise they are estimated from GPU completion).
+    feedback: bool,
+    occluded: bool,
     next_vsync: Option<Time>,
     timer: Option<Time>,
     /// Inputs applied since the last frame that drew.
@@ -155,7 +160,6 @@ pub struct Engine {
     cfg: EngineConfig,
     windows: BTreeMap<WindowId, Win>,
     new_pacer: PacerFactory,
-    source: Option<Box<dyn FrameSource>>,
     to_ui: Box<dyn Fn(ToUi) + Send>,
     wake_ui: Box<dyn Fn() + Send>,
     sent: bool,
@@ -171,7 +175,6 @@ impl Engine {
     pub fn new(
         cfg: EngineConfig,
         new_pacer: PacerFactory,
-        source: Option<Box<dyn FrameSource>>,
         to_ui: Box<dyn Fn(ToUi) + Send>,
         wake_ui: Box<dyn Fn() + Send>,
     ) -> Self {
@@ -179,7 +182,6 @@ impl Engine {
             cfg,
             windows: BTreeMap::new(),
             new_pacer,
-            source,
             to_ui,
             wake_ui,
             sent: false,
@@ -223,6 +225,9 @@ impl Engine {
             animating: false,
             caret: Caret { rect: None, revision: Default::default(), on: true, next_toggle: None },
             vsync_on: false,
+            source: None,
+            feedback: false,
+            occluded: false,
             next_vsync: None,
             timer: None,
             inputs: Vec::new(),
@@ -278,10 +283,8 @@ impl Engine {
                         gpu.detach(window, SurfaceKey::Os(*sid));
                     }
                     gpu.detach(window, SurfaceKey::Main);
-                    if w.vsync_on {
-                        if let Some(s) = &mut self.source {
-                            s.subscribe(window, false);
-                        }
+                    if let Some(l) = &w.source {
+                        l.gate.close();
                     }
                 }
             }
@@ -291,6 +294,7 @@ impl Engine {
             Msg::SetVisible { window, visible } => {
                 if let Some(w) = self.windows.get_mut(&window) {
                     w.visible = visible;
+                    let visible = visible && !w.occluded;
                     if visible {
                         for p in w.pending.values_mut() {
                             p.full = true;
@@ -327,16 +331,49 @@ impl Engine {
                     self.signal(window, now, Signal::Vsync { target, interval }, gpu);
                 }
             }
-            Msg::Presented { window, frame, at } => self.presented(window, frame, at, false, now, gpu),
+            Msg::Presented { window, frame, at, estimated } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    w.feedback |= !estimated;
+                }
+                self.presented(window, frame, at, estimated, now, gpu)
+            }
+            Msg::Occluded { window, occluded } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    if w.occluded != occluded {
+                        w.occluded = occluded;
+                        let visible = w.visible && !occluded;
+                        if visible {
+                            for p in w.pending.values_mut() {
+                                p.full = true;
+                            }
+                        }
+                        self.send(ToUi::Occluded { window, occluded });
+                        self.signal(window, now, Signal::Visible(visible), gpu);
+                    }
+                }
+            }
+            Msg::SetFrameSource { window, link } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    if let Some(old) = w.source.replace(link.clone()) {
+                        old.gate.close();
+                    }
+                    w.next_vsync = None;
+                    if let Some(i) = link.source.interval() {
+                        w.interval = i;
+                    }
+                    link.gate.set(w.vsync_on);
+                } else {
+                    link.gate.close();
+                }
+            }
+            Msg::SetCommitter { window, committer } => gpu.set_committer(window, committer),
             Msg::GpuDone { window, frame, at } => {
                 self.signal(window, now, Signal::GpuDone { frame, at }, gpu);
-                if self.source.is_none() {
-                    // No presentation feedback: the frame is shown at the first vblank after the GPU
-                    // finished, on the timer's vsync grid.
-                    if let Some(w) = self.windows.get(&window) {
-                        let at = next_grid(at, w.interval);
-                        self.presented(window, frame, at, true, now, gpu);
-                    }
+                // Without presentation feedback the frame is shown at the first vblank after the GPU
+                // finished, on the vsync grid.
+                if let Some(w) = self.windows.get(&window).filter(|w| !w.feedback) {
+                    let at = next_grid(at, w.interval);
+                    self.presented(window, frame, at, true, now, gpu);
                 }
             }
             Msg::DeviceLost => {
@@ -501,8 +538,8 @@ impl Engine {
                 Action::SubscribeVsync(on) => {
                     let Some(w) = self.windows.get_mut(&window) else { return };
                     w.vsync_on = on;
-                    match &mut self.source {
-                        Some(s) => s.subscribe(window, on),
+                    match &w.source {
+                        Some(l) => l.gate.set(on),
                         None => w.next_vsync = on.then(|| next_grid(now, w.interval)),
                     }
                 }
@@ -599,7 +636,7 @@ impl Engine {
             w.snapshots.entry(key).or_default().diff(items, &mut rects);
             let pending = w.pending.entry(key).or_default();
             pending.add(damage::to_device(&rects, w.scale, size));
-            if !w.visible || size.w == 0 || size.h == 0 {
+            if !w.visible || w.occluded || size.w == 0 || size.h == 0 {
                 continue;
             }
             let Some(dmg) = pending.take(size) else { continue };
@@ -617,6 +654,10 @@ impl Engine {
                 items: &draw_items,
                 resources: &w.tree.resources,
             };
+            if let (Some(f), SurfaceKey::Main, Some(l)) = (frame, key, &w.source) {
+                // Arms the next frame callback and presentation feedback (Wayland).
+                l.source.before_present(f);
+            }
             match gpu.draw(window, key, frame, &scene) {
                 DrawOutcome::Presented { submitted } => drew = Some(drew.map_or(submitted, |d: Time| d.max(submitted))),
                 DrawOutcome::Skipped => {

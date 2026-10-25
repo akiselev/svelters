@@ -63,7 +63,6 @@ fn headless_frame_renders_and_reports_gpu_completion() {
     let mut engine = Engine::new(
         EngineConfig { refresh: Span::from_micros(16_667), clear: Some(white), caret_color: Color::BLACK, caret_blink: None, ppi: 96.0 },
         Box::new(seams::frame_clock),
-        None,
         Box::new(move |m: ToUi| s.lock().unwrap().push(m)),
         Box::new(|| {}),
     );

@@ -69,7 +69,6 @@ fn engine() -> (Engine, Sent) {
     let e = Engine::new(
         EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_color: Color::BLACK, caret_blink: None, ppi: PPI },
         Box::new(seams::frame_clock),
-        None,
         Box::new(move |m| s.lock().unwrap().push(m)),
         Box::new(|| {}),
     );
@@ -533,4 +532,56 @@ fn hidden_windows_do_not_draw_and_redraw_fully_when_shown() {
     }
     assert_eq!(gpu.draws.len(), 2);
     assert!(gpu.draws[1].damage.is_empty(), "full redraw after being hidden");
+}
+
+/// A frame source that never ticks on its own: the test posts its ticks.
+struct ScriptedSource;
+impl presto_platform::FrameSource for ScriptedSource {
+    fn name(&self) -> &'static str {
+        "scripted"
+    }
+    fn wait(&self, timeout: Span) -> presto_platform::FrameWait {
+        std::thread::sleep(std::time::Duration::from_nanos(timeout.0.min(5_000_000) as u64));
+        presto_platform::FrameWait::TimedOut
+    }
+    fn interval(&self) -> Option<Span> {
+        Some(INTERVAL)
+    }
+}
+
+#[test]
+fn occlusion_stops_drawing_and_is_reported() {
+    let (mut e, sent) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    let (tx, _rx) = std::sync::mpsc::channel();
+    let link = presto_compositor::vsync::spawn(W, Arc::new(ScriptedSource), tx);
+    e.handle(Msg::SetFrameSource { window: W, link: link.clone() }, t0, &mut gpu);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    assert_eq!(gpu.draws.len(), 1);
+    complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
+    assert!(e.next_wakeup().map_or(true, |t| t > t0 + INTERVAL), "no timer vsync with a platform source");
+
+    e.handle(Msg::Occluded { window: W, occluded: true }, t0 + Span::from_millis(2), &mut gpu);
+    e.handle(Msg::Commit(Box::new(base_commit(2))), t0 + Span::from_millis(3), &mut gpu);
+    let tick = t0 + Span::from_millis(15);
+    e.handle(Msg::Vsync { window: W, target: tick + INTERVAL, interval: INTERVAL }, tick, &mut gpu);
+    assert_eq!(gpu.draws.len(), 1, "an occluded window does not draw");
+    e.handle(Msg::Occluded { window: W, occluded: false }, tick + Span::from_millis(1), &mut gpu);
+    let t2 = tick + INTERVAL;
+    e.handle(Msg::Vsync { window: W, target: t2 + INTERVAL, interval: INTERVAL }, t2, &mut gpu);
+    assert_eq!(gpu.draws.len(), 2, "drawn again once visible");
+    assert!(gpu.draws[1].damage.is_empty(), "with a full redraw");
+    let occl: Vec<bool> = sent
+        .lock()
+        .unwrap()
+        .iter()
+        .filter_map(|m| match m {
+            ToUi::Occluded { occluded, .. } => Some(*occluded),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(occl, vec![true, false]);
+    link.gate.close();
 }

@@ -11,7 +11,10 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   Additive: `CompositorConfig::new(clock, refresh)`, `gpu() -> Option<GpuContext>`
   (device/queue for egui islands and offscreen viewports), `resize_os_layer`, `remove_os_layer`,
   `unregister_texture`, `set_refresh`, `needs_ui_frame(window, bool)`, `ui_frame_skipped`, `ui_cost`,
-  `ui_input_cost`, `high_rate_input`, `fling`, `smooth_scroll`, `vsync`/`presented` (for a platform `FrameSource`).
+  `ui_input_cost`, `high_rate_input`, `fling`, `smooth_scroll`, `set_frame_source` (a
+  `presto_platform::FrameSource` per window, waited on by a `presto-vsync-<id>` thread that posts ticks,
+  occlusion and feedback), `set_os_layer_committer` (DComp `Commit` after every configure),
+  `os_compositing()` (true only with DX12, for `WindowDesc::os_compositing`).
 - **Thread** (`lib.rs::run`): one per process; one blocking wait (`recv_timeout` to the engine's next
   deadline), then every queued message, then what is due. The `Instance` is created on the calling
   thread so the main thread creates surfaces at once; the device is created with the first surface.
@@ -60,8 +63,7 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 ## Not implemented (listed, not faked)
 
 - Present with damage (wgpu 30 has none; patch P1): presents are full; damage limits rendering and copies.
-- DXGI waitable (`DontWait` + our own multi-object wait), CAMetalDisplayLink, Wayland frame callbacks:
-  the platform's `FrameSource` work; the default DX12 `Wait` mode is used meanwhile.
+- DXGI waitable (`DontWait` + our own multi-object wait): the default DX12 `Wait` mode is used.
 - macOS live resize with `presentsWithTransaction` and present on the main thread (needs the platform
   lane's resize path); DComp `Commit` after configuring a visual (the platform owns the DComp device).
 - `Action::Represent` (VRR keep-alive): wgpu cannot present without acquiring a new image; skipped.
@@ -76,14 +78,17 @@ Per the batch rule, nothing was run locally beyond `cargo check -p presto-compos
 Tests written, run only by CI: `tests/engine.rs` (virtual clock + recording backend: first frame,
 commit folding, smooth scroll with retarget, fast-commit revision rejection, fling frames without commits then idle, fling stopped
 by a scroll, idle does not wake, BeginFrame back-pressure, opacity animation with fill forwards,
-UI-thread animations aborted here, resize handshake, hidden windows), `tests/tree_damage.rs`
+UI-thread animations aborted here, resize handshake, hidden windows, occlusion from a platform
+frame source), `tests/tree_damage.rs`
 (paint order, folding, scroll and clip resolution, OS-layer surfaces, texture layers, damage diff,
 device rects, buffer-age history), `tests/headless.rs` (GPU-gated: a one-quad scene through presto-render into an offscreen target, GPU
 completion, readback; skips without an adapter).
 
 ## Cross-lane edits
 
-None. No `presto-base` changes.
+- `presto-base/src/commit.rs`: additive `ToUi::Occluded { window, occluded }` (decided by the coordinator
+  with PLATFORM, 2026-10-25), sent when the platform frame source reports occlusion; the compositor stops
+  drawing an occluded window and redraws it whole when it comes back.
 
 ## Questions for the coordinator (each with a recommendation)
 

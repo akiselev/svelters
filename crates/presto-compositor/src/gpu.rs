@@ -141,6 +141,7 @@ pub struct GpuBackend {
     shared: SharedGpu,
     surfaces: HashMap<(WindowId, SurfaceKey), Surf>,
     textures: HashMap<TextureId, wgpu::Texture>,
+    committers: HashMap<WindowId, presto_platform::OsLayerCommitter>,
     new_renderer: RendererFactory,
     glyphs: Arc<dyn GlyphRasterizer>,
     notify: Sender<Msg>,
@@ -169,6 +170,7 @@ impl GpuBackend {
             shared,
             surfaces: HashMap::new(),
             textures: HashMap::new(),
+            committers: HashMap::new(),
             new_renderer,
             glyphs,
             notify,
@@ -258,6 +260,13 @@ impl GpuBackend {
         config.view_formats = Vec::new();
         surface.configure(&gpu.ctx.device, &config);
         s.configured = true;
+    }
+
+    /// DirectComposition shows a configured swap chain only after a `Commit` (wgpu does not call it).
+    fn commit_os(&self, window: WindowId) {
+        if let Some(c) = self.committers.get(&window) {
+            c.commit();
+        }
     }
 
     /// Posts `GpuDone` for `frame` when the GPU finishes submission `index`.
@@ -397,6 +406,7 @@ impl Backend for GpuBackend {
             Self::configure(gpu, &mut s);
         }
         self.surfaces.insert((window, key), s);
+        self.commit_os(window);
     }
 
     fn detach(&mut self, window: WindowId, key: SurfaceKey) {
@@ -409,7 +419,13 @@ impl Backend for GpuBackend {
             if let Some(gpu) = &self.gpu {
                 Self::configure(gpu, s);
             }
+            self.commit_os(window);
         }
+    }
+
+    fn set_committer(&mut self, window: WindowId, committer: presto_platform::OsLayerCommitter) {
+        committer.commit();
+        self.committers.insert(window, committer);
     }
 
     fn register_texture(&mut self, id: TextureId, texture: wgpu::Texture) {
@@ -489,6 +505,9 @@ impl Backend for GpuBackend {
                 gpu.renderer.end_frame();
                 if reconfigure {
                     Self::configure(gpu, s);
+                    if let Some(c) = self.committers.get(&window) {
+                        c.commit();
+                    }
                 } else if outcome == DrawOutcome::NoSurface {
                     s.configured = false;
                 }
@@ -527,6 +546,9 @@ impl Backend for GpuBackend {
         gpu.renderer.end_frame();
         if suboptimal {
             Self::configure(gpu, s);
+            if let Some(c) = self.committers.get(&window) {
+                c.commit();
+            }
         }
         DrawOutcome::Presented { submitted: self.clock.now() }
     }
@@ -563,6 +585,9 @@ impl Backend for GpuBackend {
             for s in self.surfaces.values_mut() {
                 Self::configure(gpu, s);
             }
+        }
+        for c in self.committers.values() {
+            c.commit();
         }
         ok
     }
