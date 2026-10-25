@@ -275,9 +275,9 @@ impl<S> DocumentApi for IslandDoc<S> {
     }
 }
 
-/// Collects the island's texture registrations for the harness's renderer.
+/// Collects islands' texture registrations for the harness's renderer.
 #[derive(Default)]
-struct Registrations(RefCell<Vec<(TextureId, Option<wgpu::Texture>)>>);
+pub(crate) struct Registrations(RefCell<Vec<(TextureId, Option<wgpu::Texture>)>>);
 
 impl TextureRegistry for Registrations {
     fn register_texture(&self, id: TextureId, texture: wgpu::Texture) {
@@ -300,6 +300,11 @@ fn render_island<S>(doc: &mut IslandDoc<S>, gpu: &mut GpuRender) {
         .island
         .render(&gpu.device, &gpu.queue, &mut encoder, &regs);
     gpu.queue.submit(user.into_iter().chain([encoder.finish()]));
+    register_textures(regs, gpu);
+}
+
+/// Hand the collected registrations to presto-render.
+pub(crate) fn register_textures(regs: Registrations, gpu: &mut GpuRender) {
     for (id, tex) in regs.0.into_inner() {
         match tex {
             Some(t) => {
@@ -349,8 +354,11 @@ impl<S: 'static> EguiHarness<S> {
     pub fn state(&self) -> &S {
         self.inner.state().state()
     }
+    /// The closure's state; the island runs a pass at the next step (kittest's steps always run one).
     pub fn state_mut(&mut self) -> &mut S {
-        self.inner.state_mut().state_mut()
+        let doc = self.inner.state_mut();
+        doc.island.request_pass();
+        doc.state_mut()
     }
     /// The island document (the island, its last output).
     pub fn doc(&self) -> &IslandDoc<S> {

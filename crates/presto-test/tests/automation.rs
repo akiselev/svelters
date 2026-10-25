@@ -2,6 +2,9 @@
 //! source) runs in an egui island on presto, and a svelters-automation `Session` drives it through
 //! `PrestoDriver` with the same selectors and acts as on the egui backend. Synthetic clicks take
 //! presto's input path into the island; semantic ones go through the grafted AccessKit tree.
+//!
+//! The fixture needs the workspace's JS packages (`pnpm install`): without them the tests say so and
+//! pass (the presto workflow installs none; linux-gtk's workspace run has them).
 
 use presto_test::EguiHarness;
 use presto_test::automation::PrestoDriver;
@@ -10,11 +13,18 @@ use svelters_automation::{ActOptions, Expect, Session, TextMatch, Tier, WaitStat
 use svelters_egui::embed::{Embed, EmbedConfig};
 use svelters_host::HostConfig;
 
-fn session() -> Session<PrestoDriver<presto_test::IslandDoc<Embed>>> {
+fn session() -> Option<Session<PrestoDriver<presto_test::IslandDoc<Embed>>>> {
     let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/counter-egui");
     let mut src = svelters_modules::SourceConfig::for_path(&dir).expect("the fixture");
     src.backend = "egui".into();
-    let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src).expect("its sources"));
+    let provider = match svelters_modules::SourceProvider::new(src) {
+        Ok(p) => std::rc::Rc::new(p),
+        Err(e) if e.contains("pnpm install") => {
+            eprintln!("skipped: the fixture's JS packages are not installed ({e})");
+            return None;
+        }
+        Err(e) => panic!("the fixture's sources: {e}"),
+    };
     let cfg = HostConfig {
         echo_console: false,
         echo_errors: false,
@@ -42,7 +52,7 @@ fn session() -> Session<PrestoDriver<presto_test::IslandDoc<Embed>>> {
         });
     let mut s = Session::for_test(driver);
     s.wait_settled(10_000.0).expect("the app settles");
-    s
+    Some(s)
 }
 
 fn text(t: &str) -> Expect {
@@ -51,7 +61,7 @@ fn text(t: &str) -> Expect {
 
 #[test]
 fn selectors_and_acts_drive_a_presto_island() {
-    let mut s = session();
+    let Some(mut s) = session() else { return };
     let by_role = s.locate(r#"role=button[name="Increment"]"#).unwrap();
     assert_eq!(s.locate("text=increment").unwrap(), by_role);
 
@@ -77,7 +87,7 @@ fn selectors_and_acts_drive_a_presto_island() {
 
 #[test]
 fn the_driver_reports_island_nodes_in_scene_coordinates() {
-    let s = session();
+    let Some(s) = session() else { return };
     let id = s.locate(r#"role=button[name="Increment"]"#).unwrap();
     let scene_rect = s.node(id).unwrap().rect.expect("drawn");
     let nodes = s.a11y_tree().unwrap();

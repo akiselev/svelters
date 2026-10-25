@@ -119,3 +119,11 @@ fn the_context_and_state_are_kittests() {
     assert_eq!(*h.state(), 11);
     h.check_accessibility();
 }
+
+#[test]
+fn state_changed_between_steps_shows_after_run() {
+    let mut h = harness();
+    h.state_mut().clicks = 5;
+    h.run();
+    assert!(h.query_by_label("Clicks: 5").is_some(), "{}", h.a11y_dump());
+}
