@@ -214,6 +214,71 @@ impl Kind for Lbl {
     }
 }
 
+const POP: KindId = KindId::of("pop");
+const POP_OPEN: PropId = PropId::of("pop", "open", "bool");
+
+static POP_SPEC: KindSpec = KindSpec {
+    props: &[PropSpec::new("open", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)).native()],
+    container: true,
+    ..KindSpec::new("pop")
+};
+
+/// A popup: while `open`, a press outside closes it.
+#[derive(Default)]
+struct Pop;
+
+impl Kind for Pop {
+    fn spec() -> &'static KindSpec {
+        &POP_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+    fn light_dismiss(&self, node: &crate::NodeView) -> bool {
+        node.prop_bool(POP_OPEN)
+    }
+    fn outside_press(&mut self, cx: &mut EventCx, _p: &crate::PointerInput) -> Handled {
+        let _ = cx.set_native(POP_OPEN, Value::Bool(false));
+        Handled::Yes
+    }
+}
+
+const SEL: KindId = KindId::of("sel");
+const SEL_ON: PropId = PropId::of("sel", "selecting", "bool");
+
+static SEL_SPEC: KindSpec = KindSpec {
+    props: &[PropSpec::new("selecting", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)).native()],
+    focusable: true,
+    ..KindSpec::new("sel")
+};
+
+/// A text stand-in: a click selects its text and claims the one selection; losing it collapses.
+#[derive(Default)]
+struct Sel;
+
+impl Kind for Sel {
+    fn spec() -> &'static KindSpec {
+        &SEL_SPEC
+    }
+    fn measure(&self, _cx: &mut MeasureCx, _k: taffy::Size<Option<f32>>, _a: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        taffy::Size { width: 20.0, height: 10.0 }
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        if let Event::Click(_) = ev {
+            let _ = cx.set_native(SEL_ON, Value::Bool(true));
+            cx.claim_selection();
+            return Handled::Yes;
+        }
+        Handled::No
+    }
+    fn selection_lost(&mut self, cx: &mut EventCx) {
+        let _ = cx.set_native(SEL_ON, Value::Bool(false));
+    }
+}
+
 fn hdoc() -> (Document, NodeId) {
     let mut r = KindRegistry::new();
     r.register::<testkinds::BoxKind>().unwrap();
@@ -223,6 +288,8 @@ fn hdoc() -> (Document, NodeId) {
     r.register::<Deck>().unwrap();
     r.register::<Btn>().unwrap();
     r.register::<Lbl>().unwrap();
+    r.register::<Pop>().unwrap();
+    r.register::<Sel>().unwrap();
     let mut d = Document::new(Arc::new(r), Box::new(FixedText));
     d.set_text_shaper(Box::new(FixedText));
     let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(2.0));
@@ -617,4 +684,132 @@ fn the_deliverer_reads_and_writes_the_document() {
     assert_eq!(d.view(other).unwrap().prop_str(common::TITLE), Some("ok"));
     assert_eq!(d.view(b).unwrap().prop_str(common::ARIA_LABEL), Some("renamed"), "a write to the node mid-handler is kept");
     assert!(d.state(b).contains(StateMask::CHECKED), "not prevented: the default ran");
+}
+
+// ---- kinds that scroll themselves, carets, padding ----
+
+const PAGE: KindId = KindId::of("page");
+
+static PAGE_SPEC: KindSpec = KindSpec { focusable: true, ..KindSpec::new("page") };
+
+/// A code-editor stand-in: 1000 points of content it scrolls itself; Down scrolls by 10 fast.
+#[derive(Default)]
+struct Page;
+
+impl Kind for Page {
+    fn spec() -> &'static KindSpec {
+        &PAGE_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+    fn self_scroll(&self, _node: &crate::NodeView) -> Option<crate::SelfScroll> {
+        Some(crate::SelfScroll { content: Size::new(50.0, 1000.0), x: false, y: true })
+    }
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        match ev {
+            Event::Key(k) if k.key == Some(Key::ArrowDown) => {
+                let off = cx.document().scroll_offset(cx.node());
+                cx.scroll_fast(presto_base::geom::Vec2::new(0.0, off.y + 10.0));
+                cx.set_caret(Some(presto_base::geom::Rect::new(1.0, 2.0, 2.0, 12.0)));
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
+    }
+}
+
+#[test]
+fn a_kind_that_scrolls_itself_scrolls_on_the_compositor() {
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<Page>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let page = child(&mut d, root, PAGE, "width: 50px; height: 80px; margin-left: 10px; background-color: #ffffff");
+    let c = frame(&mut d).unwrap();
+    let scroll = c.props.ops.iter().any(|op| matches!(op, presto_base::props::PropOp::Scroll(..)));
+    assert!(scroll, "it has a scroll node");
+    assert!(c.layers.iter().any(|l| matches!(l, presto_base::layer::LayerDelta::Add(desc) if matches!(desc.kind, presto_base::layer::LayerKind::Scroll { .. }))));
+    d.focus(page, crate::FocusReason::Keyboard);
+    d.take_fast_commits();
+    d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+    let fast = d.take_fast_commits();
+    assert!(fast.iter().any(|f| matches!(f, presto_base::commit::FastCommit::ScrollOffset { offset, .. } if offset.y == 10.0)));
+    let caret = fast.iter().find_map(|f| match f {
+        presto_base::commit::FastCommit::Caret { rect, .. } => *rect,
+        _ => None,
+    });
+    assert_eq!(caret.map(|r| r.min.x), Some(11.0), "the caret is in window points");
+    let c = frame(&mut d).unwrap();
+    assert!(c.lists.is_empty(), "a scroll is no re-record");
+}
+
+#[test]
+fn views_carry_padding_and_the_window_transform() {
+    let (mut d, root) = hdoc();
+    let a = child(&mut d, root, BOX, "width: 50px; height: 50px; margin-left: 20px; padding: 3px 4px; border-width: 1px; border-style: solid");
+    frame(&mut d);
+    let v = d.view(a).unwrap();
+    assert_eq!(v.padding().left, 4.0);
+    assert_eq!(v.content_box().min.x, 5.0, "border, then padding");
+    assert_eq!(v.window_transform().e, 20.0);
+    assert_eq!(v.from_window(Point::new(25.0, 0.0)).x, 5.0);
+}
+
+#[test]
+fn nested_sync_events_follow_the_listener() {
+    let (mut d, root) = hdoc();
+    let b = child(&mut d, root, BTN, "");
+    let t = child(&mut d, root, TOGGLE, "");
+    d.listen(b, BTN_CHANGED, ListenFlags::EMPTY);
+    d.listen(t, common::FOCUS, ListenFlags::EMPTY);
+    let seen: Rc<RefCell<Vec<(SignalId, bool)>>> = Rc::default();
+    let log = seen.clone();
+    d.set_sync_delivery(Box::new(move |doc, ev| {
+        log.borrow_mut().push((ev.signal, ev.cancelable));
+        if ev.signal == BTN_CHANGED {
+            // a listener moves focus: its focus events come after this call, not inside it
+            doc.focus(t, crate::FocusReason::Programmatic);
+            assert_eq!(log.borrow().len(), 1, "not re-entered");
+        }
+        Outcome { prevented: ev.signal == common::FOCUS, stopped: false }
+    }));
+    d.focus(b, crate::FocusReason::Keyboard);
+    d.take_events();
+    d.dispatch(&key(Key::Space, Modifiers::default()));
+    assert_eq!(*seen.borrow(), [(BTN_CHANGED, true), (common::FOCUS, false)], "delivered, not cancelable");
+    assert_eq!(d.focused(W), Some(t));
+}
+
+#[test]
+fn a_press_outside_an_open_surface_dismisses_it() {
+    let (mut d, root) = hdoc();
+    let pop = child(&mut d, root, POP, "width: 40px; height: 40px");
+    let inner = child(&mut d, pop, TOGGLE, "");
+    let outside = child(&mut d, root, TOGGLE, "");
+    d.set_prop(pop, POP_OPEN, Value::Bool(true)).unwrap();
+    frame(&mut d);
+    click(&mut d, 5.0, 5.0);
+    assert!(d.view(pop).unwrap().prop_bool(POP_OPEN), "a press inside keeps it open");
+    assert!(d.view(inner).unwrap().prop_bool(testkinds::TOGGLE_CHECKED));
+    click(&mut d, 45.0, 5.0);
+    assert!(!d.view(pop).unwrap().prop_bool(POP_OPEN), "a press outside closes it");
+    assert!(d.view(outside).unwrap().prop_bool(testkinds::TOGGLE_CHECKED), "and is dispatched as usual");
+}
+
+#[test]
+fn one_selection_owner_under_the_gtk_rule() {
+    let (mut d, root) = hdoc();
+    let a = child(&mut d, root, SEL, "");
+    let b = child(&mut d, root, SEL, "");
+    frame(&mut d);
+    let on = |d: &Document, n| d.view(n).unwrap().prop_bool(SEL_ON);
+    click(&mut d, 5.0, 5.0);
+    click(&mut d, 25.0, 5.0);
+    assert!(on(&d, a) && on(&d, b), "off by default: both keep their selection");
+    d.set_single_selection(true);
+    click(&mut d, 5.0, 5.0);
+    click(&mut d, 25.0, 5.0);
+    assert!(!on(&d, a) && on(&d, b), "claiming collapses the previous owner");
 }

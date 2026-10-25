@@ -176,3 +176,31 @@ fn keys_go_to_the_ime_during_a_composition() {
     assert!(out.to_ime);
     assert!(out.events.is_empty());
 }
+
+#[test]
+fn an_ime_source_takes_printable_keys_before_the_keymap() {
+    let (mut d, root) = doc();
+    let t = child(&mut d, root, TOGGLE, "");
+    frame(&mut d);
+    d.focus(t, crate::FocusReason::Programmatic);
+    let hooked = std::rc::Rc::new(std::cell::Cell::new(0));
+    let h = hooked.clone();
+    d.set_key_hook(Box::new(move |_, _| {
+        h.set(h.get() + 1);
+        false
+    }));
+    d.set_ime_source(W, true);
+    let typed = |mods| {
+        let mut k = key(Key::J, mods);
+        if let presto_base::event::InputEvent::Key(e) = &mut k.event {
+            e.text = Some("j".into());
+        }
+        k
+    };
+    assert!(d.dispatch(&typed(Modifiers::default())).to_ime, "a printable key goes to the IME");
+    assert_eq!(hooked.get(), 0, "before the command keymap");
+    assert!(!d.dispatch(&typed(Modifiers::CTRL)).to_ime, "a chord goes through the keymaps");
+    assert_eq!(hooked.get(), 1);
+    d.set_ime_source(W, false);
+    assert!(!d.dispatch(&typed(Modifiers::default())).to_ime);
+}

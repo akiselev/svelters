@@ -792,8 +792,9 @@ impl Document {
         let new_box = if *old_box == new_box { old_box } else { Arc::new(new_box) };
         self.style.nodes[i].computed = new_box;
         self.style.nodes[i].css = Some(Arc::new(css));
-        if first || self.layout[i].style != tstyle {
-            self.layout[i].style = tstyle;
+        if first || *self.layout[i].style != tstyle {
+            let key = crate::compact::style_key(&tstyle);
+            self.layout[i].style = self.styles.intern(tstyle, key);
             self.invalidate_style(i);
             self.layout[i].intrinsic = None;
         }
@@ -819,7 +820,7 @@ impl Document {
             self.replace_children(i);
         }
         // the scroll range may have changed with the overflow axes
-        if property && !self.style.computed(i).overflow_x.scrolls() && !self.style.computed(i).overflow_y.scrolls() {
+        if property && self.scroll_axes(i) == (false, false) {
             self.scroll.remove(&node);
         }
         inherited
@@ -946,7 +947,7 @@ impl Document {
                 let v = if s.done { t.to.clone() } else { s.value.clone().unwrap_or_else(|| t.to.clone()) };
                 match (t.prop, &v) {
                     (UiProp::Width | UiProp::Height, AnimValue::Length(l)) => {
-                        let size = &mut self.layout[i].style.size;
+                        let size = &mut std::sync::Arc::make_mut(&mut self.layout[i].style).size;
                         let d = if t.prop == UiProp::Width { &mut size.width } else { &mut size.height };
                         if d.into_option() != Some(*l) {
                             *d = taffy::Dimension::length(*l);

@@ -37,8 +37,12 @@ delivery is a plain call:
   (the caller checks `Document::contains`); a target that a `pointerdown` listener removed gets no
   native default;
 - a write to the node whose kind is mid-handler (the kind is out of its slot) is stored and replayed
-  to the kind's `prop_changed` when the handler returns; a cancelable signal raised while the deliverer
-  runs (nested) is queued, not delivered.
+  to the kind's `prop_changed` when the handler returns;
+- **nested delivery** (coordinator's rule to pin, 2026-10-25): a sync event raised while the deliverer
+  runs (`el.click()`, a `focus()`'s focus events, a kind's `emit_sync`) is never dropped and never
+  re-enters the deliverer: it is delivered, **not cancelable**, right after the listener call that
+  caused it returns, before the outer event's default runs, repeatedly until none is left (test
+  `hooks::nested_sync_events_follow_the_listener`).
 
 ## 2. (i) scope activation, (j) label `for`
 
@@ -71,12 +75,66 @@ Not done here: OS file drops onto targets (`text/uri-list`; `InputEvent::FileHov
 dispatch nothing), auto-scroll near a scroll container's edge during a drag, the drag ghost
 (`::part(ghost)`: a widget's), the `grab` cursor over an idle source.
 
+## Requests of APP-TEST, TEXT-INPUT (R4) and QUIRE (coordinator's priority order, 2026-10-25)
+
+### APP-TEST 1–5 (`runner.rs`)
+
+1. `Document::needs_frame(window)`: queued style/layout/record/property work, rebuild or removals,
+   running UI transitions, a cursor or resources to send. Pointer-only state changes (`:hover`,
+   `:active`, `:focus-within`) no longer dirty the accessibility tree, so a hover that no rule styles
+   leaves it false.
+2. `Document::hover(window, pos) -> bool`: event-time hover (`:hover`, kinds' enter/leave, queued
+   `pointerenter`/`pointerleave`), for the moves whose JS `pointermove` is coalesced to the frame.
+3. `Document::accessibility_action(window, &ActionRequest) -> bool` (over `a11y_action`; JS events queued).
+   Id mapping, documented in `runner.rs`: an AccessKit id is the presto `NodeId`'s `u64`.
+4. `animation_event` (existed); `window_event(window, &WindowEvent)` (resize/scale in device pixels →
+   points, `Focused(false)` → `:backdrop` on the root, `ThemeChanged` → `prefers-color-scheme`);
+   `device_reset()` (every window re-sends property trees, layers, lists and runs; the document keeps
+   the live images and paths and re-sends them); `a11y_full_tree(window)`.
+5. IME purpose: **focus-driven**, no presto-base change: `Document::ime_state(window) -> Option<(Rect,
+   InputPurpose)>` from the focused text kind (`TextInputClient::purpose`); `Commit::ime_area` still
+   says when the area moved. The runner calls `ime_state` after a frame or a focus change.
+
+### TEXT-INPUT R4
+
+| Ask | Answer |
+|---|---|
+| text system in `PrepareCx`/`EventCx` | Through services, already in both: `cx.service::<presto_text::TextSystem>()` (presto-core does not depend on presto-text). |
+| clipboard in `EventCx` | The same: the runner installs `Box<dyn presto_platform::Clipboard>` as a service (`Document::set_service`), kinds take `cx.service::<Box<dyn Clipboard>>()`. |
+| fast-commit channel | `EventCx::set_caret(Option<Rect>)` (local → window, `FastCommit::Caret`), `EventCx::scroll_fast(offset)`, `Document::scroll_fast`, and `Document::take_fast_commits()` for the runner (`CompositorHandle::fast`). One design with QUIRE's below. |
+| event time | `EventCx::time()` (the event's OS time; a timer's deadline). Not duplicated into `Event`. |
+| padding edges, window transform | `NodeView::{padding, content_box, window_transform, from_window}`. |
+| IME-first route | `Document::set_ime_source(window, active)`: during a composition every key goes to the IME, and with an IME source active printable keys without a chord do, before the command keymap (`Dispatched::to_ime`), as `keys::route`. |
+| GTK's one selection owner | `Document::set_single_selection(on)` (GTK policy; off by default); a text kind calls `EventCx::claim_selection()` when it selects something and `release_selection()` when it collapses; the previous owner gets `Kind::selection_lost(cx)` (the field's `collapse_to_start`). One owner per document. |
+
+### QUIRE: kind-owned scrolling
+
+`Kind::self_scroll(&NodeView) -> Option<SelfScroll { content, x, y }>` (asked after each `prepare`): the
+node gets a scroll node, a content space and a scroll layer whatever its `overflow`, its own list is
+recorded in content space and placed in that layer, and `EventCx::scroll_fast` moves it on the compositor
+at once (the next commit carries the same offset as a property op; no re-record). Wheel defaults work on
+it like any scroll container. Pointer positions stay in the border box (add `scroll_offset`). Recording
+now runs before the property refresh in the dirty walk, so the scroll node exists from the first frame.
+Not done: a kind creating several layers of its own (gutter, minimap). Not cheap: lists, items and
+layers are one per node, so it needs per-kind sub-lists through the recorder, the rebuild walk and the
+commit. Today the shape is child nodes with `will-change: transform` (each gets its own layer) or a
+self-scrolling child.
+
+### WIDGETS-BASIC: light dismiss
+
+`Kind::light_dismiss(&NodeView) -> bool` (asked after every prop write and every call into the kind; the
+document keeps the set) and `Kind::outside_press(&mut self, cx, &PointerInput) -> Handled`: on a pointer
+down in a window, before the press is dispatched (it is not consumed), every light-dismiss node of that
+window whose subtree does not hold the hit target hears of it, topmost (latest in paint order) first,
+`local` in its own space. A method rather than an `Event::OutsidePress` variant, so the bridge's
+exhaustive `Event` match keeps compiling.
+
 ## 4. The rest of CORE-2's list
 
 | Item | State |
 |---|---|
 | Queries (svelters-egui `scene/query.rs`) | Done (`query.rs`): kind sets kept by create/free (`Document::kinds_of`), `Document::query()` → `Query` with `kind`, `in_window`, `within`, `anchor`, `state`, `prop_eq`, `changed_since`, then `collect`/`first`/`count` (it walks the kind set, else the scope in pre-order, else the anchors, else every node); `Document::select(root, css)` and `matches(node, css)` through svelters-style's selector matcher. Anchors: `find_anchor` (one anchor map, filtered by window; `anchor-scope` qualification is not applied). |
-| Interner/compaction (`compact.rs`) | Not done. `ComputedBox` is already shared (`Arc`); the taffy style per node (`LayoutBox::style`, inline) is what an interner would shrink. Recommendation: do it when a 10k-node screen is profiled; it touches every `layout[i].style` writer. |
+| Interner/compaction (`compact.rs`) | Done for the layout column: `LayoutBox::style` is an `Arc<taffy::Style>` interned at restyle (svelters-egui's `Interner` and `style_key`, pruned as the table grows); the few in-place writers (window root size, virtual rows, size transitions) copy on write. `ComputedBox` was already shared. svelters-egui's boxed leaf cache and `BoxRect` are not ported (taffy's `Layout` stays whole: the a11y and padding reads use it). |
 | `resources.paths` | Done: `PrepareCx::upload_path(Arc<PathData>) -> PathId`, `release_path`; the commit carries `paths`/`removed_paths`. |
 | Layer `opaque` | Done: a content layer (or the root) whose owner's list starts with a square opaque solid quad covering its box, at full opacity, with no effect node. Re-recording a layer owner rebuilds so the flag follows. |
 | Layer `Damage` | Not filled, on purpose: the compositor derives damage from changed lists and property ops (`presto-compositor` `damage.rs`); `LayerDelta::Damage` is for extra damage only (canvas chunks), which no core kind produces. |
@@ -90,7 +148,8 @@ Also: `NameSource::Children` now computes the name from the descendants' text (C
 Written, not run (the brief's rule): `src/tests/hooks.rs` (parts, listened, prop state, scale, chrome,
 child layout, inert, peers and Tab stop and roving, Enter/Escape and auto-default, label for and
 `labelled_by`, `invalid`, enum attributes, status tip, `emit_sync` and a prevented `pointerdown` through
-the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/query.rs`; in `src/tests/a11y.rs` a move re-sending only
+the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/runner.rs`; in `hooks.rs` the lent deliverer, nested delivery, light dismiss, self-scroll
+with fast scroll and caret, padding and window transform; in `dispatch.rs` the IME-source route; `src/tests/query.rs`; in `src/tests/a11y.rs` a move re-sending only
 the moved node (local bounds, parent-relative transform), an inserted subtree joining incrementally, and a
 name from children.
 

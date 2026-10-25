@@ -22,7 +22,8 @@
 //! - the hooks presto-core added for the kinds: paint-part styles (`::part(name)`), listened signals,
 //!   signals delivered at event time (a prevented `clicked` skips its default), peer groups (radio
 //!   exclusivity, roving focus), container hooks (chrome padding, per-child layout, inert children),
-//!   prop-derived state bits, the device scale, `label for` focus.
+//!   prop-derived state bits, the device scale, `label for` focus, light dismiss (a press outside an
+//!   open surface reaches the widget as `Event::OutsidePress`).
 
 use crate::controls::run::{self, RunNode};
 use crate::interact::{FocusReason as WFocus, Native, Policy, StateBits};
@@ -760,6 +761,15 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             PeerMsg::Notify(v) => w::PeerMsg::Checked(v.iter().filter_map(plain_from_core).collect()),
         };
         self.run(cx, |w, wcx| w.peer(wcx, &msg))
+    }
+
+    fn light_dismiss(&self, _node: &NodeView) -> bool {
+        self.widget.light_dismiss()
+    }
+
+    fn outside_press(&mut self, cx: &mut EventCx, p: &presto_core::PointerInput) -> Handled {
+        let ev = w::Event::OutsidePress(p.local);
+        self.run(cx, |w, wcx| w.event(wcx, &ev))
     }
 
     fn listen_changed(&mut self, _cx: &mut PropCx, signal: SignalId, listened: bool) {

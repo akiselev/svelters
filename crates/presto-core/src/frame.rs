@@ -283,13 +283,15 @@ impl Document {
             let node = self.slots.id_at(i).expect("live");
             let new = self.record[i].transform.is_none();
             let mut force_children = force;
-            if new || force || d.contains(Dirty::PROPERTY) {
-                force_children |= self.refresh_props(window, i, ctx, commit);
-                stats.props += 1;
-            }
+            // recording first: a kind that scrolls itself says so in `prepare`, which its property
+            // nodes follow
             if new || d.contains(Dirty::PAINT) {
                 self.record_node(i, commit, runs, images);
                 stats.recorded += 1;
+            }
+            if new || force || self.core[i].dirty.contains(Dirty::PROPERTY) {
+                force_children |= self.refresh_props(window, i, ctx, commit);
+                stats.props += 1;
             }
             if new || d.intersects(Dirty::A11Y | Dirty::CHILDREN) {
                 a11y.push(node);
@@ -330,7 +332,8 @@ impl Document {
         let scroll_view = self.scroll_viewport(i);
         let content = self.scroll_content(i);
         let offset = self.scroll_offset(node);
-        let wants_clip = s.overflow_x.clips() || s.overflow_y.clips();
+        let axes = self.scroll_axes(i);
+        let wants_clip = s.overflow_x.clips() || s.overflow_y.clips() || axes != (false, false);
         let wants_effect = s.opacity < 1.0 || s.will_change || self.animates(node, AnimProperty::Opacity);
         // a non-passive listener on the path or inside the container may cancel the scroll
         let passive = !self.nonpassive_scroll_path(i) && !self.core[i].flags.contains(crate::tree::NodeFlags::DESC_NONPASSIVE);
@@ -375,8 +378,8 @@ impl Document {
                     offset,
                     content,
                     viewport,
-                    scroll_x: s.overflow_x.scrolls(),
-                    scroll_y: s.overflow_y.scrolls(),
+                    scroll_x: axes.0,
+                    scroll_y: axes.1,
                     overscroll: OverscrollBehavior::None,
                     passive,
                 },
@@ -429,6 +432,18 @@ impl Document {
             k.prepare(&mut cx);
             cx.request
         };
+        // a kind that scrolls itself may have grown or shrunk its content
+        let own = k.self_scroll(&self.view_at(i));
+        if self.self_scroll.get(&node) != own.as_ref() {
+            match own {
+                Some(o) => self.self_scroll.insert(node, o),
+                None => self.self_scroll.remove(&node),
+            };
+            self.core[i].dirty.insert(Dirty::PROPERTY);
+            if let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w)) {
+                w.rebuild = true;
+            }
+        }
         let mut list = DisplayList::new();
         let mut node_runs = Vec::new();
         let hidden = self.style.computed(i).visibility_hidden;
@@ -598,7 +613,12 @@ impl Document {
             }
             let drawn = !s.visibility_hidden;
             if drawn && p.list.is_some() {
-                items.entry(layer).or_default().push(ItemRef { node, transform: p.transform.expect("transform"), clip: f.clip, effect: own_effect });
+                // a kind that scrolls itself draws in its content space, in its scroll layer
+                let item = match (self.self_scroll.contains_key(&node), content_layer, p.content) {
+                    (true, Some(cl), Some(ct)) => (cl, ItemRef { node, transform: ct, clip: p.clip.or(f.clip), effect: own_effect }),
+                    _ => (layer, ItemRef { node, transform: p.transform.expect("transform"), clip: f.clip, effect: own_effect }),
+                };
+                items.entry(item.0).or_default().push(item.1);
             }
             let world_rect = world.apply_rect(&bounds);
             if drawn && !s.pointer_events_none && let Some(inverse) = world.inverse() {
