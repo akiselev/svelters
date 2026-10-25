@@ -2,7 +2,7 @@
 //! `presto.json` speak.
 //!
 //! **Kinds.** A surface kind whose widget presto-widgets has written (the 18 Tier 0 controls and
-//! containers; not yet `window`, `text-edit` and the inline runs) is registered through
+//! containers, and the inline runs a `label` folds; not yet `window` and `text-edit`) is registered through
 //! `presto_widgets::host::register_tier0`; every other concrete kind gets a core kind synthesized
 //! from its surface spec ([`Placeholder`]: the props, signals and slots are real tree members, the
 //! node draws nothing) until its widget lands. Abstract bases (`Widget`, `Run`) have no core kind.
@@ -232,7 +232,8 @@ fn slot_owner(k: &'static KindSpec) -> Option<&'static KindSpec> {
 
 /// A surface prop that is a common prop: its core name and whether it is inverted.
 fn common_alias(decl: &KindSpec, p: &PropSpec) -> Option<(core::PropId, bool)> {
-    if decl.tag.is_some() || decl.name != "Widget" {
+    // the abstract bases' props (`Widget`'s, and `Run`'s `accessible-name`)
+    if decl.tag.is_some() {
         return None;
     }
     let &(_, native, inv) = COMMON_ALIASES.iter().find(|a| a.0 == p.name)?;

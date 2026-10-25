@@ -69,7 +69,7 @@ fn spec_hash(ids: &[u32]) -> u64 {
 /// presto-core's name of a surface prop declared on `k`.
 fn native_name(k: &KindSpec, p: &PropSpec) -> &'static str {
     match COMMON_ALIASES.iter().find(|a| a.0 == p.name) {
-        Some(a) if k.name == "Widget" => a.1,
+        Some(a) if k.tag.is_none() => a.1,
         _ => p.name,
     }
 }

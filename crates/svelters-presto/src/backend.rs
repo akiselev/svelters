@@ -428,9 +428,6 @@ impl PrestoBackend {
         let (c, _) = self.live(child)?;
         let b = before.map(|b| self.node(b).ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))).transpose()?;
         let s = pm.slot(slot).ok_or_else(|| format!("unknown slot id {slot} on <{}>", pm.tag()))?;
-        if pm.hosted && !pm.slots.is_empty() && pm.core.and_then(|k| self.0.kinds.registry().get(k)).is_some_and(|e| !e.spec.container) {
-            return Err(format!("<{}> takes no children on presto yet: presto-widgets' {} is a leaf (its text goes in `text`)", pm.tag(), pm.tag()));
-        }
         self.0.doc.borrow_mut().insert(p, c, b, s).map_err(|e| e.to_string())
     }
 

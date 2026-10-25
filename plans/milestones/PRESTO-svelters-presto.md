@@ -105,8 +105,10 @@ listed.
 Slider (2026-10-25, against `ci/presto-widgets-basic` c089c816, merged into this branch): registered through
 `host::register_tier0` (all 18 kinds); every slider prop maps, its enums by name (a surface enum value is remapped
 to the widget's index on write and back on read, so the two tables may order values differently; a surface value
-the widget lacks makes the prop `Side`). The run kinds (`span`, `b`, `i`, `code`, `a` folded into `label`) are
-not on that branch yet; they stay placeholders and the label error stays (Q7).
+the widget lacks makes the prop `Side`). Run kinds (against `ci/presto-widgets-basic` 26e57a9c, merged): `span`, `b`, `i`,
+`code`, `a` are presto-widgets' (label is a container folding them, Q7 done); the label-runs error is gone; every
+run member maps (`Run`'s `accessible-name` onto core's `aria-label`, as `Widget`'s). Placeholders left: `window`,
+`text-edit`.
 
 Decided (coordinator, 2026-10-25): Q7 presto-widgets' label will take inline run children (WIDGETS-BASIC); the explicit error stays until then, then runs map onto it. `surface/tier0.rs` stays the JS-facing table. Q5 publish core's `tabindex`/`focus-scope` on `Widget` later, not now; Q6
 as above.

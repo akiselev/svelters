@@ -115,7 +115,7 @@
         "runs": 1622161882
       },
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Bold": {
       "a11y": {
@@ -166,7 +166,7 @@
         "runs": 2109992493
       },
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Box": {
       "a11y": {
@@ -982,7 +982,7 @@
         "runs": 1554193940
       },
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Frame": {
       "a11y": {
@@ -1901,7 +1901,7 @@
         "runs": 1230994802
       },
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Label": {
       "a11y": {
@@ -2713,7 +2713,7 @@
           "fingerprint": "78830576",
           "id": 2021852534,
           "js": "accessible-name",
-          "native": "accessible-name",
+          "native": "aria-label",
           "nullable": false,
           "observe": {
             "class": "set_only",
@@ -3532,7 +3532,7 @@
         "runs": 824823299
       },
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Spinner": {
       "a11y": {
