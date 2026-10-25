@@ -27,11 +27,7 @@ impl Modifiers {
     }
     /// The platform's primary shortcut modifier: Cmd on macOS, Ctrl elsewhere.
     pub const fn primary(self, macos: bool) -> bool {
-        if macos {
-            self.contains(Self::SUPER)
-        } else {
-            self.contains(Self::CTRL)
-        }
+        if macos { self.contains(Self::SUPER) } else { self.contains(Self::CTRL) }
     }
 }
 
@@ -148,16 +144,10 @@ pub struct KeyEvent {
 pub enum ImeEvent {
     Enabled,
     /// The composition text and the cursor range in it (byte offsets).
-    Preedit {
-        text: String,
-        cursor: Option<(usize, usize)>,
-    },
+    Preedit { text: String, cursor: Option<(usize, usize)> },
     Commit(String),
     /// Delete text around the cursor (bytes before, bytes after).
-    DeleteSurrounding {
-        before: usize,
-        after: usize,
-    },
+    DeleteSurrounding { before: usize, after: usize },
     Disabled,
 }
 
@@ -186,10 +176,7 @@ impl InputEvent {
     pub fn is_discrete(&self) -> bool {
         !matches!(
             self,
-            InputEvent::Pointer(PointerEvent {
-                phase: PointerPhase::Move,
-                ..
-            }) | InputEvent::Wheel(_)
+            InputEvent::Pointer(PointerEvent { phase: PointerPhase::Move, .. }) | InputEvent::Wheel(_)
         )
     }
 }
@@ -213,18 +200,10 @@ pub enum Theme {
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum WindowEvent {
-    Resized {
-        size: DeviceSize,
-        scale: Scale,
-    },
-    ScaleChanged {
-        scale: Scale,
-    },
+    Resized { size: DeviceSize, scale: Scale },
+    ScaleChanged { scale: Scale },
     /// The window's new position: the content's top-left in global points.
-    Moved {
-        x: i32,
-        y: i32,
-    },
+    Moved { x: i32, y: i32 },
     Focused(bool),
     /// Hidden, minimised or fully covered (or the compositor stopped frame callbacks for 100 ms).
     Occluded(bool),

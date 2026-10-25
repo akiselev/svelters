@@ -3,8 +3,8 @@
 //! and a log of every call the app made.
 
 use crate::api::{
-    A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx,
-    PlatformError, SurfaceTarget, Waker, WindowDesc,
+    A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, PlatformError, SurfaceTarget, WindowDesc,
+    Waker,
 };
 use crate::clipboard::{Clipboard, MemoryClipboard};
 use presto_base::accesskit;
@@ -14,8 +14,8 @@ use presto_base::geom::{DeviceSize, Rect, Scale};
 use presto_base::ids::{InputSeq, SurfaceId, WindowId};
 use presto_base::time::{Clock, Span, Time};
 use std::collections::{BTreeMap, VecDeque};
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::Arc;
 
 /// A clock tests move by hand.
 #[derive(Debug, Default)]
@@ -44,20 +44,11 @@ impl Clock for VirtualClock {
 /// One scripted event.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Scripted {
-    Input {
-        window: WindowId,
-        event: InputEvent,
-    },
-    Window {
-        window: WindowId,
-        event: WindowEvent,
-    },
+    Input { window: WindowId, event: InputEvent },
+    Window { window: WindowId, event: WindowEvent },
     /// A wake from "another thread".
     Wake,
-    A11y {
-        window: WindowId,
-        event: A11yEvent,
-    },
+    A11y { window: WindowId, event: A11yEvent },
     /// The user asked to quit (Cmd-Q).
     QuitRequested,
 }
@@ -223,16 +214,7 @@ impl HeadlessPlatform {
             Scripted::Input { window, event } => {
                 let seq = InputSeq(self.next_seq);
                 self.next_seq += 1;
-                handler.input(
-                    &mut self.cx,
-                    InputEnvelope {
-                        seq,
-                        window,
-                        os_time: at,
-                        recv_time: at,
-                        event,
-                    },
-                );
+                handler.input(&mut self.cx, InputEnvelope { seq, window, os_time: at, recv_time: at, event });
             }
             Scripted::Window { window, event } => {
                 if let Some(w) = self.cx.windows.get_mut(&window) {
@@ -288,21 +270,9 @@ impl PlatformCx for HeadlessCx {
         let id = WindowId(self.next_window);
         self.next_window += 1;
         let scale = self.default_scale;
-        let size = DeviceSize {
-            w: (desc.size.w * scale.0).round() as u32,
-            h: (desc.size.h * scale.0).round() as u32,
-        };
-        self.calls
-            .push(PlatformCall::CreateWindow(id, desc.clone()));
-        self.windows.insert(
-            id,
-            HeadlessWindow {
-                desc,
-                scale,
-                size,
-                layers: Vec::new(),
-            },
-        );
+        let size = DeviceSize { w: (desc.size.w * scale.0).round() as u32, h: (desc.size.h * scale.0).round() as u32 };
+        self.calls.push(PlatformCall::CreateWindow(id, desc.clone()));
+        self.windows.insert(id, HeadlessWindow { desc, scale, size, layers: Vec::new() });
         Ok(id)
     }
 
@@ -315,11 +285,7 @@ impl PlatformCx for HeadlessCx {
         SurfaceTarget::None
     }
 
-    fn create_os_layer(
-        &mut self,
-        id: WindowId,
-        desc: OsLayerDesc,
-    ) -> Option<(SurfaceId, SurfaceTarget)> {
+    fn create_os_layer(&mut self, id: WindowId, desc: OsLayerDesc) -> Option<(SurfaceId, SurfaceTarget)> {
         let w = self.windows.get_mut(&id)?;
         let s = SurfaceId(self.next_surface);
         self.next_surface += 1;
@@ -329,8 +295,7 @@ impl PlatformCx for HeadlessCx {
     }
 
     fn set_os_layer_bounds(&mut self, id: WindowId, layer: SurfaceId, bounds: Rect) {
-        self.calls
-            .push(PlatformCall::SetOsLayerBounds(id, layer, bounds));
+        self.calls.push(PlatformCall::SetOsLayerBounds(id, layer, bounds));
     }
 
     fn remove_os_layer(&mut self, id: WindowId, layer: SurfaceId) {
@@ -380,8 +345,7 @@ impl PlatformCx for HeadlessCx {
     }
 
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]) {
-        self.calls
-            .push(PlatformCall::SetHitTestRegions(id, regions.to_vec()));
+        self.calls.push(PlatformCall::SetHitTestRegions(id, regions.to_vec()));
     }
 
     fn set_mouse_capture(&mut self, id: WindowId, capture: bool) {
@@ -392,8 +356,7 @@ impl PlatformCx for HeadlessCx {
         if let Some(w) = self.windows.get_mut(&id) {
             w.desc.title = title.to_owned();
         }
-        self.calls
-            .push(PlatformCall::SetTitle(id, title.to_owned()));
+        self.calls.push(PlatformCall::SetTitle(id, title.to_owned()));
     }
 
     fn set_visible(&mut self, id: WindowId, visible: bool) {
@@ -447,10 +410,7 @@ mod tests {
             cx.set_timer(Some(Time(50)));
         }
         fn input(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
-            self.seen.push((
-                cx.clock().now(),
-                format!("input {} {:?}", ev.seq.0, ev.event),
-            ));
+            self.seen.push((cx.clock().now(), format!("input {} {:?}", ev.seq.0, ev.event)));
             if let InputEvent::Key(k) = &ev.event {
                 if k.key == Some(Key::Q) {
                     cx.exit();
@@ -499,11 +459,7 @@ mod tests {
         p.push_window_event(Time(100), w, WindowEvent::Focused(true));
         let mut app = Recorder::default();
         p.run(&mut app);
-        let times: Vec<_> = app
-            .seen
-            .iter()
-            .map(|(t, s)| (t.0, s.split(' ').next().unwrap().to_owned()))
-            .collect();
+        let times: Vec<_> = app.seen.iter().map(|(t, s)| (t.0, s.split(' ').next().unwrap().to_owned())).collect();
         assert_eq!(
             times,
             vec![
@@ -517,10 +473,7 @@ mod tests {
         assert!(app.seen[1].1.starts_with("input 1 "));
         assert!(app.seen[3].1.starts_with("input 2 "));
         assert_eq!(p.windows().len(), 1);
-        assert!(matches!(
-            p.calls()[0],
-            PlatformCall::CreateWindow(WindowId(1), _)
-        ));
+        assert!(matches!(p.calls()[0], PlatformCall::CreateWindow(WindowId(1), _)));
     }
 
     #[test]
@@ -532,11 +485,7 @@ mod tests {
         p.push_input(Time(30), w, key(Key::A));
         let mut app = Recorder::default();
         p.run(&mut app);
-        let labels: Vec<_> = app
-            .seen
-            .iter()
-            .map(|(_, s)| s.split(' ').next().unwrap().to_owned())
-            .collect();
+        let labels: Vec<_> = app.seen.iter().map(|(_, s)| s.split(' ').next().unwrap().to_owned()).collect();
         assert_eq!(labels, vec!["input", "wake", "input"]);
         assert!(p.exited());
         assert_eq!(p.calls().last(), Some(&PlatformCall::Exit));
@@ -558,10 +507,7 @@ mod tests {
     fn quit_can_be_vetoed() {
         let mut p = HeadlessPlatform::new();
         p.push(Time(10), Scripted::QuitRequested);
-        let mut app = Recorder {
-            veto_quit: true,
-            ..Default::default()
-        };
+        let mut app = Recorder { veto_quit: true, ..Default::default() };
         p.run_until(&mut app, Some(Time(20)));
         assert!(!p.exited());
         p.push(Time(30), Scripted::QuitRequested);
@@ -573,14 +519,7 @@ mod tests {
     #[test]
     fn resize_events_update_the_window_record() {
         let mut p = HeadlessPlatform::new();
-        p.push_window_event(
-            Time(5),
-            WindowId(1),
-            WindowEvent::Resized {
-                size: DeviceSize { w: 10, h: 20 },
-                scale: Scale(2.0),
-            },
-        );
+        p.push_window_event(Time(5), WindowId(1), WindowEvent::Resized { size: DeviceSize { w: 10, h: 20 }, scale: Scale(2.0) });
         let mut app = Recorder::default();
         p.run_until(&mut app, Some(Time(6)));
         let w = &p.windows()[&WindowId(1)];

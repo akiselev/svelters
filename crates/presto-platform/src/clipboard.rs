@@ -50,16 +50,9 @@ pub struct SystemClipboard {
 }
 
 enum Inner {
-    #[cfg(any(
-        target_os = "windows",
-        target_os = "macos",
-        all(unix, not(any(target_os = "ios", target_os = "android")))
-    ))]
+    #[cfg(any(target_os = "windows", target_os = "macos", all(unix, not(any(target_os = "ios", target_os = "android")))))]
     Arboard(arboard::Clipboard),
-    #[cfg(all(
-        unix,
-        not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-    ))]
+    #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
     Wayland(smithay_clipboard::Clipboard),
     Memory(MemoryClipboard),
 }
@@ -68,68 +61,38 @@ impl SystemClipboard {
     /// Opens the OS clipboard for the display winit connected to. Falls back to an in-process
     /// clipboard (logged) when the OS one cannot be opened.
     pub fn new(display: Option<raw_window_handle::RawDisplayHandle>) -> Self {
-        #[cfg(all(
-            unix,
-            not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-        ))]
+        #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
         if let Some(raw_window_handle::RawDisplayHandle::Wayland(h)) = display {
             // SAFETY: the display pointer comes from winit's live event loop, which outlives this
             // clipboard (the backend drops the clipboard before the loop exits).
             let c = unsafe { smithay_clipboard::Clipboard::new(h.display.as_ptr()) };
-            return SystemClipboard {
-                inner: Inner::Wayland(c),
-            };
+            return SystemClipboard { inner: Inner::Wayland(c) };
         }
         let _ = display;
-        #[cfg(any(
-            target_os = "windows",
-            target_os = "macos",
-            all(unix, not(any(target_os = "ios", target_os = "android")))
-        ))]
+        #[cfg(any(target_os = "windows", target_os = "macos", all(unix, not(any(target_os = "ios", target_os = "android")))))]
         match arboard::Clipboard::new() {
-            Ok(c) => {
-                return SystemClipboard {
-                    inner: Inner::Arboard(c),
-                };
-            }
-            Err(e) => log::warn!(
-                "presto-platform: the OS clipboard is unavailable ({e}); using an in-process one"
-            ),
+            Ok(c) => return SystemClipboard { inner: Inner::Arboard(c) },
+            Err(e) => log::warn!("presto-platform: the OS clipboard is unavailable ({e}); using an in-process one"),
         }
-        SystemClipboard {
-            inner: Inner::Memory(MemoryClipboard::default()),
-        }
+        SystemClipboard { inner: Inner::Memory(MemoryClipboard::default()) }
     }
 }
 
 impl Clipboard for SystemClipboard {
     fn get_text(&mut self, kind: ClipboardKind) -> Option<String> {
         match &mut self.inner {
-            #[cfg(any(
-                target_os = "windows",
-                target_os = "macos",
-                all(unix, not(any(target_os = "ios", target_os = "android")))
-            ))]
+            #[cfg(any(target_os = "windows", target_os = "macos", all(unix, not(any(target_os = "ios", target_os = "android")))))]
             Inner::Arboard(c) => match kind {
                 ClipboardKind::Clipboard => c.get_text().ok(),
-                #[cfg(all(
-                    unix,
-                    not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-                ))]
+                #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
                 ClipboardKind::Primary => {
                     use arboard::{GetExtLinux, LinuxClipboardKind};
                     c.get().clipboard(LinuxClipboardKind::Primary).text().ok()
                 }
-                #[cfg(not(all(
-                    unix,
-                    not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-                )))]
+                #[cfg(not(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android")))))]
                 ClipboardKind::Primary => None,
             },
-            #[cfg(all(
-                unix,
-                not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-            ))]
+            #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
             Inner::Wayland(c) => match kind {
                 ClipboardKind::Clipboard => c.load().ok(),
                 ClipboardKind::Primary => c.load_primary().ok(),
@@ -140,34 +103,18 @@ impl Clipboard for SystemClipboard {
 
     fn set_text(&mut self, kind: ClipboardKind, text: &str) -> bool {
         match &mut self.inner {
-            #[cfg(any(
-                target_os = "windows",
-                target_os = "macos",
-                all(unix, not(any(target_os = "ios", target_os = "android")))
-            ))]
+            #[cfg(any(target_os = "windows", target_os = "macos", all(unix, not(any(target_os = "ios", target_os = "android")))))]
             Inner::Arboard(c) => match kind {
                 ClipboardKind::Clipboard => c.set_text(text).is_ok(),
-                #[cfg(all(
-                    unix,
-                    not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-                ))]
+                #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
                 ClipboardKind::Primary => {
                     use arboard::{LinuxClipboardKind, SetExtLinux};
-                    c.set()
-                        .clipboard(LinuxClipboardKind::Primary)
-                        .text(text.to_owned())
-                        .is_ok()
+                    c.set().clipboard(LinuxClipboardKind::Primary).text(text.to_owned()).is_ok()
                 }
-                #[cfg(not(all(
-                    unix,
-                    not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-                )))]
+                #[cfg(not(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android")))))]
                 ClipboardKind::Primary => false,
             },
-            #[cfg(all(
-                unix,
-                not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-            ))]
+            #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
             Inner::Wayland(c) => {
                 match kind {
                     ClipboardKind::Clipboard => c.store(text),
@@ -181,10 +128,7 @@ impl Clipboard for SystemClipboard {
 
     fn has_primary(&self) -> bool {
         match &self.inner {
-            #[cfg(all(
-                unix,
-                not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-            ))]
+            #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
             Inner::Wayland(_) | Inner::Arboard(_) => true,
             #[cfg(any(target_os = "windows", target_os = "macos"))]
             Inner::Arboard(_) => false,

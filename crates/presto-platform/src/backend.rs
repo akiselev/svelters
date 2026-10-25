@@ -4,8 +4,8 @@
 
 use crate::a11y::{A11yAdapter, A11ySink};
 use crate::api::{
-    A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx,
-    PlatformError, SurfaceTarget, Waker, WindowDesc,
+    A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, PlatformError, SurfaceTarget,
+    WindowDesc, Waker,
 };
 use crate::clipboard::{Clipboard, SystemClipboard};
 use crate::clock::{self, OsClock};
@@ -15,9 +15,9 @@ use crate::translate::{self, Translated, WindowInput};
 use presto_base::accesskit;
 use presto_base::cursor::CursorIcon;
 use presto_base::event::InputEnvelope;
+use presto_base::input::InputPurpose;
 use presto_base::geom::{DeviceSize, Rect, Scale, Vec2};
 use presto_base::ids::{InputSeq, SurfaceId, WindowId};
-use presto_base::input::InputPurpose;
 use presto_base::time::{Clock, Span, Time};
 use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use std::collections::HashMap;
@@ -43,9 +43,8 @@ pub(crate) enum UserEvent {
 
 /// Runs the app on this (the main) thread until it exits.
 pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
-    let event_loop = EventLoop::<UserEvent>::with_user_event()
-        .build()
-        .map_err(|e| PlatformError::EventLoop(e.to_string()))?;
+    let event_loop =
+        EventLoop::<UserEvent>::with_user_event().build().map_err(|e| PlatformError::EventLoop(e.to_string()))?;
     // Raw input only feeds DeviceEvents, which presto uses only during mouse capture.
     event_loop.listen_device_events(DeviceEvents::Never);
     let proxy = event_loop.create_proxy();
@@ -54,14 +53,8 @@ pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
         let p = poster.clone();
         os::install_app_hooks(Box::new(move || p.post(UserEvent::QuitRequested)));
     }
-    let mut app = WinitApp {
-        handler,
-        state: State::new(poster),
-        started: false,
-    };
-    event_loop
-        .run_app(&mut app)
-        .map_err(|e| PlatformError::EventLoop(e.to_string()))
+    let mut app = WinitApp { handler, state: State::new(poster), started: false };
+    event_loop.run_app(&mut app).map_err(|e| PlatformError::EventLoop(e.to_string()))
 }
 
 /// A `Send + Sync` way to post to the loop.
@@ -127,15 +120,8 @@ struct Cx<'a> {
 }
 
 impl WinitApp {
-    fn with_cx<R>(
-        &mut self,
-        el: &ActiveEventLoop,
-        f: impl FnOnce(&mut dyn AppHandler, &mut Cx<'_>) -> R,
-    ) -> R {
-        let mut cx = Cx {
-            el,
-            st: &mut self.state,
-        };
+    fn with_cx<R>(&mut self, el: &ActiveEventLoop, f: impl FnOnce(&mut dyn AppHandler, &mut Cx<'_>) -> R) -> R {
+        let mut cx = Cx { el, st: &mut self.state };
         f(&mut *self.handler, &mut cx)
     }
 
@@ -191,19 +177,10 @@ impl ApplicationHandler<UserEvent> for WinitApp {
         self.run_due_timers(el);
     }
 
-    fn window_event(
-        &mut self,
-        el: &ActiveEventLoop,
-        wid: winit::window::WindowId,
-        ev: winit::event::WindowEvent,
-    ) {
-        let Some(&id) = self.state.by_winit.get(&wid) else {
-            return;
-        };
+    fn window_event(&mut self, el: &ActiveEventLoop, wid: winit::window::WindowId, ev: winit::event::WindowEvent) {
+        let Some(&id) = self.state.by_winit.get(&wid) else { return };
         let recv = clock::now();
-        let Some(win) = self.state.windows.get_mut(&id) else {
-            return;
-        };
+        let Some(win) = self.state.windows.get_mut(&id) else { return };
         if let Some(a) = &mut win.a11y {
             a.window_event(&win.window, &ev);
         }
@@ -212,9 +189,7 @@ impl ApplicationHandler<UserEvent> for WinitApp {
             win.input.pending_history = win.shim.take_history();
         }
         let os_time = win.shim.event_time().unwrap_or(recv);
-        let Some(t) = win.input.translate(&ev) else {
-            return;
-        };
+        let Some(t) = win.input.translate(&ev) else { return };
         // Windows answers caption drags in WM_NCHITTEST; elsewhere a caption press starts the move.
         if !cfg!(target_os = "windows") {
             if let Translated::Input(presto_base::event::InputEvent::Pointer(p)) = &t {
@@ -232,13 +207,7 @@ impl ApplicationHandler<UserEvent> for WinitApp {
             Translated::Input(event) => {
                 let seq = InputSeq(self.state.next_seq);
                 self.state.next_seq += 1;
-                let env = InputEnvelope {
-                    seq,
-                    window: id,
-                    os_time,
-                    recv_time: recv,
-                    event,
-                };
+                let env = InputEnvelope { seq, window: id, os_time, recv_time: recv, event };
                 self.with_cx(el, |h, cx| h.input(cx, env));
             }
             Translated::Window(event) => self.with_cx(el, |h, cx| h.window_event(cx, id, event)),
@@ -246,21 +215,9 @@ impl ApplicationHandler<UserEvent> for WinitApp {
     }
 
     fn device_event(&mut self, el: &ActiveEventLoop, _device: DeviceId, ev: DeviceEvent) {
-        let DeviceEvent::MouseMotion { delta } = ev else {
-            return;
-        };
-        let Some(id) = self
-            .state
-            .windows
-            .iter()
-            .find(|(_, w)| w.captured)
-            .map(|(id, _)| *id)
-        else {
-            return;
-        };
-        self.with_cx(el, |h, cx| {
-            h.raw_mouse_motion(cx, id, Vec2::new(delta.0 as f32, delta.1 as f32))
-        });
+        let DeviceEvent::MouseMotion { delta } = ev else { return };
+        let Some(id) = self.state.windows.iter().find(|(_, w)| w.captured).map(|(id, _)| *id) else { return };
+        self.with_cx(el, |h, cx| h.raw_mouse_motion(cx, id, Vec2::new(delta.0 as f32, delta.1 as f32)));
     }
 
     fn about_to_wait(&mut self, el: &ActiveEventLoop) {
@@ -298,21 +255,10 @@ fn window_attributes(desc: &WindowDesc) -> WindowAttributes {
     if let Some((x, y)) = desc.position {
         a = a.with_position(PhysicalPosition::new(x, y));
     }
-    #[cfg(all(
-        unix,
-        not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-    ))]
+    #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
     if let Some(app_id) = &desc.app_id {
-        a = winit::platform::wayland::WindowAttributesExtWayland::with_name(
-            a,
-            app_id.clone(),
-            app_id.clone(),
-        );
-        a = winit::platform::x11::WindowAttributesExtX11::with_name(
-            a,
-            app_id.clone(),
-            app_id.clone(),
-        );
+        a = winit::platform::wayland::WindowAttributesExtWayland::with_name(a, app_id.clone(), app_id.clone());
+        a = winit::platform::x11::WindowAttributesExtX11::with_name(a, app_id.clone(), app_id.clone());
     }
     os::prepare_attributes(a, desc)
 }
@@ -334,10 +280,7 @@ impl Cx<'_> {
     }
 
     fn create(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
-        let window = self
-            .el
-            .create_window(window_attributes(&desc))
-            .map_err(|e| PlatformError::Os(e.to_string()))?;
+        let window = self.el.create_window(window_attributes(&desc)).map_err(|e| PlatformError::Os(e.to_string()))?;
         let id = WindowId(self.st.next_window);
         self.st.next_window += 1;
         let sink: A11ySink = {
@@ -364,14 +307,7 @@ impl Cx<'_> {
         self.st.by_winit.insert(window.id(), id);
         self.st.windows.insert(
             id,
-            Win {
-                a11y,
-                shim,
-                input: WindowInput::new(scale),
-                regions: Vec::new(),
-                captured: false,
-                window,
-            },
+            Win { a11y, shim, input: WindowInput::new(scale), regions: Vec::new(), captured: false, window },
         );
         Ok(id)
     }
@@ -389,26 +325,17 @@ impl PlatformCx for Cx<'_> {
     }
 
     fn surface_target(&self, id: WindowId) -> SurfaceTarget {
-        let Some(w) = self.win(id) else {
-            return SurfaceTarget::None;
-        };
+        let Some(w) = self.win(id) else { return SurfaceTarget::None };
         if let Some(t) = w.shim.surface_target() {
             return t;
         }
         match (w.window.window_handle(), w.window.display_handle()) {
-            (Ok(wh), Ok(dh)) => SurfaceTarget::Raw {
-                window: wh.as_raw(),
-                display: dh.as_raw(),
-            },
+            (Ok(wh), Ok(dh)) => SurfaceTarget::Raw { window: wh.as_raw(), display: dh.as_raw() },
             _ => SurfaceTarget::None,
         }
     }
 
-    fn create_os_layer(
-        &mut self,
-        id: WindowId,
-        desc: OsLayerDesc,
-    ) -> Option<(SurfaceId, SurfaceTarget)> {
+    fn create_os_layer(&mut self, id: WindowId, desc: OsLayerDesc) -> Option<(SurfaceId, SurfaceTarget)> {
         let sid = SurfaceId(self.st.next_surface);
         let w = self.st.windows.get_mut(&id)?;
         let scale = w.input.scale;
@@ -453,10 +380,7 @@ impl PlatformCx for Cx<'_> {
                 w.window.set_ime_purpose(ime_purpose(s.purpose));
                 w.window.set_ime_cursor_area(
                     LogicalPosition::new(s.area.min.x as f64, s.area.min.y as f64),
-                    LogicalSize::new(
-                        s.area.width().max(1.0) as f64,
-                        s.area.height().max(1.0) as f64,
-                    ),
+                    LogicalSize::new(s.area.width().max(1.0) as f64, s.area.height().max(1.0) as f64),
                 );
             }
             None => w.window.set_ime_allowed(false),
@@ -465,9 +389,7 @@ impl PlatformCx for Cx<'_> {
     }
 
     fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool {
-        let Some(w) = self.win_mut(id) else {
-            return false;
-        };
+        let Some(w) = self.win_mut(id) else { return false };
         if let Some(done) = w.shim.end_composition(commit) {
             return done;
         }
@@ -522,10 +444,7 @@ impl PlatformCx for Cx<'_> {
                 Monitor {
                     name: m.name(),
                     position: (pos.x, pos.y),
-                    size: DeviceSize {
-                        w: size.width,
-                        h: size.height,
-                    },
+                    size: DeviceSize { w: size.width, h: size.height },
                     work_area: os::monitor_work_area(&m),
                     scale: Scale(m.scale_factor() as f32),
                     refresh_millihertz: m.refresh_rate_millihertz(),
@@ -542,9 +461,7 @@ impl PlatformCx for Cx<'_> {
     }
 
     fn set_mouse_capture(&mut self, id: WindowId, capture: bool) {
-        let Some(w) = self.st.windows.get_mut(&id) else {
-            return;
-        };
+        let Some(w) = self.st.windows.get_mut(&id) else { return };
         w.captured = capture;
         if capture {
             if w.window.set_cursor_grab(CursorGrabMode::Locked).is_err() {
@@ -558,11 +475,7 @@ impl PlatformCx for Cx<'_> {
             w.window.set_cursor_visible(true);
         }
         let any = self.st.windows.values().any(|w| w.captured);
-        self.el.listen_device_events(if any {
-            DeviceEvents::Always
-        } else {
-            DeviceEvents::Never
-        });
+        self.el.listen_device_events(if any { DeviceEvents::Always } else { DeviceEvents::Never });
     }
 
     fn set_title(&mut self, id: WindowId, title: &str) {
@@ -597,20 +510,12 @@ impl PlatformCx for Cx<'_> {
 
     fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn FrameSource>> {
         let w = self.st.windows.get_mut(&id)?;
-        let refresh = w
-            .window
-            .current_monitor()
-            .and_then(|m| m.refresh_rate_millihertz());
-        let interval = refresh
-            .filter(|r| *r >= 1_000)
-            .map(|r| Span(1_000_000_000_000 / r as i64));
+        let refresh = w.window.current_monitor().and_then(|m| m.refresh_rate_millihertz());
+        let interval = refresh.filter(|r| *r >= 1_000).map(|r| Span(1_000_000_000_000 / r as i64));
         if let Some(s) = w.shim.frame_source(interval) {
             return Some(s);
         }
-        Some(Arc::new(IntervalSource::from_refresh(
-            refresh,
-            Arc::new(OsClock),
-        )))
+        Some(Arc::new(IntervalSource::from_refresh(refresh, Arc::new(OsClock))))
     }
 
     fn exit(&mut self) {

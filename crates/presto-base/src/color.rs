@@ -11,35 +11,15 @@ pub struct Color {
 }
 
 impl Color {
-    pub const TRANSPARENT: Color = Color {
-        r: 0.0,
-        g: 0.0,
-        b: 0.0,
-        a: 0.0,
-    };
-    pub const BLACK: Color = Color {
-        r: 0.0,
-        g: 0.0,
-        b: 0.0,
-        a: 1.0,
-    };
-    pub const WHITE: Color = Color {
-        r: 1.0,
-        g: 1.0,
-        b: 1.0,
-        a: 1.0,
-    };
+    pub const TRANSPARENT: Color = Color { r: 0.0, g: 0.0, b: 0.0, a: 0.0 };
+    pub const BLACK: Color = Color { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
+    pub const WHITE: Color = Color { r: 1.0, g: 1.0, b: 1.0, a: 1.0 };
 
     pub const fn rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
         Color { r, g, b, a }
     }
     pub fn from_rgba8(r: u8, g: u8, b: u8, a: u8) -> Self {
-        Color {
-            r: r as f32 / 255.0,
-            g: g as f32 / 255.0,
-            b: b as f32 / 255.0,
-            a: a as f32 / 255.0,
-        }
+        Color { r: r as f32 / 255.0, g: g as f32 / 255.0, b: b as f32 / 255.0, a: a as f32 / 255.0 }
     }
     /// Premultiplied, still sRGB-encoded: `[r*a, g*a, b*a, a]`.
     pub fn premultiplied(&self) -> [f32; 4] {
@@ -65,10 +45,7 @@ pub struct GradientStop {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Fill {
     Solid(Color),
-    Linear {
-        angle_deg: f32,
-        stops: smallvec::SmallVec<[GradientStop; 4]>,
-    },
+    Linear { angle_deg: f32, stops: smallvec::SmallVec<[GradientStop; 4]> },
 }
 
 impl Default for Fill {

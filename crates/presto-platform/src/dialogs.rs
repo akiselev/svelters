@@ -81,8 +81,5 @@ pub fn message(level: MessageLevel, title: &str, text: &str, buttons: MessageBut
             MessageButtons::YesNo => rfd::MessageButtons::YesNo,
         })
         .show();
-    matches!(
-        r,
-        rfd::MessageDialogResult::Ok | rfd::MessageDialogResult::Yes
-    )
+    matches!(r, rfd::MessageDialogResult::Ok | rfd::MessageDialogResult::Yes)
 }

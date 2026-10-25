@@ -29,12 +29,7 @@ pub trait TextInputClient {
     /// Replace `range` (or the selection, or the marked text) with `text`, ending any composition.
     fn replace_text_in_range(&mut self, range: Option<Utf16Range>, text: &str);
     /// Replace and mark: the IME's composition update.
-    fn replace_and_mark_text_in_range(
-        &mut self,
-        range: Option<Utf16Range>,
-        text: &str,
-        new_selected: Option<Utf16Range>,
-    );
+    fn replace_and_mark_text_in_range(&mut self, range: Option<Utf16Range>, text: &str, new_selected: Option<Utf16Range>);
     fn unmark_text(&mut self);
     /// Window-space bounds of `range` (per-character candidate placement).
     fn bounds_for_range(&self, range: Utf16Range) -> Option<Rect>;

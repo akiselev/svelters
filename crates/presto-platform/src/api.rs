@@ -55,11 +55,7 @@ pub trait PlatformCx {
     fn surface_target(&self, id: WindowId) -> SurfaceTarget;
     /// An OS layer above the window's content (DComp child visual, CAMetalLayer sublayer,
     /// `wl_subsurface`), for viewports that present on their own. `None` where the backend has none (X11).
-    fn create_os_layer(
-        &mut self,
-        id: WindowId,
-        desc: OsLayerDesc,
-    ) -> Option<(SurfaceId, SurfaceTarget)>;
+    fn create_os_layer(&mut self, id: WindowId, desc: OsLayerDesc) -> Option<(SurfaceId, SurfaceTarget)>;
     /// Moves or resizes an OS layer (window points).
     fn set_os_layer_bounds(&mut self, id: WindowId, layer: SurfaceId, bounds: Rect);
     fn remove_os_layer(&mut self, id: WindowId, layer: SurfaceId);
@@ -76,10 +72,7 @@ pub trait PlatformCx {
     /// IME bridge fall back to [`PlatformCx::set_ime`] with the client's caret and purpose.
     fn set_text_input(&mut self, id: WindowId, client: Option<Box<dyn TextInputClient>>) {
         let state = client.map(|c| {
-            let area = c
-                .selected_range()
-                .and_then(|r| c.bounds_for_range(r))
-                .unwrap_or_default();
+            let area = c.selected_range().and_then(|r| c.bounds_for_range(r)).unwrap_or_default();
             ImeState::new(area, c.purpose())
         });
         self.set_ime(id, state);
@@ -159,11 +152,7 @@ impl Default for WindowDesc {
 
 impl WindowDesc {
     pub fn new(title: impl Into<String>, size: Size) -> Self {
-        WindowDesc {
-            title: title.into(),
-            size,
-            ..Default::default()
-        }
+        WindowDesc { title: title.into(), size, ..Default::default() }
     }
 }
 
@@ -173,10 +162,7 @@ impl WindowDesc {
 #[non_exhaustive]
 pub enum SurfaceTarget {
     /// A window (or Wayland subsurface): wgpu's `SurfaceTargetUnsafe::RawHandle`.
-    Raw {
-        window: RawWindowHandle,
-        display: RawDisplayHandle,
-    },
+    Raw { window: RawWindowHandle, display: RawDisplayHandle },
     /// An `IDCompositionVisual` (Windows): wgpu's `SurfaceTargetUnsafe::CompositionVisual`.
     CompositionVisual(*mut c_void),
     /// A `CAMetalLayer` (macOS): wgpu's `SurfaceTargetUnsafe::CoreAnimationLayer`.
@@ -196,10 +182,7 @@ pub struct OsLayerDesc {
 
 impl OsLayerDesc {
     pub fn new(bounds: Rect) -> Self {
-        OsLayerDesc {
-            bounds,
-            transparent: false,
-        }
+        OsLayerDesc { bounds, transparent: false }
     }
 }
 
@@ -236,11 +219,7 @@ pub struct ImeState {
 
 impl ImeState {
     pub fn new(area: Rect, purpose: InputPurpose) -> Self {
-        ImeState {
-            area,
-            purpose,
-            ..Default::default()
-        }
+        ImeState { area, purpose, ..Default::default() }
     }
 }
 
@@ -267,11 +246,7 @@ pub struct HitRegion {
 
 /// Which kind a point falls in: the last region containing it, else `Client`.
 pub fn hit_test(regions: &[HitRegion], p: Point) -> HitKind {
-    regions
-        .iter()
-        .rev()
-        .find(|r| r.rect.contains(p))
-        .map_or(HitKind::Client, |r| r.kind)
+    regions.iter().rev().find(|r| r.rect.contains(p)).map_or(HitKind::Client, |r| r.kind)
 }
 
 #[derive(Clone, Debug, PartialEq)]

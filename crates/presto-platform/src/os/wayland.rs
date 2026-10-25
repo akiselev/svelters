@@ -8,7 +8,7 @@
 //!
 //! On X11 (and when the side connection cannot be made) it is the generic shim.
 
-use super::{ShimHooks, generic};
+use super::{generic, ShimHooks};
 use crate::api::{HitRegion, ImeState, OsLayerCommitter, OsLayerDesc, SurfaceTarget, WindowDesc};
 use crate::clock;
 use crate::frame::{FrameSource, FrameWait, Presented};
@@ -17,8 +17,7 @@ use presto_base::geom::{DeviceRect, Rect};
 use presto_base::ids::{FrameId, SurfaceId};
 use presto_base::time::{Span, Time};
 use raw_window_handle::{
-    HasDisplayHandle, HasWindowHandle, RawDisplayHandle, RawWindowHandle, WaylandDisplayHandle,
-    WaylandWindowHandle,
+    HasDisplayHandle, HasWindowHandle, RawDisplayHandle, RawWindowHandle, WaylandDisplayHandle, WaylandWindowHandle,
 };
 use smallvec::SmallVec;
 use std::os::fd::AsRawFd;
@@ -26,7 +25,7 @@ use std::ptr::NonNull;
 use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use wayland_backend::client::{Backend, ObjectId};
-use wayland_client::globals::{GlobalListContents, registry_queue_init};
+use wayland_client::globals::{registry_queue_init, GlobalListContents};
 use wayland_client::protocol::{
     wl_callback::{self, WlCallback},
     wl_compositor::WlCompositor,
@@ -36,14 +35,12 @@ use wayland_client::protocol::{
     wl_subsurface::WlSubsurface,
     wl_surface::WlSurface,
 };
-use wayland_client::{Connection, Dispatch, EventQueue, Proxy, QueueHandle, delegate_noop};
+use wayland_client::{delegate_noop, Connection, Dispatch, EventQueue, Proxy, QueueHandle};
 use wayland_protocols::wp::presentation_time::client::{
     wp_presentation::{self, WpPresentation},
     wp_presentation_feedback::{self, WpPresentationFeedback},
 };
-use wayland_protocols::wp::viewporter::client::{
-    wp_viewport::WpViewport, wp_viewporter::WpViewporter,
-};
+use wayland_protocols::wp::viewporter::client::{wp_viewport::WpViewport, wp_viewporter::WpViewporter};
 use winit::window::{Window, WindowAttributes};
 
 /// Frame callbacks missing this long mean the surface is hidden (platform.md §3.2).
@@ -57,26 +54,11 @@ struct CtxState {
 }
 
 impl Dispatch<WlRegistry, GlobalListContents> for CtxState {
-    fn event(
-        _: &mut Self,
-        _: &WlRegistry,
-        _: <WlRegistry as Proxy>::Event,
-        _: &GlobalListContents,
-        _: &Connection,
-        _: &QueueHandle<Self>,
-    ) {
-    }
+    fn event(_: &mut Self, _: &WlRegistry, _: <WlRegistry as Proxy>::Event, _: &GlobalListContents, _: &Connection, _: &QueueHandle<Self>) {}
 }
 
 impl Dispatch<WpPresentation, ()> for CtxState {
-    fn event(
-        state: &mut Self,
-        _: &WpPresentation,
-        ev: wp_presentation::Event,
-        _: &(),
-        _: &Connection,
-        _: &QueueHandle<Self>,
-    ) {
+    fn event(state: &mut Self, _: &WpPresentation, ev: wp_presentation::Event, _: &(), _: &Connection, _: &QueueHandle<Self>) {
         if let wp_presentation::Event::ClockId { clk_id } = ev {
             state.clock_id = Some(clk_id);
         }
@@ -115,15 +97,10 @@ impl WlCtx {
         // window and frame source made from it.
         let backend = unsafe { Backend::from_foreign_display(display.as_ptr() as *mut _) };
         let conn = Connection::from_backend(backend);
-        let (globals, mut queue): (_, EventQueue<CtxState>) =
-            registry_queue_init(&conn).map_err(|e| e.to_string())?;
+        let (globals, mut queue): (_, EventQueue<CtxState>) = registry_queue_init(&conn).map_err(|e| e.to_string())?;
         let qh = queue.handle();
-        let compositor: WlCompositor = globals
-            .bind(&qh, 4..=6, ())
-            .map_err(|e| format!("wl_compositor: {e}"))?;
-        let subcompositor: WlSubcompositor = globals
-            .bind(&qh, 1..=1, ())
-            .map_err(|e| format!("wl_subcompositor: {e}"))?;
+        let compositor: WlCompositor = globals.bind(&qh, 4..=6, ()).map_err(|e| format!("wl_compositor: {e}"))?;
+        let subcompositor: WlSubcompositor = globals.bind(&qh, 1..=1, ()).map_err(|e| format!("wl_subcompositor: {e}"))?;
         let viewporter: Option<WpViewporter> = globals.bind(&qh, 1..=1, ()).ok();
         let presentation: Option<WpPresentation> = globals.bind(&qh, 1..=1, ()).ok();
         let mut state = CtxState::default();
@@ -153,9 +130,7 @@ impl WlCtx {
                 Some(c)
             }
             Err(e) => {
-                log::warn!(
-                    "presto-platform: Wayland side connection failed ({e}); OS layers and presentation feedback are off"
-                );
+                log::warn!("presto-platform: Wayland side connection failed ({e}); OS layers and presentation feedback are off");
                 None
             }
         }
@@ -181,15 +156,9 @@ pub enum WindowShim {
     Other(generic::WindowShim),
 }
 
-fn wayland_handles(
-    window: &Window,
-) -> Option<(NonNull<std::ffi::c_void>, NonNull<std::ffi::c_void>)> {
-    let RawDisplayHandle::Wayland(d) = window.display_handle().ok()?.as_raw() else {
-        return None;
-    };
-    let RawWindowHandle::Wayland(w) = window.window_handle().ok()?.as_raw() else {
-        return None;
-    };
+fn wayland_handles(window: &Window) -> Option<(NonNull<std::ffi::c_void>, NonNull<std::ffi::c_void>)> {
+    let RawDisplayHandle::Wayland(d) = window.display_handle().ok()?.as_raw() else { return None };
+    let RawWindowHandle::Wayland(w) = window.window_handle().ok()?.as_raw() else { return None };
     Some((d.display, w.surface))
 }
 
@@ -199,15 +168,9 @@ impl WaylandShim {
         let ctx = WlCtx::shared(display)?;
         // SAFETY: winit's live toplevel `wl_surface`, owned by winit for the window's lifetime; we
         // only send requests on it (its events stay on winit's queue).
-        let id = unsafe { ObjectId::from_ptr(WlSurface::interface(), surface.as_ptr() as *mut _) }
-            .ok()?;
+        let id = unsafe { ObjectId::from_ptr(WlSurface::interface(), surface.as_ptr() as *mut _) }.ok()?;
         let parent = WlSurface::from_id(&ctx.conn, id).ok()?;
-        Some(WaylandShim {
-            ctx,
-            parent,
-            layers: Vec::new(),
-            frame_source: None,
-        })
+        Some(WaylandShim { ctx, parent, layers: Vec::new(), frame_source: None })
     }
 
     fn display_handle(&self) -> RawDisplayHandle {
@@ -215,44 +178,25 @@ impl WaylandShim {
     }
 
     fn place(&self, l: &SubLayer, bounds: Rect, scale: f32) {
-        l.subsurface
-            .set_position(bounds.min.x.round() as i32, bounds.min.y.round() as i32);
+        l.subsurface.set_position(bounds.min.x.round() as i32, bounds.min.y.round() as i32);
         match &l.viewport {
-            Some(v) => v.set_destination(
-                bounds.width().round().max(1.0) as i32,
-                bounds.height().round().max(1.0) as i32,
-            ),
+            Some(v) => v.set_destination(bounds.width().round().max(1.0) as i32, bounds.height().round().max(1.0) as i32),
             None => l.surface.set_buffer_scale(scale.round().max(1.0) as i32),
         }
         l.surface.commit();
     }
 
-    fn create_layer(
-        &mut self,
-        id: SurfaceId,
-        desc: OsLayerDesc,
-        scale: f32,
-    ) -> Option<SurfaceTarget> {
+    fn create_layer(&mut self, id: SurfaceId, desc: OsLayerDesc, scale: f32) -> Option<SurfaceTarget> {
         let c = &self.ctx;
         let surface = c.compositor.create_surface(&c.qh, ());
-        let subsurface = c
-            .subcompositor
-            .get_subsurface(&surface, &self.parent, &c.qh, ());
+        let subsurface = c.subcompositor.get_subsurface(&surface, &self.parent, &c.qh, ());
         subsurface.set_desync();
         // Input goes to the toplevel, which hit-tests the whole window.
         let region = c.compositor.create_region(&c.qh, ());
         surface.set_input_region(Some(&region));
         region.destroy();
-        let viewport = c
-            .viewporter
-            .as_ref()
-            .map(|v| v.get_viewport(&surface, &c.qh, ()));
-        let l = SubLayer {
-            id,
-            surface,
-            subsurface,
-            viewport,
-        };
+        let viewport = c.viewporter.as_ref().map(|v| v.get_viewport(&surface, &c.qh, ()));
+        let l = SubLayer { id, surface, subsurface, viewport };
         self.place(&l, desc.bounds, scale);
         // Subsurface position applies on the parent's next commit (the compositor's next present).
         if let Err(e) = c.conn.flush() {
@@ -260,10 +204,7 @@ impl WaylandShim {
         }
         let ptr = NonNull::new(l.surface.id().as_ptr() as *mut std::ffi::c_void)?;
         self.layers.push(l);
-        Some(SurfaceTarget::Raw {
-            window: RawWindowHandle::Wayland(WaylandWindowHandle::new(ptr)),
-            display: self.display_handle(),
-        })
+        Some(SurfaceTarget::Raw { window: RawWindowHandle::Wayland(WaylandWindowHandle::new(ptr)), display: self.display_handle() })
     }
 
     fn set_layer_bounds(&mut self, id: SurfaceId, bounds: Rect, scale: f32) {
@@ -289,11 +230,7 @@ impl WaylandShim {
         if let Some(f) = &self.frame_source {
             return f.clone();
         }
-        let f = Arc::new(WaylandFrameSource::new(
-            self.ctx.clone(),
-            self.parent.clone(),
-            interval,
-        ));
+        let f = Arc::new(WaylandFrameSource::new(self.ctx.clone(), self.parent.clone(), interval));
         self.frame_source = Some(f.clone());
         f
     }
@@ -325,13 +262,7 @@ impl WindowShim {
         None
     }
 
-    pub fn create_layer(
-        &mut self,
-        window: &Window,
-        id: SurfaceId,
-        desc: OsLayerDesc,
-        scale: f32,
-    ) -> Option<SurfaceTarget> {
+    pub fn create_layer(&mut self, window: &Window, id: SurfaceId, desc: OsLayerDesc, scale: f32) -> Option<SurfaceTarget> {
         match self {
             WindowShim::Wayland(w) => w.create_layer(id, desc, scale),
             WindowShim::Other(g) => g.create_layer(window, id, desc, scale),
@@ -394,14 +325,7 @@ struct FsState {
 }
 
 impl Dispatch<WlCallback, ()> for FsState {
-    fn event(
-        state: &mut Self,
-        _: &WlCallback,
-        ev: wl_callback::Event,
-        _: &(),
-        _: &Connection,
-        _: &QueueHandle<Self>,
-    ) {
+    fn event(state: &mut Self, _: &WlCallback, ev: wl_callback::Event, _: &(), _: &Connection, _: &QueueHandle<Self>) {
         if let wl_callback::Event::Done { .. } = ev {
             state.done = Some(clock::now());
         }
@@ -418,13 +342,7 @@ impl Dispatch<WpPresentationFeedback, FrameId> for FsState {
         _: &QueueHandle<Self>,
     ) {
         match ev {
-            wp_presentation_feedback::Event::Presented {
-                tv_sec_hi,
-                tv_sec_lo,
-                tv_nsec,
-                refresh,
-                ..
-            } => {
+            wp_presentation_feedback::Event::Presented { tv_sec_hi, tv_sec_lo, tv_nsec, refresh, .. } => {
                 let secs = ((tv_sec_hi as u64) << 32) | tv_sec_lo as u64;
                 let os_ns = secs * 1_000_000_000 + tv_nsec as u64;
                 let at = match os_clock_ns(state.clock_id) {
@@ -434,11 +352,7 @@ impl Dispatch<WpPresentationFeedback, FrameId> for FsState {
                 if refresh > 0 {
                     state.refresh = Some(Span(refresh as i64));
                 }
-                state.presented.push(Presented {
-                    frame: *frame,
-                    at,
-                    estimated: false,
-                });
+                state.presented.push(Presented { frame: *frame, at, estimated: false });
             }
             wp_presentation_feedback::Event::Discarded => {}
             _ => {}
@@ -447,10 +361,7 @@ impl Dispatch<WpPresentationFeedback, FrameId> for FsState {
 }
 
 fn os_clock_ns(clock_id: u32) -> Option<u64> {
-    let mut ts = libc::timespec {
-        tv_sec: 0,
-        tv_nsec: 0,
-    };
+    let mut ts = libc::timespec { tv_sec: 0, tv_nsec: 0 };
     // SAFETY: `clock_gettime` writes into a local timespec.
     let r = unsafe { libc::clock_gettime(clock_id as libc::clockid_t, &mut ts) };
     (r == 0).then(|| ts.tv_sec as u64 * 1_000_000_000 + ts.tv_nsec as u64)
@@ -479,24 +390,13 @@ impl WaylandFrameSource {
     fn new(ctx: Arc<WlCtx>, surface: WlSurface, interval: Option<Span>) -> Self {
         let queue = ctx.conn.new_event_queue::<FsState>();
         let qh = queue.handle();
-        let state = FsState {
-            clock_id: ctx.clock_id,
-            ..Default::default()
-        };
-        let interval = interval
-            .unwrap_or(DEFAULT_INTERVAL)
-            .0
-            .clamp(1_000_000, u32::MAX as i64) as u32;
+        let state = FsState { clock_id: ctx.clock_id, ..Default::default() };
+        let interval = interval.unwrap_or(DEFAULT_INTERVAL).0.clamp(1_000_000, u32::MAX as i64) as u32;
         WaylandFrameSource {
             ctx,
             surface,
             qh,
-            inner: Mutex::new(FsInner {
-                queue,
-                state,
-                occluded: false,
-                vsync_pending: None,
-            }),
+            inner: Mutex::new(FsInner { queue, state, occluded: false, vsync_pending: None }),
             requested: AtomicU64::new(0),
             interval_ns: AtomicU32::new(interval),
         }
@@ -516,15 +416,8 @@ impl WaylandFrameSource {
             let _ = inner.queue.dispatch_pending(&mut inner.state);
             return;
         };
-        let ms = (until - clock::now())
-            .as_millis_f64()
-            .ceil()
-            .clamp(0.0, i32::MAX as f64) as i32;
-        let mut pfd = libc::pollfd {
-            fd: guard.connection_fd().as_raw_fd(),
-            events: libc::POLLIN,
-            revents: 0,
-        };
+        let ms = (until - clock::now()).as_millis_f64().ceil().clamp(0.0, i32::MAX as f64) as i32;
+        let mut pfd = libc::pollfd { fd: guard.connection_fd().as_raw_fd(), events: libc::POLLIN, revents: 0 };
         // SAFETY: polling one valid fd (the connection's) for at most `ms`.
         let n = unsafe { libc::poll(&mut pfd, 1, ms) };
         if n > 0 {
@@ -548,12 +441,7 @@ impl FrameSource for WaylandFrameSource {
         if let Some(p) = &self.ctx.presentation {
             p.feedback(&self.surface, &self.qh, frame);
         }
-        let _ = self.requested.compare_exchange(
-            0,
-            clock::now().0.max(1),
-            Ordering::SeqCst,
-            Ordering::SeqCst,
-        );
+        let _ = self.requested.compare_exchange(0, clock::now().0.max(1), Ordering::SeqCst, Ordering::SeqCst);
         // The requests must precede the present's commit on the wire.
         if let Err(e) = self.ctx.conn.flush() {
             log::warn!("presto-platform: Wayland flush failed: {e}");
@@ -565,22 +453,14 @@ impl FrameSource for WaylandFrameSource {
         let deadline = clock::now() + timeout;
         loop {
             let interval = inner.state.refresh.unwrap_or_else(|| self.interval_span());
-            if let Some(t) = inner
-                .vsync_pending
-                .take()
-                .or_else(|| inner.state.done.take())
-            {
+            if let Some(t) = inner.vsync_pending.take().or_else(|| inner.state.done.take()) {
                 self.requested.store(0, Ordering::SeqCst);
                 if inner.occluded {
                     inner.occluded = false;
                     inner.vsync_pending = Some(t);
                     return FrameWait::Occluded(false);
                 }
-                return FrameWait::Vsync {
-                    target: t + interval,
-                    interval,
-                    estimated: inner.state.refresh.is_none(),
-                };
+                return FrameWait::Vsync { target: t + interval, interval, estimated: inner.state.refresh.is_none() };
             }
             let now = clock::now();
             let req = self.requested.load(Ordering::SeqCst);
@@ -594,11 +474,7 @@ impl FrameSource for WaylandFrameSource {
                 drop(inner);
                 crate::frame::sleep(interval);
                 let t = clock::now();
-                return FrameWait::Vsync {
-                    target: t + interval,
-                    interval,
-                    estimated: true,
-                };
+                return FrameWait::Vsync { target: t + interval, interval, estimated: true };
             }
             let starve_at = Time(req) + OCCLUSION_AFTER;
             if !inner.occluded && now >= starve_at {
@@ -608,11 +484,7 @@ impl FrameSource for WaylandFrameSource {
             if now >= deadline {
                 return FrameWait::TimedOut;
             }
-            let until = if inner.occluded {
-                deadline
-            } else {
-                deadline.min(starve_at)
-            };
+            let until = if inner.occluded { deadline } else { deadline.min(starve_at) };
             let conn = self.ctx.conn.clone();
             Self::pump(&mut inner, &conn, until);
         }

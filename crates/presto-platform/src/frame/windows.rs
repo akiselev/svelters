@@ -4,22 +4,21 @@
 //! interval instead and reports an estimated tick (GPUI's `gpui_windows/src/vsync.rs` rule).
 //! Targets come from DWM's timing info: the next vblank after now, on presto's clock.
 
-use super::{FrameSource, FrameWait, sleep};
+use super::{sleep, FrameSource, FrameWait};
 use crate::clock;
 use presto_base::time::{Span, Time};
+use windows::core::{s, w};
 use windows::Win32::Foundation::HWND;
-use windows::Win32::Graphics::Dwm::{DWM_TIMING_INFO, DwmFlush, DwmGetCompositionTimingInfo};
+use windows::Win32::Graphics::Dwm::{DwmFlush, DwmGetCompositionTimingInfo, DWM_TIMING_INFO};
 use windows::Win32::System::LibraryLoader::{GetProcAddress, LoadLibraryW};
 use windows::Win32::System::Performance::{QueryPerformanceCounter, QueryPerformanceFrequency};
-use windows::core::{s, w};
 
 const DEFAULT_INTERVAL: Span = Span(16_666_667);
 const EARLY: Span = Span::from_millis(1);
 const WAIT_TIMEOUT: u32 = 0x102;
 const WAIT_FAILED: u32 = 0xFFFF_FFFF;
 
-type WaitForCompositorClock =
-    unsafe extern "system" fn(count: u32, handles: *const isize, timeout_ms: u32) -> u32;
+type WaitForCompositorClock = unsafe extern "system" fn(count: u32, handles: *const isize, timeout_ms: u32) -> u32;
 
 pub struct DwmSource {
     compositor_clock: Option<WaitForCompositorClock>,
@@ -44,17 +43,9 @@ impl DwmSource {
             LoadLibraryW(w!("dcomp.dll"))
                 .ok()
                 .and_then(|m| GetProcAddress(m, s!("DCompositionWaitForCompositorClock")))
-                .map(|f| {
-                    std::mem::transmute::<
-                        unsafe extern "system" fn() -> isize,
-                        WaitForCompositorClock,
-                    >(f)
-                })
+                .map(|f| std::mem::transmute::<unsafe extern "system" fn() -> isize, WaitForCompositorClock>(f))
         };
-        DwmSource {
-            compositor_clock,
-            qpc_freq: freq.max(1),
-        }
+        DwmSource { compositor_clock, qpc_freq: freq.max(1) }
     }
 
     fn qpc_to_ns(&self, q: i64) -> u64 {
@@ -62,10 +53,7 @@ impl DwmSource {
     }
 
     fn timing(&self) -> Option<DWM_TIMING_INFO> {
-        let mut info = DWM_TIMING_INFO {
-            cbSize: std::mem::size_of::<DWM_TIMING_INFO>() as u32,
-            ..Default::default()
-        };
+        let mut info = DWM_TIMING_INFO { cbSize: std::mem::size_of::<DWM_TIMING_INFO>() as u32, ..Default::default() };
         // SAFETY: a null HWND asks for the desktop's timing; `info` is sized for the struct.
         unsafe { DwmGetCompositionTimingInfo(HWND::default(), &mut info) }.ok()?;
         Some(info)
@@ -73,9 +61,7 @@ impl DwmSource {
 
     /// The next vblank after now on presto's clock, and the refresh interval.
     fn next_vblank(&self) -> (Time, Span, bool) {
-        let Some(info) = self.timing() else {
-            return (clock::now() + DEFAULT_INTERVAL, DEFAULT_INTERVAL, true);
-        };
+        let Some(info) = self.timing() else { return (clock::now() + DEFAULT_INTERVAL, DEFAULT_INTERVAL, true) };
         let mut period = Span(self.qpc_to_ns(info.qpcRefreshPeriod as i64) as i64);
         // Some drivers report a bogus period (29 µs was seen); the refresh rate is right then.
         if period < EARLY {
@@ -106,21 +92,14 @@ impl Default for DwmSource {
 
 impl FrameSource for DwmSource {
     fn name(&self) -> &'static str {
-        if self.compositor_clock.is_some() {
-            "dcomp-compositor-clock"
-        } else {
-            "dwm-flush"
-        }
+        if self.compositor_clock.is_some() { "dcomp-compositor-clock" } else { "dwm-flush" }
     }
 
     fn wait(&self, timeout: Span) -> FrameWait {
         let start = clock::now();
         let ticked = match self.compositor_clock {
             Some(f) => {
-                let ms = timeout
-                    .as_millis_f64()
-                    .ceil()
-                    .clamp(0.0, u32::MAX as f64 - 1.0) as u32;
+                let ms = timeout.as_millis_f64().ceil().clamp(0.0, u32::MAX as f64 - 1.0) as u32;
                 // SAFETY: no handles (count 0, null array): wait for the compositor clock only.
                 match unsafe { f(0, std::ptr::null(), ms) } {
                     WAIT_TIMEOUT => return FrameWait::TimedOut,
@@ -136,11 +115,7 @@ impl FrameSource for DwmSource {
             sleep(interval);
             estimated = true;
         }
-        FrameWait::Vsync {
-            target,
-            interval,
-            estimated,
-        }
+        FrameWait::Vsync { target, interval, estimated }
     }
 
     fn interval(&self) -> Option<Span> {

@@ -15,20 +15,16 @@ use presto_base::ids::FrameId;
 use presto_base::time::{Clock, Span, Time};
 use std::sync::{Arc, Mutex};
 
-#[cfg(target_os = "macos")]
-pub mod macos;
 #[cfg(target_os = "windows")]
 pub mod windows;
+#[cfg(target_os = "macos")]
+pub mod macos;
 
 /// What a wait ended with.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum FrameWait {
     /// A frame opportunity: present for `target`.
-    Vsync {
-        target: Time,
-        interval: Span,
-        estimated: bool,
-    },
+    Vsync { target: Time, interval: Span, estimated: bool },
     TimedOut,
     /// The surface stopped (or resumed) getting frames: hidden, minimised or covered.
     Occluded(bool),
@@ -70,12 +66,7 @@ pub struct IntervalSource {
 impl IntervalSource {
     pub fn new(interval: Span, clock: Arc<dyn Clock>) -> Self {
         let origin = clock.now();
-        IntervalSource {
-            interval: Span(interval.0.max(1_000_000)),
-            clock,
-            origin,
-            last: Mutex::new(None),
-        }
+        IntervalSource { interval: Span(interval.0.max(1_000_000)), clock, origin, last: Mutex::new(None) }
     }
 
     /// From a refresh rate in millihertz (60 Hz when unknown).
@@ -113,11 +104,7 @@ impl FrameSource for IntervalSource {
         }
         sleep(t - self.clock.now());
         *last = Some(t);
-        FrameWait::Vsync {
-            target: t + self.interval,
-            interval: self.interval,
-            estimated: true,
-        }
+        FrameWait::Vsync { target: t + self.interval, interval: self.interval, estimated: true }
     }
 
     fn interval(&self) -> Option<Span> {
@@ -141,15 +128,9 @@ mod tests {
         let clock = VirtualClock::new(Time(1_000));
         let s = IntervalSource::new(Span::from_millis(10), clock.clone());
         assert_eq!(s.next_tick(Time(1_000), None), Time(1_000 + 10_000_000));
-        assert_eq!(
-            s.next_tick(Time(1_000 + 15_000_000), None),
-            Time(1_000 + 20_000_000)
-        );
+        assert_eq!(s.next_tick(Time(1_000 + 15_000_000), None), Time(1_000 + 20_000_000));
         // A tick already handed out is never handed out again.
-        assert_eq!(
-            s.next_tick(Time(1_000 + 5_000_000), Some(Time(1_000 + 10_000_000))),
-            Time(1_000 + 20_000_000)
-        );
+        assert_eq!(s.next_tick(Time(1_000 + 5_000_000), Some(Time(1_000 + 10_000_000))), Time(1_000 + 20_000_000));
     }
 
     #[test]

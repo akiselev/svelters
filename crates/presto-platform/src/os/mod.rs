@@ -24,20 +24,10 @@ pub mod macos;
 #[cfg(target_os = "macos")]
 pub use self::macos::{WindowShim, install_app_hooks, monitor_work_area, prepare_attributes};
 
-#[cfg(all(
-    unix,
-    not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-))]
+#[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
 pub mod wayland;
-#[cfg(all(
-    unix,
-    not(any(target_os = "macos", target_os = "ios", target_os = "android"))
-))]
+#[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
 pub use self::wayland::{WindowShim, install_app_hooks, monitor_work_area, prepare_attributes};
 
-#[cfg(not(any(
-    target_os = "windows",
-    target_os = "macos",
-    all(unix, not(any(target_os = "ios", target_os = "android")))
-)))]
+#[cfg(not(any(target_os = "windows", target_os = "macos", all(unix, not(any(target_os = "ios", target_os = "android"))))))]
 pub use self::generic::{WindowShim, install_app_hooks, monitor_work_area, prepare_attributes};

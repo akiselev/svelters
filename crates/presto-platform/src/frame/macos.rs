@@ -55,11 +55,7 @@ type OutputCallback = extern "C" fn(
 #[link(name = "CoreVideo", kind = "framework")]
 unsafe extern "C" {
     fn CVDisplayLinkCreateWithActiveCGDisplays(link_out: *mut CVDisplayLinkRef) -> CVReturn;
-    fn CVDisplayLinkSetOutputCallback(
-        link: CVDisplayLinkRef,
-        callback: OutputCallback,
-        context: *mut c_void,
-    ) -> CVReturn;
+    fn CVDisplayLinkSetOutputCallback(link: CVDisplayLinkRef, callback: OutputCallback, context: *mut c_void) -> CVReturn;
     fn CVDisplayLinkStart(link: CVDisplayLinkRef) -> CVReturn;
     fn CVDisplayLinkStop(link: CVDisplayLinkRef) -> CVReturn;
     fn CVDisplayLinkRelease(link: CVDisplayLinkRef);
@@ -116,10 +112,7 @@ extern "C" fn on_output(
     t.seq += 1;
     t.target_host = out.host_time;
     if out.video_time_scale > 0 && out.video_refresh_period > 0 {
-        t.period = Span(
-            ((out.video_refresh_period as i128 * 1_000_000_000) / out.video_time_scale as i128)
-                as i64,
-        );
+        t.period = Span(((out.video_refresh_period as i128 * 1_000_000_000) / out.video_time_scale as i128) as i64);
     }
     drop(t);
     shared.cv.notify_all();
@@ -132,10 +125,7 @@ impl DisplayLinkSource {
         let mut tb = MachTimebaseInfo::default();
         // SAFETY: plain query into a local.
         unsafe { mach_timebase_info(&mut tb) };
-        let shared = Arc::into_raw(Arc::new(Shared {
-            tick: Mutex::new(Tick::default()),
-            cv: Condvar::new(),
-        }));
+        let shared = Arc::into_raw(Arc::new(Shared { tick: Mutex::new(Tick::default()), cv: Condvar::new() }));
         let mut link: CVDisplayLinkRef = std::ptr::null_mut();
         // SAFETY: CoreVideo calls with an out-pointer to a local and a context that outlives the
         // link (released only in `Drop`, after the link stops).
@@ -151,11 +141,7 @@ impl DisplayLinkSource {
                 return None;
             }
         }
-        Some(DisplayLinkSource {
-            link,
-            shared,
-            timebase: (tb.numer.max(1), tb.denom.max(1)),
-        })
+        Some(DisplayLinkSource { link, shared, timebase: (tb.numer.max(1), tb.denom.max(1)) })
     }
 
     fn host_ns(&self, host: u64) -> u64 {
@@ -189,37 +175,22 @@ impl FrameSource for DisplayLinkSource {
         let s = self.shared();
         let guard = s.tick.lock().unwrap_or_else(|e| e.into_inner());
         let seq = guard.seq;
-        let (guard, res) =
-            s.cv.wait_timeout_while(guard, Duration::from_nanos(timeout.0.max(0) as u64), |t| {
-                t.seq == seq
-            })
+        let (guard, res) = s
+            .cv
+            .wait_timeout_while(guard, Duration::from_nanos(timeout.0.max(0) as u64), |t| t.seq == seq)
             .unwrap_or_else(|e| e.into_inner());
         if res.timed_out() {
             return FrameWait::TimedOut;
         }
         // SAFETY: plain query.
         let now_host = unsafe { mach_absolute_time() };
-        let target: Time =
-            clock::time_from_os(self.host_ns(guard.target_host), self.host_ns(now_host));
-        let interval = if guard.period.0 > 0 {
-            guard.period
-        } else {
-            Span(16_666_667)
-        };
-        FrameWait::Vsync {
-            target,
-            interval,
-            estimated: false,
-        }
+        let target: Time = clock::time_from_os(self.host_ns(guard.target_host), self.host_ns(now_host));
+        let interval = if guard.period.0 > 0 { guard.period } else { Span(16_666_667) };
+        FrameWait::Vsync { target, interval, estimated: false }
     }
 
     fn interval(&self) -> Option<Span> {
-        let p = self
-            .shared()
-            .tick
-            .lock()
-            .unwrap_or_else(|e| e.into_inner())
-            .period;
+        let p = self.shared().tick.lock().unwrap_or_else(|e| e.into_inner()).period;
         (p.0 > 0).then_some(p)
     }
 }

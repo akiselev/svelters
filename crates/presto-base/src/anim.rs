@@ -21,10 +21,7 @@ pub enum Easing {
     #[default]
     Linear,
     CubicBezier(f32, f32, f32, f32),
-    Steps {
-        count: u32,
-        position: StepPosition,
-    },
+    Steps { count: u32, position: StepPosition },
     /// CSS `linear()`: (input, output) points.
     Points(Vec<(f32, f32)>),
 }
@@ -121,35 +118,16 @@ pub struct Keyframe {
 /// A spring as a closed form (architecture §12.1): canonical `{duration, bounce}` or physical params.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum SpringParams {
-    DurationBounce {
-        duration: Span,
-        bounce: f32,
-    },
-    Physical {
-        mass: f32,
-        stiffness: f32,
-        damping: f32,
-    },
+    DurationBounce { duration: Span, bounce: f32 },
+    Physical { mass: f32, stiffness: f32, damping: f32 },
     /// svelte/motion's per-frame parameters, mapped through the 60 Hz recurrence.
-    Svelte {
-        stiffness: f32,
-        damping: f32,
-        precision: f32,
-    },
+    Svelte { stiffness: f32, damping: f32, precision: f32 },
 }
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Generator {
-    Keyframes {
-        keyframes: Vec<Keyframe>,
-        timing: Timing,
-    },
-    Spring {
-        params: SpringParams,
-        from: AnimValue,
-        to: AnimValue,
-        velocity: f32,
-    },
+    Keyframes { keyframes: Vec<Keyframe>, timing: Timing },
+    Spring { params: SpringParams, from: AnimValue, to: AnimValue, velocity: f32 },
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
@@ -178,18 +156,9 @@ pub enum AnimationCmd {
     Start(AnimationSpec),
     Cancel(AnimationId),
     /// Keep position and velocity, head for a new end value (springs, smooth scroll).
-    Retarget {
-        id: AnimationId,
-        to: AnimValue,
-    },
-    Pause {
-        id: AnimationId,
-        at: Time,
-    },
-    Resume {
-        id: AnimationId,
-        at: Time,
-    },
+    Retarget { id: AnimationId, to: AnimValue },
+    Pause { id: AnimationId, at: Time },
+    Resume { id: AnimationId, at: Time },
 }
 
 /// Reported by the compositor to the UI thread (cc's event types).
