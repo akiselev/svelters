@@ -624,8 +624,18 @@ impl FrameClock {
 
     fn attempt_draw(&mut self, now: Time, out: &mut Actions) {
         let Some(mut tick) = self.tick else { return };
+        if tick.drew {
+            return;
+        }
+        // Past this target's compositor deadline (a late commit, a throttled draw released late):
+        // draw for the next vblank it can still make, so animations sample the time it shows.
+        if now > tick.sched.d_comp && !self.cfg.blocked {
+            let t = self.predict_target(now);
+            tick.sched = self.est.schedule(t, self.cfg.latch);
+            self.stats.late_ticks += 1;
+        }
         let target = tick.sched.target;
-        if tick.drew || self.last_drawn_target.is_some_and(|d| d >= target) {
+        if self.last_drawn_target.is_some_and(|d| d >= target) {
             return;
         }
         let ready = self.ready_for(target);

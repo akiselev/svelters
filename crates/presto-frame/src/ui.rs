@@ -84,12 +84,12 @@ impl UiFrameState {
         true
     }
 
-    /// Discrete input dirtied the scene at `now`: run now when the frame for the next target is
-    /// still reachable (`now + est_ui_input ≤ D_ui`), or when the compositor is idle and nothing
-    /// was presented for two intervals (Mutter `should_update_now`).
+    /// Discrete input dirtied the scene at `now` (the caller has called [`Self::mark_dirty`]): run
+    /// now when the frame for the next target is still reachable (`now + est_ui_input ≤ D_ui`), or
+    /// when the compositor is idle and nothing was presented for two intervals (Mutter
+    /// `should_update_now`). On [`Urgency::Wait`] the input rides the next `BeginUiFrame`.
     pub fn on_urgent_input(&mut self, now: Time) -> Urgency {
         self.pending_input = true;
-        self.mark_dirty();
         if self.phase != UiPhase::Idle {
             return Urgency::Wait;
         }
@@ -211,8 +211,10 @@ mod tests {
         let r = u.commit_sent(Time(2)).unwrap();
         assert!(!r.late);
         assert!(!u.on_begin_frame(Time(3), FrameId(2), Time(36_000_000), Time(26_000_000)));
+        assert!(u.mark_dirty());
         assert_eq!(u.on_urgent_input(Time(3)), Urgency::Wait);
-        assert!(u.commit_applied(r.revision), "input during the commit asks for a frame again");
+        // the dirt after the commit was already announced, so applying asks for nothing more
+        assert!(!u.commit_applied(r.revision));
         assert!(u.on_begin_frame(Time(4), FrameId(2), Time(36_000_000), Time(26_000_000)));
     }
 
