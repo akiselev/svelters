@@ -130,3 +130,12 @@ when the five svelters workflows plus `presto` are green.
 - 20:48–22:10 UTC: every lane stopped on the account's 5-hour usage limit. 22:12 UTC: all lanes with work left resumed (CORE-3 also gets Document::start_drag for EGUI-ISLAND Q5; APP-TEST gets the menu_activated routing). The limit is shared by about 18 sessions, so lanes were told to avoid reruns on unchanged code and keep turns short.
 - MACOS done: presto run 40230302721 on ff854b58 (contains base 177731fd+) green on all three OSes, check and test: the first fully green presto run.
 - WIN32 done 305eb732 (run 40230205775 green on all three OSes), merged into base. TEXT-INPUT done 300b2660 (run 40228643140: presto-widgets green on all three OSes; pins 228/243 GTK, 226/243 Qt). MOTION-CSS done 4a4374fe (svelters workflows green; presto-motion passes). CORE-3 done (presto-core 119/119 and presto-widgets 248/248 on all three OSes in 40228786756). Decided (coordinator, 2026-10-25): a presto-base Easing variant for svelte/easing curves (MOTION-CSS); SVELTERS-PRESTO wires OP_ANIMATE native descriptors and SVL_STYLE_SHEET_BIN into presto; APP-TEST sets set_single_selection under GTK and CaretBlink from TextPolicy.
+- TEXT done (code f0236878, record 690b998; run 40226699805: 40 presto-text tests pass on all three OSes, masks
+  byte-identical across OSes). Decided: stay on skrifa 0.44 until parley moves; measure dilation amounts [local];
+  consolidation 2 moves skrifa/png to the workspace table.
+- COMPOSITOR done (code 9a58f1c4, record 4906597c; run 40228927630: every compositor target passes on all three OSes,
+  GPU tests included). Q1–Q7 decided as recommended (coordinator, 2026-10-25): consolidation 2 adds `color` and a
+  `transform: PropNodeId` to FastCommit::Caret; CSS transform replaces (core omits the local CSS transform while a
+  compositor transform animation runs); core never sends UI-placed animations; a11y, cursor and ime_area stay on the
+  UI thread (APP-TEST confirms); UiFrameState answers every BeginFrame; APP-TEST sets refresh and ppi from the
+  monitor.
