@@ -6,7 +6,9 @@ use crate::api::{HitRegion, ImeState, OsLayerCommitter, OsLayerDesc, SurfaceTarg
 use presto_base::event::PointerSample;
 use presto_base::geom::Rect;
 use presto_base::ids::SurfaceId;
-use presto_base::time::Time;
+use crate::frame::FrameSource;
+use presto_base::time::{Span, Time};
+use std::sync::Arc;
 use smallvec::SmallVec;
 use winit::window::{Window, WindowAttributes};
 
@@ -41,6 +43,10 @@ impl WindowShim {
     pub fn set_ime(&mut self, state: Option<&ImeState>) {}
     /// `None`: this OS cannot end a composition here (the backend falls back).
     pub fn end_composition(&mut self, commit: bool) -> Option<bool> {
+        None
+    }
+    /// `None`: the backend paces by the monitor's refresh rate.
+    pub fn frame_source(&mut self, interval: Option<Span>) -> Option<Arc<dyn FrameSource>> {
         None
     }
 }

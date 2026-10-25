@@ -4093,6 +4093,7 @@ dependencies = [
  "accesskit_unix",
  "accesskit_windows",
  "arboard",
+ "libc",
  "log",
  "objc2 0.5.3",
  "objc2-app-kit 0.2.2",
