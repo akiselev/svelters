@@ -180,6 +180,7 @@ impl Codegen<'_, '_> {
             self.line();
             self.w.write(&format!("const {n} = $n.at({var}, {k});"));
             self.node_tags.insert(n.clone(), e.kind.clone());
+            self.note_shared_props(&n, &e.ops);
         }
         if let Some(c) = &e.class_expr {
             self.line();

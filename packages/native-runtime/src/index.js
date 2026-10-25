@@ -58,7 +58,7 @@ export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
 export { bind_link } from './bind-observe.js';
 // presto W-C1 and W-C2 (lane COMPILER): stable ids and native templates, emitted for backends with
 // the `ids` and `templates` capabilities (./ids.js, ./template.js).
-export { ids, element_id, setp } from './ids.js';
+export { ids, element_id } from './ids.js';
 export { template, instantiate, at, template_listen } from './template.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
@@ -113,6 +113,7 @@ class Native {
     this.tokens = null; // Map: prop -> Set of tokens
     this.handlers = null; // Map: `${signal}\0${flags}` -> [fn]
     this.listening = null; // Set: same keys, while the host listens
+    this.passiveConn = null; // Set: the listening keys connected with LISTEN_PASSIVE (W-C5)
     this.cattrs = null; // Map: `parent:` child attributes, by name (sent after every insert)
     this.passive = null; // Map: signal -> [fn]: `track` mirrors, run before the handlers, never listened
     this.slots = null; // Map: slot name (null = default) -> Slot
@@ -538,6 +539,33 @@ function create(kind, top) {
 }
 
 /**
+ * W-C2 (presto, lane COMPILER): the nodes a host built from a template (`host.instantiate`), in
+ * pre-order: `handles[k]` of tag `kinds[k]`, already inserted natively into node `parents[k]`'s
+ * slot `slots[k]` (`parents[k]` -1: the root, which the caller appends). Records them as `create`
+ * and `attach` would, without host ops; teardown destroys them one by one, as any native.
+ */
+export function adopt(handles, kinds, parents, slots) {
+  if (!scope) throw new Error('adopt() outside a mounted component');
+  const hs = host();
+  const out = new Array(handles.length);
+  for (let k = 0; k < handles.length; k++) {
+    const n = (out[k] = new Native(kinds[k], handles[k], null));
+    table(hs).set(n.h, n);
+    scope.natives.push(n);
+    const p = parents[k];
+    if (p >= 0) {
+      const c = slot(out[p], slots[k]);
+      n.owner = c;
+      c.items.push(n);
+      n.np = out[p];
+      n.slotName = c.name;
+      styleInserted(n);
+    }
+  }
+  return out;
+}
+
+/**
  * A toplevel kind (X7). At the root it is shown by its `show` policy once its subtree is complete;
  * inside an element it becomes transient for the enclosing toplevel (`host.insert(enclosing, h)`)
  * and is shown after that one. `present`: the spec's modeless show method (null: picked from
@@ -955,8 +983,13 @@ export function token(node, prop, tok, on) {
 /** `listen_ex` flags (ABI v2.2). */
 export const LISTEN_AFTER = 1;
 export const LISTEN_CAPTURE = 2;
+/**
+ * W-C5 (presto, lane COMPILER): the listener never cancels its event. Not part of the handler
+ * key: a (signal, phase) is one native connection, passive while all its handlers are.
+ */
+export const LISTEN_PASSIVE = 4;
 
-const hkey = (signal, flags) => `${signal}\0${flags}`;
+const hkey = (signal, flags) => `${signal}\0${flags & ~LISTEN_PASSIVE}`;
 
 // `listen` for flags 0, `listen_ex` (a 4th argument) otherwise.
 function hostListen(node, signal, on, flags) {
@@ -985,6 +1018,11 @@ function addHandler(node, signal, fn, flags) {
   const listening = (node.listening ??= new Set());
   if (!listening.has(k) && alive(node)) {
     listening.add(k);
+    if (flags & LISTEN_PASSIVE) (node.passiveConn ??= new Set()).add(k);
+    hostListen(node, signal, true, flags);
+  } else if (!(flags & LISTEN_PASSIVE) && node.passiveConn?.delete(k) && alive(node)) {
+    // W-C5: a handler that can cancel joins a passive connection: listen again without the flag
+    hostListen(node, signal, false, flags | LISTEN_PASSIVE);
     hostListen(node, signal, true, flags);
   }
 }
@@ -1002,7 +1040,8 @@ function off(node, signal, fn, flags = 0) {
   list.splice(i, 1);
   if (list.length === 0 && node.listening?.has(k)) {
     node.listening.delete(k);
-    if (alive(node)) hostListen(node, signal, false, flags);
+    const passive = node.passiveConn?.delete(k) ? LISTEN_PASSIVE : 0;
+    if (alive(node)) hostListen(node, signal, false, (flags & ~LISTEN_PASSIVE) | passive);
   }
 }
 
