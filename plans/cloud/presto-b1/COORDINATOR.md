@@ -86,3 +86,4 @@ when the five svelters workflows plus `presto` are green.
   `ToUi::FrameTimings` variant for compositor-side stamps, confirm BeginFrame back-pressure, `ui_frame_skipped` →
   `Signal::UiFrameSkipped`; then drop APP-TEST's empty-commit stopgap), 9 fixed in the workflow (crates/presto added).
 - CI load (coordinator, 2026-10-25): the five svelters workflows skip pushes that touch only presto crates and presto lane records (paths-ignore); presto.yml covers those. A consolidation's or master's push still runs all six.
+- 19:35 UTC: 65 runs queued; cancelling the stale runs of done lanes failed (403, the session lacks actions write). Superseded runs on a lane branch are still cancelled by each workflow's concurrency group.
