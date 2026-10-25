@@ -59,6 +59,9 @@ pub trait DocumentApi {
     fn take_menu_bar(&mut self) -> Option<Option<presto_platform::MenuDesc>> {
         None
     }
+    /// Whether the platform shows the menu bar natively (`set_menu_bar`'s answer): the document's own
+    /// bar hides itself then.
+    fn menu_bar_native(&mut self, _native: bool) {}
     /// The app's clipboard, for kinds that copy and paste (installed once, at `init`).
     fn install_clipboard(&mut self, _clipboard: Box<dyn presto_platform::Clipboard>) {}
     /// A window opened or got a new size (points) and scale.
@@ -111,6 +114,8 @@ pub trait CompositorApi {
     fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, input: bool);
     /// The UI answered `BeginFrame` `frame` with nothing to commit (`UiFrameSkipped`).
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
+    /// The refresh interval of the window's monitor.
+    fn set_refresh(&self, _window: WindowId, _interval: Span) {}
     /// The window's caret blink; `None` = a steady caret.
     fn set_caret_blink(&self, _window: WindowId, _blink: Option<presto_compositor::CaretBlink>) {}
     /// The window's frame-clock snapshot for the urgent-frame rule; `None` = not known (the frame

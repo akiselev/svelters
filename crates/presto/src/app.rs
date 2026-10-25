@@ -26,7 +26,7 @@ use presto_base::input::InputPurpose;
 use presto_base::time::{Clock, Span, Time};
 use presto_frame::Urgency;
 use presto_platform::{
-    A11yEvent, AppHandler, ImeState, PlatformCx, SurfaceTarget, Waker, WindowDesc,
+    A11yEvent, AppHandler, ImeState, Monitor, PlatformCx, SurfaceTarget, Waker, WindowDesc,
 };
 use std::collections::{HashMap, VecDeque};
 use std::sync::Arc;
@@ -84,13 +84,37 @@ impl ToUiSink {
 }
 
 /// Builds the compositor in `init`, once the platform's waker and clock exist.
-pub type SpawnCompositor<C> = Box<dyn FnOnce(ToUiSink, Arc<dyn Clock>) -> C>;
+pub type SpawnCompositor<C> = Box<dyn FnOnce(ToUiSink, Arc<dyn Clock>, &[Monitor]) -> C>;
+
+/// A monitor's refresh interval, when the platform knows its rate.
+fn refresh_of(m: &Monitor) -> Option<Span> {
+    m.refresh_millihertz
+        .filter(|&r| r > 0)
+        .map(|r| Span(1_000_000_000_000 / r as i64))
+}
+
+/// The monitor holding the desktop point `at` (device pixels), else the first one.
+fn monitor_at(monitors: &[Monitor], at: Option<(i32, i32)>) -> Option<&Monitor> {
+    at.and_then(|(x, y)| {
+        monitors.iter().find(|m| {
+            x >= m.position.0
+                && y >= m.position.1
+                && x < m.position.0 + m.size.w as i32
+                && y < m.position.1 + m.size.h as i32
+        })
+    })
+    .or(monitors.first())
+}
 
 struct WindowState {
     frame: UiFrame,
     size: DeviceSize,
     scale: Scale,
     visible: bool,
+    /// The refresh interval last sent to the compositor (the window's monitor's).
+    refresh: Option<Span>,
+    /// The window's last known desktop position (device pixels).
+    position: Option<(i32, i32)>,
     /// The IME state last sent to the platform.
     ime: Option<(Rect, InputPurpose)>,
 }
@@ -183,6 +207,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         desc: WindowDesc,
     ) -> Result<WindowId, String> {
         let size_pt = desc.size;
+        let position = desc.position;
         let id = cx.create_window(desc);
         let scale = cx.window_scale(id).unwrap_or(Scale(1.0));
         let size = DeviceSize {
@@ -200,6 +225,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             WindowState {
                 frame: UiFrame::new(),
                 ime: None,
+                refresh: None,
+                position: None,
                 size,
                 scale,
                 visible: true,
@@ -211,8 +238,31 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         {
             c.set_caret_blink(id, blink);
         }
+        let position = self.windows.get(&id).and_then(|w| w.position).or(position);
+        self.sync_refresh(cx, id, position);
         self.request_frame(id);
         Ok(id)
+    }
+
+    /// Tells the compositor the refresh interval of the monitor the window is on (at `position`, else
+    /// its last known one, else the first monitor), when it changed.
+    fn sync_refresh(&mut self, cx: &mut dyn PlatformCx, w: WindowId, position: Option<(i32, i32)>) {
+        let monitors = cx.monitors();
+        let Some(ws) = self.windows.get_mut(&w) else {
+            return;
+        };
+        if position.is_some() {
+            ws.position = position;
+        }
+        let Some(interval) = monitor_at(&monitors, ws.position).and_then(refresh_of) else {
+            return;
+        };
+        if ws.refresh != Some(interval) {
+            ws.refresh = Some(interval);
+            if let Some(c) = &self.compositor {
+                c.set_refresh(w, interval);
+            }
+        }
     }
 
     pub fn close_window(&mut self, cx: &mut dyn PlatformCx, id: WindowId) {
@@ -394,7 +444,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             comp.commit(c);
         }
         if let Some(menu) = self.doc.take_menu_bar() {
-            cx.set_menu_bar(menu.as_ref());
+            let native = cx.set_menu_bar(menu.as_ref());
+            self.doc.menu_bar_native(native && menu.is_some());
         }
         if let Some(comp) = &self.compositor
             && let Some(r) = report
@@ -629,6 +680,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         match ev {
             WindowEvent::Resized { size, scale } => self.resize(cx, window, size, scale),
             WindowEvent::ScaleChanged { scale } => {
+                // A scale change usually means another monitor.
+                self.sync_refresh(cx, window, None);
                 if let Some(size) = self.windows.get(&window).map(|s| s.size) {
                     self.resize(cx, window, size, scale);
                 }
@@ -640,7 +693,13 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
                 self.occlusion(window, occluded);
             }
             WindowEvent::CloseRequested => self.close_window(cx, window),
-            WindowEvent::Focused(_) | WindowEvent::Moved { .. } | WindowEvent::ThemeChanged(_) => {
+            WindowEvent::Moved { x, y } => {
+                // A move can take the window to another monitor with another refresh rate.
+                self.sync_refresh(cx, window, Some((x, y)));
+                self.doc.window_event(window, &ev);
+                self.request_if_dirty(window);
+            }
+            WindowEvent::Focused(_) | WindowEvent::ThemeChanged(_) => {
                 self.doc.window_event(window, &ev);
                 self.request_if_dirty(window);
             }
@@ -657,7 +716,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
                 tx: self.tx.clone(),
                 waker: cx.waker(),
             };
-            self.compositor = Some(spawn(sink, clock));
+            self.compositor = Some(spawn(sink, clock, &cx.monitors()));
         }
         for desc in std::mem::take(&mut self.cfg.windows) {
             if let Err(e) = self.open_window(cx, desc) {
@@ -708,7 +767,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
             }
         }
         if let Some(menu) = self.doc.take_menu_bar() {
-            cx.set_menu_bar(menu.as_ref());
+            let native = cx.set_menu_bar(menu.as_ref());
+            self.doc.menu_bar_native(native && menu.is_some());
         }
         self.flush_fast();
     }

@@ -4,7 +4,7 @@
 
 use crate::api::{
     A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, PlatformError, SurfaceTarget, WindowDesc,
-    Waker,
+    Waker, MenuDesc,
 };
 use crate::clipboard::{Clipboard, MemoryClipboard};
 use presto_base::accesskit;
@@ -71,6 +71,7 @@ pub enum PlatformCall {
     SetVisible(WindowId, bool),
     DragWindow(WindowId),
     UpdateA11y(WindowId, accesskit::TreeUpdate),
+    SetMenuBar(Option<MenuDesc>),
     Exit,
 }
 
@@ -97,6 +98,8 @@ pub struct HeadlessCx {
     exit: bool,
     /// The scale new windows get.
     pub default_scale: Scale,
+    /// What `set_menu_bar` answers: whether this headless OS shows menu bars natively (macOS-like).
+    pub native_menu_bar: bool,
 }
 
 /// The headless platform: script events, then [`HeadlessPlatform::run`] a handler through them.
@@ -135,6 +138,7 @@ impl HeadlessPlatform {
                 calls: Vec::new(),
                 exit: false,
                 default_scale: Scale(1.0),
+                native_menu_bar: false,
             },
             script: VecDeque::new(),
             next_seq: 1,
@@ -368,6 +372,11 @@ impl PlatformCx for HeadlessCx {
 
     fn drag_window(&mut self, id: WindowId) {
         self.calls.push(PlatformCall::DragWindow(id));
+    }
+
+    fn set_menu_bar(&mut self, menu: Option<&MenuDesc>) -> bool {
+        self.calls.push(PlatformCall::SetMenuBar(menu.cloned()));
+        self.native_menu_bar
     }
 
     fn update_a11y(&mut self, id: WindowId, update: accesskit::TreeUpdate) {

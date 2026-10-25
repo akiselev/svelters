@@ -59,6 +59,7 @@ pub struct HarnessBuilder {
     config: AppConfig,
     glyphs: Option<Arc<dyn GlyphRasterizer>>,
     clear: Color,
+    native_menu_bar: bool,
 }
 
 impl Default for HarnessBuilder {
@@ -72,6 +73,7 @@ impl Default for HarnessBuilder {
             config: AppConfig::default(),
             glyphs: None,
             clear: Color::WHITE,
+            native_menu_bar: false,
         }
     }
 }
@@ -104,6 +106,12 @@ impl HarnessBuilder {
         self.glyphs = Some(glyphs);
         self
     }
+    /// Whether the headless platform shows menu bars natively, as macOS does (`set_menu_bar` answers
+    /// it; default false).
+    pub fn with_native_menu_bar(mut self, native: bool) -> Self {
+        self.native_menu_bar = native;
+        self
+    }
     /// What `render` clears to (default white).
     pub fn with_clear(mut self, clear: Color) -> Self {
         self.clear = clear;
@@ -127,17 +135,20 @@ impl HarnessBuilder {
     pub fn build_unsettled<D: DocumentApi + 'static>(self, doc: D) -> Harness<D> {
         let mut platform = HeadlessPlatform::new();
         platform.cx().default_scale = Scale(self.scale);
+        platform.cx().native_menu_bar = self.native_menu_bar;
         let clock = platform.virtual_clock();
         clock.set(self.start);
         let mut config = self.config;
         config.windows = vec![WindowDesc::new("presto-test", self.size)];
         let slot: Rc<RefCell<Option<HeadlessCompositor>>> = Rc::default();
         let keep = slot.clone();
-        let spawn = Box::new(move |sink, _clock| {
-            let c = HeadlessCompositor::new(sink);
-            *keep.borrow_mut() = Some(c.clone());
-            c
-        });
+        let spawn = Box::new(
+            move |sink, _clock, _monitors: &[presto::platform::Monitor]| {
+                let c = HeadlessCompositor::new(sink);
+                *keep.borrow_mut() = Some(c.clone());
+                c
+            },
+        );
         let mut app = App::new(config, doc, spawn);
         platform.run_until(&mut app, Some(self.start));
         let window = app.windows().next().expect("the harness window opened");

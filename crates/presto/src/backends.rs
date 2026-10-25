@@ -26,12 +26,14 @@ pub struct CoreDocument {
     root_kind: KindId,
     js_events: Vec<JsEvent>,
     caret_blink: Option<Option<presto_compositor::CaretBlink>>,
-    menu_bar: Option<Option<presto_platform::MenuDesc>>,
-    on_menu: Option<MenuHandler>,
+    /// The native menu bar last handed to the platform (`None`: none sent).
+    menu_sent: Option<presto_platform::MenuDesc>,
+    /// The windows opened in the document, in order.
+    windows: Vec<WindowId>,
 }
 
-/// Handles a chosen native menu item (`id`) on the document; true when it did.
-pub type MenuHandler = Box<dyn FnMut(&mut Document, &str) -> bool>;
+/// presto-widgets' `menu-bar` kind.
+const MENU_BAR: KindId = KindId::of("menu-bar");
 
 impl CoreDocument {
     pub fn new(doc: Document, root_kind: KindId) -> Self {
@@ -40,8 +42,8 @@ impl CoreDocument {
             root_kind,
             js_events: Vec::new(),
             caret_blink: None,
-            menu_bar: None,
-            on_menu: None,
+            menu_sent: None,
+            windows: Vec::new(),
         }
     }
     /// A document whose built-in kinds have their services: the text system, the platform's interaction
@@ -71,15 +73,23 @@ impl CoreDocument {
         d.caret_blink = Some(blink);
         d
     }
-    /// Publishes the native menu bar (the menu-bar kind's `MenuModel::to_menu_desc`; `None` removes it).
-    /// The app hands it to `PlatformCx::set_menu_bar` after its next frame or menu event.
-    pub fn publish_menu_bar(&mut self, menu: Option<presto_platform::MenuDesc>) {
-        self.menu_bar = Some(menu);
+    /// The `menu-bar` nodes of every window, in tree order.
+    fn menu_bars(&self) -> Vec<presto_core::presto_base::ids::NodeId> {
+        let mut out = Vec::new();
+        let mut stack: Vec<_> = self.windows_roots();
+        while let Some(n) = stack.pop() {
+            if self.doc.kind_of(n) == Some(MENU_BAR) {
+                out.push(n);
+            }
+            stack.extend(self.doc.children(n).iter().rev().copied());
+        }
+        out
     }
-    /// Where chosen native menu items go (the menu-bar kind's dispatch, once presto-widgets' views
-    /// expose it).
-    pub fn on_menu(&mut self, handler: MenuHandler) {
-        self.on_menu = Some(handler);
+    fn windows_roots(&self) -> Vec<presto_core::presto_base::ids::NodeId> {
+        self.windows
+            .iter()
+            .filter_map(|w| self.doc.window_root(*w))
+            .collect()
     }
     /// The JS-facing events of the last dispatch, then those queued outside dispatch (focus moves,
     /// hover enter/leave, AccessKit actions).
@@ -120,13 +130,57 @@ impl DocumentApi for CoreDocument {
         self.caret_blink
     }
     fn menu_activated(&mut self, id: &str) -> bool {
-        match self.on_menu.as_mut() {
-            Some(h) => h(&mut self.doc, id),
-            None => false,
+        // The pick goes to the menu bar kind as `menu-activated(id)` (it gets its EventCx there);
+        // the bar's new check state reaches the platform with the next `take_menu_bar`.
+        for node in self.menu_bars() {
+            let Some(method) = self
+                .doc
+                .registry()
+                .get(MENU_BAR)
+                .and_then(|e| e.spec.method_named("menu-activated"))
+            else {
+                return false;
+            };
+            if let Ok((_, events)) =
+                self.doc
+                    .call(node, method, &[presto_core::Value::Str(id.into())])
+            {
+                self.js_events.extend(events);
+                return true;
+            }
         }
+        false
     }
     fn take_menu_bar(&mut self) -> Option<Option<presto_platform::MenuDesc>> {
-        self.menu_bar.take()
+        let desc = self.menu_bars().into_iter().find_map(|n| {
+            self.doc.with_kind(n, |k| {
+                k.as_any()
+                    .and_then(|a| a.downcast_ref::<presto_widgets::views::menu::MenuBar>())
+                    .map(|b| b.to_menu_desc())
+            })?
+        });
+        if desc == self.menu_sent {
+            return None;
+        }
+        self.menu_sent = desc.clone();
+        Some(desc)
+    }
+    fn menu_bar_native(&mut self, native: bool) {
+        let Some(prop) = self
+            .doc
+            .registry()
+            .get(MENU_BAR)
+            .and_then(|e| e.spec.prop_named("native-bar"))
+        else {
+            return;
+        };
+        for node in self.menu_bars() {
+            if self.doc.get_prop(node, prop) != Some(presto_core::Value::Bool(native)) {
+                let _ = self
+                    .doc
+                    .set_prop(node, prop, presto_core::Value::Bool(native));
+            }
+        }
     }
     fn install_clipboard(&mut self, clipboard: Box<dyn presto_platform::Clipboard>) {
         // presto-widgets' text kinds read it as `cx.service::<Box<dyn presto_platform::Clipboard>>()`.
@@ -137,10 +191,12 @@ impl DocumentApi for CoreDocument {
             self.doc.resize_window(window, size, scale);
         } else {
             self.doc.create_window(window, self.root_kind, size, scale);
+            self.windows.push(window);
         }
     }
     fn close_window(&mut self, window: WindowId) {
         self.doc.close_window(window);
+        self.windows.retain(|w| *w != window);
     }
     fn scroll_moved(&mut self, window: WindowId, node: PropNodeId, offset: Vec2) {
         self.doc.apply_scroll(window, node, offset);
@@ -221,6 +277,9 @@ impl CompositorApi for CompositorHandle {
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId) {
         CompositorHandle::ui_frame_skipped(self, window, frame);
     }
+    fn set_refresh(&self, window: WindowId, interval: Span) {
+        CompositorHandle::set_refresh(self, window, interval);
+    }
     fn set_caret_blink(&self, window: WindowId, blink: Option<presto_compositor::CaretBlink>) {
         CompositorHandle::set_caret_blink(self, window, blink);
     }
@@ -238,10 +297,27 @@ pub fn compositor(
     config: impl FnOnce(Arc<dyn Clock>) -> CompositorConfig + 'static,
     glyphs: Arc<dyn GlyphRasterizer>,
 ) -> SpawnCompositor<CompositorHandle> {
-    Box::new(move |sink: ToUiSink, clock: Arc<dyn Clock>| {
-        let (to_ui, wake_ui) = sink.callbacks();
-        Compositor::spawn(config(clock), glyphs, to_ui, wake_ui)
-    })
+    Box::new(
+        move |sink: ToUiSink, clock: Arc<dyn Clock>, monitors: &[presto_platform::Monitor]| {
+            let (to_ui, wake_ui) = sink.callbacks();
+            let mut cfg = config(clock);
+            if let Some(m) = monitors.first() {
+                cfg.ppi = logical_ppi(m.scale);
+            }
+            Compositor::spawn(cfg, glyphs, to_ui, wake_ui)
+        },
+    )
+}
+
+/// A monitor's pixels per inch for fling physics. `Monitor` carries no physical size, so this is the
+/// OS's logical DPI convention times the scale: 72 on macOS (points), 96 elsewhere.
+fn logical_ppi(scale: Scale) -> f32 {
+    let base = if cfg!(target_os = "macos") {
+        72.0
+    } else {
+        96.0
+    };
+    base * scale.0
 }
 
 /// One window's `UiFrameState`, with the document's commit revisions mapped onto its own (the

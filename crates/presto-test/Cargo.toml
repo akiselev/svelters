@@ -15,3 +15,8 @@ wgpu = { workspace = true }
 pollster = "0.4"
 # The `egui::Event`-shaped injection adapter (architecture §16.1); same pin as svelters-egui.
 egui = { version = "=0.37.0", default-features = false }
+
+[dev-dependencies]
+# A real document with the built-in kinds (tests/menu.rs).
+presto-core = { workspace = true }
+presto-widgets = { workspace = true, features = ["native-menu"] }

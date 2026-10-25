@@ -486,6 +486,14 @@ pub trait Kind: 'static {
         Err(crate::PropError::Rejected(format!("{method:?} is not implemented by this kind")))
     }
 
+    /// The kind as `Any`, for an app that reads a known kind's state ([`Document::with_kind`]; the
+    /// runner reads the menu bar's model this way). `None` by default.
+    ///
+    /// [`Document::with_kind`]: crate::Document::with_kind
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        None
+    }
+
     /// Text input client, for kinds that edit text (§11.3).
     fn text_input(&mut self) -> Option<&mut dyn TextInputClient> {
         None

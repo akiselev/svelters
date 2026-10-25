@@ -37,7 +37,7 @@ use presto_base::ids::{ImageId, NodeId, RunId};
 use presto_base::text::GlyphRun;
 use presto_core::{
     A11yCx, ChildLayoutCx, Event, EventCx, NodeView, PeerGroup, PeerMsg, PeerTarget, Rove as CoreRove, SignalId, FocusReason, Handled, HitCx, HitResult, Kind, KindRegistry, KindSpec, MeasureCx, PrepareCx, PropCx, PropDefault, PropError, PropId, PropSpec, RecordCx, RegistryError,
-    SignalFlags, SignalSpec, SlotSpec, StateMask, StyleCx, Value, ValueType,
+    MethodId, SignalFlags, SignalSpec, SlotSpec, StateMask, StyleCx, Value, ValueType,
 };
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, OnceLock};
@@ -189,11 +189,12 @@ struct Traits {
     parts: &'static [&'static str],
     places_children: bool,
     folds_children: bool,
+    methods: &'static [presto_core::MethodSpec],
 }
 
 impl Traits {
     fn of<W: w::Kind>() -> Traits {
-        Traits { prop_states: W::prop_states(), parts: W::parts(), places_children: W::places_children(), folds_children: W::folds_children() }
+        Traits { prop_states: W::prop_states(), parts: W::parts(), places_children: W::places_children(), folds_children: W::folds_children(), methods: W::methods() }
     }
 }
 
@@ -259,6 +260,7 @@ fn spec_of(ws: &'static w::KindSpec, t: Traits) -> &'static Spec {
             parts: t.parts,
             places_children: t.places_children,
             prop_states: StateMask(t.prop_states.0 & !CORE_BITS.0),
+            methods: t.methods,
             ..KindSpec::new(ws.tag)
         }));
         Box::leak(Box::new(Spec { core, to_core, disabled }))
@@ -738,6 +740,21 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             cx.capture_pointer();
         }
         self.run(cx, |w, wcx| w.event(wcx, &wev))
+    }
+
+    fn call(&mut self, cx: &mut EventCx, method: MethodId, args: &[Value]) -> Result<Option<Value>, presto_core::PropError> {
+        let core = Self::spec_ref().core;
+        let Some(i) = (0..core.methods.len()).find(|&i| core.method_id(i) == method) else {
+            return Err(presto_core::PropError::Rejected(format!("{method:?} is not a method of {}", core.name)));
+        };
+        match self.run(cx, |w, wcx| w.call(wcx, i, args)) {
+            Handled::Yes => Ok(None),
+            Handled::No => Err(presto_core::PropError::Rejected(format!("{} did not take {}", core.name, core.methods[i].name))),
+        }
+    }
+
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(&self.widget)
     }
 
     fn peer_group(&self, _node: &NodeView) -> Option<PeerGroup> {
