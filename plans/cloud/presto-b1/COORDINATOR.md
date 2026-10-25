@@ -209,3 +209,8 @@ when the five svelters workflows plus `presto` are green.
   `docs/notes/batch12/LANE-skelter-svg.md`). Proposed to the user, not yet decided: the X8 JS canvas port to skelter
   (`<canvas>` is a draw-nothing placeholder in svelters-presto today), inline `<svg>` as nodes, compositor SVG
   animation, vector goldens, vector export.
+- Late heads for consolidation 2 (23:10): **compiler 012047d0** replaces dc3e8187. It fixes provider member ids
+  setting bit 31, which overlaps the signal listen flags (`SVL_SIGNAL_FLAGS_SHIFT` = 28), so `cx.emit` events never
+  matched; the 4 red egui-kinds-example tests on linux-gtk came from that. APP-TEST is done (7bd9ee8f: its crates are
+  green on all three OSes). To skelter-fixes: Windows `presto-widgets` `dialogs::native::tests::
+  an_installed_backend_answers_and_cancel_is_none` (dialogs/native.rs:271, WIDGETS-TIER1's) fails on windows-latest.
