@@ -26,7 +26,7 @@ import { NativeObject, wrapObject } from '@svelters/types/core';
 // the core's component context functions (Svelte's, through the core adapter)
 import { flush, get_all_contexts as getAllContexts, set_context as setContext } from './core/internal.js';
 import { diffKeys } from './lists-diff.js';
-import { append, element, mount, on, rowOutlet, set } from './index.js';
+import { append, element, mount, on, rowOutlet, rowScope, set } from './index.js';
 
 export { diffKeys, applySplices, lis, MAX_OPS } from './lists-diff.js';
 
@@ -307,6 +307,7 @@ export class ListController {
       $.set(s.item, this.itemAt(pos, item));
       $.set(s.index, pos);
       this.#mountRow(s);
+      rowScope(s.outlet, id >= 0 ? id : pos);
       flush();
       return;
     }
@@ -322,6 +323,8 @@ export class ListController {
     $.set(s.item, this.list[pos]);
     $.set(s.index, pos);
     this.#mountRow(s);
+    // AX1: the row's anchors are scoped by its item's key (SV53), after the mount wrote them
+    rowScope(s.outlet, this.keys[pos]);
     flush();
   }
 

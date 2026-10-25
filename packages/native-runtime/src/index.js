@@ -298,6 +298,24 @@ function anchorScope(node) {
     noAnchorScope.add(node.kind);
   }
 }
+/**
+ * AX1: a virtualized list's row outlet `node` now shows the item with `key`. Its anchors are
+ * scoped by the key as a keyed each item's are (SV53): an anchor repeated in every row is one egui
+ * id per row (and one AccessKit node), the id follows the item when the slot is recycled, and
+ * automation's `key=<key>` finds the row. Same rules as `anchorScope`: only once the app has
+ * written an `anchor`, and kinds without the prop are not asked again.
+ */
+export function rowScope(node, key) {
+  if (!anchorsUsed || !node || noAnchorScope.has(node.kind)) return;
+  const scope = keyText(key);
+  if (node.anchorScope === scope) return;
+  node.anchorScope = scope;
+  try {
+    node.host.setProp(node.h, 'anchor-scope', scope);
+  } catch {
+    noAnchorScope.add(node.kind);
+  }
+}
 let anchorsUsed = false;
 /** An `anchor` was written on `node`: the keyed items above it get their scope now. */
 function anchorWritten(node) {

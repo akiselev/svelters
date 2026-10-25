@@ -31,7 +31,7 @@
 //! Writer lane: SCENE.
 
 use super::Scene;
-use super::access::SceneRef;
+use super::access::{NodeRef, SceneRef};
 use super::id::{NodeId, RootIx, Target, VNodeId};
 use super::node::{NodeFlags, W};
 
@@ -106,6 +106,21 @@ struct HitList {
     /// The viewport's cumulative pass number the entries come from.
     pass: u64,
     entries: Vec<Entry>,
+    /// AX1: the containers (and virtual-list rows) the walk culled in that pass: nothing below
+    /// them was drawn, whatever rect they kept from an earlier pass.
+    culled: Vec<NodeId>,
+}
+
+/// AX1: where a node showed in a viewport's last drawn pass ([`SceneRef::shown`]).
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct Shown {
+    /// Its rect on screen, as drawn.
+    pub rect: egui::Rect,
+    /// The part of `rect` inside the clip it was drawn with: what a user sees of it (empty when
+    /// it is scrolled out of a `scroll-area` or a list, partly when partly scrolled out). Equal to
+    /// `rect` for a node drawn outside the walk (its clip is not known).
+    pub visible: egui::Rect,
 }
 
 /// One hit list per viewport (a handful of viewports: a vector).
@@ -146,11 +161,15 @@ pub(crate) fn record_pane(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::
     push(s, i, rect, ui, false);
 }
 
-fn push(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui, container: bool) {
+/// AX1: the walk culled node `i` in `ui` (a container outside the clip, a virtual-list row out of
+/// view): nothing in its subtree was drawn this pass ([`SceneRef::shown`] answers `None` for it).
+pub(crate) fn record_culled(s: &mut Scene, i: usize, ui: &egui::Ui) {
     let Some(node) = s.slots.id_at(i) else { return };
-    if rect == egui::Rect::NOTHING || !rect.is_positive() {
-        return;
-    }
+    current(s, ui).culled.push(node);
+}
+
+/// The hit list of `ui`'s viewport for this pass (started over at a new pass).
+fn current<'s>(s: &'s mut Scene, ui: &egui::Ui) -> &'s mut HitList {
     let ctx = ui.ctx();
     let vp = ctx.viewport_id();
     let pass = ctx.cumulative_pass_nr();
@@ -158,7 +177,7 @@ fn push(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui, container: boo
     let k = match lists.iter().position(|l| l.vp == Some(vp)) {
         Some(k) => k,
         None => {
-            lists.push(HitList { vp: Some(vp), pass, entries: Vec::new() });
+            lists.push(HitList { vp: Some(vp), pass, ..HitList::default() });
             lists.len() - 1
         }
     };
@@ -166,8 +185,18 @@ fn push(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui, container: boo
     if l.pass != pass {
         l.pass = pass;
         l.entries.clear();
+        l.culled.clear();
     }
-    l.entries.push(Entry { node, root: s.core[i].root, rect, clip: ui.clip_rect(), order: ui.layer_id().order, container });
+    l
+}
+
+fn push(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui, container: bool) {
+    let Some(node) = s.slots.id_at(i) else { return };
+    if rect == egui::Rect::NOTHING || !rect.is_positive() {
+        return;
+    }
+    let root = s.core[i].root;
+    current(s, ui).entries.push(Entry { node, root, rect, clip: ui.clip_rect(), order: ui.layer_id().order, container });
 }
 
 impl<'a> SceneRef<'a> {
@@ -253,6 +282,54 @@ impl<'a> SceneRef<'a> {
         l.entries.iter().find(|e| e.container && e.node == node).map(|e| e.rect)
     }
 
+    /// AX1: where `node` showed in `viewport`'s last drawn pass: its rect and the part of it inside
+    /// its clip. `None` when it was not drawn in that pass: below a culled container (scrolled out
+    /// of a `scroll-area`), a virtual-list row out of view, an entry of a closed menu, a node that
+    /// was never drawn. A node the walk does not record (an overlay's surface, a window) answers
+    /// the rect it was last drawn at, unclipped. O(entries + depth · culled), for tools.
+    pub fn shown(self, viewport: egui::ViewportId, node: NodeId) -> Option<Shown> {
+        let s = self.s;
+        let l = s.hits.list(viewport);
+        let entry = l.and_then(|l| l.entries.iter().rev().find(|e| e.node == node && !e.container).or_else(|| l.entries.iter().find(|e| e.node == node)));
+        if let Some(e) = entry {
+            let v = e.rect.intersect(e.clip);
+            return Some(Shown { rect: e.rect, visible: if v.is_positive() { v } else { egui::Rect::from_min_size(e.rect.min, egui::Vec2::ZERO) } });
+        }
+        let i = s.idx(node)?;
+        // culled with an ancestor, or inside a closed overlay (one not drawn this pass)
+        let culled = l.map_or(&[][..], |l| &l.culled[..]);
+        let mut x = Some(node);
+        while let Some(id) = x {
+            let Some(k) = s.idx(id) else { break };
+            if culled.contains(&id) || k != i && matches!(s.w(k), W::Overlay(_)) && s.core[k].drawn == egui::Rect::NOTHING {
+                return None;
+            }
+            x = s.core[k].parent;
+        }
+        let r = s.core[i].drawn;
+        (r != egui::Rect::NOTHING && r.is_positive()).then_some(Shown { rect: r, visible: r })
+    }
+
+    /// AX1: `node` was not drawn in `viewport`'s last pass because it or an ancestor was culled
+    /// outside the clip (scrolled out of a `scroll-area`, a realised `virtual-list` row out of
+    /// view): it is there, out of view, and `scroll-into-view` brings it in. False for a node that
+    /// was drawn, or is hidden some other way (a closed menu or overlay).
+    pub fn scrolled_out(self, viewport: egui::ViewportId, node: NodeId) -> bool {
+        let s = self.s;
+        let Some(l) = s.hits.list(viewport) else { return false };
+        if l.culled.is_empty() || l.entries.iter().any(|e| e.node == node) {
+            return false;
+        }
+        let mut x = Some(node);
+        while let Some(id) = x {
+            if l.culled.contains(&id) {
+                return true;
+            }
+            x = s.idx(id).and_then(|k| s.core[k].parent);
+        }
+        false
+    }
+
     /// Root `r` is shown and, for a slot root, drawn in `vp` now (R20).
     fn live_in(self, r: RootIx, vp: egui::ViewportId) -> bool {
         match self.s.roots.get(r) {
@@ -330,5 +407,34 @@ impl<'a> SceneRef<'a> {
     pub(crate) fn pane_part_anchor(self, pane: NodeId, key: u64) -> Option<Option<String>> {
         let (k, p) = self.s.panes.by_node.get(&pane)?;
         Some(p.try_borrow().ok().and_then(|p| p.part_anchor(key)).map(|a| format!("{k}/{a}")))
+    }
+}
+
+impl NodeRef<'_> {
+    /// AX1: where this node showed in its root's viewport last pass ([`SceneRef::shown`]).
+    pub fn shown(self) -> Option<Shown> {
+        let sr = SceneRef { s: self.s };
+        sr.shown(sr.root_viewport(self.root()).unwrap_or(egui::ViewportId::ROOT), self.id())
+    }
+
+    /// AX1: visible to a user, as automation's `visible` means it (Playwright's sense): shown
+    /// ([`NodeRef::is_visible`]: its props, stack page and root) and either drawn last pass with a
+    /// non-empty rect, or only scrolled out of view ([`SceneRef::scrolled_out`]; an act scrolls it
+    /// in). Not visible: an entry of a closed menu, the content of a closed overlay, a node not
+    /// drawn yet. A root's top (a window) needs no drawn rect.
+    pub fn is_shown(self) -> bool {
+        if !self.is_visible() {
+            return false;
+        }
+        if self.s.core[self.i].flags.contains(NodeFlags::ROOT) || matches!(self.s.w(self.i), W::Window { .. }) {
+            return true;
+        }
+        match self.shown() {
+            Some(sh) => sh.rect.area() > 0.0,
+            None => {
+                let sr = SceneRef { s: self.s };
+                sr.scrolled_out(sr.root_viewport(self.root()).unwrap_or(egui::ViewportId::ROOT), self.id())
+            }
+        }
     }
 }

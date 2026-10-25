@@ -13,6 +13,8 @@ sources:
   - plans/milestones/AU2-automation-transport.md
   - plans/milestones/AU2b-ts-runner-mount.md
   - plans/milestones/CV1-canvas-seams.md   # drag, pointer_move, wheel; panes
+  - plans/milestones/AX1-list-a11y.md      # scroll-into-view, list rows, context menus (pending: ci/b10-list-a11y)
+  - crates/svelters-automation/tests/list_a11y.rs
 ---
 
 # Automation and end-to-end tests
@@ -216,6 +218,44 @@ A drag sends the move to `from`, the press, each step's move and the release in 
 a `pointermove` listener sees every step (SV50 coalesces moves within one frame only). Modifiers are
 held with egui's `ModifiersChanged` around the act and carried on the press, release and wheel
 events.
+
+## Scroll areas, lists and menus
+
+AX1 (on `ci/b10-list-a11y`, not merged yet). What automation sees of content that is not all on screen:
+
+| Content | In the scene and `query` | In the AccessKit tree | Acts |
+|---|---|---|---|
+| a `scroll-area`'s children scrolled out | yes; `rect: None`, visible | no (culled) | scrolled into view first, then done |
+| a child cut by the area's edge | yes; `visible_rect` smaller than `rect` | yes, unclipped bounds (the area `clips_children`) | scrolled wholly into view (as much as fits), aimed at the centre of the part in view |
+| `ListView`/`TreeView` rows realised but out of view | yes; `rect: None`, visible | no | the list scrolls to the row first |
+| rows not realised (most of a long list) | no | no | `scroll_to_row(list, pos)` first |
+| entries of a closed `context-menu`/menu | yes; `rect: None`, **hidden** | no | `node.not_actionable` (open it first) |
+| entries of an open menu | yes; drawn rect, visible | `MenuItem`s, in the frame it opens | click (synthetic or semantic) |
+
+- `NodeInfo.rect` is where the node was drawn in the last pass (`None`: not drawn then);
+  `visible_rect` is its part inside its clip.
+- Visible (`to_be_visible`, `WaitState::Visible`) is the browser's sense: a node scrolled out of view
+  is still visible; a closed menu's entries and a closed overlay's content are not.
+- Anchors inside list rows are scoped by the row's item key (as in a keyed `{#each}`, SV53): every row
+  has its own egui id and AccessKit node, and `key=<item key> >> anchor=line` finds a realised row's
+  content. A row option is named by its content.
+
+```rust
+// not run
+s.click(r#"text="Cancel Job 11""#, ActOptions::default())?;            // scrolls the Jobs area first
+s.scroll_to_row("anchor=output", 640, ActOptions::default())?;          // realises row 640
+let line = s.query("key=640 >> anchor=line", None)?;
+s.context_click("key=p1", ActOptions::default())?;                      // opens the row's context menu
+s.click(r#"key=p1 >> role=menu[name="Waive"]"#, ActOptions::default())?;
+s.scroll_into_view(r#"text="Cancel Job 6""#, true, ActOptions::default())?; // centred, no act
+```
+
+JSON: `input.click {button: "secondary"}`, `input.scroll_into_view {selector, align?: "center"}`,
+`input.scroll_into_view {selector: <list>, row: <pos>}`. Rust hosts: `NodeMut::scroll_into_view(center)`,
+`SceneRef::shown(viewport, node)`, `NodeRef::is_shown()`.
+
+Not yet: a semantic (`Tier::Semantic`) click raises `onclicked` but not a DOM `onclick` (EV1 fires
+`click` from pointer releases only); `key=` cannot name an unrealised row.
 
 ## Out of process: `Server`
 

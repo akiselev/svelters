@@ -64,7 +64,7 @@ use crate::backend::EguiBackend;
 use crate::views::item_keys;
 use crate::views::selection::{KeySelect, Mode};
 use crate::scene::virt::{RowHeights, RowPool, RowSource, VScroll, VirtualChildren};
-use crate::scene::{NodeId, Origin, ProviderId, RootIx, Scene, SceneError, SceneMut, W};
+use crate::scene::{NodeFlags, NodeId, Origin, ProviderId, RootIx, Scene, SceneError, SceneMut, W};
 use crate::walk::Out;
 use crate::widgets::list_rows::{self, ListBar, RowState};
 use std::borrow::Cow;
@@ -1188,6 +1188,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             egui::accesskit::Role::List
         });
         n.set_size_of_set(len);
+        n.set_clips_children(); // AX1: rows partly scrolled out are clipped
         if multi {
             n.set_multiselectable();
         }
@@ -1229,7 +1230,19 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         let Some(ni) = s.idx(n) else { continue };
         let rr = s.core[ni].rect.translate(origin);
         covered.push((rr.min.y, rr.max.y));
+        // AX1: a `scroll-into-view` on the row or inside it (automation's `scroll_into_view`)
+        // scrolls the list to the row when it is not wholly in view
+        if s.core[ni].flags.intersects(NodeFlags::WANT_SCROLL | NodeFlags::SCROLL_BELOW) {
+            s.core[ni].flags.remove(NodeFlags::SCROLL_BELOW);
+            if !clip.contains_rect(rr) {
+                if let W::VirtualList(v) = s.w_mut(i) {
+                    v.reveal = Some((pos, Reveal::Nearest));
+                }
+                ctx.request_repaint();
+            }
+        }
         if !rr.intersects(clip) {
+            crate::scene::hit::record_culled(s, ni, &rows_ui); // AX1: realised, not shown
             continue;
         }
         let key = {

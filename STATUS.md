@@ -167,6 +167,11 @@ Coordinated by cloud session `session_01RQkPkX9QqiFN52Rrofmi7z` (svelters-agent 
   timeout reports, actionability, virtual/wall clock domains, record/replay hooks. One non-additive change:
   `svelters_automation::Error` gained a public `data` field. Record: `plans/milestones/AU7-waits.md`.
 - **AX1 list-a11y** (`ci/b10-list-a11y`): running.
+- **Queued: EV1 follow-up, activation fires a DOM `click`** (decided by the coordinator, 2026-10-25: yes, so that tours,
+  assistive tech and the mouse reach the same handlers). A button activated through its `Pressable` (Space, Enter,
+  AccessKit `Click`) also fires a DOM `click`; today EV1 fires `click` only from pointer releases, so a
+  `Tier::Semantic` click raises `onclicked` but not `onclick`. Found by AX1: `plans/milestones/AX1-list-a11y.md`,
+  "Findings and questions".
 cadatomic's svelters pin (`ab8dcfc7`) advances in its batch 10 wave 2 (waits-adopt).
 
 ## Cloud batch 8 for cadatomic (2026-10-24)
