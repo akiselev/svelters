@@ -11,3 +11,9 @@ presto-base = { workspace = true }
 presto-core = { workspace = true }
 presto-text = { workspace = true }
 presto-anim = { workspace = true }
+# The text-editing core of the `text` kinds (lane TEXT-INPUT), at cadatomic's `pins.toml` sha.
+quire-text = { git = "https://github.com/akiselev/quire", rev = "3e78dcd3bf74abc2c81209f0109caff4d9193529" }
+
+[dev-dependencies]
+# The conformance pins (pins 1–7) against the Linux goldens: tests/text_pins.rs.
+svelters-conformance = { path = "../svelters-conformance" }
