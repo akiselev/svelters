@@ -68,13 +68,15 @@ impl Poster {
     }
 }
 
+/// Fields drop in order: the accessibility adapter unhooks first (it subclassed last), then the
+/// shim, then the window.
 struct Win {
-    window: Window,
-    input: WindowInput,
     a11y: Option<A11yAdapter>,
     shim: WindowShim,
+    input: WindowInput,
     regions: Vec<HitRegion>,
     captured: bool,
+    window: Window,
 }
 
 struct State {
@@ -181,6 +183,19 @@ impl ApplicationHandler<UserEvent> for WinitApp {
         }
         let os_time = win.shim.event_time().unwrap_or(recv);
         let Some(t) = win.input.translate(&ev) else { return };
+        // Windows answers caption drags in WM_NCHITTEST; elsewhere a caption press starts the move.
+        if !cfg!(target_os = "windows") {
+            if let Translated::Input(presto_base::event::InputEvent::Pointer(p)) = &t {
+                if p.phase == presto_base::event::PointerPhase::Down
+                    && p.button == Some(presto_base::event::MouseButton::Primary)
+                    && crate::api::hit_test(&win.regions, p.pos) == crate::api::HitKind::Caption
+                {
+                    if let Err(e) = win.window.drag_window() {
+                        log::debug!("presto-platform: drag_window: {e}");
+                    }
+                }
+            }
+        }
         match t {
             Translated::Input(event) => {
                 let seq = InputSeq(self.state.next_seq);
@@ -266,7 +281,6 @@ impl Cx<'_> {
             let p = self.st.poster.clone();
             Arc::new(move |ev| p.post(UserEvent::A11y(id, ev)))
         };
-        let a11y = A11yAdapter::new(&window, sink);
         let hooks = ShimHooks {
             tick: {
                 let p = self.st.poster.clone();
@@ -279,6 +293,7 @@ impl Cx<'_> {
         };
         let mut shim = WindowShim::install(&window, &desc, hooks);
         shim.set_timer(self.st.timer);
+        let a11y = A11yAdapter::new(&window, sink);
         let scale = window.scale_factor() as f32;
         if desc.visible {
             window.set_visible(true);
@@ -286,7 +301,7 @@ impl Cx<'_> {
         self.st.by_winit.insert(window.id(), id);
         self.st.windows.insert(
             id,
-            Win { window, input: WindowInput::new(scale), a11y, shim, regions: Vec::new(), captured: false },
+            Win { a11y, shim, input: WindowInput::new(scale), regions: Vec::new(), captured: false, window },
         );
         Ok(id)
     }
