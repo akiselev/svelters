@@ -19,7 +19,8 @@ use presto_base::color::{Color, Fill};
 use presto_base::commit::{Commit, FastCommit, ToUi};
 use presto_base::display::{DisplayList, Prim, Quad};
 use presto_base::geom::{Corners, DeviceSize, Insets, Rect, Scale, Vec2};
-use presto_base::ids::{FrameId, ImageId, InputSeq, PathId, LayerId, NodeId, PropNodeId, Revision, SurfaceId, TextureId, WindowId};
+use presto_base::ids::{CanvasId, FrameId, ImageId, InputSeq, PathId, LayerId, NodeId, PropNodeId, Revision, SurfaceId, TextureId, WindowId};
+use presto_canvas::{Camera, LodParams};
 use presto_base::scene::{DrawItem, FrameScene};
 use presto_base::time::{Span, Time};
 use std::collections::{BTreeMap, HashMap};
@@ -41,6 +42,11 @@ pub trait Backend {
     fn forget(&mut self, images: &[ImageId], paths: &[PathId]);
     /// Makes OS-compositor changes visible after configuring a surface of `window` (DComp `Commit`).
     fn set_committer(&mut self, _window: WindowId, _committer: OsLayerCommitter) {}
+    /// Makes a canvas drawable (kept across device loss).
+    fn register_canvas(&mut self, _canvas: Arc<presto_canvas::Canvas>) {}
+    fn unregister_canvas(&mut self, _id: CanvasId) {}
+    /// The view state a canvas is drawn with from now on.
+    fn set_canvas_view(&mut self, _id: CanvasId, _view: presto_canvas::CanvasView) {}
     /// Rebuilds the device, queue, renderer and surface configurations after device loss.
     fn recover(&mut self) -> bool;
 }
@@ -59,8 +65,11 @@ pub enum DrawOutcome {
 pub enum Msg {
     AddWindow { window: WindowId, surface: wgpu::Surface<'static>, size: DeviceSize, scale: Scale },
     AddOsLayer { window: WindowId, surface_id: SurfaceId, surface: wgpu::Surface<'static>, size: DeviceSize },
-    ResizeOsLayer { window: WindowId, surface_id: SurfaceId, size: DeviceSize },
-    RemoveOsLayer { window: WindowId, surface_id: SurfaceId },
+    /// `done`: the handshake (`CompositorHandle::resize_os_layer_sync`): draw and present the new
+    /// size now, then answer.
+    ResizeOsLayer { window: WindowId, surface_id: SurfaceId, size: DeviceSize, done: Option<std::sync::mpsc::Sender<()>> },
+    /// `done`: answered once the surface is dropped (the platform may destroy the layer then).
+    RemoveOsLayer { window: WindowId, surface_id: SurfaceId, done: Option<std::sync::mpsc::Sender<()>> },
     RemoveWindow(WindowId),
     Commit(Box<Commit>),
     Fast(FastCommit),
@@ -70,6 +79,14 @@ pub enum Msg {
     SetCaretBlink { window: WindowId, blink: Option<CaretBlink> },
     RegisterTexture { id: TextureId, texture: wgpu::Texture },
     UnregisterTexture(TextureId),
+    /// The texture's producer drew a new image into it (a viewport frame): damage what shows it.
+    TextureUpdated { window: WindowId, texture: TextureId },
+    RegisterCanvas(Arc<presto_canvas::Canvas>),
+    UnregisterCanvas(CanvasId),
+    /// A canvas's camera (and LOD settings when given), a compositor property (architecture §9.5).
+    CanvasCamera { window: WindowId, canvas: CanvasId, camera: Camera, lod: Option<LodParams>, input_seq: InputSeq },
+    /// A canvas's content changed (`Canvas::edit`): damage its placements.
+    CanvasChanged { window: WindowId, canvas: CanvasId },
     /// The UI thread's scene is dirty (`true`) or it has nothing more to commit (`false`).
     NeedsUiFrame { window: WindowId, on: bool },
     /// The UI answered a `BeginFrame` without a commit.
@@ -277,6 +294,15 @@ impl Engine {
         self.windows.insert(window, w);
     }
 
+    /// Registers an OS layer of `window` without a surface (the backend attaches one separately, or
+    /// a test records draws to it).
+    pub fn insert_os_layer(&mut self, window: WindowId, surface_id: SurfaceId, size: DeviceSize) {
+        if let Some(w) = self.windows.get_mut(&window) {
+            w.os_layers.insert(surface_id, size);
+            w.pending.entry(SurfaceKey::Os(surface_id)).or_default().full = true;
+        }
+    }
+
     pub fn has_window(&self, window: WindowId) -> bool {
         self.windows.contains_key(&window)
     }
@@ -300,22 +326,36 @@ impl Engine {
                     self.signal(window, now, Signal::CompositorDamage, gpu);
                 }
             }
-            Msg::ResizeOsLayer { window, surface_id, size } => {
+            Msg::ResizeOsLayer { window, surface_id, size, done } => {
                 if let Some(w) = self.windows.get_mut(&window) {
                     if let Some(s) = w.os_layers.get_mut(&surface_id) {
                         *s = size;
                         gpu.resize(window, SurfaceKey::Os(surface_id), size);
+                        w.snapshots.remove(&SurfaceKey::Os(surface_id));
                         w.pending.entry(SurfaceKey::Os(surface_id)).or_default().full = true;
-                        self.signal(window, now, Signal::CompositorDamage, gpu);
+                        if done.is_some() {
+                            // The handshake: a new-size frame now, with every commit that arrived (the
+                            // UI committed the layout the new size belongs to), before answering.
+                            w.apply_upto = Some(Revision(u64::MAX));
+                            self.draw(window, None, now, now, gpu);
+                        } else {
+                            self.signal(window, now, Signal::CompositorDamage, gpu);
+                        }
                     }
                 }
+                if let Some(d) = done {
+                    let _ = d.send(());
+                }
             }
-            Msg::RemoveOsLayer { window, surface_id } => {
+            Msg::RemoveOsLayer { window, surface_id, done } => {
                 if let Some(w) = self.windows.get_mut(&window) {
                     w.os_layers.remove(&surface_id);
                     w.pending.remove(&SurfaceKey::Os(surface_id));
                     w.snapshots.remove(&SurfaceKey::Os(surface_id));
                     gpu.detach(window, SurfaceKey::Os(surface_id));
+                }
+                if let Some(d) = done {
+                    let _ = d.send(());
                 }
             }
             Msg::RemoveWindow(window) => {
@@ -366,6 +406,31 @@ impl Engine {
             }
             Msg::RegisterTexture { id, texture } => gpu.register_texture(id, texture),
             Msg::UnregisterTexture(id) => gpu.unregister_texture(id),
+            Msg::TextureUpdated { window, texture } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    w.tree.dirty_textures.insert(texture);
+                    self.signal(window, now, Signal::CompositorDamage, gpu);
+                }
+            }
+            Msg::RegisterCanvas(c) => gpu.register_canvas(c),
+            Msg::UnregisterCanvas(id) => gpu.unregister_canvas(id),
+            Msg::CanvasCamera { window, canvas, camera, lod, input_seq } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    w.tree.canvas_cameras.insert(canvas, camera);
+                    if let Some(l) = lod {
+                        w.tree.canvas_lods.insert(canvas, l);
+                    }
+                    w.tree.dirty_canvases.insert(canvas);
+                    w.inputs.push(input_seq);
+                    self.signal(window, now, Signal::CompositorDamage, gpu);
+                }
+            }
+            Msg::CanvasChanged { window, canvas } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    w.tree.dirty_canvases.insert(canvas);
+                    self.signal(window, now, Signal::CompositorDamage, gpu);
+                }
+            }
             Msg::NeedsUiFrame { window, on } => self.signal(window, now, Signal::NeedsUiFrame(on), gpu),
             Msg::UiFrameSkipped { window, frame } => self.signal(window, now, Signal::UiFrameSkipped { frame }, gpu),
             Msg::UiInputCost { window, frame, cost } => {
@@ -694,6 +759,12 @@ impl Engine {
         let mut extra: HashMap<SurfaceKey, Vec<Rect>> = HashMap::new();
         for (k, r) in w.tree.take_layer_damage() {
             extra.entry(k).or_default().push(r);
+        }
+        for (k, r) in w.tree.take_content_damage(&flat) {
+            extra.entry(k).or_default().push(r);
+        }
+        for id in w.tree.canvas_ids() {
+            gpu.set_canvas_view(id, w.tree.canvas_view(id));
         }
         let mut drew = None;
         let mut failed = false;

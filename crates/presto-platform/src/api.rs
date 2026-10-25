@@ -59,6 +59,17 @@ pub trait PlatformCx {
     /// Moves or resizes an OS layer (window points).
     fn set_os_layer_bounds(&mut self, id: WindowId, layer: SurfaceId, bounds: Rect);
     fn remove_os_layer(&mut self, id: WindowId, layer: SurfaceId);
+    /// Starts an OS layer resize (architecture §7.6): holds the layer's state so that the bounds set
+    /// before [`PlatformCx::end_os_layer_resize`] and the compositor's first present at the new size
+    /// show together (Wayland: the subsurface goes to sync mode). Returns `false` when the backend
+    /// holds nothing because its layers never show a buffer stretched (DirectComposition shows a swap
+    /// chain at its own size; presto's CAMetalLayers pin their drawable to the top-left): the caller
+    /// then presents the new size first and moves the layer after.
+    fn begin_os_layer_resize(&mut self, _id: WindowId, _layer: SurfaceId) -> bool {
+        false
+    }
+    /// Ends the resize [`PlatformCx::begin_os_layer_resize`] started: what it held becomes visible.
+    fn end_os_layer_resize(&mut self, _id: WindowId, _layer: SurfaceId) {}
     /// A `Send` handle that makes OS-layer configuration visible (DirectComposition's `Commit`), for
     /// the compositor thread to call after configuring a layer's surface. `None` when not needed.
     fn os_layer_committer(&self, id: WindowId) -> Option<OsLayerCommitter>;

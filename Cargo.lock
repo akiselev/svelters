@@ -4065,6 +4065,7 @@ dependencies = [
  "log",
  "presto-anim",
  "presto-base",
+ "presto-canvas",
  "presto-frame",
  "presto-platform",
  "presto-render",

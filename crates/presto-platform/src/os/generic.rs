@@ -28,6 +28,11 @@ impl WindowShim {
     }
     pub fn set_layer_bounds(&mut self, id: SurfaceId, bounds: Rect, scale: f32) {}
     pub fn remove_layer(&mut self, id: SurfaceId) {}
+    /// No OS layers here: nothing to hold.
+    pub fn begin_layer_resize(&mut self, id: SurfaceId) -> bool {
+        false
+    }
+    pub fn end_layer_resize(&mut self, id: SurfaceId) {}
     pub fn committer(&self) -> Option<OsLayerCommitter> {
         None
     }

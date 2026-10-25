@@ -15,6 +15,7 @@
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
 //! | [`vsync`] | a thread per platform frame source, posting ticks, occlusion and feedback |
 //! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces (real crates behind traits) |
+//! | [`viewport`] | UI-thread viewports: promotion to an OS layer or the `Prim::Surface` fallback, resize |
 
 pub mod caret;
 pub mod core;
@@ -22,6 +23,7 @@ pub mod damage;
 pub mod gpu;
 pub mod seams;
 pub mod tree;
+pub mod viewport;
 pub mod vsync;
 
 pub use crate::caret::CaretBlink;
@@ -37,7 +39,7 @@ use presto_base::anim::FlingCurve;
 use presto_base::color::Color;
 use presto_base::commit::{Commit, FastCommit};
 use presto_base::geom::{DeviceSize, Scale, Vec2};
-use presto_base::ids::{FrameId, PropNodeId, SurfaceId, TextureId, WindowId};
+use presto_base::ids::{CanvasId, FrameId, InputSeq, PropNodeId, SurfaceId, TextureId, WindowId};
 use presto_base::text::GlyphRasterizer;
 use presto_base::time::{Clock, Span, Time};
 use std::sync::mpsc::{self, Receiver, RecvTimeoutError, Sender};
@@ -220,11 +222,63 @@ impl CompositorHandle {
     }
 
     pub fn resize_os_layer(&self, window: WindowId, surface_id: SurfaceId, size: DeviceSize) {
-        self.post(Msg::ResizeOsLayer { window, surface_id, size });
+        self.post(Msg::ResizeOsLayer { window, surface_id, size, done: None });
+    }
+
+    /// The OS layer resize handshake (architecture §7.6): the compositor reconfigures the layer's
+    /// surface, draws and presents the new size with every commit that has arrived, then answers.
+    /// Waits up to `wait` (about one refresh); `false` when it timed out. [`viewport::Viewport`]
+    /// orders the platform's layer geometry around it so no frame is shown stretched.
+    pub fn resize_os_layer_sync(&self, window: WindowId, surface_id: SurfaceId, size: DeviceSize, wait: Duration) -> bool {
+        let (tx, rx) = mpsc::channel();
+        self.post(Msg::ResizeOsLayer { window, surface_id, size, done: Some(tx) });
+        rx.recv_timeout(wait).is_ok()
+    }
+
+    /// The producer of a registered texture (an offscreen viewport) drew a new image into it: what
+    /// shows the texture is redrawn on the next frame, with no UI commit. On an OS layer only that
+    /// layer's surface redraws.
+    pub fn texture_updated(&self, window: WindowId, texture: TextureId) {
+        self.post(Msg::TextureUpdated { window, texture });
+    }
+
+    /// Makes a canvas drawable by `Prim::Canvas` and `LayerKind::Canvas` (architecture §9.5).
+    pub fn register_canvas(&self, canvas: Arc<presto_canvas::Canvas>) {
+        self.post(Msg::RegisterCanvas(canvas));
+    }
+
+    pub fn unregister_canvas(&self, id: CanvasId) {
+        self.post(Msg::UnregisterCanvas(id));
+    }
+
+    /// Pans or zooms a canvas of `window`: a compositor property, so the next frame redraws the canvas
+    /// with no UI commit and no re-upload. `lod`, when given, replaces its level-of-detail settings.
+    pub fn set_canvas_camera(
+        &self,
+        window: WindowId,
+        canvas: CanvasId,
+        camera: presto_canvas::Camera,
+        lod: Option<presto_canvas::LodParams>,
+        input_seq: InputSeq,
+    ) {
+        self.post(Msg::CanvasCamera { window, canvas, camera, lod, input_seq });
+    }
+
+    /// A canvas's content changed (after `Canvas::edit`): its placements in `window` are redrawn.
+    pub fn canvas_changed(&self, window: WindowId, canvas: CanvasId) {
+        self.post(Msg::CanvasChanged { window, canvas });
     }
 
     pub fn remove_os_layer(&self, window: WindowId, surface_id: SurfaceId) {
-        self.post(Msg::RemoveOsLayer { window, surface_id });
+        self.post(Msg::RemoveOsLayer { window, surface_id, done: None });
+    }
+
+    /// Drops the OS layer's surface and waits (up to `wait`) until it is gone, so the platform can
+    /// destroy the layer under it. `false` when it timed out.
+    pub fn remove_os_layer_sync(&self, window: WindowId, surface_id: SurfaceId, wait: Duration) -> bool {
+        let (tx, rx) = mpsc::channel();
+        self.post(Msg::RemoveOsLayer { window, surface_id, done: Some(tx) });
+        rx.recv_timeout(wait).is_ok()
     }
 
     pub fn remove_window(&self, window: WindowId) {
