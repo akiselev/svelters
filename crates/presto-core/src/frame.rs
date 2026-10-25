@@ -67,13 +67,14 @@ impl Document {
     }
 
     /// [`Document::frame`] with its counters.
-    pub fn frame_with_stats(&mut self, window: WindowId, _target: Time) -> (Option<Commit>, FrameStats) {
+    pub fn frame_with_stats(&mut self, window: WindowId, target: Time) -> (Option<Commit>, FrameStats) {
         let mut stats = FrameStats::default();
         let Some(root) = self.window_root(window) else { return (None, stats) };
         if !self.contains(root) {
             return (None, stats);
         }
         self.restyle(window);
+        self.sample_ui_transitions(window, target);
         stats.layout = self.run_layout(window);
         let mut commit = Commit { window, revision: self.revision, input_seq: self.input_seq, ..Default::default() };
         let mut runs = RunSink { next: self.run_counter, added: Vec::new() };
@@ -142,14 +143,26 @@ impl Document {
             E::Finished { id, .. } | E::Aborted { id } => id,
         };
         let mut owner = None;
+        let mut finished_prop = None;
         for (n, v) in self.anim.running.iter_mut() {
             if let Some(k) = v.iter().position(|(a, _)| *a == id) {
-                v.remove(k);
+                let (_, p) = v.remove(k);
+                finished_prop = match p {
+                    AnimProperty::Opacity => Some("opacity"),
+                    AnimProperty::Transform => Some("transform"),
+                    _ => None,
+                };
                 owner = Some(*n);
                 break;
             }
         }
         if let Some(n) = owner {
+            // CSS transitions of compositor properties end on the compositor
+            if let E::Finished { .. } = ev
+                && let Some(prop) = finished_prop
+            {
+                crate::style::cascade::transition_end(self, n, prop, 0.0);
+            }
             if self.anim.running.get(&n).is_some_and(Vec::is_empty) {
                 self.anim.running.remove(&n);
             }

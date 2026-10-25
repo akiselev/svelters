@@ -101,3 +101,73 @@ fn presto_properties_reach_the_computed_box() {
     assert_eq!(c.transform.apply(presto_base::geom::Point::ZERO), presto_base::geom::Point::new(4.0, 0.0));
     assert_eq!(c.transform_origin, presto_base::geom::Point::new(0.0, 0.0));
 }
+
+fn ms(n: u64) -> Time {
+    Time(n * 1_000_000)
+}
+
+#[test]
+fn paint_transitions_sample_on_the_ui_thread() {
+    use crate::{ListenFlags, common};
+    let (mut d, root) = doc();
+    let base = "width: 20px; height: 20px; transition: background-color 100ms linear";
+    let a = child(&mut d, root, BOX, &format!("{base}; background-color: #000000"));
+    d.frame(W, ms(0));
+    d.listen(a, common::TRANSITIONEND, ListenFlags::EMPTY);
+    d.set_style(a, StyleInput { inline: Some(format!("{base}; background-color: #ffffff").into()), ..Default::default() });
+    let bg = |d: &Document| match &d.computed(a).unwrap().background {
+        Fill::Solid(c) => c.r,
+        _ => panic!("solid"),
+    };
+    // the transition starts at the next frame, from the old value
+    assert!(d.frame(W, ms(1000)).is_some());
+    assert!(bg(&d) < 0.01, "{}", bg(&d));
+    assert!(d.busy().contains(crate::Busy::ANIMATING));
+    let c = d.frame(W, ms(1050)).expect("a frame re-records the node");
+    assert!(!c.lists.is_empty());
+    assert!((bg(&d) - 0.5).abs() < 0.05, "{}", bg(&d));
+    // a restyle to the same target keeps it running
+    d.set_state(a, StateMask::HOVERED, true);
+    d.frame(W, ms(1075));
+    assert!((bg(&d) - 0.75).abs() < 0.05, "{}", bg(&d));
+    d.frame(W, ms(1100));
+    assert!((bg(&d) - 1.0).abs() < 1e-3);
+    assert!(!d.busy().contains(crate::Busy::ANIMATING));
+    let ev = d.take_events();
+    let end = ev.iter().find(|e| e.signal == common::TRANSITIONEND).expect("transitionend");
+    assert_eq!(end.arg.as_ref().and_then(|v| v.field("propertyName")).and_then(Value::as_str), Some("background-color"));
+}
+
+#[test]
+fn layout_transitions_relayout_each_frame_and_reverse_from_the_current_value() {
+    let (mut d, root) = doc();
+    let base = "height: 10px; transition: width 100ms linear";
+    let a = child(&mut d, root, BOX, &format!("{base}; width: 10px"));
+    d.frame(W, ms(0));
+    d.set_style(a, StyleInput { inline: Some(format!("{base}; width: 30px").into()), ..Default::default() });
+    d.frame(W, ms(1000));
+    assert_eq!(d.layout_rect(a).unwrap().width(), 10.0);
+    d.frame(W, ms(1050));
+    assert!((d.layout_rect(a).unwrap().width() - 20.0).abs() < 0.6);
+    // back to 10px: it starts from about 20, not from 30
+    d.set_style(a, StyleInput { inline: Some(format!("{base}; width: 10px").into()), ..Default::default() });
+    d.frame(W, ms(1060));
+    let w = d.layout_rect(a).unwrap().width();
+    assert!((w - 20.0).abs() < 1.1, "{w}");
+    d.frame(W, ms(1200));
+    assert_eq!(d.layout_rect(a).unwrap().width(), 10.0);
+}
+
+#[test]
+fn a_change_without_a_transition_stops_a_running_one() {
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "width: 10px; height: 10px; color: #000000; transition: color 100ms linear");
+    d.frame(W, ms(0));
+    d.set_style(a, StyleInput { inline: Some("width: 10px; height: 10px; color: #ffffff; transition: color 100ms linear".into()), ..Default::default() });
+    d.frame(W, ms(1000));
+    d.frame(W, ms(1050));
+    d.set_style(a, StyleInput { inline: Some("width: 10px; height: 10px; color: #ff0000".into()), ..Default::default() });
+    d.frame(W, ms(1060));
+    assert_eq!(d.computed(a).unwrap().color, Color::rgba(1.0, 0.0, 0.0, 1.0));
+    assert!(!d.busy().contains(crate::Busy::ANIMATING));
+}
