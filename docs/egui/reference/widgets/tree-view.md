@@ -40,7 +40,7 @@ A virtualized tree: JS keeps the tree and flattens its visible rows into the lis
 | `selection` | `'none' \| 'single' \| 'multi' \| 'toggle' \| 'range'` | `"single"` | no | `single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable. |
 | `uniform-rows` | `boolean` | `false` | no | OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`). |
 
-Plus the 30 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `anchor-scope`, `autofocus`, `bottom`, `dialog-role`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `status-section`, `status-tip`, `tooltip`, `top`, `visible`, `width`.
+Plus the 31 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `anchor-scope`, `autofocus`, `bottom`, `dialog-role`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `source-loc`, `status-section`, `status-tip`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
 
 ## Events

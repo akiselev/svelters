@@ -56,7 +56,7 @@ pub use journal::{ClockDomain, Cursor, Event, EventKind, FieldType, Journal, Mat
 pub use selector::{Selector, TextMatch};
 pub use session::{
     ActOptions, ActResult, Actionability, At, Budget, Condition, Drag, DragTo, Expect, Grants, NeverId, NodeInfo, Ref,
-    RootInfo, SeenId, Session, Target, Tier, Unmet, WaitReport, WaitState, Wheel,
+    RootInfo, SeenId, Session, SourceInfo, Target, Tier, Unmet, WaitReport, WaitState, Wheel,
 };
 
 use std::sync::atomic::{AtomicBool, Ordering};

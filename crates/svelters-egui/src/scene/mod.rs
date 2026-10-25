@@ -43,6 +43,7 @@ pub(crate) mod query;
 mod tests;
 pub(crate) mod tree;
 pub mod virt;
+pub(crate) mod source;
 
 pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle, SceneMut, SceneRef};
 pub use hit::{Hit, HitCx, PaneHit, Shown};
@@ -52,6 +53,7 @@ pub use dump::{DumpOpts, SceneStats};
 pub use id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Target, Tick, VNodeId};
 pub use keys::{PropKey, PropValue};
 pub use crate::provider::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, IntoStateBits, StateBit, StateBits, Storage};
+pub use source::{SourceLoc, SourceSpot};
 pub use node::{Common, Dirty, Node, NodeFlags, Owner, Visual, W};
 pub use props::{default_value, get_prop, set_prop, tag_of};
 pub use tree::TreeRoot;

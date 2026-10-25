@@ -131,14 +131,26 @@ pub struct Codegen<'a, 's> {
     name: &'s str,
     /// CX3: the component's draft bindings (`Component::drafts`).
     drafts: Vec<(usize, Draft<'a>)>,
+    /// DZ0: in a dev build for a backend with the `source-loc` prop, whether a kind takes it. Its
+    /// elements get `$n.source_loc(node, $$src, offset)` and component calls `$n.region(container,
+    /// $$src, offset)`, so the runtime can tell each native node where in this file it was declared
+    /// and through which component call sites it was rendered.
+    locs: Option<&'s dyn Fn(&str) -> bool>,
+    /// DZ0: some code read `$$src` (the module then declares it).
+    src_used: bool,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
-pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool) -> (String, String) {
+#[allow(clippy::too_many_arguments)]
+pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool, locs: Option<&dyn Fn(&str) -> bool>) -> (String, String) {
     let drafts = comp.drafts.clone();
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, _p: std::marker::PhantomData };
+    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, locs, src_used: false, _p: std::marker::PhantomData };
     g.module(comp, imports, hmr.then_some(filename));
+    if g.src_used {
+        // `var`: hoisted, and assigned before any component function of the module runs
+        g.w.write(&format!("\nvar $$src = {};\n", js_str(filename)));
+    }
     let out = filename.rsplit('/').next().unwrap_or(filename).replace(".svelte", ".js");
     g.w.finish(filename, src, &out)
 }
@@ -148,7 +160,7 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
 /// the template's expressions, so the walk runs, but nothing is written and no source map is built.
 pub fn traverse(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, imports: &crate::target::RuntimeImports) {
     let drafts = comp.drafts.clone();
-    let mut g = Codegen { src, rw, w: Writer::sink(), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, _p: std::marker::PhantomData };
+    let mut g = Codegen { src, rw, w: Writer::sink(), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, locs: None, src_used: false, _p: std::marker::PhantomData };
     g.module(comp, imports, None);
 }
 
@@ -506,6 +518,10 @@ impl Codegen<'_, '_> {
             self.w.write(&format!("const {n} = $n.attached({});", js_str(&e.kind)));
         } else {
             self.w.write(&format!("const {n} = $n.element({});", js_str(&e.kind)));
+        }
+        if self.locs.is_some_and(|has| has(&e.kind)) {
+            self.src_used = true;
+            self.w.write(&format!(" $n.source_loc({n}, $$src, {});", e.span.start));
         }
         if let Some(c) = &e.class_expr {
             self.line();
@@ -1656,6 +1672,10 @@ impl Codegen<'_, '_> {
             match dynamic_get {
                 // re-created when the component function changes (Svelte's `$.component`)
                 Some(get) => self.w.write(&format!("{open}({container}, () => {get}, ")),
+                None if self.locs.is_some() => {
+                    self.src_used = true;
+                    self.w.write(&format!("{}($n.region({container}, $$src, {}), ", c.name, c.span.start))
+                }
                 None => self.w.write(&format!("{}($n.region({container}), ", c.name)),
             }
         }

@@ -275,6 +275,51 @@ impl<'a> SceneRef<'a> {
         Some(best)
     }
 
+    /// DZ0: every node drawn under `pos` in `viewport`, containers included, topmost first and,
+    /// within a layer, innermost first: what a designer's pick cycles through (a click selects the
+    /// first, a modifier click walks out to its boxes). Unlike [`SceneRef::hit_test`] it lists
+    /// container boxes and ignores `HIT_TRANSPARENT` (`pointer-events: none` hides a node from
+    /// input, not from the tool that edits it); freed nodes, hidden roots, other viewports and
+    /// exiting nodes are skipped as there, and a provider still answers for its own rect (a part is
+    /// a `Target::Virtual`, `Hit::Miss` leaves the node out). Each target once. From the last drawn
+    /// pass; O(entries of that viewport), for tools.
+    pub fn hit_stack(self, viewport: egui::ViewportId, pos: egui::Pos2) -> Vec<Target> {
+        let s = self.s;
+        let Some(l) = s.hits.list(viewport) else { return Vec::new() };
+        // a box is recorded before its children, so the reversed list has them first
+        let mut cands: Vec<&Entry> = l.entries.iter().rev().filter(|e| e.rect.contains(pos) && e.clip.contains(pos)).collect();
+        cands.sort_by(|a, b| b.order.cmp(&a.order));
+        let mut out: Vec<(Target, egui::Order)> = Vec::new();
+        for e in cands {
+            let Some(i) = s.idx(e.node) else { continue };
+            if s.core[i].root != e.root || !self.live_in(e.root, viewport) || exiting(s, i) {
+                continue;
+            }
+            let t = if e.container {
+                Target::Node(e.node)
+            } else {
+                match ask_provider(s, i, e, pos) {
+                    Hit::Node => Target::Node(e.node),
+                    Hit::Part(key) => Target::Virtual(VNodeId { host: e.node, key }),
+                    Hit::Miss => continue,
+                }
+            };
+            if !out.iter().any(|(x, _)| *x == t) {
+                out.push((t, e.order));
+            }
+        }
+        // a provider is recorded after the shadow children it draws, so it can come before them:
+        // within a layer, a node goes before the first node already placed that is its ancestor
+        let mut sorted: Vec<(Target, egui::Order)> = Vec::with_capacity(out.len());
+        for (t, o) in out {
+            match sorted.iter().position(|(x, xo)| *xo == o && x.node() != t.node() && is_ancestor(s, x.node(), t.node())) {
+                Some(k) => sorted.insert(k, (t, o)),
+                None => sorted.push((t, o)),
+            }
+        }
+        sorted.into_iter().map(|(t, _)| t).collect()
+    }
+
     /// EV1: where container `node` was drawn last pass in `viewport` (its layout rect on screen),
     /// from the hit list; for overlays (SV7) when the node has no widget rect of its own.
     pub fn box_rect(self, viewport: egui::ViewportId, node: NodeId) -> Option<egui::Rect> {

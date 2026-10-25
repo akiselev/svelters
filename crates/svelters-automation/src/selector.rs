@@ -8,7 +8,9 @@
 //!           | "key=" ITEM                        the keyed each item `ITEM`: key=k42 >> anchor=row
 //!           | "pos=" X "," Y                     hit test in the root viewport (last resort)
 //!           | "nth=" N                           the N-th match so far (0-based, -1: last)
-//!           | "component=" … | "source=" … | "a11y=" …   parsed; answered `capability.absent` (AU3)
+//!           | "source=" FILE ("#" OFFSET)?       DZ0: nodes a dev build declared in FILE (a path or
+//!                                                a suffix of one at a `/`), at that byte offset
+//!           | "component=" … | "a11y=" …          parsed; answered `capability.absent` (AU3)
 //!           | "css=" CSS | CSS                   the svelters-style matcher (the default engine)
 //! attr     := "name" ("=" | "*=") text | STATE   STATE: a state pseudo-class name (`checked`,
 //!                                                `disabled`, `focus`, `selected`, …)
@@ -84,7 +86,9 @@ pub enum Part {
     Pos(egui::Pos2),
     Nth(i64),
     Css(String),
-    /// Engines whose data lands later (`component=`/`source=` in AU3, `a11y=` with AU2's tree).
+    /// DZ0: the nodes declared in `file` (matched as a path suffix at a `/`), at `offset` if given.
+    Source { file: String, offset: Option<u32> },
+    /// Engines whose data lands later (`component=` in AU3, `a11y=` with AU2's tree).
     Deferred(&'static str),
 }
 
@@ -177,11 +181,32 @@ fn part(p: &str) -> Result<Part, Error> {
             Part::Pos(egui::pos2(f(x)?, f(y)?))
         }
         "component" => Part::Deferred("component"),
-        "source" => Part::Deferred("source"),
+        "source" => source(strip_quotes(v))?,
         "a11y" => Part::Deferred("a11y"),
         // `[value=3]` and other CSS that contains `=` reach here only with an engine-like prefix
         _ => return Ok(Part::Css(p.to_string())),
     })
+}
+
+fn source(v: &str) -> Result<Part, Error> {
+    let (file, offset) = match v.rsplit_once('#') {
+        Some((f, o)) => {
+            let o = o.trim().parse().map_err(|_| {
+                Error::new("selector.invalid", format!("source wants FILE#OFFSET (a byte offset): {v}"))
+            })?;
+            (f, Some(o))
+        }
+        None => (v, None),
+    };
+    if file.is_empty() {
+        return Err(Error::new("selector.invalid", "source wants a file"));
+    }
+    Ok(Part::Source { file: file.to_string(), offset })
+}
+
+/// DZ0: `path` is `want` or ends with `/want`.
+pub fn path_matches(path: &str, want: &str) -> bool {
+    path == want || path.strip_suffix(want).is_some_and(|p| p.ends_with('/') || want.starts_with('/'))
 }
 
 fn strip_quotes(v: &str) -> &str {
@@ -276,6 +301,18 @@ mod tests {
             &parse("component=TaskPanel").unwrap().parts[0],
             Part::Deferred("component")
         ));
+        assert!(matches!(
+            &parse("source=panels/Jobs.svelte#120").unwrap().parts[0],
+            Part::Source { file, offset: Some(120) } if file == "panels/Jobs.svelte"
+        ));
+        assert!(matches!(
+            &parse("source=\"Jobs.svelte\"").unwrap().parts[0],
+            Part::Source { file, offset: None } if file == "Jobs.svelte"
+        ));
+        assert!(parse("source=Jobs.svelte#x").is_err());
+        assert!(path_matches("/w/ui/panels/Jobs.svelte", "panels/Jobs.svelte"));
+        assert!(path_matches("/w/ui/panels/Jobs.svelte", "/w/ui/panels/Jobs.svelte"));
+        assert!(!path_matches("/w/ui/panels/Jobs.svelte", "obs.svelte"));
         assert!(parse("text=/x/i").is_err());
         assert!(parse("role=button[name=\"x\"").is_err());
         assert!(TextMatch::Contains("COUNT".into()).matches("Count: 1"));

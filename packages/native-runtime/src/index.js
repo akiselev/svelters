@@ -244,6 +244,7 @@ function nextNative(item) {
 
 function attach(node) {
   const t = target(node.owner);
+  if (alive(node)) sendSourceLoc(node);
   if (t instanceof Root) {
     if (!node.top) throw new Error(`only toplevel kinds may be mounted at the root, got <${node.kind}>`);
     if (alive(node)) showTop(node);
@@ -1348,8 +1349,41 @@ export function append(container, node) {
   attach(node);
 }
 
-export function region(container) {
-  return newRegion(container);
+export function region(container, file, offset) {
+  const r = newRegion(container);
+  // DZ0: a dev build for a backend with `source-loc` passes the component call site
+  if (file !== undefined) r.site = `${file}#${offset}`;
+  return r;
+}
+
+/**
+ * DZ0: where in its `.svelte` file `node` was declared (dev builds for a backend with the
+ * `source-loc` prop; `offset` is the element's byte offset). Sent once, when the node is first
+ * placed: `file#offset`, then the component call sites it renders inside (the `site` of each
+ * component region around it, through native parents), innermost first, U+001F-separated. The
+ * visual designer and the inspector map a node back to its template element with it.
+ */
+export function source_loc(node, file, offset) {
+  node.src = `${file}#${offset}`;
+}
+
+function sendSourceLoc(node) {
+  if (node.src === undefined || node.srcSent) return;
+  node.srcSent = true;
+  let loc = node.src;
+  for (let c = node.owner; c; ) {
+    if (c instanceof Region) {
+      if (c.site) loc += `\u001f${c.site}`;
+      c = c.owner;
+    } else if (c instanceof Slot) {
+      c = c.node.owner;
+    } else break;
+  }
+  try {
+    node.host.setProp(node.h, 'source-loc', loc);
+  } catch {
+    // a kind the spec lists the prop for but its widget refuses: nothing to report
+  }
 }
 
 /** Runs `fn(region, ...args)` in a new branch effect + ownership scope at the end of `parent`. */

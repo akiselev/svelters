@@ -281,6 +281,10 @@ pub enum StyleLowering {
 /// The pre-R2 name of [`PlatformSemantics`].
 pub use self::PlatformSemantics as BackendSemantics;
 
+/// DZ0: the dev-mode prop that carries a native node's template source location (`file#offset`,
+/// then the component call sites around it, U+001F-separated, innermost first).
+pub const SOURCE_LOC: &str = "source-loc";
+
 /// What a template means on one GUI platform (gtk, qt, appkit, winui; dom for conformance), as the
 /// compiler needs it. Generated specs answer it ([`SpecBackend`]); [`Overlay`] overrides parts in Rust.
 /// Object-safe: one `svelters-compile` binary serves every platform from JSON loaded at run time.
@@ -300,6 +304,18 @@ pub trait PlatformSemantics {
     }
 
     fn resolve_element(&self, tag: &str) -> Result<ElementRef, Unresolved>;
+    /// DZ0: whether `el` takes the dev-mode [`SOURCE_LOC`] prop, through which a dev build tells the
+    /// backend where in the `.svelte` source each native node was declared (the visual designer's
+    /// and the inspector's "this node is that template element"). Backends without it get no
+    /// source-location ops at all.
+    fn source_loc(&self, el: &ElementRef) -> bool {
+        self.property(el, SOURCE_LOC).is_ok()
+    }
+    /// DZ0: whether any kind takes [`SOURCE_LOC`]; a dev build for a backend without it emits no
+    /// source-location code (not even the component call sites).
+    fn source_locs(&self) -> bool {
+        false
+    }
     fn lifetime(&self, el: &ElementRef) -> LifetimePlan;
     /// Kind id or (Qt) class name in the element's chain; also accepts native type names.
     fn is_a(&self, el: &ElementRef, kind_or_class: &str) -> bool;
