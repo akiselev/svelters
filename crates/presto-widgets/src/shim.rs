@@ -491,6 +491,10 @@ pub mod core {
         fn peer(&mut self, _cx: &mut EventCx, _msg: &PeerMsg) -> Handled {
             Handled::No
         }
+        /// Stands in for core telling the kind that JS now listens to `signal` (`listened`) or no
+        /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:
+        /// an `icon` or `image` takes clicks only while one of its click signals is listened.
+        fn listen(&mut self, _signal: SignalId, _listened: bool) {}
     }
 
     /// Checks a value against a prop's spec type (what `set_prop` implementations call first).
