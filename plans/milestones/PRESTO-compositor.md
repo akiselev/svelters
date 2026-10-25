@@ -80,6 +80,12 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 - A surface reported `Lost` must be recreated by the UI thread; there is no `ToUi` message to ask for it.
 - Tiles for scroll layers (architecture §7.5: only after a measurement).
 
+## CI
+
+presto run 40228927630 on 9a58f1c4 (Linux, Windows, macOS): every presto-compositor target passes,
+including the GPU-gated headless tests; the run is red only for `presto-core --lib` (lane CORE). The
+five svelters workflows skip presto-only pushes since base cc4f184d.
+
 ## Not run
 
 Run locally once, filtered, to diagnose CI's failures on a9503acb (and passing after the fix):
