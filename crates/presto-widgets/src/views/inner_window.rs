@@ -22,7 +22,7 @@
 
 use super::common::{emit, ms};
 use crate::controls::common::host_view;
-use crate::interact::{FocusReason, StateBits};
+use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
 use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
@@ -484,9 +484,8 @@ impl Kind for InnerWindow {
         }
         let title_right = self.collapse_rect().or(self.close_rect()).map_or(local.max.x, |r| r.min.x + o.x) - 8.0;
         let row = Rect::new(8.0, 0.0, title_right.max(8.0), TITLE_H);
-        let layout = paint::text_layout(pc.text, &bar, &self.props.heading, None);
-        let elided = if layout.size().w > row.width() { paint::elide(pc.text, &bar, &self.props.heading, paint::Elide::End, row.width()) } else { String::new() };
-        let layout = if elided.is_empty() { layout } else { paint::text_layout(pc.text, &bar, &elided, None) };
+        let heading = paint::elide(pc.text, &bar, &self.props.heading, paint::Elide::End, row.width());
+        let layout = paint::text_layout(pc.text, &bar, &heading, None);
         paint::paint_text(&mut pc, &bar, &layout, row, Align::Start);
         if let Some(r) = self.close_rect() {
             let r = r.translate(o);
@@ -518,25 +517,20 @@ impl Kind for InnerWindow {
             }
             // the press ended without a release: as a cancel where the pointer last was
             Event::CaptureLost if self.gesture.is_some() => {
-                let mut pe = PointerEvent {
+                let pe = PointerEvent {
                     phase: PointerPhase::Cancel,
                     pointer: 0,
                     kind: presto_base::event::PointerType::Mouse,
                     button: None,
                     buttons: 0,
                     pos: Point::ZERO,
-                    modifiers: cx.policy_mods(),
+                    modifiers: Default::default(),
                     pressure: 0.0,
                     tilt: Vec2::ZERO,
                     history: Default::default(),
                 };
-                pe.modifiers = Default::default();
                 let p = self.frame.min;
                 self.pointer(cx, &pe, p)
-            }
-            Event::Focus { gained: true, reason: FocusReason::Keyboard } => {
-                emit(cx, &SPEC, "raise", Vec::new());
-                Handled::No
             }
             _ => Handled::No,
         }
@@ -556,7 +550,8 @@ impl Kind for InnerWindow {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::views::legacy::{Os, Policy};
+    use crate::controls::testkit;
+    use crate::interact::{Native, Policy};
     use presto_base::event::{Modifiers, PointerType};
 
     fn pe(phase: PointerPhase) -> PointerEvent {
@@ -575,27 +570,26 @@ mod tests {
     }
 
     fn win() -> InnerWindow {
-        InnerWindow {
-            title: "Layers".into(),
-            frame: Rect::new(100.0, 100.0, 300.0, 250.0),
-            bounds: Rect::new(0.0, 0.0, 800.0, 600.0),
-            ..InnerWindow::default()
-        }
+        let mut w = InnerWindow { frame: Rect::new(100.0, 100.0, 300.0, 250.0), bounds: Rect::new(0.0, 0.0, 800.0, 600.0), ..InnerWindow::default() };
+        w.props.heading = "Layers".into();
+        w.sync_props();
+        w
     }
 
     fn drive(w: &mut InnerWindow, pol: &Policy, now: i64, steps: &[(PointerPhase, f32, f32)]) -> Vec<&'static str> {
         let mut names = Vec::new();
+        let mut st = StateBits::NONE;
         for &(ph, x, y) in steps {
-            let mut cx = EventCx::new(Time(now as u64 * 1_000_000), Size::new(800.0, 600.0), pol);
+            let mut cx = EventCx::new(Time(now as u64 * 1_000_000), Size::new(800.0, 600.0), &mut st, pol);
             w.pointer(&mut cx, &pe(ph), Point::new(x, y));
-            names.extend(cx.emitted.iter().map(|e| e.signal));
+            names.extend(cx.emitted.iter().map(|e| SPEC.signals[e.signal.0 as usize].name));
         }
         names
     }
 
     #[test]
     fn title_bar_drag_waits_for_the_threshold_and_clamps() {
-        let pol = Policy::for_os(Os::Linux); // threshold 8
+        let pol = *Native::Gtk.policy(); // threshold 8, double click 400 ms
         let mut w = win();
         let s = drive(&mut w, &pol, 0, &[(PointerPhase::Down, 150.0, 110.0), (PointerPhase::Move, 155.0, 110.0)]);
         assert_eq!(s, vec!["raise"]);
@@ -615,7 +609,7 @@ mod tests {
 
     #[test]
     fn edges_resize_within_min_size_and_bounds() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = *Native::Gtk.policy();
         let mut w = win();
         // the bottom-right corner
         assert_eq!(w.zone(Point::new(299.0, 249.0)), Some(Zone::Resize(Edges { x: 1, y: 1 })));
@@ -637,12 +631,12 @@ mod tests {
         drive(&mut w, &pol, 0, &[(PointerPhase::Down, 99.0, 180.0), (PointerPhase::Move, 500.0, 180.0)]);
         assert_eq!(w.frame, Rect::new(180.0, 100.0, 300.0, 250.0));
         // a JS geometry write during the drag is stale
-        assert_eq!(w.set_prop("x", &Value::F64(0.0)), Err(PropError::Stale));
+        assert_eq!(w.set_prop(P::x.id(), &Value::F64(0.0)), Err(PropError::Stale));
     }
 
     #[test]
     fn close_collapse_and_double_click() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = *Native::Gtk.policy();
         let mut w = win();
         let close = w.close_rect().unwrap();
         let c = Point::new((close.min.x + close.max.x) / 2.0, (close.min.y + close.max.y) / 2.0);
@@ -656,11 +650,44 @@ mod tests {
         drive(&mut w, &pol, 0, &[(PointerPhase::Down, 150.0, 110.0), (PointerPhase::Up, 150.0, 110.0)]);
         let s = drive(&mut w, &pol, 100, &[(PointerPhase::Down, 150.0, 110.0), (PointerPhase::Up, 150.0, 110.0)]);
         assert_eq!(s, vec!["raise", "toggle"]);
-        assert!(w.collapsed);
+        assert!(w.props.collapsed);
         assert_eq!(w.shown_frame().height(), TITLE_H);
         assert_eq!(w.zone(Point::new(150.0, 200.0)), None, "the body is folded away");
         // the bounds shrink: the frame moves back inside
         w.set_bounds(Rect::new(0.0, 0.0, 250.0, 200.0));
         assert_eq!(w.frame.max.x, 250.0);
+        assert_eq!(w.get_prop(P::x.id()), Some(Value::F64(50.0)), "the props follow the frame");
+    }
+
+    #[test]
+    fn geometry_props_follow_the_frame_both_ways() {
+        let pol = *Native::Gtk.policy();
+        let mut w = win();
+        // a move writes x and y back as native state
+        let mut st = StateBits::NONE;
+        let mut cx = EventCx::new(Time(0), Size::new(800.0, 600.0), &mut st, &pol);
+        w.pointer(&mut cx, &pe(PointerPhase::Down), Point::new(150.0, 110.0));
+        w.pointer(&mut cx, &pe(PointerPhase::Move), Point::new(170.0, 130.0));
+        assert_eq!(cx.changed, vec![P::x.id(), P::y.id()]);
+        assert_eq!((w.props.x, w.props.y), (120.0, 120.0));
+        w.pointer(&mut cx, &pe(PointerPhase::Up), Point::new(170.0, 130.0));
+        // writes from JS move and size the frame, within the minimum and the bounds
+        w.set_prop(P::x.id(), &Value::F64(10.0)).unwrap();
+        assert_eq!(w.frame.min.x, 10.0);
+        w.set_prop(P::width.id(), &Value::F64(50.0)).unwrap();
+        assert_eq!(w.frame.width(), 120.0, "min-width");
+        assert_eq!(w.get_prop(P::width.id()), Some(Value::F64(120.0)));
+        // the common `title` stays the tooltip; the bar shows `heading`
+        assert_eq!(SPEC.prop("title"), None);
+    }
+
+    #[test]
+    fn records_surface_bar_and_buttons() {
+        let w = win();
+        let (list, res) = testkit::record(&w, w.shown_frame().size(), StateBits::NONE);
+        // window-shadow and surface, the hairline, the heading, the × (button box is clear at rest),
+        // the collapse bar
+        assert_eq!(testkit::kinds(&list), ["shadow", "quad", "line", "glyphs", "line", "line", "line"]);
+        assert_eq!(res.runs.len(), 1);
     }
 }

@@ -376,15 +376,10 @@ impl ToastHost {
         for id in expired {
             self.close(cx, id, CloseReason::Timeout);
         }
-        let max = self.max_visible();
-        let mut visible = self.list.iter().filter(|t| t.shown).count();
-        for t in self.list.iter_mut().filter(|t| !t.shown) {
-            if visible >= max {
-                break;
-            }
+        let free = self.max_visible().saturating_sub(self.list.iter().filter(|t| t.shown).count());
+        for t in self.list.iter_mut().filter(|t| !t.shown).take(free) {
             t.shown = true;
             t.running_since = if t.hovered { None } else { Some(now) };
-            visible += 1;
             cx.repaint = true;
         }
         if let Some(d) = self.list.iter().filter_map(Toast::deadline).min() {
