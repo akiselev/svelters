@@ -39,6 +39,22 @@ brief's signatures until the wave-1 skeletons are merged into `ci/presto-base`.
 | WAYLAND (b3) | `ci/presto-wayland` | `session_01JDnE12Ws2QHwSfPYzesDaR` |
 | MACOS (b3) | `ci/presto-macos` | `session_01TjQo3Ks6gxG7GdDLdgUZ86` |
 
+## Later lanes
+
+| Lane | Branch | Session | Note |
+|---|---|---|---|
+| SVELTERS-PRESTO (2) | `ci/presto-svelters-presto` | `session_012kp44HgxNR751yz6GvNAH5` | continues the first session's hand-off (port to the real Document) |
+| CORE-2 | `ci/presto-core-2` | `session_01QDYxkmxLL2rFtDDfSbu4ow` | style table, DESC_NONPASSIVE, CORE's not-done list (CORE's a07c3189 wins on overlap) |
+| BERTH | berth `claude/presto-berth` | `session_01FfrTeoE8knLYGyFeFf9Ss3` | presto_berth |
+| QUIRE | quire `claude/presto-quire` | `session_01VFabqgKPiq5AmCkua2ntGG` | presto_quire |
+| CORE-3 | `ci/presto-core-3` | `session_012X4RdtAUrgfNuRfD1Vh4ge` | WIDGETS-BASIC core requests (a)–(j) plus the shared drag/anchor members |
+
+Merged into `ci/presto-base` so far: platform skeleton, frame-anim, compositor skeleton, core (full batch-1 scope and
+the request work a07c3189), text, render (full API, then GPU references 90959a28), the widgets substrate (WIDGETS-BASIC d46dcd96),
+CORE-2 (8d45666c), FRAME-ANIM test fixes (1ea8983c), platform try_create_window (5aab7622), CI fixes 14981893 and 2a12e530.
+Done lanes: CORE, CORE-2, PLATFORM, RENDER, RUNTIME (4c65de8d, all five svelters workflows green; merged at consolidation).
+Decisions: SVELTERS-PRESTO Q1–Q4 and CORE Q1–Q3 as in their records (coordinator, 2026-10-25).
+
 ## Waves 2 and 3 (original plan)
 
 `plans/cloud/presto-b2/` (wave 2: widgets, svelters-presto, the app runner and test harness, the egui island,
