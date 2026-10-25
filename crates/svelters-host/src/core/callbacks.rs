@@ -32,6 +32,12 @@ pub(crate) trait CallbackEngine {
     fn invoke(&self, id: u64, sig: svl_id, args: &[Value]) -> Result<Value, JsError>;
     /// Drops the stored function. Runs no JS.
     fn drop_function(&self, id: u64);
+    /// W-J1: handle `h` was destroyed or died: the engine stops holding its node wrapper. Runs no
+    /// JS and frees nothing (it may come from a backend callback); see `free_released`.
+    fn handle_gone(&self, _h: svl_handle) {}
+    /// Frees what `handle_gone` released. Called outside JS entries (`process_releases`) or from
+    /// a host op.
+    fn free_released(&self) {}
 }
 
 struct Slot {

@@ -37,12 +37,19 @@ fn dispatch_now_without_a_listener_fails() {
 }
 
 #[test]
-fn queued_events_go_before_a_dispatch_now() {
-    // An `event` step posts and checkpoints; two posts with no checkpoint between them would be
-    // delivered by the next `now` first, in order. Here the first click is already delivered.
+fn jobs_an_earlier_event_left_run_in_the_dispatch_now_drain() {
+    // Scripted: the `event` step's checkpoint only delivers it, so its microtask is still queued
+    // when the `now` step comes; dispatch_now's drain runs it after the second handler.
     let (cfg, opts) = fixture_config();
     let steps = parse_script(r#"[{"checkpoint":true},{"event":[2,"clicked",[]]},{"now":[2,"clicked",[]]}]"#).unwrap();
     let r = run_bundle(&js("dispatch_now.js"), steps, cfg, opts).unwrap();
     assert!(r.errors.is_empty(), "{:?}", r.errors);
-    assert!(r.oplog.ends_with("now #2 clicked []\nset #3 label \"clicked 2\"\nset #3 label \"flushed 2\"\nresult #2 ok\n"), "{}", r.oplog);
+    assert!(
+        r.oplog.ends_with(
+            "event #2 clicked []\nset #3 label \"clicked 1\"\nnow #2 clicked []\nset #3 label \"clicked 2\"\n\
+             set #3 label \"flushed 1\"\nset #3 label \"flushed 2\"\nresult #2 ok\n"
+        ),
+        "{}",
+        r.oplog
+    );
 }

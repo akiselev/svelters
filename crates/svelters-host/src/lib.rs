@@ -559,6 +559,11 @@ impl<'a> Host<'a> {
         self.engine.borrow_mut().collect_garbage();
     }
 
+    /// W-J1: `host.wrap` node wrappers alive on this thread (not yet finalized by the GC).
+    pub fn live_node_wrappers(&self) -> usize {
+        quickjs::live_node_wrappers()
+    }
+
     /// Number of callbacks that are still registered.
     pub fn live_callbacks(&self) -> usize {
         self.core.live_callbacks()

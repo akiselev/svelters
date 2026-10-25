@@ -66,6 +66,16 @@ impl Core {
         self.backend.caps() & SVL_CAP_UTF16_IN != 0
     }
 
+    /// Whether the backend takes strings as UTF-16 (engines then use the converter for them).
+    pub(crate) fn utf16_in(&self) -> bool {
+        self.utf16()
+    }
+
+    /// ABI v2.9 `SVL_CAP_DEDUPE`: the backend drops unchanged scalar writes itself.
+    pub(crate) fn dedupes(&self) -> bool {
+        self.backend.caps() & SVL_CAP_DEDUPE != 0
+    }
+
     pub(super) fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> Result<svl_id, String> {
         if let Some(id) = self
             .st
@@ -241,7 +251,7 @@ impl Core {
         })
     }
 
-    fn create_kind(&self, kid: svl_id) -> Result<svl_handle, OpError> {
+    pub(super) fn create_kind(&self, kid: svl_id) -> Result<svl_handle, OpError> {
         let h = self.backend.create(kid).map_err(|e| self.backend_err(e))?;
         if h >= MAX_HANDLE {
             self.backend.destroy(h);
@@ -367,30 +377,46 @@ impl Core {
                 return Ok(());
             }
             self.tree_ops_allowed()?;
-            // Idempotent: destroying a dead handle (already destroyed, or died natively) is a no-op.
-            if self.live_kind(h)?.is_none() {
-                return Ok(());
+            if self.forget_handle(h)? {
+                self.backend.destroy(h);
             }
-            // A queued event still carries `h` (its JS wrapper was collected meanwhile): the event
-            // makes a new wrapper, whose collection destroys the handle later.
-            if self.pinned(h) {
-                return Ok(());
-            }
-            {
-                let mut st = self.st.borrow_mut();
-                st.handles.remove(&h);
-                st.toplevels.remove(&h);
-                st.tree.remove(&h);
-                // The backend drops its native observations of `h` in `destroy`.
-                st.observed.retain(|k, _| k.0 != h);
-                st.dirty.retain(|k| k.0 != h);
-                st.dead.push(h, Death::Destroyed);
-            }
-            self.cb_release_owner(h);
-            self.links_gone(h); // CX3
-            self.backend.destroy(h);
             Ok(())
         })
+    }
+
+    /// The bookkeeping of destroying `h`: true when the backend must destroy it now, false when it
+    /// is already dead (destroying is idempotent) or pinned.
+    pub(super) fn forget_handle(&self, h: svl_handle) -> Result<bool, OpError> {
+        if self.live_kind(h)?.is_none() {
+            return Ok(false);
+        }
+        // A queued event still carries `h` (its JS wrapper was collected meanwhile): the event
+        // makes a new wrapper, whose collection destroys the handle later.
+        if self.pinned(h) {
+            return Ok(false);
+        }
+        {
+            let mut st = self.st.borrow_mut();
+            st.handles.remove(&h);
+            st.toplevels.remove(&h);
+            st.tree.remove(&h);
+            // The backend drops its native observations of `h` in `destroy`.
+            st.observed.retain(|k, _| k.0 != h);
+            st.dirty.retain(|k| k.0 != h);
+            st.dead.push(h, Death::Destroyed);
+        }
+        self.cb_release_owner(h);
+        self.links_gone(h); // CX3
+        self.engine_handle_gone(h);
+        Ok(true)
+    }
+
+    /// W-J1: the engine drops its wrapper of `h` (freed at the next `process_releases`).
+    pub(super) fn engine_handle_gone(&self, h: svl_handle) {
+        let eng = self.cb_engine.borrow().clone();
+        if let Some(e) = eng {
+            e.handle_gone(h);
+        }
     }
 
     // ---- values ----
@@ -801,6 +827,10 @@ impl Core {
             self.release_boxed(h);
         }
         self.cb_process_frees();
+        let eng = self.cb_engine.borrow().clone();
+        if let Some(e) = eng {
+            e.free_released();
+        }
     }
 
     pub(crate) fn live_boxed(&self) -> usize {

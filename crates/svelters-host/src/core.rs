@@ -34,6 +34,7 @@ use svelters_abi::{
 mod apps;
 mod asyncs;
 mod callbacks;
+mod fast;
 mod links;
 mod offload;
 mod ops;
@@ -43,6 +44,7 @@ pub use offload::OffloadStats;
 pub use reactive::ReactiveStats;
 pub(crate) use callbacks::{CallbackEngine, CallbackRegistry, CbTable};
 pub(crate) use ops::{Name, OpError, OpKind};
+pub(crate) use fast::{Instance, Scalar, TplNodeIn};
 
 #[derive(Clone, Debug)]
 pub struct HostConfig {
@@ -406,6 +408,8 @@ pub(crate) struct Core {
     wake_state: Arc<crate::sched::HostWake>,
     /// SCHED1: this host's key for `Clock::wake_at`.
     wake_key: u64,
+    /// W-C2: the registered templates (`host.template`).
+    templates: fast::Templates,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy. The third field is the spawner this
@@ -466,6 +470,7 @@ impl Core {
             waker,
             wake_state,
             wake_key: svelters_sched::wake_key(),
+            templates: fast::Templates::default(),
         }
     }
 
@@ -948,6 +953,7 @@ impl Core {
         }
         // Only marks the owner's callbacks dead; their JS functions are dropped at the next checkpoint.
         self.cb_release_owner(h);
+        self.engine_handle_gone(h);
     }
 
     /// Asks the backend to quit once, when the last toplevel is gone.

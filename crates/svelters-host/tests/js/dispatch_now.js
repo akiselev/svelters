@@ -9,6 +9,7 @@ let clicks = 0;
 globalThis.__svelters_dispatch = (_h, signal) => {
   if (signal !== 'clicked') return;
   clicks++;
-  h.setProp(lbl, 'label', `clicked ${clicks}`);
-  Promise.resolve().then(() => h.setProp(lbl, 'label', `flushed ${clicks}`));
+  const n = clicks;
+  h.setProp(lbl, 'label', `clicked ${n}`);
+  Promise.resolve().then(() => h.setProp(lbl, 'label', `flushed ${n}`));
 };
