@@ -155,3 +155,4 @@ when the five svelters workflows plus `presto` are green.
 - MOTION-CSS done ff5f7417: Easing::Svelte(SvelteEasing) in presto-base, presto-anim eval, exact compositor easings. Not mentioned: replacing presto-motion shim::css with presto_anim::css (consolidation 2).
 - EGUI-ISLAND ac6d7385 (6c97eabe green on all six workflows): physical_key mapping (Ctrl+C on Cyrillic layouts), device_reset with a CPU texture mirror and a GPU test. start_drag adoption requested.
 - MOTION-CSS final 1a016796 (shim::css replaced by presto_anim::css; presto-motion has no shims left). CANVAS ae46a5b1 (base merged). Backend resize hooks (begin/end_os_layer_resize) requested from WAYLAND, MACOS and WIN32.
+- EGUI-ISLAND final 1b3ca477 (islands start presto drags via Document::start_drag). WAYLAND 3c81128a (resize hooks). APP-TEST 790d8837 (menu hook, single selection, caret blink); one more push requested.
