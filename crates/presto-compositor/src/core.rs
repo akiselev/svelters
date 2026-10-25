@@ -8,6 +8,7 @@ use crate::damage::{self, Pending, Snapshots};
 use crate::seams::{Action, FramePacer, PacerFactory, Signal};
 use presto_anim::scroll::{DurationBehavior, Fling, ScrollAnimation, SmoothScroll};
 use crate::tree::{self, FlatItem, SurfaceKey, WindowTree};
+use crate::caret::CaretBlink;
 use crate::vsync::VsyncLink;
 use presto_platform::OsLayerCommitter;
 use presto_base::anim::{
@@ -65,6 +66,7 @@ pub enum Msg {
     Resize { window: WindowId, size: DeviceSize, scale: Scale, seq: u64 },
     SetVisible { window: WindowId, visible: bool },
     SetRefresh { window: WindowId, interval: Span },
+    SetCaretBlink { window: WindowId, blink: Option<CaretBlink> },
     RegisterTexture { id: TextureId, texture: wgpu::Texture },
     UnregisterTexture(TextureId),
     /// The UI thread's scene is dirty (`true`) or it has nothing more to commit (`false`).
@@ -94,8 +96,8 @@ pub struct EngineConfig {
     pub refresh: Span,
     pub clear: Option<Color>,
     pub caret_color: Color,
-    /// Half period of the caret blink; `None` = a steady caret.
-    pub caret_blink: Option<Span>,
+    /// The caret blink of new windows; `None` = a steady caret.
+    pub caret_blink: Option<CaretBlink>,
     /// Display pixels per inch, for fling physics.
     pub ppi: f32,
 }
@@ -113,6 +115,9 @@ struct Anim {
 struct Caret {
     rect: Option<Rect>,
     revision: presto_base::ids::Revision,
+    blink: Option<CaretBlink>,
+    /// The last caret change (the blink restarts there).
+    since: Time,
     on: bool,
     next_toggle: Option<Time>,
 }
@@ -223,7 +228,14 @@ impl Engine {
             anims: Vec::new(),
             motions: HashMap::new(),
             animating: false,
-            caret: Caret { rect: None, revision: Default::default(), on: true, next_toggle: None },
+            caret: Caret {
+                rect: None,
+                revision: Default::default(),
+                blink: self.cfg.caret_blink,
+                since: Time::ZERO,
+                on: true,
+                next_toggle: None,
+            },
             vsync_on: false,
             source: None,
             feedback: false,
@@ -301,6 +313,18 @@ impl Engine {
                         }
                     }
                     self.signal(window, now, Signal::Visible(visible), gpu);
+                }
+            }
+            Msg::SetCaretBlink { window, blink } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    let c = &mut w.caret;
+                    c.blink = blink;
+                    c.since = now;
+                    c.next_toggle = c.rect.and(blink).and_then(|b| b.next_change(now, now));
+                    if !c.on {
+                        c.on = true;
+                        self.signal(window, now, Signal::CompositorDamage, gpu);
+                    }
                 }
             }
             Msg::SetRefresh { window, interval } => {
@@ -418,7 +442,6 @@ impl Engine {
             | FastCommit::CanvasView { window, .. }
             | FastCommit::Caret { window, .. } => window,
         };
-        let blink = self.cfg.caret_blink;
         let Some(w) = self.windows.get_mut(&window) else { return };
         match f {
             FastCommit::Caret { rect, revision, .. } => {
@@ -429,7 +452,8 @@ impl Engine {
                 w.caret.revision = revision;
                 w.caret.rect = rect;
                 w.caret.on = true;
-                w.caret.next_toggle = rect.and(blink).map(|b| now + b);
+                w.caret.since = now;
+                w.caret.next_toggle = rect.and(w.caret.blink).and_then(|b| b.next_change(now, now));
             }
             FastCommit::ScrollOffset { node, input_seq, .. } => {
                 // A user scroll takes over from a running fling on the same container.
@@ -825,9 +849,10 @@ impl Engine {
         let ids: Vec<WindowId> = self.windows.keys().copied().collect();
         for id in ids {
             let Some(w) = self.windows.get_mut(&id) else { continue };
-            if let Some(t) = w.caret.next_toggle.filter(|t| *t <= now) {
-                w.caret.on = !w.caret.on;
-                w.caret.next_toggle = self.cfg.caret_blink.map(|b| next_after(t, b, now));
+            if w.caret.next_toggle.is_some_and(|t| t <= now) {
+                let c = &mut w.caret;
+                c.on = c.blink.is_none_or(|b| b.visible(now - c.since));
+                c.next_toggle = c.blink.and_then(|b| b.next_change(c.since, now));
                 self.signal(id, now, Signal::CompositorDamage, gpu);
             }
             let Some(w) = self.windows.get_mut(&id) else { continue };
@@ -1022,9 +1047,3 @@ fn latest_tick(t: Time, interval: Span, now: Time) -> Time {
     Time(t.0 + (now.0 - t.0) / i * i)
 }
 
-/// The first `t + k·period` after `now` (k ≥ 1).
-fn next_after(t: Time, period: Span, now: Time) -> Time {
-    let p = period.0.max(1) as u64;
-    let k = if now.0 >= t.0 { (now.0 - t.0) / p + 1 } else { 1 };
-    Time(t.0 + k * p)
-}

@@ -10,11 +10,13 @@
 //! |---|---|
 //! | [`tree`] | a window's committed state: commits and fast commits applied, flattening per surface |
 //! | [`damage`] | damage by diffing flattened frames, device rects, buffer-age history |
+//! | [`caret`] | the caret blink rule and its per-OS defaults |
 //! | [`core`] | the engine: messages, frame clocks, animations, scroll motions, caret, drawing |
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
 //! | [`vsync`] | a thread per platform frame source, posting ticks, occlusion and feedback |
 //! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces (real crates behind traits) |
 
+pub mod caret;
 pub mod core;
 pub mod damage;
 pub mod gpu;
@@ -22,6 +24,7 @@ pub mod seams;
 pub mod tree;
 pub mod vsync;
 
+pub use crate::caret::CaretBlink;
 pub use crate::core::Stats;
 pub use crate::gpu::GpuContext;
 pub use presto_base::commit::ToUi;
@@ -61,8 +64,9 @@ pub struct CompositorConfig {
     /// Clear colour of damaged areas; `None` = draw over the previous frame.
     pub clear: Option<Color>,
     pub caret_color: Color,
-    /// Half period of the caret blink (the OS setting); `None` = a steady caret.
-    pub caret_blink: Option<Span>,
+    /// The caret blink of new windows (the OS setting; [`CaretBlink::platform_default`]); `None` = a
+    /// steady caret. Per window: [`CompositorHandle::set_caret_blink`].
+    pub caret_blink: Option<CaretBlink>,
     /// Swapchain images assumed per surface for buffer-age-correct damage copies.
     pub swap_images: usize,
 }
@@ -79,7 +83,7 @@ impl CompositorConfig {
             power: wgpu::PowerPreference::HighPerformance,
             clear: Some(Color::TRANSPARENT),
             caret_color: Color::BLACK,
-            caret_blink: None,
+            caret_blink: Some(CaretBlink::platform_default()),
             // Mesa's Wayland WSI uses up to 4 images even at latency 1 (`round2/wgpu-integration.md` §3.1).
             swap_images: 4,
         }
@@ -232,6 +236,11 @@ impl CompositorHandle {
 
     pub fn set_visible(&self, window: WindowId, visible: bool) {
         self.post(Msg::SetVisible { window, visible });
+    }
+
+    /// The window's caret blink (the user's OS setting); `None` = a steady caret.
+    pub fn set_caret_blink(&self, window: WindowId, blink: Option<CaretBlink>) {
+        self.post(Msg::SetCaretBlink { window, blink });
     }
 
     /// The display refresh interval of the window's monitor.

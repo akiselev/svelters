@@ -585,3 +585,43 @@ fn occlusion_stops_drawing_and_is_reported() {
     assert_eq!(occl, vec![true, false]);
     link.gate.close();
 }
+
+#[test]
+fn caret_blinks_and_every_caret_commit_restarts_it() {
+    let (mut e, _) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
+    let blink = presto_compositor::CaretBlink { cycle: std::time::Duration::from_millis(1000), timeout: None };
+    e.handle(Msg::SetCaretBlink { window: W, blink: Some(blink) }, t0, &mut gpu);
+    let caret = |rev: u64| {
+        Msg::Fast(FastCommit::Caret { window: W, rect: Some(Rect::new(50.0, 50.0, 51.0, 66.0)), revision: Revision(rev) })
+    };
+    let at = t0 + Span::from_millis(2);
+    e.handle(caret(2), at, &mut gpu);
+    // The blink toggles at 500 ms; a caret move at 400 ms restarts the cycle.
+    let mut t = at;
+    while t < at + Span::from_millis(400) {
+        t = step(&mut e, &mut gpu).unwrap();
+    }
+    let moved = t;
+    e.handle(caret(3), moved, &mut gpu);
+    let mut toggles = Vec::new();
+    let mut drawn = gpu.draws.len();
+    for _ in 0..400 {
+        let Some(t) = step(&mut e, &mut gpu) else { break };
+        if gpu.draws.len() > drawn {
+            toggles.push(t);
+            drawn = gpu.draws.len();
+        }
+        if toggles.len() >= 3 {
+            break;
+        }
+    }
+    // The caret move's own frame, then off at +500 ms and on at +1000 ms (each drawn on the next tick).
+    let off = toggles.iter().find(|t| **t >= moved + Span::from_millis(500)).copied().expect("a blink-off frame");
+    assert!(off - moved < Span::from_millis(500) + Span(INTERVAL.0 * 2), "off at {:?}", off - moved);
+    assert!(off - moved >= Span::from_millis(500));
+}
