@@ -393,7 +393,7 @@ fn type_text_focuses_through_accesskit_then_commits_text() {
     assert_eq!(h.get_by_label("Name").value().as_deref(), Some("skelter"));
     h.key_press(Key::Backspace);
     h.run();
-    assert_eq!(h.get_by_role(Role::TextInput).value().as_deref(), Some("prest"));
+    assert_eq!(h.get_by_role(Role::TextInput).value().as_deref(), Some("skelte"));
 }
 
 #[test]
