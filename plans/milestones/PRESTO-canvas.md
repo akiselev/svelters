@@ -150,7 +150,7 @@ Branch `ci/presto-canvas` from `ci/presto-base` (6f66dcdb). Brief: `plans/cloud/
 - `Cargo.toml`: the workspace member and dependency `presto-canvas`.
 - No change to `presto-base`.
 
-## Questions for the coordinator (each with a recommendation; work continued meanwhile)
+## Questions for the coordinator (decided by the coordinator, 2026-10-25: Q1 as recommended; Q2: CADATOMIC adds the gates to cadatomic's REVISIT.md; Q3: a follow-up)
 
 1. **Camera precision.** The `f64` camera is a compositor property (`set_canvas_camera`), not a
    `FastCommit`. `FastCommit::CanvasView`'s `f32` affine cannot hold nm-precision pans far from the
