@@ -1,14 +1,9 @@
-//! The compositor's seams to the crates other lanes write: the renderer (`presto-render`), the frame
-//! clock (`presto-frame`) and animation sampling (`presto-anim`).
-//!
-//! Each seam is a trait with the signature the batch brief gives the real crate, so the compositor
-//! compiles and is testable before those crates exist; when they land, their types implement these
-//! traits (or replace them) without changing the compositor's logic. [`Signal`] and [`Action`] mirror
-//! `presto_frame::{Signal, Action}`; [`Sample`] mirrors `presto_anim::Sample`.
+//! The compositor's seams: the renderer (`presto_render::Renderer` behind a trait, so tests can record
+//! or replace it) and the frame clock (`presto_frame::FrameClock` behind a trait, so tests can
+//! script one).
 
-use presto_base::anim::{AnimValue, FlingCurve, Generator, TransformFn};
-use presto_base::geom::{Affine, DeviceSize, Vec2};
-use presto_base::ids::{FrameId, Revision, TextureId};
+use presto_base::geom::DeviceSize;
+use presto_base::ids::{ImageId, PathId, TextureId};
 use presto_base::scene::FrameScene;
 use presto_base::text::GlyphRasterizer;
 use presto_base::time::{Span, Time};
@@ -28,8 +23,45 @@ pub trait SceneRenderer: Send {
         target: &wgpu::TextureView,
         scene: &FrameScene<'_>,
     );
-    /// Atlas LRU generation, instance-ring advance.
+    /// Once per submitted frame, after `queue.submit`: atlas LRU generation, staging-belt recall.
     fn end_frame(&mut self);
+    /// Drops the cached atlas tiles of an image a commit removed.
+    fn forget_image(&mut self, id: ImageId);
+    /// Drops the cached tessellation of a path a commit removed.
+    fn forget_path(&mut self, id: PathId);
+}
+
+impl SceneRenderer for presto_render::Renderer {
+    fn register_texture(&mut self, id: TextureId, view: wgpu::TextureView, size: DeviceSize) {
+        presto_render::Renderer::register_texture(self, id, view, size)
+    }
+    fn unregister_texture(&mut self, id: TextureId) {
+        presto_render::Renderer::unregister_texture(self, id)
+    }
+    fn render(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        encoder: &mut wgpu::CommandEncoder,
+        target: &wgpu::TextureView,
+        scene: &FrameScene<'_>,
+    ) {
+        presto_render::Renderer::render(self, device, queue, encoder, target, scene);
+    }
+    fn end_frame(&mut self) {
+        presto_render::Renderer::end_frame(self)
+    }
+    fn forget_image(&mut self, id: ImageId) {
+        presto_render::Renderer::forget_image(self, id)
+    }
+    fn forget_path(&mut self, id: PathId) {
+        presto_render::Renderer::forget_path(self, id)
+    }
+}
+
+/// The default renderer factory: [`presto_render::Renderer`].
+pub fn presto_renderer() -> RendererFactory {
+    Box::new(|device, queue, format, glyphs| Box::new(presto_render::Renderer::new(device, queue, format, glyphs)))
 }
 
 /// Builds the renderer on the compositor thread, at startup and again after device loss.
@@ -38,66 +70,34 @@ pub type RendererFactory = Box<
         + Send,
 >;
 
-/// An input to a window's frame clock (`presto_frame::Signal`).
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum Signal {
-    Vsync { target: Time, interval: Span },
-    CommitArrived { revision: Revision, frame: Option<FrameId> },
-    /// The UI thread has dirty state and wants a `BeginFrame` (not in the brief's list; requested from
-    /// presto-frame).
-    NeedsUiFrame,
-    CompositorDamage,
-    AnimationsActive(bool),
-    Presented { frame: FrameId, at: Time, estimated: bool },
-    Visible(bool),
-    HighRateInput,
-    Timer,
-    GpuDone { frame: FrameId, at: Time },
-    UiCost { frame: FrameId, cost: Span },
-    /// A `Draw` found no damage and presented nothing: the frame is not in flight.
-    DidNotDraw { frame: FrameId },
-}
+pub use presto_frame::{Action, Signal};
 
-/// A decision of a window's frame clock (`presto_frame::Action`).
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum Action {
-    SubscribeVsync(bool),
-    BeginUiFrame { frame: FrameId, target: Time, start_at: Time, deadline: Time },
-    Draw { frame: FrameId, target: Time },
-    SetTimer(Time),
-}
-
-/// One window's frame clock (`presto_frame::FrameClock`): a pure state machine fed signals with the
-/// time they happened at.
+/// One window's frame clock: [`presto_frame::FrameClock`], or a scripted one in tests.
 pub trait FramePacer: Send {
     fn on_signal(&mut self, now: Time, sig: Signal) -> SmallVec<[Action; 4]>;
     fn next_wakeup(&self) -> Option<Time>;
+    /// The snapshot the UI thread reads for urgent frames; `None` for a clock that has none.
+    fn frame_args(&self) -> Option<presto_frame::FrameArgs> {
+        None
+    }
+}
+
+impl FramePacer for presto_frame::FrameClock {
+    fn on_signal(&mut self, now: Time, sig: Signal) -> SmallVec<[Action; 4]> {
+        presto_frame::FrameClock::on_signal(self, now, sig)
+    }
+    fn next_wakeup(&self) -> Option<Time> {
+        presto_frame::FrameClock::next_wakeup(self)
+    }
+    fn frame_args(&self) -> Option<presto_frame::FrameArgs> {
+        Some(presto_frame::FrameClock::frame_args(self))
+    }
 }
 
 /// Builds a window's frame clock for a display refresh interval.
 pub type PacerFactory = Box<dyn Fn(Span) -> Box<dyn FramePacer> + Send>;
 
-/// One sample of an animation at a time (`presto_anim::Sample`).
-#[derive(Clone, Debug, PartialEq)]
-pub struct Sample {
-    pub value: AnimValue,
-    pub done: bool,
-    /// Rate of change of the animated value per second, along its primary axis (springs retarget with it).
-    pub velocity: f32,
+/// The default: a [`presto_frame::FrameClock`] with the default latch for `interval`.
+pub fn frame_clock(interval: Span) -> Box<dyn FramePacer> {
+    Box::new(presto_frame::FrameClock::new(presto_frame::ClockConfig { interval, ..Default::default() }))
 }
-
-/// Animation math (`presto_anim::{sample, interp::compose}`).
-pub trait AnimSampler: Send + Sync {
-    fn sample(&self, generator: &Generator, start: Time, now: Time) -> Sample;
-    fn compose(&self, fns: &[TransformFn]) -> Affine;
-}
-
-/// A compositor-owned scroll motion (fling, smooth scroll): absolute offsets at absolute times
-/// (`presto_anim::scroll::ScrollAnimation`).
-pub trait ScrollMotion: Send {
-    fn offset_at(&self, t: Time) -> Vec2;
-    fn done_at(&self, t: Time) -> bool;
-}
-
-/// Starts a fling: `curve`, initial `velocity` (points per second), from `offset` at `start`.
-pub type FlingFactory = Box<dyn Fn(FlingCurve, Vec2, Vec2, Time) -> Box<dyn ScrollMotion> + Send>;

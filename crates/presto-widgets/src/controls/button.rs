@@ -6,6 +6,10 @@
 //! ring is the outline), `:default`, `:disabled`. Where no rule sets a property the UA table [`UA`]
 //! does, from the built-in VS Code theme's tokens. Signals: `clicked`, `double-clicked`,
 //! `secondary-clicked`, `press`, `release`.
+//!
+//! `default` and `cancel` (EV3): Enter in the button's focus scope activates the scope's default
+//! button, Escape its cancel button. Finding the scope's button is presto-core's focus manager's; it
+//! activates the button with an AccessKit `Click`, which the button takes as a click (`clicked`).
 
 use crate::controls::common::{self, Units};
 use crate::interact::{Focusable, Hoverable, Intents, Press, PressParams, Pressable, Sense, StateBits, Unit};
@@ -79,6 +83,10 @@ kind_props! {
     /// Held down, it activates again and again (`clicked` after 300 ms, then every 100 ms).
     repeat "repeat": bool = Bool(false) ; Bool, Property;
     disabled "disabled": bool = Bool(false) ; Bool, Paint;
+    /// The default button of its focus scope: Enter there activates it, and it shows `:default`.
+    default "default": bool = Bool(false) ; Bool, Paint;
+    /// The cancel button of its focus scope: Escape there activates it.
+    cancel "cancel": bool = Bool(false) ; Bool, Property;
 }
 
 /// The signals, in spec order.
@@ -193,6 +201,7 @@ impl Button {
     fn mirror(&self, state: &mut StateBits) {
         state.set(StateBits::SELECTED, self.props.selected);
         state.set(StateBits::DISABLED, self.props.disabled);
+        state.set(StateBits::DEFAULT, self.props.default);
     }
 }
 
@@ -403,6 +412,19 @@ mod tests {
         assert_eq!(d.take(), ["press", "clicked"]);
         d.advance(110);
         d.send(Event::Timer);
+        assert_eq!(d.take(), ["clicked"]);
+    }
+
+    #[test]
+    fn default_and_cancel() {
+        let s = Button::spec();
+        assert!(s.prop("default").is_some() && s.prop("cancel").is_some());
+        let mut d = Driver::new(Button::default(), Size::new(60.0, 26.0));
+        d.set("default", Value::Bool(true));
+        d.hover(true);
+        assert!(d.state.contains(StateBits::DEFAULT), "`:default`");
+        // the scope's Enter reaches the default button as an AccessKit click, focused or not
+        d.a11y_action(accesskit::Action::Click);
         assert_eq!(d.take(), ["clicked"]);
     }
 

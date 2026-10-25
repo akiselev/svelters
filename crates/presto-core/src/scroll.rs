@@ -25,7 +25,12 @@ impl Document {
     pub(crate) fn scroll_content(&self, i: usize) -> Size {
         let r = &self.layout[i].layout.scrollable_overflow_rect;
         let v = self.scroll_viewport(i).unwrap_or(Size::ZERO);
-        Size::new(r.right.max(v.w), r.bottom.max(v.h))
+        // a virtualising node scrolls over its model's extent, not its realised rows'
+        let (w, h) = match self.slots.id_at(i).and_then(|n| self.virtual_extent(n)) {
+            Some(e) => (e.x.max(r.right), e.y.max(r.bottom)),
+            None => (r.right, r.bottom),
+        };
+        Size::new(w.max(v.w), h.max(v.h))
     }
 
     /// `v` clamped to node `i`'s scroll range, on the axes it scrolls.

@@ -11,8 +11,10 @@
 //! - unsubscribe from vsync after one tick with nothing to do; the first frame after idle, after
 //!   becoming visible and after an output change is drawn at once;
 //! - under VRR, keep presenting for a second after high-rate input (GPUI `InputRateTracker`);
-//! - pipelined UI when its cost does not fit one interval, back after 10 frames that fit with 1.5×
-//!   headroom (Swappy); a forced full redraw after 3 failed draws (Chromium).
+//! - the UI starts for the earliest target it can still make, which pipelines it (its start falls
+//!   in the previous interval) when its cost does not fit one; the pipelined state is reported
+//!   with hysteresis (10 frames that fit with 1.5× headroom, Swappy); a forced full redraw after
+//!   3 failed draws (Chromium).
 
 use presto_base::ids::{FrameId, Revision};
 use presto_base::smallvec::SmallVec;
@@ -55,7 +57,8 @@ impl Default for ClockConfig {
     }
 }
 
-/// What happens to a window, converted to presto time at the platform boundary.
+/// What happens to a window, converted to presto time at the platform boundary. Signals from the
+/// UI thread must arrive in the order the UI sent them (one channel).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Signal {
     /// The display's pacing callback: the next latchable vblank is `target`.
@@ -82,6 +85,12 @@ pub enum Signal {
     UiInputCost { frame: FrameId, cost: Span },
     /// The UI's scene is dirty (a level: `false` once it has nothing more to commit).
     NeedsUiFrame(bool),
+    /// Discrete input dirtied the scene and waits for the next UI frame, which then starts with
+    /// the input-frame estimate.
+    UrgentInput,
+    /// The swapchain has `frame`'s buffer back (acquire succeeded, the waitable signalled): the
+    /// frame is no longer in flight even if its feedback never comes.
+    BufferAvailable { frame: FrameId },
     /// The UI answered `BeginUiFrame` without a commit (nothing changed).
     UiFrameSkipped { frame: FrameId },
     /// The compositor submitted and presented `frame` (end of its CPU work).
@@ -203,10 +212,13 @@ pub struct FrameClock {
     tick: Option<Tick>,
     ui: UiSide,
     ui_wanted: bool,
+    ui_input: bool,
     needs_draw: bool,
     animating: bool,
     in_flight: Option<InFlight>,
     last_released: Option<InFlight>,
+    /// Frames released by buffer availability whose feedback has not arrived yet (newest last).
+    awaiting_feedback: SmallVec<[InFlight; 2]>,
     next_frame: u64,
     last_drawn_target: Option<Time>,
     last_present: Option<Time>,
@@ -235,10 +247,12 @@ impl FrameClock {
             tick: None,
             ui: UiSide::Idle,
             ui_wanted: false,
+            ui_input: false,
             needs_draw: false,
             animating: false,
             in_flight: None,
             last_released: None,
+            awaiting_feedback: SmallVec::new(),
             next_frame: 1,
             last_drawn_target: None,
             last_present: None,
@@ -279,7 +293,13 @@ impl FrameClock {
                     self.ensure_subscribed(&mut out);
                 }
             }
-            Signal::Timer => {}
+            Signal::Timer => {
+                if let Some(armed) = self.armed
+                    && armed <= now
+                {
+                    self.est.wake_error.record(now - armed, self.interval);
+                }
+            }
             Signal::GpuDone { frame, at } => {
                 if let Some(f) = self.find_frame(frame) {
                     let from = f.submitted.unwrap_or(f.draw_at);
@@ -299,6 +319,16 @@ impl FrameClock {
                 self.ui_wanted = on;
                 if on {
                     self.on_ui_wanted(now, &mut out);
+                }
+            }
+            Signal::UrgentInput => self.ui_input = true,
+            Signal::BufferAvailable { frame } => {
+                if let Some(f) = self.in_flight.filter(|f| f.frame == frame) {
+                    if self.awaiting_feedback.len() == 4 {
+                        self.awaiting_feedback.remove(0);
+                    }
+                    self.awaiting_feedback.push(f);
+                    self.release(now, frame, &mut out);
                 }
             }
             Signal::UiFrameSkipped { frame } => {
@@ -345,7 +375,15 @@ impl FrameClock {
     pub fn frame_args(&self) -> FrameArgs {
         let sched = match self.tick {
             Some(t) if !t.drew => t.sched,
-            _ => self.est.schedule(self.predict_target(self.last_vsync.unwrap_or(Time::ZERO)), self.cfg.latch),
+            _ => {
+                // the first vblank after the last one drawn (or announced)
+                let base = self.last_vsync.unwrap_or(Time::ZERO);
+                let next = match self.last_drawn_target {
+                    Some(d) if d >= base => d + self.interval,
+                    _ => base,
+                };
+                self.est.schedule(next, self.cfg.latch)
+            }
         };
         FrameArgs {
             next_target: sched.target,
@@ -445,13 +483,13 @@ impl FrameClock {
     /// still ahead of `now`-ish callers; under VRR the earliest the panel accepts.
     fn predict_target(&self, now: Time) -> Time {
         if let Some(min) = self.vrr_min {
-            let ready = now + self.cfg.latch + self.est.margin.value + self.est.est_comp();
+            let ready = now + self.cfg.latch + self.est.margin() + self.est.est_comp();
             return match self.last_present {
                 Some(p) => ready.max(p + min),
                 None => ready,
             };
         }
-        let lead = self.cfg.latch + self.est.margin.value + self.est.est_comp();
+        let lead = self.cfg.latch + self.est.margin() + self.est.est_comp();
         match self.last_vsync {
             Some(v) => {
                 let earliest = now + lead;
@@ -486,7 +524,7 @@ impl FrameClock {
     fn send_begin(&mut self, frame: FrameId, sched: Schedule, now: Time, out: &mut Actions) {
         self.ui = UiSide::Sent { frame, target: sched.target };
         self.stats.ui_frames += 1;
-        out.push(Action::BeginUiFrame { frame, target: sched.target, start_at: now.max(sched.s_ui), deadline: sched.d_ui });
+        out.push(Action::BeginUiFrame { frame, target: sched.target, start_at: now, deadline: sched.d_ui });
     }
 
     fn on_vsync(&mut self, now: Time, target: Time, interval: Span, out: &mut Actions) {
@@ -501,6 +539,8 @@ impl FrameClock {
             self.plan_ui(now, out);
             if self.has_work() || self.ready_for(target) {
                 self.attempt_draw(now, out);
+            } else if self.ui == UiSide::Idle && !self.ui_wanted {
+                self.unsubscribe(out);
             }
             return;
         }
@@ -517,7 +557,14 @@ impl FrameClock {
         if k > 0 {
             self.stats.late_ticks += 1;
         }
-        if self.tick.is_some_and(|c| c.sched.target == t) {
+        if let Some(c) = self.tick
+            && c.sched.target == t
+        {
+            // A tick the urgent or predicted path opened for this target: plan it if it is open.
+            if !c.drew && self.deadline_at.is_none() {
+                self.plan_ui(now, out);
+                self.plan_deadline(now, out);
+            }
             return;
         }
         if self.last_drawn_target.is_some_and(|d| d >= t) {
@@ -555,15 +602,15 @@ impl FrameClock {
             return;
         }
         let Some(tick) = self.tick else { return };
+        // The earliest target the UI can still make; when its cost does not fit one interval this
+        // is a later vblank whose start falls in this interval (pipelined).
         let mut target = tick.sched.target;
-        if self.pipelined {
-            target = target + self.interval;
-        }
-        let mut sched = self.est.schedule(target, self.cfg.latch);
+        let est_ui = self.next_ui_cost();
+        let mut sched = self.est.schedule_with(target, self.cfg.latch, est_ui);
         let mut k = 0;
-        while sched.d_ui < now + self.est.est_ui() && k < 2 {
+        while sched.d_ui < now + est_ui && k < 2 {
             target = target + self.interval;
-            sched = self.est.schedule(target, self.cfg.latch);
+            sched = self.est.schedule_with(target, self.cfg.latch, est_ui);
             k += 1;
         }
         let frame = self.alloc_frame();
@@ -572,6 +619,11 @@ impl FrameClock {
         } else {
             self.ui = UiSide::Pending { frame, sched, start_at: sched.s_ui };
         }
+    }
+
+    /// The estimate for the next UI frame: the input-frame one when it carries discrete input.
+    fn next_ui_cost(&self) -> Span {
+        if self.ui_input { self.est.est_ui().max(self.est.est_ui_input()) } else { self.est.est_ui() }
     }
 
     fn has_work(&self) -> bool {
@@ -624,8 +676,19 @@ impl FrameClock {
 
     fn attempt_draw(&mut self, now: Time, out: &mut Actions) {
         let Some(mut tick) = self.tick else { return };
+        if tick.drew {
+            return;
+        }
+        // Past this target's deadline by more than the margin (a late commit, a throttled draw
+        // released late): draw for the next vblank it can still make, so animations sample the
+        // time it shows. Lateness within the margin (timer slack) keeps the target.
+        if now > tick.sched.d_comp + self.est.margin() && !self.cfg.blocked {
+            let t = self.predict_target(now);
+            tick.sched = self.est.schedule(t, self.cfg.latch);
+            self.stats.late_ticks += 1;
+        }
         let target = tick.sched.target;
-        if tick.drew || self.last_drawn_target.is_some_and(|d| d >= target) {
+        if self.last_drawn_target.is_some_and(|d| d >= target) {
             return;
         }
         let ready = self.ready_for(target);
@@ -660,7 +723,7 @@ impl FrameClock {
             target,
             draw_at: now,
             submitted: None,
-            latch_used: self.cfg.latch + self.est.margin.value,
+            latch_used: self.cfg.latch + self.est.margin(),
             timeout_at: target + Span(interval.0 * FEEDBACK_TIMEOUT_INTERVALS),
         });
         tick.drew = true;
@@ -686,7 +749,12 @@ impl FrameClock {
 
     /// No tick in progress and nothing presented for two intervals: the urgent path (Mutter
     /// `should_update_now`): draw at once for the next latchable target.
+    /// Also true with no tick open at all (unsubscribed, after an output change): the next
+    /// latchable target is predicted from the vsync grid.
     fn idle_for_long(&self, now: Time) -> bool {
+        if self.tick.is_none() {
+            return true;
+        }
         self.tick.is_none_or(|t| t.drew)
             && self.in_flight.is_none()
             && self.last_present.is_none_or(|p| now - p >= Span(self.interval.0 * 2))
@@ -707,6 +775,7 @@ impl FrameClock {
         };
         self.ui = UiSide::Ready { revision, target };
         self.ui_wanted = false;
+        self.ui_input = false;
         if !self.visible {
             return;
         }
@@ -774,25 +843,50 @@ impl FrameClock {
         }
         if self.idle_for_long(now) && !self.cfg.blocked {
             // First frame after idle: start the UI at once for the next latchable target.
-            let target = self.predict_target(now + self.est.est_ui());
-            let sched = self.est.schedule(target, self.cfg.latch);
+            let est_ui = self.next_ui_cost();
+            let target = self.predict_target(now + est_ui);
+            let sched = self.est.schedule_with(target, self.cfg.latch, est_ui);
             let frame = self.alloc_frame();
             self.send_begin(frame, sched, now, out);
             return;
         }
-        if self.tick.is_some_and(|t| !t.drew) {
-            self.plan_ui(now, out);
+        match self.tick {
+            Some(t) if !t.drew => self.plan_ui(now, out),
+            Some(_) => self.plan_ui_after_draw(now, out),
+            None => {}
+        }
+    }
+
+    /// The frame is no longer in flight (feedback, buffer availability, timeout).
+    fn release(&mut self, now: Time, frame: FrameId, out: &mut Actions) {
+        let Some(f) = self.in_flight.filter(|f| f.frame == frame) else { return };
+        self.in_flight = None;
+        self.last_released = Some(f);
+        self.failed_draws = 0;
+        // A draw throttled earlier in this tick, or a tick reopened by an early present, may still
+        // make its vblank.
+        if let Some(t) = self.tick
+            && !t.drew
+            && self.deadline_at.is_none()
+            && (self.has_work() || self.ready_for(t.sched.target))
+        {
+            self.plan_deadline(now, out);
         }
     }
 
     fn on_presented(&mut self, now: Time, frame: FrameId, at: Option<Time>, estimated: bool, out: &mut Actions) {
-        let Some(f) = self.in_flight.filter(|f| f.frame == frame) else {
-            self.stats.stale_feedback += 1;
-            return;
+        // Feedback for the frame in flight, or late feedback for one already released by buffer
+        // availability (still worth learning from).
+        let f = match self.in_flight {
+            Some(f) if f.frame == frame => f,
+            _ => match self.awaiting_feedback.iter().position(|f| f.frame == frame) {
+                Some(i) => self.awaiting_feedback.remove(i),
+                None => {
+                    self.stats.stale_feedback += 1;
+                    return;
+                }
+            },
         };
-        self.in_flight = None;
-        self.last_released = Some(f);
-        self.failed_draws = 0;
         if let Some(at) = at {
             let missed = at > f.target + Span(self.interval.0 / 2);
             if missed {
@@ -804,15 +898,26 @@ impl FrameClock {
                 self.est.margin.update(slack, missed, self.interval);
             }
             self.last_present = Some(self.last_present.map_or(at, |p| p.max(at)));
+            // Shown before its target (a conservative prediction): the vblanks up to the target
+            // are free again.
+            if at < f.target && self.last_drawn_target == Some(f.target) {
+                self.last_drawn_target = Some(at);
+                if let Some(t) = self.tick.as_mut()
+                    && t.drew
+                    && t.sched.target == f.target
+                {
+                    t.drew = false;
+                }
+            }
         }
-        // A draw throttled earlier in this tick may still make its deadline.
-        if let Some(t) = self.tick
+        if self.in_flight.is_some_and(|f| f.frame == frame) {
+            self.release(now, frame, out);
+        } else if let Some(t) = self.tick
             && !t.drew
-            && now <= t.sched.d_comp
+            && self.deadline_at.is_none()
             && (self.has_work() || self.ready_for(t.sched.target))
-            && self.mode != DeadlineMode::Regular
         {
-            self.attempt_draw(now, out);
+            self.plan_deadline(now, out);
         }
     }
 
