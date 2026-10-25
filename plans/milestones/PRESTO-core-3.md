@@ -187,6 +187,22 @@ core's (the shim's `PeerMsg::Checked(args)` → `PeerMsg::Notify(Some(Value::Lis
 `prop_state` with the widget's bit mask in `prop_states`; `focus_anchor`; `scale` into the shim contexts;
 `Document::set_auto_default(policy.auto_default)` where the policy is installed.
 
+## Absolute boxes (CADATOMIC's blocking bug, coordinator 2026-10-25)
+
+Taffy locates an absolute box relative to its containing block: the nearest **positioned** ancestor
+(`relative` *or* `absolute`), else the window root. `layout::positional_parent` only accepted `relative`
+ancestors, so a box inside an absolute box was placed in the window root's space: nested absolute
+boxes did not accumulate (berth's dock at the window origin). Fixed there (`position != Static`), which
+the dirty walk (transform nodes) and the rebuild walk (world rects, hit list) both use; CSS `position:
+static` now maps to taffy's `Static` (it was `Relative`). Clips: an absolute box now takes its containing
+block's child clip, in the dirty walk (clip node parent) and the rebuild walk (hit clip), so an
+`overflow` clip between the box and its containing block no longer clips it (CSS), which is the likely
+cause of berth's empty tab labels; effects and layers still follow the tree. Tests:
+`src/tests/absolute.rs` (nested absolute in absolute, absolute under a static box at an offset, under a
+relative box, the paint transform node, a clip between box and containing block, a clipping containing
+block); `cargo test -p presto-core --lib`: 126 passed. Note for the style track: svelters-style has no
+`overflow` shorthand, so `overflow: hidden` sets nothing; `overflow-x`/`overflow-y` work.
+
 ## Fixed on the way
 
 - The rebuild walk placed a `position: absolute` box under its tree parent's world transform, while

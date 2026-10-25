@@ -158,3 +158,32 @@ when the five svelters workflows plus `presto` are green.
 - EGUI-ISLAND final 1b3ca477 (islands start presto drags via Document::start_drag). WAYLAND 3c81128a (resize hooks). APP-TEST 790d8837 (menu hook, single selection, caret blink); one more push requested.
 - COMPILER b625d66b: W-C1/C2/C4/C5/C9 landed behind capabilities (no backend advertises any). Decided: Q1 egui flips templates first at consolidation 2, then ids; Q5 COMPILER's capabilities shape plus MOTION-CSS's constants. COMPILER owns the pnpm setp fix and Q2–Q4 (LISTEN_PASSIVE strip in on/off, an adopt entry, specHash() to JS) as cross-lane edits. WIN32 8968799f (resize hooks).
 - SVELTERS-PRESTO 7bdbda9c: OP_ANIMATE native plans on the compositor via new Document::start_animation/cancel_animation, SVL_STYLE_SHEET_BIN via new Document::add_parsed_sheet/preload_utilities (cross-lane additive in presto-core; consolidation 2 reviews their shape). Rule hints wait on COMPILER's template-node map.
+- Consolidation 1 resumed: integration f5a6f3c9. It had fixed setp itself in 07e50c77 (one setp; ids() via setp_id), so COMPILER now merges integration and settles F15 instead of re-fixing. F14 (Windows path test) is fixed in tier1 0876a38f; F16 (appkit vis1 embed.js) and F17 (winui bootstrap dll) to recheck.
+- Integration e5f2ef3a: the round for CADATOMIC (IslandHost, menu API, TEXT-INPUT, TIER1 ce2f4ecc, CANVAS 838cb29b, SVELTERS-PRESTO 7bdbda9c, MOTION-CSS 1a016796, WAYLAND 3c81128a, APP-TEST 790d8837). Locally presto-core 120, presto-widgets 505, harness 22, motion 18 all pass; CI pending.
+- APP-TEST closing 7bd9ee8f: native menu bar end to end (Kind::as_any in core; Kind::methods/call in the widgets shim and host; Document::call menu-activated), set_refresh from the monitor, ppi 96×scale (72×scale on macOS), headless SetMenuBar. Q12 (menu model from child elements) to WIDGETS-VIEWS. Q13 (Monitor::ppi, window→monitor query, MonitorChanged event in presto-platform) to consolidation 2.
+- COMPILER c488d386: RUNTIME and MOTION-CSS merged; one setp (RUNTIME's index.js fast path, codegen emits it only for eligible scalar props), replacing consolidation's setp_id; LISTEN_PASSIVE kept out of hkey; adopt(); spec_hash registered by svelters-egui. Native-runtime tests 157/157. WIDGETS-VIEWS bbe7ea5a: menus from element children (Kind::folds_elements); host.rs fix (Hosted::prepare now calls the widget's prepare, so views lay out in real documents).
+- CADATOMIC ea2194b: panes as islands in presto_berth's DockView (CADATOMIC_PRESTO_PANES=1); the Start pane seen live as an island in berth's native dock. Blocking presto-core bug sent to CORE-3: nested absolute boxes don't accumulate world positions; berth tab labels empty (maybe clip).
+- CORE-3 8ca53bee merged: nested absolute boxes accumulate (taffy's containing-block rule), absolute boxes take their containing block's clip, CSS static maps to taffy Static; presto-core --lib 126/126. Finding: svelters-style has no `overflow` shorthand, so `overflow: hidden` (and WIDGETS-VIEWS' base.css scroll-area overflow, if it uses the shorthand) is a no-op (consolidation 2).
+- CADATOMIC: lock on integration 0890801c; REVISIT [local] gates committed (a0fb8da); CORE-3 8ca53bee verified (presto_shell 3/3, dock placed correctly live). CADATOMIC fixes the empty presto_berth tab title on berth's branch, then does the palette modal.
+- WAYLAND done 3c81128a: all six workflows green (presto 40239616922, js 40239616939, gtk 40239616899, qt 40239616920, appkit 40239616889, winui 40239616903). The head contains base, the backend and CANVAS ae46a5b1. Its questions 2–8 go to consolidation 2.
+- WIDGETS-TIER1 final ce2f4ecc: presto green on all three OSes (40239360492), js/gtk/qt/winui green; macos-appkit 40239360509 red in step 'appkit -> counter-mac backend', the second time (also FRAME-ANIM on a9503acb), while WAYLAND 3c81128a (which contains base) was green there. Intermittent; consolidation 1 checks the log and records it as a flake candidate with its cause.
+- CADATOMIC 738f931: empty tab title fixed (the document had no presto_core::TextShaper; host::DocShaper adapter); native palette
+  modal landed (presto_shell 4/4). Bug sent to COMPOSITOR: with a text-edit node in the window, the live window draws
+  black except the caret (suspect caret-only damage against buffer age). TEXT adds impl presto_core::TextShaper for
+  TextSystem.
+- Naming: "presto" is taken on crates.io. The user proposed **skelter** (svelters-skelter); skelter and skelter-{core,base,
+  render,widgets,platform,text,compositor,test} are free on crates.io, and skelter on npm. The rename is planned for
+  consolidation 2, once, before the master merge, pending the user's confirmation.
+- CADATOMIC native Svelte edge panel blocked (cadatomic 1e8fa22): (1) PrestoBackend must take the host's Document (sent to
+  SVELTERS-PRESTO as PrestoBackend::over), (2) two svelters in the graph until cadatomic's svelters pin moves to the presto
+  line on master, (3) presto Kinds for cadatomic's Rust kinds and behaviours (conversion batch 1), (4) no pnpm install in
+  lane containers (environment note for the next batch). CADATOMIC next: the Rust edge panel and ribbon as islands in
+  native panels, then the record.
+- Conversion estimate given to the user: about 4 batches after tonight (shell + Svelte + kinds; panels 1 + canvases +
+  viewport + tours; panels 2 + 45 kittest files; egui removal).
+- **Decided (user, 2026-10-25): presto is renamed skelter**: crates skelter-*, the facade `skelter`, svelters-presto →
+  svelters-skelter. Done once in consolidation 2, before the master merge. All the names are free on crates.io.
+- **Decided (user, 2026-10-25): after this batch, a batch for the full cadatomic port** (the egui → skelter conversion).
+- CI triage on integration 2f22c1e9/0890801c: the qt and winui workflows passed. js failed on a stale @svelters/style golden (diagnostics now
+  list presto); consolidation 1 regenerates it. presto failed only in presto-test: automation (presto.yml lacked the JS install,
+  fixed 67df412a) and island_render an_island_pass_reaches_the_pixels (real; sent to TEST-V2). gtk and appkit still running.
