@@ -354,6 +354,15 @@ mod tests {
     }
 
     #[test]
+    fn alt_keys_are_key_events_on_every_level() {
+        // Lone-Alt menu activation needs Alt's own press and release as keys, whatever the level.
+        assert_eq!(logical_key(ks::Alt_L, 56), Some(Key::AltLeft));
+        assert_eq!(logical_key(ks::Meta_L, 56), Some(Key::AltLeft)); // Shift+Alt on most layouts
+        assert_eq!(logical_key(ks::Alt_R, 100), Some(Key::AltRight));
+        assert_eq!(logical_key(ks::ISO_Level3_Shift, 100), Some(Key::AltRight)); // AltGr layouts
+    }
+
+    #[test]
     fn physical_codes_are_hid_usages() {
         assert_eq!(physical_code(30), 0x0007_0004); // KEY_A
         assert_eq!(physical_code(1), 0x0007_0029); // KEY_ESC
