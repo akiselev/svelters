@@ -1,5 +1,7 @@
-//! Intents to edits: one attribute or declaration at a time, written in the file's own style.
+//! Intents to edits: one attribute or declaration at a time (v1), or one structural change
+//! (DZR2, `structure.rs`), written in the file's own style.
 
+use super::structure::{self, Target};
 use super::{apply, Design, DesignAttr, DesignNode, DesignRule, Editability, Refusal, RefusalKind as K, Why};
 use crate::diag::TextEdit;
 
@@ -24,6 +26,24 @@ pub enum Intent {
     SetDecl { rule: u32, property: String, value: String },
     /// Removes every declaration of the property from a rule.
     ClearDecl { rule: u32, property: String },
+    /// Inserts `markup` (exactly one element or component, parsed to check) as child `index` of
+    /// `parent` (`None`: the file's top level), with its siblings' layout.
+    Insert { parent: Option<u32>, index: u32, markup: String },
+    /// Deletes a node (with its whole line when it is alone on it).
+    Remove { node: u32 },
+    /// Moves a node to child `index` of `parent` (`None`: top level); `index` counts the new
+    /// parent's children without the moved node.
+    Move { node: u32, parent: Option<u32>, index: u32 },
+    /// Wraps the contiguous siblings from `first` to `last` (node offsets, same parent and branch;
+    /// `first == last` for one) in `<tag attrs…>`…`</tag>`, indenting them one step.
+    Wrap { first: u32, last: u32, tag: String, attrs: Vec<(String, Literal)> },
+    /// Replaces an element with its children, dedenting them one step.
+    Unwrap { node: u32 },
+    /// Adds a class to a node's static `class` attribute, or adds `class="…"`.
+    AddClass { node: u32, class: String },
+    /// Appends the rule `selector { decls }` to the `<style>`, adding a `<style>` block at the end
+    /// of the file when there is none.
+    AddRule { selector: String, decls: Vec<(String, String)> },
 }
 
 /// What an intent changes.
@@ -33,7 +53,10 @@ pub struct Plan {
     pub edits: Vec<TextEdit>,
     /// The file after the edits.
     pub text: String,
-    /// Where the target (node or rule) starts in the new file.
+    /// Where the target (node or rule) starts in the new file. v1 intents and `AddClass`: the
+    /// node or rule edited. `Insert`: the new node. `Move`: the moved node. `Wrap`: the wrapper.
+    /// `Unwrap`: the first unwrapped child. `Remove`: the removed node's parent (0 at the top
+    /// level). `AddRule`: the new rule's selector.
     pub target: u32,
 }
 
@@ -57,20 +80,20 @@ pub(super) fn plan(d: &Design, intent: &Intent) -> Result<Plan, Refusal> {
         Intent::SetAttr { node, name, value } => {
             let n = editable_node(d, *node)?;
             check_name(name)?;
-            (set_attr(src, n, name, value)?, *node)
+            (set_attr(src, n, name, value)?, Target::Old(*node))
         }
         Intent::ClearAttr { node, name } => {
             let n = editable_node(d, *node)?;
             let a = find_attr(n, name).ok_or_else(|| missing_attr(n, name))?;
             editable_attr(a)?;
             let from = prev_end(n, a);
-            (vec![TextEdit { start: from, end: a.end, text: String::new() }], *node)
+            (vec![TextEdit { start: from, end: a.end, text: String::new() }], Target::Old(*node))
         }
         Intent::SetDecl { rule, property, value } => {
             let r = editable_rule(d, *rule)?;
             check_property(property)?;
             check_decl_value(value)?;
-            (set_decl(src, r, property, value), *rule)
+            (set_decl(src, r, property, value), Target::Old(*rule))
         }
         Intent::ClearDecl { rule, property } => {
             let r = editable_rule(d, *rule)?;
@@ -92,18 +115,106 @@ pub(super) fn plan(d: &Design, intent: &Intent) -> Result<Plan, Refusal> {
                     TextEdit { start: from as u32, end: end as u32, text: String::new() }
                 })
                 .collect();
-            (edits, *rule)
+            (edits, Target::Old(*rule))
+        }
+        other => structure::plan(d, other)?,
+    };
+    let mut edits: Vec<TextEdit> = edits.into_iter().filter(|e| src[e.start as usize..e.end as usize] != e.text).collect();
+    edits.sort_by_key(|e| (e.start, e.end));
+    if edits.windows(2).any(|w| w[1].start < w[0].end) {
+        return Err(Refusal::new(K::Reparse, "the planned edits overlap", None));
+    }
+    let text = apply(src, &edits);
+    let target = match target {
+        Target::Old(o) => rebase(o, &edits).ok_or_else(|| Refusal::new(K::Reparse, "the edit replaced its own target", None))?,
+        Target::Zero => 0,
+        Target::New { at, k } => {
+            // where the edit inserting at `at` lands, plus `k` into its text
+            let j = edits.iter().position(|e| e.start == at && !e.text.is_empty()).ok_or_else(|| Refusal::new(K::Reparse, "the target's edit is gone", None))?;
+            let shift: i64 = edits[..j].iter().map(|e| e.text.len() as i64 - (e.end - e.start) as i64).sum();
+            (at as i64 + shift) as u32 + k
         }
     };
-    let edits: Vec<TextEdit> = edits.into_iter().filter(|e| src[e.start as usize..e.end as usize] != e.text).collect();
-    let text = apply(src, &edits);
-    let target = rebase(target, &edits).ok_or_else(|| Refusal::new(K::Reparse, "the edit replaced its own target", None))?;
-    verify(&text, intent, target)?;
+    verify(d, &text, intent, target)?;
     Ok(Plan { edits, text, target })
 }
 
+pub(super) fn plan_all(d: &Design, intents: &[Intent]) -> Result<Plan, Refusal> {
+    let src = d.source();
+    let mut text = src.to_string();
+    let mut composed: Vec<TextEdit> = Vec::new();
+    let mut mapped = true;
+    let mut target = 0;
+    for (k, intent) in intents.iter().enumerate() {
+        let p = if k == 0 { d.plan(intent)? } else { Design::parse(&text)?.plan(intent)? };
+        if mapped {
+            match compose(&composed, &p.edits) {
+                Some(c) => composed = c,
+                None => mapped = false,
+            }
+        }
+        text = p.text;
+        target = p.target;
+    }
+    if !mapped || apply(src, &composed) != text {
+        composed = diff_edit(src, &text);
+    }
+    Ok(Plan { edits: composed, text, target })
+}
+
+/// `later` (in the offsets of the text `first` produced) moved back into the original text's
+/// offsets and merged with `first`; `None` when a later edit touches text an earlier one wrote.
+fn compose(first: &[TextEdit], later: &[TextEdit]) -> Option<Vec<TextEdit>> {
+    // each earlier edit's written range in the intermediate text, and its length change
+    let mut written = Vec::with_capacity(first.len());
+    let mut shift: i64 = 0;
+    for e in first {
+        let ns = e.start as i64 + shift;
+        let delta = e.text.len() as i64 - (e.end - e.start) as i64;
+        written.push((ns, ns + e.text.len() as i64, delta));
+        shift += delta;
+    }
+    // an intermediate offset outside every written range, in the original text
+    let back = |o: i64| o - written.iter().filter(|w| w.1 <= o).map(|w| w.2).sum::<i64>();
+    let mut out = first.to_vec();
+    for x in later {
+        let (s, e) = (x.start as i64, x.end as i64);
+        if written.iter().any(|&(ns, ne, _)| s <= ne && e >= ns) {
+            return None;
+        }
+        let (s, e) = (back(s), back(e));
+        if s < 0 || e < s {
+            return None;
+        }
+        out.push(TextEdit { start: s as u32, end: e as u32, text: x.text.clone() });
+    }
+    out.sort_by_key(|e| (e.start, e.end));
+    if out.windows(2).any(|w| w[1].start < w[0].end) {
+        return None;
+    }
+    Some(out)
+}
+
+/// One edit from the common prefix to the common suffix of `old` and `new`.
+fn diff_edit(old: &str, new: &str) -> Vec<TextEdit> {
+    if old == new {
+        return Vec::new();
+    }
+    let (a, b) = (old.as_bytes(), new.as_bytes());
+    let mut p = a.iter().zip(b).take_while(|(x, y)| x == y).count();
+    while !old.is_char_boundary(p) || !new.is_char_boundary(p) {
+        p -= 1;
+    }
+    let max = a.len().min(b.len()) - p;
+    let mut q = a.iter().rev().zip(b.iter().rev()).take(max).take_while(|(x, y)| x == y).count();
+    while !old.is_char_boundary(a.len() - q) || !new.is_char_boundary(b.len() - q) {
+        q -= 1;
+    }
+    vec![TextEdit { start: p as u32, end: (a.len() - q) as u32, text: new[p..b.len() - q].to_string() }]
+}
+
 /// Parses the result and checks the target is still there and says what the intent asked.
-fn verify(text: &str, intent: &Intent, target: u32) -> Result<(), Refusal> {
+fn verify(old: &Design, text: &str, intent: &Intent, target: u32) -> Result<(), Refusal> {
     let reparse = |m: String| Refusal::new(K::Reparse, m, None);
     let d = Design::parse(text).map_err(|r| reparse(format!("the edited file does not parse: {}", r.message)))?;
     match intent {
@@ -129,6 +240,7 @@ fn verify(text: &str, intent: &Intent, target: u32) -> Result<(), Refusal> {
             let r = d.rule_at(target).ok_or_else(|| reparse("the rule moved".into()))?;
             if r.decls.iter().any(|x| x.property == *property) { Err(reparse(format!("`{property}` is still there"))) } else { Ok(()) }
         }
+        other => structure::verify(old, &d, other, target),
     }
 }
 
@@ -139,7 +251,7 @@ fn same(a: &Literal, b: &Literal) -> bool {
     }
 }
 
-fn editable_node<'d>(d: &'d Design, offset: u32) -> Result<&'d DesignNode, Refusal> {
+pub(super) fn editable_node<'d>(d: &'d Design, offset: u32) -> Result<&'d DesignNode, Refusal> {
     let n = d.node_at(offset).ok_or_else(|| Refusal::new(K::NoNode, format!("no node starts at offset {offset}"), None))?;
     if !matches!(n.kind, super::NodeKind::Element | super::NodeKind::Component) || n.name_end.is_none() {
         return Err(Refusal::new(K::NotEditable(n.why.unwrap_or(Why::Special)), format!("`{}` has no attributes to edit", n.name), Some((n.start, n.end))));
@@ -156,7 +268,7 @@ fn editable_node<'d>(d: &'d Design, offset: u32) -> Result<&'d DesignNode, Refus
     Ok(n)
 }
 
-fn editable_attr(a: &DesignAttr) -> Result<(), Refusal> {
+pub(super) fn editable_attr(a: &DesignAttr) -> Result<(), Refusal> {
     match a.why {
         None => Ok(()),
         Some(why) => {
@@ -182,7 +294,7 @@ fn editable_rule<'d>(d: &'d Design, offset: u32) -> Result<&'d DesignRule, Refus
     }
 }
 
-fn find_attr<'n>(n: &'n DesignNode, name: &str) -> Option<&'n DesignAttr> {
+pub(super) fn find_attr<'n>(n: &'n DesignNode, name: &str) -> Option<&'n DesignAttr> {
     n.attrs.iter().find(|a| a.name == name)
 }
 
@@ -195,7 +307,7 @@ fn prev_end(n: &DesignNode, a: &DesignAttr) -> u32 {
     n.attrs.iter().filter(|x| x.end <= a.start).map(|x| x.end).max().unwrap_or(n.name_end.unwrap_or(a.start))
 }
 
-fn check_name(name: &str) -> Result<(), Refusal> {
+pub(super) fn check_name(name: &str) -> Result<(), Refusal> {
     let body = name.strip_prefix("style:").unwrap_or(name);
     let ok = !body.is_empty()
         && body.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '-' || c == '_')
@@ -203,12 +315,12 @@ fn check_name(name: &str) -> Result<(), Refusal> {
     if ok && !name.contains("::") { Ok(()) } else { Err(Refusal::new(K::BadValue, format!("`{name}` is not an attribute name the designer writes"), None)) }
 }
 
-fn check_property(p: &str) -> Result<(), Refusal> {
+pub(super) fn check_property(p: &str) -> Result<(), Refusal> {
     let ok = !p.is_empty() && p.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_') && !p.starts_with(|c: char| c.is_ascii_digit());
     if ok { Ok(()) } else { Err(Refusal::new(K::BadValue, format!("`{p}` is not a property name"), None)) }
 }
 
-fn check_decl_value(v: &str) -> Result<(), Refusal> {
+pub(super) fn check_decl_value(v: &str) -> Result<(), Refusal> {
     if v.trim().is_empty() || v.contains([';', '{', '}']) || v.contains("/*") || v.contains('\n') {
         Err(Refusal::new(K::BadValue, format!("`{v}` can't be written as one declaration value"), None))
     } else {
@@ -225,7 +337,7 @@ fn num(n: f64) -> Result<String, Refusal> {
 }
 
 /// The value as source: `"text"` (with `quote`), `{12}`, `{true}`.
-fn render(value: &Literal, quote: char) -> Result<String, Refusal> {
+pub(super) fn render(value: &Literal, quote: char) -> Result<String, Refusal> {
     Ok(match value {
         Literal::Num(n) => format!("{{{}}}", num(*n)?),
         Literal::Bool(b) => format!("{{{b}}}"),
@@ -243,7 +355,7 @@ fn render(value: &Literal, quote: char) -> Result<String, Refusal> {
     })
 }
 
-fn set_attr(src: &str, n: &DesignNode, name: &str, value: &Literal) -> Result<Vec<TextEdit>, Refusal> {
+pub(super) fn set_attr(src: &str, n: &DesignNode, name: &str, value: &Literal) -> Result<Vec<TextEdit>, Refusal> {
     if let Some(a) = find_attr(n, name) {
         editable_attr(a)?;
         let text = &src[a.start as usize..a.end as usize];
@@ -318,7 +430,7 @@ fn set_decl(src: &str, r: &DesignRule, property: &str, value: &str) -> Vec<TextE
 }
 
 /// The file's indentation step: from another rule's first declaration, else two spaces.
-fn indent_step(src: &str) -> String {
+pub(super) fn indent_step(src: &str) -> String {
     let mut lines = src.lines();
     while let Some(l) = lines.next() {
         if l.trim_end().ends_with('{') {
