@@ -332,6 +332,30 @@ pub fn register<W: w::Kind + Default>(registry: &mut KindRegistry) -> Result<pre
     registry.register_with(spec_of(W::spec()).core, make::<W>)
 }
 
+/// Registers every Tier 0 kind of [`crate::controls`] in `registry`.
+pub fn register_tier0(registry: &mut KindRegistry) -> Result<(), RegistryError> {
+    use crate::controls::*;
+    register::<FlexBox>(registry)?;
+    register::<Button>(registry)?;
+    register::<Checkbox>(registry)?;
+    register::<Frame>(registry)?;
+    register::<Grid>(registry)?;
+    register::<Hyperlink>(registry)?;
+    register::<Icon>(registry)?;
+    register::<Image>(registry)?;
+    register::<Label>(registry)?;
+    register::<ProgressBar>(registry)?;
+    register::<RadioButton>(registry)?;
+    register::<Separator>(registry)?;
+    register::<Sides>(registry)?;
+    register::<Slider>(registry)?;
+    register::<Spinner>(registry)?;
+    register::<Stack>(registry)?;
+    register::<Switch>(registry)?;
+    register::<ToggleButton>(registry)?;
+    Ok(())
+}
+
 fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, state: StateMask, dark: bool) -> w::Styles<'a> {
     w::Styles { computed: css, parts: &[], state: StateBits(state.0), dark }
 }
@@ -601,6 +625,13 @@ mod tests {
         assert!(s.signals.iter().any(|g| g.name == "clicked" && g.arg.is_none()));
         let mut reg = KindRegistry::new();
         register::<Button>(&mut reg).unwrap();
+    }
+
+    #[test]
+    fn every_tier0_kind_registers() {
+        // no tag or member id collides, and every text prop exists
+        let mut reg = KindRegistry::new();
+        register_tier0(&mut reg).unwrap();
     }
 
     #[test]
