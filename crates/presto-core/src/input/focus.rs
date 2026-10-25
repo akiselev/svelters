@@ -198,7 +198,12 @@ fn queue(doc: &mut Document, target: NodeId, signal: crate::ids::SignalId, bubbl
         return;
     }
     let ev = JsEvent { signal, target, arg: None, path, cancelable: false, sync: true };
-    doc.input_events.push(ev);
+    // a focus move JS made inside the sync deliverer is delivered when its listener returns
+    if doc.delivering > 0 {
+        doc.nested.push(ev);
+    } else {
+        doc.input_events.push(ev);
+    }
 }
 
 /// Opens a `dialog` scope: remembers the focus to give back and focuses the scope's first tab stop.
