@@ -120,40 +120,14 @@ as above.
   `status-section`, `drag-data`, `drag-type`, `drop-types` reach the tree, and the `drag-*`/`drop` signals map
   through the existing by-name common-signal fallback. Until CORE-3 is in `ci/presto-base` they stay `Side`
   (name-based, no code change needed when it lands; regenerate presto.json then).
-- **Q8, decided (coordinator, 2026-10-25): queue the JS ops made inside `call_sync`, apply them after dispatch.**
-  Done in `sync.rs`: the backend installs `Document::set_sync_delivery` at construction; `deliver_cancelable`
-  walks the event's path with the handle→kind cache (no document), answers `Outcome { prevented, stopped }`
-  from `call_sync` (egui's bits or `true`), and from then on every JS op (create, insert, remove, destroy,
-  set_prop, listen, call, style, template `instantiate`) is checked against the kind maps and queued; handles
-  are assigned at once. `dispatch` applies the queue right after `Document::dispatch` returns, in
-  `js_transaction(revision)`; `pump` and `with_doc` apply it too (a kind's `emit_sync` in a frame or timer).
-  Reads inside the listener answer props it wrote and otherwise fail with a message (the tree is mid-dispatch);
-  failures when applied go to `take_deferred_errors`. Test: `tests/deliver.rs`
-  `cancelable_events_inside_dispatch_answer_prevented_and_defer_js_ops` (written, not run).
-  **Interim** (coordinator, 2026-10-25, replacing the queue answer): two-phase dispatch. When CORE-3 lands
-  `Document::begin_dispatch(window, event) -> Dispatch`, `Dispatch::next(&mut doc)` and `finish_dispatch`,
-  `PrestoBackend::dispatch` drives the `Dispatch` with the document free between steps (JS runs on the live
-  tree, sets stop/prevent on the `Dispatch`), and the op queue, the "reads fail" path and the sync-delivery
-  hook go; `take_deferred_errors` stays only if something still defers.
-
-### The run path on APP-TEST's `presto` (2026-10-25, ci/presto-base 4d94409a)
-
-- `app.rs`: `PrestoDocument` (presto's `DocumentApi` over the backend: dispatch with event-time delivery,
-  frame = rAF callbacks + `pump` + `Document::frame`, resize attaches the next presented window's node,
-  close frees its handle, a11y actions via `Document::a11y_action`), `SveltersApp` (the platform's
-  `AppHandler` around `presto::App`: after every callback runs `Embed::logic`, pumps, opens a platform window
-  for each `present` with the node's title and default size, closes on `close`, asks the compositor for frames
-  when JS changed the tree outside input, moves the platform timer to the host's deadline, installs the
-  platform waker as the host's cross-thread wake, exits on `quit` or the last window), and
-  `install_widget_services` (presto-widgets' text system, OS policy, theme into the document).
-- `present` no longer attaches at once: it queues the handle (`take_presents`); the runner opens the window
-  and `attach_presented(h, window, size, scale)` makes the node its root (window ids are the platform's).
-- `src/bin/svelters-presto-run.rs`: `--bundle <dist/app.js>` or `--entry <dir|file> [--dev]` (compiled for
-  `presto`), presto-text over the system fonts, presto's real compositor, `presto_platform::run`.
-- `tests/run.rs` (written, not run): on presto-test's `Harness`, a presented window opens with the JS-built
-  node as root and a click on its button reaches the host; closing frees the handle.
-- Not yet: the `Driver` path (`Backend::run`) is unused by the runner (the host is attached); text-edit's text
-  services wait for TEXT-INPUT; `close-request` is not asked before a user close.
+- **Q8, final (coordinator, 2026-10-25): presto-core's lent document** (`SyncDelivery`, core-3 d39eaf4b, base
+  b387ef42). `sync.rs`: the backend installs the deliverer at construction; for its call it points
+  `PrestoBackend::doc`/`doc_mut` at the `&mut Document` core lends (guards with `RefCell`'s borrow rules,
+  checked), so listeners read the live tree, write in `js_transaction` at the event's revision and build nodes
+  directly; listener nodes gone by their turn are skipped; `call_sync` answers egui's bits (1 stop, 2 prevent,
+  4 immediate) or `true`. The interim op queue, the "reads fail" path and `take_deferred_errors` are gone.
+  Tests in `tests/deliver.rs` (written, not run); the lent path itself runs in `tests/run.rs`'s click (pointer
+  events are cancelable).
 
 ## Not done
 

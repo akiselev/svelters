@@ -73,9 +73,7 @@ impl PrestoBackend {
     /// Runs one input through presto-core (hit testing, native defaults, focus) and delivers what it
     /// produced now.
     pub fn dispatch(&self, ev: &InputEnvelope) -> (Dispatched, Delivered) {
-        let d = self.0.doc.borrow_mut().dispatch(ev);
-        // what the cancelable events' listeners did inside the dispatch (`sync.rs`)
-        self.apply_deferred(Some(d.revision));
+        let d = self.doc_mut().dispatch(ev);
         let mut out = Output { events: d.events.clone(), changed: Vec::new(), revision: Some(d.revision) };
         out.append(self.collect());
         (d, self.deliver(out))
@@ -90,7 +88,7 @@ impl PrestoBackend {
     /// Everything the tree and the queue hold for JS, taken.
     fn collect(&self) -> Output {
         let mut out = std::mem::take(&mut *self.0.pending.borrow_mut());
-        let mut doc = self.0.doc.borrow_mut();
+        let mut doc = self.doc_mut();
         out.events.extend(doc.take_events());
         for c in doc.drain_changes() {
             if let Change::Prop { node, prop, native: true, revision } = c {
@@ -104,8 +102,6 @@ impl PrestoBackend {
     /// Delivers whatever native code produced outside an input (a kind's timer, an animation end, a
     /// programmatic focus move).
     pub fn pump(&self) -> Delivered {
-        // a kind's `emit_sync` outside input (in a frame, a timer) delivered inside its call
-        self.apply_deferred(None);
         let out = self.collect();
         if out.is_empty() {
             return Delivered::default();
@@ -116,7 +112,7 @@ impl PrestoBackend {
     /// The event presto-core lists for `signal` emitted on `node` by its kind: target phase, `node`'s
     /// own listeners; `None` when it has none (presto-core lists no event without a listener).
     pub fn target_event(&self, node: NodeId, signal: &str, args: Vec<surface::Value>) -> Option<JsEvent> {
-        let doc = self.0.doc.borrow();
+        let doc = self.doc();
         let m = self.0.kinds.by_core(doc.kind_of(node)?)?;
         let sm = m.signal_named(signal)?;
         let sid = sm.native?;
@@ -133,7 +129,7 @@ impl PrestoBackend {
         let mut done = Delivered::default();
         let Some(host) = self.host() else { return done };
         let kinds = self.kinds().clone();
-        let kind_of = |n: NodeId| self.0.doc.borrow().kind_of(n).and_then(|k| kinds.by_core(k));
+        let kind_of = |n: NodeId| self.doc().kind_of(n).and_then(|k| kinds.by_core(k));
         for (node, prop) in &out.changed {
             let (Some(h), Some(m)) = (self.handle(*node), kind_of(*node)) else { continue };
             for pm in m.of_native_prop(*prop) {

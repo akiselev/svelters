@@ -27,13 +27,13 @@ impl PrestoBackend {
                     None => {
                         let all = std::mem::take(&mut *self.0.sheets.borrow_mut());
                         for (_, (id, _)) in all {
-                            self.0.doc.borrow_mut().remove_sheet(id);
+                            self.doc_mut().remove_sheet(id);
                         }
                     }
                     Some(t) => match t.split_once(SVL_STYLE_SEP) {
                         Some((name, rest)) => {
                             let css = rest.split_once(SVL_STYLE_SEP).map_or(rest, |(css, _)| css);
-                            let mut doc = self.0.doc.borrow_mut();
+                            let mut doc = self.doc_mut();
                             let id = doc.add_sheet(css);
                             if let Some((old, _)) = self.0.sheets.borrow_mut().insert(name.to_string(), (id, css.to_string())) {
                                 doc.remove_sheet(old);
@@ -41,7 +41,7 @@ impl PrestoBackend {
                         }
                         None => {
                             if let Some((old, _)) = self.0.sheets.borrow_mut().remove(t) {
-                                self.0.doc.borrow_mut().remove_sheet(old);
+                                self.doc_mut().remove_sheet(old);
                             }
                         }
                     },
@@ -76,7 +76,7 @@ impl PrestoBackend {
                 }
                 let s = s.clone();
                 drop(styles);
-                self.0.doc.borrow_mut().set_style(n, s);
+                self.doc_mut().set_style(n, s);
             }
             SVL_STYLE_OPACITY | SVL_STYLE_TRANSFORM | SVL_STYLE_CLIP | SVL_STYLE_INERT => {
                 // kept until presto-core's effect and transform trees take JS channels (TR1)
