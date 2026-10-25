@@ -426,6 +426,11 @@ impl Kind for Select {
     }
 
     /// `:open` and `:placeholder-shown` follow the props, so CSS on the node sees them.
+    /// The list is open: a press outside it and the button closes it.
+    fn light_dismiss(&self) -> bool {
+        self.props.open && self.props.enabled
+    }
+
     fn prop_state(&self) -> StateBits {
         let mut s = StateBits::NONE;
         s.set(StateBits::OPEN, self.props.open);
@@ -506,6 +511,13 @@ impl Kind for Select {
             Event::Wheel(w) => self.wheel(cx, w),
             Event::Focus { gained: false, .. } => {
                 self.set_open(cx, false);
+                Handled::No
+            }
+            // light dismiss: a press outside the button and its list closes the list
+            Event::OutsidePress(p) => {
+                if self.props.open && !self.list.is_some_and(|l| l.rect.contains(*p)) {
+                    self.set_open(cx, false);
+                }
                 Handled::No
             }
             Event::Pointer(p) => {
@@ -642,6 +654,23 @@ mod tests {
             send(&mut s, &policy, 0, key(Key::Home));
             assert_eq!(s.selected, Some(0));
         }
+    }
+
+    #[test]
+    fn an_outside_press_closes_the_list_but_a_press_in_it_does_not() {
+        let policy = policy(Platform::Windows);
+        let mut s = sel();
+        assert!(!s.light_dismiss());
+        send(&mut s, &policy, 0, key(Key::F4));
+        assert!(s.is_open() && s.light_dismiss());
+        let in_list = s.list().expect("laid out").rect.min + presto_base::geom::Vec2::new(4.0, 4.0);
+        send(&mut s, &policy, 1, Event::OutsidePress(in_list));
+        assert!(s.is_open(), "the list is drawn outside the button but is part of the select");
+        let (h, sig) = send(&mut s, &policy, 2, Event::OutsidePress(Point::new(-40.0, -40.0)));
+        assert_eq!(h, Handled::No);
+        assert!(!s.is_open());
+        assert!(sig.iter().any(|e| e.0 == "toggle" && e.1 == vec![Value::Bool(false)]));
+        assert_eq!(s.selected, Some(0), "nothing picked");
     }
 
     #[test]

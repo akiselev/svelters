@@ -254,8 +254,17 @@ impl Kind for Popup {
                 self.set_open(cx, false, DismissReason::Escape);
                 Handled::Yes
             }
+            Event::OutsidePress(_) if self.light_dismiss() => {
+                self.set_open(cx, false, DismissReason::OutsidePress);
+                Handled::Yes
+            }
             _ => Handled::No,
         }
+    }
+
+    /// Open and light-dismissable (`light-dismiss`, not `modal`): a press outside closes it.
+    fn light_dismiss(&self) -> bool {
+        self.props.open && self.dismiss_flags().outside
     }
 
     fn a11y(&self, cx: &mut A11yCx) {
@@ -371,5 +380,26 @@ mod tests {
         assert!(p.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
         assert_ne!(style.display, taffy::Display::None);
         assert_eq!(p.prop_state(), StateBits::OPEN);
+    }
+
+    #[test]
+    fn an_outside_press_closes_it_when_light_dismissable() {
+        let pol = crate::interact::Policy::default();
+        let mut st = StateBits::NONE;
+        let mut p = Popup::default();
+        assert!(!p.light_dismiss(), "closed: no outside presses wanted");
+        p.props.open = true;
+        p.props.light_dismiss = true;
+        assert!(p.light_dismiss());
+        let mut cx = EventCx::new(presto_base::time::Time::ZERO, Size::new(100.0, 50.0), &mut st, &pol);
+        assert_eq!(p.event(&mut cx, &Event::OutsidePress(Point::new(-5.0, -5.0))), Handled::Yes);
+        assert!(!p.props.open);
+        assert_eq!(signals(&cx)[0], ("close", Some(Value::str("outside-press"))));
+        // a modal popup never light-dismisses
+        let mut p = Popup::default();
+        p.props.open = true;
+        p.props.light_dismiss = true;
+        p.props.modal = true;
+        assert!(!p.light_dismiss());
     }
 }

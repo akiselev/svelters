@@ -51,20 +51,45 @@ kind and `::part`); presto-core sees them through `host::register`. The lane's f
   `activate` not cancelable.
 - Virtual list: no row DnD (lane TIER1's `dnd`), no grid layout, no deferred-bind retry, no Rust row
   sources.
-- Pane layout hooks: core must call `SplitView::layout`, `Panel::set_layout`,
-  `StatusBar::set_message_area`, `VirtualList::set_viewport` (from the enclosing scroll-area) and apply
-  `take_reveal()`.
+- Pane layout: `split-view` lays its panes out itself through the container hooks (`layout_style` a
+  flex row/column with the sash lines as gaps; `child_layout` gives each pane its `weights` share:
+  `sizes` as grow weights, else `divider-position` fixed for the first of two, else the last laid sizes,
+  else equal; `prepare` takes the laid sizes and sashes). Pane CSS `min-*`/`max-*` bind in taffy but not
+  in `shares`, so sashes can be off by the clamp until the next drag. `panel` fixes its size in
+  `layout_style`, keeps the separator clear with `chrome_padding` and takes its box in `prepare`.
+  `inner-window` places its content in the body (absolute) and hides it while collapsed;
+  `modal` and `popup` hide their content while closed. Still external: `StatusBar::set_message_area`,
+  `VirtualList::set_viewport`/`plan`/`take_reveal` (from the enclosing scroll-area), `Modal::content`.
+- **Hooks adopted (CORE-3):** `child_layout`/`layout_style`/`prepare` (above); `chrome_padding` (panel);
+  `prop_state` `:open` (popup, modal, context-menu, select) and `:placeholder-shown` (select); light
+  dismiss (`light_dismiss` + `Event::OutsidePress`, closing with reason `outside-press`, the overlay
+  stack's name for it) on popup (open, light-dismissable, not modal), menu-bar/context-menu (a menu open
+  or the bar highlighted; the press goes on) and select (list open; a press in the list is not outside);
+  `emit_sync` for modal `cancel` (the modal closes unless a listener prevents it). Not adopted:
+  `children_inert` (hidden content takes no input anyway), `focus_anchor` (it names an `anchor`
+  string, the views' openers are node ids), peer groups (no view is a peer set), `emit_sync` for menu
+  `activate`/select `changed` (the pick is applied first; moving it after the sync emit touches the
+  model's pick logic), tooltip light dismiss (the tooltip kind is driven by its host's `TooltipTimer`
+  input, which already hides on press). No `:collapsed` state bit exists for `inner-window`.
 
 ## Requests (to presto-core, or to WIDGETS-BASIC's kind interface and `host`)
 
-1. Timers for kinds through `host` (`EventCx::wake` is dropped by `Hosted` today): tooltips, submenu
-   delay, toasts, drag-expand, the scroll animation until it moves to the compositor.
-2. A fast-commit path from `EventCx` to the compositor (today `views::shim::fast`).
-3. Wheel gesture `phase` and `momentum` through presto-core's `WheelInput` and `host` (per-gesture
+1. A fast-commit path from `EventCx` to the compositor (today `views::shim::fast`).
+2. Wheel gesture `phase` and `momentum` through presto-core's `WheelInput` and `host` (per-gesture
    latching needs them; without them touchpads latch per burst).
-4. `RecordCx` with the time and the policy; `interact::Policy` with `reduced_motion`.
-5. A virtual-children hook in the kind interface/`host` (`presto_core::VirtualChildren` is implemented
+3. `RecordCx` with the time and the policy; `interact::Policy` with `reduced_motion`.
+4. A virtual-children hook in the kind interface/`host` (`presto_core::VirtualChildren` is implemented
    by `VirtualList` and `TreeView`), and a way to attach per-row AccessKit nodes.
+5. **`host.rs` tables for the views** (WIDGETS-BASIC's file): `parts_of` lists no view kind, so every
+   `::part()` style a view reads comes back empty (UA only), and `PLACING` lacks the views, so
+   `child_layout` is not called for them. Add to `PLACING`: `split-view`, `popup`, `modal`,
+   `inner-window`. Add to `parts_of`: `scroll-area`/`scrollbar` `thumb-x`, `thumb-y`, `scrollbar-x`,
+   `scrollbar-y`, `corner`; `split-view` `sash`, `guide`; `panel` `sash`; `status-bar` `message`;
+   `virtual-list` `row`; `tree-view` `row`, `twisty`; `popup` none; `modal` `dialog`, `heading`;
+   `inner-window` `titlebar`, `close`, `collapse`; `toast-host` `toast`, `accent`, `close`, `action`;
+   `menu-bar`/`context-menu` `title`, `menu`, `item`, `separator`, `group-label`; `select` `list`,
+   `option`. Better: a `parts` field on `shim::core::KindSpec` that `host` reads, so kinds declare their
+   own (the views would fill it).
 6. `Copy` on `shim::core::Styles` (menu-bar copies it field by field to paint).
 7. Confirm `host`'s `set_native` path carries `List` values (`selected-ids`, `expanded-ids`).
 

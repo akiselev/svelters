@@ -651,6 +651,13 @@ impl Menus {
                 }
                 Handled::No
             }
+            // a press outside the root and its levels dismisses (light dismiss) and goes on
+            Event::OutsidePress(_) => {
+                if self.wants_outside() {
+                    self.close(&mut out);
+                }
+                Handled::No
+            }
             _ => Handled::No,
         };
         if self.nav.is_open() {
@@ -659,6 +666,11 @@ impl Menus {
         }
         self.report(cx, spec, open, out);
         h
+    }
+
+    /// A menu is open or the bar is highlighted: a press outside dismisses it ([`Kind::light_dismiss`]).
+    pub fn wants_outside(&self) -> bool {
+        self.enabled && (self.nav.is_open() || self.nav.bar_keys)
     }
 
     /// The keys the root takes while it has focus.
@@ -829,6 +841,9 @@ impl Kind for MenuBar {
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         self.menus.event(cx, ev, &MENU_BAR_SPEC, None)
     }
+    fn light_dismiss(&self) -> bool {
+        self.menus.wants_outside()
+    }
     fn a11y(&self, cx: &mut A11yCx) {
         cx.node.set_role(accesskit::Role::MenuBar);
         if !self.menus.enabled {
@@ -908,6 +923,9 @@ impl Kind for ContextMenu {
         let h = self.menus.event(cx, ev, &CONTEXT_MENU_SPEC, Some(context_props::P::open.id()));
         self.sync_open();
         h
+    }
+    fn light_dismiss(&self) -> bool {
+        self.menus.wants_outside()
     }
     fn a11y(&self, cx: &mut A11yCx) {
         cx.node.set_role(accesskit::Role::Menu);
@@ -1337,6 +1355,34 @@ mod tests {
         assert_eq!(b.menus.nav.levels[0].container, b.menus.model.find("edit").unwrap(), "Right on a plain row: next menu");
         let (_, sig, _) = send(&mut b, &policy, ms(0), key(Key::Enter));
         assert!(sig.iter().any(|s| s.0 == "activate" && s.1[0] == Value::str("undo")));
+    }
+
+    #[test]
+    fn an_outside_press_light_dismisses_the_open_menus() {
+        let mut b = bar();
+        prepare(&mut b.menus);
+        let policy = policy(Platform::Windows);
+        assert!(!b.light_dismiss(), "nothing open: no outside presses wanted");
+        let title = b.menus.titles()[0].1;
+        send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(title)));
+        send(&mut b, &policy, ms(5), ptr(PointerPhase::Up, center(title)));
+        assert!(b.light_dismiss());
+        let (h, sig, _) = send(&mut b, &policy, ms(10), Event::OutsidePress(Point::new(-50.0, -50.0)));
+        assert_eq!(h, Handled::No, "the press goes on to what is under it");
+        assert!(!b.menus.nav.is_open());
+        assert!(sig.iter().any(|s| s.0 == "close"));
+        assert!(!b.light_dismiss());
+        // a context menu: closing writes `open` back
+        let mut c = ContextMenu::default();
+        c.menus.model.add(MenuModel::ROOT, Entry::item("cut", "Cu&t"));
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(ms(0), Size::new(400.0, 300.0), &mut state, &policy);
+        c.context_click(&mut cx, Point::new(10.0, 10.0));
+        assert!(c.light_dismiss());
+        let mut cx = EventCx::new(ms(1), Size::new(400.0, 300.0), &mut state, &policy);
+        c.event(&mut cx, &Event::OutsidePress(Point::new(-5.0, 0.0)));
+        assert!(!c.props.open);
+        assert_eq!(cx.changed, vec![context_props::P::open.id()]);
     }
 
     #[test]
