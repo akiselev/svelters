@@ -19,8 +19,8 @@
 //!    commit re-composites the new texture content.
 //! 2. [`IslandHost::render`] before the commit is sent: renders the passes into the islands' textures and
 //!    releases the islands of destroyed nodes.
-//! 3. [`IslandHost::bridge_events`] with each `Dispatched`'s events: presto-core's in-app drags over an
-//!    island reach egui's `DragAndDrop`.
+//! 3. [`IslandHost::bridge_events`] with each `Dispatched`'s events (and `Document::take_events`): presto-core's
+//!    in-app drags over an island reach egui's `DragAndDrop`, and drags that left an island report their end.
 //!
 //! [`IslandHost::next_wakeup`] joins `Document::next_timer` in the runner's wait; on `ToUi::DeviceReset` the
 //! runner calls [`IslandHost::device_reset`] next to `Document::device_reset`.
@@ -210,7 +210,8 @@ pub struct IslandHost {
 }
 
 /// The signals a mounted island listens to for the drag-and-drop bridge.
-const DND_SIGNALS: [presto_core::SignalId; 3] = [common::DRAG_ENTER, common::DRAG_LEAVE, common::DROP];
+/// (`drag-end` reaches the island node as the source of a drag it handed to presto.)
+const DND_SIGNALS: [presto_core::SignalId; 4] = [common::DRAG_ENTER, common::DRAG_LEAVE, common::DROP, common::DRAG_END];
 
 impl IslandHost {
     /// Registers the `egui-island` kind.
@@ -276,8 +277,11 @@ impl IslandHost {
     }
 
     /// Runs the passes due at `now`, `ui(node, ui)` drawing each node's island, after moving every island to
-    /// its node's last layout. Returns each pass's output (cursor, IME area, the AccessKit subtree update to
-    /// forward to the platform adapter after the commit that grafts it, copied text, links, drags out).
+    /// its node's last layout. An egui drag leaving its island becomes presto's in-app drag
+    /// (`Document::start_drag`, the island node its source; its `drag-end` reaches the egui source through
+    /// [`bridge_events`](Self::bridge_events)). Returns each pass's output (cursor, IME area, the AccessKit
+    /// subtree update to forward to the platform adapter after the commit that grafts it, copied text,
+    /// links; `dnd.drag_out` only when presto refused the drag).
     pub fn run(doc: &mut Document, now: Time, mut ui: impl FnMut(NodeId, &mut egui::Ui)) -> Vec<(NodeId, IslandOutput)> {
         let nodes = Self::mounted(doc);
         let places: Vec<(NodeId, Option<(Rect, Scale)>)> = nodes.iter().map(|&n| (n, placement(doc, n))).collect();
@@ -289,6 +293,20 @@ impl IslandHost {
             island.set_rect(rect, scale);
             if island.needs_pass(now) {
                 outputs.push((node, island.run(now, |u| ui(node, u))));
+            }
+        }
+        // An egui drag that left its island continues as presto's in-app drag, the island node its source.
+        for (node, out) in &mut outputs {
+            let Some(drag) = out.dnd.drag_out.take() else { continue };
+            let (Some(window), Some(pointer)) = (doc.window_of(*node), Self::island_mut(doc, *node).map(|i| i.pointer_id())) else {
+                continue;
+            };
+            if doc.start_drag(window, pointer, *node, &drag.ty, &drag.data) {
+                if let Some(island) = Self::island_mut(doc, *node) {
+                    island.drag_out_started();
+                }
+            } else {
+                out.dnd.drag_out = Some(drag);
             }
         }
         for (node, _) in &outputs {
@@ -364,6 +382,9 @@ impl IslandHost {
                 if host.drag_over == Some(e.target) {
                     host.drag_over = None;
                 }
+            } else if e.signal == common::DRAG_END {
+                let dropped = matches!(&e.arg, Some(Value::Record(f)) if f.iter().any(|(k, v)| &**k == "dropped" && *v == Value::Bool(true)));
+                island.drag_out_finished(dropped);
             } else if e.signal == common::DROP {
                 let Some(Value::Record(fields)) = &e.arg else { continue };
                 let field = |name: &str| fields.iter().find(|(k, _)| &**k == name).map(|(_, v)| v);

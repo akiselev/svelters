@@ -1,7 +1,7 @@
 # PRESTO-egui-island: the egui island (presto batch 2)
 
 Lane EGUI-ISLAND (`plans/cloud/presto-b2/LANE-egui-island.md`), branch `ci/presto-egui-island`, from
-`ci/presto-base` at `e34079e6` (merged up to `177731fd`+, CORE-3 final). Owns `crates/presto-egui-island/**`. Design: architecture §13 (egui islands),
+`ci/presto-base` at `e34079e6` (merged up to CORE-3 `fa1d7758`). Owns `crates/presto-egui-island/**`. Design: architecture §13 (egui islands),
 §15 (the island), §11.7 (the DnD bridge).
 
 ## What landed
@@ -81,6 +81,14 @@ had them; egui pinned exactly like svelters-egui):
   resend its font atlas), and registers a new texture. Paint callbacks' `callback_resources` and native
   textures belonged to the old renderer: the host sets them up again (`init_renderer_on`).
 
+- **Island → presto drags** (Q5, CORE-3's `Document::start_drag`): when an egui drag leaves its island with the
+  button held, `IslandHost::run` starts presto's in-app drag for the island's held pointer with the island node
+  as source (`drag-type` = the egui payload's type, its data), and releases egui's side (`drag_out_started`:
+  a release and pointer-gone, so egui ends its drag). The target under the pointer is entered at once; the
+  drop is presto's. The island node listens to `drag-end` too, and `bridge_events` reports `dropped` back to the
+  egui source (`IslandDrag::was_accepted`). `IslandOutput::dnd.drag_out` stays set only when presto refused
+  (another drag running) and for islands driven without a document.
+
 ## Tests (written, not run locally)
 
 - `tests/island.rs` (no GPU): button and label clickable through presto input (scale 1 and 2); input outside
@@ -93,7 +101,9 @@ had them; egui pinned exactly like svelters-egui):
 - `tests/host.rs` (presto-core `Document`, no GPU): a mounted island records its texture and takes a click
   through `Document::dispatch` (press focuses the node); mount refusals; the node is the graft point in the
   commit's AccessKit tree and the island's subtree uses the node's tree id; detach and remount on another node;
-  presto-core's drag from a `drag-type` box drops on an egui drop zone in the island with its data.
+  presto-core's drag from a `drag-type` box drops on an egui drop zone in the island with its data; an egui drag
+  source in the island dragged out onto a `drop-types` box becomes presto's drop there (type, data, the island
+  node as `drag-end` source) and egui's drag ends.
 - `tests/input.rs`: physical keys by US position and the Latin fallback for shortcuts; key names, modifiers per platform, clipboard shortcuts, focus gating and text filtering,
   IME char ranges, wheel routing and sign, pinch.
 - `tests/render.rs` (GPU, `PRESTO_GPU_TESTS` + an adapter): renders into a registered 64×48 `Rgba8Unorm`
@@ -106,7 +116,8 @@ Run locally: `cargo check -p presto-egui-island --all-targets`. After CI run 402
 two test assertions on Windows and macOS (wrong test expectations: egui's display key names, and Super is no
 command key off macOS), one filtered local run of `--test input --test island` to debug them: 7 and 11 passed
 after the fix. `--test render` passed on CI's Windows (WARP). After the host work, one filtered run of
-`--test host --test island`: 3 and 11 passed; after the physical-key work, `--test input`: 9 passed. **Not run locally:** `render`, `input` (unchanged), clippy.
+`--test host --test island`: 3 and 11 passed; after the physical-key work, `--test input`: 9 passed; after `start_drag`, `--test host --test island`: 4 and
+11 passed. **Not run locally:** `render`, `input` (unchanged), clippy.
 
 **CI on `0dd5a347`** (merged `ci/presto-base` `cc4f184d`; runs 40226671183 js, 40226671201 linux-gtk,
 40226671185 linux-qt, 40226671215 macos-appkit, 40226671186 presto, 40226671179 windows-winui): every
@@ -128,9 +139,6 @@ none of it this crate's:
 
 ## Not done / left out
 
-- **Island → presto drags stop at the island's output.** An egui drag leaving the island comes out as
-  `IslandOutput::dnd.drag_out`, but presto-core can only start a drag from a press on a `drag-type` node; it has
-  no public call to start one for a pointer already held. See question 5.
 - While a presto drag is over an island, egui sees the pointer only where the runner reports it
   (`IslandHost::drag_moved`); core's drag doesn't deliver moves to the target node.
 - The bridge's listeners are ordinary document listeners: a JS `unlisten` of the same signal on an island node
@@ -155,7 +163,7 @@ none of it this crate's:
 3. ~~Island render thread~~: decided, UI thread.
 4. ~~How an island becomes a node~~: decided and built (`host`).
 5. ~~Starting a core drag for a held pointer~~: decided (coordinator, 2026-10-25), CORE-3 adds
-   `Document::start_drag`; until it lands, `drag_out` goes to the runner. Original question: For island → presto drags, presto-core needs something like
+   `Document::start_drag`, and the host uses it (above). Original question: For island → presto drags, presto-core needs something like
    `Document::start_drag(window, pointer, source: NodeId, ty, data)` that enters its drag state for a pointer
    already pressed (the island node as source), so `IslandHost` can turn `drag_out` into a core drag.
    Recommendation: add it to presto-core (additive, about 20 lines over `dnd::pointer`'s start branch); until

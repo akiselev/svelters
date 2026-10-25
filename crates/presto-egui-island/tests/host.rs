@@ -207,3 +207,59 @@ fn a_presto_drag_drops_on_an_egui_drop_zone_in_a_mounted_island() {
     rig.step(&mut ui);
     assert_eq!(got.take().as_deref(), Some("cad/part=42"));
 }
+
+#[test]
+fn an_egui_drag_leaving_the_island_becomes_a_presto_drop() {
+    let mut rig = Rig::new();
+    let dst = child(&mut rig.doc, rig.root, BOX, "width: 120px; height: 60px");
+    rig.doc.set_prop(dst, common::DROP_TYPES, Value::from("cad/*")).unwrap();
+    rig.doc.listen(dst, common::DROP, ListenFlags::EMPTY);
+    IslandHost::mount(&mut rig.doc, rig.node, island()).unwrap();
+
+    let source = Cell::new(egui::Rect::NOTHING);
+    let mut ui = |_: NodeId, ui: &mut egui::Ui| {
+        let r = ui.dnd_drag_source(
+            egui::Id::unique("part"),
+            IslandDrag::new(presto_egui_island::DragData::new("cad/part", "42")),
+            |ui| ui.label("part 42"),
+        );
+        if !egui::DragAndDrop::has_any_payload(ui.ctx()) {
+            source.set(r.inner.rect);
+        }
+    };
+    rig.step(&mut ui);
+    rig.step(&mut ui);
+
+    let origin = rig.doc.world_rect(rig.node).unwrap().min;
+    let start = center(origin, source.get());
+    rig.pointer(PointerPhase::Move, start, false);
+    rig.step(&mut ui);
+    rig.pointer(PointerPhase::Down, start, true);
+    rig.step(&mut ui);
+    rig.pointer(PointerPhase::Move, Point::new(start.x + 30.0, start.y + 10.0), true);
+    rig.step(&mut ui);
+    assert!(egui::DragAndDrop::has_any_payload(IslandHost::island_mut(&mut rig.doc, rig.node).unwrap().context()), "egui's drag began");
+
+    // Out of the island, over the presto target: the island's pass hands the drag to presto.
+    let d = rig.doc.world_rect(dst).unwrap();
+    let over = Point::new(d.min.x + 20.0, d.min.y + 20.0);
+    rig.pointer(PointerPhase::Move, over, true);
+    rig.now += 16_000_000;
+    let outputs = IslandHost::run(&mut rig.doc, Time(rig.now), |n, u| ui(n, u));
+    assert!(outputs.iter().all(|(_, o)| o.dnd.drag_out.is_none()), "presto took the drag");
+    assert!(rig.doc.state(dst).contains(presto_core::StateMask::DROP_TARGET), "the target under the pointer is entered at once");
+    let mut events = rig.doc.take_events();
+    rig.frame();
+
+    events.extend(rig.pointer(PointerPhase::Up, over, false));
+    let drop = events.iter().find(|e| e.signal == common::DROP).expect("presto dropped it on the target");
+    assert_eq!(drop.target, dst);
+    let Some(Value::Record(fields)) = &drop.arg else { panic!("drop carries a record") };
+    let field = |k: &str| fields.iter().find(|(n, _)| &**n == k).map(|(_, v)| v.clone());
+    assert_eq!(field("type"), Some(Value::from("cad/part")));
+    assert_eq!(field("data"), Some(Value::from("42")));
+    assert!(events.iter().any(|e| e.signal == common::DRAG_END && e.target == rig.node), "the island node is the source");
+    IslandHost::bridge_events(&mut rig.doc, &events);
+    rig.step(&mut ui);
+    assert!(!egui::DragAndDrop::has_any_payload(IslandHost::island_mut(&mut rig.doc, rig.node).unwrap().context()), "egui's drag ended");
+}

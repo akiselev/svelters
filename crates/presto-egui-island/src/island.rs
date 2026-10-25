@@ -394,6 +394,18 @@ impl EguiIsland {
         self.pass_at = Some(Time::ZERO);
     }
 
+    /// The pointer that pressed inside the island (the one an exported drag continues with).
+    pub fn pointer_id(&self) -> u32 {
+        self.input.pointer_id()
+    }
+
+    /// presto took over the drag [`DndOutput::drag_out`] reported (`Document::start_drag`): the held
+    /// pointer is presto's now, so egui sees it released and gone, which ends egui's drag in the next pass.
+    pub fn drag_out_started(&mut self) {
+        self.input.release_capture(&mut self.events);
+        self.pass_at = Some(Time::ZERO);
+    }
+
     /// The presto drag started from this island ([`DndOutput::drag_out`]) ended.
     pub fn drag_out_finished(&mut self, accepted: bool) {
         self.dnd.drag_out_finished(accepted);
