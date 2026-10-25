@@ -60,6 +60,9 @@ pub enum Item<'a> {
     Component(ComponentCall<'a>),
     /// `<svelte:element this={tag}>`.
     Dynamic(DynamicElement<'a>),
+    /// W-C2: an element subtree built from a module-scope template table (backend capability
+    /// `templates`, `lower::templates`).
+    Template(Template<'a>),
 }
 
 impl Item<'_> {
@@ -74,8 +77,21 @@ impl Item<'_> {
             Item::Render(r) => &r.slot,
             Item::Component(c) => &c.slot,
             Item::Dynamic(d) => &d.slot,
+            Item::Template(t) => &t.root.slot,
         }
     }
+}
+
+/// W-C2: an element whose subtree's static part (kinds, slots, static props, classes, styles, child
+/// attributes, tracks) is known at compile time, with holes for blocks, components and render tags.
+/// Codegen writes its table once per module (`$n.template`) and builds it with one
+/// `$n.instantiate`; its dynamic writes, listeners and bindings are emitted as for any element,
+/// against the instantiated nodes.
+#[derive(Debug)]
+pub struct Template<'a> {
+    /// The module-unique template number (`$$T<index>`).
+    pub index: usize,
+    pub root: Element<'a>,
 }
 
 /// Where an item is placed in its native parent. `None` = the parent's default slot.
@@ -112,10 +128,12 @@ pub struct Element<'a> {
 pub enum Op<'a> {
     /// A typed constant known at compile time.
     Set { prop: String, value: Json, span: Span },
-    /// A JS value written by a render effect.
-    SetDynamic { prop: String, value: Dynamic<'a>, span: Span },
-    /// `$n.on(node, signal, handler, flags)`. `flags`: LISTEN_AFTER | LISTEN_CAPTURE (0 = plain).
-    /// `sync`: the backend delivers the signal through `call_sync`, so the handler gets
+    /// A JS value written by a render effect. `change`: the prop's change class (W-C4), when the
+    /// spec knows it.
+    SetDynamic { prop: String, value: Dynamic<'a>, change: Option<crate::semantics::ChangeClass>, span: Span },
+    /// `$n.on(node, signal, handler, flags)`. `flags`: LISTEN_AFTER | LISTEN_CAPTURE |
+    /// LISTEN_PASSIVE (0 = plain; LISTEN_PASSIVE only for a backend with the `passive` capability,
+    /// W-C5). `sync`: the backend delivers the signal through `call_sync`, so the handler gets
     /// `(event, ...args)` (informational; the runtime decides by how the host calls it).
     Listen { signal: String, handler: Handler<'a>, flags: u32, sync: bool, span: Span },
     /// `{@attach listen(signal, handler, {after, capture})}` with a static signal and phase:
@@ -164,14 +182,16 @@ pub enum Op<'a> {
     Explicit { props: Vec<String>, attrs: Vec<String> },
     /// The classes the X6 styling sees (`$n.attr(node, "class", ...)` -> `host.style(CLASSES)`):
     /// `base` (static classes and the component's CSS scope class), then the dynamic class set of
-    /// element `dynamic` (`c<id>`), then the `class:` toggles.
-    Classes { base: String, dynamic: Option<usize>, toggles: Vec<(String, &'a Expression)>, span: Span },
+    /// element `dynamic` (`c<id>`), then the `class:` toggles. `change`: the costliest change class
+    /// of what the toggled classes' rules set (W-C4), when known.
+    Classes { base: String, dynamic: Option<usize>, toggles: Vec<(String, &'a Expression)>, change: Option<crate::semantics::ChangeClass>, span: Span },
     /// `id`: the widget name (`$n.attr(node, "id", value)` -> `host.style(NAME)`).
     WidgetName { value: AttrValue<'a>, span: Span },
     /// The inline style the X6 styling sees (`$n.attr(node, "style", ...)`): the static CSS
     /// declarations of `style=`, or its dynamic value, then the `style:` directives of CSS
-    /// properties (a nullish value drops the declaration).
-    InlineStyle { base: String, dynamic: Option<Dynamic<'a>>, directives: Vec<(String, AttrValue<'a>)>, span: Span },
+    /// properties (a nullish value drops the declaration). `change`: the costliest change class of
+    /// the directives' properties (W-C4), when known.
+    InlineStyle { base: String, dynamic: Option<Dynamic<'a>>, directives: Vec<(String, AttrValue<'a>)>, change: Option<crate::semantics::ChangeClass>, span: Span },
     /// `style:<setter>={value}`: `$n.set(node, target, $n.setter_value(backend, name, value) ?? <fallback>)`
     /// (`$n.child_attr` for a child attribute); the value is parsed at runtime like `style=`. A
     /// nullish (or bad) value falls back to the static inline value or the matching rules

@@ -5,7 +5,7 @@
 
 use super::*;
 use crate::estree::{ArrowBody, LiteralValue, ObjectExpression, ObjectMember, PropertyKey, PropertyKind, Statement};
-use crate::semantics::{codes, EventSpec, LISTEN_AFTER, LISTEN_CAPTURE};
+use crate::semantics::{capability, codes, EventSpec, LISTEN_AFTER, LISTEN_CAPTURE, LISTEN_PASSIVE};
 use crate::svelte::ast::{AttachTag, Script};
 
 /// `parent:<name>` attributes (the renderer's CHILD_ATTR_PREFIX).
@@ -94,7 +94,13 @@ impl<'a> Lower<'a, '_, '_> {
     /// `on<event>={handler}` and `on<event>capture={handler}` (Svelte's capture suffix): the
     /// event resolved against the spec, its phase checked, sync handler shape checked.
     pub(super) fn listen_op(&mut self, er: &ElementRef, attr: &str, handler: Handler<'a>, span: Span, name_span: (u32, u32)) -> Option<Op<'a>> {
-        let (ev, flags) = match self.sem.event(er, attr) {
+        self.listen_op_with(er, attr, handler, span, name_span, None)
+    }
+
+    /// [`Self::listen_op`] with a `|passive` (`Some(true)`) or `|nonpassive` (`Some(false)`)
+    /// modifier at `modifier.1` (W-C5).
+    pub(super) fn listen_op_with(&mut self, er: &ElementRef, attr: &str, handler: Handler<'a>, span: Span, name_span: (u32, u32), modifier: Option<(bool, (u32, u32))>) -> Option<Op<'a>> {
+        let (ev, mut flags) = match self.sem.event(er, attr) {
             Ok(ev) => (ev, 0),
             Err(u) => {
                 // Svelte's is_capture_event: `...capture`, except the pointer-capture events
@@ -121,7 +127,53 @@ impl<'a> Lower<'a, '_, '_> {
         if let Handler::Expr(h) = &handler {
             self.check_sync_handler(&ev, h);
         }
+        if self.sem.has_capability(capability::PASSIVE) && self.passive_listener(er, &ev, &handler, modifier, name_span) {
+            flags |= LISTEN_PASSIVE;
+        }
         Some(Op::Listen { signal: ev.signal, handler, flags, sync: ev.sync, span })
+    }
+
+    /// W-C5: whether a listener is passive (inferred, or as its modifier says), with the warnings:
+    /// a modifier that contradicts the handler, and a non-passive listener of a scrolling signal.
+    fn passive_listener(&mut self, er: &ElementRef, ev: &EventSpec, handler: &Handler<'a>, modifier: Option<(bool, (u32, u32))>, name_span: (u32, u32)) -> bool {
+        let inferred = super::passive::infer(handler, ev);
+        let passive = match modifier {
+            Some((true, at)) => {
+                if let super::passive::Passivity::Cancels(c) = inferred {
+                    self.diags
+                        .native_warning(
+                            "passive_listener_cancels",
+                            at,
+                            format!("`|passive`, but the `{}` handler cancels the event (at {}..{}): a passive listener's `preventDefault` does nothing", ev.signal, c.start, c.end),
+                        )
+                        .help("remove `|passive`, or the call that cancels");
+                }
+                true
+            }
+            Some((false, at)) => {
+                if inferred.is_passive() {
+                    self.diags
+                        .native_warning(
+                            "nonpassive_redundant",
+                            at,
+                            format!("`|nonpassive`, but the `{}` handler never cancels the event: the toolkit waits for it for nothing", ev.signal),
+                        )
+                        .help("remove `|nonpassive`");
+                }
+                false
+            }
+            None => inferred.is_passive(),
+        };
+        if !passive && ev.passive {
+            self.diags
+                .native_warning(
+                    "nonpassive_scroll_listener",
+                    name_span,
+                    format!("this `{}` listener of <{}> can cancel the event, so {}'s scrolling waits for JavaScript on every event", ev.signal, er.tag, self.sem.backend()),
+                )
+                .help("read only `event.<field>` (no `preventDefault`) to make it passive, or mark it `|passive`");
+        }
+        passive
     }
 
     /// Every requested phase must be one the backend accepts for the signal (spec `phases`).
@@ -294,7 +346,7 @@ impl<'a> Lower<'a, '_, '_> {
                 }
             };
             explicit.push(prop.js.clone());
-            ops.push(Op::SetDynamic { prop: prop.js.clone(), value, span });
+            ops.push(Op::SetDynamic { prop: prop.js.clone(), value, change: None, span });
             if let Ok(plan) = self.sem.plan_binding(er, &prop.js) {
                 ops.push(Op::Track { prop: plan.prop.clone(), signal: plan.signal.clone(), arg: plan.arg_operand() });
             }

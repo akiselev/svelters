@@ -65,6 +65,8 @@ mod builtin;
 mod containers;
 /// DOC1: category, states, accessibility and paint of each kind, for the docs.
 pub mod docs;
+/// W-C1: the stable id table of the built-in kinds (`metadata/semantics/egui.ids.json`).
+pub mod ids;
 pub mod dnd;
 pub mod pickers;
 mod registry;
