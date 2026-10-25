@@ -63,3 +63,9 @@ Still open:
 4. Box keeps egui's column default through its prop rule rather than a UA sheet rule. Recommend keep.
 5. Make the shim's kind interface presto-core's own (typed kind-side props, the peer and container hooks)
    or keep the bridge? Recommend keep the bridge until the consolidation, then decide with CORE.
+
+## Kind traits beyond the spec (coordinator, 2026-10-25)
+
+A widget declares its paint parts, whether it places its children and whether it folds them through the
+shim `Kind`'s associated functions `parts()`, `places_children()` and `folds_children()` (beside
+`prop_states()`); `host.rs` reads them per type, so view and tier-1 kinds need no edit there.

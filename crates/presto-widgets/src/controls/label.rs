@@ -332,6 +332,9 @@ impl Label {
 }
 
 impl Kind for Label {
+    fn folds_children() -> bool {
+        true
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         { let mut s = crate::interact::StateBits::NONE; s.set(crate::interact::StateBits::READ_ONLY, self.props.selectable); s }
     }
