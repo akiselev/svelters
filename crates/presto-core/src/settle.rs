@@ -40,7 +40,7 @@ impl Document {
         if !self.input_events.is_empty() {
             b.insert(Busy::EVENTS);
         }
-        if !self.anim.running.is_empty() {
+        if !self.anim.running.is_empty() || !self.anim.ui.is_empty() {
             b.insert(Busy::ANIMATING);
         }
         for w in &self.windows {

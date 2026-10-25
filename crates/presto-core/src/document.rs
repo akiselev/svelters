@@ -82,6 +82,8 @@ pub struct Document {
     pub(crate) services: crate::cx::Services,
     /// Kinds' deadlines (`EventCx::wake_at`).
     pub(crate) timers: HashMap<NodeId, presto_base::time::Time>,
+    /// The realised rows of virtualising nodes ([`crate::VirtualChildren`]).
+    pub(crate) virt: HashMap<NodeId, crate::virt::VirtState>,
 }
 
 impl Document {
@@ -117,6 +119,7 @@ impl Document {
             key_hook: None,
             services: Default::default(),
             timers: HashMap::new(),
+            virt: HashMap::new(),
         }
     }
 
@@ -216,6 +219,7 @@ impl Document {
             children: &self.children[i],
             window: core.window,
             css: self.style.nodes[i].css.as_deref(),
+            doc: self,
         }
     }
 
@@ -264,7 +268,9 @@ impl Document {
     /// If `kind` is not registered: the caller (svelters-presto) validates kinds from the spec first.
     pub fn create(&mut self, kind: KindId) -> NodeId {
         let entry = self.registry.get(kind).unwrap_or_else(|| panic!("presto-core: unregistered kind {kind:?}"));
-        let value = (entry.factory)();
+        let mut value = (entry.factory)();
+        let virtual_kind = value.virtual_children().is_some();
+        let folds = entry.spec.folds_children;
         let rev = self.stamp();
         let (id, fresh) = self.slots.alloc();
         let core = NodeCore {
@@ -297,6 +303,13 @@ impl Document {
             self.state[i] = StateMask::NONE;
             self.record[i] = Default::default();
             self.style.reset(i);
+        }
+        if folds {
+            self.core[i].flags.insert(NodeFlags::FOLDS);
+        }
+        if virtual_kind {
+            self.core[i].flags.insert(NodeFlags::VIRTUAL);
+            self.virt.insert(id, crate::virt::VirtState::default());
         }
         self.journal.push(Change::Created { node: id, kind, revision: rev });
         id
@@ -426,6 +439,9 @@ impl Document {
         self.structure_changed(pi);
         self.mark_subtree_style(ci);
         self.mark_subtree(ci, Dirty::RECORD);
+        if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
+            self.refresh_desc_nonpassive(pi);
+        }
         self.journal.push(Change::Inserted { parent, child, revision: rev });
         Ok(())
     }
@@ -457,6 +473,9 @@ impl Document {
         }
         self.set_window(ci, None);
         self.structure_changed(pi);
+        if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
+            self.refresh_desc_nonpassive(pi);
+        }
     }
 
     /// Destroys `node` and its subtree (removing it from its parent first). Stale ids are ignored.
@@ -488,6 +507,7 @@ impl Document {
         self.anim.forget(id);
         self.scroll.remove(&id);
         self.timers.remove(&id);
+        self.virt.remove(&id);
         self.slots.free(i);
     }
 
@@ -533,8 +553,33 @@ impl Document {
         }
     }
 
+    /// The children layout, recording and hit testing see: none for a folding kind.
+    pub(crate) fn layout_children(&self, i: usize) -> &[NodeId] {
+        if self.core[i].flags.contains(NodeFlags::FOLDS) { &[] } else { &self.children[i] }
+    }
+
+    /// Node `i` (a folded child, its props, style or text) changed: the folding ancestors directly
+    /// above it remeasure and repaint.
+    pub(crate) fn fold_up(&mut self, mut i: usize) {
+        while let Some(p) = self.core[i].parent {
+            let pi = self.ix(p);
+            if !self.core[pi].flags.contains(NodeFlags::FOLDS) {
+                return;
+            }
+            self.mark_measure(pi);
+            self.mark(p, Dirty::PAINT | Dirty::A11Y);
+            i = pi;
+        }
+    }
+
     /// The children of `pi` changed.
     fn structure_changed(&mut self, pi: usize) {
+        if self.core[pi].flags.contains(NodeFlags::FOLDS) {
+            self.mark_measure(pi);
+            let id = self.slots.id_at(pi).expect("live");
+            self.mark(id, Dirty::PAINT);
+        }
+        self.fold_up(pi);
         self.core[pi].dirty.insert(Dirty::CHILDREN | Dirty::A11Y);
         self.mark_up(pi, Dirty::DESC_RECORD);
         self.invalidate_content(pi);
@@ -626,6 +671,7 @@ impl Document {
         }
         // attribute selectors may match the prop
         self.restyle_attr(i, spec.name);
+        self.fold_up(i);
         self.journal.push(Change::Prop { node, prop, revision: rev, native });
         Ok(class)
     }
@@ -701,6 +747,33 @@ impl Document {
             }
             // the scroll nodes above it change their `passive` bit
             self.mark_ancestors_property(i);
+            if let Some(p) = self.core[i].parent {
+                let pi = self.ix(p);
+                self.refresh_desc_nonpassive(pi);
+            }
+        }
+    }
+
+    /// Recomputes [`NodeFlags::DESC_NONPASSIVE`] on `i` and up its ancestors until a node's bit does
+    /// not change.
+    pub(crate) fn refresh_desc_nonpassive(&mut self, mut i: usize) {
+        let any = NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE);
+        loop {
+            let has = self.children[i].iter().any(|&c| self.core[self.ix(c)].flags.intersects(any));
+            if has == self.core[i].flags.contains(NodeFlags::DESC_NONPASSIVE) {
+                return;
+            }
+            if has {
+                self.core[i].flags.insert(NodeFlags::DESC_NONPASSIVE);
+            } else {
+                self.core[i].flags.remove(NodeFlags::DESC_NONPASSIVE);
+            }
+            self.core[i].dirty.insert(Dirty::PROPERTY);
+            self.mark_up(i, Dirty::DESC_RECORD);
+            match self.core[i].parent {
+                Some(p) => i = self.ix(p),
+                None => return,
+            }
         }
     }
 

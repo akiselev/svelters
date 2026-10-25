@@ -184,6 +184,10 @@ pub struct KindSpec {
     pub focusable: bool,
     /// Has children (a leaf kind rejects inserts).
     pub container: bool,
+    /// Its children are content it lays out, records, hit-tests and names itself (a label's inline
+    /// runs): the node is a layout leaf (its `measure` is called), its children are not laid out,
+    /// recorded or hit, and a child's prop, style or structure change remeasures and repaints it.
+    pub folds_children: bool,
     pub methods: &'static [MethodSpec],
     /// The accessible name's sources, in order.
     pub name_from: &'static [NameSource],
@@ -201,6 +205,7 @@ impl KindSpec {
             text_prop: None,
             focusable: false,
             container: false,
+            folds_children: false,
             methods: &[],
             name_from: DEFAULT_NAME_FROM,
             doc: "",
@@ -336,6 +341,19 @@ pub trait VirtualChildren {
     fn row_rect(&self, i: usize) -> Rect;
     /// The content size (scroll extent).
     fn content_extent(&self) -> Vec2;
+    /// Binds `rows` (the range [`VirtualChildren::visible`] gave, clamped to the row count) to child
+    /// nodes of [`RealizeCx::node`](crate::cx::RealizeCx::node): recycled through a
+    /// [`RowPool`](crate::virt::RowPool), or created and inserted with
+    /// [`RealizeCx::doc`](crate::cx::RealizeCx::doc), their props written for the row. Returns them as
+    /// `(row, node)`. The document marks them [`NodeFlags::ROW`](crate::NodeFlags::ROW), places each
+    /// absolutely at [`VirtualChildren::row_rect`] in the node's content space, and hides (`display:
+    /// none`) the rows it bound before that are not returned (pooled rows stay alive). Called before
+    /// layout when the range, the row count or the extent changed, and after
+    /// [`Document::refresh_virtual`](crate::Document::refresh_virtual).
+    fn realize(&mut self, cx: &mut crate::cx::RealizeCx, rows: Range<usize>) -> Vec<(usize, presto_base::ids::NodeId)> {
+        let _ = (cx, rows);
+        Vec::new()
+    }
 }
 
 /// The retained behaviour of one node.
