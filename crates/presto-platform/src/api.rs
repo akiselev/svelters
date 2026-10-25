@@ -33,6 +33,8 @@ pub trait AppHandler: 'static {
     fn quit_requested(&mut self, _cx: &mut dyn PlatformCx) -> bool {
         true
     }
+    /// An item of the native menu bar ([`PlatformCx::set_menu_bar`]) was chosen: its [`MenuNode::Item`] id.
+    fn menu_activated(&mut self, _cx: &mut dyn PlatformCx, _id: &str) {}
     /// The loop is about to exit.
     fn exiting(&mut self, _cx: &mut dyn PlatformCx) {}
 }
@@ -76,6 +78,12 @@ pub trait PlatformCx {
             ImeState::new(area, c.purpose())
         });
         self.set_ime(id, state);
+    }
+    /// Sets the app's native menu bar (macOS) from `menu` (`None` removes the app's menus). Returns
+    /// `false` where the OS has no native menu bar; the app then draws its own. Chosen items arrive
+    /// as [`AppHandler::menu_activated`].
+    fn set_menu_bar(&mut self, _menu: Option<&MenuDesc>) -> bool {
+        false
     }
     /// Ends the active composition: commits it (`commit`) or cancels it. Returns `false` when this
     /// backend cannot do that (winit has no API for it outside the Windows shim).
@@ -259,6 +267,34 @@ pub struct Monitor {
     pub work_area: Option<DeviceRect>,
     pub scale: Scale,
     pub refresh_millihertz: Option<u32>,
+}
+
+/// A native menu bar: its top-level menus, in order (presto-widgets' `MenuModel` converts into it).
+/// On macOS the platform puts the standard app menu (About, Services, Hide, Quit) first.
+#[derive(Clone, Debug, PartialEq, Default)]
+pub struct MenuDesc {
+    pub menus: Vec<MenuNode>,
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub enum MenuNode {
+    Submenu {
+        /// The caption without mnemonic markers.
+        label: String,
+        enabled: bool,
+        items: Vec<MenuNode>,
+    },
+    Item {
+        /// What [`AppHandler::menu_activated`] reports.
+        id: String,
+        label: String,
+        /// The accelerator as authored (`Ctrl+Shift+S`, `Primary+O`; `Primary` is Cmd on macOS).
+        shortcut: String,
+        enabled: bool,
+        /// `Some(checked)` for check and radio items (the app keeps radio groups exclusive).
+        checked: Option<bool>,
+    },
+    Separator,
 }
 
 /// What an assistive technology did.
