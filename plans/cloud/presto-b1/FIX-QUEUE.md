@@ -22,6 +22,7 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | — | `ci/presto-base` | 4756b7ca | clean |
 | 12 | `ci/presto-text-input` | 300b2660 | clean |
 | 13 | `ci/presto-widgets-tier1` | d3f510ef | clean |
+| 15 | `ci/presto-app-test` | c091234d | clean (after base 4aa01eb3) |
 | 14 | `ci/presto-svelters-presto` | 80189479 | conflict in `sync.rs`: took the lane's (it ports to the lent document, superseding B2) |
 
 ## Build fixes made
@@ -43,8 +44,8 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | F5 (fixed: CORE-3 final, base 177731fd; passes) | presto-core | `tests::style::paint_transitions_sample_on_the_ui_thread`: `Busy::ANIMATING` still set after the transition should have ended (style.rs:135) | CORE-2 | Present on base. Clear ANIMATING when the last transition finishes (transitionend path, f790788a). |
 | F6 (fixed: WIDGETS-BASIC 966d4d75; `cargo test -p presto-widgets slider` 19/19 on the integration head) | presto-widgets | `controls::slider::tests::{dragging_the_thumb_changes_the_value, escape_while_dragging_restores_without_a_commit, inverted_page_clicks_and_commit_mode}`: 69.9999988 vs 70, 89.9999976 vs 90 | WIDGETS-BASIC (stopped; route to whoever owns presto-widgets controls) | Present on base since the cancelable `changed` (09fc1bfb): the value goes through an f32 (position math) without snapping. Round to the step (or compare with a tolerance in the tests). |
 | F7 (done by the lane, 80189479) | svelters-presto | B2 is a build fix only: the lane still defers JS ops and ignores the lent document | SVELTERS-PRESTO | Port `deliver_cancelable` to the lent `&mut Document` (sync delivery decision, coordinator 2026-10-25), so reads inside a cancelable listener work instead of the "cannot be read" error. |
-| F8 (routed to APP-TEST) | presto | APP-TEST request 11: TextServices not wired (`crates/presto/src/app.rs:570` TODO) | consolidation 2 or APP-TEST | As decided: TextServices owns its `SystemClipboard` (`MemoryClipboard` headless) and a compositor handle clone; install it in `App::init`. Not done here (not a build break). |
-| F9 (routed to APP-TEST) | presto | WAYLAND Q1: the facade doesn't select the platform backend yet | consolidation 2 or APP-TEST | Target-cfg deps on presto-platform-{win32,wayland,macos} with default-on features and the winit fallback, selection in `App`. Not done here. |
+| F8 (fixed: APP-TEST c091234d, `host::install` in `CoreDocument::with_widgets`, clipboard as a document service, fast commits drained to the compositor) | presto | APP-TEST request 11: TextServices not wired (`crates/presto/src/app.rs:570` TODO) | consolidation 2 or APP-TEST | As decided: TextServices owns its `SystemClipboard` (`MemoryClipboard` headless) and a compositor handle clone; install it in `App::init`. Not done here (not a build break). |
+| F9 (fixed: APP-TEST c091234d, `presto::run` picks Win32/AppKit/Wayland, winit fallback, `PRESTO_BACKEND`) | presto | WAYLAND Q1: the facade doesn't select the platform backend yet | consolidation 2 or APP-TEST | Target-cfg deps on presto-platform-{win32,wayland,macos} with default-on features and the winit fallback, selection in `App`. Not done here. |
 | F10 (done: presto.yml checks `--features dialogs`, base) | presto-widgets | `dialogs` feature (rfd) is not built by any check here or in presto.yml (it builds default features) | WIDGETS-TIER1 | Add a `cargo check -p presto-widgets --features dialogs` step to presto.yml (rfd needs GTK or xdg-portal deps on Linux). |
 | F11 (routed to consolidation 2) | presto_berth, presto_quire | Tests not run (berth `claude/presto-berth` a49111b tests/dock.rs + check.sh; quire 35b5063a/676b49bc, 43 tests); their masters not merged | consolidation 2 | Out of this brief (svelters-only branch); run and merge in consolidation 2. |
 | F12 (superseded by the F1/F2 fix) | presto-compositor | COMPOSITOR 2b98a948 was merged into base before its CI finished (coordinator list) | COMPOSITOR | F1/F2 are the result; check the lane's CI run once fixed. |
@@ -81,6 +82,11 @@ deliver 6, oplog_replay 1, ops 11, run 2, spec 4, template 4 / 0. The other crat
 
 `cargo test -p presto-core --lib tests::` 119 / 0; compositor `engine a_fling` 2 / 0 and `tree_damage diff_damages` 1 / 0;
 `cargo test -p presto-widgets slider` 19 / 0 (the CORE-3 report of three failing slider tests does not reproduce here).
+
+## After APP-TEST c091234d
+
+Workspace check clean (GTK/Qt crates excluded). `cargo test -p presto -p presto-test`: latency 14 / 0, harness 20 / 0,
+render 2 / 0.
 
 ## CI
 
