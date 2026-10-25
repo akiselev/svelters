@@ -851,6 +851,15 @@ impl NodeMut<'_> {
         ExtEntry::new(self.s.ext_cx(), key, self.id, self.origin)
     }
 
+    /// AX1: the node's `scroll-into-view` (WG6) from Rust: at the next pass every `scroll-area`
+    /// around it, and a `virtual-list` whose realised row it is or is in, scroll so it shows
+    /// (`center`: centred, else the least scroll). Automation's `scroll_into_view` and its acts on
+    /// a node scrolled out of view call it.
+    pub fn scroll_into_view(&mut self, center: bool) {
+        crate::widgets::scroll_area::scroll_into_view(self.s, self.i, center);
+        self.s.core[self.i].dirty.insert(Dirty::PAINT);
+    }
+
     /// Sets the public flags ([`NodeFlags::PUBLIC`]: `LAYOUT_BOUNDARY`, `HIT_TRANSPARENT`,
     /// `SKIP_OFFSCREEN`); others are ignored.
     pub fn set_flags(&mut self, flags: NodeFlags, on: bool) {

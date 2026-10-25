@@ -419,6 +419,8 @@ impl Widget for ScrollArea {
 
     fn a11y(&self, _cx: &A11yCx<'_>, node: &mut accesskit::Node) {
         node.set_role(accesskit::Role::ScrollView);
+        // AX1: content scrolled out of the area is clipped (its nodes keep their unclipped bounds)
+        node.set_clips_children();
         let axes = self.axes_prop();
         self.scroll.a11y(&ScrollParams { axes, ..Default::default() }, node);
     }

@@ -45,7 +45,7 @@ pub(crate) mod tree;
 pub mod virt;
 
 pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle, SceneMut, SceneRef};
-pub use hit::{Hit, HitCx, PaneHit};
+pub use hit::{Hit, HitCx, PaneHit, Shown};
 pub use query::{Cursor, Query, Visit};
 pub use journal::{Change, ChangeFilter, ChangeMask, ChangeSet, Damage, ExtChange, Observer, OriginMask, RootChange, Scope};
 pub use dump::{DumpOpts, SceneStats};

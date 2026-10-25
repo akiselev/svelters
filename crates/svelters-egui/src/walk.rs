@@ -280,6 +280,9 @@ fn cull(arena: &mut Arena, i: usize, origin: Vec2, ui: &Ui) -> bool {
     // `scroll-into-view`, or holding keyboard focus (`widgets::scroll_area::keep`)
     let c = culled(arena, i, origin, ui) && !crate::widgets::scroll_area::keep(arena, i, ui);
     arena.counters.nodes_culled += c as u64;
+    if c {
+        crate::scene::hit::record_culled(arena, i, ui); // AX1: nothing below it shows this pass
+    }
     c
 }
 
