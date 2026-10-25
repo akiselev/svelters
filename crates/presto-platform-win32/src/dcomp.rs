@@ -19,15 +19,38 @@ use windows::Win32::Graphics::DirectComposition::{
     DCompositionCreateDevice2, IDCompositionDesktopDevice, IDCompositionTarget, IDCompositionVisual,
     IDCompositionVisual2,
 };
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use windows_core::Interface;
 
 fn os_err(call: &str, e: windows_core::Error) -> PlatformError {
     PlatformError::Os(format!("{call}: {e}"))
 }
 
-/// Commits the process's DirectComposition device from any thread.
+/// Commits held back while an OS-layer resize runs, shared by every commit path.
+#[derive(Default)]
+struct Deferral {
+    /// Open `begin_os_layer_resize` calls.
+    depth: AtomicU32,
+    /// A commit was asked for while deferred.
+    pending: AtomicBool,
+}
+
+impl Deferral {
+    /// Commits now, or records it for [`DComp::end_deferral`].
+    fn commit(&self, device: &IDCompositionDesktopDevice) -> Result<(), PlatformError> {
+        if self.depth.load(Ordering::Acquire) > 0 {
+            self.pending.store(true, Ordering::Release);
+            return Ok(());
+        }
+        unsafe { device.Commit() }.map_err(|e| os_err("IDCompositionDevice::Commit", e))
+    }
+}
+
+/// Commits the process's DirectComposition device from any thread (held back during an OS-layer
+/// resize, like every other commit).
 #[derive(Clone)]
-pub struct CommitHandle(IDCompositionDesktopDevice);
+pub struct CommitHandle(IDCompositionDesktopDevice, Arc<Deferral>);
 
 // SAFETY: DirectComposition's API is thread-safe ("call any method from any thread at any time",
 // DirectComposition basic concepts).
@@ -36,12 +59,13 @@ unsafe impl Sync for CommitHandle {}
 
 impl CommitHandle {
     pub fn commit(&self) -> Result<(), PlatformError> {
-        unsafe { self.0.Commit() }.map_err(|e| os_err("IDCompositionDevice::Commit", e))
+        self.1.commit(&self.0)
     }
 }
 
 pub struct DComp {
     device: IDCompositionDesktopDevice,
+    deferral: Arc<Deferral>,
 }
 
 impl DComp {
@@ -49,15 +73,30 @@ impl DComp {
     pub fn new() -> Result<Self, PlatformError> {
         let device: IDCompositionDesktopDevice = unsafe { DCompositionCreateDevice2(None) }
             .map_err(|e| os_err("DCompositionCreateDevice2", e))?;
-        Ok(Self { device })
+        Ok(Self { device, deferral: Arc::new(Deferral::default()) })
     }
 
     pub fn commit_handle(&self) -> CommitHandle {
-        CommitHandle(self.device.clone())
+        CommitHandle(self.device.clone(), self.deferral.clone())
     }
 
     pub fn commit(&self) -> Result<(), PlatformError> {
-        unsafe { self.device.Commit() }.map_err(|e| os_err("IDCompositionDevice::Commit", e))
+        self.deferral.commit(&self.device)
+    }
+
+    /// Holds every commit (tree changes and the compositor's) until [`DComp::end_deferral`], so a
+    /// layer's new bounds and its swap chain at the new size land in one DirectComposition commit.
+    pub fn begin_deferral(&self) {
+        self.deferral.depth.fetch_add(1, Ordering::AcqRel);
+    }
+
+    /// Ends one deferral; the last one commits once if anything was held.
+    pub fn end_deferral(&self) -> Result<(), PlatformError> {
+        let prev = self.deferral.depth.fetch_update(Ordering::AcqRel, Ordering::Acquire, |d| Some(d.saturating_sub(1)));
+        if prev == Ok(1) && self.deferral.pending.swap(false, Ordering::AcqRel) {
+            return self.commit();
+        }
+        Ok(())
     }
 
     pub fn window_tree(&self, hwnd: HWND) -> Result<WindowTree, PlatformError> {
