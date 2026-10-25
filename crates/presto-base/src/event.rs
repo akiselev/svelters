@@ -146,7 +146,9 @@ pub enum ImeEvent {
     /// The composition text and the cursor range in it (byte offsets).
     Preedit { text: String, cursor: Option<(usize, usize)> },
     Commit(String),
-    /// Delete text around the cursor (bytes before, bytes after).
+    /// Delete text around the cursor (bytes before, bytes after). With a selection, the bytes are
+    /// counted from the selection's start and end, and the deletion comes before the `Commit` that
+    /// then replaces the selection.
     DeleteSurrounding { before: usize, after: usize },
     Disabled,
 }
