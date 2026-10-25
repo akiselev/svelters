@@ -52,12 +52,10 @@ warnings). I ran no tests, no clippy, and nothing against a compositor. CI resul
 
 ## Questions for the coordinator (with recommendations)
 
-1. **Dependency direction.** This crate now depends on `presto-platform` (for its traits), so
-   presto-platform cannot also select this backend through a cargo feature, because that would be a
-   cycle. *Recommend:* either (a) the facade (`presto` / the app runner) picks the backend:
-   `presto_platform_wayland::run` on Wayland sessions and `presto_platform::run` otherwise; or (b) move
-   `api.rs` + `clipboard.rs` into a small `presto-platform-api` crate that every backend and
-   presto-platform depend on. (b) is cleaner and keeps winit out of this crate's dependency tree.
+1. **Dependency direction.** Decided (coordinator, 2026-10-25): the facade picks the backend.
+   `crates/presto` depends on presto-platform-wayland, -win32 and -macos by target cfg (each behind a
+   default-on feature) and chooses one at App start, falling back to presto-platform's winit backend.
+   X11 stays on winit. There is no presto-platform-api split for now; revisit it after consolidation.
 2. **Additions** that this backend needs beyond PLATFORM's API (in `shim.rs`; the `PlatformCx` ones are
    on the `WaylandCx` extension trait, which `Cx` implements):
    - `layer_frame_source(window, layer)`: a desync subsurface has its own frame callbacks, while
