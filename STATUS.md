@@ -159,6 +159,16 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
+## Cloud batch 10 for cadatomic (2026-10-24/25)
+
+Coordinated by cloud session `session_01RQkPkX9QqiFN52Rrofmi7z` (svelters-agent is down). Briefs: `plans/cloud/batch10/`.
+- **AU7 waits** (`ci/b10-waits` `669aa79e`, code `1fbe8cfc` green on all five workflows; merged `--no-ff`): the event
+  journal with cursors (`wait.event`, `wait.never`, `wait.seen`), named busy sources (foreground/background) with
+  timeout reports, actionability, virtual/wall clock domains, record/replay hooks. One non-additive change:
+  `svelters_automation::Error` gained a public `data` field. Record: `plans/milestones/AU7-waits.md`.
+- **AX1 list-a11y** (`ci/b10-list-a11y`): running.
+cadatomic's svelters pin (`ab8dcfc7`) advances in its batch 10 wave 2 (waits-adopt).
+
 ## Cloud batch 8 for cadatomic (2026-10-24)
 
 svelters-agent is down; the user made the cadatomic batch coordinator (cloud session
