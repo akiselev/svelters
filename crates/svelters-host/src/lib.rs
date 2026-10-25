@@ -152,6 +152,11 @@ impl HostCallbacks for Callbacks {
         core::frame(&self.core, &self.engine);
     }
 
+    fn dispatch_now(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<(), SyncError> {
+        self.toolkit_up();
+        core::dispatch_now(&self.core, &self.engine, h, signal, args)
+    }
+
     fn prop_changed(&self, h: svl_handle, prop: svl_id) {
         self.toolkit_up();
         // Marks (h, prop) dirty; the next checkpoint reads, compares and delivers it in one batch.
@@ -537,6 +542,14 @@ impl<'a> Host<'a> {
     /// `svl_host.frame`), for embedders that own the frame clock.
     pub fn frame(&self) {
         core::frame(&self.core, &self.engine);
+    }
+
+    /// W-H1 (ABI v2.9 `svl_host.dispatch_now`): delivers `signal` on `h` at event time and drains
+    /// the jobs its handlers queued, so their effects are applied when this returns. Earlier queued
+    /// events and changes go first. `Err(SyncError::Busy)` while JS runs (the event is queued for
+    /// the next checkpoint instead).
+    pub fn dispatch_now(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<(), SyncError> {
+        core::dispatch_now(&self.core, &self.engine, h, signal, args)
     }
 
     /// Runs a full garbage collection. Values JS dropped without `dispose()` are queued for release

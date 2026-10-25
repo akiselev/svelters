@@ -76,6 +76,7 @@ impl Fixture {
             release_callback: h_release,
             frame: h_frame,
             prop_changed: None,
+            dispatch_now: None,
         });
         unsafe { backend.attach_host(&*host) };
         Fixture { backend, stub, _host: host }

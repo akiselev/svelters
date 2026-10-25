@@ -257,6 +257,7 @@ impl Driver {
             Step::Gone { handle, .. } => format!("gone#{handle}"),
             Step::Sync { handle, signal, .. } => format!("sync {signal}#{handle}"),
             Step::Changed { handle, prop, .. } => format!("changed {prop}#{handle}"),
+            Step::Now { handle, signal, .. } => format!("now {signal}#{handle}"),
         };
         if self.opts.measure {
             let _ = self.host.take_timing();
@@ -274,6 +275,9 @@ impl Driver {
         }
         if let Step::Changed { handle, prop, .. } = &step {
             self.fail(format!("step {index}: changed step ({prop} on #{handle}) has no native action"));
+        }
+        if let Step::Now { handle, signal, .. } = &step {
+            self.fail(format!("step {index}: now step ({signal} on #{handle}) has no native action"));
         }
         if let Step::Event { handle, signal, args, .. } = step {
             let res = match (signal.as_str(), args.first()) {

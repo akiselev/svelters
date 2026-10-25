@@ -1114,15 +1114,7 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         return;
     }
 
-    // REACTIVITY.md §5.3: the batch of changed properties first, then the queued signal events,
-    // with no job drain in between (handlers see the new state; Svelte flushes once after them).
-    deliver_changes(core, &mut eng);
-    for ev in core.take_events() {
-        if let Err(e) = deliver(core, &mut eng, ev) {
-            core.report(e);
-        }
-        pending |= drain(&mut eng, &mut budget);
-    }
+    pending |= deliver_queued(core, &mut eng, &mut budget);
 
     let now = core.now();
     // A timer callback is a new task: the microtasks of what this checkpoint delivered before it (a
@@ -1193,6 +1185,66 @@ pub(crate) fn frame(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.wake();
     }
     core.quit_if_last_window_gone();
+}
+
+/// REACTIVITY.md §5.3: the batch of changed properties first, then the queued signal events, with
+/// no job drain in between (handlers see the new state; Svelte flushes once after them) and a
+/// drain after each event. Returns whether jobs are left.
+fn deliver_queued(core: &Core, eng: &mut Box<dyn JsEngine>, budget: &mut usize) -> bool {
+    let mut pending = false;
+    deliver_changes(core, eng);
+    for ev in core.take_events() {
+        if let Err(e) = deliver(core, eng, ev) {
+            core.report(e);
+        }
+        let st = eng.run_jobs(*budget);
+        *budget = budget.saturating_sub(st.ran);
+        core.report_all(eng.take_errors());
+        pending |= st.pending;
+    }
+    pending
+}
+
+/// W-H1 `host.dispatch_now` (ABI v2.9, plans/research/presto/compiler-and-js.md §3.10): delivers
+/// `signal` at event time, as a checkpoint would deliver it, and drains the jobs its handlers
+/// queued, so their result (Svelte's flush included) is in the tree when this returns. Events and
+/// changes queued before it go first, in order. No timers fire and no offloaded call settles here.
+///
+/// - JS already running (a host op is on the stack): the event is queued, the backend woken, and
+///   the answer is [`SyncError::Busy`].
+/// - A signal nobody listens to is [`SyncError::Failed`].
+pub(crate) fn dispatch_now(
+    core: &Core,
+    engine: &RefCell<Box<dyn JsEngine>>,
+    h: svl_handle,
+    signal: svl_id,
+    args: &[Value],
+) -> Result<(), SyncError> {
+    let (id, _) = split_signal(signal);
+    if core.listened_signal(h, id).is_none() {
+        return Err(SyncError::Failed(format!("dispatch_now: no listener for signal id {id} on handle {h}")));
+    }
+    core.push_event(h, signal, args.to_vec());
+    if core.js_running() || engine.try_borrow_mut().is_err() {
+        if !core.cfg.scripted {
+            core.wake();
+        }
+        return Err(SyncError::Busy);
+    }
+    let Some(_guard) = core.enter() else {
+        return Err(SyncError::Busy);
+    };
+    let mut eng = engine.borrow_mut();
+    reactive::collect(core);
+    let mut budget = core.cfg.max_jobs_per_checkpoint;
+    let pending = deliver_queued(core, &mut eng, &mut budget);
+    drop(eng);
+    core.process_releases();
+    core.sync_sched();
+    if (pending || core.has_events()) && !core.cfg.scripted {
+        core.wake();
+    }
+    Ok(())
 }
 
 /// `host.call_sync`: runs the JS listeners of `signal` on `h` now and returns the handler
