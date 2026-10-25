@@ -10,18 +10,18 @@
 //! | [`input`] | presto events → egui `Event`s (pointer routing and capture, keys, text, IME, wheel, files) |
 //! | [`a11y`] | the AccessKit graft: nested trees, egui's root tree id rewritten, actions mapped back |
 //! | [`dnd`] | the `egui::DragAndDrop` ↔ presto drag-and-drop bridge |
-//! | [`shim`] | stand-ins for wave-1 APIs not published yet (presto drags) |
+//! | [`host`] | the `egui-island` kind and the document's table of mounted islands (mount, detach, run, render) |
 //!
-//! The island is a layer kind ([`EguiIsland::layer_kind`]): the host node records
-//! [`EguiIsland::display_list`] and places it in a `LayerKind::Texture` layer.
+//! In a presto document an island is mounted on a node of the `egui-island` kind ([`host`]); without a
+//! document (tests, a custom host) [`EguiIsland`] is driven directly.
 
 pub mod a11y;
 pub mod dnd;
+pub mod host;
 pub mod input;
 pub mod island;
-pub mod shim;
 
 pub use a11y::{A11yGraft, island_tree_id};
-pub use dnd::{DndBridge, DndOutput, IslandDrag, IslandDragCodec, PayloadCodec};
+pub use dnd::{DndBridge, DndOutput, DragData, IslandDrag, IslandDragCodec, PayloadCodec};
 pub use island::{EguiIsland, ImeArea, IslandDesc, IslandOutput, TARGET_FORMAT, TextureRegistry};
-pub use shim::PrestoDrag;
+pub use host::{EGUI_ISLAND, EguiIslandKind, IslandHost, MountError, MountRejected};

@@ -4186,6 +4186,7 @@ dependencies = [
  "pollster 0.4.0",
  "presto-base",
  "presto-compositor",
+ "presto-core",
  "presto-platform",
  "wgpu",
 ]

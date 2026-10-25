@@ -17,13 +17,12 @@
 //! sets no deadline, so presto's idle barrier holds.
 
 use crate::a11y::A11yGraft;
-use crate::dnd::{DndBridge, DndOutput, PayloadCodec};
+use crate::dnd::{DndBridge, DndOutput, DragData, PayloadCodec};
 use crate::input::{self, InputTranslator, Routed};
-use crate::shim::PrestoDrag;
 use presto_platform::clipboard::{Clipboard, ClipboardKind};
 use presto_base::cursor::CursorIcon;
 use presto_base::display::{DisplayList, Prim, SurfacePrim};
-use presto_base::event::InputEnvelope;
+use presto_base::event::{InputEnvelope, InputEvent};
 use presto_base::geom::{DeviceSize, Point, Rect, Scale};
 use presto_base::ids::TextureId;
 use presto_base::layer::LayerKind;
@@ -130,6 +129,7 @@ pub struct EguiIsland {
     dnd: DndBridge,
     clipboard: Option<Box<dyn Clipboard>>,
     max_texture_side: usize,
+    cursor: CursorIcon,
 }
 
 impl EguiIsland {
@@ -154,6 +154,7 @@ impl EguiIsland {
             clipboard: None,
             // wgpu's default `max_texture_dimension_2d`, until the device says otherwise.
             max_texture_side: 8192,
+            cursor: CursorIcon::Default,
         };
         island.place_a11y();
         island
@@ -220,6 +221,22 @@ impl EguiIsland {
         self.pass_at = Some(Time::ZERO);
     }
 
+    /// Moves the island's AccessKit subtree to `tree` (when it is mounted on another node). The next pass
+    /// sends the whole tree, with its tree info, under the new id.
+    pub fn set_tree_id(&mut self, tree: accesskit::TreeId) {
+        if tree != self.graft.tree_id() {
+            let placement = self.graft.placement();
+            self.graft = A11yGraft::new(tree);
+            self.graft.set_placement(placement);
+            self.pass_at = Some(Time::ZERO);
+        }
+    }
+
+    /// The cursor egui asked for in its last pass.
+    pub fn cursor(&self) -> CursorIcon {
+        self.cursor
+    }
+
     pub fn a11y(&self) -> &A11yGraft {
         &self.graft
     }
@@ -261,7 +278,12 @@ impl EguiIsland {
 
     /// A presto input event. Returns whether the island took it (the host stops dispatching it).
     pub fn handle_input(&mut self, ev: &InputEnvelope) -> bool {
-        let Routed { consumed, queued, paste } = self.input.translate(&ev.event, &mut self.events);
+        self.handle_event(&ev.event, ev.recv_time)
+    }
+
+    /// [`handle_input`](Self::handle_input) for an event that arrived at `at` (positions in window points).
+    pub fn handle_event(&mut self, ev: &InputEvent, at: Time) -> bool {
+        let Routed { consumed, queued, paste } = self.input.translate(ev, &mut self.events);
         if paste {
             let text = self.clipboard.as_mut().and_then(|c| c.get_text(ClipboardKind::Clipboard)).map(|t| t.replace("\r\n", "\n"));
             if let Some(text) = text.filter(|t| !t.is_empty()) {
@@ -269,7 +291,7 @@ impl EguiIsland {
             }
         }
         if queued {
-            self.request_pass_at(ev.recv_time);
+            self.request_pass_at(at);
         }
         consumed
     }
@@ -306,7 +328,7 @@ impl EguiIsland {
     }
 
     /// A presto drag entered the island at `pos` (window points).
-    pub fn drag_enter(&mut self, drag: &PrestoDrag, pos: Point) {
+    pub fn drag_enter(&mut self, drag: &DragData, pos: Point) {
         self.dnd.enter(&self.ctx, drag);
         self.drag_move(pos);
     }
@@ -410,8 +432,9 @@ impl EguiIsland {
         self.pass_at = repaint_at;
 
         let po = full.platform_output;
+        self.cursor = input::cursor(po.cursor_icon);
         let mut out = IslandOutput {
-            cursor: input::cursor(po.cursor_icon),
+            cursor: self.cursor,
             repaint_at,
             ..Default::default()
         };
