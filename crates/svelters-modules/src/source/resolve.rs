@@ -137,7 +137,7 @@ impl Resolver {
     }
 
     fn file(&self, p: &Path) -> Option<PathBuf> {
-        if p.is_file() { p.canonicalize().ok() } else { None }
+        if p.is_file() { crate::canonicalize(p).ok() } else { None }
     }
 
     /// A file as is, with an extension appended, or a directory (its package.json main, its index).
@@ -182,7 +182,7 @@ impl Resolver {
             if !pkg.is_dir() {
                 continue;
             }
-            let pkg = pkg.canonicalize().map_err(|e| format!("{}: {e}", pkg.display()))?;
+            let pkg = crate::canonicalize(&pkg).map_err(|e| format!("{}: {e}", pkg.display()))?;
             let manifest = self.manifest(&pkg);
             if let Some(exports) = manifest.as_ref().and_then(|m| m.get("exports")) {
                 let target = self.exports(exports, &sub).ok_or_else(|| format!("package {name:?} does not export {sub:?} (conditions {:?})", self.conditions))?;
@@ -338,7 +338,7 @@ mod tests {
         w("app/node_modules/@s/pkg/sub.js", "");
         let r = r();
         let src = dir.join("app/src");
-        let canon = |rel: &str| dir.join(rel).canonicalize().unwrap();
+        let canon = |rel: &str| crate::canonicalize(&dir.join(rel)).unwrap();
         assert_eq!(r.resolve(&src, "./a").unwrap(), canon("app/src/a.js"));
         assert_eq!(r.resolve(&src, "./dir").unwrap(), canon("app/src/dir/index.js"));
         assert_eq!(r.resolve(&src, "#lib/x").unwrap(), canon("app/src/lib/x.js"));

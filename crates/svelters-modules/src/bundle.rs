@@ -17,7 +17,7 @@ pub struct BundleProvider {
 impl BundleProvider {
     /// The bundle whose entry module is `entry` (e.g. `dist/app.js`).
     pub fn new(entry: &Path) -> Result<BundleProvider, String> {
-        let entry = entry.canonicalize().map_err(|e| format!("{}: {e}", entry.display()))?;
+        let entry = crate::canonicalize(entry).map_err(|e| format!("{}: {e}", entry.display()))?;
         let root = entry.parent().ok_or("entry has no parent directory")?.to_path_buf();
         let name = entry.file_name().and_then(|n| n.to_str()).ok_or("entry file name is not UTF-8")?.to_string();
         let assets = Assets::new();
@@ -59,7 +59,7 @@ impl ModuleProvider for BundleProvider {
     }
 
     fn load(&self, id: &str) -> Result<ModuleCode, String> {
-        let path = self.root.join(id).canonicalize().map_err(|e| e.to_string())?;
+        let path = crate::canonicalize(&self.root.join(id)).map_err(|e| e.to_string())?;
         // Symlinks must not lead out of the bundle directory.
         if !path.starts_with(&self.root) {
             return Err("resolves outside the bundle directory".into());

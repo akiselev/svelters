@@ -84,7 +84,7 @@ fn split_package(spec: &str) -> Option<(&str, &str)> {
 /// The directory of package `name` as Node finds it from `from`: the first
 /// `<ancestor>/node_modules/<name>` (symlinks resolved).
 pub(crate) fn package_dir(from: &Path, name: &str) -> Option<PathBuf> {
-    from.ancestors().find_map(|a| a.join("node_modules").join(name).canonicalize().ok())
+    from.ancestors().find_map(|a| crate::canonicalize(&a.join("node_modules").join(name)).ok())
 }
 
 #[cfg(test)]

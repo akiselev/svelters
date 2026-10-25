@@ -319,7 +319,7 @@ impl Assets {
             return Err(AssetError::new(format!("asset root `{root}` is already mounted")));
         }
         let canon = match &src {
-            AssetSource::Dir(d) => Some(d.canonicalize().map_err(|e| AssetError::new(format!("{}: {e}", d.display())))?),
+            AssetSource::Dir(d) => Some(crate::canonicalize(d).map_err(|e| AssetError::new(format!("{}: {e}", d.display())))?),
             AssetSource::Static(_) | AssetSource::Bundle(_) => None,
         };
         roots.insert(root.to_string(), Root { src, canon });
@@ -342,7 +342,7 @@ impl Assets {
     /// `node_modules/<package name>/<path in package>`, from the nearest package.json above it, and
     /// is recorded so the ref serves that file.
     pub fn register(&self, root: &str, file: &Path) -> Result<AssetRef, AssetError> {
-        let file = file.canonicalize().map_err(|e| AssetError::new(format!("{}: {e}", file.display())))?;
+        let file = crate::canonicalize(file).map_err(|e| AssetError::new(format!("{}: {e}", file.display())))?;
         let dir = {
             let roots = self.roots.read().unwrap();
             let r = roots.get(root).ok_or_else(|| AssetError::new(format!("asset root `{root}` is not mounted")))?;
@@ -374,7 +374,7 @@ impl Assets {
         }
         let roots = self.roots.read().unwrap();
         let dir = roots.get(r.root())?.canon.as_ref()?;
-        let p = dir.join(r.path()).canonicalize().ok()?;
+        let p = crate::canonicalize(&dir.join(r.path())).ok()?;
         p.starts_with(dir).then_some(p)
     }
 
@@ -461,7 +461,7 @@ impl Assets {
 }
 
 fn canonical(p: &Path) -> PathBuf {
-    p.canonicalize().unwrap_or_else(|_| crate::normalize(&std::path::absolute(p).unwrap_or_else(|_| p.to_path_buf())))
+    crate::canonicalize(p).unwrap_or_else(|_| crate::normalize(&std::path::absolute(p).unwrap_or_else(|_| p.to_path_buf())))
 }
 
 fn slashed(rel: &Path) -> String {

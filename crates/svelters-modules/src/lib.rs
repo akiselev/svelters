@@ -114,6 +114,24 @@ pub trait ModuleProvider {
     fn describe(&self) -> String;
 }
 
+/// `fs::canonicalize`, but on Windows a drive path comes back as `C:\…`, not the verbatim
+/// `\\?\C:\…` form: module ids are paths, and the `?` of a verbatim prefix reads as an import
+/// query (`./a.svg?raw`), so every loader path goes through here.
+pub(crate) fn canonicalize(path: &Path) -> std::io::Result<PathBuf> {
+    let p = path.canonicalize()?;
+    #[cfg(windows)]
+    {
+        use std::path::{Component, Prefix};
+        if let Some(Component::Prefix(prefix)) = p.components().next()
+            && let Prefix::VerbatimDisk(_) = prefix.kind()
+            && let Some(plain) = p.to_str().and_then(|s| s.strip_prefix(r"\\?\"))
+        {
+            return Ok(PathBuf::from(plain));
+        }
+    }
+    Ok(p)
+}
+
 /// `path` with `.` and `..` folded, without touching the file system.
 pub(crate) fn normalize(path: &Path) -> PathBuf {
     let mut out = PathBuf::new();
@@ -127,4 +145,19 @@ pub(crate) fn normalize(path: &Path) -> PathBuf {
         }
     }
     out
+}
+
+#[cfg(all(test, windows))]
+mod windows_paths {
+    #[test]
+    fn canonical_drive_paths_have_no_verbatim_prefix() {
+        let here = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        assert!(
+            here.canonicalize().unwrap().to_str().unwrap().starts_with(r"\\?\"),
+            "positive control: std gives the verbatim form"
+        );
+        let p = super::canonicalize(&here.join("src/../Cargo.toml")).unwrap();
+        let s = p.to_str().unwrap();
+        assert!(!s.contains('?') && s.ends_with(r"svelters-modules\Cargo.toml"), "{s}");
+    }
 }

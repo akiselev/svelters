@@ -79,7 +79,7 @@ impl SourceConfig {
     /// app (`.svelte` mounts it, anything else is evaluated as is). The app root is the nearest
     /// directory with a package.json.
     pub fn for_path(path: &Path) -> Result<SourceConfig, String> {
-        let path = path.canonicalize().map_err(|e| format!("{}: {e}", path.display()))?;
+        let path = crate::canonicalize(path).map_err(|e| format!("{}: {e}", path.display()))?;
         let start = if path.is_dir() { path.as_path() } else { path.parent().unwrap_or(&path) };
         let root = start
             .ancestors()
@@ -133,12 +133,12 @@ impl SourceConfig {
     /// repository's `packages/native-runtime`.
     fn find_runtime(&self) -> Result<PathBuf, String> {
         if let Some(d) = &self.runtime_dir {
-            return d.canonicalize().map_err(|e| format!("{}: {e}", d.display()));
+            return crate::canonicalize(d).map_err(|e| format!("{}: {e}", d.display()));
         }
         const RUNTIME: &str = "@svelters/native-runtime";
         package_dir(&self.root, RUNTIME)
             .or_else(|| package_dir(&self.root, "@svelters/build").and_then(|b| package_dir(&b, RUNTIME)))
-            .or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("../../packages/native-runtime").canonicalize().ok())
+            .or_else(|| crate::canonicalize(&Path::new(env!("CARGO_MANIFEST_DIR")).join("../../packages/native-runtime")).ok())
             .ok_or_else(|| format!("{}: {RUNTIME} is not installed (pnpm install)", self.root.display()))
     }
 }
@@ -174,7 +174,7 @@ impl Overlay {
 
 /// Overlay keys: canonical when the file exists, else absolute and normalised.
 fn key(path: &Path) -> PathBuf {
-    path.canonicalize().unwrap_or_else(|_| normalize(&std::path::absolute(path).unwrap_or_else(|_| path.to_path_buf())))
+    crate::canonicalize(path).unwrap_or_else(|_| normalize(&std::path::absolute(path).unwrap_or_else(|_| path.to_path_buf())))
 }
 
 /// The result of [`SourceProvider::check`]: the compiler's diagnostics for one file.
@@ -353,7 +353,7 @@ impl Inner {
                 return Err(format!("{specifier:?}: not a behaviour namespace"));
             }
             let p = self.cfg.root.join(".svelters/app/behaviors").join(format!("{ns}.js"));
-            let p = p.canonicalize().map_err(|e| format!("{specifier:?} -> {}: {e} (run the app binary's dump)", p.display()))?;
+            let p = crate::canonicalize(&p).map_err(|e| format!("{specifier:?} -> {}: {e} (run the app binary's dump)", p.display()))?;
             (p.to_string_lossy().into_owned(), Some(p))
         } else if let Some(file) = specifier.strip_prefix(STYLE_PREFIX) {
             // LD2: only the component itself imports its sheet (its compiled code ends with the import).
@@ -362,7 +362,7 @@ impl Inner {
             }
             (specifier.to_string(), Some(PathBuf::from(file)))
         } else if let Some(p) = self.aliases.get(specifier) {
-            let p = p.canonicalize().map_err(|e| format!("alias of {specifier:?} -> {}: {e}", p.display()))?;
+            let p = crate::canonicalize(&p).map_err(|e| format!("alias of {specifier:?} -> {}: {e}", p.display()))?;
             (p.to_string_lossy().into_owned(), Some(p))
         } else {
             let dir = match Path::new(base) {
