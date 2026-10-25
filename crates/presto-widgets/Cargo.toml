@@ -20,8 +20,8 @@ serde_json = { workspace = true }
 resvg = { version = "=0.45.1", default-features = false }
 # The icon colour-slot rewrite (`paint::icon::registry::slot_svg`) parses icon SVGs with the roxmltree usvg links.
 roxmltree = "=0.20.0"
-# The text-editing core of the `text` kinds (lane TEXT-INPUT), at cadatomic's `pins.toml` sha.
-quire-text = { git = "https://github.com/akiselev/quire", rev = "3e78dcd3bf74abc2c81209f0109caff4d9193529" }
+# The text-editing core of the `text` kinds (lane TEXT-INPUT), at QUIRE's `claude/presto-quire` 35b5063a (R1, R2).
+quire-text = { git = "https://github.com/akiselev/quire", rev = "35b5063ab149ca8682241324aff8efb28696f491" }
 
 [dev-dependencies]
 # The conformance pins (pins 1–7) against the Linux goldens: tests/text_pins.rs.

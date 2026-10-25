@@ -416,7 +416,6 @@ impl TextEditor {
                 if text.is_empty() {
                     self.run(EditCommand::Preedit(PreeditUpdate::Cancel));
                 } else {
-                    self.begin_composition();
                     let active = cursor.map(|(s, e)| floor_boundary(text, s.min(e))..floor_boundary(text, s.max(e)));
                     self.run(EditCommand::Preedit(PreeditUpdate::Update { text: text.clone(), active }));
                 }
@@ -434,14 +433,6 @@ impl TextEditor {
 
     fn commit(&mut self, text: &str, prev: usize, next: usize) {
         self.run(EditCommand::Preedit(PreeditUpdate::Commit { text: text.to_string(), replace_prev_chars: prev, replace_next_chars: next }));
-    }
-
-    /// A composition starting over a selection replaces it (AppKit, TSF): quire-text draws a
-    /// preedit at the caret without deleting the selection, so delete it first.
-    fn begin_composition(&mut self) {
-        if !self.composing() && !self.selection().range().is_empty() {
-            self.run(EditCommand::ReplaceSelection(String::new()));
-        }
     }
 
     // ---- pointer ----
@@ -621,7 +612,7 @@ impl TextEditor {
             self.run(EditCommand::Preedit(PreeditUpdate::Cancel));
             return;
         }
-        self.begin_composition();
+        // a composition starting over a selection replaces it: quire-text deletes it in the update
         let active = new_selected.map(|r| str_utf16_to_byte(text, r.start)..str_utf16_to_byte(text, r.end.max(r.start)));
         self.run(EditCommand::Preedit(PreeditUpdate::Update { text: text.to_string(), active }));
     }

@@ -1,53 +1,23 @@
-//! Document-wide UTF-16 offsets over quire-text's [`Text`] (architecture §11.3: TSF, macOS and UIA
-//! speak UTF-16 code units of the whole document; quire-text speaks UTF-8 bytes and has only
-//! per-line UTF-16 columns).
-//!
-//! Both directions walk the text's chunks, so they cost O(n) in the text before the offset. Fields
-//! are short; for long documents quire-text could answer in O(log n) through ropey's
-//! `char_to_utf16_cu` (requested from quire in `plans/milestones/PRESTO-text-input.md`).
+//! UTF-16 offsets (architecture §11.3: TSF, macOS and UIA speak UTF-16 code units of the whole
+//! document). Over quire-text's [`Text`] they are quire's own O(log n) conversions (request R1); the
+//! `str_*` functions do the same over a `&str` (the IME document with its preedit, a preedit itself).
 
 use quire_text::Text;
 
 /// The UTF-16 offset of byte `b` (rounded down to a char boundary, clamped to the end).
 pub fn byte_to_utf16(text: &Text, b: usize) -> usize {
-    let b = text.clamp_to_boundary(b.min(text.len_bytes()));
-    if let Some(s) = text.as_str() {
-        return str_byte_to_utf16(s, b);
-    }
-    let mut seen = 0;
-    let mut units = 0;
-    for chunk in text.chunks() {
-        if seen + chunk.len() >= b {
-            return units + str_byte_to_utf16(chunk, b - seen);
-        }
-        seen += chunk.len();
-        units += chunk.chars().map(char::len_utf16).sum::<usize>();
-    }
-    units
+    text.byte_to_utf16_offset(b)
 }
 
 /// The byte of UTF-16 offset `u` (clamped to the end; an offset inside a surrogate pair rounds down
 /// to the pair's start).
 pub fn utf16_to_byte(text: &Text, u: usize) -> usize {
-    if let Some(s) = text.as_str() {
-        return str_utf16_to_byte(s, u);
-    }
-    let mut seen = 0;
-    let mut units = 0;
-    for chunk in text.chunks() {
-        let n: usize = chunk.chars().map(char::len_utf16).sum();
-        if units + n >= u {
-            return seen + str_utf16_to_byte(chunk, u - units);
-        }
-        units += n;
-        seen += chunk.len();
-    }
-    seen
+    text.utf16_offset_to_byte(u)
 }
 
 /// The length of `text` in UTF-16 code units.
 pub fn len_utf16(text: &Text) -> usize {
-    text.chunks().map(|c| c.chars().map(char::len_utf16).sum::<usize>()).sum()
+    text.len_utf16()
 }
 
 /// [`byte_to_utf16`] on a `&str` (`b` must be a char boundary of `s`, or its length).

@@ -10,7 +10,7 @@ skeletons, then at `ac7cc8c4`, with the WIDGETS-BASIC substrate, merged in). Own
 
 | Module | What |
 |---|---|
-| `editor.rs` | `TextEditor`: one field's quire-text `TextDocument` + `TextView` (quire-text at cadatomic's pin `3e78dcd3`), per-platform `TextPolicy`, keys through `keys.rs`, IME events (winit-style `ImeEvent`) and the `TextInputClient` operations in document-wide UTF-16 offsets (the IME document is the text with the preedit spliced in), pointer selection (click, double/triple click, drags by word and line, Shift+click), the middle-click PRIMARY paste, focus rules (select-all on keyboard/programmatic focus, unfocused selection kept or collapsed, GTK's one selection owner), clipboard/PRIMARY/beep requests (`TextRequest`), input filters |
+| `editor.rs` | `TextEditor`: one field's quire-text `TextDocument` + `TextView` (quire-text at QUIRE's `claude/presto-quire` `35b5063a`, with R1 and R2), per-platform `TextPolicy`, keys through `keys.rs`, IME events (winit-style `ImeEvent`) and the `TextInputClient` operations in document-wide UTF-16 offsets (the IME document is the text with the preedit spliced in), pointer selection (click, double/triple click, drags by word and line, Shift+click), the middle-click PRIMARY paste, focus rules (select-all on keyboard/programmatic focus, unfocused selection kept or collapsed, GTK's one selection owner), clipboard/PRIMARY/beep requests (`TextRequest`), input filters |
 | `kind.rs` | `TextEdit`: `impl presto_core::Kind` for `text-edit` (spec with change classes, `text` native-owned; `prop_changed`, `measure`, `prepare`, `record` through `RecordCx`, `event` for keys, IME, pointer, focus; `text_input`; `a11y`), signals emitted with `EventCx::emit` |
 | `geometry.rs` | presto-text's `TextLayout` as the field's geometry (`LaidOut`: lines without their line feed, affinity, runs recorded through `RecordCx::draw_run`) and `SystemLayouter` over `TextSystem` |
 | `field.rs` | `TextField`: the `text-edit` kind's state: layout (through the shim), horizontal/vertical scroll to the caret, `record` (selection quads behind the glyphs, placeholder, preedit underline with the active clause thicker, clipped to the content box), the caret as `FastCommit::Caret`, the IME candidate area, `impl TextInputClient` (bounds and character index through the layout, password-aware), AccessKit role/value/placeholder/actions, signals (`changed`, `commit`, `submit`, `cancel`, `select`, kept from svelters' `text-edit` names), `TEXT_EDIT_PROPS` with change classes |
@@ -19,7 +19,7 @@ skeletons, then at `ac7cc8c4`, with the WIDGETS-BASIC substrate, merged in). Own
 | `caret.rs` | `CaretState` (fast commit on move, hide, or blink restart); the blink itself is COMPOSITOR's `CaretBlink`, set per window from `TextPolicy` |
 | `lines.rs` | `GeometryLines`: quire-text `VisualLines` over a layout (Up/Down/PageUp/PageDown and Home/End on wrapped rows, goal x in 1/64 pt) |
 | `shown.rs` | the shown text (password mask, preedit) and its byte mapping to the document |
-| `utf16.rs` | document-wide UTF-16 ↔ byte over quire's `Text` (O(n) chunk walk; request Q-R1) |
+| `utf16.rs` | document-wide UTF-16 ↔ byte: quire-text's O(log n) `byte_to_utf16_offset`/`utf16_offset_to_byte` (R1), and the same over `&str` |
 | `number.rs` | `NumberField`: the value boxes' text part on quire-text (replaces svelters-egui's interim `Entry`): `NumFormat` (prefix/suffix, special text, decimals, formatter/parser registry), `Steps` (svelters-egui `StepParams` arithmetic: step, page, wrap, adaptive, rounding), `Correction`, commit mode, the FM1 commit seam (`Input`/`Commit`/`Submit`), Up/Down/PageUp/PageDown steps, wheel notches |
 | `hex.rs` | `HexField`: the colour editor's hex field (filter, `#rgb`/`#rgba`/`#rrggbb`/`#rrggbbaa`, apply on Enter/blur, `:invalid`, Escape restores) |
 | `cell.rs` | `CellEditor`: the table's cell editor (Enter commits, Escape reverts, Tab/Shift+Tab commit and move ±1, blur commits; F2 selects the value, typing replaces it) |
@@ -76,6 +76,8 @@ from `EventCx::time`.
 - `crates/presto-widgets/Cargo.toml`: `quire-text` (git, rev `3e78dcd3bf74abc2c81209f0109caff4d9193529`)
   and the dev-dependency `svelters-conformance` (pins and goldens). Other lanes edit this file too: a
   merge conflict there is additive.
+- `crates/presto-widgets/Cargo.toml` pins quire-text at `35b5063a` (QUIRE's branch); the consolidation
+  re-pins it to the quire commit that lands on quire's main and updates cadatomic's `pins.toml`.
 - `Cargo.lock`: quire-text and its dependencies (ropey, unicode-segmentation, unicode-general-category).
 
 
@@ -83,13 +85,12 @@ No change to `presto-base` or any wave-1 crate.
 
 ## Requests
 
-- **R1 (quire-text):** document-wide UTF-16 offsets in O(log n): `Text::byte_to_utf16_offset` and
-  `utf16_offset_to_byte` (ropey's `char_to_utf16_cu`/`utf16_cu_to_char`, as `Text::utf16_to_byte` does per
-  line). presto-widgets walks chunks meanwhile (`text/utf16.rs`); fine for fields, slow for long documents.
-- **R2 (quire-text):** a preedit that starts over a selection: quire draws the preedit at the caret and
-  keeps the selection; AppKit and TSF replace the selection. The editor deletes it first
-  (`TextEditor::begin_composition`); a quire `PreeditUpdate` flag would make it one transaction.
-- **R3 (presto-base / compositor):** `FastCommit::Caret { window, rect, revision }` carries no blink cycle or
+- **R1, R2 (quire-text): done** by QUIRE on `claude/presto-quire` `35b5063a` (`Text::len_utf16`,
+  `byte_to_utf16_offset`, `utf16_offset_to_byte`; a composition started over a selection deletes it as
+  one `InputKind::Ime` transaction inside `PreeditUpdate::Update`). This branch pins that sha and dropped
+  its own chunk walk and delete-first step.
+- **R3 (compositor): done** by COMPOSITOR (`CaretBlink`, `CompositorHandle::set_caret_blink`); the app
+  sets it per window from `TextPolicy`. Was: `FastCommit::Caret { window, rect, revision }` carries no blink cycle or
   timeout, but they differ per platform (GTK 1200 ms with a 10 s timeout, Qt 1000 ms, Windows and macOS
   1060 ms in FX1's table). Recommendation: the compositor takes them per window in its config (or a new
   `FastCommit::CaretBlink { window, cycle, timeout }` variant, a breaking change for exhaustive matches), and
@@ -103,7 +104,7 @@ No change to `presto-base` or any wave-1 crate.
   the pins fixture does it in `settle`); the IME-first route (`keys::route`) before the command keymap.
 - **R5 (presto-text):** done by lane TEXT (`lines()`, `caret_rect_at(Cursor)`, affinity); its lines
   include the trailing line feed, which `geometry::LaidOut` strips.
-- **R6 (presto-platform):** `Clipboard` with PRIMARY get/set/clear (X11, Wayland); `ImeEvent::Preedit`
+- **R6 (presto-platform):** WAYLAND has the PRIMARY methods on `ci/presto-wayland` 755fcaf6 (not in base yet); the field keeps its PRIMARY requests (`TextRequest::SetPrimary` and friends, served through `shim::Clipboard`) until consolidation. Was: `Clipboard` with PRIMARY get/set/clear (X11, Wayland); `ImeEvent::Preedit`
   cursor `None` read as "hide the caret" (the field does so).
 
 ## Not done (left out, not faked)
@@ -143,4 +144,6 @@ method with a default); installing `TextHost` → APP-TEST.
   keyboard-focus select-all did not set PRIMARY: a real gap, now fixed); fixed in the next commit.
 - After merging `ci/presto-base` 87cb4e44 (document services replaced the substrate's thread-locals):
   `cargo test -p presto-widgets --lib text::` (37 passed) and `--test text_pins` (passed; table above).
+- After re-pinning quire-text to `35b5063a`: `cargo test -p presto-widgets --lib text::` (36 passed) and
+  `--test text_pins` (passed; totals unchanged, 228 and 226 of 243).
 - Not run: clippy, other crates.

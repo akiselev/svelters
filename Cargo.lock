@@ -4235,7 +4235,7 @@ dependencies = [
 [[package]]
 name = "quire-text"
 version = "0.1.0"
-source = "git+https://github.com/akiselev/quire?rev=3e78dcd3bf74abc2c81209f0109caff4d9193529#3e78dcd3bf74abc2c81209f0109caff4d9193529"
+source = "git+https://github.com/akiselev/quire?rev=35b5063ab149ca8682241324aff8efb28696f491#35b5063ab149ca8682241324aff8efb28696f491"
 dependencies = [
  "ropey",
  "smallvec",
