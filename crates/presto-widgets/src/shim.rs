@@ -217,6 +217,9 @@ pub mod core {
         Type { prop: &'static str, expected: ValueType },
         /// Native code changed this state since the event JS saw (architecture §4.5).
         Stale,
+        /// The value has the right type but the kind rejects it (a `grid-template-columns` that is
+        /// not a track list); `message` says why.
+        Invalid { prop: &'static str, message: String },
     }
 
     /// Stands in for `presto_core::Handled`.
@@ -281,6 +284,19 @@ pub mod core {
     impl<'a> Styles<'a> {
         pub fn part_css(&self, name: &str) -> Option<&'a ComputedStyle> {
             self.parts.iter().find(|(n, _)| *n == name).map(|(_, c)| *c)
+        }
+    }
+
+    /// What a container that places or hides its children itself reads about one child in
+    /// [`Kind::child_layout`]: its index and the `anchor` of every child (empty when it has none).
+    pub struct ChildCx<'a> {
+        pub index: usize,
+        pub anchors: &'a [&'a str],
+    }
+
+    impl ChildCx<'_> {
+        pub fn count(&self) -> usize {
+            self.anchors.len()
         }
     }
 
@@ -412,6 +428,27 @@ pub mod core {
         }
         fn measure(&self, _cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
             taffy::Size::ZERO
+        }
+        /// Stands in for presto-core's padded layout (svelters-egui `LayoutCx::padded_layout`): room
+        /// `[left, right, top, bottom]` in points for chrome the kind paints itself (a frame's
+        /// border and caption row), which core adds to the length parts of the padding of
+        /// [`Kind::layout_style`] before laying out the children. `None`: nothing to add. It reads
+        /// the measure context because the chrome can hold text.
+        fn chrome_padding(&self, _cx: &mut MeasureCx) -> Option<[f32; 4]> {
+            None
+        }
+        /// Stands in for presto-core's per-child layout hook: a container that places or hides its
+        /// children itself (`stack`) adjusts child `cx.index`'s taffy style, after core mapped the
+        /// child's computed style. Returns whether the child is shown (painted, hit and in the
+        /// accessibility tree); a child that is not shown but keeps its layout still sizes the
+        /// container.
+        fn child_layout(&self, _cx: &ChildCx, _style: &mut taffy::Style) -> bool {
+            true
+        }
+        /// Stands in for presto-core's subtree enablement: `true` makes every descendant inert (no
+        /// input, `:disabled`), as an unchecked `checkable` frame does to its content.
+        fn children_inert(&self) -> bool {
+            false
         }
         fn prepare(&mut self, _cx: &mut PrepareCx) {}
         fn record(&self, cx: &mut RecordCx);
