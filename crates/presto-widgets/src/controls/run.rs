@@ -11,9 +11,10 @@
 //! - **Links.** A click on an `a` run's glyphs is the label's `link-clicked` (with the run's index and
 //!   `href`) and `open-url`.
 //!
-//! CSS on the runs themselves (`label span.warn`, per-run colour, background, size) needs their
-//! computed style folded too, which waits for presto-core to show a kind its children while measuring
-//! and recording (`plans/milestones/PRESTO-widgets-basic.md`).
+//! **Styled by CSS.** presto-core restyles the runs, so `label span.warn` and `label a:hover` match
+//! them; their computed colour (where it differs from the label's), weight (600 or more is bold) and
+//! `font-style: italic` fold into the records. Per-run size and background are not folded (the
+//! records have no field for them).
 
 use crate::interact::StateBits;
 use crate::kind_props;
@@ -122,6 +123,10 @@ pub struct RunNode {
     pub text: String,
     pub href: String,
     pub weight: i64,
+    /// `font-style: italic` from its computed style.
+    pub italic: bool,
+    /// Its computed colour, when it differs from the label's.
+    pub color: Option<presto_base::color::Color>,
     pub children: Vec<RunNode>,
 }
 
@@ -131,6 +136,7 @@ struct Fmt<'a> {
     italic: bool,
     mono: bool,
     href: Option<&'a str>,
+    color: Option<presto_base::color::Color>,
 }
 
 /// The label's `runs` records for `nodes` (its run children, in order): each run's own text, then its
@@ -150,9 +156,10 @@ fn fold_one<'a>(n: &'a RunNode, up: Fmt<'a>, out: &mut Vec<Value>) {
     }
     let f = Fmt {
         bold: up.bold || n.tag == "b" || n.weight >= 600,
-        italic: up.italic || n.tag == "i",
+        italic: up.italic || n.italic || n.tag == "i",
         mono: up.mono || n.tag == "code",
         href: if n.tag == "a" { Some(n.href.as_str()) } else { up.href },
+        color: n.color.or(up.color),
     };
     if !n.text.is_empty() {
         let mut fields: Vec<(Arc<str>, Value)> = vec![(Arc::from("text"), Value::str(&n.text))];
@@ -163,6 +170,9 @@ fn fold_one<'a>(n: &'a RunNode, up: Fmt<'a>, out: &mut Vec<Value>) {
         }
         if let Some(h) = f.href {
             fields.push((Arc::from("href"), Value::str(h)));
+        }
+        if let Some(c) = f.color {
+            fields.push((Arc::from("color"), Value::Color(c)));
         }
         out.push(Value::Record(fields));
     }
@@ -213,6 +223,15 @@ mod tests {
         assert!(r.runs[1].fmt.bold && !r.runs[1].fmt.italic);
         assert!(r.runs[2].fmt.bold && r.runs[2].fmt.italic, "an i inside a b is both");
         assert_eq!(r.runs[3].href.as_deref(), Some("x"));
+    }
+
+    #[test]
+    fn css_colour_and_italic_fold() {
+        let red = presto_base::color::Color::rgba(1.0, 0.0, 0.0, 1.0);
+        let warn = RunNode { color: Some(red), italic: true, ..node("span", "warn ", vec![node("b", "inner", vec![])]) };
+        let r = rich::from_value("", &fold(&[warn])).unwrap();
+        assert!(r.runs[0].fmt.italic && r.runs[0].fmt.color == Some(red));
+        assert!(r.runs[1].fmt.bold && r.runs[1].fmt.color == Some(red), "the colour is inherited down");
     }
 
     #[test]

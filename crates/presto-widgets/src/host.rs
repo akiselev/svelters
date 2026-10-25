@@ -18,25 +18,24 @@
 //! - state: presto-core owns `:hover`, `:active`, `:focus`, `:focus-visible` and `:focus-within`; the
 //!   widget's other state bits (`:checked`, `:indeterminate`, `:selected`, `:dragging`, …) are written
 //!   to the node;
-//! - images: uploaded in [`Kind::prepare`] (presto-core's image service), referenced when recording.
-//!
-//! What presto-core does not offer yet (listed in `plans/milestones/PRESTO-widgets-basic.md`): the
-//! computed style of a kind's paint parts (`::part(name)`), whether JS listens to a signal, cancelable
-//! default actions, peer groups (radio exclusivity, roving focus), and the container hooks (chrome
-//! padding, per-child layout, inert children).
+//! - images: uploaded in [`Kind::prepare`] (presto-core's image service), referenced when recording;
+//! - the hooks presto-core added for the kinds: paint-part styles (`::part(name)`), listened signals,
+//!   signals delivered at event time (a prevented `clicked` skips its default), peer groups (radio
+//!   exclusivity, roving focus), container hooks (chrome padding, per-child layout, inert children),
+//!   prop-derived state bits, the device scale, `label for` focus.
 
-use crate::interact::{FocusReason as WFocus, Native, Policy, StateBits};
 use crate::controls::run::{self, RunNode};
+use crate::interact::{FocusReason as WFocus, Native, Policy, StateBits};
 use crate::shim::core as w;
 use crate::shim::text::{PlacedRun, RichText, TextLayout, TextShaper};
 use presto_base::commit::ImageData;
 use presto_base::display::{DisplayList, Prim};
 use presto_base::event::{PointerEvent, PointerPhase, WheelEvent};
-use presto_base::geom::{Point, Vec2};
+use presto_base::geom::{Insets, Point, Vec2};
 use presto_base::ids::{ImageId, NodeId, RunId};
 use presto_base::text::GlyphRun;
 use presto_core::{
-    A11yCx, Event, EventCx, NodeView, FocusReason, Handled, HitCx, HitResult, Kind, KindRegistry, KindSpec, MeasureCx, PrepareCx, PropCx, PropDefault, PropError, PropId, PropSpec, RecordCx, RegistryError,
+    A11yCx, ChildLayoutCx, Event, EventCx, NodeView, PeerGroup, PeerMsg, PeerTarget, Rove as CoreRove, SignalId, FocusReason, Handled, HitCx, HitResult, Kind, KindRegistry, KindSpec, MeasureCx, PrepareCx, PropCx, PropDefault, PropError, PropId, PropSpec, RecordCx, RegistryError,
     SignalFlags, SignalSpec, SlotSpec, StateMask, StyleCx, Value, ValueType,
 };
 use std::collections::HashMap;
@@ -182,7 +181,7 @@ fn is_common(name: &str) -> bool {
     presto_core::common::COMMON.props.iter().any(|p| p.name == name)
 }
 
-fn spec_of(ws: &'static w::KindSpec) -> &'static Spec {
+fn spec_of(ws: &'static w::KindSpec, prop_states: StateBits) -> &'static Spec {
     static SPECS: OnceLock<Mutex<HashMap<usize, &'static Spec>>> = OnceLock::new();
     let key = ws as *const w::KindSpec as usize;
     let mut map = SPECS.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
@@ -240,6 +239,10 @@ fn spec_of(ws: &'static w::KindSpec) -> &'static Spec {
             text_prop: ws.text_prop,
             focusable: ws.focusable,
             container: ws.children,
+            folds_children: FOLDING.contains(&ws.tag),
+            parts: parts_of(ws.tag),
+            places_children: PLACING.contains(&ws.tag),
+            prop_states: StateMask(prop_states.0 & !CORE_BITS.0),
             ..KindSpec::new(ws.tag)
         }));
         Box::leak(Box::new(Spec { core, to_core, disabled }))
@@ -322,6 +325,48 @@ fn signal_arg(s: &w::SignalSpec, args: &[w::Value]) -> Option<Value> {
 
 // ---- the hosted kind ----
 
+/// The kinds whose run children fold into their own content: presto-core measures them as leaves and
+/// does not lay out, record or hit-test their children (`KindSpec::folds_children`).
+const FOLDING: &[&str] = &["label"];
+
+/// The kinds that place or hide their own children (`Kind::child_layout`).
+const PLACING: &[&str] = &["stack"];
+
+/// The paint parts each kind draws (`::part(name)`), computed by presto-core with the node's style.
+fn parts_of(tag: &str) -> &'static [&'static str] {
+    match tag {
+        "button" | "toggle-button" => &["icon", "label"],
+        "checkbox" | "radio-button" => &["indicator", "mark", "icon", "label"],
+        "switch" => &["track", "knob", "label"],
+        "frame" => &["caption", "indicator", "mark"],
+        "progress-bar" => &["track", "fill", "label"],
+        "slider" => &["track", "fill", "rest", "thumb", "tick", "mark-label", "value", "label"],
+        _ => &[],
+    }
+}
+
+/// The node's part styles, for [`w::Styles::parts`].
+fn part_styles<'a>(node: NodeView<'a>, tag: &str) -> Vec<(&'static str, &'a svelters_style::ComputedStyle)> {
+    parts_of(tag).iter().filter_map(|n| Some((*n, node.part(n)?))).collect()
+}
+
+/// Installs what the built-in kinds read from `doc`'s services: the text system, the platform policy
+/// (and its auto-default rule) and the theme.
+pub fn install(doc: &mut presto_core::Document, text: presto_text::TextSystem, policy: Policy, theme: crate::theme::Theme) {
+    doc.set_service(text);
+    doc.set_auto_default(policy.auto_default);
+    doc.set_service(policy);
+    doc.set_service(theme);
+}
+
+/// A folding node's run children as `runs` records; empty for other kinds.
+fn folded_of(node: NodeView<'_>, tag: &str) -> Vec<w::Value> {
+    if !FOLDING.contains(&tag) {
+        return Vec::new();
+    }
+    run::fold(&run_nodes(&|id| node.view(id), node.children(), css_color(node.css(), "color")))
+}
+
 /// The state bits presto-core writes itself; the bridge never writes them back.
 const CORE_BITS: StateBits = StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::FOCUSED.0 | StateBits::FOCUS_VISIBLE.0 | StateBits::FOCUS_WITHIN.0 | StateBits::DISABLED.0);
 
@@ -330,13 +375,11 @@ pub struct Hosted<W: w::Kind + Default> {
     pub widget: W,
     /// Images uploaded in `prepare`, by the widget's image key.
     images: HashMap<String, ImageId>,
-    /// A label's run children as `runs` records, folded when the bridge last saw the children.
-    folded: Vec<w::Value>,
 }
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new(), folded: Vec::new() }
+        Hosted { widget: W::default(), images: HashMap::new() }
     }
 }
 
@@ -345,7 +388,7 @@ pub fn register<W: w::Kind + Default>(registry: &mut KindRegistry) -> Result<pre
     fn make<W: w::Kind + Default>() -> Box<dyn Kind> {
         Box::new(Hosted::<W>::default())
     }
-    registry.register_with(spec_of(W::spec()).core, make::<W>)
+    registry.register_with(spec_of(W::spec(), W::prop_states()).core, make::<W>)
 }
 
 /// Registers every Tier 0 kind of [`crate::controls`] in `registry`.
@@ -377,19 +420,37 @@ pub fn register_tier0(registry: &mut KindRegistry) -> Result<(), RegistryError> 
     Ok(())
 }
 
-fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, children: &'a [w::Value], state: StateMask, dark: bool) -> w::Styles<'a> {
-    w::Styles { computed: css, parts: &[], children, state: StateBits(state.0), dark }
+fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, parts: &'a [(&'static str, &'a svelters_style::ComputedStyle)], children: &'a [w::Value], state: StateMask, dark: bool) -> w::Styles<'a> {
+    w::Styles { computed: css, parts, children, state: StateBits(state.0), dark }
 }
 
-/// The run children under `ids` (`controls::run`), read through `view_of`.
-fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId]) -> Vec<RunNode> {
+/// A computed colour of `css`.
+fn css_color(css: Option<&svelters_style::ComputedStyle>, name: &str) -> Option<presto_base::color::Color> {
+    match css?.get(name)? {
+        svelters_style::ComputedValue::Color(c) => Some(crate::paint::color_of(*c)),
+        _ => None,
+    }
+}
+
+/// The run children under `ids` (`controls::run`), read through `view_of`, with what their computed
+/// style sets: a colour other than `parent`'s, a weight, italic.
+fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId], parent: Option<presto_base::color::Color>) -> Vec<RunNode> {
     ids.iter()
         .filter_map(|&id| {
             let v = view_of(id)?;
             let spec = v.kind().spec;
+            let css = v.css();
             let href = spec.prop_named("href").and_then(|p| v.prop_str(p)).unwrap_or("").to_owned();
-            let weight = spec.prop_named("font-weight").and_then(|p| v.prop(p)).and_then(Value::as_i64).unwrap_or(0);
-            Some(RunNode { tag: spec.name.to_owned(), text: v.text().to_owned(), href, weight, children: run_nodes(view_of, v.children()) })
+            let prop_weight = spec.prop_named("font-weight").and_then(|p| v.prop(p)).and_then(Value::as_i64).unwrap_or(0);
+            let css_weight = match css.and_then(|c| c.get("font-weight")) {
+                Some(svelters_style::ComputedValue::FontWeight(w)) => *w as i64,
+                _ => 0,
+            };
+            let italic = matches!(css.and_then(|c| c.get("font-style")), Some(svelters_style::ComputedValue::Keyword("italic" | "oblique")));
+            let own = css_color(css, "color");
+            let color = own.filter(|c| Some(*c) != parent);
+            let children = run_nodes(view_of, v.children(), own.or(parent));
+            Some(RunNode { tag: spec.name.to_owned(), text: v.text().to_owned(), href, weight: prop_weight.max(css_weight), italic, color, children })
         })
         .collect()
 }
@@ -442,7 +503,7 @@ impl w::Resources for RecordRes<'_> {
 
 impl<W: w::Kind + Default> Hosted<W> {
     fn spec_ref() -> &'static Spec {
-        spec_of(W::spec())
+        spec_of(W::spec(), W::prop_states())
     }
 
     fn pointer_event(phase: PointerPhase, p: &presto_core::PointerInput) -> w::Event {
@@ -475,6 +536,87 @@ impl<W: w::Kind + Default> Hosted<W> {
         })
     }
 
+    /// Runs `f` (an event or a peer message) on the widget with this crate's event context over `cx`,
+    /// then applies what it did: state bits, native prop writes, signals (cancelable ones at event time
+    /// through `emit_sync`), peer requests, focus, timers, cursor and repaint.
+    fn run(&mut self, cx: &mut EventCx, f: impl FnOnce(&mut W, &mut w::EventCx) -> w::Handled) -> Handled {
+        let node = cx.node();
+        let Some(view) = cx.view(node) else { return Handled::No };
+        let (size, mask) = (view.size(), view.state());
+        self.sync_disabled(view.disabled());
+        let policy = cx.service::<Policy>().copied().unwrap_or_else(os_policy);
+        let s = Self::spec_ref();
+        let ws = W::spec();
+        let mut state = StateBits(mask.0);
+        let before = state;
+        let time = cx.time();
+        let (handled, out) = {
+            let mut sync = |sig: w::SignalId, args: &[w::Value]| -> bool {
+                let i = sig.0 as usize;
+                let Some(spec) = ws.signals.get(i) else { return false };
+                cx.emit_sync(s.core.signal_id(i), signal_arg(spec, args)).prevented
+            };
+            let mut wcx = w::EventCx::new(time, size, &mut state, &policy);
+            wcx.focused = mask.contains(StateMask::FOCUSED);
+            wcx.sync = Some(&mut sync);
+            let handled = f(&mut self.widget, &mut wcx);
+            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, .. } = wcx;
+            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor))
+        };
+        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor) = out;
+        let diff = StateBits((state.0 ^ before.0) & !CORE_BITS.0);
+        for (_, bit) in StateBits::BUILTIN {
+            if diff.contains(*bit) {
+                cx.set_state(StateMask(bit.0), state.contains(*bit));
+            }
+        }
+        for p in changed {
+            let i = p.0 as usize;
+            let (Some(Some(ci)), Some(v)) = (s.to_core.get(i), self.widget.get_prop(p)) else { continue };
+            if let Some(cv) = to_core_value(&ws.props[i], &v) {
+                let _ = cx.set_native(s.core.prop_id(*ci), cv);
+            }
+        }
+        for e in emitted {
+            let i = e.signal.0 as usize;
+            let Some(sig) = ws.signals.get(i) else { continue };
+            cx.emit(s.core.signal_id(i), signal_arg(sig, &e.args));
+        }
+        for r in peers {
+            let to = match r.to {
+                w::PeerTarget::Others => PeerTarget::Others,
+                w::PeerTarget::Rove(rv) => PeerTarget::Rove(match rv {
+                    crate::interact::Rove::By(n) => CoreRove::By(n),
+                    crate::interact::Rove::First => CoreRove::First,
+                    crate::interact::Rove::Last => CoreRove::Last,
+                }),
+            };
+            let msg = match r.msg {
+                w::PeerMsg::Roved => PeerMsg::Roved,
+                w::PeerMsg::Checked(args) => PeerMsg::Notify(Some(Value::List(args.iter().filter_map(plain_to_core).collect::<Vec<_>>().into()))),
+            };
+            cx.peer_request(to, msg);
+        }
+        match focus_request {
+            Some(true) => cx.focus(FocusReason::Pointer),
+            Some(false) => cx.blur(),
+            None => {}
+        }
+        if let Some(a) = focus_anchor {
+            cx.focus_anchor(&a);
+        }
+        if let Some(t) = wake {
+            cx.wake_at(t);
+        }
+        if let Some(c) = cursor {
+            cx.set_cursor(c);
+        }
+        if repaint || diff != StateBits::NONE {
+            cx.request_paint();
+        }
+        if handled == w::Handled::Yes { Handled::Yes } else { Handled::No }
+    }
+
     /// Feeds the node's `disabled` into the widget's own `disabled` prop.
     fn sync_disabled(&mut self, disabled: bool) {
         if let Some(p) = Self::spec_ref().disabled {
@@ -485,7 +627,7 @@ impl<W: w::Kind + Default> Hosted<W> {
 
 impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn spec() -> &'static KindSpec {
-        spec_of(W::spec()).core
+        spec_of(W::spec(), W::prop_states()).core
     }
 
     fn prop_changed(&mut self, cx: &mut PropCx, prop: PropId, value: Option<&Value>) -> Result<(), PropError> {
@@ -517,18 +659,22 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
         let mut text = shaper(cx.service::<presto_text::TextSystem>());
-        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &self.folded, node.state(), dark), text: &mut *text, scale: 1.0 }, known, avail)
+        let folded = folded_of(node, W::spec().tag);
+        let parts = part_styles(node, W::spec().tag);
+        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, scale: node.scale() }, known, avail)
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
+        let folded = folded_of(node, W::spec().tag);
+        let parts = part_styles(node, W::spec().tag);
         let (new, used) = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
             let mut list = DisplayList::new();
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &self.folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             (res.new, res.used)
         };
         for (key, data) in new {
@@ -551,11 +697,13 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn record(&self, cx: &mut RecordCx) {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
+        let folded = folded_of(node, W::spec().tag);
+        let parts = part_styles(node, W::spec().tag);
         let mut list = DisplayList::new();
         let runs = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
             let mut res = RecordRes { runs: Vec::new(), images: &self.images };
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &self.folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             res.runs
         };
         // the pass's run indices become presto-core's run ids
@@ -584,65 +732,63 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         let Some(wev) = Self::translate(ev) else { return Handled::No };
-        let node = cx.node();
-        let Some(view) = cx.view(node) else { return Handled::No };
-        // a label folds its run children; presto-core shows a kind its children only here so far
-        if W::spec().tag == "label" {
-            let folded = run::fold(&run_nodes(&|id| cx.view(id), view.children()));
-            if folded != self.folded {
-                self.folded = folded;
-            }
-        }
-        let Some(view) = cx.view(node) else { return Handled::No };
-        let (size, mask) = (view.size(), view.state());
-        self.sync_disabled(view.disabled());
-        let policy = cx.service::<Policy>().copied().unwrap_or_else(os_policy);
-        let mut state = StateBits(mask.0);
-        let before = state;
-        let mut wcx = w::EventCx::new(cx.time(), size, &mut state, &policy);
-        wcx.focused = mask.contains(StateMask::FOCUSED);
-        let handled = self.widget.event(&mut wcx, &wev);
-        let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, .. } = wcx;
         // egui's interaction keeps the pointer on the pressed widget until release
         if matches!(ev, Event::PointerDown(_)) {
             cx.capture_pointer();
         }
-        let own = StateBits(!CORE_BITS.0);
-        let diff = StateBits((state.0 ^ before.0) & own.0);
-        for (_, bit) in StateBits::BUILTIN {
-            if diff.contains(*bit) {
-                cx.set_state(StateMask(bit.0), state.contains(*bit));
-            }
-        }
+        self.run(cx, |w, wcx| w.event(wcx, &wev))
+    }
+
+    fn peer_group(&self, _node: &NodeView) -> Option<PeerGroup> {
+        let g = self.widget.peer_group()?;
         let s = Self::spec_ref();
         let ws = W::spec();
-        for p in changed {
-            let i = p.0 as usize;
-            let (Some(Some(ci)), Some(v)) = (s.to_core.get(i), self.widget.get_prop(p)) else { continue };
-            if let Some(cv) = to_core_value(&ws.props[i], &v) {
-                let _ = cx.set_native(s.core.prop_id(*ci), cv);
+        let key = match g.key {
+            Some((name, v)) => {
+                let i = ws.props.iter().position(|p| p.name == name)?;
+                Some((s.core.prop_named(name)?, to_core_value(&ws.props[i], &v)?))
             }
+            None => None,
+        };
+        Some(PeerGroup { key, stop: s.core.prop_named(g.stop) })
+    }
+
+    fn peer(&mut self, cx: &mut EventCx, _from: NodeId, msg: &PeerMsg) -> Handled {
+        let msg = match msg {
+            PeerMsg::Roved => w::PeerMsg::Roved,
+            PeerMsg::Notify(Some(Value::List(l))) => w::PeerMsg::Checked(l.iter().filter_map(plain_from_core).collect()),
+            PeerMsg::Notify(v) => w::PeerMsg::Checked(v.iter().filter_map(plain_from_core).collect()),
+        };
+        self.run(cx, |w, wcx| w.peer(wcx, &msg))
+    }
+
+    fn listen_changed(&mut self, _cx: &mut PropCx, signal: SignalId, listened: bool) {
+        let s = Self::spec_ref();
+        if let Some(i) = (0..s.core.signals.len()).find(|&i| s.core.signal_id(i) == signal) {
+            self.widget.listen(w::SignalId(i as u32), listened);
         }
-        for e in emitted {
-            let i = e.signal.0 as usize;
-            let Some(sig) = ws.signals.get(i) else { continue };
-            cx.emit(s.core.signal_id(i), signal_arg(sig, &e.args));
-        }
-        match focus_request {
-            Some(true) => cx.focus(FocusReason::Pointer),
-            Some(false) => cx.blur(),
-            None => {}
-        }
-        if let Some(t) = wake {
-            cx.wake_at(t);
-        }
-        if let Some(c) = cursor {
-            cx.set_cursor(c);
-        }
-        if repaint || diff != StateBits::NONE {
-            cx.request_paint();
-        }
-        if handled == w::Handled::Yes { Handled::Yes } else { Handled::No }
+    }
+
+    fn chrome_padding(&self, cx: &mut MeasureCx) -> Option<Insets> {
+        let node = cx.node;
+        let dark = is_dark(cx.service::<crate::theme::Theme>());
+        let parts = part_styles(node, W::spec().tag);
+        let mut text = shaper(cx.service::<presto_text::TextSystem>());
+        let [left, right, top, bottom] = self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), dark), text: &mut *text, scale: node.scale() })?;
+        Some(Insets { top, right, bottom, left })
+    }
+
+    fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
+        let anchors: Vec<&str> = (0..cx.count).map(|k| cx.anchor_of(k)).collect();
+        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors }, style)
+    }
+
+    fn children_inert(&self) -> bool {
+        self.widget.children_inert()
+    }
+
+    fn prop_state(&self, _node: &NodeView) -> StateMask {
+        StateMask(self.widget.prop_state().0 & W::prop_states().0 & !CORE_BITS.0)
     }
 
     fn a11y(&self, cx: &mut A11yCx) {
@@ -674,6 +820,30 @@ mod tests {
         // no tag or member id collides, and every text prop exists
         let mut reg = KindRegistry::new();
         register_tier0(&mut reg).unwrap();
+    }
+
+    #[test]
+    fn a_label_folds_its_children() {
+        use crate::controls::{Bold, Label};
+        assert!(<Hosted<Label> as Kind>::spec().folds_children);
+        assert!(!<Hosted<Bold> as Kind>::spec().folds_children);
+        assert!(<Hosted<Label> as Kind>::spec().container);
+    }
+
+    #[test]
+    fn hooks_reach_the_core_spec() {
+        use crate::controls::{Checkbox, Label, Slider, Stack};
+        let b = <Hosted<Button> as Kind>::spec();
+        assert_eq!(b.parts, ["icon", "label"]);
+        assert!(b.prop_states.contains(StateMask::DEFAULT) && b.prop_states.contains(StateMask::SELECTED));
+        assert!(!b.prop_states.contains(StateMask::HOVERED), "presto-core's own bits are never derived");
+        assert!(<Hosted<Checkbox> as Kind>::spec().prop_states.contains(StateMask::INDETERMINATE));
+        assert!(<Hosted<Stack> as Kind>::spec().places_children);
+        assert!(!<Hosted<Label> as Kind>::spec().places_children);
+        assert!(<Hosted<Slider> as Kind>::spec().parts.contains(&"thumb"));
+        let mut c = Hosted::<Checkbox>::default();
+        c.widget.props.checked = true;
+        assert!(w::Kind::prop_state(&c.widget).contains(StateBits::CHECKED), "what core sets after a prop write");
     }
 
     #[test]

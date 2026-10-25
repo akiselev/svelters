@@ -43,6 +43,17 @@ pub fn emit(cx: &mut EventCx<'_>, spec: &KindSpec, name: &str, args: Vec<Value>)
     }
 }
 
+/// [`emit`] delivered at event time: returns whether a listener prevented the default that follows.
+pub fn emit_sync(cx: &mut EventCx<'_>, spec: &KindSpec, name: &str, args: Vec<Value>) -> bool {
+    match spec.signal(name) {
+        Some(id) => cx.emit_sync(id, args),
+        None => {
+            debug_assert!(false, "{}: no signal `{name}` in the spec", spec.tag);
+            false
+        }
+    }
+}
+
 /// Asks for an [`Event::Timer`] `secs` from now.
 pub fn wake_in(cx: &mut EventCx<'_>, secs: f64) {
     let t = cx.now + Span::from_secs_f64(secs.max(0.0));

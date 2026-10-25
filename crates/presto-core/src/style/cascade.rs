@@ -94,7 +94,15 @@ impl<'a> Element for El<'a> {
         let p = entry.spec.prop_named(name).or_else(|| {
             (0..crate::common::COMMON.props.len()).find(|&k| crate::common::COMMON.props[k].name == name).map(|k| crate::common::COMMON.prop_id(k))
         })?;
-        self.doc.view_at(self.i).prop(p).and_then(|v| v.to_text()).map(Cow::Owned)
+        let v = self.doc.view_at(self.i).prop(p)?;
+        // an enum matches by its value's name (`[dialog-role=accept]`)
+        if let crate::value::Value::Enum(e) = v
+            && let Some(spec) = entry.prop(p).or_else(|| crate::common::prop(p))
+            && let Some(name) = spec.enum_values.get(*e as usize)
+        {
+            return Some(Cow::Borrowed(name));
+        }
+        v.to_text().map(Cow::Owned)
     }
     fn state(&self) -> StateMask {
         self.doc.state[self.i]
@@ -729,7 +737,20 @@ impl Document {
         let cx = ComputeContext { root_font_size: 16.0, default_font_size: 13.0 };
         let mut caches = std::mem::take(&mut self.style.caches);
         let css = self.style.stylist.compute(El { doc: self, i }, parent_css.as_deref(), inline.as_deref(), &cx, &mut caches);
+        // the kind's paint parts inherit from the node's style
+        let part_names = self.registry.get(self.core[i].kind).map_or(&[][..], |e| e.spec.parts);
+        let parts: Vec<(&'static str, Arc<ComputedStyle>)> = part_names
+            .iter()
+            .map(|&name| {
+                let pseudo = svelters_style::PseudoElement::part(name);
+                (name, Arc::new(self.style.stylist.compute_pseudo(El { doc: self, i }, &pseudo, &css, &cx, &mut caches)))
+            })
+            .collect();
         self.style.caches = caches;
+        let parts_changed = self.style.nodes[i].parts.len() != parts.len() || self.style.nodes[i].parts.iter().zip(&parts).any(|(a, b)| a.0 != b.0 || *a.1 != *b.1);
+        if parts_changed {
+            self.style.nodes[i].parts = parts;
+        }
         let new_box = computed_box(&css, parent_box.as_deref(), cx.default_font_size);
         let hidden = self.view_at(i).prop_bool(crate::common::HIDDEN);
         let cascaded = layout_style(&css, &new_box, hidden);
@@ -745,6 +766,15 @@ impl Document {
             }
             None => cascaded,
         };
+        // chrome the kind paints around its children
+        let container = self.registry.get(self.core[i].kind).is_some_and(|e| e.spec.container);
+        if container
+            && let Some(pad) = crate::layout::with_measure_cx(self, i, Some(&new_box), |k, cx| k.chrome_padding(cx)).flatten()
+        {
+            crate::layout::add_padding(&mut tstyle, pad);
+        }
+        // a parent that places its children has the last word
+        self.place_child(i, &mut tstyle);
         // a window root's size is the window's (set by layout)
         if self.core[i].flags.contains(crate::tree::NodeFlags::ROOT) {
             tstyle.size = self.layout[i].style.size;
@@ -773,8 +803,11 @@ impl Document {
         if text || paint {
             self.fold_up(i);
         }
-        if first || paint {
+        if first || paint || parts_changed {
             self.mark(node, Dirty::PAINT | Dirty::A11Y);
+        }
+        if parts_changed && !first {
+            self.fold_up(i);
         }
         if first || property {
             self.mark(node, Dirty::PROPERTY);
@@ -782,11 +815,55 @@ impl Document {
                 ws.rebuild = true;
             }
         }
+        if self.registry.get(self.core[i].kind).is_some_and(|e| e.spec.places_children) {
+            self.replace_children(i);
+        }
         // the scroll range may have changed with the overflow axes
-        if property && !self.style.computed(i).overflow_x.scrolls() && !self.style.computed(i).overflow_y.scrolls() {
+        if property && self.scroll_axes(i) == (false, false) {
             self.scroll.remove(&node);
         }
         inherited
+    }
+
+    /// Child `i`'s parent places its children ([`KindSpec::places_children`](crate::KindSpec::places_children)):
+    /// its `child_layout` adjusts the child's taffy style and decides whether it is shown.
+    pub(crate) fn place_child(&mut self, i: usize, tstyle: &mut taffy::Style) {
+        let Some(p) = self.core[i].parent else { return };
+        let pi = self.ix(p);
+        if !self.registry.get(self.core[pi].kind).is_some_and(|e| e.spec.places_children) {
+            return;
+        }
+        let node = self.slots.id_at(i).expect("live");
+        let Some(k) = self.kinds[pi].take() else { return };
+        let shown = {
+            let index = self.children[pi].iter().position(|&c| c == node).unwrap_or(0);
+            let cx = crate::cx::ChildLayoutCx { parent: self.view_at(pi), child: self.view_at(i), index, count: self.children[pi].len() };
+            k.child_layout(&cx, tstyle)
+        };
+        self.kinds[pi] = Some(k);
+        let was = !self.core[i].flags.contains(crate::tree::NodeFlags::CONCEALED);
+        if shown != was {
+            if shown {
+                self.core[i].flags.remove(crate::tree::NodeFlags::CONCEALED);
+            } else {
+                self.core[i].flags.insert(crate::tree::NodeFlags::CONCEALED);
+            }
+            self.core[pi].dirty.insert(Dirty::CHILDREN | Dirty::A11Y);
+            self.mark_up(pi, Dirty::DESC_RECORD);
+            if let Some(ws) = self.core[i].window.and_then(|w| self.window_mut(w)) {
+                ws.rebuild = true;
+            }
+        }
+    }
+
+    /// Re-runs the parent's `child_layout` for every child of `pi` (restyles them).
+    pub(crate) fn replace_children(&mut self, pi: usize) {
+        for c in self.children[pi].clone() {
+            let ci = self.ix(c);
+            self.core[ci].dirty.insert(Dirty::STYLE);
+        }
+        self.core[pi].dirty.insert(Dirty::DESC_STYLE);
+        self.mark_up(pi, Dirty::DESC_STYLE);
     }
 
     /// Starts (or retargets) the UI-thread transitions of the paint and layout properties a
