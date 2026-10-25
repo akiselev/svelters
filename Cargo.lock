@@ -4022,6 +4022,11 @@ name = "presto"
 version = "0.0.0"
 dependencies = [
  "presto-base",
+ "presto-compositor",
+ "presto-core",
+ "presto-frame",
+ "presto-platform",
+ "wgpu",
 ]
 
 [[package]]
@@ -4156,7 +4161,13 @@ dependencies = [
 name = "presto-test"
 version = "0.0.0"
 dependencies = [
+ "egui",
+ "pollster 0.4.0",
+ "presto",
  "presto-base",
+ "presto-render",
+ "presto-text",
+ "wgpu",
 ]
 
 [[package]]

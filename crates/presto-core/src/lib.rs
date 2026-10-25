@@ -24,6 +24,7 @@
 //! | [`input`] | hit testing, dispatch, hover, capture, focus |
 //! | [`hit`] | hit lists |
 //! | [`journal`] | the change journal |
+//! | [`query`] | kind sets, anchors, [`Query`](query::Query), CSS selector queries |
 //! | [`a11y`] | the AccessKit projection and its validating builder |
 //! | [`testkinds`] | minimal kinds and fixed-metric text for tests |
 //! | [`virt`] | the row-height model and the row pool of virtualising kinds |
@@ -41,6 +42,7 @@ pub mod input;
 pub mod journal;
 pub mod kind;
 pub mod layout;
+pub mod query;
 mod record;
 pub mod registry;
 mod scroll;
@@ -56,7 +58,7 @@ mod anim;
 mod tests;
 
 pub use cx::{Services, A11yCx, ChildLayoutCx, EventCx, RealizeCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
-pub use document::{Document, Writer};
+pub use document::{Document, SyncDelivery, Writer};
 pub use error::{PropError, TreeError};
 pub use frame::FrameStats;
 pub use layout::LayoutRun;

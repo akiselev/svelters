@@ -504,7 +504,7 @@ fn a_prevented_signal_skips_the_default() {
     d.listen(b, BTN_CHANGED, ListenFlags::EMPTY);
     let seen = Rc::new(RefCell::new(Vec::new()));
     let log = seen.clone();
-    d.set_sync_delivery(Box::new(move |ev| {
+    d.set_sync_delivery(Box::new(move |_doc, ev| {
         log.borrow_mut().push(ev.signal);
         Outcome { prevented: true, stopped: false }
     }));
@@ -520,7 +520,7 @@ fn a_prevented_pointerdown_keeps_the_press_from_the_tree() {
     let (mut d, root) = hdoc();
     let t = child(&mut d, root, TOGGLE, "");
     d.listen(t, common::POINTERDOWN, ListenFlags::EMPTY);
-    d.set_sync_delivery(Box::new(|ev| Outcome { prevented: ev.signal == common::POINTERDOWN, stopped: false }));
+    d.set_sync_delivery(Box::new(|_doc, ev| Outcome { prevented: ev.signal == common::POINTERDOWN, stopped: false }));
     frame(&mut d);
     click(&mut d, 5.0, 5.0);
     assert!(!d.view(t).unwrap().prop_bool(testkinds::TOGGLE_CHECKED), "no click");
@@ -595,4 +595,26 @@ fn drop_types_match_by_prefix_and_wildcard() {
     assert!(type_matches("cad/part", "cad/part"));
     assert!(!type_matches("cad/*", "text/plain"));
     assert!(!type_matches("ca*", "cad/part"), "a prefix ends with a slash");
+}
+
+#[test]
+fn the_deliverer_reads_and_writes_the_document() {
+    let (mut d, root) = hdoc();
+    let b = child(&mut d, root, BTN, "");
+    let other = child(&mut d, root, BOX, "");
+    d.set_prop(b, common::TITLE, Value::from("ok")).unwrap();
+    d.listen(b, BTN_CHANGED, ListenFlags::EMPTY);
+    d.set_sync_delivery(Box::new(move |doc, ev| {
+        // a listener reads its target and writes elsewhere, in the event's transaction
+        let title = doc.view(ev.target).and_then(|v| v.prop_str(common::TITLE)).unwrap_or("").to_owned();
+        let rev = doc.revision();
+        doc.js_transaction(rev, |doc| doc.set_prop(other, common::TITLE, Value::from(title.as_str()))).unwrap();
+        doc.js_transaction(rev, |doc| doc.set_prop(ev.target, common::ARIA_LABEL, Value::from("renamed"))).unwrap();
+        Outcome::default()
+    }));
+    d.focus(b, crate::FocusReason::Keyboard);
+    d.dispatch(&key(Key::Space, Modifiers::default()));
+    assert_eq!(d.view(other).unwrap().prop_str(common::TITLE), Some("ok"));
+    assert_eq!(d.view(b).unwrap().prop_str(common::ARIA_LABEL), Some("renamed"), "a write to the node mid-handler is kept");
+    assert!(d.state(b).contains(StateMask::CHECKED), "not prevented: the default ran");
 }
