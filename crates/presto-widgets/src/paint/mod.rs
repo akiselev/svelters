@@ -370,7 +370,7 @@ impl<'a> StyleView<'a> {
     /// The `box-shadow` list: CSS's, else the UA table's (an `elev-*` token or a literal list).
     pub fn shadows(&self) -> Option<Cow<'a, [Shadow]>> {
         if let Some(ComputedValue::Shadows(l)) = self.css("box-shadow") {
-            return (!l.is_empty()).then(|| Cow::Borrowed(&**l));
+            return (!l.is_empty()).then_some(Cow::Borrowed(&**l));
         }
         match self.ua.find_own("box-shadow", self.state)? {
             UaValue::Shadows(l) if !l.is_empty() => Some(Cow::Borrowed(l)),

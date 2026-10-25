@@ -252,7 +252,7 @@ fn to_core_value(p: &w::PropSpec, v: &w::Value) -> Option<Value> {
             _ => Value::Str(Arc::from(*name)),
         },
         w::Value::Color(c) => Value::Color(*c),
-        w::Value::List(l) => Value::List(l.iter().filter_map(|v| plain_to_core(v)).collect::<Vec<_>>().into()),
+        w::Value::List(l) => Value::List(l.iter().filter_map(plain_to_core).collect::<Vec<_>>().into()),
         w::Value::Record(r) => Value::Record(r.iter().filter_map(|(k, v)| Some((k.clone(), plain_to_core(v)?))).collect::<Vec<_>>().into()),
     })
 }
