@@ -89,3 +89,9 @@ the workspace table to avoid conflicts with other lanes; the coordinator may mov
   `libfontconfig-dev` — fixed in the next push with fontique's `fontconfig-dlopen`. The other presto
   failures (`presto-anim`, `presto-frame`, `presto-platform` lib tests, `presto-render --test gpu`
   missing reference PNGs) are other lanes' crates, not touched here.
+- `f023687` (fontconfig-dlopen, `TextLayout::clusters`, presto-base `cc4f184d` merged; merged into
+  presto-base as `9af594f6`): presto run 40226699805 builds on all three OSes and presto-text passes
+  on Linux, Windows and macOS. The run is red only for `presto-compositor --test engine`,
+  `--test tree_damage`, `presto-core --lib` and `presto-widgets --lib` (other lanes). The five svelters
+  workflows skip presto-only pushes since base `cc4f184d`; they were green on `9221fcc`.
+- Lane done.
