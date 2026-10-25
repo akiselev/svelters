@@ -114,3 +114,8 @@ when the five svelters workflows plus `presto` are green.
   returns; light dismiss core half (`Kind::light_dismiss`, `outside_press`). Not done: compaction, incremental
   layers/hits, OS file drops, GTK single selection owner.
 - CADATOMIC decisions (coordinator, 2026-10-25): cadatomic and presto_berth name presto-* by branch ci/presto-integration (CADATOMIC may push that manifest change to berth claude/presto-berth); adapter/limits hooks in CompositorConfig (sent to COMPOSITOR); berth pin moves to claude/presto-berth on claude/presto-adoption only, in its own commit.
+- Consolidation 1 interim: ci/presto-integration 65ead449 (code f5d7ab0c, from base 82e166e2), all 11 lanes merged,
+  workspace check clean. FIX-QUEUE routed (coordinator, 2026-10-25): F1/F2 COMPOSITOR; F3–F5 CORE-3; F6 already fixed
+  (966d4d75, base c65b2e79); F7 done (svelters-presto 80189479); F8 TextServices + F9 backend selection to APP-TEST;
+  F10 presto.yml checks presto-widgets `dialogs` (this commit); F11 berth/quire at consolidation 2; F13 at consolidation 2.
+- CORE-3 final ceaf16b8 and COMPOSITOR 9a58f1c4 merged (177731fd): F1–F5 fixed (presto-core --lib 119/119 locally). Slider tests disputed (CORE-3: fail; WIDGETS-BASIC: 19/19 pass after 966d4d75); consolidation 1 settles it. Done lanes now: CORE, CORE-2, CORE-3, PLATFORM, RENDER, RUNTIME, WIDGETS-BASIC, BERTH, QUIRE.
