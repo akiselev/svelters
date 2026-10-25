@@ -1,0 +1,10 @@
+[package]
+name = "presto-core"
+description = "presto's retained tree: nodes, kinds, change classes, transactions, style, layout, events, focus, hit testing, accessibility and the commit builder."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }

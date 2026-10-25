@@ -1,0 +1,10 @@
+[package]
+name = "presto-platform"
+description = "presto's platform layer: windows, input, IME, clipboard, OS layers and frame sources; winit 0.30.13 plus shims first."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }

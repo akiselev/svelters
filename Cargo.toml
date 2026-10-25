@@ -1,6 +1,14 @@
 [workspace]
 resolver = "3"
 members = [
+    "crates/presto-base",
+    "crates/presto-core",
+    "crates/presto-anim",
+    "crates/presto-frame",
+    "crates/presto-text",
+    "crates/presto-render",
+    "crates/presto-compositor",
+    "crates/presto-platform",
     "crates/svelters-abi",
     "crates/svelters-host",
     "crates/svelters-backend-log",
@@ -36,6 +44,14 @@ license = "MIT"
 publish = false
 
 [workspace.dependencies]
+presto-base = { path = "crates/presto-base" }
+presto-core = { path = "crates/presto-core" }
+presto-anim = { path = "crates/presto-anim" }
+presto-frame = { path = "crates/presto-frame" }
+presto-text = { path = "crates/presto-text" }
+presto-render = { path = "crates/presto-render" }
+presto-compositor = { path = "crates/presto-compositor" }
+presto-platform = { path = "crates/presto-platform" }
 svelters-abi = { path = "crates/svelters-abi" }
 svelters-host = { path = "crates/svelters-host" }
 svelters-style = { path = "crates/svelters-style" }
@@ -60,9 +76,24 @@ serde = "1"
 # RA2: `Json<T>` typings (cadatomic uses schemars 1).
 schemars = "1"
 cc = "1"
+# presto (plans/research/presto/): third-party versions shared by the presto crates.
+accesskit = "0.25.1"
+smallvec = { version = "1.16", features = ["union", "const_generics"] }
+bytemuck = { version = "1.25", features = ["derive"] }
+taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
+wgpu = "30.0.1"
+winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"] }
+raw-window-handle = "0.6"
+parley = "0.12"
+etagere = "0.3"
+lyon = "1.0"
 
 # QuickJS is C compiled by the cc crate; at the dev profile's opt-level 0 it runs 5-10x slower, which
 # makes JS-heavy tests (10k-row lists) hit the host's turn budget. Optimise it in every profile.
+# presto: taffy runs on every relayout; Zed builds it at opt-level 3 in dev for the same reason.
+[profile.dev.package.taffy]
+opt-level = 3
+
 [profile.dev.package.rquickjs-sys]
 opt-level = 2
 

@@ -1,0 +1,10 @@
+[package]
+name = "presto-text"
+description = "presto's text stack: fonts, shaping and layout (parley), glyph rasterisation (skrifa), caches."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }

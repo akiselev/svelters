@@ -1,0 +1,12 @@
+[package]
+name = "presto-base"
+description = "presto's shared vocabulary: geometry, ids, display lists, commits, events, animation specs and the cross-crate traits."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+accesskit = { workspace = true }
+smallvec = { workspace = true }
+bytemuck = { workspace = true }

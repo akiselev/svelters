@@ -1,0 +1,10 @@
+[package]
+name = "presto-compositor"
+description = "presto's compositor thread: layer trees, commits, animations and scroll at present time, damage, present pacing."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }

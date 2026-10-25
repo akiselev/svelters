@@ -1,0 +1,10 @@
+[package]
+name = "presto-render"
+description = "presto's wgpu renderer: instanced primitives, atlases, batching, damage scissoring."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }
