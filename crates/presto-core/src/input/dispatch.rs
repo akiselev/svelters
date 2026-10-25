@@ -183,6 +183,7 @@ impl Document {
     pub fn dispatch(&mut self, ev: &InputEnvelope) -> Dispatched {
         let before = self.revision;
         self.consumed_input(ev.seq);
+        self.input.now = ev.os_time;
         let mut out = Dispatched { seq: ev.seq, window: ev.window, revision: self.revision, ..Default::default() };
         let mut emitted = Vec::new();
         self.transaction(|doc| match &ev.event {
