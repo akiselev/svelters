@@ -4191,6 +4191,7 @@ dependencies = [
  "presto-text",
  "quire-text",
  "resvg",
+ "rfd",
  "roxmltree 0.20.0",
  "serde_json",
  "smallvec",
