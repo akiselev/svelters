@@ -31,6 +31,14 @@ npm and Cargo dependencies are not bundled in this repository. Each one is insta
 - **`metadata/appkit/`** holds facts derived from the macOS SDK headers: class, property and method names, types, enum values and availability versions. It is generated with Xcode on macOS (Apple hardware, GitHub's macOS runner; currently Xcode 26.1.1, macOS 26.1 SDK) by `tools/metadata/appkit/ingest.py`, and CI regenerates and checks it. It contains no header text or documentation comments, and the SDK itself is not redistributed.
 - **`metadata/winui/`** holds facts derived from the Windows App SDK `Microsoft.UI.Xaml.winmd`: names, types and attributes. The SDK packages are downloaded by `tools/metadata/winui/fetch.py` and are not redistributed.
 
+## Apache-2.0 ported source (presto)
+
+| Project | Version | Where | Copyright |
+|---|---|---|---|
+| [Zed](https://github.com/zed-industries/zed) GPUI platform crates (`crates/gpui_windows/src/direct_manipulation.rs`; Apache-2.0 crates only, never Zed's GPL crates) | a5c4ca8 | `crates/presto-platform-win32/src/dmanip.rs` | Copyright 2022 - 2025 Zed Industries, Inc. |
+
+These files are under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0); each keeps a header naming its source file and commit, with "Modifications by the svelters authors".
+
 ---
 
 ## MIT License

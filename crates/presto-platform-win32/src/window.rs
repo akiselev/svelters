@@ -72,6 +72,8 @@ pub(crate) struct Window {
     pub tsf: Option<Rc<TsfDocument>>,
     pub ime: Option<ImeState>,
     pub focused: bool,
+    /// TSF's focus is on this window's document (set only on changes: re-focusing restarts TIPs).
+    pub ime_focused: bool,
     pub minimized: bool,
     /// The mouse is over the client area (pointer enter seen, leave not yet).
     pub hovering: bool,
@@ -266,6 +268,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> WindowId {
                 tsf: None,
                 ime: None,
                 focused: false,
+                ime_focused: false,
                 minimized: false,
                 hovering: false,
                 nc_pressed: None,
@@ -317,7 +320,7 @@ pub(crate) fn set_cursor(app: &App, id: WindowId, c: CursorIcon) {
 
 pub(crate) fn set_ime(app: &App, id: WindowId, state: Option<ImeState>) {
     let Some(tsf) = app.tsf.as_ref() else { return };
-    let (doc, focused) = {
+    let (doc, refocus) = {
         let mut inner = app.inner.borrow_mut();
         let Some(w) = inner.windows.get_mut(&id) else { return };
         w.ime = state.clone();
@@ -327,12 +330,17 @@ pub(crate) fn set_ime(app: &App, id: WindowId, state: Option<ImeState>) {
                 d.set_scale(w.scale.0);
             }
         }
-        (w.tsf.clone(), w.focused)
+        let want = w.focused && state.is_some() && w.tsf.is_some();
+        let refocus = w.focused && want != w.ime_focused;
+        if w.focused {
+            w.ime_focused = want;
+        }
+        (w.tsf.clone(), refocus)
     };
     if let (Some(doc), Some(s)) = (&doc, &state) {
         doc.set_field(s.area, s.purpose);
     }
-    if focused {
+    if refocus {
         tsf.focus(if state.is_some() { doc.as_deref() } else { None });
     }
 }
@@ -644,10 +652,13 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             app.input(id, pointer::snapshot_time(&snap), InputEvent::Pointer(ev));
             Some(0)
         }
-        WM_POINTERWHEEL | WM_POINTERHWHEEL => {
+        // The legacy wheel messages come from drivers that bypass the pointer stack; when the pointer
+        // message is handled the OS generates no legacy one, so nothing arrives twice.
+        WM_POINTERWHEEL | WM_POINTERHWHEEL | WM_MOUSEWHEEL | WM_MOUSEHWHEEL => {
             let p = screen_to_points(hwnd, st.scale, lparam);
             let mods = app.keys.try_borrow().map(|k| k.mods.modifiers()).unwrap_or_else(|_| os_modifiers());
-            let ev = pointer::wheel(p, wheel_delta(wparam.0), msg == WM_POINTERHWHEEL, mods);
+            let horizontal = msg == WM_POINTERHWHEEL || msg == WM_MOUSEHWHEEL;
+            let ev = pointer::wheel(p, wheel_delta(wparam.0), horizontal, mods);
             app.input(id, message_time_to_time(unsafe { GetMessageTime() }), InputEvent::Wheel(ev));
             Some(0)
         }
@@ -718,7 +729,9 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             }
             let doc = with_window(app, id, |w| {
                 w.focused = focused;
-                w.ime.as_ref().and(w.tsf.clone())
+                let doc = w.ime.as_ref().and(w.tsf.clone());
+                w.ime_focused = focused && doc.is_some();
+                doc
             })?;
             if focused && let Some(tsf) = app.tsf.as_ref() {
                 tsf.focus(doc.as_deref());

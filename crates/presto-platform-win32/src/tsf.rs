@@ -255,16 +255,17 @@ fn doc_len(c: &dyn TextInputClient) -> usize {
     c.text_for_range(0..usize::MAX).map(|s| utf16_len(&s)).unwrap_or(0)
 }
 
-/// What TSF last saw of the document, to detect the app's own edits.
+/// What TSF last saw of the document, to detect the app's own edits cheaply (the selection, the
+/// marked range and the text around the caret; the length is read only when one changed).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 struct Snapshot {
-    len: usize,
     selection: Option<Utf16Range>,
+    marked: Option<Utf16Range>,
     around: Option<String>,
 }
 
 fn snapshot(c: &dyn TextInputClient) -> Snapshot {
-    Snapshot { len: doc_len(c), selection: c.selected_range(), around: c.surrounding_text(512).map(|(s, _)| s) }
+    Snapshot { selection: c.selected_range(), marked: c.marked_range(), around: c.surrounding_text(512).map(|(s, _)| s) }
 }
 
 struct StoreState {
@@ -283,6 +284,8 @@ struct StoreState {
     /// `TextInputClient`): reported back to TSF until the document changes.
     selection_override: RefCell<Option<Utf16Range>>,
     seen: RefCell<Snapshot>,
+    /// The document length TSF last saw.
+    seen_len: Cell<usize>,
     /// `GUID_PROP_INPUTSCOPE` was requested and not yet retrieved.
     scope_requested: Cell<bool>,
 }
@@ -302,6 +305,7 @@ impl StoreState {
             composition_ended: Cell::new(false),
             selection_override: RefCell::new(None),
             seen: RefCell::new(Snapshot::default()),
+            seen_len: Cell::new(0),
             scope_requested: Cell::new(false),
         }
     }
@@ -389,8 +393,9 @@ impl StoreState {
         if self.composition_ended.replace(false) {
             self.with_client(|c| c.unmark_text());
         }
-        if let Some(seen) = self.with_client(|c| snapshot(c)) {
+        if let Some((seen, len)) = self.with_client(|c| (snapshot(c), doc_len(c))) {
             *self.seen.borrow_mut() = seen;
+            self.seen_len.set(len);
         }
     }
 
@@ -403,12 +408,14 @@ impl StoreState {
         if before == now {
             return;
         }
+        let Some(len) = self.with_client(|c| doc_len(c)) else { return };
+        let before_len = self.seen_len.replace(len);
         self.selection_override.borrow_mut().take();
         let Some((sink, mask)) = self.sink() else { return };
-        let text_changed = before.len != now.len || before.around != now.around;
+        let text_changed = before_len != len || before.around != now.around || before.marked != now.marked;
         unsafe {
             if text_changed && mask & TS_AS_TEXT_CHANGE != 0 {
-                let change = TS_TEXTCHANGE { acpStart: 0, acpOldEnd: before.len as i32, acpNewEnd: now.len as i32 };
+                let change = TS_TEXTCHANGE { acpStart: 0, acpOldEnd: before_len as i32, acpNewEnd: len as i32 };
                 let _ = sink.OnTextChange(TEXT_STORE_TEXT_CHANGE_FLAGS(0), &change);
             }
             if (text_changed || before.selection != now.selection) && mask & TS_AS_SEL_CHANGE != 0 {
