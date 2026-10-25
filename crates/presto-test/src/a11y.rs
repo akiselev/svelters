@@ -323,7 +323,13 @@ impl<'q> By<'q> {
             return false;
         }
         if let Some(l) = self.label {
-            match n.match_label() {
+            // kittest: a `Label` node by its text, any other node by its accessible name.
+            let name = if n.role() == Role::Label {
+                n.match_label().map(str::to_owned)
+            } else {
+                AkNode { info: *n, tree }.label()
+            };
+            match name {
                 Some(x) if self.label_contains && x.contains(l) => {}
                 Some(x) if !self.label_contains && x == l => {}
                 _ => return false,

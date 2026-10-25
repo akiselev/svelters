@@ -4183,6 +4183,8 @@ dependencies = [
  "presto-text",
  "svelters-automation",
  "svelters-egui",
+ "svelters-host",
+ "svelters-modules",
  "wgpu",
 ]
 

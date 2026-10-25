@@ -29,7 +29,12 @@ egui-wgpu = { version = "=0.37.0", default-features = false }
 dify = { version = "0.8.0", default-features = false }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
 svelters-automation = { workspace = true, optional = true }
-svelters-egui = { workspace = true, optional = true }
+# No default features: no eframe, no native dialogs (the presto workflow installs no GTK).
+svelters-egui = { path = "../svelters-egui", default-features = false, optional = true }
 
 [dev-dependencies]
 presto-test = { path = ".", features = ["automation"] }
+# The automation test loads an app from source (fixtures/counter-egui) into an island.
+svelters-egui = { path = "../svelters-egui", default-features = false, features = ["source"] }
+svelters-host = { workspace = true }
+svelters-modules = { workspace = true, features = ["source"] }

@@ -337,16 +337,13 @@ impl<S: 'static> DerefMut for EguiHarness<S> {
 }
 
 impl<S: 'static> EguiHarness<S> {
-    pub fn builder() -> EguiHarnessBuilder {
-        EguiHarnessBuilder::default()
-    }
     #[track_caller]
     pub fn new_ui_state(app: impl FnMut(&mut egui::Ui, &mut S) + 'static, state: S) -> Self {
-        Self::builder().build_ui_state(app, state)
+        EguiHarnessBuilder::default().build_ui_state(app, state)
     }
     #[track_caller]
     pub fn new_state(app: impl FnMut(&egui::Context, &mut S) + 'static, state: S) -> Self {
-        Self::builder().build_state(app, state)
+        EguiHarnessBuilder::default().build_state(app, state)
     }
     /// kittest's `state`: the closure's state.
     pub fn state(&self) -> &S {
@@ -367,6 +364,10 @@ impl<S: 'static> EguiHarness<S> {
     pub fn island_output(&self) -> &IslandOutput {
         self.doc().output()
     }
+    /// The presto harness, for drivers that own one (`automation::PrestoDriver`).
+    pub fn into_harness(self) -> Harness<IslandDoc<S>> {
+        self.inner
+    }
     pub fn into_state(self) -> S
     where
         S: Default,
@@ -377,13 +378,17 @@ impl<S: 'static> EguiHarness<S> {
 }
 
 impl EguiHarness<()> {
+    /// The builder (the state type comes from `build_ui_state`/`build_state`).
+    pub fn builder() -> EguiHarnessBuilder {
+        EguiHarnessBuilder::default()
+    }
     #[track_caller]
     pub fn new_ui(mut app: impl FnMut(&mut egui::Ui) + 'static) -> Self {
-        Self::builder().build_ui_state(move |ui, _: &mut ()| app(ui), ())
+        EguiHarnessBuilder::default().build_ui_state(move |ui, _: &mut ()| app(ui), ())
     }
     #[track_caller]
     pub fn new(mut app: impl FnMut(&egui::Context) + 'static) -> Self {
-        Self::builder().build_state(move |ctx, _: &mut ()| app(ctx), ())
+        EguiHarnessBuilder::default().build_state(move |ctx, _: &mut ()| app(ctx), ())
     }
 }
 
