@@ -43,6 +43,19 @@ impl CoreDocument {
             js_events: Vec::new(),
         }
     }
+    /// A document whose built-in kinds have their services: the text system, the platform's interaction
+    /// policy and the theme (`presto_widgets::host::install`). Text editing also needs presto-widgets'
+    /// text services, which the app installs beside these (see the TODO in `App::init`).
+    pub fn with_widgets(
+        mut doc: Document,
+        root_kind: KindId,
+        text: presto_text::TextSystem,
+        policy: presto_widgets::interact::Policy,
+        theme: presto_widgets::theme::Theme,
+    ) -> Self {
+        presto_widgets::host::install(&mut doc, text, policy, theme);
+        Self::new(doc, root_kind)
+    }
     /// The JS-facing events of the last dispatch, then those queued outside dispatch (focus moves).
     pub fn take_js_events(&mut self) -> Vec<JsEvent> {
         let mut out = std::mem::take(&mut self.js_events);

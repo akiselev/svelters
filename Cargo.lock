@@ -4026,6 +4026,8 @@ dependencies = [
  "presto-core",
  "presto-frame",
  "presto-platform",
+ "presto-text",
+ "presto-widgets",
  "wgpu",
 ]
 

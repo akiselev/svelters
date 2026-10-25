@@ -180,3 +180,6 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
   before each urgent decision (request 6 done); `ToUi::FrameTimings` stamps draw/submit/gpu_done/present,
   amending records `Presented` already ended and adding the segments it completes (request 7 done); after
   each commit the app asks for a frame again when the tree is still dirty (the caveat to request 8).
+- `CoreDocument::with_widgets(doc, root_kind, text, policy, theme)` calls `presto_widgets::host::install`
+  (base 0ef700c1); `presto` now depends on presto-widgets and presto-text. The TextServices TODO in
+  `App::init` names both calls.
