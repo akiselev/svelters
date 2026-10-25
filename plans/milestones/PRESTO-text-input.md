@@ -41,7 +41,10 @@ the caret through `EventCx::set_caret` (node-local; presto-core turns it into `F
 event time from `EventCx::time`, the content box from `NodeView::content_box` and the IME's window-space
 queries through `NodeView::window_transform`. `text/shim.rs` keeps only the field's own interfaces
 (`TextGeometry`, `Layouter`, `Clipboard`, `RecordSink`) and the fixed-advance test layout. GTK's one
-selection owner is not in core: `TextEditor::collapse_to_start` is the hook (the pins fixture applies it).
+selection owner is core's (`Document::set_single_selection`, set by the runner under the GTK policy):
+`text-edit` calls `EventCx::claim_selection`/`release_selection` after each event and collapses to the start
+in `Kind::selection_lost`. The pins fixture has no document and applies the same rule itself through the
+same hook (`TextField::lose_selection`).
 
 **`text-edit` and the substrate.** `text-edit` implements `presto_core::Kind` directly, not through the
 substrate's `Hosted<W>` / `shim::core` bridge: the bridge carries no `Event::Ime` and no `text_input`
@@ -94,8 +97,8 @@ No change to `presto-base` or any wave-1 crate.
   `FastCommit::CaretBlink { window, cycle, timeout }` variant, a breaking change for exhaustive matches), and
   applies `text::caret::blink_visible`'s rule (on for the first half of each cycle, steady after the timeout,
   restarted by every `Caret` commit).
-- **R4 (presto-core): done** by CORE-3 (base `96426b4a`), but GTK's one selection owner; `text-edit` uses
-  it. Was: for the text kinds: the text system (layouts with geometry, `TextLayout`) in
+- **R4 (presto-core): done** by CORE-3 (base `96426b4a`, and the one selection owner in core-3 `16277aed`);
+  `text-edit` uses all of it. Was: for the text kinds: the text system (layouts with geometry, `TextLayout`) in
   `PrepareCx` and `EventCx` (a key can move over rows the previous key changed), the clipboard and the
   fast-commit channel in `EventCx`, the event time in `Event`, the node's padding edges and its
   window transform in `NodeView` (the kind uses the padding box and `pos - local`/the sum of layout rects

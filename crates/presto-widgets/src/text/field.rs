@@ -570,6 +570,17 @@ impl TextField {
         self.repaint = true;
     }
 
+    /// Another field took the one selection (GTK): collapse this one's to its start.
+    pub fn lose_selection(&mut self) {
+        self.editor.collapse_to_start();
+        self.after();
+    }
+
+    /// The field holds a non-empty selection.
+    pub fn has_selection(&self) -> bool {
+        !self.editor.selection().range().is_empty()
+    }
+
     fn commit_change(&mut self) {
         if std::mem::take(&mut self.edited) {
             self.signals.push(FieldSignal::Commit);

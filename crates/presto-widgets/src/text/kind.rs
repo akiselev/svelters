@@ -11,7 +11,9 @@
 //! (`Box<dyn presto_platform::Clipboard>`). The caret goes out through presto-core's fast channel
 //! (`EventCx::set_caret`), the IME's window-space queries through the node's window transform.
 //! Without a text system the kind records its box only and takes no input (it cannot place a caret);
-//! without a clipboard it edits without one.
+//! without a clipboard it edits without one. GTK's one selection is core's
+//! (`Document::set_single_selection`): the field claims it when it selects and collapses on
+//! `selection_lost`.
 
 use super::editor::{EditorConfig, FocusReason as FieldFocus};
 use super::field::{FieldColors, FieldPointer, FieldSignal, TextField};
@@ -191,6 +193,12 @@ impl TextEdit {
         if let Some(rect) = self.field.caret_update() {
             cx.set_caret(rect);
         }
+        // GTK's one selection: core collapses the previous owner (when the document has the rule on)
+        if self.field.has_selection() {
+            cx.claim_selection();
+        } else {
+            cx.release_selection();
+        }
         self.emit(cx);
         if self.field.take_repaint() {
             cx.request_paint();
@@ -320,6 +328,14 @@ impl Kind for TextEdit {
         }
         self.finish(cx);
         if handled { Handled::Yes } else { Handled::No }
+    }
+
+    fn selection_lost(&mut self, cx: &mut EventCx) {
+        self.field.lose_selection();
+        self.emit(cx);
+        if self.field.take_repaint() {
+            cx.request_paint();
+        }
     }
 
     fn text_input(&mut self) -> Option<&mut dyn TextInputClient> {
