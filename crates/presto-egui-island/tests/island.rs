@@ -10,7 +10,7 @@ use presto_base::geom::{Point, Rect, Scale, Vec2};
 use presto_base::ids::{InputSeq, TextureId, WindowId};
 use presto_base::key::Key;
 use presto_base::time::{Span, Time};
-use presto_egui_island::{EguiIsland, IslandDesc, IslandDrag, IslandOutput, PrestoDrag, island_tree_id};
+use presto_egui_island::{EguiIsland, IslandDesc, IslandDrag, IslandOutput, DragData, island_tree_id};
 use std::cell::Cell;
 
 /// The island sits at (100, 50) in its window, 300 × 200 points.
@@ -382,12 +382,12 @@ mod dnd {
             rect.set(inner.response.rect);
             if let Some(p) = payload {
                 p.accept();
-                got.set(p.drag.get("text/plain").map(|d| String::from_utf8_lossy(d).into_owned()));
+                got.set((&*p.drag.ty == "text/plain").then(|| p.drag.data.to_string()));
             }
         };
         rig.pass(&mut ui);
         let at = window_center(rect.get());
-        rig.island.drag_enter(&PrestoDrag::single("text/plain", "hello"), at);
+        rig.island.drag_enter(&DragData::new("text/plain", "hello"), at);
         let out = rig.pass(&mut ui);
         assert_eq!(out.dnd.dropped, None, "hovering is no drop");
         rig.island.drag_drop(at);
@@ -403,7 +403,7 @@ mod dnd {
             ui.label("nothing to drop on");
         };
         rig.pass(&mut ui);
-        rig.island.drag_enter(&PrestoDrag::single("text/plain", "x"), Point::new(150.0, 100.0));
+        rig.island.drag_enter(&DragData::new("text/plain", "x"), Point::new(150.0, 100.0));
         rig.pass(&mut ui);
         assert!(egui::DragAndDrop::has_any_payload(rig.island.context()));
         rig.island.drag_leave();
@@ -417,7 +417,7 @@ mod dnd {
         let mut rig = Rig::new(1.0);
         let rect = Cell::new(egui::Rect::NOTHING);
         let mut ui = |ui: &mut egui::Ui| {
-            let r = ui.dnd_drag_source(egui::Id::unique("part"), IslandDrag::new(PrestoDrag::single("cad/part", "42")), |ui| {
+            let r = ui.dnd_drag_source(egui::Id::unique("part"), IslandDrag::new(DragData::new("cad/part", "42")), |ui| {
                 ui.label("part 42")
             });
             if r.inner.rect.is_positive() && !egui::DragAndDrop::has_any_payload(ui.ctx()) {
@@ -446,7 +446,7 @@ mod dnd {
                 out = o;
             }
         }
-        assert_eq!(out.dnd.drag_out, Some(PrestoDrag::single("cad/part", "42")));
+        assert_eq!(out.dnd.drag_out, Some(DragData::new("cad/part", "42")));
         rig.island.drag_out_finished(true);
         rig.pointer(PointerPhase::Up, Point::new(20.0, 20.0), Some(MouseButton::Primary));
         rig.pass(&mut ui);

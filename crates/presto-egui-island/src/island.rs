@@ -17,17 +17,17 @@
 //! sets no deadline, so presto's idle barrier holds.
 
 use crate::a11y::A11yGraft;
-use crate::dnd::{DndBridge, DndOutput, PayloadCodec};
+use crate::dnd::{DndBridge, DndOutput, DragData, PayloadCodec};
 use crate::input::{self, InputTranslator, Routed};
-use crate::shim::PrestoDrag;
 use presto_platform::clipboard::{Clipboard, ClipboardKind};
 use presto_base::cursor::CursorIcon;
 use presto_base::display::{DisplayList, Prim, SurfacePrim};
-use presto_base::event::InputEnvelope;
+use presto_base::event::{InputEnvelope, InputEvent};
 use presto_base::geom::{DeviceSize, Point, Rect, Scale};
 use presto_base::ids::TextureId;
 use presto_base::layer::LayerKind;
 use presto_base::time::{Span, Time};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Duration;
@@ -130,6 +130,13 @@ pub struct EguiIsland {
     dnd: DndBridge,
     clipboard: Option<Box<dyn Clipboard>>,
     max_texture_side: usize,
+    cursor: CursorIcon,
+    /// egui's textures as uploaded, for a new renderer after a device reset (egui sends each texture
+    /// once, as deltas).
+    mirror: TextureMirror,
+    /// The renderer is new (first render, or after a device reset): upload the mirror before the
+    /// pending deltas.
+    replay: bool,
 }
 
 impl EguiIsland {
@@ -154,6 +161,9 @@ impl EguiIsland {
             clipboard: None,
             // wgpu's default `max_texture_dimension_2d`, until the device says otherwise.
             max_texture_side: 8192,
+            cursor: CursorIcon::Default,
+            mirror: TextureMirror::default(),
+            replay: false,
         };
         island.place_a11y();
         island
@@ -171,6 +181,25 @@ impl EguiIsland {
         self.max_texture_side = device.limits().max_texture_dimension_2d as usize;
         self.renderer
             .get_or_insert_with(|| egui_wgpu::Renderer::new(device, TARGET_FORMAT, self.renderer_options))
+    }
+
+    /// The GPU device was lost and presto recreated it (`ToUi::DeviceReset`, `Document::device_reset`). The
+    /// renderer and the island's texture belonged to the old device: the next pass re-renders on the device
+    /// [`render`](Self::render) is given, re-uploading egui's textures from the island's copies and
+    /// registering a new texture. What lived on the old renderer is gone: paint callbacks set up their
+    /// `callback_resources` again ([`renderer_mut`](Self::renderer_mut) after the next render or after
+    /// [`init_renderer_on`](Self::init_renderer_on)), and native textures are registered again.
+    pub fn device_reset(&mut self) {
+        self.renderer = None;
+        self.target = None;
+        self.replay = true;
+        self.pass_at = Some(Time::ZERO);
+    }
+
+    /// Creates the renderer on `device` now (after [`device_reset`](Self::device_reset), so paint callbacks
+    /// can set up their resources before the next render).
+    pub fn init_renderer_on(&mut self, device: &wgpu::Device) -> &mut egui_wgpu::Renderer {
+        self.init_renderer(device)
     }
 
     /// The island's egui context: the host installs fonts, style, image loaders and plugins on it.
@@ -220,6 +249,22 @@ impl EguiIsland {
         self.pass_at = Some(Time::ZERO);
     }
 
+    /// Moves the island's AccessKit subtree to `tree` (when it is mounted on another node). The next pass
+    /// sends the whole tree, with its tree info, under the new id.
+    pub fn set_tree_id(&mut self, tree: accesskit::TreeId) {
+        if tree != self.graft.tree_id() {
+            let placement = self.graft.placement();
+            self.graft = A11yGraft::new(tree);
+            self.graft.set_placement(placement);
+            self.pass_at = Some(Time::ZERO);
+        }
+    }
+
+    /// The cursor egui asked for in its last pass.
+    pub fn cursor(&self) -> CursorIcon {
+        self.cursor
+    }
+
     pub fn a11y(&self) -> &A11yGraft {
         &self.graft
     }
@@ -261,7 +306,12 @@ impl EguiIsland {
 
     /// A presto input event. Returns whether the island took it (the host stops dispatching it).
     pub fn handle_input(&mut self, ev: &InputEnvelope) -> bool {
-        let Routed { consumed, queued, paste } = self.input.translate(&ev.event, &mut self.events);
+        self.handle_event(&ev.event, ev.recv_time)
+    }
+
+    /// [`handle_input`](Self::handle_input) for an event that arrived at `at` (positions in window points).
+    pub fn handle_event(&mut self, ev: &InputEvent, at: Time) -> bool {
+        let Routed { consumed, queued, paste } = self.input.translate(ev, &mut self.events);
         if paste {
             let text = self.clipboard.as_mut().and_then(|c| c.get_text(ClipboardKind::Clipboard)).map(|t| t.replace("\r\n", "\n"));
             if let Some(text) = text.filter(|t| !t.is_empty()) {
@@ -269,7 +319,7 @@ impl EguiIsland {
             }
         }
         if queued {
-            self.request_pass_at(ev.recv_time);
+            self.request_pass_at(at);
         }
         consumed
     }
@@ -306,7 +356,7 @@ impl EguiIsland {
     }
 
     /// A presto drag entered the island at `pos` (window points).
-    pub fn drag_enter(&mut self, drag: &PrestoDrag, pos: Point) {
+    pub fn drag_enter(&mut self, drag: &DragData, pos: Point) {
         self.dnd.enter(&self.ctx, drag);
         self.drag_move(pos);
     }
@@ -410,8 +460,9 @@ impl EguiIsland {
         self.pass_at = repaint_at;
 
         let po = full.platform_output;
+        self.cursor = input::cursor(po.cursor_icon);
         let mut out = IslandOutput {
-            cursor: input::cursor(po.cursor_icon),
+            cursor: self.cursor,
             repaint_at,
             ..Default::default()
         };
@@ -486,9 +537,15 @@ impl EguiIsland {
             return Vec::new();
         };
 
+        if std::mem::take(&mut self.replay) {
+            for (id, delta) in self.mirror.full_deltas() {
+                renderer.update_texture(device, queue, id, &delta);
+            }
+        }
         for (id, deltas) in &pending.textures.set {
             for delta in deltas {
                 renderer.update_texture(device, queue, *id, delta);
+                self.mirror.apply(*id, delta);
             }
         }
         let screen = egui_wgpu::ScreenDescriptor {
@@ -520,6 +577,7 @@ impl EguiIsland {
         }
         for id in &pending.textures.free {
             renderer.free_texture(id);
+            self.mirror.free(id);
         }
         user_buffers
     }
@@ -542,6 +600,41 @@ impl EguiIsland {
         if self.target.take().is_some() {
             registry.unregister_texture(self.texture_id);
         }
+    }
+}
+
+/// CPU copies of egui's textures as they were uploaded (whole images with partial updates applied).
+#[derive(Default)]
+struct TextureMirror {
+    images: HashMap<egui::TextureId, (Arc<egui::ColorImage>, egui::TextureOptions)>,
+}
+
+impl TextureMirror {
+    fn apply(&mut self, id: egui::TextureId, delta: &egui::epaint::ImageDelta) {
+        let egui::ImageData::Color(image) = &delta.image;
+        match delta.pos {
+            None => {
+                self.images.insert(id, (image.clone(), delta.options));
+            }
+            Some([x, y]) => {
+                let Some((full, options)) = self.images.get_mut(&id) else { return };
+                let full = Arc::make_mut(full);
+                let (w, [pw, ph]) = (full.size[0], image.size);
+                for row in 0..ph {
+                    let dst = (y + row) * w + x;
+                    full.pixels[dst..dst + pw].copy_from_slice(&image.pixels[row * pw..(row + 1) * pw]);
+                }
+                *options = delta.options;
+            }
+        }
+    }
+
+    fn free(&mut self, id: &egui::TextureId) {
+        self.images.remove(id);
+    }
+
+    fn full_deltas(&self) -> Vec<(egui::TextureId, egui::epaint::ImageDelta)> {
+        self.images.iter().map(|(id, (image, options))| (*id, egui::epaint::ImageDelta::full(image.clone(), *options))).collect()
     }
 }
 

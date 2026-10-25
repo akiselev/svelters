@@ -14,23 +14,40 @@
 //!   drag with it; the host reports the outcome with
 //!   [`EguiIsland::drag_out_finished`](crate::EguiIsland::drag_out_finished).
 //!
+//! presto's side is presto-core's in-app drag (`drag-type`/`drag-data`/`drop-types`, CORE-3): one type and
+//! its string data, delivered to targets as `drag-enter(type)`, `drag-leave` and `drop{type, data, x, y,
+//! action}`; [`crate::host::IslandHost::bridge_events`] turns those into the calls above. [`DragData`] is that
+//! payload.
+//!
 //! The default codec carries [`IslandDrag`]. svelters-egui's panels use its `DragPayload`; an embedder
 //! that still links svelters-egui supplies a codec for that type (the island doesn't depend on it).
 
-use crate::shim::PrestoDrag;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+
+/// An in-app drag's payload as presto-core carries it: the source's `drag-type` and `drag-data`.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct DragData {
+    pub ty: Arc<str>,
+    pub data: Arc<str>,
+}
+
+impl DragData {
+    pub fn new(ty: impl Into<Arc<str>>, data: impl Into<Arc<str>>) -> DragData {
+        DragData { ty: ty.into(), data: data.into() }
+    }
+}
 
 /// The payload egui code in an island sees for a presto drag (the default codec's type), and the type an
 /// island panel sets to drag something out to presto.
 #[derive(Debug)]
 pub struct IslandDrag {
-    pub drag: PrestoDrag,
+    pub drag: DragData,
     accepted: Arc<AtomicBool>,
 }
 
 impl IslandDrag {
-    pub fn new(drag: PrestoDrag) -> IslandDrag {
+    pub fn new(drag: DragData) -> IslandDrag {
         IslandDrag { drag, accepted: Arc::default() }
     }
 
@@ -48,10 +65,10 @@ impl IslandDrag {
 /// How presto drags become egui payloads and back.
 pub trait PayloadCodec: Send + Sync {
     /// Put `drag` into `egui::DragAndDrop`; `accepted` is set when an egui target takes it.
-    fn import(&self, ctx: &egui::Context, drag: &PrestoDrag, accepted: Arc<AtomicBool>);
+    fn import(&self, ctx: &egui::Context, drag: &DragData, accepted: Arc<AtomicBool>);
     /// egui's current payload as a presto drag (`None`: no payload, or one presto can't carry), and the
     /// flag that reports the drop back to its egui source.
-    fn export(&self, ctx: &egui::Context) -> Option<(PrestoDrag, Arc<AtomicBool>)>;
+    fn export(&self, ctx: &egui::Context) -> Option<(DragData, Arc<AtomicBool>)>;
 }
 
 /// Carries [`IslandDrag`].
@@ -59,11 +76,11 @@ pub trait PayloadCodec: Send + Sync {
 pub struct IslandDragCodec;
 
 impl PayloadCodec for IslandDragCodec {
-    fn import(&self, ctx: &egui::Context, drag: &PrestoDrag, accepted: Arc<AtomicBool>) {
+    fn import(&self, ctx: &egui::Context, drag: &DragData, accepted: Arc<AtomicBool>) {
         egui::DragAndDrop::set_payload(ctx, IslandDrag { drag: drag.clone(), accepted });
     }
 
-    fn export(&self, ctx: &egui::Context) -> Option<(PrestoDrag, Arc<AtomicBool>)> {
+    fn export(&self, ctx: &egui::Context) -> Option<(DragData, Arc<AtomicBool>)> {
         egui::DragAndDrop::payload::<IslandDrag>(ctx).map(|p| (p.drag.clone(), p.accepted.clone()))
     }
 }
@@ -72,7 +89,7 @@ impl PayloadCodec for IslandDragCodec {
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct DndOutput {
     /// An egui drag left the island: the host starts a presto drag carrying it.
-    pub drag_out: Option<PrestoDrag>,
+    pub drag_out: Option<DragData>,
     /// The presto drag dropped on the island this pass, and whether an egui target took it.
     pub dropped: Option<bool>,
 }
@@ -105,7 +122,7 @@ impl DndBridge {
     }
 
     /// A presto drag (re)entered the island.
-    pub fn enter(&mut self, ctx: &egui::Context, drag: &PrestoDrag) {
+    pub fn enter(&mut self, ctx: &egui::Context, drag: &DragData) {
         let accepted = Arc::new(AtomicBool::new(false));
         self.codec.import(ctx, drag, accepted.clone());
         self.incoming = Some(Incoming { accepted, dropping: false });

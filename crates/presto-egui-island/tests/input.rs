@@ -132,3 +132,46 @@ fn pinch_over_the_island_is_egui_zoom() {
     t.translate(&InputEvent::Gesture(GestureEvent::Pinch { delta: 0.0, phase: GesturePhase::Moved }), &mut out);
     assert_eq!(out, vec![egui::Event::Zoom(1.0)]);
 }
+
+#[test]
+fn physical_keys_map_by_us_layout_position() {
+    use presto_egui_island::input::physical_key;
+    assert_eq!(physical_key(0x07_0004), Some(egui::Key::A));
+    assert_eq!(physical_key(0x07_001D), Some(egui::Key::Z));
+    assert_eq!(physical_key(0x07_0027), Some(egui::Key::Num0));
+    assert_eq!(physical_key(0x07_0059), Some(egui::Key::Num1), "numpad digits fold as egui-winit folds them");
+    assert_eq!(physical_key(0x07_0058), Some(egui::Key::Enter));
+    assert_eq!(physical_key(0x07_002F), Some(egui::Key::OpenBracket));
+    assert_eq!(physical_key(0x07_0073), Some(egui::Key::F24));
+    assert_eq!(physical_key(0x07_0039), None, "Caps Lock has no egui key");
+    assert_eq!(physical_key(0x0C_00E9), None, "consumer page");
+}
+
+#[test]
+fn keys_carry_their_physical_key_and_shortcuts_fall_back_to_it() {
+    let mut t = translator();
+    let mut out = Vec::new();
+    t.set_focused(true, &mut out);
+    out.clear();
+    let press = |key: Option<Key>, physical: u32, text: Option<&str>, modifiers: Modifiers| {
+        InputEvent::Key(KeyEvent {
+            key,
+            physical,
+            text: text.map(str::to_owned),
+            state: KeyState::Pressed,
+            repeat: false,
+            location: KeyLocation::Standard,
+            modifiers,
+        })
+    };
+    // A Cyrillic layout: the key at C's position types "с" and has no Latin logical key.
+    t.translate(&press(None, 0x07_0006, Some("с"), Modifiers::CTRL), &mut out);
+    assert_eq!(out, vec![egui::Event::Copy], "Ctrl+(the key at C) copies");
+    out.clear();
+    t.translate(&press(Some(Key::Q), 0x07_0004, Some("q"), Modifiers::default()), &mut out);
+    assert!(
+        matches!(out[0], egui::Event::Key { key: egui::Key::Q, physical_key: Some(egui::Key::A), .. }),
+        "AZERTY: logical Q at A's position, got {:?}",
+        out[0]
+    );
+}

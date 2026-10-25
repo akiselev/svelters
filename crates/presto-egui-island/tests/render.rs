@@ -151,3 +151,41 @@ fn renders_into_a_registered_texture_with_paint_callbacks() {
     island.release(&registry);
     assert_eq!(*registry.unregistered.lock().unwrap(), vec![TextureId(3)]);
 }
+
+#[test]
+fn a_device_reset_rerenders_on_the_new_device() {
+    let (Some((device_a, queue_a)), Some((device_b, queue_b))) = (device(), device()) else {
+        eprintln!("no GPU (set PRESTO_GPU_TESTS on a machine with an adapter)");
+        return;
+    };
+    let registry = Registry::default();
+    let mut island = EguiIsland::new(IslandDesc {
+        texture: TextureId(4),
+        tree: island_tree_id(4),
+        rect: Rect::new(0.0, 0.0, 64.0, 48.0),
+        scale: Scale(1.0),
+        renderer: egui_wgpu::RendererOptions::PREDICTABLE,
+    });
+    // egui's rect meshes sample the font atlas's white texel: a red rect after the reset proves the atlas
+    // reached the new renderer.
+    let mut ui = |ui: &mut egui::Ui| {
+        ui.painter().rect_filled(egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(32.0, 48.0)), 0.0, egui::Color32::RED);
+    };
+    let frame = |island: &mut EguiIsland, now: u64, device: &wgpu::Device, queue: &wgpu::Queue, ui: &mut dyn FnMut(&mut egui::Ui)| {
+        island.run(Time(now), ui);
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        let user = island.render(device, queue, &mut encoder, &registry);
+        queue.submit(user.into_iter().chain([encoder.finish()]));
+    };
+    frame(&mut island, 1, &device_a, &queue_a, &mut ui);
+    assert_eq!(registry.registered.lock().unwrap().len(), 1);
+
+    island.device_reset();
+    assert!(island.needs_pass(Time(2)), "a reset asks for a pass");
+    assert!(island.texture().is_none(), "the old device's texture is dropped");
+    frame(&mut island, 2, &device_b, &queue_b, &mut ui);
+    assert_eq!(registry.registered.lock().unwrap().len(), 2, "the new texture is registered");
+    let texture = island.texture().expect("rendered on the new device").clone();
+    let px = read_back(&device_b, &queue_b, &texture);
+    assert_eq!(&px[(24 * 64 + 8) * 4..][..4], &[255, 0, 0, 255]);
+}
