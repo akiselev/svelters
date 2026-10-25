@@ -637,7 +637,21 @@ impl Document {
             };
             for c in self.paint_order(i).into_iter().rev() {
                 let ci = self.ix(c);
-                stack.push(Frame { i: ci, ..child });
+                // an absolute box is placed in its containing block's space (as in the dirty walk)
+                let parent_world = match crate::layout::positional_parent(self, ci) {
+                    Some(pp) if pp != i => {
+                        let ppn = self.slots.id_at(pp).expect("live");
+                        let w = self.record[pp].world_tf;
+                        if self.record[pp].scroll.is_some() {
+                            let off = self.scroll_offset(ppn);
+                            w.then(&Affine::translate(-off.x, -off.y))
+                        } else {
+                            w
+                        }
+                    }
+                    _ => child.parent_world,
+                };
+                stack.push(Frame { i: ci, parent_world, ..child });
             }
         }
         // diff the layers and items against what was sent

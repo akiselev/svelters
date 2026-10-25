@@ -90,12 +90,12 @@ core's (the shim's `PeerMsg::Checked(args)` → `PeerMsg::Notify(Some(Value::Lis
 `prop_state` with the widget's bit mask in `prop_states`; `focus_anchor`; `scale` into the shim contexts;
 `Document::set_auto_default(policy.auto_default)` where the policy is installed.
 
-## Known gaps found on the way
+## Fixed on the way
 
-- The rebuild walk places a `position: absolute` box under its tree parent's world transform, while
-  layout locates it relative to its containing block (the dirty walk uses the right space for property
-  nodes): hit testing and world rects are off for an absolute box whose containing block is not its
-  parent. Not changed here; it needs `positional_parent` in the rebuild walk too.
+- The rebuild walk placed a `position: absolute` box under its tree parent's world transform, while
+  layout locates it relative to its containing block: its hit entry and world rect were off when the
+  containing block is not its parent. It now composes with the containing block's world transform (and
+  scroll offset), as the dirty walk does for property nodes.
 
 ## Questions for the coordinator
 
