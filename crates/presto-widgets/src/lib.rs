@@ -10,6 +10,7 @@ pub mod dnd;
 pub mod interact;
 pub mod paint;
 pub mod pickers;
+pub mod shim;
 pub mod table;
 pub mod tabs;
 pub mod text;

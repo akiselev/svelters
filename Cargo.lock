@@ -3948,6 +3948,10 @@ dependencies = [
  "presto-base",
  "presto-core",
  "presto-text",
+ "resvg",
+ "smallvec",
+ "svelters-style",
+ "taffy",
 ]
 
 [[package]]
