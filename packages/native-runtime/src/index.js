@@ -1754,7 +1754,7 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
     const owner = scope;
     // H3c: the position of this instance among its parent's instances of the same component, and the
     // registry a swapped parent parked for it
-    const inst = { path: instancePath(owner, id), counters: new Map(), reg: () => liveReg, sig: () => liveReg?.sig };
+    const inst = { path: instancePath(owner, id, anchor), counters: new Map(), reg: () => liveReg, sig: () => liveReg?.sig, top: null };
     let claimed = takeClaim(inst.path);
     block(() => {
       const next = $.get(current);
@@ -1764,6 +1764,7 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
       nb.scope = new Scope(owner);
       nb.scope.hmr = inst;
       inst.counters = new Map();
+      inst.top = nb;
       const prevScope = scope;
       scope = nb.scope;
       let result;
@@ -1776,7 +1777,8 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
         claimed = null;
       }
       // H3c: park the live registries of the instances below this one before they are destroyed
-      const parked = ran && live ? parkDescendants(live.scope) : null;
+      // DZ0: through the edit that made this version, if the loader sent one (call sites moved)
+      const parked = ran && live ? parkDescendants(live.scope, next[HMR_EDIT]) : null;
       const ctx = { restore, entries: new Map() };
       try {
         // intros are suppressed while a version is replaced
@@ -1835,6 +1837,12 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
     current,
     id,
     update(incoming) {
+      // DZ0: the edit that made this version (`hmr_edit`) goes with its function, for the swap
+      const edit = pendingEdits.get(incoming[HMR].id);
+      if (edit) {
+        pendingEdits.delete(incoming[HMR].id);
+        incoming[HMR].fn[HMR_EDIT] = edit;
+      }
       // the first version's source drives every instance's block (upstream's "first version wins"):
       // later imports point their `current` at it, else block effects would pile up
       $.set(wrapper[HMR].current, incoming[HMR].fn);
@@ -1869,14 +1877,78 @@ let hmrClaims = null;
 const rootCounters = new Map();
 
 /** `<parent path>/<component id>#<n>`: n counts the instances of that component created under the same
- *  parent instance since its current version started (call order is the positional key). */
-function instancePath(owner, id) {
+ *  parent instance since its current version started (call order is the positional key).
+ *
+ *  DZ0: in a dev build for a backend with `source-loc`, the call site is known (`anchor.site`,
+ *  `file#offset`): the key is `<parent path>/<component id>` U+001F `<site>` and the keys of the keyed
+ *  `{#each}` items around the call inside the parent (`[k1,k2]`), then `#<n>` counting only the
+ *  calls with that same key. Inserting another call of the component elsewhere, or reordering a
+ *  keyed list, then keeps every instance's state; a swap translates the parked sites through the
+ *  edit (`parkDescendants`). */
+function instancePath(owner, id, anchor) {
   let s = owner;
   while (s && !s.hmr) s = s.parent;
   const counters = s ? s.hmr.counters : rootCounters;
-  const n = counters.get(id) ?? 0;
-  counters.set(id, n + 1);
-  return `${s ? s.hmr.path : ''}/${id}#${n}`;
+  let base = id;
+  if (anchor instanceof Region && anchor.site !== undefined) {
+    const keys = [];
+    const top = s ? s.hmr.top : null;
+    for (let c = anchor.owner; c && c !== top; ) {
+      if (c instanceof Region) {
+        if (c.keyed) keys.push(keyText(c.key));
+        c = c.owner;
+      } else if (c instanceof Slot) c = c.node.owner;
+      else break;
+    }
+    base = `${id}\u001f${anchor.site}${keys.length ? `[${keys.reverse().join(',')}]` : ''}`;
+  }
+  const n = counters.get(base) ?? 0;
+  counters.set(base, n + 1);
+  return `${s ? s.hmr.path : ''}/${base}#${n}`;
+}
+
+const HMR_EDIT = Symbol('svelters.hmr.edit');
+/** DZ0: the last edit of each component file the loader reported (`hmr_edit`), until its update. */
+const pendingEdits = new Map();
+
+/**
+ * DZ0: the loader's report of the edit that made the module now evaluating (dev, HMR): `runs` is
+ * a flat list of `start, oldEnd, newLength` byte edits of the previous source of `file`, in order
+ * and not overlapping. A swap of that component translates the call sites in its children's parked
+ * keys through it, so state follows a call site that moved.
+ */
+export function hmr_edit(file, runs) {
+  const edits = [];
+  for (let i = 0; i + 2 < runs.length; i += 3) edits.push({ start: runs[i], end: runs[i + 1], len: runs[i + 2] });
+  pendingEdits.set(file, { file, edits });
+}
+
+/** DZ0: offset `o` of the previous source through `edits`; `null` inside an edited run. */
+function translateOffset(o, edits) {
+  let shift = 0;
+  for (const e of edits) {
+    if (o < e.start) break;
+    if (o < e.end) return null;
+    shift += e.len - (e.end - e.start);
+  }
+  return o + shift;
+}
+
+/** DZ0: `path` with its U+001F `file#offset` call sites in `edit.file` moved through `edit`; `null` when
+ *  one was inside edited text (that call site is new). */
+function translatePath(path, edit) {
+  if (!edit) return path;
+  let gone = false;
+  const out = path.replace(/\u001f([^#[\u001f]*)#(\d+)/g, (m, file, off) => {
+    if (file !== edit.file) return m;
+    const o = translateOffset(Number(off), edit.edits);
+    if (o === null) {
+      gone = true;
+      return m;
+    }
+    return `\u001f${file}#${o}`;
+  });
+  return gone ? null : out;
 }
 
 function takeClaim(path) {
@@ -1885,15 +1957,17 @@ function takeClaim(path) {
   return c ?? null;
 }
 
-/** The changed values of every live hmr instance below `scope`, keyed by path (H3c). */
-function parkDescendants(scope) {
+/** The changed values of every live hmr instance below `scope`, keyed by path (H3c). DZ0: by the
+ *  path the instance will have in the new version, through `edit`. */
+function parkDescendants(scope, edit) {
   if (!hmrPreserve || !scope) return null;
   const out = new Map();
   const walk = (sc) => {
     for (const c of sc.children) {
       const inst = c.hmr;
       const reg = inst?.reg();
-      if (reg && reg.sig != null) out.set(inst.path, { sig: reg.sig, snap: snapshot(reg.entries) });
+      const path = inst && translatePath(inst.path, edit);
+      if (reg && reg.sig != null && path) out.set(path, { sig: reg.sig, snap: snapshot(reg.entries) });
       walk(c);
     }
   };

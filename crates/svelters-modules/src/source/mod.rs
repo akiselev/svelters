@@ -199,14 +199,51 @@ struct Cached {
     css: Option<String>,
     /// DZ0 (dev): the sheet's map to the `<style>` text (`ScopedCss::source_map_text`).
     css_map: Option<String>,
+    /// DZ0 (HMR): the source this was compiled from, to tell the next version's edit.
+    src: Option<String>,
 }
 
 /// LD2: what an edit of a component changed, by file (`invalidate`), so `modules_at` re-runs only
 /// that part: a `<style>`-only edit re-runs the sheet module alone.
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 struct Changed {
     js: bool,
     css: bool,
+    /// DZ0: the edit from the previous source ([`source_edits`]), told to the runtime with the new
+    /// version so a swap keeps the state of children whose call site moved.
+    edit: Option<std::rc::Rc<[(usize, usize, usize)]>>,
+}
+
+/// DZ0: how `new` differs from `old`, as non-overlapping `(start, old end, new length)` byte edits
+/// of `old`, in order. Lines are compared first: whole lines inserted or removed are one edit at
+/// line boundaries (so a call written on a new line before an old one never looks like an edit
+/// inside the old one); lines changed in place get an edit each, within the line (so changing an
+/// attribute after a call's tag keeps the call where it was).
+fn source_edits(old: &str, new: &str) -> Vec<(usize, usize, usize)> {
+    let lo: Vec<&str> = old.split_inclusive('\n').collect();
+    let ln: Vec<&str> = new.split_inclusive('\n').collect();
+    let p = lo.iter().zip(&ln).take_while(|(a, b)| a == b).count();
+    let max_s = lo.len().min(ln.len()) - p;
+    let s = lo.iter().rev().zip(ln.iter().rev()).take(max_s).take_while(|(a, b)| a == b).count();
+    let at = |lines: &[&str], k: usize| lines[..k].iter().map(|l| l.len()).sum::<usize>();
+    let (o0, o1) = (at(&lo, p), at(&lo, lo.len() - s));
+    let (n0, n1) = (at(&ln, p), at(&ln, ln.len() - s));
+    if o0 == o1 && n0 == n1 {
+        return Vec::new();
+    }
+    if lo.len() - s - p != ln.len() - s - p {
+        return vec![(o0, o1, n1 - n0)];
+    }
+    let mut out = Vec::new();
+    let mut off = o0;
+    for (a, b) in lo[p..lo.len() - s].iter().zip(&ln[p..ln.len() - s]) {
+        if a != b {
+            let (c, oe, ne) = svelters_compiler::check::changed_region(a, b);
+            out.push((off + c, off + oe, ne - c));
+        }
+        off += a.len();
+    }
+    out
 }
 
 struct Node {
@@ -415,8 +452,18 @@ impl Inner {
             let source = c.css_map.as_deref().map(|m| (file, m));
             return Ok(ModuleCode::Source { js: style_module(&key, c.css.as_deref().unwrap_or(""), source), map: None });
         }
+        let edit = self.changed.get(Path::new(id)).filter(|c| c.js).and_then(|c| c.edit.clone());
         let c = self.compiled(Path::new(id), overlay)?;
-        Ok(ModuleCode::Source { js: c.js.clone(), map: c.map.clone() })
+        let mut js = c.js.clone();
+        if let Some(edits) = edit
+            && Kind::of(Path::new(id)) == Kind::Component
+        {
+            // DZ0: the edit that made this version, for the swap (`$n.hmr_edit`, the runtime's)
+            let file = serde_json::Value::String(id.to_string()).to_string();
+            let flat: Vec<String> = edits.iter().map(|(s, e, n)| format!("{s}, {e}, {n}")).collect();
+            js.push_str(&format!("\n$n.hmr_edit({file}, [{}]);\n", flat.join(", ")));
+        }
+        Ok(ModuleCode::Source { js, map: c.map.clone() })
     }
 
     /// The transform output of `path` (from the cache when its text is unchanged). A component with
@@ -427,6 +474,7 @@ impl Inner {
         if self.cache.get(path).is_some_and(|c| c.hash == hash) {
             return Ok(&self.cache[path]);
         }
+        let kept = self.compiler.hmr.then(|| src.clone());
         let Output { mut js, map, warnings, css } = self.compiler.transform(path, src)?;
         // AU2b: Vite's `import.meta.glob`, expanded against the files there now.
         if let Some(expanded) = glob::expand(&js, path)? {
@@ -439,7 +487,7 @@ impl Inner {
             let spec = serde_json::Value::String(format!("{STYLE_PREFIX}{}", path.to_string_lossy())).to_string();
             js.push_str(&format!("\nimport {spec};\n"));
         }
-        self.cache.insert(path.to_path_buf(), Cached { hash, js, map, css, css_map });
+        self.cache.insert(path.to_path_buf(), Cached { hash, js, map, css, css_map, src: kept });
         Ok(&self.cache[path])
     }
 
@@ -531,9 +579,10 @@ impl ModuleProvider for SourceProvider {
         inner.changed.clear();
         let components: Vec<PathBuf> = changed.iter().filter(|p| inner.nodes.contains_key(&*p.to_string_lossy()) && Kind::of(p) == Kind::Component).cloned().collect();
         for p in components {
-            let before = inner.cache.get(&p).map(|c| (c.js.clone(), c.css.clone()));
-            if let (Some((js, css)), Ok(c)) = (before, inner.compiled(&p, &self.overlay)) {
-                let parts = Changed { js: c.js != js, css: c.css != css };
+            let before = inner.cache.get(&p).map(|c| (c.js.clone(), c.css.clone(), c.src.clone()));
+            if let (Some((js, css, old)), Ok(c)) = (before, inner.compiled(&p, &self.overlay)) {
+                let edit = old.zip(c.src.as_deref()).map(|(old, new)| source_edits(&old, new).into());
+                let parts = Changed { js: c.js != js, css: c.css != css, edit };
                 inner.changed.insert(p, parts);
             }
         }
@@ -558,7 +607,7 @@ impl ModuleProvider for SourceProvider {
             .filter(|(id, n)| {
                 // LD2: the sheet module re-runs when its sheet changed; the component when its code
                 // did, or when nothing did (as before LD2).
-                let parts = n.path.as_ref().and_then(|p| inner.changed.get(p)).copied().unwrap_or(Changed { js: true, css: true });
+                let parts = n.path.as_ref().and_then(|p| inner.changed.get(p)).cloned().unwrap_or(Changed { js: true, css: true, edit: None });
                 if id.starts_with(STYLE_PREFIX) { parts.css } else { parts.js || !parts.css }
             })
             .map(|(id, _)| id.clone())
@@ -637,5 +686,32 @@ fn split_query(specifier: &str) -> Result<(&str, Option<&str>), String> {
         Some((_, q)) => Err(format!(
             "cannot import {specifier:?}: the module loader supports the query suffixes ?url, ?raw, ?inline and ?bytes, not ?{q} (no ?worker, no ?sharedworker)"
         )),
+    }
+}
+
+#[cfg(test)]
+mod dz0_tests {
+    use super::source_edits;
+
+    #[test]
+    fn source_edits_align_inserted_lines_and_stay_inside_changed_ones() {
+        let old = "<box>\n  <C name=\"a\" />\n  <C name=\"b\" />\n</box>\n";
+        // a whole line inserted before `a`: one edit at the line boundary, `a`'s tag after it
+        let new = old.replace("<box>\n", "<box>\n  <C name=\"new\" />\n");
+        let a = old.find("<C name=\"a\"").unwrap();
+        assert_eq!(source_edits(old, &new), vec![(6, 6, 19)]);
+        assert!(a >= 6);
+        // an attribute added after `a`'s tag: an edit inside that line, after the tag's start
+        let new = old.replace("name=\"a\"", "name=\"a\" big");
+        let e = source_edits(old, &new);
+        assert_eq!(e.len(), 1);
+        assert!(e[0].0 > a, "{e:?}");
+        // two lines changed in place: one edit each
+        let new = old.replace("\"a\"", "\"A\"").replace("\"b\"", "\"B\"");
+        assert_eq!(source_edits(old, &new).len(), 2);
+        assert!(source_edits(old, old).is_empty());
+        // lines removed
+        let new = old.replace("  <C name=\"a\" />\n", "");
+        assert_eq!(source_edits(old, &new), vec![(6, 23, 0)]);
     }
 }

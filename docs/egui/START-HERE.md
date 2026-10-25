@@ -36,6 +36,7 @@ a lane branch, not merged; the page says which), `stub` (a page skeleton, still 
 | handle pointer events on a canvas, make a pane you paint hit-testable, anchor rows of a keyed list | [Events, canvases and panes](rust/events.md) |
 | load an app or extension from source, ship a `.svb` bundle, control what extensions can import | [Loading code and release bundles](rust/loading-code.md) |
 | understand what an edit does to the running app and which state survives | [Hot reload](rust/hot-reload.md) |
+| build a designer or inspector: node → source, the pick stack, matched rules with `<style>` offsets, preview overrides | [Designer seams](rust/designer.md) |
 
 ## All pages
 
@@ -59,6 +60,9 @@ a lane branch, not merged; the page says which), `stub` (a page skeleton, still 
   loading or ship a release.
 - [Hot reload](rust/hot-reload.md): component swaps, kept `$state`, style-only restyles, fallbacks. Read
   it when you set up a dev loop or an editor that saves into the running app.
+- [Designer seams](rust/designer.md): `source-loc` and `SceneRef::by_source`, `hit_stack`,
+  `matched_rules` with `<style>` offsets, `set_override`/`force_style`, HMR state by call site. Read it
+  before building a visual designer or inspector.
 
 ### CSS
 
