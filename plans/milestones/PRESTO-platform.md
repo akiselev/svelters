@@ -89,3 +89,14 @@ presto-base: **no changes.**
    is not DX12.
 4. **macOS frame source:** CVDisplayLink now, `CAMetalDisplayLink` together with wgpu patch P3?
    Recommendation: yes, keep CVDisplayLink until P3 lands.
+
+## CI (presto workflow, run 40223170166 on 00f59538)
+
+- **windows-latest and macos-latest:** presto-platform compiled; 19 of 20 lib tests passed. The one
+  failure, `clock::tests::os_time_is_in_the_past`, was in the test itself: in a fresh process "3 ms ago"
+  clamped to the clock's epoch. It is fixed in the next push, and that filtered test passes locally.
+- **ubuntu-24.04:** `cargo check` stopped at `yeslogic-fontconfig-sys` (presto-text's dependency); the
+  runner has no `libfontconfig1-dev`. That is the workflow's apt list, not this crate.
+- The other failures in that run belong to other lanes: presto-anim `easing::steps_positions` and
+  `spring::duration_bounce_zero_is_critical`, presto-frame `ui::never_starts_while_commit_unapplied`,
+  presto-render `--test gpu`. The five svelters workflows were green.
