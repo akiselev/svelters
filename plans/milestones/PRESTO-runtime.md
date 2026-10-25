@@ -126,10 +126,11 @@ Branch `ci/presto-runtime` (from `ci/presto-base`, which is merged in). Brief:
   above so op logs stay byte-identical.
 
 ## CI
-- `presto` workflow: red on every push since the base, in its own "crates" step: `ls -d
-  crates/presto-* crates/svelters-presto` exits non-zero while `crates/svelters-presto` does not
-  exist (pipefail). Base-branch workflow, not this lane's file: left as is.
-- Five svelters workflows: see the report to the coordinator for the run ids of the final sha.
+- Final sha `0c981c33` (with `ci/presto-base` 7a947d45 merged): js 40223167311, linux-gtk 40223167387,
+  linux-qt 40223167341, macos-appkit 40223167334, windows-winui 40223167390 all **green**.
+- `presto` 40223167403 red, not from this lane: ubuntu fails building `yeslogic-fontconfig-sys`
+  (no `fontconfig` on the runner, a presto crate's dependency); windows/macos fail in `cargo test`
+  of the presto crates. The workflow needs `libfontconfig1-dev` on Linux.
 
 ## Questions for the coordinator
 1. **egui's same-frame rerun costs one more pass on interaction frames.** Recommendation: keep it on
@@ -137,6 +138,5 @@ Branch `ci/presto-runtime` (from `ci/presto-base`, which is merged in). Brief:
    (`EmbedConfig { same_frame_reactions: false, .. }`).
 2. **`host.instantiate` returns a number or an array.** Recommendation: keep both shapes (the native
    path must stay allocation-free); `template.js` branches on `typeof`.
-3. **The `presto` workflow's crate list step** fails while `crates/svelters-presto` is missing.
-   Recommendation: `ls -d crates/presto-* crates/svelters-presto 2>/dev/null || true` in
-   `.github/workflows/presto.yml` on `ci/presto-base`.
+3. **The `presto` workflow on Linux needs `libfontconfig1-dev`** (yeslogic-fontconfig-sys).
+   Recommendation: install it in `.github/workflows/presto.yml` on `ci/presto-base`.
