@@ -29,7 +29,7 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
   `metadata/semantics/egui.ids.json` (kind ids; per kind and category, member numbers; never
   renumbered, rows of removed members stay). The registry (`kinds/registry.rs`) now takes built-in
   kind ids and member ids from the table (`kind id << 16 | number`, declaring kind); provider kinds
-  keep positional ids (member owner `0x8000 | (local + 1)`). The table was generated from the
+  keep positional ids (member owner `0x800 | (local + 1)`; member ids leave their top 4 bits to the listen flags). The table was generated from the
   positional ids, so every id is the same number as before.
 - egui spec (`spec.rs`): `id`/`fingerprint` per kind/prop/signal/method, slot ids, `spec_hash`
   (`spec::spec_hash()`, FNV-1a over the id rows), `capabilities`, `source.ids`.
