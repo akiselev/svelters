@@ -125,26 +125,53 @@ pub(crate) fn pointer(doc: &mut Document, window: WindowId, p: &PointerEvent, ou
         return false;
     }
     doc.input.drag_press = None;
-    let source = press.source;
+    let v = doc.view(press.source).expect("checked");
+    let ty: Arc<str> = Arc::from(v.prop_str(common::DRAG_TYPE).unwrap_or(""));
+    let data: Arc<str> = Arc::from(v.prop_str(common::DRAG_DATA).unwrap_or(""));
+    begin(doc, window, p.pointer, press.source, ty, data, Some(p.pos), out);
+    out.handled = true;
+    true
+}
+
+/// Starts a drag of `source` by `pointer` (already held): the pointer's press ends without a click,
+/// the source gets `:dragging` and `drag-begin`, and the target under `pos` (if any) is entered.
+fn begin(doc: &mut Document, window: WindowId, pointer: u32, source: NodeId, ty: Arc<str>, data: Arc<str>, pos: Option<Point>, out: &mut Dispatched) {
     // the press becomes the drag: the pressed node's press ends without a click
-    if let Some(n) = doc.input.press.remove(&p.pointer).filter(|&n| doc.contains(n)) {
+    if let Some(n) = doc.input.press.remove(&pointer).filter(|&n| doc.contains(n)) {
         doc.set_state(n, StateMask::PRESSED, false);
         let mut emitted = Vec::new();
-        crate::input::dispatch::call_kind(doc, n, &crate::kind::Event::PointerCancel, &mut emitted, Some(p.pointer));
+        crate::input::dispatch::call_kind(doc, n, &crate::kind::Event::PointerCancel, &mut emitted, Some(pointer));
         for e in emitted {
             crate::input::dispatch::queue_emitted(doc, e);
         }
     }
-    doc.input.release(p.pointer);
-    let v = doc.view(source).expect("checked");
-    let ty: Arc<str> = Arc::from(v.prop_str(common::DRAG_TYPE).unwrap_or(""));
-    let data: Arc<str> = Arc::from(v.prop_str(common::DRAG_DATA).unwrap_or(""));
-    doc.input.drag = Some(Drag { pointer: p.pointer, window, source, ty, data, target: None });
+    doc.input.release(pointer);
+    doc.input.drag_press = None;
+    doc.input.drag = Some(Drag { pointer, window, source, ty, data, target: None });
     doc.set_state(source, StateMask::DRAGGING, true);
     doc.emit_js(out, source, common::DRAG_BEGIN, None);
-    retarget(doc, window, Some(p.pos), out);
-    out.handled = true;
-    true
+    if pos.is_some() {
+        retarget(doc, window, pos, out);
+    }
+}
+
+impl Document {
+    /// Starts an in-app drag for `pointer`, which is already held, of `source` with payload
+    /// type `ty` and `data`, whatever the source's own `drag-type` (a drag that began inside an
+    /// egui island becomes a presto drag). From here on the pointer's moves, release and cancel go to
+    /// the drag as for one that began in the tree; the target under the pointer's last position is
+    /// entered at once. False (nothing started) when `source` is not in `window` or a drag runs.
+    /// The JS events it raised are queued ([`Document::take_events`]).
+    pub fn start_drag(&mut self, window: WindowId, pointer: u32, source: NodeId, ty: &str, data: &str) -> bool {
+        if self.window_of(source) != Some(window) || self.input.drag.is_some() {
+            return false;
+        }
+        let pos = self.input.last_pos.get(&window).copied();
+        let mut out = Dispatched { window, revision: self.revision, ..Default::default() };
+        self.transaction(|doc| begin(doc, window, pointer, source, Arc::from(ty), Arc::from(data), pos, &mut out));
+        self.input_events.append(&mut out.events);
+        true
+    }
 }
 
 /// The target under `pos` (`None`: the pointer left the window) takes over from the old one.
