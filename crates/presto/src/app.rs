@@ -110,6 +110,8 @@ pub struct App<D: DocumentApi, C: CompositorApi> {
     latency: LatencyRecorder,
     clock: Option<Arc<dyn Clock>>,
     resize_seq: u64,
+    /// The platform timer armed for the documents' wakeups.
+    timer: Option<Time>,
 }
 
 impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
@@ -130,6 +132,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             latency,
             clock: None,
             resize_seq: 0,
+            timer: None,
         }
     }
 
@@ -235,6 +238,22 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             && let Some(c) = &self.compositor
         {
             c.request_ui_frame(w);
+        }
+    }
+
+    /// Arm the platform timer for the earliest future wakeup a visible window's document asked for.
+    fn arm_timer(&mut self, cx: &mut dyn PlatformCx) {
+        let now = self.now();
+        let next = self
+            .windows
+            .iter()
+            .filter(|(_, s)| s.visible)
+            .filter_map(|(w, _)| self.doc.next_wakeup(*w))
+            .filter(|t| *t > now)
+            .min();
+        if next != self.timer {
+            self.timer = next;
+            cx.set_timer(next);
         }
     }
 
@@ -584,61 +603,6 @@ fn fast_revision(f: &FastCommit) -> Revision {
     }
 }
 
-impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
-    fn on_input(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
-        let w = ev.window;
-        if !self.windows.contains_key(&w) {
-            return;
-        }
-        self.latency.begin(&ev);
-        if !ev.event.is_discrete() {
-            // Hover changes at event time; the move itself reaches JS with the frame (§11.1).
-            if let InputEvent::Pointer(p) = &ev.event
-                && p.phase == PointerPhase::Move
-                && self.doc.hover(w, p.pos)
-            {
-                self.request_frame(w);
-            }
-            let seq: InputSeq = ev.seq;
-            if let Pushed::Merged { old } = self.coalescer.push(ev) {
-                self.latency.merged(old, seq);
-            }
-            if let Some(c) = &self.compositor {
-                c.high_rate_input(w);
-            }
-            self.request_frame(w);
-            return;
-        }
-        self.flush_coalesced(w);
-        let dirty = self.dispatch_one(&ev);
-        if dirty || self.doc.needs_frame(w) {
-            self.urgent(cx, w);
-        }
-    }
-
-    fn on_window_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: WindowEvent) {
-        match ev {
-            WindowEvent::Resized { size, scale } => self.resize(cx, window, size, scale),
-            WindowEvent::ScaleChanged { scale } => {
-                if let Some(size) = self.windows.get(&window).map(|s| s.size) {
-                    self.resize(cx, window, size, scale);
-                }
-            }
-            WindowEvent::Occluded(occluded) => {
-                if let Some(c) = &self.compositor {
-                    c.set_visible(window, !occluded);
-                }
-                self.occlusion(window, occluded);
-            }
-            WindowEvent::CloseRequested => self.close_window(cx, window),
-            WindowEvent::Focused(_) | WindowEvent::Moved { .. } | WindowEvent::ThemeChanged(_) => {
-                self.doc.window_event(window, &ev);
-                self.request_if_dirty(window);
-            }
-        }
-    }
-}
-
 impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D, C> {
     fn init(&mut self, cx: &mut dyn PlatformCx) {
         let clock = cx.clock();
@@ -673,24 +637,99 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
     }
 
     fn input(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
-        self.on_input(cx, ev);
+        self.input_one(cx, ev);
         self.flush_fast();
+        self.arm_timer(cx);
     }
 
     fn window_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: WindowEvent) {
-        self.on_window_event(cx, window, ev);
+        self.window_event_one(cx, window, ev);
         self.flush_fast();
+        self.arm_timer(cx);
     }
 
     fn wake(&mut self, cx: &mut dyn PlatformCx) {
         self.pump(cx);
+        self.arm_timer(cx);
     }
 
     fn timer(&mut self, cx: &mut dyn PlatformCx, _now: Time) {
+        self.timer = None;
         self.pump(cx);
+        let windows: Vec<WindowId> = self.windows.keys().copied().collect();
+        for w in windows {
+            self.request_if_dirty(w);
+        }
+        self.arm_timer(cx);
     }
 
     fn a11y_event(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: A11yEvent) {
+        self.a11y_event_one(cx, window, ev);
+        self.arm_timer(cx);
+    }
+
+    fn exiting(&mut self, _cx: &mut dyn PlatformCx) {
+        if let Some(c) = self.compositor.take() {
+            c.shutdown();
+        }
+    }
+}
+
+impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
+    fn input_one(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
+        let w = ev.window;
+        if !self.windows.contains_key(&w) {
+            return;
+        }
+        self.latency.begin(&ev);
+        if !ev.event.is_discrete() {
+            // Hover changes at event time; the move itself reaches JS with the frame (§11.1).
+            if let InputEvent::Pointer(p) = &ev.event
+                && p.phase == PointerPhase::Move
+                && self.doc.hover(w, p.pos)
+            {
+                self.request_frame(w);
+            }
+            let seq: InputSeq = ev.seq;
+            if let Pushed::Merged { old } = self.coalescer.push(ev) {
+                self.latency.merged(old, seq);
+            }
+            if let Some(c) = &self.compositor {
+                c.high_rate_input(w);
+            }
+            self.request_frame(w);
+            return;
+        }
+        self.flush_coalesced(w);
+        let dirty = self.dispatch_one(&ev);
+        if dirty || self.doc.needs_frame(w) {
+            self.urgent(cx, w);
+        }
+    }
+
+    fn window_event_one(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: WindowEvent) {
+        match ev {
+            WindowEvent::Resized { size, scale } => self.resize(cx, window, size, scale),
+            WindowEvent::ScaleChanged { scale } => {
+                if let Some(size) = self.windows.get(&window).map(|s| s.size) {
+                    self.resize(cx, window, size, scale);
+                }
+            }
+            WindowEvent::Occluded(occluded) => {
+                if let Some(c) = &self.compositor {
+                    c.set_visible(window, !occluded);
+                }
+                self.occlusion(window, occluded);
+            }
+            WindowEvent::CloseRequested => self.close_window(cx, window),
+            WindowEvent::Focused(_) | WindowEvent::Moved { .. } | WindowEvent::ThemeChanged(_) => {
+                self.doc.window_event(window, &ev);
+                self.request_if_dirty(window);
+            }
+        }
+    }
+
+    fn a11y_event_one(&mut self, cx: &mut dyn PlatformCx, window: WindowId, ev: A11yEvent) {
         match ev {
             A11yEvent::Action(req) => {
                 self.accessibility_action(cx, window, &req);
@@ -700,12 +739,6 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
                 self.request_if_dirty(window);
             }
             A11yEvent::Deactivated => {}
-        }
-    }
-
-    fn exiting(&mut self, _cx: &mut dyn PlatformCx) {
-        if let Some(c) = self.compositor.take() {
-            c.shutdown();
         }
     }
 }

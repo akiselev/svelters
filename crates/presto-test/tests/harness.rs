@@ -332,10 +332,10 @@ fn queries_by_role_label_value_and_author_id() {
         Some("inc")
     );
     assert_eq!(h.get_by_author_id("enabled").role(), Role::CheckBox);
-    assert_eq!(h.get_by_role(Role::TextInput).label(), Some("Name"));
+    assert_eq!(h.get_by_role(Role::TextInput).label().as_deref(), Some("Name"));
     assert!(h.query_by_role_and_label(Role::Button, "Name").is_none());
     assert!(h.query_by_author_id("missing").is_none());
-    assert_eq!(h.get_by_label("Increment").rect(), Some(BUTTON_RECT));
+    assert_eq!(h.get_by_label("Increment").bounds(), Some(BUTTON_RECT));
     assert_eq!(h.query_all(By::new().label_contains("e")).len(), 3);
 }
 
@@ -373,12 +373,14 @@ fn key_press_moves_focus_and_activates() {
 #[test]
 fn type_text_focuses_through_accesskit_then_commits_text() {
     let mut h = harness();
-    h.get_by_label("Name").type_text("presto");
+    let field = h.get_by_label("Name");
+    field.focus();
+    field.type_text("presto");
     h.run();
-    assert_eq!(h.get_by_label("Name").value(), Some("presto"));
+    assert_eq!(h.get_by_label("Name").value().as_deref(), Some("presto"));
     h.key_press(Key::Backspace);
     h.run();
-    assert_eq!(h.get_by_role(Role::TextInput).value(), Some("prest"));
+    assert_eq!(h.get_by_role(Role::TextInput).value().as_deref(), Some("prest"));
 }
 
 #[test]

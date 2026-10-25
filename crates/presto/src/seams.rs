@@ -63,6 +63,12 @@ pub trait DocumentApi {
     fn window_event(&mut self, window: WindowId, ev: &WindowEvent);
     /// The GPU device was reset: the next commit re-sends every resource.
     fn device_reset(&mut self);
+    /// When the window's tree next wants a frame without input (a delayed repaint, a timer);
+    /// `None` = not until something changes. The runner arms a platform timer for it and asks for a
+    /// frame when it fires and [`DocumentApi::needs_frame`] says so.
+    fn next_wakeup(&self, _window: WindowId) -> Option<Time> {
+        None
+    }
 }
 
 /// The JS side of dispatch (svelters-presto's QuickJS host): delivers the JS-facing events and drains
