@@ -181,3 +181,9 @@ when the five svelters workflows plus `presto` are green.
   native panels, then the record.
 - Conversion estimate given to the user: about 4 batches after tonight (shell + Svelte + kinds; panels 1 + canvases +
   viewport + tours; panels 2 + 45 kittest files; egui removal).
+- **Decided (user, 2026-10-25): presto is renamed skelter**: crates skelter-*, the facade `skelter`, svelters-presto →
+  svelters-skelter. Done once in consolidation 2, before the master merge. All the names are free on crates.io.
+- **Decided (user, 2026-10-25): after this batch, a batch for the full cadatomic port** (the egui → skelter conversion).
+- CI triage on integration 2f22c1e9/0890801c: the qt and winui workflows passed. js failed on a stale @svelters/style golden (diagnostics now
+  list presto); consolidation 1 regenerates it. presto failed only in presto-test: automation (presto.yml lacked the JS install,
+  fixed 67df412a) and island_render an_island_pass_reaches_the_pixels (real; sent to TEST-V2). gtk and appkit still running.
