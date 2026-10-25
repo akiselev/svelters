@@ -58,7 +58,8 @@ export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
 export { bind_link } from './bind-observe.js';
 // presto W-C1 and W-C2 (lane COMPILER): stable ids and native templates, emitted for backends with
 // the `ids` and `templates` capabilities (./ids.js, ./template.js).
-export { ids, element_id, setp } from './ids.js';
+export { ids, element_id } from './ids.js';
+import { has_prop_id, setp_id } from './ids.js';
 export { template, instantiate, at, template_listen } from './template.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
@@ -688,6 +689,8 @@ export function set(node, prop, value) {
  * as for `set`.
  */
 export function setp(node, prop, value) {
+  // W-C1: an id a module declared with `ids` is the spec's stable id; it goes through `set` by name.
+  if (typeof prop === 'number' && has_prop_id(prop)) return setp_id(node, prop, value);
   if (node.dead || node.destroyed) return;
   const hs = node.host;
   if (!hs.dedupes) {

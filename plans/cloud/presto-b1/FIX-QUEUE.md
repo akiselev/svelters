@@ -31,6 +31,8 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 |---|---|---|
 | B1 | svelters-compiler | `compile.rs`: duplicate `use crate::semantics::capability;` after the COMPILER + MOTION-CSS merge (E0252); removed one. In the motion-css merge commit. |
 | B2 | svelters-presto | `sync.rs` `install_sync_delivery`: CORE-3's `SyncDelivery` is now `FnMut(&mut Document, &JsEvent)`; the closure takes `_doc` and ignores it (E0593). Commit 095d27dc. |
+| B3 | @svelters/native-runtime | `setp` exported twice (COMPILER's `ids.js` W-C1 id write vs RUNTIME's W-C3 typed scalar write in `index.js`); rolldown rejected the bundle ("Export has already been declared"), failing every workflow's JS build at bc7215cb. One `setp` now: an id a module declared with `ids()` goes through COMPILER's path (`setp_id`, by name through `set`), everything else through RUNTIME's. |
+| B4 | presto-platform-wayland | `time.rs` test `presentation_and_commit_timer_round_trip`: `((7 << 32) + 11) s` in u64 nanoseconds overflows (deny `arithmetic_overflow`, lib test didn't compile on ubuntu presto). Now `(3 << 32) + 11` (still a non-zero high word). |
 
 ## Queue
 
@@ -50,6 +52,8 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | F11 (routed to consolidation 2) | presto_berth, presto_quire | Tests not run (berth `claude/presto-berth` a49111b tests/dock.rs + check.sh; quire 35b5063a/676b49bc, 43 tests); their masters not merged | consolidation 2 | Out of this brief (svelters-only branch); run and merge in consolidation 2. |
 | F12 (superseded by the F1/F2 fix) | presto-compositor | COMPOSITOR 2b98a948 was merged into base before its CI finished (coordinator list) | COMPOSITOR | F1/F2 are the result; check the lane's CI run once fixed. |
 | F13 (routed to consolidation 2) | presto-widgets | warning: unused import `StateBits` (`controls/box_.rs:12`) | WIDGETS-BASIC | Remove it (clippy is advisory now). |
+| F14 | presto-widgets | Windows only (presto windows-latest, run 40229342780): `dialogs::native::tests::an_installed_backend_answers_and_cancel_is_none` at `dialogs/native.rs:271`: `left: Ok(Some("/out\\x.kicad_pcb"))`, `right: Ok(Some("/out/x.kicad_pcb"))`; lib 502 / 1 | WIDGETS-TIER1 | The test joins with `Path::join` (backslash on Windows) but expects `/`; build the expected value with `Path::new("/out").join("x.kicad_pcb")` or compare as paths. |
+| F15 | @svelters/native-runtime, svelters-compiler | B3 settles the `setp` clash by routing; the two lanes should agree on one contract (do spec stable ids reach `host.setp` directly once hosts take them, and is W-C3's typed-scalar `setp` a separate op name?) | COMPILER + RUNTIME | Decide whether the compiler emits a distinct op for W-C3 writes (e.g. `$n.setv`) and keep `setp` for W-C1 ids, or retire `setp_id` once `host.setp` takes spec ids. |
 
 ## Local results (one run, f5d7ab0c)
 

@@ -54,8 +54,13 @@ export function element_id(id) {
   return element(tag);
 }
 
+/** Whether `id` is a prop id a module declared with `ids` (index.js `setp` routes those here). */
+export function has_prop_id(id) {
+  return propNames.has(id);
+}
+
 /** `set` by prop id. */
-export function setp(node, id, value) {
+export function setp_id(node, id, value) {
   if (pending.length) check();
   const name = propNames.get(id);
   if (name === undefined) throw new Error(`svelters: unknown prop id ${id}`);
