@@ -203,3 +203,9 @@ when the five svelters workflows plus `presto` are green.
   - TEST-V2 Q2: a SceneSource trait in svelters-automation for skelter-native UI;
   - COMPOSITOR: core sends no FastCommit::Caret for an editor that isn't rendered;
   - IslandHost::bridge_events wiring.
+- **Decided (user, 2026-10-25): SVG items 1 and 2** ("Do 1 and 2"): SVG drawn as GPU vectors above a small-size
+  threshold (resvg rasters below), and live colour slots (`currentColor`, the icon slots) as a compositor property. It is
+  batch 12's svelters lane **skelter-svg** (`ci/skelter-svg` from master after the rename; brief cadatomic
+  `docs/notes/batch12/LANE-skelter-svg.md`). Proposed to the user, not yet decided: the X8 JS canvas port to skelter
+  (`<canvas>` is a draw-nothing placeholder in svelters-presto today), inline `<svg>` as nodes, compositor SVG
+  animation, vector goldens, vector export.
