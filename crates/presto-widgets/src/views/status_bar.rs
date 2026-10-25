@@ -12,13 +12,30 @@
 //! it: the `status-tip` of the innermost hovered node, else of the focused one, gathered per frame by
 //! [`StatusTips`] and shown by every status bar of the window.
 
-use super::draw;
-use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::common;
+use crate::interact::StateBits;
+use crate::kind_props;
+use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
-use presto_base::geom::{Point, Rect};
+use presto_base::geom::Rect;
 use presto_base::time::{Span, Time};
 use std::sync::Arc;
+
+/// The bar's UA sheet: the panel surface with a hairline on top, the theme's status-bar height and
+/// small text (VS Code's status bar); `:open` while a message or tip shows.
+pub const UA: Ua = Ua(&[UaRule::base(&[
+    ("background-color", Token("panel-bg")),
+    ("border-top-width", Token("stroke")),
+    ("border-top-color", Token("border")),
+    ("padding-left", Px(4.0)),
+    ("padding-right", Px(4.0)),
+    ("font-size", Token("font-size-sm")),
+    ("color", Token("fg")),
+])]);
+
+/// `::part(message)`'s UA sheet: the message text, cut at the end.
+pub const MESSAGE_UA: Ua = Ua(&[UaRule::base(&[("text-overflow", Keyword("ellipsis"))])]);
 
 /// A section's place in the bar.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -48,10 +65,32 @@ pub fn order_sections(sections: &[Section]) -> (Vec<usize>, Option<usize>) {
     (idx, pushed)
 }
 
+kind_props! {
+    /// The bar's props.
+    pub struct StatusBarProps;
+    /// The message (until changed; `show-message` gives it a timeout).
+    message "message": String = Str("") ; Str, Layout, bindable;
+}
+
+/// The signals, in spec order.
+pub const SIGNALS: &[SignalSpec] = &[SignalSpec::new("changed", &[("message", ValueType::Str)], "The message changed by `show-message`, `clear-message` or its timeout.")];
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "status-bar",
+    props: StatusBarProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
+    role: accesskit::Role::Status,
+    name_from: NameFrom::Prop("message"),
+    text_prop: None,
+    focusable: false,
+};
+
 /// The `status-bar` kind.
 #[derive(Clone, Debug, Default)]
 pub struct StatusBar {
-    pub message: String,
+    pub props: StatusBarProps,
     /// When the message times out.
     until: Option<Time>,
     /// The status tip shown this frame (from [`StatusTips::shown`]).
@@ -60,27 +99,19 @@ pub struct StatusBar {
     area: (f32, f32),
 }
 
-static STATUS_BAR_SPEC: KindSpec = KindSpec {
-    name: "status-bar",
-    props: &[prop("message", PropType::Str, ChangeClass::Paint)],
-    signals: &[signal("changed", true, false)],
-    slots: &[""],
-    role: accesskit::Role::Status,
-};
-
 impl StatusBar {
     /// `show-message(text, timeout)`: the message until changed, or for `timeout` (`None` or zero:
     /// no timeout). Announced with `changed`, as a method call is (a prop write is not).
     pub fn show_message(&mut self, cx: &mut EventCx<'_>, text: &str, timeout: Option<Span>) {
-        let changed = text != self.message;
-        self.message = text.to_string();
-        self.until = timeout.filter(|t| *t > Span::ZERO && !self.message.is_empty()).map(|t| cx.now + t);
+        let changed = text != self.props.message;
+        self.props.message = text.to_string();
+        self.until = timeout.filter(|t| *t > Span::ZERO && !self.props.message.is_empty()).map(|t| cx.now + t);
         if let Some(t) = self.until {
             cx.wake_at(t);
         }
         if changed {
-            cx.mark(ChangeClass::Paint);
-            cx.emit("changed", Value::Str(self.message.clone()));
+            cx.prop_changed(P::message.id());
+            common::emit(cx, &SPEC, "changed", vec![Value::str(&self.props.message)]);
         }
     }
 
@@ -90,17 +121,17 @@ impl StatusBar {
     }
 
     /// The window's status tip this frame.
-    pub fn set_tip(&mut self, tip: Option<Arc<str>>) -> Option<ChangeClass> {
+    pub fn set_tip(&mut self, tip: Option<Arc<str>>) -> bool {
         if tip == self.tip {
-            return None;
+            return false;
         }
         self.tip = tip;
-        Some(ChangeClass::Layout)
+        true
     }
 
     /// What the bar shows: the tip, else the message.
     pub fn text(&self) -> Option<&str> {
-        self.tip.as_deref().or((!self.message.is_empty()).then_some(self.message.as_str()))
+        self.tip.as_deref().or((!self.props.message.is_empty()).then_some(self.props.message.as_str()))
     }
 
     /// The temporary sections are hidden (a message or a tip shows): `:open` on the bar.
@@ -117,56 +148,61 @@ impl StatusBar {
 
 impl Kind for StatusBar {
     fn spec() -> &'static KindSpec {
-        &STATUS_BAR_SPEC
+        &SPEC
     }
-
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "message" => {
-                self.message = match value {
-                    Value::Null => String::new(),
-                    v => v.as_str().ok_or(PropError::Invalid("a string"))?.to_string(),
-                };
-                self.until = None;
-                Ok(ChangeClass::Layout)
-            }
-            _ => Err(PropError::Unknown),
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
+    }
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        self.props.set(prop, v)?;
+        if prop == P::message.id() {
+            self.until = None;
         }
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
     }
 
-    fn record(&self, cx: &mut RecordCx<'_>) {
-        let pal = cx.palette;
-        let size = cx.size;
-        draw::fill(cx.list, Rect::from_origin_size(Point::ZERO, size), 0.0, pal.surface_raised);
-        draw::line(cx.list, Point::new(0.0, 0.5), Point::new(size.w, 0.5), 1.0, pal.border);
+    fn record(&self, cx: &mut RecordCx) {
+        let mut style = cx.style.state;
+        style.set(StateBits::OPEN, self.showing());
+        let host = crate::paint::StyleView::new(cx.style.computed, UA, style, cx.style.dark);
+        let msg_v = host.part(cx.style.part_css("message"), MESSAGE_UA);
+        let rect = cx.rect();
+        let mut pc = PaintCx::of(cx);
+        let geom = paint::paint_box(&mut pc, &host, rect);
         if let Some(t) = self.text() {
-            let pad = 4.0;
-            let (l, r) = (self.area.0 + pad, if self.area.1 > self.area.0 { self.area.1 } else { size.w });
-            let h = cx.labels.measure(t, pal.font_size, None).h;
+            let (l, r) = if self.area.1 > self.area.0 { (geom.content.min.x.max(self.area.0), self.area.1.min(geom.content.max.x)) } else { (geom.content.min.x, geom.content.max.x) };
             let width = (r - l).max(0.0);
-            cx.labels.record(cx.list, t, Point::new(l, (size.h - h) / 2.0), pal.font_size, pal.text, Some(width));
+            let shown = paint::elide(pc.text, &msg_v, t, paint::Elide::of_style(&msg_v).unwrap_or(paint::Elide::End), width);
+            let layout = paint::text_layout(pc.text, &msg_v, &shown, None);
+            let area = Rect::new(l, geom.content.min.y, r, geom.content.max.y);
+            paint::paint_text(&mut pc, &msg_v, &layout, area, Align::Start);
         }
     }
 
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        cx.state.set(StateBits::OPEN, self.showing());
         if let Event::Timer = ev
             && self.until.is_some_and(|u| cx.now >= u)
         {
             self.until = None;
-            self.message.clear();
-            cx.mark(ChangeClass::Layout);
-            cx.emit("changed", Value::Str(String::new()));
+            self.props.message.clear();
+            cx.prop_changed(P::message.id());
+            cx.state.set(StateBits::OPEN, self.showing());
+            common::emit(cx, &SPEC, "changed", vec![Value::str("")]);
             return Handled::Yes;
         }
         Handled::No
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
+    fn a11y(&self, cx: &mut A11yCx) {
         // a polite live status region carrying the message
-        node.set_role(accesskit::Role::Status);
-        node.set_live(accesskit::Live::Polite);
+        cx.node.set_role(accesskit::Role::Status);
+        cx.node.set_live(accesskit::Live::Polite);
         if let Some(t) = self.text() {
-            node.set_label(t);
+            cx.node.set_label(t);
         }
     }
 }
@@ -208,8 +244,8 @@ impl StatusTips {
 
 #[cfg(test)]
 mod tests {
-    use super::super::legacy::{Os, Policy};
     use super::*;
+    use crate::controls::testkit::{self, Driver};
     use presto_base::geom::Size;
 
     #[test]
@@ -223,25 +259,46 @@ mod tests {
 
     #[test]
     fn a_message_times_out() {
-        let pol = Policy::for_os(Os::Linux);
+        let mut d = Driver::new(StatusBar::default(), Size::new(400.0, 22.0));
+        let t0 = d.now;
+        {
+            let policy = d.policy;
+            let mut state = StateBits::NONE;
+            let mut cx = EventCx::new(t0, d.size, &mut state, &policy);
+            d.kind.show_message(&mut cx, "Saved", Some(Span::from_millis(2000)));
+            assert_eq!(cx.wake, Some(t0 + Span::from_millis(2000)));
+            assert_eq!(cx.emitted.len(), 1);
+            assert_eq!(cx.changed, vec![P::message.id()]);
+        }
+        assert_eq!(d.kind.text(), Some("Saved"));
+        assert_eq!(d.get("message"), Some(Value::str("Saved")));
+        d.advance(1000);
+        assert_eq!(d.send(Event::Timer), Handled::No);
+        d.advance(1000);
+        assert_eq!(d.send(Event::Timer), Handled::Yes);
+        assert_eq!(d.kind.text(), None);
+        assert_eq!(d.signals.last().cloned(), Some(("changed", vec![Value::str("")])));
+        assert_eq!(d.changed, ["message"]);
+        assert!(!d.state.contains(StateBits::OPEN));
+    }
+
+    #[test]
+    fn records_surface_hairline_and_message() {
         let mut bar = StatusBar::default();
-        let mut cx = EventCx::new(Time(0), Size::ZERO, &pol);
-        bar.show_message(&mut cx, "Saved", Some(Span::from_millis(2000)));
-        assert_eq!(bar.text(), Some("Saved"));
-        assert_eq!(cx.wake, Some(Time(0) + Span::from_millis(2000)));
-        assert_eq!(cx.emitted("changed").count(), 1);
-        let mut cx = EventCx::new(Time(0) + Span::from_millis(1000), Size::ZERO, &pol);
-        assert_eq!(bar.event(&mut cx, &Event::Timer), Handled::No);
-        let mut cx = EventCx::new(Time(0) + Span::from_millis(2000), Size::ZERO, &pol);
-        assert_eq!(bar.event(&mut cx, &Event::Timer), Handled::Yes);
-        assert_eq!(bar.text(), None);
-        assert_eq!(cx.emitted("changed").next().map(|e| e.detail.clone()), Some(Value::Str(String::new())));
+        bar.props.message = "Ready".into();
+        let (list, res) = testkit::record(&bar, Size::new(400.0, 22.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&list), ["quad", "glyphs"]);
+        assert_eq!(res.runs.len(), 1);
+        let n = testkit::a11y(&bar, StateBits::NONE, Size::new(400.0, 22.0));
+        assert_eq!(n.role(), accesskit::Role::Status);
+        assert_eq!(n.label(), Some("Ready"));
     }
 
     #[test]
     fn a_tip_wins_over_the_message() {
         let mut tips = StatusTips::default();
-        let mut bar = StatusBar { message: "Ready".into(), ..Default::default() };
+        let mut bar = StatusBar::default();
+        bar.props.message = "Ready".into();
         tips.offer_focused("Focused field".into());
         tips.offer_hovered(1, "Outer".into());
         tips.offer_hovered(3, "Inner button".into());

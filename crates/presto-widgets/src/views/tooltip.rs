@@ -2,8 +2,8 @@
 //! ([`Tooltip`]).
 //!
 //! Timing (svelters-egui `interact/tooltip.rs`): the tip shows after the pointer rested on its host
-//! for the platform's delay ([`Policy::tooltip_delay`], or the host's own), at once while another
-//! tip hid within the follow-on window ([`Policy::tooltip_follow_on`], Qt's fall-asleep timer, kept
+//! for the platform's delay ([`Policy::tooltip_delay_ms`], or the host's own), at once while another
+//! tip hid within the follow-on window ([`Policy::tooltip_follow_on_ms`], Qt's fall-asleep timer, kept
 //! per window in [`TooltipWarmth`]); also on a disabled host. A press, a scroll, Escape or the pointer
 //! leaving hides it, and after a press, scroll or Escape it stays hidden until the pointer leaves;
 //! `duration` hides it after a time.
@@ -11,12 +11,16 @@
 //! The surface goes above its host, centred (`top-center`), flipping below when there is no room
 //! (svelters-egui `widgets/tooltip.rs`); it is a click-through overlay entry.
 
-use super::draw;
+use super::common::ms;
 use super::placement::{AnchorParams, Placed, Placement, place};
-use super::legacy::{Event, EventCx, Kind, KindSpec, Labels, Palette, Policy, PropError, PropType, RecordCx, Value, prop};
+use crate::controls::common::host_view;
+use crate::interact::Policy;
+use crate::kind_props;
+use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, Value};
+use crate::shim::text::TextShaper;
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
-use presto_base::geom::{Point, Rect, Size};
+use presto_base::geom::{Rect, Size};
 use presto_base::time::{Span, Time};
 
 /// What a host does this step, as the timer sees it.
@@ -126,59 +130,90 @@ impl TooltipTimer {
     }
 }
 
-static SPEC: KindSpec = KindSpec {
-    name: "tooltip",
-    props: &[
-        prop("text", PropType::Str, ChangeClass::Layout),
-        prop("placement", PropType::Enum(super::popup::PLACEMENTS), ChangeClass::Property),
-        prop("delay", PropType::F64, ChangeClass::Property),
-        prop("duration", PropType::F64, ChangeClass::Property),
-    ],
+/// The surface's UA sheet: the tooltip fill, the widget border, 8/4 padding, `popup-shadow`.
+pub const UA: Ua = Ua(&[UaRule::base(&[
+    ("background-color", Token("tooltip-bg")),
+    ("border-color", Token("border-widget")),
+    ("border-width", Token("stroke")),
+    ("border-radius", Token("radius")),
+    ("box-shadow", Token("popup-shadow")),
+    ("padding-left", Px(8.0)),
+    ("padding-right", Px(8.0)),
+    ("padding-top", Px(4.0)),
+    ("padding-bottom", Px(4.0)),
+    ("font-size", Token("font-size-sm")),
+])]);
+
+kind_props! {
+    /// The tooltip's props.
+    pub struct TooltipProps;
+    text "text": String = Str("") ; Str, Layout;
+    placement "placement": String = Enum("top-center") ; Enum(super::popup::PLACEMENTS), Property;
+    /// Seconds before it shows; unset: the platform's delay.
+    delay "delay": Option<f64> = None ; F64, Property;
+    /// Seconds it stays; zero: while hovered.
+    duration "duration": f64 = F64(0.0) ; F64, Property;
+}
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "tooltip",
+    props: TooltipProps::SPECS,
     signals: &[],
-    slots: &[""],
+    slots: &[],
+    children: false,
     role: accesskit::Role::Tooltip,
+    name_from: NameFrom::Prop("text"),
+    text_prop: Some("text"),
+    focusable: false,
 };
 
 /// The widest a tooltip's text runs before it wraps.
 pub const MAX_WIDTH: f32 = 360.0;
-/// Text inset and the gap to the host.
-const PAD: Size = Size::new(8.0, 4.0);
+/// The gap to the host.
 const GAP: f32 = 6.0;
 
 /// A `tooltip` surface.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Tooltip {
-    pub text: String,
-    pub placement: Placement,
-    /// `None`: the policy's delay.
-    pub delay: Option<Span>,
-    /// Zero: while hovered.
-    pub duration: Span,
+    pub props: TooltipProps,
     pub timer: TooltipTimer,
 }
 
-impl Default for Tooltip {
-    fn default() -> Self {
-        Tooltip { text: String::new(), placement: Placement::TOP_CENTER, delay: None, duration: Span::ZERO, timer: TooltipTimer::default() }
-    }
-}
-
 impl Tooltip {
-    /// Steps the timer for the host's input with the policy's timings.
-    pub fn step(&mut self, input: TipInput, now: Time, policy: &Policy, warmth: &mut TooltipWarmth) -> Option<Tip> {
-        let input = if self.text.is_empty() { TipInput { over: false, ..input } } else { input };
-        self.timer.step(input, now, self.delay.unwrap_or(policy.tooltip_delay), self.duration, policy.tooltip_follow_on, warmth)
+    /// A tooltip showing `text`, the rest default.
+    pub fn with_text(text: &str) -> Tooltip {
+        let mut t = Tooltip::default();
+        t.props.text = text.to_owned();
+        t
     }
 
-    /// The surface's size for its text.
-    pub fn size(&self, labels: &mut dyn Labels, palette: &Palette) -> Size {
-        let t = labels.measure(&self.text, palette.font_size, Some(MAX_WIDTH));
-        Size::new(t.w + 2.0 * PAD.w, t.h + 2.0 * PAD.h)
+    pub fn placement(&self) -> Placement {
+        Placement::parse(&self.props.placement).unwrap_or(Placement::TOP_CENTER)
+    }
+    /// Zero: while hovered.
+    pub fn duration(&self) -> Span {
+        Span::from_secs_f64(self.props.duration.max(0.0))
+    }
+
+    /// Steps the timer for the host's input with the policy's timings (the tooltip's own `delay` first).
+    pub fn step(&mut self, input: TipInput, now: Time, policy: &Policy, warmth: &mut TooltipWarmth) -> Option<Tip> {
+        let input = if self.props.text.is_empty() { TipInput { over: false, ..input } } else { input };
+        let delay = self.props.delay.map_or(ms(policy.tooltip_delay_ms), |s| Span::from_secs_f64(s.max(0.0)));
+        let duration = self.duration();
+        self.timer.step(input, now, delay, duration, ms(policy.tooltip_follow_on_ms), warmth)
+    }
+
+    /// The surface's size for its text under `s` (its style view): the text wrapped at [`MAX_WIDTH`]
+    /// plus padding and border.
+    pub fn size(&self, shaper: &mut dyn TextShaper, s: &StyleView) -> Size {
+        let t = paint::measure_text(shaper, s, &self.props.text, Some(MAX_WIDTH));
+        let e = paint::box_extra(s);
+        Size::new(t.w + e.x, t.h + e.y)
     }
 
     /// Where it goes for a host at `host` (window points) inside `bounds`.
     pub fn place(&self, host: Rect, bounds: Rect, size: Size) -> Placed {
-        place(&AnchorParams { anchor: host, size, bounds, placement: self.placement, gap: GAP, flip: true, shift: true, ..AnchorParams::default() })
+        place(&AnchorParams { anchor: host, size, bounds, placement: self.placement(), gap: GAP, flip: true, shift: true, ..AnchorParams::default() })
     }
 }
 
@@ -186,44 +221,49 @@ impl Kind for Tooltip {
     fn spec() -> &'static KindSpec {
         &SPEC
     }
-
-    fn set_prop(&mut self, name: &str, v: &Value) -> Result<ChangeClass, PropError> {
-        let secs = |v: &Value| v.as_f64().map(|s| Span::from_secs_f64(s.max(0.0))).ok_or(PropError::Invalid("expected seconds"));
-        match name {
-            "text" => self.text = v.as_str().ok_or(PropError::Invalid("expected a string"))?.to_string(),
-            "placement" => self.placement = v.as_str().and_then(Placement::parse).ok_or(PropError::Invalid("unknown placement"))?,
-            "delay" => self.delay = if *v == Value::Null { None } else { Some(secs(v)?) },
-            "duration" => self.duration = if *v == Value::Null { Span::ZERO } else { secs(v)? },
-            _ => return Err(PropError::Unknown),
-        }
-        Ok(SPEC.prop(name).map_or(ChangeClass::Paint, |p| p.change))
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
+    }
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        self.props.set(prop, v)
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
     }
 
-    fn record(&self, cx: &mut RecordCx<'_>) {
-        let p = cx.palette;
-        let rect = Rect::from_origin_size(Point::ZERO, cx.size);
-        draw::shadow(cx.list, rect, p.radius, p.shadow, 4.0, presto_base::geom::Vec2::new(0.0, 1.0));
-        draw::boxed(cx.list, rect, p.radius, p.surface_raised, 1.0, p.border);
-        let max = (cx.size.w - 2.0 * PAD.w).max(0.0);
-        cx.labels.record(cx.list, &self.text, Point::new(PAD.w, PAD.h), p.font_size, p.text, Some(max));
+    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        let host = host_view(&cx.style, UA);
+        let s = self.size(cx.text, &host);
+        taffy::Size { width: s.w, height: s.h }
+    }
+
+    fn record(&self, cx: &mut RecordCx) {
+        let host = host_view(&cx.style, UA);
+        let rect = cx.rect();
+        let mut pc = PaintCx::of(cx);
+        let geom = paint::paint_box(&mut pc, &host, rect);
+        let layout = paint::text_layout(pc.text, &host, &self.props.text, Some(geom.content.width().max(0.0)));
+        paint::paint_text(&mut pc, &host, &layout, geom.content, Align::Start);
     }
 
     /// Tooltips take no input (click-through).
-    fn event(&mut self, _cx: &mut EventCx<'_>, _ev: &Event) -> super::legacy::Handled {
-        super::legacy::Handled::No
+    fn event(&mut self, _cx: &mut EventCx, _ev: &Event) -> Handled {
+        Handled::No
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
-        node.set_role(accesskit::Role::Tooltip);
-        node.set_label(self.text.clone());
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::Tooltip);
+        cx.node.set_label(self.props.text.clone());
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::controls::testkit;
+    use crate::interact::{Native, StateBits};
+    use crate::shim::testing::MonoShaper;
     use crate::views::placement::Side;
-    use crate::views::legacy::{FixedLabels, Os};
 
     fn ms(n: i64) -> Time {
         Time(n as u64 * 1_000_000)
@@ -233,9 +273,9 @@ mod tests {
 
     #[test]
     fn shows_after_the_delay_and_hides_on_press_until_left() {
-        let pol = Policy::for_os(Os::Linux); // 500 ms delay, 1000 ms follow-on
+        let pol = *Native::Gtk.policy(); // 500 ms delay, 1000 ms follow-on
         let mut warm = TooltipWarmth::default();
-        let mut t = Tooltip { text: "Save".into(), ..Tooltip::default() };
+        let mut t = Tooltip::with_text("Save");
         assert_eq!(t.step(OVER, ms(0), &pol, &mut warm), None);
         assert_eq!(t.timer.wake(), Some(ms(500)));
         assert_eq!(t.step(OVER, ms(499), &pol, &mut warm), None);
@@ -255,10 +295,10 @@ mod tests {
 
     #[test]
     fn follow_on_shows_the_next_tip_at_once() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = *Native::Gtk.policy();
         let mut warm = TooltipWarmth::default();
-        let mut a = Tooltip { text: "A".into(), ..Tooltip::default() };
-        let mut b = Tooltip { text: "B".into(), ..Tooltip::default() };
+        let mut a = Tooltip::with_text("A");
+        let mut b = Tooltip::with_text("B");
         a.step(OVER, ms(0), &pol, &mut warm);
         assert_eq!(a.step(OVER, ms(500), &pol, &mut warm), Some(Tip::Show));
         // the pointer moves from A to B
@@ -272,9 +312,10 @@ mod tests {
 
     #[test]
     fn duration_hides_it_and_empty_text_never_shows() {
-        let pol = Policy::for_os(Os::Windows); // 400 ms
+        let pol = *Native::Windows.policy(); // 400 ms
         let mut warm = TooltipWarmth::default();
-        let mut t = Tooltip { text: "x".into(), duration: Span::from_millis(1000), ..Tooltip::default() };
+        let mut t = Tooltip::with_text("x");
+        t.props.duration = 1.0;
         t.step(OVER, ms(0), &pol, &mut warm);
         assert_eq!(t.step(OVER, ms(400), &pol, &mut warm), Some(Tip::Show));
         assert_eq!(t.timer.wake(), Some(ms(1400)));
@@ -286,8 +327,10 @@ mod tests {
 
     #[test]
     fn goes_above_the_host_and_flips_below_at_the_top() {
-        let t = Tooltip { text: "Save all".into(), ..Tooltip::default() };
-        let size = t.size(&mut FixedLabels, &Palette::default());
+        let t = Tooltip::with_text("Save all");
+        let size = t.size(&mut MonoShaper, &StyleView::ua_only(UA, StateBits::NONE, true));
+        // 8 chars of 12px text, 8/4 padding, 1px border
+        assert_eq!(size.w, 8.0 * MonoShaper::advance(12.0) + 18.0);
         let bounds = Rect::new(0.0, 0.0, 800.0, 600.0);
         let host = Rect::new(100.0, 100.0, 140.0, 120.0);
         let placed = t.place(host, bounds, size);
@@ -296,5 +339,18 @@ mod tests {
         assert!((placed.rect.min.x + placed.rect.max.x - 240.0).abs() < 0.01, "centred on the host");
         let top = Rect::new(100.0, 0.0, 140.0, 20.0);
         assert_eq!(t.place(top, bounds, size).side, Side::Bottom);
+    }
+
+    #[test]
+    fn delay_prop_overrides_the_policy_and_records_box_and_text() {
+        let pol = *Native::Gtk.policy();
+        let mut warm = TooltipWarmth::default();
+        let mut t = Tooltip::with_text("Save");
+        t.set_prop(SPEC.prop("delay").unwrap(), &Value::F64(0.1)).unwrap();
+        t.step(OVER, ms(0), &pol, &mut warm);
+        assert_eq!(t.step(OVER, ms(100), &pol, &mut warm), Some(Tip::Show));
+        let (list, res) = testkit::record(&t, Size::new(60.0, 24.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&list), ["shadow", "quad", "glyphs"]);
+        assert_eq!(res.runs.len(), 1);
     }
 }

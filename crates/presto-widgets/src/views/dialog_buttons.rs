@@ -6,31 +6,11 @@
 //! tree's. A click reports `clicked(role)` (and `help`); an accept or reject closes the enclosing
 //! `modal` or `inner-window` with that result ([`DialogButtons::child_clicked`]).
 
-use super::legacy::{ButtonOrder, Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::common;
+use crate::interact::ButtonOrder;
+use crate::kind_props;
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
-
-impl ButtonOrder {
-    /// The trailing roles in order (help and reset lead on every platform).
-    pub fn roles(self) -> &'static [&'static str] {
-        match self {
-            ButtonOrder::Windows => &["accept", "action", "reject", "destructive", "apply"],
-            ButtonOrder::Kde => &["accept", "action", "apply", "destructive", "reject"],
-            ButtonOrder::Gnome => &["destructive", "action", "apply", "reject", "accept"],
-            ButtonOrder::MacOs => &["destructive", "apply", "action", "reject", "accept"],
-        }
-    }
-    /// The `order` prop's names (`platform` resolves through the policy).
-    pub fn of(name: &str) -> Option<ButtonOrder> {
-        Some(match name {
-            "windows" => ButtonOrder::Windows,
-            "kde" => ButtonOrder::Kde,
-            "gnome" => ButtonOrder::Gnome,
-            "macos" => ButtonOrder::MacOs,
-            _ => return None,
-        })
-    }
-}
 
 /// A child of the row as the order sees it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -68,19 +48,47 @@ pub enum OrderSetting {
     Fixed(ButtonOrder),
 }
 
+kind_props! {
+    /// The row's props.
+    pub struct DialogButtonsProps;
+    /// The button order: the platform's, the tree's (`none`), or a named platform's.
+    order "order": String = Enum("platform") ; Enum(&["platform", "none", "windows", "kde", "gnome", "macos"]), Layout;
+}
+
+/// The signals, in spec order.
+pub const SIGNALS: &[SignalSpec] = &[
+    SignalSpec::new("clicked", &[("role", ValueType::Str)], "A child button was clicked; its resolved dialog role."),
+    SignalSpec::new("help", &[], "The help button was clicked."),
+];
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "dialog-buttons",
+    props: DialogButtonsProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
+    role: accesskit::Role::Group,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
+};
+
 /// The `dialog-buttons` row.
 #[derive(Clone, Debug, Default)]
 pub struct DialogButtons {
+    pub props: DialogButtonsProps,
     pub order: OrderSetting,
 }
 
-static DIALOG_BUTTONS_SPEC: KindSpec = KindSpec {
-    name: "dialog-buttons",
-    props: &[prop("order", PropType::Enum(&["platform", "none", "windows", "kde", "gnome", "macos"]), ChangeClass::Layout)],
-    signals: &[signal("clicked", true, false), signal("help", true, false)],
-    slots: &[""],
-    role: accesskit::Role::Group,
-};
+impl OrderSetting {
+    /// The `order` prop's value as a setting (an unknown name is the platform's).
+    pub fn parse(s: &str) -> OrderSetting {
+        match s {
+            "none" => OrderSetting::None,
+            n => ButtonOrder::of(n).map_or(OrderSetting::Platform, OrderSetting::Fixed),
+        }
+    }
+}
 
 impl DialogButtons {
     /// The order this row uses on a platform whose order is `platform`.
@@ -114,9 +122,9 @@ impl DialogButtons {
     /// enclosing `modal` or `inner-window` with.
     pub fn child_clicked(&self, cx: &mut EventCx<'_>, child: &ButtonChild<'_>) -> Option<&'static str> {
         let role = role_of(child)?;
-        cx.emit("clicked", Value::Str(role.into()));
+        common::emit(cx, &SPEC, "clicked", vec![Value::str(role)]);
         if role == "help" {
-            cx.emit("help", Value::Null);
+            common::emit(cx, &SPEC, "help", Vec::new());
         }
         matches!(role, "accept" | "reject").then_some(role)
     }
@@ -124,41 +132,38 @@ impl DialogButtons {
 
 impl Kind for DialogButtons {
     fn spec() -> &'static KindSpec {
-        &DIALOG_BUTTONS_SPEC
+        &SPEC
     }
-
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "order" => {
-                self.order = match value.as_str().unwrap_or("platform") {
-                    "platform" => OrderSetting::Platform,
-                    "none" => OrderSetting::None,
-                    n => OrderSetting::Fixed(ButtonOrder::of(n).ok_or(PropError::Invalid("order: platform, none, windows, kde, gnome or macos"))?),
-                };
-                Ok(ChangeClass::Layout)
-            }
-            _ => Err(PropError::Unknown),
-        }
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
+    }
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        self.props.set(prop, v)?;
+        self.order = OrderSetting::parse(&self.props.order);
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
     }
 
     /// A flex row: no look of its own (the buttons draw themselves).
-    fn record(&self, _cx: &mut RecordCx<'_>) {}
+    fn record(&self, _cx: &mut RecordCx) {}
 
-    fn event(&mut self, _cx: &mut EventCx<'_>, _ev: &Event) -> Handled {
+    fn event(&mut self, _cx: &mut EventCx, _ev: &Event) -> Handled {
         Handled::No
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
-        node.set_role(accesskit::Role::Group);
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::Group);
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::super::legacy::{Os, Policy};
     use super::*;
+    use crate::controls::testkit::Driver;
+    use crate::interact::{Native, Platform, StateBits};
     use presto_base::geom::Size;
-    use presto_base::time::Time;
 
     fn b(role: &'static str) -> ButtonChild<'static> {
         ButtonChild { is_button: true, dialog_role: role, default_button: false, cancel_button: false }
@@ -173,26 +178,34 @@ mod tests {
         let ok = ButtonChild { default_button: true, ..b("auto") };
         let cancel = ButtonChild { cancel_button: true, ..b("auto") };
         let kids = [ok, cancel, b("apply"), b("help"), b("destructive")];
-        assert_eq!(roles(Policy::for_os(Os::Windows).button_order, &kids), ["help", "accept", "reject", "destructive", "apply"]);
-        assert_eq!(roles(Policy::for_os(Os::MacOs).button_order, &kids), ["help", "destructive", "apply", "reject", "accept"]);
-        assert_eq!(roles(Policy::for_os(Os::Linux).button_order, &kids), ["help", "destructive", "apply", "reject", "accept"]);
+        assert_eq!(roles(Native::for_os(Platform::Windows).policy().button_order, &kids), ["help", "accept", "reject", "destructive", "apply"]);
+        assert_eq!(roles(Native::for_os(Platform::Macos).policy().button_order, &kids), ["help", "destructive", "apply", "reject", "accept"]);
+        assert_eq!(roles(Native::for_os(Platform::Linux).policy().button_order, &kids), ["help", "destructive", "apply", "reject", "accept"]);
         assert_eq!(roles(ButtonOrder::Kde, &kids), ["help", "accept", "apply", "destructive", "reject"]);
         // a child that is not a button keeps its place before the roles
         let label = ButtonChild { is_button: false, ..b("auto") };
         assert_eq!(roles(ButtonOrder::Gnome, &[ok, label, cancel]), ["-", "reject", "accept"]);
         // `order="none"`: the tree's order
-        let row = DialogButtons { order: OrderSetting::None };
+        let row = DialogButtons { order: OrderSetting::None, ..Default::default() };
         assert_eq!(row.order_children(ButtonOrder::MacOs, &kids), vec![0, 1, 2, 3, 4]);
     }
 
     #[test]
     fn accept_and_reject_close_with_their_role() {
-        let pol = Policy::for_os(Os::Windows);
-        let row = DialogButtons::default();
-        let mut cx = EventCx::new(Time(0), Size::ZERO, &pol);
-        assert_eq!(row.child_clicked(&mut cx, &ButtonChild { default_button: true, ..b("auto") }), Some("accept"));
-        assert_eq!(row.child_clicked(&mut cx, &b("help")), None);
-        assert_eq!(cx.emitted("clicked").count(), 2);
-        assert_eq!(cx.emitted("help").count(), 1);
+        let mut d = Driver::new(DialogButtons::default(), Size::ZERO);
+        let policy = d.policy;
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(d.now, Size::ZERO, &mut state, &policy);
+        assert_eq!(d.kind.child_clicked(&mut cx, &ButtonChild { default_button: true, ..b("auto") }), Some("accept"));
+        assert_eq!(d.kind.child_clicked(&mut cx, &b("help")), None);
+        let names: Vec<&str> = cx.emitted.iter().map(|e| SPEC.signals[e.signal.0 as usize].name).collect();
+        assert_eq!(names, ["clicked", "clicked", "help"]);
+        assert_eq!(cx.emitted[0].args, vec![Value::str("accept")]);
+        // the order prop
+        d.set("order", Value::str("macos"));
+        assert_eq!(d.kind.order, OrderSetting::Fixed(ButtonOrder::MacOs));
+        d.set("order", Value::str("none"));
+        assert_eq!(d.kind.order, OrderSetting::None);
+        assert!(d.kind.set_prop(d.prop_id("order"), &Value::str("beos")).is_err(), "not one of the names");
     }
 }

@@ -19,15 +19,20 @@
 //! expands it ([`TreeView::drag_over`]). **A11y**: a `Tree` of `TreeItem`s with level (1-based),
 //! `expanded`, selection and position over the whole flattened list.
 
-use super::draw;
-use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
-use super::virtual_list::{Mods, SELECTION, VirtualChildren, VirtualList, id_list, set_list_prop};
+use super::common::{emit, ms, platform};
+use super::virtual_list::{Mods, SELECTION, VirtualList, id_list, list_signals};
+use crate::interact::Platform;
+use crate::kind_props;
+use crate::paint::{Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
+use presto_base::color::Color;
+use presto_base::display::{Line, LineCap, Prim};
 use presto_base::event::{KeyState, MouseButton, PointerPhase};
-use presto_base::geom::Point;
+use presto_base::geom::{Point, Rect, Vec2};
 use presto_base::key::Key;
-use presto_base::time::Time;
+use presto_base::time::{Span, Time};
+use std::ops::Range;
 use std::collections::{HashMap, HashSet};
 
 /// The default row height of a tree, in points.
@@ -57,6 +62,8 @@ pub struct TreeRow {
 /// The state of one `tree-view`.
 #[derive(Clone, Debug)]
 pub struct TreeView {
+    /// `indent` and `expanded-ids` as last written (the list props live in [`Self::list`]).
+    pub props: TreeProps,
     pub list: VirtualList,
     nodes: HashMap<u64, TreeNode>,
     roots: Vec<u64>,
@@ -78,6 +85,7 @@ impl Default for TreeView {
 impl TreeView {
     pub fn new() -> TreeView {
         TreeView {
+            props: TreeProps::default(),
             list: VirtualList::new(TREE_ROW_HEIGHT),
             nodes: HashMap::new(),
             roots: Vec::new(),
@@ -211,8 +219,8 @@ impl TreeView {
         if !n.expandable || !self.expanded.insert(id) {
             return false;
         }
-        cx.emit("expand", Value::I64(id as i64));
-        cx.mark(ChangeClass::Structure);
+        emit(cx, &SPEC, "expand", vec![Value::I64(id as i64)]);
+        cx.prop_changed(P::expanded_ids.id());
         self.sync();
         true
     }
@@ -226,10 +234,11 @@ impl TreeView {
             && self.is_descendant(c, id)
         {
             self.list.sel.cursor = Some(id);
-            cx.emit("current", Value::I64(id as i64));
+            emit(cx, &SPEC, "current", vec![Value::I64(id as i64)]);
+            cx.prop_changed(P::current.id());
         }
-        cx.emit("collapse", Value::I64(id as i64));
-        cx.mark(ChangeClass::Structure);
+        emit(cx, &SPEC, "collapse", vec![Value::I64(id as i64)]);
+        cx.prop_changed(P::expanded_ids.id());
         self.sync();
         true
     }
@@ -284,11 +293,13 @@ impl TreeView {
             if let Some(p) = ids.iter().position(|&x| x == id) {
                 self.list.scroll_to(p, super::virtual_list::Reveal::Nearest);
             }
-            cx.emit("current", Value::I64(id as i64));
-            cx.mark(ChangeClass::Paint);
+            emit(cx, &SPEC, "current", vec![Value::I64(id as i64)]);
+            cx.prop_changed(P::current.id());
         }
         if ch.selection {
-            cx.emit("selectionchange", Value::List(self.list.sel.selected.iter().map(|&i| Value::I64(i as i64)).collect()));
+            let v = self.list.selected_value();
+            emit(cx, &SPEC, "selectionchange", vec![v]);
+            cx.prop_changed(P::selected_ids.id());
         }
         ch.cursor || ch.selection
     }
@@ -309,11 +320,11 @@ impl TreeView {
     }
 
     /// The disclosure triangle's rect of the row at `pos` (list-local).
-    pub fn disclosure_rect(&self, pos: usize) -> Option<presto_base::geom::Rect> {
+    pub fn disclosure_rect(&self, pos: usize) -> Option<Rect> {
         let r = self.rows.get(pos).filter(|r| r.expandable)?;
         let row = self.list.row_rect(pos)?;
         let x0 = r.depth as f32 * self.indent;
-        Some(presto_base::geom::Rect::new(x0, row.min.y, x0 + self.indent, row.max.y))
+        Some(Rect::new(x0, row.min.y, x0 + self.indent, row.max.y))
     }
 
     /// The pointer position's row, if it is on that row's disclosure triangle.
@@ -323,13 +334,13 @@ impl TreeView {
     }
 
     /// A drag hovers `into` the node `id` (`None`: it left, or hovers between rows). A collapsed
-    /// expandable node held for `Policy::drag_expand` expands (on the [`Event::Timer`] asked for).
+    /// expandable node held for `Policy::drag_expand_ms` expands (on the [`Event::Timer`] asked for).
     pub fn drag_over(&mut self, cx: &mut EventCx<'_>, id: Option<u64>) {
-        let delay = cx.policy.drag_expand;
+        let delay = ms(cx.policy.drag_expand_ms);
         let target = id.filter(|i| self.row(*i).is_some_and(|r| r.expandable && !r.expanded));
         match (target, self.drag_hover) {
             (Some(t), Some((h, _))) if t == h => {}
-            (Some(t), _) if delay > presto_base::time::Span::ZERO => {
+            (Some(t), _) if delay > Span::ZERO => {
                 self.drag_hover = Some((t, cx.now));
                 cx.wake_at(cx.now + delay);
             }
@@ -340,7 +351,7 @@ impl TreeView {
 
     fn drag_timer(&mut self, cx: &mut EventCx<'_>) {
         if let Some((id, since)) = self.drag_hover
-            && cx.now - since >= cx.policy.drag_expand
+            && cx.now - since >= ms(cx.policy.drag_expand_ms)
         {
             self.drag_hover = None;
             self.expand(cx, id);
@@ -360,63 +371,114 @@ impl TreeView {
     }
 }
 
-static TREE_SPEC: KindSpec = KindSpec {
-    name: "tree-view",
-    props: &[
-        prop("selection", PropType::Enum(SELECTION), ChangeClass::Paint),
-        prop("row-height", PropType::F64, ChangeClass::Layout),
-        prop("uniform-rows", PropType::Bool, ChangeClass::Layout),
-        prop("selected-ids", PropType::List, ChangeClass::Paint),
-        prop("current", PropType::I64, ChangeClass::Paint),
-        prop("pool-limit", PropType::I64, ChangeClass::Property),
-        prop("indent", PropType::F64, ChangeClass::Paint),
-        prop("expanded-ids", PropType::List, ChangeClass::Structure),
-    ],
-    signals: &[
-        signal("setup", false, false),
-        signal("bind", false, false),
-        signal("unbind", false, false),
-        signal("teardown", false, false),
-        signal("activate", true, false),
-        signal("select", true, false),
-        signal("selectionchange", true, false),
-        signal("current", true, false),
-        signal("row-clicked", true, false),
-        signal("row-context", true, false),
-        signal("row-hovered", true, false),
-        signal("copy", true, false),
-        signal("expand", true, false),
-        signal("collapse", true, false),
-    ],
-    slots: &[""],
+impl presto_core::VirtualChildren for TreeView {
+    fn row_count(&self) -> usize {
+        self.list.len()
+    }
+    fn visible(&self, viewport: Rect) -> Range<usize> {
+        presto_core::VirtualChildren::visible(&self.list, viewport)
+    }
+    fn row_rect(&self, i: usize) -> Rect {
+        presto_core::VirtualChildren::row_rect(&self.list, i)
+    }
+    fn content_extent(&self) -> Vec2 {
+        presto_core::VirtualChildren::content_extent(&self.list)
+    }
+}
+
+/// `::part(twisty)`: the disclosure chevron, in the theme's icon colour.
+pub const TWISTY_UA: Ua = Ua(&[UaRule::base(&[("color", Token("icon"))])]);
+
+kind_props! {
+    /// The tree's props: the list's six (same order and indices: they are forwarded to it), then its own.
+    pub struct TreeProps;
+    selection "selection": String = Enum("single") ; Enum(SELECTION), Paint;
+    row_height "row-height": f64 = F64(24.0) ; F64, Layout;
+    uniform_rows "uniform-rows": bool = Bool(false) ; Bool, Layout;
+    selected_ids "selected-ids": Vec<Value> = None ; List, Paint, bindable;
+    current "current": i64 = I64(-1) ; I64, Paint, bindable;
+    pool_limit "pool-limit": i64 = I64(8) ; I64, Property;
+    /// Points per level; the disclosure triangle sits in the last.
+    indent "indent": f64 = F64(16.0) ; F64, Paint;
+    /// The expanded node ids (native-owned: keys, presses and drags change it).
+    expanded_ids "expanded-ids": Vec<Value> = None ; List, Structure, bindable;
+}
+
+/// The list's signals, then `expand(id)` (JS loads lazy children) and `collapse(id)`.
+pub const SIGNALS: &[SignalSpec] = list_signals!(
+    SignalSpec::new("expand", &[("id", crate::shim::core::ValueType::I64)], "A node expanded; JS answers `setChildren` if it never gave its children."),
+    SignalSpec::new("collapse", &[("id", crate::shim::core::ValueType::I64)], ""),
+);
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "tree-view",
+    props: TreeProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
     role: accesskit::Role::Tree,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: true,
 };
+
+/// The list's props are the first six of the tree's.
+const LIST_PROPS: u32 = 6;
 
 impl Kind for TreeView {
     fn spec() -> &'static KindSpec {
-        &TREE_SPEC
+        &SPEC
+    }
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
     }
 
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "indent" => {
-                self.indent = value.as_f32().filter(|v| *v >= 0.0).ok_or(PropError::Invalid("indent >= 0"))?;
-                Ok(ChangeClass::Paint)
-            }
-            "expanded-ids" => {
-                self.expanded = id_list(value)?.into_iter().collect();
-                self.sync();
-                Ok(ChangeClass::Structure)
-            }
-            _ => set_list_prop(&mut self.list, name, value),
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        if prop.0 < LIST_PROPS {
+            return self.list.set_list_prop(prop, v);
         }
+        let spec = TreeProps::SPECS.get(prop.0 as usize).ok_or(PropError::UnknownProp)?;
+        let bad = PropError::Type { prop: spec.name, expected: spec.ty };
+        if prop == P::indent.id() {
+            if !v.as_f64().is_some_and(|i| i >= 0.0) {
+                return Err(bad);
+            }
+            self.props.set(prop, v)?;
+            self.indent = self.props.indent as f32;
+        } else if prop == P::expanded_ids.id() {
+            let ids = id_list(v).ok_or(bad)?;
+            self.props.set(prop, v)?;
+            self.expanded = ids.into_iter().collect();
+            self.sync();
+        } else {
+            return Err(PropError::UnknownProp);
+        }
+        Ok(())
     }
 
-    /// The list's row backgrounds, then each expandable row's disclosure chevron (`>` collapsed,
-    /// `v` expanded).
-    fn record(&self, cx: &mut RecordCx<'_>) {
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        if prop.0 < LIST_PROPS {
+            return self.list.list_prop(prop);
+        }
+        if prop == P::expanded_ids.id() {
+            let mut ids: Vec<u64> = self.expanded.iter().copied().collect();
+            ids.sort_unstable();
+            return Some(Value::List(ids.into_iter().map(|i| Value::I64(i as i64)).collect()));
+        }
+        self.props.get(prop)
+    }
+
+    fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        self.list.measure(cx, known, avail)
+    }
+
+    /// The list's box and rows, then each expandable row's disclosure chevron (`>` collapsed, `v`
+    /// expanded) as `::part(twisty)`.
+    fn record(&self, cx: &mut RecordCx) {
         self.list.record_rows(cx);
-        let color = cx.palette.text_muted;
+        let host = VirtualList::host_view(cx);
+        let twisty = host.part(cx.style.part_css("twisty"), TWISTY_UA);
+        let color = twisty.color("color").unwrap_or(Color::TRANSPARENT);
         for pos in self.list.window() {
             let Some(r) = self.disclosure_rect(pos) else { continue };
             let (c, s) = (Point::new((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0), 3.0);
@@ -426,13 +488,15 @@ impl Kind for TreeView {
             } else {
                 (Point::new(c.x - s / 2.0, c.y - s), Point::new(c.x + s / 2.0, c.y), Point::new(c.x - s / 2.0, c.y + s))
             };
-            draw::line(cx.list, a, b, 1.5, color);
-            draw::line(cx.list, b, d, 1.5, color);
+            for (from, to) in [(a, b), (b, d)] {
+                let ink = Rect::new(from.x.min(to.x), from.y.min(to.y), from.x.max(to.x), from.y.max(to.y)).inflate(1.5);
+                cx.list.push(Prim::Line(Line { from, to, width: 1.5, color, cap: LineCap::Round, dash: None, wavy: false }), ink);
+            }
         }
     }
 
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        let macos = cx.policy.os == super::legacy::Os::MacOs;
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        let macos = platform(cx.policy) == Platform::Macos;
         match ev {
             Event::Key(k) if k.state == KeyState::Pressed => {
                 let m = Mods { shift: k.modifiers.contains(presto_base::event::Modifiers::SHIFT), ctrl: k.modifiers.primary(macos) };
@@ -443,21 +507,22 @@ impl Kind for TreeView {
                     _ => None,
                 };
                 match done {
-                    Some(_) => Handled::Yes,
-                    None => self.list.handle(cx, ev),
-                }
-            }
-            Event::Pointer(p) if p.phase == PointerPhase::Down && p.button == Some(MouseButton::Primary) => {
-                match self.on_disclosure(p.pos) {
-                    Some(id) => {
-                        if !self.collapse(cx, id) {
-                            self.expand(cx, id);
-                        }
+                    Some(_) => {
+                        cx.repaint = true;
                         Handled::Yes
                     }
-                    None => self.list.handle(cx, ev),
+                    None => self.list.handle(cx, &SPEC, ev),
                 }
             }
+            Event::Pointer(p) if p.phase == PointerPhase::Down && p.button == Some(MouseButton::Primary) => match self.on_disclosure(p.pos) {
+                Some(id) => {
+                    if !self.collapse(cx, id) {
+                        self.expand(cx, id);
+                    }
+                    Handled::Yes
+                }
+                None => self.list.handle(cx, &SPEC, ev),
+            },
             Event::Timer => {
                 self.drag_timer(cx);
                 Handled::No
@@ -468,23 +533,36 @@ impl Kind for TreeView {
                 if r.action == accesskit::Action::Expand { self.expand(cx, c) } else { self.collapse(cx, c) };
                 Handled::Yes
             }
-            _ => self.list.handle(cx, ev),
+            _ => self.list.handle(cx, &SPEC, ev),
         }
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
-        self.list.a11y(node);
-        node.set_role(accesskit::Role::Tree);
+    fn a11y(&self, cx: &mut A11yCx) {
+        self.list.list_a11y(cx.node);
+        cx.node.set_role(accesskit::Role::Tree);
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::super::virtual_list::test_support::{send, with_cx};
     use super::*;
-    use crate::views::legacy::{Os, Policy};
+    use crate::controls::testkit;
+    use crate::interact::{Native, Policy, StateBits};
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerEvent, PointerType};
     use presto_base::geom::Size;
-    use presto_base::time::Span;
+
+    fn pol() -> Policy {
+        *Native::Gtk.policy()
+    }
+
+    fn expand(t: &mut TreeView, id: u64) -> bool {
+        with_cx(t, &pol(), Time::ZERO, |t, cx| t.expand(cx, id)).0
+    }
+
+    fn collapse(t: &mut TreeView, id: u64) -> bool {
+        with_cx(t, &pol(), Time::ZERO, |t, cx| t.collapse(cx, id)).0
+    }
 
     /// 1 ─┬─ 11 ─── 111
     ///    └─ 12
@@ -510,33 +588,31 @@ mod tests {
 
     #[test]
     fn flattens_only_expanded_children() {
-        let pol = Policy::for_os(Os::Linux);
         let mut t = tree();
         assert_eq!(ids(&t), vec![1, 2, 3]);
         assert_eq!(t.list.ids(), &[1, 2, 3]);
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        assert!(t.expand(&mut cx, 1));
+        assert!(expand(&mut t, 1));
         assert_eq!(ids(&t), vec![1, 11, 12, 2, 3]);
-        assert!(t.expand(&mut cx, 11));
+        assert!(expand(&mut t, 11));
         assert_eq!(ids(&t), vec![1, 11, 111, 12, 2, 3]);
         assert_eq!(t.rows()[2].depth, 2);
         assert_eq!(t.list.ids(), &[1, 11, 111, 12, 2, 3]);
         // collapsing the parent hides the grandchild but keeps 11 expanded for later
-        assert!(t.collapse(&mut cx, 1));
+        assert!(collapse(&mut t, 1));
         assert_eq!(ids(&t), vec![1, 2, 3]);
         assert!(t.is_expanded(11));
-        t.expand(&mut cx, 1);
+        expand(&mut t, 1);
         assert_eq!(ids(&t), vec![1, 11, 111, 12, 2, 3]);
-        assert!(!t.expand(&mut cx, 3), "a leaf does not expand");
+        assert!(!expand(&mut t, 3), "a leaf does not expand");
     }
 
     #[test]
     fn lazy_children_raise_expand_and_arrive_later() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = pol();
         let mut t = tree();
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.expand(&mut cx, 2);
-        assert_eq!(cx.emitted("expand").next().unwrap().detail, Value::I64(2));
+        let (_, sent) = with_cx(&mut t, &pol, Time::ZERO, |t, cx| t.expand(cx, 2));
+        assert_eq!(sent.arg("expand"), Some(Value::I64(2)));
+        assert!(sent.changed.contains(&"expanded-ids"));
         assert_eq!(ids(&t), vec![1, 2, 3], "nothing loaded yet");
         t.set_children(Some(2), &[(21, "a".into(), false), (22, "b".into(), false)]).unwrap();
         assert_eq!(ids(&t), vec![1, 2, 21, 22, 3]);
@@ -549,7 +625,6 @@ mod tests {
 
     #[test]
     fn expanding_splices_only_the_new_rows() {
-        let pol = Policy::for_os(Os::Linux);
         let mut t = tree();
         // realise the rows (answering setups)
         for _ in 0..2 {
@@ -560,8 +635,7 @@ mod tests {
             }
         }
         let slot_of_3 = t.list.row_at_pos(2).unwrap();
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.expand(&mut cx, 1);
+        expand(&mut t, 1);
         // row 3 moved from 2 to 4 in its slot, without a rebind
         assert_eq!(t.list.slots()[slot_of_3].pos, Some(4));
         assert_eq!(t.list.slots()[slot_of_3].id, 3);
@@ -569,46 +643,44 @@ mod tests {
 
     #[test]
     fn right_and_left_expand_descend_collapse_and_ascend() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = pol();
         let mut t = tree();
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.event(&mut cx, &key(Key::ArrowDown));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowDown));
         assert_eq!(t.list.sel.cursor, Some(1));
-        t.event(&mut cx, &key(Key::ArrowRight));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowRight));
         assert!(t.is_expanded(1));
         assert_eq!(t.list.sel.cursor, Some(1), "the first Right only expands");
-        t.event(&mut cx, &key(Key::ArrowRight));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowRight));
         assert_eq!(t.list.sel.cursor, Some(11));
-        t.event(&mut cx, &key(Key::ArrowRight));
-        t.event(&mut cx, &key(Key::ArrowRight));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowRight));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowRight));
         assert_eq!(t.list.sel.cursor, Some(111));
-        t.event(&mut cx, &key(Key::ArrowLeft));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowLeft));
         assert_eq!(t.list.sel.cursor, Some(11), "a leaf goes to its parent");
-        t.event(&mut cx, &key(Key::ArrowLeft));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowLeft));
         assert!(!t.is_expanded(11));
         assert_eq!(t.list.sel.is_selected(11), true);
-        t.event(&mut cx, &key(Key::ArrowDown));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowDown));
         assert_eq!(t.list.sel.cursor, Some(12));
         // collapsing the root moves the cursor out of the hidden rows
         t.list.sel.cursor = Some(12);
-        t.collapse(&mut cx, 1);
+        collapse(&mut t, 1);
         assert_eq!(t.list.sel.cursor, Some(1));
     }
 
     #[test]
     fn star_expands_the_siblings() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = pol();
         let mut t = tree();
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.event(&mut cx, &key(Key::ArrowDown));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowDown));
         let star = Event::Key(KeyEvent { key: None, physical: 0, text: Some("*".into()), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::SHIFT });
-        assert_eq!(t.event(&mut cx, &star), Handled::Yes);
+        assert_eq!(send(&mut t, &pol, Time::ZERO, &star).handled, Handled::Yes);
         assert!(t.is_expanded(1) && t.is_expanded(2) && !t.is_expanded(3));
     }
 
     #[test]
     fn a_press_on_the_triangle_toggles_without_selecting() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = pol();
         let mut t = tree();
         let press = |x: f32, y: f32| {
             Event::Pointer(PointerEvent {
@@ -624,47 +696,42 @@ mod tests {
                 history: Default::default(),
             })
         };
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.event(&mut cx, &press(8.0, 12.0));
+        send(&mut t, &pol, Time::ZERO, &press(8.0, 12.0));
         assert!(t.is_expanded(1));
         assert!(t.list.sel.selected.is_empty());
         // the label part of row 11 (depth 1) selects
-        t.event(&mut cx, &press(60.0, 36.0));
+        send(&mut t, &pol, Time::ZERO, &press(60.0, 36.0));
         assert_eq!(t.list.sel.cursor, Some(11));
         // row 11's triangle is one indent in
-        t.event(&mut cx, &press(20.0, 36.0));
+        send(&mut t, &pol, Time::ZERO, &press(20.0, 36.0));
         assert!(t.is_expanded(11));
     }
 
     #[test]
     fn a_held_drag_expands_after_the_delay() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = pol();
+        let delay = ms(pol.drag_expand_ms);
         let mut t = tree();
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.drag_over(&mut cx, Some(1));
-        assert_eq!(cx.wake, Some(Time::ZERO + pol.drag_expand));
+        let (_, sent) = with_cx(&mut t, &pol, Time::ZERO, |t, cx| t.drag_over(cx, Some(1)));
+        assert_eq!(sent.wake, Some(Time::ZERO + delay));
         assert!(!t.is_expanded(1));
-        let mut cx = EventCx::new(Time::ZERO + Span::from_millis(200), Size::new(200.0, 240.0), &pol);
-        t.drag_over(&mut cx, Some(1));
+        with_cx(&mut t, &pol, Time::ZERO + Span::from_millis(200), |t, cx| t.drag_over(cx, Some(1)));
         assert!(!t.is_expanded(1), "still holding");
-        let mut cx = EventCx::new(Time::ZERO + pol.drag_expand, Size::new(200.0, 240.0), &pol);
-        t.event(&mut cx, &Event::Timer);
+        send(&mut t, &pol, Time::ZERO + delay, &Event::Timer);
         assert!(t.is_expanded(1));
         // moving off resets
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.drag_over(&mut cx, Some(2));
-        t.drag_over(&mut cx, None);
-        let mut cx = EventCx::new(Time::ZERO + Span::from_millis(5000), Size::new(200.0, 240.0), &pol);
-        t.event(&mut cx, &Event::Timer);
+        with_cx(&mut t, &pol, Time::ZERO, |t, cx| {
+            t.drag_over(cx, Some(2));
+            t.drag_over(cx, None);
+        });
+        send(&mut t, &pol, Time::ZERO + Span::from_millis(5000), &Event::Timer);
         assert!(!t.is_expanded(2));
     }
 
     #[test]
     fn rows_are_tree_items_with_levels() {
-        let pol = Policy::for_os(Os::Linux);
         let mut t = tree();
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 240.0), &pol);
-        t.expand(&mut cx, 1);
+        expand(&mut t, 1);
         let n = t.row_a11y(0).unwrap();
         assert_eq!(n.role(), accesskit::Role::TreeItem);
         assert_eq!(n.level(), Some(1));
@@ -673,5 +740,32 @@ mod tests {
         assert_eq!(n.level(), Some(2));
         assert_eq!(n.is_expanded(), None, "a leaf");
         assert_eq!(n.size_of_set(), Some(5));
+    }
+
+    #[test]
+    fn the_list_props_are_forwarded_by_index() {
+        let (ts, ls) = (TreeView::spec(), VirtualList::spec());
+        for i in 0..LIST_PROPS as usize {
+            assert_eq!(ts.props[i].name, ls.props[i].name);
+        }
+        for (i, sig) in ls.signals.iter().enumerate() {
+            assert_eq!(ts.signals[i].name, sig.name);
+        }
+        let mut t = tree();
+        t.set_prop(ts.prop("selection").unwrap(), &Value::str("multi")).unwrap();
+        assert!(t.list.sel.mode.is_multi());
+        t.set_prop(P::expanded_ids.id(), &Value::List(vec![Value::I64(1)])).unwrap();
+        assert_eq!(t.list.ids(), &[1, 11, 12, 2, 3]);
+        assert_eq!(t.get_prop(P::expanded_ids.id()), Some(Value::List(vec![Value::I64(1)])));
+        assert!(t.set_prop(P::indent.id(), &Value::F64(-1.0)).is_err());
+    }
+
+    #[test]
+    fn records_rows_and_chevrons() {
+        let mut t = tree();
+        expand(&mut t, 1);
+        let (list, _) = testkit::record(&t, Size::new(200.0, 240.0), StateBits::NONE);
+        // rows 1, 11 and 2 are expandable: two lines per chevron
+        assert_eq!(testkit::kinds(&list).iter().filter(|k| **k == "line").count(), 6);
     }
 }

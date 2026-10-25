@@ -8,10 +8,18 @@
 //!   window edge; every level is shrunk to the room it has (`fit`);
 //! - the pointer: a press on a title opens or closes its menu, and moving over another title while a
 //!   menu is open switches to it; a press on a submenu row opens it at once, hovering opens it after
-//!   the platform's delay ([`Policy::submenu_delay`], 0 on macOS) and hovering another row closes it
-//!   after the same delay, except while the pointer heads towards the open submenu (the safe
-//!   triangle); an item picks on release; a press outside every level closes them all;
+//!   the platform's delay ([`Policy::submenu_delay_ms`](crate::interact::Policy), 0 on macOS) and
+//!   hovering another row closes it after the same delay, except while the pointer heads towards the
+//!   open submenu (the safe triangle); an item picks on release; a press outside every level closes
+//!   them all;
 //! - the keys are [`MenuNav::key`]'s.
+//!
+//! Look (CSS over the UA tables below, from the theme's tokens): the bar's `::part(title)` (`:hover`
+//! and `:open` while its menu shows), each level's `::part(menu)` surface (`menu-bg`,
+//! `menu-border-color`, `menu-radius`, `popup-shadow`), its `::part(item)` rows (`:selected` is the
+//! current row: `menu-sel`/`menu-sel-fg`; `:disabled`, `:checked`), `::part(separator)`,
+//! `::part(shortcut)` (`muted`) and `::part(group-label)`. Row heights, paddings and the surface's
+//! minimum width come from the same views.
 //!
 //! Positions are in the root's local points: a `context-menu` shares its owner's space, and the
 //! overlay layers the levels go into take the root's transform. `prepare` lays out with the labels
@@ -19,54 +27,129 @@
 //!
 //! macOS's own menu bar (`NSMenu`) is a platform concern, not drawn here.
 
-use super::draw;
-use super::menu_model::{EntryIx, EntryKind, KeyIn, MenuModel, MenuNav, MenuOut, Picked, shortcut_text};
+use super::common::{emit, ms, platform};
+use super::menu_model::{Check, Entry, EntryIx, EntryKind, KeyIn, MenuModel, MenuNav, MenuOut, Picked, shortcut_text};
 use super::placement::{AnchorParams, Placement, place};
-use super::legacy::{
-    self as shim, Event, EventCx, Handled, Kind, KindSpec, Labels, Os, Palette, PropError, PropType, RecordCx, Value, prop,
-    signal,
+use crate::controls::common::host_view;
+use crate::interact::{Platform, StateBits};
+use crate::kind_props;
+use crate::paint::{self, Align, Elide, PaintCx, StyleView, Ua, UaRule, UaValue::{Px, Token}};
+use crate::shim::core::{
+    A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, Resources,
+    SignalSpec, Styles, Value, ValueType,
 };
+use crate::shim::text::TextShaper;
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
 use presto_base::color::Color;
-use presto_base::display::DisplayList;
-use presto_base::event::{KeyState, MouseButton, PointerEvent, PointerPhase};
+use presto_base::display::{DisplayList, Line, LineCap, Prim};
+use presto_base::event::{KeyState, Modifiers, MouseButton, PointerEvent, PointerPhase};
 use presto_base::geom::{Point, Rect, Size, Vec2};
 use presto_base::key::Key;
 use presto_base::time::Time;
 
-/// The sizes menus are laid out with (VS Code's: 26 pt rows, 4 pt surface padding, 160 pt minimum).
+/// `menu-bar` itself: 4 pt around its titles.
+pub const BAR_UA: Ua = Ua(&[UaRule::base(&[("padding", Px(4.0))])]);
+
+/// `::part(title)`: a bar title (VS Code's menubar: 22 pt, 8 pt sides, the toolbar hover fill).
+pub const TITLE_UA: Ua = Ua(&[
+    UaRule::base(&[("height", Px(22.0)), ("padding-left", Px(8.0)), ("padding-right", Px(8.0)), ("border-radius", Token("radius"))]),
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("toolbar-hover"))]),
+    UaRule::when(StateBits::OPEN, &[("background-color", Token("toolbar-hover"))]),
+    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
+]);
+
+/// `::part(menu)`: one open level's surface (VS Code's: 4 pt padding, 160 pt minimum width).
+pub const SURFACE_UA: Ua = Ua(&[UaRule::base(&[
+    ("background-color", Token("menu-bg")),
+    ("border-color", Token("menu-border-color")),
+    ("border-width", Token("stroke")),
+    ("border-radius", Token("menu-radius")),
+    ("box-shadow", Token("popup-shadow")),
+    ("padding", Px(4.0)),
+    ("min-width", Px(160.0)),
+])]);
+
+/// `::part(item)`: a row (26 pt, 8 pt sides). `:selected` is the current row; a disabled current row
+/// is only tinted (R9).
+pub const ITEM_UA: Ua = Ua(&[
+    UaRule::base(&[("height", Px(26.0)), ("padding-left", Px(8.0)), ("padding-right", Px(8.0)), ("border-radius", Token("radius")), ("color", Token("fg"))]),
+    UaRule::when(StateBits::SELECTED, &[("background-color", Token("menu-sel")), ("color", Token("menu-sel-fg"))]),
+    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
+    UaRule::when(StateBits(StateBits::SELECTED.0 | StateBits::DISABLED.0), &[("background-color", Token("list-hover")), ("color", Token("disabled-fg"))]),
+]);
+
+/// `::part(separator)`: a 9 pt row with a hairline in its middle.
+pub const SEPARATOR_UA: Ua = Ua(&[UaRule::base(&[("height", Px(9.0)), ("background-color", Token("menu-border-color"))])]);
+
+/// `::part(shortcut)`: the accelerator text, muted but for the current row.
+pub const SHORTCUT_UA: Ua = Ua(&[
+    UaRule::base(&[("color", Token("muted"))]),
+    UaRule::when(StateBits::SELECTED, &[("color", Token("menu-sel-fg"))]),
+    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
+]);
+
+/// `::part(group-label)`: a section heading row.
+pub const GROUP_LABEL_UA: Ua = Ua(&[UaRule::base(&[("color", Token("muted"))])]);
+
+/// The columns rows keep for check marks and submenu chevrons, and the gap before a shortcut.
+const CHECK_W: f32 = 22.0;
+const CHEVRON_W: f32 = 24.0;
+const SHORTCUT_GAP: f32 = 24.0;
+
+/// The sizes menus are laid out with, read from the parts' views.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct MenuMetrics {
     pub row_h: f32,
     pub sep_h: f32,
+    /// The surface's padding (one value: its left).
     pub pad: f32,
     pub row_pad_x: f32,
-    pub check_w: f32,
-    pub chevron_w: f32,
-    pub shortcut_gap: f32,
     pub min_w: f32,
     pub bar_pad: f32,
+    pub title_h: f32,
     pub title_pad_x: f32,
-    pub font_size: f32,
-    pub radius: f32,
+}
+
+/// The views of a root and its parts, in a state (rows and titles override it per row).
+struct Views<'a> {
+    host: &'a StyleView<'a>,
+    title: StyleView<'a>,
+    surface: &'a StyleView<'a>,
+    item: StyleView<'a>,
+    separator: StyleView<'a>,
+    group: StyleView<'a>,
+}
+
+/// Builds [`Views`] of `style` for a root with `ua`, then runs `f` with them.
+fn with_views<R>(style: &Styles, ua: Ua, f: impl FnOnce(&Views) -> R) -> R {
+    let host = host_view(style, ua);
+    let surface = host.part(style.part_css("menu"), SURFACE_UA);
+    let v = Views {
+        title: host.part(style.part_css("title"), TITLE_UA),
+        item: surface.part(style.part_css("item"), ITEM_UA),
+        separator: surface.part(style.part_css("separator"), SEPARATOR_UA),
+        group: surface.part(style.part_css("group-label"), GROUP_LABEL_UA),
+        surface: &surface,
+        host: &host,
+    };
+    f(&v)
 }
 
 impl MenuMetrics {
-    pub fn from_palette(p: &Palette) -> MenuMetrics {
+    fn of(v: &Views) -> MenuMetrics {
+        let [_, _, bar_top, _] = v.host.sides("padding");
+        let [pad, ..] = v.surface.sides("padding");
+        let [row_pad_x, ..] = v.item.sides("padding");
+        let [title_pad_x, ..] = v.title.sides("padding");
         MenuMetrics {
-            row_h: p.row_height + 4.0,
-            sep_h: 9.0,
-            pad: 4.0,
-            row_pad_x: 8.0,
-            check_w: 22.0,
-            chevron_w: 24.0,
-            shortcut_gap: 24.0,
-            min_w: 160.0,
-            bar_pad: 4.0,
-            title_pad_x: 8.0,
-            font_size: p.font_size,
-            radius: p.radius,
+            row_h: v.item.px("height").unwrap_or(26.0),
+            sep_h: v.separator.px("height").unwrap_or(9.0),
+            pad,
+            row_pad_x,
+            min_w: v.surface.px("min-width").unwrap_or(0.0),
+            bar_pad: bar_top,
+            title_h: v.title.px("height").unwrap_or(22.0),
+            title_pad_x,
         }
     }
 }
@@ -106,6 +189,7 @@ pub struct Menus {
     titles: Vec<(EntryIx, Rect)>,
     levels: Vec<LevelGeom>,
     metrics: Option<MenuMetrics>,
+    /// Shortcuts are shown the macOS way (from the last event's policy).
     macos: bool,
     /// The row under the pointer and since when (submenu delays).
     hover: Option<(usize, EntryIx, Time)>,
@@ -121,8 +205,13 @@ impl Menus {
             bar,
             enabled: true,
             bounds: Rect::new(f32::NEG_INFINITY, f32::NEG_INFINITY, f32::INFINITY, f32::INFINITY),
+            macos: cfg!(target_os = "macos"),
             ..Menus::default()
         }
+    }
+
+    fn ua(&self) -> Ua {
+        if self.bar { BAR_UA } else { Ua::NONE }
     }
 
     /// The open levels as last laid out.
@@ -134,17 +223,29 @@ impl Menus {
         &self.titles
     }
 
+    /// The bar's natural size: its titles in a row inside its padding.
+    pub fn bar_size(&self, text: &mut dyn TextShaper, style: &Styles) -> Size {
+        with_views(style, self.ua(), |v| {
+            let mt = MenuMetrics::of(v);
+            let w: f32 = self.model.rows(MenuModel::ROOT).iter().map(|&t| paint::measure_text(text, &v.title, &self.model.get(t).label, None).w + mt.title_pad_x * 2.0).sum();
+            Size::new(w + mt.bar_pad * 2.0, mt.title_h + mt.bar_pad * 2.0)
+        })
+    }
+
     /// Lays out the bar's titles and the open levels (after input, before recording).
-    pub fn prepare(&mut self, labels: &mut dyn Labels, palette: &Palette, os: Os) {
-        let mt = MenuMetrics::from_palette(palette);
+    pub fn prepare(&mut self, text: &mut dyn TextShaper, style: &Styles) {
+        with_views(style, self.ua(), |v| self.prepare_with(text, v));
+    }
+
+    fn prepare_with(&mut self, text: &mut dyn TextShaper, v: &Views) {
+        let mt = MenuMetrics::of(v);
         self.metrics = Some(mt);
-        self.macos = os == Os::MacOs;
         self.titles.clear();
         if self.bar {
             let mut x = mt.bar_pad;
             for t in self.model.rows(MenuModel::ROOT) {
-                let w = labels.measure(&self.model.get(t).label, mt.font_size, None).w + mt.title_pad_x * 2.0;
-                self.titles.push((t, Rect::new(x, mt.bar_pad, x + w, mt.bar_pad + mt.row_h - 4.0)));
+                let w = paint::measure_text(text, &v.title, &self.model.get(t).label, None).w + mt.title_pad_x * 2.0;
+                self.titles.push((t, Rect::new(x, mt.bar_pad, x + w, mt.bar_pad + mt.title_h)));
                 x += w;
             }
         }
@@ -166,14 +267,16 @@ impl Menus {
                     None => break,
                 }
             };
-            let g = self.layout_level(labels, &mt, container, anchor, placement, cross);
+            let g = self.layout_level(text, v, &mt, container, anchor, placement, cross);
             self.levels.push(g);
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn layout_level(
         &self,
-        labels: &mut dyn Labels,
+        text: &mut dyn TextShaper,
+        v: &Views,
         mt: &MenuMetrics,
         container: EntryIx,
         anchor: Rect,
@@ -181,7 +284,7 @@ impl Menus {
         cross: f32,
     ) -> LevelGeom {
         let rows = self.model.rows(container);
-        let checks = rows.iter().any(|&r| self.model.get(r).check != super::menu_model::Check::None);
+        let checks = rows.iter().any(|&r| self.model.get(r).check != Check::None);
         let subs = rows.iter().any(|&r| self.model.get(r).kind == EntryKind::Menu);
         let mut label_w: f32 = 0.0;
         let mut short_w: f32 = 0.0;
@@ -192,20 +295,20 @@ impl Menus {
                 EntryKind::Separator => h += mt.sep_h,
                 _ => {
                     h += mt.row_h;
-                    label_w = label_w.max(labels.measure(&e.label, mt.font_size, None).w);
+                    label_w = label_w.max(paint::measure_text(text, &v.item, &e.label, None).w);
                     let s = shortcut_text(&e.shortcut, self.macos);
                     if !s.is_empty() {
-                        short_w = short_w.max(labels.measure(&s, mt.font_size, None).w);
+                        short_w = short_w.max(paint::measure_text(text, &v.item, &s, None).w);
                     }
                 }
             }
         }
         let w = mt.pad * 2.0
             + mt.row_pad_x * 2.0
-            + if checks { mt.check_w } else { 0.0 }
+            + if checks { CHECK_W } else { 0.0 }
             + label_w
-            + if short_w > 0.0 { mt.shortcut_gap + short_w } else { 0.0 }
-            + if subs { mt.chevron_w } else { 0.0 };
+            + if short_w > 0.0 { SHORTCUT_GAP + short_w } else { 0.0 }
+            + if subs { CHEVRON_W } else { 0.0 };
         let placed = place(&AnchorParams {
             anchor,
             size: Size::new(w.max(mt.min_w), h),
@@ -331,15 +434,20 @@ impl Menus {
                     }
                     _ => self.hover = None,
                 }
+                cx.repaint = true;
                 if hit.is_some() { Handled::Yes } else { Handled::No }
             }
             PointerPhase::Leave | PointerPhase::Cancel => {
-                self.hover = None;
-                self.hover_title = None;
+                self.hover_left();
                 Handled::No
             }
             PointerPhase::Enter => Handled::No,
         }
+    }
+
+    fn hover_left(&mut self) {
+        self.hover = None;
+        self.hover_title = None;
     }
 
     /// Opens or closes a submenu once the pointer has rested on a row for the platform's delay.
@@ -351,7 +459,7 @@ impl Menus {
         if done || k >= self.nav.levels.len() {
             return;
         }
-        let due = since + cx.policy.submenu_delay;
+        let due = since + ms(cx.policy.submenu_delay_ms);
         if cx.now < due {
             cx.wake_at(due);
             return;
@@ -367,161 +475,166 @@ impl Menus {
     pub fn key(&mut self, cx: &EventCx<'_>, ev: &presto_base::event::KeyEvent, out: &mut Vec<MenuOut>) -> bool {
         let k = KeyIn { key: ev.key, text: ev.text.as_deref(), state: ev.state, modifiers: ev.modifiers, now: cx.now };
         // Shift+F10 and the Menu key open a context menu from the keyboard
-        if !self.bar
-            && !self.nav.is_open()
-            && ev.state == KeyState::Pressed
-            && (ev.key == Some(Key::Menu)
-                || (ev.key == Some(Key::F10) && ev.modifiers == presto_base::event::Modifiers::SHIFT))
-        {
+        if !self.bar && !self.nav.is_open() && ev.state == KeyState::Pressed && (ev.key == Some(Key::Menu) || (ev.key == Some(Key::F10) && ev.modifiers == Modifiers::SHIFT)) {
             self.open_at(Point::ZERO, true, out);
             return true;
         }
         self.nav.key(&mut self.model, self.bar, cx.policy.alt_focuses_menu_bar, k, out)
     }
 
-    /// Records the bar's titles (in flow).
-    pub fn record_bar(&self, list: &mut DisplayList, palette: &Palette, labels: &mut dyn Labels) {
-        let Some(mt) = self.metrics else { return };
-        let open = self.nav.levels.first().map(|l| l.container);
-        let mnemonics = self.nav.bar_keys || self.nav.keyboard;
-        for &(t, r) in &self.titles {
-            let e = self.model.get(t);
-            let current = open == Some(t) || (self.nav.bar_keys && self.nav.bar_current == Some(t)) || self.hover_title == Some(t);
-            if current && self.enabled {
-                draw::fill(list, r, mt.radius, palette.hover);
-            }
-            let color = if self.enabled && e.enabled { palette.text } else { palette.text_muted };
-            let origin = Point::new(r.min.x + mt.title_pad_x, r.min.y + (r.height() - mt.font_size * 1.25) / 2.0);
-            labels.record(list, &e.label, origin, mt.font_size, color, None);
-            if mnemonics {
-                underline(list, labels, &e.label, e.mnemonic_at, origin, mt.font_size, color);
-            }
+    /// Records the bar's titles (in flow) under the node's style.
+    pub fn record_bar(&self, pc: &mut PaintCx, style: &Styles) {
+        if self.metrics.is_none() {
+            return;
         }
+        with_views(style, self.ua(), |v| {
+            let open = self.nav.levels.first().map(|l| l.container);
+            let mnemonics = self.nav.bar_keys || self.nav.keyboard;
+            for &(t, r) in &self.titles {
+                let e = self.model.get(t);
+                let mut st = StateBits::NONE;
+                st.set(StateBits::HOVERED, self.hover_title == Some(t) || (self.nav.bar_keys && self.nav.bar_current == Some(t)));
+                st.set(StateBits::OPEN, open == Some(t));
+                st.set(StateBits::DISABLED, !self.enabled || !e.enabled);
+                let tv = v.title.in_state(st);
+                let g = paint::paint_box(pc, &tv, r);
+                let layout = paint::text_layout(pc.text, &tv, &e.label, None);
+                let at = paint::paint_text(pc, &tv, &layout, g.content, Align::Start);
+                if mnemonics {
+                    underline(pc, &tv, &e.label, e.mnemonic_at, at);
+                }
+            }
+        });
     }
 
-    /// Records the open levels, outermost first (each goes into its own overlay layer).
-    pub fn record_levels(&self, palette: &Palette, labels: &mut dyn Labels) -> Vec<DisplayList> {
+    /// Records the open levels, outermost first, each into its own list for its overlay layer.
+    pub fn record_levels(&self, text: &mut dyn TextShaper, res: &mut dyn Resources, style: &Styles, scale: f32) -> Vec<DisplayList> {
         let Some(mt) = self.metrics else { return Vec::new() };
-        let mut lists = Vec::with_capacity(self.levels.len());
-        for (k, l) in self.levels.iter().enumerate() {
-            let mut list = DisplayList::new();
-            draw::shadow(&mut list, l.rect, mt.radius, palette.shadow, 8.0, Vec2::new(0.0, 2.0));
-            draw::boxed(&mut list, l.rect, mt.radius, palette.surface_raised, 1.0, palette.border);
-            let current = self.nav.levels.get(k).and_then(|n| n.current);
-            let open_sub = self.nav.open_below(k);
-            for &(r, rr) in &l.rows {
-                self.record_row(&mut list, labels, palette, &mt, l, r, rr, current == Some(r) || open_sub == Some(r));
+        with_views(style, self.ua(), |v| {
+            let mut lists = Vec::with_capacity(self.levels.len());
+            for (k, l) in self.levels.iter().enumerate() {
+                let mut list = DisplayList::new();
+                let mut pc = PaintCx::new(&mut list, &mut *res, &mut *text, scale);
+                paint::paint_box(&mut pc, v.surface, l.rect);
+                let current = self.nav.levels.get(k).and_then(|n| n.current);
+                let open_sub = self.nav.open_below(k);
+                for &(r, rr) in &l.rows {
+                    self.record_row(&mut pc, v, &mt, l, r, rr, current == Some(r) || open_sub == Some(r));
+                }
+                lists.push(list);
             }
-            lists.push(list);
-        }
-        lists
+            lists
+        })
     }
 
     #[allow(clippy::too_many_arguments)]
-    fn record_row(
-        &self,
-        list: &mut DisplayList,
-        labels: &mut dyn Labels,
-        palette: &Palette,
-        mt: &MenuMetrics,
-        l: &LevelGeom,
-        r: EntryIx,
-        rr: Rect,
-        current: bool,
-    ) {
+    fn record_row(&self, pc: &mut PaintCx, v: &Views, mt: &MenuMetrics, l: &LevelGeom, r: EntryIx, rr: Rect, current: bool) {
         let e = self.model.get(r);
         match e.kind {
             EntryKind::Separator => {
                 let y = (rr.min.y + rr.max.y) / 2.0;
-                draw::line(list, Point::new(rr.min.x, y), Point::new(rr.max.x, y), 1.0, palette.border);
+                if let Some(c) = v.separator.color("background-color") {
+                    stroke(pc, Point::new(rr.min.x, y), Point::new(rr.max.x, y), 1.0, c);
+                }
                 return;
             }
             EntryKind::GroupLabel => {
-                let origin = Point::new(rr.min.x + mt.row_pad_x, rr.min.y + (rr.height() - mt.font_size * 1.25) / 2.0);
-                labels.record(list, &e.label, origin, mt.font_size, palette.text_muted, Some(rr.width() - mt.row_pad_x * 2.0));
+                let content = Rect::new(rr.min.x + mt.row_pad_x, rr.min.y, rr.max.x - mt.row_pad_x, rr.max.y);
+                let shown = paint::elide(pc.text, &v.group, &e.label, Elide::End, content.width());
+                let layout = paint::text_layout(pc.text, &v.group, &shown, None);
+                paint::paint_text(pc, &v.group, &layout, content, Align::Start);
                 return;
             }
             _ => {}
         }
-        let enabled = self.model.enabled(r);
-        let (fg, muted) = if current && enabled {
-            draw::fill(list, rr, mt.radius, palette.accent);
-            (palette.on_accent, palette.on_accent)
-        } else {
-            if current {
-                // R9: a disabled current row is only tinted
-                draw::fill(list, rr, mt.radius, palette.hover);
-            }
-            (if enabled { palette.text } else { palette.text_muted }, palette.text_muted)
-        };
-        let mut x = rr.min.x + mt.row_pad_x;
-        let ty = rr.min.y + (rr.height() - mt.font_size * 1.25) / 2.0;
+        let mut st = StateBits::NONE;
+        st.set(StateBits::SELECTED, current);
+        st.set(StateBits::DISABLED, !self.model.enabled(r));
+        st.set(StateBits::CHECKED, e.checked);
+        let iv = v.item.in_state(st);
+        let g = paint::paint_box(pc, &iv, rr);
+        let fg = iv.color("color").unwrap_or(Color::BLACK);
+        let mut x = g.content.min.x;
+        let cy = (rr.min.y + rr.max.y) / 2.0;
         if l.checks {
             if e.checked {
-                let c = Point::new(x + mt.check_w / 2.0 - 3.0, (rr.min.y + rr.max.y) / 2.0);
+                let c = Point::new(x + CHECK_W / 2.0 - 3.0, cy);
                 match e.check {
-                    super::menu_model::Check::Radio(_) => draw::fill(list, Rect::new(c.x - 3.0, c.y - 3.0, c.x + 3.0, c.y + 3.0), 3.0, fg),
-                    _ => check_mark(list, c, fg),
+                    Check::Radio(_) => dot(pc, c, 3.0, fg),
+                    _ => check_mark(pc, c, fg),
                 }
             }
-            x += mt.check_w;
+            x += CHECK_W;
         }
-        let right = rr.max.x - mt.row_pad_x - if e.kind == EntryKind::Menu { mt.chevron_w } else { 0.0 };
-        let origin = Point::new(x, ty);
-        labels.record(list, &e.label, origin, mt.font_size, fg, Some((right - x).max(0.0)));
-        if self.nav.keyboard {
-            underline(list, labels, &e.label, e.mnemonic_at, origin, mt.font_size, fg);
+        let right = g.content.max.x - if e.kind == EntryKind::Menu { CHEVRON_W } else { 0.0 };
+        let shown = paint::elide(pc.text, &iv, &e.label, Elide::End, (right - x).max(0.0));
+        let layout = paint::text_layout(pc.text, &iv, &shown, None);
+        let at = paint::paint_text(pc, &iv, &layout, Rect::new(x, rr.min.y, right, rr.max.y), Align::Start);
+        if self.nav.keyboard && shown == e.label {
+            underline(pc, &iv, &e.label, e.mnemonic_at, at);
         }
         let s = shortcut_text(&e.shortcut, self.macos);
         if !s.is_empty() {
-            let w = labels.measure(&s, mt.font_size, None).w;
-            labels.record(list, &s, Point::new(right - w, ty), mt.font_size, if current && enabled { fg } else { muted }, None);
+            let sv = iv.part(None, SHORTCUT_UA);
+            let layout = paint::text_layout(pc.text, &sv, &s, None);
+            paint::paint_text(pc, &sv, &layout, Rect::new(x, rr.min.y, right, rr.max.y), Align::End);
         }
         if e.kind == EntryKind::Menu {
-            let cx = rr.max.x - mt.row_pad_x - mt.chevron_w / 2.0 + 4.0;
-            let cy = (rr.min.y + rr.max.y) / 2.0;
-            draw::line(list, Point::new(cx - 2.0, cy - 4.0), Point::new(cx + 2.0, cy), 1.25, fg);
-            draw::line(list, Point::new(cx + 2.0, cy), Point::new(cx - 2.0, cy + 4.0), 1.25, fg);
+            let cx = g.content.max.x - CHEVRON_W / 2.0 + 4.0;
+            stroke(pc, Point::new(cx - 2.0, cy - 4.0), Point::new(cx + 2.0, cy), 1.25, fg);
+            stroke(pc, Point::new(cx + 2.0, cy), Point::new(cx - 2.0, cy + 4.0), 1.25, fg);
         }
     }
 
-    /// Turns navigation results into signals and work marks.
-    fn report(&self, cx: &mut EventCx<'_>, out: Vec<MenuOut>) {
+    /// Turns navigation results into signals and repaints; `open` is the root's bindable `open` prop
+    /// (a context menu's), told when the menu opens or closes natively.
+    fn report(&self, cx: &mut EventCx<'_>, spec: &KindSpec, open: Option<PropId>, out: Vec<MenuOut>) {
         for o in out {
+            cx.repaint = true;
             match o {
                 MenuOut::Opened(c) => {
-                    cx.mark(ChangeClass::Structure);
-                    cx.emit("open", id_record("menu", &self.model.get(c).id, None));
+                    if self.nav.levels.len() == 1
+                        && let Some(p) = open
+                    {
+                        cx.prop_changed(p);
+                    }
+                    emit(cx, spec, "open", vec![Value::str(&self.model.get(c).id)]);
                 }
                 MenuOut::Closed(c) => {
-                    cx.mark(ChangeClass::Structure);
-                    cx.emit("close", id_record("menu", &self.model.get(c).id, None));
+                    if !self.nav.is_open()
+                        && let Some(p) = open
+                    {
+                        cx.prop_changed(p);
+                    }
+                    emit(cx, spec, "close", vec![Value::str(&self.model.get(c).id)]);
                 }
-                MenuOut::Current(r) => {
-                    cx.mark(ChangeClass::Paint);
-                    cx.emit("hover", id_record("item", &self.model.get(r).id, None));
-                }
+                MenuOut::Current(r) => emit(cx, spec, "hover", vec![Value::str(&self.model.get(r).id)]),
                 MenuOut::Picked(Picked { activated, toggled }) => {
-                    cx.mark(ChangeClass::Paint);
                     for (id, c) in toggled {
-                        cx.emit("toggled", id_record("item", &id, Some(c)));
+                        emit(cx, spec, "toggled", vec![Value::str(&id), Value::Bool(c)]);
                     }
                     if let Some((id, c)) = activated {
-                        cx.emit("activate", id_record("item", &id, Some(c)));
+                        emit(cx, spec, "activate", vec![Value::str(&id), Value::Bool(c)]);
                     }
                 }
-                MenuOut::BarKeys(_) => cx.mark(ChangeClass::Paint),
+                MenuOut::BarKeys(_) => {}
             }
         }
     }
 
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
+    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event, spec: &KindSpec, open: Option<PropId>) -> Handled {
+        self.macos = platform(cx.policy) == Platform::Macos;
         if !self.enabled {
             return Handled::No;
         }
         let mut out = Vec::new();
         let h = match ev {
             Event::Pointer(p) => self.pointer(cx, p, &mut out),
+            Event::Hover(false) => {
+                self.hover_left();
+                cx.repaint = true;
+                Handled::No
+            }
             Event::Key(k) => {
                 if self.key(cx, k, &mut out) {
                     Handled::Yes
@@ -533,7 +646,7 @@ impl Menus {
                 self.hover_delay(cx, &mut out);
                 Handled::No
             }
-            Event::Focus(false) => {
+            Event::Focus { gained: false, .. } => {
                 if self.nav.is_open() || self.nav.bar_keys {
                     self.close(&mut out);
                 }
@@ -543,35 +656,58 @@ impl Menus {
         };
         if self.nav.is_open() {
             // the open menu holds the keyboard
-            cx.focus = true;
+            cx.focus_request = Some(true);
         }
-        self.report(cx, out);
+        self.report(cx, spec, open, out);
         h
     }
-}
 
-fn id_record(key: &str, id: &str, checked: Option<bool>) -> Value {
-    let mut fs = vec![(key.to_string(), Value::Str(id.to_string()))];
-    if let Some(c) = checked {
-        fs.push(("checked".to_string(), Value::Bool(c)));
+    /// The keys the root takes while it has focus.
+    fn claims(&self, key: Key, m: Modifiers) -> bool {
+        if self.nav.is_open() || self.nav.bar_keys {
+            return matches!(key, Key::ArrowUp | Key::ArrowDown | Key::ArrowLeft | Key::ArrowRight | Key::Home | Key::End | Key::Enter | Key::Space | Key::Escape);
+        }
+        key == Key::F10 || (!self.bar && key == Key::Menu) || (self.bar && m.contains(Modifiers::ALT))
     }
-    Value::Record(fs)
 }
 
-/// Underlines the mnemonic letter of `label` (at byte `at`) recorded at `origin`.
-fn underline(list: &mut DisplayList, labels: &mut dyn Labels, label: &str, at: Option<usize>, origin: Point, size: f32, color: Color) {
-    let Some(at) = at else { return };
-    let Some(ch) = label[at..].chars().next() else { return };
-    let x0 = origin.x + labels.measure(&label[..at], size, None).w;
-    let x1 = origin.x + labels.measure(&label[..at + ch.len_utf8()], size, None).w;
-    let y = origin.y + size * 1.15;
-    draw::line(list, Point::new(x0, y), Point::new(x1, y), 1.0, color);
+/// A straight line of `width` in `color`.
+pub(crate) fn stroke(pc: &mut PaintCx, from: Point, to: Point, width: f32, color: Color) {
+    let ink = Rect::new(from.x.min(to.x), from.y.min(to.y), from.x.max(to.x), from.y.max(to.y)).inflate(width);
+    pc.push(Prim::Line(Line { from, to, width, color, cap: LineCap::Butt, dash: None, wavy: false }), ink);
+}
+
+/// A filled dot of radius `r` at `c` (a radio item's mark).
+fn dot(pc: &mut PaintCx, c: Point, r: f32, color: Color) {
+    let rect = Rect::new(c.x - r, c.y - r, c.x + r, c.y + r);
+    pc.push(
+        Prim::Quad(presto_base::display::Quad {
+            rect,
+            radii: presto_base::geom::Corners::all(r),
+            fill: presto_base::color::Fill::Solid(color),
+            border_widths: presto_base::geom::Insets::ZERO,
+            border_color: Color::TRANSPARENT,
+            border_style: Default::default(),
+        }),
+        rect,
+    );
 }
 
 /// A check mark centred near `c`.
-fn check_mark(list: &mut DisplayList, c: Point, color: Color) {
-    draw::line(list, Point::new(c.x - 4.0, c.y), Point::new(c.x - 1.0, c.y + 3.0), 1.5, color);
-    draw::line(list, Point::new(c.x - 1.0, c.y + 3.0), Point::new(c.x + 5.0, c.y - 4.0), 1.5, color);
+pub(crate) fn check_mark(pc: &mut PaintCx, c: Point, color: Color) {
+    stroke(pc, Point::new(c.x - 4.0, c.y), Point::new(c.x - 1.0, c.y + 3.0), 1.5, color);
+    stroke(pc, Point::new(c.x - 1.0, c.y + 3.0), Point::new(c.x + 5.0, c.y - 4.0), 1.5, color);
+}
+
+/// Underlines the mnemonic letter of `label` (at byte `at`) painted in `text_rect` under `s`.
+fn underline(pc: &mut PaintCx, s: &StyleView, label: &str, at: Option<usize>, text_rect: Rect) {
+    let Some(at) = at else { return };
+    let Some(ch) = label[at..].chars().next() else { return };
+    let x0 = text_rect.min.x + paint::measure_text(pc.text, s, &label[..at], None).w;
+    let x1 = text_rect.min.x + paint::measure_text(pc.text, s, &label[..at + ch.len_utf8()], None).w;
+    let y = text_rect.max.y - 1.0;
+    let color = s.color("color").unwrap_or(Color::BLACK);
+    stroke(pc, Point::new(x0, y), Point::new(x1, y), 1.0, color);
 }
 
 /// Whether the pointer at `p`, moving by `delta`, heads into `sub` (the triangle from where it was
@@ -593,49 +729,72 @@ fn in_triangle(p: Point, a: Point, b: Point, c: Point) -> bool {
     !(neg && pos)
 }
 
-// ---- the kinds ----
+// ---- the roots ----
 
-const ROOT_SIGNALS: &[shim::SignalSpec] = &[
-    signal("activate", false, false),
-    signal("toggled", true, false),
-    signal("hover", true, false),
-    signal("open", true, false),
-    signal("close", true, false),
+/// The roots' signals. `activate` is not cancelable: the pick (check and radio state) is applied
+/// before listeners run.
+pub const ROOT_SIGNALS: &[SignalSpec] = &[
+    SignalSpec::new("activate", &[("item", ValueType::Str), ("checked", ValueType::Bool)], "An item was picked (its id and check state after the pick)."),
+    SignalSpec::new("toggled", &[("item", ValueType::Str), ("checked", ValueType::Bool)], "A check or radio item changed state (each item of a radio group that did)."),
+    SignalSpec::new("hover", &[("item", ValueType::Str)], "The current row changed (pointer or keys)."),
+    SignalSpec::new("open", &[("menu", ValueType::Str)], "A menu level opened."),
+    SignalSpec::new("close", &[("menu", ValueType::Str)], "A menu level closed."),
 ];
 
-static MENU_BAR_SPEC: KindSpec = KindSpec {
-    name: "menu-bar",
-    props: &[prop("enabled", PropType::Bool, ChangeClass::Paint)],
+pub mod bar_props {
+    use crate::kind_props;
+    kind_props! {
+        /// `menu-bar`'s props.
+        pub struct BarProps;
+        enabled "enabled": bool = Bool(true) ; Bool, Paint;
+    }
+}
+
+pub mod context_props {
+    use crate::kind_props;
+    kind_props! {
+        /// `context-menu`'s props.
+        pub struct ContextProps;
+        enabled "enabled": bool = Bool(true) ; Bool, Paint;
+        /// Shown; set natively when it opens or closes (`bind:open`).
+        open "open": bool = Bool(false) ; Bool, Structure, bindable;
+    }
+}
+
+pub static MENU_BAR_SPEC: KindSpec = KindSpec {
+    tag: "menu-bar",
+    props: bar_props::BarProps::SPECS,
     signals: ROOT_SIGNALS,
-    slots: &[""],
+    slots: &[],
+    children: true,
     role: accesskit::Role::MenuBar,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
 };
 
-static CONTEXT_MENU_SPEC: KindSpec = KindSpec {
-    name: "context-menu",
-    props: &[prop("enabled", PropType::Bool, ChangeClass::Paint), prop("open", PropType::Bool, ChangeClass::Structure)],
+pub static CONTEXT_MENU_SPEC: KindSpec = KindSpec {
+    tag: "context-menu",
+    props: context_props::ContextProps::SPECS,
     signals: ROOT_SIGNALS,
-    slots: &[""],
+    slots: &[],
+    children: true,
     role: accesskit::Role::Menu,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
 };
 
 /// `menu-bar`: a row of titles, each opening its menu below it.
 #[derive(Clone, Debug)]
 pub struct MenuBar {
+    pub props: bar_props::BarProps,
     pub menus: Menus,
 }
 
 impl Default for MenuBar {
     fn default() -> Self {
-        MenuBar { menus: Menus::new(true) }
-    }
-}
-
-impl MenuBar {
-    /// The bar's height for `palette`.
-    pub fn height(palette: &Palette) -> f32 {
-        let mt = MenuMetrics::from_palette(palette);
-        mt.row_h - 4.0 + mt.bar_pad * 2.0
+        MenuBar { props: Default::default(), menus: Menus::new(true) }
     }
 }
 
@@ -643,28 +802,42 @@ impl Kind for MenuBar {
     fn spec() -> &'static KindSpec {
         &MENU_BAR_SPEC
     }
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "enabled" => {
-                self.menus.enabled = value.as_bool().ok_or(PropError::Invalid("bool"))?;
-                if !self.menus.enabled {
-                    self.menus.close(&mut Vec::new());
-                }
-                Ok(ChangeClass::Paint)
-            }
-            _ => Err(PropError::Unknown),
-        }
+    fn kind_spec(&self) -> &'static KindSpec {
+        &MENU_BAR_SPEC
     }
-    fn record(&self, cx: &mut RecordCx<'_>) {
-        self.menus.record_bar(cx.list, cx.palette, cx.labels);
-    }
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        self.menus.event(cx, ev)
-    }
-    fn a11y(&self, node: &mut accesskit::Node) {
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        self.props.set(prop, v)?;
+        self.menus.enabled = self.props.enabled;
         if !self.menus.enabled {
-            node.set_disabled();
+            self.menus.close(&mut Vec::new());
         }
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
+    }
+    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        let s = self.menus.bar_size(cx.text, &cx.style);
+        taffy::Size { width: s.w, height: s.h }
+    }
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.menus.prepare(cx.text, &cx.style);
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        let style = Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        self.menus.record_bar(&mut PaintCx::of(cx), &style);
+    }
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        self.menus.event(cx, ev, &MENU_BAR_SPEC, None)
+    }
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::MenuBar);
+        if !self.menus.enabled {
+            cx.node.set_disabled();
+        }
+    }
+    fn claims_key(&self, key: Key, m: Modifiers) -> bool {
+        self.menus.claims(key, m)
     }
 }
 
@@ -672,12 +845,13 @@ impl Kind for MenuBar {
 /// the Menu key or `open = true`.
 #[derive(Clone, Debug)]
 pub struct ContextMenu {
+    pub props: context_props::ContextProps,
     pub menus: Menus,
 }
 
 impl Default for ContextMenu {
     fn default() -> Self {
-        ContextMenu { menus: Menus::new(false) }
+        ContextMenu { props: Default::default(), menus: Menus::new(false) }
     }
 }
 
@@ -686,8 +860,13 @@ impl ContextMenu {
     pub fn context_click(&mut self, cx: &mut EventCx<'_>, p: Point) {
         let mut out = Vec::new();
         self.menus.open_at(p, false, &mut out);
-        cx.focus = true;
-        self.menus.report(cx, out);
+        cx.focus_request = Some(true);
+        self.sync_open();
+        self.menus.report(cx, &CONTEXT_MENU_SPEC, Some(context_props::P::open.id()), out);
+    }
+
+    fn sync_open(&mut self) {
+        self.props.open = self.menus.nav.is_open();
     }
 }
 
@@ -695,191 +874,218 @@ impl Kind for ContextMenu {
     fn spec() -> &'static KindSpec {
         &CONTEXT_MENU_SPEC
     }
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "enabled" => {
-                self.menus.enabled = value.as_bool().ok_or(PropError::Invalid("bool"))?;
-                Ok(ChangeClass::Paint)
-            }
-            "open" => {
-                let open = value.as_bool().ok_or(PropError::Invalid("bool"))?;
-                let mut out = Vec::new();
-                if open && !self.menus.nav.is_open() {
-                    let p = self.menus.point.unwrap_or(Point::ZERO);
-                    self.menus.open_at(p, false, &mut out);
-                } else if !open {
-                    self.menus.close(&mut out);
-                }
-                Ok(ChangeClass::Structure)
-            }
-            _ => Err(PropError::Unknown),
+    fn kind_spec(&self) -> &'static KindSpec {
+        &CONTEXT_MENU_SPEC
+    }
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        self.props.set(prop, v)?;
+        self.menus.enabled = self.props.enabled;
+        let mut out = Vec::new();
+        if self.props.open && !self.menus.nav.is_open() && self.menus.enabled {
+            let p = self.menus.point.unwrap_or(Point::ZERO);
+            self.menus.open_at(p, false, &mut out);
+        } else if !self.props.open || !self.menus.enabled {
+            self.menus.close(&mut out);
         }
+        self.sync_open();
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
+    }
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.menus.prepare(cx.text, &cx.style);
     }
     /// Out of flow: its levels are recorded into the overlay stack ([`Menus::record_levels`]).
-    fn record(&self, _cx: &mut RecordCx<'_>) {}
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        self.menus.event(cx, ev)
+    fn record(&self, _cx: &mut RecordCx) {}
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        let h = self.menus.event(cx, ev, &CONTEXT_MENU_SPEC, Some(context_props::P::open.id()));
+        self.sync_open();
+        h
     }
-    fn a11y(&self, node: &mut accesskit::Node) {
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::Menu);
         if !self.menus.enabled {
-            node.set_disabled();
+            cx.node.set_disabled();
         }
+    }
+    fn claims_key(&self, key: Key, m: Modifiers) -> bool {
+        self.menus.claims(key, m)
     }
 }
 
 // ---- the entries ----
 
-static MENU_SPEC: KindSpec = KindSpec {
-    name: "menu",
-    props: &[
-        prop("label", PropType::Str, ChangeClass::Layout),
-        prop("enabled", PropType::Bool, ChangeClass::Paint),
-        prop("visible", PropType::Bool, ChangeClass::Structure),
-    ],
-    signals: &[],
-    slots: &[""],
-    role: accesskit::Role::MenuItem,
-};
-
-static MENU_ITEM_SPEC: KindSpec = KindSpec {
-    name: "menu-item",
-    props: &[
-        prop("label", PropType::Str, ChangeClass::Layout),
-        prop("shortcut", PropType::Str, ChangeClass::Layout),
-        prop("enabled", PropType::Bool, ChangeClass::Paint),
-        prop("visible", PropType::Bool, ChangeClass::Structure),
-        prop("checkable", PropType::Bool, ChangeClass::Layout),
-        prop("checked", PropType::Bool, ChangeClass::Paint),
-        prop("group", PropType::Str, ChangeClass::Layout),
-    ],
-    signals: &[signal("activate", false, false), signal("toggled", true, false), signal("hover", true, false)],
-    slots: &[],
-    role: accesskit::Role::MenuItem,
-};
-
-static MENU_SEPARATOR_SPEC: KindSpec = KindSpec {
-    name: "menu-separator",
-    props: &[prop("visible", PropType::Bool, ChangeClass::Structure)],
-    signals: &[],
-    slots: &[],
-    role: accesskit::Role::GenericContainer,
-};
-
-/// The props of one menu entry; the root builds its [`MenuModel`] from its entry children (the
-/// tree walk is `presto-core`'s; [`MenuModel::add`] takes these entries).
-#[derive(Clone, Debug, PartialEq)]
-pub struct MenuEntry {
-    pub entry: super::menu_model::Entry,
-    group: String,
-    checkable: bool,
+pub mod menu_props {
+    use crate::kind_props;
+    kind_props! {
+        /// `menu`'s props.
+        pub struct MenuProps;
+        /// The caption; `&` marks the mnemonic (`&File`).
+        label "label": String = Str("") ; Str, Layout;
+        enabled "enabled": bool = Bool(true) ; Bool, Paint;
+        visible "visible": bool = Bool(true) ; Bool, Structure;
+    }
 }
 
-impl MenuEntry {
-    pub fn menu() -> MenuEntry {
-        MenuEntry { entry: super::menu_model::Entry::menu("", ""), group: String::new(), checkable: false }
+pub mod item_props {
+    use crate::kind_props;
+    kind_props! {
+        /// `menu-item`'s props.
+        pub struct ItemProps;
+        /// The caption; `&` marks the mnemonic.
+        label "label": String = Str("") ; Str, Layout;
+        /// The accelerator as authored (`Primary+S`), shown the platform's way.
+        shortcut "shortcut": String = Str("") ; Str, Layout;
+        enabled "enabled": bool = Bool(true) ; Bool, Paint;
+        visible "visible": bool = Bool(true) ; Bool, Structure;
+        /// A check item.
+        checkable "checkable": bool = Bool(false) ; Bool, Layout;
+        /// Set natively when picked (`bind:checked`).
+        checked "checked": bool = Bool(false) ; Bool, Paint, bindable;
+        /// A radio item of this group (non-empty).
+        group "group": String = Str("") ; Str, Layout;
     }
-    pub fn item() -> MenuEntry {
-        MenuEntry { entry: super::menu_model::Entry::item("", ""), group: String::new(), checkable: false }
-    }
-    pub fn separator() -> MenuEntry {
-        MenuEntry { entry: super::menu_model::Entry::separator(), group: String::new(), checkable: false }
-    }
+}
 
-    fn sync_check(&mut self) {
-        use super::menu_model::Check;
-        self.entry.check = if !self.group.is_empty() {
-            Check::Radio(self.group.clone())
-        } else if self.checkable {
+pub mod separator_props {
+    use crate::kind_props;
+    kind_props! {
+        /// `menu-separator`'s props.
+        pub struct SeparatorProps;
+        visible "visible": bool = Bool(true) ; Bool, Structure;
+    }
+}
+
+pub static MENU_SPEC: KindSpec = KindSpec {
+    tag: "menu",
+    props: menu_props::MenuProps::SPECS,
+    signals: &[],
+    slots: &[],
+    children: true,
+    role: accesskit::Role::MenuItem,
+    name_from: NameFrom::Prop("label"),
+    text_prop: None,
+    focusable: false,
+};
+
+pub static MENU_ITEM_SPEC: KindSpec = KindSpec {
+    tag: "menu-item",
+    props: item_props::ItemProps::SPECS,
+    signals: &[],
+    slots: &[],
+    children: false,
+    role: accesskit::Role::MenuItem,
+    name_from: NameFrom::Prop("label"),
+    text_prop: Some("label"),
+    focusable: false,
+};
+
+pub static MENU_SEPARATOR_SPEC: KindSpec = KindSpec {
+    tag: "menu-separator",
+    props: separator_props::SeparatorProps::SPECS,
+    signals: &[],
+    slots: &[],
+    children: false,
+    role: accesskit::Role::GenericContainer,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
+};
+
+/// The entry's AccessKit properties (`menu`, `menu-item` and `menu-separator` share them).
+pub fn entry_node(e: &Entry, node: &mut accesskit::Node) {
+    node.set_role(match (&e.kind, &e.check) {
+        (EntryKind::Separator, _) => accesskit::Role::GenericContainer,
+        (_, Check::Check) => accesskit::Role::MenuItemCheckBox,
+        (_, Check::Radio(_)) => accesskit::Role::MenuItemRadio,
+        _ => accesskit::Role::MenuItem,
+    });
+    if e.kind == EntryKind::Separator {
+        return;
+    }
+    node.set_label(e.label.as_str());
+    if !e.enabled {
+        node.set_disabled();
+    }
+    if e.check != Check::None {
+        node.set_toggled(accesskit::Toggled::from(e.checked));
+    }
+    if e.kind == EntryKind::Menu {
+        node.set_has_popup(accesskit::HasPopup::Menu);
+    }
+    if !e.shortcut.is_empty() {
+        node.set_keyboard_shortcut(shortcut_text(&e.shortcut, false).as_str());
+    }
+}
+
+/// `menu`: a bar title or a submenu row. The root builds its [`MenuModel`] from its entry children
+/// (the tree walk is presto-core's; [`MenuModel::add`] takes their [`Entry`]s).
+#[derive(Clone, Debug, PartialEq)]
+pub struct MenuKind {
+    pub props: menu_props::MenuProps,
+    pub entry: Entry,
+}
+
+/// `menu-item`: an action, check or radio row.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MenuItemKind {
+    pub props: item_props::ItemProps,
+    pub entry: Entry,
+}
+
+/// `menu-separator`.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MenuSeparatorKind {
+    pub props: separator_props::SeparatorProps,
+    pub entry: Entry,
+}
+
+impl Default for MenuKind {
+    fn default() -> Self {
+        MenuKind { props: Default::default(), entry: Entry::menu("", "") }
+    }
+}
+impl Default for MenuItemKind {
+    fn default() -> Self {
+        MenuItemKind { props: Default::default(), entry: Entry::item("", "") }
+    }
+}
+impl Default for MenuSeparatorKind {
+    fn default() -> Self {
+        MenuSeparatorKind { props: Default::default(), entry: Entry::separator() }
+    }
+}
+
+impl MenuKind {
+    fn sync(&mut self) {
+        self.entry.set_label(&self.props.label);
+        self.entry.enabled = self.props.enabled;
+        self.entry.visible = self.props.visible;
+    }
+}
+
+impl MenuItemKind {
+    fn sync(&mut self) {
+        let p = &self.props;
+        self.entry.set_label(&p.label);
+        self.entry.shortcut = p.shortcut.clone();
+        self.entry.enabled = p.enabled;
+        self.entry.visible = p.visible;
+        self.entry.checked = p.checked;
+        self.entry.check = if !p.group.is_empty() {
+            Check::Radio(p.group.clone())
+        } else if p.checkable {
             Check::Check
         } else {
             Check::None
         };
     }
-
-    fn spec_for(&self) -> &'static KindSpec {
-        match self.entry.kind {
-            EntryKind::Menu => &MENU_SPEC,
-            EntryKind::Separator => &MENU_SEPARATOR_SPEC,
-            _ => &MENU_ITEM_SPEC,
-        }
-    }
-
-    /// Applies a prop write (`menu`, `menu-item` and `menu-separator` share it).
-    pub fn set(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        let spec = self.spec_for().prop(name).ok_or(PropError::Unknown)?;
-        let b = || value.as_bool().ok_or(PropError::Invalid("bool"));
-        let s = || value.as_str().map(str::to_string).ok_or(PropError::Invalid("string"));
-        match name {
-            "label" => self.entry.set_label(&s()?),
-            "shortcut" => self.entry.shortcut = s()?,
-            "enabled" => self.entry.enabled = b()?,
-            "visible" => self.entry.visible = b()?,
-            "checked" => self.entry.checked = b()?,
-            "checkable" => {
-                self.checkable = b()?;
-                self.sync_check();
-            }
-            "group" => {
-                self.group = s()?;
-                self.sync_check();
-            }
-            _ => return Err(PropError::Unknown),
-        }
-        Ok(spec.change)
-    }
-
-    /// The entry's AccessKit properties.
-    pub fn node(&self, node: &mut accesskit::Node) {
-        use super::menu_model::Check;
-        let e = &self.entry;
-        node.set_role(match (&e.kind, &e.check) {
-            (EntryKind::Separator, _) => accesskit::Role::GenericContainer,
-            (_, Check::Check) => accesskit::Role::MenuItemCheckBox,
-            (_, Check::Radio(_)) => accesskit::Role::MenuItemRadio,
-            _ => accesskit::Role::MenuItem,
-        });
-        if e.kind == EntryKind::Separator {
-            return;
-        }
-        node.set_label(e.label.as_str());
-        if !e.enabled {
-            node.set_disabled();
-        }
-        if e.check != Check::None {
-            node.set_toggled(accesskit::Toggled::from(e.checked));
-        }
-        if e.kind == EntryKind::Menu {
-            node.set_has_popup(accesskit::HasPopup::Menu);
-        }
-        if !e.shortcut.is_empty() {
-            node.set_keyboard_shortcut(shortcut_text(&e.shortcut, false).as_str());
-        }
-    }
 }
 
-/// `menu`: a bar title or a submenu row.
-#[derive(Clone, Debug, PartialEq)]
-pub struct MenuKind(pub MenuEntry);
-/// `menu-item`: an action, check or radio row.
-#[derive(Clone, Debug, PartialEq)]
-pub struct MenuItemKind(pub MenuEntry);
-/// `menu-separator`.
-#[derive(Clone, Debug, PartialEq)]
-pub struct MenuSeparatorKind(pub MenuEntry);
-
-impl Default for MenuKind {
-    fn default() -> Self {
-        MenuKind(MenuEntry::menu())
-    }
-}
-impl Default for MenuItemKind {
-    fn default() -> Self {
-        MenuItemKind(MenuEntry::item())
-    }
-}
-impl Default for MenuSeparatorKind {
-    fn default() -> Self {
-        MenuSeparatorKind(MenuEntry::separator())
+impl MenuSeparatorKind {
+    fn sync(&mut self) {
+        self.entry.visible = self.props.visible;
     }
 }
 
@@ -889,13 +1095,21 @@ macro_rules! entry_kind {
             fn spec() -> &'static KindSpec {
                 &$spec
             }
-            fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-                self.0.set(name, value)
+            fn kind_spec(&self) -> &'static KindSpec {
+                &$spec
+            }
+            fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+                self.props.set(prop, v)?;
+                self.sync();
+                Ok(())
+            }
+            fn get_prop(&self, prop: PropId) -> Option<Value> {
+                self.props.get(prop)
             }
             /// Drawn by its root's levels.
-            fn record(&self, _cx: &mut RecordCx<'_>) {}
-            fn a11y(&self, node: &mut accesskit::Node) {
-                self.0.node(node)
+            fn record(&self, _cx: &mut RecordCx) {}
+            fn a11y(&self, cx: &mut A11yCx) {
+                entry_node(&self.entry, cx.node)
             }
         }
     };
@@ -906,14 +1120,23 @@ entry_kind!(MenuSeparatorKind, MENU_SEPARATOR_SPEC);
 
 #[cfg(test)]
 mod tests {
-    use super::super::menu_model::Entry;
-    use super::super::legacy::{FixedLabels, Policy};
     use super::*;
-    use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerType};
-    use presto_base::time::Span;
+    use crate::controls::testkit;
+    use crate::interact::{Native, Policy};
+    use crate::shim::testing::{MemResources, MonoShaper};
+    use presto_base::change::ChangeClass;
+    use presto_base::event::{KeyEvent, KeyLocation, PointerType};
 
     fn ms(n: u64) -> Time {
         Time(n * 1_000_000)
+    }
+
+    fn policy(os: Platform) -> Policy {
+        *Native::for_os(os).policy()
+    }
+
+    fn styles() -> Styles<'static> {
+        Styles { computed: None, parts: &[], state: StateBits::NONE, dark: true }
     }
 
     fn bar() -> MenuBar {
@@ -933,7 +1156,7 @@ mod tests {
     }
 
     fn prepare(b: &mut Menus) {
-        b.prepare(&mut FixedLabels, &Palette::default(), Os::Linux);
+        b.prepare(&mut MonoShaper, &styles());
     }
 
     fn ptr(phase: PointerPhase, p: Point) -> Event {
@@ -952,15 +1175,7 @@ mod tests {
     }
 
     fn key(k: Key) -> Event {
-        Event::Key(KeyEvent {
-            key: Some(k),
-            physical: 0,
-            text: None,
-            state: KeyState::Pressed,
-            repeat: false,
-            location: KeyLocation::Standard,
-            modifiers: Modifiers::default(),
-        })
+        Event::Key(KeyEvent { key: Some(k), physical: 0, text: None, state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::default() })
     }
 
     fn center(r: Rect) -> Point {
@@ -972,25 +1187,37 @@ mod tests {
         b.levels()[k].rows.iter().find(|(r, _)| *r == ix).unwrap().1
     }
 
-    fn send(b: &mut MenuBar, policy: &Policy, now: Time, ev: Event) -> (Handled, Vec<shim::Emitted>, Option<Time>) {
-        let mut cx = EventCx::new(now, Size::new(800.0, 30.0), policy);
-        let h = b.event(&mut cx, &ev);
+    type Signals = Vec<(&'static str, Vec<Value>)>;
+
+    /// Sends `ev` to `k` at `now`; returns what it handled, the signals by name and its wake-up.
+    fn send_to<K: Kind>(k: &mut K, policy: &Policy, now: Time, size: Size, ev: Event) -> (Handled, Signals, Option<Time>) {
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(now, size, &mut state, policy);
+        let h = k.event(&mut cx, &ev);
+        let spec = k.kind_spec();
+        let sig = cx.emitted.iter().map(|e| (spec.signals[e.signal.0 as usize].name, e.args.clone())).collect();
+        (h, sig, cx.wake)
+    }
+
+    fn send(b: &mut MenuBar, policy: &Policy, now: Time, ev: Event) -> (Handled, Signals, Option<Time>) {
+        let out = send_to(b, policy, now, Size::new(800.0, 30.0), ev);
         prepare(&mut b.menus);
-        (h, cx.emitted, cx.wake)
+        out
     }
 
     #[test]
     fn levels_are_placed_below_titles_and_beside_rows() {
         let mut b = bar();
         prepare(&mut b.menus);
-        let policy = Policy::for_os(Os::Linux);
+        let policy = policy(Platform::Linux);
         let file_title = b.menus.titles()[0].1;
         send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(file_title)));
         assert!(b.menus.nav.is_open());
         let l0 = b.menus.levels()[0].rect;
         assert_eq!(l0.min, Point::new(file_title.min.x, file_title.max.y + 2.0));
-        assert!(l0.width() >= 160.0);
+        assert!(l0.width() >= 160.0, "the surface's min-width");
         let rec = row(&b.menus, 0, "recent");
+        assert_eq!(rec.height(), 26.0, "the item's height");
         send(&mut b, &policy, ms(10), ptr(PointerPhase::Down, center(rec)));
         let l1 = b.menus.levels()[1].rect;
         assert_eq!(l1.min.x, rec.max.x, "right-start beside its row");
@@ -1001,7 +1228,7 @@ mod tests {
     fn hovering_switches_bar_menus_while_one_is_open() {
         let mut b = bar();
         prepare(&mut b.menus);
-        let policy = Policy::for_os(Os::Windows);
+        let policy = policy(Platform::Windows);
         let [(file, f), (edit, e)] = [b.menus.titles()[0], b.menus.titles()[1]];
         // hovering a title with nothing open opens nothing
         send(&mut b, &policy, ms(0), ptr(PointerPhase::Move, center(e)));
@@ -1011,7 +1238,7 @@ mod tests {
         assert_eq!(b.menus.nav.levels[0].container, file, "a release on the title is not a pick and keeps it open");
         let (_, sig, _) = send(&mut b, &policy, ms(5), ptr(PointerPhase::Move, center(e)));
         assert_eq!(b.menus.nav.levels[0].container, edit);
-        assert!(sig.iter().any(|s| s.signal == "close") && sig.iter().any(|s| s.signal == "open"));
+        assert!(sig.iter().any(|s| s.0 == "close") && sig.iter().any(|s| s.0 == "open"));
         // pressing the open title closes it
         send(&mut b, &policy, ms(10), ptr(PointerPhase::Down, center(e)));
         assert!(!b.menus.nav.is_open());
@@ -1021,7 +1248,8 @@ mod tests {
     fn submenus_open_after_the_delay_and_the_safe_triangle_holds() {
         let mut b = bar();
         prepare(&mut b.menus);
-        let policy = Policy { submenu_delay: Span::from_millis(225), ..Policy::for_os(Os::Linux) };
+        let mut policy = policy(Platform::Linux);
+        policy.submenu_delay_ms = 225;
         let f = b.menus.titles()[0].1;
         send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(f)));
         let rec = row(&b.menus, 0, "recent");
@@ -1052,7 +1280,7 @@ mod tests {
     fn macos_opens_submenus_at_once() {
         let mut b = bar();
         prepare(&mut b.menus);
-        let policy = Policy::for_os(Os::MacOs);
+        let policy = policy(Platform::Macos);
         let title = b.menus.titles()[0].1;
         send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(title)));
         let rec = row(&b.menus, 0, "recent");
@@ -1064,15 +1292,15 @@ mod tests {
     fn a_release_on_an_item_picks_and_a_press_outside_dismisses() {
         let mut b = bar();
         prepare(&mut b.menus);
-        let policy = Policy::for_os(Os::Windows);
+        let policy = policy(Platform::Windows);
         let title = b.menus.titles()[0].1;
         send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(title)));
         let save = row(&b.menus, 0, "save");
         send(&mut b, &policy, ms(10), ptr(PointerPhase::Move, center(save)));
         let (_, sig, _) = send(&mut b, &policy, ms(20), ptr(PointerPhase::Up, center(save)));
         assert!(!b.menus.nav.is_open());
-        let act = sig.iter().find(|s| s.signal == "activate").unwrap();
-        assert_eq!(act.detail.field("item"), Some(&Value::Str("save".into())));
+        let act = sig.iter().find(|s| s.0 == "activate").unwrap();
+        assert_eq!(act.1[0], Value::str("save"));
         let title = b.menus.titles()[0].1;
         send(&mut b, &policy, ms(30), ptr(PointerPhase::Down, center(title)));
         let (h, _, _) = send(&mut b, &policy, ms(40), ptr(PointerPhase::Down, Point::new(700.0, 500.0)));
@@ -1084,9 +1312,11 @@ mod tests {
     fn keys_reach_the_bar_menus() {
         let mut b = bar();
         prepare(&mut b.menus);
-        let policy = Policy::for_os(Os::Linux);
+        let policy = policy(Platform::Linux);
+        assert!(b.claims_key(Key::F10, Modifiers::default()));
         send(&mut b, &policy, ms(0), key(Key::F10));
         assert!(b.menus.nav.bar_keys);
+        assert!(b.claims_key(Key::ArrowDown, Modifiers::default()));
         send(&mut b, &policy, ms(0), key(Key::ArrowDown));
         assert_eq!(b.menus.nav.current(), b.menus.model.find("new"));
         send(&mut b, &policy, ms(0), key(Key::ArrowDown));
@@ -1100,7 +1330,7 @@ mod tests {
         send(&mut b, &policy, ms(0), key(Key::ArrowRight));
         assert_eq!(b.menus.nav.levels[0].container, b.menus.model.find("edit").unwrap(), "Right on a plain row: next menu");
         let (_, sig, _) = send(&mut b, &policy, ms(0), key(Key::Enter));
-        assert!(sig.iter().any(|s| s.signal == "activate" && s.detail.field("item") == Some(&Value::Str("undo".into()))));
+        assert!(sig.iter().any(|s| s.0 == "activate" && s.1[0] == Value::str("undo")));
     }
 
     #[test]
@@ -1109,51 +1339,72 @@ mod tests {
         c.menus.model.add(MenuModel::ROOT, Entry::item("cut", "Cu&t").shortcut("Primary+X"));
         c.menus.model.add(MenuModel::ROOT, Entry::item("copy", "&Copy"));
         c.menus.bounds = Rect::new(0.0, 0.0, 400.0, 300.0);
-        let policy = Policy::for_os(Os::Windows);
-        let mut cx = EventCx::new(ms(0), Size::new(400.0, 300.0), &policy);
+        let policy = policy(Platform::Windows);
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(ms(0), Size::new(400.0, 300.0), &mut state, &policy);
         c.context_click(&mut cx, Point::new(390.0, 290.0));
-        assert!(cx.emitted.iter().any(|s| s.signal == "open"));
+        let open = CONTEXT_MENU_SPEC.signal("open").unwrap();
+        assert!(cx.emitted.iter().any(|s| s.signal == open));
+        assert_eq!(cx.changed, vec![context_props::P::open.id()], "`bind:open` is told");
+        assert!(c.props.open);
         prepare(&mut c.menus);
         let r = c.menus.levels()[0].rect;
         assert_eq!(r.max.y, 290.0 - 2.0, "flipped above the point");
         assert_eq!(r.max.x, 400.0, "shifted inside");
         // the release of the opening click right there is not a pick
-        let mut cx = EventCx::new(ms(5), Size::new(400.0, 300.0), &policy);
-        c.event(&mut cx, &ptr(PointerPhase::Up, Point::new(390.0, 290.0)));
+        send_to(&mut c, &policy, ms(5), Size::new(400.0, 300.0), ptr(PointerPhase::Up, Point::new(390.0, 290.0)));
         assert!(c.menus.nav.is_open());
         // Shift+F10 opens it from the keyboard with its first row current
         let mut c2 = ContextMenu::default();
         c2.menus.model.add(MenuModel::ROOT, Entry::item("x", "x"));
-        let mut cx = EventCx::new(ms(0), Size::new(10.0, 10.0), &policy);
-        let ev = Event::Key(KeyEvent {
-            key: Some(Key::F10),
-            physical: 0,
-            text: None,
-            state: KeyState::Pressed,
-            repeat: false,
-            location: KeyLocation::Standard,
-            modifiers: Modifiers::SHIFT,
-        });
-        assert_eq!(c2.event(&mut cx, &ev), Handled::Yes);
+        let ev = Event::Key(KeyEvent { key: Some(Key::F10), physical: 0, text: None, state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::SHIFT });
+        let (h, _, _) = send_to(&mut c2, &policy, ms(0), Size::new(10.0, 10.0), ev);
+        assert_eq!(h, Handled::Yes);
         assert_eq!(c2.menus.nav.current(), c2.menus.model.find("x"));
+    }
+
+    #[test]
+    fn levels_record_surface_rows_and_shortcuts() {
+        let mut b = bar();
+        prepare(&mut b.menus);
+        let policy = policy(Platform::Linux);
+        let f = b.menus.titles()[0].1;
+        send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(f)));
+        send(&mut b, &policy, ms(10), ptr(PointerPhase::Move, center(row(&b.menus, 0, "new"))));
+        let mut res = MemResources::default();
+        let lists = b.menus.record_levels(&mut MonoShaper, &mut res, &styles(), 1.0);
+        assert_eq!(lists.len(), 1);
+        let kinds = testkit::kinds(&lists[0]);
+        // the popup shadow and the surface, then the current row's fill
+        assert_eq!(&kinds[..3], ["shadow", "quad", "quad"]);
+        assert!(kinds.contains(&"line"), "the separator");
+        assert!(kinds.iter().filter(|k| **k == "glyphs").count() >= 4, "labels and the shortcut");
+        // the bar's open title has its fill
+        let (bar_list, _) = testkit::record(&b, Size::new(800.0, 30.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&bar_list)[0], "quad");
     }
 
     #[test]
     fn entries_take_props_and_describe_themselves() {
         let mut it = MenuItemKind::default();
-        assert_eq!(it.set_prop("label", &Value::Str("&Wrap".into())), Ok(ChangeClass::Layout));
-        assert_eq!(it.set_prop("checkable", &Value::Bool(true)), Ok(ChangeClass::Layout));
-        assert_eq!(it.set_prop("checked", &Value::Bool(true)), Ok(ChangeClass::Paint));
-        assert_eq!(it.set_prop("nope", &Value::Bool(true)), Err(PropError::Unknown));
-        assert_eq!(it.0.entry.label, "Wrap");
-        assert_eq!(it.0.entry.mnemonic, Some('w'));
-        let mut node = accesskit::Node::new(accesskit::Role::Unknown);
-        it.a11y(&mut node);
+        let spec = MenuItemKind::spec();
+        let label = spec.prop("label").unwrap();
+        assert_eq!(spec.prop_spec(label).unwrap().change, ChangeClass::Layout);
+        assert_eq!(spec.prop_spec(spec.prop("checked").unwrap()).unwrap().change, ChangeClass::Paint);
+        assert!(spec.prop_spec(spec.prop("checked").unwrap()).unwrap().bindable);
+        it.set_prop(label, &Value::str("&Wrap")).unwrap();
+        it.set_prop(spec.prop("checkable").unwrap(), &Value::Bool(true)).unwrap();
+        it.set_prop(spec.prop("checked").unwrap(), &Value::Bool(true)).unwrap();
+        assert!(it.set_prop(label, &Value::Bool(true)).is_err(), "type-checked");
+        assert!(spec.prop("nope").is_none());
+        assert_eq!(it.entry.label, "Wrap");
+        assert_eq!(it.entry.mnemonic, Some('w'));
+        let node = testkit::a11y(&it, StateBits::NONE, Size::new(100.0, 26.0));
         assert_eq!(node.role(), accesskit::Role::MenuItemCheckBox);
         assert_eq!(node.toggled(), Some(accesskit::Toggled::True));
-        let mut sep = MenuSeparatorKind::default();
-        assert_eq!(sep.set_prop("label", &Value::Str("x".into())), Err(PropError::Unknown));
-        assert_eq!(MenuItemKind::spec().signal("activate").map(|s| s.passive), Some(false));
+        assert!(MenuSeparatorKind::spec().prop("label").is_none());
+        let activate = &ROOT_SIGNALS[MENU_BAR_SPEC.signal("activate").unwrap().0 as usize];
+        assert!(!activate.cancelable, "the pick is applied before listeners run");
     }
 
     #[test]

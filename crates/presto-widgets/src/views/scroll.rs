@@ -11,7 +11,7 @@
 //!   event). A new gesture chains. A wheel without phases latches per burst
 //!   ([`WHEEL_LATCH_TIMEOUT`]).
 //! - [`ScrollArea`]: the kind. Wheel steps animate per OS through
-//!   [`shim::scroll_physics`](super::legacy::scroll_physics) (Chromium's curve on Windows and Linux,
+//!   [`shim::scroll_physics`](super::shim::scroll_physics) (Chromium's curve on Windows and Linux,
 //!   none on macOS), touchpads move 1:1 and fling on release where the OS has no momentum. While
 //!   every listener on the area is passive, each step is also a [`FastCommit::ScrollOffset`]: the
 //!   compositor moves the content without waiting for the UI phases. The offset is native-owned
@@ -19,17 +19,23 @@
 //! - [`Scrollbar`]: a standalone bar over `value` in `min..=max`, `page` sizing the thumb.
 //!
 //! The scroll offset belongs to the scroll property node (`ScrollNode`), not to the display list:
-//! [`ScrollArea::record`](Kind::record) draws only the bars over the content.
+//! [`ScrollArea::record`](Kind::record) draws only the bars over the content: `::part(thumb-x)` and
+//! `::part(thumb-y)` over [`THUMB_UA`] (`:hover` while the pointer is over the area, `:active` while
+//! dragged), and for classic bars their tracks `::part(scrollbar-x)`/`::part(scrollbar-y)` and the
+//! corner `::part(corner)` over [`TRACK_UA`]. Overlay bars fade by multiplying the thumb's alpha.
 
-use super::draw;
-use super::legacy::scroll_physics::{self, Fling, ScrollAnimation, SmoothScroll, VelocityTracker};
-use super::legacy::{
-    Event, EventCx, Handled, Kind, KindSpec, Kinetic, Os, Policy, PropError, PropType, RecordCx, Scrollbars, TrackClick, Value,
-    prop, signal,
-};
+use super::common::{self, platform, secs};
+use super::shim::fast;
+use super::shim::scroll_physics::{self, Fling, ScrollAnimation, SmoothScroll, VelocityTracker};
+use crate::interact::{Kinetic, Platform, Policy, Scrollbars, StateBits, TrackClick};
+use crate::kind_props;
+use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Styles, Value, ValueType};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
+use presto_base::color::{Color, Fill};
 use presto_base::commit::FastCommit;
+use presto_base::display::{Prim, Quad};
+use presto_base::geom::{Corners, Insets};
 use presto_base::event::{GesturePhase, KeyState, MouseButton, PointerPhase, WheelEvent};
 use presto_base::geom::{Point, Rect, Size, Vec2};
 use presto_base::ids::{InputSeq, NodeId, PropNodeId, Revision, WindowId};
@@ -44,6 +50,17 @@ pub const TRACK_REPEAT_FIRST: Span = Span::from_millis(300);
 pub const TRACK_REPEAT_EVERY: Span = Span::from_millis(50);
 /// Animation and repeat frames while the UI thread samples them (the compositor takes this over).
 const FRAME: Span = Span::from_micros(16_667);
+
+/// A thumb's UA sheet (`::part(thumb-x)`, `::part(thumb-y)`): VS Code's slider colours, by state.
+pub const THUMB_UA: Ua = Ua(&[
+    UaRule::base(&[("background-color", Token("scrollbar"))]),
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("scrollbar-hover"))]),
+    UaRule::when(StateBits::DRAGGING, &[("background-color", Token("scrollbar-active"))]),
+]);
+
+/// A classic bar's track and the corner between two bars (`::part(scrollbar-x)`,
+/// `::part(scrollbar-y)`, `::part(corner)`).
+pub const TRACK_UA: Ua = Ua(&[UaRule::base(&[("background-color", Token("bg"))])]);
 
 fn get(v: Vec2, d: usize) -> f32 {
     if d == 0 { v.x } else { v.y }
@@ -235,7 +252,7 @@ impl Scroller {
             return 1.0;
         }
         let t = (now - self.last_activity).as_secs_f64() as f32;
-        let (hold, fade) = (p.bar_hold.as_secs_f64() as f32, p.bar_fade.as_secs_f64() as f32);
+        let (hold, fade) = (p.scroll.bar_hold, p.scroll.bar_fade);
         if t <= hold {
             1.0
         } else if fade > 0.0 && t < hold + fade {
@@ -250,8 +267,8 @@ impl Scroller {
         if p.scrollbars == Scrollbars::Classic || self.hovered || self.drag.is_some() {
             return None;
         }
-        let hold_end = self.last_activity + p.bar_hold;
-        let fade_end = hold_end + p.bar_fade;
+        let hold_end = self.last_activity + secs(p.scroll.bar_hold);
+        let fade_end = hold_end + secs(p.scroll.bar_fade);
         if now < hold_end {
             Some(hold_end)
         } else if now < fade_end {
@@ -367,8 +384,8 @@ impl Scroller {
                         return (true, false);
                     }
                     if b.track.contains(pos) {
-                        let mut mode = policy.track_click;
-                        if policy.shift_track_click_inverts && shift {
+                        let mut mode = policy.scroll.track_click;
+                        if policy.scroll.shift_track_click_inverts && shift {
                             mode = if mode == TrackClick::Page { TrackClick::Jump } else { TrackClick::Page };
                         }
                         match mode {
@@ -491,24 +508,41 @@ impl Scroller {
         node.add_action(accesskit::Action::SetScrollOffset);
     }
 
-    /// Records the bars at `alpha` (thumbs; the track too for classic bars).
-    pub fn record_bars(&self, cx: &mut RecordCx<'_>, alpha: f32, classic: bool) {
+    /// Records the bars at `alpha` under the node's styles (thumbs; the tracks and the corner too
+    /// for classic bars). `thumb_names`/`track_names` are the parts per axis.
+    pub fn record_bars(&self, pc: &mut PaintCx, styles: &Styles, alpha: f32, classic: bool) {
         if alpha <= 0.0 {
             return;
         }
-        let pal = cx.palette;
+        let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark);
         let bars = self.bars();
-        for b in bars.iter().flatten() {
+        const THUMBS: [&str; 2] = ["thumb-x", "thumb-y"];
+        const TRACKS: [&str; 2] = ["scrollbar-x", "scrollbar-y"];
+        for (d, b) in bars.iter().enumerate() {
+            let Some(b) = b else { continue };
             if classic {
-                draw::fill(cx.list, b.track, 0.0, pal.surface_raised);
+                let track = host.part(styles.part_css(TRACKS[d]), TRACK_UA).in_state(StateBits::NONE);
+                paint::paint_box(pc, &track, b.track);
             }
-            let c = pal.scrollbar_thumb;
-            draw::fill(cx.list, b.thumb, 0.0, c.with_alpha(c.a * alpha));
+            let mut st = StateBits::NONE;
+            st.set(StateBits::HOVERED, self.hovered);
+            st.set(StateBits::DRAGGING, self.dragging(d));
+            st.set(StateBits::PRESSED, self.dragging(d));
+            let thumb = host.part(styles.part_css(THUMBS[d]), THUMB_UA).in_state(st);
+            let c = thumb.color("background-color").unwrap_or(Color::TRANSPARENT);
+            let c = c.with_alpha(c.a * alpha * thumb.opacity());
+            if c.a <= 0.0 {
+                continue;
+            }
+            let [tl, tr, br, bl] = thumb.radii();
+            let r = pc.snap_rect(b.thumb);
+            pc.push(Prim::Quad(Quad { rect: r, radii: Corners { tl, tr, br, bl }, fill: Fill::Solid(c), border_widths: Insets::ZERO, border_color: Color::TRANSPARENT, border_style: Default::default() }), r);
         }
         if classic
             && let (Some(x), Some(y)) = (bars[0], bars[1])
         {
-            draw::fill(cx.list, Rect::new(y.track.min.x, x.track.min.y, y.track.max.x, x.track.max.y), 0.0, pal.surface_raised);
+            let corner = host.part(styles.part_css("corner"), TRACK_UA).in_state(StateBits::NONE);
+            paint::paint_box(pc, &corner, Rect::new(y.track.min.x, x.track.min.y, y.track.max.x, x.track.max.y));
         }
     }
 }
@@ -642,9 +676,51 @@ impl ScrollLatch {
 
 // ---- scroll-area ----
 
+kind_props! {
+    /// The scroll area's props.
+    pub struct ScrollAreaProps;
+    /// The axes that scroll.
+    direction "direction": String = Enum("vertical") ; Enum(&["vertical", "horizontal", "both"]), Layout;
+    /// The offset (native-owned: `bind:scroll-x` observes it; a write JS made before it saw the
+    /// latest native scroll is refused).
+    scroll_x "scroll-x": f64 = F64(0.0) ; F64, Property, bindable;
+    scroll_y "scroll-y": f64 = F64(0.0) ; F64, Property, bindable;
+    /// At an edge, a new gesture goes on to the scroll area around (`auto`) or stays (`contain`, `none`).
+    overscroll_behavior "overscroll-behavior": String = Enum("auto") ; Enum(&["auto", "contain", "none"]), Property;
+    /// Every listener on the area is passive (core writes it from the listeners): each step is also a
+    /// fast commit.
+    passive "passive": bool = Bool(true) ; Bool, Property;
+}
+
+/// The signals, in spec order.
+pub const SIGNALS: &[SignalSpec] = &[
+    SignalSpec::new(
+        "scroll",
+        &[("x", ValueType::F64), ("y", ValueType::F64), ("by", ValueType::Str), ("revision", ValueType::I64)],
+        "The offset moved natively: by `wheel`, `kinetic`, `thumb`, `track`, `key`, `a11y` or `program`; `revision` is the native revision JS has then seen.",
+    ),
+    SignalSpec::new("scrollend", &[("x", ValueType::F64), ("y", ValueType::F64)], "A scroll gesture or animation stopped."),
+];
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "scroll-area",
+    props: ScrollAreaProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
+    role: accesskit::Role::ScrollView,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
+};
+
 /// A scrolling container (`QScrollArea`, a CSS `overflow: auto` box).
 #[derive(Clone, Debug)]
 pub struct ScrollArea {
+    pub props: ScrollAreaProps,
+    /// `prefers-reduced-motion`: wheel and key steps jump instead of animating (the host sets it;
+    /// the platform policy has no such field yet).
+    pub reduced_motion: bool,
     /// The axes that scroll.
     pub axes: [bool; 2],
     pub overscroll: OverscrollBehavior,
@@ -671,11 +747,16 @@ pub struct ScrollArea {
     focused: bool,
     /// Focus is inside the area (PageUp/PageDown/Home/End are the area's when no child claimed them).
     focus_within: bool,
+    /// The last event's time and policy (recording has neither: the bars' fade reads them).
+    now: Time,
+    policy: Option<Policy>,
 }
 
 impl Default for ScrollArea {
     fn default() -> Self {
         ScrollArea {
+            props: ScrollAreaProps::default(),
+            reduced_motion: false,
             axes: [false, true],
             overscroll: OverscrollBehavior::None,
             chains: true,
@@ -692,23 +773,11 @@ impl Default for ScrollArea {
             scrolling: false,
             focused: false,
             focus_within: false,
+            now: Time::ZERO,
+            policy: None,
         }
     }
 }
-
-static SCROLL_AREA_SPEC: KindSpec = KindSpec {
-    name: "scroll-area",
-    props: &[
-        prop("direction", PropType::Enum(&["vertical", "horizontal", "both"]), ChangeClass::Layout),
-        prop("scroll-x", PropType::F64, ChangeClass::Property),
-        prop("scroll-y", PropType::F64, ChangeClass::Property),
-        prop("overscroll-behavior", PropType::Enum(&["auto", "contain", "none"]), ChangeClass::Property),
-        prop("passive", PropType::Bool, ChangeClass::Property),
-    ],
-    signals: &[signal("scroll", true, false), signal("scrollend", true, false)],
-    slots: &[""],
-    role: accesskit::Role::ScrollView,
-};
 
 impl ScrollArea {
     /// The compositor's ids this area's fast commits address: its window and scroll property node.
@@ -757,11 +826,18 @@ impl ScrollArea {
         self.scroller.touch(cx.now);
         self.scrolling = true;
         let o = self.scroller.offset();
-        cx.mark(ChangeClass::Property);
+        if (o.x as f64) != self.props.scroll_x {
+            self.props.scroll_x = o.x as f64;
+            cx.prop_changed(P::scroll_x.id());
+        }
+        if (o.y as f64) != self.props.scroll_y {
+            self.props.scroll_y = o.y as f64;
+            cx.prop_changed(P::scroll_y.id());
+        }
         if self.passive
             && let Some(node) = self.scroll_node
         {
-            cx.fast.push(FastCommit::ScrollOffset { window: self.window, node, offset: o, revision: self.revision, input_seq: self.input_seq });
+            fast::push(FastCommit::ScrollOffset { window: self.window, node, offset: o, revision: self.revision, input_seq: self.input_seq });
         }
         let by = match by {
             ScrollBy::Wheel => "wheel",
@@ -772,21 +848,13 @@ impl ScrollArea {
             ScrollBy::A11y => "a11y",
             ScrollBy::Program => "program",
         };
-        cx.emit(
-            "scroll",
-            Value::Record(vec![
-                ("x".into(), Value::F64(o.x as f64)),
-                ("y".into(), Value::F64(o.y as f64)),
-                ("by".into(), Value::Str(by.into())),
-                ("revision".into(), Value::I64(self.native_rev as i64)),
-            ]),
-        );
+        common::emit(cx, &SPEC, "scroll", vec![Value::F64(o.x as f64), Value::F64(o.y as f64), Value::str(by), Value::I64(self.native_rev as i64)]);
     }
 
     fn end(&mut self, cx: &mut EventCx<'_>) {
         if std::mem::take(&mut self.scrolling) {
             let o = self.scroller.offset();
-            cx.emit("scrollend", Value::Record(vec![("x".into(), Value::F64(o.x as f64)), ("y".into(), Value::F64(o.y as f64))]));
+            common::emit(cx, &SPEC, "scrollend", vec![Value::F64(o.x as f64), Value::F64(o.y as f64)]);
         }
     }
 
@@ -805,7 +873,7 @@ impl ScrollArea {
     /// running animation with its velocity.
     fn animate_to(&mut self, cx: &mut EventCx<'_>, to: Vec2) {
         let to = vmin(vmax(to, Vec2::ZERO), self.scroller.max_offset());
-        if cx.policy.reduced_motion {
+        if self.reduced_motion {
             self.anim = None;
             if !self.jump(cx, to, ScrollBy::Wheel) {
                 self.end(cx);
@@ -837,9 +905,10 @@ impl ScrollArea {
 
     /// The wheel or touchpad event the latch routed here (the whole delta is this area's).
     pub fn wheel(&mut self, cx: &mut EventCx<'_>, ev: &WheelEvent) -> Handled {
-        let delta = scroll_physics::wheel_delta_points(cx.policy.os, ev.delta, self.scroller.viewport());
+        let os = platform(cx.policy);
+        let delta = scroll_physics::wheel_delta_points(os, ev.delta, self.scroller.viewport());
         // Shift+wheel scrolls horizontally where only x scrolls or the OS did not do it already
-        let delta = if ev.modifiers.contains(presto_base::event::Modifiers::SHIFT) && delta.x == 0.0 && cx.policy.os != Os::MacOs {
+        let delta = if ev.modifiers.contains(presto_base::event::Modifiers::SHIFT) && delta.x == 0.0 && os != Platform::Macos {
             Vec2::new(delta.y, 0.0)
         } else {
             delta
@@ -885,7 +954,7 @@ impl ScrollArea {
                     self.end(cx);
                 }
             }
-            (None, None) if precise || cx.policy.os == Os::MacOs => {
+            (None, None) if precise || os == Platform::Macos => {
                 // precise deltas without phases, and macOS's accelerated wheel: applied at once
                 self.apply_direct(cx, delta, ScrollBy::Wheel);
                 self.end(cx);
@@ -931,60 +1000,86 @@ impl ScrollArea {
     }
 }
 
+impl ScrollArea {
+    /// Takes the props into the fields the scroller and the latch read (not the offset).
+    fn sync(&mut self) {
+        self.axes = match self.props.direction.as_str() {
+            "horizontal" => [true, false],
+            "both" => [true, true],
+            _ => [false, true],
+        };
+        let (chains, ov) = match self.props.overscroll_behavior.as_str() {
+            "contain" | "none" => (false, OverscrollBehavior::None),
+            _ => (true, if cfg!(target_os = "macos") { OverscrollBehavior::Elastic } else { OverscrollBehavior::None }),
+        };
+        self.chains = chains;
+        self.overscroll = ov;
+        self.passive = self.props.passive;
+    }
+}
+
 impl Kind for ScrollArea {
     fn spec() -> &'static KindSpec {
-        &SCROLL_AREA_SPEC
+        &SPEC
+    }
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
     }
 
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "direction" => {
-                self.axes = match value.as_str() {
-                    Some("vertical") | None => [false, true],
-                    Some("horizontal") => [true, false],
-                    Some("both") => [true, true],
-                    Some(_) => return Err(PropError::Invalid("direction: vertical, horizontal or both")),
-                };
-                Ok(ChangeClass::Layout)
-            }
-            "scroll-x" | "scroll-y" => {
-                let v = value.as_f32().ok_or(PropError::Invalid("a number of points"))?;
-                // native code moved it since the event JS saw: JS would paint stale state
-                if self.native_rev > self.js_rev {
-                    return Err(PropError::Stale);
-                }
-                let mut o = self.scroller.offset();
-                set(&mut o, if name == "scroll-x" { 0 } else { 1 }, v);
-                self.anim = None;
-                self.scroller.set_offset(o);
-                Ok(ChangeClass::Property)
-            }
-            "overscroll-behavior" => {
-                let (chains, ov) = match value.as_str() {
-                    Some("auto") | None => (true, if Os::current() == Os::MacOs { OverscrollBehavior::Elastic } else { OverscrollBehavior::None }),
-                    Some("contain") => (false, OverscrollBehavior::None),
-                    Some("none") => (false, OverscrollBehavior::None),
-                    Some(_) => return Err(PropError::Invalid("overscroll-behavior: auto, contain or none")),
-                };
-                self.chains = chains;
-                self.overscroll = ov;
-                Ok(ChangeClass::Property)
-            }
-            "passive" => {
-                self.passive = value.as_bool().ok_or(PropError::Invalid("a boolean"))?;
-                Ok(ChangeClass::Property)
-            }
-            _ => Err(PropError::Unknown),
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        let axis = if prop == P::scroll_x.id() {
+            Some(0)
+        } else if prop == P::scroll_y.id() {
+            Some(1)
+        } else {
+            None
+        };
+        // native code moved the offset since the event JS saw: JS would paint stale state
+        if axis.is_some() && self.native_rev > self.js_rev {
+            return Err(PropError::Stale);
         }
+        self.props.set(prop, v)?;
+        if let Some(d) = axis {
+            let mut o = self.scroller.offset();
+            set(&mut o, d, if d == 0 { self.props.scroll_x } else { self.props.scroll_y } as f32);
+            self.anim = None;
+            self.scroller.set_offset(o);
+            let o = self.scroller.offset();
+            (self.props.scroll_x, self.props.scroll_y) = (o.x as f64, o.y as f64);
+        }
+        self.sync();
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
     }
 
-    fn record(&self, cx: &mut RecordCx<'_>) {
+    fn record(&self, cx: &mut RecordCx) {
         // the content moves with the scroll property node; the area draws only its bars
-        let policy = Policy::for_os(Os::current());
-        self.scroller.record_bars(cx, self.scroller.bar_alpha(cx.now, &policy), policy.scrollbars == Scrollbars::Classic);
+        let policy = self.policy.unwrap_or_else(crate::host::policy);
+        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        let alpha = self.scroller.bar_alpha(self.now, &policy);
+        self.scroller.record_bars(&mut PaintCx::of(cx), &styles, alpha, policy.scrollbars == Scrollbars::Classic);
     }
 
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        self.now = cx.now;
+        self.policy = Some(*cx.policy);
+        self.focused = cx.focused;
+        self.focus_within = cx.focused || cx.state.contains(StateBits::FOCUS_WITHIN);
+        // the pointer leaving or the capture ending reach the bars as a leave or a cancel
+        let synthetic;
+        let ev = match ev {
+            Event::Hover(false) => {
+                synthetic = Event::Pointer(super::split::leave_event(PointerPhase::Leave));
+                &synthetic
+            }
+            Event::CaptureLost => {
+                synthetic = Event::Pointer(super::split::leave_event(PointerPhase::Cancel));
+                &synthetic
+            }
+            e => e,
+        };
         match ev {
             Event::Wheel(w) => self.wheel(cx, w),
             Event::Pointer(p) => {
@@ -1001,7 +1096,7 @@ impl Kind for ScrollArea {
                 let dragging = self.scroller.dragging(0) || self.scroller.dragging(1);
                 if dragging != was_dragging {
                     cx.capture = Some(dragging);
-                    cx.mark(ChangeClass::Paint);
+                    cx.repaint = true;
                 }
                 if moved {
                     let by = if dragging { ScrollBy::Thumb } else { ScrollBy::Track };
@@ -1022,7 +1117,7 @@ impl Kind for ScrollArea {
                 let Some(key) = k.key else { return Handled::No };
                 let m = k.modifiers;
                 use presto_base::event::Modifiers as M;
-                let command = m.primary(cx.policy.os == Os::MacOs);
+                let command = m.primary(platform(cx.policy) == Platform::Macos);
                 let Some(to) = self.scroller.key_target(
                     self.axes,
                     key,
@@ -1031,7 +1126,7 @@ impl Kind for ScrollArea {
                     m.contains(M::ALT),
                     self.focus_within,
                     self.focused,
-                    cx.policy.scroll_line,
+                    cx.policy.scroll.line,
                 ) else {
                     return Handled::No;
                 };
@@ -1052,8 +1147,8 @@ impl Kind for ScrollArea {
                 self.end(cx);
                 Handled::Yes
             }
-            Event::Focus(f) => {
-                self.focused = *f;
+            Event::Focus { gained, .. } => {
+                self.focused = *gained;
                 Handled::No
             }
             Event::Timer => {
@@ -1069,26 +1164,65 @@ impl Kind for ScrollArea {
                 }
                 if let Some(t) = self.scroller.bar_wake(cx.now, cx.policy) {
                     cx.wake_at(t);
-                    cx.mark(ChangeClass::Paint);
                 }
+                // the bars fade between events
+                cx.repaint = true;
                 Handled::Yes
             }
             _ => Handled::No,
         }
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
-        node.set_role(accesskit::Role::ScrollView);
-        node.set_clips_children();
-        self.scroller.a11y(self.axes, node);
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::ScrollView);
+        cx.node.set_clips_children();
+        self.scroller.a11y(self.axes, cx.node);
     }
 }
 
 // ---- scrollbar ----
 
+/// The scroll bar's props (their own module: each `kind_props!` names its index enum `P`).
+pub mod scrollbar_props {
+    use crate::kind_props;
+    use crate::shim::core::Value;
+
+    kind_props! {
+        /// The scroll bar's props.
+        pub struct ScrollbarProps;
+        /// The position in `min..=max` (native-owned while the user drags).
+        value "value": f64 = F64(0.0) ; F64, Paint, bindable;
+        min "min": f64 = F64(0.0) ; F64, Paint;
+        max "max": f64 = F64(100.0) ; F64, Paint;
+        /// The visible amount: the thumb's share of the track.
+        page "page": f64 = F64(10.0) ; F64, Paint;
+        /// What an arrow key or AccessKit increment moves.
+        step "step": f64 = F64(1.0) ; F64, Property;
+        orientation "orientation": String = Enum("vertical") ; Enum(&["vertical", "horizontal"]), Layout;
+    }
+}
+pub use scrollbar_props::ScrollbarProps;
+use scrollbar_props::P as SbP;
+
+/// The scroll bar's signals, in spec order.
+pub const SCROLLBAR_SIGNALS: &[SignalSpec] = &[SignalSpec::new("changed", &[("value", ValueType::F64)], "The user moved the bar.")];
+
+pub static SCROLLBAR_SPEC: KindSpec = KindSpec {
+    tag: "scrollbar",
+    props: ScrollbarProps::SPECS,
+    signals: SCROLLBAR_SIGNALS,
+    slots: &[],
+    children: false,
+    role: accesskit::Role::ScrollBar,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
+};
+
 /// A standalone scroll bar (`QScrollBar`): `value` in `min..=max`, `page` sizing the thumb.
 #[derive(Clone, Debug)]
 pub struct Scrollbar {
+    pub props: ScrollbarProps,
     pub value: f64,
     pub min: f64,
     pub max: f64,
@@ -1103,24 +1237,9 @@ pub struct Scrollbar {
 
 impl Default for Scrollbar {
     fn default() -> Self {
-        Scrollbar { value: 0.0, min: 0.0, max: 100.0, page: 10.0, step: 1.0, axis: 1, scroller: Scroller::default(), size: Size::ZERO, min_thumb: 20.0 }
+        Scrollbar { props: ScrollbarProps::default(), value: 0.0, min: 0.0, max: 100.0, page: 10.0, step: 1.0, axis: 1, scroller: Scroller::default(), size: Size::ZERO, min_thumb: 20.0 }
     }
 }
-
-static SCROLLBAR_SPEC: KindSpec = KindSpec {
-    name: "scrollbar",
-    props: &[
-        prop("value", PropType::F64, ChangeClass::Paint),
-        prop("min", PropType::F64, ChangeClass::Paint),
-        prop("max", PropType::F64, ChangeClass::Paint),
-        prop("page", PropType::F64, ChangeClass::Paint),
-        prop("step", PropType::F64, ChangeClass::Property),
-        prop("orientation", PropType::Enum(&["vertical", "horizontal"]), ChangeClass::Layout),
-    ],
-    signals: &[signal("changed", true, false)],
-    slots: &[],
-    role: accesskit::Role::ScrollBar,
-};
 
 impl Scrollbar {
     /// (min, max, page), sanitised: finite, max ≥ min, page ≥ 0.
@@ -1160,8 +1279,9 @@ impl Scrollbar {
         let v = min + get(self.scroller.offset(), self.axis) as f64;
         if v != self.value {
             self.value = v;
-            cx.mark(ChangeClass::Paint);
-            cx.emit("changed", Value::F64(v));
+            self.props.value = v;
+            cx.prop_changed(SbP::value.id());
+            common::emit(cx, &SCROLLBAR_SPEC, "changed", vec![Value::F64(v)]);
         }
     }
 
@@ -1179,40 +1299,35 @@ impl Kind for Scrollbar {
     fn spec() -> &'static KindSpec {
         &SCROLLBAR_SPEC
     }
-
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        let num = || value.as_f64().ok_or(PropError::Invalid("a number"));
-        match name {
-            "value" => self.value = num()?,
-            "min" => self.min = num()?,
-            "max" => self.max = num()?,
-            "page" => self.page = num()?,
-            "step" => {
-                self.step = num()?;
-                return Ok(ChangeClass::Property);
-            }
-            "orientation" => {
-                self.axis = match value.as_str() {
-                    Some("horizontal") => 0,
-                    Some("vertical") | None => 1,
-                    Some(_) => return Err(PropError::Invalid("orientation: vertical or horizontal")),
-                };
-                return Ok(ChangeClass::Layout);
-            }
-            _ => return Err(PropError::Unknown),
-        }
-        self.layout(self.size, self.min_thumb);
-        Ok(ChangeClass::Paint)
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SCROLLBAR_SPEC
     }
 
-    fn record(&self, cx: &mut RecordCx<'_>) {
-        self.scroller.record_bars(cx, 1.0, true);
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        // the drag owns the value until it ends
+        if prop == SbP::value.id() && (self.scroller.dragging(0) || self.scroller.dragging(1)) {
+            return Err(PropError::Stale);
+        }
+        self.props.set(prop, v)?;
+        let p = &self.props;
+        (self.value, self.min, self.max, self.page, self.step) = (p.value, p.min, p.max, p.page, p.step);
+        self.axis = if p.orientation == "horizontal" { 0 } else { 1 };
+        self.layout(self.size, self.min_thumb);
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
+    }
+
+    fn record(&self, cx: &mut RecordCx) {
+        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        self.scroller.record_bars(&mut PaintCx::of(cx), &styles, 1.0, true);
     }
 
     fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
         match ev {
             Event::Wheel(w) => {
-                let d = scroll_physics::wheel_delta_points(cx.policy.os, w.delta, self.scroller.viewport());
+                let d = scroll_physics::wheel_delta_points(platform(cx.policy), w.delta, self.scroller.viewport());
                 // a horizontal bar takes the vertical wheel too
                 let along = if self.axis == 0 && d.x == 0.0 { d.y } else { get(d, self.axis) };
                 self.by(cx, along as f64);
@@ -1259,7 +1374,8 @@ impl Kind for Scrollbar {
         }
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
+    fn a11y(&self, cx: &mut A11yCx) {
+        let node = &mut *cx.node;
         let (min, max, _) = self.range();
         node.set_role(accesskit::Role::ScrollBar);
         node.set_orientation(if self.axis == 0 { accesskit::Orientation::Horizontal } else { accesskit::Orientation::Vertical });

@@ -1,6 +1,7 @@
 //! `modal`: a dialog over a backdrop that covers the whole window (svelters-egui `widgets/dialog.rs`).
 //! The node is the full-window overlay entry; the dialog box sits centred in it at its content's
-//! size (clamped to the window less a margin), with an optional title row. Nothing below is reached
+//! size (clamped to the window less a margin), with an optional heading row (`heading`: the common
+//! `title` prop stays the tooltip every node has). Nothing below is reached
 //! while it is open (the overlay stack's modal block).
 //!
 //! It computes the dialog rect ([`Modal::dialog_rect`]), the cancel gestures (Escape, a press and
@@ -8,18 +9,20 @@
 //! dialog focus scope ([`FocusScope`]): Tab and Shift+Tab cycle inside it, and focus goes back to the
 //! opener when it closes.
 
-use super::draw;
-use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
+use super::common::emit;
+use crate::controls::common::host_view;
+use crate::kind_props;
+use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
 use presto_base::event::{KeyState, MouseButton, PointerPhase};
-use presto_base::geom::{Point, Rect, Size, Vec2};
+use presto_base::geom::{Point, Rect, Size};
 use presto_base::ids::NodeId;
 use presto_base::key::Key;
 
 /// The space kept between the dialog and the window's edges.
 pub const MARGIN: f32 = 24.0;
-/// The title row's height.
+/// The heading row's height.
 pub const TITLE_H: f32 = 32.0;
 const PAD: f32 = 12.0;
 
@@ -53,43 +56,68 @@ impl FocusScope {
     }
 }
 
-static SPEC: KindSpec = KindSpec {
-    name: "modal",
-    props: &[
-        prop("open", PropType::Bool, ChangeClass::Structure),
-        prop("title", PropType::Str, ChangeClass::Layout),
-        prop("dismissable", PropType::Bool, ChangeClass::Property),
-    ],
-    signals: &[signal("cancel", false, true), signal("close", true, false)],
-    slots: &[""],
+/// The node's UA sheet: the backdrop dimming the window.
+pub const UA: Ua = Ua(&[UaRule::base(&[("background-color", Color(presto_base::color::Color::rgba(0.0, 0.0, 0.0, 0.4)))])]);
+
+/// `::part(dialog)`'s UA sheet: the raised surface with the window radius and `window-shadow`.
+pub const DIALOG_UA: Ua = Ua(&[UaRule::base(&[
+    ("background-color", Token("surface-raised")),
+    ("border-color", Token("border-widget")),
+    ("border-width", Token("stroke")),
+    ("border-radius", Token("window-radius")),
+    ("box-shadow", Token("window-shadow")),
+])]);
+
+/// `::part(heading)`'s UA sheet: the strong foreground, semibold.
+pub const HEADING_UA: Ua = Ua(&[UaRule::base(&[("color", Token("fg-strong")), ("font-weight", Number(600.0))])]);
+
+kind_props! {
+    /// The modal's props.
+    pub struct ModalProps;
+    /// Shown; closing natively writes it back.
+    open "open": bool = Bool(false) ; Bool, Structure, bindable;
+    /// The dialog's heading row (empty: none).
+    heading "heading": String = Str("") ; Str, Layout;
+    /// Escape and a backdrop click ask to cancel it.
+    dismissable "dismissable": bool = Bool(true) ; Bool, Property;
+}
+
+pub const SIGNALS: &[SignalSpec] = &[
+    SignalSpec::new("cancel", &[("reason", ValueType::Str)], "Escape or a backdrop click asked to close it (`escape`, `backdrop`).").cancelable(),
+    SignalSpec::new("close", &[("reason", ValueType::Str)], "It closed."),
+];
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "modal",
+    props: ModalProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
     role: accesskit::Role::Dialog,
+    name_from: NameFrom::Prop("heading"),
+    text_prop: None,
+    focusable: false,
 };
 
 /// A `modal` node.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct Modal {
-    pub open: bool,
-    pub title: String,
-    /// Escape and a backdrop press cancel it.
-    pub dismissable: bool,
-    /// The content's laid-out size (without title and padding).
+    pub props: ModalProps,
+    /// The content's laid-out size (without heading and padding).
     pub content: Size,
     pub scope: FocusScope,
     /// A primary press went down on the backdrop (a cancel needs the release there too).
     backdrop_down: bool,
 }
 
-impl Default for Modal {
-    fn default() -> Self {
-        Modal { open: false, title: String::new(), dismissable: true, content: Size::ZERO, scope: FocusScope::default(), backdrop_down: false }
-    }
-}
-
 impl Modal {
+    fn heading_h(&self) -> f32 {
+        if self.props.heading.is_empty() { 0.0 } else { TITLE_H }
+    }
+
     /// The dialog box in a window of `window` size: centred, at most the window less [`MARGIN`].
     pub fn dialog_rect(&self, window: Size) -> Rect {
-        let title = if self.title.is_empty() { 0.0 } else { TITLE_H };
-        let want = Size::new(self.content.w + 2.0 * PAD, self.content.h + 2.0 * PAD + title);
+        let want = Size::new(self.content.w + 2.0 * PAD, self.content.h + 2.0 * PAD + self.heading_h());
         let s = Size::new(want.w.min((window.w - 2.0 * MARGIN).max(0.0)), want.h.min((window.h - 2.0 * MARGIN).max(0.0)));
         let min = Point::new(((window.w - s.w) / 2.0).round(), ((window.h - s.h) / 2.0).round());
         Rect::from_origin_size(min, s)
@@ -98,25 +126,24 @@ impl Modal {
     /// Where the content goes inside the window.
     pub fn content_rect(&self, window: Size) -> Rect {
         let d = self.dialog_rect(window);
-        let title = if self.title.is_empty() { 0.0 } else { TITLE_H };
-        Rect::new(d.min.x + PAD, d.min.y + PAD + title, d.max.x - PAD, d.max.y - PAD)
+        Rect::new(d.min.x + PAD, d.min.y + PAD + self.heading_h(), d.max.x - PAD, d.max.y - PAD)
     }
 
     /// Asks to cancel: `cancel` is cancelable; the app (or the default when nobody prevents it)
     /// closes it with [`Modal::close`].
     fn cancel(&mut self, cx: &mut EventCx<'_>, reason: &'static str) {
-        cx.emit("cancel", Value::Record(vec![("reason".into(), Value::Str(reason.into()))]));
+        emit(cx, &SPEC, "cancel", vec![Value::str(reason)]);
     }
 
-    /// Closes it; focus goes back to the opener (returned).
+    /// Closes it (`open` written back as native state); focus goes back to the opener (returned).
     pub fn close(&mut self, cx: &mut EventCx<'_>, reason: &'static str) -> Option<NodeId> {
-        if !self.open {
+        if !self.props.open {
             return None;
         }
-        self.open = false;
+        self.props.open = false;
         self.backdrop_down = false;
-        cx.emit("close", Value::Record(vec![("reason".into(), Value::Str(reason.into()))]));
-        cx.mark(ChangeClass::Structure);
+        emit(cx, &SPEC, "close", vec![Value::str(reason)]);
+        cx.prop_changed(P::open.id());
         self.scope.opener
     }
 }
@@ -125,39 +152,40 @@ impl Kind for Modal {
     fn spec() -> &'static KindSpec {
         &SPEC
     }
-
-    fn set_prop(&mut self, name: &str, v: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "open" => self.open = v.as_bool().ok_or(PropError::Invalid("expected a bool"))?,
-            "title" => self.title = v.as_str().ok_or(PropError::Invalid("expected a string"))?.to_string(),
-            "dismissable" => self.dismissable = v.as_bool().ok_or(PropError::Invalid("expected a bool"))?,
-            _ => return Err(PropError::Unknown),
-        }
-        Ok(SPEC.prop(name).map_or(ChangeClass::Paint, |p| p.change))
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
+    }
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        self.props.set(prop, v)
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
     }
 
-    fn record(&self, cx: &mut RecordCx<'_>) {
-        let p = cx.palette;
-        draw::fill(cx.list, Rect::from_origin_size(Point::ZERO, cx.size), 0.0, p.backdrop);
-        let d = self.dialog_rect(cx.size);
-        draw::shadow(cx.list, d, p.radius * 2.0, p.shadow, 16.0, Vec2::new(0.0, 4.0));
-        draw::boxed(cx.list, d, p.radius * 2.0, p.surface_raised, 1.0, p.border);
-        if !self.title.is_empty() {
-            let th = cx.labels.measure(&self.title, p.font_size, None).h;
-            let origin = Point::new(d.min.x + PAD, d.min.y + PAD + (TITLE_H - th) / 2.0);
-            cx.labels.record(cx.list, &self.title, origin, p.font_size, p.text, Some((d.width() - 2.0 * PAD).max(0.0)));
+    fn record(&self, cx: &mut RecordCx) {
+        let host = host_view(&cx.style, UA);
+        let dialog = host.part(cx.style.part_css("dialog"), DIALOG_UA);
+        let heading = dialog.part(cx.style.part_css("heading"), HEADING_UA);
+        let (rect, d) = (cx.rect(), self.dialog_rect(cx.size));
+        let mut pc = PaintCx::of(cx);
+        paint::paint_box(&mut pc, &host, rect);
+        paint::paint_box(&mut pc, &dialog, d);
+        if !self.props.heading.is_empty() {
+            let row = Rect::new(d.min.x + PAD, d.min.y + PAD, d.max.x - PAD, d.min.y + PAD + TITLE_H);
+            let layout = paint::text_layout(pc.text, &heading, &self.props.heading, None);
+            paint::paint_text(&mut pc, &heading, &layout, row, Align::Start);
         }
     }
 
     /// Escape and a backdrop click ask to cancel; every pointer event is taken (nothing below the
     /// modal is reached).
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        if !self.open {
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        if !self.props.open {
             return Handled::No;
         }
         match ev {
             Event::Key(k) if k.state == KeyState::Pressed && k.key == Some(Key::Escape) => {
-                if self.dismissable {
+                if self.props.dismissable {
                     self.cancel(cx, "escape");
                 }
                 Handled::Yes
@@ -167,7 +195,7 @@ impl Kind for Modal {
                 match pe.phase {
                     PointerPhase::Down if pe.button == Some(MouseButton::Primary) => self.backdrop_down = on_backdrop,
                     PointerPhase::Up if pe.button == Some(MouseButton::Primary) => {
-                        if std::mem::take(&mut self.backdrop_down) && on_backdrop && self.dismissable {
+                        if std::mem::take(&mut self.backdrop_down) && on_backdrop && self.props.dismissable {
                             self.cancel(cx, "backdrop");
                         }
                     }
@@ -176,16 +204,20 @@ impl Kind for Modal {
                 }
                 Handled::Yes
             }
-            Event::Wheel(_) => Handled::Yes,
+            Event::CaptureLost => {
+                self.backdrop_down = false;
+                Handled::Yes
+            }
+            Event::Wheel(_) | Event::Hover(_) => Handled::Yes,
             _ => Handled::No,
         }
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
-        node.set_role(accesskit::Role::Dialog);
-        node.set_modal();
-        if !self.title.is_empty() {
-            node.set_label(self.title.clone());
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::Dialog);
+        cx.node.set_modal();
+        if !self.props.heading.is_empty() {
+            cx.node.set_label(self.props.heading.clone());
         }
     }
 }
@@ -193,8 +225,10 @@ impl Kind for Modal {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::views::legacy::{Os, Policy};
+    use crate::controls::testkit;
+    use crate::interact::{Policy, StateBits};
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerEvent, PointerType};
+    use presto_base::geom::Vec2;
     use presto_base::time::Time;
 
     fn ptr(phase: PointerPhase, x: f32, y: f32) -> Event {
@@ -217,7 +251,15 @@ mod tests {
     }
 
     fn open_modal() -> Modal {
-        Modal { open: true, title: "Rename".into(), content: Size::new(200.0, 100.0), scope: FocusScope { opener: Some(NodeId(9)) }, ..Modal::default() }
+        let mut m = Modal { content: Size::new(200.0, 100.0), scope: FocusScope { opener: Some(NodeId(9)) }, ..Modal::default() };
+        m.props.open = true;
+        m.props.heading = "Rename".into();
+        m
+    }
+
+    /// The signals `cx` holds with their first argument.
+    fn signals(cx: &EventCx) -> Vec<(&'static str, Option<Value>)> {
+        cx.emitted.iter().map(|e| (SPEC.signals[e.signal.0 as usize].name, e.args.first().cloned())).collect()
     }
 
     #[test]
@@ -233,31 +275,44 @@ mod tests {
 
     #[test]
     fn escape_and_backdrop_click_cancel_inside_presses_do_not() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = Policy::default();
         let size = Size::new(800.0, 600.0);
+        let mut st = StateBits::NONE;
         let mut m = open_modal();
-        let mut cx = EventCx::new(Time::ZERO, size, &pol);
+        let mut cx = EventCx::new(Time::ZERO, size, &mut st, &pol);
         assert_eq!(m.event(&mut cx, &esc()), Handled::Yes);
-        assert_eq!(cx.emitted("cancel").next().and_then(|e| e.detail.field("reason").cloned()), Some(Value::Str("escape".into())));
+        assert_eq!(signals(&cx), vec![("cancel", Some(Value::str("escape")))]);
         // a press inside the dialog dragged out to the backdrop is not a backdrop click
-        let mut cx = EventCx::new(Time::ZERO, size, &pol);
+        let mut cx = EventCx::new(Time::ZERO, size, &mut st, &pol);
         m.event(&mut cx, &ptr(PointerPhase::Down, 400.0, 300.0));
         m.event(&mut cx, &ptr(PointerPhase::Up, 10.0, 10.0));
-        assert_eq!(cx.emitted("cancel").count(), 0);
+        assert!(signals(&cx).is_empty());
         // a backdrop click
         m.event(&mut cx, &ptr(PointerPhase::Down, 10.0, 10.0));
         assert_eq!(m.event(&mut cx, &ptr(PointerPhase::Up, 12.0, 10.0)), Handled::Yes);
-        assert_eq!(cx.emitted("cancel").next().and_then(|e| e.detail.field("reason").cloned()), Some(Value::Str("backdrop".into())));
+        assert_eq!(signals(&cx), vec![("cancel", Some(Value::str("backdrop")))]);
+        assert!(SPEC.signals[0].cancelable, "`cancel` can be prevented");
         // not dismissable: nothing cancels, but presses are still swallowed
-        m.dismissable = false;
-        let mut cx = EventCx::new(Time::ZERO, size, &pol);
+        m.props.dismissable = false;
+        let mut cx = EventCx::new(Time::ZERO, size, &mut st, &pol);
         assert_eq!(m.event(&mut cx, &esc()), Handled::Yes);
         m.event(&mut cx, &ptr(PointerPhase::Down, 10.0, 10.0));
         assert_eq!(m.event(&mut cx, &ptr(PointerPhase::Up, 10.0, 10.0)), Handled::Yes);
         assert!(cx.emitted.is_empty());
-        // closing returns the opener
+        // closing returns the opener and writes `open` back
         assert_eq!(m.close(&mut cx, "accept"), Some(NodeId(9)));
+        assert_eq!(cx.changed, vec![P::open.id()]);
         assert_eq!(m.close(&mut cx, "accept"), None, "already closed");
+    }
+
+    #[test]
+    fn records_backdrop_dialog_and_heading() {
+        let m = open_modal();
+        let (list, _) = testkit::record(&m, Size::new(800.0, 600.0), StateBits::NONE);
+        // backdrop, window-shadow, dialog surface, heading
+        assert_eq!(testkit::kinds(&list), ["quad", "shadow", "quad", "glyphs"]);
+        assert_eq!(SPEC.prop("heading").map(|p| SPEC.prop_spec(p).unwrap().name), Some("heading"));
+        assert_eq!(SPEC.prop("title"), None, "the common `title` stays the tooltip");
     }
 
     #[test]

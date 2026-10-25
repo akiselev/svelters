@@ -28,14 +28,14 @@
 //! is visible ([`VirtualList::set_viewport`]) and takes the offsets the list wants
 //! ([`VirtualList::take_reveal`]: `scrollTo`, the keyboard cursor, scroll anchoring after a splice).
 
-use super::draw;
-use super::legacy::{
-    Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal,
-};
+use super::common::{emit, ms, platform};
+use crate::interact::{Platform, StateBits};
+use crate::kind_props;
+use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
 use presto_base::event::{KeyState, MouseButton, PointerPhase};
-use presto_base::geom::{Point, Rect, Size};
+use presto_base::geom::{Point, Rect, Size, Vec2};
 use presto_base::ids::NodeId;
 use presto_base::key::Key;
 use presto_base::time::Time;
@@ -525,15 +525,13 @@ pub enum RowRequest {
 
 impl RowRequest {
     /// The M5 sync signal and its arguments.
-    pub fn signal(&self) -> (&'static str, Value) {
+    pub fn signal(&self) -> (&'static str, Vec<Value>) {
         let i = |v: usize| Value::I64(v as i64);
         match *self {
-            RowRequest::Setup { slot } => ("setup", Value::List(vec![i(slot)])),
-            RowRequest::Bind { slot, pos, id, generation } => {
-                ("bind", Value::List(vec![i(slot), i(pos), Value::I64(id as i64), Value::I64(generation)]))
-            }
-            RowRequest::Unbind { slot, generation } => ("unbind", Value::List(vec![i(slot), Value::I64(generation)])),
-            RowRequest::Teardown { slot } => ("teardown", Value::List(vec![i(slot)])),
+            RowRequest::Setup { slot } => ("setup", vec![i(slot)]),
+            RowRequest::Bind { slot, pos, id, generation } => ("bind", vec![i(slot), i(pos), Value::I64(id as i64), Value::I64(generation)]),
+            RowRequest::Unbind { slot, generation } => ("unbind", vec![i(slot), Value::I64(generation)]),
+            RowRequest::Teardown { slot } => ("teardown", vec![i(slot)]),
         }
     }
 }
@@ -570,25 +568,11 @@ impl Reveal {
     }
 }
 
-/// Children supplied on demand (stands in for `presto_core::VirtualChildren`, architecture §4.2):
-/// what the tree, hit testing, queries and accessibility ask of a virtualiser.
-pub trait VirtualChildren {
-    /// Rows in the model.
-    fn len(&self) -> usize;
-    /// The stable key (item id) of `row`.
-    fn key(&self, row: usize) -> u64;
-    fn row_of(&self, key: u64) -> Option<usize>;
-    /// The row's rect in the host's local space (every row has one, realised or not).
-    fn row_rect(&self, row: usize) -> Option<Rect>;
-    /// The realised rows: (content node, position), in position order.
-    fn realised(&self) -> Vec<(NodeId, usize)>;
-    /// The slot requests that bring the realised rows to the current window.
-    fn plan(&mut self) -> Vec<RowRequest>;
-}
-
 /// The state of one `virtual-list` (and the row machinery of `tree-view`).
 #[derive(Clone, Debug)]
 pub struct VirtualList {
+    /// The props as last written (`selected-ids` and `current` are read live from [`Self::sel`]).
+    pub props: ListProps,
     /// The item ids, by position.
     ids: Vec<u64>,
     /// Type-ahead labels (empty, or one per id).
@@ -621,7 +605,10 @@ impl Default for VirtualList {
 
 impl VirtualList {
     pub fn new(row_height: f32) -> VirtualList {
+        let mut props = ListProps::default();
+        props.row_height = row_height as f64;
         VirtualList {
+            props,
             ids: Vec::new(),
             labels: Vec::new(),
             sel: KeySelect::new(SelectMode::Single),
@@ -712,14 +699,19 @@ impl VirtualList {
     /// need anywhere in the list (a margin cut at an end goes to the other side), so the slots set
     /// up at the top are enough while scrolling.
     pub fn window(&self) -> Range<usize> {
-        if self.view_height <= 0.0 || self.is_empty() {
+        self.window_in(self.view_top, self.view_height)
+    }
+
+    /// [`Self::window`] for a viewport `height` tall at `top` (list-local).
+    pub fn window_in(&self, top: f64, height: f32) -> Range<usize> {
+        if height <= 0.0 || self.is_empty() {
             return 0..0;
         }
         let est = self.heights.estimate() as f64;
         let m = OVERSCAN_ROWS as f64 * est;
-        let r = self.heights.range(self.view_top - m, self.view_top + self.view_height as f64 + m);
+        let r = self.heights.range(top - m, top + height as f64 + m);
         let len = self.len();
-        let n = ((self.view_height as f64 / est).ceil() as usize + 1 + 2 * OVERSCAN_ROWS).min(len);
+        let n = ((height as f64 / est).ceil() as usize + 1 + 2 * OVERSCAN_ROWS).min(len);
         let (mut start, mut end) = (r.start, r.end.max(r.start + n));
         if end > len {
             end = len;
@@ -824,31 +816,49 @@ impl VirtualList {
         }
     }
 
-    /// Applies a selection [`Change`]: reveal, `select`/`selectionchange`, the bindable props.
-    fn changed(&mut self, cx: &mut EventCx<'_>, c: Change) {
+    /// The selected ids as a list value (`selected-ids`, `selectionchange`, `copy`).
+    pub fn selected_value(&self) -> Value {
+        Value::List(self.sel.selected.iter().map(|&i| Value::I64(i as i64)).collect())
+    }
+
+    /// Applies a selection [`Change`] under `spec` (the list's or the tree's): reveal,
+    /// `current`/`select`/`selectionchange`, and the bindable props changed natively.
+    pub(crate) fn changed(&mut self, cx: &mut EventCx<'_>, spec: &KindSpec, c: Change) {
         if c.cursor {
             self.reveal_cursor();
-            cx.emit("current", Value::I64(self.sel.cursor.map_or(-1, |c| c as i64)));
-            cx.mark(ChangeClass::Paint);
+            emit(cx, spec, "current", vec![Value::I64(self.sel.cursor.map_or(-1, |c| c as i64))]);
+            if let Some(id) = spec.prop("current") {
+                cx.prop_changed(id);
+            }
+            cx.repaint = true;
         }
         if c.selection {
             if let Some(p) = pos_of(&self.ids, self.sel.cursor).filter(|_| self.sel.cursor.is_some_and(|c| self.sel.is_selected(c))) {
-                cx.emit("select", Value::I64(p as i64));
+                emit(cx, spec, "select", vec![Value::I64(p as i64)]);
             }
-            cx.emit("selectionchange", Value::List(self.sel.selected.iter().map(|&i| Value::I64(i as i64)).collect()));
-            cx.mark(ChangeClass::Paint);
+            emit(cx, spec, "selectionchange", vec![self.selected_value()]);
+            if let Some(id) = spec.prop("selected-ids") {
+                cx.prop_changed(id);
+            }
+            cx.repaint = true;
         }
     }
 
     /// The selection, keyboard and pointer defaults shared with `tree-view` (which handles its own
-    /// Left/Right first).
-    pub fn handle(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        let macos = cx.policy.os == super::legacy::Os::MacOs;
+    /// Left/Right first); signals and native prop changes go out under `spec`.
+    pub fn handle(&mut self, cx: &mut EventCx<'_>, spec: &KindSpec, ev: &Event) -> Handled {
+        let macos = platform(cx.policy) == Platform::Macos;
         match ev {
-            Event::Focus(f) => {
-                self.focused = *f;
-                cx.mark(ChangeClass::Paint);
+            Event::Focus { gained, .. } => {
+                self.focused = *gained;
+                cx.repaint = true;
                 Handled::Yes
+            }
+            Event::Hover(false) => {
+                if self.hovered.take().is_some() {
+                    cx.repaint = true;
+                }
+                Handled::No
             }
             Event::Key(k) if k.state == KeyState::Pressed => {
                 let m = Mods { shift: k.modifiers.contains(presto_base::event::Modifiers::SHIFT), ctrl: k.modifiers.primary(macos) };
@@ -856,29 +866,30 @@ impl VirtualList {
                 if let Some(nav) = k.key.and_then(Nav::of) {
                     let page = self.page_rows();
                     let c = self.sel.nav(&ids, nav, m, page);
-                    self.changed(cx, c);
+                    self.changed(cx, spec, c);
                     return Handled::Yes;
                 }
                 match k.key {
                     Some(Key::Space) if !m.shift => {
                         let c = self.sel.toggle_cursor();
-                        self.changed(cx, c);
+                        self.changed(cx, spec, c);
                         Handled::Yes
                     }
                     Some(Key::Enter) => match pos_of(&ids, self.sel.cursor) {
                         Some(p) => {
-                            cx.emit("activate", Value::I64(p as i64));
+                            emit(cx, spec, "activate", vec![Value::I64(p as i64)]);
                             Handled::Yes
                         }
                         None => Handled::No,
                     },
                     Some(Key::A) if m.ctrl && self.sel.mode.is_multi() => {
                         let c = self.sel.select_all(&ids);
-                        self.changed(cx, c);
+                        self.changed(cx, spec, c);
                         Handled::Yes
                     }
                     Some(Key::C) if m.ctrl => {
-                        cx.emit("copy", Value::List(self.sel.selected.iter().map(|&i| Value::I64(i as i64)).collect()));
+                        let v = self.selected_value();
+                        emit(cx, spec, "copy", vec![v]);
                         Handled::Yes
                     }
                     _ => match &k.text {
@@ -887,7 +898,7 @@ impl VirtualList {
                             let c = self.sel.type_ahead(&ids, t, cx.now, |id| {
                                 ids.iter().position(|&x| x == id).and_then(|p| labels.get(p).cloned()).unwrap_or_default()
                             });
-                            self.changed(cx, c);
+                            self.changed(cx, spec, c);
                             if c == Change::default() { Handled::No } else { Handled::Yes }
                         }
                         _ => Handled::No,
@@ -901,16 +912,16 @@ impl VirtualList {
                         let id = pos.map(|x| self.ids[x]);
                         if id != self.hovered {
                             self.hovered = id;
-                            cx.mark(ChangeClass::Paint);
+                            cx.repaint = true;
                             if let (Some(x), Some(id)) = (pos, id) {
-                                cx.emit("row-hovered", Value::List(vec![Value::I64(x as i64), Value::I64(id as i64)]));
+                                emit(cx, spec, "row-hovered", vec![Value::I64(x as i64), Value::I64(id as i64)]);
                             }
                         }
                         Handled::No
                     }
                     PointerPhase::Leave | PointerPhase::Cancel => {
                         if self.hovered.take().is_some() {
-                            cx.mark(ChangeClass::Paint);
+                            cx.repaint = true;
                         }
                         Handled::No
                     }
@@ -919,16 +930,16 @@ impl VirtualList {
                         let id = self.ids[x];
                         let ids = self.ids.clone();
                         let m = Mods { shift: p.modifiers.contains(presto_base::event::Modifiers::SHIFT), ctrl: p.modifiers.primary(macos) };
-                        cx.focus = true;
-                        let args = Value::List(vec![Value::I64(x as i64), Value::I64(id as i64)]);
+                        cx.focus_request = Some(true);
+                        let args = vec![Value::I64(x as i64), Value::I64(id as i64)];
                         match p.button {
                             Some(MouseButton::Primary) => {
                                 let c = self.sel.click(&ids, id, m);
-                                self.changed(cx, c);
-                                cx.emit("row-clicked", args);
-                                let double = self.last_click.is_some_and(|(i, t)| i == id && cx.now - t <= cx.policy.double_click);
+                                self.changed(cx, spec, c);
+                                emit(cx, spec, "row-clicked", args);
+                                let double = self.last_click.is_some_and(|(i, t)| i == id && cx.now - t <= ms(cx.policy.double_click_ms));
                                 if double {
-                                    cx.emit("activate", Value::I64(x as i64));
+                                    emit(cx, spec, "activate", vec![Value::I64(x as i64)]);
                                     self.last_click = None;
                                 } else {
                                     self.last_click = Some((id, cx.now));
@@ -938,9 +949,9 @@ impl VirtualList {
                             Some(MouseButton::Secondary) => {
                                 if cx.policy.context_click_selects && !self.sel.is_selected(id) && self.sel.mode != SelectMode::None {
                                     let c = self.sel.click(&ids, id, Mods::default());
-                                    self.changed(cx, c);
+                                    self.changed(cx, spec, c);
                                 }
-                                cx.emit("row-context", args);
+                                emit(cx, spec, "row-context", args);
                                 Handled::Yes
                             }
                             _ => Handled::No,
@@ -950,29 +961,46 @@ impl VirtualList {
                 }
             }
             Event::A11y(r) if r.action == accesskit::Action::Focus => {
-                cx.focus = true;
+                cx.focus_request = Some(true);
                 Handled::Yes
             }
             _ => Handled::No,
         }
     }
 
-    /// Records the row backgrounds of the window (selection, hover, the focused cursor); the rows'
-    /// content is their own nodes.
+    /// The list's own style view (its computed style over [`UA`]).
+    pub(crate) fn host_view<'a>(cx: &RecordCx<'a>) -> StyleView<'a> {
+        StyleView::new(cx.style.computed, UA, cx.style.state, cx.style.dark)
+    }
+
+    /// The state of the row at `pos`: `:hover`, `:selected`, `:focus` (the cursor of a focused list)
+    /// and `:focus-within` (the list has focus: the selection draws active).
+    fn row_state(&self, pos: usize, active: bool) -> StateBits {
+        let id = self.ids[pos];
+        let mut st = StateBits::NONE;
+        st.set(StateBits::HOVERED, self.hovered == Some(id));
+        st.set(StateBits::SELECTED, self.sel.is_selected(id));
+        st.set(StateBits::FOCUSED, active && self.sel.cursor == Some(id));
+        st.set(StateBits::FOCUS_WITHIN, active);
+        st
+    }
+
+    /// Records the list's box (when CSS gives it one) and the window's rows as `::part(row)` boxes
+    /// over [`ROW_UA`] (selection, hover, the focused cursor's outline); the rows' content is their
+    /// own nodes.
     pub fn record_rows(&self, cx: &mut RecordCx<'_>) {
-        let pal = *cx.palette;
+        let host = Self::host_view(cx);
+        let row_css = cx.style.part_css("row");
+        let active = self.focused || cx.style.state.contains(StateBits::FOCUSED);
         let width = if self.width > 0.0 { self.width } else { cx.size.w };
+        let bounds = cx.rect();
+        let mut pc = PaintCx::of(cx);
+        paint::paint_box(&mut pc, &host, bounds);
         for pos in self.window() {
-            let id = self.ids[pos];
             let r = self.heights.rect(pos, width);
-            if self.sel.is_selected(id) {
-                draw::fill(cx.list, r, 0.0, pal.selection);
-            } else if self.hovered == Some(id) {
-                draw::fill(cx.list, r, 0.0, pal.hover);
-            }
-            if self.focused && self.sel.cursor == Some(id) {
-                draw::boxed(cx.list, r, 0.0, presto_base::color::Color::TRANSPARENT, 1.0, pal.accent);
-            }
+            let row = host.part(row_css, ROW_UA).in_state(self.row_state(pos, active));
+            paint::paint_box(&mut pc, &row, r);
+            paint::paint_outline(&mut pc, &row, r);
         }
     }
 
@@ -1003,20 +1031,22 @@ impl VirtualList {
     }
 }
 
-impl VirtualChildren for VirtualList {
-    fn len(&self) -> usize {
-        self.ids.len()
-    }
-    fn key(&self, row: usize) -> u64 {
+/// The protocol side of the list: what the document and JS's `<ListView>` ask of the virtualiser
+/// beyond [`presto_core::VirtualChildren`] (keys, the realised rows, the slot plan).
+impl VirtualList {
+    /// The stable key (item id) of `row`.
+    pub fn key(&self, row: usize) -> u64 {
         self.ids[row]
     }
-    fn row_of(&self, key: u64) -> Option<usize> {
+    pub fn row_of(&self, key: u64) -> Option<usize> {
         self.ids.iter().position(|&x| x == key)
     }
-    fn row_rect(&self, row: usize) -> Option<Rect> {
+    /// The row's rect in the list's local space (every row has one, realised or not).
+    pub fn row_rect(&self, row: usize) -> Option<Rect> {
         (row < self.len()).then(|| self.heights.rect(row, self.width))
     }
-    fn realised(&self) -> Vec<(NodeId, usize)> {
+    /// The realised rows: (content node, position), in position order.
+    pub fn realised(&self) -> Vec<(NodeId, usize)> {
         let mut v: Vec<(NodeId, usize)> = self.slots.iter().filter(|sl| sl.bound).filter_map(|sl| Some((sl.content?, sl.pos?))).collect();
         v.sort_by_key(|&(_, p)| p);
         v
@@ -1026,7 +1056,7 @@ impl VirtualChildren for VirtualList {
     /// content, sets up new slots only when none is free (one per missing row, counting setups still
     /// waiting for `setRow`), and tears down trailing free slots beyond the pool limit. The slots'
     /// state is updated as if every request succeeded.
-    fn plan(&mut self) -> Vec<RowRequest> {
+    pub fn plan(&mut self) -> Vec<RowRequest> {
         let mut out = Vec::new();
         let want = self.window();
         for (k, sl) in self.slots.iter_mut().enumerate() {
@@ -1090,102 +1120,189 @@ impl VirtualChildren for VirtualList {
     }
 }
 
-static LIST_SPEC: KindSpec = KindSpec {
-    name: "virtual-list",
-    props: &[
-        prop("selection", PropType::Enum(SELECTION), ChangeClass::Paint),
-        prop("row-height", PropType::F64, ChangeClass::Layout),
-        prop("uniform-rows", PropType::Bool, ChangeClass::Layout),
-        prop("selected-ids", PropType::List, ChangeClass::Paint),
-        prop("current", PropType::I64, ChangeClass::Paint),
-        prop("pool-limit", PropType::I64, ChangeClass::Property),
-    ],
-    signals: &[
-        signal("setup", false, false),
-        signal("bind", false, false),
-        signal("unbind", false, false),
-        signal("teardown", false, false),
-        signal("activate", true, false),
-        signal("select", true, false),
-        signal("selectionchange", true, false),
-        signal("current", true, false),
-        signal("row-clicked", true, false),
-        signal("row-context", true, false),
-        signal("row-hovered", true, false),
-        signal("copy", true, false),
-    ],
-    slots: &[""],
-    role: accesskit::Role::ListBox,
-};
-
-/// Reads an id list prop (`selected-ids`).
-pub(crate) fn id_list(v: &Value) -> Result<Vec<u64>, PropError> {
-    match v {
-        Value::Null => Ok(Vec::new()),
-        Value::List(l) => l.iter().map(|x| x.as_i64().map(|i| i as u64).ok_or(PropError::Invalid("ids are integers"))).collect(),
-        _ => Err(PropError::Invalid("a list of ids")),
+impl presto_core::VirtualChildren for VirtualList {
+    fn row_count(&self) -> usize {
+        self.len()
+    }
+    /// The rows to realise for `viewport` (list-local): the rows it overlaps plus the overscan.
+    fn visible(&self, viewport: Rect) -> Range<usize> {
+        self.window_in(viewport.min.y as f64, viewport.height())
+    }
+    fn row_rect(&self, i: usize) -> Rect {
+        self.heights.rect(i, self.width)
+    }
+    fn content_extent(&self) -> Vec2 {
+        Vec2::new(self.width, self.content_height() as f32)
     }
 }
 
-/// Shared prop writes of lists and trees.
-pub(crate) fn set_list_prop(l: &mut VirtualList, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-    match name {
-        "selection" => {
-            let m = value.as_str().and_then(SelectMode::parse).ok_or(PropError::Invalid("selection"))?;
-            l.set_mode(m);
-            Ok(ChangeClass::Paint)
+/// The list's own look: none (CSS may give it a box); its rows are [`ROW_UA`].
+pub const UA: Ua = Ua(&[]);
+
+/// `::part(row)`: VS Code's list colours. A row's state is `:hover`, `:selected`, `:focus` (the
+/// cursor of a focused list) and `:focus-within` (the list has focus): a selection in an unfocused
+/// list draws in `list-sel-inactive`.
+pub const ROW_UA: Ua = Ua(&[
+    UaRule::base(&[
+        ("outline-style", Keyword("none")),
+        ("outline-color", Token("list-focus-outline")),
+        ("outline-width", Px(1.0)),
+        ("outline-offset", Px(-1.0)),
+    ]),
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("list-hover"))]),
+    UaRule::when(StateBits::SELECTED, &[("background-color", Token("list-sel")), ("color", Token("list-sel-fg"))]),
+    UaRule::when_not(StateBits::SELECTED, StateBits::FOCUS_WITHIN, &[("background-color", Token("list-sel-inactive"))]),
+    UaRule::when(StateBits::FOCUSED, &[("outline-style", Keyword("solid"))]),
+]);
+
+kind_props! {
+    /// The list's props (also the first six of `tree-view`'s, in this order).
+    pub struct ListProps;
+    /// How clicks and keys select.
+    selection "selection": String = Enum("single") ; Enum(SELECTION), Paint;
+    /// The estimated (and minimum) row height.
+    row_height "row-height": f64 = F64(32.0) ; F64, Layout;
+    /// Every row is `row-height` tall; rows are not measured.
+    uniform_rows "uniform-rows": bool = Bool(false) ; Bool, Layout;
+    /// The selected item ids (native-owned: clicks and keys change it).
+    selected_ids "selected-ids": Vec<Value> = None ; List, Paint, bindable;
+    /// The cursor's item id (-1: none; native-owned).
+    current "current": i64 = I64(-1) ; I64, Paint, bindable;
+    /// Free row slots kept for reuse beyond the window's needs.
+    pool_limit "pool-limit": i64 = I64(8) ; I64, Property;
+}
+
+/// A sync M5 signal: the slot request waits for JS.
+pub(crate) const fn sync(s: SignalSpec) -> SignalSpec {
+    SignalSpec { sync: true, ..s }
+}
+
+/// The list's signals (`tree-view` adds its own after these): the M5 slot requests, then the
+/// selection and row events.
+macro_rules! list_signals {
+    ($($extra:expr),* $(,)?) => {
+        &[
+            $crate::views::virtual_list::sync($crate::shim::core::SignalSpec::new("setup", &[("row", $crate::shim::core::ValueType::I64)], "M5: slot `row` is new: JS builds its row widget and calls `setRow`.")),
+            $crate::views::virtual_list::sync($crate::shim::core::SignalSpec::new("bind", &[("row", $crate::shim::core::ValueType::I64), ("pos", $crate::shim::core::ValueType::I64), ("id", $crate::shim::core::ValueType::I64), ("gen", $crate::shim::core::ValueType::I64)], "M5: slot `row` now shows item `id` at `pos`.")),
+            $crate::views::virtual_list::sync($crate::shim::core::SignalSpec::new("unbind", &[("row", $crate::shim::core::ValueType::I64), ("gen", $crate::shim::core::ValueType::I64)], "M5: the binding `gen` of slot `row` ended.")),
+            $crate::views::virtual_list::sync($crate::shim::core::SignalSpec::new("teardown", &[("row", $crate::shim::core::ValueType::I64)], "M5: slot `row` is gone.")),
+            $crate::shim::core::SignalSpec::new("activate", &[("pos", $crate::shim::core::ValueType::I64)], "Enter or a double click on a row."),
+            $crate::shim::core::SignalSpec::new("select", &[("pos", $crate::shim::core::ValueType::I64)], "The cursor's row was selected."),
+            $crate::shim::core::SignalSpec::new("selectionchange", &[("ids", $crate::shim::core::ValueType::List)], ""),
+            $crate::shim::core::SignalSpec::new("current", &[("id", $crate::shim::core::ValueType::I64)], "The cursor moved (-1: none)."),
+            $crate::shim::core::SignalSpec::new("row-clicked", &[("pos", $crate::shim::core::ValueType::I64), ("id", $crate::shim::core::ValueType::I64)], ""),
+            $crate::shim::core::SignalSpec::new("row-context", &[("pos", $crate::shim::core::ValueType::I64), ("id", $crate::shim::core::ValueType::I64)], "A secondary press on a row (after selecting it where the platform does)."),
+            $crate::shim::core::SignalSpec::new("row-hovered", &[("pos", $crate::shim::core::ValueType::I64), ("id", $crate::shim::core::ValueType::I64)], ""),
+            $crate::shim::core::SignalSpec::new("copy", &[("ids", $crate::shim::core::ValueType::List)], "Ctrl/Cmd+C with the selection."),
+            $($extra,)*
+        ]
+    };
+}
+pub(crate) use list_signals;
+
+pub const SIGNALS: &[SignalSpec] = list_signals!();
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "virtual-list",
+    props: ListProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
+    role: accesskit::Role::ListBox,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: true,
+};
+
+/// Reads an id list (`selected-ids`, `expanded-ids`); unset is empty.
+pub(crate) fn id_list(v: &Value) -> Option<Vec<u64>> {
+    match v {
+        Value::List(l) => l.iter().map(|x| x.as_i64().map(|i| i as u64)).collect(),
+        _ => None,
+    }
+}
+
+const PROPS: [P; 6] = [P::selection, P::row_height, P::uniform_rows, P::selected_ids, P::current, P::pool_limit];
+
+impl VirtualList {
+    /// Writes one of the list props (by [`ListProps`] index; `tree-view` forwards its first six).
+    pub fn set_list_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        let spec = ListProps::SPECS.get(prop.0 as usize).ok_or(PropError::UnknownProp)?;
+        let bad = || PropError::Type { prop: spec.name, expected: spec.ty };
+        let which = PROPS[prop.0 as usize];
+        let ok = match which {
+            P::row_height => v.as_f64().is_some_and(|h| h > 0.0),
+            P::pool_limit => v.as_i64().is_some_and(|n| n >= 0),
+            P::selected_ids => id_list(v).is_some(),
+            _ => true,
+        };
+        if !ok {
+            return Err(bad());
         }
-        "row-height" => {
-            let h = value.as_f32().filter(|h| *h > 0.0).ok_or(PropError::Invalid("row-height > 0"))?;
-            l.heights.set_estimate(h);
-            Ok(ChangeClass::Layout)
-        }
-        "uniform-rows" => {
-            l.uniform = value.as_bool().ok_or(PropError::Invalid("bool"))?;
-            if l.uniform && !l.heights.is_uniform() {
-                l.heights = RowHeights::uniform(l.heights.len(), l.heights.estimate());
+        self.props.set(prop, v)?;
+        match which {
+            P::selection => self.set_mode(SelectMode::parse(&self.props.selection).ok_or_else(bad)?),
+            P::row_height => self.heights.set_estimate(self.props.row_height as f32),
+            P::uniform_rows => {
+                self.uniform = self.props.uniform_rows;
+                if self.uniform && !self.heights.is_uniform() {
+                    self.heights = RowHeights::uniform(self.heights.len(), self.heights.estimate());
+                }
             }
-            Ok(ChangeClass::Layout)
+            P::selected_ids => {
+                self.sel.set(id_list(v).unwrap_or_default());
+            }
+            P::current => self.sel.cursor = (self.props.current >= 0).then_some(self.props.current as u64),
+            P::pool_limit => self.pool_limit = self.props.pool_limit as usize,
         }
-        "selected-ids" => {
-            l.sel.set(id_list(value)?);
-            Ok(ChangeClass::Paint)
+        Ok(())
+    }
+
+    /// Reads one of the list props; `selected-ids` and `current` are the live native values.
+    pub fn list_prop(&self, prop: PropId) -> Option<Value> {
+        match PROPS.get(prop.0 as usize)? {
+            P::selected_ids => Some(self.selected_value()),
+            P::current => Some(Value::I64(self.sel.cursor.map_or(-1, |c| c as i64))),
+            _ => self.props.get(prop),
         }
-        "current" => {
-            let c = value.as_i64().ok_or(PropError::Invalid("an id or -1"))?;
-            l.sel.cursor = (c >= 0).then_some(c as u64);
-            Ok(ChangeClass::Paint)
+    }
+
+    /// The list's own AccessKit properties (role, multi-selection, set size).
+    pub fn list_a11y(&self, node: &mut accesskit::Node) {
+        node.set_role(if self.sel.mode == SelectMode::None { accesskit::Role::List } else { accesskit::Role::ListBox });
+        if self.sel.mode.is_multi() {
+            node.set_multiselectable();
         }
-        "pool-limit" => {
-            let n = value.as_i64().filter(|n| *n >= 0).ok_or(PropError::Invalid("pool-limit >= 0"))?;
-            l.pool_limit = n as usize;
-            Ok(ChangeClass::Property)
-        }
-        _ => Err(PropError::Unknown),
+        node.set_size_of_set(self.len());
     }
 }
 
 impl Kind for VirtualList {
     fn spec() -> &'static KindSpec {
-        &LIST_SPEC
+        &SPEC
     }
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        set_list_prop(self, name, value)
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
     }
-    fn record(&self, cx: &mut RecordCx<'_>) {
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        self.set_list_prop(prop, v)
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.list_prop(prop)
+    }
+    /// Its given width and its full content height (it sits in a scroll-area's content).
+    fn measure(&self, _cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        let s = intrinsic_size(self, known.width.unwrap_or(self.width));
+        taffy::Size { width: s.w, height: s.h }
+    }
+    fn record(&self, cx: &mut RecordCx) {
         self.record_rows(cx);
     }
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
-        self.handle(cx, ev)
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        self.handle(cx, &SPEC, ev)
     }
-    fn a11y(&self, node: &mut accesskit::Node) {
-        if self.sel.mode == SelectMode::None {
-            node.set_role(accesskit::Role::List);
-        }
-        if self.sel.mode.is_multi() {
-            node.set_multiselectable();
-        }
-        node.set_size_of_set(self.len());
+    fn a11y(&self, cx: &mut A11yCx) {
+        self.list_a11y(cx.node);
     }
 }
 
@@ -1194,11 +1311,64 @@ pub fn intrinsic_size(l: &VirtualList, width: f32) -> Size {
     Size::new(width, l.content_height() as f32)
 }
 
+/// Driving the list's and tree's event code without a document (tests).
+#[cfg(test)]
+pub(crate) mod test_support {
+    use crate::interact::{Policy, StateBits};
+    use crate::shim::core::{Event, EventCx, Handled, Kind, Value};
+    use presto_base::geom::Size;
+    use presto_base::time::Time;
+
+    /// What one call did: its result, the signals by name with their arguments, the props changed
+    /// natively, the focus request and the wake-up asked for.
+    pub struct Sent {
+        pub handled: Handled,
+        pub signals: Vec<(&'static str, Vec<Value>)>,
+        pub changed: Vec<&'static str>,
+        pub focus: Option<bool>,
+        pub wake: Option<Time>,
+    }
+
+    impl Sent {
+        /// The first argument of the first signal named `name`.
+        pub fn arg(&self, name: &str) -> Option<Value> {
+            self.signals.iter().find(|(n, _)| *n == name).and_then(|(_, a)| a.first().cloned())
+        }
+        pub fn has(&self, name: &str) -> bool {
+            self.signals.iter().any(|(n, _)| *n == name)
+        }
+    }
+
+    /// Runs `f` on `k` with a fresh event context at `now` and collects what it did.
+    pub fn with_cx<K: Kind, R>(k: &mut K, policy: &Policy, now: Time, f: impl FnOnce(&mut K, &mut EventCx) -> R) -> (R, Sent) {
+        let spec = k.kind_spec();
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(now, Size::new(200.0, 2000.0), &mut state, policy);
+        let r = f(k, &mut cx);
+        let sent = Sent {
+            handled: Handled::No,
+            signals: cx.emitted.iter().map(|e| (spec.signals[e.signal.0 as usize].name, e.args.clone())).collect(),
+            changed: cx.changed.iter().map(|p| spec.props[p.0 as usize].name).collect(),
+            focus: cx.focus_request,
+            wake: cx.wake,
+        };
+        (r, sent)
+    }
+
+    /// Sends `ev` to `k` at `now`.
+    pub fn send<K: Kind>(k: &mut K, policy: &Policy, now: Time, ev: &Event) -> Sent {
+        let (handled, mut sent) = with_cx(k, policy, now, |k, cx| k.event(cx, ev));
+        sent.handled = handled;
+        sent
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use super::test_support::send;
     use super::*;
-    use crate::views::legacy::{FixedLabels, Os, Palette, Policy};
-    use presto_base::display::DisplayList;
+    use crate::controls::testkit;
+    use crate::interact::Native;
     use presto_base::event::{KeyEvent, KeyLocation, Modifiers, PointerEvent, PointerType};
     use presto_base::time::Span;
 
@@ -1463,35 +1633,35 @@ mod tests {
 
     #[test]
     fn keys_select_reveal_and_emit() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = *Native::Gtk.policy();
         let mut l = list(100, 100.0);
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 2000.0), &pol);
-        assert_eq!(l.event(&mut cx, &key(Key::End, Modifiers::default())), Handled::Yes);
+        let sent = send(&mut l, &pol, Time::ZERO, &key(Key::End, Modifiers::default()));
+        assert_eq!(sent.handled, Handled::Yes);
         assert_eq!(l.sel.cursor, Some(199));
-        assert_eq!(cx.emitted("select").next().unwrap().detail, Value::I64(99));
+        assert_eq!(sent.arg("select"), Some(Value::I64(99)));
+        assert!(sent.changed.contains(&"current") && sent.changed.contains(&"selected-ids"), "{:?}", sent.changed);
         assert_eq!(l.take_reveal(), Some(1900.0));
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 2000.0), &pol);
-        l.event(&mut cx, &key(Key::Enter, Modifiers::default()));
-        assert_eq!(cx.emitted("activate").next().unwrap().detail, Value::I64(99));
+        let sent = send(&mut l, &pol, Time::ZERO, &key(Key::Enter, Modifiers::default()));
+        assert_eq!(sent.arg("activate"), Some(Value::I64(99)));
+        // the bindable props read the live selection
+        assert_eq!(l.get_prop(P::current.id()), Some(Value::I64(199)));
+        assert_eq!(l.get_prop(P::selected_ids.id()), Some(Value::List(vec![Value::I64(199)])));
     }
 
     #[test]
     fn clicks_select_and_double_clicks_activate() {
-        let pol = Policy::for_os(Os::Windows);
+        let pol = *Native::Windows.policy();
         let mut l = list(100, 100.0);
-        let mut cx = EventCx::new(Time::ZERO, Size::new(200.0, 2000.0), &pol);
-        l.event(&mut cx, &press(10.0, 45.0, MouseButton::Primary));
+        let sent = send(&mut l, &pol, Time::ZERO, &press(10.0, 45.0, MouseButton::Primary));
         assert_eq!(sel(&l.sel), vec![102]);
-        assert!(cx.focus);
-        assert!(cx.emitted("activate").next().is_none());
-        let mut cx = EventCx::new(Time::ZERO + Span::from_millis(200), Size::new(200.0, 2000.0), &pol);
-        l.event(&mut cx, &press(10.0, 45.0, MouseButton::Primary));
-        assert_eq!(cx.emitted("activate").next().unwrap().detail, Value::I64(2));
+        assert_eq!(sent.focus, Some(true));
+        assert!(!sent.has("activate"));
+        let sent = send(&mut l, &pol, Time::ZERO + Span::from_millis(200), &press(10.0, 45.0, MouseButton::Primary));
+        assert_eq!(sent.arg("activate"), Some(Value::I64(2)));
         // a secondary click on an unselected row selects it first (Windows)
-        let mut cx = EventCx::new(Time::ZERO + Span::from_millis(900), Size::new(200.0, 2000.0), &pol);
-        l.event(&mut cx, &press(10.0, 65.0, MouseButton::Secondary));
+        let sent = send(&mut l, &pol, Time::ZERO + Span::from_millis(900), &press(10.0, 65.0, MouseButton::Secondary));
         assert_eq!(sel(&l.sel), vec![103]);
-        assert!(cx.emitted("row-context").next().is_some());
+        assert!(sent.has("row-context"));
     }
 
     #[test]
@@ -1499,12 +1669,27 @@ mod tests {
         let mut l = list(100, 100.0);
         l.sel.set([101]);
         l.hovered = Some(103);
-        let mut list = DisplayList::new();
-        let pal = Palette::default();
-        let mut labels = FixedLabels;
-        l.record(&mut RecordCx { size: Size::new(200.0, 2000.0), list: &mut list, palette: &pal, labels: &mut labels, now: Time::ZERO });
-        assert_eq!(list.items.len(), 2);
+        let (list, _) = testkit::record(&l, Size::new(200.0, 2000.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&list), ["quad", "quad"]);
         assert_eq!(list.bounds, Rect::new(0.0, 20.0, 200.0, 80.0));
+        // a focused list outlines its cursor
+        l.focused = true;
+        l.sel.cursor = Some(101);
+        let (list, _) = testkit::record(&l, Size::new(200.0, 2000.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&list), ["quad", "quad", "quad"]);
+    }
+
+    #[test]
+    fn spec_props_are_typed_and_selection_is_bindable() {
+        let s = VirtualList::spec();
+        assert_eq!(s.tag, "virtual-list");
+        assert!(s.prop_spec(s.prop("selected-ids").unwrap()).unwrap().bindable);
+        assert!(s.signals[s.signal("bind").unwrap().0 as usize].sync);
+        let mut l = VirtualList::default();
+        assert!(l.set_prop(P::row_height.id(), &Value::F64(0.0)).is_err());
+        assert!(l.set_prop(P::selection.id(), &Value::str("bogus")).is_err());
+        l.set_prop(P::row_height.id(), &Value::F64(24.0)).unwrap();
+        assert_eq!(l.heights().estimate(), 24.0);
     }
 
     #[test]
@@ -1516,9 +1701,19 @@ mod tests {
         assert_eq!(n.size_of_set(), Some(100));
         assert_eq!(n.label(), Some("seven"));
         assert_eq!(n.is_selected(), Some(false));
-        assert!(l.set_prop("selection", &Value::Str("multi".into())).is_ok());
-        let mut root = accesskit::Node::new(accesskit::Role::ListBox);
-        l.a11y(&mut root);
+        assert!(l.set_prop(P::selection.id(), &Value::str("multi")).is_ok());
+        let root = testkit::a11y(&l, StateBits::NONE, Size::new(200.0, 100.0));
+        assert_eq!(root.role(), accesskit::Role::ListBox);
         assert!(root.is_multiselectable());
+    }
+
+    #[test]
+    fn core_virtual_children_follow_the_window() {
+        use presto_core::VirtualChildren as _;
+        let l = list(1000, 100.0);
+        assert_eq!(presto_core::VirtualChildren::row_count(&l), 1000);
+        assert_eq!(l.visible(Rect::new(0.0, 0.0, 200.0, 100.0)), 0..10);
+        assert_eq!(presto_core::VirtualChildren::row_rect(&l, 3), Rect::new(0.0, 60.0, 200.0, 80.0));
+        assert_eq!(l.content_extent(), Vec2::new(200.0, 20_000.0));
     }
 }

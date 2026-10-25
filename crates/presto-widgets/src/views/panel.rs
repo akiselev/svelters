@@ -4,15 +4,48 @@
 //! the panel's `min-*`/`max-*`, or focus it and use the arrow keys; `changed(size)` reports each new
 //! size. The separator is a 1 pt line inside the panel along its inner edge.
 
-use super::draw;
-use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, PropError, PropType, RecordCx, Value, prop, signal};
-use super::split::{Sash, SashIntent, SashParams, record_sash};
+use super::common;
+use super::split::{Sash, SashIntent, SashParams, leave_event, record_sash};
+use crate::controls::common::host_view;
+use crate::kind_props;
+use crate::paint::{self, PaintCx, Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
 use presto_base::cursor::CursorIcon;
 use presto_base::event::{KeyState, MouseButton, PointerPhase};
 use presto_base::geom::{Rect, Size};
 use presto_base::time::Time;
+
+/// The panel's UA sheet: the chrome surface (`panel-bg`, the theme's side bar and panel colour).
+pub const UA: Ua = Ua(&[UaRule::base(&[("background-color", Token("panel-bg"))])]);
+
+kind_props! {
+    /// The panel's props.
+    pub struct PanelProps;
+    /// The edge it sits on; the sash is on the opposite (inner) edge.
+    side "side": String = Enum("left") ; Enum(&["left", "right", "top", "bottom"]), Layout;
+    /// Its width (`left`/`right`) or height (`top`/`bottom`) in points; unset: its content's.
+    size "size": Option<f64> = None ; F64, Layout, bindable;
+    /// The inner edge is a sash.
+    resizable "resizable": bool = Bool(false) ; Bool, Paint;
+    /// Draws the line on the inner edge.
+    separator "separator": bool = Bool(true) ; Bool, Paint;
+}
+
+/// The signals, in spec order.
+pub const SIGNALS: &[SignalSpec] = &[SignalSpec::new("changed", &[("size", ValueType::F64)], "The user resized the panel.")];
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "panel",
+    props: PanelProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
+    role: accesskit::Role::Pane,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
+};
 
 /// Where a panel sits; its sash is on the opposite (inner) edge.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -47,6 +80,7 @@ impl PanelSide {
 /// A side or top/bottom panel.
 #[derive(Clone, Debug)]
 pub struct Panel {
+    pub props: PanelProps,
     pub side: PanelSide,
     /// Its width or height in points; `None` for its content's.
     pub size: Option<f32>,
@@ -66,22 +100,9 @@ pub struct Panel {
 
 impl Default for Panel {
     fn default() -> Self {
-        Panel { side: PanelSide::Left, size: None, resizable: false, separator: true, min: 0.0, max: f32::INFINITY, hit: 4.0, sash: Sash::default(), rect: Size::ZERO, now: Time::ZERO }
+        Panel { props: PanelProps::default(), side: PanelSide::Left, size: None, resizable: false, separator: true, min: 0.0, max: f32::INFINITY, hit: 4.0, sash: Sash::default(), rect: Size::ZERO, now: Time::ZERO }
     }
 }
-
-static PANEL_SPEC: KindSpec = KindSpec {
-    name: "panel",
-    props: &[
-        prop("side", PropType::Enum(&["left", "right", "top", "bottom"]), ChangeClass::Layout),
-        prop("size", PropType::F64, ChangeClass::Layout),
-        prop("resizable", PropType::Bool, ChangeClass::Paint),
-        prop("separator", PropType::Bool, ChangeClass::Paint),
-    ],
-    signals: &[signal("changed", true, false)],
-    slots: &[""],
-    role: accesskit::Role::Pane,
-};
 
 impl Panel {
     /// The layout's border box size.
@@ -124,8 +145,9 @@ impl Panel {
                 SashIntent::Resize { size } | SashIntent::Commit { size } | SashIntent::Cancel { size } => {
                     if self.size != Some(size) {
                         self.size = Some(size);
-                        cx.mark(ChangeClass::Layout);
-                        cx.emit("changed", Value::F64(size as f64));
+                        self.props.size = Some(size as f64);
+                        cx.prop_changed(P::size.id());
+                        common::emit(cx, &SPEC, "changed", vec![Value::F64(size as f64)]);
                     }
                 }
             }
@@ -146,66 +168,71 @@ impl Panel {
 
 impl Kind for Panel {
     fn spec() -> &'static KindSpec {
-        &PANEL_SPEC
+        &SPEC
     }
-
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "side" => {
-                self.side = PanelSide::parse(value.as_str().unwrap_or("left")).ok_or(PropError::Invalid("side: left, right, top or bottom"))?;
-                Ok(ChangeClass::Layout)
-            }
-            "size" => {
-                // a drag owns the size until it ends
-                if self.sash.dragging() {
-                    return Err(PropError::Stale);
-                }
-                self.size = match value {
-                    Value::Null => None,
-                    v => Some(v.as_f32().ok_or(PropError::Invalid("a number of points or null"))?),
-                };
-                if let Some(s) = self.size {
-                    self.sash.set_size(s);
-                }
-                Ok(ChangeClass::Layout)
-            }
-            "resizable" => {
-                self.resizable = value.as_bool().ok_or(PropError::Invalid("a boolean"))?;
-                Ok(ChangeClass::Paint)
-            }
-            "separator" => {
-                self.separator = value.as_bool().ok_or(PropError::Invalid("a boolean"))?;
-                Ok(ChangeClass::Paint)
-            }
-            _ => Err(PropError::Unknown),
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
+    }
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        // a drag owns the size until it ends
+        if prop == P::size.id() && self.sash.dragging() {
+            return Err(PropError::Stale);
         }
+        self.props.set(prop, v)?;
+        self.side = PanelSide::parse(&self.props.side).unwrap_or_default();
+        self.size = self.props.size.map(|s| s as f32);
+        if let Some(s) = self.size {
+            self.sash.set_size(s);
+        }
+        self.resizable = self.props.resizable;
+        self.separator = self.props.separator;
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
     }
 
-    fn record(&self, cx: &mut RecordCx<'_>) {
-        draw::fill(cx.list, Rect::from_origin_size(Default::default(), cx.size), 0.0, cx.palette.surface_raised);
+    fn record(&self, cx: &mut RecordCx) {
+        let host = host_view(&cx.style, UA);
+        let styles = crate::shim::core::Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        let rect = cx.rect();
+        let mut pc = PaintCx::of(cx);
+        paint::paint_box(&mut pc, &host, rect);
         let (line, _) = self.edge_rects();
         let shown = self.resizable && self.sash.hover_shown(self.now);
         if self.separator || shown {
-            record_sash(cx, line, self.side.axis(), shown);
+            record_sash(&mut pc, &styles, line, self.side.axis(), shown, self.sash.dragging());
         }
     }
 
-    fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         self.now = cx.now;
         if !self.resizable {
             return Handled::No;
         }
+        let synthetic;
+        let ev = match ev {
+            Event::Hover(false) => {
+                synthetic = Event::Pointer(leave_event(PointerPhase::Leave));
+                &synthetic
+            }
+            Event::CaptureLost => {
+                synthetic = Event::Pointer(leave_event(PointerPhase::Cancel));
+                &synthetic
+            }
+            e => e,
+        };
         match ev {
             Event::Pointer(p) => {
                 let (_, hit) = self.edge_rects();
-                let inside = hit.contains(p.pos);
+                let inside = p.phase != PointerPhase::Leave && hit.contains(p.pos);
                 let primary = p.button == Some(MouseButton::Primary) || (p.phase != PointerPhase::Down && p.buttons & 1 != 0);
                 let was_shown = self.sash.hover_shown(cx.now);
                 let params = self.params();
                 let dragging = self.sash.dragging();
                 let intents = self.sash.pointer(cx.now, cx.policy, &params, p.phase, primary, p.pos, inside);
                 if was_shown != self.sash.hover_shown(cx.now) {
-                    cx.mark(ChangeClass::Paint);
+                    cx.repaint = true;
                 }
                 if let Some(t) = self.sash.wake() {
                     cx.wake_at(t);
@@ -232,22 +259,23 @@ impl Kind for Panel {
                 Handled::Yes
             }
             Event::Timer => {
-                cx.mark(ChangeClass::Paint);
+                cx.repaint = true;
                 Handled::Yes
             }
             _ => Handled::No,
         }
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
-        node.set_role(accesskit::Role::Pane);
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::Pane);
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::super::legacy::{Os, Policy};
     use super::*;
+    use crate::interact::{Native, Platform};
+    use super::super::split::Probe;
     use presto_base::event::{Modifiers, PointerEvent, PointerType};
     use presto_base::geom::{Point, Vec2};
 
@@ -268,34 +296,48 @@ mod tests {
 
     #[test]
     fn a_right_panel_grows_when_its_left_edge_moves_left() {
-        let pol = Policy::for_os(Os::Windows);
-        let mut p = Panel { side: PanelSide::Right, resizable: true, min: 100.0, max: 400.0, ..Default::default() };
+        let pol = *Native::for_os(Platform::Windows).policy();
+        let mut p = Panel { min: 100.0, max: 400.0, ..Default::default() };
+        p.set_prop(P::side.id(), &Value::str("right")).unwrap();
+        p.set_prop(P::resizable.id(), &Value::Bool(true)).unwrap();
         p.set_layout(Size::new(200.0, 300.0));
         let (line, hit) = p.edge_rects();
         assert_eq!(line, Rect::new(0.0, 0.0, 1.0, 300.0));
         assert!(hit.contains(Point::new(-1.0, 10.0)));
-        let mut cx = EventCx::new(Time(0), Size::new(200.0, 300.0), &pol);
-        assert_eq!(p.event(&mut cx, &ptr(PointerPhase::Down, 0.0)), Handled::Yes);
-        p.event(&mut cx, &ptr(PointerPhase::Move, -50.0));
+        let mut t = Probe::new(pol, Size::new(200.0, 300.0));
+        assert_eq!(t.send(&mut p, ptr(PointerPhase::Down, 0.0)), Handled::Yes);
+        t.send(&mut p, ptr(PointerPhase::Move, -50.0));
         assert_eq!(p.size, Some(250.0));
-        p.event(&mut cx, &ptr(PointerPhase::Move, -500.0));
+        t.send(&mut p, ptr(PointerPhase::Move, -500.0));
         assert_eq!(p.size, Some(400.0), "clamped to max");
-        p.event(&mut cx, &ptr(PointerPhase::Up, -500.0));
-        assert_eq!(cx.capture, Some(false));
-        assert_eq!(cx.emitted("changed").count(), 2);
+        t.send(&mut p, ptr(PointerPhase::Up, -500.0));
+        assert_eq!(t.capture, Some(false));
+        assert_eq!(t.count("changed"), 2);
+        assert_eq!(p.get_prop(P::size.id()), Some(Value::F64(400.0)));
+        assert!(t.changed.iter().all(|n| *n == "size") && !t.changed.is_empty());
     }
 
     #[test]
     fn a_js_write_during_a_drag_is_refused() {
-        let pol = Policy::for_os(Os::Linux);
-        let mut p = Panel { resizable: true, ..Default::default() };
+        let pol = *Native::for_os(Platform::Linux).policy();
+        let mut p = Panel::default();
+        p.set_prop(P::resizable.id(), &Value::Bool(true)).unwrap();
         p.set_layout(Size::new(200.0, 300.0));
-        let mut cx = EventCx::new(Time(0), Size::new(200.0, 300.0), &pol);
-        p.event(&mut cx, &ptr(PointerPhase::Down, 200.0));
-        p.event(&mut cx, &ptr(PointerPhase::Move, 230.0));
+        let mut t = Probe::new(pol, Size::new(200.0, 300.0));
+        t.send(&mut p, ptr(PointerPhase::Down, 200.0));
+        t.send(&mut p, ptr(PointerPhase::Move, 230.0));
         assert_eq!(p.size, Some(230.0));
-        assert_eq!(p.set_prop("size", &Value::F64(100.0)), Err(PropError::Stale));
-        p.event(&mut cx, &ptr(PointerPhase::Up, 230.0));
-        assert_eq!(p.set_prop("size", &Value::F64(100.0)), Ok(ChangeClass::Layout));
+        assert_eq!(p.set_prop(P::size.id(), &Value::F64(100.0)), Err(PropError::Stale));
+        t.send(&mut p, ptr(PointerPhase::Up, 230.0));
+        assert_eq!(p.set_prop(P::size.id(), &Value::F64(100.0)), Ok(()));
+        assert_eq!(p.size, Some(100.0));
+    }
+
+    #[test]
+    fn records_the_surface_and_the_separator() {
+        let mut p = Panel::default();
+        p.set_layout(Size::new(200.0, 300.0));
+        let (list, _) = crate::controls::testkit::record(&p, Size::new(200.0, 300.0), crate::interact::StateBits::NONE);
+        assert_eq!(crate::controls::testkit::kinds(&list), ["quad", "quad"], "surface, then the separator line");
     }
 }

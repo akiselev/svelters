@@ -14,18 +14,35 @@
 //!   `commit-mode="release"`, a guide showing meanwhile). The drag is native: the pane sizes change
 //!   without JS (architecture §4.5: a splitter's position during a drag is native-owned).
 
-use super::draw;
-use super::legacy::{Event, EventCx, Handled, Kind, KindSpec, Policy, PropError, PropType, RecordCx, Value, prop, signal};
+use super::common::{self, ms, secs};
+use crate::interact::{Policy, StateBits};
+use crate::kind_props;
+use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Styles, Value, ValueType};
 use presto_base::accesskit;
-use presto_base::change::ChangeClass;
+use presto_base::color::{Color, Fill};
 use presto_base::cursor::CursorIcon;
+use presto_base::display::{Prim, Quad};
 use presto_base::event::{KeyState, Modifiers, MouseButton, PointerPhase};
-use presto_base::geom::{Point, Rect, Size};
+use presto_base::geom::{Corners, Insets, Point, Rect, Size};
 use presto_base::key::Key;
 use presto_base::time::{Span, Time};
 
-/// R11: hovering a sash shows its hover bar and grip after this long (VS Code 300 ms).
+/// R11: hovering a sash shows its hover bar and grip after this long when no policy says otherwise
+/// (VS Code 300 ms; the policy's `scroll.sash_hover_delay`).
 pub const SASH_HOVER_DELAY: Span = Span::from_millis(300);
+
+/// `::part(sash)`'s UA sheet: the 1 pt line in the border colour; hovered (after the delay), dragged
+/// or focused, the 4 pt bar in the focus colour with its grip dots in `color` (VS Code's
+/// `sash.hoverBorder`).
+pub const SASH_UA: Ua = Ua(&[
+    UaRule::base(&[("background-color", Token("border")), ("color", Token("accent-fg"))]),
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("focus"))]),
+    UaRule::when(StateBits::DRAGGING, &[("background-color", Token("focus"))]),
+]);
+
+/// `::part(guide)`'s UA sheet: where the sash will land with `commit-mode="release"`.
+pub const GUIDE_UA: Ua = Ua(&[UaRule::base(&[("background-color", Token("focus"))])]);
 
 /// What a host configures on a [`Sash`].
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -78,6 +95,8 @@ pub struct Sash {
     restore: Option<f32>,
     focused: bool,
     last_click: Option<Time>,
+    /// The policy's hover delay (taken at each pointer event; [`SASH_HOVER_DELAY`] before one).
+    delay: Option<Span>,
 }
 
 fn coord(p: Point, axis: usize) -> f32 {
@@ -105,11 +124,14 @@ impl Sash {
     }
     /// The hover bar and grip show (after the hover delay, at once while dragged or focused).
     pub fn hover_shown(&self, now: Time) -> bool {
-        self.start.is_some() || self.focused || self.hover_since.is_some_and(|t| now - t >= SASH_HOVER_DELAY)
+        self.start.is_some() || self.focused || self.hover_since.is_some_and(|t| now - t >= self.hover_delay())
+    }
+    fn hover_delay(&self) -> Span {
+        self.delay.unwrap_or(SASH_HOVER_DELAY)
     }
     /// When the hover bar appears without more input.
     pub fn wake(&self) -> Option<Time> {
-        self.hover_since.filter(|_| self.start.is_none()).map(|t| t + SASH_HOVER_DELAY)
+        self.hover_since.filter(|_| self.start.is_none()).map(|t| t + self.hover_delay())
     }
 
     fn clamp(&self, p: &SashParams, v: f32) -> f32 {
@@ -147,6 +169,7 @@ impl Sash {
     /// Pointer input on the sash's hit area (`pos` in any space the host keeps fixed for the drag).
     pub fn pointer(&mut self, now: Time, policy: &Policy, p: &SashParams, phase: PointerPhase, primary: bool, pos: Point, inside: bool) -> Vec<SashIntent> {
         let mut out = Vec::new();
+        self.delay = Some(secs(policy.scroll.sash_hover_delay));
         let at = coord(pos, p.axis);
         match phase {
             PointerPhase::Down if primary && inside => {
@@ -179,7 +202,7 @@ impl Sash {
                     out.push(SashIntent::Commit { size: self.size });
                 } else if self.pressed.take().is_some() && inside {
                     // the click count is ours: two clicks within the platform's double-click time
-                    let double = self.last_click.is_some_and(|t| now - t <= policy.double_click);
+                    let double = self.last_click.is_some_and(|t| now - t <= ms(policy.double_click_ms));
                     self.last_click = if double { None } else { Some(now) };
                     if double && p.double_click {
                         self.toggle_collapse(p, &mut out);
@@ -280,21 +303,28 @@ impl Sash {
     }
 }
 
-/// Records a sash: the line, then (shown) the hover bar and its three-dot grip.
-pub(crate) fn record_sash(cx: &mut RecordCx<'_>, line: Rect, axis: usize, shown: bool) {
-    let pal = cx.palette;
-    draw::fill(cx.list, line, 0.0, pal.border);
+/// Records a sash under the node's styles: the line (`::part(sash)`), then (shown) the hover bar and
+/// its three-dot grip.
+pub(crate) fn record_sash(pc: &mut PaintCx, styles: &Styles, line: Rect, axis: usize, shown: bool, dragging: bool) {
+    let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark);
+    let base = host.part(styles.part_css("sash"), SASH_UA).in_state(StateBits::NONE);
+    paint::paint_box(pc, &base, line);
     if !shown {
         return;
     }
+    let mut st = StateBits::HOVERED;
+    st.set(StateBits::DRAGGING, dragging);
+    let hot = host.part(styles.part_css("sash"), SASH_UA).in_state(st);
     let (w, dot, gap) = (4.0, 2.0, 2.0);
     let c = Point::new((line.min.x + line.max.x) / 2.0, (line.min.y + line.max.y) / 2.0);
     let bar = if axis == 0 { Rect::new(c.x - w / 2.0, line.min.y, c.x + w / 2.0, line.max.y) } else { Rect::new(line.min.x, c.y - w / 2.0, line.max.x, c.y + w / 2.0) };
-    draw::fill(cx.list, bar, 0.0, pal.accent);
+    paint::paint_box(pc, &hot, bar);
+    let color = hot.color("color").unwrap_or(Color::WHITE);
     for i in -1..=1 {
         let off = i as f32 * (dot + gap);
         let p = if axis == 0 { Point::new(c.x, c.y + off) } else { Point::new(c.x + off, c.y) };
-        draw::fill(cx.list, Rect::new(p.x - dot / 2.0, p.y - dot / 2.0, p.x + dot / 2.0, p.y + dot / 2.0), dot / 2.0, pal.on_accent);
+        let r = Rect::new(p.x - dot / 2.0, p.y - dot / 2.0, p.x + dot / 2.0, p.y + dot / 2.0);
+        pc.push(Prim::Quad(Quad { rect: r, radii: Corners::all(dot / 2.0), fill: Fill::Solid(color), border_widths: Insets::ZERO, border_color: Color::TRANSPARENT, border_style: Default::default() }), r);
     }
 }
 
@@ -312,9 +342,49 @@ impl Default for PaneLimits {
     }
 }
 
+kind_props! {
+    /// The split view's props.
+    pub struct SplitViewProps;
+    /// Panes side by side (`horizontal`) or stacked (`vertical`).
+    orientation "orientation": String = Enum("horizontal") ; Enum(&["horizontal", "vertical"]), Layout;
+    /// The first pane's size in points (unset: its share).
+    divider_position "divider-position": Option<f64> = None ; F64, Layout, bindable;
+    /// The smallest size of a pane, in points.
+    min_size "min-size": f64 = F64(32.0) ; F64, Layout;
+    resizable "resizable": bool = Bool(true) ; Bool, Paint;
+    /// Every pane's size (empty: from `divider-position` or equal shares).
+    sizes "sizes": Vec<Value> = None ; List, Layout, bindable;
+    /// Dragging below half a pane's minimum collapses it.
+    collapsible "collapsible": bool = Bool(false) ; Bool, Layout;
+    restore_on_double_click "restore-on-double-click": bool = Bool(true) ; Bool, Property;
+    /// `release`: the panes move when the drag ends; a guide shows meanwhile.
+    commit_mode "commit-mode": String = Enum("live") ; Enum(&["live", "release"]), Property;
+}
+
+/// The signals, in spec order.
+pub const SIGNALS: &[SignalSpec] = &[
+    SignalSpec::new("changed", &[("position", ValueType::F64)], "The first pane's size changed (each step of a live drag)."),
+    SignalSpec::new("drag-started", &[], ""),
+    SignalSpec::new("drag-stopped", &[], ""),
+    SignalSpec::new("commit", &[("sizes", ValueType::List)], "A drag ended, or a key or AccessKit step: the sizes to keep."),
+];
+
+pub static SPEC: KindSpec = KindSpec {
+    tag: "split-view",
+    props: SplitViewProps::SPECS,
+    signals: SIGNALS,
+    slots: &[],
+    children: true,
+    role: accesskit::Role::Group,
+    name_from: NameFrom::None,
+    text_prop: None,
+    focusable: false,
+};
+
 /// Panes split by draggable sashes (`QSplitter`).
 #[derive(Clone, Debug)]
 pub struct SplitView {
+    pub props: SplitViewProps,
     pub vertical: bool,
     /// The first pane's size; `None` for its share.
     pub divider_position: Option<f64>,
@@ -348,6 +418,7 @@ pub struct SplitView {
 impl Default for SplitView {
     fn default() -> Self {
         SplitView {
+            props: SplitViewProps::default(),
             vertical: false,
             divider_position: None,
             min_size: 32.0,
@@ -371,23 +442,6 @@ impl Default for SplitView {
         }
     }
 }
-
-static SPLIT_VIEW_SPEC: KindSpec = KindSpec {
-    name: "split-view",
-    props: &[
-        prop("orientation", PropType::Enum(&["horizontal", "vertical"]), ChangeClass::Layout),
-        prop("divider-position", PropType::F64, ChangeClass::Layout),
-        prop("min-size", PropType::F64, ChangeClass::Layout),
-        prop("resizable", PropType::Bool, ChangeClass::Paint),
-        prop("sizes", PropType::List, ChangeClass::Layout),
-        prop("collapsible", PropType::Bool, ChangeClass::Layout),
-        prop("restore-on-double-click", PropType::Bool, ChangeClass::Property),
-        prop("commit-mode", PropType::Enum(&["live", "release"]), ChangeClass::Property),
-    ],
-    signals: &[signal("changed", true, false), signal("drag-started", true, false), signal("drag-stopped", true, false), signal("commit", true, false)],
-    slots: &[""],
-    role: accesskit::Role::Group,
-};
 
 impl SplitView {
     fn axis(&self) -> usize {
@@ -521,19 +575,35 @@ impl SplitView {
         }
     }
 
-    /// Writes new pane sizes (the user's): `sizes`, `divider-position`, `changed`.
+    /// Takes the props into the fields the layout and the sashes read.
+    fn sync(&mut self) {
+        let p = &self.props;
+        self.vertical = p.orientation == "vertical";
+        self.divider_position = p.divider_position;
+        self.min_size = p.min_size;
+        self.resizable = p.resizable;
+        self.sizes = (!p.sizes.is_empty()).then(|| p.sizes.iter().map(|v| v.as_f64().unwrap_or(-1.0)).collect());
+        self.collapsible = p.collapsible;
+        self.restore_on_double_click = p.restore_on_double_click;
+        self.commit_on_release = p.commit_mode == "release";
+    }
+
+    /// Writes new pane sizes (the user's): `sizes`, `divider-position` (native changes), `changed`.
     fn write(&mut self, cx: &mut EventCx<'_>, sizes: Vec<f32>) {
         let v: Vec<f64> = sizes.iter().map(|x| *x as f64).collect();
         let first = v.first().copied();
+        self.props.sizes = v.iter().map(|x| Value::F64(*x)).collect();
         self.sizes = Some(v);
+        cx.prop_changed(P::sizes.id());
         if let Some(f) = first
             && Some(f) != self.divider_position
         {
             self.divider_position = Some(f);
-            cx.emit("changed", Value::F64(f));
+            self.props.divider_position = Some(f);
+            cx.prop_changed(P::divider_position.id());
+            common::emit(cx, &SPEC, "changed", vec![Value::F64(f)]);
         }
         self.laid = sizes;
-        cx.mark(ChangeClass::Layout);
     }
 
     fn apply(&mut self, cx: &mut EventCx<'_>, k: usize, intents: Vec<SashIntent>) {
@@ -549,12 +619,12 @@ impl SplitView {
                 SashIntent::Start => {
                     self.drag = Some(k);
                     cx.capture = Some(true);
-                    cx.emit("drag-started", Value::Null);
+                    common::emit(cx, &SPEC, "drag-started", Vec::new());
                 }
                 SashIntent::Resize { size } => {
                     if self.commit_on_release && self.sashes[k].dragging() {
                         self.ghost = Some((k, size));
-                        cx.mark(ChangeClass::Paint);
+                        cx.repaint = true;
                     } else {
                         let s = with(&self.laid, size);
                         self.write(cx, s);
@@ -565,10 +635,10 @@ impl SplitView {
                     self.ghost = None;
                     let was_drag = self.drag.take() == Some(k);
                     self.write(cx, s.clone());
-                    cx.emit("commit", Value::List(s.iter().map(|x| Value::F64(*x as f64)).collect()));
+                    common::emit(cx, &SPEC, "commit", vec![Value::List(s.iter().map(|x| Value::F64(*x as f64)).collect())]);
                     if was_drag {
                         cx.capture = Some(false);
-                        cx.emit("drag-stopped", Value::Null);
+                        common::emit(cx, &SPEC, "drag-stopped", Vec::new());
                     }
                 }
                 SashIntent::Cancel { size } => {
@@ -576,11 +646,11 @@ impl SplitView {
                         let s = with(&self.laid, size);
                         self.write(cx, s);
                     } else {
-                        cx.mark(ChangeClass::Paint);
+                        cx.repaint = true;
                     }
                     self.drag = None;
                     cx.capture = Some(false);
-                    cx.emit("drag-stopped", Value::Null);
+                    common::emit(cx, &SPEC, "drag-stopped", Vec::new());
                 }
             }
         }
@@ -589,80 +659,48 @@ impl SplitView {
 
 impl Kind for SplitView {
     fn spec() -> &'static KindSpec {
-        &SPLIT_VIEW_SPEC
+        &SPEC
     }
-
-    fn set_prop(&mut self, name: &str, value: &Value) -> Result<ChangeClass, PropError> {
-        match name {
-            "orientation" => {
-                self.vertical = match value.as_str() {
-                    Some("vertical") => true,
-                    Some("horizontal") | None => false,
-                    Some(_) => return Err(PropError::Invalid("orientation: horizontal or vertical")),
-                };
-                Ok(ChangeClass::Layout)
-            }
-            "divider-position" => {
-                // a host write of `divider-position` overrides `sizes`
-                if self.sashes.iter().any(Sash::dragging) {
-                    return Err(PropError::Stale);
-                }
-                self.divider_position = match value {
-                    Value::Null => None,
-                    v => Some(v.as_f64().ok_or(PropError::Invalid("a number of points or null"))?),
-                };
-                self.sizes = None;
-                Ok(ChangeClass::Layout)
-            }
-            "sizes" => {
-                if self.sashes.iter().any(Sash::dragging) {
-                    return Err(PropError::Stale);
-                }
-                self.sizes = match value {
-                    Value::Null => None,
-                    Value::List(l) => Some(l.iter().map(|v| v.as_f64().ok_or(PropError::Invalid("a list of numbers"))).collect::<Result<_, _>>()?),
-                    _ => return Err(PropError::Invalid("a list of numbers or null")),
-                };
-                Ok(ChangeClass::Layout)
-            }
-            "min-size" => {
-                self.min_size = value.as_f64().ok_or(PropError::Invalid("a number"))?;
-                Ok(ChangeClass::Layout)
-            }
-            "resizable" => {
-                self.resizable = value.as_bool().ok_or(PropError::Invalid("a boolean"))?;
-                Ok(ChangeClass::Paint)
-            }
-            "collapsible" => {
-                self.collapsible = value.as_bool().ok_or(PropError::Invalid("a boolean"))?;
-                Ok(ChangeClass::Layout)
-            }
-            "restore-on-double-click" => {
-                self.restore_on_double_click = value.as_bool().ok_or(PropError::Invalid("a boolean"))?;
-                Ok(ChangeClass::Property)
-            }
-            "commit-mode" => {
-                self.commit_on_release = match value.as_str() {
-                    Some("release") => true,
-                    Some("live") | None => false,
-                    Some(_) => return Err(PropError::Invalid("commit-mode: live or release")),
-                };
-                Ok(ChangeClass::Property)
-            }
-            _ => Err(PropError::Unknown),
+    fn kind_spec(&self) -> &'static KindSpec {
+        &SPEC
+    }
+    fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
+        // a drag owns the pane sizes until it ends
+        if (prop == P::divider_position.id() || prop == P::sizes.id()) && self.sashes.iter().any(Sash::dragging) {
+            return Err(PropError::Stale);
         }
+        self.props.set(prop, v)?;
+        if prop == P::sizes.id()
+            && self.props.sizes.iter().any(|x| x.as_f64().is_none())
+        {
+            self.props.sizes.clear();
+            return Err(PropError::Type { prop: "sizes", expected: ValueType::List });
+        }
+        // a host write of `divider-position` overrides `sizes`
+        if prop == P::divider_position.id() {
+            self.props.sizes.clear();
+        }
+        self.sync();
+        Ok(())
+    }
+    fn get_prop(&self, prop: PropId) -> Option<Value> {
+        self.props.get(prop)
     }
 
-    fn record(&self, cx: &mut RecordCx<'_>) {
+    fn record(&self, cx: &mut RecordCx) {
         let ax = self.axis();
+        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        let mut pc = PaintCx::of(cx);
         for k in 0..self.sashes.len() {
             let (line, _) = self.sash_rects(k);
-            record_sash(cx, line, ax, self.resizable && self.sashes[k].hover_shown(self.now));
+            record_sash(&mut pc, &styles, line, ax, self.resizable && self.sashes[k].hover_shown(self.now), self.sashes[k].dragging());
         }
         if let Some((k, size)) = self.ghost {
             let at = self.laid[..k].iter().sum::<f32>() + self.line * k as f32 + size;
             let g = if ax == 0 { Rect::new(at - 1.0, 0.0, at + 1.0, self.size.h) } else { Rect::new(0.0, at - 1.0, self.size.w, at + 1.0) };
-            draw::fill(cx.list, g, 0.0, cx.palette.accent);
+            let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark);
+            let guide = host.part(styles.part_css("guide"), GUIDE_UA);
+            paint::paint_box(&mut pc, &guide, g);
         }
     }
 
@@ -671,10 +709,23 @@ impl Kind for SplitView {
         if !self.resizable || self.sashes.is_empty() {
             return Handled::No;
         }
+        // the pointer leaving or the capture ending reach the sashes as a leave or a cancel
+        let synthetic;
+        let ev = match ev {
+            Event::Hover(false) => {
+                synthetic = Event::Pointer(leave_event(PointerPhase::Leave));
+                &synthetic
+            }
+            Event::CaptureLost => {
+                synthetic = Event::Pointer(leave_event(PointerPhase::Cancel));
+                &synthetic
+            }
+            e => e,
+        };
         match ev {
             Event::Pointer(p) => {
                 let primary = p.button == Some(MouseButton::Primary) || (p.phase != PointerPhase::Down && p.buttons & 1 != 0);
-                let under = (0..self.sashes.len()).find(|k| self.sash_rects(*k).1.contains(p.pos));
+                let under = (0..self.sashes.len()).find(|k| p.phase != PointerPhase::Leave && self.sash_rects(*k).1.contains(p.pos));
                 if p.phase == PointerPhase::Down && primary {
                     self.active = under;
                 }
@@ -690,7 +741,7 @@ impl Kind for SplitView {
                     self.sashes[k].set_size(self.laid[k]);
                     let intents = self.sashes[k].pointer(cx.now, cx.policy, &params, p.phase, primary, p.pos, inside);
                     if self.sashes[k].hover_shown(cx.now) != was_shown {
-                        cx.mark(ChangeClass::Paint);
+                        cx.repaint = true;
                     }
                     if let Some(t) = self.sashes[k].wake() {
                         cx.wake_at(t);
@@ -721,16 +772,42 @@ impl Kind for SplitView {
                 self.apply(cx, i, intents);
                 Handled::Yes
             }
+            Event::A11y(req) => {
+                let Some(k) = self.focused else { return Handled::No };
+                self.sash_action(cx, k, req);
+                Handled::Yes
+            }
+            Event::Focus { gained: false, .. } => {
+                self.focus_sash(None);
+                cx.repaint = true;
+                Handled::No
+            }
             Event::Timer => {
-                cx.mark(ChangeClass::Paint);
+                cx.repaint = true;
                 Handled::Yes
             }
             _ => Handled::No,
         }
     }
 
-    fn a11y(&self, node: &mut accesskit::Node) {
-        node.set_role(accesskit::Role::Group);
+    fn a11y(&self, cx: &mut A11yCx) {
+        cx.node.set_role(accesskit::Role::Group);
+    }
+}
+
+/// A pointer event with no position of its own (the pointer left, or the capture ended).
+pub(crate) fn leave_event(phase: PointerPhase) -> presto_base::event::PointerEvent {
+    presto_base::event::PointerEvent {
+        phase,
+        pointer: 0,
+        kind: presto_base::event::PointerType::Mouse,
+        button: None,
+        buttons: 0,
+        pos: Point::new(f32::NAN, f32::NAN),
+        modifiers: Modifiers::default(),
+        pressure: 0.0,
+        tilt: presto_base::geom::Vec2::ZERO,
+        history: Default::default(),
     }
 }
 
@@ -753,9 +830,9 @@ impl SplitView {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::interact::{Native, Platform};
     use presto_base::event::{KeyEvent, KeyLocation, PointerEvent, PointerType};
     use presto_base::geom::Vec2;
-    use super::super::legacy::Os;
 
     fn lim(n: usize) -> Vec<PaneLimits> {
         vec![PaneLimits { min: 32.0, ..Default::default() }; n]
@@ -809,58 +886,87 @@ mod tests {
 
     #[test]
     fn a_drag_moves_the_two_panes_beside_the_sash() {
-        let pol = Policy::for_os(Os::Windows);
+        let pol = *Native::for_os(Platform::Windows).policy();
         let mut s = SplitView::default();
         let rects = s.layout(Size::new(401.0, 100.0), &lim(2));
         assert_eq!(rects[0], Rect::new(0.0, 0.0, 200.0, 100.0));
         assert_eq!(s.sash_rects(0).0, Rect::new(200.0, 0.0, 201.0, 100.0));
-        let mut cx = EventCx::new(Time(0), Size::new(401.0, 100.0), &pol);
-        assert_eq!(s.event(&mut cx, &ptr(PointerPhase::Down, 200.5)), Handled::Yes);
+        let mut t = Probe::new(pol, Size::new(401.0, 100.0));
+        assert_eq!(t.send(&mut s, ptr(PointerPhase::Down, 200.5)), Handled::Yes);
         // below the drag threshold (4 pt on Windows): nothing yet
-        s.event(&mut cx, &ptr(PointerPhase::Move, 202.0));
-        assert_eq!(cx.emitted("drag-started").count(), 0);
-        s.event(&mut cx, &ptr(PointerPhase::Move, 250.5));
-        assert_eq!(cx.emitted("drag-started").count(), 1);
+        t.send(&mut s, ptr(PointerPhase::Move, 202.0));
+        assert_eq!(t.count("drag-started"), 0);
+        t.send(&mut s, ptr(PointerPhase::Move, 250.5));
+        assert_eq!(t.count("drag-started"), 1);
+        assert_eq!(t.capture, Some(true));
         assert_eq!(s.laid(), &[250.0, 150.0]);
-        assert_eq!(cx.emitted("changed").last().map(|e| e.detail.clone()), Some(Value::F64(250.0)));
-        s.event(&mut cx, &ptr(PointerPhase::Up, 250.5));
-        assert_eq!(cx.emitted("commit").count(), 1);
-        assert_eq!(cx.emitted("drag-stopped").count(), 1);
-        assert_eq!(cx.capture, Some(false));
+        assert_eq!(t.last("changed"), Some(vec![Value::F64(250.0)]));
+        assert!(t.changed.contains(&"sizes") && t.changed.contains(&"divider-position"), "native changes for bind:");
+        t.send(&mut s, ptr(PointerPhase::Up, 250.5));
+        assert_eq!(t.count("commit"), 1);
+        assert_eq!(t.count("drag-stopped"), 1);
+        assert_eq!(t.capture, Some(false));
         assert_eq!(s.sizes, Some(vec![250.0, 150.0]));
+        assert_eq!(s.get_prop(P::sizes.id()), Some(Value::List(vec![Value::F64(250.0), Value::F64(150.0)])));
     }
 
     #[test]
     fn escape_cancels_and_keys_step_the_focused_sash() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = *Native::for_os(Platform::Linux).policy();
         let mut s = SplitView::default();
         s.layout(Size::new(401.0, 100.0), &lim(2));
-        let mut cx = EventCx::new(Time(0), Size::new(401.0, 100.0), &pol);
-        s.event(&mut cx, &ptr(PointerPhase::Down, 200.5));
-        s.event(&mut cx, &ptr(PointerPhase::Move, 300.5));
+        let mut t = Probe::new(pol, Size::new(401.0, 100.0));
+        t.send(&mut s, ptr(PointerPhase::Down, 200.5));
+        t.send(&mut s, ptr(PointerPhase::Move, 300.5));
         assert_eq!(s.laid()[0], 300.0);
-        s.event(&mut cx, &key(Key::Escape));
+        // a JS write while the drag owns the sizes is refused
+        assert_eq!(s.set_prop(P::divider_position.id(), &Value::F64(10.0)), Err(PropError::Stale));
+        t.send(&mut s, key(Key::Escape));
         assert_eq!(s.laid()[0], 200.0, "back to the size before the drag");
         s.focus_sash(Some(0));
-        s.event(&mut cx, &key(Key::ArrowRight));
+        t.send(&mut s, key(Key::ArrowRight));
         assert_eq!(s.laid(), &[210.0, 190.0]);
-        s.event(&mut cx, &key(Key::Home));
+        t.send(&mut s, key(Key::Home));
         assert_eq!(s.laid()[0], 32.0);
+        assert_eq!(s.set_prop(P::divider_position.id(), &Value::F64(10.0)), Ok(()));
+        assert_eq!(s.sizes, None, "divider-position overrides sizes");
     }
 
     #[test]
     fn release_mode_moves_on_release() {
-        let pol = Policy::for_os(Os::Windows);
-        let mut s = SplitView { commit_on_release: true, ..Default::default() };
+        let pol = *Native::for_os(Platform::Windows).policy();
+        let mut s = SplitView::default();
+        s.set_prop(P::commit_mode.id(), &Value::str("release")).unwrap();
+        assert!(s.commit_on_release);
         s.layout(Size::new(401.0, 100.0), &lim(2));
-        let mut cx = EventCx::new(Time(0), Size::new(401.0, 100.0), &pol);
-        s.event(&mut cx, &ptr(PointerPhase::Down, 200.5));
-        s.event(&mut cx, &ptr(PointerPhase::Move, 260.5));
+        let mut t = Probe::new(pol, Size::new(401.0, 100.0));
+        t.send(&mut s, ptr(PointerPhase::Down, 200.5));
+        t.send(&mut s, ptr(PointerPhase::Move, 260.5));
         assert_eq!(s.laid()[0], 200.0, "panes stay during the drag");
         assert_eq!(s.ghost, Some((0, 260.0)));
-        s.event(&mut cx, &ptr(PointerPhase::Up, 260.5));
+        let (list, _) = crate::controls::testkit::record(&s, Size::new(401.0, 100.0), StateBits::NONE);
+        // the sash line, its hover bar and three grip dots, then the guide
+        assert_eq!(crate::controls::testkit::kinds(&list), ["quad", "quad", "quad", "quad", "quad", "quad"]);
+        t.send(&mut s, ptr(PointerPhase::Up, 260.5));
         assert_eq!(s.laid()[0], 260.0);
         assert_eq!(s.ghost, None);
+    }
+
+    #[test]
+    fn the_hover_bar_waits_for_the_policy_delay() {
+        let pol = *Native::for_os(Platform::Windows).policy();
+        let mut s = SplitView::default();
+        s.layout(Size::new(401.0, 100.0), &lim(2));
+        let mut t = Probe::new(pol, Size::new(401.0, 100.0));
+        t.send(&mut s, Event::Pointer(PointerEvent { buttons: 0, button: None, ..match ptr(PointerPhase::Move, 200.5) { Event::Pointer(p) => p, _ => unreachable!() } }));
+        assert!(!s.sashes[0].hover_shown(t.now));
+        let wake = t.wake.expect("asks for the delay");
+        assert_eq!(wake - t.now, secs(pol.scroll.sash_hover_delay));
+        t.now = wake;
+        assert!(s.sashes[0].hover_shown(t.now));
+        // the pointer leaves the view: the bar goes
+        t.send(&mut s, Event::Hover(false));
+        assert!(!s.sashes[0].hover_shown(t.now));
     }
 
     #[test]
@@ -877,5 +983,57 @@ mod tests {
         r.toggle_collapse(&p, &mut out);
         assert_eq!(r.size(), 120.0, "restored to the size before the collapse");
         assert_eq!(out.last(), Some(&SashIntent::Commit { size: 120.0 }));
+    }
+}
+
+/// A test harness for one view kind: sends events at a virtual time with a policy, and keeps the
+/// signals (with their arguments), native prop changes, capture and wake-up each event produced.
+#[cfg(test)]
+pub(crate) struct Probe {
+    pub policy: Policy,
+    pub size: Size,
+    pub now: Time,
+    pub state: StateBits,
+    pub focused: bool,
+    pub signals: Vec<(&'static str, Vec<Value>)>,
+    pub changed: Vec<&'static str>,
+    pub capture: Option<bool>,
+    pub wake: Option<Time>,
+    pub cursor: Option<CursorIcon>,
+    pub repaint: bool,
+}
+
+#[cfg(test)]
+impl Probe {
+    pub fn new(policy: Policy, size: Size) -> Probe {
+        Probe { policy, size, now: Time(1_000_000_000), state: StateBits::NONE, focused: false, signals: Vec::new(), changed: Vec::new(), capture: None, wake: None, cursor: None, repaint: false }
+    }
+    /// Sends `ev` to `k`; capture, wake, cursor and repaint are this event's.
+    pub fn send<K: Kind>(&mut self, k: &mut K, ev: Event) -> Handled {
+        let spec = k.kind_spec();
+        let policy = self.policy;
+        let mut cx = EventCx::new(self.now, self.size, &mut self.state, &policy);
+        cx.focused = self.focused;
+        let h = k.event(&mut cx, &ev);
+        let (emitted, changed) = (std::mem::take(&mut cx.emitted), std::mem::take(&mut cx.changed));
+        let (capture, wake, cursor, repaint) = (cx.capture, cx.wake, cx.cursor, cx.repaint);
+        self.signals.extend(emitted.into_iter().map(|e| (spec.signals[e.signal.0 as usize].name, e.args)));
+        self.changed.extend(changed.into_iter().map(|p| spec.props[p.0 as usize].name));
+        if capture.is_some() {
+            self.capture = capture;
+        }
+        (self.wake, self.cursor, self.repaint) = (wake, cursor, repaint);
+        h
+    }
+    pub fn advance(&mut self, ms: i64) {
+        self.now = self.now + Span::from_millis(ms);
+    }
+    /// How many times `name` was emitted.
+    pub fn count(&self, name: &str) -> usize {
+        self.signals.iter().filter(|(n, _)| *n == name).count()
+    }
+    /// The arguments of the last `name`.
+    pub fn last(&self, name: &str) -> Option<Vec<Value>> {
+        self.signals.iter().rev().find(|(n, _)| *n == name).map(|(_, a)| a.clone())
     }
 }
