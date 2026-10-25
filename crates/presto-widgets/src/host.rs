@@ -26,16 +26,17 @@
 //! padding, per-child layout, inert children).
 
 use crate::interact::{FocusReason as WFocus, Native, Policy, StateBits};
+use crate::controls::run::{self, RunNode};
 use crate::shim::core as w;
 use crate::shim::text::{PlacedRun, RichText, TextLayout, TextShaper};
 use presto_base::commit::ImageData;
 use presto_base::display::{DisplayList, Prim};
 use presto_base::event::{PointerEvent, PointerPhase, WheelEvent};
 use presto_base::geom::{Point, Vec2};
-use presto_base::ids::{ImageId, RunId};
+use presto_base::ids::{ImageId, NodeId, RunId};
 use presto_base::text::GlyphRun;
 use presto_core::{
-    A11yCx, Event, EventCx, FocusReason, Handled, HitCx, HitResult, Kind, KindRegistry, KindSpec, MeasureCx, PrepareCx, PropCx, PropDefault, PropError, PropId, PropSpec, RecordCx, RegistryError,
+    A11yCx, Event, EventCx, NodeView, FocusReason, Handled, HitCx, HitResult, Kind, KindRegistry, KindSpec, MeasureCx, PrepareCx, PropCx, PropDefault, PropError, PropId, PropSpec, RecordCx, RegistryError,
     SignalFlags, SignalSpec, SlotSpec, StateMask, StyleCx, Value, ValueType,
 };
 use std::collections::HashMap;
@@ -316,11 +317,13 @@ pub struct Hosted<W: w::Kind + Default> {
     pub widget: W,
     /// Images uploaded in `prepare`, by the widget's image key.
     images: HashMap<String, ImageId>,
+    /// A label's run children as `runs` records, folded when the bridge last saw the children.
+    folded: Vec<w::Value>,
 }
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new() }
+        Hosted { widget: W::default(), images: HashMap::new(), folded: Vec::new() }
     }
 }
 
@@ -353,11 +356,29 @@ pub fn register_tier0(registry: &mut KindRegistry) -> Result<(), RegistryError> 
     register::<Stack>(registry)?;
     register::<Switch>(registry)?;
     register::<ToggleButton>(registry)?;
+    register::<Span>(registry)?;
+    register::<Bold>(registry)?;
+    register::<Italic>(registry)?;
+    register::<Code>(registry)?;
+    register::<Anchor>(registry)?;
     Ok(())
 }
 
-fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, state: StateMask, dark: bool) -> w::Styles<'a> {
-    w::Styles { computed: css, parts: &[], state: StateBits(state.0), dark }
+fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, children: &'a [w::Value], state: StateMask, dark: bool) -> w::Styles<'a> {
+    w::Styles { computed: css, parts: &[], children, state: StateBits(state.0), dark }
+}
+
+/// The run children under `ids` (`controls::run`), read through `view_of`.
+fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId]) -> Vec<RunNode> {
+    ids.iter()
+        .filter_map(|&id| {
+            let v = view_of(id)?;
+            let spec = v.kind().spec;
+            let href = spec.prop_named("href").and_then(|p| v.prop_str(p)).unwrap_or("").to_owned();
+            let weight = spec.prop_named("font-weight").and_then(|p| v.prop(p)).and_then(Value::as_i64).unwrap_or(0);
+            Some(RunNode { tag: spec.name.to_owned(), text: v.text().to_owned(), href, weight, children: run_nodes(view_of, v.children()) })
+        })
+        .collect()
 }
 
 fn is_dark(theme: Option<&mut crate::theme::Theme>) -> bool {
@@ -483,7 +504,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let node = cx.node;
         let dark = is_dark(cx.service::<crate::theme::Theme>());
         let mut text = shaper(cx.service::<presto_text::TextSystem>());
-        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), node.state(), dark), text: &mut *text, scale: 1.0 }, known, avail)
+        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &self.folded, node.state(), dark), text: &mut *text, scale: 1.0 }, known, avail)
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
@@ -494,7 +515,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
             let mut list = DisplayList::new();
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &self.folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
             (res.new, res.used)
         };
         for (key, data) in new {
@@ -521,7 +542,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let runs = {
             let mut text = shaper(cx.service::<presto_text::TextSystem>());
             let mut res = RecordRes { runs: Vec::new(), images: &self.images };
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &self.folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: 1.0 });
             res.runs
         };
         // the pass's run indices become presto-core's run ids
@@ -551,6 +572,14 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         let Some(wev) = Self::translate(ev) else { return Handled::No };
         let node = cx.node();
+        let Some(view) = cx.view(node) else { return Handled::No };
+        // a label folds its run children; presto-core shows a kind its children only here so far
+        if W::spec().tag == "label" {
+            let folded = run::fold(&run_nodes(&|id| cx.view(id), view.children()));
+            if folded != self.folded {
+                self.folded = folded;
+            }
+        }
         let Some(view) = cx.view(node) else { return Handled::No };
         let (size, mask) = (view.size(), view.state());
         self.sync_disabled(view.disabled());
