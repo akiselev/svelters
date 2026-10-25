@@ -65,11 +65,6 @@ impl SlotTable {
         self.len
     }
 
-    /// Slots ever used (live or not).
-    pub fn capacity(&self) -> usize {
-        self.gens.len()
-    }
-
     #[cfg(test)]
     pub fn free_len(&self) -> usize {
         self.free.len()

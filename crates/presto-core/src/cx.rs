@@ -200,7 +200,7 @@ pub(crate) struct ImageSink {
 /// [`Kind::prepare`](crate::Kind::prepare).
 pub struct PrepareCx<'a> {
     pub node: NodeView<'a>,
-    pub(crate) shaper: Option<&'a mut dyn TextShaper>,
+    pub(crate) shaper: Option<&'a mut (dyn TextShaper + 'static)>,
     pub(crate) images: &'a mut ImageSink,
     pub(crate) request: Dirty,
 }
@@ -248,7 +248,7 @@ pub struct RecordCx<'a> {
     pub(crate) runs: &'a mut RunSink,
     /// The runs this node's list references (replaced runs are dropped when the list is).
     pub(crate) node_runs: &'a mut Vec<RunId>,
-    pub(crate) shaper: Option<&'a mut dyn TextShaper>,
+    pub(crate) shaper: Option<&'a mut (dyn TextShaper + 'static)>,
 }
 
 impl<'a> std::ops::Deref for RecordCx<'a> {

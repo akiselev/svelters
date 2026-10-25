@@ -4,6 +4,7 @@
 //! classes need (architecture §5): layout properties relayout, paint properties re-record, compositor
 //! properties (opacity, transform) update the property trees. Transitions start engine animations.
 
+pub(crate) mod cascade;
 mod computed;
 
 pub use computed::{BoxShadow, ComputedBox, Overflow, TextAlign, TransitionSpec};

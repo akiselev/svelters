@@ -75,6 +75,9 @@ pub struct Document {
     pub(crate) scroll: HashMap<NodeId, presto_base::geom::Vec2>,
     /// The revision of the last edit that changed something.
     pub(crate) last_change: Revision,
+    /// Run and image ids are unique per document (the compositor holds them per window).
+    pub(crate) run_counter: u64,
+    pub(crate) images: crate::cx::ImageSink,
 }
 
 impl Document {
@@ -105,6 +108,8 @@ impl Document {
             anim: Default::default(),
             scroll: HashMap::new(),
             last_change: Revision(0),
+            run_counter: 0,
+            images: Default::default(),
         }
     }
 
