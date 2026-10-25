@@ -81,7 +81,7 @@ mod tests {
 
     #[test]
     fn presentation_and_commit_timer_round_trip() {
-        let t = Time(((7u64 << 32) + 11) * 1_000_000_000 + 999);
+        let t = Time(((1u64 << 32) + 11) * 1_000_000_000 + 999);
         let (hi, lo, ns) = to_timespec_parts(t);
         assert_eq!(from_presentation(CLOCK_MONOTONIC_ID, hi, lo, ns), Some(t));
         assert_eq!(from_presentation(7, hi, lo, ns), None);
