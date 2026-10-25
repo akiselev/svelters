@@ -4169,12 +4169,20 @@ dependencies = [
 name = "presto-test"
 version = "0.0.0"
 dependencies = [
+ "dify",
  "egui",
+ "egui-wgpu",
+ "image",
  "pollster 0.4.0",
  "presto",
  "presto-base",
+ "presto-egui-island",
+ "presto-platform",
  "presto-render",
+ "presto-test",
  "presto-text",
+ "svelters-automation",
+ "svelters-egui",
  "wgpu",
 ]
 

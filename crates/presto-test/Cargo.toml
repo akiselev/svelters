@@ -6,12 +6,30 @@ version.workspace = true
 license.workspace = true
 publish.workspace = true
 
+[features]
+default = []
+# The automation bridge: `svelters_automation::Driver` for a harness hosting svelters-egui roots in
+# egui islands (`crate::automation`).
+automation = ["dep:svelters-automation", "dep:svelters-egui"]
+
 [dependencies]
 presto-base = { workspace = true }
 presto = { workspace = true }
 presto-render = { workspace = true }
 presto-text = { workspace = true }
+presto-egui-island = { workspace = true }
+presto-platform = { workspace = true }
 wgpu = { workspace = true }
 pollster = "0.4"
-# The `egui::Event`-shaped injection adapter (architecture §16.1); same pin as svelters-egui.
+# The `egui::Event`-shaped injection adapter (architecture §16.1) and the egui island harness; same
+# pin as svelters-egui.
 egui = { version = "=0.37.0", default-features = false }
+egui-wgpu = { version = "=0.37.0", default-features = false }
+# The pixel tier: egui_kittest's comparison (dify) and PNG goldens, at egui_kittest 0.37's versions.
+dify = { version = "0.8.0", default-features = false }
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+svelters-automation = { workspace = true, optional = true }
+svelters-egui = { workspace = true, optional = true }
+
+[dev-dependencies]
+presto-test = { path = ".", features = ["automation"] }
