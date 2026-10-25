@@ -225,8 +225,12 @@ pub(crate) fn post(p: Pending) {
     drain();
 }
 
-/// Queues an input event for `window`, stamped with the next [`InputSeq`].
+/// Queues an input event for `window`, stamped with the next [`InputSeq`]; dropped for a closed window.
 pub(crate) fn post_input(window: WindowId, os_time: Time, event: InputEvent) {
+    // AppKit can still deliver events to a closed window's view.
+    if with_app(|st| st.windows.contains_key(&window)) == Some(false) {
+        return;
+    }
     let seq = SEQ.with(|c| {
         let s = c.get();
         c.set(s + 1);

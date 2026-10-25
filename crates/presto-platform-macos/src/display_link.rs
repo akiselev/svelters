@@ -24,8 +24,8 @@ use objc2_app_kit::NSView;
 use objc2_core_foundation::{CFRetained, CFRunLoop, kCFRunLoopDefaultMode};
 use objc2_core_video::{CVDisplayLink, CVOptionFlags, CVReturn, CVTimeStamp};
 use objc2_foundation::{
-    NSDefaultRunLoopMode, NSObject, NSObjectProtocol, NSOperatingSystemVersion, NSProcessInfo,
-    NSRunLoop,
+    NSDefaultRunLoopMode, NSObject, NSObjectProtocol, NSOperatingSystemVersion, NSPort,
+    NSProcessInfo, NSRunLoop,
 };
 use objc2_quartz_core::{
     CADisplayLink, CAMetalDisplayLink, CAMetalDisplayLinkDelegate, CAMetalDisplayLinkUpdate,
@@ -194,14 +194,19 @@ impl MacFrameSource {
 
     fn perform(&self, f: impl Fn() + 'static) {
         if let Some(rl) = &self.run_loop {
-            let block = RcBlock::new(f);
-            // SAFETY: the default mode is a valid mode; the block is retained by the run loop.
-            unsafe {
-                rl.0.perform_block(kCFRunLoopDefaultMode.map(|m| &**m), Some(&block))
-            };
-            rl.0.wake_up();
+            perform(rl, f);
         }
     }
+}
+
+/// Runs `f` on the link thread's run loop.
+fn perform(rl: &SendRunLoop, f: impl Fn() + 'static) {
+    let block = RcBlock::new(f);
+    // SAFETY: the default mode is a valid mode; the run loop retains the block.
+    unsafe {
+        rl.0.perform_block(kCFRunLoopDefaultMode.map(|m| &**m), Some(&block))
+    };
+    rl.0.wake_up();
 }
 
 impl FrameSource for MacFrameSource {
@@ -231,7 +236,7 @@ impl Drop for MacFrameSource {
         self.shared.alive.store(false, Ordering::Release);
         if let Some(rl) = self.run_loop.take() {
             let rl2 = rl.clone();
-            self.perform(move || {
+            perform(&rl, move || {
                 LINK.with(|l| {
                     if let Some(l) = l.borrow_mut().take() {
                         l.invalidate();
@@ -239,7 +244,6 @@ impl Drop for MacFrameSource {
                 });
                 rl2.0.stop();
             });
-            rl.0.wake_up();
         }
         if let Some(t) = self.thread.take() {
             let _ = t.join();
@@ -308,6 +312,10 @@ fn link_thread(start: LinkStart, shared: Arc<Shared>, tx: mpsc::Sender<SendRunLo
             }
         };
         LINK.with(|l| *l.borrow_mut() = Some(link));
+        // A port keeps the run loop running (CFRunLoopRun returns at once without sources) whatever
+        // the link does.
+        // SAFETY: this thread's run loop, in its default mode.
+        unsafe { run_loop.addPort_forMode(&NSPort::port(), NSDefaultRunLoopMode) };
     });
     let Some(rl) = CFRunLoop::current() else {
         return;
@@ -315,7 +323,7 @@ fn link_thread(start: LinkStart, shared: Arc<Shared>, tx: mpsc::Sender<SendRunLo
     if tx.send(SendRunLoop(rl)).is_err() {
         return;
     }
-    // Runs until the source's Drop stops it; the link keeps the run loop alive meanwhile.
+    // Runs until the source's Drop stops it.
     while shared.alive.load(Ordering::Acquire) {
         objc2::rc::autoreleasepool(|_| CFRunLoop::run());
     }
