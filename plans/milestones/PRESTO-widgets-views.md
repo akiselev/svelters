@@ -2,15 +2,15 @@
 
 Lane WIDGETS-VIEWS of presto batch 2 (`plans/cloud/presto-b2/LANE-widgets-views.md`). Branch
 `ci/presto-widgets-views`, from `ci/presto-base`, with `ci/presto-base` merged up to 622aef24 (presto-anim,
-presto-compositor skeleton, presto-core, presto-text). Session `session_01UQTt4dFy9hz4VEv6q2vmpg`.
+presto-compositor skeleton, presto-core, presto-text, the WIDGETS-BASIC substrate ac7cc8c4). Session `session_01UQTt4dFy9hz4VEv6q2vmpg`.
 
-## What landed (`crates/presto-widgets/src/views/`, about 12.4k lines with tests)
+## What landed (`crates/presto-widgets/src/views/`)
 
 | File | What |
 |---|---|
-| `shim.rs` | stand-ins for APIs the views needed before presto-core existed: a `Kind` trait over own fields (`set_prop`), `KindSpec`, `Value`, `Event`, `EventCx` (time, policy, emitted signals, change class, fast commits, wake deadline, capture, focus, cursor), `RecordCx` with `Labels`, the platform `Policy` table (svelters-egui `native::Policy`, view fields), `Palette` (theme stand-in); `scroll_physics` (stands in for `presto_anim::scroll`) |
-| `bridge.rs` | `Bridge<K>`: every shim kind on presto-core's real `Kind` (spec conversion, `prop_changed`, event translation, signals by name, display list flushed in paint order with labels through `RecordCx::draw_text`, a11y); `register_all` registers the 19 view kinds |
-| `draw.rs` | private recording helpers (fill, boxed, shadow, line) until WIDGETS-BASIC's `paint` lands |
+| `shim.rs` | stand-ins for APIs still missing: `scroll_physics` (for `presto_anim::scroll`) and `fast` (a per-thread queue of `FastCommit`s, for a kind's fast-commit path; the app runner drains `fast::take()`) |
+| `common.rs` | `ms`/`secs` (policy times as spans), `platform`, `emit` by signal name |
+| `mod.rs` | `register_all`: the 19 view kinds through WIDGETS-BASIC's `host::register` |
 | `placement.rs` | popup placement: side/align, gap, flip, shift, fit, anchor width (svelters-egui `interact/anchor.rs`) |
 | `scroll.rs` | `Scroller` (offset, bars, overlay fade, thumb drag, track page/jump with repeat, keys, a11y, reveal), `ScrollLatch` (**latching per gesture**: a phased touchpad gesture and its OS momentum stay on one scroller and never chain mid-gesture; plain wheels latch per 500 ms burst; `overscroll-behavior: contain`), `ScrollArea` kind (smooth wheel on Windows/Linux, 1:1 touchpad, own fling on Linux, OS momentum elsewhere; **passive fast commits** `FastCommit::ScrollOffset` only while every listener is passive; stale JS offset writes rejected), `Scrollbar` kind |
 | `panel.rs`, `split.rs` | `Panel` with an inner-edge sash; `SplitView` (native sash drag after the drag threshold, Escape cancels, keys, a11y, live or on-release commit), `Sash` |
@@ -25,20 +25,28 @@ Tests (written, **not run** locally, per the batch rule): placement, scrolling a
 only when passive, stale writes, wheel curve/fling/velocity, virtual-list recycling and splices,
 selection keys, tree navigation, overlay dismiss chains and modal blocking, tooltip/toast timing, inner
 window drag/resize, menu keyboard navigation, submenu delay, select per OS, dialog button order,
-bridge registration and value conversion. CI runs them.
+registration of every view kind, record goldens. CI runs them.
+
+Every kind is written against WIDGETS-BASIC's kind interface (`crate::shim::core::Kind`, `kind_props!`,
+`interact::Policy`) and looks through UA tables over `paint::StyleView` (theme tokens, CSS-overridable per
+kind and `::part`); presto-core sees them through `host::register`. The lane's first shim, bridge and
+`draw.rs` are gone. `placement.rs` stays: `interact` has no anchor module.
 
 ## Stubbed or left out
 
-- **Shim in use.** View logic and its tests are on `shim::Kind`; presto-core sees them through
-  `bridge::Bridge`. The consolidation can port each kind to `presto_core::Kind` directly once core has
-  the APIs below, or keep the bridge.
+- `activate` (menus) and `changed` (select) are not cancelable: the pick is applied before the signal.
+- Menu roots are not in the Tab order (F10/Alt and the keymap reach them).
+- `VirtualList::plan`/`set_viewport`/`take_reveal` have no caller yet (no virtual-children hook in
+  `host` or the kind interface); per-row AccessKit nodes (`row_a11y`) are built but not attached.
+- `ScrollArea` caches the last event's time and policy for the overlay-bar fade (`RecordCx` has
+  neither) and has its own `reduced_motion` field (not in `interact::Policy`).
+- Popup `anchor` is a record (`{node}`, `{x,y,width,height}`, `{x,y}`).
+- Toast spacing is Rust constants; colours, borders, radii and shadows come from CSS.
 - Scroll animation is sampled on the UI thread via timer events (~16 ms); it should become an
   `AnimationSpec { property: ScrollOffset }` the compositor runs. Keyboard and programmatic smooth
   scrolls reuse the wheel curve. No macOS rubber band, no edge shadows, no drag auto-scroll.
-- Labels in bridged kinds draw in the node's font and colour, and their measurement is an estimate
-  (0.6 em/char) until `RecordCx` can measure (request 4).
 - Modal: no resize, no default/cancel button routing. Toasts: no rich text or declarative children.
-  No exit transitions. Inner-window moves mark `Property` but send no fast commit.
+  No exit transitions. Inner-window moves report native prop changes, no fast commit.
 - Menus: no `menu-button`, no shortcut matching while closed, focus restore left to the focus model,
   `activate` not cancelable.
 - Virtual list: no row DnD (lane TIER1's `dnd`), no grid layout, no deferred-bind retry, no Rust row
@@ -47,18 +55,18 @@ bridge registration and value conversion. CI runs them.
   `StatusBar::set_message_area`, `VirtualList::set_viewport` (from the enclosing scroll-area) and apply
   `take_reveal()`.
 
-## Requests to presto-core (CORE lane), each a shim item today
+## Requests (to presto-core, or to WIDGETS-BASIC's kind interface and `host`)
 
-1. `EventCx::now()` (the event's time) and access to the platform policy.
-2. Timers for kinds: `EventCx::wake_at(Time)` and an `Event::Timer` delivery (tooltips, submenu delay,
-   toasts, drag-expand, scroll animation until it moves to the compositor). Today: `bridge::take_wakes`.
-3. `EventCx::fast_commit(FastCommit)` for native-owned writes (scroll offsets). Today: `bridge::take_fast`.
-4. `RecordCx::measure_text` and `draw_text` at a given size and colour.
-5. `WheelInput` with the gesture `phase` and `momentum` (presto-base `WheelEvent` has them): per-gesture
-   latching needs them; the bridge passes `None` today, so touchpads latch per burst.
-6. Hover enter/leave with a position; AccessKit action requests delivered to kinds.
-7. The newest revision delivered to JS per node (`ScrollArea::js_saw`), for the stale-write check;
-   or core's `native_owned` check alone (the bridge marks `Property`-class props native-owned).
+1. Timers for kinds through `host` (`EventCx::wake` is dropped by `Hosted` today): tooltips, submenu
+   delay, toasts, drag-expand, the scroll animation until it moves to the compositor.
+2. A fast-commit path from `EventCx` to the compositor (today `views::shim::fast`).
+3. Wheel gesture `phase` and `momentum` through presto-core's `WheelInput` and `host` (per-gesture
+   latching needs them; without them touchpads latch per burst).
+4. `RecordCx` with the time and the policy; `interact::Policy` with `reduced_motion`.
+5. A virtual-children hook in the kind interface/`host` (`presto_core::VirtualChildren` is implemented
+   by `VirtualList` and `TreeView`), and a way to attach per-row AccessKit nodes.
+6. `Copy` on `shim::core::Styles` (menu-bar copies it field by field to paint).
+7. Confirm `host`'s `set_native` path carries `List` values (`selected-ids`, `expanded-ids`).
 
 ## Questions for the coordinator (with recommendations)
 
@@ -72,11 +80,11 @@ bridge registration and value conversion. CI runs them.
    Recommend reachable by default, skipped through `disabled_focusable = false`.
 5. **Lone Alt** needs `Key::AltLeft/AltRight` press/release events from the platform lanes; recommend
    confirming with them.
-6. **Name overlaps with common props/signals**: `inner-window`/`modal` `title` (the window title) vs the
-   common `title` (tooltip); `scroll-area`'s `scroll` signal vs the common DOM `scroll` event.
-   Recommend renaming the kind props to `heading` (or dropping the common `title` for these kinds) and
-   letting `scroll-area` emit the common `scroll` event instead of its own.
-7. `RecordCx` has no policy, so overlay vs classic bars follow the host OS; recommend adding it.
+6. **Name overlaps**: done for `title`: `modal`/`inner-window` now have `heading` (the common `title` stays
+   the tooltip). Open: `scroll-area`'s `scroll` signal vs the common DOM `scroll` event; recommend
+   emitting the common one.
+7. Menu roots out of the Tab order (VS Code, Windows): confirm.
+8. Popup `anchor` as one record prop: recommend keeping.
 
 ## Cross-lane edits
 
