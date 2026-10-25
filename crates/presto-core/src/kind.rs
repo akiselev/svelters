@@ -555,6 +555,11 @@ pub trait Kind: 'static {
         None
     }
 
+    /// Another node claimed the one selection ([`EventCx::claim_selection`](crate::EventCx::claim_selection)
+    /// with [`Document::set_single_selection`](crate::Document::set_single_selection) on, GTK's rule):
+    /// collapse this node's selection (to its start).
+    fn selection_lost(&mut self, cx: &mut EventCx) {}
+
     /// An open floating surface (popup, menu, select list, tooltip) that a press outside it closes:
     /// while true, a primary-or-other pointer press in the window outside the node's subtree first
     /// reaches [`Kind::outside_press`]. Asked after every prop write and every call into the kind.

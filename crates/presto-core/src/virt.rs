@@ -444,7 +444,7 @@ impl Document {
     fn place_row(&mut self, n: NodeId, r: Rect) {
         use taffy::{Dimension, LengthPercentageAuto as Lpa, Position};
         let i = self.ix(n);
-        let st = &mut self.layout[i].style;
+        let st = std::sync::Arc::make_mut(&mut self.layout[i].style);
         let inset = taffy::Rect { left: Lpa::length(r.min.x), top: Lpa::length(r.min.y), right: Lpa::auto(), bottom: Lpa::auto() };
         let size = taffy::Size { width: Dimension::length(r.width()), height: Dimension::length(r.height()) };
         let display = if st.display == taffy::Display::None { taffy::Display::Flex } else { st.display };
@@ -462,7 +462,7 @@ impl Document {
     fn park_row(&mut self, n: NodeId) {
         let i = self.ix(n);
         if self.layout[i].style.display != taffy::Display::None {
-            self.layout[i].style.display = taffy::Display::None;
+            std::sync::Arc::make_mut(&mut self.layout[i].style).display = taffy::Display::None;
             self.mark_layout(n);
         }
     }

@@ -243,6 +243,42 @@ impl Kind for Pop {
     }
 }
 
+const SEL: KindId = KindId::of("sel");
+const SEL_ON: PropId = PropId::of("sel", "selecting", "bool");
+
+static SEL_SPEC: KindSpec = KindSpec {
+    props: &[PropSpec::new("selecting", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)).native()],
+    focusable: true,
+    ..KindSpec::new("sel")
+};
+
+/// A text stand-in: a click selects its text and claims the one selection; losing it collapses.
+#[derive(Default)]
+struct Sel;
+
+impl Kind for Sel {
+    fn spec() -> &'static KindSpec {
+        &SEL_SPEC
+    }
+    fn measure(&self, _cx: &mut MeasureCx, _k: taffy::Size<Option<f32>>, _a: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        taffy::Size { width: 20.0, height: 10.0 }
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        if let Event::Click(_) = ev {
+            let _ = cx.set_native(SEL_ON, Value::Bool(true));
+            cx.claim_selection();
+            return Handled::Yes;
+        }
+        Handled::No
+    }
+    fn selection_lost(&mut self, cx: &mut EventCx) {
+        let _ = cx.set_native(SEL_ON, Value::Bool(false));
+    }
+}
+
 fn hdoc() -> (Document, NodeId) {
     let mut r = KindRegistry::new();
     r.register::<testkinds::BoxKind>().unwrap();
@@ -253,6 +289,7 @@ fn hdoc() -> (Document, NodeId) {
     r.register::<Btn>().unwrap();
     r.register::<Lbl>().unwrap();
     r.register::<Pop>().unwrap();
+    r.register::<Sel>().unwrap();
     let mut d = Document::new(Arc::new(r), Box::new(FixedText));
     d.set_text_shaper(Box::new(FixedText));
     let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(2.0));
@@ -759,4 +796,20 @@ fn a_press_outside_an_open_surface_dismisses_it() {
     click(&mut d, 45.0, 5.0);
     assert!(!d.view(pop).unwrap().prop_bool(POP_OPEN), "a press outside closes it");
     assert!(d.view(outside).unwrap().prop_bool(testkinds::TOGGLE_CHECKED), "and is dispatched as usual");
+}
+
+#[test]
+fn one_selection_owner_under_the_gtk_rule() {
+    let (mut d, root) = hdoc();
+    let a = child(&mut d, root, SEL, "");
+    let b = child(&mut d, root, SEL, "");
+    frame(&mut d);
+    let on = |d: &Document, n| d.view(n).unwrap().prop_bool(SEL_ON);
+    click(&mut d, 5.0, 5.0);
+    click(&mut d, 25.0, 5.0);
+    assert!(on(&d, a) && on(&d, b), "off by default: both keep their selection");
+    d.set_single_selection(true);
+    click(&mut d, 5.0, 5.0);
+    click(&mut d, 25.0, 5.0);
+    assert!(!on(&d, a) && on(&d, b), "claiming collapses the previous owner");
 }

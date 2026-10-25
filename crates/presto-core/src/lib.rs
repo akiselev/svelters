@@ -33,6 +33,7 @@
 
 pub mod a11y;
 pub mod common;
+mod compact;
 pub mod cx;
 mod document;
 pub mod error;
