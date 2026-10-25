@@ -399,6 +399,8 @@ impl<D: DocumentApi + 'static> Harness<D> {
     #[track_caller]
     pub fn step(&mut self) {
         self.deliver();
+        // The test may have changed the document's state between steps (`state_mut`): it gets its frame.
+        self.app.request_dirty_frames();
         self.clock.advance(self.interval);
         let now = self.now();
         self.compositor.vsync(now, self.interval);

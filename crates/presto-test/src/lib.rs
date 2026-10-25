@@ -3,6 +3,7 @@
 //! | Module | What |
 //! |---|---|
 //! | [`harness`] | [`Harness`]: kittest's verbs (`run`, `step`, `get_by_label`, `click`, `key_press`, …) on a real `presto::App` |
+//! | [`core_islands`] | [`CoreIslands`]: a presto-core document with islands mounted through `IslandHost` |
 //! | [`island`] | [`EguiHarness`]: egui_kittest's `Harness` for egui closures in a presto egui island |
 //! | [`headless`] | the GPU-less compositor the harness runs on (with `presto_platform::HeadlessPlatform`) |
 //! | [`a11y`] | the AccessKit snapshot (grafted island subtrees included) and kittest's queries |
@@ -16,6 +17,7 @@ pub mod a11y;
 #[cfg(feature = "automation")]
 pub mod automation;
 pub mod convert;
+pub mod core_islands;
 pub mod egui_event;
 pub mod harness;
 pub mod headless;
@@ -25,6 +27,7 @@ pub mod snapshot;
 
 pub use a11y::{A11yTree, AkNode, By, NodeInfo, NodeKey, by};
 pub use convert::TestEvent;
+pub use core_islands::CoreIslands;
 pub use harness::{Harness, HarnessBuilder, Node, NotSettled};
 pub use headless::HeadlessCompositor;
 pub use island::{EguiHarness, EguiHarnessBuilder, IslandDoc};

@@ -40,9 +40,7 @@ fn an_island_pass_reaches_the_pixels() {
     assert!(p[0] > 200 && p[1] < 40 && p[2] < 40, "red inside the rect: {p:?}");
 
     *h.state_mut() = egui::Color32::BLUE;
-    h.doc_mut().island_mut().request_pass();
-    h.ctx.request_repaint();
-    h.run_steps(2);
+    h.run();
     let img = h.render().expect("render");
     let p = img.pixel(30, 20);
     assert!(p[2] > 200 && p[0] < 40, "blue after the next pass: {p:?}");

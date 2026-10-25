@@ -1,8 +1,8 @@
 # PRESTO-test-v2: presto-test at kittest parity for cadatomic (W-T2)
 
 Lane TEST-V2 of batch presto-b3 (`plans/cloud/presto-b3/LANE-test-v2.md`). Branch `ci/presto-test-v2`, session
-`session_01FZ1DXSABohru158URTe1mR`, 2026-10-25. Owns `crates/presto-test/**`. Based on `ci/presto-base` 6f66dcdb, with
-`ci/presto-egui-island` 0dd5a347 merged in (the island API the harness codes against).
+`session_01FZ1DXSABohru158URTe1mR`, 2026-10-25. Owns `crates/presto-test/**`. Based on `ci/presto-base` (merged up to
+8a810ca9), with `ci/presto-egui-island` merged in up to 6c97eabe (`IslandHost`, the island API the harness codes against).
 
 ## What landed
 
@@ -40,6 +40,17 @@ Lane TEST-V2 of batch presto-b3 (`plans/cloud/presto-b3/LANE-test-v2.md`). Branc
   `with_accessibility_check`, `with_options`, `with_renderer_setup`, `build_ui`, `build_ui_state`, `build`,
   `build_state`; `ctx` (the island's context), `state`, `state_mut`, `into_harness`, `island_output`; everything
   else derefs to `Harness`.
+- **`CoreIslands`** (`core_islands.rs`, `HarnessBuilder::build_core_islands(core, ui)`): a presto-core document whose
+  `egui-island` nodes carry islands mounted through `presto_egui_island::IslandHost` (cadatomic's panes as real
+  nodes, W-D1). It takes the island steps the app runner does not take yet: `IslandHost::run` before each frame, the
+  passes' AccessKit subtrees handed to the harness (queries descend into them under the kind's graft node, tree id
+  `island_tree_id(node)`), `IslandHost::render` before `render`, AccessKit actions for an island's tree routed to it,
+  `IslandHost::next_wakeup` as the document's wakeup. Input goes through presto-core's dispatch (hit testing, the
+  kind's forwarding). Not wired: `IslandHost::bridge_events` (in-app drags into islands), since `CoreDocument` hands
+  its JS events to the script host.
+- **Steps run state changes.** kittest runs a pass on every step; presto frames only when asked. `Harness::step` now
+  asks the app for frames for documents with uncommitted changes (`App::request_dirty_frames`), and
+  `EguiHarness::state_mut` asks the island for a pass, so `*h.state_mut() = …; h.run()` shows the change as in kittest.
 - **`render` through the real renderer** (`island.rs`, `harness.rs`): before drawing, the island's last pass is
   rendered by egui-wgpu into its texture on the harness's device and registered with presto-render; then the
   committed tree (the island's `Prim::Surface`) is drawn as before (`HeadlessTarget`; lavapipe with
@@ -75,7 +86,11 @@ Lane TEST-V2 of batch presto-b3 (`plans/cloud/presto-b3/LANE-test-v2.md`). Branc
   `render_every_step`, an island snapshot compares with itself.
 - `tests/automation.rs`: the counter fixture compiled live from source runs in an island; a `Session` over
   `PrestoDriver` resolves selectors, clicks synthetically and semantically, waits for the label, and the driver's
-  AccessKit nodes line up with the scene's nodes.
+  AccessKit nodes line up with the scene's nodes. It needs the workspace's JS packages: without them (the presto
+  workflow runs no `pnpm install`) it prints "skipped" and passes; linux-gtk's workspace nextest has them.
+- `tests/core_islands.rs`: an island mounted with `IslandHost` on a presto-core node: queries reach its button, a
+  click goes through the document into egui, an AccessKit action on the island's tree reaches it.
+- `tests/island.rs` also: a `state_mut` change shows after `run`.
 - `tests/harness.rs` adjusted to the kittest-shaped `Node` (`value()`/`label()` as `String`, `bounds()`, `focus()`
   before `type_text`).
 
@@ -169,8 +184,9 @@ in an island). "Adapted" = available with a different shape, what to change in t
 
 - `crates/presto/src/seams.rs`: `DocumentApi::next_wakeup` (a default method; no implementor changes).
 - `crates/presto/src/app.rs`: the app's handlers wrap their bodies (`input_one`, `window_event_one`, `a11y_event_one`)
-  and arm a platform timer for documents' wakeups after each; `timer` asks every window with a due frame for one.
-  Reason: an island's delayed repaints never ran (see above).
+  and arm a platform timer for documents' wakeups after each; `timer` asks every window with a due frame for one
+  (`App::request_dirty_frames`, public: the harness calls it each step). Reason: an island's delayed repaints never
+  ran, and a host's state change outside dispatch never got a frame.
 - Merged `ci/presto-egui-island` (0dd5a347): this branch carries that lane's commits unchanged.
 - `Cargo.lock`: presto-test's new edges (presto-egui-island, presto-platform, egui-wgpu, dify, image, and, for tests and
   the `automation` feature, svelters-automation, svelters-egui without default features, svelters-host,
@@ -179,7 +195,14 @@ in an island). "Adapted" = available with a different shape, what to change in t
 ## Builds and tests run
 
 - `cargo check -p presto -p presto-test --all-targets` (with the self dev-dependency turning `automation` on): clean.
-- No tests run locally (batch rule). CI: see the report.
+- CI run 40230141525 (presto, b0754e75): island rendering worked on lavapipe, WARP and Metal (the first frame's
+  pixels, the snapshot round trip, `render_every_step`); one assertion failed (a `state_mut` change never got a frame,
+  fixed above) and `automation` failed for lack of `pnpm install`. The svelters workflows were green on 07a4a30f
+  (linux-gtk's workspace nextest included presto-test). The run's other failures (`presto-compositor` engine and
+  tree_damage, `presto-core` and `presto-widgets` lib tests) are in other lanes' crates.
+- After those fixes, one local run of the non-GPU tests this lane touched (`harness`, `queries`, `island`,
+  `snapshot`, `core_islands`, `automation`, with `pnpm install`): 41 passed. `island_render` and `render` not run
+  locally (no Vulkan driver in the container).
 - The presto workflow now also builds svelters-automation, svelters-egui (no default features), svelters-host
   (QuickJS-NG, C) and svelters-modules with `source` (the compiler) for presto-test's tests: more build time on all
   three OSes. If that is too slow, the automation test can move behind its own feature, run in linux-gtk's workspace job.

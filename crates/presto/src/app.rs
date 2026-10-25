@@ -252,6 +252,15 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         }
     }
 
+    /// Ask for a frame for every window whose document has changes no commit carries yet (state the
+    /// host changed outside dispatch, an island asked for a pass).
+    pub fn request_dirty_frames(&mut self) {
+        let windows: Vec<WindowId> = self.windows.keys().copied().collect();
+        for w in windows {
+            self.request_if_dirty(w);
+        }
+    }
+
     fn request_if_dirty(&mut self, w: WindowId) {
         if self.doc.needs_frame(w) || self.coalescer.has_pending(w) {
             self.request_frame(w);
@@ -617,10 +626,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
     fn timer(&mut self, cx: &mut dyn PlatformCx, _now: Time) {
         self.timer = None;
         self.pump(cx);
-        let windows: Vec<WindowId> = self.windows.keys().copied().collect();
-        for w in windows {
-            self.request_if_dirty(w);
-        }
+        self.request_dirty_frames();
         self.arm_timer(cx);
     }
 
