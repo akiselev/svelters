@@ -43,6 +43,9 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | 30 | `ci/presto-compiler` | c488d386, then dc3e8187 (c488d386 + integration 921d51c4, same ids.js/index.js; merged clean, record only) (RUNTIME 4c65de8d and MOTION-CSS 1a016796 in, F15 settled) | conflicts in native-runtime `ids.js`, `index.js`: took COMPILER's (one `setp`, RUNTIME's scalar path; B3's `setp_id` gone, nothing else used it) |
 | 31 | `ci/presto-app-test` | 7bd9ee8f | conflicts in `Cargo.lock` (regenerated), `presto-test/Cargo.toml` (kept the island/automation deps, added presto-core and presto-widgets `native-menu` dev-deps), `presto-test/src/harness.rs` (kept the `pub(crate)` fields, added `native_menu_bar`), `presto-widgets/Cargo.toml` (comment only), `presto/src/app.rs` (kept test-v2's `*_one` helpers, folded in app-test's `sync_refresh` on scale change and move) |
 | 32 | `ci/presto-widgets-views` | bbe7ea5a | clean |
+| — | `ci/presto-base` | 606cc569 (CORE-3 8ca53bee absolute boxes, presto.yml setup-pnpm 67df412a) | clean; my duplicate setup-pnpm step removed |
+| 33 | `ci/presto-macos` | c36101b4 | clean |
+| 34 | `ci/presto-test-v2` | 9a4f1213 | clean |
 
 ## Build fixes made
 
@@ -53,6 +56,8 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | B3 | @svelters/native-runtime | `setp` exported twice (COMPILER's `ids.js` W-C1 id write vs RUNTIME's W-C3 typed scalar write in `index.js`); rolldown rejected the bundle ("Export has already been declared"), failing every workflow's JS build at bc7215cb. One `setp` now: an id a module declared with `ids()` goes through COMPILER's path (`setp_id`, by name through `set`), everything else through RUNTIME's. |
 | B4 | presto-platform-wayland | `time.rs` test `presentation_and_commit_timer_round_trip`: `((7 << 32) + 11) s` in u64 nanoseconds overflows (deny `arithmetic_overflow`, lib test didn't compile on ubuntu presto). Now `(3 << 32) + 11` (still a non-zero high word). |
 | B5 | presto-widgets | `Cargo.toml` duplicate key `presto-platform` (APP-TEST made it a required dependency for the clipboard; WIDGETS-VIEWS added it as optional for `native-menu`). Kept the required one; `native-menu = []` now only gates the code. |
+| B6 | @svelters/style | js at 2f22c1e9: `unsupported` golden predates presto as a style toolkit (every "it is one on …" list now ends in presto). Regenerated with UPDATE=1; the diff only adds ", presto"; the other goldens (card, native, setters) were current. The svelters-cli `no such command: nextest` in the same job was fallout (install-action has no `if: !cancelled()`, also on master). |
+| B7 | presto.yml | presto-test `automation` needs the pnpm workspace (`svelte` via native-runtime's aliases). Fixed in base 67df412a (setup-pnpm), which this round takes. |
 
 ## Queue
 
@@ -75,7 +80,9 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | F14 (fixed in widgets-tier1 0876a38f, merged; recheck on CI) | presto-widgets | Windows only (presto windows-latest, run 40229342780): `dialogs::native::tests::an_installed_backend_answers_and_cancel_is_none` at `dialogs/native.rs:271`: `left: Ok(Some("/out\\x.kicad_pcb"))`, `right: Ok(Some("/out/x.kicad_pcb"))`; lib 502 / 1 | WIDGETS-TIER1 | The test joins with `Path::join` (backslash on Windows) but expects `/`; build the expected value with `Path::new("/out").join("x.kicad_pcb")` or compare as paths. |
 | F15 (settled by COMPILER c488d386/dc3e8187, merged) | @svelters/native-runtime, svelters-compiler | B3 settles the `setp` clash by routing; the two lanes should agree on one contract (do spec stable ids reach `host.setp` directly once hosts take them, and is W-C3's typed-scalar `setp` a separate op name?) | COMPILER + RUNTIME | Decide whether the compiler emits a distinct op for W-C3 writes (e.g. `$n.setv`) and keep `setp` for W-C1 ids, or retire `setp_id` once `host.setp` takes spec ids. |
 | F16 | svelters-testkit (macos-appkit) | bc7215cb, run 40229342651: `vis1` `own_widgets_match_vscode` panicked at `crates/svelters-testkit/tests/vis1.rs:54`: `fixtures/gallery-egui/dist/embed.js is missing: run pnpm --filter ./fixtures/gallery-egui build` | consolidation (recheck) | Most likely downstream of B3 (the bundle builds failed). Recheck on the next run; if it stays, the appkit job needs the gallery-egui build step. |
-| F17 | svelters-winui (windows-winui) | bc7215cb, run 40229342723: `cargo test -p svelters-winui --test generated`: `WinUI init failed: LoadLibraryW(Microsoft.WindowsAppRuntime.Bootstrap.dll): The specified module could not be found. (HRESULT 0x8007007E)` | consolidation (recheck) | Green on master. Recheck on the next run; if it stays, compare the bootstrap fetch step with master's. |
+| F17 (gone: windows-winui green on 2f22c1e9, run 40241055307) | svelters-winui (windows-winui) | bc7215cb, run 40229342723: `cargo test -p svelters-winui --test generated`: `WinUI init failed: LoadLibraryW(Microsoft.WindowsAppRuntime.Bootstrap.dll): The specified module could not be found. (HRESULT 0x8007007E)` | consolidation (recheck) | Green on master. Recheck on the next run; if it stays, compare the bootstrap fetch step with master's. |
+| F18 | svelters-style | No `overflow` shorthand: `overflow: hidden` in app CSS is a no-op. presto-widgets' base.css uses `overflow-x`/`overflow-y` only (scroll containers fine); the `overflow` utility expands to both | svelters-style (fix lane or consolidation 2) | Add the shorthand (one or two values onto overflow-x/overflow-y). |
+| F19 | presto-test | GPU only (PRESTO_GPU_TESTS=1; ubuntu, macos, windows, run 40241095094): `island_render` `an_island_pass_reaches_the_pixels` panicked at `tests/island_render.rs:48`: `blue after the next pass: [255, 0, 0, 255]` | TEST-V2 (sent by the coordinator), with EGUI-ISLAND | The island's second pass doesn't reach the pixels: check the island texture re-upload/damage after a repaint request. |
 
 ## Local results (one run, f5d7ab0c)
 
@@ -133,6 +140,15 @@ motion 4, oplog_replay 1, ops 11, run 2, spec 4, template 4. All 0 failed.
 presto latency 14; presto-core 120; presto-platform 21; presto-test automation 2, harness 22, island 7, island_render 3, menu 3,
 queries 8, render 2, snapshot 2; presto-widgets 508, text_pins 1. All 0 failed. `pnpm -r --filter '!@svelters/docs' build`
 exit 0; native-runtime tests 159 / 159.
+
+## Round 5 (base 606cc569, macos c36101b4, test-v2 9a4f1213, B6)
+
+presto latency 14; presto-core 126; presto-test automation 2, harness 22, island 8, island_render 3 (GPU path skipped
+locally), menu 3, queries 8, render 2, snapshot 2 and the rest; all 0 failed.
+
+CI at 2f22c1e9 (svelters) / 0890801c (presto, same code): linux-qt success 40241055328, windows-winui success
+40241055307, js failure 40241055330 (B6), presto failure 40241095094 (B7, F19); linux-gtk and macos-appkit were still running
+when round 5 was pushed.
 
 ## CI
 
