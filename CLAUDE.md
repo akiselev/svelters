@@ -49,13 +49,16 @@ agents (worktree lanes) that share that machine's build slots.
 
 | Machine | svelters checkout | cadatomic checkout | Sessions (Remote Control) |
 |---|---|---|---|
-| WSL PC (16 cores, 31 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `svelters-agent` (svelters coordinator), `main-cadatomic` (cadatomic coordinator) |
+| WSL PC (16 cores, 31 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `main-cadatomic` (coordinator of cadatomic and svelters) |
 | thinkpadx1 (12 cores, 62 GB) | `/projects/sinbad/svelters` | `/projects/sinbad/cadatomic` | `thinkpad-svelters`, `thinkpad-cadatomic` |
 | macbook (Intel, 12 cores, 32 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `macbook-svelters`, `macbook-cadatomic` |
 
 - The WSL PC can build and test Windows targets: `tools/dev/win sync` fast-forwards a git.exe clone (`C:\Users\dev\projects\svelters-win`) to your branch, `tools/dev/win cargo …` runs cargo.exe there through cargo-slot.
 
-- **The coordinator** (`svelters-agent`, WSL PC) owns svelters `master`: it merges lane branches
+- **There is no separate svelters coordinator** (user, 2026-10-25). The cadatomic coordinator
+  (`main-cadatomic`, or the cadatomic batch coordinator when cloud batches run) also coordinates
+  svelters; older records that name `svelters-agent` mean that role.
+- **The coordinator** owns svelters `master`: it merges lane branches
   (`--no-ff`) after their gates and CI pass, keeps `STATUS.md` and `MATRIX.md`, pushes, and does
   its own feature work in between. Other svelters sessions never push `master`; they work in
   worktrees and push `ci/<lane>` branches, then report to the coordinator.
@@ -67,20 +70,20 @@ agents (worktree lanes) that share that machine's build slots.
 
 ## Who decides (user, 2026-10-22)
 
-**The coordinators decide; the user is not asked.** The user has delegated decisions to the two
-coordinators and does not want sessions asking them questions.
+**The coordinator decides; the user is not asked.** The user has delegated decisions to the
+coordinator (`main-cadatomic`, for both svelters and cadatomic; see "Machines and sessions") and does
+not want sessions asking them questions.
 
 - **Worker sessions and lane agents never ask the user.** They send the question to their
-  coordinator (`svelters-agent` for svelters, `main-cadatomic` for cadatomic) with a recommendation,
+  coordinator (`main-cadatomic`) with a recommendation,
   keep working on something else meanwhile, and follow the answer.
-- **The coordinators decide**, citing the reason in the answer:
-  - each coordinator decides routine and procedural questions in its own repo: lane assignment
-    and order, scheduling, merges and conflict resolution, pins and pin advances, build and test
-    rules, rules files (`CLAUDE.md`), implementation details inside an agreed design, and recording
-    in the decision register the user's decisions that the other coordinator relays;
-  - the two coordinators settle cross-repo seams between themselves. If they disagree, svelters-agent
-    decides for svelters-side APIs, main-cadatomic for cadatomic-side ones;
-  - a coordinator's message to a session in its repo carries this delegated authority. Act on it.
+- **The coordinator decides**, citing the reason in the answer:
+  - routine and procedural questions in svelters: lane assignment and order, scheduling, merges
+    and conflict resolution, pins and pin advances, build and test rules, rules files
+    (`CLAUDE.md`), implementation details inside an agreed design;
+  - cross-repo seams between svelters and cadatomic that fix a contradiction or a bug and choose
+    no design;
+  - the coordinator's message to a session carries this delegated authority. Act on it.
 - **Escalate to the user only** (the coordinator does it, nobody else):
   - architecture and design choices: the open questions in `plans/research/ARCH-*.md` and similar
     design docs, brought together with a recommendation each;
