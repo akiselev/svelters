@@ -35,6 +35,8 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.longpaths true
       - uses: actions/checkout@v4
+      # presto-test's automation tests load svelters' JS runtime sources (node_modules).
+      - uses: ./.github/actions/setup-pnpm
       - name: Linux packages (Wayland, X11, xkb, lavapipe)
         if: runner.os == 'Linux'
         run: |

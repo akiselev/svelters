@@ -312,9 +312,9 @@ pub(crate) fn positional_parent(doc: &Document, i: usize) -> Option<usize> {
     }
     let mut a = p;
     loop {
-        if doc.layout[a].style.position == taffy::Position::Relative && doc.core[a].parent.is_some() {
-            // taffy's containing block: the nearest box that is not `static` (all presto boxes are
-            // relative unless absolute), which is the parent
+        // taffy's containing block: the nearest positioned box (`relative` or `absolute`; boxes are
+        // `static` unless CSS says otherwise), else the window root, which claims the rest
+        if doc.layout[a].style.position != taffy::Position::Static {
             return Some(a);
         }
         match doc.core[a].parent {
