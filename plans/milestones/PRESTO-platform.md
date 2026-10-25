@@ -75,7 +75,7 @@ presto-base: **no changes.**
   presentation feedback, AccessKit with screen readers. These checks go to REVISIT
   (platform.md §8).
 
-## Questions for the coordinator (each with a recommendation)
+## Questions for the coordinator (decided 2026-10-25 as recommended; Q2 done: `PlatformCx::try_create_window`, `create_window` is its panicking default)
 
 1. **Who forwards frame-source occlusion to the UI?** Recommendation: the compositor turns
    `FrameWait::Occluded(b)` into `ToUi` (a new `ToUi::Occluded { window, occluded }` in presto-base),

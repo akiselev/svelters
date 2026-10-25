@@ -3,7 +3,7 @@
 //! and a log of every call the app made.
 
 use crate::api::{
-    A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, SurfaceTarget, WindowDesc,
+    A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, PlatformError, SurfaceTarget, WindowDesc,
     Waker,
 };
 use crate::clipboard::{Clipboard, MemoryClipboard};
@@ -266,14 +266,14 @@ impl HeadlessPlatform {
 }
 
 impl PlatformCx for HeadlessCx {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
+    fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
         let id = WindowId(self.next_window);
         self.next_window += 1;
         let scale = self.default_scale;
         let size = DeviceSize { w: (desc.size.w * scale.0).round() as u32, h: (desc.size.h * scale.0).round() as u32 };
         self.calls.push(PlatformCall::CreateWindow(id, desc.clone()));
         self.windows.insert(id, HeadlessWindow { desc, scale, size, layers: Vec::new() });
-        id
+        Ok(id)
     }
 
     fn close_window(&mut self, id: WindowId) {

@@ -279,8 +279,7 @@ impl Cx<'_> {
         self.st.windows.get_mut(&id)
     }
 
-    /// Creates a window; the error says why the OS refused.
-    pub fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
+    fn create(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
         let window = self.el.create_window(window_attributes(&desc)).map_err(|e| PlatformError::Os(e.to_string()))?;
         let id = WindowId(self.st.next_window);
         self.st.next_window += 1;
@@ -315,11 +314,8 @@ impl Cx<'_> {
 }
 
 impl PlatformCx for Cx<'_> {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
-        match self.try_create_window(desc) {
-            Ok(id) => id,
-            Err(e) => panic!("presto-platform: the OS refused to create a window: {e}"),
-        }
+    fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
+        self.create(desc)
     }
 
     fn close_window(&mut self, id: WindowId) {
