@@ -206,6 +206,9 @@ impl Button {
 }
 
 impl Kind for Button {
+    fn parts() -> &'static [&'static str] {
+        &["icon", "label"]
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         { let mut s = crate::interact::StateBits::NONE; self.mirror(&mut s); s }
     }

@@ -560,6 +560,8 @@ mod tests {
         assert_eq!(key_location(VK_HOME, lp(0x47, true)), KeyLocation::Standard);
         assert_eq!(key_location(VK_HOME, lp(0x47, false)), KeyLocation::Numpad);
         assert_eq!(key_location(VK_RCONTROL, lp(0x1D, true)), KeyLocation::Right);
+        assert_eq!(logical_key(sided_vk(VK_MENU, lp(0x38, false)), None), Some(Key::AltLeft));
+        assert_eq!(logical_key(sided_vk(VK_MENU, lp(0x38, true)), None), Some(Key::AltRight));
     }
 
     #[test]

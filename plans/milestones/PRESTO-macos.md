@@ -37,13 +37,37 @@ Public main-thread extras: `set_text_input_client`, `text_input_changed`, `set_o
 - In simple IME mode (no client) `replacementRange` cannot be honoured (no document); press-and-hold
   accents need a client.
 
-## Not run
+## Not run / CI
 
-Nothing was run on macOS from this container. `cargo check -p presto-platform-macos --target
-aarch64-apple-darwin --all-targets` passes locally (cross-check, no link), and `cargo check` for Linux
-(empty crate). Tests were written, not run (user's instruction). CI: see the report sha.
+- Nothing ran on a Mac interactively: windows, IME (Japanese/Chinese/Korean, dead keys, press-and-hold,
+  dictation, Character Viewer), VoiceOver, tablets, display links and live resize are unverified on
+  hardware (platform.md §8 checks).
+- Local: `cargo check -p presto-platform-macos --target aarch64-apple-darwin --all-targets` (cross-check,
+  no link) and the Linux build (empty crate).
+- CI presto run 40226739671 on bef22840: `cargo check` passed on macos-latest, ubuntu and windows;
+  `presto-platform-macos` unit tests passed on macOS. `cargo test` failed on other lanes' targets
+  (`presto-compositor --test engine`, `--test tree_damage`, `presto-core --lib`, `presto-widgets --lib`:
+  slider tests), not this crate.
+- The facade constructor is `MacPlatform::new().run(handler)` (and `run_mac` with the macOS callbacks).
 
 ## Additions outside the crate
+
+- Decided by the coordinator (2026-10-25), made here as additive changes:
+  - `presto_platform::PlatformCx::set_text_input(id, Option<Box<dyn TextInputClient>>)`, whose default
+    falls back to `set_ime` with the client's caret rect and purpose; this backend bridges it to
+    `NSTextInputClient`.
+  - `WindowDesc.custom_title_bar` (default false); this backend applies it at creation.
+  - Native menu bar (asked by WIDGETS-VIEWS through the coordinator): `presto_platform::MenuDesc
+    { menus: Vec<MenuNode> }`, `MenuNode::{Submenu { label, enabled, items }, Item { id, label,
+    shortcut, enabled, checked: Option<bool> }, Separator}`, `PlatformCx::set_menu_bar(Option<&MenuDesc>)
+    -> bool` (default `false`: no native bar) and `AppHandler::menu_activated(cx, id)` (default no-op).
+    The macOS backend builds muda menus after the standard app menu (`Primary` → Cmd; group labels
+    should arrive as disabled items). `MacAppHandler::menu` is gone (replaced by `menu_activated`).
+    views' `MenuModel` → `MenuDesc` is for WIDGETS-VIEWS to write (labels without `&`, `Check::Radio`
+    as `checked: Some(..)`, invisible entries left out).
+  - Option press/release: `flagsChanged:` already emits `Key::AltLeft`/`AltRight` key events.
+  - presto-base docs: `KeyEvent.physical` is `page << 16 | usage`; `WindowEvent::Moved` is the content's
+    top-left in global points.
 
 - `THIRD_PARTY_NOTICES.md`: an "Apache-2.0 ported source" table with the GPUI row (other platform lanes
   will add rows; merge them into one table).
