@@ -75,7 +75,23 @@ impl Document {
         }
         self.restyle(window);
         self.sample_ui_transitions(window, target);
+        // virtualising nodes realise their rows before layout, and again when layout moved their
+        // viewport (new rows are styled before they are laid out)
+        if self.drive_virtual(window) {
+            self.restyle(window);
+            self.drive_virtual(window);
+        }
+        self.keep_rows_parked(window);
         stats.layout = self.run_layout(window);
+        if self.drive_virtual(window) {
+            self.restyle(window);
+            self.drive_virtual(window);
+            self.keep_rows_parked(window);
+            let again = self.run_layout(window);
+            stats.layout.boundaries += again.boundaries;
+            stats.layout.full |= again.full;
+            stats.layout.leaf_layouts += again.leaf_layouts;
+        }
         let mut commit = Commit { window, revision: self.revision, input_seq: self.input_seq, ..Default::default() };
         let mut runs = RunSink { next: self.run_counter, added: Vec::new() };
         let mut images = std::mem::take(&mut self.images);

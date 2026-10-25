@@ -520,6 +520,24 @@ impl EventCx<'_> {
     }
 }
 
+/// [`VirtualChildren::realize`](crate::VirtualChildren::realize): the document, to create, recycle and
+/// bind the rows of the virtualising node.
+pub struct RealizeCx<'a> {
+    pub(crate) doc: &'a mut Document,
+    pub(crate) node: NodeId,
+}
+
+impl RealizeCx<'_> {
+    /// The virtualising node (the rows' parent).
+    pub fn node(&self) -> NodeId {
+        self.node
+    }
+    /// The document (the node's own kind value is out while it realises).
+    pub fn doc(&mut self) -> &mut Document {
+        self.doc
+    }
+}
+
 /// [`Kind::a11y`](crate::Kind::a11y): the node's AccessKit node, prefilled with its role, bounds and
 /// children.
 pub struct A11yCx<'a> {

@@ -82,6 +82,8 @@ pub struct Document {
     pub(crate) services: crate::cx::Services,
     /// Kinds' deadlines (`EventCx::wake_at`).
     pub(crate) timers: HashMap<NodeId, presto_base::time::Time>,
+    /// The realised rows of virtualising nodes ([`crate::VirtualChildren`]).
+    pub(crate) virt: HashMap<NodeId, crate::virt::VirtState>,
 }
 
 impl Document {
@@ -117,6 +119,7 @@ impl Document {
             key_hook: None,
             services: Default::default(),
             timers: HashMap::new(),
+            virt: HashMap::new(),
         }
     }
 
@@ -264,7 +267,8 @@ impl Document {
     /// If `kind` is not registered: the caller (svelters-presto) validates kinds from the spec first.
     pub fn create(&mut self, kind: KindId) -> NodeId {
         let entry = self.registry.get(kind).unwrap_or_else(|| panic!("presto-core: unregistered kind {kind:?}"));
-        let value = (entry.factory)();
+        let mut value = (entry.factory)();
+        let virtual_kind = value.virtual_children().is_some();
         let rev = self.stamp();
         let (id, fresh) = self.slots.alloc();
         let core = NodeCore {
@@ -297,6 +301,10 @@ impl Document {
             self.state[i] = StateMask::NONE;
             self.record[i] = Default::default();
             self.style.reset(i);
+        }
+        if virtual_kind {
+            self.core[i].flags.insert(NodeFlags::VIRTUAL);
+            self.virt.insert(id, crate::virt::VirtState::default());
         }
         self.journal.push(Change::Created { node: id, kind, revision: rev });
         id
@@ -494,6 +502,7 @@ impl Document {
         self.anim.forget(id);
         self.scroll.remove(&id);
         self.timers.remove(&id);
+        self.virt.remove(&id);
         self.slots.free(i);
     }
 

@@ -9,6 +9,7 @@ mod focus;
 mod services;
 mod style;
 mod tree;
+mod virtual_rows;
 
 use crate::testkinds::{self, FixedText};
 use crate::{Document, KindId, StyleInput};
