@@ -3899,6 +3899,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "presto-platform-macos"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-platform-wayland"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-platform-win32"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
 name = "presto-render"
 version = "0.0.0"
 dependencies = [
