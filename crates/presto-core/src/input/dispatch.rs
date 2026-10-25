@@ -308,7 +308,7 @@ impl Document {
     }
 
     /// Hover follows the newest sample: leave the old path's nodes not on the new path, enter the new.
-    fn update_hover(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
+    pub(crate) fn update_hover(&mut self, window: WindowId, p: &PointerEvent, target: Option<NodeId>, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
         let mut path = Vec::new();
         let mut a = target;
         while let Some(n) = a {

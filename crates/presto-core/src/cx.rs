@@ -276,6 +276,9 @@ pub(crate) struct ImageSink {
     pub next_path: u64,
     pub paths: Vec<(presto_base::ids::PathId, Arc<presto_base::commit::PathData>)>,
     pub removed_paths: Vec<presto_base::ids::PathId>,
+    /// Every image and path uploaded and not released (re-sent after a device reset).
+    pub live_images: std::collections::HashMap<ImageId, Arc<ImageData>>,
+    pub live_paths: std::collections::HashMap<presto_base::ids::PathId, Arc<presto_base::commit::PathData>>,
 }
 
 /// [`Kind::prepare`](crate::Kind::prepare).
@@ -304,10 +307,12 @@ impl PrepareCx<'_> {
     pub fn upload_image(&mut self, data: Arc<ImageData>) -> ImageId {
         self.images.next += 1;
         let id = ImageId(self.images.next);
+        self.images.live_images.insert(id, data.clone());
         self.images.added.push((id, data));
         id
     }
     pub fn release_image(&mut self, id: ImageId) {
+        self.images.live_images.remove(&id);
         self.images.removed.push(id);
     }
     /// Uploads a path (an icon outline, a chart's curve) for `Prim::Path`; the id stays valid until
@@ -315,10 +320,12 @@ impl PrepareCx<'_> {
     pub fn upload_path(&mut self, data: Arc<presto_base::commit::PathData>) -> presto_base::ids::PathId {
         self.images.next_path += 1;
         let id = presto_base::ids::PathId(self.images.next_path);
+        self.images.live_paths.insert(id, data.clone());
         self.images.paths.push((id, data));
         id
     }
     pub fn release_path(&mut self, id: presto_base::ids::PathId) {
+        self.images.live_paths.remove(&id);
         self.images.removed_paths.push(id);
     }
     /// Re-record after this prepare even if the node was not content-dirty.
