@@ -119,6 +119,12 @@ impl Switch {
 }
 
 impl Kind for Switch {
+    fn prop_state(&self) -> crate::interact::StateBits {
+        self.mirror(crate::interact::StateBits::NONE)
+    }
+    fn prop_states() -> crate::interact::StateBits {
+        crate::interact::StateBits::CHECKED
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
