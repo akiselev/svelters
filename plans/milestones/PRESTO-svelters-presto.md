@@ -83,6 +83,27 @@ instead of the table, `kinds.rs` has a unit test.
   are core's, not egui's, so the JS-facing surface still comes from the table. Once WIDGETS names follow Q2,
   `spec.rs` can generate from the registry plus a `Widget` table.
 
+### Missing behaviour props and signals per hosted kind (coordinator Q6, for WIDGETS-BASIC/TIER1)
+
+The surface (egui) members presto-widgets' kinds do not take yet, from `Kinds::builtin()` at 7546a2a6+ (stored
+by the backend as `Side`, not acted on). The `Widget` layout props (`width`, `height`, `min-*`, `max-*`,
+`margin`, `flex-*`, `align-self`, `position`, `top/left/right/bottom`) are CSS-only on presto (Q6) and not
+listed.
+
+| Kind | Props | Signals |
+|---|---|---|
+| every kind (`Widget`) | `anchor`, `anchor-scope`, `invalid`, `dialog-role`, `status-tip`, `status-section`, `drag-data`, `drag-type`, `drop-types`, `source-loc` (runtime-set, dev builds) | `drag-begin`, `drag-end`, `drag-enter`, `drag-leave`, `drop` |
+| `button` | `default`, `cancel` | |
+| `label` | `selectable`, `selection-start`, `selection-end`, `for` | |
+
+`focus-scope` on `box`/`frame` maps onto core's common `focus-scope`. Every other hosted kind
+(`toggle-button`, `checkbox`, `radio-button`, `switch`, `progress-bar`, `spinner`, `separator`, `icon`, `image`,
+`hyperlink`, `stack`, `sides`, `grid`, `frame`, `box`) takes all its own surface props. Placeholders
+(`window`, `slider`, `text-edit`, runs) are not listed: they are not presto-widgets' yet.
+
+Decided (coordinator, 2026-10-25): Q5 publish core's `tabindex`/`focus-scope` on `Widget` later, not now; Q6
+as above.
+
 ## Not done
 
 - **`svelters-presto-run`**: `crates/presto` and `crates/presto-test` are still one-line stubs in `ci/presto-base`

@@ -407,7 +407,13 @@ impl Kinds {
                 let target = match (common_alias(decl, p), entry) {
                     (Some((id, true)), _) => PropTarget::Inverted(id),
                     (Some((id, false)), _) => PropTarget::Native(id),
-                    (None, Some(e)) => e.spec.prop_named(p.name).filter(|&id| e.prop(id).is_some_and(|s| s.ty == core_type(p.ty))).map_or(PropTarget::Side, PropTarget::Native),
+                    // the kind's own prop, else a common one of that name and type (`focus-scope`)
+                    (None, Some(e)) => e
+                        .spec
+                        .prop_named(p.name)
+                        .filter(|&id| e.prop(id).is_some_and(|s| s.ty == core_type(p.ty)))
+                        .or_else(|| core::common::COMMON.prop_named(p.name).filter(|&id| core::common::prop(id).is_some_and(|s| s.ty == core_type(p.ty))))
+                        .map_or(PropTarget::Side, PropTarget::Native),
                     (None, None) => PropTarget::Side,
                 };
                 props.push(PropMap { spec: p, decl, wire: prop_wire(decl, p), target });
