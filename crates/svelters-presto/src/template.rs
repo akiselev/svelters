@@ -104,6 +104,21 @@ impl PrestoBackend {
         t.validate()?;
         let n = t.nodes.len() as u64;
         let base = self.0.handles.borrow_mut().reserve(n);
+        if self.deferring() {
+            // inside a cancelable event's listener (`sync.rs`): the handles now, the nodes after
+            for (k, node) in t.nodes.iter().enumerate() {
+                self.0.handles.borrow_mut().set_kind(base + k as u64, node.kind);
+            }
+            let t = t.clone();
+            self.defer(move |b| b.instantiate_at(base, &t));
+            return Ok(base);
+        }
+        self.instantiate_at(base, t)?;
+        Ok(base)
+    }
+
+    /// Builds `t` at the reserved handles `base ..`; frees what it made on failure.
+    fn instantiate_at(&self, base: svl_handle, t: &Template) -> StrResult<()> {
         let mut made = 0u64;
         let r = (|| -> StrResult<()> {
             for (k, node) in t.nodes.iter().enumerate() {
@@ -137,7 +152,7 @@ impl PrestoBackend {
             }
             return Err(e);
         }
-        Ok(base)
+        Ok(())
     }
 
     /// Frees handles `base .. base + n` (a template instance's non-hole subtree). Handles already

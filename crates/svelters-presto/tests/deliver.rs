@@ -70,3 +70,26 @@ fn observe_counts_nest() {
     r.backend.pump();
     assert!(r.take().changed.is_empty());
 }
+
+#[test]
+fn cancelable_events_inside_dispatch_answer_prevented_and_defer_js_ops() {
+    let r = Rig::new();
+    let b = r.create("button");
+    r.listen(b, "keydown");
+    let n = r.backend.node(b).unwrap();
+    let ev = r.backend.target_event(n, "keydown", vec![PValue::I64(b as i64), PValue::I64(2), PValue::Str("Enter".into()), PValue::Bool(false), PValue::I64(0)]).unwrap();
+    // preventDefault (bit 2) and no stop
+    r.log.borrow_mut().sync_answer = Some(Value::I64(2));
+    let o = r.backend.deliver_cancelable(&ev);
+    assert!(o.prevented && !o.stopped);
+    assert_eq!(r.take().syncs.len(), 1);
+    // what a listener does now waits for the dispatch to return; a written prop reads back
+    r.set(b, "text", Value::Str("pressed".into()));
+    assert_eq!(r.get(b, "text"), Value::Str("pressed".into()));
+    assert!(r.br().get_prop(b, r.prop_id(b, "selected")).is_err(), "the tree is mid-dispatch");
+    let made = r.create("label");
+    r.backend.pump();
+    assert_eq!(r.get(b, "text"), Value::Str("pressed".into()));
+    assert!(r.backend.node(made).is_some(), "the deferred create ran");
+    assert!(r.backend.take_deferred_errors().is_empty());
+}

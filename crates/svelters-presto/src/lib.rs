@@ -8,6 +8,7 @@
 //! | [`style`] | the `style` op: CSS engine inputs and the TR1 visual channels |
 //! | [`kinds`] | the JS-facing kinds on presto-core's (presto-widgets' or synthesized), with the wire ids |
 //! | [`spec`] | the generated semantic spec `metadata/semantics/presto.json` |
+//! | [`sync`] | cancelable events delivered inside presto-core's dispatch; JS ops made then, deferred |
 //! | [`embed`] | many Svelte roots in one host: roots, slots, faults, settle (ARCH-EMBED, minus egui) |
 //! | [`value`] | ABI values ↔ surface values ↔ presto-core values |
 //! | [`surface`] | the JS-facing kind specs presto-core's `KindSpec` does not carry yet (Q3) |
@@ -20,6 +21,7 @@ pub mod kinds;
 pub mod spec;
 pub mod style;
 pub mod surface;
+pub mod sync;
 pub mod template;
 pub mod value;
 

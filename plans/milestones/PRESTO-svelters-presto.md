@@ -120,16 +120,16 @@ as above.
   `status-section`, `drag-data`, `drag-type`, `drop-types` reach the tree, and the `drag-*`/`drop` signals map
   through the existing by-name common-signal fallback. Until CORE-3 is in `ci/presto-base` they stay `Side`
   (name-based, no code change needed when it lands; regenerate presto.json then).
-- **Q8 (to CORE-3 and the coordinator): `Document::set_sync_delivery` is not installed yet.** The deliverer runs
-  while `dispatch` holds `&mut Document`, and the JS it runs (`call_sync`) calls back into the backend: not
-  only writes but reads (`get_prop`, `bind:` reads, `handle_info`, creating nodes in a handler), all through the
-  backend's `RefCell<Document>`, which is borrowed then. Queueing writes is not enough: a handler that reads a
-  prop it just wrote, or builds UI, sees stale state or cannot run. *Recommendation:* core lends the document to
-  the deliverer, `FnMut(&mut Document, &JsEvent) -> Outcome` (core keeps its dispatch state outside the
-  borrow, as it does between phases), and svelters-presto points its ops at that `&mut` for the call's
-  duration; JS writes then apply immediately in `js_transaction(revision)`. Second choice: a two-phase
-  `dispatch` that returns at the first sync event and resumes with its `Outcome`. Until then delivery stays
-  after `dispatch` (cancellation reported, but the native default has already run).
+- **Q8, decided (coordinator, 2026-10-25): queue the JS ops made inside `call_sync`, apply them after dispatch.**
+  Done in `sync.rs`: the backend installs `Document::set_sync_delivery` at construction; `deliver_cancelable`
+  walks the event's path with the handle→kind cache (no document), answers `Outcome { prevented, stopped }`
+  from `call_sync` (egui's bits or `true`), and from then on every JS op (create, insert, remove, destroy,
+  set_prop, listen, call, style, template `instantiate`) is checked against the kind maps and queued; handles
+  are assigned at once. `dispatch` applies the queue right after `Document::dispatch` returns, in
+  `js_transaction(revision)`; `pump` and `with_doc` apply it too (a kind's `emit_sync` in a frame or timer).
+  Reads inside the listener answer props it wrote and otherwise fail with a message (the tree is mid-dispatch);
+  failures when applied go to `take_deferred_errors`. Test: `tests/deliver.rs`
+  `cancelable_events_inside_dispatch_answer_prevented_and_defer_js_ops` (written, not run).
 
 ## Not done
 

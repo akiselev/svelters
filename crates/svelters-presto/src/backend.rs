@@ -77,6 +77,9 @@ pub(crate) struct Handles {
     next: svl_handle,
     nodes: HashMap<svl_handle, NodeId>,
     handles: HashMap<NodeId, svl_handle>,
+    /// Each handle's wire kind, so ops can check kinds without the document (it is borrowed by
+    /// presto-core's dispatch while cancelable listeners run, `sync.rs`).
+    kinds: HashMap<svl_handle, svl_id>,
 }
 
 impl Handles {
@@ -100,7 +103,16 @@ impl Handles {
         self.handles.get(&n).copied()
     }
 
+    pub(crate) fn set_kind(&mut self, h: svl_handle, kind: svl_id) {
+        self.kinds.insert(h, kind);
+    }
+
+    pub(crate) fn kind(&self, h: svl_handle) -> Option<svl_id> {
+        self.kinds.get(&h).copied()
+    }
+
     pub(crate) fn unbind(&mut self, h: svl_handle) -> Option<NodeId> {
+        self.kinds.remove(&h);
         let n = self.nodes.remove(&h)?;
         self.handles.remove(&n);
         Some(n)
@@ -132,6 +144,11 @@ pub struct Inner {
     pub(crate) sheets: RefCell<BTreeMap<String, (svelters_style::SheetId, String)>>,
     /// Native output queued outside the tree (an embedder's, a test's), delivered by the next pump.
     pub(crate) pending: RefCell<Output>,
+    /// Ops made while presto-core's dispatch runs cancelable listeners (`sync.rs`): `Some` while
+    /// deferring.
+    pub(crate) sync: RefCell<Option<crate::sync::Deferred>>,
+    /// What deferred ops failed with when applied (taken by the embedder or runner).
+    pub(crate) deferred_errors: RefCell<Vec<String>>,
     /// While events dispatched at this revision are delivered: JS writes are a JS task that saw it
     /// (native-owned props the kind changed since are not overwritten, architecture §4.5).
     pub(crate) seen: Cell<Option<Revision>>,
@@ -164,7 +181,7 @@ impl PrestoBackend {
     }
 
     pub fn with_text(kinds: Arc<Kinds>, text: Box<dyn TextMeasure>) -> PrestoBackend {
-        PrestoBackend(Rc::new(Inner {
+        let b = PrestoBackend(Rc::new(Inner {
             doc: RefCell::new(Document::new(kinds.registry().clone(), text)),
             kinds,
             side: RefCell::new(HashMap::new()),
@@ -173,6 +190,8 @@ impl PrestoBackend {
             scheme: Cell::new(None),
             sheets: RefCell::new(BTreeMap::new()),
             pending: RefCell::new(Output::default()),
+            sync: RefCell::new(None),
+            deferred_errors: RefCell::new(Vec::new()),
             seen: Cell::new(None),
             handles: RefCell::new(Handles::default()),
             host: Cell::new(std::ptr::null()),
@@ -185,7 +204,9 @@ impl PrestoBackend {
             frame_pending: Cell::new(false),
             quitting: Cell::new(false),
             driver: RefCell::new(None),
-        }))
+        }));
+        b.install_sync_delivery();
+        b
     }
 
     /// A backend of the built-in kinds.
@@ -208,7 +229,10 @@ impl PrestoBackend {
 
     /// The document, for the runner (style, layout, frame) and tests.
     pub fn with_doc<R>(&self, f: impl FnOnce(&mut Document) -> R) -> R {
-        f(&mut self.0.doc.borrow_mut())
+        let r = f(&mut self.0.doc.borrow_mut());
+        // a frame or a native step may have delivered cancelable signals (`sync.rs`)
+        self.apply_deferred(None);
+        r
     }
 
     pub fn kinds(&self) -> &Arc<Kinds> {
@@ -324,9 +348,20 @@ impl PrestoBackend {
     /// The node behind a live handle and its kind's member map.
     pub(crate) fn live(&self, h: svl_handle) -> StrResult<(NodeId, &KindMap)> {
         let n = self.node(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        let k = self.0.doc.borrow().kind_of(n).ok_or_else(|| format!("stale handle {h}"))?;
-        let m = self.0.kinds.by_core(k).ok_or_else(|| format!("handle {h} has a kind JS does not know"))?;
+        // the document is borrowed while presto-core's dispatch runs cancelable listeners
+        if let Ok(doc) = self.0.doc.try_borrow()
+            && !doc.contains(n)
+        {
+            return Err(format!("stale handle {h}"));
+        }
+        let m = self.kind_map(h)?;
         Ok((n, m))
+    }
+
+    /// The member map of `h`'s kind (also for a handle whose creation is deferred).
+    pub(crate) fn kind_map(&self, h: svl_handle) -> StrResult<&KindMap> {
+        let k = self.0.handles.borrow().kind(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
+        self.0.kinds.by_wire(k).ok_or_else(|| format!("handle {h} has a kind JS does not know"))
     }
 
     /// Creates a node of wire kind `kind` at handle `h` (reserved by the caller).
@@ -334,7 +369,9 @@ impl PrestoBackend {
         let m = self.0.kinds.by_wire(kind).ok_or_else(|| format!("unknown kind id {kind}"))?;
         let k = m.core.ok_or_else(|| format!("{} is abstract: no element creates it", m.surface.name))?;
         let n = self.0.doc.borrow_mut().create(k);
-        self.0.handles.borrow_mut().bind(h, n);
+        let mut hs = self.0.handles.borrow_mut();
+        hs.bind(h, n);
+        hs.set_kind(h, kind);
         Ok(n)
     }
 
@@ -507,15 +544,32 @@ impl Backend for PrestoBackend {
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
         let h = self.0.handles.borrow_mut().reserve(1);
+        if self.deferring() {
+            let m = self.0.kinds.by_wire(kind).ok_or_else(|| format!("unknown kind id {kind}"))?;
+            if m.core.is_none() {
+                return Err(format!("{} is abstract: no element creates it", m.surface.name));
+            }
+            self.0.handles.borrow_mut().set_kind(h, kind);
+            self.defer(move |b| b.create_at(h, kind).map(|_| ()));
+            return Ok(h);
+        }
         self.create_at(h, kind)?;
         Ok(h)
     }
 
     fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
+        if self.deferring() {
+            self.defer(move |b| b.write_insert(parent, child, before, slot));
+            return Ok(());
+        }
         self.write_insert(parent, child, before, slot)
     }
 
     fn remove(&self, parent: svl_handle, child: svl_handle) -> StrResult<()> {
+        if self.deferring() {
+            self.defer(move |b| b.remove(parent, child));
+            return Ok(());
+        }
         let (p, c) = (self.node(parent), self.node(child));
         let (Some(p), Some(c)) = (p, c) else { return Err("stale or foreign handle".into()) };
         self.0.doc.borrow_mut().remove(p, c).map_err(|e| e.to_string())
@@ -526,14 +580,29 @@ impl Backend for PrestoBackend {
         if self.0.borrowed.borrow().contains(&h) {
             return;
         }
+        if self.deferring() {
+            self.defer(move |b| {
+                b.free(h);
+                Ok(())
+            });
+            return;
+        }
         self.free(h);
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
+        if self.deferring() {
+            self.kind_map(h)?.prop(prop).ok_or_else(|| format!("unknown prop id {prop}"))?;
+            self.defer_write(h, prop, v.clone());
+            return Ok(());
+        }
         self.write_prop(h, prop, v)
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
+        if self.deferring() {
+            return self.deferred_read(h, prop);
+        }
         let (n, km) = self.live(h)?;
         let pm = km.prop(prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", km.tag()))?;
         let stored = match pm.target {
@@ -551,6 +620,11 @@ impl Backend for PrestoBackend {
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
+        if self.deferring() {
+            let args = args.to_vec();
+            self.defer(move |b| b.call(h, method, &args).map(|_| ()));
+            return Ok(Value::Null);
+        }
         let (_, km) = self.live(h)?;
         let m = km.method(method).ok_or_else(|| format!("unknown method id {method} on <{}>", km.tag()))?;
         if !args.is_empty() && m.spec.params.is_empty() {
@@ -605,16 +679,20 @@ impl Backend for PrestoBackend {
     }
 
     fn listen(&self, h: svl_handle, signal: svl_id, on: bool) -> StrResult<()> {
-        self.write_listen(h, signal, on, 0)
+        self.listen_ex(h, signal, on, 0)
     }
 
     /// EV1 capture on the DOM-style events, and `LISTEN_PASSIVE` (compiler-and-js §3.5).
     fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> StrResult<()> {
+        if self.deferring() {
+            self.defer(move |b| b.write_listen(h, signal, on, flags));
+            return Ok(());
+        }
         self.write_listen(h, signal, on, flags)
     }
 
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
-        let (_, km) = self.live(h)?;
+        let km = if self.deferring() { self.kind_map(h)? } else { self.live(h)?.1 };
         Ok(svl_handle_info {
             kind: km.wire,
             lifetime: if self.0.borrowed.borrow().contains(&h) {
@@ -666,6 +744,11 @@ impl Backend for PrestoBackend {
     }
 
     fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<i32> {
+        if self.deferring() && !matches!(op, SVL_STYLE_TARGET | SVL_STYLE_ANIMATE) {
+            let text = text.map(str::to_string);
+            self.defer(move |b| b.style_op(op, h, text.as_deref()).map(|_| ()));
+            return Ok(0);
+        }
         self.style_op(op, h, text)
     }
 

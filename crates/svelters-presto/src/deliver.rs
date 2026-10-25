@@ -1,7 +1,9 @@
 //! Event-time delivery (architecture §11.1, compiler-and-js §3.10): what one input produced in the
 //! tree reaches JS before the input's handling ends, not at the next frame through an outbox.
 //!
-//! What JS is told comes from presto-core: the events of [`Document::dispatch`] (and those it queued
+//! The cancelable events are delivered inside the dispatch, before their native default (`sync.rs`);
+//! presto-core does not repeat them in its result. The rest comes from presto-core: the events of
+//! [`Document::dispatch`] (and those it queued
 //! outside dispatch, [`Document::take_events`]: focus moves, kinds' signals) with their propagation
 //! paths, and the native-owned prop changes of its change journal ([`Document::drain_changes`],
 //! `Change::Prop { native: true }`). [`Output`] is that, gathered.
@@ -72,6 +74,8 @@ impl PrestoBackend {
     /// produced now.
     pub fn dispatch(&self, ev: &InputEnvelope) -> (Dispatched, Delivered) {
         let d = self.0.doc.borrow_mut().dispatch(ev);
+        // what the cancelable events' listeners did inside the dispatch (`sync.rs`)
+        self.apply_deferred(Some(d.revision));
         let mut out = Output { events: d.events.clone(), changed: Vec::new(), revision: Some(d.revision) };
         out.append(self.collect());
         (d, self.deliver(out))
@@ -100,6 +104,8 @@ impl PrestoBackend {
     /// Delivers whatever native code produced outside an input (a kind's timer, an animation end, a
     /// programmatic focus move).
     pub fn pump(&self) -> Delivered {
+        // a kind's `emit_sync` outside input (in a frame, a timer) delivered inside its call
+        self.apply_deferred(None);
         let out = self.collect();
         if out.is_empty() {
             return Delivered::default();
