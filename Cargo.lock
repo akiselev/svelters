@@ -4170,8 +4170,12 @@ dependencies = [
  "presto-base",
  "presto-core",
  "presto-text",
+ "resvg",
  "rfd",
  "serde_json",
+ "smallvec",
+ "svelters-style",
+ "taffy",
 ]
 
 [[package]]

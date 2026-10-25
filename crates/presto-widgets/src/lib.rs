@@ -7,9 +7,11 @@
 pub mod controls;
 pub mod dialogs;
 pub mod dnd;
+pub mod host;
 pub mod interact;
 pub mod paint;
 pub mod pickers;
+pub mod shim;
 pub mod table;
 pub mod tabs;
 pub mod text;

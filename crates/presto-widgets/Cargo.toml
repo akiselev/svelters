@@ -11,7 +11,13 @@ presto-base = { workspace = true }
 presto-core = { workspace = true }
 presto-text = { workspace = true }
 presto-anim = { workspace = true }
+# The CSS engine presto uses as its style system (architecture §3, §5): widgets read computed values.
+svelters-style = { workspace = true }
+taffy = { workspace = true }
+smallvec = { workspace = true }
 serde_json = { workspace = true }
+# Icon kit SVGs rasterised into images (EGUI.md §5 `icon`).
+resvg = { version = "=0.45.1", default-features = false }
 # Native file and message dialogs (`dialogs::native`) through rfd; without it they fail as unsupported.
 rfd = { version = "0.17.2", optional = true }
 
