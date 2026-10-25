@@ -19,8 +19,8 @@ use crate::latency::{LatencyConfig, LatencyRecorder, Stage, Track};
 use crate::seams::{CompositorApi, Dispatched, DocumentApi, ScriptHost};
 use presto_base::accesskit::ActionRequest;
 use presto_base::commit::{Commit, FastCommit, ToUi};
-use presto_base::event::{InputEnvelope, WindowEvent};
-use presto_base::geom::{DeviceSize, Scale, Size};
+use presto_base::event::{InputEnvelope, InputEvent, PointerPhase, WindowEvent};
+use presto_base::geom::{DeviceSize, Rect, Scale, Size};
 use presto_base::ids::{FrameId, InputSeq, Revision, WindowId};
 use presto_base::input::InputPurpose;
 use presto_base::time::{Clock, Span, Time};
@@ -89,6 +89,8 @@ struct WindowState {
     size: DeviceSize,
     scale: Scale,
     visible: bool,
+    /// The IME state last sent to the platform.
+    ime: Option<(Rect, InputPurpose)>,
 }
 
 pub struct App<D: DocumentApi, C: CompositorApi> {
@@ -195,6 +197,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             id,
             WindowState {
                 frame: UiFrame::new(),
+                ime: None,
                 size,
                 scale,
                 visible: true,
@@ -355,9 +358,16 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         if let Some(cursor) = c.cursor {
             cx.set_cursor(w, cursor);
         }
-        if let Some(area) = c.ime_area {
-            // The commit carries the area only; the purpose comes with focus (a CORE request in the record).
-            cx.set_ime(w, Some(ImeState::new(area, InputPurpose::Text)));
+        // The IME follows focus: the document's focused editable node, else the commit's bare area.
+        let ime = self
+            .doc
+            .ime_state(w)
+            .or_else(|| c.ime_area.map(|a| (a, InputPurpose::Text)));
+        if let Some(ws) = self.windows.get_mut(&w)
+            && ws.ime != ime
+        {
+            ws.ime = ime;
+            cx.set_ime(w, ime.map(|(area, purpose)| ImeState::new(area, purpose)));
         }
         if let Some(u) = &c.a11y {
             cx.update_a11y(w, u.clone());
@@ -587,6 +597,13 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
         }
         self.latency.begin(&ev);
         if !ev.event.is_discrete() {
+            // Hover changes at event time; the move itself reaches JS with the frame (§11.1).
+            if let InputEvent::Pointer(p) = &ev.event
+                && p.phase == PointerPhase::Move
+                && self.doc.hover(w, p.pos)
+            {
+                self.request_frame(w);
+            }
             let seq: InputSeq = ev.seq;
             if let Pushed::Merged { old } = self.coalescer.push(ev) {
                 self.latency.merged(old, seq);

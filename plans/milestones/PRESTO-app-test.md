@@ -183,3 +183,9 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
 - `CoreDocument::with_widgets(doc, root_kind, text, policy, theme)` calls `presto_widgets::host::install`
   (base 0ef700c1); `presto` now depends on presto-widgets and presto-text. The TextServices TODO in
   `App::init` names both calls.
+- CORE-3's answers adopted (base 96426b4a; requests 1–5 done): `CoreDocument` now calls
+  `Document::{needs_frame, hover, accessibility_action, a11y_full_tree, window_event, device_reset,
+  animation_event, ime_state, take_fast_commits}` (its revision approximation is gone). `App` hovers
+  coalesced pointer moves at event time (`DocumentApi::hover`) and sends the platform the focused
+  field's IME area and purpose (`DocumentApi::ime_state`, falling back to `Commit::ime_area`) only when
+  it changes. New harness tests: event-time hover, the IME following focus.
