@@ -117,7 +117,9 @@ Run locally, all passing: the tests above, svelters-egui `spec` (after `SVELTERS
 `gen_reference.py --check`, `gen_utilities.py --check`, native-runtime `pnpm test` (138 + the new file),
 the python half of `pnpm docs:test`. Not run locally: everything else (CI is the gate).
 
-CI run ids: see below.
+CI, all five green on `db74c6d6` (after merging `master` `d6debc5c`): js `40169258991`, linux-gtk
+`40169259022`, linux-qt `40169259007`, macos-appkit `40169258986`, windows-winui `40169259047`. The commit
+after it only adds these ids.
 
 ### Decided (coordinator, 2026-10-25)
 
