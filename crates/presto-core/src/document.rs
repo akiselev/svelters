@@ -1114,6 +1114,23 @@ impl Document {
         self.restyle_all();
     }
 
+    /// Adds a sheet already parsed (a precompiled one, `svelters_style::binary`), as [`Document::add_sheet`].
+    pub fn add_parsed_sheet(&mut self, sheet: &svelters_style::Stylesheet) -> svelters_style::SheetId {
+        let id = self.style.add_parsed(sheet);
+        self.restyle_all();
+        id
+    }
+
+    /// Loads resolved utility rules (a precompiled sheet's) without the vocabulary lookup; returns
+    /// how many were added (none while utilities are off).
+    pub fn preload_utilities(&mut self, utilities: &[svelters_style::Utility]) -> usize {
+        let n = self.style.preload_utilities(utilities);
+        if n > 0 {
+            self.restyle_all();
+        }
+        n
+    }
+
     pub(crate) fn restyle_all(&mut self) {
         let roots: Vec<NodeId> = self.windows.iter().map(|w| w.root).collect();
         for r in roots {

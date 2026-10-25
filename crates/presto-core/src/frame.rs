@@ -217,6 +217,41 @@ impl Document {
         }
     }
 
+    /// Starts a compositor animation of `property` on `node`, driven by `generator` (svelters-presto's
+    /// `OP_ANIMATE`: Svelte's native transitions and `flip`, presto-motion's plans). `None` when the
+    /// node is in no window. It is cancelled with the node, keeps the node's property nodes while it
+    /// runs, and ends with an `AnimationEvent` like a CSS transition's.
+    pub fn start_animation(&mut self, node: NodeId, property: AnimProperty, generator: presto_base::anim::Generator) -> Option<presto_base::ids::AnimationId> {
+        let window = self.window_of(node)?;
+        let id = self.anim.alloc();
+        self.anim.running.entry(node).or_default().push((id, property));
+        let spec = presto_base::anim::AnimationSpec { id, node, target: None, property, generator, start: presto_base::anim::StartTime::NextFrame };
+        if let Some(ws) = self.window_mut(window) {
+            ws.pending.animations.push(AnimationCmd::Start(spec));
+            ws.rebuild = true;
+        }
+        self.mark(node, Dirty::PROPERTY);
+        Some(id)
+    }
+
+    /// Cancels an animation [`Document::start_animation`] started (no-op once it ended).
+    pub fn cancel_animation(&mut self, id: presto_base::ids::AnimationId) {
+        let owner = self.anim.running.iter_mut().find_map(|(n, v)| {
+            let k = v.iter().position(|(a, _)| *a == id)?;
+            v.remove(k);
+            Some(*n)
+        });
+        let Some(n) = owner else { return };
+        if self.anim.running.get(&n).is_some_and(Vec::is_empty) {
+            self.anim.running.remove(&n);
+        }
+        if let Some(ws) = self.window_of(n).and_then(|w| self.window_mut(w)) {
+            ws.pending.animations.push(AnimationCmd::Cancel(id));
+            ws.rebuild = true;
+        }
+        self.mark(n, Dirty::PROPERTY);
+    }
+
     /// Animations started this frame drive their node's effect or transform node.
     fn bind_animation_targets(&self, commit: &mut Commit) {
         for cmd in &mut commit.animations {

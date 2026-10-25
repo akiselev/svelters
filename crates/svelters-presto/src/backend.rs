@@ -144,6 +144,8 @@ pub struct Inner {
     pub(crate) sheets: RefCell<BTreeMap<String, (svelters_style::SheetId, String)>>,
     /// Native output queued outside the tree (an embedder's, a test's), delivered by the next pump.
     pub(crate) pending: RefCell<Output>,
+    /// Native animations running and ended (`motion.rs`).
+    pub(crate) motion: RefCell<crate::motion::Running>,
     /// The document presto-core lends the sync deliverer (`sync.rs`), while it runs; null otherwise.
     pub(crate) lent: Cell<*mut Document>,
     /// Borrows of the lent document: > 0 shared, -1 exclusive (the `RefCell` rules, checked).
@@ -193,6 +195,7 @@ impl PrestoBackend {
             scheme: Cell::new(None),
             sheets: RefCell::new(BTreeMap::new()),
             pending: RefCell::new(Output::default()),
+            motion: RefCell::new(Default::default()),
             lent: Cell::new(std::ptr::null_mut()),
             lent_borrows: Cell::new(0),
             seen: Cell::new(None),

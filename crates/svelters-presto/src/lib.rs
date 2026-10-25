@@ -8,6 +8,7 @@
 //! | [`template`] | native templates: `instantiate` and `destroy_range` (compiler-and-js §3.2) |
 //! | [`style`] | the `style` op: CSS engine inputs and the TR1 visual channels |
 //! | [`kinds`] | the JS-facing kinds on presto-core's (presto-widgets' or synthesized), with the wire ids |
+//! | [`motion`] | `OP_ANIMATE` on the compositor: presto-motion's plans, `animationend` |
 //! | [`spec`] | the generated semantic spec `metadata/semantics/presto.json` |
 //! | [`sync`] | cancelable events delivered inside presto-core's dispatch; JS ops made then, deferred |
 //! | [`embed`] | many Svelte roots in one host: roots, slots, faults, settle (ARCH-EMBED, minus egui) |
@@ -20,6 +21,7 @@ pub mod css;
 pub mod deliver;
 pub mod embed;
 pub mod kinds;
+pub mod motion;
 pub mod spec;
 pub mod style;
 pub mod surface;

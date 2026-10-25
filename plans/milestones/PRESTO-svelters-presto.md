@@ -129,6 +129,24 @@ as above.
   Tests in `tests/deliver.rs` (written, not run); the lent path itself runs in `tests/run.rs`'s click (pointer
   events are cancelable).
 
+### MOTION-CSS's presto side (2026-10-25, merged ci/presto-motion-css 4a4374fe + ci/presto-base)
+
+- `motion.rs`: `SVL_STYLE_ANIMATE` parses `presto_motion::op::AnimateOp`; the plan is the `native`
+  descriptor's when the compositor can play all of it (opacity, transform, clip; no statics, no
+  `overflow: hidden`), else the op's channel frames; each track starts with presto-core's new
+  `Document::start_animation`, `cancel` cancels them; when the compositor reports the op's last track
+  finished or aborted (`PrestoDocument::animation_event` → `PrestoBackend::animation_event`), `pump` posts
+  `animationend` with the op id. Always answers 1 (the runtime stops offering native animations to a host
+  that refuses one); a node in no window ends at once. The frames' transform origin is the node's own.
+- `SVL_STYLE_SHEET_BIN` (12): `binary::decode(from_base64(..))` → presto-core's new `add_parsed_sheet` and
+  `preload_utilities`, replacing sheet `id`. Rule hints are unused (need COMPILER's template-node map).
+- Capabilities: `native_transitions native_motion css_precompiled` were already in presto.json's
+  `capabilities` (unchanged), which the compiler now reads.
+- **Cross-lane edit (presto-core, additive):** `Document::start_animation(node, AnimProperty, Generator) ->
+  Option<AnimationId>`, `Document::cancel_animation(id)` (frame.rs), `Document::add_parsed_sheet`,
+  `Document::preload_utilities` (document.rs, style/mod.rs). For CORE to keep or reshape at consolidation.
+- Tests: `tests/motion.rs` (4, **run once, pass**); `tests/ops.rs` follows (a bad ANIMATE payload errors).
+
 ## Not done
 
 - **`svelters-presto-run`**: `crates/presto` and `crates/presto-test` are still one-line stubs in `ci/presto-base`
