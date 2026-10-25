@@ -3950,6 +3950,8 @@ dependencies = [
  "bytemuck",
  "etagere",
  "lyon",
+ "naga",
+ "png 0.18.1",
  "pollster 0.4.0",
  "presto-base",
  "smallvec",
