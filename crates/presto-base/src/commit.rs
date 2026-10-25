@@ -112,4 +112,7 @@ pub enum ToUi {
     ResizeDone { window: WindowId, seq: u64, size: DeviceSize, scale: Scale },
     /// The GPU device was lost and recreated: re-send every resource.
     DeviceReset,
+    /// The platform's frame source reports the window covered or minimised (`true`) or visible
+    /// again; the compositor stops drawing it meanwhile.
+    Occluded { window: WindowId, occluded: bool },
 }

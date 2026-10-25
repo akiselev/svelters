@@ -40,7 +40,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libwayland-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-dev \
-            libxcursor-dev libxrandr-dev libxi-dev mesa-vulkan-drivers libvulkan1 vulkan-tools xvfb
+            libxcursor-dev libxrandr-dev libxi-dev libfontconfig1-dev libfreetype-dev mesa-vulkan-drivers libvulkan1 vulkan-tools xvfb
       - name: Rust toolchain (rust-toolchain.toml)
         run: rustup toolchain install --profile minimal && rustc --version
       - uses: Swatinem/rust-cache@v2
@@ -50,7 +50,7 @@ jobs:
         id: crates
         shell: bash
         run: |
-          crates=$( (ls -d crates/presto-* crates/svelters-presto 2>/dev/null || true) | xargs -n1 basename | sed 's/^/-p /' | tr '\n' ' ')
+          crates=$( (ls -d crates/presto crates/presto-* crates/svelters-presto 2>/dev/null || true) | xargs -n1 basename | sed 's/^/-p /' | tr '\n' ' ')
           echo "list=$crates" >> "$GITHUB_OUTPUT"
           echo "$crates"
       - name: cargo check (all targets)

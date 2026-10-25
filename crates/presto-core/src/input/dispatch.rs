@@ -183,6 +183,7 @@ impl Document {
     pub fn dispatch(&mut self, ev: &InputEnvelope) -> Dispatched {
         let before = self.revision;
         self.consumed_input(ev.seq);
+        self.input.now = ev.os_time;
         let mut out = Dispatched { seq: ev.seq, window: ev.window, revision: self.revision, ..Default::default() };
         let mut emitted = Vec::new();
         self.transaction(|doc| match &ev.event {
@@ -450,6 +451,15 @@ impl Document {
         }
         let Some(target) = self.focused(window).or_else(|| self.window_root(window)) else { return };
         out.target = Some(target);
+        // outside a composition the command layer's keymap comes first, then the focused kind, then JS
+        if let Some(mut hook) = self.key_hook.take() {
+            let taken = hook(window, k);
+            self.key_hook = Some(hook);
+            if taken {
+                out.handled = true;
+                return;
+            }
+        }
         let native = bubble_native(self, target, &Event::Key(k), emitted, None);
         out.handled |= native.is_some();
         let signal = if k.state == KeyState::Pressed { common::KEYDOWN } else { common::KEYUP };
@@ -472,6 +482,26 @@ impl Document {
         let Some(target) = self.focused(window) else { return };
         out.target = Some(target);
         out.handled |= call_kind(self, target, &Event::Ime(ev), emitted, None) == Handled::Yes;
+    }
+
+    /// Calls `f` with the text-input client of `window`'s focused node, when its kind edits text: the
+    /// platform's IME bridge (IMM32/TSF, NSTextInputClient, text-input-v3) talks to it (§11.3).
+    pub fn with_text_input<R>(&mut self, window: WindowId, f: impl FnOnce(&mut dyn presto_base::input::TextInputClient) -> R) -> Option<R> {
+        let node = self.focused(window)?;
+        let i = self.idx(node)?;
+        let mut k = self.kinds[i].take()?;
+        let r = k.text_input().map(f);
+        self.kinds[i] = Some(k);
+        if r.is_some() {
+            self.mark(node, crate::tree::Dirty::PAINT | crate::tree::Dirty::A11Y);
+        }
+        r
+    }
+
+    /// The command layer's keymap (cadatomic's one command path): called for every key outside a
+    /// composition before the focused kind; returning true consumes the key.
+    pub fn set_key_hook(&mut self, hook: Box<dyn FnMut(WindowId, &KeyEvent) -> bool>) {
+        self.key_hook = Some(hook);
     }
 
     /// Whether anything changed since `rev` (a dispatch that hit no handler keeps its revision).
