@@ -350,6 +350,9 @@ pub(crate) struct SceneStyle {
     /// against.
     theme_tokens: Option<UtilityTokens>,
     host_tokens: std::collections::BTreeMap<String, &'static str>,
+    /// DZ2b: a tool's forced state bits by node, ORed over the node's own bits wherever selectors
+    /// match and paint reads state ([`Scene::shown_state`]); the walk never writes them.
+    forced_states: std::collections::HashMap<NodeId, StateBits>,
 }
 
 impl SceneStyle {
@@ -398,6 +401,7 @@ impl Default for SceneStyle {
             reduced_motion: false,
             theme_tokens: None,
             host_tokens: Default::default(),
+            forced_states: Default::default(),
         }
     }
 }
@@ -500,6 +504,7 @@ impl SceneStyle {
 
     /// Node `id` went away: forgets its transitions, and releases its utility classes (U3).
     pub(crate) fn forget(&mut self, id: NodeId) {
+        self.forced_states.remove(&id);
         if let Some(n) = self.nodes.get_mut(id.index() as usize).filter(|n| n.id == Some(id))
             && !n.classes.is_empty()
         {
@@ -559,6 +564,22 @@ impl SceneStyle {
 }
 
 // ---- the scene as the engine's tree ----
+
+/// DZ2b: the state bits a pseudo-class tests, as written in a selector (with or without the
+/// `:`): `hover`, `active`, `focus`, `focus-visible`, `disabled`, `checked`, `state(cad.pending)`,
+/// … — what [`EguiBackend::force_state`] forces to show that state's rules. Read from the engine's
+/// pseudo-class table and the provider state registry. `None` for an unknown name and for the
+/// negated ones (`:enabled`, `:valid`, …), which no forced bit can turn on.
+pub fn pseudo_state(name: &str) -> Option<StateBits> {
+    let name = name.trim().trim_start_matches(':');
+    if let Some(arg) = name.strip_prefix("state(").and_then(|r| r.strip_suffix(')')) {
+        return ProviderStates.lookup(arg.trim()).map(|m| StateBits(m.0));
+    }
+    if name == "focus-visible" {
+        return Some(StateBits::FOCUS_VISIBLE);
+    }
+    svelters_style::STATE_PSEUDO_CLASSES.iter().find(|(n, _, negated)| *n == name && !*negated).map(|(_, m, _)| StateBits(m.0))
+}
 
 /// Provider states by full name (`cad.pending`), for `:state()` (RA1's registry).
 pub struct ProviderStates;
@@ -638,13 +659,14 @@ impl Element for NodeRef<'_> {
     fn attr(&self, name: &str) -> Option<Cow<'_, str>> {
         self.value_of(name).ok().as_ref().and_then(value_text)
     }
+    /// The node's bits with a tool's forced ones (DZ2b).
     fn state(&self) -> StateMask {
-        StateMask(NodeRef::state(*self).0)
+        StateMask(self.s.shown_state(self.i).0)
     }
     /// OW0: the `focus-visible` bit (own widgets: Focusable's rule; stock leaves: the walk sets it
     /// with `focused`, as before).
     fn is_focus_visible(&self) -> bool {
-        NodeRef::state(*self).contains(StateBits::FOCUS_VISIBLE)
+        self.s.shown_state(self.i).contains(StateBits::FOCUS_VISIBLE)
     }
 }
 
@@ -849,15 +871,17 @@ impl Scene {
         let st = &self.style;
         let c = st.stylist.compute(n, parent.as_deref(), inline.as_deref(), &st.cx, &mut caches);
         let states = if is_stock(self.w(i)) && st.stylist.invalidation().states_used().intersects(StateMask(StateBits::HOVERED.0 | StateBits::PRESSED.0)) {
-            let s0 = self.core[i].state;
+            let s0 = self.shown_state(i);
             let base = StateBits(s0.0 & !(StateBits::HOVERED.0 | StateBits::PRESSED.0));
             let one = |state: StateBits, caches: &mut MatchCaches| {
                 caches.clear();
                 Arc::new(st.stylist.compute(Forced { n, subject: id, state }, parent.as_deref(), inline.as_deref(), &st.cx, caches))
             };
-            let a = one(base, &mut caches);
-            let h = one(base | StateBits::HOVERED, &mut caches);
+            // DZ2b: a forced hover or press shows whatever egui's own state is
+            let forced = st.forced_states.get(&id).copied().unwrap_or_default();
             let p = one(base | StateBits::HOVERED | StateBits::PRESSED, &mut caches);
+            let h = if forced.contains(StateBits::PRESSED) { p.clone() } else { one(base | StateBits::HOVERED, &mut caches) };
+            let a = if forced.intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0)) { h.clone() } else { one(base, &mut caches) };
             Some(Arc::new([a, h, p]))
         } else {
             None
@@ -1123,7 +1147,7 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     let c = s.style.computed(id)?.clone();
     let dark = ui.ctx().theme() == egui::Theme::Dark;
     let ua = if matches!(s.w(i), W::StatusBar(_)) { crate::views::status_bar::STATUS_UA } else { crate::paint::Ua::NONE }; // OW7c
-    let v = crate::paint::StyleView::new(Some(&c), ua, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+    let v = crate::paint::StyleView::new(Some(&c), ua, s.shown_state(i), dark).with_overlay(s.style.overlay(id));
     crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(ui.painter(), id.to_raw()), &v, r);
     let o = v.opacity();
     (o < 1.0).then_some(o)
@@ -1185,7 +1209,7 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
                 child.multiply_opacity(o.max(0.0));
             }
             let dark = child.ctx().theme() == egui::Theme::Dark;
-            let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+            let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.shown_state(i), dark).with_overlay(s.style.overlay(id));
             crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(child.painter(), id.to_raw()), &v, r);
         }
         return;
@@ -1243,13 +1267,14 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         }
         // CS5g: the shadows of this pass's state, behind the widget
         let now = match &states {
+            // (a forced hover or press: `restyle_node` made the lower states that state's)
             Some(st) => &st[if pressed { 2 } else if hovered { 1 } else { 0 }],
             None => &c,
         };
         stock_shadows(now, r, child);
     } else {
         let dark = child.ctx().theme() == egui::Theme::Dark;
-        let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+        let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.shown_state(i), dark).with_overlay(s.style.overlay(id));
         crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(child.painter(), id.to_raw()), &v, r);
         if let Some(col) = v.color("color").filter(|_| c.get("color").is_some()) {
             child.visuals_mut().override_text_color = Some(col);
@@ -2134,7 +2159,8 @@ impl Scene {
         diags
     }
 
-    /// DZ0: drops every node's forced declarations; returns the roots of the nodes that had some.
+    /// DZ0: drops every node's forced declarations and (DZ2b) forced states; returns the roots of
+    /// the nodes that had some.
     pub(crate) fn clear_forced(&mut self) -> Vec<crate::scene::RootIx> {
         let ids: Vec<NodeId> = self.style.nodes.iter().filter(|n| n.forced.is_some()).filter_map(|n| n.id).collect();
         let mut roots = Vec::new();
@@ -2144,7 +2170,49 @@ impl Scene {
                 roots.push(self.core[self.ix(id)].root);
             }
         }
+        let ids: Vec<NodeId> = self.style.forced_states.keys().copied().collect();
+        for id in ids {
+            self.apply_forced_state(id, StateBits::NONE);
+            if self.idx(id).is_some() {
+                roots.push(self.core[self.ix(id)].root);
+            }
+        }
         roots
+    }
+
+    /// DZ2b: node `i`'s state bits as selectors and paint see them: its own, with a tool's forced
+    /// ones ORed in. The one place a forced state enters (`Element::state`, the walk's
+    /// `StyleView`s, own widgets' `WidgetCx::style`).
+    pub(crate) fn shown_state(&self, i: usize) -> StateBits {
+        self.core[i].state | self.forced_bits(i)
+    }
+
+    /// DZ2b: the bits a tool forced on node `i`.
+    pub(crate) fn forced_bits(&self, i: usize) -> StateBits {
+        if self.style.forced_states.is_empty() {
+            return StateBits::NONE;
+        }
+        self.slots.id_at(i).and_then(|id| self.style.forced_states.get(&id).copied()).unwrap_or_default()
+    }
+
+    /// DZ2b: forces `bits` on node `id` (`NONE`: none), and restyles what the change reaches.
+    fn apply_forced_state(&mut self, id: NodeId, bits: StateBits) {
+        let Some(i) = self.idx(id) else {
+            self.style.forced_states.remove(&id);
+            return;
+        };
+        self.activate_style();
+        let before = self.shown_state(i);
+        if bits.is_empty() {
+            self.style.forced_states.remove(&id);
+        } else {
+            self.style.forced_states.insert(id, bits);
+        }
+        let after = self.shown_state(i);
+        let reach = self.style.stylist.invalidation().state_changed(StateMask(before.0), StateMask(after.0));
+        self.mark_reach(id, reach);
+        self.mark_style(id);
+        self.core[i].dirty.insert(Dirty::PAINT);
     }
 
     /// Installs (or with `None` removes) sheet `name`; `@tokens…` and `@theme…` sheets are the
@@ -2473,6 +2541,29 @@ impl EguiBackend {
         };
         self.touched(Some(r.1));
         Ok(r.0)
+    }
+
+    /// DZ2b: forces state bits on node `h` (`StateBits::HOVERED`, a provider's `:state(…)` bit) for
+    /// selector matching and painting, until replaced; `StateBits::NONE` clears. A designer forces a
+    /// state to show and edit that state's rules. The bits are ORed over the node's own (the walk
+    /// keeps writing those) and never reach its journaled state, events or a11y.
+    /// [`clear_overrides`](EguiBackend::clear_overrides) clears them with the forced styles, and a
+    /// freed node takes them with it. [`pseudo_state`] maps a selector's pseudo-class to its bits.
+    pub fn force_state(&self, h: Handle, bits: StateBits) -> Result<(), String> {
+        let root = {
+            let mut s = self.0.scene.borrow_mut();
+            let id = s.live(h)?;
+            s.apply_forced_state(id, bits);
+            s.core[s.ix(id)].root
+        };
+        self.touched(Some(root));
+        Ok(())
+    }
+
+    /// DZ2b: the bits forced on node `h` ([`EguiBackend::force_state`]), `NONE` when none.
+    pub fn forced_state(&self, h: Handle) -> StateBits {
+        let s = self.0.scene.borrow();
+        s.live(h).ok().and_then(|id| s.style.forced_states.get(&id).copied()).unwrap_or_default()
     }
 
     /// DZ0: the rules that match node `h` now, in cascade order (normal declarations: origin,

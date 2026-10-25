@@ -176,3 +176,56 @@ fn prop_states_and_grid() {
     assert!(!state(&rig, c1).contains(StateBits::CHECKED));
     assert_eq!(get(&rig, c1, "border-width"), None);
 }
+
+/// DZ2b: a forced `:hover` (and a provider `:state()`) styles a node with no pointer over it,
+/// survives the walk rewriting the node's own bits every frame, leaves those bits alone, and stops
+/// when cleared, by `NONE` or with `clear_overrides`.
+#[test]
+fn forced_states_show_a_states_rules() {
+    use svelters_egui::style::pseudo_state;
+    let mut rig = Rig::new();
+    let (_w, col) = rig.window();
+    let panel = rig.leaf(col, "box", &[]);
+    let lbl = rig.leaf(panel, "label", &[("text", Value::Str("a".into()))]);
+    let btn = rig.leaf(panel, "button", &[("text", Value::Str("go".into()))]);
+    sheet(
+        &rig,
+        "app",
+        "label { color: #ff0000; }
+         label:hover { color: #00ff00; }
+         box:hover { padding-left: 9px; }
+         button:state(cadt.pending) { border-width: 3px; }",
+    );
+    rig.harness.hover_at(egui::pos2(-50.0, -50.0));
+    rig.run();
+    assert_eq!(get(&rig, lbl, "color"), rgb(255, 0, 0));
+
+    assert_eq!(pseudo_state("hover"), Some(StateBits::HOVERED));
+    assert_eq!(pseudo_state(":active"), Some(StateBits::PRESSED));
+    assert_eq!(pseudo_state("focus-visible"), Some(StateBits::FOCUS_VISIBLE));
+    assert_eq!(pseudo_state("state(cadt.pending)"), Some(cadt::PENDING.bits()));
+    assert_eq!(pseudo_state("enabled"), None, "negated: nothing to force");
+    assert_eq!(pseudo_state("state(no.such)"), None);
+
+    rig.backend.force_state(lbl, pseudo_state("hover").unwrap()).unwrap();
+    rig.backend.force_state(panel, StateBits::HOVERED).unwrap();
+    rig.backend.force_state(btn, pseudo_state("state(cadt.pending)").unwrap()).unwrap();
+    rig.run();
+    rig.run();
+    assert_eq!(get(&rig, lbl, "color"), rgb(0, 255, 0), "forced hover, no pointer");
+    assert_eq!(get(&rig, panel, "padding-left"), Some(ComputedValue::Length(Length::px(9.0))), "a container's forced hover");
+    assert_eq!(get(&rig, btn, "border-width"), Some(ComputedValue::Length(Length::px(3.0))), "a forced provider state");
+    assert!(!state(&rig, lbl).contains(StateBits::HOVERED), "the node's own bits stay the walk's");
+    assert_eq!(rig.backend.forced_state(lbl), StateBits::HOVERED);
+
+    rig.backend.force_state(lbl, StateBits::NONE).unwrap();
+    rig.run();
+    assert_eq!(get(&rig, lbl, "color"), rgb(255, 0, 0), "cleared");
+    assert_eq!(get(&rig, panel, "padding-left"), Some(ComputedValue::Length(Length::px(9.0))), "others stay forced");
+
+    rig.backend.clear_overrides();
+    rig.run();
+    assert_eq!(get(&rig, panel, "padding-left"), None, "clear_overrides ends forced states");
+    assert_eq!(get(&rig, btn, "border-width"), None);
+    assert_eq!(rig.backend.forced_state(panel), StateBits::NONE);
+}

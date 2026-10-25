@@ -23,6 +23,7 @@
 //! since the parser's offsets skip it.
 
 mod edit;
+mod structure;
 #[cfg(test)]
 mod tests;
 
@@ -197,6 +198,19 @@ pub struct Design<'s> {
     /// Top-level outline nodes, in order.
     pub roots: Vec<usize>,
     pub rules: Vec<DesignRule>,
+    /// Where the `<style>` element is, and its top-level rules and at-rules (DZR2's `AddRule`).
+    style: Option<StyleInfo>,
+}
+
+/// The `<style>` element's layout.
+#[derive(Debug)]
+struct StyleInfo {
+    /// The `<` of `<style`.
+    start: u32,
+    content_start: u32,
+    content_end: u32,
+    /// (start, end) of each top-level rule or at-rule, in order.
+    tops: Vec<(u32, u32)>,
 }
 
 impl<'s> Design<'s> {
@@ -208,10 +222,23 @@ impl<'s> Design<'s> {
             .map_err(|e| Refusal::new(RefusalKind::Parse, e.message, Some((e.start, e.end))))?;
         let sheet = crate::svelte::css::parse_style(src, &root)
             .map_err(|e| Refusal::new(RefusalKind::Parse, e.message, Some((e.start, e.end))))?;
-        let mut d = Design { src, nodes: Vec::new(), roots: Vec::new(), rules: Vec::new() };
+        let mut d = Design { src, nodes: Vec::new(), roots: Vec::new(), rules: Vec::new(), style: None };
         d.roots = d.fragment(&root.fragment, None, Branch::Body, &[], &mut 0);
         if let Some(sheet) = &sheet {
             d.sheet(sheet);
+        }
+        if let Some(block) = &root.css {
+            let tops = sheet.as_ref().map_or_else(Vec::new, |sh| {
+                sh.children
+                    .iter()
+                    .filter_map(|c| match c {
+                        CssNode::Rule(r) => Some((r.start as u32, r.end as u32)),
+                        CssNode::Atrule(a) => Some((a.start as u32, a.end as u32)),
+                        CssNode::Declaration(_) => None,
+                    })
+                    .collect()
+            });
+            d.style = Some(StyleInfo { start: block.start, content_start: block.content.start, content_end: block.content.end, tops });
         }
         Ok(d)
     }
@@ -238,6 +265,16 @@ impl<'s> Design<'s> {
     /// The edits for `intent`, checked by parsing the result again.
     pub fn plan(&self, intent: &Intent) -> Result<Plan, Refusal> {
         edit::plan(self, intent)
+    }
+
+    /// DZR2: plans `intents` in order, each against the text the previous ones left (so each
+    /// intent's offsets are in that text: an earlier plan's `target`, or an offset passed through
+    /// [`rebase`]), as ONE plan: `edits` in this file's offsets (sorted, not overlapping), `text`
+    /// the final text, `target` the last intent's target. When the steps' edits can't be mapped
+    /// back without overlapping, `edits` is one edit over the changed range (common prefix and
+    /// suffix). One undo group for "override here" (`[AddClass, AddRule]`). No intents: no edits.
+    pub fn plan_all(&self, intents: &[Intent]) -> Result<Plan, Refusal> {
+        edit::plan_all(self, intents)
     }
 
     fn fragment(&mut self, f: &Fragment, parent: Option<usize>, branch: Branch, path: &[u32], k: &mut u32) -> Vec<usize> {

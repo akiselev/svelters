@@ -12,9 +12,11 @@ sources:
   - crates/svelters-egui/src/overrides.rs               # set_override, clear_override
   - crates/svelters-egui/tests/{source_loc,style_source,overrides,hmr_sites}.rs
   - crates/svelters-automation/tests/source_loc.rs
-  - crates/svelters-compiler/src/design/{mod,edit}.rs  # Design, Intent, Plan, rebase
+  - crates/svelters-compiler/src/design/{mod,edit,structure}.rs  # Design, Intent, Plan, rebase, plan_all
+  - crates/svelters-egui/tests/style.rs                 # forced_states_show_a_states_rules
   - plans/milestones/DZ0-designer-seams.md
   - plans/milestones/DZR-design-resolver.md
+  - plans/milestones/DZR2-structure-and-states.md
 ---
 
 # Designer seams
@@ -90,6 +92,14 @@ live nodes:
   never reaches `bind:` state. A node freed by a swap takes its overrides with it.
 - `force_style(h, Some("color: #00ff00; padding: 4px"))` sets declarations above `style=` and every
   rule. `None` or `clear_overrides` removes them.
+- `force_state(h, StateBits::HOVERED)` forces state bits, so that state's rules match with no pointer
+  over the node: edit a `:hover` rule while hover shows. `pseudo_state("hover")` (or `":active"`,
+  `"focus-visible"`, `"state(cad.pending)"`) gives the bits a selector's pseudo-class tests; negated
+  ones (`:enabled`) give `None`. The bits are ORed over the node's own for selector matching and
+  painting; the walk keeps writing the node's own bits, and the node's journaled state, events and
+  a11y never see forced ones. `StateBits::NONE` or `clear_overrides` ends them, and a freed node
+  takes them with it. `forced_state(h)` reads them back. A stock button or text field forced to hover
+  paints its hover style whatever egui's own state is.
 
 The usual sequence:
 1. Override while dragging.
@@ -117,7 +127,28 @@ let plan = d.plan(&Intent::SetAttr { node: offset, name: "gap".into(), value: Li
 ```
 
 - `node` is the element offset from `source-loc`. `rule` is a matched rule's `style_offset`.
-- The intents are `SetAttr`, `ClearAttr`, `SetDecl` and `ClearDecl`.
+- The attribute and declaration intents are `SetAttr`, `ClearAttr`, `SetDecl` and `ClearDecl`.
+- The structural intents (DZR2) are:
+  - `Insert { parent, index, markup }`: one element or component as child `index` (`parent: None` is
+    the top level);
+  - `Remove { node }`;
+  - `Move { node, parent, index }`: `index` counts the new parent's children without the moved node;
+  - `Wrap { first, last, tag, attrs }`: contiguous siblings in a new element;
+  - `Unwrap { node }`: an element replaced by its children;
+  - `AddClass { node, class }` and `AddRule { selector, decls }`: the pair behind "override here".
+- They write in the file's layout: a node alone on its line gets lines of its own at its siblings'
+  indent; siblings sharing a line stay on one line, with the separator they already use (else one
+  space); `<box />` opens to `<box>`…`</box>` for its first child; wrapped and unwrapped children
+  move one step in or out (the template's own step). A new rule goes after the last one with the
+  sheet's blank lines and declaration indent; with no `<style>`, one is added at the end.
+- New parents must be elements or components (a spread is fine); blocks are refused. Opaque nodes
+  are never removed, moved or wrapped. Only elements unwrap. `AddClass` writes only a static `class`.
+- `Plan::target` after a structural intent: `Insert`, the new node; `Move`, the moved node; `Wrap`, the
+  wrapper; `Unwrap`, the first unwrapped child; `Remove`, the parent (0 at the top level); `AddClass`,
+  the node; `AddRule`, the new rule's selector.
+- `Design::plan_all(&[..])` plans several intents as one undo group: each is planned on the text the
+  previous ones left (so its offsets name that text), and the result is one `Plan` with edits in the
+  original file's offsets. `[AddClass, AddRule]` is "override here".
 - `rebase(offset, &plan.edits)` keeps a held selection pointing at the same node after the edit.
 - Only literal attributes are written (`"row"`, `{12}`, `{true}`), and only rules whose selectors are
   kinds, classes and pseudo-classes. Expressions, handlers, spreads and blocks are refused with their
