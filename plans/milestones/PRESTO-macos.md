@@ -65,6 +65,9 @@ Public main-thread extras: `set_text_input_client`, `text_input_changed`, `set_o
     should arrive as disabled items). `MacAppHandler::menu` is gone (replaced by `menu_activated`).
     views' `MenuModel` → `MenuDesc` is for WIDGETS-VIEWS to write (labels without `&`, `Check::Radio`
     as `checked: Some(..)`, invisible entries left out).
+  - OS-layer resize (asked by CANVAS): `begin_os_layer_resize`/`end_os_layer_resize` open and commit a
+    Core Animation transaction (actions off; balanced on layer removal and window close); sublayers
+    get top-left contents gravity and `masksToBounds`.
   - Option press/release: `flagsChanged:` already emits `Key::AltLeft`/`AltRight` key events.
   - presto-base docs: `KeyEvent.physical` is `page << 16 | usage`; `WindowEvent::Moved` is the content's
     top-left in global points.

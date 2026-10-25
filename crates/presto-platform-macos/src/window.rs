@@ -53,6 +53,8 @@ pub(crate) struct WindowState {
     pub live_resize: bool,
     /// The window's frame sources, for occlusion reports.
     pub frame_sources: Vec<crate::display_link::OcclusionHandle>,
+    /// OS layers inside an open resize transaction (`begin_os_layer_resize`).
+    pub layer_resizes: std::collections::HashSet<SurfaceId>,
 }
 
 impl WindowState {
@@ -131,6 +133,7 @@ impl WindowState {
             last_size: None,
             live_resize: false,
             frame_sources: Vec::new(),
+            layer_resizes: Default::default(),
         }
     }
 
