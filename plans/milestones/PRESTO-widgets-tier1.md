@@ -138,3 +138,12 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
 
 Per the batch rule nothing was run beyond `cargo check`/`cargo clippy -p presto-widgets --all-targets`
 (warning-free). No test was run; GitHub CI runs them.
+
+## CI
+
+`d3f510ef` (presto run 40228203704; the five svelters workflows green: js 40228203726, linux-gtk
+40228203659, linux-qt 40228203681, macos-appkit 40228203637, windows-winui 40228203667). presto
+`cargo test`: every tier-1 test passed on Linux and macOS; on Windows one failed
+(`dialogs::native` expected a `/` where `PathBuf::join` gives `\`), fixed in the next commit. The other
+presto failures are not this lane's: WIDGETS-BASIC's three `controls::slider` tests (f32 rounding),
+`presto-core --lib`, and `presto-compositor` tests `engine` and `tree_damage`.
