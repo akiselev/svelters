@@ -3948,6 +3948,7 @@ dependencies = [
  "presto-base",
  "presto-core",
  "presto-text",
+ "rfd",
 ]
 
 [[package]]

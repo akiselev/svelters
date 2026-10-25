@@ -2,7 +2,7 @@
 //!
 //! Wave-2 lanes own one module group each (`plans/cloud/presto-b2/`): WIDGETS-BASIC `interact`, `paint`,
 //! `theme`, `controls`; WIDGETS-VIEWS `views`; TEXT-INPUT `text`; WIDGETS-TIER1 `table`, `tabs`, `pickers`,
-//! `dnd`, `dialogs`.
+//! `dnd`, `dialogs`, `zoom`.
 
 pub mod controls;
 pub mod dialogs;
@@ -15,3 +15,4 @@ pub mod tabs;
 pub mod text;
 pub mod theme;
 pub mod views;
+pub mod zoom;

@@ -11,3 +11,9 @@ presto-base = { workspace = true }
 presto-core = { workspace = true }
 presto-text = { workspace = true }
 presto-anim = { workspace = true }
+serde_json = { workspace = true }
+# Native file and message dialogs (`dialogs::native`) through rfd; without it they fail as unsupported.
+rfd = { version = "0.17.2", optional = true }
+
+[features]
+dialogs = ["dep:rfd"]
