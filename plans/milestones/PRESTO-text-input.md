@@ -149,4 +149,9 @@ method with a default); installing `TextHost` → APP-TEST.
 - After re-pinning quire-text to `35b5063a`: `cargo test -p presto-widgets --lib text::` (36 passed) and
   `--test text_pins` (passed; totals unchanged, 228 and 226 of 243).
 - After moving onto CORE-3's services (base `96426b4a`): `text::` 36 passed, `text_pins` passed (228, 226).
+- **CI on `300b2660` (presto run 40228643140): presto-widgets green on Linux, Windows and macOS** (the
+  `text::` unit tests and `text_pins`). The run is red only in other lanes' targets: presto-compositor
+  `--test engine` and `--test tree_damage`, presto-core `--lib` (its `tests::hooks` and `tests::style`).
+- Pin floors (Q3): the measured totals above (228 GTK, 226 Qt of 243), per pin as in the table, are ready
+  to become `text_pins`' ratchet; not added on this branch so the green head stays the one CI checked.
 - Not run: clippy, other crates.
