@@ -16,7 +16,8 @@ use presto_base::props::{EffectNode, OverscrollBehavior, PropOp, ScrollNode, Tra
 use presto_base::scene::FrameScene;
 use presto_base::time::{Span, Time};
 use presto_compositor::core::{Backend, DrawOutcome, Engine, EngineConfig, Msg};
-use presto_compositor::seams::{self, ScrollMotion};
+use presto_compositor::seams;
+use presto_anim::scroll::{DurationBehavior, Fling, ScrollAnimation};
 use presto_compositor::tree::SurfaceKey;
 use std::sync::{Arc, Mutex};
 
@@ -62,17 +63,12 @@ impl Backend for FakeGpu {
 
 type Sent = Arc<Mutex<Vec<ToUi>>>;
 
-fn engine(fling: bool) -> (Engine, Sent) {
+fn engine() -> (Engine, Sent) {
     let sent: Sent = Arc::default();
     let s = sent.clone();
-    let fling: Option<presto_compositor::seams::FlingFactory> = fling.then(|| {
-        Box::new(|_c: FlingCurve, v: Vec2, from: Vec2, at: Time| Box::new(LinearFling { from, v, at }) as Box<dyn ScrollMotion>)
-            as presto_compositor::seams::FlingFactory
-    });
     let e = Engine::new(
-        EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_color: Color::BLACK, caret_blink: None },
+        EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_color: Color::BLACK, caret_blink: None, ppi: PPI },
         Box::new(seams::frame_clock),
-        fling,
         None,
         Box::new(move |m| s.lock().unwrap().push(m)),
         Box::new(|| {}),
@@ -80,22 +76,17 @@ fn engine(fling: bool) -> (Engine, Sent) {
     (e, sent)
 }
 
-/// Decelerates linearly to rest over 300 ms.
-struct LinearFling {
-    from: Vec2,
-    v: Vec2,
-    at: Time,
-}
+const PPI: f32 = 96.0;
 
-impl ScrollMotion for LinearFling {
-    fn offset_at(&self, t: Time) -> Vec2 {
-        let s = ((t - self.at).as_secs_f64() as f32).clamp(0.0, 0.3);
-        let k = s - s * s / 0.6;
-        self.from + self.v * k
-    }
-    fn done_at(&self, t: Time) -> bool {
-        (t - self.at).as_secs_f64() >= 0.3
-    }
+fn scroll_moves(sent: &Sent) -> Vec<f32> {
+    sent.lock()
+        .unwrap()
+        .iter()
+        .filter_map(|m| match m {
+            ToUi::ScrollMoved { node, offset, .. } if *node == SCROLL => Some(offset.y),
+            _ => None,
+        })
+        .collect()
 }
 
 fn quad(r: Rect, c: Color) -> Arc<DisplayList> {
@@ -191,7 +182,7 @@ fn complete(e: &mut Engine, gpu: &mut FakeGpu, now: Time) {
 
 #[test]
 fn first_commit_draws_the_whole_window_and_acks() {
-    let (mut e, sent) = engine(false);
+    let (mut e, sent) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -204,7 +195,7 @@ fn first_commit_draws_the_whole_window_and_acks() {
 
 #[test]
 fn commits_arriving_before_a_draw_fold_into_one_frame() {
-    let (mut e, sent) = engine(false);
+    let (mut e, sent) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -247,7 +238,7 @@ fn commits_arriving_before_a_draw_fold_into_one_frame() {
 
 #[test]
 fn stale_fast_commits_are_rejected_and_win_over_older_commits() {
-    let (mut e, _) = engine(false);
+    let (mut e, _) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -292,7 +283,7 @@ fn stale_fast_commits_are_rejected_and_win_over_older_commits() {
 
 #[test]
 fn a_fling_keeps_producing_frames_without_commits_then_goes_idle() {
-    let (mut e, sent) = engine(true);
+    let (mut e, sent) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -305,38 +296,62 @@ fn a_fling_keeps_producing_frames_without_commits_then_goes_idle() {
         &mut gpu,
     );
     let drawn_before = gpu.draws.len();
-    let mut last = at;
-    for _ in 0..200 {
-        match step(&mut e, &mut gpu) {
-            Some(t) => last = t,
-            None => break,
+    for _ in 0..2000 {
+        if step(&mut e, &mut gpu).is_none() {
+            break;
         }
     }
     let frames = gpu.draws.len() - drawn_before;
-    // 300 ms at 60 Hz: about 18 frames, every one from the compositor alone.
-    assert!(frames >= 15, "only {frames} fling frames");
+    let curve = Fling::new(FlingCurve::Chromium, Vec2::new(0.0, 2000.0), PPI, Size::new(400.0, 300.0));
+    let expect = curve.offset_at(Span::from_millis(60_000)).y.min(2700.0);
+    let duration_frames = (0..).find(|k| curve.done_at(Span(INTERVAL.0 * k))).unwrap();
+    // Every fling frame comes from the compositor alone, one per vsync.
+    assert!(frames as i64 + 2 >= duration_frames, "{frames} frames for a {duration_frames}-frame fling");
     assert!(e.next_wakeup().is_none(), "idle after the fling: no wakeups");
-    assert!(last - at < Span::from_millis(400));
-    let moved: Vec<f32> = sent
-        .lock()
-        .unwrap()
-        .iter()
-        .filter_map(|m| match m {
-            ToUi::ScrollMoved { node, offset, .. } if *node == SCROLL => Some(offset.y),
-            _ => None,
-        })
-        .collect();
-    assert!(moved.len() >= 15);
+    let moved = scroll_moves(&sent);
+    assert!(moved.len() >= 5, "{moved:?}");
     assert!(moved.windows(2).all(|w| w[1] >= w[0]), "monotonic: {moved:?}");
-    assert!((moved.last().unwrap() - 300.0).abs() < 1.0, "rests at v·t/2 = 300: {moved:?}");
+    assert!((moved.last().unwrap() - expect).abs() < 0.5, "rests at the curve's distance {expect}: {moved:?}");
     assert_eq!(e.tree(W).unwrap().revision, Revision(1), "no commits during the fling");
     let presented = sent.lock().unwrap().iter().filter(|m| matches!(m, ToUi::Presented { estimated: true, .. })).count();
     assert!(presented >= frames, "every frame reports an estimated present");
 }
 
 #[test]
+fn smooth_scroll_reaches_its_target_and_retargets() {
+    let (mut e, sent) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
+    let to = |y: f32, at: Time| Msg::SmoothScroll {
+        window: W,
+        node: SCROLL,
+        to: Vec2::new(0.0, y),
+        behavior: DurationBehavior::InverseDelta,
+        at,
+    };
+    e.handle(to(100.0, t0 + Span::from_millis(2)), t0 + Span::from_millis(2), &mut gpu);
+    let mid = step(&mut e, &mut gpu).unwrap();
+    step(&mut e, &mut gpu);
+    // A second wheel step mid-animation heads for the new end without restarting from rest.
+    e.handle(to(220.0, mid + Span::from_millis(20)), mid + Span::from_millis(20), &mut gpu);
+    for _ in 0..200 {
+        if step(&mut e, &mut gpu).is_none() {
+            break;
+        }
+    }
+    let moved = scroll_moves(&sent);
+    assert!(moved.windows(2).all(|w| w[1] >= w[0]), "monotonic: {moved:?}");
+    assert_eq!(*moved.last().unwrap(), 220.0);
+    assert_eq!(e.tree(W).unwrap().props.scrolls[&SCROLL].offset.y, 220.0);
+    assert!(e.next_wakeup().is_none());
+}
+
+#[test]
 fn a_scroll_fast_commit_stops_a_fling() {
-    let (mut e, _) = engine(true);
+    let (mut e, _) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -369,7 +384,7 @@ fn a_scroll_fast_commit_stops_a_fling() {
 
 #[test]
 fn idle_window_does_not_wake() {
-    let (mut e, _) = engine(false);
+    let (mut e, _) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -386,7 +401,7 @@ fn idle_window_does_not_wake() {
 
 #[test]
 fn begin_frame_follows_a_request_and_waits_for_the_commit() {
-    let (mut e, sent) = engine(false);
+    let (mut e, sent) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -402,7 +417,7 @@ fn begin_frame_follows_a_request_and_waits_for_the_commit() {
 
 #[test]
 fn compositor_opacity_animation_runs_and_holds_with_fill_forwards() {
-    let (mut e, sent) = engine(false);
+    let (mut e, sent) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -455,7 +470,7 @@ fn compositor_opacity_animation_runs_and_holds_with_fill_forwards() {
 
 #[test]
 fn ui_thread_animations_are_not_run_here() {
-    let (mut e, sent) = engine(false);
+    let (mut e, sent) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -482,7 +497,7 @@ fn ui_thread_animations_are_not_run_here() {
 
 #[test]
 fn resize_draws_the_new_size_and_answers() {
-    let (mut e, sent) = engine(false);
+    let (mut e, sent) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);
@@ -497,7 +512,7 @@ fn resize_draws_the_new_size_and_answers() {
 
 #[test]
 fn hidden_windows_do_not_draw_and_redraw_fully_when_shown() {
-    let (mut e, _) = engine(false);
+    let (mut e, _) = engine();
     let mut gpu = FakeGpu::default();
     let t0 = T0;
     new_window(&mut e);

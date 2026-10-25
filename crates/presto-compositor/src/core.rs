@@ -5,8 +5,9 @@
 //! a virtual clock and a recording backend.
 
 use crate::damage::{self, Pending, Snapshots};
-use crate::seams::{Action, FlingFactory, FramePacer, PacerFactory, ScrollMotion, Signal};
-use crate::tree::{FlatItem, SurfaceKey, WindowTree};
+use crate::seams::{Action, FramePacer, PacerFactory, Signal};
+use presto_anim::scroll::{DurationBehavior, Fling, ScrollAnimation, SmoothScroll};
+use crate::tree::{self, FlatItem, SurfaceKey, WindowTree};
 use presto_base::anim::{
     Placement, AnimProperty, AnimValue, AnimationCmd, AnimationEvent, AnimationSpec, FillMode, FlingCurve, Generator, Keyframe,
     StartTime,
@@ -70,6 +71,7 @@ pub enum Msg {
     HighRateInput(WindowId),
     UiCost { window: WindowId, frame: FrameId, cost: Span },
     Fling { window: WindowId, node: PropNodeId, velocity: Vec2, curve: FlingCurve, at: Time },
+    SmoothScroll { window: WindowId, node: PropNodeId, to: Vec2, behavior: DurationBehavior, at: Time },
     /// A display-clock tick from a platform [`FrameSource`].
     Vsync { window: WindowId, target: Time, interval: Span },
     /// Presentation feedback from the platform.
@@ -94,6 +96,8 @@ pub struct EngineConfig {
     pub caret_color: Color,
     /// Half period of the caret blink; `None` = a steady caret.
     pub caret_blink: Option<Span>,
+    /// Display pixels per inch, for fling physics.
+    pub ppi: f32,
 }
 
 struct Anim {
@@ -127,7 +131,7 @@ struct Win {
     pending: HashMap<SurfaceKey, Pending>,
     snapshots: Snapshots,
     anims: Vec<Anim>,
-    motions: HashMap<PropNodeId, Box<dyn ScrollMotion>>,
+    motions: HashMap<PropNodeId, Motion>,
     animating: bool,
     caret: Caret,
     vsync_on: bool,
@@ -151,7 +155,6 @@ pub struct Engine {
     cfg: EngineConfig,
     windows: BTreeMap<WindowId, Win>,
     new_pacer: PacerFactory,
-    fling: Option<FlingFactory>,
     source: Option<Box<dyn FrameSource>>,
     to_ui: Box<dyn Fn(ToUi) + Send>,
     wake_ui: Box<dyn Fn() + Send>,
@@ -168,7 +171,6 @@ impl Engine {
     pub fn new(
         cfg: EngineConfig,
         new_pacer: PacerFactory,
-        fling: Option<FlingFactory>,
         source: Option<Box<dyn FrameSource>>,
         to_ui: Box<dyn Fn(ToUi) + Send>,
         wake_ui: Box<dyn Fn() + Send>,
@@ -177,7 +179,6 @@ impl Engine {
             cfg,
             windows: BTreeMap::new(),
             new_pacer,
-            fling,
             source,
             to_ui,
             wake_ui,
@@ -312,7 +313,14 @@ impl Engine {
             }
             Msg::HighRateInput(window) => self.signal(window, now, Signal::HighRateInput, gpu),
             Msg::UiCost { window, frame, cost } => self.signal(window, now, Signal::UiCost { frame, cost }, gpu),
-            Msg::Fling { window, node, velocity, curve, at } => self.start_fling(window, node, velocity, curve, at, now, gpu),
+            Msg::Fling { window, node, velocity, curve, at } => {
+                let ppi = self.cfg.ppi;
+                self.start_motion(window, node, now, gpu, |s| {
+                    let curve = Fling::new(curve, velocity, ppi, s.viewport.size());
+                    Motion { anim: MotionKind::Fling(curve), base: s.offset, start: at }
+                })
+            }
+            Msg::SmoothScroll { window, node, to, behavior, at } => self.smooth_scroll(window, node, to, behavior, at, now, gpu),
             Msg::Vsync { window, target, interval } => {
                 if let Some(w) = self.windows.get_mut(&window) {
                     w.interval = interval;
@@ -430,26 +438,51 @@ impl Engine {
         self.send(ToUi::ResizeDone { window, seq, size, scale });
     }
 
-    fn start_fling(
+    /// Starts a compositor-owned scroll motion on `node`, replacing any running one.
+    fn start_motion(
         &mut self,
         window: WindowId,
         node: PropNodeId,
-        velocity: Vec2,
-        curve: FlingCurve,
+        now: Time,
+        gpu: &mut dyn Backend,
+        make: impl FnOnce(&presto_base::props::ScrollNode) -> Motion,
+    ) {
+        let Some(w) = self.windows.get_mut(&window) else { return };
+        let Some(s) = w.tree.props.scrolls.get(&node) else { return };
+        let motion = make(s);
+        w.motions.insert(node, motion);
+        w.tree.compositor_scrolling.insert(node);
+        self.update_animating(window, now, gpu);
+    }
+
+    /// Animates `node` to `to`: a running smooth scroll heads for the new target keeping its velocity
+    /// (Chromium's retarget); otherwise a new curve starts from the current offset.
+    #[allow(clippy::too_many_arguments)]
+    fn smooth_scroll(
+        &mut self,
+        window: WindowId,
+        node: PropNodeId,
+        to: Vec2,
+        behavior: DurationBehavior,
         at: Time,
         now: Time,
         gpu: &mut dyn Backend,
     ) {
-        let Some(factory) = &self.fling else {
-            log::warn!("presto-compositor: fling requested but no scroll physics is configured");
-            return;
-        };
         let Some(w) = self.windows.get_mut(&window) else { return };
         let Some(s) = w.tree.props.scrolls.get(&node) else { return };
-        let motion = factory(curve, velocity, s.offset, at);
-        w.motions.insert(node, motion);
-        w.tree.compositor_scrolling.insert(node);
-        self.update_animating(window, now, gpu);
+        let to = tree::clamp_offset(s, to);
+        if let Some(m) = w.motions.get_mut(&node) {
+            if let MotionKind::Smooth(c) = &mut m.anim {
+                if c.retarget(at - m.start, to) {
+                    return;
+                }
+            }
+        }
+        self.start_motion(window, node, now, gpu, |s| Motion {
+            anim: MotionKind::Smooth(SmoothScroll::new(s.offset, to, behavior)),
+            base: Vec2::ZERO,
+            start: at,
+        });
     }
 
     fn presented(&mut self, window: WindowId, frame: FrameId, at: Time, estimated: bool, now: Time, gpu: &mut dyn Backend) {
@@ -878,6 +911,35 @@ fn retarget(a: &mut Anim, to: AnimValue, now: Time) {
     a.start = Some(now);
     a.holding = false;
     a.started = true;
+}
+
+/// A compositor-owned scroll motion on one scroll node.
+struct Motion {
+    anim: MotionKind,
+    /// Added to the curve's offset: a fling's offsets are distances from where it started; a smooth
+    /// scroll's are absolute.
+    base: Vec2,
+    start: Time,
+}
+
+enum MotionKind {
+    Fling(Fling),
+    Smooth(SmoothScroll),
+}
+
+impl Motion {
+    fn curve(&self) -> &dyn ScrollAnimation {
+        match &self.anim {
+            MotionKind::Fling(f) => f,
+            MotionKind::Smooth(s) => s,
+        }
+    }
+    fn offset_at(&self, t: Time) -> Vec2 {
+        self.base + self.curve().offset_at(t - self.start)
+    }
+    fn done_at(&self, t: Time) -> bool {
+        self.curve().done_at(t - self.start)
+    }
 }
 
 fn caret_item(rect: Rect, color: Color) -> FlatItem {

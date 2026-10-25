@@ -11,7 +11,7 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   Additive: `CompositorConfig::new(clock, refresh)`, `gpu() -> Option<GpuContext>`
   (device/queue for egui islands and offscreen viewports), `resize_os_layer`, `remove_os_layer`,
   `unregister_texture`, `set_refresh`, `needs_ui_frame(window, bool)`, `ui_frame_skipped`, `ui_cost`,
-  `ui_input_cost`, `high_rate_input`, `fling`, `vsync`/`presented` (for a platform `FrameSource`).
+  `ui_input_cost`, `high_rate_input`, `fling`, `smooth_scroll`, `vsync`/`presented` (for a platform `FrameSource`).
 - **Thread** (`lib.rs::run`): one per process; one blocking wait (`recv_timeout` to the engine's next
   deadline), then every queued message, then what is due. The `Instance` is created on the calling
   thread so the main thread creates surfaces at once; the device is created with the first surface.
@@ -53,8 +53,9 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   refresh)`); the trait stays so tests can record draws. RENDER's contract is kept: non-sRGB
   targets, `end_frame` once per submitted frame after `submit` (also when acquire fails: the encoder is
   submitted, not dropped), `ResourceDelta` removals forwarded to `forget_image`/`forget_path`.
-- `seams::ScrollMotion` + `FlingFactory`: presto-anim's `scroll` module is empty in the skeleton; with no
-  factory configured, `fling` logs and does nothing.
+- Scroll motions are presto-anim's (`scroll::Fling` relative to the fling's start, `SmoothScroll`
+  absolute, velocity-keeping retarget); no seam left. The rubber band (`RubberBandReturn`, elastic
+  overscroll past an edge) is not driven by the compositor yet: flings clamp at the edges.
 
 ## Not implemented (listed, not faked)
 
@@ -73,7 +74,7 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 
 Per the batch rule, nothing was run locally beyond `cargo check -p presto-compositor --all-targets`.
 Tests written, run only by CI: `tests/engine.rs` (virtual clock + recording backend: first frame,
-commit folding, fast-commit revision rejection, fling frames without commits then idle, fling stopped
+commit folding, smooth scroll with retarget, fast-commit revision rejection, fling frames without commits then idle, fling stopped
 by a scroll, idle does not wake, BeginFrame back-pressure, opacity animation with fill forwards,
 UI-thread animations aborted here, resize handshake, hidden windows), `tests/tree_damage.rs`
 (paint order, folding, scroll and clip resolution, OS-layer surfaces, texture layers, damage diff,
@@ -101,6 +102,8 @@ None. No `presto-base` changes.
    hand them to the platform directly and could drop them from `Commit` in a later base revision.
 5. **Every `BeginFrame` must be answered** by a commit or `CompositorHandle::ui_frame_skipped`, or the
    clock never sends another (back-pressure). Recommendation: presto-core's `UiFrameState` does this.
+7. **`CompositorConfig::ppi` defaults to 96** (the CSS reference) for fling physics. Recommendation:
+   presto-platform passes the monitor's value; flings then match the OS's distance.
 6. **Default refresh**: `CompositorConfig::new` takes the interval; the platform should call
    `set_refresh` per window from its monitor's rate. Recommendation: presto-platform does it on window
    creation and on monitor change.

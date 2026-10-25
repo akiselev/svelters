@@ -26,7 +26,8 @@ pub use presto_base::commit::ToUi;
 
 use crate::core::{Engine, EngineConfig, Msg};
 use crate::gpu::{GpuBackend, SharedGpu};
-use crate::seams::{FlingFactory, PacerFactory, RendererFactory};
+use crate::seams::{PacerFactory, RendererFactory};
+use presto_anim::scroll::DurationBehavior;
 use presto_base::anim::FlingCurve;
 use presto_base::color::Color;
 use presto_base::commit::{Commit, FastCommit};
@@ -39,16 +40,15 @@ use std::sync::{Arc, Mutex, RwLock};
 use std::thread::JoinHandle;
 use std::time::Duration;
 
-/// How the compositor is set up. Scroll physics come from presto-anim's `scroll` module once it is
-/// written; until then the caller passes them.
+/// How the compositor is set up.
 pub struct CompositorConfig {
     /// The process clock every thread shares (the platform's).
     pub clock: Arc<dyn Clock>,
     /// Builds the renderer on the compositor thread (again after device loss); defaults to
     /// [`presto_render::Renderer`].
     pub renderer: RendererFactory,
-    /// Scroll physics for [`CompositorHandle::fling`]; `None` ignores flings.
-    pub fling: Option<FlingFactory>,
+    /// Display pixels per inch, for fling physics (the platform's monitor value).
+    pub ppi: f32,
     /// Builds each window's frame clock; defaults to [`presto_frame::FrameClock`].
     pub pacer: PacerFactory,
     /// A platform display clock; `None` = a timer at the refresh interval and presentation estimated
@@ -73,7 +73,7 @@ impl CompositorConfig {
         CompositorConfig {
             clock,
             renderer: seams::presto_renderer(),
-            fling: None,
+            ppi: 96.0,
             pacer: Box::new(seams::frame_clock),
             frame_source: None,
             refresh,
@@ -120,9 +120,9 @@ impl Compositor {
                 clear: cfg.clear,
                 caret_color: cfg.caret_color,
                 caret_blink: cfg.caret_blink,
+                ppi: cfg.ppi,
             },
             cfg.pacer,
-            cfg.fling,
             cfg.frame_source,
             to_ui,
             wake_ui,
@@ -278,10 +278,17 @@ impl CompositorHandle {
         self.post(Msg::UiInputCost { window, frame, cost });
     }
 
-    /// Starts a compositor-owned fling on a scroll node; offsets come back as `ToUi::ScrollMoved`. A
-    /// scroll-offset fast commit on the same node stops it.
+    /// Starts a compositor-owned fling on a scroll node (presto-anim's curves; `velocity` in points
+    /// per second at release); offsets come back as `ToUi::ScrollMoved`. A scroll-offset fast commit
+    /// on the same node stops it.
     pub fn fling(&self, window: WindowId, node: PropNodeId, velocity: Vec2, curve: FlingCurve, at: Time) {
         self.post(Msg::Fling { window, node, velocity, curve, at });
+    }
+
+    /// Animates a scroll node to `to` on the compositor (wheel steps, keyboard, `scrollTo` smooth); a
+    /// smooth scroll already running heads for the new target keeping its velocity.
+    pub fn smooth_scroll(&self, window: WindowId, node: PropNodeId, to: Vec2, behavior: DurationBehavior, at: Time) {
+        self.post(Msg::SmoothScroll { window, node, to, behavior, at });
     }
 
     /// A display-clock tick from a platform [`FrameSource`].

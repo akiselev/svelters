@@ -1,9 +1,8 @@
 //! The compositor's seams: the renderer (`presto_render::Renderer` behind a trait, so tests can record
-//! or replace it), the frame clock (`presto_frame::FrameClock` behind a trait, so tests can script
-//! one) and compositor-owned scroll motions (presto-anim's scroll physics, not written yet).
+//! or replace it) and the frame clock (`presto_frame::FrameClock` behind a trait, so tests can
+//! script one).
 
-use presto_base::anim::FlingCurve;
-use presto_base::geom::{DeviceSize, Vec2};
+use presto_base::geom::DeviceSize;
 use presto_base::ids::{ImageId, PathId, TextureId};
 use presto_base::scene::FrameScene;
 use presto_base::text::GlyphRasterizer;
@@ -95,13 +94,3 @@ pub type PacerFactory = Box<dyn Fn(Span) -> Box<dyn FramePacer> + Send>;
 pub fn frame_clock(interval: Span) -> Box<dyn FramePacer> {
     Box::new(presto_frame::FrameClock::new(presto_frame::ClockConfig { interval, ..Default::default() }))
 }
-
-/// A compositor-owned scroll motion (fling, smooth scroll): absolute offsets at absolute times
-/// (`presto_anim::scroll::ScrollAnimation`).
-pub trait ScrollMotion: Send {
-    fn offset_at(&self, t: Time) -> Vec2;
-    fn done_at(&self, t: Time) -> bool;
-}
-
-/// Starts a fling: `curve`, initial `velocity` (points per second), from `offset` at `start`.
-pub type FlingFactory = Box<dyn Fn(FlingCurve, Vec2, Vec2, Time) -> Box<dyn ScrollMotion> + Send>;
