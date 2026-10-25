@@ -21,7 +21,7 @@ calloop. It has its own `poll` loop on the Wayland socket and a wake pipe.
 | `ime` | text-input-v3: `done`-batch ordering (preedit/delete/commit/preedit), content type and hints, 4000-byte surrounding clamp, UTF-16↔UTF-8, `apply_to_client` bridge to `TextInputClient` |
 | `csd` | our CSD: hit regions → `move`/`resize`/`show_window_menu`/maximize/minimize/close, double click, resize cursors |
 | `layers` | OS layers as `wl_subsurface`s with their own viewport, an empty input region, desync normally |
-| `present` | `SurfaceLock` (buffer-size-keyed viewport/buffer-scale/window-geometry applied in `before_present`; children synced during resize, desynced after the parent's first present at the new size) and `WaylandFrameSource` (own event queue; frame callbacks as vsync, a bare-commit tick when idle, `wp_presentation` feedback, the 100 ms occlusion rule, `fifo-v1`/`commit-timing-v1` opt-in) |
+| `present` | `SurfaceLock` (pending viewport, buffer scale and window geometry, applied in `before_present`; children synced during a resize and desynced at the next present) and `WaylandFrameSource`, which implements presto-platform's `FrameSource` (merged from COMPOSITOR's base `d58a0fa0`): its own event queue, frame callbacks as `FrameWait::Vsync`, a bare-commit tick when none is armed, `wp_presentation` → `take_presented`/`interval`, the 100 ms occlusion rule → `FrameWait::Occluded`, and `fifo-v1` opt-in |
 | `data` | clipboard + primary selection (our own text served from memory, reads with a 500 ms timeout), file DnD (`text/uri-list` → FileHovered/Dropped/HoverCancelled), drag source, internal drags fed back as pointer events, `xdg-toplevel-drag-v1` tear-off |
 | `portal` (feature `portal`, default) | ashpd 0.13 on async-io (no runtime): colour-scheme watcher → `ThemeChanged`, `accent_color`, blocking `open_files`/`save_file` |
 | `shim` | re-exports lane PLATFORM's `presto_platform` traits and data (after merging `ci/presto-base` as the coordinator asked) plus marked additions: the `WaylandCx` extension trait, `FrameSource`/`FrameSignal`, popups, IME hints, drags |
@@ -60,8 +60,14 @@ warnings). I ran no tests, no clippy, and nothing against a compositor. CI resul
    presto-platform depend on. (b) is cleaner and keeps winit out of this crate's dependency tree.
 2. **Additions** that this backend needs beyond PLATFORM's API (in `shim.rs`; the `PlatformCx` ones are
    on the `WaylandCx` extension trait, which `Cx` implements):
-   - `frame_source` with `FrameSource`/`FrameSignal`, which maps 1:1 onto presto-frame's `Signal`.
-     PLATFORM is still writing its trait; I will adopt it when it lands.
+   - `layer_frame_source(window, layer)`: a desync subsurface has its own frame callbacks, while
+     PLATFORM's `frame_source(window)` covers only the window.
+   - `FrameSource::before_present(frame)` does not say the buffer size. The surface lock therefore
+     applies pending viewport and buffer-scale state on the next present, which is right once the
+     resize handshake has run. If the compositor presents an old-size frame after a configure, an
+     integer `buffer_scale` change could be a protocol error. *Recommend:* add
+     `before_present(frame, size)` (and a target time, so `commit-timing-v1` can be used; I dropped it
+     for now).
    - `create_popup` with `PopupDesc` (xdg_popup with a positioner and grab), and `create_child_window`.
    - `client_side_decorations`, `set_window_state` (incl. `Activate` via xdg-activation) and
      `set_ime_hints`.
@@ -82,9 +88,8 @@ warnings). I ran no tests, no clippy, and nothing against a compositor. CI resul
    the same encoding; please confirm it with them.
 6. **fifo-v1 / commit-timing-v1 and Mesa.** Mesa's Vulkan WSI creates its own `wp_fifo_v1` for FIFO
    present mode, and a second one on the surface is a protocol error that kills the connection. Both
-   are therefore opt-in (`FrameSourceConfig`, default off). *Recommend:* the compositor enables `fifo`
-   only with a Mailbox/Immediate swapchain, and `commit_timing` only after checking that Mesa does not
-   already hold a timer (Mesa 25.1+ with present-timing).
+   is therefore opt-in (`FrameSourceConfig::fifo`, default off; `frame_source` uses the default).
+   *Recommend:* enable `fifo` only with a Mailbox/Immediate swapchain.
 7. **Bare-commit ticks** (frame callbacks while nothing presents) also apply a pending
    `ack_configure` (sctk acks immediately) with the old buffer. They are suppressed while a resize is
    pending. They need the hardware checks in `platform.md` §8.

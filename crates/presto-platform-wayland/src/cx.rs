@@ -44,23 +44,35 @@ impl<'a> Cx<'a> {
     }
 
     /// Creates a window and waits for its first configure: presenting before it is a protocol error.
-    fn open(&mut self, desc: WindowDesc, popup: Option<PopupDesc>, parent: Option<WindowId>) -> WindowId {
+    fn open(&mut self, desc: WindowDesc, popup: Option<PopupDesc>, parent: Option<WindowId>) -> Result<WindowId, PlatformError> {
         let id = WindowId(self.state.next_window);
         self.state.next_window += 1;
-        if window::create(self.state, id, desc, popup, parent).is_err() {
-            // The app hears about it as an immediate close.
-            self.state.push_window(id, WindowEvent::CloseRequested);
-            return id;
-        }
+        window::create(self.state, id, desc, popup, parent)?;
         while self.state.windows.get(&id).is_some_and(|w| !w.configured) {
-            if self.queue.blocking_dispatch(self.state).is_err() {
-                break;
+            if let Err(e) = self.queue.blocking_dispatch(self.state) {
+                return Err(PlatformError::EventLoop(e.to_string()));
             }
+        }
+        if !self.state.windows.contains_key(&id) {
+            return Err(PlatformError::Os("the compositor dismissed the window before configuring it".into()));
         }
         if let Some(theme) = self.state.theme {
             self.state.push_window(id, WindowEvent::ThemeChanged(theme));
         }
-        id
+        Ok(id)
+    }
+
+    fn make_frame_source(&mut self, id: WindowId, layer: Option<SurfaceId>) -> Option<Arc<dyn FrameSource>> {
+        let w = self.state.windows.get(&id)?;
+        let (surface, lock) = match layer {
+            None => (w.surface.clone(), w.lock.clone()),
+            Some(l) => {
+                let l = w.layers.get(&l)?;
+                (l.surface.clone(), l.lock.clone())
+            }
+        };
+        let globals = self.state.frame_globals();
+        Some(Arc::new(WaylandFrameSource::new(&self.state.conn, surface, lock, &globals, FrameSourceConfig::default())))
     }
 
     pub(crate) fn state_mut(&mut self) -> &mut State {
@@ -87,7 +99,7 @@ impl<'a> Cx<'a> {
 }
 
 impl PlatformCx for Cx<'_> {
-    fn create_window(&mut self, desc: WindowDesc) -> WindowId {
+    fn try_create_window(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
         self.open(desc, None, None)
     }
 
@@ -195,6 +207,10 @@ impl PlatformCx for Cx<'_> {
         }
     }
 
+    fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn FrameSource>> {
+        self.make_frame_source(id, None)
+    }
+
     fn exit(&mut self) {
         self.state.exit = true;
     }
@@ -263,11 +279,11 @@ impl PlatformCx for Cx<'_> {
 }
 
 impl WaylandCx for Cx<'_> {
-    fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> WindowId {
+    fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> Result<WindowId, PlatformError> {
         self.open(desc, Some(popup), None)
     }
 
-    fn create_child_window(&mut self, desc: WindowDesc, parent: WindowId) -> WindowId {
+    fn create_child_window(&mut self, desc: WindowDesc, parent: WindowId) -> Result<WindowId, PlatformError> {
         self.open(desc, None, Some(parent))
     }
 
@@ -283,17 +299,8 @@ impl WaylandCx for Cx<'_> {
         std::mem::take(&mut self.state.finished_drags)
     }
 
-    fn frame_source(&mut self, id: WindowId, layer: Option<SurfaceId>) -> Option<Box<dyn FrameSource>> {
-        let w = self.state.windows.get(&id)?;
-        let (surface, lock) = match layer {
-            None => (w.surface.clone(), w.lock.clone()),
-            Some(l) => {
-                let l = w.layers.get(&l)?;
-                (l.surface.clone(), l.lock.clone())
-            }
-        };
-        let globals = self.state.frame_globals();
-        Some(Box::new(WaylandFrameSource::new(&self.state.conn, surface, lock, &globals, FrameSourceConfig::default())))
+    fn layer_frame_source(&mut self, id: WindowId, layer: SurfaceId) -> Option<Arc<dyn FrameSource>> {
+        self.make_frame_source(id, Some(layer))
     }
 
     fn client_side_decorations(&self, id: WindowId) -> bool {

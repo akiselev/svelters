@@ -4,14 +4,13 @@
 
 pub use presto_platform::{
     A11yEvent, AppHandler, Clipboard, ClipboardKind, HitKind, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc,
-    PlatformCx, PlatformError, SurfaceTarget, Waker, WindowDesc, hit_test,
+    FrameSource, FrameWait, PlatformCx, PlatformError, Presented, SurfaceTarget, Waker, WindowDesc, hit_test,
 };
 
-use presto_base::geom::{DeviceSize, Rect, Vec2};
-use presto_base::ids::{FrameId, SurfaceId, WindowId};
+use presto_base::geom::{Rect, Vec2};
+use presto_base::ids::{SurfaceId, WindowId};
 use presto_base::input::TextInputClient;
-use presto_base::time::{Span, Time};
-use smallvec::SmallVec;
+use std::sync::Arc;
 
 /// text-input-v3 caps surrounding text at 4000 bytes.
 pub const SURROUNDING_MAX: usize = 4000;
@@ -19,11 +18,11 @@ pub const SURROUNDING_MAX: usize = 4000;
 /// Addition: what this backend offers beyond `PlatformCx`.
 pub trait WaylandCx: PlatformCx {
     /// A popup (menu, tooltip, combo list) positioned against its parent; configured on return.
-    fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> WindowId;
+    fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> Result<WindowId, PlatformError>;
     /// A toplevel that is a transient child (dialog) of `parent`.
-    fn create_child_window(&mut self, desc: WindowDesc, parent: WindowId) -> WindowId;
-    /// The window's (or one of its OS layers') frame source, handed to the compositor thread.
-    fn frame_source(&mut self, id: WindowId, layer: Option<SurfaceId>) -> Option<Box<dyn FrameSource>>;
+    fn create_child_window(&mut self, desc: WindowDesc, parent: WindowId) -> Result<WindowId, PlatformError>;
+    /// An OS layer's frame source (a desync subsurface gets its own frame callbacks), for the compositor thread.
+    fn layer_frame_source(&mut self, id: WindowId, layer: SurfaceId) -> Option<Arc<dyn FrameSource>>;
     /// Whether the app must draw the window's title bar and frame (no server-side decorations). The platform
     /// then resizes from a border along the window's edges by itself.
     fn client_side_decorations(&self, id: WindowId) -> bool;
@@ -106,31 +105,6 @@ pub enum DragOutcome {
     /// Dropped on a target that accepted it.
     Dropped,
     Cancelled,
-}
-
-/// Addition: the per-surface frame signal source the compositor thread waits on (`platform.md` §4: frame
-/// callbacks and presentation feedback on Wayland, the DXGI waitable or compositor clock on Windows, the
-/// display link on macOS). `Send`: created on the main thread, used on the compositor thread.
-pub trait FrameSource: Send {
-    /// Ask for (or stop asking for) vsync signals.
-    fn subscribe(&mut self, on: bool);
-    /// Call right before presenting `frame` at `size` (device pixels); `target` is the intended display time.
-    fn before_present(&mut self, frame: FrameId, target: Option<Time>, size: DeviceSize);
-    /// Call right after the present call returns.
-    fn after_present(&mut self, frame: FrameId);
-    /// Collect signals that arrived, without blocking.
-    fn poll(&mut self, now: Time) -> SmallVec<[FrameSignal; 4]>;
-    /// Block until a signal may be ready or `until` passes.
-    fn wait(&mut self, until: Option<Time>);
-}
-
-/// What a [`FrameSource`] reports; maps one to one onto presto-frame's `Signal`.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum FrameSignal {
-    Vsync { target: Time, interval: Span },
-    Presented { frame: FrameId, at: Time, estimated: bool },
-    /// The OS stopped (or resumed) asking for frames: hidden, minimised, fully covered.
-    Visible(bool),
 }
 
 #[cfg(test)]

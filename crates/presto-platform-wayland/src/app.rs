@@ -36,7 +36,6 @@ use wayland_client::backend::ObjectId;
 use wayland_client::globals::{GlobalList, registry_queue_init};
 use wayland_client::protocol::{wl_output, wl_seat, wl_surface};
 use wayland_client::{Connection, Dispatch, EventQueue, Proxy, QueueHandle};
-use wayland_protocols::wp::commit_timing::v1::client::wp_commit_timing_manager_v1::WpCommitTimingManagerV1;
 use wayland_protocols::wp::cursor_shape::v1::client::wp_cursor_shape_manager_v1::WpCursorShapeManagerV1;
 use wayland_protocols::wp::fifo::v1::client::wp_fifo_manager_v1::WpFifoManagerV1;
 use wayland_protocols::wp::fractional_scale::v1::client::wp_fractional_scale_manager_v1::WpFractionalScaleManagerV1;
@@ -69,7 +68,6 @@ pub(crate) struct Protocols {
     pub viewporter: Option<WpViewporter>,
     pub presentation: Option<WpPresentation>,
     pub fifo: Option<WpFifoManagerV1>,
-    pub commit_timing: Option<WpCommitTimingManagerV1>,
     pub toplevel_drag: Option<XdgToplevelDragManagerV1>,
     pub cursor_shape: Option<WpCursorShapeManagerV1>,
     pub text_input: Option<ZwpTextInputManagerV3>,
@@ -117,7 +115,6 @@ impl State {
             viewporter: globals.bind(&qh, 1..=1, ()).ok(),
             presentation: globals.bind(&qh, 1..=2, ()).ok(),
             fifo: globals.bind(&qh, 1..=1, ()).ok(),
-            commit_timing: globals.bind(&qh, 1..=1, ()).ok(),
             toplevel_drag: globals.bind(&qh, 1..=1, ()).ok(),
             cursor_shape: globals.bind(&qh, 1..=1, ()).ok(),
             text_input: globals.bind(&qh, 1..=1, ()).ok(),
@@ -158,7 +155,6 @@ impl State {
             presentation: self.protocols.presentation.clone(),
             presentation_clock: self.presentation_clock.clone(),
             fifo: self.protocols.fifo.clone(),
-            commit_timing: self.protocols.commit_timing.clone(),
         }
     }
 
@@ -432,7 +428,6 @@ no_events!(
     WpViewporter,
     wayland_protocols::wp::viewporter::client::wp_viewport::WpViewport,
     WpFifoManagerV1,
-    WpCommitTimingManagerV1,
     XdgToplevelDragManagerV1,
     wayland_protocols::xdg::toplevel_drag::v1::client::xdg_toplevel_drag_v1::XdgToplevelDragV1,
     WpCursorShapeManagerV1,
