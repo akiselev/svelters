@@ -81,3 +81,7 @@ when the five svelters workflows plus `presto` are green.
 - APP-TEST 30dd49e2: TextServices not wired (TODO in `crates/presto/src/app.rs` App::init, request 11). Decided
   (coordinator, 2026-10-25): TextServices owns its own `SystemClipboard` (`MemoryClipboard` headless) and a compositor
   handle clone for caret fast commits; the consolidation wires it.
+- APP-TEST requests 1–10 (`plans/milestones/PRESTO-app-test.md`), decided (coordinator, 2026-10-25): 1–5 to CORE-3
+  (additive Document entries; IME purpose rides with the area), 6–8 and 10 to COMPOSITOR (`frame_args`, a new
+  `ToUi::FrameTimings` variant for compositor-side stamps, confirm BeginFrame back-pressure, `ui_frame_skipped` →
+  `Signal::UiFrameSkipped`; then drop APP-TEST's empty-commit stopgap), 9 fixed in the workflow (crates/presto added).
