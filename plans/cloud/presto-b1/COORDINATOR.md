@@ -151,3 +151,4 @@ when the five svelters workflows plus `presto` are green.
 - TEXT-INPUT done 093ae50f (base merged; code as green 300b2660). Q5 for consolidation 2: a RecordCx::fixed() (or similar)
   so a self_scroll kind can record its box outside the scroll layer; until then a field scroll re-records the node.
 - CORE-3 done fa1d7758 (Document::start_drag), WAYLAND dd66a164 (overflow fix), both merged into base 21d341bb.
+- CANVAS code complete f208b779 (presto-canvas, Viewport OS-layer promotion with resize handshake, Prim::Canvas, Slug text; locally 10^6 primitives = 542 µs CPU plan per frame (debug), orbit test 0 commits). Decided: Q1 camera handle now, FastCommit::CanvasCamera later; Q2 [local] gates into cadatomic REVISIT.md via CADATOMIC's branch; Q3 polygon AA follow-up.
