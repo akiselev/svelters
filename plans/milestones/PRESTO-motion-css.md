@@ -83,7 +83,7 @@ Design: `plans/research/presto/compiler-and-js.md` §3.6, §3.7.
   (precompiled vs parsed sheets give equal computed styles on a tree; interning; anon layers; hints
   and utilities round trip; garbage refused).
 
-Not run locally: any of the above (cargo check only, per the batch rule). CI results: see the end.
+Run locally once to fix CI's first report (filtered): presto-motion's tests, svelters-style `binary`, the compiler's `motion_native`/`css_precompiled`/`cx1_codes`, svelters-compiler and svelters-modules suites, native-runtime's JS suite. CI results: see the end.
 
 ## Shims and cross-lane edits
 
@@ -116,3 +116,10 @@ Not run locally: any of the above (cargo check only, per the batch rule). CI res
    `presto_anim::easing::eval` with `presto_motion::easing::SvelteEasing::eval`'s formulas?
    Recommendation: yes, additive (FRAME-ANIM adds one match arm); then `to_presto` returns it and
    compositor tracks are exact instead of within 1e-4.
+
+## CI
+
+`3f223c27` (merged `ci/presto-base` 4d94409a): js 40227639042, linux-gtk 40227639098, linux-qt 40227639088,
+macos-appkit 40227639111, windows-winui 40227639122 **green**; presto 40227639129 red only in other lanes'
+targets (`presto-compositor --test engine`, `--test tree_damage`, `presto-core --lib`, `presto-widgets --lib`);
+presto-motion's tests pass there.
