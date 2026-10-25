@@ -491,6 +491,9 @@ impl ToastHost {
 }
 
 impl Kind for ToastHost {
+    fn parts() -> &'static [&'static str] {
+        &["toast", "close", "action"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

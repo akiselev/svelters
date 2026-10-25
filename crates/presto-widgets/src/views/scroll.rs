@@ -14,10 +14,12 @@
 //! - [`ScrollArea`]: the kind. Curves, flings, the release velocity and the per-OS defaults are
 //!   presto-anim's ([`presto_anim::scroll`]): wheel steps animate with Chromium's curve on Windows and
 //!   Linux (none on macOS), keys with its constant 150 ms curve, `scrollTo` with its programmatic one;
-//!   touchpads move 1:1 and fling on release where the OS has no momentum. While
-//!   every listener on the area is passive, each step is also a [`FastCommit::ScrollOffset`]: the
-//!   compositor moves the content without waiting for the UI phases. The offset is native-owned
-//!   (architecture §4.5): a JS write made before JS saw the latest native change is refused.
+//!   touchpads move 1:1 and fling on release where the OS has no momentum. Each step hands the offset
+//!   to the host ([`EventCx::scroll_to`]), which writes it to the document as a fast commit (the
+//!   compositor moves the content without waiting for the UI phases) and emits the common `scroll`
+//!   event; the area is a scroll container in core's layout (`overflow: scroll` on its axes), so core
+//!   translates the content by that offset. The offset is native-owned (architecture §4.5): a JS
+//!   write made before JS saw the latest native change is refused.
 //! - [`Scrollbar`]: a standalone bar over `value` in `min..=max`, `page` sizing the thumb.
 //!
 //! The scroll offset belongs to the scroll property node (`ScrollNode`), not to the display list:
@@ -27,7 +29,6 @@
 //! corner `::part(corner)` over [`TRACK_UA`]. Overlay bars fade by multiplying the thumb's alpha.
 
 use super::common::{self, platform, secs};
-use super::shim::fast;
 use presto_anim::scroll::{self as anim, DurationBehavior, Fling, ScrollAnimation, SmoothScroll, VelocityTracker};
 use presto_base::anim::FlingCurve;
 use crate::interact::{Kinetic, Platform, Policy, Scrollbars, StateBits, TrackClick};
@@ -36,12 +37,11 @@ use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
 use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Styles, Value, ValueType};
 use presto_base::accesskit;
 use presto_base::color::{Color, Fill};
-use presto_base::commit::FastCommit;
 use presto_base::display::{Prim, Quad};
 use presto_base::geom::{Corners, Insets};
 use presto_base::event::{GesturePhase, KeyState, MouseButton, PointerPhase, ScrollDelta, WheelEvent};
 use presto_base::geom::{Point, Rect, Size, Vec2};
-use presto_base::ids::{InputSeq, NodeId, PropNodeId, Revision, WindowId};
+use presto_base::ids::NodeId;
 use presto_base::key::Key;
 use presto_base::props::OverscrollBehavior;
 use presto_base::time::{Span, Time};
@@ -85,20 +85,6 @@ fn vmax(a: Vec2, b: Vec2) -> Vec2 {
 }
 fn vmin(a: Vec2, b: Vec2) -> Vec2 {
     Vec2::new(a.x.min(b.x), a.y.min(b.y))
-}
-
-/// What moved the offset.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ScrollBy {
-    Wheel,
-    /// A touchpad's own fling or the OS's momentum.
-    Kinetic,
-    Thumb,
-    Track,
-    Key,
-    A11y,
-    /// A JS or Rust request (`scrollTo`).
-    Program,
 }
 
 /// One bar's geometry, in the scroller's local coordinates.
@@ -713,9 +699,6 @@ impl Anim {
             Anim::Fling { curve, from, .. } => *from + curve.offset_at(Span::from_secs_f64(3600.0)),
         }
     }
-    fn is_fling(&self) -> bool {
-        matches!(self, Anim::Fling { .. })
-    }
     /// Heads for `to`: a smooth scroll keeps its velocity; a fling (which cannot retarget) gives way to
     /// a new smooth scroll from where it is.
     fn retarget(&mut self, now: Time, to: Vec2, behavior: DurationBehavior) {
@@ -741,18 +724,10 @@ kind_props! {
     scroll_y "scroll-y": f64 = F64(0.0) ; F64, Property, bindable;
     /// At an edge, a new gesture goes on to the scroll area around (`auto`) or stays (`contain`, `none`).
     overscroll_behavior "overscroll-behavior": String = Enum("auto") ; Enum(&["auto", "contain", "none"]), Property;
-    /// Every listener on the area is passive (core writes it from the listeners): each step is also a
-    /// fast commit.
-    passive "passive": bool = Bool(true) ; Bool, Property;
 }
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
-    SignalSpec::new(
-        "scroll",
-        &[("x", ValueType::F64), ("y", ValueType::F64), ("by", ValueType::Str), ("revision", ValueType::I64)],
-        "The offset moved natively: by `wheel`, `kinetic`, `thumb`, `track`, `key`, `a11y` or `program`; `revision` is the native revision JS has then seen.",
-    ),
     SignalSpec::new("scrollend", &[("x", ValueType::F64), ("y", ValueType::F64)], "A scroll gesture or animation stopped."),
 ];
 
@@ -780,9 +755,6 @@ pub struct ScrollArea {
     pub overscroll: OverscrollBehavior,
     /// `overscroll-behavior: auto` (false: `contain`/`none`).
     pub chains: bool,
-    /// Every listener on the area is passive (core sets it from the listeners): steps are fast
-    /// commits.
-    pub passive: bool,
     pub scroller: Scroller,
     /// A wheel step's or fling's animation, sampled on the UI thread until the compositor runs it.
     anim: Option<Anim>,
@@ -791,11 +763,6 @@ pub struct ScrollArea {
     native_rev: u64,
     /// The native revision of the last scroll JS has seen ([`ScrollArea::js_saw`]).
     js_rev: u64,
-    /// The compositor's ids for fast commits ([`ScrollArea::bind`]).
-    window: WindowId,
-    scroll_node: Option<PropNodeId>,
-    revision: Revision,
-    input_seq: InputSeq,
     /// A scroll gesture or animation is running (`scrollend` when it stops).
     scrolling: bool,
     focused: bool,
@@ -814,16 +781,11 @@ impl Default for ScrollArea {
             axes: [false, true],
             overscroll: OverscrollBehavior::None,
             chains: true,
-            passive: true,
             scroller: Scroller::default(),
             anim: None,
             velocity: VelocityTracker::default(),
             native_rev: 0,
             js_rev: 0,
-            window: WindowId::default(),
-            scroll_node: None,
-            revision: Revision::default(),
-            input_seq: InputSeq::default(),
             scrolling: false,
             focused: false,
             focus_within: false,
@@ -834,21 +796,11 @@ impl Default for ScrollArea {
 }
 
 impl ScrollArea {
-    /// The compositor's ids this area's fast commits address: its window and scroll property node.
-    pub fn bind(&mut self, window: WindowId, scroll_node: PropNodeId) {
-        self.window = window;
-        self.scroll_node = Some(scroll_node);
-    }
-    /// The tree revision and the input being handled, carried by the next fast commits.
-    pub fn set_frame_ids(&mut self, revision: Revision, input_seq: InputSeq) {
-        self.revision = revision;
-        self.input_seq = input_seq;
-    }
-    /// The native revision of the offset: each native change bumps it; `scroll` events carry it.
+    /// The native revision of the offset: each native change bumps it.
     pub fn native_revision(&self) -> u64 {
         self.native_rev
     }
-    /// Core: JS is running with the `scroll` event of native revision `rev` as the newest it saw.
+    /// Core: JS is running having seen the offset of native revision `rev` (its newest `scroll`).
     pub fn js_saw(&mut self, rev: u64) {
         self.js_rev = self.js_rev.max(rev);
     }
@@ -873,9 +825,10 @@ impl ScrollArea {
         self.scroller.layout_bars(view, bar_width, min_thumb, show);
     }
 
-    /// The offset moved natively: bumps the revision, reports `scroll`, and fast-commits it when
-    /// every listener is passive.
-    fn moved(&mut self, cx: &mut EventCx<'_>, by: ScrollBy) {
+    /// The offset moved natively: bumps the revision, reports the bound props, and hands the offset
+    /// to the host (a fast commit and the common `scroll` event). Whether the compositor may move
+    /// the content before the commit (every listener passive) is core's to decide.
+    fn moved(&mut self, cx: &mut EventCx<'_>) {
         self.native_rev += 1;
         self.scroller.touch(cx.now);
         self.scrolling = true;
@@ -888,21 +841,7 @@ impl ScrollArea {
             self.props.scroll_y = o.y as f64;
             cx.prop_changed(P::scroll_y.id());
         }
-        if self.passive
-            && let Some(node) = self.scroll_node
-        {
-            fast::push(FastCommit::ScrollOffset { window: self.window, node, offset: o, revision: self.revision, input_seq: self.input_seq });
-        }
-        let by = match by {
-            ScrollBy::Wheel => "wheel",
-            ScrollBy::Kinetic => "kinetic",
-            ScrollBy::Thumb => "thumb",
-            ScrollBy::Track => "track",
-            ScrollBy::Key => "key",
-            ScrollBy::A11y => "a11y",
-            ScrollBy::Program => "program",
-        };
-        common::emit(cx, &SPEC, "scroll", vec![Value::F64(o.x as f64), Value::F64(o.y as f64), Value::str(by), Value::I64(self.native_rev as i64)]);
+        cx.scroll_to = Some(o);
     }
 
     fn end(&mut self, cx: &mut EventCx<'_>) {
@@ -913,12 +852,12 @@ impl ScrollArea {
     }
 
     /// Applies `to` now (no animation), clamped.
-    fn jump(&mut self, cx: &mut EventCx<'_>, to: Vec2, by: ScrollBy) -> bool {
+    fn jump(&mut self, cx: &mut EventCx<'_>, to: Vec2) -> bool {
         let before = self.scroller.offset();
         self.scroller.set_offset(to);
         let moved = self.scroller.offset() != before;
         if moved {
-            self.moved(cx, by);
+            self.moved(cx);
         }
         moved
     }
@@ -929,7 +868,7 @@ impl ScrollArea {
         let to = vmin(vmax(to, Vec2::ZERO), self.scroller.max_offset());
         if self.reduced_motion {
             self.anim = None;
-            if !self.jump(cx, to, ScrollBy::Wheel) {
+            if !self.jump(cx, to) {
                 self.end(cx);
             }
             return;
@@ -944,9 +883,8 @@ impl ScrollArea {
     /// Samples the running animation at `cx.now`.
     fn step(&mut self, cx: &mut EventCx<'_>) {
         let Some(a) = self.anim.clone() else { return };
-        let by = if a.is_fling() { ScrollBy::Kinetic } else { ScrollBy::Wheel };
         let want = a.offset_at(cx.now);
-        let moved = self.jump(cx, want, by);
+        let moved = self.jump(cx, want);
         // an animation that reached an edge stops there
         let stuck = !moved && self.scroller.offset() != want;
         if a.done_at(cx.now) || stuck {
@@ -979,14 +917,14 @@ impl ScrollArea {
                 // fingers down: a fling stops
                 self.anim = None;
                 self.velocity.reset();
-                self.apply_direct(cx, delta, ScrollBy::Wheel);
+                self.apply_direct(cx, delta);
             }
             (Some(GesturePhase::Moved), _) => {
                 self.velocity.add(cx.now, delta);
-                self.apply_direct(cx, delta, ScrollBy::Wheel);
+                self.apply_direct(cx, delta);
             }
             (Some(GesturePhase::Ended), _) => {
-                self.apply_direct(cx, delta, ScrollBy::Wheel);
+                self.apply_direct(cx, delta);
                 // an own fling where the OS sends no momentum
                 let v = self.velocity.velocity(cx.now).filter(|v| v.length() > anim::FLING_STOP_PX_PER_S);
                 if cx.policy.kinetic == Kinetic::Own
@@ -1007,14 +945,14 @@ impl ScrollArea {
             }
             (None, Some(m)) => {
                 // the OS's momentum, 1:1
-                self.apply_direct(cx, delta, ScrollBy::Kinetic);
+                self.apply_direct(cx, delta);
                 if matches!(m, GesturePhase::Ended | GesturePhase::Cancelled) {
                     self.end(cx);
                 }
             }
             (None, None) if precise || !defaults(cx.policy).wheel_animated => {
                 // precise deltas without phases, and macOS's accelerated wheel: applied at once
-                self.apply_direct(cx, delta, ScrollBy::Wheel);
+                self.apply_direct(cx, delta);
                 self.end(cx);
             }
             (None, None) => {
@@ -1025,14 +963,14 @@ impl ScrollArea {
         Handled::Yes
     }
 
-    fn apply_direct(&mut self, cx: &mut EventCx<'_>, delta: Vec2, by: ScrollBy) {
+    fn apply_direct(&mut self, cx: &mut EventCx<'_>, delta: Vec2) {
         if delta == Vec2::ZERO {
             return;
         }
         let before = self.scroller.offset();
         self.scroller.scroll_by(self.axes, delta);
         if self.scroller.offset() != before {
-            self.moved(cx, by);
+            self.moved(cx);
         }
     }
 
@@ -1042,7 +980,7 @@ impl ScrollArea {
             self.animate_to(cx, to, DurationBehavior::DeltaBased);
         } else {
             self.anim = None;
-            self.jump(cx, to, ScrollBy::Program);
+            self.jump(cx, to);
             self.end(cx);
         }
     }
@@ -1052,7 +990,7 @@ impl ScrollArea {
         let d = Scroller::reveal_delta(view, target, center, margin);
         let to = self.scroller.offset() + d;
         self.anim = None;
-        self.jump(cx, to, ScrollBy::Program);
+        self.jump(cx, to);
         self.end(cx);
     }
 }
@@ -1071,11 +1009,13 @@ impl ScrollArea {
         };
         self.chains = chains;
         self.overscroll = ov;
-        self.passive = self.props.passive;
     }
 }
 
 impl Kind for ScrollArea {
+    fn parts() -> &'static [&'static str] {
+        &["thumb-x", "thumb-y", "scrollbar-x", "scrollbar-y", "corner"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
@@ -1156,8 +1096,7 @@ impl Kind for ScrollArea {
                     cx.repaint = true;
                 }
                 if moved {
-                    let by = if dragging { ScrollBy::Thumb } else { ScrollBy::Track };
-                    self.moved(cx, by);
+                    self.moved(cx);
                 }
                 if ours && matches!(p.phase, PointerPhase::Up | PointerPhase::Cancel) {
                     self.end(cx);
@@ -1199,7 +1138,7 @@ impl Kind for ScrollArea {
                 let before = self.scroller.offset();
                 self.scroller.scroll_by(self.axes, d);
                 if self.scroller.offset() != before {
-                    self.moved(cx, ScrollBy::A11y);
+                    self.moved(cx);
                 }
                 self.end(cx);
                 Handled::Yes
@@ -1214,7 +1153,7 @@ impl Kind for ScrollArea {
                 }
                 let (moved, next) = self.scroller.repeat(cx.now);
                 if moved {
-                    self.moved(cx, ScrollBy::Track);
+                    self.moved(cx);
                 }
                 if let Some(t) = next {
                     cx.wake_at(t);
@@ -1352,6 +1291,9 @@ impl Scrollbar {
 }
 
 impl Kind for Scrollbar {
+    fn parts() -> &'static [&'static str] {
+        &["thumb-x", "thumb-y", "scrollbar-x", "scrollbar-y", "corner"]
+    }
     fn spec() -> &'static KindSpec {
         &SCROLLBAR_SPEC
     }
@@ -1619,29 +1561,19 @@ mod tests {
     }
 
     #[test]
-    fn steps_fast_commit_only_while_passive() {
+    fn each_step_hands_the_host_its_offset() {
         let mut a = area(1000.0, 100.0);
-        a.bind(WindowId(3), PropNodeId(7));
-        a.set_frame_ids(Revision(5), InputSeq(42));
-        fast::take();
         let mut t = probe(pol(Platform::Macos), 0);
         t.send(&mut a, Event::Wheel(wheel(None, None, -30.0)));
         assert_eq!(a.scroller.offset().y, 30.0);
-        assert_eq!(
-            fast::take(),
-            vec![FastCommit::ScrollOffset { window: WindowId(3), node: PropNodeId(7), offset: Vec2::new(0.0, 30.0), revision: Revision(5), input_seq: InputSeq(42) }]
-        );
-        assert_eq!(t.count("scroll"), 1);
-        assert_eq!(t.last("scroll"), Some(vec![Value::F64(0.0), Value::F64(30.0), Value::str("wheel"), Value::I64(1)]));
+        assert_eq!(t.scroll_to, [Vec2::new(0.0, 30.0)], "the host fast-commits it and emits the common `scroll`");
         assert_eq!(t.changed, ["scroll-y"], "the offset is a native change `bind:scroll-y` observes");
         assert_eq!(a.get_prop(P::scroll_y.id()), Some(Value::F64(30.0)));
-        // a non-passive listener: the step waits for the commit
-        a.set_prop(P::passive.id(), &Value::Bool(false)).unwrap();
+        // at the end nothing moves: nothing for the host
+        a.scroller.set_offset(Vec2::new(0.0, 900.0));
         t.now = ms(10);
         t.send(&mut a, Event::Wheel(wheel(None, None, -30.0)));
-        assert_eq!(a.scroller.offset().y, 60.0);
-        assert!(fast::take().is_empty());
-        assert_eq!(t.count("scroll"), 2);
+        assert_eq!(t.scroll_to.len(), 1);
     }
 
     #[test]

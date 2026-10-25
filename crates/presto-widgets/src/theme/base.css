@@ -19,6 +19,20 @@
   panel {
     background-color: var(--sv-bg);
   }
+  /* WIDGETS-VIEWS: a scroll area is presto-core's scroll container on the axes its `direction` names
+     (core translates the content by the offset the kind hands it) */
+  scroll-area {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  scroll-area[direction=horizontal] {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  scroll-area[direction=both] {
+    overflow-x: auto;
+    overflow-y: auto;
+  }
   scroll-area:state(sv.overflow-top) {
     box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow);
   }

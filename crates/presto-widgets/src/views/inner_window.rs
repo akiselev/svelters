@@ -441,6 +441,12 @@ impl InnerWindow {
 }
 
 impl Kind for InnerWindow {
+    fn parts() -> &'static [&'static str] {
+        &["titlebar", "close", "collapse"]
+    }
+    fn places_children() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

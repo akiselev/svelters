@@ -426,6 +426,9 @@ pub static SPEC: KindSpec = KindSpec {
 const LIST_PROPS: u32 = 6;
 
 impl Kind for TreeView {
+    fn parts() -> &'static [&'static str] {
+        &["row", "twisty"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
