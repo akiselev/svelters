@@ -200,6 +200,11 @@ in an island). "Adapted" = available with a different shape, what to change in t
   fixed above) and `automation` failed for lack of `pnpm install`. The svelters workflows were green on 07a4a30f
   (linux-gtk's workspace nextest included presto-test). The run's other failures (`presto-compositor` engine and
   tree_damage, `presto-core` and `presto-widgets` lib tests) are in other lanes' crates.
+- **The `island_render` failure (`blue after the next pass`, also on integration 0890801c, run 40241095094) was the
+  harness, not the island:** the test changed the closure's state and nothing asked the app for a frame, so no second
+  pass ran; the island's re-record and texture update were never reached. Fixed in 9a4f1213 (`Harness::step` asks for
+  frames for dirty documents, `EguiHarness::state_mut` requests a pass, the test uses `run`). presto run 40239572275
+  on 9a4f1213: green on Linux, Windows and macOS, `island_render` included.
 - After those fixes, one local run of the non-GPU tests this lane touched (`harness`, `queries`, `island`,
   `snapshot`, `core_islands`, `automation`, with `pnpm install`): 41 passed. `island_render` and `render` not run
   locally (no Vulkan driver in the container).
