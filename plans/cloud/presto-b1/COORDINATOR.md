@@ -146,3 +146,8 @@ when the five svelters workflows plus `presto` are green.
 - WIDGETS-TIER1 done 0876a38f (table, tabs, pickers, dnd, dialogs, zoom; tier-1 tests pass on Linux and macOS; a Windows
   path test fixed in 0876a38f). Open items for consolidation 2 in its record: picker overlay layers, prepare can't emit,
   EventCx can't emit on a child, drag-preview hook, table scrollbars on the views scroll layer, hex/cell editors.
+- WIDGETS-VIEWS done 2226e000: spec-driven parts/places_children, scroll through EventCx::scroll_to → core scroll_fast,
+  MenuModel::to_menu_desc behind `native-menu`, menu-bar `native-bar`. Runner wiring sent to APP-TEST (via Kind::call).
+- TEXT-INPUT done 093ae50f (base merged; code as green 300b2660). Q5 for consolidation 2: a RecordCx::fixed() (or similar)
+  so a self_scroll kind can record its box outside the scroll layer; until then a field scroll re-records the node.
+- CORE-3 done fa1d7758 (Document::start_drag), WAYLAND dd66a164 (overflow fix), both merged into base 21d341bb.
