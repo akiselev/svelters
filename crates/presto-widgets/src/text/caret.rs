@@ -29,6 +29,18 @@ impl CaretState {
         self.restart = true;
     }
 
+    /// `Some(rect)` when `rect` (`None`: hidden) differs from what was sent or a restart is due:
+    /// what to send now.
+    pub fn changed(&mut self, rect: Option<Rect>) -> Option<Option<Rect>> {
+        if rect == self.sent && !(self.restart && rect.is_some()) {
+            self.restart = false;
+            return None;
+        }
+        self.sent = rect;
+        self.restart = false;
+        Some(rect)
+    }
+
     /// The fast commit for caret rect `rect` (`None`: hidden — unfocused, a selection, or an IME
     /// that hides it), when it differs from what was sent or a restart is due.
     pub fn update(&mut self, window: WindowId, rect: Option<Rect>, revision: Revision) -> Option<FastCommit> {

@@ -19,7 +19,7 @@
 
 use presto_base::event::{KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton, PointerPhase};
 use presto_base::event::ImeEvent;
-use presto_base::geom::{Point, Rect};
+use presto_base::geom::{Affine, Point, Rect};
 use presto_base::key::Key;
 use presto_base::time::{Span, Time};
 use presto_widgets::text::editor::{EditorConfig, FocusReason};
@@ -156,7 +156,7 @@ impl Presto {
 
     fn prepare(&mut self) {
         for (i, f) in self.fields.iter_mut().enumerate() {
-            f.prepare(&mut self.lay, content(), origin(i));
+            f.prepare(&mut self.lay, content(), Affine::translate(origin(i).x, origin(i).y));
         }
     }
 

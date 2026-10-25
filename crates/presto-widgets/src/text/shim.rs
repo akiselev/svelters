@@ -1,25 +1,20 @@
-//! Stand-ins for wave-1 APIs the text kinds need before those crates have them, and the small
-//! interfaces the field records and lays out through. Each stand-in names the API it stands for; the
-//! consolidation replaces it with the real one.
+//! The small interfaces the field lays out, records and copies through, so it runs on presto-text and
+//! presto-core in the kind and on fixed-advance text in tests.
 //!
 //! - [`TextGeometry`]: the field's view of a layout. `presto_text::TextLayout` implements it
 //!   ([`super::geometry`]); so does [`MonoGeometry`]. Not a stand-in: it lets tests lay out without
 //!   fonts.
 //! - [`Layouter`]: lays out a field's shown text in its style; [`super::geometry::SystemLayouter`]
 //!   implements it over `presto_text::TextSystem`, [`MonoLayouter`] over [`MonoGeometry`].
-//! - [`Clipboard`] stands for `presto_platform::Clipboard` (`get_text`/`set_text` by
-//!   `ClipboardKind`), which presto-widgets does not depend on; the app adapts it (giving PRIMARY up is
-//!   setting it empty there).
-//! - [`RecordSink`] stands for the part of presto-core's `RecordCx` a field records through (`push`,
+//! - [`Clipboard`]: the field's clipboard, with PRIMARY; the `text-edit` kind adapts presto-platform's
+//!   (`ClipboardKind`) to it, and tests model X11's selections with it.
+//! - [`RecordSink`] is the part of presto-core's `RecordCx` a field records through (`push`,
 //!   `draw_run`); [`ListSink`] collects into a `DisplayList` for tests.
-//! - [`TextHost`]: the document service (`Document::set_service`) the text kinds read the clipboard
-//!   and the caret's fast-commit channel from; the app installs it beside the `TextSystem` service.
 //! - [`MonoGeometry`] is a real layout of its own (fixed advance, fixed line height): what the tests
 //!   and the conformance pins lay text out with, and a fallback for headless use. It has no font, so
 //!   it records no glyphs.
 
 use presto_base::color::Color;
-use presto_base::commit::FastCommit;
 use presto_base::display::{DisplayList, Prim};
 use presto_base::geom::{Point, Rect, Size};
 use presto_base::text::GlyphRun;
@@ -80,14 +75,6 @@ impl RecordSink for ListSink {
     fn draw_run(&mut self, run: Arc<GlyphRun>, origin: Point, color: Color) {
         self.runs.push((run, origin, color));
     }
-}
-
-/// What the text kinds need from the app besides the text system: the clipboard (PRIMARY included)
-/// and the channel that sends the caret's fast commits to the window's compositor. Lent to kinds as a
-/// presto-core document service (`Document::set_service(TextHost { .. })`).
-pub struct TextHost {
-    pub clipboard: Box<dyn Clipboard>,
-    pub fast_commit: Box<dyn FnMut(FastCommit)>,
 }
 
 /// Lays out a field's shown text in its style; `max_width` wraps (`None`: rows end at line feeds).
