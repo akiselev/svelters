@@ -12,10 +12,8 @@
 //!   setting it empty there).
 //! - [`RecordSink`] stands for the part of presto-core's `RecordCx` a field records through (`push`,
 //!   `draw_run`); [`ListSink`] collects into a `DisplayList` for tests.
-//! - [`TextServices`] stands for what presto-core's contexts do not hand a kind yet: the clipboard,
-//!   the caret fast-commit channel and the event time. The app installs them per UI thread
-//!   ([`install_services`]) beside the text system (`crate::host::install_text_system`); the
-//!   consolidation moves them into `EventCx`.
+//! - [`TextHost`]: the document service (`Document::set_service`) the text kinds read the clipboard
+//!   and the caret's fast-commit channel from; the app installs it beside the `TextSystem` service.
 //! - [`MonoGeometry`] is a real layout of its own (fixed advance, fixed line height): what the tests
 //!   and the conformance pins lay text out with, and a fallback for headless use. It has no font, so
 //!   it records no glyphs.
@@ -25,8 +23,6 @@ use presto_base::commit::FastCommit;
 use presto_base::display::{DisplayList, Prim};
 use presto_base::geom::{Point, Rect, Size};
 use presto_base::text::GlyphRun;
-use presto_base::time::Time;
-use std::cell::RefCell;
 use std::ops::Range;
 use std::sync::Arc;
 
@@ -86,31 +82,12 @@ impl RecordSink for ListSink {
     }
 }
 
-/// The services a text kind needs from the app (see the module docs).
-pub trait TextServices {
-    fn clipboard(&mut self) -> &mut dyn Clipboard;
-    /// Sends a fast commit (the caret) to the window's compositor.
-    fn fast_commit(&mut self, c: FastCommit);
-    /// Now, on presto's clock (undo grouping, double clicks).
-    fn now(&self) -> Time;
-}
-
-thread_local! {
-    static SERVICES: RefCell<Option<Box<dyn TextServices>>> = const { RefCell::new(None) };
-}
-
-/// Installs the UI thread's text services (the app runner does, once).
-pub fn install_services(s: Box<dyn TextServices>) {
-    SERVICES.with(|c| *c.borrow_mut() = Some(s));
-}
-
-/// Runs `f` with the installed services; `None` when none are installed (a document without text).
-pub fn with_services<R>(f: impl FnOnce(&mut dyn TextServices) -> R) -> Option<R> {
-    SERVICES.with(|c| {
-        let mut b = c.borrow_mut();
-        let s: &mut dyn TextServices = b.as_mut()?.as_mut();
-        Some(f(s))
-    })
+/// What the text kinds need from the app besides the text system: the clipboard (PRIMARY included)
+/// and the channel that sends the caret's fast commits to the window's compositor. Lent to kinds as a
+/// presto-core document service (`Document::set_service(TextHost { .. })`).
+pub struct TextHost {
+    pub clipboard: Box<dyn Clipboard>,
+    pub fast_commit: Box<dyn FnMut(FastCommit)>,
 }
 
 /// Lays out a field's shown text in its style; `max_width` wraps (`None`: rows end at line feeds).

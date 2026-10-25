@@ -88,6 +88,8 @@ pub(crate) struct WindowState {
     pub scroll_nodes: HashMap<PropNodeId, NodeId>,
     /// The AccessKit ids sent so far (to know what an update must re-send after removals).
     pub a11y_sent: HashSet<NodeId>,
+    /// The IME area the last commit carried.
+    pub ime_sent: Option<presto_base::geom::Rect>,
     pub a11y_removed: bool,
     /// Structure, layout or properties changed: rebuild layer items and the hit list.
     pub rebuild: bool,
@@ -118,6 +120,7 @@ impl WindowState {
             hits: Arc::new(HitList::default()),
             scroll_nodes: HashMap::new(),
             a11y_sent: HashSet::new(),
+            ime_sent: None,
             a11y_removed: false,
             rebuild: true,
             built: None,

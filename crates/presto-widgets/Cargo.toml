@@ -18,6 +18,8 @@ smallvec = { workspace = true }
 serde_json = { workspace = true }
 # Icon kit SVGs rasterised into images (EGUI.md §5 `icon`).
 resvg = { version = "=0.45.1", default-features = false }
+# The icon colour-slot rewrite (`paint::icon::registry::slot_svg`) parses icon SVGs with the roxmltree usvg links.
+roxmltree = "=0.20.0"
 # The text-editing core of the `text` kinds (lane TEXT-INPUT), at cadatomic's `pins.toml` sha.
 quire-text = { git = "https://github.com/akiselev/quire", rev = "3e78dcd3bf74abc2c81209f0109caff4d9193529" }
 

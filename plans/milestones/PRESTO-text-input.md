@@ -36,23 +36,40 @@ job summary. It is a measurement (fails only when the harness breaks), like `egu
 ## Shims (the consolidation replaces them)
 
 `text/shim.rs`:
-- `TextServices` (installed per UI thread with `install_services`): what presto-core's contexts do not
-  hand a kind yet: the clipboard, the caret's fast-commit channel, the event time. The app runner (lane
-  APP-TEST / svelters-presto) installs it beside the substrate's text system
-  (`host::install_text_system`); without both `text-edit` records its box only and takes no input.
-  Request R4.
-
-**`text-edit` and the substrate.** `text-edit` implements `presto_core::Kind` directly, not through the
-substrate's `Hosted<W>` / `shim::core` bridge (as the coordinator asked kinds to be built): the bridge
-carries no `Event::Ime` and no `text_input` hook, both required by architecture §11.3. It shares the
-substrate's per-thread `TextSystem` (through the new `host::with_text_system`: layouts with geometry,
-which the substrate's `TextShaper` does not expose) and its platform policy (`TextPolicy::from_policy`
-over `host::policy()`; the word rules, undo grouping, PRIMARY and mask stay in `text/policy.rs`, which
-`interact::Policy` lacks). Question 4 below.
+- `TextHost`: the document service (`Document::set_service`) with the clipboard and the caret's
+  fast-commit channel. The app installs it beside the `presto_text::TextSystem` and `interact::Policy`
+  services (lane APP-TEST). Without a `TextSystem` service `text-edit` records its box only and takes
+  no input; without a `TextHost` it edits with no clipboard and sends no caret.
 - `Clipboard`: presto-platform's `Clipboard` is by `ClipboardKind` and presto-widgets does not depend on
   presto-platform; the app adapts it.
 - `TextGeometry`, `Layouter`, `RecordSink` are the field's own interfaces (implemented for presto-text's
   `TextLayout`/`TextSystem`, presto-core's `RecordCx`, and the test `MonoGeometry`/`ListSink`).
+
+**`text-edit` and the substrate.** `text-edit` implements `presto_core::Kind` directly, not through the
+substrate's `Hosted<W>` / `shim::core` bridge: the bridge carries no `Event::Ime` and no `text_input`
+hook (architecture §11.3). Decided (coordinator, 2026-10-25): keep it so. It reads the same document
+services the bridge does (`TextSystem`, `Policy` through `TextPolicy::from_policy`; the word rules, undo
+grouping, PRIMARY and mask stay in `text/policy.rs`, which `interact::Policy` lacks) and the event time
+from `EventCx::time`.
+
+## The pins (local run, deterministic)
+
+`tests/text_pins.rs` at the head of this branch, checkpoints equal to the golden:
+
+| Pin | Behaviour | Checkpoints | Gtk policy = GTK 4.24.1 | Qt policy = Qt 6.12.0 |
+|---|---|---|---|---|
+| 1 | word-delete-back / -fwd / -mid, word-move | 16 / 16 / 7 / 33 | all | all |
+| 2 | select-all / -collapse / -extend | 11 / 17 / 14 | all | all |
+| 3 | multi-click | 14 | 12 | 9 |
+| 4 | undo-edits / -paste / -typing | 21 / 10 / 11 | 20 / 10 / 11 | all |
+| 5 | clipboard-keys / paste-multiline / primary | 20 / 4 / 8 | 20 / 1 / 3 | 20 / 1 / 1 |
+| 6 | dead-keys / unicode-entry | 12 / 13 | 8 / 13 | 10 / 13 |
+| 7 | focus-click / focus-tab | 7 / 9 | all | all |
+| | **total** | **243** | **228** | **226** |
+
+(egui's `TextEdit` with FX1's native rules, `egui_measure`'s floors, is lower on every pin but 1, 2 and
+7.) The gaps (multi-click word rules, paste-multiline, PRIMARY, dead keys) are listed per checkpoint in
+`target/na/linux/presto-gap.md`; floors follow the first green CI run (Q3).
 
 ## Cross-lane edits
 
@@ -61,8 +78,6 @@ over `host::policy()`; the word rules, undo grouping, PRIMARY and mask stay in `
   merge conflict there is additive.
 - `Cargo.lock`: quire-text and its dependencies (ropey, unicode-segmentation, unicode-general-category).
 
-- `crates/presto-widgets/src/host.rs` (WIDGETS-BASIC's): one additive function, `with_text_system`, so the
-  text kinds lay out with the same per-thread `TextSystem` the other kinds shape with.
 
 No change to `presto-base` or any wave-1 crate.
 
@@ -104,18 +119,16 @@ No change to `presto-base` or any wave-1 crate.
   Option+Up/Down paragraph motions.
 - The beep (`TextRequest::Beep`) is dropped by `TextField::serve` until the platform has a bell.
 
-## Questions for the coordinator (with recommendations)
+## Questions for the coordinator: answered (coordinator, 2026-10-25)
 
-1. **Undo grouping on Windows and macOS.** FX3 measured GTK and Qt only; `policy.rs` uses quire's Monaco
-   grouping on Windows and macOS. Recommendation: keep Monaco until WG3w/WG3m measure the native fields.
-2. **Caret blink parameters** (R3): which channel? Recommendation: per-window compositor config, set by
-   the platform policy, so `FastCommit` stays as it is.
-3. **The pins' floor.** `text_pins.rs` reports without a ratchet. Recommendation: after the first green CI
-   run, set per-pin floors from its job summary (as `egui_measure`'s `FLOOR`).
+1. Undo grouping on Windows and macOS: Monaco until the native fields are measured.
+2. Caret blink: a per-window compositor config set from the platform policy; `FastCommit` stays (asked
+   of COMPOSITOR).
+3. The pins' floors: after the first green CI run.
+4. `text-edit` stays on `presto_core::Kind` directly.
 
-4. **`text-edit` outside `Hosted<W>`.** Recommendation: keep it on `presto_core::Kind` directly; if kinds
-   must all go through the bridge, add `Event::Ime` and a `text_input` hook to `shim::core::Kind` and
-   `Hosted<W>` first (WIDGETS-BASIC's files), and the text kinds move over in a few lines.
+Routing: R1, R2 → QUIRE; R3 → COMPOSITOR; R4 → CORE-3; R6 (PRIMARY) → WAYLAND (an additive `Clipboard`
+method with a default); installing `TextHost` → APP-TEST.
 
 ## What I ran and did not run
 
@@ -128,4 +141,6 @@ No change to `presto-base` or any wave-1 crate.
   presto-widgets, `text_pins` passed (the measurement ran) and three text unit tests failed on wrong
   expectations (Qt's double click takes the trailing space; the field scrolled to reveal the caret; GTK's
   keyboard-focus select-all did not set PRIMARY: a real gap, now fixed); fixed in the next commit.
+- After merging `ci/presto-base` 87cb4e44 (document services replaced the substrate's thread-locals):
+  `cargo test -p presto-widgets --lib text::` (37 passed) and `--test text_pins` (passed; table above).
 - Not run: clippy, other crates.
