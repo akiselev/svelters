@@ -341,10 +341,11 @@ fn synthesize(k: &'static KindSpec) -> &'static core::KindSpec {
         text_prop,
         focusable: k.signals.iter().any(|s| s.name == "clicked") || matches!(k.a11y.role, "TextInput" | "Slider"),
         container: owner.is_some(),
-        folds_children: false,
         methods: Box::leak(methods.into_boxed_slice()),
         name_from: if name_from.is_empty() { core::kind::DEFAULT_NAME_FROM } else { Box::leak(name_from.into_boxed_slice()) },
         doc: k.doc,
+        // what a placeholder does not have (folded or placed children, parts, prop states) stays core's default
+        ..core::KindSpec::new("")
     }))
 }
 
