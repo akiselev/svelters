@@ -82,6 +82,13 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 
 ## Not run
 
+Run locally once, filtered, to diagnose CI's failures on a9503acb (and passing after the fix):
+`cargo test -p presto-compositor --test engine --test tree_damage --test caret`. Fixed: damage no
+longer counts a removal as reordering its successor (only survivors that change relative order are
+damaged); the fling test counted presents, but frames whose content scrolled out of view rightly
+present nothing, so it counts sampled frames.
+
+
 Per the batch rule, nothing was run locally beyond `cargo check -p presto-compositor --all-targets`.
 Tests written, run only by CI: `tests/engine.rs` (virtual clock + recording backend: first frame,
 commit folding, smooth scroll with retarget, fast-commit revision rejection, fling frames without commits then idle, fling stopped
