@@ -5,6 +5,7 @@ use crate::value::ValueType;
 use presto_base::ids::{NodeId, Revision};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum TreeError {
     /// The node was destroyed (or the id was never a node of this document).
     Stale(NodeId),
@@ -20,6 +21,8 @@ pub enum TreeError {
     SlotFull { parent: NodeId, slot: SlotId },
     /// A window root cannot be inserted under another node.
     IsRoot(NodeId),
+    /// A node with a parent cannot become a window's root ([`crate::Document::attach_window`]).
+    HasParent(NodeId),
 }
 
 impl std::fmt::Display for TreeError {
@@ -32,6 +35,7 @@ impl std::fmt::Display for TreeError {
             TreeError::UnknownSlot { parent, slot } => write!(f, "{parent:?} has no slot {slot:?}"),
             TreeError::SlotFull { parent, slot } => write!(f, "slot {slot:?} of {parent:?} holds one child"),
             TreeError::IsRoot(n) => write!(f, "{n:?} is a window root"),
+            TreeError::HasParent(n) => write!(f, "{n:?} has a parent and cannot be a window root"),
         }
     }
 }
@@ -66,3 +70,29 @@ impl std::fmt::Display for PropError {
 }
 
 impl std::error::Error for PropError {}
+
+/// Why a method call failed ([`crate::Document::call`]).
+#[derive(Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum CallError {
+    Stale(NodeId),
+    /// Neither the node's kind nor the common methods have it.
+    Unknown(crate::ids::MethodId),
+    /// Argument `index` is missing or has the wrong type.
+    BadArg { method: crate::ids::MethodId, index: usize },
+    /// The kind refused or failed (its message).
+    Failed(String),
+}
+
+impl std::fmt::Display for CallError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CallError::Stale(n) => write!(f, "stale node {n:?}"),
+            CallError::Unknown(m) => write!(f, "unknown method {m:?}"),
+            CallError::BadArg { method, index } => write!(f, "method {method:?}: argument {index} is missing or has the wrong type"),
+            CallError::Failed(m) => f.write_str(m),
+        }
+    }
+}
+
+impl std::error::Error for CallError {}

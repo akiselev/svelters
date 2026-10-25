@@ -60,6 +60,10 @@ member_id!(
     SignalId, "signal"
 );
 member_id!(
+    /// A method of a kind (its type part is the signature, [`crate::MethodSpec::signature`]).
+    MethodId, "method"
+);
+member_id!(
     /// A named slot of a container kind (`header`, `footer`); `None` in the tree is the default slot.
     SlotId, "slot"
 );

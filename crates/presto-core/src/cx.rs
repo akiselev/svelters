@@ -478,6 +478,18 @@ impl EventCx<'_> {
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node, signal, arg });
     }
+    /// Emits `signal` with its named arguments ([`SignalSpec::args`](crate::SignalSpec::args)), in
+    /// spec order: one argument is delivered as its value, several as a record with their names.
+    pub fn emit_args(&mut self, signal: SignalId, args: Vec<Value>) {
+        let spec = self.doc.view(self.node).and_then(|v| v.kind().signal(signal)).or_else(|| common::signal(signal));
+        let arg = match (args.len(), spec) {
+            (0, _) => None,
+            (1, _) => args.into_iter().next(),
+            (_, Some(s)) if s.args.len() == args.len() => Some(Value::Record(s.args.iter().map(|p| Arc::<str>::from(p.name)).zip(args).collect::<Vec<_>>().into())),
+            (_, _) => Some(Value::List(args.into())),
+        };
+        self.emit(signal, arg);
+    }
     /// Keeps the current pointer on this node until release.
     pub fn capture_pointer(&mut self) {
         if let Some(p) = self.pointer {
@@ -510,6 +522,8 @@ impl EventCx<'_> {
 pub struct A11yCx<'a> {
     pub node: NodeView<'a>,
     pub out: &'a mut accesskit::Node,
+    /// The text content of the node's descendants (filled when its spec names [`NameFrom::Contents`](crate::NameFrom::Contents)).
+    pub(crate) contents: Option<String>,
 }
 
 impl<'a> std::ops::Deref for A11yCx<'a> {
@@ -520,13 +534,44 @@ impl<'a> std::ops::Deref for A11yCx<'a> {
 }
 
 impl A11yCx<'_> {
-    /// The defaults: the label from `aria-label` or the text content, disabled, focusable.
-    pub fn default_a11y(&mut self) {
-        let label = self.node.prop_str(common::ARIA_LABEL).filter(|s| !s.is_empty()).or_else(|| Some(self.node.text()).filter(|s| !s.is_empty()));
-        if let Some(l) = label {
-            self.out.set_label(l);
+    /// The text content of the node's descendants, in tree order (`None` unless the kind's spec
+    /// takes its name from its contents).
+    pub fn contents_text(&self) -> Option<&str> {
+        self.contents.as_deref()
+    }
+
+    /// The accessible name: `aria-label`, then the spec's [`KindSpec::name_from`](crate::KindSpec::name_from)
+    /// sources in order (by default the text content, then `title`).
+    pub fn name(&self) -> Option<String> {
+        use crate::kind::NameFrom;
+        let nonempty = |s: Option<&str>| s.filter(|s| !s.trim().is_empty()).map(str::to_owned);
+        if let Some(l) = nonempty(self.node.prop_str(common::ARIA_LABEL)) {
+            return Some(l);
         }
-        if let Some(t) = self.node.prop_str(common::TITLE) {
+        let spec = self.node.entry.spec;
+        let defaults: &[NameFrom] = &[NameFrom::Contents, NameFrom::Title];
+        let sources = if spec.name_from.is_empty() { defaults } else { spec.name_from };
+        for src in sources {
+            let n = match *src {
+                NameFrom::Prop(p) => spec.prop_named(p).and_then(|p| nonempty(self.node.prop_str(p))),
+                // the node's own text content counts as contents
+                NameFrom::Contents => nonempty(Some(self.node.text())).or_else(|| nonempty(self.contents.as_deref())),
+                NameFrom::Title => nonempty(self.node.prop_str(common::TITLE)),
+            };
+            if n.is_some() {
+                return n;
+            }
+        }
+        None
+    }
+
+    /// The defaults: the name ([`A11yCx::name`]), `title` as the description, disabled, focusable.
+    pub fn default_a11y(&mut self) {
+        let label = self.name();
+        if let Some(l) = &label {
+            self.out.set_label(l.as_str());
+        }
+        if let Some(t) = self.node.prop_str(common::TITLE).filter(|t| label.as_deref() != Some(*t)) {
             self.out.set_description(t);
         }
         if self.node.disabled() {

@@ -231,6 +231,7 @@ fn spec_of(ws: &'static w::KindSpec) -> &'static Spec {
             text_prop: ws.text_prop,
             focusable: ws.focusable,
             container: ws.children,
+            ..KindSpec::new(ws.tag)
         }));
         Box::leak(Box::new(Spec { core, to_core, disabled }))
     })

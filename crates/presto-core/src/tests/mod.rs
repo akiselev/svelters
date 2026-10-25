@@ -7,6 +7,7 @@ mod commit;
 mod dispatch;
 mod focus;
 mod kindapi;
+mod spec;
 mod style;
 mod tree;
 

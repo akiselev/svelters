@@ -358,6 +358,53 @@ impl Document {
         }
     }
 
+    /// Presents a node JS created (a `window` element, filled before `present`) as `window`'s root.
+    /// The node must be detached; a window that already has a root gets this one instead (the old
+    /// root is detached, not destroyed). [`Document::detach_window`] undoes it.
+    pub fn attach_window(&mut self, node: NodeId, window: WindowId, size: Size, scale: Scale) -> Result<(), TreeError> {
+        let i = self.idx(node).ok_or(TreeError::Stale(node))?;
+        if self.core[i].parent.is_some() {
+            return Err(TreeError::HasParent(node));
+        }
+        if let Some(w) = self.core[i].window
+            && w != window
+        {
+            // it presents another window: move it
+            self.detach_window(w);
+        }
+        if self.window_root(window) == Some(node) {
+            self.resize_window(window, size, scale);
+            return Ok(());
+        }
+        self.detach_window(window);
+        let i = self.ix(node);
+        let rev = self.stamp();
+        self.core[i].flags.insert(NodeFlags::ROOT);
+        self.core[i].changed = rev;
+        self.set_window(i, Some(window));
+        self.windows.push(WindowState::new(window, node, size, scale));
+        self.mark_subtree_style(i);
+        self.mark_subtree(i, Dirty::RECORD);
+        self.invalidate_style(i);
+        Ok(())
+    }
+
+    /// Stops presenting `window` and returns its root, which stays alive and detached (a JS-owned
+    /// window node after `close`). [`Document::close_window`] destroys the root instead.
+    pub fn detach_window(&mut self, window: WindowId) -> Option<NodeId> {
+        let w = self.windows.iter().position(|w| w.id == window)?;
+        let root = self.windows[w].root;
+        if let Some(i) = self.idx(root) {
+            self.stamp();
+            self.forget_in_window(window, i);
+            self.set_window(i, None);
+            self.core[i].flags.remove(NodeFlags::ROOT);
+        }
+        self.windows.remove(w);
+        self.timers.retain(|n, _| self.slots.index(*n).is_some_and(|i| self.core[i].window.is_some()));
+        Some(root).filter(|&r| self.contains(r))
+    }
+
     pub fn window_root(&self, window: WindowId) -> Option<NodeId> {
         self.windows.iter().find(|w| w.id == window).map(|w| w.root)
     }
@@ -817,6 +864,72 @@ impl Document {
         if let Some(i) = self.idx(node) {
             self.invalidate_style(i);
         }
+    }
+
+    // ---- methods ----
+
+    /// Calls a method of `node` from JS: a common method (`focus`, `blur`, `scroll-into-view`,
+    /// `bounds`) or one of its kind's ([`Kind::call`]). The arguments are checked against the
+    /// method's [`MethodSpec`](crate::MethodSpec) first (`None` is `null`, allowed where the parameter
+    /// is nullable; missing trailing nullable arguments read as `null`). Signals the kind emits are
+    /// queued like a programmatic focus move's ([`Document::take_events`]).
+    pub fn call(&mut self, node: NodeId, method: crate::ids::MethodId, args: &[Option<Value>]) -> Result<Option<Value>, crate::error::CallError> {
+        use crate::error::CallError;
+        let i = self.idx(node).ok_or(CallError::Stale(node))?;
+        let entry = self.registry.get(self.core[i].kind).expect("registered kind");
+        let own = entry.method(method);
+        let spec = own.or_else(|| common::method(method)).ok_or(CallError::Unknown(method))?;
+        let mut checked: Vec<Option<Value>> = Vec::with_capacity(spec.params.len());
+        for (k, p) in spec.params.iter().enumerate() {
+            let v = match args.get(k).cloned().flatten() {
+                Some(v) => Some(v.coerce(p.ty).ok_or(CallError::BadArg { method, index: k })?),
+                None if p.nullable => None,
+                None => return Err(CallError::BadArg { method, index: k }),
+            };
+            checked.push(v);
+        }
+        if args.len() > spec.params.len() {
+            return Err(CallError::BadArg { method, index: spec.params.len() });
+        }
+        if own.is_none() {
+            return Ok(self.call_common(node, method));
+        }
+        self.transaction(|doc| {
+            let i = doc.ix(node);
+            let Some(mut k) = doc.kinds[i].take() else { return Err(CallError::Stale(node)) };
+            let mut emitted = Vec::new();
+            let r = {
+                let mut cx = crate::cx::EventCx { doc, node, emitted: &mut emitted, pointer: None };
+                k.call(&mut cx, method, &checked)
+            };
+            if let Some(i) = doc.idx(node) {
+                doc.kinds[i] = Some(k);
+            }
+            for e in emitted {
+                crate::input::dispatch::queue_emitted(doc, e);
+            }
+            r
+        })
+    }
+
+    fn call_common(&mut self, node: NodeId, method: crate::ids::MethodId) -> Option<Value> {
+        if method == common::FOCUS_METHOD {
+            self.focus(node, FocusReason::Programmatic);
+        } else if method == common::BLUR_METHOD {
+            if let Some(w) = self.window_of(node)
+                && self.focused(w).is_some_and(|f| self.is_ancestor_or_self(node, f))
+            {
+                crate::input::focus::clear_focus(self, w);
+            }
+        } else if method == common::SCROLL_INTO_VIEW {
+            self.scroll_into_view(node);
+        } else if method == common::BOUNDS {
+            self.window_of(node)?;
+            let r = self.world_rect(node)?;
+            let f = |n: &str, v: f32| (Arc::<str>::from(n), Value::F64(v as f64));
+            return Some(Value::Record(vec![f("x", r.min.x), f("y", r.min.y), f("width", r.width()), f("height", r.height())].into()));
+        }
+        None
     }
 
     // ---- focus ----

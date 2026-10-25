@@ -4,7 +4,7 @@
 //! accessibility through the contexts in [`crate::cx`].
 
 use crate::cx::{A11yCx, EventCx, HitCx, MeasureCx, PrepareCx, PropCx, RecordCx, StyleCx};
-use crate::ids::{KindId, PropId, SignalId, SlotId};
+use crate::ids::{KindId, MethodId, PropId, SignalId, SlotId};
 use crate::value::{PropDefault, Value, ValueType};
 use presto_base::change::ChangeClass;
 use presto_base::event::{ImeEvent, KeyEvent, Modifiers, MouseButton, PointerType, ScrollDelta};
@@ -26,11 +26,23 @@ pub struct PropSpec {
     /// The kind owns this prop's live value (scroll offset, selection, a slider during a drag): a JS
     /// write older than the kind's last change of it is rejected (architecture §4.5).
     pub native_owned: bool,
+    /// JS may write `null` (it reads as the default again).
+    pub nullable: bool,
+    /// One line for the generated spec and typings.
+    pub doc: &'static str,
 }
 
 impl PropSpec {
     pub const fn new(name: &'static str, ty: ValueType, change: ChangeClass) -> Self {
-        PropSpec { name, ty, change, default: PropDefault::Unset, enum_values: &[], native_owned: false }
+        PropSpec { name, ty, change, default: PropDefault::Unset, enum_values: &[], native_owned: false, nullable: false, doc: "" }
+    }
+    pub const fn nullable(mut self) -> Self {
+        self.nullable = true;
+        self
+    }
+    pub const fn doc(mut self, d: &'static str) -> Self {
+        self.doc = d;
+        self
     }
     pub const fn default(mut self, d: PropDefault) -> Self {
         self.default = d;
@@ -67,19 +79,124 @@ impl SignalFlags {
     }
 }
 
+/// A named, typed parameter: a signal's argument or a method's parameter.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ParamSpec {
+    pub name: &'static str,
+    pub ty: ValueType,
+    /// May be `null`.
+    pub nullable: bool,
+    pub doc: &'static str,
+}
+
+impl ParamSpec {
+    pub const fn new(name: &'static str, ty: ValueType) -> Self {
+        ParamSpec { name, ty, nullable: false, doc: "" }
+    }
+    pub const fn nullable(mut self) -> Self {
+        self.nullable = true;
+        self
+    }
+    pub const fn doc(mut self, d: &'static str) -> Self {
+        self.doc = d;
+        self
+    }
+}
+
 /// One signal of a kind (an event the kind emits: `onchange`, `onactivate`).
 #[derive(Clone, Copy, Debug)]
 pub struct SignalSpec {
     pub name: &'static str,
-    /// The type of the argument (`None`: no argument).
+    /// The type of the value delivered (`None`: no argument). With [`SignalSpec::args`] it is the
+    /// one argument's type, or `Record` for several.
     pub arg: Option<ValueType>,
     pub flags: SignalFlags,
+    /// The named arguments (bindings and typings refer to them by name). One argument is delivered as
+    /// its value; several as a `Value::Record` with these names, in this order. Empty: `arg` is
+    /// unnamed.
+    pub args: &'static [ParamSpec],
+    pub doc: &'static str,
 }
 
 impl SignalSpec {
     pub const fn new(name: &'static str, arg: Option<ValueType>, flags: SignalFlags) -> Self {
-        SignalSpec { name, arg, flags }
+        SignalSpec { name, arg, flags, args: &[], doc: "" }
     }
+    /// Names the arguments; sets [`SignalSpec::arg`] to match.
+    pub const fn args(mut self, args: &'static [ParamSpec]) -> Self {
+        self.args = args;
+        self.arg = match args {
+            [] => None,
+            [one] => Some(one.ty),
+            _ => Some(ValueType::Record),
+        };
+        self
+    }
+    pub const fn doc(mut self, d: &'static str) -> Self {
+        self.doc = d;
+        self
+    }
+}
+
+/// One method of a kind, called from JS (`present`, `close`, `scroll-into-view`).
+#[derive(Clone, Copy, Debug)]
+pub struct MethodSpec {
+    pub name: &'static str,
+    pub params: &'static [ParamSpec],
+    /// The return type (`None`: nothing).
+    pub ret: Option<ValueType>,
+    /// The return value may be `null`.
+    pub ret_nullable: bool,
+    pub doc: &'static str,
+}
+
+impl MethodSpec {
+    pub const fn new(name: &'static str) -> Self {
+        MethodSpec { name, params: &[], ret: None, ret_nullable: false, doc: "" }
+    }
+    pub const fn params(mut self, p: &'static [ParamSpec]) -> Self {
+        self.params = p;
+        self
+    }
+    pub const fn returns(mut self, ty: ValueType, nullable: bool) -> Self {
+        self.ret = Some(ty);
+        self.ret_nullable = nullable;
+        self
+    }
+    pub const fn doc(mut self, d: &'static str) -> Self {
+        self.doc = d;
+        self
+    }
+    /// The signature the method's id hashes (`(bool,string?)->f64`): a changed signature is a new id.
+    pub fn signature(&self) -> String {
+        let mut s = String::from("(");
+        for (i, p) in self.params.iter().enumerate() {
+            if i > 0 {
+                s.push(',');
+            }
+            s.push_str(p.ty.name());
+            if p.nullable {
+                s.push('?');
+            }
+        }
+        s.push_str(")->");
+        s.push_str(self.ret.map_or("void", ValueType::name));
+        if self.ret_nullable {
+            s.push('?');
+        }
+        s
+    }
+}
+
+/// Where a node's accessible name comes from, tried in order after `aria-label`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum NameFrom {
+    /// A string prop of the kind (`label`, `text`).
+    Prop(&'static str),
+    /// The text content of its descendants (a button with a label child).
+    Contents,
+    /// The common `title` prop.
+    Title,
 }
 
 /// One named slot of a container kind.
@@ -106,6 +223,13 @@ pub struct KindSpec {
     pub focusable: bool,
     /// Has children (a leaf kind rejects inserts).
     pub container: bool,
+    /// One paragraph for the generated spec and typings.
+    pub doc: &'static str,
+    pub methods: &'static [MethodSpec],
+    /// Accessible name sources after `aria-label`, in order. Empty: the text prop, then `title`.
+    pub name_from: &'static [NameFrom],
+    /// A node of this kind without an accessible name is a diagnostic (compiler-and-js §3.9).
+    pub name_required: bool,
 }
 
 impl KindSpec {
@@ -119,6 +243,10 @@ impl KindSpec {
             text_prop: None,
             focusable: false,
             container: false,
+            doc: "",
+            methods: &[],
+            name_from: &[],
+            name_required: false,
         }
     }
     pub const fn id(&self) -> KindId {
@@ -131,6 +259,13 @@ impl KindSpec {
     pub fn signal_id(&self, i: usize) -> SignalId {
         let s = &self.signals[i];
         SignalId::of(self.name, s.name, s.arg.map_or("void", ValueType::name))
+    }
+    pub fn method_id(&self, i: usize) -> MethodId {
+        let m = &self.methods[i];
+        MethodId::of(self.name, m.name, &m.signature())
+    }
+    pub fn method_named(&self, name: &str) -> Option<MethodId> {
+        self.methods.iter().position(|m| m.name == name).map(|i| self.method_id(i))
     }
     pub fn slot_id(&self, i: usize) -> SlotId {
         SlotId::of(self.name, self.slots[i].name, "slot")
@@ -296,6 +431,13 @@ pub trait Kind: 'static {
     /// Native-owned state the kind exposes (§4.5).
     fn native_state(&self) -> Option<&dyn NativeState> {
         None
+    }
+
+    /// A method of the kind's spec, called from JS through [`Document::call`](crate::Document::call),
+    /// with arguments already checked against its [`MethodSpec`] (`None` = `null`). The common methods
+    /// (`focus`, `blur`, `scroll-into-view`, `bounds`) are the document's and never reach here.
+    fn call(&mut self, cx: &mut EventCx, method: MethodId, args: &[Option<Value>]) -> Result<Option<Value>, crate::error::CallError> {
+        Err(crate::error::CallError::Unknown(method))
     }
 
     /// Children supplied on demand.
