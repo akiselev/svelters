@@ -62,7 +62,8 @@ impl SpringMotion {
     /// Whether Svelte has settled by frame `n`: some frame `m < n` had `|e[m]|` and `|e[m+1] - e[m]|`
     /// under `precision` (Svelte then writes the target at frame `m + 1`).
     pub fn settled(&self, n: f64) -> bool {
-        self.settle_frame().is_some_and(|m| n >= (m + 1) as f64)
+        // `n` comes from a clock: allow its rounding (41.9999... is frame 42)
+        self.settle_frame().is_some_and(|m| n >= (m + 1) as f64 - 1e-6)
     }
 
     /// The value at frame `n`: the closed form until the settle frame, then the target.

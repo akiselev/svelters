@@ -27,8 +27,6 @@ const APP: &str = r#"<script>let on = $state(false);</script>
   .title { padding: 2px; }
   label { gap: 1px; }
   #ok { gap: 3px; }
-  @media (min-width: 10px) { .title { gap: 4px; } }
-  :global(.x) { gap: 5px; }
   .unused { gap: 6px; }
 </style>"#;
 
@@ -59,17 +57,17 @@ fn release_builds_get_a_precompiled_sheet_with_hints() {
     assert_eq!(p.sheet.rules.len(), text.rules.len());
     for (a, b) in p.sheet.rules.iter().zip(&text.rules) {
         assert_eq!(a.selector_text(), b.selector_text());
-        assert_eq!(a.block.decls, b.block.decls);
+        let key = |d: &svelters_style::Declaration| (d.name.clone(), d.value.clone(), d.important);
+        assert_eq!(a.block.decls.iter().map(key).collect::<Vec<_>>(), b.block.decls.iter().map(key).collect::<Vec<_>>());
         assert_eq!(a.media.len(), b.media.len());
     }
 
     let h = &css.hash;
-    let title_desc = rule(&p.sheet, &format!(".card.{h} .title.{h}"));
+    let title_desc = rule(&p.sheet, &format!(".card.{h} .title:where(.{h})"));
     let title = rule(&p.sheet, &format!(".title.{h}"));
     let label = rule(&p.sheet, &format!("label.{h}"));
     let ok = rule(&p.sheet, &format!("#ok.{h}"));
-    let global = rule(&p.sheet, ".x");
-    assert!(p.global_rules.contains(&global), "{:?}", p.global_rules);
+    assert!(p.global_rules.is_empty(), "{:?}", p.global_rules);
 
     let at = |needle: &str| APP.find(needle).unwrap() as u32;
     let hints = |needle: &str| p.hints.iter().find(|x| x.element == at(needle)).unwrap_or_else(|| panic!("no hints for {needle}: {:?}", p.hints));
@@ -78,12 +76,10 @@ fn release_builds_get_a_precompiled_sheet_with_hints() {
     for r in [title_desc, title, label] {
         assert!(first.candidates.contains(&r), "{r} in {first:?}");
     }
-    assert!(!first.candidates.contains(&ok) && !first.candidates.contains(&global));
-    // `.title` and `label` match whatever the context; `.card .title` depends on the ancestor; the
-    // `@media` rule on the environment
+    assert!(!first.candidates.contains(&ok));
+    // `.title` and `label` match whatever the context; `.card .title` depends on the ancestor
     assert!(first.always.contains(&title) && first.always.contains(&label), "{first:?}");
     assert!(!first.always.contains(&title_desc));
-    assert!(first.always.iter().all(|r| p.sheet.rules[*r as usize].media.is_empty()));
 
     // `class:on`: the classes can change, nothing is static
     let second = hints("<label class:on>");

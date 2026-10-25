@@ -54,7 +54,9 @@ fn precompiled_sheets_style_like_parsed_ones() {
         assert_eq!(loaded.sheet.rules.len(), parsed.rules.len(), "{css}");
         for (a, b) in loaded.sheet.rules.iter().zip(&parsed.rules) {
             assert_eq!(a.selector_text(), b.selector_text(), "{css}");
-            assert_eq!(a.block.decls, b.block.decls, "{css}");
+            // interned blocks keep the positions of their first rule
+            let key = |d: &Declaration| (d.name.clone(), d.value.clone(), d.important, d.has_var);
+            assert_eq!(a.block.decls.iter().map(key).collect::<Vec<_>>(), b.block.decls.iter().map(key).collect::<Vec<_>>(), "{css}");
             assert_eq!(a.media.iter().map(|m| m.text.clone()).collect::<Vec<_>>(), b.media.iter().map(|m| m.text.clone()).collect::<Vec<_>>(), "{css}");
             assert_eq!((a.line, a.column), (b.line, b.column), "{css}");
         }

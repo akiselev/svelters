@@ -15,12 +15,11 @@
 // `spring` store is Svelte's too.
 import { state, get, set, tag } from './core/index.js';
 import { loop, raf } from './core/internal.js';
-import { render_effect } from 'svelte/internal/client';
+import { render_effect } from './core/svelte.js';
 import { DEV } from 'esm-env';
 import { prefersReducedMotion as reduced } from './motion.js';
 
-export { Tween, tweened } from 'svelte/internal/motion/tweened';
-export { spring } from 'svelte/internal/motion/spring';
+export { Tween, tweened, spring_store as spring } from './core/svelte.js';
 
 /** `prefersReducedMotion.current`, as svelte/motion's MediaQuery gives it. */
 export const prefersReducedMotion = {
@@ -75,7 +74,8 @@ export function springMotion({ stiffness: k, damping: c, precision }, x0, xPrev,
     }
     e = next;
   }
-  const settled = (n) => n >= settleFrame + 1;
+  // the frame count comes from a clock in ms: allow its rounding (n = 41.9999... is frame 42)
+  const settled = (n) => n >= settleFrame + 1 - 1e-6;
   return { target, raw: (n) => target + error(n), settled, value: (n) => (settled(n) ? target : target + error(n)) };
 }
 
