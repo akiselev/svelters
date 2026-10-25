@@ -2,8 +2,9 @@
 //! Node ids are presto's [`NodeId`]s. A kind fills its node through [`Kind::a11y`](crate::Kind::a11y);
 //! the document adds bounds (window space), children and focus.
 //!
-//! A full tree goes out on a window's first frame and after structure changes; otherwise only the
-//! nodes whose accessibility data changed. Every update passes [`validate`] before it leaves: AccessKit
+//! A full tree goes out on a window's first frame; afterwards only the nodes whose accessibility data
+//! changed, the ones that moved relative to their parent (each node carries its local box and its
+//! transform to its parent), and subtrees that joined the tree. Every update passes [`validate`] before it leaves: AccessKit
 //! panics on an invalid update (a focus or child id not in the tree, a node reachable from nowhere),
 //! so the builder repairs what it can and drops the rest, with a debug assertion, never a panic in
 //! release.
@@ -19,7 +20,8 @@ fn ax(id: NodeId) -> AxId {
 }
 
 impl Document {
-    /// The AccessKit node of node `i`.
+    /// The AccessKit node of node `i`: the kind's, with its box in its own space and its transform
+    /// relative to its parent (so a move re-sends only the node that moved), and its children.
     fn a11y_node(&mut self, i: usize) -> Node {
         let role = self.view_at(i).kind().spec.role;
         let mut out = Node::new(role);
@@ -30,55 +32,99 @@ impl Document {
             }
             self.kinds[i] = Some(k);
         }
-        let w = self.record[i].world;
-        out.set_bounds(accesskit::Rect { x0: w.min.x as f64, y0: w.min.y as f64, x1: w.max.x as f64, y1: w.max.y as f64 });
+        let l = &self.layout[i].layout;
+        out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: l.size.width as f64, y1: l.size.height as f64 });
+        let world = self.record[i].world_tf;
+        let rel = match self.core[i].parent {
+            Some(p) => self.record[self.ix(p)].world_tf.inverse().map_or(presto_base::geom::Affine::IDENTITY, |pi| pi.then(&world)),
+            None => world,
+        };
+        if rel != presto_base::geom::Affine::IDENTITY {
+            out.set_transform(accesskit::Affine::new([rel.a as f64, rel.b as f64, rel.c as f64, rel.d as f64, rel.e as f64, rel.f as f64]));
+        }
+        self.record[i].a11y_tf = Some(rel);
         let hidden = self.layout[i].style.display == taffy::Display::None || self.style.computed(i).visibility_hidden;
         if hidden {
             out.set_hidden();
         }
-        out.set_children(self.children[i].iter().map(|&c| ax(c)).collect::<Vec<_>>());
+        let kids: Vec<NodeId> = self.a11y_children(i).collect();
+        out.set_children(kids.iter().map(|&c| ax(c)).collect::<Vec<_>>());
+        if self.state[i].contains(svelters_style::StateMask::INVALID) {
+            out.set_invalid(accesskit::Invalid::True);
+        }
+        // the anchor is the author id; the labels whose `for` names it label the node
+        let node = self.slots.id_at(i).expect("live");
+        if let Some(a) = self.anchors.get(&node) {
+            out.set_author_id(a.to_string());
+            let w = self.core[i].window;
+            let mut labels: Vec<NodeId> = self.label_for.iter().filter(|(l, f)| *f == a && self.window_of(**l) == w).map(|(l, _)| *l).collect();
+            if !labels.is_empty() {
+                labels.sort_by_key(|l| l.0);
+                out.set_labelled_by(labels.into_iter().map(ax).collect::<Vec<_>>());
+            }
+        }
+        self.record[i].a11y_kids = kids;
         out
     }
 
-    /// The update for this frame (`None`: nothing changed).
-    pub(crate) fn a11y_update(&mut self, window: WindowId, root: NodeId, full: bool, dirty: &[NodeId]) -> Option<TreeUpdate> {
+    /// The children in the accessibility tree: all but those their container conceals.
+    fn a11y_children(&self, i: usize) -> impl Iterator<Item = NodeId> + '_ {
+        self.children[i].iter().copied().filter(|&c| !self.core[self.ix(c)].flags.contains(crate::tree::NodeFlags::CONCEALED))
+    }
+
+    /// The update for this frame (`None`: nothing changed). The whole tree goes out on the window's
+    /// first frame; afterwards the nodes in `dirty` that the tree has, plus every node that joins
+    /// it under them (a new or shown subtree). Nodes that leave it (removed, concealed) are dropped
+    /// from the known set with their subtrees.
+    pub(crate) fn a11y_update(&mut self, window: WindowId, root: NodeId, dirty: &[NodeId]) -> Option<TreeUpdate> {
         let first = self.window(window).is_some_and(|w| w.a11y_sent.is_empty());
-        let removed = self.window(window).is_some_and(|w| w.a11y_removed);
-        let full = full || first || removed;
-        if !full && dirty.is_empty() {
+        if !first && dirty.is_empty() {
             return None;
         }
+        let mut known = self.window_mut(window).map(|w| std::mem::take(&mut w.a11y_sent)).unwrap_or_default();
+        let before = known.clone();
         let mut nodes = Vec::new();
-        let mut sent = HashSet::new();
-        if full {
-            let mut stack = vec![root];
-            while let Some(n) = stack.pop() {
-                let Some(i) = self.idx(n) else { continue };
-                nodes.push((ax(n), self.a11y_node(i)));
-                sent.insert(n);
-                stack.extend(self.children[i].iter().copied());
+        let mut sent: HashSet<NodeId> = HashSet::new();
+        let mut queue: Vec<NodeId> = if first { vec![root] } else { dirty.iter().copied().filter(|n| known.contains(n)).collect() };
+        while let Some(n) = queue.pop() {
+            let Some(i) = self.idx(n) else { continue };
+            if self.core[i].window != Some(window) || !sent.insert(n) {
+                continue;
             }
-        } else {
-            for &n in dirty {
-                if let Some(i) = self.idx(n)
-                    && self.core[i].window == Some(window)
-                {
-                    nodes.push((ax(n), self.a11y_node(i)));
+            let old_kids = std::mem::take(&mut self.record[i].a11y_kids);
+            let node = self.a11y_node(i);
+            nodes.push((ax(n), node));
+            known.insert(n);
+            // children that joined the tree come with this node
+            for &c in &self.record[i].a11y_kids {
+                if !known.contains(&c) {
+                    queue.push(c);
+                }
+            }
+            // children that left it take their subtrees out of the known set
+            for c in old_kids.into_iter().filter(|c| !self.record[i].a11y_kids.contains(c)) {
+                let mut stack = vec![c];
+                while let Some(g) = stack.pop() {
+                    // a node moved under a parent sent earlier in this update stays
+                    if !sent.contains(&g) && known.remove(&g) {
+                        stack.extend(self.children(g).iter().copied());
+                    }
                 }
             }
         }
-        let focus = self.focused(window).unwrap_or(root);
-        let ws = self.window_mut(window).expect("window");
-        ws.a11y_removed = false;
-        let known: &HashSet<NodeId> = if full {
-            ws.a11y_sent = sent;
-            &ws.a11y_sent
-        } else {
-            &ws.a11y_sent
-        };
-        let update = TreeUpdate { nodes, tree: full.then(|| TreeInfo::new(ax(root))), tree_id: TreeId::ROOT, focus: ax(focus) };
-        let known: HashSet<AxId> = known.iter().map(|&n| ax(n)).collect();
-        Some(validate(update, ax(root), &known))
+        if nodes.is_empty() {
+            if let Some(w) = self.window_mut(window) {
+                w.a11y_sent = known;
+            }
+            return None;
+        }
+        let focus = self.focused(window).filter(|f| known.contains(f)).unwrap_or(root);
+        if let Some(w) = self.window_mut(window) {
+            w.a11y_sent = known;
+        }
+        let update = TreeUpdate { nodes, tree: first.then(|| TreeInfo::new(ax(root))), tree_id: TreeId::ROOT, focus: ax(focus) };
+        let prev: HashSet<AxId> = if first { HashSet::new() } else { before.iter().map(|&n| ax(n)).collect() };
+        Some(validate(update, ax(root), &prev))
     }
 }
 
@@ -132,8 +178,19 @@ pub fn validate(mut update: TreeUpdate, root: AxId, known: &HashSet<AxId>) -> Tr
             update.tree = Some(TreeInfo::new(root));
         }
     } else {
+        // a new node must hang under a known node the update re-sends
+        let mut reach = HashSet::new();
+        let mut stack: Vec<AxId> = update.nodes.iter().map(|(id, _)| *id).filter(|id| known.contains(id)).collect();
+        while let Some(id) = stack.pop() {
+            if !reach.insert(id) {
+                continue;
+            }
+            if let Some(&k) = by_id.get(&id) {
+                stack.extend(update.nodes[k].1.children().iter().copied());
+            }
+        }
         let before = update.nodes.len();
-        update.nodes.retain(|(id, _)| known.contains(id) || *id == root);
+        update.nodes.retain(|(id, _)| reach.contains(id) || *id == root);
         debug_assert_eq!(before, update.nodes.len(), "a11y: a new node in an incremental update without its parent");
     }
     let present = |id: &AxId| update.nodes.iter().any(|(n, _)| n == id) || known.contains(id);
