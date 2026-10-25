@@ -20,8 +20,13 @@
 //! interact::run(cx, &pass, |icx| self.press.input(&params, icx, &mut fired));
 //! ```
 //!
-//! Disabled hosts: units other than [`Hoverable`] produce no intents (R9: disabled controls stay
-//! hoverable).
+//! Disabled hosts: units other than [`Hoverable`] and [`Tooltipable`] produce no intents (R9:
+//! disabled controls stay hoverable and keep their tooltip).
+//!
+//! The units: [`Hoverable`], [`Focusable`], [`Pressable`], [`Toggleable`], [`Expandable`],
+//! [`Roving`] (focus across a group's members) and [`RovingList`] (a current index inside one
+//! kind), [`Draggable`], [`DragToValue`] (scrub), [`Steppable`], [`Resizable`] (sashes),
+//! [`Dismissable`], [`Typeahead`], [`Anchored`] (Floating UI placement) and [`Tooltipable`].
 //!
 //! Not here: `Scrollable` (lane WIDGETS-VIEWS, with scroll physics), `DragSource`/`DropTarget` (lane
 //! WIDGETS-TIER1).
@@ -31,19 +36,40 @@ mod press;
 mod state;
 mod tracker;
 
+pub mod anchor;
+pub mod dismiss;
+mod drag;
+mod expand;
 mod focus;
 mod hover;
-mod toggle;
+mod resize;
 pub mod roving;
+pub mod roving_list;
+mod scrub;
+mod step;
+mod toggle;
+pub mod tooltip;
+pub mod typeahead;
 
+pub use drag::{Axis, Drag, DragParams, Draggable};
+pub use expand::{Expand, ExpandParams, Expandable};
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
 pub use policy::{ButtonOrder, Kinetic, Native, Platform, Policy, ScrollPolicy, Scrollbars, TrackClick};
 pub use press::{ACCEL_EVERY, ActivateOn, Press, PressParams, Pressable};
-pub use state::StateBits;
-pub use toggle::{Toggle, ToggleParams, Toggleable};
+pub use resize::{Resizable, Resize, ResizeParams};
 pub use roving::{Rove, Roving, RovingParams};
+pub use scrub::{DragToValue, Scale, Scrub, ScrubMode, ScrubParams};
+pub use state::StateBits;
+pub use step::{Arrows, POINTS_PER_STEP, Step, StepParams, Steppable, Wheel};
+pub use toggle::{Toggle, ToggleParams, Toggleable};
 pub use tracker::{ClickOptions, FrameEvent, InputFrame, Mods, Pass, PointerFrame, Sense, Tracker};
+// floating surfaces, groups and tooltips
+pub use anchor::{AnchorParams, Anchored, Placed, Placement};
+pub use dismiss::{Dismiss, DismissParams, Dismissable};
+pub use roving_list::{Move, RovingList, RovingListParams};
+pub use tooltip::{Tip, TooltipParams, Tooltipable};
+pub use typeahead::{Search, Typeahead, TypeaheadParams};
 
 use crate::shim::core::EventCx;
 use presto_base::accesskit;

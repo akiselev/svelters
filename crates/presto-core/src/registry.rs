@@ -178,4 +178,23 @@ impl KindRegistry {
     pub fn is_empty(&self) -> bool {
         self.kinds.is_empty()
     }
+
+    /// What a wire id names: `(kind, member)` (`"*"` for the common members, `"(kind id)"` for a
+    /// kind's own id). svelters-presto decodes ids from the wire with it.
+    pub fn member(&self, id: u32) -> Option<(&'static str, &'static str)> {
+        self.members.get(&id).copied()
+    }
+
+    /// A hash of every id in the registry and what it names, independent of registration order: the
+    /// host compares it with the compiled spec's to detect a stale spec.
+    pub fn spec_hash(&self) -> u32 {
+        let mut rows: Vec<(u32, &str, &str)> = self.members.iter().map(|(&id, &(k, m))| (id, k, m)).collect();
+        rows.sort_unstable();
+        let mut h = crate::ids::fingerprint(&["spec"]);
+        for (id, k, m) in rows {
+            h ^= crate::ids::fingerprint(&[&format!("{id:08x}"), k, m]);
+            h = h.wrapping_mul(0x0100_0193);
+        }
+        h
+    }
 }

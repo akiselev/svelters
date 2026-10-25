@@ -508,3 +508,30 @@ fn atlas_survives_many_frames_and_glyph_churn() {
         assert_eq!(stats.skipped, 0);
     }
 }
+
+#[test]
+fn real_text_through_presto_text() {
+    let Some((device, queue)) = gpu() else { return };
+    use presto_text::{FontConfig, FontRasterizer, FontStore, RichText, TextStyle, TextSystem};
+    let fonts = FontStore::new(FontConfig::testing());
+    let mut renderer = Renderer::new(&device, &queue, FORMAT, Arc::new(FontRasterizer::new(fonts.clone())));
+    let mut text = TextSystem::new(fonts);
+    let layout = text.layout(&RichText::plain("Hag", TextStyle { size: 20.0, ..Default::default() }), None);
+    let mut res = Res::default();
+    let mut prims = Vec::new();
+    for (i, placed) in layout.runs().iter().enumerate() {
+        let id = RunId(i as u64 + 1);
+        res.runs.insert(id, (*placed.run).clone());
+        prims.push(Prim::Glyphs(Glyphs { run: id, origin: Point::new(placed.origin.x + 4.0, placed.origin.y + 8.0), color: Color::BLACK }));
+    }
+    assert!(!prims.is_empty(), "presto-text laid out no runs");
+    let l = list(prims);
+    let items = [DrawItem { transform: Affine::IDENTITY, clip: None, opacity: 1.0, list: &l }];
+    let target = HeadlessTarget::new(&device, SIZE);
+    let scene = FrameScene { target: SIZE, scale: Scale(1.0), clear: Some(Color::WHITE), damage: &[], items: &items, resources: &res };
+    let stats = target.render(&device, &queue, &mut renderer, &scene);
+    assert!(stats.instances >= 3, "{stats:?}");
+    let img = target.read_rgba(&device, &queue).expect("readback");
+    assert!(img.chunks(4).any(|p| p[0] < 64), "no dark pixels: the glyphs did not draw");
+    check("real_text", &img);
+}

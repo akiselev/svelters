@@ -201,6 +201,38 @@ fn easing(t: &svelters_style::TimingFunction) -> Easing {
     }
 }
 
+/// Parses `transform-origin` as fractions of the border box: keywords (`left`, `center`, `top right`)
+/// and percentages; one value sets x (or y for `top`/`bottom`), the other axis stays centred. Lengths
+/// are not supported (the box size is not known here): the origin stays the centre.
+pub(crate) fn parse_origin(src: &str) -> Option<presto_base::geom::Point> {
+    let mut x: Option<f32> = None;
+    let mut y: Option<f32> = None;
+    for tok in src.split_whitespace().take(2) {
+        match tok {
+            "left" => x = Some(0.0),
+            "right" => x = Some(1.0),
+            "top" => y = Some(0.0),
+            "bottom" => y = Some(1.0),
+            "center" => {
+                if x.is_none() {
+                    x = Some(0.5);
+                } else {
+                    y = Some(0.5);
+                }
+            }
+            t => {
+                let f = t.strip_suffix('%')?.parse::<f32>().ok()? / 100.0;
+                if x.is_none() {
+                    x = Some(f);
+                } else {
+                    y = Some(f);
+                }
+            }
+        }
+    }
+    Some(presto_base::geom::Point::new(x.unwrap_or(0.5), y.unwrap_or(0.5)))
+}
+
 /// Parses a CSS transform list (`translate(10px, 0) scale(.9) rotate(45deg)`) into an affine.
 /// Unknown functions make the whole list identity (as an invalid value does in CSS).
 pub(crate) fn parse_transform(src: &str) -> Option<(Affine, Vec<TransformFn>)> {
@@ -388,6 +420,9 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
         && let Some((m, _)) = parse_transform(t)
     {
         b.transform = m;
+    }
+    if let Some(o) = text(c.get("transform-origin")).and_then(parse_origin) {
+        b.transform_origin = o;
     }
     b.overflow_x = overflow(kw(c.get("overflow-x")));
     b.overflow_y = overflow(kw(c.get("overflow-y")));
@@ -719,6 +754,8 @@ impl Document {
         let node = self.slots.id_at(i).expect("live");
         if !first {
             self.start_transitions(window, node, &old_box, &new_box);
+            let old_size = self.layout[i].style.size;
+            self.start_ui_transitions(node, &old_box, &new_box, old_size, tstyle.size);
         }
         let (text, paint, property) = box_diff(&old_box, &new_box);
         let inherited = first || inherited_differs(&old_box, &new_box);
@@ -732,6 +769,9 @@ impl Document {
         }
         if text {
             self.mark_measure(i);
+        }
+        if text || paint {
+            self.fold_up(i);
         }
         if first || paint {
             self.mark(node, Dirty::PAINT | Dirty::A11Y);
@@ -747,6 +787,120 @@ impl Document {
             self.scroll.remove(&node);
         }
         inherited
+    }
+
+    /// Starts (or retargets) the UI-thread transitions of the paint and layout properties a
+    /// `transition` covers: colours re-record, `width`/`height` (both in points) relayout. A restyle
+    /// to the value a running transition already heads for keeps it; a change while one runs starts
+    /// from the value shown now (the old box holds the last sample).
+    fn start_ui_transitions(&mut self, node: NodeId, old: &ComputedBox, new: &ComputedBox, old_size: taffy::Size<taffy::Dimension>, new_size: taffy::Size<taffy::Dimension>) {
+        use crate::anim::{UiProp, UiTransition};
+        let solid = |f: &Fill| match f {
+            Fill::Solid(c) => Some(*c),
+            Fill::Linear { .. } => None,
+        };
+        let mut changes: Vec<(UiProp, AnimValue, AnimValue)> = Vec::new();
+        let mut color = |p: UiProp, a: Color, b: Color| {
+            if a != b {
+                changes.push((p, AnimValue::Color(a), AnimValue::Color(b)));
+            }
+        };
+        color(UiProp::Color, old.color, new.color);
+        if let (Some(a), Some(b)) = (solid(&old.background), solid(&new.background)) {
+            color(UiProp::Background, a, b);
+        }
+        color(UiProp::BorderColor, old.border_color, new.border_color);
+        color(UiProp::OutlineColor, old.outline_color, new.outline_color);
+        for (p, a, b) in [(UiProp::Width, old_size.width, new_size.width), (UiProp::Height, old_size.height, new_size.height)] {
+            if let (Some(a), Some(b)) = (a.into_option(), b.into_option())
+                && a != b
+            {
+                changes.push((p, AnimValue::Length(a), AnimValue::Length(b)));
+            }
+        }
+        for (prop, from, to) in changes {
+            if self.anim.ui_running(node, prop).is_some_and(|t| t.to == to) {
+                continue;
+            }
+            let spec = transition_for(new, prop.css()).or_else(|| (prop == UiProp::Background).then(|| transition_for(new, "background")).flatten());
+            let list = self.anim.ui.entry(node).or_default();
+            list.retain(|t| t.prop != prop);
+            let Some(t) = spec else {
+                if list.is_empty() {
+                    self.anim.ui.remove(&node);
+                }
+                continue;
+            };
+            let timing = Timing {
+                delay: t.delay,
+                end_delay: Span::ZERO,
+                duration: t.duration,
+                iterations: 1.0,
+                iteration_start: 0.0,
+                direction: PlaybackDirection::Normal,
+                fill: FillMode::Backwards,
+                easing: t.easing.clone(),
+            };
+            let generator = Generator::Keyframes {
+                keyframes: vec![Keyframe { offset: 0.0, value: from, easing: None }, Keyframe { offset: 1.0, value: to.clone(), easing: None }],
+                timing,
+            };
+            list.push(UiTransition { prop, generator, start: None, to });
+        }
+    }
+
+    /// Applies the UI-thread transitions of `window`'s nodes at `now` (the frame's presentation
+    /// time): their sampled values replace the computed ones until they end, then `transitionend`
+    /// is queued. Inherited colours reach descendants at their own restyle, not per frame.
+    pub(crate) fn sample_ui_transitions(&mut self, window: WindowId, now: presto_base::time::Time) {
+        use crate::anim::UiProp;
+        if self.anim.ui.is_empty() {
+            return;
+        }
+        let nodes: Vec<NodeId> = self.anim.ui.keys().copied().filter(|&n| self.window_of(n) == Some(window)).collect();
+        for node in nodes {
+            let Some(i) = self.idx(node) else { continue };
+            let list = self.anim.ui.remove(&node).unwrap_or_default();
+            let mut keep = Vec::with_capacity(list.len());
+            let mut ended = Vec::new();
+            for mut t in list {
+                let start = *t.start.get_or_insert(now);
+                let s = presto_anim::sample(&t.generator, start, now);
+                let v = if s.done { t.to.clone() } else { s.value.clone().unwrap_or_else(|| t.to.clone()) };
+                match (t.prop, &v) {
+                    (UiProp::Width | UiProp::Height, AnimValue::Length(l)) => {
+                        let size = &mut self.layout[i].style.size;
+                        let d = if t.prop == UiProp::Width { &mut size.width } else { &mut size.height };
+                        if d.into_option() != Some(*l) {
+                            *d = taffy::Dimension::length(*l);
+                            self.mark_layout(node);
+                        }
+                    }
+                    (p, AnimValue::Color(c)) => {
+                        let b = Arc::make_mut(&mut self.style.nodes[i].computed);
+                        match p {
+                            UiProp::Color => b.color = *c,
+                            UiProp::Background => b.background = Fill::Solid(*c),
+                            UiProp::BorderColor => b.border_color = *c,
+                            _ => b.outline_color = *c,
+                        }
+                        self.mark(node, Dirty::PAINT);
+                    }
+                    _ => {}
+                }
+                if s.done {
+                    ended.push((t.prop, (now - start).as_secs_f64()));
+                } else {
+                    keep.push(t);
+                }
+            }
+            if !keep.is_empty() {
+                self.anim.ui.insert(node, keep);
+            }
+            for (prop, elapsed) in ended {
+                transition_end(self, node, prop.css(), elapsed);
+            }
+        }
     }
 
     /// Starts engine animations for the compositor properties whose change a `transition` covers.
@@ -802,6 +956,13 @@ impl Document {
     }
 }
 
+/// Queues the `transitionend` event of `property` on `node`.
+pub(crate) fn transition_end(doc: &mut Document, node: NodeId, property: &str, elapsed: f64) {
+    let rec: Vec<(Arc<str>, crate::value::Value)> = vec![("propertyName".into(), crate::value::Value::from(property)), ("elapsedTime".into(), crate::value::Value::F64(elapsed))];
+    let e = crate::cx::Emitted { node, signal: crate::common::TRANSITIONEND, arg: Some(crate::value::Value::Record(rec.into())) };
+    crate::input::dispatch::queue_emitted(doc, e);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -814,6 +975,10 @@ mod tests {
         assert_eq!(m.apply(Point::new(1.0, 1.0)), Point::new(12.0, 7.0));
         assert_eq!(parse_transform("none").unwrap().0, Affine::IDENTITY);
         assert!(parse_transform("perspective(10px)").is_none());
+        assert_eq!(parse_origin("left top"), Some(Point::new(0.0, 0.0)));
+        assert_eq!(parse_origin("25% 100%"), Some(Point::new(0.25, 1.0)));
+        assert_eq!(parse_origin("bottom"), Some(Point::new(0.5, 1.0)));
+        assert_eq!(parse_origin("10px 4px"), None);
         let (r, _) = parse_transform("rotate(90deg)").unwrap();
         let p = r.apply(Point::new(1.0, 0.0));
         assert!((p.x).abs() < 1e-5 && (p.y - 1.0).abs() < 1e-5);

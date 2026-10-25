@@ -4,7 +4,7 @@
 #![allow(dead_code)]
 
 use crate::interact::{FocusReason, Policy, StateBits};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, MeasureCx, PropId, RecordCx, Styles, Value};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, MeasureCx, PrepareCx, PropId, RecordCx, Styles, Value};
 use crate::shim::testing::{MemResources, MonoShaper};
 use presto_base::accesskit;
 use presto_base::display::{DisplayList, Prim};
@@ -19,7 +19,7 @@ pub fn record(k: &dyn Kind, size: Size, state: StateBits) -> (DisplayList, MemRe
     let mut list = DisplayList::new();
     let mut res = MemResources::default();
     let mut text = MonoShaper;
-    let mut cx = RecordCx { size, style: Styles { computed: None, parts: &[], state, dark: true }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
+    let mut cx = RecordCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
     k.record(&mut cx);
     (list, res)
 }
@@ -27,10 +27,18 @@ pub fn record(k: &dyn Kind, size: Size, state: StateBits) -> (DisplayList, MemRe
 /// The kind's measured size with no width constraint.
 pub fn measure(k: &dyn Kind, state: StateBits) -> Size {
     let mut text = MonoShaper;
-    let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], state, dark: true }, text: &mut text, scale: 1.0 };
+    let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, text: &mut text, scale: 1.0 };
     let avail = taffy::Size { width: taffy::AvailableSpace::MaxContent, height: taffy::AvailableSpace::MaxContent };
     let s = k.measure(&mut cx, taffy::Size { width: None, height: None }, avail);
     Size::new(s.width, s.height)
+}
+
+/// Runs the kind's `prepare` at `size` in `state` (what presto-core does after layout, before
+/// recording and the events that follow).
+pub fn prepare(k: &mut dyn Kind, size: Size, state: StateBits) {
+    let mut text = MonoShaper;
+    let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, text: &mut text };
+    k.prepare(&mut cx);
 }
 
 /// The kind's AccessKit node.
@@ -240,7 +248,7 @@ pub fn record_css(k: &dyn Kind, size: Size, state: StateBits, css: &svelters_sty
     let mut list = DisplayList::new();
     let mut res = MemResources::default();
     let mut text = MonoShaper;
-    let mut cx = RecordCx { size, style: Styles { computed: Some(css), parts: &[], state, dark: true }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
+    let mut cx = RecordCx { size, style: Styles { computed: Some(css), parts: &[], children: &[], state, dark: true }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
     k.record(&mut cx);
     (list, res)
 }

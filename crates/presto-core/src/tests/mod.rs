@@ -6,9 +6,12 @@ mod change;
 mod commit;
 mod dispatch;
 mod focus;
+mod folds;
+mod ime;
 mod services;
 mod style;
 mod tree;
+mod virtual_rows;
 
 use crate::testkinds::{self, FixedText};
 use crate::{Document, KindId, StyleInput};

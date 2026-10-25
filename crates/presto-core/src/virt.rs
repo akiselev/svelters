@@ -341,6 +341,147 @@ impl RowPool {
     }
 }
 
+// ---- the document's side ----
+
+/// What the document realised for one virtualising node.
+#[derive(Clone, Debug, Default)]
+pub(crate) struct VirtState {
+    pub range: Range<usize>,
+    pub count: usize,
+    pub extent: presto_base::geom::Vec2,
+    /// The bound rows, `(row, node)`.
+    pub rows: Vec<(usize, NodeId)>,
+    /// Realise at the next frame even if nothing above changed.
+    pub dirty: bool,
+    pub realised: bool,
+}
+
+impl Document {
+    /// The virtualising `node`'s model changed (rows inserted, removed or rebound): realise its
+    /// rows again at the next frame.
+    pub fn refresh_virtual(&mut self, node: NodeId) {
+        if let Some(st) = self.virt.get_mut(&node) {
+            st.dirty = true;
+            self.mark(node, crate::tree::Dirty::CHILDREN);
+            if let Some(i) = self.idx(node) {
+                self.invalidate_style(i);
+            }
+        }
+    }
+
+    /// The rows realised for `node` by the last frame, `(row, node)` in row order.
+    pub fn virtual_rows(&self, node: NodeId) -> &[(usize, NodeId)] {
+        self.virt.get(&node).map_or(&[], |s| &s.rows)
+    }
+
+    /// The scroll extent of a virtualising node (its model's, not its children's).
+    pub(crate) fn virtual_extent(&self, node: NodeId) -> Option<presto_base::geom::Vec2> {
+        self.virt.get(&node).filter(|s| s.realised).map(|s| s.extent)
+    }
+
+    /// Node `i`'s visible rect in its content space: the scroll offset and the padding box.
+    fn content_viewport(&self, i: usize, node: NodeId) -> Rect {
+        let l = &self.layout[i].layout;
+        let b = self.style.computed(i).border_widths;
+        let size = self.scroll_viewport(i).unwrap_or(Size::new((l.size.width - b.left - b.right).max(0.0), (l.size.height - b.top - b.bottom).max(0.0)));
+        let o = self.scroll_offset(node);
+        Rect::from_origin_size(Point::new(o.x, o.y), size)
+    }
+
+    /// Realises the rows of `window`'s virtualising nodes whose viewport, row count or extent
+    /// changed, and (re)applies every bound row's placement over its cascaded layout style. True
+    /// when rows were realised (the caller restyles and lays out again).
+    pub(crate) fn drive_virtual(&mut self, window: presto_base::ids::WindowId) -> bool {
+        if self.virt.is_empty() {
+            return false;
+        }
+        let nodes: Vec<NodeId> = self.virt.keys().copied().filter(|&n| self.window_of(n) == Some(window)).collect();
+        let mut realised = false;
+        for node in nodes {
+            let Some(i) = self.idx(node) else { continue };
+            let Some(mut k) = self.kinds[i].take() else { continue };
+            let viewport = self.content_viewport(i, node);
+            let mut rects: Vec<(NodeId, Rect)> = Vec::new();
+            if let Some(vc) = k.virtual_children() {
+                let count = vc.row_count();
+                let extent = vc.content_extent();
+                let v = vc.visible(viewport);
+                let range = v.start.min(count)..v.end.min(count);
+                let st = self.virt.get(&node).cloned().unwrap_or_default();
+                if !st.realised || st.dirty || st.range != range || st.count != count || st.extent != extent {
+                    let rows = {
+                        let mut cx = crate::cx::RealizeCx { doc: self, node };
+                        vc.realize(&mut cx, range.clone())
+                    };
+                    let rows: Vec<(usize, NodeId)> = rows.into_iter().filter(|&(_, n)| self.parent(n) == Some(node)).collect();
+                    for &(_, n) in &st.rows {
+                        if !rows.iter().any(|&(_, m)| m == n) && self.contains(n) {
+                            self.park_row(n);
+                        }
+                    }
+                    for &(_, n) in &rows {
+                        let ci = self.ix(n);
+                        self.core[ci].flags.insert(crate::tree::NodeFlags::ROW);
+                    }
+                    self.virt.insert(node, VirtState { range, count, extent, rows, dirty: false, realised: true });
+                    realised = true;
+                }
+                if let Some(st) = self.virt.get(&node) {
+                    rects = st.rows.iter().filter(|&&(_, n)| self.contains(n)).map(|&(r, n)| (n, vc.row_rect(r))).collect();
+                }
+            }
+            if let Some(i) = self.idx(node) {
+                self.kinds[i] = Some(k);
+            }
+            for (n, r) in rects {
+                self.place_row(n, r);
+            }
+        }
+        realised
+    }
+
+    /// Lays row `n` out absolutely at `r` (content space of its parent).
+    fn place_row(&mut self, n: NodeId, r: Rect) {
+        use taffy::{Dimension, LengthPercentageAuto as Lpa, Position};
+        let i = self.ix(n);
+        let st = &mut self.layout[i].style;
+        let inset = taffy::Rect { left: Lpa::length(r.min.x), top: Lpa::length(r.min.y), right: Lpa::auto(), bottom: Lpa::auto() };
+        let size = taffy::Size { width: Dimension::length(r.width()), height: Dimension::length(r.height()) };
+        let display = if st.display == taffy::Display::None { taffy::Display::Flex } else { st.display };
+        if st.position == Position::Absolute && st.inset == inset && st.size == size && st.display == display {
+            return;
+        }
+        st.position = Position::Absolute;
+        st.inset = inset;
+        st.size = size;
+        st.display = display;
+        self.mark_layout(n);
+    }
+
+    /// A pooled row out of view: not laid out, not drawn, not hit.
+    fn park_row(&mut self, n: NodeId) {
+        let i = self.ix(n);
+        if self.layout[i].style.display != taffy::Display::None {
+            self.layout[i].style.display = taffy::Display::None;
+            self.mark_layout(n);
+        }
+    }
+
+    /// Keeps parked rows hidden over a restyle (their cascaded `display` comes back).
+    pub(crate) fn keep_rows_parked(&mut self, window: presto_base::ids::WindowId) {
+        let parked: Vec<NodeId> = self
+            .virt
+            .iter()
+            .filter(|(n, _)| self.window_of(**n) == Some(window))
+            .flat_map(|(n, st)| self.children(*n).iter().copied().filter(move |c| !st.rows.iter().any(|&(_, r)| r == *c)))
+            .filter(|&c| self.flags(c).is_some_and(|f| f.contains(crate::tree::NodeFlags::ROW)))
+            .collect();
+        for n in parked {
+            self.park_row(n);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
