@@ -18,8 +18,8 @@ It implements `presto_platform::{AppHandler, PlatformCx}` and exposes `Win32Plat
 | `tsf` | `ITextStoreACP` + `ITfContextOwnerCompositionSink` over that field (UTF-16): the lock protocol, TIP edits as `replace`/`replace_and_mark`, the marked range settled to the composition's exact extent after each write lock, unmark on composition end, app-side changes reported through `sync()` (`OnTextChange`/`OnSelectionChange`, checked cheaply), `OnLayoutChange` when the field moves, `GetTextExt` with the caret-area fallback for TIPs that mishandle `TS_E_NOLAYOUT`, input scopes as an `ITfInputScope` attribute, `end_ime_composition` (cancel drops the preedit first) | range resolution, text changes, extents, relative selections, lock protocol, input scopes |
 | `imm` | `WM_IME_REQUEST`: `IMR_RECONVERTSTRING` (ATOK/Mozc reverse conversion), `IMR_DOCUMENTFEED`, `IMR_QUERYCHARPOSITION` | `RECONVERTSTRING` layout, context windows |
 | `dmanip` | port of GPUI's `direct_manipulation.rs` (Apache-2.0: header, `THIRD_PARTY_NOTICES.md`): precision-touchpad pan with inertia (wheel events in pixels with gesture phases) and pinch; updated on each compositor wake and on an 8 ms timer while a gesture or its inertia runs | float comparison |
-| `dcomp` | one DirectComposition device per process; per window a target, root visual, main visual (`SurfaceTarget::CompositionVisual`) and child visuals per OS layer above it in creation order (offset, clip; `set_os_layer_bounds`); `CommitHandle` (Send) for the compositor after wgpu sets content | layer geometry |
-| `frame` | presto-platform's `FrameSource` (`Win32Frames`, returned by `PlatformCx::frame_source` for the compositor's `set_frame_source`; boost and the DXGI waitable through its inherent `set_boost`/`set_waitable`): Windows 11 compositor clock (looked up at run time) with extra handles and boost, the DXGI waitable when given, `DwmFlush`; GPUI's 1 ms early-return rule; interval from `DwmGetCompositionTimingInfo` with the implausible-period fallback | clock results, intervals, timeouts, wake → `FrameWait` |
+| `dcomp` | one DirectComposition device per process; per window a target, root visual, main visual (`SurfaceTarget::CompositionVisual`) and child visuals per OS layer above it in creation order (offset, clip; `set_os_layer_bounds`); `os_layer_committer` wraps `CommitHandle` (Send) for the compositor's `set_os_layer_committer` | layer geometry |
+| `frame` | presto-platform's `FrameSource` (`Win32Frames`, returned by `PlatformCx::frame_source` for the compositor's `set_frame_source`; the window keeps a handle and boosts the compositor clock while a DirectManipulation gesture or its inertia runs; `set_waitable` takes a DXGI waitable if one is ever handed over): Windows 11 compositor clock (looked up at run time) with extra handles and boost, the DXGI waitable when given, `DwmFlush`; GPUI's 1 ms early-return rule; interval from `DwmGetCompositionTimingInfo` with the implausible-period fallback | clock results, intervals, timeouts, wake → `FrameWait` |
 | `drag` | per-window OLE drop target → `FileHovered`/`FileDropped`/`FileHoverCancelled`; an OLE drag source (text, `CF_HDROP`) that is ready but unreachable (the contract has no drag-source call) | `DROPFILES` layout, drag results |
 | `clipboard`, `cursor`, `monitor`, `hit_test`, `util` | `presto_platform::Clipboard` (text, CRLF on write, no primary selection) plus file lists; CSS cursors; monitors with work areas, DPI, refresh; hit regions; QPC and message times on `presto_platform::clock` | each |
 
@@ -33,10 +33,11 @@ all three, failing only in presto-compositor, presto-core and presto-widgets (ot
 
 ## Not done / stubbed (no fake successes)
 
-- **`os_layer_committer`** returns `None`: `OsLayerCommitter`'s field is `pub(crate)` with no public
-  constructor, so a backend crate cannot build one for the compositor's `set_os_layer_committer` (question 3).
-- **Drag source, popup/tooltip windows, fullscreen, pointer capture for tab tear-off**: the contract has no
-  calls for them.
+- **Drag source, popup/tooltip windows, fullscreen, pointer capture for tab tear-off**: not in the contract;
+  consolidation 2 decides (coordinator, 2026-10-25). The OLE drag source in `drag` is ready for it.
+- **The DXGI frame-latency waitable**: it lives in wgpu's swap chain on the compositor side; `FrameSource`
+  stays as it is (coordinator, 2026-10-25), so `Win32Frames` paces by the compositor clock or `DwmFlush` and
+  only uses a waitable passed to `set_waitable`.
 - **IMM32 composition fallback** when TSF fails to start: none (TSF exists on every supported Windows). Stray
   `WM_CHAR`s become `ImeEvent::Commit`.
 - **Legacy mouse messages**: not handled; mouse input relies on `EnableMouseInPointer` (always succeeds on the
@@ -46,25 +47,18 @@ all three, failing only in presto-compositor, presto-core and presto-widgets (ot
   limit.
 - **Pointer prediction**: not here.
 
-## Questions for the coordinator (each with a recommendation)
+## Decided (coordinator, 2026-10-25)
 
-1. **`custom_title_bar` without `DwmExtendFrameIntoClientArea`.** The window keeps its side and bottom frame
-   (so DWM keeps the shadow) and only the caption is removed in `WM_NCCALCSIZE`; extending the DWM frame would
-   draw the old caption buttons into a DComp window. Recommendation: confirm on Windows 10 and 11 hardware
-   (REVISIT) before adding it.
-2. **`ImeEvent::DeleteSurrounding` with a selection**: this backend emits it before `Commit`, meaning "delete
-   these bytes before and after the selection, then commit replaces the selection". Recommendation: state that
-   order in presto-base's doc comment so the editing kinds agree.
-3. **`OsLayerCommitter` needs a public constructor** (`OsLayerCommitter::new(f)`, like `Waker::new`).
-   Recommendation: add it in presto-platform; this crate then returns one wrapping `dcomp::CommitHandle`.
-4. **The DXGI waitable and the boost** are Windows-only knobs on `Win32Frames` (`set_waitable`, `set_boost`),
-   which the compositor reaches only as `Arc<dyn FrameSource>`. Recommendation: the consolidation either adds
-   `FrameSource::set_boost`/an "after configure" hook, or keeps the compositor clock (which needs neither) as
-   the Windows 11 path and leaves the waitable for Windows 10.
+- `OsLayerCommitter::new(f)` added to presto-platform (cross-lane, additive); `os_layer_committer` returns one.
+- `FrameSource` is not widened; Windows-only setup happens when the source is created (boost as above).
+- `ImeEvent::DeleteSurrounding` documents "before `Commit`, counted from the selection's ends" (presto-base,
+  additive doc).
+- `custom_title_bar` skips `DwmExtendFrameIntoClientArea` until the hardware check below.
 
-## Checks that need Windows hardware (REVISIT)
+## Checks that need Windows hardware [local] (REVISIT)
 
-`DCompositionWaitForCompositorClock`'s result encoding (`WAIT_OBJECT_0 + count` = tick, from the docs); the
+`custom_title_bar` without `DwmExtendFrameIntoClientArea` (shadow, border, caption buttons on Windows 10 and
+11, with and without `os_compositing`); `DCompositionWaitForCompositorClock`'s result encoding (`WAIT_OBJECT_0 + count` = tick, from the docs); the
 custom frame's shadow and border on Windows 10 and 11 without `DwmExtendFrameIntoClientArea`; snap layouts
 over the app-drawn maximise button; raw mouse motion and cursor clipping under `set_mouse_capture`; UIA with
 Narrator/NVDA through the subclassing adapter; TSF with MS-IME Japanese, Chinese (Pinyin), Korean, ATOK/Mozc
@@ -73,6 +67,8 @@ smoothness at the 8 ms timer; resize cleanliness from every edge with the compos
 
 ## Cross-lane edits
 
+`crates/presto-platform/src/api.rs`: `OsLayerCommitter::new` (additive, coordinator's decision).
+`crates/presto-base/src/event.rs`: the `DeleteSurrounding` doc comment (additive, coordinator's decision).
 `THIRD_PARTY_NOTICES.md`: a "presto-platform-win32 (Apache-2.0 port)" section for the GPUI file (merged next to
 presto-render's section). `Cargo.lock`: this crate's `windows` 0.62 and `accesskit_windows` 0.35.1 entries
 (versions presto-platform already uses).

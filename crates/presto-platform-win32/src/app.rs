@@ -438,10 +438,14 @@ impl PlatformCx for Cx<'_> {
         }
     }
 
-    /// `None`: `OsLayerCommitter` has no public constructor yet (see the lane record); the
-    /// compositor can use [`crate::dcomp::CommitHandle`] directly once wired.
-    fn os_layer_committer(&self, _id: WindowId) -> Option<OsLayerCommitter> {
-        None
+    /// Commits the DirectComposition device (wgpu sets a visual's content but never commits).
+    fn os_layer_committer(&self, id: WindowId) -> Option<OsLayerCommitter> {
+        let inner = self.app.inner.borrow();
+        inner.windows.get(&id)?.tree.as_ref()?;
+        let handle = self.app.dcomp.as_ref()?.commit_handle();
+        Some(OsLayerCommitter::new(move || {
+            let _ = handle.commit();
+        }))
     }
 
     fn set_cursor(&mut self, id: WindowId, c: CursorIcon) {
@@ -520,9 +524,11 @@ impl PlatformCx for Cx<'_> {
         self.app.inner.borrow().windows.get(&id).map(|w| w.scale)
     }
 
+    /// The window keeps a handle to boost the compositor clock while a touchpad gesture runs.
     fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn FrameSource>> {
-        self.app.hwnd(id)?;
-        Some(Arc::new(Win32Frames::new()))
+        let frames = Arc::new(Win32Frames::new());
+        self.app.inner.borrow_mut().windows.get_mut(&id)?.frames = Some(frames.clone());
+        Some(frames)
     }
 
     fn exit(&mut self) {

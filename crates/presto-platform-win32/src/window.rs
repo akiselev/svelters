@@ -21,6 +21,7 @@ use crate::cursor;
 use crate::dcomp::WindowTree;
 use crate::dmanip::{DirectManipulation, os_modifiers};
 use crate::drag::DropTarget;
+use crate::frame::Win32Frames;
 use crate::hit_test;
 use crate::imm;
 use crate::monitor::{BASE_DPI, dpi_to_scale};
@@ -92,6 +93,8 @@ pub(crate) struct Window {
     pub nc_pressed: Option<HitKind>,
     pub nc_hovering: bool,
     pub dm_timer: bool,
+    /// The frame source handed to the compositor: boosted while a gesture or its inertia runs.
+    pub frames: Option<Arc<Win32Frames>>,
     /// The pointer is locked and hidden, raw motion on.
     pub mouse_captured: bool,
     pub drop_target: Option<windows::Win32::System::Ole::IDropTarget>,
@@ -326,6 +329,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, Platfo
                 nc_pressed: None,
                 nc_hovering: false,
                 dm_timer: false,
+                frames: None,
                 mouse_captured: false,
                 drop_target,
                 a11y,
@@ -801,6 +805,9 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
                 let start = with_window(app, id, |w| !std::mem::replace(&mut w.dm_timer, true))?;
                 if start {
                     unsafe { SetTimer(Some(hwnd), DM_TIMER, DM_TIMER_MS, None) };
+                    if let Some(f) = with_window(app, id, |w| w.frames.clone())? {
+                        f.set_boost(true);
+                    }
                 }
             }
             None
@@ -812,8 +819,14 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
                 app.input(id, app.now(), ev);
             }
             if !dm.active() {
-                with_window(app, id, |w| w.dm_timer = false);
+                let frames = with_window(app, id, |w| {
+                    w.dm_timer = false;
+                    w.frames.clone()
+                })?;
                 let _ = unsafe { KillTimer(Some(hwnd), DM_TIMER) };
+                if let Some(f) = frames {
+                    f.set_boost(false);
+                }
             }
             Some(0)
         }

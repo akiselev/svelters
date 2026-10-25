@@ -192,6 +192,10 @@ impl OsLayerDesc {
 pub struct OsLayerCommitter(pub(crate) Arc<dyn Fn() + Send + Sync>);
 
 impl OsLayerCommitter {
+    pub fn new(f: impl Fn() + Send + Sync + 'static) -> Self {
+        OsLayerCommitter(Arc::new(f))
+    }
+
     pub fn commit(&self) {
         (self.0)()
     }
