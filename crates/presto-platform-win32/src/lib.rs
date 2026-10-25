@@ -21,9 +21,16 @@
 
 #![cfg(target_os = "windows")]
 
+pub mod clipboard;
 pub mod cursor;
+pub mod dcomp;
+pub mod dmanip;
+pub mod frame;
 pub mod hit_test;
+pub mod imm;
 pub mod keyboard;
+pub mod monitor;
 pub mod pointer;
 pub mod shim;
+pub mod tsf;
 pub mod util;
