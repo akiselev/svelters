@@ -1,0 +1,30 @@
+{
+  "source": "plans/research/DESIGN.md §2.6. `default` is VS Code's own metrics (§1.3): the app default. `compact` is a per-panel opt-in for data-heavy tables, `comfortable` is for pen, touch and presentations.",
+  "compact": {
+    "row-h": "20px",
+    "control-h": "22px",
+    "tab-h": "28px",
+    "header-h": "22px",
+    "icon-size": "16px",
+    "button-pad-y": "2px",
+    "button-pad-x": "6px"
+  },
+  "default": {
+    "row-h": "22px",
+    "control-h": "26px",
+    "tab-h": "35px",
+    "header-h": "22px",
+    "icon-size": "16px",
+    "button-pad-y": "4px",
+    "button-pad-x": "8px"
+  },
+  "comfortable": {
+    "row-h": "28px",
+    "control-h": "32px",
+    "tab-h": "40px",
+    "header-h": "28px",
+    "icon-size": "20px",
+    "button-pad-y": "6px",
+    "button-pad-x": "12px"
+  }
+}
