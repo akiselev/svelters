@@ -96,6 +96,11 @@ egui spec (`crates/svelters-compiler/tests/presto.rs`).
 - egui spec `a11y`: `requires_name` (WAI-ARIA name-required roles whose every name source is a
   prop), `name_props` (from `name_from`), `icon_props`.
 
+- The provider-kind fragments the generators write carry the new fields too:
+  `examples/egui-kinds/app/.svelters/app/kinds.json`, `fixtures/gallery-egui/.svelters/app/kinds.json`
+  (regenerated with `SVELTERS_UPDATE=1` on `egui-kinds-example --test kinds` and
+  `svelters-egui --test wg4b`).
+
 ### Codes and docs
 
 - `codes.rs` rows for the six new codes; `docs/site/src/content/docs/guides/diagnostics.md`
