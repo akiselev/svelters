@@ -885,6 +885,34 @@ impl NodeMut<'_> {
 // ---- the one write path ----
 
 impl Scene {
+    /// W-C3 (ABI v2.9 `SVL_CAP_DEDUPE`): whether a JS write of scalar `v` to `prop` of `id` would
+    /// change nothing: JS wrote the prop before (it is explicit, so the CSS engine already leaves it
+    /// alone) and it holds a value equal to `v`. The runtime keeps no last-value cache for typed
+    /// scalar writes on this backend and relies on this check instead.
+    pub(crate) fn js_write_unchanged(&self, id: NodeId, prop: u32, v: svelters_abi::ValueRef<'_>) -> bool {
+        use svelters_abi::{SVL_BOOL, SVL_F64, SVL_I64, SVL_STR};
+        if !matches!(v.tag(), SVL_BOOL | SVL_I64 | SVL_F64 | SVL_STR) {
+            return false;
+        }
+        let Some(i) = self.idx(id) else { return false };
+        let kind = self.core[i].kind as usize;
+        let explicit = member_bit(kind, prop, Member::Prop).is_some_and(|b| b < 64 && self.core[i].explicit & (1 << b) != 0);
+        if !explicit {
+            return false;
+        }
+        let Some(def) = kinds::prop_def(kind, prop) else { return false };
+        let Some(Ok(cur)) = self.get(id.to_raw()).map(|n| props::get_prop(&n, def)) else { return false };
+        match (&cur, v.tag()) {
+            (Value::Bool(a), SVL_BOOL) => v.as_bool() == Some(*a),
+            (Value::I64(a), SVL_I64) => v.as_i64() == Some(*a),
+            (Value::F64(a), SVL_F64) => v.as_f64().is_some_and(|b| b.to_bits() == a.to_bits()),
+            (Value::Str(a), SVL_STR) => v.as_str().is_some_and(|b| b == a.as_str()),
+            _ => false,
+        }
+    }
+}
+
+impl Scene {
     /// Writes prop `prop` of `id` from `origin`: stores it, marks the dirty bits (restyle and
     /// invalidation for layout props, remeasure for content), sets the `explicit` bit for a
     /// runtime's write, and queues `prop_changed` for an observed prop written by Rust (R18).

@@ -115,6 +115,7 @@ fn qt_wakes_coalesce_until_the_checkpoint_runs() {
         release_callback,
         frame,
         prop_changed: None,
+        dispatch_now: None,
     }));
     unsafe { counter_qt::set_host(host) };
     hooks::run_later(50, Box::new(step1));

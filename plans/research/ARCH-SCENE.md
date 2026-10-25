@@ -49,6 +49,10 @@ contradicts a section further down, the item wins. The milestone that implements
   - **R17** (§5.2): one `Ui` phase runs from the end of `logic` to the next `logic`. It covers `App::ui`
     between `show_slot` calls and deferred-viewport closures, not just Walk. In it, `write` returns
     `Err(SceneBusy)` and `defer` works (cadatomic K-1).
+    **Relaxed (W-H1). Decided (user, 2026-10-25: follow the recommendations):** with
+    `EmbedConfig::same_frame_reactions` (default on), a pass whose walk sent widget signals or
+    `bind:` changes to JS is discarded (`request_discard`) and the rerun pass runs `logic` again
+    before its walk, so the reaction is drawn in the frame of the input. Within one pass R17 holds.
   - **R18** (§5.3): a Rust `NodeMut::set` on a bound prop announces `prop_changed` only. It never fires the
     kind's events (input, change, accepted), keeping cadatomic's one-command-path rule.
   - **R19** (§8.2/§10.1): `RowPool::release_unused` must not leave stale ext entries on hidden rows:

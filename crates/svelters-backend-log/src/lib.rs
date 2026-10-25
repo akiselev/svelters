@@ -55,6 +55,15 @@ pub enum Step {
         prop: String,
         value: Option<Value>,
     },
+    /// ABI v2.9 (W-H1): a signal delivered at event time: logs `now #h <signal> <args>`, calls
+    /// `host.dispatch_now` (which drains the jobs it queued), then logs `result #h ok` (`busy`/
+    /// `error` when the host refused).
+    Now {
+        handle: svl_handle,
+        signal: String,
+        args: Vec<Value>,
+        flags: u32,
+    },
     Checkpoint,
 }
 
@@ -101,8 +110,9 @@ pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
 
 fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
     let obj = s.as_object().ok_or("expected an object")?;
-    if let Some(ev) = obj.get("event").or_else(|| obj.get("sync")) {
+    if let Some(ev) = obj.get("event").or_else(|| obj.get("sync")).or_else(|| obj.get("now")) {
         let is_sync = obj.contains_key("sync");
+        let is_now = obj.contains_key("now");
         let ev = ev
             .as_array()
             .ok_or("event: expected [handle, signal, args]")?;
@@ -128,6 +138,9 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
             None => 0,
             Some(w) => flags_from_word(w.as_str().ok_or("event: flags must be a string")?)?,
         };
+        if is_now {
+            return Ok(Step::Now { handle, signal, args, flags });
+        }
         if is_sync {
             return Ok(Step::Sync {
                 handle,
@@ -157,7 +170,7 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
     } else if obj.contains_key("checkpoint") {
         Ok(Step::Checkpoint)
     } else {
-        Err("unknown step (expected `event`, `sync`, `gone`, `changed` or `checkpoint`)".into())
+        Err("unknown step (expected `event`, `sync`, `now`, `gone`, `changed` or `checkpoint`)".into())
     }
 }
 
@@ -920,6 +933,17 @@ impl Backend for LogBackend {
                         Err(e) if e.code == svelters_abi::SVL_SYNC_BUSY => {
                             self.append(format_args!("result #{handle} busy"))
                         }
+                        Err(_) => self.append(format_args!("result #{handle} error")),
+                    }
+                }
+                Step::Now { handle, signal, args, flags } => {
+                    let kind = self.check_live(handle)?;
+                    let sig = self.shared.lock().names.intern(NameKind::Signal as u32, kind, &signal);
+                    let list = Value::List(args.clone());
+                    self.append(format_args!("now #{handle} {signal} {}{}", json_string(&list), flags_suffix(flags)));
+                    match host.dispatch_now(handle, sig | (flags << svelters_abi::SVL_SIGNAL_FLAGS_SHIFT), &args) {
+                        Ok(()) => self.append(format_args!("result #{handle} ok")),
+                        Err(e) if e.code == svelters_abi::SVL_SYNC_BUSY => self.append(format_args!("result #{handle} busy")),
                         Err(_) => self.append(format_args!("result #{handle} error")),
                     }
                 }
