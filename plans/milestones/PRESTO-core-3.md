@@ -71,6 +71,11 @@ In-app drag and drop (`input/dnd.rs`, svelters WG4b semantics): a primary press 
 `drag-end`), Escape or a pointer cancel ends it undropped. Actions from the modifiers as Qt (copy: Ctrl,
 Option on macOS; link: Ctrl+Shift, Cmd+Option). Cursor `grabbing`/`no-drop` during the drag.
 
+`Document::start_drag(window, pointer, source, ty, data) -> bool` (EGUI-ISLAND Q5): starts an in-app drag
+for a pointer already held (a drag begun inside an egui island becomes a presto drag); the target under the
+pointer's last position is entered at once, events queued (`take_events`). Test
+`hooks::a_drag_started_from_outside_the_tree_drops_like_any_other`.
+
 Not done here: OS file drops onto targets (`text/uri-list`; `InputEvent::FileHovered/FileDropped` still
 dispatch nothing), auto-scroll near a scroll container's edge during a drag, the drag ghost
 (`::part(ghost)`: a widget's), the `grab` cursor over an idle source.
