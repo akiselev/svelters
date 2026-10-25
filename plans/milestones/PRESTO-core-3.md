@@ -71,6 +71,49 @@ Not done here: OS file drops onto targets (`text/uri-list`; `InputEvent::FileHov
 dispatch nothing), auto-scroll near a scroll container's edge during a drag, the drag ghost
 (`::part(ghost)`: a widget's), the `grab` cursor over an idle source.
 
+## Requests of APP-TEST, TEXT-INPUT (R4) and QUIRE (coordinator's priority order, 2026-10-25)
+
+### APP-TEST 1–5 (`runner.rs`)
+
+1. `Document::needs_frame(window)`: queued style/layout/record/property work, rebuild or removals,
+   running UI transitions, a cursor or resources to send. Pointer-only state changes (`:hover`,
+   `:active`, `:focus-within`) no longer dirty the accessibility tree, so a hover that no rule styles
+   leaves it false.
+2. `Document::hover(window, pos) -> bool`: event-time hover (`:hover`, kinds' enter/leave, queued
+   `pointerenter`/`pointerleave`), for the moves whose JS `pointermove` is coalesced to the frame.
+3. `Document::accessibility_action(window, &ActionRequest) -> bool` (over `a11y_action`; JS events queued).
+   Id mapping, documented in `runner.rs`: an AccessKit id is the presto `NodeId`'s `u64`.
+4. `animation_event` (existed); `window_event(window, &WindowEvent)` (resize/scale in device pixels →
+   points, `Focused(false)` → `:backdrop` on the root, `ThemeChanged` → `prefers-color-scheme`);
+   `device_reset()` (every window re-sends property trees, layers, lists and runs; the document keeps
+   the live images and paths and re-sends them); `a11y_full_tree(window)`.
+5. IME purpose: **focus-driven**, no presto-base change: `Document::ime_state(window) -> Option<(Rect,
+   InputPurpose)>` from the focused text kind (`TextInputClient::purpose`); `Commit::ime_area` still
+   says when the area moved. The runner calls `ime_state` after a frame or a focus change.
+
+### TEXT-INPUT R4
+
+| Ask | Answer |
+|---|---|
+| text system in `PrepareCx`/`EventCx` | Through services, already in both: `cx.service::<presto_text::TextSystem>()` (presto-core does not depend on presto-text). |
+| clipboard in `EventCx` | The same: the runner installs `Box<dyn presto_platform::Clipboard>` as a service (`Document::set_service`), kinds take `cx.service::<Box<dyn Clipboard>>()`. |
+| fast-commit channel | `EventCx::set_caret(Option<Rect>)` (local → window, `FastCommit::Caret`), `EventCx::scroll_fast(offset)`, `Document::scroll_fast`, and `Document::take_fast_commits()` for the runner (`CompositorHandle::fast`). One design with QUIRE's below. |
+| event time | `EventCx::time()` (the event's OS time; a timer's deadline). Not duplicated into `Event`. |
+| padding edges, window transform | `NodeView::{padding, content_box, window_transform, from_window}`. |
+| IME-first route | `Document::set_ime_source(window, active)`: during a composition every key goes to the IME, and with an IME source active printable keys without a chord do, before the command keymap (`Dispatched::to_ime`), as `keys::route`. |
+| GTK's one selection owner | Not done (not in the coordinator's list); a `Kind` hook "selection lost" is the shape when asked. |
+
+### QUIRE: kind-owned scrolling
+
+`Kind::self_scroll(&NodeView) -> Option<SelfScroll { content, x, y }>` (asked after each `prepare`): the
+node gets a scroll node, a content space and a scroll layer whatever its `overflow`, its own list is
+recorded in content space and placed in that layer, and `EventCx::scroll_fast` moves it on the compositor
+at once (the next commit carries the same offset as a property op; no re-record). Wheel defaults work on
+it like any scroll container. Pointer positions stay in the border box (add `scroll_offset`). Recording
+now runs before the property refresh in the dirty walk, so the scroll node exists from the first frame.
+Not done: a kind creating several layers of its own (gutter, minimap); the shape would be child nodes
+with `will-change` today.
+
 ## 4. The rest of CORE-2's list
 
 | Item | State |
@@ -90,7 +133,8 @@ Also: `NameSource::Children` now computes the name from the descendants' text (C
 Written, not run (the brief's rule): `src/tests/hooks.rs` (parts, listened, prop state, scale, chrome,
 child layout, inert, peers and Tab stop and roving, Enter/Escape and auto-default, label for and
 `labelled_by`, `invalid`, enum attributes, status tip, `emit_sync` and a prevented `pointerdown` through
-the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/query.rs`; in `src/tests/a11y.rs` a move re-sending only
+the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/runner.rs`; in `hooks.rs` the lent deliverer, self-scroll
+with fast scroll and caret, padding and window transform; in `dispatch.rs` the IME-source route; `src/tests/query.rs`; in `src/tests/a11y.rs` a move re-sending only
 the moved node (local bounds, parent-relative transform), an inserted subtree joining incrementally, and a
 name from children.
 

@@ -162,6 +162,24 @@ impl<'a> NodeView<'a> {
     pub fn scale(&self) -> f32 {
         self.window.and_then(|w| self.doc.window(w)).map_or(1.0, |w| w.scale.0)
     }
+    /// The padding widths from the last layout (points).
+    pub fn padding(&self) -> presto_base::geom::Insets {
+        let Some(i) = self.doc.idx(self.id) else { return presto_base::geom::Insets::ZERO };
+        let p = self.doc.layout[i].layout.padding;
+        presto_base::geom::Insets { top: p.top, right: p.right, bottom: p.bottom, left: p.left }
+    }
+    /// The content box in local coordinates (inside the borders and the padding).
+    pub fn content_box(&self) -> Rect {
+        self.padding_box().inset(self.padding())
+    }
+    /// The border box's window transform from the last rebuild (local → window points).
+    pub fn window_transform(&self) -> presto_base::geom::Affine {
+        self.doc.idx(self.id).map_or(presto_base::geom::Affine::IDENTITY, |i| self.doc.record[i].world_tf)
+    }
+    /// A window point in the node's local space (the inverse of [`NodeView::window_transform`]).
+    pub fn from_window(&self, p: Point) -> Point {
+        self.window_transform().inverse().map_or(p, |t| t.apply(p))
+    }
     /// The common `anchor` prop (`""` when unset).
     pub fn anchor(&self) -> &'a str {
         self.prop_str(common::ANCHOR).unwrap_or("")
@@ -550,6 +568,20 @@ impl EventCx<'_> {
                 crate::kind::Outcome::default()
             }
         }
+    }
+    /// Scrolls the node (a scroll container, or a kind with [`Kind::self_scroll`](crate::Kind::self_scroll))
+    /// to `offset` and sends the offset to the compositor at once, without waiting for a frame.
+    pub fn scroll_fast(&mut self, offset: presto_base::geom::Vec2) {
+        let n = self.node;
+        self.doc.scroll_fast(n, offset);
+    }
+    /// Shows the caret at `rect` (local coordinates; `None` hides it) through a fast commit: the
+    /// compositor draws and blinks it, so a caret move costs no frame.
+    pub fn set_caret(&mut self, rect: Option<Rect>) {
+        let Some(window) = self.doc.window_of(self.node) else { return };
+        let rect = rect.map(|r| self.doc.view(self.node).map_or(r, |v| v.window_transform().apply_rect(&r)));
+        let revision = self.doc.revision;
+        self.doc.fast.push(presto_base::commit::FastCommit::Caret { window, rect, revision });
     }
     /// Asks the document to deliver `msg` to the members of the node's peer group that `to` picks
     /// ([`Kind::peer`](crate::Kind::peer)), after this event, in order.
