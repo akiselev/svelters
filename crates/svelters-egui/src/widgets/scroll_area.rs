@@ -405,6 +405,10 @@ impl Widget for ScrollArea {
         self.seen = Some((nx, ny));
         if o != off {
             ui.ctx().request_repaint();
+            // latency experiment: the children were drawn at the old offset; redraw this frame
+            if crate::frame::exp_discard() {
+                ui.ctx().request_discard("svelters: scroll offset moved after the children drew");
+            }
         }
         if let Some(t) = self.scroll.next_frame() {
             ui.ctx().request_repaint_after(t);

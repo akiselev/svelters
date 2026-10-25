@@ -29,7 +29,26 @@ use std::sync::atomic::Ordering;
 use std::time::Instant;
 use svelters_abi::*;
 
+/// Latency experiment: `SVELTERS_EXP_DISCARD` set (read once). Input that reached JS during a pass
+/// discards that pass, and the rerun runs logic first, so the reaction is drawn in the same frame.
+pub(crate) fn exp_discard() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var_os("SVELTERS_EXP_DISCARD").is_some())
+}
+
+/// Latency experiment: `SVELTERS_EXP_INSTANT_WHEEL` set (read once). Mouse-wheel line steps reach
+/// egui as touch-phase point deltas, which egui applies at once instead of easing them in.
+pub(crate) fn exp_instant_wheel() -> bool {
+    static ON: std::sync::OnceLock<bool> = std::sync::OnceLock::new();
+    *ON.get_or_init(|| std::env::var_os("SVELTERS_EXP_INSTANT_WHEEL").is_some())
+}
+
 impl EguiBackend {
+    /// Work the next logic would do: queued events or changes, a wake, an animation frame.
+    pub(crate) fn logic_pending(&self) -> bool {
+        self.0.checkpoint_pending.get() || self.0.frame_pending.get() || self.0.shared.wake.load(Ordering::Acquire)
+    }
+
     /// A host op changed scene root `r` (EM2, ARCH-EMBED §5.5). During a frame the root is recorded
     /// and `route_repaints` asks for its viewport after logic; outside one, its viewport is asked
     /// now. A hidden slot's root asks for nothing (it is not drawn); a detached node neither.
@@ -421,6 +440,9 @@ impl EguiBackend {
                 }
             }
             self.0.checkpoint_pending.set(true);
+            if exp_discard() {
+                ctx.request_discard("svelters: input reached JS");
+            }
         }
         // EM2: pending JS work asks for a pass of the viewport that runs logic next (`logic_vp`:
         // the root viewport, or this deferred viewport with the begin-pass plugin), never the

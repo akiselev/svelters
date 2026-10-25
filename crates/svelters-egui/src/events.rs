@@ -596,12 +596,37 @@ impl egui::Plugin for EventsPlugin {
         for b in backends(ctx) {
             b.dispatch_input(ctx, input);
         }
+        if crate::frame::exp_instant_wheel() {
+            instant_wheel(ctx, input);
+        }
     }
 
     fn on_end_pass(&mut self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
         for b in backends(&ctx) {
             b.track_focus(&ctx);
+        }
+    }
+}
+
+/// Latency experiment (`SVELTERS_EXP_INSTANT_WHEEL`): egui eases a mouse wheel's line steps in over
+/// about 100 ms (`WheelState::after_events`) but applies touch-phase deltas at once. Each line or
+/// page step becomes a `Start` and a point `Move`, so every scrollable (egui's and ours) moves in
+/// the frame that got the notch.
+fn instant_wheel(ctx: &Context, input: &mut RawInput) {
+    use egui::{MouseWheelSource, MouseWheelUnit, TouchPhase};
+    let speed = ctx.options(|o| o.input_options.line_scroll_speed);
+    let page = input.screen_rect.map_or(0.0, |r| r.height());
+    let events = std::mem::take(&mut input.events);
+    for e in events {
+        match e {
+            Event::MouseWheel { unit, delta, phase: TouchPhase::Move, source: MouseWheelSource::Wheel, modifiers } if unit != MouseWheelUnit::Point => {
+                let d = if unit == MouseWheelUnit::Line { delta * speed } else { delta * page };
+                let wheel = |phase, delta| Event::MouseWheel { unit: MouseWheelUnit::Point, delta, phase, source: MouseWheelSource::Wheel, modifiers };
+                input.events.push(wheel(TouchPhase::Start, Vec2::ZERO));
+                input.events.push(wheel(TouchPhase::Move, d));
+            }
+            e => input.events.push(e),
         }
     }
 }

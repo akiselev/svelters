@@ -832,7 +832,9 @@ impl Embed {
     pub fn logic(&self, ctx: &egui::Context) {
         let b = &self.inner.backend;
         // R17: this frame's logic ran (or runs only in the first pass): the rest of the pass is `Ui`.
-        if ctx.current_pass_index() != 0 {
+        // Latency experiment: a pass rerun after a discard (`SVELTERS_EXP_DISCARD`) runs the logic the
+        // first pass's input left pending, so the reaction is drawn in the same frame.
+        if ctx.current_pass_index() != 0 && !(crate::frame::exp_discard() && b.logic_pending()) {
             b.0.scene.set_phase(Phase::Ui);
             return;
         }
