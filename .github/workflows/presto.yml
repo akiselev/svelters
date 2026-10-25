@@ -46,6 +46,9 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           shared-key: presto-${{ matrix.os }}
+      # presto-test's automation tests load fixtures/counter-egui from source, which resolves `svelte`
+      # through packages/native-runtime's aliases: they need the pnpm workspace installed.
+      - uses: ./.github/actions/setup-pnpm
       - name: Which presto crates exist
         id: crates
         shell: bash
