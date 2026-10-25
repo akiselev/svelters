@@ -47,7 +47,9 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   sampled with `presto_anim::sample` at the frame target, `Started`/`Finished`/`Aborted` events, fill
   forwards holds, pause/resume, retarget (springs through `presto_anim::retarget`). Flings own their
   scroll node and report `ToUi::ScrollMoved` per frame; a scroll fast commit stops them. Caret from
-  `FastCommit::Caret`, blinking at `caret_blink`. `ToUi::Presented` carries the input seqs applied in
+  `FastCommit::Caret`, blinking per window by `CaretBlink { cycle, timeout }` (on for the first half of
+  each cycle from the last caret change, steady after the timeout; defaults GTK 1200 ms/10 s, Qt 1000 ms,
+  Windows and macOS 1060 ms; `set_caret_blink`; TEXT-INPUT R3, decided as Q2). `ToUi::Presented` carries the input seqs applied in
   that frame. Resize handshake: reconfigure, draw every arrived commit, present, `ResizeDone`.
 
 ## Seams (stubbed until other lanes land)
@@ -80,7 +82,7 @@ commit folding, smooth scroll with retarget, fast-commit revision rejection, fli
 by a scroll, idle does not wake, BeginFrame back-pressure, opacity animation with fill forwards,
 UI-thread animations aborted here, resize handshake, hidden windows, occlusion from a platform
 frame source), `tests/tree_damage.rs`
-(paint order, folding, scroll and clip resolution, OS-layer surfaces, texture layers, damage diff,
+(`tests/caret.rs`: the blink rule; paint order, folding, scroll and clip resolution, OS-layer surfaces, texture layers, damage diff,
 device rects, buffer-age history), `tests/headless.rs` (GPU-gated: a one-quad scene through presto-render into an offscreen target, GPU
 completion, readback; skips without an adapter).
 
