@@ -83,6 +83,14 @@ bits! {
         const DESC_NONPASSIVE = 1 << 7;
         /// Its kind folds its children into its own content ([`KindSpec::folds_children`](crate::KindSpec::folds_children)).
         const FOLDS = 1 << 8;
+        /// Its parent's [`Kind::child_layout`](crate::Kind::child_layout) does not show it: laid out,
+        /// but not painted, hit or in the accessibility tree.
+        const CONCEALED = 1 << 9;
+        /// An ancestor's kind makes its descendants inert ([`Kind::children_inert`](crate::Kind::children_inert)):
+        /// `:disabled`, no input.
+        const INERT = 1 << 10;
+        /// Its kind makes its descendants inert.
+        const INERT_CHILDREN = 1 << 11;
         /// Has a kind with virtual children (rows bound on demand).
         const VIRTUAL = 1 << 5;
         /// A virtual row realised by its host (not a light child JS created).

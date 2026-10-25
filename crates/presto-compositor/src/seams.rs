@@ -76,6 +76,10 @@ pub use presto_frame::{Action, Signal};
 pub trait FramePacer: Send {
     fn on_signal(&mut self, now: Time, sig: Signal) -> SmallVec<[Action; 4]>;
     fn next_wakeup(&self) -> Option<Time>;
+    /// The snapshot the UI thread reads for urgent frames; `None` for a clock that has none.
+    fn frame_args(&self) -> Option<presto_frame::FrameArgs> {
+        None
+    }
 }
 
 impl FramePacer for presto_frame::FrameClock {
@@ -84,6 +88,9 @@ impl FramePacer for presto_frame::FrameClock {
     }
     fn next_wakeup(&self) -> Option<Time> {
         presto_frame::FrameClock::next_wakeup(self)
+    }
+    fn frame_args(&self) -> Option<presto_frame::FrameArgs> {
+        Some(presto_frame::FrameClock::frame_args(self))
     }
 }
 
