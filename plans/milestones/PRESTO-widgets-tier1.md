@@ -5,12 +5,14 @@ Lane WIDGETS-TIER1 of presto batch 2 (`plans/cloud/presto-b2/LANE-widgets-tier1.
 
 ## State
 
-presto-core and presto-text had no API skeleton on `ci/presto-base` when this lane ran (both `lib.rs`
-were doc lines only), so every tier-1 widget is written as **toolkit-independent native state, geometry,
-input state machines and recording** over presto-base types, plus a small local shim
-(`crates/presto-widgets/src/table/shim.rs`). The `presto_core::Kind` impls (KindSpec statics, `record`,
-`event`, `a11y` glue) are **not written**: they are thin wrappers once `presto_core::Kind` exists, and the
-consolidation (or a follow-up of this lane) adds them. Nothing here returns a fake success.
+presto-core and presto-text had no API skeleton on `ci/presto-base` when this lane started, so every
+tier-1 widget is written as **toolkit-independent native state, geometry, input state machines and
+recording** over presto-base types, plus a small local shim (`crates/presto-widgets/src/table/shim.rs`).
+presto-core's skeleton landed mid-lane (merged at `d6725daa`): `table/core_text.rs` bridges the shim's
+`TextPainter` to it (shape in `prepare`, draw cached runs in `record`), and `pickers/kinds.rs` has the
+`KindSpec`s of the four picker kinds and the `Kind` impls of the leaf kinds `calendar` and `color-editor`.
+The container and popup kinds (`table`, `tab-view`, `date-picker`, `color-picker`) have no `Kind` impl
+yet: see "presto-core gaps". Nothing here returns a fake success.
 
 ## What landed
 
@@ -31,7 +33,24 @@ consolidation (or a follow-up of this lane) adds them. Nothing here returns a fa
   `dialogs`.
 - `zoom/`: zoom levels (1.2 steps), `Zoom` state (clamp, effective scale), shortcut detection per
   platform modifier, `ZoomKeys` (host or presto).
-- `table/`, `pickers/`: see their sections below (written by forks of this session).
+- `table/` (svelters-egui `views/table.rs`, OW5b): `Table` with `TableState` (props by spec name with
+  change classes, the `set-rows` JS row window, `set-ids`, `range(first,last)` with overscan, sort,
+  `header-state` JSON via serde_json), `ColumnState`, `Geom` (frozen header, sticky columns, stretch-last,
+  visible rows/columns, hit tests, reveal offsets), `ColumnResize` (drag with min/max clamp, Escape
+  cancel, double-click fit), KeySelect selection keyed by row id, keyboard navigation, type-ahead,
+  `copy(ids)`, `activated`, header click sort, `header-context`, recording. Left out: the cell editor
+  (needs TEXT-INPUT's field), the column menu popup, the Rust `RowModel` and tree rows
+  (`svelters_host::rows` is not a dependency), scroll bars (views' scroll layer), AccessKit, error tooltips.
+  Double-click time and drag threshold are local (`TableMetrics`) until WIDGETS-BASIC's Pressable lands.
+- `pickers/`: hand-written civil date math (ISO weeks, month arithmetic, `strftime` subset), `calendar`
+  (6×7 grid, first day, min/max, keys across months, `changed`/`commit`/`page-changed`), colour models
+  (HSV/HSL/RGB, hex with alpha), `color-editor` (SV square as two gradient quads, hue and alpha strips,
+  channel scrubbing, swatches and custom colours), the drop button and popup state (`popup.rs`),
+  `date-picker` (confirm/immediate) and `color-picker` (live/confirm) models, `spec.rs` rows. Left out:
+  hex field typing (TEXT-INPUT), popup placement (views). Deviations: the popup footer follows the OS
+  button order (`dialogs::ButtonOrder`); `changed` is not cancelable (no `prevented()` yet); today is UTC
+  (`Date::today_utc`); `first-day="auto"` is Monday; `custom-colors-changed` is a new signal name for the
+  custom colours write-back (rename to svelters-presto's bind write-back convention).
 
 ## Shim (replaced at consolidation) — `crates/presto-widgets/src/table/shim.rs`
 
@@ -48,12 +67,27 @@ consolidation (or a follow-up of this lane) adds them. Nothing here returns a fa
 WIDGETS-BASIC has a crate-level `shim` with `core::{Kind, KindSpec, Value, …}` and `text::TextShaper` on
 its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds into it.
 
+## presto-core gaps (for lane CORE / the consolidation)
+
+1. **Children's props in `prepare`/`record`/`measure`.** `NodeView::children` gives ids only; `tab-view`
+   needs its `tab` children's `title`/`closable`, `table` its `table-column` children's props. Ask: a
+   `NodeView` for a child (`PrepareCx::child(i)` or `view(node)` as `EventCx` has).
+2. **Styled text.** `PrepareCx::shape_text` shapes in the node's computed font only; tier-1 parts need
+   another weight (header cells) or size. Ask: `shape_spec(&TextSpec, max_width)`. Colour already works
+   (`draw_run`).
+3. **Parent-placed children.** `tab-view` lays out only the selected page and hides the others; core's
+   layout is not written yet. Ask: a hook for a container kind to place or hide its children.
+4. **Popups.** `date-picker`/`color-picker` popups need an overlay layer anchored to the node
+   (architecture §14; views lane's placement).
+5. **DnD.** The DnD props belong on presto-core's common props, and dispatch must feed `dnd::DragSession`
+   (hit-test candidates deepest first, pointer capture by the source, Escape cancel, OS file events).
+
 ## Cross-lane edits
 
 - `crates/presto-widgets/src/lib.rs` (WIDGETS-BASIC's): one line `pub mod zoom;` and the doc line naming
   it. The lane file assigns `zoom.rs` to this lane but no module group held it.
-- `crates/presto-widgets/Cargo.toml`: optional `rfd` dependency and feature `dialogs` (`Cargo.lock` gains
-  `rfd` under presto-widgets; rfd 0.17.2 was already locked for svelters-egui).
+- `crates/presto-widgets/Cargo.toml`: optional `rfd` dependency and feature `dialogs`, and `serde_json`
+  (table `header-state`); `Cargo.lock` gains both under presto-widgets (already locked for other crates).
 
 ## Questions for the coordinator (with recommendations)
 
@@ -64,14 +98,14 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
 2. **dialog-buttons.** WIDGETS-VIEWS' list has the `dialog-buttons` kind; this lane has "dialog button
    order per OS". Recommendation: as done: the order logic lives in `dialogs/` and the views kind calls
    `order_buttons`.
-3. **Kind glue.** Recommendation: once presto-core's `Kind` is in `ci/presto-base`, this lane (fresh
-   session) adds KindSpec statics and `Kind` impls for table, table-column, tab-view, tab, date-picker,
-   color-picker, calendar, color-editor; DnD props go on presto-core's common node props.
+3. **Remaining Kind glue.** Recommendation: once the core gaps above are closed, a fresh session adds
+   the `Kind` impls of table, table-column, tab-view, tab, date-picker and color-picker (the models are
+   done; the glue follows `pickers/kinds.rs`).
 4. **rfd default.** svelters-egui had `dialogs` on by default; here it is off (fewer CI dependencies).
    Recommendation: the presto app crate (`presto` facade or svelters-presto) turns `presto-widgets/dialogs`
    on.
 
 ## Not run
 
-Per the batch rule nothing was run beyond `cargo check -p presto-widgets` (and `--tests`, in a scratch
-copy of the crate while the forks' files were incomplete). No test was run; GitHub CI runs them.
+Per the batch rule nothing was run beyond `cargo check`/`cargo clippy -p presto-widgets --all-targets`
+(warning-free). No test was run; GitHub CI runs them.
