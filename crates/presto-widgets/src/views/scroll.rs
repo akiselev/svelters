@@ -1185,7 +1185,6 @@ impl Kind for ScrollArea {
 /// The scroll bar's props (their own module: each `kind_props!` names its index enum `P`).
 pub mod scrollbar_props {
     use crate::kind_props;
-    use crate::shim::core::Value;
 
     kind_props! {
         /// The scroll bar's props.
@@ -1392,7 +1391,13 @@ impl Kind for Scrollbar {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::super::split::Probe;
+    use crate::interact::Native;
     use presto_base::event::{Modifiers, PointerEvent, PointerType, ScrollDelta};
+
+    fn pol(os: Platform) -> Policy {
+        *Native::for_os(os).policy()
+    }
 
     fn sc(content: Size, view: Size) -> Scroller {
         let mut s = Scroller::default();
@@ -1449,7 +1454,7 @@ mod tests {
 
     #[test]
     fn thumb_drag_and_track_page() {
-        let pol = Policy::for_os(Os::Windows);
+        let pol = pol(Platform::Windows);
         let mut s = sc(Size::new(100.0, 1000.0), Size::new(100.0, 100.0));
         s.layout_bars(Rect::new(0.0, 0.0, 100.0, 100.0), 10.0, 20.0, [false, true]);
         // the thumb is 20 tall at 0..20: grab it at 10 and drag to 50 (thumb start 40 of 80)
@@ -1486,7 +1491,7 @@ mod tests {
 
     #[test]
     fn overlay_bars_hold_then_fade() {
-        let pol = Policy::for_os(Os::Linux);
+        let pol = pol(Platform::Linux);
         let mut s = sc(Size::new(100.0, 500.0), Size::new(100.0, 100.0));
         s.touch(ms(10_000));
         assert_eq!(s.bar_alpha(ms(10_200), &pol), 1.0);
@@ -1549,85 +1554,100 @@ mod tests {
         assert_eq!(l.route(ms(16), &wheel(Some(GesturePhase::Moved), None, -10.0), down, &only_outer), None);
     }
 
+    /// A probe at `t` ms.
+    fn probe(p: Policy, t: u64) -> Probe {
+        let mut pr = Probe::new(p, Size::new(100.0, 100.0));
+        pr.now = ms(t);
+        pr
+    }
+
     #[test]
     fn steps_fast_commit_only_while_passive() {
-        let pol = Policy::for_os(Os::MacOs);
         let mut a = area(1000.0, 100.0);
         a.bind(WindowId(3), PropNodeId(7));
         a.set_frame_ids(Revision(5), InputSeq(42));
-        let mut cx = EventCx::new(ms(0), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Wheel(wheel(None, None, -30.0)));
+        fast::take();
+        let mut t = probe(pol(Platform::Macos), 0);
+        t.send(&mut a, Event::Wheel(wheel(None, None, -30.0)));
         assert_eq!(a.scroller.offset().y, 30.0);
         assert_eq!(
-            cx.fast,
+            fast::take(),
             vec![FastCommit::ScrollOffset { window: WindowId(3), node: PropNodeId(7), offset: Vec2::new(0.0, 30.0), revision: Revision(5), input_seq: InputSeq(42) }]
         );
-        assert_eq!(cx.emitted("scroll").count(), 1);
-        assert_eq!(cx.changed, Some(ChangeClass::Property));
+        assert_eq!(t.count("scroll"), 1);
+        assert_eq!(t.last("scroll"), Some(vec![Value::F64(0.0), Value::F64(30.0), Value::str("wheel"), Value::I64(1)]));
+        assert_eq!(t.changed, ["scroll-y"], "the offset is a native change `bind:scroll-y` observes");
+        assert_eq!(a.get_prop(P::scroll_y.id()), Some(Value::F64(30.0)));
         // a non-passive listener: the step waits for the commit
-        a.set_prop("passive", &Value::Bool(false)).unwrap();
-        let mut cx = EventCx::new(ms(10), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Wheel(wheel(None, None, -30.0)));
+        a.set_prop(P::passive.id(), &Value::Bool(false)).unwrap();
+        t.now = ms(10);
+        t.send(&mut a, Event::Wheel(wheel(None, None, -30.0)));
         assert_eq!(a.scroller.offset().y, 60.0);
-        assert!(cx.fast.is_empty());
-        assert_eq!(cx.emitted("scroll").count(), 1);
+        assert!(fast::take().is_empty());
+        assert_eq!(t.count("scroll"), 2);
     }
 
     #[test]
     fn a_stale_js_write_is_refused() {
-        let pol = Policy::for_os(Os::MacOs);
         let mut a = area(1000.0, 100.0);
-        assert_eq!(a.set_prop("scroll-y", &Value::F64(100.0)), Ok(ChangeClass::Property), "no native change yet");
+        assert_eq!(a.set_prop(P::scroll_y.id(), &Value::F64(100.0)), Ok(()), "no native change yet");
         assert_eq!(a.scroller.offset().y, 100.0);
-        let mut cx = EventCx::new(ms(0), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Wheel(wheel(None, None, -30.0)));
+        let mut t = probe(pol(Platform::Macos), 0);
+        t.send(&mut a, Event::Wheel(wheel(None, None, -30.0)));
         assert_eq!(a.scroller.offset().y, 130.0);
         // JS has not seen that scroll yet
-        assert_eq!(a.set_prop("scroll-y", &Value::F64(0.0)), Err(PropError::Stale));
+        assert_eq!(a.set_prop(P::scroll_y.id(), &Value::F64(0.0)), Err(PropError::Stale));
         assert_eq!(a.scroller.offset().y, 130.0);
         // once it has, its write wins
         a.js_saw(a.native_revision());
-        assert_eq!(a.set_prop("scroll-y", &Value::F64(0.0)), Ok(ChangeClass::Property));
+        assert_eq!(a.set_prop(P::scroll_y.id(), &Value::F64(0.0)), Ok(()));
         assert_eq!(a.scroller.offset().y, 0.0);
     }
 
     #[test]
     fn a_wheel_detent_animates_on_windows_and_retargets() {
-        let pol = Policy::for_os(Os::Windows);
         let mut a = area(2000.0, 100.0);
         let detent = WheelEvent { pos: Point::ZERO, delta: ScrollDelta::Lines(Vec2::new(0.0, -1.0)), phase: None, momentum: None, modifiers: Modifiers::default() };
-        let mut cx = EventCx::new(ms(0), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Wheel(detent.clone()));
+        let mut t = probe(pol(Platform::Windows), 0);
+        t.send(&mut a, Event::Wheel(detent.clone()));
         assert!(a.animating());
         assert_eq!(a.scroller.offset().y, 0.0, "starts at rest");
-        assert!(cx.wake.is_some());
-        let mut cx = EventCx::new(ms(100), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Timer);
+        assert!(t.wake.is_some());
+        t.now = ms(100);
+        t.send(&mut a, Event::Timer);
         let mid = a.scroller.offset().y;
         assert!(mid > 0.0 && mid < 100.0, "{mid}");
         // a second detent heads for 200 from where it is
-        a.event(&mut cx, &Event::Wheel(detent));
-        let mut cx = EventCx::new(ms(1000), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Timer);
+        t.send(&mut a, Event::Wheel(detent));
+        t.now = ms(1000);
+        t.send(&mut a, Event::Timer);
         assert_eq!(a.scroller.offset().y, 200.0);
         assert!(!a.animating());
-        assert_eq!(cx.emitted("scrollend").count(), 1);
+        assert_eq!(t.count("scrollend"), 1);
+    }
+
+    #[test]
+    fn reduced_motion_jumps() {
+        let mut a = area(2000.0, 100.0);
+        a.reduced_motion = true;
+        let detent = WheelEvent { pos: Point::ZERO, delta: ScrollDelta::Lines(Vec2::new(0.0, -1.0)), phase: None, momentum: None, modifiers: Modifiers::default() };
+        let mut t = probe(pol(Platform::Windows), 0);
+        t.send(&mut a, Event::Wheel(detent));
+        assert!(!a.animating());
+        assert_eq!(a.scroller.offset().y, 100.0);
     }
 
     #[test]
     fn a_press_stops_an_own_fling() {
-        let pol = Policy::for_os(Os::Linux);
         let mut a = area(10_000.0, 100.0);
-        let mut t = 0;
-        let mut cx = EventCx::new(ms(t), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Wheel(wheel(Some(GesturePhase::Started), None, 0.0)));
+        let mut t = probe(pol(Platform::Linux), 0);
+        t.send(&mut a, Event::Wheel(wheel(Some(GesturePhase::Started), None, 0.0)));
         for _ in 0..8 {
-            t += 10;
-            let mut cx = EventCx::new(ms(t), Size::new(100.0, 100.0), &pol);
-            a.event(&mut cx, &Event::Wheel(wheel(Some(GesturePhase::Moved), None, -20.0)));
+            t.advance(10);
+            t.send(&mut a, Event::Wheel(wheel(Some(GesturePhase::Moved), None, -20.0)));
         }
-        let mut cx = EventCx::new(ms(t + 5), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Wheel(wheel(Some(GesturePhase::Ended), None, 0.0)));
+        t.advance(5);
+        t.send(&mut a, Event::Wheel(wheel(Some(GesturePhase::Ended), None, 0.0)));
         assert!(a.animating(), "Linux flings on release");
         let press = PointerEvent {
             phase: PointerPhase::Down,
@@ -1641,22 +1661,48 @@ mod tests {
             tilt: Vec2::ZERO,
             history: Default::default(),
         };
-        let mut cx = EventCx::new(ms(t + 50), Size::new(100.0, 100.0), &pol);
-        a.event(&mut cx, &Event::Pointer(press));
+        t.advance(45);
+        t.send(&mut a, Event::Pointer(press));
         assert!(!a.animating());
-        assert_eq!(cx.emitted("scrollend").count(), 1);
+        assert_eq!(t.count("scrollend"), 1);
+    }
+
+    #[test]
+    fn records_the_thumb_and_fades_overlay_bars() {
+        let mut a = area(1000.0, 100.0);
+        a.set_geometry(Size::new(100.0, 1000.0), Rect::new(0.0, 0.0, 100.0, 100.0), 10.0, 20.0, [false, false]);
+        let mut t = probe(pol(Platform::Windows), 0);
+        t.send(&mut a, Event::Wheel(wheel(None, None, -30.0)));
+        let (list, _) = crate::controls::testkit::record(&a, Size::new(100.0, 100.0), StateBits::NONE);
+        assert_eq!(crate::controls::testkit::kinds(&list), ["quad"], "an overlay thumb just after a scroll");
+        let Prim::Quad(q) = &list.items[0] else { unreachable!() };
+        assert_eq!(q.rect.min.x, 90.0);
+        // seconds later the overlay bar has faded out
+        t.now = ms(5000);
+        t.send(&mut a, Event::Timer);
+        assert!(t.repaint);
+        let (list, _) = crate::controls::testkit::record(&a, Size::new(100.0, 100.0), StateBits::NONE);
+        assert!(list.items.is_empty());
     }
 
     #[test]
     fn scrollbar_maps_its_range() {
-        let pol = Policy::for_os(Os::Windows);
-        let mut b = Scrollbar { max: 90.0, page: 10.0, ..Default::default() };
+        let mut b = Scrollbar::default();
+        b.set_prop(SbP::max.id(), &Value::F64(90.0)).unwrap();
         b.layout(Size::new(10.0, 100.0), 20.0);
-        let mut cx = EventCx::new(ms(0), Size::new(10.0, 100.0), &pol);
+        let mut t = Probe::new(pol(Platform::Windows), Size::new(10.0, 100.0));
         let req = accesskit::ActionRequest { action: accesskit::Action::SetValue, target_tree: accesskit::TreeId::ROOT, target_node: accesskit::NodeId(1), data: Some(accesskit::ActionData::NumericValue(200.0)) };
-        b.event(&mut cx, &Event::A11y(req));
+        t.send(&mut b, Event::A11y(req));
         assert_eq!(b.value, 90.0, "clamped to max");
-        assert_eq!(cx.emitted("changed").count(), 1);
+        assert_eq!(t.count("changed"), 1);
+        assert_eq!(t.changed, ["value"]);
+        assert_eq!(b.get_prop(SbP::value.id()), Some(Value::F64(90.0)));
         assert_eq!(b.scroller.bars()[1].unwrap().thumb.max.y, 100.0);
+        // classic look: track, then thumb
+        let (list, _) = crate::controls::testkit::record(&b, Size::new(10.0, 100.0), StateBits::NONE);
+        assert_eq!(crate::controls::testkit::kinds(&list), ["quad", "quad"]);
+        let n = crate::controls::testkit::a11y(&b, StateBits::NONE, Size::new(10.0, 100.0));
+        assert_eq!(n.role(), accesskit::Role::ScrollBar);
+        assert_eq!(n.numeric_value(), Some(90.0));
     }
 }

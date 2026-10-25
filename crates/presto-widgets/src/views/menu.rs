@@ -32,7 +32,6 @@ use super::menu_model::{Check, Entry, EntryIx, EntryKind, KeyIn, MenuModel, Menu
 use super::placement::{AnchorParams, Placement, place};
 use crate::controls::common::host_view;
 use crate::interact::{Platform, StateBits};
-use crate::kind_props;
 use crate::paint::{self, Align, Elide, PaintCx, StyleView, Ua, UaRule, UaValue::{Px, Token}};
 use crate::shim::core::{
     A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, Resources,
@@ -1370,7 +1369,8 @@ mod tests {
         let policy = policy(Platform::Linux);
         let f = b.menus.titles()[0].1;
         send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(f)));
-        send(&mut b, &policy, ms(10), ptr(PointerPhase::Move, center(row(&b.menus, 0, "new"))));
+        let new = center(row(&b.menus, 0, "new"));
+        send(&mut b, &policy, ms(10), ptr(PointerPhase::Move, new));
         let mut res = MemResources::default();
         let lists = b.menus.record_levels(&mut MonoShaper, &mut res, &styles(), 1.0);
         assert_eq!(lists.len(), 1);
