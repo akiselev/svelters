@@ -7,7 +7,7 @@
 //! `packages/native-runtime/src/animate.js` computed `to.width / to.width`, always 1; here the
 //! layout size is presto's own, so a scaled ancestor is accounted for.
 
-use crate::easing::SvelteEasing;
+use crate::easing::{SvelteEasing, SvelteEasingExt};
 use crate::transition::{Channel, Plan, Track, Transform64};
 use crate::shim::css::TransformList;
 use presto_base::anim::{AnimValue, FillMode, Keyframe, PlaybackDirection, Timing};
@@ -117,7 +117,7 @@ impl Flip {
                 iteration_start: 0.0,
                 direction: PlaybackDirection::Normal,
                 fill: FillMode::Forwards,
-                easing: self.easing.to_presto(crate::transition::EASING_TOLERANCE),
+                easing: self.easing.to_presto(),
             },
         }
     }

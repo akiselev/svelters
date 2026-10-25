@@ -10,7 +10,7 @@
 //! turns it into two- or three-keyframe tracks whose timing easing is the transition's easing:
 //! presto samples them at the display's refresh rate instead of Svelte's baked 60 Hz frames.
 
-use crate::easing::SvelteEasing;
+use crate::easing::{SvelteEasing, SvelteEasingExt};
 use crate::shim::css::{TransformList, parse_transform};
 use presto_base::anim::{AnimProperty, AnimValue, FillMode, Keyframe, PlaybackDirection, Timing, TransformFn};
 use presto_base::time::Span;
@@ -590,13 +590,10 @@ impl Run {
             direction: PlaybackDirection::Normal,
             // Svelte plays transitions with `fill: 'forwards'`: the last frame holds until it is cancelled
             fill: FillMode::Forwards,
-            easing: easing.to_presto(EASING_TOLERANCE),
+            easing: easing.to_presto(),
         }
     }
 }
-
-/// How far a compositor track's piecewise-linear easing may stray from the svelte/easing curve.
-pub const EASING_TOLERANCE: f64 = 1e-4;
 
 /// What a track drives.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -650,7 +647,7 @@ pub struct Plan {
     /// The transform origin as fractions of the node's size; `None` = the node's own
     /// (`transform-origin`, the centre by default).
     pub origin: Option<(f64, f64)>,
-    /// The exact curve; [`Plan::timing`] holds presto's approximation of it.
+    /// The curve (also [`Plan::timing`]'s easing, as `Easing::Svelte`).
     pub easing: SvelteEasing,
     pub timing: Timing,
 }

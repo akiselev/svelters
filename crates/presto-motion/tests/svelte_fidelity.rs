@@ -3,7 +3,7 @@
 //! The native formulas must equal it within 1e-6 at Svelte's 60 Hz keyframe times.
 
 use presto_base::anim::{AnimValue, TransformFn};
-use presto_motion::easing::SvelteEasing;
+use presto_motion::easing::{SvelteEasing, SvelteEasingExt};
 use presto_motion::flip::{DomRect, Flip, FlipInput, FlipParams};
 use presto_motion::shim::css::parse_transform;
 use presto_motion::spring::{SpringMotion, SvelteSpring};
@@ -105,22 +105,17 @@ fn every_easing_equals_svelte() {
 }
 
 #[test]
-fn compositor_easings_stay_within_tolerance() {
+fn compositor_easings_are_exact() {
+    // a compositor track's easing is the curve itself: presto-anim's sampler gives Svelte's values
     use presto_base::anim::Easing;
     for (e, name) in presto_motion::easing::ALL {
-        let tol = presto_motion::transition::EASING_TOLERANCE;
-        let Easing::Points(points) = e.to_presto(tol) else {
-            assert_eq!(e, SvelteEasing::Linear, "{name}: only linear is exact");
-            continue;
-        };
+        let presto = e.to_presto();
+        assert!(matches!(presto, Easing::Svelte(_)) || e == SvelteEasing::Linear, "{name}");
         for i in 0..=1000 {
-            let x = i as f64 / 1000.0;
-            let k = points.partition_point(|p| (p.0 as f64) <= x).clamp(1, points.len() - 1);
-            let (a, b) = (points[k - 1], points[k]);
-            let q = (x - a.0 as f64) / (b.0 as f64 - a.0 as f64);
-            let y = a.1 as f64 + (b.1 as f64 - a.1 as f64) * q;
-            // f32 points add their own rounding to the subdivision tolerance
-            assert!((y - e.eval(x)).abs() <= tol + 1e-5, "{name} at {x}: points give {y}, curve {}", e.eval(x));
+            let x = i as f32 / 1000.0;
+            let got = presto_anim::easing::eval(&presto, x) as f64;
+            let want = e.eval(x as f64);
+            assert!((got - want).abs() <= 1e-6 * want.abs().max(1.0), "{name} at {x}: presto {got}, svelte {want}");
         }
     }
 }

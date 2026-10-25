@@ -101,8 +101,12 @@ Run locally once to fix CI's first report (filtered): presto-motion's tests, sve
    `presto_motion::op::AnimateOp` + `waapi::Animations` (deliver `poll` as `animationend`), and
    `SVL_STYLE_SHEET_BIN` with `binary::decode(from_base64(..))` into the style engine; use the hints
    (needs a template-node → element-offset map from COMPILER's templates) and `preload_utilities`.
-2. **Compositor easing**: presto-base's `Easing` has no svelte/easing curves, so tracks carry `linear()`
-   points within 1e-4. Question below.
+2. **Compositor easing** (done, coordinator's decision 2026-10-25): `presto_base::anim::Easing::Svelte(SvelteEasing)`
+   (the 31 named curves and `SVELTE_EASINGS` moved to presto-base), evaluated by
+   `presto_anim::easing::svelte::eval`; presto-motion re-exports the enum and plans tracks with it, so
+   they are exact. presto-compositor had no exhaustive match on `Easing`; presto-anim's `eval_with` has
+   the new arm. Tests: presto-anim `svelte_variant_evaluates_every_named_curve`, presto-motion
+   `compositor_easings_are_exact`.
 3. A spring that only feeds `style:` is not yet handed to the compositor (JS evaluates the closed form
    per frame; it is frame-rate independent already).
 4. `svelte/motion` imports in `.svelte.js` modules and plain JS are not rewritten (only components);
@@ -112,10 +116,7 @@ Run locally once to fix CI's first report (filtered): presto-motion's tests, sve
 
 ## Questions for the coordinator
 
-1. **Add `Easing::Svelte(name)` (or `Easing::Fn(u8)`) to `presto-base::anim::Easing`**, evaluated by
-   `presto_anim::easing::eval` with `presto_motion::easing::SvelteEasing::eval`'s formulas?
-   Recommendation: yes, additive (FRAME-ANIM adds one match arm); then `to_presto` returns it and
-   compositor tracks are exact instead of within 1e-4.
+None open (the easing variant was decided yes and is done).
 
 ## CI
 
