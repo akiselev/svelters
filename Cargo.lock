@@ -4352,6 +4352,7 @@ dependencies = [
  "presto-anim",
  "presto-base",
  "presto-core",
+ "presto-platform",
  "presto-text",
  "quire-text",
  "resvg",

@@ -113,13 +113,13 @@ mod tests {
         let mut sys = system();
         let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default() };
         let mut f = TextField::new("Hello", EditorConfig::default(), TextPolicy::of(Platform::Windows));
-        f.prepare(&mut lay, Rect::new(0.0, 0.0, 300.0, 20.0), Point::ZERO);
+        f.prepare(&mut lay, Rect::new(0.0, 0.0, 300.0, 20.0), presto_base::geom::Affine::IDENTITY);
         f.focus_in(FocusReason::Pointer);
         f.editor.set_selection(5, 5);
-        f.prepare(&mut lay, Rect::new(0.0, 0.0, 300.0, 20.0), Point::ZERO);
+        f.prepare(&mut lay, Rect::new(0.0, 0.0, 300.0, 20.0), presto_base::geom::Affine::IDENTITY);
         let end = f.caret_rect().unwrap();
         f.editor.set_selection(0, 0);
-        f.prepare(&mut lay, Rect::new(0.0, 0.0, 300.0, 20.0), Point::ZERO);
+        f.prepare(&mut lay, Rect::new(0.0, 0.0, 300.0, 20.0), presto_base::geom::Affine::IDENTITY);
         assert!(f.caret_rect().unwrap().min.x < end.min.x);
         let colors = FieldColors { text: Color::BLACK, placeholder: Color::BLACK, selection: Color::WHITE, selection_inactive: Color::WHITE, preedit_underline: Color::BLACK };
         let mut sink = ListSink::default();

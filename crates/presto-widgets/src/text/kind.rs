@@ -7,21 +7,20 @@
 //! §11.3), which `crate::shim::core` does not carry (coordinator, 2026-10-25: keep it so).
 //!
 //! The document's services carry what it shares with the other kinds: the `TextSystem` (layouts with
-//! geometry), the platform `Policy` ([`TextPolicy::from_policy`]), and the text kinds' own
-//! [`TextHost`] (clipboard, caret fast-commit channel). Without a text system the kind records its
-//! box only and takes no input (it cannot place a caret); without a `TextHost` it edits but has no
-//! clipboard and sends no caret.
-//!
-//! The content box is the padding box (presto-core's `NodeView` has no padding edges yet), and the
-//! window origin comes from pointer events (`pos - local`), else the sum of the ancestors' layout
-//! rects (no scroll offsets or transforms): both are requests in the lane record.
+//! geometry), the platform `Policy` ([`TextPolicy::from_policy`]) and the clipboard
+//! (`Box<dyn presto_platform::Clipboard>`). The caret goes out through presto-core's fast channel
+//! (`EventCx::set_caret`), the IME's window-space queries through the node's window transform.
+//! Without a text system the kind records its box only and takes no input (it cannot place a caret);
+//! without a clipboard it edits without one. GTK's one selection is core's
+//! (`Document::set_single_selection`): the field claims it when it selects and collapses on
+//! `selection_lost`.
 
 use super::editor::{EditorConfig, FocusReason as FieldFocus};
 use super::field::{FieldColors, FieldPointer, FieldSignal, TextField};
 use super::keys::KeyAction;
 use super::geometry::SystemLayouter;
 use super::policy::{Platform, TextPolicy};
-use super::shim::{RecordSink, TextHost};
+use super::shim::{Clipboard, RecordSink};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::color::Color;
@@ -30,6 +29,7 @@ use presto_base::display::Prim;
 use presto_base::event::PointerPhase;
 use presto_base::geom::{Point, Rect};
 use presto_base::input::TextInputClient;
+use presto_platform::ClipboardKind;
 use presto_base::text::GlyphRun;
 use presto_core::{
     A11yCx, ComputedBox, Event, EventCx, FocusReason, Handled, Kind, KindSpec, MeasureCx, PointerInput, PrepareCx, PropCx, PropDefault, PropError,
@@ -138,22 +138,30 @@ fn pointer(phase: PointerPhase, p: &PointerInput) -> FieldPointer {
         modifiers: p.modifiers,
         local: p.local,
         count: (phase == PointerPhase::Down).then_some(p.count.max(1)),
-        window_origin: Some(p.pos - p.local.to_vec()),
     }
 }
 
-/// The node's origin in window coordinates from the layout rects of it and its ancestors.
-fn layout_origin(cx: &EventCx) -> Point {
-    let doc = cx.document();
-    let mut p = Point::ZERO;
-    let mut n = Some(cx.node());
-    while let Some(id) = n {
-        if let Some(r) = doc.layout_rect(id) {
-            p = p + r.min.to_vec();
-        }
-        n = doc.parent(id);
+/// presto-platform's clipboard as the field's.
+struct PlatformClipboard<'a>(&'a mut dyn presto_platform::Clipboard);
+
+impl Clipboard for PlatformClipboard<'_> {
+    fn get_text(&mut self) -> Option<String> {
+        self.0.get_text(ClipboardKind::Clipboard)
     }
-    p
+    fn set_text(&mut self, t: &str) {
+        self.0.set_text(ClipboardKind::Clipboard, t);
+    }
+    fn get_primary(&mut self) -> Option<String> {
+        self.0.get_text(ClipboardKind::Primary)
+    }
+    fn set_primary(&mut self, t: &str) {
+        self.0.set_text(ClipboardKind::Primary, t);
+    }
+    // presto-platform has no "give PRIMARY up" yet (WAYLAND's methods are not in base): an empty
+    // PRIMARY is the closest
+    fn clear_primary(&mut self) {
+        self.0.set_text(ClipboardKind::Primary, "");
+    }
 }
 
 impl TextEdit {
@@ -179,14 +187,17 @@ impl TextEdit {
 
     /// After input: serve the clipboard, send the caret, emit, repaint when the content changed.
     fn finish(&mut self, cx: &mut EventCx) {
-        let window = cx.view(cx.node()).and_then(|v| v.window());
-        let rev = cx.document().revision();
-        let caret = window.and_then(|w| self.field.caret_commit(w, rev));
-        if let Some(h) = cx.service::<TextHost>() {
-            self.field.serve(&mut *h.clipboard);
-            if let Some(c) = caret {
-                (h.fast_commit)(c);
-            }
+        if let Some(cb) = cx.service::<Box<dyn presto_platform::Clipboard>>() {
+            self.field.serve(&mut PlatformClipboard(&mut **cb));
+        }
+        if let Some(rect) = self.field.caret_update() {
+            cx.set_caret(rect);
+        }
+        // GTK's one selection: core collapses the previous owner (when the document has the rule on)
+        if self.field.has_selection() {
+            cx.claim_selection();
+        } else {
+            cx.release_selection();
         }
         self.emit(cx);
         if self.field.take_repaint() {
@@ -241,10 +252,10 @@ impl Kind for TextEdit {
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
         let style = text_style(cx.style());
-        let content = cx.padding_box();
-        let origin = self.field.window_origin();
+        let content = cx.content_box();
+        let to_window = cx.window_transform();
         if let Some(ts) = cx.service::<presto_text::TextSystem>() {
-            self.field.prepare(&mut SystemLayouter { system: ts, style }, content, origin);
+            self.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window);
         }
         if self.field.take_repaint() {
             cx.request_paint();
@@ -259,10 +270,6 @@ impl Kind for TextEdit {
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         let Some(style) = cx.view(cx.node()).map(|v| text_style(v.style())) else { return Handled::No };
-        let origin = self.field.window_origin();
-        if origin == Point::ZERO {
-            self.field.set_window_origin(layout_origin(cx));
-        }
         if let (Event::FocusIn(_), Some(p)) = (ev, cx.service::<crate::interact::Policy>().copied()) {
             self.field.editor.set_policy(TextPolicy::from_policy(Platform::current(), &p));
         }
@@ -321,6 +328,14 @@ impl Kind for TextEdit {
         }
         self.finish(cx);
         if handled { Handled::Yes } else { Handled::No }
+    }
+
+    fn selection_lost(&mut self, cx: &mut EventCx) {
+        self.field.lose_selection();
+        self.emit(cx);
+        if self.field.take_repaint() {
+            cx.request_paint();
+        }
     }
 
     fn text_input(&mut self) -> Option<&mut dyn TextInputClient> {

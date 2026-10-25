@@ -25,11 +25,9 @@ use super::utf16::{floor_boundary, str_byte_to_utf16, str_utf16_to_byte};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
 use presto_base::color::{Color, Fill};
-use presto_base::commit::FastCommit;
 use presto_base::display::{Line, LineCap, Prim, Quad};
 use presto_base::event::{ImeEvent, KeyEvent, Modifiers, MouseButton, PointerPhase};
-use presto_base::geom::{Corners, Insets, Point, Rect, RoundedRect, Size, Vec2};
-use presto_base::ids::{Revision, WindowId};
+use presto_base::geom::{Affine, Corners, Insets, Point, Rect, RoundedRect, Size, Vec2};
 use presto_base::input::{InputPurpose, TextInputClient, Utf16Range};
 use presto_base::time::{Span, Time};
 use quire_text::{NoWrap, Rejected};
@@ -105,13 +103,11 @@ pub struct FieldPointer {
     /// The click count of a press, when the dispatcher counts clicks (presto-core does); `None`: the
     /// field counts with the platform's double-click time.
     pub count: Option<u32>,
-    /// The node's origin in window coordinates (`pos - local`), for the IME's window-space queries.
-    pub window_origin: Option<Point>,
 }
 
 impl FieldPointer {
     pub fn new(phase: PointerPhase, button: Option<MouseButton>, buttons: u32, local: Point) -> Self {
-        FieldPointer { phase, button, buttons, modifiers: Modifiers::default(), local, count: None, window_origin: None }
+        FieldPointer { phase, button, buttons, modifiers: Modifiers::default(), local, count: None }
     }
 }
 
@@ -145,9 +141,9 @@ pub struct TextField {
     /// The layout no longer matches the shown text (or the width).
     stale: bool,
     shown: Shown,
-    /// The content box in node coordinates, and the node's origin in window coordinates.
+    /// The content box in node coordinates, and the node's local → window transform.
     content: Rect,
-    origin: Point,
+    to_window: Affine,
     scroll: Vec2,
     caret: CaretState,
     clicks: ClickCounter,
@@ -171,7 +167,7 @@ impl TextField {
             stale: true,
             shown,
             content: Rect::ZERO,
-            origin: Point::ZERO,
+            to_window: Affine::IDENTITY,
             scroll: Vec2::ZERO,
             caret: CaretState::default(),
             clicks: ClickCounter::default(),
@@ -230,13 +226,9 @@ impl TextField {
         &self.shown.text
     }
 
-    /// The node's origin in window coordinates, as last known.
-    pub fn window_origin(&self) -> Point {
-        self.origin
-    }
-
-    pub fn set_window_origin(&mut self, o: Point) {
-        self.origin = o;
+    /// The node's local → window transform, as last prepared.
+    pub fn window_transform(&self) -> Affine {
+        self.to_window
     }
 
     pub fn scroll_offset(&self) -> Vec2 {
@@ -305,17 +297,17 @@ impl TextField {
         Size::new(s.w.max(p.w), s.h.max(p.h).max(row.h))
     }
 
-    /// After layout: the content box (node coordinates) and the node's window origin; lays the text
-    /// out if needed and scrolls the caret into view.
-    pub fn prepare(&mut self, lay: &mut dyn Layouter, content: Rect, origin: Point) {
+    /// After layout: the content box (node coordinates) and the node's local → window transform;
+    /// lays the text out if needed and scrolls the caret into view.
+    pub fn prepare(&mut self, lay: &mut dyn Layouter, content: Rect, to_window: Affine) {
         if content.width() != self.content.width() && self.wrap {
             self.stale = true;
         }
-        if content != self.content || origin != self.origin {
+        if content != self.content || to_window != self.to_window {
             self.repaint = true;
         }
         self.content = content;
-        self.origin = origin;
+        self.to_window = to_window;
         self.relayout(lay);
         if let Some(b) = self.editor.take_reveal() {
             self.reveal(self.shown.to_shown(b));
@@ -385,17 +377,22 @@ impl TextField {
         Some(g.caret_rect(self.shown.to_shown(s.head), false))
     }
 
-    /// The caret in window coordinates, clipped out when scrolled away.
-    pub fn caret_rect(&self) -> Option<Rect> {
+    /// The caret in node coordinates, `None` when hidden or scrolled away.
+    pub fn caret_local(&self) -> Option<Rect> {
         let r = self.caret_in_layout()?.translate(self.to_node());
-        let clip = self.content.inflate(1.0);
-        r.intersects(&clip).then(|| r.translate(self.origin.to_vec()))
+        r.intersects(&self.content.inflate(1.0)).then_some(r)
     }
 
-    /// The caret's fast commit, when it moved, hid or restarts its blink (architecture §7.3).
-    pub fn caret_commit(&mut self, window: WindowId, revision: Revision) -> Option<FastCommit> {
-        let r = self.caret_rect();
-        self.caret.update(window, r, revision)
+    /// The caret in window coordinates.
+    pub fn caret_rect(&self) -> Option<Rect> {
+        self.caret_local().map(|r| self.to_window.apply_rect(&r))
+    }
+
+    /// The caret's node-local rect when it moved, hid or restarts its blink: what the kind hands to
+    /// presto-core's fast channel (`EventCx::set_caret`).
+    pub fn caret_update(&mut self) -> Option<Option<Rect>> {
+        let r = self.caret_local();
+        self.caret.changed(r)
     }
 
     /// The IME candidate area (window coordinates): the composition, else the caret.
@@ -405,7 +402,7 @@ impl TextField {
             Some(p) => g.selection_rects(p).into_iter().reduce(|a, b| a.union(&b))?,
             None => self.caret_in_layout().unwrap_or_else(|| g.caret_rect(self.shown.to_shown(self.editor.caret()), false)),
         };
-        Some(r.translate(self.to_node()).translate(self.origin.to_vec()))
+        Some(self.to_window.apply_rect(&r.translate(self.to_node())))
     }
 
     // ---- record ----
@@ -523,9 +520,6 @@ impl TextField {
     /// A pointer event (node coordinates). Returns whether the field took it.
     pub fn pointer(&mut self, ev: &FieldPointer, now: Time, lay: &mut dyn Layouter) -> bool {
         self.begin(now, lay);
-        if let Some(o) = ev.window_origin {
-            self.origin = o;
-        }
         let local = ev.local;
         let took = match (ev.phase, ev.button) {
             (PointerPhase::Down, Some(MouseButton::Primary)) => {
@@ -574,6 +568,17 @@ impl TextField {
         self.commit_change();
         self.after();
         self.repaint = true;
+    }
+
+    /// Another field took the one selection (GTK): collapse this one's to its start.
+    pub fn lose_selection(&mut self) {
+        self.editor.collapse_to_start();
+        self.after();
+    }
+
+    /// The field holds a non-empty selection.
+    pub fn has_selection(&self) -> bool {
+        !self.editor.selection().range().is_empty()
     }
 
     fn commit_change(&mut self) {
@@ -670,7 +675,7 @@ impl TextField {
     }
 
     fn layout_rect_to_window(&self, r: Rect) -> Rect {
-        r.translate(self.to_node()).translate(self.origin.to_vec())
+        self.to_window.apply_rect(&r.translate(self.to_node()))
     }
 }
 
@@ -713,7 +718,7 @@ impl TextInputClient for TextField {
 
     fn character_index_for_point(&self, p: Point) -> Option<usize> {
         let g = self.geom.as_ref().filter(|_| !self.stale)?;
-        let local = p - self.origin.to_vec() - self.to_node();
+        let local = self.to_window.inverse()?.apply(p) - self.to_node();
         let s = g.hit_test(local).byte;
         let ime = self.ime_text();
         Some(str_byte_to_utf16(&ime, self.layout_to_ime(&ime, s)))
@@ -743,7 +748,7 @@ mod tests {
         let mut f = TextField::new(text, cfg, TextPolicy::of(Platform::Gtk));
         let mut lay = LAY;
         // a 100×20 content box at (4, 2) in a node placed at (50, 60) in the window
-        f.prepare(&mut lay, Rect::new(4.0, 2.0, 104.0, 22.0), Point::new(50.0, 60.0));
+        f.prepare(&mut lay, Rect::new(4.0, 2.0, 104.0, 22.0), Affine::translate(50.0, 60.0));
         (f, lay)
     }
 
@@ -761,8 +766,8 @@ mod tests {
         let (mut f, mut lay) = field("", EditorConfig::default());
         f.focus_in(FocusReason::Pointer);
         assert_eq!(f.caret_rect(), Some(Rect::new(54.0, 62.0, 55.0, 82.0)));
-        assert!(f.caret_commit(WindowId(1), Revision(1)).is_some());
-        assert_eq!(f.caret_commit(WindowId(1), Revision(1)), None);
+        assert_eq!(f.caret_update(), Some(Some(Rect::new(4.0, 2.0, 5.0, 22.0))), "node coordinates");
+        assert_eq!(f.caret_update(), None);
         for _ in 0..15 {
             press(&mut f, &mut lay, Key::X, Modifiers::default(), Some("x"));
         }
@@ -857,12 +862,12 @@ mod tests {
         let mut lay = LAY;
         f.set_placeholder("Type here");
         // 40 points wide: 4 columns
-        f.prepare(&mut lay, Rect::new(0.0, 0.0, 40.0, 60.0), Point::ZERO);
+        f.prepare(&mut lay, Rect::new(0.0, 0.0, 40.0, 60.0), Affine::IDENTITY);
         let m = f.measure(&mut lay, Some(40.0));
         assert_eq!(m, Size::new(40.0, 60.0), "the placeholder wraps to three rows");
         f.focus_in(FocusReason::Pointer);
         f.set_text("abcdefgh");
-        f.prepare(&mut lay, Rect::new(0.0, 0.0, 40.0, 60.0), Point::ZERO);
+        f.prepare(&mut lay, Rect::new(0.0, 0.0, 40.0, 60.0), Affine::IDENTITY);
         f.editor.set_selection(1, 1);
         press(&mut f, &mut lay, Key::ArrowDown, Modifiers::default(), None);
         assert_eq!(f.editor.caret(), 5, "down moves to the next wrapped row");

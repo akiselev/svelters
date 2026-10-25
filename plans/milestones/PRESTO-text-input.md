@@ -33,17 +33,18 @@ rules, wrapped-row motion, caret commits and blink, record output, value box sea
 against `conformance/golden/linux/` (GTK 4.24.1, Qt 6.12.0), writing `target/na/linux/presto-gap.md` and the
 job summary. It is a measurement (fails only when the harness breaks), like `egui_text_edit_against_windows_goldens`.
 
-## Shims (the consolidation replaces them)
+## Stand-ins: none left
 
-`text/shim.rs`:
-- `TextHost`: the document service (`Document::set_service`) with the clipboard and the caret's
-  fast-commit channel. The app installs it beside the `presto_text::TextSystem` and `interact::Policy`
-  services (lane APP-TEST). Without a `TextSystem` service `text-edit` records its box only and takes
-  no input; without a `TextHost` it edits with no clipboard and sends no caret.
-- `Clipboard`: presto-platform's `Clipboard` is by `ClipboardKind` and presto-widgets does not depend on
-  presto-platform; the app adapts it.
-- `TextGeometry`, `Layouter`, `RecordSink` are the field's own interfaces (implemented for presto-text's
-  `TextLayout`/`TextSystem`, presto-core's `RecordCx`, and the test `MonoGeometry`/`ListSink`).
+`text-edit` runs on presto-core's own services and channels (CORE-3, base `96426b4a`): the
+`presto_text::TextSystem` and `Box<dyn presto_platform::Clipboard>` services (installed by the runner),
+the caret through `EventCx::set_caret` (node-local; presto-core turns it into `FastCommit::Caret`), the
+event time from `EventCx::time`, the content box from `NodeView::content_box` and the IME's window-space
+queries through `NodeView::window_transform`. `text/shim.rs` keeps only the field's own interfaces
+(`TextGeometry`, `Layouter`, `Clipboard`, `RecordSink`) and the fixed-advance test layout. GTK's one
+selection owner is core's (`Document::set_single_selection`, set by the runner under the GTK policy):
+`text-edit` calls `EventCx::claim_selection`/`release_selection` after each event and collapses to the start
+in `Kind::selection_lost`. The pins fixture has no document and applies the same rule itself through the
+same hook (`TextField::lose_selection`).
 
 **`text-edit` and the substrate.** `text-edit` implements `presto_core::Kind` directly, not through the
 substrate's `Hosted<W>` / `shim::core` bridge: the bridge carries no `Event::Ime` and no `text_input`
@@ -76,7 +77,7 @@ from `EventCx::time`.
 - `crates/presto-widgets/Cargo.toml`: `quire-text` (git, rev `3e78dcd3bf74abc2c81209f0109caff4d9193529`)
   and the dev-dependency `svelters-conformance` (pins and goldens). Other lanes edit this file too: a
   merge conflict there is additive.
-- `crates/presto-widgets/Cargo.toml` pins quire-text at `35b5063a` (QUIRE's branch); the consolidation
+- `crates/presto-widgets/Cargo.toml` depends on presto-platform (the clipboard service's trait), and pins quire-text at `35b5063a` (QUIRE's branch); the consolidation
   re-pins it to the quire commit that lands on quire's main and updates cadatomic's `pins.toml`.
 - `Cargo.lock`: quire-text and its dependencies (ropey, unicode-segmentation, unicode-general-category).
 
@@ -96,7 +97,8 @@ No change to `presto-base` or any wave-1 crate.
   `FastCommit::CaretBlink { window, cycle, timeout }` variant, a breaking change for exhaustive matches), and
   applies `text::caret::blink_visible`'s rule (on for the first half of each cycle, steady after the timeout,
   restarted by every `Caret` commit).
-- **R4 (presto-core):** for the text kinds: the text system (layouts with geometry, `TextLayout`) in
+- **R4 (presto-core): done** by CORE-3 (base `96426b4a`, and the one selection owner in core-3 `16277aed`);
+  `text-edit` uses all of it. Was: for the text kinds: the text system (layouts with geometry, `TextLayout`) in
   `PrepareCx` and `EventCx` (a key can move over rows the previous key changed), the clipboard and the
   fast-commit channel in `EventCx`, the event time in `Event`, the node's padding edges and its
   window transform in `NodeView` (the kind uses the padding box and `pos - local`/the sum of layout rects
@@ -146,4 +148,5 @@ method with a default); installing `TextHost` → APP-TEST.
   `cargo test -p presto-widgets --lib text::` (37 passed) and `--test text_pins` (passed; table above).
 - After re-pinning quire-text to `35b5063a`: `cargo test -p presto-widgets --lib text::` (36 passed) and
   `--test text_pins` (passed; totals unchanged, 228 and 226 of 243).
+- After moving onto CORE-3's services (base `96426b4a`): `text::` 36 passed, `text_pins` passed (228, 226).
 - Not run: clippy, other crates.
