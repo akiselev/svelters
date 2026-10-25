@@ -624,6 +624,28 @@ impl RealizeCx<'_> {
     }
 }
 
+/// The text of `v`'s descendants in tree order (their `aria-label`, else their text content),
+/// separated by spaces: the name of a button with a text child.
+fn descendant_text(v: &NodeView) -> String {
+    let mut out = String::new();
+    let mut stack: Vec<NodeView> = v.children().iter().rev().filter_map(|&c| v.view(c)).collect();
+    while let Some(c) = stack.pop() {
+        let own = c.prop_str(common::ARIA_LABEL).filter(|s| !s.is_empty()).unwrap_or(c.text());
+        if !own.is_empty() {
+            if !out.is_empty() {
+                out.push(' ');
+            }
+            out.push_str(own.trim());
+            // a labelled child names its subtree
+            if c.prop_str(common::ARIA_LABEL).is_some_and(|s| !s.is_empty()) {
+                continue;
+            }
+        }
+        stack.extend(c.children().iter().rev().filter_map(|&k| v.view(k)));
+    }
+    out
+}
+
 /// [`Kind::a11y`](crate::Kind::a11y): the node's AccessKit node, prefilled with its role, bounds and
 /// children.
 pub struct A11yCx<'a> {
@@ -643,17 +665,17 @@ impl A11yCx<'_> {
     pub fn default_a11y(&mut self) {
         let v = self.node;
         let label = v.entry.spec.name_from.iter().find_map(|src| {
-            let s = match *src {
-                crate::kind::NameSource::AriaLabel => v.prop_str(common::ARIA_LABEL)?,
-                crate::kind::NameSource::Prop(p) => v.prop_str(v.entry.spec.prop_named(p)?)?,
-                crate::kind::NameSource::Text => v.text(),
-                // the children's own labels are their nodes'; AccessKit computes it from them
-                crate::kind::NameSource::Children => return None,
+            let s: std::borrow::Cow<str> = match *src {
+                crate::kind::NameSource::AriaLabel => v.prop_str(common::ARIA_LABEL)?.into(),
+                crate::kind::NameSource::Prop(p) => v.prop_str(v.entry.spec.prop_named(p)?)?.into(),
+                crate::kind::NameSource::Text => v.text().into(),
+                // accesskit computes names from descendants for a few roles only: concatenate here
+                crate::kind::NameSource::Children => descendant_text(&v).into(),
             };
             (!s.is_empty()).then_some(s)
         });
         if let Some(l) = label {
-            self.out.set_label(l);
+            self.out.set_label(&*l);
         }
         if let Some(t) = self.node.prop_str(common::TITLE) {
             self.out.set_description(t);

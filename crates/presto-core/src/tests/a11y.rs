@@ -103,3 +103,37 @@ fn an_inserted_subtree_joins_incrementally() {
     let ids: HashSet<AxId> = u.nodes.iter().map(|(id, _)| *id).collect();
     assert!(ids.contains(&ax(root)) && ids.contains(&ax(a)) && ids.contains(&ax(b)), "the parent and the new subtree");
 }
+
+static NAMED: crate::KindSpec = crate::KindSpec { container: true, role: Role::Button, name_from: &[crate::NameSource::Children], ..crate::KindSpec::new("named") };
+
+#[derive(Default)]
+struct Named;
+
+impl crate::Kind for Named {
+    fn spec() -> &'static crate::KindSpec {
+        &NAMED
+    }
+    fn record(&self, cx: &mut crate::RecordCx) {
+        cx.draw_box();
+    }
+}
+
+#[test]
+fn a_name_from_children_follows_their_text() {
+    let mut r = crate::KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<testkinds::TextKind>().unwrap();
+    r.register::<Named>().unwrap();
+    let mut d = Document::new(std::sync::Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let b = child(&mut d, root, KindId::of("named"), "");
+    let t1 = child(&mut d, b, TEXT, "");
+    let t2 = child(&mut d, b, TEXT, "");
+    d.set_prop(t1, TEXT_PROP, Value::from("Save")).unwrap();
+    d.set_prop(t2, TEXT_PROP, Value::from("all")).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    assert_eq!(u.nodes.iter().find(|(id, _)| *id == ax(b)).unwrap().1.label(), Some("Save all"));
+    d.set_prop(t2, TEXT_PROP, Value::from("as")).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    assert_eq!(u.nodes.iter().find(|(id, _)| *id == ax(b)).expect("re-sent").1.label(), Some("Save as"));
+}

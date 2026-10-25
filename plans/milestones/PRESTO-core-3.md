@@ -52,12 +52,28 @@ Not done here: OS file drops onto targets (`text/uri-list`; `InputEvent::FileHov
 dispatch nothing), auto-scroll near a scroll container's edge during a drag, the drag ghost
 (`::part(ghost)`: a widget's), the `grab` cursor over an idle source.
 
+## 4. The rest of CORE-2's list
+
+| Item | State |
+|---|---|
+| Queries (svelters-egui `scene/query.rs`) | Done (`query.rs`): kind sets kept by create/free (`Document::kinds_of`), `Document::query()` → `Query` with `kind`, `in_window`, `within`, `anchor`, `state`, `prop_eq`, `changed_since`, then `collect`/`first`/`count` (it walks the kind set, else the scope in pre-order, else the anchors, else every node); `Document::select(root, css)` and `matches(node, css)` through svelters-style's selector matcher. Anchors: `find_anchor` (one anchor map, filtered by window; `anchor-scope` qualification is not applied). |
+| Interner/compaction (`compact.rs`) | Not done. `ComputedBox` is already shared (`Arc`); the taffy style per node (`LayoutBox::style`, inline) is what an interner would shrink. Recommendation: do it when a 10k-node screen is profiled; it touches every `layout[i].style` writer. |
+| `resources.paths` | Done: `PrepareCx::upload_path(Arc<PathData>) -> PathId`, `release_path`; the commit carries `paths`/`removed_paths`. |
+| Layer `opaque` | Done: a content layer (or the root) whose owner's list starts with a square opaque solid quad covering its box, at full opacity, with no effect node. Re-recording a layer owner rebuilds so the flag follows. |
+| Layer `Damage` | Not filled, on purpose: the compositor derives damage from changed lists and property ops (`presto-compositor` `damage.rs`); `LayerDelta::Damage` is for extra damage only (canvas chunks), which no core kind produces. |
+| Incremental rebuild walk | Partly. The accessibility half is incremental now: nodes carry local bounds and their transform to their parent, so a rebuild re-sends only the nodes that moved relative to their parent, plus dirty nodes and subtrees that joined (removed and concealed subtrees leave the known set); the full tree goes only on the first frame (before: on every structure, layout or property change). Layers, items and the hit list are still rebuilt over the window on such changes. Recommendation for the rest: keep per-node hit and item ranges from the walk and splice the dirty subtrees' ranges; worth it only after profiling, since the walk is arithmetic per node. |
+
+Also: `NameSource::Children` now computes the name from the descendants' text (CORE-2 Q2), and a text or
+`aria-label` change re-projects such ancestors.
+
 ## Tests
 
 Written, not run (the brief's rule): `src/tests/hooks.rs` (parts, listened, prop state, scale, chrome,
 child layout, inert, peers and Tab stop and roving, Enter/Escape and auto-default, label for and
 `labelled_by`, `invalid`, enum attributes, status tip, `emit_sync` and a prevented `pointerdown` through
-the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids.
+the sync deliverer, drag and drop, type matching); `common::tests` covers the new ids; `src/tests/query.rs`; in `src/tests/a11y.rs` a move re-sending only
+the moved node (local bounds, parent-relative transform), an inserted subtree joining incrementally, and a
+name from children.
 
 ## Built / not run
 
@@ -73,6 +89,13 @@ core's (the shim's `PeerMsg::Checked(args)` → `PeerMsg::Notify(Some(Value::Lis
 `chrome_padding`, `child_layout` (+ `places_children: true` in the spec), `children_inert`;
 `prop_state` with the widget's bit mask in `prop_states`; `focus_anchor`; `scale` into the shim contexts;
 `Document::set_auto_default(policy.auto_default)` where the policy is installed.
+
+## Known gaps found on the way
+
+- The rebuild walk places a `position: absolute` box under its tree parent's world transform, while
+  layout locates it relative to its containing block (the dirty walk uses the right space for property
+  nodes): hit testing and world rects are off for an absolute box whose containing block is not its
+  parent. Not changed here; it needs `positional_parent` in the rebuild walk too.
 
 ## Questions for the coordinator
 

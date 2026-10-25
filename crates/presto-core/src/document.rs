@@ -771,6 +771,17 @@ impl Document {
         }
         self.refresh_prop_state(i);
         self.refresh_children_inert(i);
+        // ancestors named by their descendants' text re-project
+        if is_text || prop == common::ARIA_LABEL {
+            let mut a = self.core[i].parent;
+            while let Some(p) = a {
+                let pi = self.ix(p);
+                if self.registry.get(self.core[pi].kind).is_some_and(|e| e.spec.name_from.contains(&crate::kind::NameSource::Children)) {
+                    self.mark(p, Dirty::A11Y);
+                }
+                a = self.core[pi].parent;
+            }
+        }
         // attribute selectors may match the prop
         self.restyle_attr(i, spec.name);
         self.fold_up(i);
