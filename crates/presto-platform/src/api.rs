@@ -8,7 +8,7 @@ use presto_base::cursor::CursorIcon;
 use presto_base::event::{InputEnvelope, WindowEvent};
 use presto_base::geom::{DeviceRect, Point, Rect, Scale, Size, Vec2};
 use presto_base::ids::{SurfaceId, WindowId};
-use presto_base::input::InputPurpose;
+use presto_base::input::{InputPurpose, TextInputClient};
 use presto_base::time::{Clock, Time};
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 use std::ffi::c_void;
@@ -65,6 +65,18 @@ pub trait PlatformCx {
     fn set_cursor(&mut self, id: WindowId, c: CursorIcon);
     /// Text input on (with where the candidate window goes) or off.
     fn set_ime(&mut self, id: WindowId, state: Option<ImeState>);
+    /// Gives the window a full text-input client (architecture §11.3): the IME reads and edits the
+    /// document through it (reconversion, accents, dictation, per-character candidate placement)
+    /// instead of reporting composition as `ImeEvent`s. Key presses the IME passes through still
+    /// arrive as key events with their text. `None` turns text input off. Backends without a full
+    /// IME bridge fall back to [`PlatformCx::set_ime`] with the client's caret and purpose.
+    fn set_text_input(&mut self, id: WindowId, client: Option<Box<dyn TextInputClient>>) {
+        let state = client.map(|c| {
+            let area = c.selected_range().and_then(|r| c.bounds_for_range(r)).unwrap_or_default();
+            ImeState::new(area, c.purpose())
+        });
+        self.set_ime(id, state);
+    }
     /// Ends the active composition: commits it (`commit`) or cancels it. Returns `false` when this
     /// backend cannot do that (winit has no API for it outside the Windows shim).
     fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool;
@@ -113,6 +125,9 @@ pub struct WindowDesc {
     /// its content is a DirectComposition visual (wgpu DX12 only), which `create_os_layer` needs.
     /// Off: a plain window swap chain and no OS layers. Ignored elsewhere.
     pub os_compositing: bool,
+    /// Content extends under a transparent title bar (the OS window controls stay; macOS); the app
+    /// draws its own title bar and marks it with [`HitRegion`]s. Ignored where unsupported.
+    pub custom_title_bar: bool,
 }
 
 impl Default for WindowDesc {
@@ -130,6 +145,7 @@ impl Default for WindowDesc {
             maximized: false,
             app_id: None,
             os_compositing: true,
+            custom_title_bar: false,
         }
     }
 }
