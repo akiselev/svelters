@@ -371,8 +371,26 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             if let Some(r) = report
                 && let Some(f) = r.frame
             {
-                comp.ui_cost(w, f, r.cost);
+                comp.ui_cost(w, f, r.cost, r.input);
             }
+        }
+    }
+
+    /// The window was hidden (its in-flight inputs are dropped) or shown again (one frame if dirty).
+    fn occlusion(&mut self, window: WindowId, occluded: bool) {
+        let Some(ws) = self.windows.get_mut(&window) else {
+            return;
+        };
+        ws.visible = !occluded;
+        let dirty = ws.frame.is_dirty();
+        if occluded {
+            self.coalescer.take(window);
+            self.latency.drop_window(window);
+        } else if (dirty || self.doc.needs_frame(window))
+            && let Some(c) = &self.compositor
+        {
+            // The compositor kept the damage; one UI frame brings the tree up to date.
+            c.request_ui_frame(window);
         }
     }
 
@@ -433,6 +451,8 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             }
             // A late reply to a resize that already timed out: nothing waits for it.
             ToUi::ResizeDone { .. } => {}
+            // The platform's frame source saw the window covered or shown (the compositor knows).
+            ToUi::Occluded { window, occluded } => self.occlusion(window, occluded),
             ToUi::DeviceReset => {
                 self.doc.device_reset();
                 let ws: Vec<_> = self.windows.keys().copied().collect();
@@ -569,23 +589,10 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
                 }
             }
             WindowEvent::Occluded(occluded) => {
-                let Some(ws) = self.windows.get_mut(&window) else {
-                    return;
-                };
-                ws.visible = !occluded;
-                let dirty = ws.frame.is_dirty();
                 if let Some(c) = &self.compositor {
                     c.set_visible(window, !occluded);
                 }
-                if occluded {
-                    self.coalescer.take(window);
-                    self.latency.drop_window(window);
-                } else if (dirty || self.doc.needs_frame(window))
-                    && let Some(c) = &self.compositor
-                {
-                    // One frame when visible again (the compositor kept the damage).
-                    c.request_ui_frame(window);
-                }
+                self.occlusion(window, occluded);
             }
             WindowEvent::CloseRequested => self.close_window(cx, window),
             WindowEvent::Focused(_) | WindowEvent::Moved { .. } | WindowEvent::ThemeChanged(_) => {

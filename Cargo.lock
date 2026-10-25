@@ -4162,8 +4162,12 @@ name = "presto-test"
 version = "0.0.0"
 dependencies = [
  "egui",
+ "pollster 0.4.0",
  "presto",
  "presto-base",
+ "presto-render",
+ "presto-text",
+ "wgpu",
 ]
 
 [[package]]

@@ -2,19 +2,23 @@
 //!
 //! [`HeadlessCompositor`] implements `presto::seams::CompositorApi` without a GPU: it applies commits at
 //! each simulated vsync, reports `CommitApplied` and `Presented`, sends `BeginFrame` when the UI asked
-//! for one or an animation runs, and answers resizes at once. Drawing goes through the real compositor
-//! on lavapipe once `presto-compositor` is merged (`Harness::render`, not here yet).
+//! for one or an animation runs, and answers resizes at once. It also folds each commit into a real
+//! `presto_compositor::tree::WindowTree`, which [`HeadlessCompositor::render`] draws.
 
+use crate::render::{GpuRender, Image, RenderError};
 use presto::ToUiSink;
+use presto::compositor_crate::tree::{SurfaceKey, WindowTree};
 use presto::platform::SurfaceTarget;
 use presto::seams::CompositorApi;
 use presto_base::accesskit::TreeUpdate;
 use presto_base::anim::{
     AnimationCmd, AnimationEvent, AnimationSpec, Generator, SpringParams, StartTime,
 };
+use presto_base::color::Color;
 use presto_base::commit::{Commit, FastCommit, ToUi};
 use presto_base::geom::{DeviceSize, Scale};
 use presto_base::ids::{AnimationId, FrameId, InputSeq, WindowId};
+use presto_base::scene::{DrawItem, FrameScene};
 use presto_base::time::{Span, Time};
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
@@ -37,6 +41,8 @@ struct Running {
 #[derive(Default)]
 struct CompState {
     windows: BTreeMap<WindowId, CompWindow>,
+    /// Each window's committed scene, folded as the real compositor folds it (what `render` draws).
+    trees: BTreeMap<WindowId, WindowTree>,
     pending: BTreeMap<WindowId, Vec<Commit>>,
     fast: BTreeMap<WindowId, Vec<FastCommit>>,
     animations: BTreeMap<AnimationId, Running>,
@@ -144,9 +150,12 @@ impl HeadlessCompositor {
                     inputs.push(c.input_seq);
                     frame = frame.or(c.frame);
                     last_revision = Some(c.revision);
+                    st.trees.entry(w).or_default().apply_commit(c.clone());
                     st.applied.push(c);
                 }
                 for f in &fast {
+                    // A stale or unknown-node fast commit is dropped, as the compositor drops it.
+                    let _ = st.trees.entry(w).or_default().apply_fast(f);
                     if let FastCommit::ScrollOffset { input_seq, .. }
                     | FastCommit::Transform { input_seq, .. }
                     | FastCommit::CanvasView { input_seq, .. } = *f
@@ -264,6 +273,46 @@ impl HeadlessCompositor {
     pub fn skipped_frames(&self) -> u64 {
         self.lock().skipped
     }
+    /// Draws the window's committed scene (its main surface, all of it) on `gpu`, cleared to `clear`.
+    pub fn render(
+        &self,
+        window: WindowId,
+        gpu: &mut GpuRender,
+        clear: Color,
+    ) -> Result<Image, RenderError> {
+        let mut st = self.lock();
+        let st = &mut *st;
+        let (size, scale) = st
+            .windows
+            .get(&window)
+            .map(|w| (w.size, w.scale))
+            .ok_or_else(|| RenderError(format!("no window {window:?}")))?;
+        let tree = st.trees.entry(window).or_default();
+        let flat = tree.flatten();
+        let items: Vec<DrawItem<'_>> = flat
+            .get(&SurfaceKey::Main)
+            .map(|v| &v[..])
+            .unwrap_or(&[])
+            .iter()
+            .filter(|it| it.opacity > 0.0 && !it.bounds.is_empty())
+            .map(|it| DrawItem {
+                transform: it.transform,
+                clip: it.clip,
+                opacity: it.opacity,
+                list: &it.list,
+            })
+            .collect();
+        let scene = FrameScene {
+            target: size,
+            scale,
+            clear: Some(clear),
+            damage: &[],
+            items: &items,
+            resources: &tree.resources,
+        };
+        gpu.draw(&scene)
+    }
+
     pub fn is_shut_down(&self) -> bool {
         self.lock().shut_down
     }
@@ -292,6 +341,7 @@ impl CompositorApi for HeadlessCompositor {
     fn remove_window(&self, window: WindowId) {
         let mut st = self.lock();
         st.windows.remove(&window);
+        st.trees.remove(&window);
         st.pending.remove(&window);
         st.fast.remove(&window);
         st.animations.retain(|_, a| a.window != window);
@@ -338,7 +388,7 @@ impl CompositorApi for HeadlessCompositor {
     fn high_rate_input(&self, _window: WindowId) {
         self.lock().high_rate += 1;
     }
-    fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span) {
+    fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, _input: bool) {
         self.lock().ui_costs.push((window, frame, cost));
     }
     fn ui_frame_skipped(&self, _window: WindowId, _frame: FrameId) {

@@ -76,8 +76,9 @@ pub trait CompositorApi {
     fn request_ui_frame(&self, window: WindowId);
     /// Continuous input arrived (keeps variable-refresh displays up).
     fn high_rate_input(&self, window: WindowId);
-    /// How long the UI phases of `frame` took (the frame clock's estimator).
-    fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span);
+    /// How long the UI phases of `frame` took (the frame clock's estimator); `input` = the frame
+    /// handled discrete input (its own estimate).
+    fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, input: bool);
     /// The UI answered `BeginFrame` `frame` with nothing to commit (`UiFrameSkipped`).
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
     fn shutdown(&self);

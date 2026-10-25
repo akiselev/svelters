@@ -12,6 +12,7 @@
 use crate::a11y::{A11yTree, By, NodeInfo};
 use crate::egui_event::{EguiAdapter, Injected};
 use crate::headless::HeadlessCompositor;
+use crate::render::{GpuRender, Image, RenderError};
 use presto::platform::{
     A11yEvent, ClipboardKind, HeadlessPlatform, PlatformCall, PlatformCx, Scripted, VirtualClock,
     WindowDesc,
@@ -19,6 +20,7 @@ use presto::platform::{
 use presto::seams::DocumentApi;
 use presto::{App, AppConfig};
 use presto_base::accesskit::{Action, ActionRequest, NodeId, Role, TreeId};
+use presto_base::color::Color;
 use presto_base::event::{
     ImeEvent, InputEvent, KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton, PointerEvent,
     PointerPhase, PointerType, ScrollDelta, WheelEvent, WindowEvent,
@@ -27,6 +29,7 @@ use presto_base::geom::{DeviceSize, Point, Rect, Scale, Size, Vec2};
 use presto_base::ids::WindowId;
 use presto_base::key::Key;
 use presto_base::smallvec::SmallVec;
+use presto_base::text::GlyphRasterizer;
 use presto_base::time::{Clock, Span, Time};
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -54,6 +57,8 @@ pub struct HarnessBuilder {
     max_steps: u64,
     start: Time,
     config: AppConfig,
+    glyphs: Option<Arc<dyn GlyphRasterizer>>,
+    clear: Color,
 }
 
 impl Default for HarnessBuilder {
@@ -65,6 +70,8 @@ impl Default for HarnessBuilder {
             max_steps: 64,
             start: Time(1_000_000_000),
             config: AppConfig::default(),
+            glyphs: None,
+            clear: Color::WHITE,
         }
     }
 }
@@ -89,6 +96,17 @@ impl HarnessBuilder {
     }
     pub fn with_max_steps(mut self, n: u64) -> Self {
         self.max_steps = n;
+        self
+    }
+    /// The glyph rasteriser `render` draws text with (default: presto-text over its bundled test
+    /// fonts, `FontConfig::testing()`).
+    pub fn with_glyphs(mut self, glyphs: Arc<dyn GlyphRasterizer>) -> Self {
+        self.glyphs = Some(glyphs);
+        self
+    }
+    /// What `render` clears to (default white).
+    pub fn with_clear(mut self, clear: Color) -> Self {
+        self.clear = clear;
         self
     }
     /// The app's configuration (its window list is replaced by the harness window).
@@ -141,6 +159,9 @@ impl HarnessBuilder {
             a11y: A11yTree::default(),
             calls: Vec::new(),
             steps: 0,
+            glyphs: self.glyphs,
+            clear: self.clear,
+            gpu: None,
         };
         h.collect_calls();
         // The platform reports the window's size once it exists, as an OS backend does.
@@ -183,6 +204,10 @@ pub struct Harness<D: DocumentApi + 'static> {
     /// Every platform call the app made, in order.
     calls: Vec<PlatformCall>,
     steps: u64,
+    glyphs: Option<Arc<dyn GlyphRasterizer>>,
+    clear: Color,
+    /// Opened by the first `render`.
+    gpu: Option<GpuRender>,
 }
 
 impl<D: DocumentApi + 'static> Harness<D> {
@@ -289,6 +314,23 @@ impl<D: DocumentApi + 'static> Harness<D> {
         }
         self.platform.run_until(&mut self.app, Some(now));
         self.collect_calls();
+    }
+
+    /// The window as the compositor has it now (every applied commit), drawn by presto-render on the
+    /// environment's wgpu adapter. Opens the device on first use; `Err` when there is none.
+    pub fn render(&mut self) -> Result<Image, RenderError> {
+        if self.gpu.is_none() {
+            let glyphs = match &self.glyphs {
+                Some(g) => g.clone(),
+                None => {
+                    let fonts = presto_text::FontStore::new(presto_text::FontConfig::testing());
+                    Arc::new(presto_text::FontRasterizer::new(fonts)) as Arc<dyn GlyphRasterizer>
+                }
+            };
+            self.gpu = Some(GpuRender::new(glyphs)?);
+        }
+        let gpu = self.gpu.as_mut().expect("opened above");
+        self.compositor.render(self.window, gpu, self.clear)
     }
 
     /// Why the harness is not settled, or `None` when it is (or the app exited).

@@ -65,6 +65,13 @@ Based on `ci/presto-base` 622aef24 (CORE, TEXT, PLATFORM, FRAME-ANIM and COMPOSI
   `Presented { at: vsync }` naming the commits' and fast commits' input seqs, `BeginFrame` when asked or
   while an animation runs, `Started`/`Finished` for keyframe and `{duration, bounce}` animations,
   immediate `ResizeDone`, hidden windows hold their commits.
+- `Harness::render` → `Image` (premultiplied RGBA8, device pixels): the headless compositor folds every
+  applied commit and fast commit into a real `presto_compositor::tree::WindowTree`; `render` flattens its
+  main surface into a `FrameScene` (full damage, `with_clear`, default white) and draws it with
+  `presto_render::Renderer` on `presto_render::headless::HeadlessTarget`, on the environment's adapter
+  (`GpuRender`: default adapter, then the fallback; lavapipe in Linux CI). Glyphs default to presto-text's
+  `FontRasterizer` over `FontConfig::testing()` (`with_glyphs` overrides). Not drawn: the compositor's own
+  caret, compositor animations' sampled values, OS-layer surfaces.
 - `a11y`: the AccessKit snapshot folded from the app's `update_a11y` calls (unreachable nodes dropped,
   window-space bounds through ancestor transforms), `By` queries with author ids (EM1).
 - `egui_event::EguiAdapter`: `egui::Event` → presto input (pointer, buttons with held-button mask, keys by
@@ -86,12 +93,11 @@ Based on `ci/presto-base` 622aef24 (CORE, TEXT, PLATFORM, FRAME-ANIM and COMPOSI
   **every injected input terminates exactly once** (hover merges, click, keys, drag: 17 seqs, no
   violations, presented ones carry commit and presented stamps); Chrome trace has flows; closing the last
   window exits and shuts the compositor down; hidden windows.
+- `crates/presto-test/tests/render.rs` (`PRESTO_GPU_TESTS=1` only): a committed quad's pixels and the
+  clear colour, a re-recorded list after a key press, and HiDPI output in device pixels.
 
 ## Not done (left out, not faked)
 
-- `Harness::render` (pixels through the compositor on lavapipe): the headless compositor draws nothing.
-  Needs a harness mode that spawns the real `presto_compositor::Compositor` with an offscreen target (or
-  `presto_render::render_to_image` over the compositor's flattened scene); listed for consolidation.
 - Hover "at once" for continuous input (architecture §11.1) is not separate from the coalesced dispatch:
   `Document` has no hover-only entry (CORE request 2 below).
 - Physical and svelte/motion springs never end in the headless compositor (no settle time without
@@ -161,3 +167,12 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
     **Decided (coordinator, 2026-10-25):** `TextServices` owns its own `presto_platform::SystemClipboard`
     (`MemoryClipboard` headless) and a clone of the compositor handle for caret fast commits; the
     consolidation wires it at the TODO in `App::init`.
+
+## Update (2026-10-25, after base 2a12e530+)
+
+- `Harness::render` landed (above). Not run locally (no Vulkan ICD in this container); CI's lavapipe run
+  is its first run.
+- Adopted COMPOSITOR's new handle API: `needs_ui_frame(window, true)` for frame requests,
+  `ui_frame_skipped` (request 10 is done, the empty-commit stopgap is gone), `ui_input_cost` for frames
+  that handled discrete input; `ToUi::Occluded` from the frame source hides/shows the window like
+  `WindowEvent::Occluded`.

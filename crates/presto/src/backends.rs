@@ -148,26 +148,20 @@ impl CompositorApi for CompositorHandle {
         CompositorHandle::set_visible(self, window, visible);
     }
     fn request_ui_frame(&self, window: WindowId) {
-        CompositorHandle::request_ui_frame(self, window);
+        CompositorHandle::needs_ui_frame(self, window, true);
     }
     fn high_rate_input(&self, window: WindowId) {
         CompositorHandle::high_rate_input(self, window);
     }
-    fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span) {
-        CompositorHandle::ui_cost(self, window, frame, cost);
+    fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span, input: bool) {
+        if input {
+            CompositorHandle::ui_input_cost(self, window, frame, cost);
+        } else {
+            CompositorHandle::ui_cost(self, window, frame, cost);
+        }
     }
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId) {
-        // The handle has no skipped signal yet and the interval pacer sends no further `BeginFrame`
-        // until a commit arrives, so answer with an empty commit: no ops, revision 0 (never newer than
-        // the applied tree), no input. Replace with the signal once COMPOSITOR adds it (the record, 10).
-        CompositorHandle::commit(
-            self,
-            Commit {
-                window,
-                frame: Some(frame),
-                ..Commit::default()
-            },
-        );
+        CompositorHandle::ui_frame_skipped(self, window, frame);
     }
     fn shutdown(&self) {
         self.clone().shutdown();
