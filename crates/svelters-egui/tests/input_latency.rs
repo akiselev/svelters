@@ -13,6 +13,15 @@ use svelters_egui::harness::TestApp;
 const DT: f32 = 1.0 / 60.0;
 const MAX: usize = 120;
 
+thread_local! {
+    /// Wall time of the frame that got the input (debug build, not a gate).
+    static FIRST_MS: std::cell::Cell<f64> = const { std::cell::Cell::new(0.0) };
+}
+
+fn first_ms() -> String {
+    format!("input frame {:.1} ms", FIRST_MS.with(|c| c.get()))
+}
+
 fn app() -> TestApp {
     let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/latency-egui");
     let mut app = TestApp::from_source_stepped(&dir, DT).unwrap();
@@ -57,7 +66,11 @@ fn press(pos: Pos2, pressed: bool) -> Event {
 fn frames_until(app: &mut TestApp, done: impl Fn(&TestApp) -> bool) -> (Option<usize>, u64) {
     let p0 = app.harness.ctx.cumulative_pass_nr();
     for i in 1..=MAX {
+        let t = std::time::Instant::now();
         app.harness.step();
+        if i == 1 {
+            FIRST_MS.with(|c| c.set(t.elapsed().as_secs_f64() * 1e3));
+        }
         if done(app) {
             return (Some(i), app.harness.ctx.cumulative_pass_nr() - p0);
         }
@@ -99,17 +112,17 @@ fn input_latency_in_frames() {
     // a widget signal (`onclicked`, from egui's Response during the walk)
     let mut a = app();
     let (frames, passes) = click_frames(&mut a, "Signal", |a| has(a, "signal 1"));
-    rows.push(Row { name: "button onclicked", frames, passes, note: String::new() });
+    rows.push(Row { name: "button onclicked", frames, passes, note: first_ms() });
 
     // a DOM event (`onclick`, dispatched by the input hook before the pass)
     let mut a = app();
     let (frames, passes) = click_frames(&mut a, "Dom", |a| has(a, "dom 1"));
-    rows.push(Row { name: "button onclick (DOM)", frames, passes, note: String::new() });
+    rows.push(Row { name: "button onclick (DOM)", frames, passes, note: first_ms() });
 
     // a two-way binding feeding an {#if}
     let mut a = app();
     let (frames, passes) = click_frames(&mut a, "Check", |a| has(a, "checked on"));
-    rows.push(Row { name: "checkbox bind:checked -> {#if}", frames, passes, note: String::new() });
+    rows.push(Row { name: "checkbox bind:checked -> {#if}", frames, passes, note: first_ms() });
 
     // typing into a bound field, shown by another label
     let mut a = app();
@@ -119,24 +132,26 @@ fn input_latency_in_frames() {
     let edit_drawn = has(&a, "typed []");
     send(&mut a, vec![Event::Text("x".into())]);
     let (frames, passes) = frames_until(&mut a, |a| has(a, "typed [x]"));
-    rows.push(Row { name: "text-edit bind:text -> label", frames, passes, note: format!("field drawn: {edit_drawn}") });
+    rows.push(Row { name: "text-edit bind:text -> label", frames, passes, note: format!("field drawn: {edit_drawn}, {}", first_ms()) });
 
     // the menu bar: open Alpha, then hover Beta
     let mut a = app();
     let (frames, passes) = click_frames(&mut a, "Alpha", |a| has(a, "Alpha item"));
-    rows.push(Row { name: "menu-bar click opens menu", frames, passes, note: String::new() });
+    rows.push(Row { name: "menu-bar click opens menu", frames, passes, note: first_ms() });
     let beta = center(&a, "Beta");
     send(&mut a, vec![Event::PointerMoved(beta)]);
     let (frames, passes) = frames_until(&mut a, |a| has(a, "Beta item") && !has(a, "Alpha item"));
-    rows.push(Row { name: "menu-bar hover switches menu", frames, passes, note: String::new() });
+    rows.push(Row { name: "menu-bar hover switches menu", frames, passes, note: first_ms() });
 
     // one wheel notch over the scroll area (a line, as a mouse wheel on Windows sends it)
     let mut a = app();
-    let r0 = rect_of(&a, "row 0").expect("row 0");
-    let over = r0.center();
+    let over = rect_of(&a, "row 0").expect("row 0").center();
     send(&mut a, vec![Event::PointerMoved(over)]);
     settle(&mut a);
-    let r0 = rect_of(&a, "row 0").expect("row 0");
+    // the last row drawn: it moves up and stays in view (row 0 scrolls out)
+    let last = (0..60).rev().find(|i| rect_of(&a, &format!("row {i}")).is_some()).expect("a row");
+    let row = format!("row {last}");
+    let r0 = rect_of(&a, &row).expect("last row");
     send(
         &mut a,
         vec![Event::MouseWheel {
@@ -151,7 +166,7 @@ fn input_latency_in_frames() {
     let mut ys = Vec::new();
     for _ in 0..MAX {
         a.harness.step();
-        ys.push(rect_of(&a, "row 0").map_or(f32::NAN, |r| r0.min.y - r.min.y));
+        ys.push(rect_of(&a, &row).map_or(f32::NAN, |r| r0.min.y - r.min.y));
     }
     let end = *ys.last().unwrap();
     let first = ys.iter().position(|&d| d.abs() > 0.01).map(|i| i + 1);
