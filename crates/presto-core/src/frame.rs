@@ -302,15 +302,17 @@ impl Document {
                 }
             }
             self.core[i].dirty.remove(Dirty::RECORD.union(Dirty::DESC_RECORD).union(Dirty::LAYOUT).union(Dirty::DESC_LAYOUT));
-            let p = &self.record[i];
+            let p = &mut self.record[i];
             let child = Ctx { space: p.content.or(p.transform), clip: p.clip.or(ctx.clip), effect: p.effect.or(ctx.effect) };
+            p.child_clip = child.clip;
             for &c in self.layout_children(i).to_vec().iter().rev() {
                 let ci = self.ix(c);
-                // absolute boxes are placed in their containing block's space
+                // absolute boxes are placed in their containing block's space and clipped as its
+                // children are (a clip between the two does not clip them, as in CSS)
                 let cctx = match crate::layout::positional_parent(self, ci) {
                     Some(pp) if pp != i => {
                         let q = &self.record[pp];
-                        Ctx { space: q.content.or(q.transform), ..child }
+                        Ctx { space: q.content.or(q.transform), clip: q.child_clip, ..child }
                     }
                     _ => child,
                 };
@@ -545,6 +547,7 @@ impl Document {
         items.insert(root_layer, Vec::new());
         let mut hits = Vec::new();
         // (slot, world transform of the space its children are placed in, world clip, layer, ctx)
+        #[derive(Clone, Copy)]
         struct Frame {
             i: usize,
             parent_world: Affine,
@@ -558,6 +561,8 @@ impl Document {
         let mut z_next = 1;
         let mut used_layers = vec![root_layer];
         let mut moved = Vec::new();
+        // what each visited node passes its children: absolute boxes take their containing block's
+        let mut cb_frames: std::collections::HashMap<usize, Frame> = Default::default();
         while let Some(f) = stack.pop() {
             let i = f.i;
             let node = self.slots.id_at(i).expect("live");
@@ -655,23 +660,19 @@ impl Document {
                 clip: p.clip.or(f.clip),
                 effect: own_effect,
             };
+            cb_frames.insert(i, child);
             for c in self.paint_order(i).into_iter().rev() {
                 let ci = self.ix(c);
-                // an absolute box is placed in its containing block's space (as in the dirty walk)
-                let parent_world = match crate::layout::positional_parent(self, ci) {
-                    Some(pp) if pp != i => {
-                        let ppn = self.slots.id_at(pp).expect("live");
-                        let w = self.record[pp].world_tf;
-                        if self.record[pp].scroll.is_some() {
-                            let off = self.scroll_offset(ppn);
-                            w.then(&Affine::translate(-off.x, -off.y))
-                        } else {
-                            w
-                        }
-                    }
-                    _ => child.parent_world,
+                // an absolute box is placed in its containing block's space and clipped as its
+                // children are (as in the dirty walk); effects and layers follow the tree
+                let frame = match crate::layout::positional_parent(self, ci) {
+                    Some(pp) if pp != i => match cb_frames.get(&pp) {
+                        Some(cb) => Frame { i: ci, parent_world: cb.parent_world, clip_world: cb.clip_world, clip: cb.clip, ..child },
+                        None => Frame { i: ci, ..child },
+                    },
+                    _ => Frame { i: ci, ..child },
                 };
-                stack.push(Frame { i: ci, parent_world, ..child });
+                stack.push(frame);
             }
         }
         // diff the layers and items against what was sent
