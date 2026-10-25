@@ -169,6 +169,8 @@ pub(crate) struct LayoutBox {
     pub layout: taffy::Layout,
     /// A leaf's last measured max-content size (the measure guard compares against it).
     pub intrinsic: Option<Size>,
+    /// The out-of-flow boxes this node is the containing block of (taffy's hoisted children).
+    pub hoisted: Vec<NodeId>,
 }
 
 /// The props written to a node (defaults are not stored).

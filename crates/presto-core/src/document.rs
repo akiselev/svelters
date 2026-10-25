@@ -75,6 +75,10 @@ pub struct Document {
     pub(crate) scroll: HashMap<NodeId, presto_base::geom::Vec2>,
     /// The revision of the last edit that changed something.
     pub(crate) last_change: Revision,
+    /// Run and image ids are unique per document (the compositor holds them per window).
+    pub(crate) run_counter: u64,
+    pub(crate) images: crate::cx::ImageSink,
+    pub(crate) key_hook: Option<Box<dyn FnMut(WindowId, &presto_base::event::KeyEvent) -> bool>>,
 }
 
 impl Document {
@@ -105,6 +109,9 @@ impl Document {
             anim: Default::default(),
             scroll: HashMap::new(),
             last_change: Revision(0),
+            run_counter: 0,
+            images: Default::default(),
+            key_hook: None,
         }
     }
 
@@ -260,7 +267,7 @@ impl Document {
             slot: None,
             window: None,
             flags: NodeFlags::EMPTY,
-            dirty: Dirty::STYLE | Dirty::LAYOUT | Dirty::MEASURE | Dirty::RECORD,
+            dirty: Dirty::STYLE | Dirty::LAYOUT | Dirty::RECORD,
             changed: rev,
         };
         let i = id.index() as usize;
@@ -504,9 +511,8 @@ impl Document {
         self.core[pi].dirty.insert(Dirty::CHILDREN | Dirty::A11Y);
         self.mark_up(pi, Dirty::DESC_RECORD);
         self.invalidate_content(pi);
-        // structural selectors (:first-child, :has) may restyle siblings
-        self.core[pi].dirty.insert(Dirty::STYLE_SUBTREE | Dirty::STYLE);
-        self.mark_up(pi, Dirty::DESC_STYLE);
+        // structural selectors (:first-child, :has) may restyle around it
+        self.restyle_structure(pi);
     }
 
     // ---- props ----
@@ -592,9 +598,7 @@ impl Document {
             self.set_state(node, StateMask::DISABLED, on);
         }
         // attribute selectors may match the prop
-        self.style.prop_written(i);
-        self.core[i].dirty.insert(Dirty::STYLE);
-        self.mark_up(i, Dirty::DESC_STYLE);
+        self.restyle_attr(i, spec.name);
         self.journal.push(Change::Prop { node, prop, revision: rev, native });
         Ok(class)
     }
@@ -688,11 +692,11 @@ impl Document {
     /// Sets the node's classes, `#id` and inline declarations.
     pub fn set_style(&mut self, node: NodeId, style: StyleInput) {
         let Some(i) = self.idx(node) else { return };
-        if self.style.set_input(i, style) {
+        let old = self.style.input(i).cloned();
+        if self.style.set_input(i, style.clone()) {
             let rev = self.stamp();
             self.core[i].changed = rev;
-            self.core[i].dirty.insert(Dirty::STYLE | Dirty::STYLE_SUBTREE);
-            self.mark_up(i, Dirty::DESC_STYLE);
+            self.restyle_inputs(i, old.as_ref(), &style);
             self.journal.push(Change::Style { node, revision: rev });
         }
     }
@@ -735,11 +739,9 @@ impl Document {
         }
         self.state[i] = new;
         self.stamp();
-        self.core[i].dirty.insert(Dirty::STYLE | Dirty::A11Y);
-        if self.style.state_affects_descendants(StateMask(old.0 ^ new.0)) {
-            self.core[i].dirty.insert(Dirty::STYLE_SUBTREE);
-        }
-        self.mark_up(i, Dirty::DESC_STYLE | Dirty::DESC_RECORD);
+        self.core[i].dirty.insert(Dirty::A11Y);
+        self.mark_up(i, Dirty::DESC_RECORD);
+        self.restyle_state(i, old, new);
         self.journal.push(Change::State { node, state: new });
     }
 
