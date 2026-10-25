@@ -7,7 +7,7 @@ Watch it / Try it run live; the core first.
 
 ## Status
 
-Code, tests and docs written; local filtered tests: see "Tests". CI: see "CI".
+Done: all five CI workflows green on `1fbe8cfc`. Ready for the coordinator to merge (merge order 1).
 
 ## What landed
 
@@ -68,11 +68,23 @@ actionability) and unit tests in `journal.rs`, `busy.rs`, `replay.rs`:
 - the JSON surface (`journal.cursor`, `wait.event` with and without `since`, `wait.seen`, `wait.never`, `wait.step_end`,
   `journal.events`, `journal.kinds`) and the report in `Error::data`.
 
-Run locally: see the CI section's note.
+Run locally (no nextest in the cloud container, so `cargo test`): `svelters-automation --features run` `--lib`,
+`--test waits`, `--test counter`, `--test ipc`, all passing on `1fbe8cfc`. Not run locally: the full workspace,
+the gates, conformance (CI ran them).
 
 ## CI
 
-(run ids added after the push)
+Head `1fbe8cfc` (merged with `origin/master`, which had nothing new): all green.
+
+| Workflow | Run id |
+|---|---|
+| js | 40135540969 |
+| linux-gtk | 40135540952 |
+| linux-qt | 40135541038 |
+| macos-appkit | 40135541033 |
+| windows-winui | 40135540943 |
+
+The follow-up commit that records these ids is docs-only (CI not rerun for it per `CLAUDE.md`; it runs anyway on push).
 
 ## Handoff to cadatomic's `waits-adopt`
 
