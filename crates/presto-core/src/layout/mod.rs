@@ -92,21 +92,44 @@ impl presto_base::text::TextMeasure for NoMeasure {
     }
 }
 
-/// The measure of a leaf: its kind's `measure` with the node's view.
-fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: Size<AvailableSpace>) -> Size<f32> {
-    let Some(k) = doc.kinds[i].take() else { return Size::ZERO };
-    // the kind sees the whole document (its children's views): the services it uses mutably are
-    // lent out of it for the call
+/// Calls `f` with node `i`'s kind and a measure context (its view, with `style` standing in for its
+/// computed box while a restyle computes it). The kind sees the whole document (its children's
+/// views): the services it uses mutably are lent out of it for the call.
+pub(crate) fn with_measure_cx<R>(doc: &mut Document, i: usize, style: Option<&crate::style::ComputedBox>, f: impl FnOnce(&dyn crate::Kind, &mut MeasureCx) -> R) -> Option<R> {
+    let k = doc.kinds[i].take()?;
     let mut text = std::mem::replace(&mut doc.text, Box::new(NoMeasure));
     let mut services = std::mem::take(&mut doc.services);
     let out = {
-        let mut cx = MeasureCx { node: doc.view_at(i), text: &mut *text, services: &mut services };
-        k.measure(&mut cx, known, avail)
+        let view = doc.view_at(i);
+        let view = match style {
+            Some(s) => crate::cx::NodeView { style: s, ..view },
+            None => view,
+        };
+        let mut cx = MeasureCx { node: view, text: &mut *text, services: &mut services };
+        f(&*k, &mut cx)
     };
     doc.text = text;
     doc.services = services;
     doc.kinds[i] = Some(k);
-    out
+    Some(out)
+}
+
+/// The measure of a leaf: its kind's `measure` with the node's view.
+fn measure_leaf(doc: &mut Document, i: usize, known: Size<Option<f32>>, avail: Size<AvailableSpace>) -> Size<f32> {
+    with_measure_cx(doc, i, None, |k, cx| k.measure(cx, known, avail)).unwrap_or(Size::ZERO)
+}
+
+/// Adds `pad` (points) to the length parts of `style`'s padding (a kind's chrome).
+pub(crate) fn add_padding(style: &mut Style, pad: presto_base::geom::Insets) {
+    let add = |lp: &mut taffy::LengthPercentage, v: f32| {
+        if let taffy::style::ExpandedLengthPercentage::Length(l) = lp.expand() {
+            *lp = taffy::LengthPercentage::length(l + v);
+        }
+    };
+    add(&mut style.padding.left, pad.left);
+    add(&mut style.padding.right, pad.right);
+    add(&mut style.padding.top, pad.top);
+    add(&mut style.padding.bottom, pad.bottom);
 }
 
 impl LayoutPartialTree for Tree<'_> {
@@ -152,7 +175,7 @@ impl LayoutPartialTree for Tree<'_> {
                 let m = measure_leaf(doc, i, Size::NONE, Size { width: AvailableSpace::MaxContent, height: AvailableSpace::MaxContent });
                 doc.layout[i].intrinsic = Some(PSize::new(m.width, m.height));
             }
-            compute_leaf_layout(inputs, &style, |_, _| 0.0, |known, avail| {
+            compute_leaf_layout(inputs, &*style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(h) } = known {
                     return Size { width: w, height: h };
                 }
@@ -289,9 +312,9 @@ pub(crate) fn positional_parent(doc: &Document, i: usize) -> Option<usize> {
     }
     let mut a = p;
     loop {
-        if doc.layout[a].style.position == taffy::Position::Relative && doc.core[a].parent.is_some() {
-            // taffy's containing block: the nearest box that is not `static` (all presto boxes are
-            // relative unless absolute), which is the parent
+        // taffy's containing block: the nearest positioned box (`relative` or `absolute`; boxes are
+        // `static` unless CSS says otherwise), else the window root, which claims the rest
+        if doc.layout[a].style.position != taffy::Position::Static {
             return Some(a);
         }
         match doc.core[a].parent {
@@ -307,7 +330,7 @@ impl Tree<'_> {
         let i = top.index() as usize;
         let want = Size { width: taffy::Dimension::length(size.w), height: taffy::Dimension::length(size.h) };
         if self.doc.layout[i].style.size != want {
-            self.doc.layout[i].style.size = want;
+            std::sync::Arc::make_mut(&mut self.doc.layout[i].style).size = want;
             self.doc.layout[i].cache.clear();
         }
         let id = tid(top);

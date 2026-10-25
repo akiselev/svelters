@@ -67,6 +67,14 @@ Deliverables:
   primitive as intended), and committed. In that run every exact-pixel assert passed on Metal (Apple
   Paravirtual) and on WARP, with no wgpu validation errors. `PRESTO_BLESS=1` rewrites them.
 
+## CI
+
+At 90959a28 (presto run 40225795440): presto-render 26 unit + 13 GPU tests pass on ubuntu-24.04 (lavapipe),
+windows-latest (WARP/DX12) and macos-latest (Metal), all ten images within tolerance of the references,
+no wgpu validation errors. The five svelters workflows are green. The presto job is still red only on
+other lanes' tests: presto-core `paint_transitions_sample_on_the_ui_thread`, presto-platform
+`os_time_is_in_the_past`, presto-widgets three slider tests (exact float compares).
+
 ## Not run
 
 Locally only `shaders_parse_and_validate` and `cargo check -p presto-render --all-targets` (no GPU in this

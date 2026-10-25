@@ -177,6 +177,8 @@ pub struct InputFrame {
     /// The wheel step in notches when the device reported lines or pages (egui's
     /// `MouseWheelUnit::Line`/`Page`: one per detent); `None` for precise point deltas (touchpads).
     pub wheel_notches: Option<Vec2>,
+    /// A press outside the host and its subtree this pass ([`Event::OutsidePress`], host-local).
+    pub outside_press: Option<Point>,
 }
 
 impl InputFrame {
@@ -437,6 +439,7 @@ impl Tracker {
             }
             Event::Timer => {}
             Event::CaptureLost => self.cancel_press(),
+            Event::OutsidePress(p) => pass.input.outside_press = Some(*p),
         }
         // the press can no longer click: no click candidate; a click-and-drag host starts dragging
         if self.origin.is_some() && !self.could_be_click(t) {

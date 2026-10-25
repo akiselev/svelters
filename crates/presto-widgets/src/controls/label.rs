@@ -332,6 +332,15 @@ impl Label {
 }
 
 impl Kind for Label {
+    fn folds_children() -> bool {
+        true
+    }
+    fn prop_state(&self) -> crate::interact::StateBits {
+        { let mut s = crate::interact::StateBits::NONE; s.set(crate::interact::StateBits::READ_ONLY, self.props.selectable); s }
+    }
+    fn prop_states() -> crate::interact::StateBits {
+        crate::interact::StateBits::READ_ONLY
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
@@ -444,8 +453,8 @@ impl Kind for Label {
                     let run = &r.runs[i];
                     let href = run.href.clone().unwrap_or_default();
                     let index = run.item.map_or(-1, |k| k as i64);
-                    common::emit(cx, &SPEC, "link-clicked", vec![Value::I64(index), Value::str(&href)]);
-                    if !href.is_empty() {
+                    let prevented = common::emit_sync(cx, &SPEC, "link-clicked", vec![Value::I64(index), Value::str(&href)]);
+                    if !prevented && !href.is_empty() {
                         common::emit(cx, &SPEC, "open-url", vec![Value::str(&href), Value::Bool(false)]);
                     }
                 }

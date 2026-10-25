@@ -83,7 +83,7 @@ const VALUE_ARG: &[(&str, ValueType)] = &[("value", ValueType::F64)];
 
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
-    SignalSpec::new("changed", VALUE_ARG, "The value changed (dragging, a key, the wheel, AccessKit)."),
+    SignalSpec::new("changed", VALUE_ARG, "The value changed (dragging, a key, the wheel, AccessKit). Preventing it keeps the value.").cancelable(),
     SignalSpec::new("input", VALUE_ARG, "Sent after `changed`, with the value written."),
     SignalSpec::new("commit", VALUE_ARG, "A commit point: the release of a drag that changed the value, or a step."),
     SignalSpec::new("submit", VALUE_ARG, "The user committed a value: the release of a drag, or Enter while focused."),
@@ -284,7 +284,9 @@ impl Slider {
 
     /// Writes `v` as the value the user set: `changed`, the write, `input`.
     fn write(&mut self, cx: &mut EventCx, v: f64) {
-        common::emit(cx, &SPEC, "changed", vec![Value::F64(v)]);
+        if common::emit_sync(cx, &SPEC, "changed", vec![Value::F64(v)]) {
+            return;
+        }
         self.props.value = v;
         cx.prop_changed(P::value.id());
         common::emit(cx, &SPEC, "input", vec![Value::F64(v)]);
@@ -292,6 +294,9 @@ impl Slider {
 }
 
 impl Kind for Slider {
+    fn parts() -> &'static [&'static str] {
+        &["track", "fill", "rest", "thumb", "tick", "mark-label", "value", "label"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
@@ -536,6 +541,13 @@ mod tests {
         d.get("value").and_then(|v| v.as_f64()).unwrap()
     }
 
+    /// The value is `want` up to the f32 rounding of pointer geometry.
+    #[track_caller]
+    fn assert_value(d: &Driver<Slider>, want: f64, what: &str) {
+        let v = value(d);
+        assert!((v - want).abs() < 1e-4, "{what}: value {v}, want {want}");
+    }
+
     fn quad(list: &presto_base::display::DisplayList, i: usize) -> presto_base::display::Quad {
         match &list.items[i] {
             Prim::Quad(q) => q.clone(),
@@ -636,7 +648,7 @@ mod tests {
         let mut d = driver();
         d.hover(true);
         d.down(60.0, 12.0);
-        assert_eq!(value(&d), 50.0);
+        assert_value(&d, 50.0, "value");
         assert!(d.state.contains(StateBits::PRESSED) && d.state.contains(StateBits::DRAGGING));
         d.advance(30);
         d.up(60.0, 12.0);
@@ -654,9 +666,9 @@ mod tests {
         assert!(d.take() == ["drag-started"], "a press on the thumb grabs it: no jump");
         d.advance(20);
         d.move_to(80.0, 12.0);
-        assert_eq!(value(&d), 70.0);
-        let changed = d.signals.iter().find(|(n, _)| *n == "changed").map(|(_, a)| a.clone());
-        assert_eq!(changed, Some(vec![Value::F64(70.0)]));
+        assert_value(&d, 70.0, "value");
+        let changed = d.signals.iter().find(|(n, _)| *n == "changed").and_then(|(_, a)| a.first()?.as_f64());
+        assert!(changed.is_some_and(|v| (v - 70.0).abs() < 1e-4), "changed carries the value: {changed:?}");
         d.advance(20);
         d.up(80.0, 12.0);
         assert_eq!(d.take(), ["changed", "input", "commit", "submit", "drag-stopped"]);
@@ -671,11 +683,11 @@ mod tests {
         d.down(20.0, 12.0);
         d.advance(20);
         d.move_to(100.0, 12.0);
-        assert_eq!(value(&d), 90.0, "live while dragging");
+        assert_value(&d, 90.0, "live while dragging");
         assert!(d.kind.claims_key(Key::Escape, Default::default()));
         d.key(Key::Escape);
         d.up(100.0, 12.0);
-        assert_eq!(value(&d), 10.0);
+        assert_value(&d, 10.0, "value");
         assert!(!d.names().contains(&"commit"));
     }
 
@@ -689,7 +701,7 @@ mod tests {
         d.key(Key::Enter);
         let subs: Vec<_> = d.signals.iter().filter(|(n, _)| *n == "submit").map(|(_, a)| a.clone()).collect();
         assert_eq!(subs, [vec![Value::F64(1.0)]], "one submit with the value");
-        assert_eq!(value(&d), 1.0, "Enter does not move it");
+        assert_value(&d, 1.0, "Enter does not move it");
     }
 
     #[test]
@@ -699,21 +711,21 @@ mod tests {
         d.set("page-step", Value::F64(20.0));
         d.focus(true);
         d.key(Key::ArrowRight);
-        assert_eq!(value(&d), 1.0);
+        assert_value(&d, 1.0, "value");
         d.key(Key::PageUp);
-        assert_eq!(value(&d), 21.0);
+        assert_value(&d, 21.0, "value");
         d.key(Key::End);
-        assert_eq!(value(&d), 100.0);
+        assert_value(&d, 100.0, "value");
         d.key(Key::Home);
-        assert_eq!(value(&d), 0.0);
+        assert_value(&d, 0.0, "value");
         d.key(Key::ArrowDown);
-        assert_eq!(value(&d), 0.0, "clamped at min: no change");
+        assert_value(&d, 0.0, "clamped at min: no change");
         let names = d.take();
         assert_eq!(names.iter().filter(|n| **n == "commit").count(), 4, "every step commits");
         assert_eq!(names.iter().filter(|n| **n == "changed").count(), 4);
         assert!(d.kind.claims_key(Key::ArrowLeft, Default::default()) && d.kind.claims_key(Key::Home, Default::default()));
         d.a11y_action(accesskit::Action::Increment);
-        assert_eq!(value(&d), 1.0);
+        assert_value(&d, 1.0, "value");
     }
 
     #[test]
@@ -723,7 +735,7 @@ mod tests {
         d.hover(true);
         d.down(20.0, 12.0);
         d.up(20.0, 12.0);
-        assert_eq!(value(&d), 90.0, "inverted: max at the start");
+        assert_value(&d, 90.0, "inverted: max at the start");
         d.set("inverted", Value::Bool(false));
         d.set("value", Value::F64(0.0));
         // track-click="page": toward the pointer by page-step
@@ -733,7 +745,7 @@ mod tests {
         d.take();
         d.down(110.0, 12.0);
         d.up(110.0, 12.0);
-        assert_eq!(value(&d), 20.0);
+        assert_value(&d, 20.0, "value");
         assert_eq!(d.take(), ["changed", "input", "commit"]);
         d.set("track-click", Value::str("jump"));
         // commit mode: a draft while dragging, the value and commit at the release
@@ -743,11 +755,11 @@ mod tests {
         d.down(10.0, 12.0);
         d.advance(20);
         d.move_to(60.0, 12.0);
-        assert_eq!(value(&d), 0.0, "tracking=false: not while dragging");
+        assert_value(&d, 0.0, "tracking=false: not while dragging");
         assert_eq!(d.take(), ["drag-started"]);
         d.advance(20);
         d.up(60.0, 12.0);
-        assert_eq!(value(&d), 50.0);
+        assert_value(&d, 50.0, "value");
         assert_eq!(d.take(), ["changed", "input", "commit", "submit", "drag-stopped"]);
     }
 
@@ -759,7 +771,7 @@ mod tests {
         d.advance(20);
         d.move_to(100.0, 12.0);
         d.up(100.0, 12.0);
-        assert_eq!(value(&d), 0.0);
+        assert_value(&d, 0.0, "value");
         assert!(!d.names().contains(&"drag-started"));
     }
 
@@ -773,7 +785,7 @@ mod tests {
         d.focus(true);
         d.key(Key::ArrowRight);
         d.a11y_action(accesskit::Action::Increment);
-        assert_eq!(value(&d), 0.0);
+        assert_value(&d, 0.0, "value");
         assert!(d.take().is_empty());
         assert!(d.state.contains(StateBits::DISABLED) && !d.state.contains(StateBits::PRESSED));
     }
@@ -783,7 +795,7 @@ mod tests {
         let mut d = driver();
         d.set("value", Value::F64(250.0));
         d.hover(true);
-        assert_eq!(value(&d), 100.0);
+        assert_value(&d, 100.0, "value");
         assert_eq!(d.changed, ["value"]);
         assert!(d.take().is_empty());
     }
@@ -803,5 +815,16 @@ mod tests {
         let n = testkit::a11y(&k, StateBits::NONE, SIZE);
         assert!(n.supports_action(accesskit::Action::Decrement));
         assert_eq!(n.orientation(), Some(accesskit::Orientation::Vertical));
+    }
+
+    #[test]
+    fn a_prevented_changed_keeps_the_value() {
+        let mut d = driver();
+        d.set("step", Value::F64(1.0));
+        d.prevent = vec!["changed"];
+        d.focus(true);
+        d.key(Key::ArrowRight);
+        assert!(d.names().contains(&"changed") && !d.names().contains(&"input"));
+        assert_value(&d, 0.0, "value");
     }
 }
