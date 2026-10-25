@@ -41,6 +41,11 @@ pub enum Cmd {
     Close,
 }
 
+/// `sqrt(x² + y²)` with IEEE `sqrt` only (libm's `hypot` is not bit-identical across platforms).
+fn len(x: f32, y: f32) -> f32 {
+    (x * x + y * y).sqrt()
+}
+
 /// Flattening tolerance in pixels.
 const TOLERANCE: f32 = 0.05;
 
@@ -76,7 +81,7 @@ pub fn flatten(cmds: &[Cmd]) -> Vec<Vec<Pt>> {
                 if cur.is_empty() {
                     cur.push(last);
                 }
-                let dd = (last.x - 2.0 * c1.x + p.x).hypot(last.y - 2.0 * c1.y + p.y);
+                let dd = len(last.x - 2.0 * c1.x + p.x, last.y - 2.0 * c1.y + p.y);
                 let n = (1 + ((dd / (8.0 * TOLERANCE)).sqrt()) as usize).min(64);
                 for i in 1..=n {
                     let t = i as f32 / n as f32;
@@ -90,8 +95,8 @@ pub fn flatten(cmds: &[Cmd]) -> Vec<Vec<Pt>> {
                 if cur.is_empty() {
                     cur.push(last);
                 }
-                let d1 = (last.x - 2.0 * c1.x + c2.x).hypot(last.y - 2.0 * c1.y + c2.y);
-                let d2 = (c1.x - 2.0 * c2.x + p.x).hypot(c1.y - 2.0 * c2.y + p.y);
+                let d1 = len(last.x - 2.0 * c1.x + c2.x, last.y - 2.0 * c1.y + c2.y);
+                let d2 = len(c1.x - 2.0 * c2.x + p.x, c1.y - 2.0 * c2.y + p.y);
                 let dd = d1.max(d2);
                 let n = (1 + ((3.0 * dd / (4.0 * TOLERANCE)).sqrt()) as usize).min(96);
                 for i in 1..=n {
@@ -156,7 +161,7 @@ pub fn embolden(polys: &mut [Vec<Pt>], strength: f32) {
             let n0 = normal(prev, cur);
             let n1 = normal(cur, next);
             let (mut bx, mut by) = (n0.x + n1.x, n0.y + n1.y);
-            let len = bx.hypot(by);
+            let len = len(bx, by);
             if len < 1e-6 {
                 continue;
             }
@@ -182,7 +187,7 @@ fn signed_area(p: &[Pt]) -> f32 {
 /// The unit normal of the edge a→b (rotated -90° in y-down space).
 fn normal(a: Pt, b: Pt) -> Pt {
     let (dx, dy) = (b.x - a.x, b.y - a.y);
-    let len = dx.hypot(dy);
+    let len = len(dx, dy);
     if len < 1e-9 {
         return Pt::default();
     }

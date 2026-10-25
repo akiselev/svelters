@@ -11,9 +11,8 @@
 //! - **Links.** A click on an `a` run's glyphs is the label's `link-clicked` (with the run's index and
 //!   `href`) and `open-url`.
 //!
-//! CSS on the runs themselves (`label span.warn`, per-run colour, background, size) needs their
-//! computed style folded too, which waits for presto-core to show a kind its children while measuring
-//! and recording (`plans/milestones/PRESTO-widgets-basic.md`).
+//! CSS on the runs themselves (`label span.warn`, per-run colour, background, size) is not folded yet:
+//! presto-core restyles the runs, but the records carry only tag formatting and `href`.
 
 use crate::interact::StateBits;
 use crate::kind_props;

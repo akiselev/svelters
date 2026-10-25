@@ -518,7 +518,7 @@ impl Document {
             let i = f.i;
             let node = self.slots.id_at(i).expect("live");
             let s = self.style.nodes[i].computed.clone();
-            let hidden = self.layout[i].style.display == taffy::Display::None;
+            let hidden = self.layout[i].style.display == taffy::Display::None || self.core[i].flags.contains(crate::tree::NodeFlags::CONCEALED);
             if hidden {
                 continue;
             }

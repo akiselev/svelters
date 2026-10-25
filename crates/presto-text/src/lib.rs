@@ -21,7 +21,7 @@ pub mod system;
 pub mod test_fonts;
 
 pub use fonts::{FontConfig, FontStore};
-pub use layout::{Affinity, Cursor, LineInfo, PlacedRun, TextLayout};
+pub use layout::{Affinity, ClusterInfo, Cursor, LineInfo, PlacedRun, TextLayout};
 pub use raster::{FontRasterizer, RasterConfig, RasterPolicy};
 pub use style::{Align, RichText, Span, TextStyle};
 pub use system::{TextStats, TextSystem};

@@ -4163,6 +4163,7 @@ dependencies = [
 name = "presto-text"
 version = "0.0.0"
 dependencies = [
+ "fontique",
  "parley",
  "png 0.18.1",
  "presto-base",

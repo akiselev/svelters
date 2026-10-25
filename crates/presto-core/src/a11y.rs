@@ -36,8 +36,27 @@ impl Document {
         if hidden {
             out.set_hidden();
         }
-        out.set_children(self.children[i].iter().map(|&c| ax(c)).collect::<Vec<_>>());
+        out.set_children(self.a11y_children(i).map(ax).collect::<Vec<_>>());
+        if self.state[i].contains(svelters_style::StateMask::INVALID) {
+            out.set_invalid(accesskit::Invalid::True);
+        }
+        // the anchor is the author id; the labels whose `for` names it label the node
+        let node = self.slots.id_at(i).expect("live");
+        if let Some(a) = self.anchors.get(&node) {
+            out.set_author_id(a.to_string());
+            let w = self.core[i].window;
+            let mut labels: Vec<NodeId> = self.label_for.iter().filter(|(l, f)| *f == a && self.window_of(**l) == w).map(|(l, _)| *l).collect();
+            if !labels.is_empty() {
+                labels.sort_by_key(|l| l.0);
+                out.set_labelled_by(labels.into_iter().map(ax).collect::<Vec<_>>());
+            }
+        }
         out
+    }
+
+    /// The children in the accessibility tree: all but those their container conceals.
+    fn a11y_children(&self, i: usize) -> impl Iterator<Item = NodeId> + '_ {
+        self.children[i].iter().copied().filter(|&c| !self.core[self.ix(c)].flags.contains(crate::tree::NodeFlags::CONCEALED))
     }
 
     /// The update for this frame (`None`: nothing changed).
@@ -56,10 +75,13 @@ impl Document {
                 let Some(i) = self.idx(n) else { continue };
                 nodes.push((ax(n), self.a11y_node(i)));
                 sent.insert(n);
-                stack.extend(self.children[i].iter().copied());
+                stack.extend(self.a11y_children(i));
             }
         } else {
-            for &n in dirty {
+            let known = self.window(window).map(|w| &w.a11y_sent);
+            let dirty: Vec<NodeId> = dirty.iter().copied().filter(|n| known.is_some_and(|k| k.contains(n))).collect();
+            // a node the last full tree did not have (concealed) waits for the next full tree
+            for &n in &dirty {
                 if let Some(i) = self.idx(n)
                     && self.core[i].window == Some(window)
                 {

@@ -12,6 +12,8 @@
 //!   keyed on shaping results includes it.
 //! - **Fallback for bundled fonts.** With system fonts off, fontique has no fallback source, so each
 //!   bundled family is registered as the fallback of every script whose sample text it covers.
+//!   Bundled colour fonts (COLR, CBDT, sbix) join the `emoji` generic family, which parley queries
+//!   for emoji clusters.
 
 use parley::fontique::{
     self, Blob, Collection, CollectionOptions, FallbackKey, FamilyId, GenericFamily, Script, ScriptExt,
@@ -67,6 +69,7 @@ pub struct FontStore {
     faces: RwLock<Faces>,
     coords: RwLock<HashMap<u64, Arc<[i16]>>>,
     default_family: String,
+    system_fonts: bool,
 }
 
 impl std::fmt::Debug for FontStore {
@@ -88,6 +91,7 @@ impl FontStore {
             faces: RwLock::default(),
             coords: RwLock::default(),
             default_family: cfg.default_family,
+            system_fonts: cfg.system_fonts,
         };
         for bytes in cfg.bundled {
             store.register_font_inner(bytes, !cfg.system_fonts);
@@ -105,7 +109,7 @@ impl FontStore {
 
     /// Registers the faces in a font file. Returns the families it added to. Bumps the generation.
     pub fn register_font(&self, bytes: Vec<u8>) -> Vec<String> {
-        let names = self.register_font_inner(bytes, false);
+        let names = self.register_font_inner(bytes, !self.system_fonts);
         self.generation.fetch_add(1, Ordering::Relaxed);
         names
     }
@@ -119,9 +123,13 @@ impl FontStore {
             if let Some(name) = c.family_name(*family) {
                 names.push(name.to_string());
             }
-            if as_fallback {
-                if let Some(font) = fonts.first() {
+            if let Some(font) = fonts.first() {
+                if as_fallback {
                     register_script_fallbacks(&mut c, *family, blob.data(), font.index());
+                }
+                // parley asks the `emoji` generic family for emoji clusters.
+                if is_color_font(blob.data(), font.index()) {
+                    c.append_generic_families(GenericFamily::Emoji, std::iter::once(*family));
                 }
             }
         }
@@ -201,6 +209,13 @@ impl FontStore {
         let Some(blob) = font.load(None) else { return false };
         FontRef::from_index(blob.data(), font.index()).map(|f| f.charmap().map(ch).is_some()).unwrap_or(false)
     }
+}
+
+fn is_color_font(data: &[u8], index: u32) -> bool {
+    use skrifa::raw::TableProvider;
+    FontRef::from_index(data, index)
+        .map(|f| f.colr().is_ok() || f.cbdt().is_ok() || f.sbix().is_ok())
+        .unwrap_or(false)
 }
 
 /// Registers `family` as the fallback of each script whose sample text the face covers (at least
