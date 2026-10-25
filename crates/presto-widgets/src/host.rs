@@ -231,6 +231,7 @@ fn spec_of(ws: &'static w::KindSpec) -> &'static Spec {
             text_prop: ws.text_prop,
             focusable: ws.focusable,
             container: ws.children,
+            ..KindSpec::new(ws.tag)
         }));
         Box::leak(Box::new(Spec { core, to_core, disabled }))
     })
@@ -405,6 +406,8 @@ impl<W: w::Kind + Default> Hosted<W> {
                 },
             },
             Event::FocusOut => w::Event::Focus { gained: false, reason: WFocus::Program },
+            Event::Timer => w::Event::Timer,
+            Event::A11y(r) => w::Event::A11y((*r).clone()),
             // clicks are the tracker's; IME is the text kinds'
             Event::Click(_) | Event::Ime(_) => return None,
         })

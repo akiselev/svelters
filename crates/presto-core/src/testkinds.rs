@@ -178,10 +178,16 @@ pub struct ToggleKind {
 
 pub const TOGGLE_CHECKED: PropId = PropId::of("toggle", "checked", "bool");
 pub const TOGGLED: SignalId = SignalId::of("toggle", "toggled", "bool");
+/// `flip()`: toggles and returns the new value.
+pub const TOGGLE_FLIP: crate::MethodId = crate::MethodId::of("toggle", "flip", "bool");
+/// Held this long after a press, the toggle flips (a stand-in for press-held behaviour).
+pub const HOLD: presto_base::time::Span = presto_base::time::Span::from_millis(500);
 
 static TOGGLE: KindSpec = KindSpec {
     props: &[PropSpec::new("checked", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)).native()],
-    signals: &[SignalSpec::new("toggled", Some(ValueType::Bool), SignalFlags::SYNC.union(SignalFlags::BUBBLES))],
+    signals: &[SignalSpec::new("toggled", Some(ValueType::Bool), SignalFlags::SYNC.union(SignalFlags::BUBBLES))
+        .args(&[crate::ArgSpec::new("checked", ValueType::Bool)])],
+    methods: &[crate::MethodSpec::new("flip", &[], Some(crate::ArgSpec::new("checked", ValueType::Bool)))],
     role: accesskit::Role::CheckBox,
     focusable: true,
     ..KindSpec::new("toggle")
@@ -222,11 +228,29 @@ impl Kind for ToggleKind {
         match ev {
             Event::Click(_) => self.flip(cx),
             Event::Key(k) if k.state == presto_base::event::KeyState::Pressed && k.key == Some(presto_base::key::Key::Space) => self.flip(cx),
+            Event::PointerDown(_) => {
+                let at = cx.time() + HOLD;
+                cx.wake_at(at);
+                Handled::No
+            }
+            Event::PointerUp(_) | Event::PointerCancel => {
+                cx.cancel_wake();
+                Handled::No
+            }
+            Event::Timer => self.flip(cx),
+            Event::A11y(r) if r.action == accesskit::Action::Click => self.flip(cx),
             _ => Handled::No,
         }
     }
     fn native_state(&self) -> Option<&dyn NativeState> {
         Some(self)
+    }
+    fn call(&mut self, cx: &mut EventCx, method: crate::MethodId, _args: &[Value]) -> Result<Option<Value>, crate::PropError> {
+        if method != TOGGLE_FLIP {
+            return Err(crate::PropError::Rejected(format!("{method:?}")));
+        }
+        self.flip(cx);
+        Ok(cx.view(cx.node()).map(|v| Value::Bool(v.prop_bool(TOGGLE_CHECKED))))
     }
     fn a11y(&self, cx: &mut crate::cx::A11yCx) {
         cx.default_a11y();
