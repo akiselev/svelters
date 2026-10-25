@@ -57,6 +57,15 @@ Public main-thread extras: `set_text_input_client`, `text_input_changed`, `set_o
     falls back to `set_ime` with the client's caret rect and purpose; this backend bridges it to
     `NSTextInputClient`.
   - `WindowDesc.custom_title_bar` (default false); this backend applies it at creation.
+  - Native menu bar (asked by WIDGETS-VIEWS through the coordinator): `presto_platform::MenuDesc
+    { menus: Vec<MenuNode> }`, `MenuNode::{Submenu { label, enabled, items }, Item { id, label,
+    shortcut, enabled, checked: Option<bool> }, Separator}`, `PlatformCx::set_menu_bar(Option<&MenuDesc>)
+    -> bool` (default `false`: no native bar) and `AppHandler::menu_activated(cx, id)` (default no-op).
+    The macOS backend builds muda menus after the standard app menu (`Primary` → Cmd; group labels
+    should arrive as disabled items). `MacAppHandler::menu` is gone (replaced by `menu_activated`).
+    views' `MenuModel` → `MenuDesc` is for WIDGETS-VIEWS to write (labels without `&`, `Check::Radio`
+    as `checked: Some(..)`, invisible entries left out).
+  - Option press/release: `flagsChanged:` already emits `Key::AltLeft`/`AltRight` key events.
   - presto-base docs: `KeyEvent.physical` is `page << 16 | usage`; `WindowEvent::Moved` is the content's
     top-left in global points.
 

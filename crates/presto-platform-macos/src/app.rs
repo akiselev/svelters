@@ -44,8 +44,6 @@ pub use crate::keymap::OptionAsAlt;
 pub trait MacAppHandler: AppHandler {
     /// The Dock icon was clicked (or the app was opened again) while running.
     fn reopen(&mut self, _cx: &mut dyn PlatformCx, _has_visible_windows: bool) {}
-    /// A muda menu item was chosen.
-    fn menu(&mut self, _cx: &mut dyn PlatformCx, _id: &muda::MenuId) {}
     /// A live resize (the user dragging an edge) started or ended. During it the window's layer
     /// presents with the Core Animation transaction (`platform.md` §4, macOS).
     fn live_resize(&mut self, _cx: &mut dyn PlatformCx, _window: WindowId, _active: bool) {}
@@ -163,6 +161,9 @@ impl AppHandler for Plain {
     }
     fn exiting(&mut self, cx: &mut dyn PlatformCx) {
         self.0.exiting(cx)
+    }
+    fn menu_activated(&mut self, cx: &mut dyn PlatformCx, id: &str) {
+        self.0.menu_activated(cx, id)
     }
 }
 
@@ -299,7 +300,7 @@ fn deliver(h: &mut dyn MacAppHandler, cx: &mut MacCx, p: Pending) {
                 cx.exit();
             }
         }
-        Pending::Menu(id) => h.menu(cx, &id),
+        Pending::Menu(id) => h.menu_activated(cx, &id.0),
         Pending::LiveResize(id, active) => h.live_resize(cx, id, active),
         Pending::A11y(id, ev) => h.a11y_event(cx, id, ev),
         Pending::RawMotion(id, d) => h.raw_mouse_motion(cx, id, d),
@@ -455,6 +456,10 @@ impl PlatformCx for MacCx {
         client: Option<Box<dyn presto_base::input::TextInputClient>>,
     ) {
         crate::set_text_input_client(id, client);
+    }
+
+    fn set_menu_bar(&mut self, menu: Option<&presto_platform::MenuDesc>) -> bool {
+        menu::install(menu)
     }
 
     fn end_ime_composition(&mut self, id: WindowId, commit: bool) -> bool {
