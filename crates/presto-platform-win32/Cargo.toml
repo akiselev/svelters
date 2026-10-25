@@ -1,0 +1,10 @@
+[package]
+name = "presto-platform-win32"
+description = "presto platform backend (presto-platform-win32)."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }
