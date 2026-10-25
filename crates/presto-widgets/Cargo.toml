@@ -1,0 +1,13 @@
+[package]
+name = "presto-widgets"
+description = "presto's built-in kinds: interaction units, paint helpers, theme tokens, Tier 0 and Tier 1 widgets, views, text editing."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+presto-base = { workspace = true }
+presto-core = { workspace = true }
+presto-text = { workspace = true }
+presto-anim = { workspace = true }

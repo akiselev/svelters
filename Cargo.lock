@@ -3833,6 +3833,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8cf8e6a8aa66ce33f63993ffc4ea4271eb5b0530a9002db8455ea6050c77bfa"
 
 [[package]]
+name = "presto"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
 name = "presto-anim"
 version = "0.0.0"
 dependencies = [
@@ -3863,9 +3870,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "presto-egui-island"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
 name = "presto-frame"
 version = "0.0.0"
 dependencies = [
+ "presto-base",
+]
+
+[[package]]
+name = "presto-motion"
+version = "0.0.0"
+dependencies = [
+ "presto-anim",
  "presto-base",
 ]
 
@@ -3884,10 +3906,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "presto-test"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
+]
+
+[[package]]
 name = "presto-text"
 version = "0.0.0"
 dependencies = [
  "presto-base",
+]
+
+[[package]]
+name = "presto-widgets"
+version = "0.0.0"
+dependencies = [
+ "presto-anim",
+ "presto-base",
+ "presto-core",
+ "presto-text",
 ]
 
 [[package]]
@@ -4822,6 +4861,13 @@ dependencies = [
  "serde",
  "serde_json",
  "svelters-compiler",
+]
+
+[[package]]
+name = "svelters-presto"
+version = "0.0.0"
+dependencies = [
+ "presto-base",
 ]
 
 [[package]]
