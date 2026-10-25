@@ -39,7 +39,7 @@ pub struct LayoutRun {
     pub full: bool,
     /// Boundaries laid out on their own.
     pub boundaries: u64,
-    /// Leaves remeasured, and those whose size changed.
+    /// Leaves remeasured, and those whose size changed (or that may wrap differently).
     pub remeasured: u64,
     pub resized: u64,
     /// Leaf computations (cache misses).
@@ -127,7 +127,7 @@ impl LayoutPartialTree for Tree<'_> {
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);
-            let container = !tree.doc.children[i].is_empty() || tree.doc.view_at(i).kind().spec.container;
+            let container = !tree.doc.children[i].is_empty();
             if container {
                 let mut out = match tree.doc.layout[i].style.display {
                     Display::Grid => compute_grid_layout(tree, id, inputs),
@@ -142,6 +142,11 @@ impl LayoutPartialTree for Tree<'_> {
             tree.leaf_layouts += 1;
             let style = tree.doc.layout[i].style.clone();
             let doc = &mut *tree.doc;
+            // the measure guard's reference: the leaf's max-content size
+            if doc.layout[i].intrinsic.is_none() {
+                let m = measure_leaf(doc, i, Size::NONE, Size { width: AvailableSpace::MaxContent, height: AvailableSpace::MaxContent });
+                doc.layout[i].intrinsic = Some(PSize::new(m.width, m.height));
+            }
             compute_leaf_layout(inputs, &style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(h) } = known {
                     return Size { width: w, height: h };
@@ -374,13 +379,12 @@ impl Document {
             run.remeasured += 1;
             let new = measure_leaf(self, i, Size::NONE, Size { width: AvailableSpace::MaxContent, height: AvailableSpace::MaxContent });
             let new = PSize::new(new.width, new.height);
-            if self.layout[i].intrinsic != Some(new) {
-                self.layout[i].intrinsic = Some(new);
+            let old = self.layout[i].intrinsic.replace(new);
+            // a wrapping leaf wider than its box may break differently with new text
+            let width = self.layout[i].layout.size.width;
+            let wraps = self.style.computed(i).wrap && new.w > width + 0.5;
+            if old != Some(new) || wraps {
                 run.resized += 1;
-                self.invalidate_content(i);
-            } else {
-                // same size: the content still changed (a wrapped leaf may break differently)
-                self.layout[i].cache.clear();
                 self.invalidate_content(i);
             }
         }

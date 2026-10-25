@@ -1,0 +1,72 @@
+//! The accessibility projection: a valid full tree first, incremental updates after, roles, labels,
+//! states and focus from the document.
+
+use super::*;
+use crate::testkinds::{BOX_TINT, TEXT as TEXT_PROP};
+use crate::{FocusReason, Value, common};
+use accesskit::{NodeId as AxId, Role, Toggled};
+use presto_base::color::Color;
+use std::collections::HashSet;
+
+fn ax(n: NodeId) -> AxId {
+    AxId(n.0)
+}
+
+#[test]
+fn the_first_update_is_a_valid_full_tree() {
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "width: 50px; height: 20px");
+    let t = child(&mut d, a, TEXT, "");
+    d.set_prop(t, TEXT_PROP, Value::from("Hello")).unwrap();
+    let g = child(&mut d, root, TOGGLE, "");
+    d.set_prop(g, common::ARIA_LABEL, Value::from("Wrap")).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    assert_eq!(u.tree.as_ref().map(|t| t.root), Some(ax(root)));
+    assert_eq!(u.focus, ax(root), "no focus: the root");
+    let ids: HashSet<AxId> = u.nodes.iter().map(|(id, _)| *id).collect();
+    assert_eq!(ids.len(), u.nodes.len(), "no duplicates");
+    assert_eq!(ids, [root, a, t, g].into_iter().map(ax).collect());
+    for (_, n) in &u.nodes {
+        for c in n.children() {
+            assert!(ids.contains(c), "child {c:?} is in the tree");
+        }
+    }
+    let node = |id: NodeId| &u.nodes.iter().find(|(k, _)| *k == ax(id)).unwrap().1;
+    assert_eq!(node(t).role(), Role::Label);
+    assert_eq!(node(t).label(), Some("Hello"));
+    assert_eq!(node(g).role(), Role::CheckBox);
+    assert_eq!(node(g).label(), Some("Wrap"));
+    assert_eq!(node(g).toggled(), Some(Toggled::False));
+    let b = node(a).bounds().unwrap();
+    assert_eq!((b.x1 - b.x0, b.y1 - b.y0), (50.0, 20.0));
+}
+
+#[test]
+fn later_updates_send_only_changed_nodes_and_the_focus() {
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "width: 50px; height: 20px");
+    let g = child(&mut d, root, TOGGLE, "");
+    frame(&mut d);
+    d.set_prop(a, BOX_TINT, Value::Color(Color::WHITE)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    assert!(u.tree.is_none());
+    assert_eq!(u.nodes.iter().map(|(id, _)| *id).collect::<Vec<_>>(), [ax(a)]);
+    d.focus(g, FocusReason::Keyboard);
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    assert_eq!(u.focus, ax(g));
+    assert!(u.nodes.iter().any(|(id, _)| *id == ax(g)));
+}
+
+#[test]
+fn removing_nodes_resends_a_tree_without_them() {
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "");
+    let b = child(&mut d, a, BOX, "");
+    frame(&mut d);
+    d.destroy(a);
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let ids: Vec<AxId> = u.nodes.iter().map(|(id, _)| *id).collect();
+    assert!(!ids.contains(&ax(a)) && !ids.contains(&ax(b)));
+    let r = &u.nodes.iter().find(|(id, _)| *id == ax(root)).unwrap().1;
+    assert!(r.children().is_empty());
+}

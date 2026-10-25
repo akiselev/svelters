@@ -6,11 +6,12 @@
 
 pub(crate) mod cascade;
 mod computed;
+mod invalidate;
 
 pub use computed::{BoxShadow, ComputedBox, Overflow, TextAlign, TransitionSpec};
 
 use std::sync::Arc;
-use svelters_style::{DeclBlock, SheetId, StateMask, Stylist};
+use svelters_style::{DeclBlock, SheetId, Stylist};
 
 /// A node's style inputs: what the `class`, `id` and `style` attributes say.
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -74,8 +75,6 @@ impl DocStyle {
         n.input = Some(Box::new(input));
         true
     }
-    /// A prop was written: attribute selectors may match it (the restyle re-matches the node).
-    pub fn prop_written(&mut self, _i: usize) {}
     pub fn add_sheet(&mut self, css: &str) -> SheetId {
         let sheet = svelters_style::Stylesheet::parse(css, &Default::default());
         let (id, _diags) = self.stylist.add_sheet(&sheet, svelters_style::Origin::Author);
@@ -85,9 +84,5 @@ impl DocStyle {
     pub fn remove_sheet(&mut self, id: SheetId) {
         self.stylist.remove_sheet(id);
         self.caches.clear();
-    }
-    /// Whether a change of `changed` state bits can restyle descendants (`:hover .x`, `:has`).
-    pub fn state_affects_descendants(&self, _changed: StateMask) -> bool {
-        true
     }
 }

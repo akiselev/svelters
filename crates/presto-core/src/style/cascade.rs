@@ -699,7 +699,7 @@ impl Document {
         let hidden = self.view_at(i).prop_bool(crate::common::HIDDEN);
         let cascaded = layout_style(&css, &new_box, hidden);
         // the kind's own layout participation over the cascaded style
-        let tstyle = match self.kinds[i].take() {
+        let mut tstyle = match self.kinds[i].take() {
             Some(k) => {
                 let st = {
                     let view = crate::cx::NodeView { style: &new_box, ..self.view_at(i) };
@@ -710,6 +710,10 @@ impl Document {
             }
             None => cascaded,
         };
+        // a window root's size is the window's (set by layout)
+        if self.core[i].flags.contains(crate::tree::NodeFlags::ROOT) {
+            tstyle.size = self.layout[i].style.size;
+        }
         let first = self.style.nodes[i].css.is_none();
         let old_box = self.style.nodes[i].computed.clone();
         let node = self.slots.id_at(i).expect("live");

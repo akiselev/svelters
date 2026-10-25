@@ -509,9 +509,8 @@ impl Document {
         self.core[pi].dirty.insert(Dirty::CHILDREN | Dirty::A11Y);
         self.mark_up(pi, Dirty::DESC_RECORD);
         self.invalidate_content(pi);
-        // structural selectors (:first-child, :has) may restyle siblings
-        self.core[pi].dirty.insert(Dirty::STYLE_SUBTREE | Dirty::STYLE);
-        self.mark_up(pi, Dirty::DESC_STYLE);
+        // structural selectors (:first-child, :has) may restyle around it
+        self.restyle_structure(pi);
     }
 
     // ---- props ----
@@ -597,9 +596,7 @@ impl Document {
             self.set_state(node, StateMask::DISABLED, on);
         }
         // attribute selectors may match the prop
-        self.style.prop_written(i);
-        self.core[i].dirty.insert(Dirty::STYLE);
-        self.mark_up(i, Dirty::DESC_STYLE);
+        self.restyle_attr(i, spec.name);
         self.journal.push(Change::Prop { node, prop, revision: rev, native });
         Ok(class)
     }
@@ -693,11 +690,11 @@ impl Document {
     /// Sets the node's classes, `#id` and inline declarations.
     pub fn set_style(&mut self, node: NodeId, style: StyleInput) {
         let Some(i) = self.idx(node) else { return };
-        if self.style.set_input(i, style) {
+        let old = self.style.input(i).cloned();
+        if self.style.set_input(i, style.clone()) {
             let rev = self.stamp();
             self.core[i].changed = rev;
-            self.core[i].dirty.insert(Dirty::STYLE | Dirty::STYLE_SUBTREE);
-            self.mark_up(i, Dirty::DESC_STYLE);
+            self.restyle_inputs(i, old.as_ref(), &style);
             self.journal.push(Change::Style { node, revision: rev });
         }
     }
@@ -740,11 +737,9 @@ impl Document {
         }
         self.state[i] = new;
         self.stamp();
-        self.core[i].dirty.insert(Dirty::STYLE | Dirty::A11Y);
-        if self.style.state_affects_descendants(StateMask(old.0 ^ new.0)) {
-            self.core[i].dirty.insert(Dirty::STYLE_SUBTREE);
-        }
-        self.mark_up(i, Dirty::DESC_STYLE | Dirty::DESC_RECORD);
+        self.core[i].dirty.insert(Dirty::A11Y);
+        self.mark_up(i, Dirty::DESC_RECORD);
+        self.restyle_state(i, old, new);
         self.journal.push(Change::State { node, state: new });
     }
 

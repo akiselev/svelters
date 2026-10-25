@@ -50,6 +50,8 @@ mod tree;
 pub mod value;
 mod window;
 mod anim;
+#[cfg(test)]
+mod tests;
 
 pub use cx::{A11yCx, EventCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
 pub use document::{Document, Writer};
