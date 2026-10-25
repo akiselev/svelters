@@ -43,6 +43,17 @@ npm and Cargo dependencies are not bundled in this repository. Each one is insta
 
 ---
 
+## presto-text (lane TEXT)
+
+Ported code (each file names its source in its header comment):
+
+| Project | License | Where | Copyright |
+|---|---|---|---|
+| [font-rs](https://github.com/raphlinus/font-rs) accumulation rasteriser (`src/raster.rs`) | Apache-2.0 | `crates/presto-text/src/raster/coverage.rs` | Copyright 2015 Google Inc. |
+| [fontations](https://github.com/googlefonts/fontations) skrifa 0.49.0 `RasterPolicy` (`skrifa/src/outline/glyf/hint/cleartype.rs`) | MIT OR Apache-2.0 | `crates/presto-text/src/raster/mod.rs` (`raster_policy`) | Copyright the fontations authors |
+
+Bundled fonts (test data, `crates/presto-text/fonts/`, subsets made with fonttools `pyftsubset`; see `fonts/README.md`): Noto Sans, Noto Sans Hebrew and Noto Color Emoji, SIL Open Font License 1.1 (`fonts/OFL.txt`), Copyright 2022 The Noto Project Authors.
+
 ## MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
