@@ -9,3 +9,8 @@ declare module 'svelters:shell' {
   export * from '@svelters/native-runtime/shell';
   export { default } from '@svelters/native-runtime/shell';
 }
+// MOTION-CSS: on a backend with the `native_motion` capability the compiler imports `svelte/motion`
+// from `svelters:motion` (also `@svelters/native-runtime/motion`): the same API.
+declare module 'svelters:motion' {
+  export * from 'svelte/motion';
+}

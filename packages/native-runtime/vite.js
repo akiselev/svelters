@@ -125,6 +125,9 @@ export const HIDDEN_MODULES = {
   [LOOP_SPECIFIER]: loopPath,
   [RENDER_SPECIFIER]: renderPath,
   [CONSTANTS_SPECIFIER]: constantsPath,
+  // MOTION-CSS: svelters:motion re-exports Svelte's Tween and spring store
+  'svelte/internal/motion/spring': ALIASES['svelte/internal/motion/spring'],
+  'svelte/internal/motion/tweened': ALIASES['svelte/internal/motion/tweened'],
 };
 
 /** TR1: `svelte/transition` and `svelte/animate` as app code sees them: native ports of Svelte's built-ins. */

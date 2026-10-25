@@ -18,6 +18,7 @@
 // Svelte's `raf` (requestAnimationFrame on the host's frame clock): a frame is requested only while
 // an animation runs.
 import { DEV } from 'esm-env';
+import * as easings from 'svelte/easing';
 import { loop, queue_task, raf } from './core/internal.js';
 
 export const OP_OPACITY = 4;
@@ -277,7 +278,7 @@ function startNative(a) {
   // `globalThis.__svelters_no_native_animation = true` forces TR1's JS player (profiling, TR3)
   if (globalThis.__svelters_no_native_animation === true) return false;
   if (typeof hs.style !== 'function' || !listenSignal || refused.get(hs)?.has(OP_ANIMATE)) return false;
-  const payload = JSON.stringify({ id: a.id, duration: a.duration, delay: a.delay, frames: a.frames });
+  const payload = JSON.stringify({ id: a.id, duration: a.duration, delay: a.delay, frames: a.frames, native: a.nativeDesc ?? undefined });
   let ok = false;
   try {
     ok = hs.style(OP_ANIMATE, node.h, payload) === 1;
@@ -306,6 +307,7 @@ export class NativeAnimation {
     this.id = ++ids;
     this.target = node;
     this.frames = (Array.isArray(keyframes) ? keyframes : []).map(parseFrame);
+    this.nativeDesc = takeNative(node, this.frames.length);
     let duration = 0;
     let delay = 0;
     if (typeof options === 'number') duration = options;
@@ -442,6 +444,54 @@ export class NativeAnimation {
 }
 
 // ---------------------------------------------------------------------------------------------
+// MOTION-CSS: native descriptors (`native_transitions`)
+//
+// `$n.transition_native` / `$n.flip_native` run the same built-ins as `$n.transition` /
+// `$n.animation`, with their `css` wrapped by `describeNative`: it notes the `t` of the first and
+// the last keyframe Svelte computes, and the next `animate()` on that node sends them in the
+// OP_ANIMATE payload as `native: { kind, params, computed, t1, t2 }` next to the frames. A backend
+// that evaluates the formulas itself (presto, crates/presto-motion `op`) plays them at its own
+// refresh rate; every other backend reads only the frames.
+
+/** svelte/easing's functions by identity -> their export names (transition.js adds its private copies). */
+const EASING_NAMES = new Map(Object.entries(easings).map(([name, fn]) => [fn, name]));
+
+/** The svelte/easing export name of `fn`, or null for any other easing (it stays in JS keyframes). */
+export function easingName(fn) {
+  return EASING_NAMES.get(fn) ?? null;
+}
+
+/** Registers a private copy of a svelte/easing curve under its name. */
+export function nameEasing(fn, name) {
+  EASING_NAMES.set(fn, name);
+}
+
+/** The descriptor whose `css` ran last, with the `t` range of those calls: `{ node, desc, t1, t2 }`. */
+let pendingNative = null;
+
+/** `cfg` with its `css` noting each `t` for `desc` (see above). */
+export function describeNative(node, cfg, desc) {
+  const css = cfg.css;
+  if (typeof css !== 'function') return cfg;
+  return {
+    ...cfg,
+    css: (t, u) => {
+      if (pendingNative?.desc === desc && pendingNative.node === node) pendingNative.t2 = t;
+      else pendingNative = { node, desc, t1: t, t2: t };
+      return css(t, u);
+    },
+  };
+}
+
+/** The descriptor for the animation `node.animate()` is creating now (its keyframes came from `css`). */
+function takeNative(node, frames) {
+  const p = pendingNative;
+  pendingNative = null;
+  if (!p || p.node !== node || frames === 0) return null;
+  return { ...p.desc, t1: p.t1, t2: p.t2 };
+}
+
+// ---------------------------------------------------------------------------------------------
 // `node.style`: a CSSStyleDeclaration over the channels (Svelte reads/writes `overflow`; a `tick`
 // written for the DOM writes `opacity` / `transform`)
 
@@ -562,6 +612,8 @@ export function computed(node) {
     borderBottomWidth: '0px',
     borderLeftWidth: '0px',
     borderRightWidth: '0px',
+    strokeLinecap: 'butt',
+    strokeWidth: '1px',
   };
 }
 

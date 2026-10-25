@@ -73,6 +73,13 @@ pub mod capability {
     /// W-C4: dynamic writes carry their change class. (A raw string: `cx1_codes` reads plain
     /// string constants with underscores as diagnostic codes.)
     pub const CHANGE_CLASSES: &str = r"change_classes";
+    /// MOTION-CSS: svelte/transition's built-ins and svelte/animate's `flip` as `$n.transition_native`
+    /// / `$n.flip_native` (presto evaluates them from their parameters).
+    pub const NATIVE_TRANSITIONS: &str = r"native_transitions";
+    /// MOTION-CSS: `svelte/motion` is imported from `svelters:motion`.
+    pub const NATIVE_MOTION: &str = r"native_motion";
+    /// MOTION-CSS: release builds carry the scoped sheet precompiled (`svelters_style::binary`).
+    pub const CSS_PRECOMPILED: &str = r"css_precompiled";
 }
 
 /// W-C4: what a change of a prop or style property can invalidate in the toolkit (architecture
