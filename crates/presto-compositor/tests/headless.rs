@@ -6,14 +6,17 @@
 use presto_base::color::Color;
 use presto_base::commit::{Commit, ToUi};
 use presto_base::geom::{DeviceSize, Rect, Scale};
-use presto_base::ids::{LayerId, PropNodeId, Revision, TextureId, WindowId};
-use presto_base::layer::{LayerDelta, LayerDesc, LayerKind};
-use presto_base::scene::FrameScene;
+use presto_base::ids::{LayerId, NodeId, PropNodeId, Revision, WindowId};
+use presto_base::layer::{ItemRef, LayerDelta, LayerDesc, LayerKind};
+use presto_base::color::Fill;
+use presto_base::display::{DisplayList, Prim, Quad};
+use presto_base::geom::{Affine, Corners, Insets};
+use presto_base::props::{PropOp, TransformNode};
 use presto_base::text::{GlyphImage, GlyphKey, GlyphRasterizer};
 use presto_base::time::{Clock, Span, Time};
 use presto_compositor::core::{Engine, EngineConfig, Msg};
 use presto_compositor::gpu::GpuBackend;
-use presto_compositor::seams::{self, SceneRenderer};
+use presto_compositor::seams;
 use presto_compositor::tree::SurfaceKey;
 use std::sync::{mpsc, Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -32,40 +35,6 @@ impl Clock for InstantClock {
     }
 }
 
-/// Clears the target to the scene's clear colour.
-struct ClearRenderer;
-impl SceneRenderer for ClearRenderer {
-    fn register_texture(&mut self, _: TextureId, _: wgpu::TextureView, _: DeviceSize) {}
-    fn unregister_texture(&mut self, _: TextureId) {}
-    fn render(
-        &mut self,
-        _: &wgpu::Device,
-        _: &wgpu::Queue,
-        encoder: &mut wgpu::CommandEncoder,
-        target: &wgpu::TextureView,
-        scene: &FrameScene<'_>,
-    ) {
-        let c = scene.clear.unwrap_or(Color::TRANSPARENT).premultiplied();
-        let _pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: Some("clear"),
-            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: target,
-                depth_slice: None,
-                resolve_target: None,
-                ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Clear(wgpu::Color { r: c[0] as f64, g: c[1] as f64, b: c[2] as f64, a: c[3] as f64 }),
-                    store: wgpu::StoreOp::Store,
-                },
-            })],
-            depth_stencil_attachment: None,
-            timestamp_writes: None,
-            occlusion_query_set: None,
-            multiview_mask: None,
-        });
-    }
-    fn end_frame(&mut self) {}
-}
-
 #[test]
 fn headless_frame_renders_and_reports_gpu_completion() {
     let clock: Arc<dyn Clock> = Arc::new(InstantClock(Instant::now()));
@@ -75,7 +44,7 @@ fn headless_frame_renders_and_reports_gpu_completion() {
         instance,
         wgpu::PowerPreference::LowPower,
         Arc::new(std::sync::RwLock::new(None)),
-        Box::new(|_, _, _, _| Box::new(ClearRenderer)),
+        seams::presto_renderer(),
         Arc::new(NoGlyphs),
         tx,
         clock.clone(),
@@ -90,8 +59,9 @@ fn headless_frame_renders_and_reports_gpu_completion() {
     let sent = Arc::new(Mutex::new(Vec::new()));
     let s = sent.clone();
     let red = Color::rgba(1.0, 0.0, 0.0, 1.0);
+    let white = Color::WHITE;
     let mut engine = Engine::new(
-        EngineConfig { refresh: Span::from_micros(16_667), clear: Some(red), caret_color: Color::BLACK, caret_blink: None },
+        EngineConfig { refresh: Span::from_micros(16_667), clear: Some(white), caret_color: Color::BLACK, caret_blink: None },
         Box::new(seams::frame_clock),
         None,
         None,
@@ -111,6 +81,26 @@ fn headless_frame_renders_and_reports_gpu_completion() {
         bounds: Rect::new(0.0, 0.0, 64.0, 32.0),
         opaque: true,
     })];
+    c.props.ops = vec![PropOp::Transform(PropNodeId(1), TransformNode { parent: None, local: Affine::IDENTITY, scroll: None })];
+    let node = NodeId::new(1, 1);
+    c.layers.push(LayerDelta::Items {
+        layer: LayerId(1),
+        items: vec![ItemRef { node, transform: PropNodeId(1), clip: None, effect: None }],
+    });
+    let left = Rect::new(0.0, 0.0, 32.0, 32.0);
+    let mut list = DisplayList::new();
+    list.push(
+        Prim::Quad(Quad {
+            rect: left,
+            radii: Corners::ZERO,
+            fill: Fill::Solid(red),
+            border_widths: Insets::ZERO,
+            border_color: Color::TRANSPARENT,
+            border_style: Default::default(),
+        }),
+        left,
+    );
+    c.lists = vec![(node, Arc::new(list))];
     engine.handle(Msg::Commit(Box::new(c)), clock.now(), &mut gpu);
     assert_eq!(engine.stats.frames_drawn, 1);
 
@@ -121,11 +111,14 @@ fn headless_frame_renders_and_reports_gpu_completion() {
 
     let (got, format, pixels) = gpu.read_pixels(w, SurfaceKey::Main).expect("read back");
     assert_eq!(got, size);
-    let px = &pixels[0..4];
-    let expect: [u8; 4] = match format {
-        wgpu::TextureFormat::Bgra8Unorm => [0, 0, 255, 255],
-        _ => [255, 0, 0, 255],
+    let (r, g, b) = match format {
+        wgpu::TextureFormat::Bgra8Unorm => (2, 1, 0),
+        _ => (0, 1, 2),
     };
-    assert_eq!(px, expect);
-    assert!(pixels.chunks(4).all(|p| p == expect));
+    let at = |x: u32, y: u32| {
+        let i = ((y * size.w + x) * 4) as usize;
+        [pixels[i + r], pixels[i + g], pixels[i + b], pixels[i + 3]]
+    };
+    assert_eq!(at(8, 16), [255, 0, 0, 255], "inside the quad");
+    assert_eq!(at(56, 16), [255, 255, 255, 255], "the clear colour outside it");
 }

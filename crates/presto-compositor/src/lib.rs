@@ -12,7 +12,7 @@
 //! | [`damage`] | damage by diffing flattened frames, device rects, buffer-age history |
 //! | [`core`] | the engine: messages, frame clocks, animations, scroll motions, caret, drawing |
 //! | [`gpu`] | adapter, device, surfaces, persistent targets, late acquire, device loss |
-//! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces the compositor codes against |
+//! | [`seams`] | the renderer, frame-clock and scroll-motion interfaces (real crates behind traits) |
 
 pub mod core;
 pub mod damage;
@@ -39,12 +39,13 @@ use std::sync::{Arc, Mutex, RwLock};
 use std::thread::JoinHandle;
 use std::time::Duration;
 
-/// How the compositor is set up. The renderer and the scroll physics come from presto-render and
-/// presto-anim; until those are written, the caller passes them.
+/// How the compositor is set up. Scroll physics come from presto-anim's `scroll` module once it is
+/// written; until then the caller passes them.
 pub struct CompositorConfig {
     /// The process clock every thread shares (the platform's).
     pub clock: Arc<dyn Clock>,
-    /// Builds the renderer on the compositor thread (again after device loss).
+    /// Builds the renderer on the compositor thread (again after device loss); defaults to
+    /// [`presto_render::Renderer`].
     pub renderer: RendererFactory,
     /// Scroll physics for [`CompositorHandle::fling`]; `None` ignores flings.
     pub fling: Option<FlingFactory>,
@@ -68,10 +69,10 @@ pub struct CompositorConfig {
 }
 
 impl CompositorConfig {
-    pub fn new(clock: Arc<dyn Clock>, refresh: Span, renderer: RendererFactory) -> Self {
+    pub fn new(clock: Arc<dyn Clock>, refresh: Span) -> Self {
         CompositorConfig {
             clock,
-            renderer,
+            renderer: seams::presto_renderer(),
             fling: None,
             pacer: Box::new(seams::frame_clock),
             frame_source: None,

@@ -13,3 +13,4 @@ smallvec = { workspace = true }
 log = "0.4"
 presto-frame = { workspace = true }
 presto-anim = { workspace = true }
+presto-render = { workspace = true }

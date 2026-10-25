@@ -1,5 +1,5 @@
-//! The compositor's seams: the renderer (`presto-render`, coded against the brief's signature until
-//! that crate lands), the frame clock (`presto_frame::FrameClock` behind a trait, so tests can script
+//! The compositor's seams: the renderer (`presto_render::Renderer` behind a trait, so tests can record
+//! or replace it), the frame clock (`presto_frame::FrameClock` behind a trait, so tests can script
 //! one) and compositor-owned scroll motions (presto-anim's scroll physics, not written yet).
 
 use presto_base::anim::FlingCurve;
@@ -26,6 +26,33 @@ pub trait SceneRenderer: Send {
     );
     /// Atlas LRU generation, instance-ring advance.
     fn end_frame(&mut self);
+}
+
+impl SceneRenderer for presto_render::Renderer {
+    fn register_texture(&mut self, id: TextureId, view: wgpu::TextureView, size: DeviceSize) {
+        presto_render::Renderer::register_texture(self, id, view, size)
+    }
+    fn unregister_texture(&mut self, id: TextureId) {
+        presto_render::Renderer::unregister_texture(self, id)
+    }
+    fn render(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        encoder: &mut wgpu::CommandEncoder,
+        target: &wgpu::TextureView,
+        scene: &FrameScene<'_>,
+    ) {
+        presto_render::Renderer::render(self, device, queue, encoder, target, scene);
+    }
+    fn end_frame(&mut self) {
+        presto_render::Renderer::end_frame(self)
+    }
+}
+
+/// The default renderer factory: [`presto_render::Renderer`].
+pub fn presto_renderer() -> RendererFactory {
+    Box::new(|device, queue, format, glyphs| Box::new(presto_render::Renderer::new(device, queue, format, glyphs)))
 }
 
 /// Builds the renderer on the compositor thread, at startup and again after device loss.

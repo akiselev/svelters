@@ -8,7 +8,7 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 - **API** (brief signatures kept): `Compositor::spawn(cfg, glyphs, to_ui, wake_ui) -> CompositorHandle`;
   `CompositorHandle` (`Send + Clone`): `instance`, `add_window`, `add_os_layer`, `remove_window`, `commit`,
   `fast`, `resize` (→ `ToUi::ResizeDone`), `set_visible`, `register_texture`, `shutdown`.
-  Additive: `CompositorConfig::new(clock, refresh, renderer_factory)`, `gpu() -> Option<GpuContext>`
+  Additive: `CompositorConfig::new(clock, refresh)`, `gpu() -> Option<GpuContext>`
   (device/queue for egui islands and offscreen viewports), `resize_os_layer`, `remove_os_layer`,
   `unregister_texture`, `set_refresh`, `needs_ui_frame(window, bool)`, `ui_frame_skipped`, `ui_cost`,
   `ui_input_cost`, `high_rate_input`, `fling`, `vsync`/`presented` (for a platform `FrameSource`).
@@ -49,9 +49,9 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 
 ## Seams (stubbed until other lanes land)
 
-- `seams::SceneRenderer` + `RendererFactory`: the brief's `presto_render::Renderer` API. `CompositorConfig`
-  takes the factory until presto-render's skeleton is in `ci/presto-base`; then the default becomes
-  `presto_render::Renderer` (one `impl SceneRenderer for Renderer`).
+- `seams::SceneRenderer`: implemented by `presto_render::Renderer`, the default (`CompositorConfig::new(clock,
+  refresh)`); the trait stays so tests can record draws. Image and path removals are not forwarded to
+  `Renderer::forget_image` yet (the atlas LRU expires them).
 - `seams::ScrollMotion` + `FlingFactory`: presto-anim's `scroll` module is empty in the skeleton; with no
   factory configured, `fling` logs and does nothing.
 
@@ -76,8 +76,8 @@ commit folding, fast-commit revision rejection, fling frames without commits the
 by a scroll, idle does not wake, BeginFrame back-pressure, opacity animation with fill forwards,
 UI-thread animations aborted here, resize handshake, hidden windows), `tests/tree_damage.rs`
 (paint order, folding, scroll and clip resolution, OS-layer surfaces, texture layers, damage diff,
-device rects, buffer-age history), `tests/headless.rs` (GPU-gated: offscreen frame, GPU completion,
-readback; skips without an adapter).
+device rects, buffer-age history), `tests/headless.rs` (GPU-gated: a one-quad scene through presto-render into an offscreen target, GPU
+completion, readback; skips without an adapter).
 
 ## Cross-lane edits
 

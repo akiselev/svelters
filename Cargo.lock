@@ -4048,6 +4048,7 @@ dependencies = [
  "presto-anim",
  "presto-base",
  "presto-frame",
+ "presto-render",
  "smallvec",
  "wgpu",
 ]
