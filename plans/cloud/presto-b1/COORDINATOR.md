@@ -174,3 +174,10 @@ when the five svelters workflows plus `presto` are green.
 - Naming: "presto" is taken on crates.io. The user proposed **skelter** (svelters-skelter); skelter and skelter-{core,base,
   render,widgets,platform,text,compositor,test} are free on crates.io, and skelter on npm. The rename is planned for
   consolidation 2, once, before the master merge, pending the user's confirmation.
+- CADATOMIC native Svelte edge panel blocked (cadatomic 1e8fa22): (1) PrestoBackend must take the host's Document (sent to
+  SVELTERS-PRESTO as PrestoBackend::over), (2) two svelters in the graph until cadatomic's svelters pin moves to the presto
+  line on master, (3) presto Kinds for cadatomic's Rust kinds and behaviours (conversion batch 1), (4) no pnpm install in
+  lane containers (environment note for the next batch). CADATOMIC next: the Rust edge panel and ribbon as islands in
+  native panels, then the record.
+- Conversion estimate given to the user: about 4 batches after tonight (shell + Svelte + kinds; panels 1 + canvases +
+  viewport + tours; panels 2 + 45 kittest files; egui removal).
