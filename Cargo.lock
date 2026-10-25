@@ -3852,7 +3852,10 @@ dependencies = [
 name = "presto-compositor"
 version = "0.0.0"
 dependencies = [
+ "log",
  "presto-base",
+ "smallvec",
+ "wgpu",
 ]
 
 [[package]]
