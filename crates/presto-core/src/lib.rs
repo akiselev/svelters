@@ -55,7 +55,7 @@ mod anim;
 #[cfg(test)]
 mod tests;
 
-pub use cx::{Services, A11yCx, EventCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
+pub use cx::{Services, A11yCx, EventCx, RealizeCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
 pub use document::{Document, Writer};
 pub use error::{PropError, TreeError};
 pub use frame::FrameStats;

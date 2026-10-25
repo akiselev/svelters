@@ -153,3 +153,28 @@ fn commits_in_flight_count_as_busy_until_applied() {
     d.commit_applied(W, c.revision);
     assert!(d.busy().is_empty(), "{:?}", d.busy());
 }
+
+#[test]
+fn a_nonpassive_listener_inside_a_scroller_makes_it_wait_for_js() {
+    use crate::{ListenFlags, NodeFlags, common};
+    let (mut d, root) = doc();
+    let s = child(&mut d, root, BOX, "width: 100px; height: 50px; overflow-y: scroll");
+    let mid = child(&mut d, s, BOX, "height: 200px; flex-shrink: 0");
+    let leaf = child(&mut d, mid, BOX, "height: 10px");
+    let passive = |c: &presto_base::commit::Commit| c.props.ops.iter().find_map(|op| if let PropOp::Scroll(_, n) = op { Some(n.passive) } else { None });
+    assert_eq!(passive(&frame(&mut d).unwrap()), Some(true));
+    d.listen(leaf, common::WHEEL, ListenFlags::EMPTY);
+    assert!(d.flags(mid).unwrap().contains(NodeFlags::DESC_NONPASSIVE));
+    assert!(d.flags(s).unwrap().contains(NodeFlags::DESC_NONPASSIVE));
+    assert_eq!(passive(&frame(&mut d).unwrap()), Some(false));
+    // a passive listener does not count; removing the other clears the bits up the chain
+    d.listen(leaf, common::WHEEL, ListenFlags::PASSIVE);
+    assert!(!d.flags(s).unwrap().contains(NodeFlags::DESC_NONPASSIVE));
+    assert_eq!(passive(&frame(&mut d).unwrap()), Some(true));
+    // moving a non-passive subtree in and out updates its new and old ancestors
+    d.listen(leaf, common::WHEEL, ListenFlags::EMPTY);
+    d.remove(mid, leaf).unwrap();
+    assert!(!d.flags(s).unwrap().contains(NodeFlags::DESC_NONPASSIVE));
+    d.insert(mid, leaf, None, None).unwrap();
+    assert!(d.flags(s).unwrap().contains(NodeFlags::DESC_NONPASSIVE));
+}

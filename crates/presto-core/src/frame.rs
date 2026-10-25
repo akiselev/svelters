@@ -67,14 +67,31 @@ impl Document {
     }
 
     /// [`Document::frame`] with its counters.
-    pub fn frame_with_stats(&mut self, window: WindowId, _target: Time) -> (Option<Commit>, FrameStats) {
+    pub fn frame_with_stats(&mut self, window: WindowId, target: Time) -> (Option<Commit>, FrameStats) {
         let mut stats = FrameStats::default();
         let Some(root) = self.window_root(window) else { return (None, stats) };
         if !self.contains(root) {
             return (None, stats);
         }
         self.restyle(window);
+        self.sample_ui_transitions(window, target);
+        // virtualising nodes realise their rows before layout, and again when layout moved their
+        // viewport (new rows are styled before they are laid out)
+        if self.drive_virtual(window) {
+            self.restyle(window);
+            self.drive_virtual(window);
+        }
+        self.keep_rows_parked(window);
         stats.layout = self.run_layout(window);
+        if self.drive_virtual(window) {
+            self.restyle(window);
+            self.drive_virtual(window);
+            self.keep_rows_parked(window);
+            let again = self.run_layout(window);
+            stats.layout.boundaries += again.boundaries;
+            stats.layout.full |= again.full;
+            stats.layout.leaf_layouts += again.leaf_layouts;
+        }
         let mut commit = Commit { window, revision: self.revision, input_seq: self.input_seq, ..Default::default() };
         let mut runs = RunSink { next: self.run_counter, added: Vec::new() };
         let mut images = std::mem::take(&mut self.images);
@@ -107,6 +124,7 @@ impl Document {
         commit.animations.extend(orphaned.into_iter().map(AnimationCmd::Cancel));
         self.bind_animation_targets(&mut commit);
         commit.cursor = self.input.cursor.take();
+        commit.ime_area = self.ime_area(window);
         let empty = commit.layers.is_empty()
             && commit.props.ops.is_empty()
             && commit.lists.is_empty()
@@ -117,13 +135,30 @@ impl Document {
             && commit.resources.removed_images.is_empty()
             && commit.animations.is_empty()
             && commit.a11y.is_none()
-            && commit.cursor.is_none();
+            && commit.cursor.is_none()
+            && commit.ime_area.is_none();
         if empty {
             return (None, stats);
         }
         let ws = self.window_mut(window).expect("window");
         ws.built = Some(commit.revision);
         (Some(commit), stats)
+    }
+
+    /// The IME candidate area when it moved: the focused text kind's composition (or selection)
+    /// bounds, else its box. `None` when unchanged or nothing editable has focus.
+    fn ime_area(&mut self, window: WindowId) -> Option<Rect> {
+        let node = self.focused(window)?;
+        let i = self.idx(node)?;
+        let mut k = self.kinds[i].take()?;
+        let r = k.text_input().map(|c| c.marked_range().or_else(|| c.selected_range()).and_then(|r| c.bounds_for_range(r)));
+        self.kinds[i] = Some(k);
+        let r = r?.unwrap_or(self.record[i].world);
+        if self.window(window).and_then(|w| w.ime_sent) == Some(r) {
+            return None;
+        }
+        self.window_mut(window)?.ime_sent = Some(r);
+        Some(r)
     }
 
     /// The compositor applied the commit with `revision` (back-pressure release; `settle`).
@@ -142,14 +177,26 @@ impl Document {
             E::Finished { id, .. } | E::Aborted { id } => id,
         };
         let mut owner = None;
+        let mut finished_prop = None;
         for (n, v) in self.anim.running.iter_mut() {
             if let Some(k) = v.iter().position(|(a, _)| *a == id) {
-                v.remove(k);
+                let (_, p) = v.remove(k);
+                finished_prop = match p {
+                    AnimProperty::Opacity => Some("opacity"),
+                    AnimProperty::Transform => Some("transform"),
+                    _ => None,
+                };
                 owner = Some(*n);
                 break;
             }
         }
         if let Some(n) = owner {
+            // CSS transitions of compositor properties end on the compositor
+            if let E::Finished { .. } = ev
+                && let Some(prop) = finished_prop
+            {
+                crate::style::cascade::transition_end(self, n, prop, 0.0);
+            }
             if self.anim.running.get(&n).is_some_and(Vec::is_empty) {
                 self.anim.running.remove(&n);
             }
@@ -245,7 +292,7 @@ impl Document {
             self.core[i].dirty.remove(Dirty::RECORD.union(Dirty::DESC_RECORD).union(Dirty::LAYOUT).union(Dirty::DESC_LAYOUT));
             let p = &self.record[i];
             let child = Ctx { space: p.content.or(p.transform), clip: p.clip.or(ctx.clip), effect: p.effect.or(ctx.effect) };
-            for &c in self.children[i].iter().rev() {
+            for &c in self.layout_children(i).to_vec().iter().rev() {
                 let ci = self.ix(c);
                 // absolute boxes are placed in their containing block's space
                 let cctx = match crate::layout::positional_parent(self, ci) {
@@ -275,7 +322,8 @@ impl Document {
         let offset = self.scroll_offset(node);
         let wants_clip = s.overflow_x.clips() || s.overflow_y.clips();
         let wants_effect = s.opacity < 1.0 || s.will_change || self.animates(node, AnimProperty::Opacity);
-        let passive = !self.nonpassive_scroll_path(i);
+        // a non-passive listener on the path or inside the container may cancel the scroll
+        let passive = !self.nonpassive_scroll_path(i) && !self.core[i].flags.contains(crate::tree::NodeFlags::DESC_NONPASSIVE);
         let mut ids = std::mem::take(&mut self.window_mut(window).expect("window").props);
         let mut scroll_nodes: Option<(PropNodeId, Option<PropNodeId>)> = None;
         let p = &mut self.record[i];
@@ -418,7 +466,7 @@ impl Document {
 
     /// Children of node `i` in paint order: tree order, stably sorted by `z-index`.
     fn paint_order(&self, i: usize) -> Vec<NodeId> {
-        let mut kids = self.children[i].clone();
+        let mut kids = self.layout_children(i).to_vec();
         if kids.iter().any(|&c| self.style.computed(self.ix(c)).z_index.is_some()) {
             kids.sort_by_key(|&c| self.style.computed(self.ix(c)).z_index.unwrap_or(0));
         }

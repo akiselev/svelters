@@ -73,6 +73,7 @@ pub struct NodeView<'a> {
     pub(crate) children: &'a [NodeId],
     pub(crate) window: Option<WindowId>,
     pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
+    pub(crate) doc: &'a Document,
 }
 
 impl<'a> NodeView<'a> {
@@ -137,6 +138,14 @@ impl<'a> NodeView<'a> {
     }
     pub fn children(&self) -> &'a [NodeId] {
         self.children
+    }
+    /// A read view of another live node (a child whose runs a folding kind lays out, a sibling).
+    pub fn view(&self, node: NodeId) -> Option<NodeView<'a>> {
+        self.doc.view(node)
+    }
+    /// The `k`-th child's view.
+    pub fn child(&self, k: usize) -> Option<NodeView<'a>> {
+        self.children.get(k).and_then(|&c| self.doc.view(c))
     }
 }
 
@@ -517,6 +526,24 @@ impl EventCx<'_> {
     }
     pub fn request_layout(&mut self) {
         self.doc.mark_layout(self.node);
+    }
+}
+
+/// [`VirtualChildren::realize`](crate::VirtualChildren::realize): the document, to create, recycle and
+/// bind the rows of the virtualising node.
+pub struct RealizeCx<'a> {
+    pub(crate) doc: &'a mut Document,
+    pub(crate) node: NodeId,
+}
+
+impl RealizeCx<'_> {
+    /// The virtualising node (the rows' parent).
+    pub fn node(&self) -> NodeId {
+        self.node
+    }
+    /// The document (the node's own kind value is out while it realises).
+    pub fn doc(&mut self) -> &mut Document {
+        self.doc
     }
 }
 
