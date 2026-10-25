@@ -23,7 +23,7 @@
 //! (written by the kind from [`Table::geom`] once presto-core's `A11yCx` exists).
 
 pub mod column;
-pub mod core_text;
+pub mod text_painter;
 pub mod geom;
 pub mod item_keys;
 pub mod resize;

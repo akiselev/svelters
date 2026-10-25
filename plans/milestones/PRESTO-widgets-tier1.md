@@ -8,9 +8,13 @@ Lane WIDGETS-TIER1 of presto batch 2 (`plans/cloud/presto-b2/LANE-widgets-tier1.
 presto-core and presto-text had no API skeleton on `ci/presto-base` when this lane started, so every
 tier-1 widget is written as **toolkit-independent native state, geometry, input state machines and
 recording** over presto-base types, plus a small local shim (`crates/presto-widgets/src/table/shim.rs`).
-presto-core's skeleton landed mid-lane (merged at `d6725daa`): `table/core_text.rs` bridges the shim's
-`TextPainter` to it (shape in `prepare`, draw cached runs in `record`), and `pickers/kinds.rs` has the
-`KindSpec`s of the four picker kinds and the `Kind` impls of the leaf kinds `calendar` and `color-editor`.
+presto-core's skeleton and WIDGETS-BASIC's widget substrate landed mid-lane (merged at `d6725daa` and
+`d7785fc5`). `pickers/kinds.rs` declares the four picker kinds' specs with `kind_props!` and implements
+the leaf kinds `calendar` and `color-editor` against the substrate's kind interface (`shim::core::Kind`),
+registered on presto-core through `host::register` (`Hosted<W>`). `table/text_painter.rs` implements the
+tier-1 `TextPainter` over the substrate's `TextShaper` (presto-text), honouring the requested family,
+size, weight and colour, with the shaper's own one-line ellipsis. The picker look comes from the built-in
+theme's tokens (`PickerLook::from_theme`).
 The container and popup kinds (`table`, `tab-view`, `date-picker`, `color-picker`) have no `Kind` impl
 yet: see "presto-core gaps". Nothing here returns a fake success.
 
@@ -72,9 +76,8 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
 1. **Children's props in `prepare`/`record`/`measure`.** `NodeView::children` gives ids only; `tab-view`
    needs its `tab` children's `title`/`closable`, `table` its `table-column` children's props. Ask: a
    `NodeView` for a child (`PrepareCx::child(i)` or `view(node)` as `EventCx` has).
-2. **Styled text.** `PrepareCx::shape_text` shapes in the node's computed font only; tier-1 parts need
-   another weight (header cells) or size. Ask: `shape_spec(&TextSpec, max_width)`. Colour already works
-   (`draw_run`).
+2. **Styled text.** Closed through the substrate: `host.rs` shapes `RichText` with any style through the
+   thread's presto-text `TextSystem` (`table/text_painter.rs`).
 3. **Parent-placed children.** `tab-view` lays out only the selected page and hides the others; core's
    layout is not written yet. Ask: a hook for a container kind to place or hide its children.
 4. **Popups.** `date-picker`/`color-picker` popups need an overlay layer anchored to the node
@@ -102,7 +105,8 @@ its branch. Once it (or presto-core) is in `ci/presto-base`, this shim folds int
    `order_buttons`.
 3. **Remaining Kind glue.** Recommendation: once the core gaps above are closed, a fresh session adds
    the `Kind` impls of table, table-column, tab-view, tab, date-picker and color-picker (the models are
-   done; the glue follows `pickers/kinds.rs`).
+   done; the glue follows `pickers/kinds.rs`: a `shim::core::Kind` registered with `host::register`).
+   The substrate's contexts also lack children's props (gap 1).
 4. **rfd default.** svelters-egui had `dialogs` on by default; here it is off (fewer CI dependencies).
    Recommendation: the presto app crate (`presto` facade or svelters-presto) turns `presto-widgets/dialogs`
    on.
