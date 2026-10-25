@@ -191,6 +191,8 @@ export interface EguiElements {
     padding?: number;
     /** Space between the window's children, in points. */
     gap?: number;
+    /** Set by the runtime in dev builds: where the window was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set. */
+    'source-loc'?: string;
     /** The user asked to close the window; return true to keep it open. Runs before the frame's pass. */
     'onclose-request'?: (e: SvlEvent<[]>) => void;
     /** A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). */

@@ -30,6 +30,14 @@ pub(super) static WINDOW_PROPS: &[PropDef] = &[
     // The content area is a flex column (the window is the root of its taffy tree).
     layout("padding", P::Padding, Ty::F64, Def::F64(8.0), "Inner spacing of the content area, in points."),
     layout("gap", P::Gap, Ty::F64, Def::F64(0.0), "Space between the window's children, in points."),
+    // DZ0b2: appended (toplevels mounted at the root had no source location)
+    prop(
+        "source-loc",
+        P::SourceLoc,
+        Ty::Str,
+        Def::Str(""),
+        "Set by the runtime in dev builds: where the window was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set.",
+    ),
 ];
 
 pub(super) static WINDOW_SIGNALS: &[SignalDef] = dom_signals![SignalDef {

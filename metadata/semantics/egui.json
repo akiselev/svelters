@@ -15999,6 +15999,23 @@
           "type": "f64",
           "writable": true
         },
+        "source-loc": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime in dev builds: where the window was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set.",
+          "js": "source-loc",
+          "native": "source-loc",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Window:source-loc",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "title": {
           "construct_only": false,
           "default": "",

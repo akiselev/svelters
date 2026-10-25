@@ -6,7 +6,7 @@
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use svelters_egui::embed::{EmbedConfig, MountSpec, Props, SlotOptions};
-use svelters_egui::harness::EmbedHarness;
+use svelters_egui::harness::{EmbedHarness, TestApp};
 use svelters_egui::scene::{SceneRef, SourceSpot};
 use svelters_host::HostConfig;
 use svelters_host::modules::{SourceConfig, SourceProvider};
@@ -171,6 +171,32 @@ fn dynamic_components_and_renders_add_their_call_sites() {
         assert_eq!(sites("s"), vec![dynamic("<Named {name}"), dynamic("{@render")]);
         let plain = anchored(s, "plain")[0].source_loc().unwrap();
         assert_eq!(plain.sites().count(), 0);
+    });
+}
+
+/// DZ0b2: a toplevel mounted at the root (an app's `<window>`) has its source location too.
+#[test]
+fn a_root_window_has_its_source_loc() {
+    const APP: &str = "<window title=\"dz0b2\">\n  <label anchor=\"inside\" text=\"inside\" />\n</window>\n";
+    let dir = scratch("root-window");
+    std::fs::write(dir.join("package.json"), r#"{ "name": "dz0w", "private": true, "type": "module", "svelters": { "toolkit": "egui" } }"#).unwrap();
+    std::fs::write(dir.join("src/App.svelte"), APP).unwrap();
+    let mut cfg = SourceConfig::for_path(&dir).unwrap();
+    cfg.dev = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
+    let host = HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..HostConfig::default() };
+    let mut app = TestApp::with_loader(host, |e| e.load_app_from(provider)).unwrap();
+    app.run();
+    let errors = app.errors();
+    assert!(errors.is_empty(), "{errors:?}");
+    app.backend.scene().read(|s| {
+        let inside = anchored(s, "inside")[0].source_loc().expect("the label has one");
+        let file = inside.element().file;
+        assert!(file.ends_with("src/App.svelte"), "{file}");
+        let windows: Vec<_> = s.by_source(file, at(APP, "<window")).collect();
+        assert_eq!(windows.len(), 1, "the root window carries source-loc");
+        assert_eq!(windows[0].source_loc().unwrap().sites().count(), 0);
+        assert!(inside.element().offset > 0 && inside.sites().count() == 0);
     });
 }
 
