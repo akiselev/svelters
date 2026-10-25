@@ -26,3 +26,4 @@ pub mod select;
 pub mod panel;
 pub mod status_bar;
 pub mod dialog_buttons;
+pub mod bridge;
