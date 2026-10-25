@@ -286,6 +286,8 @@ fn builds_and_settles_with_the_first_frame() {
     let h = harness();
     assert!(h.busy().is_none());
     assert!(h.state().frames >= 1);
+    // The open-window request's BeginFrame came after the resize's urgent frame and found nothing.
+    assert!(h.compositor().skipped_frames() >= 1);
     assert_eq!(h.get_by_label("Count: 0").role(), Role::Label);
     assert_eq!(h.state().size, Some((Size::new(800.0, 600.0), Scale(1.0))));
 }

@@ -78,5 +78,7 @@ pub trait CompositorApi {
     fn high_rate_input(&self, window: WindowId);
     /// How long the UI phases of `frame` took (the frame clock's estimator).
     fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span);
+    /// The UI answered `BeginFrame` `frame` with nothing to commit (`UiFrameSkipped`).
+    fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
     fn shutdown(&self);
 }

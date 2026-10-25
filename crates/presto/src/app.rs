@@ -318,11 +318,20 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             Some(c) => self.send_commit(cx, w, frame, c),
             None => {
                 self.latency.frame_without_commit(w);
-                self.latency.counters_mut(w).no_damage += 1;
-                if let Some(ws) = self.windows.get_mut(&w) {
-                    ws.frame.skipped();
-                }
+                self.skip_frame(w, frame);
             }
+        }
+    }
+
+    fn skip_frame(&mut self, w: WindowId, frame: Option<FrameId>) {
+        self.latency.counters_mut(w).no_damage += 1;
+        if let Some(ws) = self.windows.get_mut(&w) {
+            ws.frame.skipped();
+        }
+        if let Some(f) = frame
+            && let Some(c) = &self.compositor
+        {
+            c.ui_frame_skipped(w, f);
         }
     }
 
@@ -386,10 +395,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
                 if self.doc.needs_frame(window) || self.coalescer.has_pending(window) {
                     self.run_frame(cx, window, Some(frame), target);
                 } else {
-                    self.latency.counters_mut(window).no_damage += 1;
-                    if let Some(ws) = self.windows.get_mut(&window) {
-                        ws.frame.skipped();
-                    }
+                    self.skip_frame(window, Some(frame));
                 }
             }
             ToUi::CommitApplied { window, revision } => {

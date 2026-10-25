@@ -45,6 +45,7 @@ struct CompState {
     resizes: Vec<(WindowId, DeviceSize, Scale, u64)>,
     ui_costs: Vec<(WindowId, FrameId, Span)>,
     high_rate: u64,
+    skipped: u64,
     shut_down: bool,
 }
 
@@ -259,6 +260,10 @@ impl HeadlessCompositor {
     pub fn high_rate_inputs(&self) -> u64 {
         self.lock().high_rate
     }
+    /// `BeginFrame`s the UI answered with nothing.
+    pub fn skipped_frames(&self) -> u64 {
+        self.lock().skipped
+    }
     pub fn is_shut_down(&self) -> bool {
         self.lock().shut_down
     }
@@ -335,6 +340,9 @@ impl CompositorApi for HeadlessCompositor {
     }
     fn ui_cost(&self, window: WindowId, frame: FrameId, cost: Span) {
         self.lock().ui_costs.push((window, frame, cost));
+    }
+    fn ui_frame_skipped(&self, _window: WindowId, _frame: FrameId) {
+        self.lock().skipped += 1;
     }
     fn shutdown(&self) {
         self.lock().shut_down = true;
