@@ -50,6 +50,7 @@ struct Doc {
     animation_events: Vec<AnimationEvent>,
     frames: u32,
     duplicates: bool,
+    hovers: Vec<Point>,
 }
 
 impl Doc {
@@ -262,6 +263,15 @@ impl DocumentApi for Doc {
     }
 
     fn window_event(&mut self, _window: WindowId, _ev: &WindowEvent) {}
+
+    fn hover(&mut self, _window: WindowId, pos: Point) -> bool {
+        self.hovers.push(pos);
+        false
+    }
+
+    fn ime_state(&mut self, _window: WindowId) -> Option<(Rect, presto_base::input::InputPurpose)> {
+        (self.focus == Some(FIELD)).then_some((FIELD_RECT, presto_base::input::InputPurpose::Email))
+    }
 
     fn close_window(&mut self, _window: WindowId) {}
 
@@ -548,4 +558,54 @@ fn hidden_windows_drop_their_inputs() {
         h.query_by_label("Count: 1").is_some(),
         "the change shows once visible"
     );
+}
+
+#[test]
+fn coalesced_moves_hover_at_event_time() {
+    let mut h = harness();
+    h.hover_at(Point::new(300.0, 300.0));
+    h.hover_at(Point::new(301.0, 300.0));
+    h.run();
+    // Each move hovered when it arrived, though the two merged into one dispatched move.
+    assert_eq!(
+        h.state().hovers,
+        vec![Point::new(300.0, 300.0), Point::new(301.0, 300.0)]
+    );
+}
+
+#[test]
+fn the_ime_follows_the_focused_field() {
+    use presto::platform::PlatformCall;
+    let mut h = harness();
+    h.get_by_label("Name").focus();
+    h.run();
+    let ime: Vec<_> = h
+        .calls()
+        .iter()
+        .filter_map(|c| match c {
+            PlatformCall::SetIme(_, s) => Some(s.clone()),
+            _ => None,
+        })
+        .collect();
+    let last = ime.last().cloned().flatten().expect("the IME turned on");
+    assert_eq!(
+        (last.area, last.purpose),
+        (FIELD_RECT, presto_base::input::InputPurpose::Email)
+    );
+    h.key_press(Key::Tab);
+    h.run();
+    let ime: Vec<_> = h
+        .calls()
+        .iter()
+        .filter_map(|c| match c {
+            PlatformCall::SetIme(_, s) => Some(s.clone()),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(
+        ime.last(),
+        Some(&None),
+        "focus left the field: the IME is off"
+    );
+    assert_eq!(ime.len(), 2, "sent only when it changed");
 }

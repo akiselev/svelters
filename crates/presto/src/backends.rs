@@ -4,33 +4,26 @@
 
 use crate::app::{SpawnCompositor, ToUiSink};
 use crate::seams::{CompositorApi, Dispatched, DocumentApi};
-use presto_base::accesskit::{Action, ActionRequest};
+use presto_base::accesskit::ActionRequest;
 use presto_base::anim::AnimationEvent;
 use presto_base::commit::{Commit, FastCommit};
 use presto_base::event::{InputEnvelope, WindowEvent};
-use presto_base::geom::{DeviceSize, Scale, Size, Vec2};
-use presto_base::ids::{FrameId, NodeId, PropNodeId, Revision, WindowId};
+use presto_base::geom::{DeviceSize, Point, Rect, Scale, Size, Vec2};
+use presto_base::ids::{FrameId, PropNodeId, Revision, WindowId};
+use presto_base::input::InputPurpose;
 use presto_base::text::GlyphRasterizer;
 use presto_base::time::{Clock, Span, Time};
 use presto_compositor::{Compositor, CompositorConfig, CompositorHandle};
-use presto_core::{Document, FocusReason, JsEvent, KindId};
+use presto_core::{Document, JsEvent, KindId};
 use presto_frame::{CommitReport, UiFrameState, Urgency};
 use presto_platform::SurfaceTarget;
-use std::collections::HashMap;
 use std::sync::Arc;
 
 /// `presto_core::Document` behind [`DocumentApi`]. It opens each window's root with `root_kind` and
 /// keeps the JS-facing events of the last dispatch for the script host ([`CoreDocument::take_js_events`]).
-///
-/// Where `Document` has no API yet, this says so rather than pretending:
-/// - `needs_frame` compares the document's revision with the one each window last ran a frame at, so
-///   any transaction (even one that changed nothing) asks for a frame, which then commits nothing;
-/// - animation events, window focus/theme, device resets and AT activation are not consumed;
-/// - AccessKit actions: `Focus` focuses the node whose id equals the AccessKit id; others are unhandled.
 pub struct CoreDocument {
     pub doc: Document,
     root_kind: KindId,
-    framed: HashMap<WindowId, Revision>,
     js_events: Vec<JsEvent>,
 }
 
@@ -39,11 +32,24 @@ impl CoreDocument {
         Self {
             doc,
             root_kind,
-            framed: HashMap::new(),
             js_events: Vec::new(),
         }
     }
-    /// The JS-facing events of the last dispatch, then those queued outside dispatch (focus moves).
+    /// A document whose built-in kinds have their services: the text system, the platform's interaction
+    /// policy and the theme (`presto_widgets::host::install`). The clipboard service follows at
+    /// `App::init` (`DocumentApi::install_clipboard`), once the platform's display is known.
+    pub fn with_widgets(
+        mut doc: Document,
+        root_kind: KindId,
+        text: presto_text::TextSystem,
+        policy: presto_widgets::interact::Policy,
+        theme: presto_widgets::theme::Theme,
+    ) -> Self {
+        presto_widgets::host::install(&mut doc, text, policy, theme);
+        Self::new(doc, root_kind)
+    }
+    /// The JS-facing events of the last dispatch, then those queued outside dispatch (focus moves,
+    /// hover enter/leave, AccessKit actions).
     pub fn take_js_events(&mut self) -> Vec<JsEvent> {
         let mut out = std::mem::take(&mut self.js_events);
         out.extend(self.doc.take_events());
@@ -59,20 +65,27 @@ impl DocumentApi for CoreDocument {
         Dispatched {
             dirty: d.changed,
             js_events,
-            fast: Vec::new(),
+            fast: self.doc.take_fast_commits(),
         }
     }
     fn frame(&mut self, window: WindowId, target: Time) -> Option<Commit> {
-        let c = self.doc.frame(window, target);
-        self.framed.insert(window, self.doc.revision());
-        c
+        self.doc.frame(window, target)
     }
     fn needs_frame(&self, window: WindowId) -> bool {
-        self.doc.window_root(window).is_some()
-            && self
-                .framed
-                .get(&window)
-                .is_none_or(|r| self.doc.revision() > *r)
+        self.doc.needs_frame(window)
+    }
+    fn hover(&mut self, window: WindowId, pos: Point) -> bool {
+        self.doc.hover(window, pos)
+    }
+    fn ime_state(&mut self, window: WindowId) -> Option<(Rect, InputPurpose)> {
+        self.doc.ime_state(window)
+    }
+    fn take_fast_commits(&mut self) -> Vec<FastCommit> {
+        self.doc.take_fast_commits()
+    }
+    fn install_clipboard(&mut self, clipboard: Box<dyn presto_platform::Clipboard>) {
+        // presto-widgets' text kinds read it as `cx.service::<Box<dyn presto_platform::Clipboard>>()`.
+        self.doc.set_service(clipboard);
     }
     fn resize(&mut self, window: WindowId, size: Size, scale: Scale) {
         if self.doc.window_root(window).is_some() {
@@ -83,25 +96,25 @@ impl DocumentApi for CoreDocument {
     }
     fn close_window(&mut self, window: WindowId) {
         self.doc.close_window(window);
-        self.framed.remove(&window);
     }
     fn scroll_moved(&mut self, window: WindowId, node: PropNodeId, offset: Vec2) {
         self.doc.apply_scroll(window, node, offset);
     }
-    fn animation_event(&mut self, _window: WindowId, _ev: AnimationEvent) {}
-    fn accessibility_action(&mut self, _window: WindowId, req: &ActionRequest) -> bool {
-        let node = NodeId(req.target_node.0);
-        match req.action {
-            Action::Focus if self.doc.contains(node) => {
-                self.doc.focus(node, FocusReason::Programmatic);
-                true
-            }
-            _ => false,
-        }
+    fn animation_event(&mut self, _window: WindowId, ev: AnimationEvent) {
+        self.doc.animation_event(ev);
     }
-    fn accessibility_activated(&mut self, _window: WindowId) {}
-    fn window_event(&mut self, _window: WindowId, _ev: &WindowEvent) {}
-    fn device_reset(&mut self) {}
+    fn accessibility_action(&mut self, window: WindowId, req: &ActionRequest) -> bool {
+        self.doc.accessibility_action(window, req)
+    }
+    fn accessibility_activated(&mut self, window: WindowId) {
+        self.doc.a11y_full_tree(window);
+    }
+    fn window_event(&mut self, window: WindowId, ev: &WindowEvent) {
+        self.doc.window_event(window, ev);
+    }
+    fn device_reset(&mut self) {
+        self.doc.device_reset();
+    }
 }
 
 impl CompositorApi for CompositorHandle {

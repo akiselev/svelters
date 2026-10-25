@@ -180,3 +180,33 @@ None. `Cargo.lock` gained presto's and presto-test's dependency edges.
   before each urgent decision (request 6 done); `ToUi::FrameTimings` stamps draw/submit/gpu_done/present,
   amending records `Presented` already ended and adding the segments it completes (request 7 done); after
   each commit the app asks for a frame again when the tree is still dirty (the caveat to request 8).
+- `CoreDocument::with_widgets(doc, root_kind, text, policy, theme)` calls `presto_widgets::host::install`
+  (base 0ef700c1); `presto` now depends on presto-widgets and presto-text. The TextServices TODO in
+  `App::init` names both calls.
+- CORE-3's answers adopted (base 96426b4a; requests 1–5 done): `CoreDocument` now calls
+  `Document::{needs_frame, hover, accessibility_action, a11y_full_tree, window_event, device_reset,
+  animation_event, ime_state, take_fast_commits}` (its revision approximation is gone). `App` hovers
+  coalesced pointer moves at event time (`DocumentApi::hover`) and sends the platform the focused
+  field's IME area and purpose (`DocumentApi::ime_state`, falling back to `Commit::ime_area`) only when
+  it changes. New harness tests: event-time hover, the IME following focus.
+
+## Consolidation items F8 and F9 (coordinator, 2026-10-25 20:02)
+
+Branch `ci/presto-app-test` with `ci/presto-base` 4756b7ca, `ci/presto-text-input` 300b2660 and
+`ci/presto-integration` 65ead449 merged in (all clean, no conflicts).
+
+- **F8 (text services).** TEXT-INPUT's text kind no longer has a `TextServices` trait: it reads the
+  document's services (`TextSystem`, `Policy`, `Box<dyn presto_platform::Clipboard>`) and sends the caret
+  through presto-core's fast channel. So: `CoreDocument::with_widgets` calls `presto_widgets::host::install`
+  (text system, policy, theme); `App::init` installs the clipboard (`DocumentApi::install_clipboard` →
+  `Document::set_service::<Box<dyn Clipboard>>`): `SystemClipboard::new(display)` for the first window's
+  display, `MemoryClipboard` when there is none (headless). `App` drains `Document::take_fast_commits()`
+  to the compositor after each input, window event, AccessKit action and compositor message, and before
+  each commit. The TODO is gone. (The decided "compositor handle clone" is not needed: core's fast
+  channel replaced it.)
+- **F9 (backend selection).** `presto::run(handler) -> Result<Backend, PlatformError>` (`run.rs`): Win32 on
+  Windows, AppKit on macOS, Wayland on Linux/BSD with `WAYLAND_DISPLAY`, each behind a default-on feature
+  (`win32`, `wayland`, `macos`; target-cfg optional dependencies), else presto-platform's winit backend.
+  An own backend that errors before calling `init` falls back to winit (the app is shared through a
+  forwarding handler, so it is not lost); `PRESTO_BACKEND=winit` forces winit, `PRESTO_BACKEND=native`
+  disables the fallback. No test (it needs a display); CI builds it on all three OSes.
