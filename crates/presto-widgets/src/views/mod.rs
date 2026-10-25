@@ -21,3 +21,6 @@ pub mod tooltip;
 pub mod toast;
 pub mod modal;
 pub mod inner_window;
+pub mod split;
+pub mod select;
+pub mod panel;

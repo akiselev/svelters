@@ -109,7 +109,7 @@ impl Sash {
     }
     /// When the hover bar appears without more input.
     pub fn wake(&self) -> Option<Time> {
-        (self.start.is_none()).then_some(self.hover_since?.add_span(SASH_HOVER_DELAY))
+        self.hover_since.filter(|_| self.start.is_none()).map(|t| t + SASH_HOVER_DELAY)
     }
 
     fn clamp(&self, p: &SashParams, v: f32) -> f32 {
@@ -280,15 +280,6 @@ impl Sash {
     }
 }
 
-trait AddSpan {
-    fn add_span(self, s: Span) -> Time;
-}
-impl AddSpan for Time {
-    fn add_span(self, s: Span) -> Time {
-        self + s
-    }
-}
-
 /// Records a sash: the line, then (shown) the hover bar and its three-dot grip.
 pub(crate) fn record_sash(cx: &mut RecordCx<'_>, line: Rect, axis: usize, shown: bool) {
     let pal = cx.palette;
@@ -346,6 +337,8 @@ pub struct SplitView {
     sashes: Vec<Sash>,
     /// The sash the pointer pressed (it keeps the pointer until release).
     active: Option<usize>,
+    /// The sash being dragged (between `drag-started` and `drag-stopped`).
+    drag: Option<usize>,
     focused: Option<usize>,
     /// `commit-mode="release"`: the sash being dragged and the size it would give.
     ghost: Option<(usize, f32)>,
@@ -371,6 +364,7 @@ impl Default for SplitView {
             maxs: Vec::new(),
             sashes: Vec::new(),
             active: None,
+            drag: None,
             focused: None,
             ghost: None,
             now: Time::ZERO,
@@ -553,6 +547,7 @@ impl SplitView {
         for i in intents {
             match i {
                 SashIntent::Start => {
+                    self.drag = Some(k);
                     cx.capture = Some(true);
                     cx.emit("drag-started", Value::Null);
                 }
@@ -567,7 +562,8 @@ impl SplitView {
                 }
                 SashIntent::Commit { size } => {
                     let s = with(&self.laid, size);
-                    let was_drag = self.ghost.take().is_some() || self.active == Some(k);
+                    self.ghost = None;
+                    let was_drag = self.drag.take() == Some(k);
                     self.write(cx, s.clone());
                     cx.emit("commit", Value::List(s.iter().map(|x| Value::F64(*x as f64)).collect()));
                     if was_drag {
@@ -582,6 +578,7 @@ impl SplitView {
                     } else {
                         cx.mark(ChangeClass::Paint);
                     }
+                    self.drag = None;
                     cx.capture = Some(false);
                     cx.emit("drag-stopped", Value::Null);
                 }
