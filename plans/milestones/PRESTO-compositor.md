@@ -14,12 +14,15 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   `ui_input_cost`, `high_rate_input`, `fling`, `smooth_scroll`, `set_frame_source` (a
   `presto_platform::FrameSource` per window, waited on by a `presto-vsync-<id>` thread that posts ticks,
   occlusion and feedback), `set_os_layer_committer` (DComp `Commit` after every configure),
-  `os_compositing()` (true only with DX12, for `WindowDesc::os_compositing`).
+  `os_compositing()` (true only with DX12, for `WindowDesc::os_compositing`), `frame_args(window)`
+  (the frame clock's `FrameArgs` snapshot, republished after every clock update; APP-TEST #6), `set_caret_blink`.
 - **Thread** (`lib.rs::run`): one per process; one blocking wait (`recv_timeout` to the engine's next
   deadline), then every queued message, then what is due. The `Instance` is created on the calling
   thread so the main thread creates surfaces at once; the device is created with the first surface.
 - **GPU** (`gpu.rs`): backends DX12 only on Windows, Metal on Apple, Vulkan then GL elsewhere; adapters
-  ranked by power preference, software (lavapipe/WARP/llvmpipe) last; non-sRGB format; Fifo,
+  ranked by power preference, software (lavapipe/WARP/llvmpipe) last, or chosen by
+  `CompositorConfig::adapter` (cadatomic's `adapter::select`) with `CompositorConfig::limits` for
+  `required_limits`, the same after device loss; non-sRGB format; Fifo,
   `desired_maximum_frame_latency = 1`; a persistent target per surface, encode first and **acquire late**,
   copy damage ∪ what older images missed (`DamageHistory`, `swap_images` = 4) into the image; surfaces
   without `COPY_DST` redraw whole; `Outdated` reconfigures, `Suboptimal` reconfigures after present;
@@ -50,7 +53,10 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
   `FastCommit::Caret`, blinking per window by `CaretBlink { cycle, timeout }` (on for the first half of
   each cycle from the last caret change, steady after the timeout; defaults GTK 1200 ms/10 s, Qt 1000 ms,
   Windows and macOS 1060 ms; `set_caret_blink`; TEXT-INPUT R3, decided as Q2). `ToUi::Presented` carries the input seqs applied in
-  that frame. Resize handshake: reconfigure, draw every arrived commit, present, `ResizeDone`.
+  that frame, followed by `ToUi::FrameTimings` (draw, submit, GPU done, present; APP-TEST #7).
+  APP-TEST #8 holds: a `BeginFrame` is not sent while a commit is unapplied and goes out after the draw
+  that applies it if the UI is still dirty (test); #10: the interval pacer is gone, `ui_frame_skipped`
+  → `Signal::UiFrameSkipped` frees the clock (test). Resize handshake: reconfigure, draw every arrived commit, present, `ResizeDone`.
 
 ## Seams (stubbed until other lanes land)
 
@@ -76,6 +82,13 @@ Branch `ci/presto-compositor`. Brief: `plans/cloud/presto-b1/BRIEF.md`, `LANE-co
 
 ## Not run
 
+Run locally once, filtered, to diagnose CI's failures on a9503acb (and passing after the fix):
+`cargo test -p presto-compositor --test engine --test tree_damage --test caret`. Fixed: damage no
+longer counts a removal as reordering its successor (only survivors that change relative order are
+damaged); the fling test counted presents, but frames whose content scrolled out of view rightly
+present nothing, so it counts sampled frames.
+
+
 Per the batch rule, nothing was run locally beyond `cargo check -p presto-compositor --all-targets`.
 Tests written, run only by CI: `tests/engine.rs` (virtual clock + recording backend: first frame,
 commit folding, smooth scroll with retarget, fast-commit revision rejection, fling frames without commits then idle, fling stopped
@@ -88,6 +101,8 @@ completion, readback; skips without an adapter).
 
 ## Cross-lane edits
 
+- `presto-base/src/commit.rs`: additive `ToUi::FrameTimings { window, frame, draw, submit, gpu_done,
+  present, estimated }` (coordinator decision for APP-TEST #7).
 - `presto-base/src/commit.rs`: additive `ToUi::Occluded { window, occluded }` (decided by the coordinator
   with PLATFORM, 2026-10-25), sent when the platform frame source reports occlusion; the compositor stops
   drawing an occluded window and redraws it whole when it comes back.

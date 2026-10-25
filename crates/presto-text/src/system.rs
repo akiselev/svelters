@@ -272,13 +272,7 @@ impl TextSystem {
             key,
             Shaped { layout, bytes, last_used: self.generation, broken: None, widths: None, placed: Vec::new() },
         );
-        self.evict_if_over();
-    }
-
-    fn evict_if_over(&mut self) {
-        if self.bytes > self.budget {
-            self.evict();
-        }
+        self.evict();
     }
 
     /// Families of the symbol chain to append for the Common-script symbols in `text`.
@@ -290,11 +284,10 @@ impl TextSystem {
                 .symbols
                 .entry(ch)
                 .or_insert_with(|| SYMBOL_CHAIN.iter().copied().find(|f| fonts.family_has_char(f, ch)));
-            if let Some(f) = found {
-                if !out.contains(&f) {
+            if let Some(f) = found
+                && !out.contains(&f) {
                     out.push(f);
                 }
-            }
         }
         out
     }
@@ -427,6 +420,7 @@ struct RawCluster {
     rtl: bool,
     newline: bool,
     tab: bool,
+    space: bool,
     glyphs: Vec<parley::layout::Glyph>,
     key: RunKey,
     ascent: f32,
@@ -447,7 +441,8 @@ fn place(
     let line_count = layout.len();
     let visible = text.max_lines.map(|m| (m.max(1) as usize).min(line_count)).unwrap_or(line_count);
     let mut out = TextLayout { text_len: text.text.len(), rtl, ..Default::default() };
-    out.truncated = visible < line_count;
+    let dropped = visible < line_count;
+    out.truncated = dropped;
 
     for (li, line) in layout.lines().enumerate().take(visible) {
         let m = *line.metrics();
@@ -469,6 +464,7 @@ fn place(
                     rtl: cl.is_rtl(),
                     newline,
                     tab: is_tab,
+                    space: cl.is_space_or_nbsp(),
                     glyphs,
                     key: RunKey {
                         font,
@@ -486,7 +482,7 @@ fn place(
 
         // Cut this line for max_lines or an overflowing width.
         let content_w: f32 = raw.iter().map(|c| if c.tab { tab } else { c.advance }).sum();
-        let cut_by_lines = out.truncated && li + 1 == visible;
+        let cut_by_lines = dropped && li + 1 == visible;
         let overflow = max_width.is_some_and(|w| content_w > w + 0.01);
         let ellipsis = if text.ellipsis && (cut_by_lines || overflow) { aux.and_then(|a| a.ellipsis.clone()) } else { None };
         if text.ellipsis && overflow {
@@ -591,8 +587,6 @@ fn place(
                 run.advance = (x + adv) - *origin_x;
                 placed.range.start = placed.range.start.min(c.range.start);
                 placed.range.end = placed.range.end.max(c.range.end);
-            } else if let Some((_, r, _)) = cur.take() {
-                out.runs.push(r);
             }
             x += adv;
         }
@@ -608,12 +602,21 @@ fn place(
         }
 
         let last_cluster = out.clusters.len() as u32;
-        let (mut left, mut right) = (line_left, line_left);
-        for c in out.clusters[first_cluster as usize..].iter().filter(|c| !c.newline) {
-            left = left.min(c.x0);
-            right = right.max(c.x1);
+        // The line's extent: its ink-bearing clusters (hanging spaces and the newline excluded),
+        // or all its clusters for a line of spaces.
+        let boxes = &out.clusters[first_cluster as usize..];
+        let inked: Vec<usize> = (0..raw.len()).filter(|&i| !raw[i].newline && !raw[i].space).collect();
+        let pick: Vec<usize> = if inked.is_empty() { (0..raw.len()).filter(|&i| !raw[i].newline).collect() } else { inked };
+        let (mut left, mut right) = match pick.first() {
+            Some(&i) => (boxes[i].x0, boxes[i].x1),
+            None => (line_left, line_left),
+        };
+        for &i in &pick {
+            left = left.min(boxes[i].x0);
+            right = right.max(boxes[i].x1);
         }
         if ellipsis.is_some() {
+            left = left.min(line_left);
             right = right.max(x);
         }
         out.lines.push(LineInfo {
