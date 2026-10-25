@@ -633,7 +633,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], state: StateBits::NONE, dark: true }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true }
     }
 
     #[test]

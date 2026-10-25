@@ -1114,7 +1114,7 @@ impl Kind for ScrollArea {
     fn record(&self, cx: &mut RecordCx) {
         // the content moves with the scroll property node; the area draws only its bars
         let policy = self.policy.unwrap_or_else(crate::host::os_policy);
-        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
         let alpha = self.scroller.bar_alpha(self.now, &policy);
         self.scroller.record_bars(&mut PaintCx::of(cx), &styles, alpha, policy.scrollbars == Scrollbars::Classic);
     }
@@ -1376,7 +1376,7 @@ impl Kind for Scrollbar {
     }
 
     fn record(&self, cx: &mut RecordCx) {
-        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
         self.scroller.record_bars(&mut PaintCx::of(cx), &styles, 1.0, true);
     }
 

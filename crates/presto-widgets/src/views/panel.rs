@@ -194,7 +194,7 @@ impl Kind for Panel {
 
     fn record(&self, cx: &mut RecordCx) {
         let host = host_view(&cx.style, UA);
-        let styles = crate::shim::core::Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        let styles = crate::shim::core::Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
         let rect = cx.rect();
         let mut pc = PaintCx::of(cx);
         paint::paint_box(&mut pc, &host, rect);

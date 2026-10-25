@@ -689,7 +689,7 @@ impl Kind for SplitView {
 
     fn record(&self, cx: &mut RecordCx) {
         let ax = self.axis();
-        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, state: cx.style.state, dark: cx.style.dark };
+        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
         let mut pc = PaintCx::of(cx);
         for k in 0..self.sashes.len() {
             let (line, _) = self.sash_rects(k);
