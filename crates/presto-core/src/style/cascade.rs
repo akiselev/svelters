@@ -568,6 +568,7 @@ pub(crate) fn layout_style(c: &ComputedStyle, b: &ComputedBox, hidden: bool) -> 
             "position" => {
                 st.position = match k {
                     Some("absolute") | Some("fixed") => taffy::Position::Absolute,
+                    Some("static") => taffy::Position::Static,
                     _ => taffy::Position::Relative,
                 }
             }

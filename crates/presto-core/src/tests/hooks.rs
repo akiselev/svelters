@@ -823,3 +823,32 @@ fn one_selection_owner_under_the_gtk_rule() {
     click(&mut d, bx, by);
     assert!(!on(&d, a) && on(&d, b), "claiming collapses the previous owner");
 }
+
+#[test]
+fn a_drag_started_from_outside_the_tree_drops_like_any_other() {
+    let (mut d, root) = hdoc();
+    let island = child(&mut d, root, BOX, "width: 40px; height: 40px");
+    let dst = child(&mut d, root, BOX, "width: 40px; height: 40px");
+    d.set_prop(dst, common::DROP_TYPES, Value::from("cad/*")).unwrap();
+    d.listen(island, common::DRAG_BEGIN, ListenFlags::EMPTY);
+    d.listen(dst, common::DROP, ListenFlags::EMPTY);
+    frame(&mut d);
+    // the press went to the island (an egui drag), then presto takes the drag over
+    let (x, y) = at(&d, island);
+    d.dispatch(&pointer(PointerPhase::Down, x, y, 0));
+    assert!(d.start_drag(W, 0, island, "cad/part", "7"));
+    assert!(!d.start_drag(W, 0, island, "cad/part", "7"), "one drag at a time");
+    assert!(d.state(island).contains(StateMask::DRAGGING));
+    assert!(d.take_events().iter().any(|e| e.signal == common::DRAG_BEGIN));
+    let (tx, ty) = at(&d, dst);
+    let mut mv = pointer(PointerPhase::Move, tx, ty, 10);
+    if let presto_base::event::InputEvent::Pointer(p) = &mut mv.event {
+        p.buttons = 1;
+    }
+    d.dispatch(&mv);
+    assert!(d.state(dst).contains(StateMask::DROP_TARGET));
+    let up = d.dispatch(&pointer(PointerPhase::Up, tx, ty, 20));
+    let drop = up.events.iter().find(|e| e.signal == common::DROP).expect("drop").arg.clone().unwrap();
+    assert_eq!(drop.field("type"), Some(&Value::from("cad/part")));
+    assert_eq!(drop.field("data"), Some(&Value::from("7")));
+}
