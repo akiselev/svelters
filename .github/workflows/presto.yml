@@ -40,7 +40,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libwayland-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-dev \
-            libxcursor-dev libxrandr-dev libxi-dev mesa-vulkan-drivers libvulkan1 vulkan-tools xvfb
+            libxcursor-dev libxrandr-dev libxi-dev libfontconfig1-dev libfreetype-dev mesa-vulkan-drivers libvulkan1 vulkan-tools xvfb
       - name: Rust toolchain (rust-toolchain.toml)
         run: rustup toolchain install --profile minimal && rustc --version
       - uses: Swatinem/rust-cache@v2
