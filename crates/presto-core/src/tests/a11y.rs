@@ -71,3 +71,35 @@ fn removing_nodes_resends_a_tree_without_them() {
     let r = &u.nodes.iter().find(|(id, _)| *id == ax(root)).unwrap().1;
     assert!(r.children().is_empty());
 }
+
+#[test]
+fn a_move_resends_only_the_node_that_moved() {
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "width: 50px; height: 20px; margin-left: 0px");
+    let b = child(&mut d, a, BOX, "width: 10px; height: 10px");
+    frame(&mut d);
+    d.set_style(a, crate::StyleInput { inline: Some("width: 50px; height: 20px; margin-left: 30px".into()), ..Default::default() });
+    let u = frame(&mut d).unwrap().a11y.expect("the moved node is re-sent");
+    assert!(u.tree.is_none(), "an incremental update");
+    let ids: Vec<AxId> = u.nodes.iter().map(|(id, _)| *id).collect();
+    assert!(ids.contains(&ax(a)) && !ids.contains(&ax(b)), "its child keeps its transform to it");
+    let n = &u.nodes.iter().find(|(id, _)| *id == ax(a)).unwrap().1;
+    assert_eq!(n.transform().map(|t| t.as_coeffs()[4]), Some(30.0));
+    let bounds = n.bounds().unwrap();
+    assert_eq!((bounds.x0, bounds.x1), (0.0, 50.0), "bounds are local");
+}
+
+#[test]
+fn an_inserted_subtree_joins_incrementally() {
+    let (mut d, root) = doc();
+    child(&mut d, root, BOX, "");
+    frame(&mut d);
+    let a = d.create(BOX);
+    let b = d.create(TEXT);
+    d.insert(a, b, None, None).unwrap();
+    d.insert(root, a, None, None).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    assert!(u.tree.is_none());
+    let ids: HashSet<AxId> = u.nodes.iter().map(|(id, _)| *id).collect();
+    assert!(ids.contains(&ax(root)) && ids.contains(&ax(a)) && ids.contains(&ax(b)), "the parent and the new subtree");
+}

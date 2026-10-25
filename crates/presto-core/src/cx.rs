@@ -267,12 +267,15 @@ impl MeasureCx<'_> {
     }
 }
 
-/// Images a kind uploads; the commit carries them to the compositor's resource store.
+/// Images and paths a kind uploads; the commit carries them to the compositor's resource store.
 #[derive(Default)]
 pub(crate) struct ImageSink {
     pub next: u64,
     pub added: Vec<(ImageId, Arc<ImageData>)>,
     pub removed: Vec<ImageId>,
+    pub next_path: u64,
+    pub paths: Vec<(presto_base::ids::PathId, Arc<presto_base::commit::PathData>)>,
+    pub removed_paths: Vec<presto_base::ids::PathId>,
 }
 
 /// [`Kind::prepare`](crate::Kind::prepare).
@@ -306,6 +309,17 @@ impl PrepareCx<'_> {
     }
     pub fn release_image(&mut self, id: ImageId) {
         self.images.removed.push(id);
+    }
+    /// Uploads a path (an icon outline, a chart's curve) for `Prim::Path`; the id stays valid until
+    /// [`PrepareCx::release_path`].
+    pub fn upload_path(&mut self, data: Arc<presto_base::commit::PathData>) -> presto_base::ids::PathId {
+        self.images.next_path += 1;
+        let id = presto_base::ids::PathId(self.images.next_path);
+        self.images.paths.push((id, data));
+        id
+    }
+    pub fn release_path(&mut self, id: presto_base::ids::PathId) {
+        self.images.removed_paths.push(id);
     }
     /// Re-record after this prepare even if the node was not content-dirty.
     pub fn request_paint(&mut self) {

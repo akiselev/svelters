@@ -95,6 +95,8 @@ pub struct Document {
     pub(crate) label_for: HashMap<NodeId, Arc<str>>,
     /// The focused push button of a dialog scope is its default (`Policy::auto_default`).
     pub(crate) auto_default: bool,
+    /// Per kind, its live nodes.
+    pub(crate) kind_sets: crate::query::KindSets,
 }
 
 impl Document {
@@ -137,6 +139,7 @@ impl Document {
             anchors: HashMap::new(),
             label_for: HashMap::new(),
             auto_default: false,
+            kind_sets: Default::default(),
         }
     }
 
@@ -356,6 +359,7 @@ impl Document {
             self.core[i].flags.insert(NodeFlags::VIRTUAL);
             self.virt.insert(id, crate::virt::VirtState::default());
         }
+        self.kind_sets.add(kind, id);
         self.refresh_prop_state(i);
         self.journal.push(Change::Created { node: id, kind, revision: rev });
         id
@@ -546,6 +550,7 @@ impl Document {
 
     fn free(&mut self, i: usize) {
         let id = self.slots.id_at(i).expect("live slot");
+        self.kind_sets.remove(self.core[i].kind, id);
         self.kinds[i] = None;
         self.props[i] = PropStore::default();
         self.listeners[i].clear();
@@ -600,7 +605,9 @@ impl Document {
         }
         self.input.leave_subtree(&gone);
         if let Some(ws) = self.window_mut(w) {
-            ws.a11y_removed = true;
+            for id in &gone {
+                ws.a11y_sent.remove(id);
+            }
         }
     }
 
