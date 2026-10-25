@@ -30,6 +30,16 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | 18 | `ci/presto-macos` ff854b58, `ci/presto-win32` 305eb732, `ci/presto-wayland` dd66a164 | — | already in through base |
 | 19 | `ci/presto-test-v2` | b0754e75 | conflict in `presto/src/app.rs`: test-v2's `AppHandler` (`arm_timer`, `*_one` helpers, timer pass) with APP-TEST's clipboard install in `init`, `flush_fast` after input and window events, and the hover-at-event-time branch in `input_one` |
 | 20 | `ci/presto-canvas` | f208b779 | clean |
+| — | `ci/presto-base` | a8154099 | clean (third round) |
+| 21 | `ci/presto-text-input` | 093ae50f | clean |
+| 22 | `ci/presto-widgets-tier1` | ce2f4ecc (contains 0876a38f) | clean |
+| 23 | `ci/presto-svelters-presto` | 7bdbda9c | clean |
+| 24 | `ci/presto-egui-island` | 1b3ca477 | clean |
+| 25 | `ci/presto-motion-css` | 1a016796 | clean |
+| 26 | `ci/presto-wayland` | 3c81128a | clean |
+| 27 | `ci/presto-canvas` | 838cb29b (contains ae46a5b1) | clean |
+| 28 | `ci/presto-app-test` | 790d8837 | conflict in `presto-test/src/harness.rs`: kept test-v2's harness, added app-test's `menu_activated` |
+| 29 | `ci/presto-win32` | 8968799f | clean |
 
 ## Build fixes made
 
@@ -59,8 +69,8 @@ fixed build breaks only; everything else is listed here for the coordinator to r
 | F11 (routed to consolidation 2) | presto_berth, presto_quire | Tests not run (berth `claude/presto-berth` a49111b tests/dock.rs + check.sh; quire 35b5063a/676b49bc, 43 tests); their masters not merged | consolidation 2 | Out of this brief (svelters-only branch); run and merge in consolidation 2. |
 | F12 (superseded by the F1/F2 fix) | presto-compositor | COMPOSITOR 2b98a948 was merged into base before its CI finished (coordinator list) | COMPOSITOR | F1/F2 are the result; check the lane's CI run once fixed. |
 | F13 (routed to consolidation 2) | presto-widgets | warning: unused import `StateBits` (`controls/box_.rs:12`) | WIDGETS-BASIC | Remove it (clippy is advisory now). |
-| F14 | presto-widgets | Windows only (presto windows-latest, run 40229342780): `dialogs::native::tests::an_installed_backend_answers_and_cancel_is_none` at `dialogs/native.rs:271`: `left: Ok(Some("/out\\x.kicad_pcb"))`, `right: Ok(Some("/out/x.kicad_pcb"))`; lib 502 / 1 | WIDGETS-TIER1 | The test joins with `Path::join` (backslash on Windows) but expects `/`; build the expected value with `Path::new("/out").join("x.kicad_pcb")` or compare as paths. |
-| F15 | @svelters/native-runtime, svelters-compiler | B3 settles the `setp` clash by routing; the two lanes should agree on one contract (do spec stable ids reach `host.setp` directly once hosts take them, and is W-C3's typed-scalar `setp` a separate op name?) | COMPILER + RUNTIME | Decide whether the compiler emits a distinct op for W-C3 writes (e.g. `$n.setv`) and keep `setp` for W-C1 ids, or retire `setp_id` once `host.setp` takes spec ids. |
+| F14 (fixed in widgets-tier1 0876a38f, merged; recheck on CI) | presto-widgets | Windows only (presto windows-latest, run 40229342780): `dialogs::native::tests::an_installed_backend_answers_and_cancel_is_none` at `dialogs/native.rs:271`: `left: Ok(Some("/out\\x.kicad_pcb"))`, `right: Ok(Some("/out/x.kicad_pcb"))`; lib 502 / 1 | WIDGETS-TIER1 | The test joins with `Path::join` (backslash on Windows) but expects `/`; build the expected value with `Path::new("/out").join("x.kicad_pcb")` or compare as paths. |
+| F15 (COMPILER settles it on top of B3, coordinator 2026-10-25) | @svelters/native-runtime, svelters-compiler | B3 settles the `setp` clash by routing; the two lanes should agree on one contract (do spec stable ids reach `host.setp` directly once hosts take them, and is W-C3's typed-scalar `setp` a separate op name?) | COMPILER + RUNTIME | Decide whether the compiler emits a distinct op for W-C3 writes (e.g. `$n.setv`) and keep `setp` for W-C1 ids, or retire `setp_id` once `host.setp` takes spec ids. |
 | F16 | svelters-testkit (macos-appkit) | bc7215cb, run 40229342651: `vis1` `own_widgets_match_vscode` panicked at `crates/svelters-testkit/tests/vis1.rs:54`: `fixtures/gallery-egui/dist/embed.js is missing: run pnpm --filter ./fixtures/gallery-egui build` | consolidation (recheck) | Most likely downstream of B3 (the bundle builds failed). Recheck on the next run; if it stays, the appkit job needs the gallery-egui build step. |
 | F17 | svelters-winui (windows-winui) | bc7215cb, run 40229342723: `cargo test -p svelters-winui --test generated`: `WinUI init failed: LoadLibraryW(Microsoft.WindowsAppRuntime.Bootstrap.dll): The specified module could not be found. (HRESULT 0x8007007E)` | consolidation (recheck) | Green on master. Recheck on the next run; if it stays, compare the bootstrap fetch step with master's. |
 
@@ -107,6 +117,13 @@ presto latency 14; presto-canvas 13, million 2, text 3; compositor caret 4, engi
 presto-core 120; presto-egui-island host 3, input 9, island 11, render 2; presto-platform 21; presto-platform-wayland 54;
 presto-render 26, canvas 4, gpu 13; presto-test automation 2, harness 20, island 7, island_render 3, queries 8, render 2,
 snapshot 2; presto-widgets 505, text_pins 1. All 0 failed. macOS/Win32 crates are cfg-gated (CI only).
+
+## Third round (e5f2ef3a, crates the merges touched)
+
+presto latency 14; presto-anim 38, svelte 9; presto-core 120; presto-egui-island host 4, input 9, island 11, render 2;
+presto-motion motion 10, svelte_fidelity 8; presto-platform-wayland 54; presto-test automation 2, harness 22, island 7,
+island_render 3, queries 8, render 2, snapshot 2; presto-widgets 505, text_pins 1; svelters-presto lib 6, deliver 6,
+motion 4, oplog_replay 1, ops 11, run 2, spec 4, template 4. All 0 failed.
 
 ## CI
 
