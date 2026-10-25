@@ -51,6 +51,33 @@ use objc2::MainThreadMarker;
 use presto_base::ids::WindowId;
 use presto_base::input::TextInputClient;
 
+/// The backend as the `presto` facade picks it: `MacPlatform::new().run(handler)` is the macOS
+/// counterpart of `presto_platform::run`.
+#[derive(Clone, Debug, Default)]
+pub struct MacPlatform {
+    pub config: MacConfig,
+}
+
+impl MacPlatform {
+    pub fn new() -> Self {
+        MacPlatform::default()
+    }
+
+    pub fn with_config(config: MacConfig) -> Self {
+        MacPlatform { config }
+    }
+
+    /// Runs `handler` until it exits. Main thread only.
+    pub fn run(self, handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
+        app::run_with(handler, self.config)
+    }
+
+    /// [`MacPlatform::run`] with the macOS callbacks.
+    pub fn run_mac(self, handler: Box<dyn MacAppHandler>) -> Result<(), PlatformError> {
+        run_mac(handler, self.config)
+    }
+}
+
 /// Gives `window` a full text-input client (architecture §11.3): the IME then reads and edits the
 /// document through it (reconversion, accents, dictation, the Character Viewer, per-character
 /// candidate placement), instead of reporting [`ImeEvent`](presto_base::event::ImeEvent)s as

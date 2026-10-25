@@ -75,7 +75,14 @@ impl Default for MacConfig {
 
 /// Runs the app until [`PlatformCx::exit`]. Main thread only.
 pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
-    run_mac(Box::new(Plain(handler)), MacConfig::default())
+    run_with(handler, MacConfig::default())
+}
+
+pub(crate) fn run_with(
+    handler: Box<dyn AppHandler>,
+    config: MacConfig,
+) -> Result<(), PlatformError> {
+    run_mac(Box::new(Plain(handler)), config)
 }
 
 /// [`run`] with macOS callbacks and options.
