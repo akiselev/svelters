@@ -11,7 +11,7 @@ additions; no presto-base change, no edit outside `crates/presto-core/**` and th
 |---|---|
 | (a) `::part(name)` styles | `KindSpec::parts: &[&str]`; the restyle computes each part with svelters-style's `compute_pseudo` (inheriting from the node; `:hover::part(x)` restyles with the host); a changed part repaints the node (and folding ancestors). Read with `NodeView::part(name) -> Option<&ComputedStyle>` in every context. |
 | (b) JS listens | `NodeView::listened(signal)`; `Kind::listen_changed(&mut self, cx: &mut PropCx, signal, listened)` when a signal gains its first or loses its last listener. |
-| (c) cancelable defaults | `Document::set_sync_delivery(Box<dyn FnMut(&JsEvent) -> Outcome>)` (svelters-presto's `call_sync`); `EventCx::emit_sync(signal, arg) -> Outcome { prevented, stopped }` delivers at once when JS listens (else queues as `emit` and reports nothing prevented). With a deliverer, `pointerdown`, `pointerup`, `click`, `dblclick`, `wheel`, `keydown`/`keyup` also reach JS **before** the native default (EV1): a prevented `pointerdown` keeps the press (no press state, focus, click or drag), `pointerup` the click, `click` the kind's `Click`, `wheel` the scroll, `keydown` the kind, Tab and scope activation. Events the deliverer took are not repeated in `Dispatched::events`. The deliverer runs while the document is borrowed: **svelters-presto queues the listeners' writes and applies them after the dispatch** (`js_transaction`). |
+| (c) cancelable defaults | `Document::set_sync_delivery(Box<dyn FnMut(&JsEvent) -> Outcome>)` (svelters-presto's `call_sync`); `EventCx::emit_sync(signal, arg) -> Outcome { prevented, stopped }` delivers at once when JS listens (else queues as `emit` and reports nothing prevented). With a deliverer, `pointerdown`, `pointerup`, `click`, `dblclick`, `wheel`, `keydown`/`keyup` also reach JS **before** the native default (EV1): a prevented `pointerdown` keeps the press (no press state, focus, click or drag), `pointerup` the click, `click` the kind's `Click`, `wheel` the scroll, `keydown` the kind, Tab and scope activation. Events the deliverer took are not repeated in `Dispatched::events`. The deliverer is `FnMut(&mut Document, &JsEvent) -> Outcome` (`SyncDelivery`): it gets the document lent, so listeners read, write (in `js_transaction(revision)`) and build nodes directly; see "Sync delivery" below. |
 | (d) peer groups | `Kind::peer_group(&self, &NodeView) -> Option<PeerGroup { key: Option<(PropId, Value)>, stop: Option<PropId> }>` (members: same-kind siblings whose `key` prop matches); `EventCx::peer_request(PeerTarget::{Others, Rove(Rove::{By(n), First, Last})}, PeerMsg::{Roved, Notify(Option<Value>)})`, applied after the event in order through `Kind::peer(&mut self, cx, from, msg)` (a member's own requests queue behind). A group of two or more focusable members is one Tab stop (first member whose `stop` prop is true, else the first); roving skips members that cannot take focus (WIDGETS-BASIC Q2: yes), focuses the target (keyboard) and then sends it the message. |
 | (e) container hooks | `Kind::chrome_padding(&self, &mut MeasureCx) -> Option<Insets>` (added to the length parts of the padding at restyle); `KindSpec::places_children` + `Kind::child_layout(&self, &ChildLayoutCx { parent, child, index, count }, &mut taffy::Style) -> bool` (a hidden child keeps its layout but is not painted, hit, focusable or in the a11y tree: `NodeFlags::CONCEALED`; `ChildLayoutCx::anchor_of(k)`); `Kind::children_inert(&self) -> bool` (asked after every prop write; descendants get `NodeFlags::INERT` and `:disabled`, lose focus; inserts and moves follow). |
 | (f) prop-derived state | `KindSpec::prop_states: StateMask` + `Kind::prop_state(&self, &NodeView) -> StateMask`, applied after every prop write and at creation. |
@@ -20,6 +20,25 @@ additions; no presto-base change, no edit outside `crates/presto-core/**` and th
 Also: a `Layout`-class write of a non-text prop now restyles the node, so a kind's `layout_style` (and
 chrome) follows its props; before, only the cached taffy style was relaid out (a box's `orientation`, and
 the common `hidden`, did not apply until the next restyle).
+
+### Sync delivery: the lent document (supersedes the two-phase answer to SVELTERS-PRESTO Q8)
+
+The coordinator decided a two-phase dispatch (`begin_dispatch`/`next`/`finish_dispatch`). I built the
+first choice of SVELTERS-PRESTO's Q8 instead, because a two-phase dispatch covers only the DOM events of
+`dispatch`: a kind's own cancelable signals (a checkbox's `changed`, a hyperlink's `clicked` before its
+`open-url`) are raised inside the kind's native default, which `finish_dispatch` would run after JS has
+been delivered, so they could never be prevented. With the document lent to the deliverer, every sync
+delivery is a plain call:
+- `Document::set_sync_delivery(Box<dyn FnMut(&mut Document, &JsEvent) -> Outcome>)`; core takes the
+  deliverer out of the document for the call, so there is no outstanding borrow;
+- JS reads the tree, writes props (in `js_transaction(event revision)`) and creates or inserts nodes
+  directly; the dispatch transaction is still open, so everything shares its revision;
+- the path is fixed when the event is built; a listener node that is gone by its turn is skipped
+  (the caller checks `Document::contains`); a target that a `pointerdown` listener removed gets no
+  native default;
+- a write to the node whose kind is mid-handler (the kind is out of its slot) is stored and replayed
+  to the kind's `prop_changed` when the handler returns; a cancelable signal raised while the deliverer
+  runs (nested) is queued, not delivered.
 
 ## 2. (i) scope activation, (j) label `for`
 
@@ -99,10 +118,7 @@ core's (the shim's `PeerMsg::Checked(args)` → `PeerMsg::Notify(Some(Value::Lis
 
 ## Questions for the coordinator
 
-1. **Sync delivery and re-entrancy.** The deliverer cannot touch the document (it is borrowed during
-   dispatch). Recommendation: svelters-presto queues JS writes made inside `call_sync` and applies them
-   right after `dispatch` returns, in `js_transaction(revision)`; the prevented bit is all core needs
-   synchronously.
+1. ~~Sync delivery and re-entrancy~~: answered (coordinator), then superseded by SVELTERS-PRESTO Q8; see "Sync delivery" above.
 2. **`Layout` writes restyle the node.** This costs a cascade match per layout-prop write (text props are
    exempt: they only remeasure). Recommendation: keep it; a per-kind `KindSpec` flag to skip it is easy if
    profiling asks.

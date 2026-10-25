@@ -43,6 +43,9 @@ pub enum Writer {
     Js { seen: Revision },
 }
 
+/// The deliverer of JS events at event time ([`Document::set_sync_delivery`]).
+pub type SyncDelivery = Box<dyn FnMut(&mut Document, &crate::input::JsEvent) -> crate::kind::Outcome>;
+
 /// The retained tree of one app.
 pub struct Document {
     pub(crate) registry: Arc<KindRegistry>,
@@ -88,7 +91,10 @@ pub struct Document {
     pub(crate) peer_queue: std::collections::VecDeque<(NodeId, crate::kind::PeerTarget, crate::kind::PeerMsg)>,
     pub(crate) peer_running: bool,
     /// Delivers a JS event at event time and answers what its listeners did.
-    pub(crate) sync_delivery: Option<Box<dyn FnMut(&crate::input::JsEvent) -> crate::kind::Outcome>>,
+    pub(crate) sync_delivery: Option<SyncDelivery>,
+    /// Prop writes made while their node's kind was out (JS run during the kind's own handler):
+    /// the kind gets `prop_changed` for them when it is back.
+    pub(crate) missed_props: Vec<(NodeId, PropId)>,
     /// The nodes with a non-empty `anchor`.
     pub(crate) anchors: HashMap<NodeId, Arc<str>>,
     /// The nodes with a non-empty `for` prop (labels), and the anchor it names.
@@ -136,6 +142,7 @@ impl Document {
             peer_queue: Default::default(),
             peer_running: false,
             sync_delivery: None,
+            missed_props: Vec::new(),
             anchors: HashMap::new(),
             label_for: HashMap::new(),
             auto_default: false,
@@ -146,11 +153,38 @@ impl Document {
     /// Installs the deliverer of JS events at event time (svelters-presto's `call_sync`): cancelable
     /// events then reach their listeners before the native default, which honours `preventDefault`
     /// ([`EventCx::emit_sync`](crate::EventCx::emit_sync), and the DOM pointer, key and wheel events
-    /// of [`Document::dispatch`]). Events it delivered are not listed in [`Dispatched::events`](crate::Dispatched::events).
-    /// It runs while the document is borrowed: the caller queues the listeners' writes and applies
-    /// them after the dispatch (with [`Document::js_transaction`]).
-    pub fn set_sync_delivery(&mut self, f: Box<dyn FnMut(&crate::input::JsEvent) -> crate::kind::Outcome>) {
+    /// of [`Document::dispatch`]). Events it delivered are not listed in
+    /// [`Dispatched::events`](crate::Dispatched::events).
+    ///
+    /// The deliverer gets the document lent to it: listeners read the tree, write props and build
+    /// nodes directly (writes belong in [`Document::js_transaction`] with the event's revision). The
+    /// path is the one computed when the event was built: a listener node that is gone when its turn
+    /// comes is skipped (`Document::contains`). While the deliverer runs, a cancelable signal another
+    /// listener's action raises is queued, not delivered (no nested delivery), and a write to the node
+    /// whose kind is mid-handler reaches that kind's `prop_changed` when the handler returns.
+    pub fn set_sync_delivery(&mut self, f: SyncDelivery) {
         self.sync_delivery = Some(f);
+    }
+
+    /// Puts node `node`'s kind back after a call and replays the prop writes it missed meanwhile.
+    pub(crate) fn restore_kind(&mut self, node: NodeId, mut k: Box<dyn Kind>) {
+        let Some(i) = self.idx(node) else { return };
+        if self.missed_props.iter().any(|(n, _)| *n == node) {
+            let missed: Vec<PropId> = self.missed_props.iter().filter(|(n, _)| *n == node).map(|(_, p)| *p).collect();
+            self.missed_props.retain(|(n, _)| *n != node);
+            let mut request = Dirty::EMPTY;
+            for p in missed {
+                let v = self.props[i].get(p).cloned();
+                let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
+                // the write is stored already: a rejection now cannot undo it
+                let _ = k.prop_changed(&mut cx, p, v.as_ref());
+                request.insert(cx.request);
+            }
+            self.kinds[i] = Some(k);
+            self.apply_request(i, request);
+            return;
+        }
+        self.kinds[i] = Some(k);
     }
 
     /// The focused push button of a `dialog` focus scope is the scope's default (`:default`, Enter
@@ -564,6 +598,7 @@ impl Document {
         self.anchors.remove(&id);
         self.label_for.remove(&id);
         self.peer_queue.retain(|(n, ..)| *n != id);
+        self.missed_props.retain(|(n, _)| *n != id);
         self.slots.free(i);
     }
 
@@ -695,6 +730,10 @@ impl Document {
         }
         // the kind sees the stored value; it may reject it (undo) or ask for more work
         let mut request = Dirty::EMPTY;
+        if self.kinds[i].is_none() {
+            // the kind is mid-handler (JS runs inside it): it hears of the write when it is back
+            self.missed_props.push((node, prop));
+        }
         if let Some(mut k) = self.kinds[i].take() {
             let res = {
                 let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
@@ -1195,9 +1234,7 @@ impl Document {
             let mut cx = crate::cx::EventCx { doc, node, emitted: &mut emitted, pointer: None };
             k.call(&mut cx, method, &checked)
         });
-        if let Some(i) = self.idx(node) {
-            self.kinds[i] = Some(k);
-        }
+        self.restore_kind(node, k);
         if !self.peer_queue.is_empty() {
             self.transaction(|doc| crate::input::peers::run(doc, &mut emitted));
         }

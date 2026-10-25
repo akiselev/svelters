@@ -58,7 +58,7 @@ mod anim;
 mod tests;
 
 pub use cx::{Services, A11yCx, ChildLayoutCx, EventCx, RealizeCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
-pub use document::{Document, Writer};
+pub use document::{Document, SyncDelivery, Writer};
 pub use error::{PropError, TreeError};
 pub use frame::FrameStats;
 pub use layout::LayoutRun;
