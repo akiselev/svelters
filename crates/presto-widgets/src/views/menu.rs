@@ -1498,4 +1498,61 @@ mod tests {
         assert!(!towards(Point::new(150.0, 105.0), Vec2::new(-10.0, 5.0), sub), "moving away");
         assert!(!towards(Point::new(150.0, 105.0), Vec2::ZERO, sub));
     }
+
+    #[test]
+    fn a_native_bar_hides_this_one() {
+        let mut b = bar();
+        prepare(&mut b.menus);
+        let policy = policy(Platform::Macos);
+        let sc = StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None };
+        assert_eq!(b.layout_style(&sc).display, taffy::Display::Flex, "shown while no native bar has the menus");
+        b.set_prop(bar_props::P::native_bar.id(), &Value::Bool(true)).unwrap();
+        assert_eq!(b.layout_style(&sc).display, taffy::Display::None);
+        let file_title = b.menus.titles()[0].1;
+        let (h, sig, _) = send(&mut b, &policy, ms(0), ptr(PointerPhase::Down, center(file_title)));
+        assert_eq!(h, Handled::No);
+        assert!(sig.is_empty() && !b.menus.nav.is_open(), "no input while the native bar shows the menus");
+        assert!(!b.light_dismiss());
+        assert!(!b.claims_key(Key::F10, Modifiers::default()));
+    }
+
+    #[test]
+    fn a_native_pick_picks_as_a_click_would() {
+        let mut b = bar();
+        let edit = b.menus.model.find("edit").unwrap();
+        b.menus.model.add(edit, Entry::item("wrap", "Word &Wrap").checkable(false));
+        let policy = policy(Platform::Macos);
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(ms(0), Size::new(800.0, 30.0), &mut state, &policy);
+        assert_eq!(b.menu_activated(&mut cx, "wrap"), Handled::Yes);
+        let names: Vec<_> = cx.emitted.iter().map(|e| (MENU_BAR_SPEC.signals[e.signal.0 as usize].name, e.args.clone())).collect();
+        assert_eq!(
+            names,
+            [("toggled", vec![Value::str("wrap"), Value::Bool(true)]), ("activate", vec![Value::str("wrap"), Value::Bool(true)])]
+        );
+        assert!(b.menus.model.get(b.menus.model.find("wrap").unwrap()).checked);
+        assert_eq!(b.menu_activated(&mut cx, "nope"), Handled::No);
+    }
+
+    #[cfg(feature = "native-menu")]
+    #[test]
+    fn the_model_describes_the_native_bar() {
+        use presto_platform::MenuNode;
+        let mut b = bar();
+        let edit = b.menus.model.find("edit").unwrap();
+        b.menus.model.add(edit, Entry::group_label("View"));
+        b.menus.model.add(edit, Entry::item("wrap", "Word &Wrap").checkable(true));
+        b.menus.model.add(edit, Entry::item("secret", "Secret").hidden());
+        let d = b.menus.model.to_menu_desc();
+        assert_eq!(d.menus.len(), 2);
+        let MenuNode::Submenu { label, items, .. } = &d.menus[0] else { panic!("file is a submenu") };
+        assert_eq!(label, "File", "no mnemonic marker");
+        assert_eq!(items[0], MenuNode::Item { id: "new".into(), label: "New".into(), shortcut: "Primary+N".into(), enabled: true, checked: None });
+        assert_eq!(items[1], MenuNode::Separator);
+        assert!(matches!(&items[2], MenuNode::Submenu { label, items, .. } if label == "Recent" && items.len() == 2));
+        let MenuNode::Submenu { items, .. } = &d.menus[1] else { panic!("edit is a submenu") };
+        assert_eq!(items.len(), 3, "the hidden item is left out");
+        assert_eq!(items[1], MenuNode::Item { id: String::new(), label: "View".into(), shortcut: String::new(), enabled: false, checked: None });
+        assert_eq!(items[2], MenuNode::Item { id: "wrap".into(), label: "Word Wrap".into(), shortcut: String::new(), enabled: true, checked: Some(true) });
+    }
 }

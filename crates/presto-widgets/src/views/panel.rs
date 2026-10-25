@@ -168,6 +168,9 @@ impl Panel {
 }
 
 impl Kind for Panel {
+    fn parts() -> &'static [&'static str] {
+        &["sash"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

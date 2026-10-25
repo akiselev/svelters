@@ -5,8 +5,7 @@
 //!
 //! Each kind implements the crate's kind interface ([`crate::shim::core::Kind`]) over plain logic the
 //! tests drive without a tree (latching, row recycling, placement, menu navigation); [`register_all`]
-//! puts them on presto-core through [`crate::host`]. [`shim`] holds the stand-ins for APIs other crates
-//! do not have yet.
+//! puts them on presto-core through [`crate::host`].
 
 pub mod common;
 pub mod dialog_buttons;
@@ -20,7 +19,6 @@ pub mod placement;
 pub mod popup;
 pub mod scroll;
 pub mod select;
-pub mod shim;
 pub mod split;
 pub mod status_bar;
 pub mod toast;
