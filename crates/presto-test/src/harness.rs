@@ -88,6 +88,7 @@ pub struct HarnessBuilder {
     pub(crate) render_every_step: bool,
     pub(crate) check_accessibility: bool,
     pub(crate) snapshot: SnapshotOptions,
+    pub(crate) native_menu_bar: bool,
 }
 
 impl Default for HarnessBuilder {
@@ -104,6 +105,7 @@ impl Default for HarnessBuilder {
             render_every_step: false,
             check_accessibility: true,
             snapshot: SnapshotOptions::default(),
+            native_menu_bar: false,
         }
     }
 }
@@ -142,6 +144,12 @@ impl HarnessBuilder {
     /// fonts, `FontConfig::testing()`).
     pub fn with_glyphs(mut self, glyphs: Arc<dyn GlyphRasterizer>) -> Self {
         self.glyphs = Some(glyphs);
+        self
+    }
+    /// Whether the headless platform shows menu bars natively, as macOS does (`set_menu_bar` answers
+    /// it; default false).
+    pub fn with_native_menu_bar(mut self, native: bool) -> Self {
+        self.native_menu_bar = native;
         self
     }
     /// What `render` clears to (default white).
@@ -221,6 +229,7 @@ impl HarnessBuilder {
     ) -> Harness<D> {
         let mut platform = HeadlessPlatform::new();
         platform.cx().default_scale = Scale(self.scale);
+        platform.cx().native_menu_bar = self.native_menu_bar;
         let clock = platform.virtual_clock();
         clock.set(self.start);
         let doc = make_doc(clock.clone(), gpu.as_ref());
@@ -228,11 +237,13 @@ impl HarnessBuilder {
         config.windows = vec![WindowDesc::new("presto-test", self.size)];
         let slot: Rc<RefCell<Option<HeadlessCompositor>>> = Rc::default();
         let keep = slot.clone();
-        let spawn = Box::new(move |sink, _clock| {
-            let c = HeadlessCompositor::new(sink);
-            *keep.borrow_mut() = Some(c.clone());
-            c
-        });
+        let spawn = Box::new(
+            move |sink, _clock, _monitors: &[presto::platform::Monitor]| {
+                let c = HeadlessCompositor::new(sink);
+                *keep.borrow_mut() = Some(c.clone());
+                c
+            },
+        );
         let mut app = App::new(config, doc, spawn);
         platform.run_until(&mut app, Some(self.start));
         let window = app.windows().next().expect("the harness window opened");

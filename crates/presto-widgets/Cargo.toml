@@ -29,8 +29,8 @@ rfd = { version = "0.17.2", optional = true }
 
 [features]
 dialogs = ["dep:rfd"]
-# The native menu bar's description (`views::menu_model::MenuModel::to_menu_desc`). presto-platform is a
-# required dependency now (the clipboard service), so the feature only gates that code.
+# The native menu bar's description (`views::menu_model::MenuModel::to_menu_desc`); presto-platform is a
+# regular dependency since the text kinds read its clipboard.
 native-menu = []
 
 [dev-dependencies]

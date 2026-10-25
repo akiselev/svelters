@@ -544,6 +544,18 @@ pub mod core {
         fn event(&mut self, _cx: &mut EventCx, _ev: &Event) -> Handled {
             Handled::No
         }
+        /// Methods the app (or JS) calls on the node through `presto_core::Document::call`, as
+        /// presto-core declares them.
+        fn methods() -> &'static [presto_core::MethodSpec]
+        where
+            Self: Sized,
+        {
+            &[]
+        }
+        /// Method `method` (an index into [`Kind::methods`]) with its checked arguments.
+        fn call(&mut self, _cx: &mut EventCx, _method: usize, _args: &[presto_core::Value]) -> Handled {
+            Handled::No
+        }
         fn a11y(&self, cx: &mut A11yCx);
         /// EV3: while focused, whether the kind takes `key` with `m` itself (keymaps and Tab skip it).
         fn claims_key(&self, _key: presto_base::key::Key, _m: presto_base::event::Modifiers) -> bool {

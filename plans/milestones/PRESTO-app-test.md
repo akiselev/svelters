@@ -230,3 +230,54 @@ Branch `ci/presto-app-test` with `ci/presto-base` 4756b7ca, `ci/presto-text-inpu
 - Tests: `menu_items_reach_the_document_with_an_urgent_frame`, `new_windows_get_the_policy_caret_blink`
   (`Harness::menu_activated`; the headless compositor records caret blinks). The headless platform does
   not record `set_menu_bar` (its default returns false), so menu-bar publishing has no harness assertion.
+
+## Native menu bar, refresh and ppi, headless set_menu_bar (coordinator, 2026-10-25 22:18)
+
+Merged `ci/presto-widgets-views` 2226e000 (conflict in `crates/presto-widgets/Cargo.toml` resolved by keeping
+both sides; see the cross-lane edits) and `ci/presto-base`.
+
+- **Menu bar, real path.** `CoreDocument` finds the `menu-bar` nodes of its windows (tree walk from each
+  root; it now tracks its windows). `take_menu_bar` reads the first bar's `MenuBar::to_menu_desc()` through
+  `Kind::as_any` and returns it when it differs from what was sent; `App` calls `set_menu_bar` and then
+  `DocumentApi::menu_bar_native(answer)`, which sets the bars' `native-bar` prop. `menu_activated(id)` calls
+  `menu-activated(id)` on the bar through `Document::call` (the kind gets its `EventCx`); the bar is re-sent
+  after each pick because its check state changes the description. The `publish_menu_bar`/`on_menu` stubs
+  are gone. presto depends on presto-widgets with `native-menu`.
+- **Refresh (COMPOSITOR Q6):** `App` sends `CompositorHandle::set_refresh` for a window from the refresh
+  rate of the monitor holding its position: at creation (`WindowDesc::position`, else the first monitor),
+  on `WindowEvent::Moved` and on `ScaleChanged`, when the interval changes. `PlatformCx` has no
+  window→monitor query, so the position decides.
+- **ppi (COMPOSITOR Q7):** `presto::compositor` sets `CompositorConfig::ppi` from the first monitor:
+  `Monitor` has no physical size, so it is the OS's logical DPI convention × scale (72 on macOS, 96
+  elsewhere). `SpawnCompositor` now also gets the platform's monitors.
+- **Commit side data:** confirmed: `App` hands `Commit::a11y` (`update_a11y`), `cursor` (`set_cursor`) and
+  the IME area (`set_ime`, focus-driven) to the platform itself.
+- **Headless `set_menu_bar`:** `PlatformCall::SetMenuBar(Option<MenuDesc>)` is recorded;
+  `HeadlessCx::native_menu_bar` is its answer (`HarnessBuilder::with_native_menu_bar`).
+- Tests: `crates/presto-test/tests/menu.rs` (a real `CoreDocument` with the built-in kinds): the bar is
+  sent once, `native-bar` follows the platform's answer, a pick reaches the kind's call path.
+
+### Cross-lane edits (all additive)
+
+- `crates/presto-widgets/Cargo.toml` (merge resolution): `presto-platform` was already a regular
+  dependency (TEXT-INPUT), so `native-menu` is an empty feature instead of `dep:presto-platform`.
+- `crates/presto-core/src/kind.rs`: `Kind::as_any(&self) -> Option<&dyn Any>` (default `None`), so an app can
+  read a known kind's state through `Document::with_kind`.
+- `crates/presto-widgets/src/shim.rs`: shim `Kind::methods()` (presto-core `MethodSpec`s, default empty) and
+  `Kind::call(cx, index, args)` (default `Handled::No`).
+- `crates/presto-widgets/src/host.rs`: the hosted core spec carries the widget's methods (`Traits::methods`);
+  `Hosted::call` forwards to the widget; `Hosted::as_any` returns the widget.
+- `crates/presto-widgets/src/views/menu.rs`: `MenuBar::to_menu_desc()` (`native-menu`), and the
+  `menu-activated(id)` method (spec + call arm) forwarding to `MenuBar::menu_activated`.
+- `crates/presto-platform/src/headless.rs`: `PlatformCall::SetMenuBar`, `HeadlessCx::native_menu_bar`,
+  `set_menu_bar` recording.
+
+### Questions (with recommendations)
+
+12. **WIDGETS-VIEWS / CORE: the menu bar's model is not built from its element children in a document**
+    (`menu`/`menu-item` children do not reach `MenuModel`; views' tests fill it with `model.add`). So a real
+    document's native bar is empty. Recommend the bar rebuild its model from its children in `prepare`
+    (presto-core gives the children's views), then `to_menu_desc` describes the authored menus.
+13. **PLATFORM: `Monitor` has no physical size or ppi, and `PlatformCx` no window→monitor query or monitor
+    change event.** Recommend `Monitor::ppi: Option<f32>` (from the OS's physical size) and a
+    `WindowEvent::MonitorChanged`, so refresh and ppi stop being inferred from positions and conventions.

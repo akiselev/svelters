@@ -38,3 +38,6 @@ presto-test = { path = ".", features = ["automation"] }
 svelters-egui = { path = "../svelters-egui", default-features = false, features = ["source"] }
 svelters-host = { workspace = true }
 svelters-modules = { workspace = true, features = ["source"] }
+# A real document with the built-in kinds (tests/menu.rs).
+presto-core = { workspace = true }
+presto-widgets = { workspace = true, features = ["native-menu"] }

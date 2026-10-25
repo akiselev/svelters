@@ -822,7 +822,20 @@ impl MenuBar {
         self.menus.report(cx, &MENU_BAR_SPEC, None, vec![MenuOut::Picked(p)]);
         Handled::Yes
     }
+
+    /// The bar as the platform's native menu bar describes it (the runner's `set_menu_bar`).
+    #[cfg(feature = "native-menu")]
+    pub fn to_menu_desc(&self) -> presto_platform::MenuDesc {
+        self.menus.model.to_menu_desc()
+    }
 }
+
+/// `menu-activated(id)`: [`MenuBar::menu_activated`] through `presto_core::Document::call`.
+static MENU_BAR_METHODS: &[presto_core::MethodSpec] = &[presto_core::MethodSpec::new(
+    "menu-activated",
+    &[presto_core::ArgSpec::new("id", presto_core::ValueType::Str)],
+    None,
+)];
 
 impl Kind for MenuBar {
     fn parts() -> &'static [&'static str] {
@@ -833,6 +846,15 @@ impl Kind for MenuBar {
     }
     fn kind_spec(&self) -> &'static KindSpec {
         &MENU_BAR_SPEC
+    }
+    fn methods() -> &'static [presto_core::MethodSpec] {
+        MENU_BAR_METHODS
+    }
+    fn call(&mut self, cx: &mut EventCx, method: usize, args: &[presto_core::Value]) -> Handled {
+        match (method, args) {
+            (0, [presto_core::Value::Str(id)]) => self.menu_activated(cx, id),
+            _ => Handled::No,
+        }
     }
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         let mut s = cx.default_layout();
