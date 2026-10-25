@@ -94,3 +94,4 @@ when the five svelters workflows plus `presto` are green.
   consolidation runs them). Decided: Q1 kind-owned layers/fast commits (to CORE-3), Q2 TextLayout cluster accessor (to
   TEXT), Q3 4 new host events approved, Q4 egui-free quire view crate as a follow-up, Q5 svelters git dep OK.
 - FRAME-ANIM done once presto CI on a9503acb passes its crates.
+- QUIRE R1/R2 at quire 35b5063a; R2 (composition over a selection replaces it) approved (coordinator, 2026-10-25). TEXT-INPUT re-pins quire-text to it. Consolidation merges quire claude/presto-quire and berth claude/presto-berth into their masters after their tests and checks pass.
