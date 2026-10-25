@@ -13,6 +13,7 @@
 //! | [`shim`] | stand-ins for presto-core and presto-widgets API not merged yet |
 
 pub mod backend;
+pub mod css;
 pub mod deliver;
 pub mod embed;
 pub mod ids;

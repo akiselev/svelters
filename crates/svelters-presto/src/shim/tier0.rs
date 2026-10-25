@@ -711,8 +711,157 @@ pub static TEXTEDIT: KindSpec = KindSpec {
     native_state: &["text"],
 };
 
+static RUN_PROPS: &[PropSpec] = &[
+    PropSpec { name: "accessible-name", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text." },
+    PropSpec { name: "font-weight", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet." },
+    PropSpec { name: "text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The run's own text, before its child runs (its text children fold into it)." },
+];
+static RUN_SIGNALS: &[SignalSpec] = &[
+];
+static RUN_METHODS: &[MethodSpec] = &[
+];
+static RUN_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "runs", accepts: &["Span", "Bold", "Italic", "Code", "Anchor"], many: true },
+];
+pub static RUN: KindSpec = KindSpec {
+    name: "Run",
+    tag: None,
+    extends: None,
+    doc: "Common properties of the inline runs (`span`, `b`, `i`, `code`, `a`): text inside a `label`, laid out with the label's other runs as one paragraph, never by taffy.",
+    props: RUN_PROPS,
+    signals: RUN_SIGNALS,
+    methods: RUN_METHODS,
+    slots: RUN_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &[], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &[],
+};
+
+static SPAN_PROPS: &[PropSpec] = &[
+];
+static SPAN_SIGNALS: &[SignalSpec] = &[
+];
+static SPAN_METHODS: &[MethodSpec] = &[
+];
+static SPAN_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "runs", accepts: &["Span", "Bold", "Italic", "Code", "Anchor"], many: true },
+];
+pub static SPAN: KindSpec = KindSpec {
+    name: "Span",
+    tag: Some("span"),
+    extends: Some(&RUN),
+    doc: "An inline run of text in a `label`, styled by CSS (`label span.cls`). Bare text in a rich label becomes anonymous spans.",
+    props: SPAN_PROPS,
+    signals: SPAN_SIGNALS,
+    methods: SPAN_METHODS,
+    slots: SPAN_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &[], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &[],
+};
+
+static BOLD_PROPS: &[PropSpec] = &[
+];
+static BOLD_SIGNALS: &[SignalSpec] = &[
+];
+static BOLD_METHODS: &[MethodSpec] = &[
+];
+static BOLD_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "runs", accepts: &["Span", "Bold", "Italic", "Code", "Anchor"], many: true },
+];
+pub static BOLD: KindSpec = KindSpec {
+    name: "Bold",
+    tag: Some("b"),
+    extends: Some(&RUN),
+    doc: "Bold inline text (`font-weight: 700` from the theme's base sheet).",
+    props: BOLD_PROPS,
+    signals: BOLD_SIGNALS,
+    methods: BOLD_METHODS,
+    slots: BOLD_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &[], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &[],
+};
+
+static ITALIC_PROPS: &[PropSpec] = &[
+];
+static ITALIC_SIGNALS: &[SignalSpec] = &[
+];
+static ITALIC_METHODS: &[MethodSpec] = &[
+];
+static ITALIC_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "runs", accepts: &["Span", "Bold", "Italic", "Code", "Anchor"], many: true },
+];
+pub static ITALIC: KindSpec = KindSpec {
+    name: "Italic",
+    tag: Some("i"),
+    extends: Some(&RUN),
+    doc: "Italic inline text (`font-style: italic` from the theme's base sheet).",
+    props: ITALIC_PROPS,
+    signals: ITALIC_SIGNALS,
+    methods: ITALIC_METHODS,
+    slots: ITALIC_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &[], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &[],
+};
+
+static CODE_PROPS: &[PropSpec] = &[
+];
+static CODE_SIGNALS: &[SignalSpec] = &[
+];
+static CODE_METHODS: &[MethodSpec] = &[
+];
+static CODE_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "runs", accepts: &["Span", "Bold", "Italic", "Code", "Anchor"], many: true },
+];
+pub static CODE: KindSpec = KindSpec {
+    name: "Code",
+    tag: Some("code"),
+    extends: Some(&RUN),
+    doc: "Inline code: the monospace font on the field fill (theme's base sheet).",
+    props: CODE_PROPS,
+    signals: CODE_SIGNALS,
+    methods: CODE_METHODS,
+    slots: CODE_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &[], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &[],
+};
+
+static ANCHOR_PROPS: &[PropSpec] = &[
+    PropSpec { name: "href", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The link target. Without an `onclicked` handler a click opens it (as `hyperlink`'s `url`); with one, only the handler runs." },
+];
+static ANCHOR_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "clicked", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The link was activated (click, or Enter/Space while it has keyboard focus)." },
+];
+static ANCHOR_METHODS: &[MethodSpec] = &[
+];
+static ANCHOR_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "runs", accepts: &["Span", "Bold", "Italic", "Code", "Anchor"], many: true },
+];
+pub static ANCHOR: KindSpec = KindSpec {
+    name: "Anchor",
+    tag: Some("a"),
+    extends: Some(&RUN),
+    doc: "An inline link: the `link` colour, underlined on hover (DESIGN R18), the pointer cursor (R10); focusable, activated by click, Enter or Space.",
+    props: ANCHOR_PROPS,
+    signals: ANCHOR_SIGNALS,
+    methods: ANCHOR_METHODS,
+    slots: ANCHOR_SLOTS,
+    a11y: A11ySpec { role: "Link", name_from: &["accessible-name", "text"], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &[],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&WIDGET, &WINDOW, &BOX, &FRAME, &LABEL, &BUTTON, &TOGGLEBUTTON, &CHECKBOX, &RADIOBUTTON, &SWITCH, &SLIDER, &PROGRESSBAR, &SPINNER, &SEPARATOR, &ICON, &IMAGE, &HYPERLINK, &STACK, &SIDES, &GRID, &TEXTEDIT];
+pub static ALL: &[&KindSpec] = &[&WIDGET, &WINDOW, &BOX, &FRAME, &LABEL, &BUTTON, &TOGGLEBUTTON, &CHECKBOX, &RADIOBUTTON, &SWITCH, &SLIDER, &PROGRESSBAR, &SPINNER, &SEPARATOR, &ICON, &IMAGE, &HYPERLINK, &STACK, &SIDES, &GRID, &TEXTEDIT, &RUN, &SPAN, &BOLD, &ITALIC, &CODE, &ANCHOR];
 
 /// A registry of the Tier 0 kinds (shim for `presto_widgets::registry()`).
 pub fn registry() -> KindRegistry {

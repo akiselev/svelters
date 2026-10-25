@@ -320,6 +320,24 @@ export function withoutBindings(src) {
  * setter declarations (the Rust compiler matches those itself). Returns null when nothing remains
  * for the toolkit's dialect.
  */
+const engineCache = new Map();
+/**
+ * Whether `backend` runs the Rust CSS engine in process (its spec's `style.engine` is `backend`: egui,
+ * presto; CS5e): it gets a component's scoped CSS as Svelte wrote it instead of X6-translated sheets.
+ */
+function runsCssEngine(backend) {
+  if (!engineCache.has(backend)) {
+    let engine = false;
+    try {
+      engine = JSON.parse(fs.readFileSync(path.join(repoRoot, "metadata/semantics", `${backend}.json`), "utf8")).style?.engine === 'backend';
+    } catch {
+      engine = false;
+    }
+    engineCache.set(backend, engine);
+  }
+  return engineCache.get(backend);
+}
+
 const tagCache = new Map();
 /**
  * The element tags of a backend (metadata/semantics/<backend>.json) plus those of its spec fragments
@@ -372,8 +390,8 @@ export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
     return null;
   }
-  // egui runs the Rust CSS engine in process (CS5e): it gets the scoped CSS as Svelte wrote it
-  if (toolkit === 'egui') return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
+  // egui and presto run the Rust CSS engine in process (CS5e): they get the scoped CSS as Svelte wrote it
+  if (runsCssEngine(toolkit)) return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
   return translatedSheets(r.css?.code ?? '', scope, native, toolkit, warn, specFragments);
 }
 
@@ -448,7 +466,7 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
       const style = isModule ? null : styleBlock(code);
       let css = null;
       let res;
-      if (style && backend !== 'egui') {
+      if (style && !runsCssEngine(backend)) {
         const { native } = nativeBlocks(style[2], file);
         const scope = scopeOf(file);
         res = run(['--css', '--css-scope', scope]);
