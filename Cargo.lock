@@ -4045,7 +4045,11 @@ name = "presto-compositor"
 version = "0.0.0"
 dependencies = [
  "log",
+ "presto-anim",
  "presto-base",
+ "presto-frame",
+ "presto-platform",
+ "presto-render",
  "smallvec",
  "wgpu",
 ]
