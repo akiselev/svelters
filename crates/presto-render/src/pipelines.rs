@@ -1,8 +1,8 @@
 //! The renderer's pipelines and bind-group layouts, created once per (device, target format).
 //!
-//! Bind groups: `@group(0)` the frame globals (uniform), `@group(1)` the frame's instance records
-//! (one read-only storage buffer, shared by every pipeline at `@binding(0)`), `@group(2)` a texture and
-//! sampler (atlas page, registered surface or path intermediate).
+//! Bind groups: `@group(0)` the frame globals (uniform), `@group(1)` the frame's instance records (one
+//! read-only storage buffer, bound once per record kind so no two shader declarations alias a binding),
+//! `@group(2)` a texture and sampler (atlas page, registered surface or path intermediate).
 
 use std::borrow::Cow;
 
@@ -10,6 +10,8 @@ use crate::gpu::PathVertex;
 
 /// MSAA sample count of the path intermediates. WebGPU guarantees 4× for every renderable format.
 pub const PATH_SAMPLES: u32 = 4;
+/// Record kinds in `@group(1)`: quads, shadows, lines, masks, images, paths, path sprites.
+pub const INSTANCE_BINDINGS: u32 = 7;
 
 pub struct Pipelines {
     pub globals_layout: wgpu::BindGroupLayout,
@@ -45,10 +47,9 @@ impl Pipelines {
                 count: None,
             }],
         });
-        let instances_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("presto instances"),
-            entries: &[wgpu::BindGroupLayoutEntry {
-                binding: 0,
+        let instance_entries: Vec<_> = (0..INSTANCE_BINDINGS)
+            .map(|binding| wgpu::BindGroupLayoutEntry {
+                binding,
                 visibility: vf,
                 ty: wgpu::BindingType::Buffer {
                     ty: wgpu::BufferBindingType::Storage { read_only: true },
@@ -56,7 +57,11 @@ impl Pipelines {
                     min_binding_size: None,
                 },
                 count: None,
-            }],
+            })
+            .collect();
+        let instances_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("presto instances"),
+            entries: &instance_entries,
         });
         let texture_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("presto texture"),

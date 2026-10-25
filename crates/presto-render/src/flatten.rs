@@ -822,3 +822,326 @@ fn close(f: &mut Frame, mut batch: Batch) {
     }
     f.batches.push(batch);
 }
+
+#[cfg(test)]
+pub(crate) mod tests {
+    use super::*;
+    use presto_base::color::Color;
+    use presto_base::commit::{PathCmd, PathData};
+    use presto_base::display::{DisplayList, Glyphs, Quad};
+    use presto_base::geom::{Insets, Scale};
+    use presto_base::ids::{FontId, PathId, RunId};
+    use presto_base::text::{AaMode, Glyph, GlyphImage, GlyphRun, HintMode};
+
+    /// Glyph `id < 1000`: a 6×8 coverage box; `id >= 1000`: an 8×8 red colour glyph; 0: empty.
+    pub struct BoxGlyphs;
+
+    impl GlyphRasterizer for BoxGlyphs {
+        fn rasterize(&self, key: &GlyphKey) -> Option<GlyphImage> {
+            match key.glyph {
+                0 => None,
+                g if g >= 1000 => Some(GlyphImage {
+                    left: 0,
+                    top: -8,
+                    width: 8,
+                    height: 8,
+                    format: GlyphFormat::Color,
+                    data: [255, 0, 0, 255].repeat(64),
+                }),
+                _ => Some(GlyphImage {
+                    left: 0,
+                    top: -8,
+                    width: 6,
+                    height: 8,
+                    format: GlyphFormat::Mask,
+                    data: (0..48).map(|i| if (i % 6 == 0) || (i % 6 == 5) || i < 6 || i >= 42 { 255 } else { 0 }).collect(),
+                }),
+            }
+        }
+    }
+
+    #[derive(Default)]
+    pub struct Res {
+        pub runs: HashMap<RunId, GlyphRun>,
+        pub images: HashMap<ImageId, ImageData>,
+        pub paths: HashMap<PathId, PathData>,
+    }
+
+    impl SceneResources for Res {
+        fn run(&self, id: RunId) -> Option<&GlyphRun> {
+            self.runs.get(&id)
+        }
+        fn image(&self, id: ImageId) -> Option<&ImageData> {
+            self.images.get(&id)
+        }
+        fn path(&self, id: PathId) -> Option<&PathData> {
+            self.paths.get(&id)
+        }
+    }
+
+    pub fn run(glyphs: &[u32]) -> GlyphRun {
+        GlyphRun {
+            font: FontId(1),
+            size: 12.0,
+            variations: 0,
+            glyphs: glyphs.iter().enumerate().map(|(i, &id)| Glyph { id, x: i as f32 * 7.0, y: 0.0 }).collect(),
+            ascent: 9.0,
+            descent: 3.0,
+            advance: glyphs.len() as f32 * 7.0,
+            hint: HintMode::Vertical,
+            aa: AaMode::Grayscale,
+            embolden: 0.0,
+            skew_deg: 0.0,
+        }
+    }
+
+    pub fn solid(rect: Rect, c: Color) -> Prim {
+        Prim::Quad(Quad {
+            rect,
+            radii: Corners::ZERO,
+            fill: Fill::Solid(c),
+            border_widths: Insets::ZERO,
+            border_color: Color::TRANSPARENT,
+            border_style: BorderStyle::Solid,
+        })
+    }
+
+    struct State {
+        mask: Atlas,
+        color: Atlas,
+        paths: PathCache,
+        glyph_index: HashMap<GlyphKey, GlyphEntry>,
+        surfaces: HashMap<TextureId, DeviceSize>,
+        tree: BoundsTree,
+    }
+
+    impl State {
+        fn new() -> Self {
+            State {
+                mask: Atlas::new(AtlasKind::Mask, 4, 8192),
+                color: Atlas::new(AtlasKind::Color, 4, 8192),
+                paths: PathCache::default(),
+                glyph_index: HashMap::new(),
+                surfaces: HashMap::new(),
+                tree: BoundsTree::default(),
+            }
+        }
+        fn flatten(&mut self, lists: &[DisplayList], res: &Res, size: DeviceSize, cull: Rect) -> Frame {
+            let items: Vec<DrawItem<'_>> = lists
+                .iter()
+                .map(|list| DrawItem { transform: Affine::IDENTITY, clip: None, opacity: 1.0, list })
+                .collect();
+            let scene = FrameScene {
+                target: size,
+                scale: Scale(1.0),
+                clear: Some(Color::WHITE),
+                damage: &[],
+                items: &items,
+                resources: res,
+            };
+            flatten(
+                &scene,
+                cull,
+                &mut Ctx {
+                    mask: &mut self.mask,
+                    color: &mut self.color,
+                    paths: &mut self.paths,
+                    glyph_index: &mut self.glyph_index,
+                    glyphs: &BoxGlyphs,
+                    surfaces: &self.surfaces,
+                    tree: &mut self.tree,
+                },
+            )
+        }
+    }
+
+    const BIG: DeviceSize = DeviceSize { w: 1000, h: 1000 };
+    const ALL: Rect = Rect::new(0.0, 0.0, 1000.0, 1000.0);
+
+    fn list(prims: Vec<Prim>) -> DisplayList {
+        let mut l = DisplayList::new();
+        for p in prims {
+            l.push(p, ALL);
+        }
+        l
+    }
+
+    #[test]
+    fn ten_thousand_disjoint_quads_are_one_batch() {
+        let prims = (0..10_000)
+            .map(|i| {
+                let (x, y) = ((i % 100) as f32 * 10.0, (i / 100) as f32 * 10.0);
+                solid(Rect::new(x, y, x + 8.0, y + 8.0), Color::BLACK)
+            })
+            .collect();
+        let f = State::new().flatten(&[list(prims)], &Res::default(), BIG, ALL);
+        assert_eq!(f.quads.len(), 10_000);
+        assert_eq!(f.batches.len(), 1);
+        assert_eq!(f.batches[0].count, 10_000);
+    }
+
+    #[test]
+    fn ten_thousand_stacked_quads_are_one_batch() {
+        // Each overlaps the previous one: 10k orders, still one pipeline and no texture changes.
+        let prims = (0..10_000).map(|i| solid(Rect::new(0.0, 0.0, 100.0 + (i % 7) as f32, 100.0), Color::BLACK)).collect();
+        let f = State::new().flatten(&[list(prims)], &Res::default(), BIG, ALL);
+        assert_eq!(f.batches.len(), 1);
+    }
+
+    #[test]
+    fn text_over_quads_alternates_only_where_it_overlaps() {
+        let mut res = Res::default();
+        res.runs.insert(RunId(1), run(&[1, 2, 3]));
+        let glyphs = |x: f32, y: f32| Prim::Glyphs(Glyphs { run: RunId(1), origin: Point::new(x, y), color: Color::BLACK });
+        // 100 buttons, each a background quad with a label on top: two batches (all quads, all text).
+        let mut prims = Vec::new();
+        for i in 0..100 {
+            let (x, y) = ((i % 10) as f32 * 100.0, (i / 10) as f32 * 50.0);
+            prims.push(solid(Rect::new(x, y, x + 90.0, y + 40.0), Color::WHITE));
+            prims.push(glyphs(x + 5.0, y + 25.0));
+        }
+        let mut st = State::new();
+        let f = st.flatten(&[list(prims.clone())], &res, BIG, ALL);
+        assert_eq!(f.quads.len(), 100);
+        assert_eq!(f.masks.len(), 300);
+        assert_eq!(f.batches.iter().map(|b| b.kind).collect::<Vec<_>>(), vec![Kind::Quad, Kind::Mask]);
+        // A quad over every label forces a third batch; the first two are unchanged.
+        prims.push(solid(Rect::new(0.0, 0.0, 1000.0, 1000.0), Color::rgba(0.0, 0.0, 0.0, 0.5)));
+        let f = st.flatten(&[list(prims)], &res, BIG, ALL);
+        assert_eq!(f.batches.iter().map(|b| b.kind).collect::<Vec<_>>(), vec![Kind::Quad, Kind::Mask, Kind::Quad]);
+        // Glyph rasters were cached: three keys, one atlas page.
+        assert_eq!(st.glyph_index.len(), 3);
+        assert_eq!(st.mask.page_count(), 1);
+    }
+
+    #[test]
+    fn colour_glyphs_go_to_the_image_pipeline_and_empty_glyphs_are_skipped() {
+        let mut res = Res::default();
+        res.runs.insert(RunId(1), run(&[1, 0, 1000]));
+        let p = Prim::Glyphs(Glyphs { run: RunId(1), origin: Point::new(10.0, 20.0), color: Color::BLACK });
+        let f = State::new().flatten(&[list(vec![p])], &res, BIG, ALL);
+        assert_eq!(f.masks.len(), 1);
+        assert_eq!(f.images.len(), 1);
+        // Pen at (10, 20), raster top -8: whole-pixel placement.
+        assert_eq!(f.masks[0].bounds, [10.0, 12.0, 6.0, 8.0]);
+    }
+
+    #[test]
+    fn subpixel_x_is_quantised_to_quarters() {
+        let mut res = Res::default();
+        res.runs.insert(RunId(1), run(&[1]));
+        let mut st = State::new();
+        for (x, bin) in [(10.0, 0u8), (10.26, 1), (10.5, 2), (10.74, 3), (10.9, 0)] {
+            st.glyph_index.clear();
+            let p = Prim::Glyphs(Glyphs { run: RunId(1), origin: Point::new(x, 20.0), color: Color::BLACK });
+            st.flatten(&[list(vec![p])], &res, BIG, ALL);
+            let key = st.glyph_index.keys().next().copied().unwrap();
+            assert_eq!(key.x_bin, bin, "x = {x}");
+        }
+    }
+
+    #[test]
+    fn culling_drops_primitives_outside_the_damage() {
+        let prims = vec![solid(Rect::new(0.0, 0.0, 10.0, 10.0), Color::BLACK), solid(Rect::new(500.0, 500.0, 510.0, 510.0), Color::BLACK)];
+        let f = State::new().flatten(&[list(prims)], &Res::default(), BIG, Rect::new(400.0, 400.0, 600.0, 600.0));
+        assert_eq!(f.quads.len(), 1);
+        assert_eq!(f.quads[0].clip.rect, [400.0, 400.0, 600.0, 600.0]);
+    }
+
+    #[test]
+    fn push_clip_intersects_and_keeps_the_rounded_clip() {
+        let rr = RoundedRect { rect: Rect::new(10.0, 10.0, 50.0, 50.0), radii: Corners::all(8.0) };
+        let prims = vec![
+            Prim::PushClip(rr),
+            solid(Rect::new(0.0, 0.0, 100.0, 100.0), Color::BLACK),
+            Prim::PopClip,
+            solid(Rect::new(0.0, 0.0, 100.0, 100.0), Color::BLACK),
+        ];
+        let f = State::new().flatten(&[list(prims)], &Res::default(), BIG, ALL);
+        let clipped = f.quads.iter().find(|q| q.clip.rrect[2] > 0.0).unwrap();
+        assert_eq!(clipped.clip.rect, [10.0, 10.0, 50.0, 50.0]);
+        assert_eq!(clipped.clip.radii, [8.0; 4]);
+        assert!(f.quads.iter().any(|q| q.clip.rrect[2] <= 0.0 && q.clip.rect == [0.0, 0.0, 1000.0, 1000.0]));
+    }
+
+    #[test]
+    fn paths_make_one_target_per_batch_and_missing_resources_are_counted() {
+        let mut res = Res::default();
+        res.paths.insert(
+            PathId(1),
+            PathData {
+                cmds: vec![PathCmd::MoveTo(0.0, 0.0), PathCmd::LineTo(20.0, 0.0), PathCmd::LineTo(0.0, 20.0), PathCmd::Close],
+                fill_rule: Default::default(),
+            },
+        );
+        let path = |x: f32| {
+            Prim::Path(display::PathPrim { path: PathId(1), transform: Affine::translate(x, 0.0), paint: PathPaint::Fill(Color::BLACK) })
+        };
+        let prims = vec![
+            path(0.0),
+            path(100.0),
+            Prim::Path(display::PathPrim { path: PathId(9), transform: Affine::IDENTITY, paint: PathPaint::Fill(Color::BLACK) }),
+        ];
+        let f = State::new().flatten(&[list(prims)], &res, BIG, ALL);
+        assert_eq!(f.paths.len(), 2);
+        assert_eq!(f.path_targets.len(), 1);
+        assert_eq!(f.path_targets[0].rect, [0, 0, 120, 20]);
+        assert_eq!(f.skipped, 1);
+        assert_eq!(f.batches.len(), 1);
+        assert_eq!(f.batches[0].kind, Kind::Path);
+    }
+
+    #[test]
+    fn many_gradient_stops_are_resampled() {
+        let stops: Vec<GradientStop> = (0..12)
+            .map(|i| GradientStop { offset: i as f32 / 11.0, color: if i % 2 == 0 { Color::BLACK } else { Color::WHITE } })
+            .collect();
+        let r = resample_stops(&stops);
+        assert_eq!(r.len(), MAX_STOPS);
+        assert_eq!(r[0].offset, 0.0);
+        assert_eq!(r[MAX_STOPS - 1].offset, 1.0);
+        assert_eq!(gradient_at(&stops, 0.0), Color::BLACK);
+        assert_eq!(gradient_at(&stops, 1.0 / 11.0), Color::WHITE);
+    }
+
+    #[test]
+    fn rotated_quads_keep_pixel_local_geometry() {
+        let mut l = list(vec![solid(Rect::new(0.0, 0.0, 10.0, 20.0), Color::BLACK)]);
+        l.bounds = Rect::new(0.0, 0.0, 10.0, 20.0);
+        let items = [DrawItem {
+            transform: Affine::translate(100.0, 100.0).then(&Affine::rotate(0.5)).then(&Affine::scale(2.0, 2.0)),
+            clip: None,
+            opacity: 0.5,
+            list: &l,
+        }];
+        let res = Res::default();
+        let scene = FrameScene {
+            target: BIG,
+            scale: Scale(1.5),
+            clear: None,
+            damage: &[],
+            items: &items,
+            resources: &res,
+        };
+        let mut st = State::new();
+        let f = flatten(
+            &scene,
+            ALL,
+            &mut Ctx {
+                mask: &mut st.mask,
+                color: &mut st.color,
+                paths: &mut st.paths,
+                glyph_index: &mut st.glyph_index,
+                glyphs: &BoxGlyphs,
+                surfaces: &st.surfaces,
+                tree: &mut st.tree,
+            },
+        );
+        let q = f.quads[0];
+        // 2× item scale × 1.5 window scale = 3 device pixels per point.
+        assert!((q.bounds[2] - 30.0).abs() < 1e-3 && (q.bounds[3] - 60.0).abs() < 1e-3, "{:?}", q.bounds);
+        let det = q.xform.m[0] * q.xform.m[3] - q.xform.m[1] * q.xform.m[2];
+        assert!((det - 1.0).abs() < 1e-4);
+        assert_eq!(q.fill[3], 0.5);
+    }
+}

@@ -267,7 +267,9 @@ impl Renderer {
         let instances_bg = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("presto instances"),
             layout: &self.pipelines.instances_layout,
-            entries: &[wgpu::BindGroupEntry { binding: 0, resource: instances.as_entire_binding() }],
+            entries: &(0..pipelines::INSTANCE_BINDINGS)
+                .map(|binding| wgpu::BindGroupEntry { binding, resource: instances.as_entire_binding() })
+                .collect::<Vec<_>>(),
         });
         RingSlot { instances, capacity, globals, globals_bg, instances_bg }
     }

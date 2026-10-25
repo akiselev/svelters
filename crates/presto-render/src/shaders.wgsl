@@ -7,7 +7,8 @@
 // surface sprites with source rects, MSAA path meshes, and a scissored clear.
 //
 // presto's renderer shaders (architecture §8.1). Every pipeline draws a 4-vertex triangle strip per
-// instance (paths: triangle lists), reading its records from `@group(1) @binding(0)`. Output is
+// instance (paths: triangle lists), reading its records from `@group(1)`: one storage buffer bound
+// once per kind (bindings 0..=6), so no two declarations alias a binding. Output is
 // premultiplied; targets are non-sRGB, so blending happens in sRGB-encoded space (architecture §8.3).
 
 // Contrast and gamma correction adapted from https://github.com/microsoft/terminal/blob/1283c0f5b99a2961673249fa77c6b986efb5086c/src/renderer/atlas/dwrite.hlsl
@@ -664,7 +665,7 @@ struct Shadow {
     params: vec4<f32>,
 }
 
-@group(1) @binding(0) var<storage, read> b_shadows: array<Shadow>;
+@group(1) @binding(1) var<storage, read> b_shadows: array<Shadow>;
 
 struct ShadowVarying {
     @builtin(position) position: vec4<f32>,
@@ -758,7 +759,7 @@ struct Line {
     dash: vec4<f32>,
 }
 
-@group(1) @binding(0) var<storage, read> b_lines: array<Line>;
+@group(1) @binding(2) var<storage, read> b_lines: array<Line>;
 
 struct LineVarying {
     @builtin(position) position: vec4<f32>,
@@ -844,7 +845,7 @@ struct MaskSprite {
     params: vec4<f32>,
 }
 
-@group(1) @binding(0) var<storage, read> b_masks: array<MaskSprite>;
+@group(1) @binding(3) var<storage, read> b_masks: array<MaskSprite>;
 
 struct MaskVarying {
     @builtin(position) position: vec4<f32>,
@@ -894,7 +895,7 @@ struct ImageSprite {
     params: vec4<f32>,
 }
 
-@group(1) @binding(0) var<storage, read> b_images: array<ImageSprite>;
+@group(1) @binding(4) var<storage, read> b_images: array<ImageSprite>;
 
 struct ImageVarying {
     @builtin(position) position: vec4<f32>,
@@ -939,7 +940,7 @@ struct PathInstance {
     viewport_rect: vec4<f32>,
 }
 
-@group(1) @binding(0) var<storage, read> b_paths: array<PathInstance>;
+@group(1) @binding(5) var<storage, read> b_paths: array<PathInstance>;
 
 struct PathRasterVarying {
     @builtin(position) position: vec4<f32>,
@@ -970,7 +971,7 @@ struct PathSprite {
     bounds: vec4<f32>,
 }
 
-@group(1) @binding(0) var<storage, read> b_path_sprites: array<PathSprite>;
+@group(1) @binding(6) var<storage, read> b_path_sprites: array<PathSprite>;
 
 struct PathSpriteVarying {
     @builtin(position) position: vec4<f32>,
