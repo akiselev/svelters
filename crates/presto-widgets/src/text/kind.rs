@@ -2,10 +2,15 @@
 //! §4.2), with svelters' `text-edit` props and signals (svelters-egui `kinds/builtin.rs`) plus
 //! `read-only`, `wrap`, `cancel` and `select`.
 //!
-//! What presto-core's contexts do not hand a kind yet comes from the installed
-//! [`TextServices`]: the text system (a layout with geometry), the clipboard, the caret's
-//! fast-commit channel and the event time. Without services the kind records its box only and takes
-//! no input (a document without a text system cannot place a caret).
+//! It implements presto-core's `Kind` directly rather than through the substrate's `Hosted<W>`
+//! bridge (`crate::host`): a text field needs `Event::Ime` and the `text_input` hook (architecture
+//! §11.3), which `crate::shim::core` does not carry. It shares the substrate's per-thread text system
+//! (`crate::host::install_text_system`, read through `host::with_text_system` for layouts with
+//! geometry) and platform policy (`host::policy`, [`TextPolicy::from_policy`]).
+//!
+//! What presto-core's contexts do not hand a kind yet comes from the installed [`TextServices`]: the
+//! clipboard, the caret's fast-commit channel and the event time. Without the text system and the
+//! services the kind records its box only and takes no input (it cannot place a caret).
 //!
 //! The content box is the padding box (presto-core's `NodeView` has no padding edges yet), and the
 //! window origin comes from pointer events (`pos - local`), else the sum of the ancestors' layout
@@ -14,7 +19,8 @@
 use super::editor::{EditorConfig, FocusReason as FieldFocus};
 use super::field::{FieldColors, FieldPointer, FieldSignal, TextField};
 use super::keys::KeyAction;
-use super::policy::TextPolicy;
+use super::geometry::SystemLayouter;
+use super::policy::{Platform, TextPolicy};
 use super::shim::{RecordSink, TextServices, with_services};
 use presto_base::accesskit;
 use presto_base::change::ChangeClass;
@@ -101,7 +107,8 @@ pub struct TextEdit {
 
 impl Default for TextEdit {
     fn default() -> Self {
-        TextEdit { field: TextField::new("", EditorConfig::default(), TextPolicy::default()) }
+        let policy = TextPolicy::from_policy(Platform::current(), &crate::host::policy());
+        TextEdit { field: TextField::new("", EditorConfig::default(), policy) }
     }
 }
 
@@ -233,7 +240,7 @@ impl Kind for TextEdit {
         let style = text_style(cx.style());
         let content = cx.padding_box();
         let origin = self.field.window_origin();
-        with_services(|s| self.field.prepare(s.layouter(&style), content, origin));
+        crate::host::with_text_system(|ts| self.field.prepare(&mut SystemLayouter { system: ts, style }, content, origin));
         if self.field.take_repaint() {
             cx.request_paint();
         }
@@ -251,56 +258,60 @@ impl Kind for TextEdit {
         if origin == Point::ZERO {
             self.field.set_window_origin(layout_origin(cx));
         }
-        let handled = with_services(|s| {
-            let now = s.now();
-            let h = match ev {
-                Event::Key(k) => {
-                    let action = self.field.key(k, now, s.layouter(&style));
-                    !matches!(action, KeyAction::Ignore)
-                }
-                Event::Ime(i) => {
-                    self.field.ime(i, now, s.layouter(&style));
-                    true
-                }
-                Event::PointerDown(p) => {
-                    if !self.field.editor.focused() {
-                        cx.focus(FocusReason::Pointer);
+        let handled = crate::host::with_text_system(|ts| {
+            with_services(|s| {
+                let now = s.now();
+                let mut lay = SystemLayouter { system: ts, style };
+                let h = match ev {
+                    Event::Key(k) => {
+                        let action = self.field.key(k, now, &mut lay);
+                        !matches!(action, KeyAction::Ignore)
                     }
-                    let took = self.field.pointer(&pointer(PointerPhase::Down, p), now, s.layouter(&style));
-                    if took {
-                        cx.capture_pointer();
+                    Event::Ime(i) => {
+                        self.field.ime(i, now, &mut lay);
+                        true
                     }
-                    took
-                }
-                Event::PointerMove(p) => {
-                    cx.set_cursor(CursorIcon::Text);
-                    self.field.pointer(&pointer(PointerPhase::Move, p), now, s.layouter(&style))
-                }
-                Event::PointerUp(p) => {
-                    cx.release_pointer();
-                    self.field.pointer(&pointer(PointerPhase::Up, p), now, s.layouter(&style))
-                }
-                Event::PointerCancel => {
-                    let up = FieldPointer::new(PointerPhase::Cancel, None, 0, Point::ZERO);
-                    self.field.pointer(&up, now, s.layouter(&style))
-                }
-                Event::HoverEnter => {
-                    cx.set_cursor(CursorIcon::Text);
-                    false
-                }
-                Event::FocusIn(r) => {
-                    self.field.focus_in(field_focus(*r));
-                    true
-                }
-                Event::FocusOut => {
-                    self.field.focus_out();
-                    true
-                }
-                _ => false,
-            };
-            self.finish(cx, s);
-            h
-        });
+                    Event::PointerDown(p) => {
+                        if !self.field.editor.focused() {
+                            cx.focus(FocusReason::Pointer);
+                        }
+                        let took = self.field.pointer(&pointer(PointerPhase::Down, p), now, &mut lay);
+                        if took {
+                            cx.capture_pointer();
+                        }
+                        took
+                    }
+                    Event::PointerMove(p) => {
+                        cx.set_cursor(CursorIcon::Text);
+                        self.field.pointer(&pointer(PointerPhase::Move, p), now, &mut lay)
+                    }
+                    Event::PointerUp(p) => {
+                        cx.release_pointer();
+                        self.field.pointer(&pointer(PointerPhase::Up, p), now, &mut lay)
+                    }
+                    Event::PointerCancel => {
+                        let up = FieldPointer::new(PointerPhase::Cancel, None, 0, Point::ZERO);
+                        self.field.pointer(&up, now, &mut lay)
+                    }
+                    Event::HoverEnter => {
+                        cx.set_cursor(CursorIcon::Text);
+                        false
+                    }
+                    Event::FocusIn(r) => {
+                        self.field.focus_in(field_focus(*r));
+                        true
+                    }
+                    Event::FocusOut => {
+                        self.field.focus_out();
+                        true
+                    }
+                    _ => false,
+                };
+                self.finish(cx, s);
+                h
+            })
+        })
+        .flatten();
         if handled == Some(true) { Handled::Yes } else { Handled::No }
     }
 

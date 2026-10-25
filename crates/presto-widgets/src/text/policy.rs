@@ -173,6 +173,21 @@ impl TextPolicy {
         }
     }
 
+    /// The text rows of the widget substrate's platform policy (`crate::interact::Policy`, the same FX1
+    /// table), over this platform's word rules, undo grouping, PRIMARY and mask.
+    pub fn from_policy(platform: Platform, p: &crate::interact::Policy) -> TextPolicy {
+        TextPolicy {
+            word_move_collapses: p.word_move_collapses,
+            select_on_keyboard_focus: p.select_on_keyboard_focus,
+            select_on_programmatic_focus: p.select_on_programmatic_focus,
+            keep_selection_unfocused: p.keep_selection_unfocused,
+            one_selection_owner: p.one_selection_owner,
+            caret_blink_ms: p.caret_blink_ms,
+            double_click_ms: p.double_click_ms,
+            ..TextPolicy::of(platform)
+        }
+    }
+
     /// quire-text's command rules for a field under this policy.
     pub fn edit_rules(&self, secret: bool) -> EditRules {
         let mut r = EditRules::field(self.words.rules());

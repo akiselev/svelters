@@ -2,7 +2,7 @@
 
 Lane file: `plans/cloud/presto-b2/LANE-text-input.md`. Branch `ci/presto-text-input` (from `ci/presto-base`
 at `e34079e6`; `ci/presto-base` at `622aef24`, with the presto-core, presto-text and presto-platform
-skeletons, merged in). Owns `crates/presto-widgets/src/text/**` and `crates/presto-widgets/tests/text_pins.rs`.
+skeletons, then at `ac7cc8c4`, with the WIDGETS-BASIC substrate, merged in). Owns `crates/presto-widgets/src/text/**` and `crates/presto-widgets/tests/text_pins.rs`.
 
 ## What landed
 
@@ -37,10 +37,18 @@ job summary. It is a measurement (fails only when the harness breaks), like `egu
 
 `text/shim.rs`:
 - `TextServices` (installed per UI thread with `install_services`): what presto-core's contexts do not
-  hand a kind yet: a layouter over the `TextSystem` (`PrepareCx::shape_text` gives runs without
-  geometry, and `EventCx` has no text system), the clipboard, the caret's fast-commit channel, the event
-  time. The app runner (lane APP-TEST / svelters-presto) installs it; without it `text-edit` records
-  its box only and takes no input. Request R4.
+  hand a kind yet: the clipboard, the caret's fast-commit channel, the event time. The app runner (lane
+  APP-TEST / svelters-presto) installs it beside the substrate's text system
+  (`host::install_text_system`); without both `text-edit` records its box only and takes no input.
+  Request R4.
+
+**`text-edit` and the substrate.** `text-edit` implements `presto_core::Kind` directly, not through the
+substrate's `Hosted<W>` / `shim::core` bridge (as the coordinator asked kinds to be built): the bridge
+carries no `Event::Ime` and no `text_input` hook, both required by architecture §11.3. It shares the
+substrate's per-thread `TextSystem` (through the new `host::with_text_system`: layouts with geometry,
+which the substrate's `TextShaper` does not expose) and its platform policy (`TextPolicy::from_policy`
+over `host::policy()`; the word rules, undo grouping, PRIMARY and mask stay in `text/policy.rs`, which
+`interact::Policy` lacks). Question 4 below.
 - `Clipboard`: presto-platform's `Clipboard` is by `ClipboardKind` and presto-widgets does not depend on
   presto-platform; the app adapts it.
 - `TextGeometry`, `Layouter`, `RecordSink` are the field's own interfaces (implemented for presto-text's
@@ -52,6 +60,9 @@ job summary. It is a measurement (fails only when the harness breaks), like `egu
   and the dev-dependency `svelters-conformance` (pins and goldens). Other lanes edit this file too: a
   merge conflict there is additive.
 - `Cargo.lock`: quire-text and its dependencies (ropey, unicode-segmentation, unicode-general-category).
+
+- `crates/presto-widgets/src/host.rs` (WIDGETS-BASIC's): one additive function, `with_text_system`, so the
+  text kinds lay out with the same per-thread `TextSystem` the other kinds shape with.
 
 No change to `presto-base` or any wave-1 crate.
 
@@ -101,6 +112,10 @@ No change to `presto-base` or any wave-1 crate.
    the platform policy, so `FastCommit` stays as it is.
 3. **The pins' floor.** `text_pins.rs` reports without a ratchet. Recommendation: after the first green CI
    run, set per-pin floors from its job summary (as `egui_measure`'s `FLOOR`).
+
+4. **`text-edit` outside `Hosted<W>`.** Recommendation: keep it on `presto_core::Kind` directly; if kinds
+   must all go through the bridge, add `Event::Ime` and a `text_input` hook to `shim::core::Kind` and
+   `Hosted<W>` first (WIDGETS-BASIC's files), and the text kinds move over in a few lines.
 
 ## What I ran and did not run
 

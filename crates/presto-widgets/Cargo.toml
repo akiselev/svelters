@@ -11,6 +11,13 @@ presto-base = { workspace = true }
 presto-core = { workspace = true }
 presto-text = { workspace = true }
 presto-anim = { workspace = true }
+# The CSS engine presto uses as its style system (architecture §3, §5): widgets read computed values.
+svelters-style = { workspace = true }
+taffy = { workspace = true }
+smallvec = { workspace = true }
+serde_json = { workspace = true }
+# Icon kit SVGs rasterised into images (EGUI.md §5 `icon`).
+resvg = { version = "=0.45.1", default-features = false }
 # The text-editing core of the `text` kinds (lane TEXT-INPUT), at cadatomic's `pins.toml` sha.
 quire-text = { git = "https://github.com/akiselev/quire", rev = "3e78dcd3bf74abc2c81209f0109caff4d9193529" }
 

@@ -12,10 +12,10 @@
 //!   setting it empty there).
 //! - [`RecordSink`] stands for the part of presto-core's `RecordCx` a field records through (`push`,
 //!   `draw_run`); [`ListSink`] collects into a `DisplayList` for tests.
-//! - [`TextServices`] stands for what presto-core's contexts do not hand a kind yet: the text system
-//!   (for layouts with geometry, not only shaped runs), the clipboard, the caret fast-commit channel and
-//!   the event time. The app installs them per UI thread ([`install_services`]); the consolidation
-//!   moves them into `PrepareCx`/`EventCx`.
+//! - [`TextServices`] stands for what presto-core's contexts do not hand a kind yet: the clipboard,
+//!   the caret fast-commit channel and the event time. The app installs them per UI thread
+//!   ([`install_services`]) beside the text system (`crate::host::install_text_system`); the
+//!   consolidation moves them into `EventCx`.
 //! - [`MonoGeometry`] is a real layout of its own (fixed advance, fixed line height): what the tests
 //!   and the conformance pins lay text out with, and a fallback for headless use. It has no font, so
 //!   it records no glyphs.
@@ -26,7 +26,6 @@ use presto_base::display::{DisplayList, Prim};
 use presto_base::geom::{Point, Rect, Size};
 use presto_base::text::GlyphRun;
 use presto_base::time::Time;
-use presto_text::TextStyle;
 use std::cell::RefCell;
 use std::ops::Range;
 use std::sync::Arc;
@@ -89,8 +88,6 @@ impl RecordSink for ListSink {
 
 /// The services a text kind needs from the app (see the module docs).
 pub trait TextServices {
-    /// Lays out in `style` (the node's computed text style).
-    fn layouter(&mut self, style: &TextStyle) -> &mut dyn Layouter;
     fn clipboard(&mut self) -> &mut dyn Clipboard;
     /// Sends a fast commit (the caret) to the window's compositor.
     fn fast_commit(&mut self, c: FastCommit);
