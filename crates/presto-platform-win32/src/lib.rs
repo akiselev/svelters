@@ -41,3 +41,21 @@ pub mod util;
 pub mod window;
 
 pub use app::run;
+
+use presto_platform::{AppHandler, PlatformError};
+
+/// The backend as the `presto` facade selects it: `Win32Platform::new().run(handler)`, in place of
+/// presto-platform's winit `run`.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct Win32Platform;
+
+impl Win32Platform {
+    pub fn new() -> Self {
+        Win32Platform
+    }
+
+    /// Runs the app on this thread until it exits (see [`app::run`]).
+    pub fn run(self, handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
+        app::run(handler)
+    }
+}

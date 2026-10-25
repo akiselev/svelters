@@ -2,7 +2,8 @@
 
 Date: 2026-10-25. Branch `ci/presto-win32` (from `ci/presto-base` at efe20dd5; merged `ci/presto-base`
 d58a0fa0). Crate: `crates/presto-platform-win32` (empty on other OSes: `#![cfg(target_os = "windows")]`).
-It implements `presto_platform::{AppHandler, PlatformCx}` and exposes `run(Box<dyn AppHandler>)`; the early
+It implements `presto_platform::{AppHandler, PlatformCx}` and exposes `Win32Platform::new().run(handler)` (and
+`run(Box<dyn AppHandler>)`) for the `presto` facade, which selects the backend (coordinator, 2026-10-25); the early
 `shim` module (coded against the b1 brief before PLATFORM's skeleton) is gone.
 
 ## What landed
