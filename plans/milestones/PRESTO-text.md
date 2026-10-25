@@ -95,3 +95,13 @@ the workspace table to avoid conflicts with other lanes; the coordinator may mov
   `--test tree_damage`, `presto-core --lib` and `presto-widgets --lib` (other lanes). The five svelters
   workflows skip presto-only pushes since base `cc4f184d`; they were green on `9221fcc`.
 - Lane done.
+
+## Follow-up: presto_core::TextShaper (coordinator, after wave 1)
+
+`impl presto_core::TextShaper for TextSystem` in `src/system.rs` (shapes a `TextSpec` through `layout`,
+runs at their baseline origins), behind presto-text's feature `core`, **on by default**, so hosts no
+longer write an adapter (CADATOMIC's `host::DocShaper` can go). presto-core is an optional dependency
+of presto-text (presto-core does not depend on presto-text, so there is no cycle); a compositor-only
+user can set `default-features = false` to skip presto-core's taffy and svelters-style. Test
+`tests::layout::presto_core_shaper_matches_layout`. `cargo check -p presto-text --tests` and
+`--no-default-features` clean; tests not run locally.
