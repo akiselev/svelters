@@ -24,6 +24,16 @@
 //!
 //! The `egui::DragAndDrop` bridge for egui islands is lane EGUI-ISLAND's; it starts and takes drags
 //! through [`DragSession::begin`] and [`DragSession::payload`].
+//!
+//! **presto-core now runs in-app drags itself** (`presto_core::input::dnd`, CORE-2/CORE-3): the common
+//! props, the threshold, the deepest accepting target, the enter/leave/drop/end order, Escape cancel,
+//! the actions and the cursor. For in-app drags that supersedes [`DragSource`], [`DragSession`]'s
+//! pointer steps and this module's [`accepts`]/[`type_matches`]/[`DropAction::from_modifiers`] (their
+//! tests still state the order core keeps). Still only here: OS file drags (core ignores
+//! `FileHovered`/`FileDropped`; [`DragSession::files_hovered`]/[`DragSession::files_dropped`],
+//! [`uri_list`]), JS-side id payloads ([`PayloadData::Js`]; core's `drag-data` is a string),
+//! [`edge_scroll`], and the ghost and drop-line recording ([`ghost`]): core has no drag-layer or
+//! drop-indication hook to call them from yet (the target only gets `:drop-target` for CSS).
 
 pub mod ghost;
 pub mod session;

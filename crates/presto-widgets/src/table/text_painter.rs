@@ -2,12 +2,19 @@
 //! thread's [`TextShaper`] (presto-text through `host.rs`) in the requested family, size, weight and
 //! slant, and each placed run is registered through the recording's [`Resources`] and drawn in the
 //! requested colour. An elided draw is one line cut with `…` by the shaper at the box's width.
+//!
+//! Kinds that implement presto-core's `Kind` directly (the containers `tab-view` and `table`, which
+//! read their children) shape with the document's presto-text service through [`with_text`] and
+//! record through [`record_core`].
 
 use super::shim::{HAlign, TextPainter, TextStyle};
 use crate::shim::core::Resources;
 use crate::shim::text::{self, RichText, TextLayout, TextShaper};
+use presto_base::commit::ImageData;
 use presto_base::display::{DisplayList, Glyphs, Prim};
 use presto_base::geom::{Point, Rect, Size};
+use presto_base::ids::{ImageId, RunId};
+use presto_base::text::GlyphRun;
 use std::sync::Arc;
 
 /// A [`TextPainter`] over a shaper; without `res` (measuring) draws record nothing.
@@ -48,6 +55,68 @@ impl TextPainter for ShaperPainter<'_> {
             let id = res.run(&pr.run);
             list.push(Prim::Glyphs(Glyphs { run: id, origin, color: style.color }), ink);
         }
+    }
+}
+
+/// The runs a recording made, before presto-core assigns their ids: a run's provisional id is its
+/// position in `runs` plus one.
+#[derive(Default)]
+pub struct CollectRes {
+    pub runs: Vec<Arc<GlyphRun>>,
+}
+
+impl Resources for CollectRes {
+    fn run(&mut self, run: &Arc<GlyphRun>) -> RunId {
+        self.runs.push(run.clone());
+        RunId(self.runs.len() as u64)
+    }
+    fn image(&mut self, _key: &str, _make: &mut dyn FnMut() -> Option<ImageData>) -> Option<ImageId> {
+        None
+    }
+}
+
+/// The shaper of a document without a text system: no text is measured or drawn.
+pub struct NoShaper;
+
+impl TextShaper for NoShaper {
+    fn layout(&mut self, _text: &RichText, _max_width: Option<f32>) -> Arc<TextLayout> {
+        Arc::new(TextLayout::default())
+    }
+}
+
+/// Runs `f` with a measuring painter over `ts` (the document's text system), or over [`NoShaper`].
+pub fn with_text<R>(ts: Option<&mut presto_text::TextSystem>, f: impl FnOnce(&mut dyn TextPainter) -> R) -> R {
+    let mut none = NoShaper;
+    let text: &mut dyn TextShaper = match ts {
+        Some(t) => t,
+        None => &mut none,
+    };
+    f(&mut ShaperPainter { text, res: None })
+}
+
+/// Runs `f` (record code) with a painter over the document's text system and moves what it recorded
+/// into `cx`, registering its runs with presto-core.
+pub fn record_core(cx: &mut presto_core::RecordCx<'_>, f: impl FnOnce(&mut dyn TextPainter, &mut DisplayList)) {
+    let mut list = DisplayList::new();
+    let mut res = CollectRes::default();
+    {
+        let mut none = NoShaper;
+        let text: &mut dyn TextShaper = match cx.service::<presto_text::TextSystem>() {
+            Some(t) => t,
+            None => &mut none,
+        };
+        let mut p = ShaperPainter { text, res: Some(&mut res) };
+        f(&mut p, &mut list);
+    }
+    let ids: Vec<RunId> = res.runs.into_iter().map(|r| cx.add_run(r)).collect();
+    let bounds = list.bounds;
+    for mut item in list.items {
+        if let Prim::Glyphs(g) = &mut item
+            && let Some(id) = (g.run.0 as usize).checked_sub(1).and_then(|k| ids.get(k))
+        {
+            g.run = *id;
+        }
+        cx.push(item, bounds);
     }
 }
 
