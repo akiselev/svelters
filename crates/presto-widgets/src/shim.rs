@@ -1,13 +1,15 @@
-//! Stand-ins for presto-core and presto-text APIs that do not exist yet (`plans/cloud/presto-b2/BRIEF.md`:
-//! the smallest thing the widgets need, replaced at the consolidation). Each item names the API it stands
-//! in for; `plans/milestones/PRESTO-widgets-basic.md` lists them.
+//! The interface the built-in kinds are written against, bridged to presto-core and presto-text by
+//! [`crate::host`] (`plans/cloud/presto-b2/BRIEF.md`). It keeps what presto-core's `Kind` leaves to the
+//! document: typed props held by the kind, events in the shape the egui-semantics tracker reads, and
+//! contexts that carry the computed style the UA tables layer under. `plans/milestones/PRESTO-widgets-basic.md`
+//! lists what presto-core would need for the kinds to implement its `Kind` directly.
 //!
-//! - [`core`]: `presto_core::{Kind, KindSpec, Value, …}` and the kind contexts (architecture §4.2). The
-//!   contexts here carry what Tier 0 kinds read and write; presto-core's own contexts will carry more.
-//! - [`text`]: `presto_text::{RichText, TextLayout, TextSystem::layout}` (b1 brief), behind
-//!   [`text::TextShaper`] so record and measure code takes any shaper.
-//! - [`testing`]: a deterministic monospace shaper and a context harness, for this crate's tests (a test
-//!   double, never a production path).
+//! - [`core`]: the kind interface ([`core::Kind`], [`core::KindSpec`], [`core::Value`], the contexts, the
+//!   [`core::Event`] a kind receives).
+//! - [`text`]: rich text in, placed runs out ([`text::TextShaper`]); implemented for
+//!   `presto_text::TextSystem` in [`crate::host`].
+//! - [`testing`]: a deterministic monospace shaper and in-memory resources, for this crate's tests (a
+//!   test double, never a production path).
 
 pub mod core {
     //! Stand-in for presto-core's kind API (architecture §4.2, b1 brief "presto-core").
@@ -259,13 +261,14 @@ pub mod core {
         pub computed: Option<&'a ComputedStyle>,
         pub state: StateBits,
         pub dark: bool,
+        /// The taffy style presto-core's cascade computed (`None` in tests: taffy's default).
+        pub base: Option<taffy::Style>,
     }
 
     impl StyleCx<'_> {
-        /// The layout style the computed style gives (presto-core maps CSS to taffy; this stand-in gives
-        /// taffy's default).
+        /// The layout style the cascade gives (CSS over the kind's defaults).
         pub fn default_layout(&self) -> taffy::Style {
-            taffy::Style::default()
+            self.base.clone().unwrap_or_default()
         }
     }
 
