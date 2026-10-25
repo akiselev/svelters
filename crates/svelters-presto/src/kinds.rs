@@ -236,8 +236,11 @@ fn common_alias(decl: &KindSpec, p: &PropSpec) -> Option<(core::PropId, bool)> {
     if decl.tag.is_some() {
         return None;
     }
-    let &(_, native, inv) = COMMON_ALIASES.iter().find(|a| a.0 == p.name)?;
-    core::common::COMMON.prop_named(native).map(|id| (id, inv))
+    if let Some(&(_, native, inv)) = COMMON_ALIASES.iter().find(|a| a.0 == p.name) {
+        return core::common::COMMON.prop_named(native).map(|id| (id, inv));
+    }
+    // a common prop of the same name and a type it can hold (`anchor`, `drag-type`, `dialog-role`)
+    core::common::COMMON.prop_named(p.name).filter(|&id| core::common::prop(id).is_some_and(|c| fits(p.ty, c))).map(|id| (id, false))
 }
 
 fn role_of(name: &str) -> Role {

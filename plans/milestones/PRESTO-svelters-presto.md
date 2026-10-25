@@ -113,6 +113,24 @@ run member maps (`Run`'s `accessible-name` onto core's `aria-label`, as `Widget`
 Decided (coordinator, 2026-10-25): Q7 presto-widgets' label will take inline run children (WIDGETS-BASIC); the explicit error stays until then, then runs map onto it. `surface/tier0.rs` stays the JS-facing table. Q5 publish core's `tabindex`/`focus-scope` on `Widget` later, not now; Q6
 as above.
 
+### CORE-3's common members and sync delivery (2026-10-25)
+
+- `Widget` props now map onto a common prop of the same name when its type fits (enums by name): with CORE-3's
+  (`ci/presto-core-3` eb669f1e) `anchor`, `anchor-scope`, `invalid`, `dialog-role`, `status-tip`,
+  `status-section`, `drag-data`, `drag-type`, `drop-types` reach the tree, and the `drag-*`/`drop` signals map
+  through the existing by-name common-signal fallback. Until CORE-3 is in `ci/presto-base` they stay `Side`
+  (name-based, no code change needed when it lands; regenerate presto.json then).
+- **Q8 (to CORE-3 and the coordinator): `Document::set_sync_delivery` is not installed yet.** The deliverer runs
+  while `dispatch` holds `&mut Document`, and the JS it runs (`call_sync`) calls back into the backend: not
+  only writes but reads (`get_prop`, `bind:` reads, `handle_info`, creating nodes in a handler), all through the
+  backend's `RefCell<Document>`, which is borrowed then. Queueing writes is not enough: a handler that reads a
+  prop it just wrote, or builds UI, sees stale state or cannot run. *Recommendation:* core lends the document to
+  the deliverer, `FnMut(&mut Document, &JsEvent) -> Outcome` (core keeps its dispatch state outside the
+  borrow, as it does between phases), and svelters-presto points its ops at that `&mut` for the call's
+  duration; JS writes then apply immediately in `js_transaction(revision)`. Second choice: a two-phase
+  `dispatch` that returns at the first sync event and resumes with its `Outcome`. Until then delivery stays
+  after `dispatch` (cancellation reported, but the native default has already run).
+
 ## Not done
 
 - **`svelters-presto-run`**: `crates/presto` and `crates/presto-test` are still one-line stubs in `ci/presto-base`
