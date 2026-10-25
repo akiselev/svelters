@@ -31,6 +31,33 @@ const ROW: &str = r#"<script>
 <button anchor="row" text={name} />
 "#;
 
+/// DZ0b2: `<svelte:component>`, `<X>` with a reactive or member `X`, and `{@render}`.
+const DYNAMIC: &str = r#"<script>
+  import Named from './Named.svelte';
+  let Comp = $state(Named);
+  const parts = { Named };
+</script>
+
+{#snippet two(name)}
+  <Named {name} />
+{/snippet}
+
+<box anchor="top">
+  <svelte:component this={Comp} name="c" />
+  <Comp name="d" />
+  <parts.Named name="m" />
+  {@render two('s')}
+  <label anchor="plain" text="plain" />
+</box>
+"#;
+
+const NAMED: &str = r#"<script>
+  let { name } = $props();
+</script>
+
+<button anchor={name} text={name} />
+"#;
+
 fn scratch(name: &str) -> PathBuf {
     let fixture = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/embed-egui").canonicalize().unwrap();
     assert!(fixture.join("node_modules").exists(), "run `pnpm install` first");
@@ -39,17 +66,23 @@ fn scratch(name: &str) -> PathBuf {
     std::fs::create_dir_all(dir.join("src")).unwrap();
     std::fs::write(
         dir.join("package.json"),
-        r#"{ "name": "dz0", "private": true, "type": "module", "svelters": { "toolkit": "egui", "embed": { "Panel": "src/Panel.svelte" } } }"#,
+        r#"{ "name": "dz0", "private": true, "type": "module", "svelters": { "toolkit": "egui", "embed": { "Panel": "src/Panel.svelte", "Dynamic": "src/Dynamic.svelte" } } }"#,
     )
     .unwrap();
     std::fs::write(dir.join("src/Panel.svelte"), PANEL).unwrap();
     std::fs::write(dir.join("src/Row.svelte"), ROW).unwrap();
+    std::fs::write(dir.join("src/Dynamic.svelte"), DYNAMIC).unwrap();
+    std::fs::write(dir.join("src/Named.svelte"), NAMED).unwrap();
     #[cfg(unix)]
     std::os::unix::fs::symlink(fixture.join("node_modules"), dir.join("node_modules")).unwrap();
     dir.canonicalize().unwrap()
 }
 
 fn mounted(name: &str, dev: bool) -> EmbedHarness {
+    mounted_as(name, "Panel", dev)
+}
+
+fn mounted_as(name: &str, component: &'static str, dev: bool) -> EmbedHarness {
     let dir = scratch(name);
     let mut cfg = SourceConfig::for_path(&dir).unwrap();
     cfg.dev = dev;
@@ -67,7 +100,7 @@ fn mounted(name: &str, dev: bool) -> EmbedHarness {
     eh.set_ui(move |e, ui| {
         e.show_slot(ui, s1);
     });
-    e.mount(MountSpec::new(entry, "Panel", s1, "p1").props(Props::new())).unwrap();
+    e.mount(MountSpec::new(entry, component, s1, "p1").props(Props::new())).unwrap();
     eh.run();
     let errors: Vec<String> = e.host().take_errors().into_iter().map(|x| x.to_string()).collect();
     assert!(errors.is_empty(), "{errors:?}");
@@ -115,6 +148,29 @@ fn dev_nodes_name_their_template_element_and_call_sites() {
         let mut keys: Vec<_> = rows.iter().map(|r| r.item_key().unwrap().to_string()).collect();
         keys.sort();
         assert_eq!(keys, ["a", "b"], "the keyed row is the each item's key, as before");
+    });
+}
+
+#[test]
+fn dynamic_components_and_renders_add_their_call_sites() {
+    let eh = mounted_as("dynamic", "Dynamic", true);
+    eh.embed.backend().scene().read(|s| {
+        let sites = |anchor: &str| {
+            let n = anchored(s, anchor);
+            assert_eq!(n.len(), 1, "{anchor}");
+            let loc = n[0].source_loc().unwrap_or_else(|| panic!("{anchor} has source-loc"));
+            assert!(loc.element().file.ends_with("src/Named.svelte"), "{}", loc.raw());
+            assert_eq!(loc.element().offset, at(NAMED, "<button"));
+            loc.sites().map(|x| (x.file.rsplit('/').next().unwrap().to_string(), x.offset)).collect::<Vec<_>>()
+        };
+        let dynamic = |needle: &str| ("Dynamic.svelte".to_string(), at(DYNAMIC, needle));
+        assert_eq!(sites("c"), vec![dynamic("<svelte:component")]);
+        assert_eq!(sites("d"), vec![dynamic("<Comp")]);
+        assert_eq!(sites("m"), vec![dynamic("<parts.Named")]);
+        // the call inside the snippet, then the render tag, innermost first
+        assert_eq!(sites("s"), vec![dynamic("<Named {name}"), dynamic("{@render")]);
+        let plain = anchored(s, "plain")[0].source_loc().unwrap();
+        assert_eq!(plain.sites().count(), 0);
     });
 }
 
