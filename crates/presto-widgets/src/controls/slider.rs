@@ -294,6 +294,9 @@ impl Slider {
 }
 
 impl Kind for Slider {
+    fn parts() -> &'static [&'static str] {
+        &["track", "fill", "rest", "thumb", "tick", "mark-label", "value", "label"]
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }

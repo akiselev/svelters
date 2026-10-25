@@ -119,6 +119,9 @@ impl Switch {
 }
 
 impl Kind for Switch {
+    fn parts() -> &'static [&'static str] {
+        &["track", "knob", "label"]
+    }
     fn prop_state(&self) -> crate::interact::StateBits {
         self.mirror(crate::interact::StateBits::NONE)
     }

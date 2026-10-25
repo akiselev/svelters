@@ -52,6 +52,9 @@ impl Stack {
 }
 
 impl Kind for Stack {
+    fn places_children() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
