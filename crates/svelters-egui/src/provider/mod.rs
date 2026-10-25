@@ -636,7 +636,9 @@ impl WidgetCx<'_> {
     /// the paint primitives read.
     pub fn style(&self, ua: crate::paint::Ua) -> crate::paint::StyleView<'_> {
         let css = self.s.style.computed(self.node).map(|c| &**c);
-        crate::paint::StyleView::new(css, ua, self.state, self.dark).with_overlay(self.s.style.overlay(self.node))
+        // DZ2b: with a tool's forced states
+        let state = self.state | self.s.forced_bits(self.i);
+        crate::paint::StyleView::new(css, ua, state, self.dark).with_overlay(self.s.style.overlay(self.node))
     }
 
     /// OW-CSS: part `name`'s view under `host` (this node's [`WidgetCx::style`]): its
