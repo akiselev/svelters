@@ -95,11 +95,18 @@ listed.
 | every kind (`Widget`) | `anchor`, `anchor-scope`, `invalid`, `dialog-role`, `status-tip`, `status-section`, `drag-data`, `drag-type`, `drop-types`, `source-loc` (runtime-set, dev builds) | `drag-begin`, `drag-end`, `drag-enter`, `drag-leave`, `drop` |
 | `button` | `default`, `cancel` | |
 | `label` | `selectable`, `selection-start`, `selection-end`, `for` | |
+| `slider` | | `submit` |
 
 `focus-scope` on `box`/`frame` maps onto core's common `focus-scope`. Every other hosted kind
 (`toggle-button`, `checkbox`, `radio-button`, `switch`, `progress-bar`, `spinner`, `separator`, `icon`, `image`,
 `hyperlink`, `stack`, `sides`, `grid`, `frame`, `box`) takes all its own surface props. Placeholders
 (`window`, `slider`, `text-edit`, runs) are not listed: they are not presto-widgets' yet.
+
+Slider (2026-10-25, against `ci/presto-widgets-basic` c089c816, merged into this branch): registered through
+`host::register_tier0` (all 18 kinds); every slider prop maps, its enums by name (a surface enum value is remapped
+to the widget's index on write and back on read, so the two tables may order values differently; a surface value
+the widget lacks makes the prop `Side`). The run kinds (`span`, `b`, `i`, `code`, `a` folded into `label`) are
+not on that branch yet; they stay placeholders and the label error stays (Q7).
 
 Decided (coordinator, 2026-10-25): Q7 presto-widgets' label will take inline run children (WIDGETS-BASIC); the explicit error stays until then, then runs map onto it. `surface/tier0.rs` stays the JS-facing table. Q5 publish core's `tabindex`/`focus-scope` on `Widget` later, not now; Q6
 as above.

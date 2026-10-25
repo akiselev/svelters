@@ -1,9 +1,9 @@
 //! The JS-facing kinds ([`crate::surface`]) on presto-core's kinds, and the wire ids the ABI and
 //! `presto.json` speak.
 //!
-//! **Kinds.** A surface kind whose widget presto-widgets has written (the Tier 0 controls and
-//! containers; not yet `window`, `slider`, `text-edit` and the inline runs) is registered
-//! through `presto_widgets::host::register`; every other concrete kind gets a core kind synthesized
+//! **Kinds.** A surface kind whose widget presto-widgets has written (the 18 Tier 0 controls and
+//! containers; not yet `window`, `text-edit` and the inline runs) is registered through
+//! `presto_widgets::host::register_tier0`; every other concrete kind gets a core kind synthesized
 //! from its surface spec ([`Placeholder`]: the props, signals and slots are real tree members, the
 //! node draws nothing) until its widget lands. Abstract bases (`Widget`, `Run`) have no core kind.
 //!
@@ -136,27 +136,38 @@ pub const COMMON_ALIASES: &[(&str, &str, bool)] = &[
 
 /// The kinds presto-widgets has written, registered through its host bridge.
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
-    use presto_widgets::controls as c;
-    use presto_widgets::host::register;
-    Ok(vec![
-        register::<c::Button>(reg)?,
-        register::<c::box_::FlexBox>(reg)?,
-        register::<c::checkbox::Checkbox>(reg)?,
-        register::<c::frame::Frame>(reg)?,
-        register::<c::grid::Grid>(reg)?,
-        register::<c::hyperlink::Hyperlink>(reg)?,
-        register::<c::icon::Icon>(reg)?,
-        register::<c::image::Image>(reg)?,
-        register::<c::label::Label>(reg)?,
-        register::<c::progress::ProgressBar>(reg)?,
-        register::<c::radio::RadioButton>(reg)?,
-        register::<c::separator::Separator>(reg)?,
-        register::<c::sides::Sides>(reg)?,
-        register::<c::spinner::Spinner>(reg)?,
-        register::<c::stack::Stack>(reg)?,
-        register::<c::switch::Switch>(reg)?,
-        register::<c::toggle_button::ToggleButton>(reg)?,
-    ])
+    let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
+    presto_widgets::host::register_tier0(reg)?;
+    Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
+}
+
+/// Whether surface type `t` can live in core prop `c`: the same core type and, for an enum, every
+/// surface name among core's values (the index is remapped by name, [`enum_to_core`]).
+fn fits(t: ValueType, c: &core::PropSpec) -> bool {
+    c.ty == core_type(t)
+        && match t {
+            ValueType::Enum(names) => names.iter().all(|n| c.enum_values.contains(n)),
+            _ => true,
+        }
+}
+
+/// A surface enum index as core prop `c`'s index (by name).
+pub fn enum_to_core(t: ValueType, c: &core::PropSpec, i: u16) -> Option<u32> {
+    let ValueType::Enum(names) = t else { return Some(i as u32) };
+    let name = names.get(i as usize)?;
+    c.enum_values.iter().position(|v| v == name).map(|p| p as u32)
+}
+
+/// Core prop `c`'s enum index as the surface index (by name).
+pub fn enum_from_core(t: ValueType, c: &core::PropSpec, i: u32) -> Option<u16> {
+    let ValueType::Enum(names) = t else { return Some(i as u16) };
+    let name = c.enum_values.get(i as usize)?;
+    names.iter().position(|v| v == name).map(|p| p as u16)
+}
+
+/// The core spec of prop `p` on core kind `k` (its own, else a common one).
+pub fn core_prop(reg: &KindRegistry, k: core::KindId, p: core::PropId) -> Option<&'static core::PropSpec> {
+    reg.get(k).and_then(|e| e.prop(p)).or_else(|| core::common::prop(p))
 }
 
 /// The core type of a surface type (lists are lists, colours colours).
@@ -411,8 +422,8 @@ impl Kinds {
                     (None, Some(e)) => e
                         .spec
                         .prop_named(p.name)
-                        .filter(|&id| e.prop(id).is_some_and(|s| s.ty == core_type(p.ty)))
-                        .or_else(|| core::common::COMMON.prop_named(p.name).filter(|&id| core::common::prop(id).is_some_and(|s| s.ty == core_type(p.ty))))
+                        .filter(|&id| e.prop(id).is_some_and(|s| fits(p.ty, s)))
+                        .or_else(|| core::common::COMMON.prop_named(p.name).filter(|&id| core::common::prop(id).is_some_and(|s| fits(p.ty, s))))
                         .map_or(PropTarget::Side, PropTarget::Native),
                     (None, None) => PropTarget::Side,
                 };
@@ -491,7 +502,8 @@ mod tests {
         let label = k.by_tag("label").unwrap();
         assert_eq!(label.prop_named("enabled").unwrap().wire, button.prop_named("enabled").unwrap().wire);
         assert!(label.hosted);
-        assert!(!k.by_tag("slider").unwrap().hosted, "slider is a placeholder until presto-widgets has it");
+        assert!(k.by_tag("slider").unwrap().hosted);
+        assert!(!k.by_tag("text-edit").unwrap().hosted, "text-edit is a placeholder until presto-widgets has it");
         assert!(k.by_tag("window").unwrap().core.is_some());
     }
 }

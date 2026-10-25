@@ -3481,7 +3481,7 @@
       },
       "slot_ids": {},
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "presto-widgets"
     },
     "Span": {
       "a11y": {

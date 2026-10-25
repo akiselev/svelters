@@ -64,7 +64,8 @@ fn ids_are_presto_core_hashes() {
     assert_eq!(widget["props"]["enabled"]["native"], "disabled");
     assert_eq!(widget["props"]["accessible-name"]["native"], "aria-label");
     assert_eq!(button["widget"], "presto-widgets");
-    assert_eq!(spec["kinds"]["Slider"]["widget"], "placeholder");
+    assert_eq!(spec["kinds"]["Slider"]["widget"], "presto-widgets");
+    assert_eq!(spec["kinds"]["TextEdit"]["widget"], "placeholder");
 }
 
 #[test]

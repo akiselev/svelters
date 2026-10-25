@@ -352,7 +352,18 @@ impl PrestoBackend {
                 };
                 return Ok(());
             }
-            PropTarget::Native(pid) => (pid, value::to_core(v)),
+            PropTarget::Native(pid) => {
+                let cv = match v {
+                    // enums travel by name: the widget may order its values differently
+                    surface::Value::Enum(i) => {
+                        let c = crate::kinds::core_prop(self.0.kinds.registry(), m.core.expect("a live node's kind"), pid).ok_or_else(|| format!("<{}> {}: no presto prop", m.tag(), pm.spec.name))?;
+                        let ci = crate::kinds::enum_to_core(pm.spec.ty, c, i).ok_or_else(|| format!("<{}> {}: the value is not one presto has", m.tag(), pm.spec.name))?;
+                        Some(presto_core::Value::Enum(ci))
+                    }
+                    v => value::to_core(v),
+                };
+                (pid, cv)
+            }
             PropTarget::Inverted(pid) => (pid, value::to_core(v).map(|v| presto_core::Value::Bool(!v.as_bool().unwrap_or(false)))),
         };
         let write = |d: &mut Document| match v {
@@ -530,7 +541,12 @@ impl Backend for PrestoBackend {
         let pm = km.prop(prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", km.tag()))?;
         let stored = match pm.target {
             PropTarget::Side => self.0.side.borrow().get(&(n, prop)).cloned(),
-            PropTarget::Native(pid) => self.0.doc.borrow().get_prop(n, pid).map(|v| value::from_core(&v)),
+            PropTarget::Native(pid) => self.0.doc.borrow().get_prop(n, pid).map(|v| match v {
+                presto_core::Value::Enum(ci) => crate::kinds::core_prop(self.0.kinds.registry(), km.core.expect("a live node's kind"), pid)
+                    .and_then(|c| crate::kinds::enum_from_core(pm.spec.ty, c, ci))
+                    .map_or(surface::Value::Null, surface::Value::Enum),
+                v => value::from_core(&v),
+            }),
             PropTarget::Inverted(pid) => self.0.doc.borrow().get_prop(n, pid).and_then(|v| v.as_bool()).map(|b| surface::Value::Bool(!b)),
         };
         let v = stored.unwrap_or_else(|| pm.spec.default.value());
