@@ -37,11 +37,18 @@ Public main-thread extras: `set_text_input_client`, `text_input_changed`, `set_o
 - In simple IME mode (no client) `replacementRange` cannot be honoured (no document); press-and-hold
   accents need a client.
 
-## Not run
+## Not run / CI
 
-Nothing was run on macOS from this container. `cargo check -p presto-platform-macos --target
-aarch64-apple-darwin --all-targets` passes locally (cross-check, no link), and `cargo check` for Linux
-(empty crate). Tests were written, not run (user's instruction). CI: see the report sha.
+- Nothing ran on a Mac interactively: windows, IME (Japanese/Chinese/Korean, dead keys, press-and-hold,
+  dictation, Character Viewer), VoiceOver, tablets, display links and live resize are unverified on
+  hardware (platform.md §8 checks).
+- Local: `cargo check -p presto-platform-macos --target aarch64-apple-darwin --all-targets` (cross-check,
+  no link) and the Linux build (empty crate).
+- CI presto run 40226739671 on bef22840: `cargo check` passed on macos-latest, ubuntu and windows;
+  `presto-platform-macos` unit tests passed on macOS. `cargo test` failed on other lanes' targets
+  (`presto-compositor --test engine`, `--test tree_damage`, `presto-core --lib`, `presto-widgets --lib`:
+  slider tests), not this crate.
+- The facade constructor is `MacPlatform::new().run(handler)` (and `run_mac` with the macOS callbacks).
 
 ## Additions outside the crate
 
