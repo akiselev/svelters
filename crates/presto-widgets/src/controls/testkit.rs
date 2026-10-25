@@ -4,7 +4,7 @@
 #![allow(dead_code)]
 
 use crate::interact::{FocusReason, Policy, StateBits};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, MeasureCx, PropId, RecordCx, Styles, Value};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, MeasureCx, PrepareCx, PropId, RecordCx, Styles, Value};
 use crate::shim::testing::{MemResources, MonoShaper};
 use presto_base::accesskit;
 use presto_base::display::{DisplayList, Prim};
@@ -31,6 +31,14 @@ pub fn measure(k: &dyn Kind, state: StateBits) -> Size {
     let avail = taffy::Size { width: taffy::AvailableSpace::MaxContent, height: taffy::AvailableSpace::MaxContent };
     let s = k.measure(&mut cx, taffy::Size { width: None, height: None }, avail);
     Size::new(s.width, s.height)
+}
+
+/// Runs the kind's `prepare` at `size` in `state` (what presto-core does after layout, before
+/// recording and the events that follow).
+pub fn prepare(k: &mut dyn Kind, size: Size, state: StateBits) {
+    let mut text = MonoShaper;
+    let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], state, dark: true }, text: &mut text };
+    k.prepare(&mut cx);
 }
 
 /// The kind's AccessKit node.
