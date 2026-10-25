@@ -1,1 +1,2 @@
-//! presto's own platform backend (`plans/cloud/presto-b3/`).
+//! presto's own macOS platform backend (`plans/research/presto/platform.md` §5, W-P5).
+#![cfg(target_os = "macos")]
