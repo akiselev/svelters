@@ -118,3 +118,4 @@ when the five svelters workflows plus `presto` are green.
   workspace check clean. FIX-QUEUE routed (coordinator, 2026-10-25): F1/F2 COMPOSITOR; F3–F5 CORE-3; F6 already fixed
   (966d4d75, base c65b2e79); F7 done (svelters-presto 80189479); F8 TextServices + F9 backend selection to APP-TEST;
   F10 presto.yml checks presto-widgets `dialogs` (this commit); F11 berth/quire at consolidation 2; F13 at consolidation 2.
+- CORE-3 final ceaf16b8 and COMPOSITOR 9a58f1c4 merged (177731fd): F1–F5 fixed (presto-core --lib 119/119 locally). Slider tests disputed (CORE-3: fail; WIDGETS-BASIC: 19/19 pass after 966d4d75); consolidation 1 settles it. Done lanes now: CORE, CORE-2, CORE-3, PLATFORM, RENDER, RUNTIME, WIDGETS-BASIC, BERTH, QUIRE.
