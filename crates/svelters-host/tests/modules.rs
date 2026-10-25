@@ -216,7 +216,7 @@ fn styles_are_reported_not_silently_dropped() {
     host.load_from(provider.clone()).unwrap();
     let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
     // LD2: the live path applies `<style>` on egui; the other backends' sheets come from the Vite build
-    assert!(warnings.iter().any(|w| w.contains("<style> is applied from source on egui only")), "{warnings:?}");
+    assert!(warnings.iter().any(|w| w.contains("<style> is applied from source only on backends that run the CSS engine")), "{warnings:?}");
 }
 
 /// LD2: on egui a component's scoped sheet is its own `svelters-style:` module (`registerStyles(id,
