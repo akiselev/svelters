@@ -9,9 +9,10 @@ use svelters_host::exports::TypeRef;
 /// Kind ids of provider kinds: pack 62 (`62 << 22 | local`; CUSTOM-WIDGETS.md §3.2).
 pub const PROVIDER_PACK: u32 = 62 << 22;
 const PACK_MASK: u32 = 0x3F << 22;
-/// The owner field (`id >> 16`) of a provider kind's member ids: `0x8000 | (local + 1)`; built-in
-/// kind ids stay below it.
-const PROVIDER_OWNER: u32 = 0x8000;
+/// The owner field (`id >> 16`) of a provider kind's member ids: `0x800 | (local + 1)`; built-in
+/// kind ids stay below it. Member ids keep the top 4 bits free (the listen flags of
+/// `SVL_SIGNAL_FLAGS_SHIFT` travel there), so the owner field has 12 bits.
+const PROVIDER_OWNER: u32 = 0x800;
 
 /// A provider kind in the registry.
 pub struct ProviderKind {
@@ -50,7 +51,7 @@ impl ProviderKind {
 /// id (indexes `KINDS.len() + local`, kind ids `62 << 22 | (local + 1)`, so ids are stable for a
 /// given binary). A duplicate tag or spec id, or one that collides with a built-in, fails at
 /// startup. Member ids are `owner << 16 | number`: for a built-in kind the declaring kind's id and
-/// the member's number in the table, for a provider kind `0x8000 | (local + 1)` and the member's
+/// the member's number in the table, for a provider kind `0x800 | (local + 1)` and the member's
 /// index + 1.
 ///
 /// Built-in definitions are references into [`KINDS`] itself (callers compare them by address,

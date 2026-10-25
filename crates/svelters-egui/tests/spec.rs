@@ -210,6 +210,14 @@ fn registry_ids_are_the_tables() {
             assert_eq!(id, row.id << 16 | u32::from(n), "{}.{}: signal id", k.id, s.name);
         }
     }
+    // the top 4 bits of a signal id carry its listen flags (ABI `SVL_SIGNAL_FLAGS_SHIFT`): no
+    // member id, built-in or provider, may reach them
+    for i in reg.indexes() {
+        for s in reg.kind(i).signals {
+            let (id, _) = reg.find_signal(i, s.name).unwrap();
+            assert_eq!(id & !svelters_abi::SVL_SIGNAL_ID_MASK, 0, "{}.{}: id {id:#x} reaches the flag bits", reg.kind(i).id, s.name);
+        }
+    }
 }
 
 /// W-C1: the spec carries the ids and the spec hash; every built-in kind, prop and signal has an id

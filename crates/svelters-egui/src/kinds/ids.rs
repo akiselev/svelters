@@ -8,7 +8,8 @@
 //!
 //! The wire id of a member is `kind id << 16 | number`, with the kind id of the kind that declares
 //! it. Provider kinds (`#[svelters::widget]`) are per binary and keep positional ids: kind ids
-//! `62 << 22 | (local + 1)`, member owners `0x8000 | (local + 1)`.
+//! `62 << 22 | (local + 1)`, member owners `0x800 | (local + 1)`. Member ids leave their top 4 bits
+//! to the listen flags (`SVL_SIGNAL_FLAGS_SHIFT`), so built-in kind ids stay below `0x800`.
 //!
 //! A kind or member missing from the table still gets an id (after the table's, in table order)
 //! so a build works, but `tests/spec.rs` fails until the table is regenerated
@@ -59,7 +60,7 @@ impl IdFile {
         let str_of = |k: &str| j.get(k).and_then(J::as_str).map(str::to_string).ok_or_else(|| format!("no `{k}`"));
         let mut kinds = BTreeMap::new();
         for (name, row) in j.get("kinds").and_then(J::as_object).ok_or("no `kinds`")? {
-            let id = row.get("id").and_then(J::as_u64).ok_or_else(|| format!("kind {name}: no `id`"))? as u32;
+            let id = row.get("id").and_then(J::as_u64).filter(|&id| id > 0 && id < 0x800).ok_or_else(|| format!("kind {name}: no `id` below 0x800"))? as u32;
             let mut k = KindIds { id, ..KindIds::default() };
             for (c, key) in CATS {
                 for (m, n) in row.get(key).and_then(J::as_object).into_iter().flatten() {
@@ -137,7 +138,7 @@ impl StableIds {
             return r.id;
         }
         let id = self.file.kinds.values().map(|r| r.id).max().unwrap_or(0) + 1;
-        assert!(id < 0x8000, "svelters-egui: built-in kind ids are below 0x8000");
+        assert!(id < 0x800, "svelters-egui: built-in kind ids are below 0x800 (provider member owners start there)");
         self.file.kinds.insert(kind.to_string(), KindIds { id, ..KindIds::default() });
         self.by_id.insert(id, kind.to_string());
         self.added = true;
