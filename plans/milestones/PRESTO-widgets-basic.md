@@ -45,10 +45,14 @@ branch (a: part styles; b: listened signals; c: `emit_sync`, used by hyperlink `
 `Document::set_auto_default` (call `host::install`); j: `focus_anchor`, `for` → `labelled_by`).
 
 Still open:
-- Cancelable `changed` of checkbox, radio-button, switch, toggle-button, frame and slider: they emit it as a
-  plain signal; switching them to `emit_sync` (and skipping the write when prevented) is a follow-up.
-- Light-dismiss presses routed to open floating surfaces (`Dismissable`).
-- Folding the run children's computed CSS (per-run colour, size, background).
+- (done, on CORE-3's sync delivery at ci/presto-base b387ef42) `changed` of checkbox, radio-button, switch,
+  toggle-button, frame and slider is cancelable: emitted through `emit_sync` before the write, which a
+  prevented `changed` skips (a sibling's follow-up `changed` in a radio or toggle group stays a plain signal).
+- Light dismiss: the widget side is done (`Event::OutsidePress`, `Kind::light_dismiss`, `Dismissable` reads
+  `InputFrame::outside_press`); presto-core must deliver a press outside an open surface's subtree to every
+  node whose `light_dismiss` is on (requested from CORE-3), and the bridge maps it then.
+- Run children: computed colour, weight and italic fold (done); per-run size and background do not (the
+  records have no field).
 
 ## Questions for the coordinator (with recommendations)
 

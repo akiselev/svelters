@@ -83,11 +83,14 @@ pub struct Driver<K: Kind> {
     pub changed: Vec<&'static str>,
     pub wake: Option<Time>,
     pub handled: Vec<Handled>,
+    /// Signals a listener prevents (delivered at event time through `emit_sync`, recorded in
+    /// `signals` when they happen); empty: no sync delivery, every signal is queued.
+    pub prevent: Vec<&'static str>,
 }
 
 impl<K: Kind> Driver<K> {
     pub fn new(kind: K, size: Size) -> Driver<K> {
-        Driver { kind, state: StateBits::NONE, policy: Policy::default(), size, now: Time(1_000_000_000), focused: false, signals: Vec::new(), changed: Vec::new(), wake: None, handled: Vec::new() }
+        Driver { kind, state: StateBits::NONE, policy: Policy::default(), size, now: Time(1_000_000_000), focused: false, signals: Vec::new(), changed: Vec::new(), wake: None, handled: Vec::new(), prevent: Vec::new() }
     }
 
     pub fn set(&mut self, prop: &str, v: Value) {
@@ -104,13 +107,25 @@ impl<K: Kind> Driver<K> {
     pub fn send(&mut self, ev: Event) -> Handled {
         let spec = self.kind.kind_spec();
         let policy = self.policy;
+        let prevent = self.prevent.clone();
+        let mut synced: Vec<(&'static str, Vec<Value>)> = Vec::new();
+        let mut sync = |sig: crate::shim::core::SignalId, args: &[Value]| -> bool {
+            let name = spec.signals[sig.0 as usize].name;
+            synced.push((name, args.to_vec()));
+            prevent.contains(&name)
+        };
         let mut cx = EventCx::new(self.now, self.size, &mut self.state, &policy);
         cx.focused = self.focused;
+        if !self.prevent.is_empty() {
+            cx.sync = Some(&mut sync);
+        }
         let h = self.kind.event(&mut cx, &ev);
         let emitted = std::mem::take(&mut cx.emitted);
         let changed = std::mem::take(&mut cx.changed);
         let focus = cx.focus_request;
         self.wake = cx.wake;
+        drop(cx);
+        self.signals.extend(synced);
         for e in emitted {
             self.signals.push((spec.signals[e.signal.0 as usize].name, e.args));
         }
