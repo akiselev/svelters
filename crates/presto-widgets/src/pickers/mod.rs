@@ -21,6 +21,7 @@
 //! | [`popup`] | the drop button's open/close, the Save/Cancel footer, chevron glyphs |
 //! | [`date_picker`], [`color_picker`] | the drop kinds |
 //! | [`spec`] | the four kinds' prop and signal names (the svelters spec rows) |
+//! | [`kinds`] | the presto-core `KindSpec`s, and the `Kind` impls of `calendar` and `color-editor` |
 
 pub mod calendar;
 pub mod color;
@@ -28,6 +29,7 @@ pub mod color_editor;
 pub mod color_picker;
 pub mod date;
 pub mod date_picker;
+pub mod kinds;
 pub mod popup;
 pub mod spec;
 
