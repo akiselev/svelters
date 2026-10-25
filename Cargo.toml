@@ -1,24 +1,24 @@
 [workspace]
 resolver = "3"
 members = [
-    "crates/presto-base",
-    "crates/presto-core",
-    "crates/presto-anim",
-    "crates/presto-frame",
-    "crates/presto-text",
-    "crates/presto-render",
-    "crates/presto-canvas",
-    "crates/presto-compositor",
-    "crates/presto-platform",
-    "crates/presto-widgets",
-    "crates/presto-motion",
-    "crates/presto-egui-island",
-    "crates/presto-test",
-    "crates/presto",
-    "crates/svelters-presto",
-    "crates/presto-platform-win32",
-    "crates/presto-platform-wayland",
-    "crates/presto-platform-macos",
+    "crates/skelter-base",
+    "crates/skelter-core",
+    "crates/skelter-anim",
+    "crates/skelter-frame",
+    "crates/skelter-text",
+    "crates/skelter-render",
+    "crates/skelter-canvas",
+    "crates/skelter-compositor",
+    "crates/skelter-platform",
+    "crates/skelter-widgets",
+    "crates/skelter-motion",
+    "crates/skelter-egui-island",
+    "crates/skelter-test",
+    "crates/skelter",
+    "crates/svelters-skelter",
+    "crates/skelter-platform-win32",
+    "crates/skelter-platform-wayland",
+    "crates/skelter-platform-macos",
     "crates/svelters-abi",
     "crates/svelters-host",
     "crates/svelters-backend-log",
@@ -54,21 +54,21 @@ license = "MIT"
 publish = false
 
 [workspace.dependencies]
-presto-base = { path = "crates/presto-base" }
-presto-core = { path = "crates/presto-core" }
-presto-anim = { path = "crates/presto-anim" }
-presto-frame = { path = "crates/presto-frame" }
-presto-text = { path = "crates/presto-text" }
-presto-render = { path = "crates/presto-render" }
-presto-canvas = { path = "crates/presto-canvas" }
-presto-compositor = { path = "crates/presto-compositor" }
-presto-platform = { path = "crates/presto-platform" }
-presto-widgets = { path = "crates/presto-widgets" }
-presto-motion = { path = "crates/presto-motion" }
-presto-egui-island = { path = "crates/presto-egui-island" }
-presto-test = { path = "crates/presto-test" }
-presto = { path = "crates/presto" }
-svelters-presto = { path = "crates/svelters-presto" }
+skelter-base = { path = "crates/skelter-base" }
+skelter-core = { path = "crates/skelter-core" }
+skelter-anim = { path = "crates/skelter-anim" }
+skelter-frame = { path = "crates/skelter-frame" }
+skelter-text = { path = "crates/skelter-text" }
+skelter-render = { path = "crates/skelter-render" }
+skelter-canvas = { path = "crates/skelter-canvas" }
+skelter-compositor = { path = "crates/skelter-compositor" }
+skelter-platform = { path = "crates/skelter-platform" }
+skelter-widgets = { path = "crates/skelter-widgets" }
+skelter-motion = { path = "crates/skelter-motion" }
+skelter-egui-island = { path = "crates/skelter-egui-island" }
+skelter-test = { path = "crates/skelter-test" }
+skelter = { path = "crates/skelter" }
+svelters-skelter = { path = "crates/svelters-skelter" }
 svelters-abi = { path = "crates/svelters-abi" }
 svelters-host = { path = "crates/svelters-host" }
 svelters-style = { path = "crates/svelters-style" }
@@ -93,7 +93,7 @@ serde = "1"
 # RA2: `Json<T>` typings (cadatomic uses schemars 1).
 schemars = "1"
 cc = "1"
-# presto (plans/research/presto/): third-party versions shared by the presto crates.
+# skelter (plans/research/skelter/): third-party versions shared by the skelter crates.
 accesskit = "0.25.1"
 smallvec = { version = "1.16", features = ["union", "const_generics"] }
 bytemuck = { version = "1.25", features = ["derive"] }
@@ -107,7 +107,7 @@ lyon = "1.0"
 
 # QuickJS is C compiled by the cc crate; at the dev profile's opt-level 0 it runs 5-10x slower, which
 # makes JS-heavy tests (10k-row lists) hit the host's turn budget. Optimise it in every profile.
-# presto: taffy runs on every relayout; Zed builds it at opt-level 3 in dev for the same reason.
+# skelter: taffy runs on every relayout; Zed builds it at opt-level 3 in dev for the same reason.
 [profile.dev.package.taffy]
 opt-level = 3
 

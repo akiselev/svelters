@@ -1,4 +1,4 @@
-//! W-C4: change classes (presto `compiler-and-js.md` §3.4).
+//! W-C4: change classes (skelter `compiler-and-js.md` §3.4).
 //!
 //! Tags each dynamic prop write with its prop's `change` class from the spec, each `class:`
 //! toggle (and dynamic class set) with the costliest class of what the component's rules for

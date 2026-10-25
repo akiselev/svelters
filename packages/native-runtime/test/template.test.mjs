@@ -1,4 +1,4 @@
-// W-C1 and W-C2 (presto, lane COMPILER): the template expansion writes the same op log as the
+// W-C1 and W-C2 (skelter, lane COMPILER): the template expansion writes the same op log as the
 // per-node ops the compiler writes without templates, and module ids are checked against the
 // host before their first use. Run with the package's `pnpm test`.
 import { test } from 'node:test';

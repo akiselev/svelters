@@ -40,7 +40,7 @@ pub struct ScopedCss {
     /// output (`--json`) as `map`, the [`ScopedCss::source_map_text`] text.
     #[serde(rename = "map", serialize_with = "map_text")]
     pub source_map: Vec<(u32, u32, u32)>,
-    /// presto `css_precompiled` (release builds): the sheet as `svelters_style::binary` bytes,
+    /// skelter `css_precompiled` (release builds): the sheet as `svelters_style::binary` bytes,
     /// with rule hints per element and the resolved utility rules; `None` in dev, on other
     /// backends, or when the engine's parser reports something about the sheet (the text path
     /// then carries it, with its diagnostics).
@@ -100,7 +100,7 @@ pub fn parse_source_map(text: &str) -> Option<Vec<(u32, u32, u32)>> {
         .collect()
 }
 
-/// presto `css_precompiled`: the scoped sheet `code` parsed by the engine and written as bytes, with
+/// skelter `css_precompiled`: the scoped sheet `code` parsed by the engine and written as bytes, with
 /// per element the rules Svelte's pruning says might apply (`candidates`) and those that match it
 /// in any context (`always`). A rule maps to the Svelte rule whose selector list holds its start
 /// (through the sheet's source map); a rule that maps to none, or that has an entirely global

@@ -1,4 +1,4 @@
-//! Precompiled sheets (presto `css_precompiled`, compiler-and-js.md §3.7): a component's scoped
+//! Precompiled sheets (skelter `css_precompiled`, compiler-and-js.md §3.7): a component's scoped
 //! sheet parsed at compile time and written as bytes, with what the compiler knows about its
 //! elements, so loading skips the sheet parser and restyling tests fewer rules.
 //!

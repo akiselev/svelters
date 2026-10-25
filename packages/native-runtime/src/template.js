@@ -1,4 +1,4 @@
-// W-C2 (plans/research/presto/compiler-and-js.md §3.2): native templates, the runtime side.
+// W-C2 (plans/research/skelter/compiler-and-js.md §3.2): native templates, the runtime side.
 //
 // A module compiled for a backend with the `templates` capability declares each element subtree
 // whose static part the compiler knows once, at module scope (`template(hash, nodes, listeners)`),

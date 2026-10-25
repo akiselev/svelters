@@ -12,7 +12,7 @@
 //! [`Element`]; the compiler can link the parser for diagnostics (Q3).
 
 mod atom;
-/// Precompiled sheets (presto `css_precompiled`): a sheet, its element hints and utility rules as bytes.
+/// Precompiled sheets (skelter `css_precompiled`): a sheet, its element hints and utility rules as bytes.
 pub mod binary;
 mod cascade;
 mod computed;

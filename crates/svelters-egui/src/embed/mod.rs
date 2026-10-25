@@ -120,7 +120,7 @@ pub struct EmbedConfig {
     /// U3 (UTILITY-CSS §4.6, UQ8): utility classes (`p-4 bg-surface hover:bg-list-hover`). Off by
     /// default; [`EmbedConfig::with_utilities`]. [`EguiBackend::set_utilities`] changes it later.
     pub utilities: crate::style::Utilities,
-    /// W-H1 (plans/research/presto/compiler-and-js.md §3.10): widget signals (`onclicked`,
+    /// W-H1 (plans/research/skelter/compiler-and-js.md §3.10): widget signals (`onclicked`,
     /// `onchanged`, `bind:`) are only known during the walk, where JS cannot run. On by default:
     /// a pass whose walk sent any to JS is discarded (`Context::request_discard`) and rerun with
     /// logic first, so the handlers run and their reaction is drawn in the frame that got the

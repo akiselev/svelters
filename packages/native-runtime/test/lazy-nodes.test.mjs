@@ -1,4 +1,4 @@
-// W-C3 (plans/research/presto/compiler-and-js.md §3.3): runtime nodes carry every field as their
+// W-C3 (plans/research/skelter/compiler-and-js.md §3.3): runtime nodes carry every field as their
 // own (no read falls through to the provider-method proxy) and create their collections on first
 // use; `setp` is the typed scalar write, deduped in JS unless the host dedupes (`host.dedupes`).
 // Run: node --import ./test/register.mjs --test test/lazy-nodes.test.mjs

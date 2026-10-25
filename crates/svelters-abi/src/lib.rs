@@ -123,11 +123,11 @@ pub const SVL_STYLE_INERT: u32 = 10;
 /// "delay":ms,"frames":[{"opacity":o,"transform":[6],"clip":[2]},..]}`, or `{"id":n,"cancel":true}`.
 /// The backend interpolates and reports the end with the `animationend` signal (argument: the id).
 /// A backend without it refuses the op (an error) and the runtime plays the animation itself.
-/// presto (`native_transitions`): an optional `"native":{"kind","params","computed","t1","t2"[,"flip"]}`
-/// names the svelte/transition built-in or `flip` the frames came from (crates/presto-motion `op`);
+/// skelter (`native_transitions`): an optional `"native":{"kind","params","computed","t1","t2"[,"flip"]}`
+/// names the svelte/transition built-in or `flip` the frames came from (crates/skelter-motion `op`);
 /// other backends ignore it.
 pub const SVL_STYLE_ANIMATE: u32 = 11;
-/// presto (`css_precompiled`): a precompiled sheet, `id SEP base64` of `svelters_style::binary`
+/// skelter (`css_precompiled`): a precompiled sheet, `id SEP base64` of `svelters_style::binary`
 /// bytes (the sheet, rule hints per element, utility rules); replaces sheet `id` like `SVL_STYLE_SHEET`.
 pub const SVL_STYLE_SHEET_BIN: u32 = 12;
 /// `SVL_STYLE_TARGET` answers: the dialect the backend's sheets use.
@@ -405,7 +405,7 @@ pub struct svl_tpl_listen {
     pub flags: u32,
 }
 
-/// ABI v2.9 (W-C2, plans/research/presto/compiler-and-js.md §3.2): a static subtree. Instantiating
+/// ABI v2.9 (W-C2, plans/research/skelter/compiler-and-js.md §3.2): a static subtree. Instantiating
 /// it is, op for op, this sequence (the host writes it to the op log when it expands one): for
 /// each node in pre-order, `create` and its static props in table order; when a node's subtree is
 /// complete, its `insert` into its template parent (roots are not inserted), then its listeners.

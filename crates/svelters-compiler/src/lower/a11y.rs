@@ -1,4 +1,4 @@
-//! W-C9: accessibility checks from the spec's `a11y` facts (presto `compiler-and-js.md` §3.9):
+//! W-C9: accessibility checks from the spec's `a11y` facts (skelter `compiler-and-js.md` §3.9):
 //! what egui's kittest reports at run time ("widget(s) lack accessible name"), at compile time.
 //!
 //! An element whose kind `requires_name` is named when the element sets one of the kind's

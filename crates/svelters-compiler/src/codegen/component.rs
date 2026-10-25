@@ -16,7 +16,7 @@ use std::collections::{BTreeMap, HashMap};
 /// W-C2: `Item::Template` emission.
 mod template;
 
-/// What codegen emits beyond today's ops, from the backend's capabilities (presto
+/// What codegen emits beyond today's ops, from the backend's capabilities (skelter
 /// `compiler-and-js.md` §3). The default is today's output; template items come from the
 /// lowering (`lower::templates`), which makes them only for a backend with `templates`.
 #[derive(Default)]

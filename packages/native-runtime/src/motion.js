@@ -450,7 +450,7 @@ export class NativeAnimation {
 // `$n.animation`, with their `css` wrapped by `describeNative`: it notes the `t` of the first and
 // the last keyframe Svelte computes, and the next `animate()` on that node sends them in the
 // OP_ANIMATE payload as `native: { kind, params, computed, t1, t2 }` next to the frames. A backend
-// that evaluates the formulas itself (presto, crates/presto-motion `op`) plays them at its own
+// that evaluates the formulas itself (skelter, crates/skelter-motion `op`) plays them at its own
 // refresh rate; every other backend reads only the frames.
 
 /** svelte/easing's functions by identity -> their export names (transition.js adds its private copies). */

@@ -20,7 +20,7 @@ mod lists;
 pub mod native_reads;
 pub mod portability;
 pub mod template_await;
-// presto (`plans/research/presto/compiler-and-js.md` §3): W-C2 templates, W-C4 change classes,
+// skelter (`plans/research/skelter/compiler-and-js.md` §3): W-C2 templates, W-C4 change classes,
 // W-C5 passive listeners, W-C9 accessibility checks
 pub mod templates;
 pub mod change;

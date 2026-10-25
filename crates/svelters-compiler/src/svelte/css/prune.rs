@@ -124,7 +124,7 @@ pub struct Pruner<'c, 'p, 'a> {
     synth: &'p Synthetic,
     /// `element.metadata.scoped`
     pub scoped: HashSet<NodeKey>,
-    /// SVELTERS (presto `css_precompiled`): (complex selector id, element) for every element a
+    /// SVELTERS (skelter `css_precompiled`): (complex selector id, element) for every element a
     /// complex selector might apply to.
     pub matched: Vec<(usize, NodeKey)>,
     /// SVELTERS: complex selectors that are entirely global (they may match any element).

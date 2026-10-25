@@ -1,4 +1,4 @@
-// W-C1 (plans/research/presto/compiler-and-js.md §3.1): stable ids. A module compiled for a
+// W-C1 (plans/research/skelter/compiler-and-js.md §3.1): stable ids. A module compiled for a
 // backend with the `ids` capability names kinds and props by the spec's stable integer ids
 // (`$n.element_id($$K_Label)`, `$n.setp(node, $$P_Label_text, v)`; `setp` is index.js's scalar
 // fast path, which takes a name or an id) and declares them once with

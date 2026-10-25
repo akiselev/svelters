@@ -1,3 +1,5 @@
+> presto is now skelter (user, 2026-10-25: "go with svelters-skelter"): read `presto-*`/`presto_*`/`Presto*`/`PRESTO_*` below as `skelter-*`/`skelter_*`/`Skelter*`/`SKELTER_*`; branch and batch names keep presto.
+
 # presto batch 2 (wave 2: widgets, the svelters backend, the app runner, tests, island, motion): common brief
 
 Date: 2026-10-25. Coordinator: `session_01CqZ417NuvkRujZaYSm7Pwo`. **Everything in

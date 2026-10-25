@@ -87,7 +87,7 @@ static CODES: &[CodeInfo] = &[
     own("legacy_forwarding_lowered", "svelters::event::forwarding_lowered", Note, "A bare `on:x` forwards the component's own `onx` callback prop (FW1); once per component.", ""),
     own("sync_handler_arguments", "svelters::event::sync_handler_arguments", Warning, "A handler of a sync signal declares a parameter for a signal argument, but listeners get `(event, ...args)`.", ""),
     own("sync_handler_return", "svelters::event::sync_handler_return", Warning, "The return value of a sync signal's listener is ignored.", ""),
-    // presto W-C5: passive listeners (`compiler-and-js.md` §3.5; backends with the `passive` capability)
+    // skelter W-C5: passive listeners (`compiler-and-js.md` §3.5; backends with the `passive` capability)
     own("nonpassive_scroll_listener", "svelters::event::nonpassive_scroll_listener", Warning, "A listener of a scrolling or pointer-tracking signal can cancel its event, so the toolkit waits for JavaScript on every event.", ""),
     own("passive_listener_cancels", "svelters::event::passive_listener_cancels", Warning, "`|passive` on a listener whose handler cancels the event; a passive listener's `preventDefault` does nothing.", REMOVE_MODIFIER),
     own("nonpassive_redundant", "svelters::event::nonpassive_redundant", Warning, "`|nonpassive` on a listener whose handler never cancels the event: the toolkit waits for it for nothing.", REMOVE_MODIFIER),
@@ -105,9 +105,9 @@ static CODES: &[CodeInfo] = &[
     own("bind_and_prop", "svelters::bind::and_prop", Error, "A property is both bound with `bind:` and set explicitly on the same element.", ""),
     own("dynamic_element_bind", "svelters::bind::dynamic_element", Error, "`bind:` on `<svelte:element>`: the binding plan needs the element's kind at compile time.", ""),
     own("native_read_not_observable", "svelters::reactivity::native_read_not_observable", Warning, "A reactive context reads a native property whose changes are not announced, so it does not rerun when the property changes (error under `--strict-native`).", ""),
-    // presto W-C4: change classes (`compiler-and-js.md` §3.4; dev builds)
+    // skelter W-C4: change classes (`compiler-and-js.md` §3.4; dev builds)
     own("layout_write_per_frame", "svelters::change::layout_write_per_frame", Warning, "A layout property is driven by a variable a per-frame handler (wheel, pointer move) sets: every event relayouts.", ""),
-    // presto W-C9: accessibility (`compiler-and-js.md` §3.9; the spec's `a11y` facts)
+    // skelter W-C9: accessibility (`compiler-and-js.md` §3.9; the spec's `a11y` facts)
     own("a11y_missing_name", "svelters::a11y::missing_name", Warning, "A control that needs an accessible name sets none of the props that name it.", ""),
     own("a11y_icon_only_control", "svelters::a11y::icon_only_control", Warning, "A control shows only an icon and sets none of the props that name it.", ""),
     // slots and child placement

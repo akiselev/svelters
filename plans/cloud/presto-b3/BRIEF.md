@@ -1,3 +1,5 @@
+> presto is now skelter (user, 2026-10-25: "go with svelters-skelter"): read `presto-*`/`presto_*`/`Presto*`/`PRESTO_*` below as `skelter-*`/`skelter_*`/`Skelter*`/`SKELTER_*`; branch and batch names keep presto.
+
 # presto batch 3, early lanes: own platform backends
 
 Date: 2026-10-25. Coordinator: `session_01CqZ417NuvkRujZaYSm7Pwo`. **`plans/cloud/presto-b1/BRIEF.md` applies**

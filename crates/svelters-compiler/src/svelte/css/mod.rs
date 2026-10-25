@@ -138,7 +138,7 @@ pub struct CssOutput {
     /// DZ0: the runs of `code` that are untouched `<style>` text: `(offset in code, offset from
     /// the style content's start, length)`, bytes
     pub source_map: Vec<(u32, u32, u32)>,
-    /// SVELTERS (presto `css_precompiled`): what pruning found, per rule.
+    /// SVELTERS (skelter `css_precompiled`): what pruning found, per rule.
     pub matches: SelectorMatches,
 }
 

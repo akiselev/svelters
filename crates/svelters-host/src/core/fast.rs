@@ -1,4 +1,4 @@
-//! The engine-agnostic halves of the fast host ops (plans/research/presto/compiler-and-js.md §3.2,
+//! The engine-agnostic halves of the fast host ops (plans/research/skelter/compiler-and-js.md §3.2,
 //! §5.4 option (a)): typed scalar prop writes by id with no conversion tree (W-J1), and native
 //! templates (W-C2): a static subtree registered once, then built per instance with one host call,
 //! by the backend (`instantiate`) or by this module's expansion into today's ops.

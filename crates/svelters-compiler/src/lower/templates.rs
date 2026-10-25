@@ -1,4 +1,4 @@
-//! W-C2: native templates, the lowering side (presto `compiler-and-js.md` §3.2). For a backend
+//! W-C2: native templates, the lowering side (skelter `compiler-and-js.md` §3.2). For a backend
 //! with the `templates` capability, every element subtree whose structure and static writes are
 //! known here becomes an [`Item::Template`]; codegen writes it as a module-scope table and one
 //! `$n.instantiate` (`codegen::component::template`).

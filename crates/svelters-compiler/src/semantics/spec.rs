@@ -51,7 +51,7 @@ pub struct Spec {
     /// Fragments append to it.
     #[serde(default)]
     pub bind_sources: Vec<BindSourceSpec>,
-    /// The new op shapes the backend's runtime path accepts (presto `compiler-and-js.md` §2):
+    /// The new op shapes the backend's runtime path accepts (skelter `compiler-and-js.md` §2):
     /// [`capability::IDS`], [`capability::TEMPLATES`], ... Codegen emits them only for a backend
     /// that lists them; every other backend keeps today's ops.
     #[serde(default)]
@@ -74,7 +74,7 @@ pub mod capability {
     /// string constants with underscores as diagnostic codes.)
     pub const CHANGE_CLASSES: &str = r"change_classes";
     /// MOTION-CSS: svelte/transition's built-ins and svelte/animate's `flip` as `$n.transition_native`
-    /// / `$n.flip_native` (presto evaluates them from their parameters).
+    /// / `$n.flip_native` (skelter evaluates them from their parameters).
     pub const NATIVE_TRANSITIONS: &str = r"native_transitions";
     /// MOTION-CSS: `svelte/motion` is imported from `svelters:motion`.
     pub const NATIVE_MOTION: &str = r"native_motion";

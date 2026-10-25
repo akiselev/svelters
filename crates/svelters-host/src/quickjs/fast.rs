@@ -1,4 +1,4 @@
-//! W-J1 (plans/research/presto/compiler-and-js.md §5.4 option (a), §5.5): the hot host ops as raw
+//! W-J1 (plans/research/skelter/compiler-and-js.md §5.4 option (a), §5.5): the hot host ops as raw
 //! QuickJS C functions, and node wrappers whose handlers the GC traces.
 //!
 //! A raw C function gets the interpreter's own argument slots and an integer `magic`, so a call

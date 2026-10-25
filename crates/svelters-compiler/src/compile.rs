@@ -174,7 +174,7 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     // U4: `@apply` expanded before scoping and the engine's check
     let no_utilities = crate::utilities::UtilityCheck::default();
     let apply = crate::utilities::apply::expand(src, &root, opts.backend, opts.utilities.as_ref().unwrap_or(&no_utilities), &mut diags);
-    // presto `css_precompiled`: release builds get the sheet as bytes too (dev keeps the text path
+    // skelter `css_precompiled`: release builds get the sheet as bytes too (dev keeps the text path
     // for HMR CSS edits)
     let utility_tokens = opts.utilities.as_ref().map(|u| u.utility_tokens());
     let precompile = (opts.scoped_css && !opts.dev && opts.backend.has_capability(capability::CSS_PRECOMPILED)).then(|| crate::scoped_css::Precompile {
@@ -193,7 +193,7 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     let is_setter = |name: &str| opts.backend.is_setter_property(name);
     let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags, &is_setter));
     let mut ir = lower(&root, opts.backend, sheet.as_ref(), css_scope, apply.as_ref(), &mut diags);
-    // presto (`plans/research/presto/compiler-and-js.md` §3): change classes (W-C4), the
+    // skelter (`plans/research/skelter/compiler-and-js.md` §3): change classes (W-C4), the
     // accessibility checks (W-C9), then templates (W-C2) for a backend that takes them
     crate::lower::change::tag(&mut ir.root, opts.backend, src, &root, &mut diags, opts.dev);
     crate::lower::a11y::check(&ir.root, opts.backend, &mut diags);

@@ -436,7 +436,7 @@ export function sameValue(a, b) {
 
 /**
  * Whether `toolkit` runs the Rust CSS engine in process (its spec's `style.engine` is `backend`: egui,
- * presto), so bundles send it raw CSS (style target 4).
+ * skelter), so bundles send it raw CSS (style target 4).
  */
 function runsCssEngine(toolkit) {
   try {
@@ -450,7 +450,7 @@ export async function runBundle({ bundlePath, script, toolkit, styleDialect = to
   const th = createTestHost({ toolkit });
   if (styleDialect === 'qss' || styleDialect === 'engine') {
     // answer the Qt dialect (style target 2), so the bundle applies the Qt style table; or the
-    // engine target (4: egui since CS5e, presto), so it sends raw CSS as those backends get it
+    // engine target (4: egui since CS5e, skelter), so it sends raw CSS as those backends get it
     const style = th.host.style;
     const target = styleDialect === 'qss' ? 2 : 4;
     th.host.style = (op, h, text) => (op === 0 ? target : style(op, h, text));

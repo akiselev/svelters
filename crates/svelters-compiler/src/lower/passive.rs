@@ -1,4 +1,4 @@
-//! W-C5: passive-listener inference (presto `compiler-and-js.md` §3.5).
+//! W-C5: passive-listener inference (skelter `compiler-and-js.md` §3.5).
 //!
 //! A listener is passive when it cannot cancel its event: the signal is not cancelable, or the
 //! handler is a function literal that takes no parameter, or whose event parameter is only ever

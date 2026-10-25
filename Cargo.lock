@@ -4138,268 +4138,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8cf8e6a8aa66ce33f63993ffc4ea4271eb5b0530a9002db8455ea6050c77bfa"
 
 [[package]]
-name = "presto"
-version = "0.0.0"
-dependencies = [
- "presto-base",
- "presto-compositor",
- "presto-core",
- "presto-frame",
- "presto-platform",
- "presto-platform-macos",
- "presto-platform-wayland",
- "presto-platform-win32",
- "presto-text",
- "presto-widgets",
- "wgpu",
-]
-
-[[package]]
-name = "presto-anim"
-version = "0.0.0"
-dependencies = [
- "presto-base",
-]
-
-[[package]]
-name = "presto-base"
-version = "0.0.0"
-dependencies = [
- "accesskit",
- "bytemuck",
- "smallvec",
-]
-
-[[package]]
-name = "presto-canvas"
-version = "0.0.0"
-dependencies = [
- "bytemuck",
- "lyon",
- "naga",
- "pollster 0.4.0",
- "presto-base",
- "skrifa",
- "wgpu",
-]
-
-[[package]]
-name = "presto-compositor"
-version = "0.0.0"
-dependencies = [
- "log",
- "presto-anim",
- "presto-base",
- "presto-canvas",
- "presto-frame",
- "presto-platform",
- "presto-render",
- "smallvec",
- "wgpu",
-]
-
-[[package]]
-name = "presto-core"
-version = "0.0.0"
-dependencies = [
- "accesskit",
- "presto-anim",
- "presto-base",
- "smallvec",
- "svelters-style",
- "taffy",
-]
-
-[[package]]
-name = "presto-egui-island"
-version = "0.0.0"
-dependencies = [
- "accesskit",
- "accesskit_consumer",
- "egui",
- "egui-wgpu",
- "pollster 0.4.0",
- "presto-base",
- "presto-compositor",
- "presto-core",
- "presto-platform",
- "wgpu",
-]
-
-[[package]]
-name = "presto-frame"
-version = "0.0.0"
-dependencies = [
- "presto-base",
-]
-
-[[package]]
-name = "presto-motion"
-version = "0.0.0"
-dependencies = [
- "presto-anim",
- "presto-base",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "presto-platform"
-version = "0.0.0"
-dependencies = [
- "accesskit",
- "accesskit_macos",
- "accesskit_unix",
- "accesskit_windows",
- "arboard",
- "libc",
- "log",
- "objc2 0.5.3",
- "objc2-app-kit 0.2.2",
- "objc2-foundation 0.2.2",
- "objc2-quartz-core 0.2.2",
- "presto-base",
- "raw-window-handle",
- "rfd",
- "smallvec",
- "smithay-clipboard",
- "wayland-backend",
- "wayland-client",
- "wayland-protocols",
- "windows",
- "winit",
-]
-
-[[package]]
-name = "presto-platform-macos"
-version = "0.0.0"
-dependencies = [
- "accesskit",
- "accesskit_macos",
- "block2 0.6.2",
- "dispatch2",
- "muda",
- "objc2 0.6.5",
- "objc2-app-kit 0.3.2",
- "objc2-core-foundation",
- "objc2-core-graphics",
- "objc2-core-video",
- "objc2-foundation 0.3.2",
- "objc2-metal 0.3.2",
- "objc2-quartz-core 0.3.2",
- "presto-base",
- "presto-platform",
- "raw-window-handle",
-]
-
-[[package]]
-name = "presto-platform-wayland"
-version = "0.0.0"
-dependencies = [
- "ashpd",
- "futures-lite",
- "presto-base",
- "presto-platform",
- "raw-window-handle",
- "rustix 1.1.5",
- "smallvec",
- "smithay-client-toolkit 0.20.0",
- "wayland-backend",
- "wayland-client",
- "wayland-cursor",
- "wayland-protocols",
- "xkbcommon-dl",
- "xkeysym",
-]
-
-[[package]]
-name = "presto-platform-win32"
-version = "0.0.0"
-dependencies = [
- "accesskit_windows",
- "presto-base",
- "presto-platform",
- "raw-window-handle",
- "smallvec",
- "windows",
- "windows-core 0.62.2",
-]
-
-[[package]]
-name = "presto-render"
-version = "0.0.0"
-dependencies = [
- "bytemuck",
- "etagere",
- "lyon",
- "naga",
- "png 0.18.1",
- "pollster 0.4.0",
- "presto-base",
- "presto-canvas",
- "presto-text",
- "smallvec",
- "wgpu",
-]
-
-[[package]]
-name = "presto-test"
-version = "0.0.0"
-dependencies = [
- "dify",
- "egui",
- "egui-wgpu",
- "image",
- "pollster 0.4.0",
- "presto",
- "presto-base",
- "presto-core",
- "presto-egui-island",
- "presto-platform",
- "presto-render",
- "presto-test",
- "presto-text",
- "presto-widgets",
- "svelters-automation",
- "svelters-egui",
- "svelters-host",
- "svelters-modules",
- "wgpu",
-]
-
-[[package]]
-name = "presto-text"
-version = "0.0.0"
-dependencies = [
- "fontique",
- "parley",
- "png 0.18.1",
- "presto-base",
- "presto-core",
- "skrifa",
-]
-
-[[package]]
-name = "presto-widgets"
-version = "0.0.0"
-dependencies = [
- "presto-anim",
- "presto-base",
- "presto-core",
- "presto-platform",
- "presto-text",
- "quire-text",
- "resvg",
- "rfd",
- "roxmltree 0.20.0",
- "serde_json",
- "smallvec",
- "svelters-conformance",
- "svelters-style",
- "taffy",
-]
-
-[[package]]
 name = "proc-macro-crate"
 version = "3.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5002,6 +4740,268 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "33f4fe9184a62d842c9ef383018f3306d8ba224fd9d836f56d7288308847c256"
 
 [[package]]
+name = "skelter"
+version = "0.0.0"
+dependencies = [
+ "skelter-base",
+ "skelter-compositor",
+ "skelter-core",
+ "skelter-frame",
+ "skelter-platform",
+ "skelter-platform-macos",
+ "skelter-platform-wayland",
+ "skelter-platform-win32",
+ "skelter-text",
+ "skelter-widgets",
+ "wgpu",
+]
+
+[[package]]
+name = "skelter-anim"
+version = "0.0.0"
+dependencies = [
+ "skelter-base",
+]
+
+[[package]]
+name = "skelter-base"
+version = "0.0.0"
+dependencies = [
+ "accesskit",
+ "bytemuck",
+ "smallvec",
+]
+
+[[package]]
+name = "skelter-canvas"
+version = "0.0.0"
+dependencies = [
+ "bytemuck",
+ "lyon",
+ "naga",
+ "pollster 0.4.0",
+ "skelter-base",
+ "skrifa",
+ "wgpu",
+]
+
+[[package]]
+name = "skelter-compositor"
+version = "0.0.0"
+dependencies = [
+ "log",
+ "skelter-anim",
+ "skelter-base",
+ "skelter-canvas",
+ "skelter-frame",
+ "skelter-platform",
+ "skelter-render",
+ "smallvec",
+ "wgpu",
+]
+
+[[package]]
+name = "skelter-core"
+version = "0.0.0"
+dependencies = [
+ "accesskit",
+ "skelter-anim",
+ "skelter-base",
+ "smallvec",
+ "svelters-style",
+ "taffy",
+]
+
+[[package]]
+name = "skelter-egui-island"
+version = "0.0.0"
+dependencies = [
+ "accesskit",
+ "accesskit_consumer",
+ "egui",
+ "egui-wgpu",
+ "pollster 0.4.0",
+ "skelter-base",
+ "skelter-compositor",
+ "skelter-core",
+ "skelter-platform",
+ "wgpu",
+]
+
+[[package]]
+name = "skelter-frame"
+version = "0.0.0"
+dependencies = [
+ "skelter-base",
+]
+
+[[package]]
+name = "skelter-motion"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "skelter-anim",
+ "skelter-base",
+]
+
+[[package]]
+name = "skelter-platform"
+version = "0.0.0"
+dependencies = [
+ "accesskit",
+ "accesskit_macos",
+ "accesskit_unix",
+ "accesskit_windows",
+ "arboard",
+ "libc",
+ "log",
+ "objc2 0.5.3",
+ "objc2-app-kit 0.2.2",
+ "objc2-foundation 0.2.2",
+ "objc2-quartz-core 0.2.2",
+ "raw-window-handle",
+ "rfd",
+ "skelter-base",
+ "smallvec",
+ "smithay-clipboard",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-protocols",
+ "windows",
+ "winit",
+]
+
+[[package]]
+name = "skelter-platform-macos"
+version = "0.0.0"
+dependencies = [
+ "accesskit",
+ "accesskit_macos",
+ "block2 0.6.2",
+ "dispatch2",
+ "muda",
+ "objc2 0.6.5",
+ "objc2-app-kit 0.3.2",
+ "objc2-core-foundation",
+ "objc2-core-graphics",
+ "objc2-core-video",
+ "objc2-foundation 0.3.2",
+ "objc2-metal 0.3.2",
+ "objc2-quartz-core 0.3.2",
+ "raw-window-handle",
+ "skelter-base",
+ "skelter-platform",
+]
+
+[[package]]
+name = "skelter-platform-wayland"
+version = "0.0.0"
+dependencies = [
+ "ashpd",
+ "futures-lite",
+ "raw-window-handle",
+ "rustix 1.1.5",
+ "skelter-base",
+ "skelter-platform",
+ "smallvec",
+ "smithay-client-toolkit 0.20.0",
+ "wayland-backend",
+ "wayland-client",
+ "wayland-cursor",
+ "wayland-protocols",
+ "xkbcommon-dl",
+ "xkeysym",
+]
+
+[[package]]
+name = "skelter-platform-win32"
+version = "0.0.0"
+dependencies = [
+ "accesskit_windows",
+ "raw-window-handle",
+ "skelter-base",
+ "skelter-platform",
+ "smallvec",
+ "windows",
+ "windows-core 0.62.2",
+]
+
+[[package]]
+name = "skelter-render"
+version = "0.0.0"
+dependencies = [
+ "bytemuck",
+ "etagere",
+ "lyon",
+ "naga",
+ "png 0.18.1",
+ "pollster 0.4.0",
+ "skelter-base",
+ "skelter-canvas",
+ "skelter-text",
+ "smallvec",
+ "wgpu",
+]
+
+[[package]]
+name = "skelter-test"
+version = "0.0.0"
+dependencies = [
+ "dify",
+ "egui",
+ "egui-wgpu",
+ "image",
+ "pollster 0.4.0",
+ "skelter",
+ "skelter-base",
+ "skelter-core",
+ "skelter-egui-island",
+ "skelter-platform",
+ "skelter-render",
+ "skelter-test",
+ "skelter-text",
+ "skelter-widgets",
+ "svelters-automation",
+ "svelters-egui",
+ "svelters-host",
+ "svelters-modules",
+ "wgpu",
+]
+
+[[package]]
+name = "skelter-text"
+version = "0.0.0"
+dependencies = [
+ "fontique",
+ "parley",
+ "png 0.18.1",
+ "skelter-base",
+ "skelter-core",
+ "skrifa",
+]
+
+[[package]]
+name = "skelter-widgets"
+version = "0.0.0"
+dependencies = [
+ "quire-text",
+ "resvg",
+ "rfd",
+ "roxmltree 0.20.0",
+ "serde_json",
+ "skelter-anim",
+ "skelter-base",
+ "skelter-core",
+ "skelter-platform",
+ "skelter-text",
+ "smallvec",
+ "svelters-conformance",
+ "svelters-style",
+ "taffy",
+]
+
+[[package]]
 name = "skrifa"
 version = "0.44.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5370,27 +5370,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "svelters-presto"
-version = "0.0.0"
-dependencies = [
- "presto",
- "presto-base",
- "presto-compositor",
- "presto-core",
- "presto-motion",
- "presto-platform",
- "presto-test",
- "presto-text",
- "presto-widgets",
- "serde_json",
- "smallvec",
- "svelters-abi",
- "svelters-host",
- "svelters-modules",
- "svelters-style",
-]
-
-[[package]]
 name = "svelters-qt-build"
 version = "0.0.0"
 dependencies = [
@@ -5400,6 +5379,27 @@ dependencies = [
 [[package]]
 name = "svelters-sched"
 version = "0.0.0"
+
+[[package]]
+name = "svelters-skelter"
+version = "0.0.0"
+dependencies = [
+ "serde_json",
+ "skelter",
+ "skelter-base",
+ "skelter-compositor",
+ "skelter-core",
+ "skelter-motion",
+ "skelter-platform",
+ "skelter-test",
+ "skelter-text",
+ "skelter-widgets",
+ "smallvec",
+ "svelters-abi",
+ "svelters-host",
+ "svelters-modules",
+ "svelters-style",
+]
 
 [[package]]
 name = "svelters-style"

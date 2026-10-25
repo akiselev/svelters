@@ -1,4 +1,4 @@
-//! Stable ids of the built-in kinds and their members (W-C1, presto `compiler-and-js.md` §3.1).
+//! Stable ids of the built-in kinds and their members (W-C1, skelter `compiler-and-js.md` §3.1).
 //!
 //! An id is assigned once, in the checked-in table [`IDS_PATH`], and never changes or comes back:
 //! a new kind gets the next kind id, a new prop, signal or method the next number among its kind's

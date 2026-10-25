@@ -15,7 +15,7 @@ Outputs:
   python3 tools/metadata/style/gen_utilities.py            # write
   python3 tools/metadata/style/gen_utilities.py --check    # fail if an output is stale or a check fails
   python3 tools/metadata/style/gen_utilities.py --report   # also print the to-do: table properties no row names,
-                                                           # and the rows presto's style table cannot apply
+                                                           # and the rows skelter's style table cannot apply
 
 The checks (UTILITY-CSS §3.6; any failure is an error):
   - every row's properties are in the egui style table (a row with `requires:` waits as pending);
@@ -39,9 +39,9 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[3]
 SPEC = ROOT / "metadata/semantics/egui.json"
-# presto runs the same engine and utilities (crates/svelters-presto/src/spec.rs); --report lists the
+# skelter runs the same engine and utilities (crates/svelters-skelter/src/spec.rs); --report lists the
 # rows whose properties its style table lacks
-PRESTO_SPEC = ROOT / "metadata/semantics/presto.json"
+SKELTER_SPEC = ROOT / "metadata/semantics/skelter.json"
 VOCAB = ROOT / "metadata/style/utilities.yaml"
 TAILWIND = ROOT / "metadata/style/tailwind-v4.yaml"
 OUT_RS = ROOT / "crates/svelters-style/src/utilities.generated.rs"
@@ -915,9 +915,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  {p}")
         pending = [f"{r['name']} ({r['requires']})" for r in m["rows"] if r["pending"]]
         print("rows waiting for engine items: " + (", ".join(pending) or "none"))
-        presto = json.loads(PRESTO_SPEC.read_text())["style"]["properties"]
-        gaps = [f"{r['name']} ({', '.join(p for p in r['props'] if p not in presto)})" for r in m["rows"] if not r["pending"] and any(p not in presto for p in r["props"])]
-        print("rows presto's style table cannot apply yet: " + (", ".join(gaps) or "none"))
+        skelter = json.loads(SKELTER_SPEC.read_text())["style"]["properties"]
+        gaps = [f"{r['name']} ({', '.join(p for p in r['props'] if p not in skelter)})" for r in m["rows"] if not r["pending"] and any(p not in skelter for p in r["props"])]
+        print("rows skelter's style table cannot apply yet: " + (", ".join(gaps) or "none"))
     stale = []
     for out, text in outputs(m):
         if out.exists() and out.read_text() == text:

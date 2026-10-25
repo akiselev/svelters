@@ -1,3 +1,5 @@
+> presto is now skelter (user, 2026-10-25: "go with svelters-skelter"): read `presto-*`/`presto_*`/`Presto*`/`PRESTO_*` below as `skelter-*`/`skelter_*`/`Skelter*`/`SKELTER_*`; branch and batch names keep presto.
+
 # presto batch 1 (wave 1: foundations): common brief
 
 Date: 2026-10-25. Coordinator: the session that wrote this brief (cadatomic/svelters batch coordinator).

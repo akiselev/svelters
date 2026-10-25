@@ -160,7 +160,7 @@ function assign(tar, src) {
  */
 /**
  * Svelte's `draw`: the stroke dash channels. The path length is the node's `getTotalLength()`
- * when the backend has one (presto's path kinds), else 0.
+ * when the backend has one (skelter's path kinds), else 0.
  */
 export function draw(node, { delay = 0, speed, duration, easing = cubic_in_out } = {}) {
   let len = typeof node.getTotalLength === 'function' ? node.getTotalLength() : 0;

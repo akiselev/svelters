@@ -17,7 +17,7 @@
 //! widget reference; the compiler reads only `a11y`'s `requires_name`, `name_props` and
 //! `icon_props` (W-C9).
 //!
-//! The presto compiler integrations (`plans/research/presto/compiler-and-js.md` §2): the built-in
+//! The skelter compiler integrations (`plans/research/skelter/compiler-and-js.md` §2): the built-in
 //! kinds and their props, signals, methods and slots carry their stable `id` ([`kinds::ids`]) and a
 //! `fingerprint` (a hash of the kind, the member and its type), the spec its `spec_hash` over them;
 //! props and style properties carry their `change` class where it is known, signals `cancelable`

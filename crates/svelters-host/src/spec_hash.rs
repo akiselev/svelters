@@ -1,4 +1,4 @@
-//! W-C1 (presto `compiler-and-js.md` §3.1): the spec hash of each backend in the process. A backend
+//! W-C1 (skelter `compiler-and-js.md` §3.1): the spec hash of each backend in the process. A backend
 //! whose semantic spec carries stable ids registers the hash of those ids here; `host.specHash(backend)`
 //! answers it to the runtime, which compares it with the hash a module was compiled against
 //! (`@svelters/native-runtime` `ids`) instead of checking each id through the resolvers.

@@ -1,8 +1,8 @@
 // `svelters:motion`: svelte/motion's API (`Spring`, `Tween`, `spring`, `tweened`,
 // `prefersReducedMotion`) on a backend with the `native_motion` capability, where the compiler
-// imports it in place of `svelte/motion` (plans/research/presto/compiler-and-js.md §3.6).
+// imports it in place of `svelte/motion` (plans/research/skelter/compiler-and-js.md §3.6).
 //
-// `Spring` follows svelte/motion's spring in closed form (crates/presto-motion `shim::spring`, the
+// `Spring` follows svelte/motion's spring in closed form (crates/skelter-motion `shim::spring`, the
 // same math): Svelte's per-frame integrator at 60 Hz is the linear recurrence
 // `e[n+1] = (2 - k - c) e[n] - (1 - c) e[n-1]` on the error `e = x - target`, so `e[n]` is a sum
 // of powers of its characteristic roots, evaluated here at `n = 60 * seconds`. Values equal

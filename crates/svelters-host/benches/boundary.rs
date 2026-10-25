@@ -1,4 +1,4 @@
-//! W-J0 (plans/research/presto/compiler-and-js.md §5.6 step 5): the JS→Rust crossing on stock
+//! W-J0 (plans/research/skelter/compiler-and-js.md §5.6 step 5): the JS→Rust crossing on stock
 //! QuickJS-NG, per call, for the binding shapes the fork question weighs:
 //!
 //! - an rquickjs `Function::new` closure (today's host ops);

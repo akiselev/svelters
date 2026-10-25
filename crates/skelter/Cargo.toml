@@ -1,0 +1,34 @@
+[package]
+name = "skelter"
+description = "skelter: the app runner tying the platform, the tree, text and the compositor together on the UI thread."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+skelter-base = { workspace = true }
+skelter-core = { workspace = true }
+skelter-frame = { workspace = true }
+skelter-compositor = { workspace = true }
+skelter-platform = { workspace = true }
+skelter-text = { workspace = true }
+skelter-widgets = { workspace = true, features = ["native-menu"] }
+wgpu = { workspace = true }
+
+# The own platform backends (architecture §3, platform.md §5), each on by default on its OS; the facade
+# picks one at start and falls back to skelter-platform's winit backend (`skelter::run`).
+[features]
+default = ["win32", "wayland", "macos"]
+win32 = ["dep:skelter-platform-win32"]
+wayland = ["dep:skelter-platform-wayland"]
+macos = ["dep:skelter-platform-macos"]
+
+[target.'cfg(target_os = "windows")'.dependencies]
+skelter-platform-win32 = { path = "../skelter-platform-win32", optional = true }
+
+[target.'cfg(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly", target_os = "netbsd", target_os = "openbsd"))'.dependencies]
+skelter-platform-wayland = { path = "../skelter-platform-wayland", optional = true }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+skelter-platform-macos = { path = "../skelter-platform-macos", optional = true }

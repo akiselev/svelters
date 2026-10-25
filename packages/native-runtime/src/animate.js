@@ -5,7 +5,7 @@
 // the host's `bounds` (ABI v2.8).
 //
 // MOTION-CSS: `flipNative` is `flip` with its native descriptor (./motion.js `describeNative`): a
-// backend that evaluates it (presto) plays the transform track from the rects and layout size.
+// backend that evaluates it (skelter) plays the transform track from the rects and layout size.
 import { computed, describeNative, easingName } from './motion.js';
 
 /** @param {number} t */

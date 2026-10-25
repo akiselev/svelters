@@ -1,4 +1,4 @@
-//! presto `css_precompiled`: a release build for a backend with the capability gets its scoped
+//! skelter `css_precompiled`: a release build for a backend with the capability gets its scoped
 //! sheet as `svelters_style::binary` bytes, with Svelte's pruning turned into rule hints per
 //! element. The precompiled sheet must style like the text one: same rules, selectors and
 //! declarations as the engine parses from `css.code`.

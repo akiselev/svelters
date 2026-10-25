@@ -170,7 +170,7 @@ function sheetText(entry) {
 
 function pushSheet(id, entry) {
   if (state.target === 'decl') return;
-  // presto `css_precompiled` (release builds): the sheet parsed at compile time, as base64 bytes
+  // skelter `css_precompiled` (release builds): the sheet parsed at compile time, as base64 bytes
   // (svelters_style::binary) with its rule hints; the engine loads it without parsing
   if (state.target === 'engine' && entry.bin) {
     if (entry.sent === entry.bin) return;

@@ -1,0 +1,283 @@
+# SKELTER-app-test: the `skelter` facade (app runner, latency) and `skelter-test`
+
+Lane APP-TEST of batch presto-b2 (`plans/cloud/presto-b2/LANE-app-test.md`). Branch `ci/presto-app-test`,
+session `session_012jLSJr3WKZ7XDr4KKJtnf1`, 2026-10-25. Owns `crates/skelter/**` and `crates/skelter-test/**`.
+Based on `ci/presto-base` 622aef24 (CORE, TEXT, PLATFORM, FRAME-ANIM and COMPOSITOR skeletons merged in).
+
+## What landed
+
+### `skelter` (the app runner)
+
+- `app::App<D: DocumentApi, C: CompositorApi>` implements `skelter_platform::AppHandler`:
+  - **event-time dispatch**: discrete input flushes the window's coalesced input first (order kept),
+    then `Document::dispatch` (stamp `dispatch_end`), then the script host if there are JS-facing events
+    (stamp `js_end`); a change runs an urgent frame when `UiFrameState` allows it, otherwise asks the
+    compositor for a `BeginFrame` (`request_ui_frame`);
+  - **continuous input** (pointer moves, wheel) is coalesced per window (`coalesce`: pointer moves keep
+    every earlier sample in `history`; wheel deltas of one unit and gesture state add; gesture
+    boundaries are never merged) and dispatched at the next UI frame; reports `high_rate_input`;
+  - **`ToUi`**: `BeginFrame` → frame or skip; `CommitApplied` → back-pressure release (re-request when
+    dirty); `Presented` → latency termination; `Animation`/`ScrollMoved` → the document;
+    `DeviceReset` → re-request every window; late `ResizeDone` ignored;
+  - **commit side effects**: `set_cursor`, `set_ime` (area), `update_a11y` (the platform adapter gets each
+    commit's AccessKit update), `ui_cost` for answered `BeginFrame`s, `ui_missed` from `CommitReport::late`;
+  - **windows**: `open_window` creates the platform window, the wgpu surface on the main thread
+    (`CompositorHandle` impl maps `SurfaceTarget::{Raw, CompositionVisual, CoreAnimationLayer}` to
+    `wgpu::SurfaceTargetUnsafe`) and hands it to the compositor; close, occlusion (drops in-flight
+    inputs, one frame when visible again), exit on last window, compositor shutdown in `exiting`;
+  - **resize handshake**: new size → document → urgent frame → `compositor.resize(seq)` → waits up to
+    `AppConfig::resize_wait` (one refresh) for the matching `ResizeDone`, deferring other messages;
+    timeouts are counted;
+  - **AccessKit**: `a11y_event` (`Action` → `accessibility_action` with an urgent frame; `Activated`).
+- `seams`: `DocumentApi`, `CompositorApi`, `ScriptHost<D>`, `Dispatched` — the traits the runner drives.
+- `backends`: `CoreDocument` (wraps `skelter_core::Document`), `impl CompositorApi for CompositorHandle`,
+  `UiFrame` (wraps `skelter_frame::UiFrameState`, mapping document revisions onto its own and retrying a
+  refused `BeginFrame`), `compositor(config, glyphs)` (spawns the real compositor in `init` with the
+  platform's clock).
+- `latency` (architecture §16.3, `scheduler-latency.md` §5): `LatencyRecorder` with one record per
+  `InputSeq` and the 12 stages `os … presented`; terminations `Presented(frame)`, `MergedInto(seq)`,
+  `NoVisualChange`, `Dropped(WindowGone | Timeout)`, each exactly once (a second one, a stamp after the
+  end, an unknown seq and a duplicate begin are recorded `Violation`s); `presented` folds every committed
+  input up to the newest one named (commits fold newer over older); fast commits carry inputs without a UI
+  frame; `frame_stages` takes compositor-side stamps. Log-linear `Histogram` (exact < 128 µs, 64 sub-buckets
+  per octave, < 1 % error, to ~16.7 s) per (segment, class, window), session and a rolling recent window;
+  Chrome-EventLatency segment names; `FrameCounters`; `snapshot_json` (the rpc/MCP surface);
+  `chrome_trace` (Perfetto-readable: thread tracks with phase slices, zero-length stage slices joined by
+  `s`/`t`/`f` flows per input, async segment slices per input).
+
+### `skelter-test`
+
+- `Harness<D>` with kittest's verbs: `new`, `builder()` (`with_size`, `with_scale`, `with_interval`,
+  `with_max_steps`, `with_config`, `build`, `build_unsettled`), `run` (until settled; panics after
+  `max_steps`), `try_run`, `run_until_settled`, `run_for`, `step`, `busy` (why not settled), `state`,
+  `state_mut`, `event` (skelter `InputEvent`), `event_egui`, `window_event`, `set_size`, `set_modifiers`,
+  `key_press`, `key_press_modifiers`, `key_down`, `key_up`, `type_text`, `hover_at`, `click_at`,
+  `click_button_at`, `drag`, `wheel_at`; queries `get_by_label`, `query_by_label`, `get_all_by_label`,
+  `get_by_label_contains`, `get_by_role`, `query_by_role`, `get_by_role_and_label`,
+  `query_by_role_and_label`, `get_by_value`, `query_by_value`, `get_by_author_id`, `query_by_author_id`,
+  `query_all(By)`, `get(By)`, `focused`, `a11y_dump`; `Node` handles with `click`, `click_secondary`,
+  `hover`, `click_accesskit`, `focus`, `action`, `type_text`, `key_press`, `rect`, `label`, `value`,
+  `role`, `author_id`, `toggled`, `is_disabled`, `is_focused`. `get_*` panics on none or several matches.
+- It runs the real `skelter::App` on `skelter_platform::HeadlessPlatform` (input and AccessKit actions are
+  scripted into it, so they take the production path) and its virtual clock; `step` = deliver, advance one
+  interval, vsync, deliver the wake.
+- `HeadlessCompositor` (GPU-less `CompositorApi`): applies folded commits at vsync, `CommitApplied`,
+  `Presented { at: vsync }` naming the commits' and fast commits' input seqs, `BeginFrame` when asked or
+  while an animation runs, `Started`/`Finished` for keyframe and `{duration, bounce}` animations,
+  immediate `ResizeDone`, hidden windows hold their commits.
+- `Harness::render` → `Image` (premultiplied RGBA8, device pixels): the headless compositor folds every
+  applied commit and fast commit into a real `skelter_compositor::tree::WindowTree`; `render` flattens its
+  main surface into a `FrameScene` (full damage, `with_clear`, default white) and draws it with
+  `skelter_render::Renderer` on `skelter_render::headless::HeadlessTarget`, on the environment's adapter
+  (`GpuRender`: default adapter, then the fallback; lavapipe in Linux CI). Glyphs default to skelter-text's
+  `FontRasterizer` over `FontConfig::testing()` (`with_glyphs` overrides). Not drawn: the compositor's own
+  caret, compositor animations' sampled values, OS-layer surfaces.
+- `a11y`: the AccessKit snapshot folded from the app's `update_a11y` calls (unreachable nodes dropped,
+  window-space bounds through ancestor transforms), `By` queries with author ids (EM1).
+- `egui_event::EguiAdapter`: `egui::Event` → skelter input (pointer, buttons with held-button mask, keys by
+  egui name, modifiers with `command` → Cmd/Ctrl, text and IME with char → byte ranges, touch, wheel units
+  and trackpad phases, copy/cut/paste as chords plus a clipboard write, focus, AccessKit requests).
+
+### Tests (written, not run)
+
+- `crates/skelter/tests/latency.rs`: full pipeline → presented with all 11 segments; fold of older inputs;
+  double termination, stamp-after-end, unknown seq and duplicate begin are violations; timeout and window
+  drops; frame without commit; fast commits; bounded ended set; histogram quantiles within 1 %; snapshot
+  and trace shape (one `s`, one `f`, balanced async pairs); pointer-move merge with history; wheel sums with
+  gesture boundaries kept; discrete events never merged.
+- `crates/skelter-test/tests/harness.rs` (a small document: button, label, checkbox, text field): first
+  frame and settle; click through dispatch updates the snapshot (urgent frame counted); a click reaches the
+  screen in one step; queries by role/label/value/author id and bounds; `get` panics on several and on none;
+  Tab focus and Space toggle; `type_text` via AccessKit focus; AccessKit click; egui events; idle steps do
+  nothing; resize handshake; HiDPI sizes in points; `run` waits for a 100 ms compositor animation;
+  **every injected input terminates exactly once** (hover merges, click, keys, drag: 17 seqs, no
+  violations, presented ones carry commit and presented stamps); Chrome trace has flows; closing the last
+  window exits and shuts the compositor down; hidden windows.
+- `crates/skelter-test/tests/render.rs` (`SKELTER_GPU_TESTS=1` only): a committed quad's pixels and the
+  clear colour, a re-recorded list after a key press, and HiDPI output in device pixels.
+
+## Not done (left out, not faked)
+
+- Hover "at once" for continuous input (architecture §11.1) is not separate from the coalesced dispatch:
+  `Document` has no hover-only entry (CORE request 2 below).
+- Physical and svelte/motion springs never end in the headless compositor (no settle time without
+  `skelter_anim::spring`); `busy()` says so. Wiring `skelter_compositor::seams::AnimSampler` in would fix it.
+- `App` does not own a `TextSystem`: the document is built by the caller (`Document::new(registry,
+  Box::new(text_system))`); a `skelter::run(…)` convenience that builds platform + text + compositor +
+  document is for the consolidation, once skelter-render's renderer factory is wired into
+  `CompositorConfig`.
+- PresentMon ETW events and Tracy export (architecture §16.3) are not written; the Chrome JSON trace is.
+
+## Builds and tests run
+
+- `cargo check -p skelter -p skelter-test --all-targets` and `cargo clippy … -- -D warnings`: clean (only
+  skelter-core's own dead-code warnings appear).
+- No tests run locally (per the batch rule). CI: see the report to the coordinator.
+- Note: the `skelter` workflow's crate list is `ls -d crates/skelter-*`, which **excludes `crates/skelter`**;
+  its tests (`tests/latency.rs`) run only in linux-gtk's workspace `cargo nextest run`. Recommend adding
+  `crates/skelter` to the list (coordinator's file).
+
+## Cross-lane edits
+
+None. `Cargo.lock` gained skelter's and skelter-test's dependency edges.
+
+## Requests and questions (each with a recommendation)
+
+1. **CORE: `Document::needs_frame(window) -> bool`.** `CoreDocument` approximates it with "revision moved
+   since this window's last frame", so every transaction (even a hover that changed nothing) costs a UI
+   frame that commits nothing. Recommend exposing the window's dirty state (`RootDirty`/journal non-empty).
+2. **CORE: a hover-only update for continuous input** (`Document::hover(window, pos)`), so `:hover` changes at
+   event time while JS still gets the coalesced move at the frame (§11.1). Recommend adding it.
+3. **CORE: AccessKit actions.** `Document` has no action handler; `CoreDocument` only maps `Focus` by
+   assuming AccessKit ids equal skelter `NodeId`s. Recommend `Document::accessibility_action(window,
+   &ActionRequest) -> bool` and documenting the id mapping of the a11y projection.
+4. **CORE: animation events, window focus/theme, device reset, AT activation** have no `Document` entry;
+   `CoreDocument` drops them (documented). Recommend `Document::{animation_event, window_event,
+   device_reset, a11y_full_tree}`.
+5. **CORE: the IME purpose with the area.** `Commit::ime_area` has no purpose; `App` sends `Text`.
+   Recommend an `ime: Option<(Rect, InputPurpose)>` (skelter-base additive: a new field) or a focus-driven
+   `ImeState` from the document.
+6. **COMPOSITOR: publish `FrameArgs`** (next target, `D_ui`, `est_ui_input`, idle, visible) for the UI
+   thread. Without it `UiFrameState::on_urgent_input` always runs urgent frames for `now` when idle.
+   Recommend a `CompositorHandle::frame_args(window) -> Option<FrameArgs>` (seqlock/atomic snapshot).
+7. **COMPOSITOR: compositor-side latency stamps** (`draw`, `submit`, `gpu_done`, `present`) never reach the
+   UI thread; `LatencyRecorder::frame_stages` is ready for them. Recommend adding them to
+   `ToUi::Presented` (skelter-base: new fields are breaking for struct-literal builders, so a new
+   `ToUi::FrameTimings` variant, which breaks exhaustive matches; the coordinator's call). Until then the
+   `CommitToDraw … PresentToPresented` segments stay empty and `InputToPresented` is still exact.
+8. **COMPOSITOR: back-pressure on `request_ui_frame`.** `App` relies on the compositor holding a requested
+   `BeginFrame` until the in-flight commit is applied (scheduler-latency §2.11); `UiFrame` also re-requests
+   after a refused `BeginFrame`. Please confirm the engine does that.
+9. **CI: add `crates/skelter` to the skelter workflow's crate list** (see above).
+10. **COMPOSITOR (a bug, not a design question): no "UI frame skipped" signal.** `IntervalPacer` sets
+    `ui_sent` when it sends `BeginUiFrame` and clears it only on `CommitArrived`, so a `BeginFrame` the UI
+    answers with nothing (no damage) stops all further `BeginFrame`s for that window. Stopgap on this
+    branch: `CompositorApi::ui_frame_skipped`, which the `CompositorHandle` impl answers with an empty
+    commit (no ops, revision 0, no input; the tree only moves its revision forward). Recommend
+    `CompositorHandle::ui_frame_skipped(window, frame)` → `Signal::UiFrameSkipped { frame }` clearing
+    `ui_sent` (skelter-frame's `FrameClock` should take the same signal), then the impl calls it.
+11. **TEXT-INPUT's `TextServices` (asked by the coordinator 2026-10-25 19:28):** not wired yet; the API
+    is on `ci/presto-text-input` 0030df69, not in base. A TODO naming the call sits in `App::init`
+    (`crates/skelter/src/app.rs`). One design note for the consolidation: the platform clipboard is only
+    reachable through `&mut dyn PlatformCx` during a handler call, so a `TextServices` installed once in
+    a thread-local cannot hold it. Recommend that the services own their own
+    `skelter_platform::SystemClipboard` (or `MemoryClipboard` headless), and that the fast-commit channel
+    be a clone of the compositor handle (`CompositorApi::fast`). `skelter` then needs a dependency on
+    `skelter-widgets`.
+    **Decided (coordinator, 2026-10-25):** `TextServices` owns its own `skelter_platform::SystemClipboard`
+    (`MemoryClipboard` headless) and a clone of the compositor handle for caret fast commits; the
+    consolidation wires it at the TODO in `App::init`.
+
+## Update (2026-10-25, after base 2a12e530+)
+
+- `Harness::render` landed (above). Not run locally (no Vulkan ICD in this container); CI's lavapipe run
+  is its first run.
+- Adopted COMPOSITOR's new handle API: `needs_ui_frame(window, true)` for frame requests,
+  `ui_frame_skipped` (request 10 is done, the empty-commit stopgap is gone), `ui_input_cost` for frames
+  that handled discrete input; `ToUi::Occluded` from the frame source hides/shows the window like
+  `WindowEvent::Occluded`.
+- COMPOSITOR's answers adopted (base merge of 3cbd9595): `frame_args` feeds `UiFrameState::set_args`
+  before each urgent decision (request 6 done); `ToUi::FrameTimings` stamps draw/submit/gpu_done/present,
+  amending records `Presented` already ended and adding the segments it completes (request 7 done); after
+  each commit the app asks for a frame again when the tree is still dirty (the caveat to request 8).
+- `CoreDocument::with_widgets(doc, root_kind, text, policy, theme)` calls `skelter_widgets::host::install`
+  (base 0ef700c1); `skelter` now depends on skelter-widgets and skelter-text. The TextServices TODO in
+  `App::init` names both calls.
+- CORE-3's answers adopted (base 96426b4a; requests 1–5 done): `CoreDocument` now calls
+  `Document::{needs_frame, hover, accessibility_action, a11y_full_tree, window_event, device_reset,
+  animation_event, ime_state, take_fast_commits}` (its revision approximation is gone). `App` hovers
+  coalesced pointer moves at event time (`DocumentApi::hover`) and sends the platform the focused
+  field's IME area and purpose (`DocumentApi::ime_state`, falling back to `Commit::ime_area`) only when
+  it changes. New harness tests: event-time hover, the IME following focus.
+
+## Consolidation items F8 and F9 (coordinator, 2026-10-25 20:02)
+
+Branch `ci/presto-app-test` with `ci/presto-base` 4756b7ca, `ci/presto-text-input` 300b2660 and
+`ci/presto-integration` 65ead449 merged in (all clean, no conflicts).
+
+- **F8 (text services).** TEXT-INPUT's text kind no longer has a `TextServices` trait: it reads the
+  document's services (`TextSystem`, `Policy`, `Box<dyn skelter_platform::Clipboard>`) and sends the caret
+  through skelter-core's fast channel. So: `CoreDocument::with_widgets` calls `skelter_widgets::host::install`
+  (text system, policy, theme); `App::init` installs the clipboard (`DocumentApi::install_clipboard` →
+  `Document::set_service::<Box<dyn Clipboard>>`): `SystemClipboard::new(display)` for the first window's
+  display, `MemoryClipboard` when there is none (headless). `App` drains `Document::take_fast_commits()`
+  to the compositor after each input, window event, AccessKit action and compositor message, and before
+  each commit. The TODO is gone. (The decided "compositor handle clone" is not needed: core's fast
+  channel replaced it.)
+- **F9 (backend selection).** `skelter::run(handler) -> Result<Backend, PlatformError>` (`run.rs`): Win32 on
+  Windows, AppKit on macOS, Wayland on Linux/BSD with `WAYLAND_DISPLAY`, each behind a default-on feature
+  (`win32`, `wayland`, `macos`; target-cfg optional dependencies), else skelter-platform's winit backend.
+  An own backend that errors before calling `init` falls back to winit (the app is shared through a
+  forwarding handler, so it is not lost); `SKELTER_BACKEND=winit` forces winit, `SKELTER_BACKEND=native`
+  disables the fallback. No test (it needs a display); CI builds it on all three OSes.
+
+## Menu bar, single selection, caret blink (coordinator, 2026-10-25 22:12)
+
+- CI on c091234d: `skelter` (14) and `skelter-test` (harness 20, render 2 on Metal, lib 13) green; the red
+  jobs were other lanes' (reported).
+- **Menus:** `AppHandler::menu_activated(cx, id)` → `DocumentApi::menu_activated(id)`, then an urgent frame
+  for each window the document dirtied; `DocumentApi::take_menu_bar()` → `PlatformCx::set_menu_bar` after
+  each commit and menu event. `CoreDocument` keeps it a small hook until skelter-widgets' views expose the
+  menu bar's dispatch and `MenuModel::to_menu_desc`: `publish_menu_bar(Option<MenuDesc>)` and
+  `on_menu(MenuHandler)`. `skelter::run`'s forwarding handler forwards `menu_activated`.
+- **Single selection:** `CoreDocument::with_widgets` calls `Document::set_single_selection(policy.one_selection_owner)`
+  (true under the GTK policy).
+- **Caret blink:** `with_widgets` derives it from `TextPolicy::from_policy(Platform::current(), &policy)`
+  (`caret_blink_ms`, 0 = steady; `caret_blink_timeout_ms`); `App::open_window` sends it with
+  `CompositorApi::set_caret_blink` → `CompositorHandle::set_caret_blink`.
+- **Services:** match text-edit's lookups: `skelter_text::TextSystem` (`host::install`) and
+  `Box<dyn skelter_platform::Clipboard>` (`install_clipboard`).
+- Tests: `menu_items_reach_the_document_with_an_urgent_frame`, `new_windows_get_the_policy_caret_blink`
+  (`Harness::menu_activated`; the headless compositor records caret blinks). The headless platform does
+  not record `set_menu_bar` (its default returns false), so menu-bar publishing has no harness assertion.
+
+## Native menu bar, refresh and ppi, headless set_menu_bar (coordinator, 2026-10-25 22:18)
+
+Merged `ci/presto-widgets-views` 2226e000 (conflict in `crates/skelter-widgets/Cargo.toml` resolved by keeping
+both sides; see the cross-lane edits) and `ci/presto-base`.
+
+- **Menu bar, real path.** `CoreDocument` finds the `menu-bar` nodes of its windows (tree walk from each
+  root; it now tracks its windows). `take_menu_bar` reads the first bar's `MenuBar::to_menu_desc()` through
+  `Kind::as_any` and returns it when it differs from what was sent; `App` calls `set_menu_bar` and then
+  `DocumentApi::menu_bar_native(answer)`, which sets the bars' `native-bar` prop. `menu_activated(id)` calls
+  `menu-activated(id)` on the bar through `Document::call` (the kind gets its `EventCx`); the bar is re-sent
+  after each pick because its check state changes the description. The `publish_menu_bar`/`on_menu` stubs
+  are gone. skelter depends on skelter-widgets with `native-menu`.
+- **Refresh (COMPOSITOR Q6):** `App` sends `CompositorHandle::set_refresh` for a window from the refresh
+  rate of the monitor holding its position: at creation (`WindowDesc::position`, else the first monitor),
+  on `WindowEvent::Moved` and on `ScaleChanged`, when the interval changes. `PlatformCx` has no
+  window→monitor query, so the position decides.
+- **ppi (COMPOSITOR Q7):** `skelter::compositor` sets `CompositorConfig::ppi` from the first monitor:
+  `Monitor` has no physical size, so it is the OS's logical DPI convention × scale (72 on macOS, 96
+  elsewhere). `SpawnCompositor` now also gets the platform's monitors.
+- **Commit side data:** confirmed: `App` hands `Commit::a11y` (`update_a11y`), `cursor` (`set_cursor`) and
+  the IME area (`set_ime`, focus-driven) to the platform itself.
+- **Headless `set_menu_bar`:** `PlatformCall::SetMenuBar(Option<MenuDesc>)` is recorded;
+  `HeadlessCx::native_menu_bar` is its answer (`HarnessBuilder::with_native_menu_bar`).
+- Tests: `crates/skelter-test/tests/menu.rs` (a real `CoreDocument` with the built-in kinds): the bar is
+  sent once, `native-bar` follows the platform's answer, a pick reaches the kind's call path.
+
+### Cross-lane edits (all additive)
+
+- `crates/skelter-widgets/Cargo.toml` (merge resolution): `skelter-platform` was already a regular
+  dependency (TEXT-INPUT), so `native-menu` is an empty feature instead of `dep:skelter-platform`.
+- `crates/skelter-core/src/kind.rs`: `Kind::as_any(&self) -> Option<&dyn Any>` (default `None`), so an app can
+  read a known kind's state through `Document::with_kind`.
+- `crates/skelter-widgets/src/shim.rs`: shim `Kind::methods()` (skelter-core `MethodSpec`s, default empty) and
+  `Kind::call(cx, index, args)` (default `Handled::No`).
+- `crates/skelter-widgets/src/host.rs`: the hosted core spec carries the widget's methods (`Traits::methods`);
+  `Hosted::call` forwards to the widget; `Hosted::as_any` returns the widget.
+- `crates/skelter-widgets/src/views/menu.rs`: `MenuBar::to_menu_desc()` (`native-menu`), and the
+  `menu-activated(id)` method (spec + call arm) forwarding to `MenuBar::menu_activated`.
+- `crates/skelter-platform/src/headless.rs`: `PlatformCall::SetMenuBar`, `HeadlessCx::native_menu_bar`,
+  `set_menu_bar` recording.
+
+### Questions (with recommendations)
+
+12. **WIDGETS-VIEWS / CORE: the menu bar's model is not built from its element children in a document**
+    (`menu`/`menu-item` children do not reach `MenuModel`; views' tests fill it with `model.add`). So a real
+    document's native bar is empty. Recommend the bar rebuild its model from its children in `prepare`
+    (skelter-core gives the children's views), then `to_menu_desc` describes the authored menus.
+13. **PLATFORM: `Monitor` has no physical size or ppi, and `PlatformCx` no window→monitor query or monitor
+    change event.** Recommend `Monitor::ppi: Option<f32>` (from the OS's physical size) and a
+    `WindowEvent::MonitorChanged`, so refresh and ppi stop being inferred from positions and conventions.

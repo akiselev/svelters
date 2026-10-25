@@ -1211,7 +1211,7 @@ fn deliver_queued(core: &Core, eng: &mut Box<dyn JsEngine>, budget: &mut usize) 
     pending
 }
 
-/// W-H1 `host.dispatch_now` (ABI v2.9, plans/research/presto/compiler-and-js.md §3.10): delivers
+/// W-H1 `host.dispatch_now` (ABI v2.9, plans/research/skelter/compiler-and-js.md §3.10): delivers
 /// `signal` at event time, as a checkpoint would deliver it, and drains the jobs its handlers
 /// queued, so their result (Svelte's flush included) is in the tree when this returns. Events and
 /// changes queued before it go first, in order. No timers fire and no offloaded call settles here.

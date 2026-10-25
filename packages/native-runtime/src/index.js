@@ -56,7 +56,7 @@ export { observeProp, trackProp, trackLocal, invalidateProp } from './observe.js
 export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
 // CX3: a `bind:` on a Rust store field linked to the prop in the host (no JS per change).
 export { bind_link } from './bind-observe.js';
-// presto W-C1 and W-C2 (lane COMPILER): stable ids and native templates, emitted for backends with
+// skelter W-C1 and W-C2 (lane COMPILER): stable ids and native templates, emitted for backends with
 // the `ids` and `templates` capabilities (./ids.js, ./template.js).
 export { ids, element_id } from './ids.js';
 export { template, instantiate, at, template_listen } from './template.js';
@@ -90,7 +90,7 @@ class Scope {
 /** `node.attrs` until the first `attr` write: read-only, so a missed copy-on-write throws. */
 const NO_ATTRS = Object.freeze({});
 
-// W-C3 (plans/research/presto/compiler-and-js.md §3.3): every field a node can carry is an own
+// W-C3 (plans/research/skelter/compiler-and-js.md §3.3): every field a node can carry is an own
 // field set here, so a read never falls through to the provider-method proxy on the prototype; the
 // collections are null until their first write (most nodes of a template never get one).
 class Native {
@@ -539,7 +539,7 @@ function create(kind, top) {
 }
 
 /**
- * W-C2 (presto, lane COMPILER): the nodes a host built from a template (`host.instantiate`), in
+ * W-C2 (skelter, lane COMPILER): the nodes a host built from a template (`host.instantiate`), in
  * pre-order: `handles[k]` of tag `kinds[k]`, already inserted natively into node `parents[k]`'s
  * slot `slots[k]` (`parents[k]` -1: the root, which the caller appends). Records them as `create`
  * and `attach` would, without host ops; teardown destroys them one by one, as any native.
@@ -984,7 +984,7 @@ export function token(node, prop, tok, on) {
 export const LISTEN_AFTER = 1;
 export const LISTEN_CAPTURE = 2;
 /**
- * W-C5 (presto, lane COMPILER): the listener never cancels its event. Not part of the handler
+ * W-C5 (skelter, lane COMPILER): the listener never cancels its event. Not part of the handler
  * key: a (signal, phase) is one native connection, passive while all its handlers are.
  */
 export const LISTEN_PASSIVE = 4;

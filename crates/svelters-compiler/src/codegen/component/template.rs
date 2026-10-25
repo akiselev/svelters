@@ -1,4 +1,4 @@
-//! W-C2: native templates, the codegen side (presto `compiler-and-js.md` §3.2).
+//! W-C2: native templates, the codegen side (skelter `compiler-and-js.md` §3.2).
 //!
 //! An [`Item::Template`] is written as one table per template at module scope and one call per
 //! instance:

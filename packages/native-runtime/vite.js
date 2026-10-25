@@ -326,7 +326,7 @@ export function withoutBindings(src) {
 const engineCache = new Map();
 /**
  * Whether `backend` runs the Rust CSS engine in process (its spec's `style.engine` is `backend`: egui,
- * presto; CS5e): it gets a component's scoped CSS as Svelte wrote it instead of X6-translated sheets.
+ * skelter; CS5e): it gets a component's scoped CSS as Svelte wrote it instead of X6-translated sheets.
  */
 function runsCssEngine(backend) {
   if (!engineCache.has(backend)) {
@@ -393,7 +393,7 @@ export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
     return null;
   }
-  // egui and presto run the Rust CSS engine in process (CS5e): they get the scoped CSS as Svelte wrote it
+  // egui and skelter run the Rust CSS engine in process (CS5e): they get the scoped CSS as Svelte wrote it
   if (runsCssEngine(toolkit)) return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
   return translatedSheets(r.css?.code ?? '', scope, native, toolkit, warn, specFragments);
 }

@@ -199,7 +199,7 @@ struct Cached {
     css: Option<String>,
     /// DZ0 (dev): the sheet's map to the `<style>` text (`ScopedCss::source_map_text`).
     css_map: Option<String>,
-    /// presto `css_precompiled` (release): the sheet as base64 `svelters_style::binary` bytes.
+    /// skelter `css_precompiled` (release): the sheet as base64 `svelters_style::binary` bytes.
     css_bin: Option<String>,
     /// DZ0 (HMR): the source this was compiled from, to tell the next version's edit.
     src: Option<String>,
@@ -655,7 +655,7 @@ fn style_module(file: &str, css: &str, source: Option<(&str, &str)>) -> String {
     )
 }
 
-/// presto `css_precompiled`: a release build's sheet module registers the precompiled sheet
+/// skelter `css_precompiled`: a release build's sheet module registers the precompiled sheet
 /// (`svelters_style::binary`, base64) instead of its text; the backend loads it without parsing.
 fn precompiled_style_module(file: &str, bin: &str) -> String {
     let lit = |s: &str| serde_json::Value::String(s.to_string()).to_string();
