@@ -128,6 +128,9 @@ impl Compositor {
             to_ui,
             wake_ui,
         );
+        let frame_args: core::SharedFrameArgs = Arc::default();
+        let mut engine = engine;
+        engine.publish_frame_args(frame_args.clone());
         let clock = cfg.clock;
         let thread = std::thread::Builder::new()
             .name("presto-compositor".into())
@@ -137,6 +140,7 @@ impl Compositor {
             tx,
             instance: Arc::new(instance),
             gpu: shared,
+            frame_args,
             thread: Arc::new(Mutex::new(Some(thread))),
         }
     }
@@ -177,6 +181,7 @@ pub struct CompositorHandle {
     tx: Sender<Msg>,
     instance: Arc<wgpu::Instance>,
     gpu: SharedGpu,
+    frame_args: core::SharedFrameArgs,
     thread: Arc<Mutex<Option<JoinHandle<()>>>>,
 }
 
@@ -190,6 +195,12 @@ impl CompositorHandle {
     /// The instance to create surfaces with, on the main thread.
     pub fn instance(&self) -> &wgpu::Instance {
         &self.instance
+    }
+
+    /// The window's frame-clock snapshot (next target, `D_ui`, `est_ui_input`, idle, visible), as of
+    /// the clock's last update: what the UI thread's urgent-frame rule reads without a round trip.
+    pub fn frame_args(&self, window: WindowId) -> Option<presto_frame::FrameArgs> {
+        self.frame_args.read().unwrap_or_else(|e| e.into_inner()).get(&window).copied()
     }
 
     /// The device and queue, once the first surface created them (`None` before that and while a lost

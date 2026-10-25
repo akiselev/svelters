@@ -23,7 +23,8 @@ use presto_base::ids::{FrameId, ImageId, InputSeq, PathId, LayerId, NodeId, Prop
 use presto_base::scene::{DrawItem, FrameScene};
 use presto_base::time::{Span, Time};
 use std::collections::{BTreeMap, HashMap};
-use std::sync::Arc;
+use presto_frame::FrameArgs;
+use std::sync::{Arc, RwLock};
 
 /// The GPU side of drawing, implemented by [`crate::gpu::GpuBackend`] (and by recording fakes in tests).
 pub trait Backend {
@@ -149,8 +150,20 @@ struct Win {
     timer: Option<Time>,
     /// Inputs applied since the last frame that drew.
     inputs: Vec<InputSeq>,
-    in_flight: HashMap<FrameId, Vec<InputSeq>>,
+    in_flight: HashMap<FrameId, InFlight>,
 }
+
+/// A presented frame waiting for its presentation time.
+struct InFlight {
+    inputs: Vec<InputSeq>,
+    draw: Time,
+    submit: Time,
+    gpu_done: Option<Time>,
+}
+
+/// The frame clocks' published [`FrameArgs`] per window, for the UI thread's urgent-frame decision
+/// (`round2/scheduler-latency.md` §2.4) without a round trip.
+pub type SharedFrameArgs = Arc<RwLock<HashMap<WindowId, FrameArgs>>>;
 
 /// Counters for tests and the latency overlay.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -169,6 +182,7 @@ pub struct Engine {
     wake_ui: Box<dyn Fn() + Send>,
     sent: bool,
     scheduled: Vec<(Time, ToUi)>,
+    frame_args: Option<SharedFrameArgs>,
     pub stats: Stats,
 }
 
@@ -191,8 +205,23 @@ impl Engine {
             wake_ui,
             sent: false,
             scheduled: Vec::new(),
+            frame_args: None,
             stats: Stats::default(),
         }
+    }
+
+    /// Publishes every window's [`FrameArgs`] into `shared` after each frame-clock update.
+    pub fn publish_frame_args(&mut self, shared: SharedFrameArgs) {
+        self.frame_args = Some(shared);
+    }
+
+    fn publish(&self, window: WindowId) {
+        let (Some(shared), Some(w)) = (&self.frame_args, self.windows.get(&window)) else { return };
+        let mut map = shared.write().unwrap_or_else(|e| e.into_inner());
+        match w.pacer.frame_args() {
+            Some(a) => map.insert(window, a),
+            None => map.remove(&window),
+        };
     }
 
     fn send(&mut self, m: ToUi) {
@@ -290,6 +319,9 @@ impl Engine {
                 }
             }
             Msg::RemoveWindow(window) => {
+                if let Some(shared) = &self.frame_args {
+                    shared.write().unwrap_or_else(|e| e.into_inner()).remove(&window);
+                }
                 if let Some(w) = self.windows.remove(&window) {
                     for sid in w.os_layers.keys() {
                         gpu.detach(window, SurfaceKey::Os(*sid));
@@ -392,6 +424,9 @@ impl Engine {
             }
             Msg::SetCommitter { window, committer } => gpu.set_committer(window, committer),
             Msg::GpuDone { window, frame, at } => {
+                if let Some(f) = self.windows.get_mut(&window).and_then(|w| w.in_flight.get_mut(&frame)) {
+                    f.gpu_done = Some(at);
+                }
                 self.signal(window, now, Signal::GpuDone { frame, at }, gpu);
                 // Without presentation feedback the frame is shown at the first vblank after the GPU
                 // finished, on the vsync grid.
@@ -548,8 +583,20 @@ impl Engine {
 
     fn presented(&mut self, window: WindowId, frame: FrameId, at: Time, estimated: bool, now: Time, gpu: &mut dyn Backend) {
         let Some(w) = self.windows.get_mut(&window) else { return };
-        let inputs = w.in_flight.remove(&frame).unwrap_or_default();
+        let f = w.in_flight.remove(&frame);
+        let inputs = f.as_ref().map(|f| f.inputs.clone()).unwrap_or_default();
         self.send(ToUi::Presented { window, frame, at, estimated, inputs });
+        if let Some(f) = f {
+            self.send(ToUi::FrameTimings {
+                window,
+                frame,
+                draw: f.draw,
+                submit: f.submit,
+                gpu_done: f.gpu_done,
+                present: at,
+                estimated,
+            });
+        }
         self.signal(window, now, Signal::Presented { frame, at, estimated }, gpu);
     }
 
@@ -557,6 +604,7 @@ impl Engine {
     fn signal(&mut self, window: WindowId, now: Time, sig: Signal, gpu: &mut dyn Backend) {
         let Some(w) = self.windows.get_mut(&window) else { return };
         let actions = w.pacer.on_signal(now, sig);
+        self.publish(window);
         for a in actions {
             match a {
                 Action::SubscribeVsync(on) => {
@@ -700,8 +748,9 @@ impl Engine {
         if let Some(frame) = frame {
             match drew {
                 Some(at) => {
-                    w.in_flight.insert(frame, inputs);
-                    self.signal(window, now, Signal::Submitted { frame, at: at.max(now) }, gpu);
+                    let submit = at.max(now);
+                    w.in_flight.insert(frame, InFlight { inputs, draw: now, submit, gpu_done: None });
+                    self.signal(window, now, Signal::Submitted { frame, at: submit }, gpu);
                 }
                 None => {
                     // Nothing reached the screen: the inputs ride on the next frame that draws.
