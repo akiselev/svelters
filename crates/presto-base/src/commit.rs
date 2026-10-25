@@ -112,6 +112,18 @@ pub enum ToUi {
     ResizeDone { window: WindowId, seq: u64, size: DeviceSize, scale: Scale },
     /// The GPU device was lost and recreated: re-send every resource.
     DeviceReset,
+    /// The compositor side of a frame's latency (architecture §16.3), sent when it was presented:
+    /// when the draw started, the CPU submitted, the GPU finished, and the frame reached the screen
+    /// (`estimated` when the OS gave no time). `gpu_done` is `None` when it was not reported.
+    FrameTimings {
+        window: WindowId,
+        frame: FrameId,
+        draw: Time,
+        submit: Time,
+        gpu_done: Option<Time>,
+        present: Time,
+        estimated: bool,
+    },
     /// The platform's frame source reports the window covered or minimised (`true`) or visible
     /// again; the compositor stops drawing it meanwhile.
     Occluded { window: WindowId, occluded: bool },
