@@ -43,8 +43,8 @@ windows = { version = "0.62.2", features = [
 accesskit_macos = "0.27.1"
 # The objc2 0.5 family: the one winit 0.30.13 and accesskit_macos 0.27 link.
 objc2 = "0.5.2"
-objc2-foundation = { version = "0.2.2", features = ["NSString", "NSThread", "NSGeometry"] }
-objc2-app-kit = { version = "0.2.2", features = ["NSApplication", "NSResponder", "NSView", "NSWindow"] }
+objc2-foundation = { version = "0.2.2", features = ["NSArray", "NSDate", "NSGeometry", "NSProcessInfo", "NSString", "NSThread"] }
+objc2-app-kit = { version = "0.2.2", features = ["NSApplication", "NSEvent", "NSResponder", "NSScreen", "NSView", "NSWindow", "objc2-quartz-core"] }
 objc2-quartz-core = { version = "0.2.2", features = ["CALayer", "CAMetalLayer", "CATransaction", "objc2-metal"] }
 
 [target.'cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))'.dependencies]
