@@ -9,10 +9,12 @@
 //!   it **for the whole gesture**, OS momentum included: a stream that reaches an edge stops there
 //!   instead of scrolling the panel around it (browsers and AppKit; svelters-egui chained per
 //!   event). A new gesture chains. A wheel without phases latches per burst
-//!   ([`WHEEL_LATCH_TIMEOUT`]).
-//! - [`ScrollArea`]: the kind. Wheel steps animate per OS through
-//!   [`shim::scroll_physics`](super::shim::scroll_physics) (Chromium's curve on Windows and Linux,
-//!   none on macOS), touchpads move 1:1 and fling on release where the OS has no momentum. While
+//!   ([`anim::WHEEL_LATCH_TIMEOUT`]). The gesture bookkeeping is presto-anim's
+//!   [`anim::ScrollLatch`]; this adds the choice over the chain.
+//! - [`ScrollArea`]: the kind. Curves, flings, the release velocity and the per-OS defaults are
+//!   presto-anim's ([`presto_anim::scroll`]): wheel steps animate with Chromium's curve on Windows and
+//!   Linux (none on macOS), keys with its constant 150 ms curve, `scrollTo` with its programmatic one;
+//!   touchpads move 1:1 and fling on release where the OS has no momentum. While
 //!   every listener on the area is passive, each step is also a [`FastCommit::ScrollOffset`]: the
 //!   compositor moves the content without waiting for the UI phases. The offset is native-owned
 //!   (architecture §4.5): a JS write made before JS saw the latest native change is refused.
@@ -26,7 +28,8 @@
 
 use super::common::{self, platform, secs};
 use super::shim::fast;
-use super::shim::scroll_physics::{self, Fling, ScrollAnimation, SmoothScroll, VelocityTracker};
+use presto_anim::scroll::{self as anim, DurationBehavior, Fling, ScrollAnimation, SmoothScroll, VelocityTracker};
+use presto_base::anim::FlingCurve;
 use crate::interact::{Kinetic, Platform, Policy, Scrollbars, StateBits, TrackClick};
 use crate::kind_props;
 use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
@@ -36,7 +39,7 @@ use presto_base::color::{Color, Fill};
 use presto_base::commit::FastCommit;
 use presto_base::display::{Prim, Quad};
 use presto_base::geom::{Corners, Insets};
-use presto_base::event::{GesturePhase, KeyState, MouseButton, PointerPhase, WheelEvent};
+use presto_base::event::{GesturePhase, KeyState, MouseButton, PointerPhase, ScrollDelta, WheelEvent};
 use presto_base::geom::{Point, Rect, Size, Vec2};
 use presto_base::ids::{InputSeq, NodeId, PropNodeId, Revision, WindowId};
 use presto_base::key::Key;
@@ -329,7 +332,7 @@ impl Scroller {
 
     /// A page along axis `d`.
     pub fn page(&self, d: usize) -> f32 {
-        scroll_physics::page_step(if d == 0 { self.viewport.w } else { self.viewport.h })
+        anim::page_step(if d == 0 { self.viewport.w } else { self.viewport.h }).max(1.0)
     }
 
     /// The offset on axis `d` that puts the thumb's start at `pos`.
@@ -549,12 +552,6 @@ impl Scroller {
 
 // ---- latching ----
 
-/// A wheel without phases (a mouse wheel, a Windows legacy touchpad) stays latched while its events
-/// come less than this apart. Chromium's wheel scroll latching ends a transaction after 500 ms
-/// without events (`kDefaultMouseWheelLatchingTransactionMs`, `mouse_wheel_phase_handler.h`;
-/// recalled, the research notes recommend 300 ms without a source).
-pub const WHEEL_LATCH_TIMEOUT: Span = Span::from_millis(500);
-
 /// One scroller under the pointer, as the latch sees it.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct LatchCandidate {
@@ -583,80 +580,57 @@ impl LatchCandidate {
     }
 }
 
-/// Where a gesture currently is.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum Gesture {
-    /// A phased touchpad gesture (fingers down), then possibly its OS momentum.
-    Phased,
-    /// The OS momentum after the fingers lifted.
-    Momentum,
-    /// A wheel burst without phases.
-    Wheel,
-}
-
 /// Which scroller a wheel or touchpad gesture scrolls, kept for the whole gesture (one per window).
+/// When a gesture starts and ends, and how long a wheel burst stays latched, is presto-anim's
+/// [`anim::ScrollLatch`]; this picks over the chain under the pointer and drops the rest of a
+/// gesture whose scroller left the chain.
 #[derive(Clone, Debug, Default)]
 pub struct ScrollLatch {
-    latched: Option<(NodeId, Gesture)>,
-    last: Time,
+    latch: anim::ScrollLatch,
 }
 
 impl ScrollLatch {
     /// The scroller the current gesture is latched to.
     pub fn latched(&self) -> Option<NodeId> {
-        self.latched.map(|(n, _)| n)
+        self.latch.latched()
     }
 
     /// Ends the gesture (the pointer left the window, a key was pressed, the latched node went away).
     pub fn reset(&mut self) {
-        self.latched = None;
+        self.latch.release();
     }
 
     /// Routes `ev` (with `delta` its offset change, positive towards the end) over `chain`, the
     /// scrollers under the pointer innermost first. Returns the node that takes the whole delta, or
     /// `None` when no scroller takes it (the delta is dropped: never chained mid-gesture).
     pub fn route(&mut self, now: Time, ev: &WheelEvent, delta: Vec2, chain: &[LatchCandidate]) -> Option<NodeId> {
-        let starts = match (ev.phase, ev.momentum) {
-            (Some(GesturePhase::Started), _) => Some(Gesture::Phased),
-            (Some(_), _) => None,
-            (None, Some(GesturePhase::Started)) => {
-                // momentum continues the gesture its fingers made; alone, it starts one
-                match self.latched {
-                    Some((_, Gesture::Phased | Gesture::Momentum)) => None,
-                    _ => Some(Gesture::Momentum),
-                }
-            }
-            (None, Some(_)) => None,
-            (None, None) => match self.latched {
-                Some((_, Gesture::Wheel)) if now - self.last < WHEEL_LATCH_TIMEOUT => None,
-                _ => Some(Gesture::Wheel),
-            },
+        use anim::GesturePhase as A;
+        let unlatched = self.latch.latched().is_none();
+        let phase = match (ev.phase, ev.momentum) {
+            (Some(GesturePhase::Started), _) => A::Began,
+            // a gesture whose start no scroller took (its first event often carries no delta):
+            // picked on its first movement
+            (Some(GesturePhase::Moved), _) if unlatched => A::Began,
+            (Some(GesturePhase::Moved), _) => A::Changed,
+            (Some(GesturePhase::Ended | GesturePhase::Cancelled), _) => A::Ended,
+            (None, Some(GesturePhase::Moved)) if unlatched => A::MomentumBegan,
+            (None, Some(GesturePhase::Started)) => A::MomentumBegan,
+            (None, Some(GesturePhase::Moved)) => A::Momentum,
+            (None, Some(GesturePhase::Ended | GesturePhase::Cancelled)) => A::MomentumEnded,
+            (None, None) => A::Wheel,
         };
-        self.last = now;
-        let still_there = |n: NodeId| chain.iter().any(|c| c.node == n);
-        if let Some(kind) = starts {
-            // a touchpad's first event often carries no delta: pick on its first movement
-            self.latched = if delta == Vec2::ZERO && kind == Gesture::Phased { None } else { Self::pick(delta, chain).map(|n| (n, kind)) };
-        } else if let Some((n, kind)) = self.latched {
-            if !still_there(n) {
-                // the latched scroller left the chain (removed, or the pointer moved off it while
-                // fingers rested): the rest of the gesture goes nowhere
-                self.latched = None;
-                return None;
-            }
-            if ev.momentum.is_some() && kind == Gesture::Phased {
-                self.latched = Some((n, Gesture::Momentum));
-            }
-        } else if matches!(ev.phase, Some(GesturePhase::Moved)) || matches!(ev.momentum, Some(GesturePhase::Moved)) {
-            // a gesture whose start no scroller took: still pick on its first real movement
-            self.latched = Self::pick(delta, chain).map(|n| (n, if ev.momentum.is_some() { Gesture::Momentum } else { Gesture::Phased }));
-        }
-        let out = self.latched.map(|(n, _)| n);
-        // the gesture's end releases the latch (after this event, which still goes to it)
-        if matches!(ev.phase, Some(GesturePhase::Cancelled))
-            || matches!(ev.momentum, Some(GesturePhase::Ended | GesturePhase::Cancelled))
+        let choose = || if phase == A::Began && delta == Vec2::ZERO { None } else { Self::pick(delta, chain) };
+        let out = self.latch.route(now, phase, choose);
+        if let Some(n) = out
+            && !chain.iter().any(|c| c.node == n)
         {
-            self.latched = None;
+            // the latched scroller left the chain (removed, or the pointer moved off it while
+            // fingers rested): the rest of the gesture goes nowhere
+            self.latch.release();
+            return None;
+        }
+        if matches!(ev.phase, Some(GesturePhase::Cancelled)) {
+            self.latch.release();
         }
         out
     }
@@ -671,6 +645,86 @@ impl ScrollLatch {
         }
         // nothing can move: the innermost takes it (a gesture towards an edge everyone is at)
         chain.first().map(|c| c.node)
+    }
+}
+
+// ---- scroll animations ----
+
+/// Windows' default `SPI_GETWHEELSCROLLLINES` (the policy has no field for the user's setting yet).
+const LINES_PER_DETENT: u32 = 3;
+/// The pixel density flings are computed for: the kinds' contexts have no display PPI yet, so the
+/// CSS reference density.
+const FLING_PPI: f32 = 96.0;
+
+/// presto-anim's OS for a policy platform.
+fn anim_os(p: Platform) -> anim::Os {
+    match p {
+        Platform::Windows => anim::Os::Windows,
+        Platform::Macos => anim::Os::MacOs,
+        Platform::Linux => anim::Os::Linux,
+    }
+}
+
+/// The scroll defaults of the policy's platform.
+fn defaults(policy: &Policy) -> anim::ScrollDefaults {
+    anim::defaults(anim_os(platform(policy)), LINES_PER_DETENT)
+}
+
+/// The offset change (content points, positive towards the end) a wheel delta asks for. The event's
+/// positive `y` scrolls the content up (the wheel away from the user), so it is negated.
+pub fn wheel_delta_points(policy: &Policy, delta: ScrollDelta, viewport: Size) -> Vec2 {
+    let v = match delta {
+        ScrollDelta::Lines(v) => v * defaults(policy).wheel_px_per_detent,
+        ScrollDelta::Pixels(v) => v,
+        ScrollDelta::Pages(v) => Vec2::new(v.x * anim::page_step(viewport.w), v.y * anim::page_step(viewport.h)),
+    };
+    Vec2::new(-v.x, -v.y)
+}
+
+/// A running scroll animation in offsets, sampled at absolute times (presto-anim's curves run from
+/// their own start).
+#[derive(Clone, Debug)]
+enum Anim {
+    Smooth { curve: SmoothScroll, start: Time },
+    /// presto-anim's flings are displacements from where they started.
+    Fling { curve: Fling, from: Vec2, start: Time },
+}
+
+impl Anim {
+    fn smooth(now: Time, from: Vec2, to: Vec2, behavior: DurationBehavior) -> Anim {
+        Anim::Smooth { curve: SmoothScroll::new(from, to, behavior), start: now }
+    }
+    fn offset_at(&self, now: Time) -> Vec2 {
+        match self {
+            Anim::Smooth { curve, start } => curve.offset_at(now - *start),
+            Anim::Fling { curve, from, start } => *from + curve.offset_at(now - *start),
+        }
+    }
+    fn done_at(&self, now: Time) -> bool {
+        match self {
+            Anim::Smooth { curve, start } => curve.done_at(now - *start),
+            Anim::Fling { curve, start, .. } => curve.done_at(now - *start),
+        }
+    }
+    /// Where it is heading (a fling's end).
+    fn target(&self) -> Vec2 {
+        match self {
+            Anim::Smooth { curve, .. } => curve.target(),
+            Anim::Fling { curve, from, .. } => *from + curve.offset_at(Span::from_secs_f64(3600.0)),
+        }
+    }
+    fn is_fling(&self) -> bool {
+        matches!(self, Anim::Fling { .. })
+    }
+    /// Heads for `to`: a smooth scroll keeps its velocity; a fling (which cannot retarget) gives way to
+    /// a new smooth scroll from where it is.
+    fn retarget(&mut self, now: Time, to: Vec2, behavior: DurationBehavior) {
+        match self {
+            Anim::Smooth { curve, start } => {
+                curve.retarget(now - *start, to);
+            }
+            Anim::Fling { .. } => *self = Anim::smooth(now, self.offset_at(now), to, behavior),
+        }
     }
 }
 
@@ -731,7 +785,7 @@ pub struct ScrollArea {
     pub passive: bool,
     pub scroller: Scroller,
     /// A wheel step's or fling's animation, sampled on the UI thread until the compositor runs it.
-    anim: Option<ScrollAnimation>,
+    anim: Option<Anim>,
     velocity: VelocityTracker,
     /// Bumped on each native change of the offset (architecture §4.5).
     native_rev: u64,
@@ -869,9 +923,9 @@ impl ScrollArea {
         moved
     }
 
-    /// Smoothly (or at once, with reduced motion or a zero duration) towards `to`, retargeting a
-    /// running animation with its velocity.
-    fn animate_to(&mut self, cx: &mut EventCx<'_>, to: Vec2) {
+    /// Smoothly (or at once, with reduced motion) towards `to` on the curve of `behavior`, retargeting
+    /// a running animation with its velocity.
+    fn animate_to(&mut self, cx: &mut EventCx<'_>, to: Vec2, behavior: DurationBehavior) {
         let to = vmin(vmax(to, Vec2::ZERO), self.scroller.max_offset());
         if self.reduced_motion {
             self.anim = None;
@@ -881,16 +935,16 @@ impl ScrollArea {
             return;
         }
         match self.anim.as_mut() {
-            Some(a) => a.retarget(cx.now, to),
-            None => self.anim = Some(ScrollAnimation::Smooth(SmoothScroll::wheel(cx.now, self.scroller.offset(), to))),
+            Some(a) => a.retarget(cx.now, to, behavior),
+            None => self.anim = Some(Anim::smooth(cx.now, self.scroller.offset(), to, behavior)),
         }
         self.step(cx);
     }
 
     /// Samples the running animation at `cx.now`.
     fn step(&mut self, cx: &mut EventCx<'_>) {
-        let Some(a) = self.anim else { return };
-        let by = if matches!(a, ScrollAnimation::Fling(_)) { ScrollBy::Kinetic } else { ScrollBy::Wheel };
+        let Some(a) = self.anim.clone() else { return };
+        let by = if a.is_fling() { ScrollBy::Kinetic } else { ScrollBy::Wheel };
         let want = a.offset_at(cx.now);
         let moved = self.jump(cx, want, by);
         // an animation that reached an edge stops there
@@ -906,7 +960,7 @@ impl ScrollArea {
     /// The wheel or touchpad event the latch routed here (the whole delta is this area's).
     pub fn wheel(&mut self, cx: &mut EventCx<'_>, ev: &WheelEvent) -> Handled {
         let os = platform(cx.policy);
-        let delta = scroll_physics::wheel_delta_points(os, ev.delta, self.scroller.viewport());
+        let delta = wheel_delta_points(cx.policy, ev.delta, self.scroller.viewport());
         // Shift+wheel scrolls horizontally where only x scrolls or the OS did not do it already
         let delta = if ev.modifiers.contains(presto_base::event::Modifiers::SHIFT) && delta.x == 0.0 && os != Platform::Macos {
             Vec2::new(delta.y, 0.0)
@@ -928,15 +982,19 @@ impl ScrollArea {
                 self.apply_direct(cx, delta, ScrollBy::Wheel);
             }
             (Some(GesturePhase::Moved), _) => {
-                self.velocity.push(cx.now, delta);
+                self.velocity.add(cx.now, delta);
                 self.apply_direct(cx, delta, ScrollBy::Wheel);
             }
             (Some(GesturePhase::Ended), _) => {
                 self.apply_direct(cx, delta, ScrollBy::Wheel);
                 // an own fling where the OS sends no momentum
-                let v = self.velocity.velocity(cx.now);
-                if cx.policy.kinetic == Kinetic::Own && v.length() > scroll_physics::FLING_STOP_SPEED {
-                    self.anim = Some(ScrollAnimation::Fling(Fling::new(cx.now, self.scroller.offset(), v, self.scroller.viewport())));
+                let v = self.velocity.velocity(cx.now).filter(|v| v.length() > anim::FLING_STOP_PX_PER_S);
+                if cx.policy.kinetic == Kinetic::Own
+                    && let Some(v) = v
+                {
+                    let curve = defaults(cx.policy).touchpad_fling.unwrap_or(FlingCurve::Chromium);
+                    let fling = Fling::new(curve, v, FLING_PPI, self.scroller.viewport());
+                    self.anim = Some(Anim::Fling { curve: fling, from: self.scroller.offset(), start: cx.now });
                     self.step(cx);
                 } else {
                     self.end(cx);
@@ -954,14 +1012,14 @@ impl ScrollArea {
                     self.end(cx);
                 }
             }
-            (None, None) if precise || os == Platform::Macos => {
+            (None, None) if precise || !defaults(cx.policy).wheel_animated => {
                 // precise deltas without phases, and macOS's accelerated wheel: applied at once
                 self.apply_direct(cx, delta, ScrollBy::Wheel);
                 self.end(cx);
             }
             (None, None) => {
-                let base = self.anim.map_or(self.scroller.offset(), |a| a.target());
-                self.animate_to(cx, base + delta);
+                let base = self.anim.as_ref().map_or(self.scroller.offset(), Anim::target);
+                self.animate_to(cx, base + delta, DurationBehavior::InverseDelta);
             }
         }
         Handled::Yes
@@ -978,11 +1036,10 @@ impl ScrollArea {
         }
     }
 
-    /// `scrollTo` from JS or Rust (`smooth`: Chromium's programmatic curve is approximated by the
-    /// wheel curve until presto-anim has it).
+    /// `scrollTo` from JS or Rust (`smooth`: Chromium's programmatic curve).
     pub fn scroll_to(&mut self, cx: &mut EventCx<'_>, to: Vec2, smooth: bool) {
         if smooth {
-            self.animate_to(cx, to);
+            self.animate_to(cx, to, DurationBehavior::DeltaBased);
         } else {
             self.anim = None;
             self.jump(cx, to, ScrollBy::Program);
@@ -1131,8 +1188,8 @@ impl Kind for ScrollArea {
                     return Handled::No;
                 };
                 if to != self.scroller.offset() {
-                    // keys: Chromium's constant 150 ms ease-in-out; the wheel curve stands in
-                    self.animate_to(cx, to);
+                    // keys: Chromium's constant 150 ms ease-in-out
+                    self.animate_to(cx, to, DurationBehavior::Constant);
                 }
                 Handled::Yes
             }
@@ -1326,7 +1383,7 @@ impl Kind for Scrollbar {
     fn event(&mut self, cx: &mut EventCx<'_>, ev: &Event) -> Handled {
         match ev {
             Event::Wheel(w) => {
-                let d = scroll_physics::wheel_delta_points(platform(cx.policy), w.delta, self.scroller.viewport());
+                let d = wheel_delta_points(cx.policy, w.delta, self.scroller.viewport());
                 // a horizontal bar takes the vertical wheel too
                 let along = if self.axis == 0 && d.x == 0.0 { d.y } else { get(d, self.axis) };
                 self.by(cx, along as f64);
@@ -1393,7 +1450,7 @@ mod tests {
     use super::*;
     use super::super::split::Probe;
     use crate::interact::Native;
-    use presto_base::event::{Modifiers, PointerEvent, PointerType, ScrollDelta};
+    use presto_base::event::{Modifiers, PointerEvent, PointerType};
 
     fn pol(os: Platform) -> Policy {
         *Native::for_os(os).policy()
@@ -1540,7 +1597,7 @@ mod tests {
         // the inner one hit its end, but the burst goes on: still latched
         assert_eq!(l.route(ms(100), &wheel(None, None, -1.0), down, &chain(true)), Some(n(1)));
         // a pause longer than the timeout starts a new burst, which chains
-        assert_eq!(l.route(ms(100) + WHEEL_LATCH_TIMEOUT + Span::from_millis(1), &wheel(None, None, -1.0), down, &chain(true)), Some(n(2)));
+        assert_eq!(l.route(ms(100) + anim::WHEEL_LATCH_TIMEOUT + Span::from_millis(1), &wheel(None, None, -1.0), down, &chain(true)), Some(n(2)));
     }
 
     #[test]

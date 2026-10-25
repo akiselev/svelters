@@ -8,7 +8,7 @@ presto-compositor skeleton, presto-core, presto-text, the WIDGETS-BASIC substrat
 
 | File | What |
 |---|---|
-| `shim.rs` | stand-ins for APIs still missing: `scroll_physics` (for `presto_anim::scroll`) and `fast` (a per-thread queue of `FastCommit`s, for a kind's fast-commit path; the app runner drains `fast::take()`) |
+| `shim.rs` | the stand-in still needed: `fast` (a per-thread queue of `FastCommit`s, for a kind's fast-commit path; the app runner drains `fast::take()`). Scroll physics are `presto_anim::scroll` (curves, flings, velocity, page step, per-OS defaults, the latch's gesture and burst timing); `scroll.rs` keeps the chain choice (innermost that can move, `contain`, removed node, zero-delta start, cancel) |
 | `common.rs` | `ms`/`secs` (policy times as spans), `platform`, `emit` by signal name |
 | `mod.rs` | `register_all`: the 19 view kinds through WIDGETS-BASIC's `host::register` |
 | `placement.rs` | popup placement: side/align, gap, flip, shift, fit, anchor width (svelters-egui `interact/anchor.rs`) |
@@ -43,8 +43,8 @@ kind and `::part`); presto-core sees them through `host::register`. The lane's f
 - Popup `anchor` is a record (`{node}`, `{x,y,width,height}`, `{x,y}`).
 - Toast spacing is Rust constants; colours, borders, radii and shadows come from CSS.
 - Scroll animation is sampled on the UI thread via timer events (~16 ms); it should become an
-  `AnimationSpec { property: ScrollOffset }` the compositor runs. Keyboard and programmatic smooth
-  scrolls reuse the wheel curve. No macOS rubber band, no edge shadows, no drag auto-scroll.
+  `AnimationSpec { property: ScrollOffset }` the compositor runs. Keys use Chromium's constant 150 ms curve,
+  `scrollTo` its programmatic curve. No macOS rubber band (presto-anim has `RubberBandReturn`; `Scroller` clamps and needs overscroll state), no edge shadows, no drag auto-scroll. A wheel step during a fling starts a fresh smooth scroll without the fling's velocity (presto-anim's flings do not retarget). Flings use 96 ppi (no display ppi in the kind contexts); wheel detents assume 3 lines (no Windows lines-per-notch in the policy).
 - Modal: no resize, no default/cancel button routing. Toasts: no rich text or declarative children.
   No exit transitions. Inner-window moves report native prop changes, no fast commit.
 - Menus: no `menu-button`, no shortcut matching while closed, focus restore left to the focus model,
@@ -70,8 +70,9 @@ kind and `::part`); presto-core sees them through `host::register`. The lane's f
 
 ## Questions for the coordinator (with recommendations)
 
-1. **Wheel latch timeout**: 500 ms (Chromium `kDefaultMouseWheelLatchingTransactionMs`, from memory,
-   unverified) or the notes' 300 ms (unsourced)? Recommend 500, verified against Chromium's source.
+1. **Wheel latch timeout**: the views now follow presto-anim's `WHEEL_LATCH_TIMEOUT` (300 ms). Chromium's
+   `kDefaultMouseWheelLatchingTransactionMs` is 500 ms from memory (unverified); recommend FRAME-ANIM
+   checks it against Chromium's source.
 2. **Inner windows** in the overlay stack (band below popups) or a separate layer group? Recommend the
    stack: one structure owns hit routing and raise order above the panes.
 3. **macOS native menu bar** (`NSMenu`): recommend lane presto-platform-macos owns it, fed from the same
