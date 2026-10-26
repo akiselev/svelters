@@ -896,7 +896,8 @@ mod tests {
         assert_eq!(commits.len(), 1, "reverted");
         // Tab commits (no editable cell after it: the edit ends)
         send(&mut d, &mut commits, Key::F2, None);
-        send(&mut d, &mut commits, Key::End, None);
+        // Right collapses the selection to its end on every platform (End moves nothing on macOS)
+        send(&mut d, &mut commits, Key::ArrowRight, None);
         send(&mut d, &mut commits, Key::A, Some("!"));
         send(&mut d, &mut commits, Key::Tab, None);
         assert_eq!(commits.last().and_then(|c| c.field("value")), Some(&Value::from("xz!")));
