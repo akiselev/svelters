@@ -91,6 +91,55 @@ fn queries_reach_widgets_in_a_mounted_island() {
 }
 
 #[test]
+fn island_widgets_are_reported_where_they_are_drawn_when_the_island_is_offset() {
+    // As in an app: the island node is laid out off the window's origin before the island is
+    // mounted, so its first AccessKit tree (with its root) is built there.
+    let mut reg = KindRegistry::new();
+    reg.register::<BoxKind>().unwrap();
+    IslandHost::register(&mut reg).unwrap();
+    let mut doc = Document::new(Arc::new(reg), Box::new(FixedText));
+    doc.set_text_shaper(Box::new(FixedText));
+    let ui: Ui = Box::new(|_, ui| {
+        let _ = ui.button("Pane button");
+    });
+    let mut h = skelter_test::HarnessBuilder::new()
+        .with_size(Size::new(400.0, 300.0))
+        .with_accessibility_check(false)
+        .build_core_islands(CoreDocument::new(doc, BOX), ui);
+    let window = h.window();
+    let doc = h.state_mut().doc();
+    let root = doc.window_root(window).expect("the harness window's root");
+    let node = doc.create(EGUI_ISLAND);
+    doc.set_style(
+        node,
+        StyleInput {
+            inline: Some("width: 300px; height: 200px; margin-left: 60px; margin-top: 40px".into()),
+            ..Default::default()
+        },
+    );
+    doc.insert(root, node, None, None).unwrap();
+    h.run();
+    let island = EguiIsland::new(IslandDesc {
+        texture: TextureId(9),
+        tree: island_tree_id(0),
+        rect: Rect::ZERO,
+        scale: Scale(1.0),
+        renderer: Default::default(),
+    });
+    IslandHost::mount(h.state_mut().doc(), node, island).unwrap_or_else(|_| panic!("mounts"));
+    h.run();
+    let at = h.state_mut().doc().world_rect(node).expect("the island node is laid out");
+    assert_eq!((at.min.x, at.min.y), (60.0, 40.0));
+    let b = h.get_by_role_and_label(Role::Button, "Pane button").bounds().expect("bounds");
+    // The subtree follows its node once: the button sits at the island's top left, not twice its offset.
+    assert!(
+        b.min.x >= at.min.x && b.min.y >= at.min.y && b.max.x <= at.max.x && b.max.y <= at.max.y,
+        "the button {b:?} is inside its island {at:?}"
+    );
+    assert!(b.min.x < at.min.x + 30.0 && b.min.y < at.min.y + 30.0, "near the island's top left: {b:?}");
+}
+
+#[test]
 fn a_click_goes_through_the_document_into_egui() {
     let (mut h, clicks) = rig();
     h.get_by_label("Pane button").click();

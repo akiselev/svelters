@@ -239,6 +239,11 @@ impl IslandHost {
             return Err(MountRejected { reason: MountError::Occupied(node), island });
         }
         island.set_tree_id(island_tree_id(node.0));
+        // The graft node is a skelter-core node: its AccessKit transform already places it at its
+        // layout offset, and the island's points are its local space, so the subtree needs no
+        // placement of its own (the default re-applies the offset: every island node was reported
+        // at twice its position, cadatomic QC1-PRB-001).
+        island.set_a11y_placement(skelter_base::accesskit::Affine::IDENTITY);
         island.enable_accesskit();
         if let Some((rect, scale)) = placement(doc, node) {
             island.set_rect(rect, scale);
