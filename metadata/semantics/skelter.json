@@ -19,13 +19,226 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "0c365694cb4055df"
+    "spec_hash": "51c641b87678158c"
   },
   "inline_text": {
     "kind": "span",
     "prop": "text"
   },
   "kinds": {
+    "Action": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "label"
+        ],
+        "name_required": true,
+        "role": "Button"
+      },
+      "abstract": false,
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "activate",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-skelter: <action> writes checked into the tree as native-owned state (architecture §4.5) and emits `activate` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Action",
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "A menu item: plain, a check item (`checkable`) or a radio item (`group`), with an optional `shortcut`. AccessKit role Button, CheckBox or RadioButton.",
+      "fingerprint": "a7d581cb",
+      "id": 2815787467,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Action",
+      "native_state": [
+        "checked"
+      ],
+      "present": null,
+      "props": {
+        "checkable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "A check item: picking it toggles `checked`.",
+          "fingerprint": "4ceb1dce",
+          "id": 1290477006,
+          "js": "checkable",
+          "native": "checkable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:checkable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "checked": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Check or radio state; picking a check item toggles it, picking a radio item sets it.",
+          "fingerprint": "c3ac3b33",
+          "id": 3282844467,
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Action:checked",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "group": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "A radio item: the actions of one parent with the same group form an exclusive set; picking one checks it and unchecks the others (each announced).",
+          "fingerprint": "d2b2dfbe",
+          "id": 3534938046,
+          "js": "group",
+          "native": "group",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:group",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "label": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "fingerprint": "d314b86b",
+          "id": 3541350507,
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:label",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "shortcut": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error.",
+          "fingerprint": "819314f7",
+          "id": 2173900023,
+          "js": "shortcut",
+          "native": "shortcut",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:shortcut",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick.",
+          "fingerprint": "49bd9e26",
+          "handler_result": "none",
+          "id": 1237163558,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "hover": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3).",
+          "fingerprint": "0a13fddd",
+          "handler_result": "none",
+          "id": 169082333,
+          "js_event": "hover",
+          "name": "hover",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggled": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state.",
+          "fingerprint": "399ff851",
+          "handler_result": "none",
+          "id": 966785105,
+          "js_event": "toggled",
+          "name": "toggled",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": "label",
+      "widget": "skelter-widgets"
+    },
     "Anchor": {
       "a11y": {
         "name_from": [
@@ -10687,6 +10900,7 @@
         "native": "visible",
         "prop": "visible",
         "tags": [
+          "action",
           "box",
           "button",
           "checkbox",
@@ -10895,6 +11109,7 @@
   },
   "tags": {
     "a": "Anchor",
+    "action": "Action",
     "b": "Bold",
     "box": "Box",
     "button": "Button",

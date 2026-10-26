@@ -118,6 +118,30 @@ fn context_menu_is_skelter_widgets_with_eguis_surface() {
 }
 
 #[test]
+fn action_is_skelter_widgets_menu_item_with_eguis_surface() {
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    let m = kinds.by_tag("action").unwrap();
+    assert!(m.hosted);
+    assert_eq!(m.core, Some(skelter_core::KindId::of("menu-item")), "egui's action is skelter-widgets' menu-item");
+    let menu = r.create("context-menu");
+    let a = r.create("action");
+    let items = r.br().resolve(NameKind::Slot, r.kind(menu), "items");
+    r.br().insert(menu, a, None, items).unwrap();
+    r.set(a, "label", Value::Str("Save".into()));
+    r.set(a, "checkable", Value::Bool(true));
+    r.set(a, "checked", Value::Bool(true));
+    assert_eq!(r.get(a, "label"), Value::Str("Save".into()));
+    assert_eq!(r.get(a, "checked"), Value::Bool(true));
+    let n = r.backend.node(a).unwrap();
+    assert_eq!(r.backend.with_doc(|d| d.get_prop(n, skelter_core::PropId::of("menu-item", "label", "string"))), Some(skelter_core::Value::Str("Save".into())));
+    // egui's signals resolve and take listeners; skelter-widgets' menu root emits the picks itself
+    // (`activate` on the context-menu), so an action's own `activate` does not fire yet
+    r.listen(a, "activate");
+    assert!(m.signal_named("activate").unwrap().native.is_none());
+}
+
+#[test]
 fn collapsing_header_has_eguis_surface() {
     let r = Rig::new();
     let kinds = r.backend.kinds().clone();

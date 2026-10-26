@@ -307,5 +307,36 @@ pub static CONTEXTMENU: KindSpec = KindSpec {
     native_state: &[],
 };
 
+static ACTION_PROPS: &[PropSpec] = &[
+    PropSpec { name: "checkable", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "A check item: picking it toggles `checked`." },
+    PropSpec { name: "checked", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "Check or radio state; picking a check item toggles it, picking a radio item sets it." },
+    PropSpec { name: "group", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "A radio item: the actions of one parent with the same group form an exclusive set; picking one checks it and unchecks the others (each announced)." },
+    PropSpec { name: "label", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The caption." },
+    PropSpec { name: "shortcut", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error." },
+];
+static ACTION_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "activate", args: &[("checked", ValueType::Bool)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick." },
+    SignalSpec { name: "hover", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3)." },
+    SignalSpec { name: "toggled", args: &[("checked", ValueType::Bool)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state." },
+];
+static ACTION_METHODS: &[MethodSpec] = &[
+];
+static ACTION_SLOTS: &[SlotSpec] = &[
+];
+pub static ACTION: KindSpec = KindSpec {
+    name: "Action",
+    tag: Some("action"),
+    extends: Some(&MENUENTRY),
+    doc: "A menu item: plain, a check item (`checkable`) or a radio item (`group`), with an optional `shortcut`. AccessKit role Button, CheckBox or RadioButton.",
+    props: ACTION_PROPS,
+    signals: ACTION_SIGNALS,
+    methods: ACTION_METHODS,
+    slots: ACTION_SLOTS,
+    a11y: A11ySpec { role: "Button", name_from: &["accessible-name", "label"], name_required: true },
+    text_content: Some("label"),
+    toplevel: false,
+    native_state: &["checked"],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX, &MENUENTRY, &CONTEXTMENU];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX, &MENUENTRY, &CONTEXTMENU, &ACTION];

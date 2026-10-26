@@ -155,6 +155,7 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
     skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::menu::ContextMenu>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::menu::MenuItemKind>(reg)?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
