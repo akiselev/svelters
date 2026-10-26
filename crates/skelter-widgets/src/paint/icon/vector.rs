@@ -20,8 +20,12 @@
 //! [`slot_masks`]: one `A8` coverage mask per colour (a few masks instead of one RGBA raster), each
 //! tinted at draw time, so the slots stay live at every size.
 //!
+//! A mask made of solid shapes (the kit's knockout gaps: halo cuts, front blocks, slits) is drawn
+//! as a path boolean: the masked layers intersected with the mask's region (white or opaque shapes
+//! in, black ones cut, inside the mask's rectangle), flattened to polygons when the SVG is parsed.
+//!
 //! What the vector path cannot draw yet falls back to the raster path, per icon:
-//! filters, masks, clip paths, blend modes, patterns, embedded images, text, a group opacity over
+//! filters, masks of grey, translucent or gradient shapes, clip paths, blend modes, patterns, embedded images, text, a group opacity over
 //! several shapes, and gradients (linear and radial: a gradient `PathPaint` needs per-pixel colour in
 //! the path shader, more than this lane's small change; see the record). [`VectorArt::parse`] says
 //! why, and the registry reports it once per icon (`IconError::Fallback`).
@@ -191,9 +195,6 @@ fn walk(g: &usvg::Group, opacity: f32, out: &mut Vec<VectorLayer>) -> Result<(),
                 if !c.filters().is_empty() {
                     return Err("filter".into());
                 }
-                if c.mask().is_some() {
-                    return Err("mask".into());
-                }
                 if c.clip_path().is_some() {
                     return Err("clip path".into());
                 }
@@ -204,7 +205,16 @@ fn walk(g: &usvg::Group, opacity: f32, out: &mut Vec<VectorLayer>) -> Result<(),
                 if o < 1.0 && shapes(c) > 1 {
                     return Err("group opacity over several shapes".into());
                 }
-                walk(c, opacity * o, out)?;
+                match c.mask() {
+                    // a mask of solid shapes: the group's layers intersected with its region
+                    Some(m) => {
+                        let region = mask_region(m)?;
+                        let mut inner = Vec::new();
+                        walk(c, opacity * o, &mut inner)?;
+                        out.extend(inner.iter().filter_map(|l| masked(l, &region)));
+                    }
+                    None => walk(c, opacity * o, out)?,
+                }
             }
             usvg::Node::Path(p) => {
                 if !p.is_visible() {
@@ -221,16 +231,8 @@ fn walk(g: &usvg::Group, opacity: f32, out: &mut Vec<VectorLayer>) -> Result<(),
                     fill = Some(layer(p.data().clone(), rule, p.abs_transform(), LayerKind::Fill, opacity * f.opacity().get(), source_of(f.paint())?));
                 }
                 if let Some(s) = p.stroke() {
-                    let t = p.abs_transform();
-                    // outline precision: the drawing's units at up to 16 device pixels each
-                    let res = (t.sx * t.sy - t.kx * t.ky).abs().sqrt().max(1.0) * 16.0;
-                    let mut ts = s.to_tiny_skia();
-                    let dashed = match ts.dash.take() {
-                        Some(d) => p.data().dash(&d, res),
-                        None => Some(p.data().clone()),
-                    };
-                    if let Some(outline) = dashed.and_then(|d| d.stroke(&ts, res)) {
-                        stroke = Some(layer(outline, (FillRule::NonZero, tiny_skia::FillRule::Winding), t, LayerKind::Stroke, opacity * s.opacity().get(), source_of(s.paint())?));
+                    if let Some(outline) = outline(p, s) {
+                        stroke = Some(layer(outline, (FillRule::NonZero, tiny_skia::FillRule::Winding), p.abs_transform(), LayerKind::Stroke, opacity * s.opacity().get(), source_of(s.paint())?));
                     }
                 }
                 let (a, b) = if fill_first { (fill, stroke) } else { (stroke, fill) };
@@ -241,6 +243,199 @@ fn walk(g: &usvg::Group, opacity: f32, out: &mut Vec<VectorLayer>) -> Result<(),
         }
     }
     Ok(())
+}
+
+/// `p`'s stroke outlined as resvg draws it (caps, joins, miter limits and dashes).
+fn outline(p: &usvg::Path, s: &usvg::Stroke) -> Option<tiny_skia::Path> {
+    let t = p.abs_transform();
+    // outline precision: the drawing's units at up to 16 device pixels each
+    let res = (t.sx * t.sy - t.kx * t.ky).abs().sqrt().max(1.0) * 16.0;
+    let mut ts = s.to_tiny_skia();
+    let dashed = match ts.dash.take() {
+        Some(d) => p.data().dash(&d, res),
+        None => Some(p.data().clone()),
+    };
+    dashed.and_then(|d| d.stroke(&ts, res))
+}
+
+/// Polygons in the drawing's coordinates, as i_overlay takes them.
+type Contours = Vec<Vec<[f64; 2]>>;
+
+/// Curves are flattened to segments this long at most (drawing units: an icon is 16–24 units, so
+/// a 96-pixel draw is off by well under a pixel's hundredth).
+const FLATTEN: f32 = 0.05;
+
+/// `p` under `t`, flattened to polygons.
+fn flatten(p: &tiny_skia::Path, t: tiny_skia::Transform) -> Contours {
+    let map = |q: tiny_skia::Point| {
+        let mut q = q;
+        t.map_point(&mut q);
+        q
+    };
+    let mut out: Contours = Vec::new();
+    let mut cur: Vec<[f64; 2]> = Vec::new();
+    let mut last = tiny_skia::Point::zero();
+    let push = |cur: &mut Vec<[f64; 2]>, q: tiny_skia::Point| cur.push([f64::from(q.x), f64::from(q.y)]);
+    let steps = |pts: &[tiny_skia::Point]| {
+        let len: f32 = pts.windows(2).map(|w| w[0].distance(w[1])).sum();
+        ((len / FLATTEN).ceil() as usize).clamp(2, 256)
+    };
+    for seg in p.segments() {
+        match seg {
+            tiny_skia::PathSegment::MoveTo(a) => {
+                if cur.len() > 2 {
+                    out.push(std::mem::take(&mut cur));
+                }
+                cur.clear();
+                last = map(a);
+                push(&mut cur, last);
+            }
+            tiny_skia::PathSegment::LineTo(a) => {
+                last = map(a);
+                push(&mut cur, last);
+            }
+            tiny_skia::PathSegment::QuadTo(c, a) => {
+                let (p0, p1, p2) = (last, map(c), map(a));
+                let n = steps(&[p0, p1, p2]);
+                for i in 1..=n {
+                    let u = i as f32 / n as f32;
+                    let v = 1.0 - u;
+                    push(&mut cur, tiny_skia::Point::from_xy(v * v * p0.x + 2.0 * v * u * p1.x + u * u * p2.x, v * v * p0.y + 2.0 * v * u * p1.y + u * u * p2.y));
+                }
+                last = p2;
+            }
+            tiny_skia::PathSegment::CubicTo(c1, c2, a) => {
+                let (p0, p1, p2, p3) = (last, map(c1), map(c2), map(a));
+                let n = steps(&[p0, p1, p2, p3]);
+                for i in 1..=n {
+                    let u = i as f32 / n as f32;
+                    let v = 1.0 - u;
+                    let (a0, a1, a2, a3) = (v * v * v, 3.0 * v * v * u, 3.0 * v * u * u, u * u * u);
+                    push(&mut cur, tiny_skia::Point::from_xy(a0 * p0.x + a1 * p1.x + a2 * p2.x + a3 * p3.x, a0 * p0.y + a1 * p1.y + a2 * p2.y + a3 * p3.y));
+                }
+                last = p3;
+            }
+            tiny_skia::PathSegment::Close => {
+                if cur.len() > 2 {
+                    out.push(std::mem::take(&mut cur));
+                }
+                cur.clear();
+            }
+        }
+    }
+    if cur.len() > 2 {
+        out.push(cur);
+    }
+    out
+}
+
+/// `contours` under `rule` as non-overlapping polygons (any later operation can use non-zero).
+fn simplified(contours: &Contours, rule: tiny_skia::FillRule) -> Contours {
+    use i_overlay::core::fill_rule::FillRule as R;
+    use i_overlay::float::simplify::SimplifyShape;
+    let rule = match rule {
+        tiny_skia::FillRule::Winding => R::NonZero,
+        tiny_skia::FillRule::EvenOdd => R::EvenOdd,
+    };
+    contours.simplify_shape(rule).into_iter().flatten().collect()
+}
+
+fn boolean(a: &Contours, b: &Contours, op: i_overlay::core::overlay_rule::OverlayRule) -> Contours {
+    use i_overlay::core::fill_rule::FillRule as R;
+    use i_overlay::float::single::SingleFloatOverlay;
+    a.overlay(b, op, R::NonZero).into_iter().flatten().collect()
+}
+
+/// The region a mask lets through, when it is made of solid shapes only: luminance masks of white
+/// (shown) and black (cut) fills and strokes, alpha masks of opaque ones, later shapes over earlier
+/// ones, inside the mask's rectangle. Anything else (grey, translucent, gradients, nested masks or
+/// groups with effects) is `Err` and the icon stays raster.
+fn mask_region(m: &usvg::Mask) -> Result<Contours, String> {
+    use i_overlay::core::overlay_rule::OverlayRule;
+    if m.mask().is_some() {
+        return Err("nested mask".into());
+    }
+    let alpha = m.kind() == usvg::MaskType::Alpha;
+    fn shapes_of(g: &usvg::Group, out: &mut Vec<(Contours, bool)>, alpha: bool) -> Result<(), String> {
+        for n in g.children() {
+            match n {
+                usvg::Node::Group(c) => {
+                    if !c.filters().is_empty() || c.mask().is_some() || c.clip_path().is_some() || c.blend_mode() != usvg::BlendMode::Normal || c.opacity().get() < 1.0 {
+                        return Err("mask with effects".into());
+                    }
+                    shapes_of(c, out, alpha)?;
+                }
+                usvg::Node::Path(p) => {
+                    if !p.is_visible() {
+                        continue;
+                    }
+                    let shown = |paint: &usvg::Paint, opacity: f32| -> Result<bool, String> {
+                        let usvg::Paint::Color(c) = paint else { return Err("mask with gradients".into()) };
+                        if opacity < 1.0 {
+                            return Err("translucent mask".into());
+                        }
+                        // `currentColor` (inherited strokes) is white, as the coverage raster draws it
+                        match (alpha, (c.red, c.green, c.blue)) {
+                            (true, _) => Ok(true),
+                            (false, (255, 255, 255)) => Ok(true),
+                            (false, rgb) if rgb == SENTINELS[0] => Ok(true),
+                            (false, (0, 0, 0)) => Ok(false),
+                            _ => Err("grey mask".into()),
+                        }
+                    };
+                    let t = p.abs_transform();
+                    let mut fill = None;
+                    if let Some(f) = p.fill() {
+                        let rule = match f.rule() {
+                            usvg::FillRule::NonZero => tiny_skia::FillRule::Winding,
+                            usvg::FillRule::EvenOdd => tiny_skia::FillRule::EvenOdd,
+                        };
+                        fill = Some((simplified(&flatten(p.data(), t), rule), shown(f.paint(), f.opacity().get())?));
+                    }
+                    let mut stroke = None;
+                    if let Some(s) = p.stroke() {
+                        let on = shown(s.paint(), s.opacity().get())?;
+                        stroke = outline(p, s).map(|o| (simplified(&flatten(&o, t), tiny_skia::FillRule::Winding), on));
+                    }
+                    let (a, b) = if p.paint_order() == usvg::PaintOrder::FillAndStroke { (fill, stroke) } else { (stroke, fill) };
+                    out.extend(a.into_iter().chain(b));
+                }
+                usvg::Node::Image(_) => return Err("mask with an image".into()),
+                usvg::Node::Text(_) => return Err("mask with text".into()),
+            }
+        }
+        Ok(())
+    }
+    let mut shapes = Vec::new();
+    shapes_of(m.root(), &mut shapes, alpha)?;
+    let mut region: Contours = Vec::new();
+    for (s, shown) in shapes {
+        region = if shown { boolean(&region, &s, OverlayRule::Union) } else { boolean(&region, &s, OverlayRule::Difference) };
+    }
+    let r = m.rect();
+    let (x0, y0, x1, y1) = (f64::from(r.left()), f64::from(r.top()), f64::from(r.right()), f64::from(r.bottom()));
+    let rect = vec![vec![[x0, y0], [x1, y0], [x1, y1], [x0, y1]]];
+    Ok(boolean(&region, &rect, OverlayRule::Intersect))
+}
+
+/// Layer `l` cut to `region` (both in the drawing's coordinates): its outline becomes polygons in the
+/// drawing's coordinates; `None` when nothing of it is left.
+fn masked(l: &VectorLayer, region: &Contours) -> Option<VectorLayer> {
+    use i_overlay::core::overlay_rule::OverlayRule;
+    let own = simplified(&flatten(&l.ts, l.ts_transform), l.ts_rule);
+    let cut = boolean(&own, region, OverlayRule::Intersect);
+    let mut pb = tiny_skia::PathBuilder::new();
+    for c in &cut {
+        let mut pts = c.iter();
+        let Some(first) = pts.next() else { continue };
+        pb.move_to(first[0] as f32, first[1] as f32);
+        for q in pts {
+            pb.line_to(q[0] as f32, q[1] as f32);
+        }
+        pb.close();
+    }
+    let p = pb.finish()?;
+    layer(p, (FillRule::NonZero, tiny_skia::FillRule::Winding), tiny_skia::Transform::identity(), l.kind, l.opacity, l.source)
 }
 
 fn layer(p: tiny_skia::Path, rule: (FillRule, tiny_skia::FillRule), t: tiny_skia::Transform, kind: LayerKind, opacity: f32, source: PaintSource) -> Option<VectorLayer> {
