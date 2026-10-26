@@ -115,8 +115,6 @@ pub enum Msg {
 pub struct EngineConfig {
     pub refresh: Span,
     pub clear: Option<Color>,
-    /// The caret colour until a window's first `FastCommit::Caret`, which brings its own.
-    pub caret_color: Color,
     /// The caret blink of new windows; `None` = a steady caret.
     pub caret_blink: Option<CaretBlink>,
     /// Display pixels per inch, for fling physics.
@@ -285,7 +283,8 @@ impl Engine {
             animating: false,
             caret: Caret {
                 rect: None,
-                color: self.cfg.caret_color,
+                // hidden until the window's first `FastCommit::Caret`, which brings its colour
+                color: Color::BLACK,
                 transform: PropNodeId::default(),
                 revision: Default::default(),
                 blink: self.cfg.caret_blink,

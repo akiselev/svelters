@@ -913,6 +913,20 @@ fn no_caret_for_an_editor_that_isnt_rendered() {
     restyle(&mut d, "; visibility: hidden");
     frame(&mut d);
     assert_eq!(carets(&mut d), vec![None]);
+    // caret-color wins over color; `auto` falls back to color
+    let caret_color = |d: &mut Document, extra: &str| {
+        restyle(d, extra);
+        frame(d);
+        d.take_fast_commits();
+        d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+        d.take_fast_commits().iter().find_map(|f| match f {
+            skelter_base::commit::FastCommit::Caret { color, rect: Some(_), .. } => Some(*color),
+            _ => None,
+        })
+    };
+    let blue = skelter_base::color::Color::rgba(0.0, 0.0, 1.0, 1.0);
+    assert_eq!(caret_color(&mut d, "; caret-color: #0000ff"), Some(blue), "caret-color over color");
+    assert_eq!(caret_color(&mut d, "; caret-color: auto"), color, "auto = color");
 }
 
 #[test]

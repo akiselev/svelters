@@ -61,7 +61,7 @@ fn css_change(name: &str) -> Option<&'static str> {
     const PAINT: &[&str] = &[
         "background-color", "background-image", "border-color", "border-radius", "border-top-color", "border-right-color", "border-bottom-color",
         "border-left-color", "border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius",
-        "border-top-style", "border-right-style", "border-bottom-style", "border-left-style", "box-shadow", "color", "cursor", "opacity",
+        "border-top-style", "border-right-style", "border-bottom-style", "border-left-style", "box-shadow", "caret-color", "color", "cursor", "opacity",
         "outline-color", "outline-offset", "outline-style", "outline-width", "text-decoration-line",
     ];
     const LAYOUT: &[&str] = &[

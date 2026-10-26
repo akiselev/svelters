@@ -156,7 +156,7 @@ impl Entry {
     }
 
     /// Paints the text in `content` (scrolled to keep the caret in view), the selection and the
-    /// caret (`caret` colour, 1 physical px; no blink yet).
+    /// caret (`caret-color`, else the `caret` role; 1 physical px; no blink yet).
     pub fn paint(&self, cx: &mut PaintCx, s: &StyleView, content: Rect, align: paint::Align, focused: bool) {
         let ctx = cx.painter.ctx().clone();
         let g = paint::text_galley(&ctx, s, &self.text, None);
@@ -188,7 +188,7 @@ impl Entry {
         if focused {
             let w = cx.snap_width(1.0);
             let x = ((x0 + caret_x) * cx.ppp).round() / cx.ppp;
-            let caret = crate::paint::ua_token(s.is_dark(), "caret").unwrap_or(color);
+            let caret = s.color("caret-color").or_else(|| crate::paint::ua_token(s.is_dark(), "caret")).unwrap_or(color);
             p.rect_filled(Rect::from_min_size(egui::pos2(x, y0), egui::vec2(w, g.size().y)), 0.0, caret);
         }
     }
