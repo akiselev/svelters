@@ -297,15 +297,21 @@ pub mod core {
     }
 
     /// What a container that places or hides its children itself reads about one child in
-    /// [`Kind::child_layout`]: its index and the `anchor` of every child (empty when it has none).
+    /// [`Kind::child_layout`]: its index, the `anchor` of every child (empty when it has none) and
+    /// the name of the slot each child is in (`""`: the default slot; `slots` may be empty then).
     pub struct ChildCx<'a> {
         pub index: usize,
         pub anchors: &'a [&'a str],
+        pub slots: &'a [&'a str],
     }
 
     impl ChildCx<'_> {
         pub fn count(&self) -> usize {
             self.anchors.len()
+        }
+        /// The slot child `k` is in (`""`: the default slot).
+        pub fn slot_of(&self, k: usize) -> &str {
+            self.slots.get(k).copied().unwrap_or("")
         }
     }
 

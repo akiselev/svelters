@@ -375,12 +375,12 @@ mod tests {
     fn closed_it_hides_its_content_and_open_is_a_state() {
         let mut p = Popup::default();
         let mut style = taffy::Style::default();
-        assert!(!p.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert!(!p.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
         assert_eq!(style.display, taffy::Display::None);
         assert_eq!(p.prop_state(), StateBits::NONE);
         p.props.open = true;
         let mut style = taffy::Style::default();
-        assert!(p.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert!(p.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
         assert_ne!(style.display, taffy::Display::None);
         assert_eq!(p.prop_state(), StateBits::OPEN);
     }

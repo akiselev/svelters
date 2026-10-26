@@ -882,7 +882,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 
     fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
         let anchors: Vec<&str> = (0..cx.count).map(|k| cx.anchor_of(k)).collect();
-        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors }, style)
+        let slots: Vec<&str> = (0..cx.count).map(|k| cx.parent.child(k).map_or("", |c| c.slot_name())).collect();
+        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors, slots: &slots }, style)
     }
 
     fn children_inert(&self) -> bool {

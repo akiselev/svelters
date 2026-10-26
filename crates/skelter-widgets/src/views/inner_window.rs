@@ -726,14 +726,14 @@ mod tests {
         let mut w = InnerWindow::default();
         w.frame = Rect::new(10.0, 20.0, 310.0, 220.0);
         let mut style = taffy::Style::default();
-        assert!(w.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert!(w.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
         assert_eq!(style.position, taffy::Position::Absolute);
         assert_eq!(style.inset.top, taffy::LengthPercentageAuto::length(20.0 + TITLE_H));
         assert_eq!(style.size.width, taffy::Dimension::length(300.0));
         assert_eq!(style.size.height, taffy::Dimension::length(200.0 - TITLE_H));
         w.props.collapsed = true;
         let mut style = taffy::Style::default();
-        assert!(!w.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert!(!w.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
         assert_eq!(style.display, taffy::Display::None);
     }
 }

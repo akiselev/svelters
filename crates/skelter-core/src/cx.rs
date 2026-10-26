@@ -184,6 +184,13 @@ impl<'a> NodeView<'a> {
     pub fn anchor(&self) -> &'a str {
         self.prop_str(common::ANCHOR).unwrap_or("")
     }
+    /// The name of the parent's slot the node is in (`""`: the default slot, or no parent): a
+    /// collapsing header lays out its `end` children in its header row.
+    pub fn slot_name(&self) -> &'static str {
+        let Some(slot) = self.doc.slot_of(self.id) else { return "" };
+        let parent = self.doc.parent(self.id).and_then(|p| self.doc.view(p));
+        parent.and_then(|p| p.entry.slot(slot)).map_or("", |s| s.name)
+    }
 }
 
 /// [`Kind::child_layout`](crate::Kind::child_layout): the container and the child it places.
