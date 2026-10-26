@@ -402,11 +402,10 @@ mod tests {
 
     #[test]
     fn a_long_line_scrolls_on_the_compositor_and_its_box_stays_fixed() {
-        use crate::testdoc::{W, child, doc, frame, key};
+        use crate::testdoc::{W, child, doc, frame, line_edge};
         use skelter_base::commit::FastCommit;
         use skelter_base::display::Prim;
         use skelter_base::ids::NodeId;
-        use skelter_base::key::Key;
         let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 100.0), |r| {
             r.register::<TextEdit>().unwrap();
         });
@@ -420,13 +419,13 @@ mod tests {
         assert!(list(&c, f).is_some_and(|l| l.items.iter().any(|p| matches!(p, Prim::Glyphs(_)))), "the text is the scrolled content");
         d.focus(f, FocusReason::Keyboard);
         // a collapsed caret first (focus may have selected all): that re-records
-        d.dispatch(&key(Key::Home, None));
+        d.dispatch(&line_edge(false));
         frame(&mut d);
         d.take_fast_commits();
         let offset = |d: &skelter_core::Document| d.scroll_offset(f).x;
         assert_eq!(offset(&d), 0.0);
         // End: the caret goes past the box, the content moves on the compositor
-        d.dispatch(&key(Key::End, None));
+        d.dispatch(&line_edge(true));
         let fast = d.take_fast_commits();
         let scrolled = fast.iter().find_map(|c| match c {
             FastCommit::ScrollOffset { offset, .. } => Some(offset.x),
@@ -438,7 +437,7 @@ mod tests {
         let c = frame(&mut d);
         assert!(c.as_ref().is_none_or(|c| list(c, f).is_none() && list(c, fixed_key).is_none()), "neither the text nor the box re-records");
         // Home scrolls back the same way
-        d.dispatch(&key(Key::Home, None));
+        d.dispatch(&line_edge(false));
         assert!(d.take_fast_commits().iter().any(|c| matches!(c, FastCommit::ScrollOffset { offset, .. } if offset.x == 0.0)));
         let c = frame(&mut d);
         assert!(c.as_ref().is_none_or(|c| list(c, f).is_none()));
