@@ -169,6 +169,86 @@ impl ListRig {
     }
 }
 
+/// svelters-egui's `a_2k_row_list_binds_its_window_and_flings_without_unbound_rows`: `splice` and
+/// `count`, the rows of the window set up once and bound, and scrolling through the list rebinds
+/// the same slots (no row created while scrolling).
+#[test]
+fn virtual_list_binds_its_window_and_recycles_while_scrolling() {
+    let r = ListRig::new("virtual-list");
+    let ids: Vec<i64> = (1..=2000).collect();
+    r.splice(0, 0, ids.iter().copied());
+    assert_eq!(r.call("count", &[]), Value::I64(2000));
+    r.run();
+    let setups = r.st.borrow().setups;
+    assert!(setups > 8 && setups <= 30, "{setups} row slots for a {VIEW_H}-point viewport of {ROW_H}-point rows");
+    let shown = r.check_rows(&ids);
+    assert!(shown >= 10, "{shown} rows shown");
+    // scroll through the list: the slots are rebound, none created
+    let n = r.node();
+    for k in 1..=20 {
+        r.backend.with_doc(|d| d.set_scroll_offset(n, skelter_base::geom::Vec2::new(0.0, k as f32 * 2000.0)));
+        r.run();
+        r.check_rows(&ids);
+    }
+    assert!(r.offset() > 39_000.0, "scrolled: {}", r.offset());
+    assert_eq!(r.st.borrow().setups, setups, "no row created while scrolling");
+    assert!(r.st.borrow().events.iter().filter(|e| e.0 == "bind").count() > 200, "rows were rebound");
+}
+
+/// svelters-egui's `scroll_to_anchoring_and_set_size`: `scrollTo`, `rowAt`, scroll anchoring by key
+/// on a splice above the first visible row, and a splice of what is in view rebinds without stale
+/// rows.
+#[test]
+fn virtual_list_scroll_to_row_at_and_anchoring() {
+    let r = ListRig::new("virtual-list");
+    let mut ids: Vec<i64> = (1..=500).collect();
+    r.splice(0, 0, ids.iter().copied());
+    r.run();
+    r.call("scrollTo", &[Value::I64(300)]);
+    r.run();
+    let off = r.offset();
+    assert!(off > 0.0 && off <= 300.0 * ROW_H && off + VIEW_H as f64 >= 301.0 * ROW_H, "row 300 in view at offset {off}");
+    assert_ne!(r.call("rowAt", &[Value::I64(300)]), Value::I64(-1));
+    assert_eq!(r.call("rowAt", &[Value::I64(10)]), Value::I64(-1));
+    r.check_rows(&ids);
+    // `scrollTo` with a hint
+    r.call("scrollTo", &[Value::I64(100), Value::Str("top".into())]);
+    r.run();
+    assert_eq!(r.offset(), 100.0 * ROW_H);
+    // insert 10 items at the top: the first visible item keeps its place on screen
+    let off = r.offset();
+    let first = (off / ROW_H).floor() as usize;
+    let first_id = ids[first];
+    let y_before = first as f64 * ROW_H - off;
+    r.splice(0, 0, 9001..=9010);
+    ids.splice(0..0, 9001..=9010);
+    r.run();
+    let at = ids.iter().position(|&x| x == first_id).unwrap();
+    assert_eq!(at as f64 * ROW_H - r.offset(), y_before, "anchored by key: offset {off} → {}", r.offset());
+    r.check_rows(&ids);
+    // remove what is in view: rows are rebound, none stale
+    r.splice(at as i64, 20, std::iter::empty());
+    ids.drain(at..at + 20);
+    r.run();
+    assert!(r.check_rows(&ids) >= 10);
+    assert_eq!(r.call("count", &[]), Value::I64(ids.len() as i64));
+}
+
+/// egui's `selected` (a position) on the list: a host write selects that item and raises nothing;
+/// it reads back.
+#[test]
+fn virtual_list_selected_is_a_position() {
+    let r = ListRig::new("virtual-list");
+    r.splice(0, 0, 1..=50);
+    r.run();
+    r.st.borrow_mut().events.clear();
+    r.set("selected", Value::I64(7));
+    r.run();
+    let k = r.br.handle_info(r.list).unwrap().kind;
+    assert_eq!(r.br.get_prop(r.list, r.br.resolve(NameKind::Prop, k, "selected")).unwrap(), Value::I64(7));
+    assert!(!r.st.borrow().events.iter().any(|e| e.0 == "selectionchange"), "a host write never raises");
+}
+
 /// A9b.b: cadatomic's `lists.js` drives `tree-view` as svelters-egui's: JS flattens the tree,
 /// `splice(pos, removed, ids)` gives the visible rows, `setNodes(ids, levels, flags, labels)` their
 /// facts, and the rows come through the same row protocol; `selection` and `setSelection`.

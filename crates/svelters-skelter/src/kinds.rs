@@ -171,6 +171,7 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
     skelter_widgets::host::register::<skelter_widgets::controls::CollapsingHeader>(reg)?;
     skelter_widgets::table::kinds::register(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::virtual_list::VirtualList>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::menu::ContextMenu>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::menu::MenuItemKind>(reg)?;
