@@ -850,6 +850,11 @@ impl EventCx<'_> {
     pub fn request_layout(&mut self) {
         self.doc.mark_layout(self.node);
     }
+    /// The node's accessibility data changed (a text field's text, selection or runs): it is sent
+    /// again with the next frame, as [`PropCx::request_a11y`] does for a prop.
+    pub fn request_a11y(&mut self) {
+        self.doc.mark(self.node, Dirty::A11Y);
+    }
 }
 
 /// [`VirtualChildren::realize`](crate::VirtualChildren::realize): the document, to create, recycle and

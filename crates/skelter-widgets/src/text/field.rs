@@ -19,6 +19,7 @@ use super::editor::{EditorConfig, FocusReason, TextEditor, TextRequest};
 use super::keys::KeyAction;
 use super::lines::GeometryLines;
 use super::policy::TextPolicy;
+use super::runs::TextRanges;
 use super::shim::{Clipboard, Layouter, RecordSink, TextGeometry};
 use super::shown::Shown;
 use super::utf16::{floor_boundary, str_byte_to_utf16, str_utf16_to_byte};
@@ -31,8 +32,12 @@ use skelter_base::geom::{Affine, Corners, Insets, Point, Rect, RoundedRect, Size
 use skelter_base::input::{InputPurpose, TextInputClient, Utf16Range};
 use skelter_base::time::{Span, Time};
 use quire_text::{NoWrap, Rejected};
+use std::borrow::Cow;
 use std::ops::Range;
 use std::sync::Arc;
+
+/// The most runs a field sends: skelter-core's cap on one node's virtual children.
+const MAX_RUNS: usize = skelter_core::a11y::MAX_VIRTUAL_CHILDREN;
 
 /// The `text-edit` kind's props and their change classes (architecture §4.3), with svelters'
 /// names; `read-only` and `wrap` are new.
@@ -158,6 +163,11 @@ pub struct TextField {
     /// A non-empty selection was last recorded: a caret move needs no re-record unless one was or is
     /// (the caret itself goes out through the fast channel).
     selection_painted: bool,
+    /// The laid-out text as accessibility runs, rebuilt with the layout.
+    ranges: TextRanges,
+    /// The accessibility node is stale (text, selection, preedit, scroll or layout changed; never a
+    /// caret blink).
+    a11y_changed: bool,
 }
 
 impl TextField {
@@ -182,6 +192,8 @@ impl TextField {
             repaint: true,
             scroll_repaints: true,
             selection_painted: false,
+            ranges: TextRanges::default(),
+            a11y_changed: true,
         }
     }
 
@@ -272,6 +284,11 @@ impl TextField {
         std::mem::take(&mut self.repaint)
     }
 
+    /// Whether the accessibility node must be sent again (and clears the flag).
+    pub fn take_a11y(&mut self) -> bool {
+        std::mem::take(&mut self.a11y_changed)
+    }
+
     // ---- after every operation ----
 
     /// Folds the editor's changes into signals, layout staleness and the caret restart.
@@ -289,6 +306,7 @@ impl TextField {
             self.signals.push(FieldSignal::Select);
         }
         if c.text || c.external || c.selection || c.preedit {
+            self.a11y_changed = true;
             self.caret.restart();
             // a collapsed caret moving is the fast channel's: no re-record
             let selected = !self.editor.selection().range().is_empty();
@@ -319,6 +337,10 @@ impl TextField {
         }
         self.stale = false;
         self.repaint = true;
+        // the runs follow the layout (O(text) in carets: here, not in every `a11y`)
+        let words: Vec<usize> = self.editor.word_starts().into_iter().map(|b| self.shown.to_shown(b)).collect();
+        self.ranges = TextRanges::build(&self.shown.text, self.geom.as_deref(), &words);
+        self.a11y_changed = true;
     }
 
     /// Intrinsic content size: the text (or the placeholder, or one empty row) at `max_width`.
@@ -364,6 +386,7 @@ impl TextField {
             self.scroll.y = r.max.y - h;
         }
         self.repaint |= self.scroll_repaints && before != self.scroll;
+        self.a11y_changed |= before != self.scroll;
     }
 
     fn clamp_scroll(&mut self) {
@@ -373,6 +396,7 @@ impl TextField {
         let max = Vec2::new((s.w + 1.0 - self.content.width()).max(0.0), (s.h - self.content.height()).max(0.0));
         let c = Vec2::new(self.scroll.x.clamp(0.0, max.x), self.scroll.y.clamp(0.0, max.y));
         self.repaint |= self.scroll_repaints && c != self.scroll;
+        self.a11y_changed |= c != self.scroll;
         self.scroll = c;
     }
 
@@ -397,17 +421,22 @@ impl TextField {
         if !self.editor.focused() {
             return None;
         }
-        if let Some(pre) = self.editor.preedit() {
-            let p = self.shown.preedit_range()?;
-            let a = pre.active.as_ref()?;
-            let at = if self.editor.config().password { p.start + pre.text[..a.end].chars().count() * self.editor.policy().mask.len_utf8() } else { p.start + a.end };
-            return Some(g.caret_rect(at, false));
+        if self.editor.preedit().is_some() {
+            return Some(g.caret_rect(self.preedit_caret()?, false));
         }
         let s = self.editor.selection();
         if !s.range().is_empty() {
             return None;
         }
         Some(g.caret_rect(self.shown.to_shown(s.head), false))
+    }
+
+    /// The shown byte of the caret in a composition: the end of its active clause.
+    fn preedit_caret(&self) -> Option<usize> {
+        let pre = self.editor.preedit()?;
+        let p = self.shown.preedit_range()?;
+        let a = pre.active.as_ref()?;
+        Some(if self.editor.config().password { p.start + pre.text[..a.end].chars().count() * self.editor.policy().mask.len_utf8() } else { p.start + a.end })
     }
 
     /// The caret in node coordinates, `None` when hidden or scrolled away.
@@ -659,7 +688,43 @@ impl TextField {
 
     // ---- accessibility ----
 
-    pub fn a11y(&self, node: &mut accesskit::Node) {
+    /// The runs of the shown text: the layout's, or unplaced rows while there is no layout.
+    fn a11y_ranges(&self) -> Cow<'_, TextRanges> {
+        if self.geom.is_some() && !self.stale { Cow::Borrowed(&self.ranges) } else { Cow::Owned(TextRanges::build(&self.shown.text, None, &[])) }
+    }
+
+    /// The runs sent: all of them, or, past the virtual-children cap, the whole rows in view with a
+    /// viewport of margin on each side (as Chromium's virtualised editors do).
+    fn a11y_window(&self, r: &TextRanges) -> Range<usize> {
+        let n = r.runs.len();
+        if n <= MAX_RUNS {
+            return 0..n;
+        }
+        let h = self.content.height().max(1.0);
+        let (top, bottom) = (self.scroll.y - h, self.scroll.y + 2.0 * h);
+        let mut a = r.runs.iter().position(|q| q.rect.max.y >= top).unwrap_or(n - 1);
+        while a > 0 && r.runs[a].chunk > 0 {
+            a -= 1;
+        }
+        let mut b = r.runs[a..].iter().position(|q| q.rect.min.y > bottom).map_or(n, |k| a + k);
+        while b < n && r.runs[b].chunk > 0 {
+            b += 1;
+        }
+        if b - a > MAX_RUNS {
+            b = a + MAX_RUNS;
+            while b > a + 1 && r.runs[b].chunk > 0 {
+                b -= 1;
+            }
+        }
+        a..b
+    }
+
+    /// The field's AccessKit node, and its text as `Role::TextRun` nodes (plan `qc-a11y` §3.1) for
+    /// the owner to add as virtual children, in order: `run_id(k)` is the id the `k`-th gets. The
+    /// runs carry the shown text (a password field's masks), the selection names them, and a
+    /// single-line field keeps its `value` (UIA's ValuePattern, macOS `AXValue`); a multi-line one
+    /// leaves it to the runs.
+    pub fn a11y(&self, node: &mut accesskit::Node, run_id: &dyn Fn(usize) -> accesskit::NodeId) -> Vec<accesskit::Node> {
         let cfg = self.editor.config();
         node.set_role(if cfg.password {
             accesskit::Role::PasswordInput
@@ -668,8 +733,9 @@ impl TextField {
         } else {
             accesskit::Role::TextInput
         });
-        let value = if cfg.password { self.shown.text.clone() } else { self.editor.text() };
-        node.set_value(value);
+        if !cfg.multiline {
+            node.set_value(if cfg.password { self.shown.text.clone() } else { self.editor.text() });
+        }
         if !self.placeholder.is_empty() {
             node.set_placeholder(self.placeholder.clone());
         }
@@ -679,19 +745,81 @@ impl TextField {
             node.add_action(accesskit::Action::SetValue);
             node.add_action(accesskit::Action::ReplaceSelectedText);
         }
+        node.add_action(accesskit::Action::SetTextSelection);
         node.add_action(accesskit::Action::Focus);
+
+        let ranges = self.a11y_ranges();
+        let w = self.a11y_window(&ranges);
+        let o = self.to_node();
+        let mut runs = Vec::with_capacity(w.len());
+        for (k, r) in ranges.runs[w.clone()].iter().enumerate() {
+            let mut n = accesskit::Node::new(accesskit::Role::TextRun);
+            n.set_text_direction(accesskit::TextDirection::LeftToRight);
+            let b = r.rect.translate(o);
+            n.set_bounds(accesskit::Rect { x0: b.min.x as f64, y0: b.min.y as f64, x1: b.max.x as f64, y1: b.max.y as f64 });
+            n.set_value(r.text.clone());
+            n.set_character_lengths(r.lengths.clone());
+            n.set_character_positions(r.positions.clone());
+            n.set_character_widths(r.widths.clone());
+            n.set_word_starts(r.word_starts.clone());
+            if r.chunk > 0 && k > 0 {
+                n.set_previous_on_line(run_id(k - 1));
+            }
+            if r.chunk + 1 < r.chunks && w.start + k + 1 < w.end {
+                n.set_next_on_line(run_id(k + 1));
+            }
+            runs.push(n);
+        }
+        // in a composition the caret is at its active clause's end, which the runs hold
+        let s = self.editor.selection();
+        let (anchor, focus) = match self.preedit_caret() {
+            Some(c) => (c, c),
+            None => (self.shown.to_shown(s.anchor), self.shown.to_shown(s.head)),
+        };
+        let pos = |b: usize| {
+            let (k, c) = match ranges.position(b) {
+                (k, _) if k < w.start => (w.start, 0),
+                (k, _) if k >= w.end => (w.end - 1, ranges.runs[w.end - 1].lengths.len()),
+                kc => kc,
+            };
+            accesskit::TextPosition { node: run_id(k - w.start), character_index: c }
+        };
+        node.set_text_selection(accesskit::TextSelection { anchor: pos(anchor), focus: pos(focus) });
+        runs
     }
 
-    /// An AccessKit action on the field.
-    pub fn a11y_action(&mut self, req: &accesskit::ActionRequest) {
-        if let Some(accesskit::ActionData::Value(v)) = &req.data {
-            match req.action {
-                accesskit::Action::SetValue => self.editor.set_value_by_user(v),
-                accesskit::Action::ReplaceSelectedText => self.editor.replace_selection(v),
-                _ => {}
+    /// An AccessKit action on the field: `SetValue`, `ReplaceSelectedText` and `SetTextSelection`,
+    /// whose positions name runs; `run_of` gives a run id's index among the runs [`TextField::a11y`]
+    /// returned. Whether the field took it.
+    pub fn a11y_action(&mut self, req: &accesskit::ActionRequest, run_of: &dyn Fn(accesskit::NodeId) -> Option<usize>) -> bool {
+        let took = match (req.action, &req.data) {
+            (accesskit::Action::SetValue, Some(accesskit::ActionData::Value(v))) => {
+                self.editor.set_value_by_user(v);
+                true
             }
-        }
+            (accesskit::Action::ReplaceSelectedText, Some(accesskit::ActionData::Value(v))) => {
+                self.editor.replace_selection(v);
+                true
+            }
+            (accesskit::Action::SetTextSelection, Some(accesskit::ActionData::SetTextSelection(sel))) => {
+                let bytes = {
+                    let ranges = self.a11y_ranges();
+                    let w = self.a11y_window(&ranges);
+                    let byte = |p: &accesskit::TextPosition| run_of(p.node).filter(|k| w.start + k < w.end).map(|k| self.shown.to_doc(ranges.byte(w.start + k, p.character_index)));
+                    byte(&sel.anchor).zip(byte(&sel.focus))
+                };
+                match bytes {
+                    Some((a, h)) => {
+                        self.editor.set_selection(a, h);
+                        true
+                    }
+                    None => false,
+                }
+            }
+            _ => false,
+        };
         self.after();
+        took
     }
 
     // ---- the IME document ↔ the layout (geometry queries of TextInputClient) ----
@@ -919,6 +1047,95 @@ mod tests {
         assert_eq!(f.editor.caret(), 5, "down moves to the next wrapped row");
         press(&mut f, &mut lay, Key::End, Modifiers::default(), None);
         assert_eq!(f.editor.caret(), 8);
+    }
+
+    fn ax(f: &TextField) -> (accesskit::Node, Vec<accesskit::Node>) {
+        let mut n = accesskit::Node::new(accesskit::Role::TextInput);
+        let runs = f.a11y(&mut n, &|k| accesskit::NodeId(1000 + k as u64));
+        (n, runs)
+    }
+
+    fn select(f: &mut TextField, anchor: (usize, usize), focus: (usize, usize)) -> bool {
+        let pos = |(k, c): (usize, usize)| accesskit::TextPosition { node: accesskit::NodeId(1000 + k as u64), character_index: c };
+        let req = accesskit::ActionRequest {
+            action: accesskit::Action::SetTextSelection,
+            target_tree: accesskit::TreeId::ROOT,
+            target_node: accesskit::NodeId(1),
+            data: Some(accesskit::ActionData::SetTextSelection(accesskit::TextSelection { anchor: pos(anchor), focus: pos(focus) })),
+        };
+        f.a11y_action(&req, &|id| id.0.checked_sub(1000).map(|k| k as usize))
+    }
+
+    #[test]
+    fn runs_carry_the_text_and_the_selection_names_them() {
+        let (mut f, mut lay) = field("hello wörld", EditorConfig::default());
+        f.focus_in(FocusReason::Pointer);
+        // the end: "ö" is two bytes
+        f.editor.set_selection(12, 12);
+        f.take_a11y();
+        press(&mut f, &mut lay, Key::Exclamationmark, Modifiers::default(), Some("!"));
+        assert!(f.take_a11y(), "typing re-sends the node");
+        press(&mut f, &mut lay, Key::ArrowLeft, Modifiers::SHIFT, None);
+        assert!(f.take_a11y(), "a selection change re-sends it");
+        let (n, runs) = ax(&f);
+        assert_eq!(n.value(), Some("hello wörld!"));
+        assert_eq!(runs.len(), 1);
+        assert_eq!(runs[0].role(), accesskit::Role::TextRun);
+        assert_eq!(runs[0].value(), Some("hello wörld!"));
+        assert_eq!(runs[0].character_lengths().len(), 12);
+        assert_eq!(runs[0].character_lengths()[7], 2, "ö is two bytes");
+        assert_eq!(runs[0].word_starts(), &[0, 6]);
+        assert_eq!(runs[0].character_positions().unwrap()[1], 10.0);
+        let sel = n.text_selection().unwrap();
+        assert_eq!((sel.anchor.node, sel.anchor.character_index), (accesskit::NodeId(1000), 12));
+        assert_eq!((sel.focus.node, sel.focus.character_index), (accesskit::NodeId(1000), 11));
+        assert!(n.supports_action(accesskit::Action::SetTextSelection));
+        // AT moves the selection: "hello" (characters 0..5)
+        assert!(select(&mut f, (0, 0), (0, 5)));
+        let s = f.editor.selection();
+        assert_eq!((s.anchor, s.head), (0, 5));
+        assert!(f.take_a11y());
+    }
+
+    #[test]
+    fn an_empty_field_has_one_empty_run_and_a_password_no_clear_text() {
+        let (f, _) = field("", EditorConfig::default());
+        let (n, runs) = ax(&f);
+        assert_eq!(runs.len(), 1);
+        assert_eq!(runs[0].value(), Some(""));
+        assert!(runs[0].character_lengths().is_empty());
+        assert_eq!(n.text_selection().map(|s| s.focus.character_index), Some(0));
+
+        let (p, _) = field("hunter2", EditorConfig { password: true, ..EditorConfig::default() });
+        let (n, runs) = ax(&p);
+        assert_eq!(n.role(), accesskit::Role::PasswordInput);
+        for v in std::iter::once(n.value()).chain(runs.iter().map(|r| r.value())) {
+            let v = v.unwrap_or("");
+            assert!(!v.contains("hunter") && !v.contains('2'), "clear text left the field: {v:?}");
+        }
+        assert_eq!(runs[0].character_lengths().len(), 7, "one mask a character");
+        assert!(runs[0].word_starts().is_empty());
+    }
+
+    #[test]
+    fn multiline_runs_end_in_line_feeds_and_leave_value_unset() {
+        let cfg = EditorConfig { multiline: true, ..EditorConfig::default() };
+        let mut f = TextField::new("ab\ncd", cfg, TextPolicy::of(Platform::Gtk));
+        let mut lay = LAY;
+        f.prepare(&mut lay, Rect::new(4.0, 2.0, 104.0, 42.0), Affine::IDENTITY);
+        let (n, runs) = ax(&f);
+        assert_eq!(n.role(), accesskit::Role::MultilineTextInput);
+        assert_eq!(n.value(), None, "consumers read the runs");
+        assert_eq!(runs.iter().map(|r| r.value().unwrap()).collect::<Vec<_>>(), vec!["ab\n", "cd"]);
+        assert_eq!(runs[0].character_widths().unwrap()[2], 0.0);
+        // bounds in node space: the content box's origin
+        let b = runs[1].bounds().unwrap();
+        assert_eq!((b.x0, b.y0, b.x1, b.y1), (4.0, 22.0, 24.0, 42.0));
+        // a selection after the line feed starts the second run
+        f.editor.set_selection(3, 4);
+        let (n, _) = ax(&f);
+        let s = n.text_selection().unwrap();
+        assert_eq!((s.anchor.node, s.anchor.character_index, s.focus.character_index), (accesskit::NodeId(1001), 0, 1));
     }
 
     struct Board {

@@ -6561,7 +6561,7 @@
       },
       "slot_ids": {},
       "text_content": null,
-      "widget": "placeholder"
+      "widget": "skelter-widgets"
     },
     "ToggleButton": {
       "a11y": {

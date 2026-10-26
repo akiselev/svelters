@@ -272,6 +272,39 @@ impl TextEditor {
         Shown::build(&text, mask, self.preedit().map(|p| (self.caret(), p.text.as_str())))
     }
 
+    /// The document bytes that start a word by the field's word rules (what a double click selects),
+    /// ascending; none in a password field, whose word motions go to the ends.
+    pub fn word_starts(&self) -> Vec<usize> {
+        if self.cfg.password {
+            return Vec::new();
+        }
+        let text = self.doc.text();
+        let s = text.to_string();
+        let word = |c: char| c.is_alphanumeric() || c == '_';
+        let mut out = Vec::new();
+        if let Some(cls) = self.rules.words.classifier() {
+            // VS Code's: a word is a run of the classifier's regular chars
+            let mut prev = None;
+            for (b, c) in s.char_indices() {
+                let class = cls.class(c);
+                if class == quire_text::words::CharClass::Regular && prev != Some(quire_text::words::CharClass::Regular) {
+                    out.push(b);
+                }
+                prev = Some(class);
+            }
+            return out;
+        }
+        let mut b = 0;
+        while b < s.len() {
+            let r = self.rules.words.word_at(text, b);
+            if r.start == b && r.end > b && s[b..].chars().next().is_some_and(word) {
+                out.push(b);
+            }
+            b = if r.start <= b && r.end > b { r.end } else { b + s[b..].chars().next().map_or(1, char::len_utf8) };
+        }
+        out
+    }
+
     /// The IME's document: the text with the preedit spliced in, never masked.
     fn ime_doc(&self) -> Shown {
         let text = self.text();

@@ -91,7 +91,7 @@ fn ids_are_skelter_core_hashes() {
     assert_eq!(widget["props"]["accessible-name"]["native"], "aria-label");
     assert_eq!(button["widget"], "skelter-widgets");
     assert_eq!(spec["kinds"]["Slider"]["widget"], "skelter-widgets");
-    assert_eq!(spec["kinds"]["TextEdit"]["widget"], "placeholder");
+    assert_eq!(spec["kinds"]["TextEdit"]["widget"], "skelter-widgets");
 }
 
 #[test]

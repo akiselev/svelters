@@ -216,6 +216,16 @@ impl TextEdit {
         if self.field.take_repaint() {
             cx.request_paint();
         }
+        // text, selection, preedit, scroll or layout: the runs and selection go out again (a caret
+        // blink is not an event)
+        if self.field.take_a11y() {
+            cx.request_a11y();
+        }
+    }
+
+    /// The run index of a virtual child id of `node` (the runs are its only virtual children).
+    fn run_of(node: skelter_base::ids::NodeId) -> impl Fn(accesskit::NodeId) -> Option<usize> {
+        move |id| skelter_core::a11y::virtual_child(id).filter(|(o, _)| *o == node).map(|(_, k)| k as usize)
     }
 }
 
@@ -282,6 +292,9 @@ impl Kind for TextEdit {
         if self.field.take_repaint() {
             cx.request_paint();
         }
+        // the frame sends the node when its layout or props changed, which is when a prepare
+        // relays the text out
+        self.field.take_a11y();
     }
 
     fn record(&self, cx: &mut RecordCx) {
@@ -299,6 +312,12 @@ impl Kind for TextEdit {
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        // AT requests need no layout: they edit the text or move the selection
+        if let Event::A11y(req) = ev {
+            let took = self.field.a11y_action(req, &Self::run_of(cx.node()));
+            self.finish(cx);
+            return if took { Handled::Yes } else { Handled::No };
+        }
         let Some(style) = cx.view(cx.node()).map(|v| text_style(v.style())) else { return Handled::No };
         if let (Event::FocusIn(_), Some(p)) = (ev, cx.service::<crate::interact::Policy>().copied()) {
             self.field.editor.set_policy(TextPolicy::from_policy(Platform::current(), &p));
@@ -377,7 +396,12 @@ impl Kind for TextEdit {
 
     fn a11y(&self, cx: &mut A11yCx) {
         cx.default_a11y();
-        self.field.a11y(cx.out);
+        let node = cx.node.id();
+        let runs = self.field.a11y(cx.out, &|k| skelter_core::a11y::virtual_id(node, k as u32));
+        for (k, run) in runs.into_iter().enumerate() {
+            let added = cx.add_virtual_child(run);
+            debug_assert_eq!(added, Some(k as u32), "the runs are the field's only virtual children");
+        }
     }
 }
 
