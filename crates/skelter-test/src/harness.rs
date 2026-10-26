@@ -2,7 +2,8 @@
 //! `skelter_platform::HeadlessPlatform` and the [`HeadlessCompositor`], on the platform's virtual clock.
 //! Input is scripted into the headless platform, which delivers it as an OS backend would
 //! (`AppHandler::input`, `a11y_event`), so tests take the production dispatch path; queries read the
-//! AccessKit snapshot folded from the app's `update_a11y` calls (and grafted subtrees: egui islands).
+//! AccessKit snapshot folded from the app's `update_a11y` calls (grafted subtrees, egui islands', included:
+//! `Commit::a11y_subtrees`).
 //!
 //! - `step` = one vsync on the virtual clock: queued input is delivered, the clock moves one interval,
 //!   the compositor applies commits and presents, the UI answers `BeginFrame`.
@@ -24,7 +25,7 @@ use skelter::platform::{
 };
 use skelter::seams::DocumentApi;
 use skelter::{App, AppConfig};
-use skelter_base::accesskit::{Action, ActionData, ActionRequest, NodeId, Role, TreeId, TreeUpdate};
+use skelter_base::accesskit::{Action, ActionData, ActionRequest, NodeId, Role, TreeId};
 use skelter_base::color::Color;
 use skelter_base::event::{
     ImeEvent, InputEvent, KeyEvent, KeyLocation, KeyState, Modifiers, MouseButton, PointerEvent,
@@ -57,9 +58,6 @@ impl std::error::Error for NotSettled {}
 
 /// Document-specific work the harness does around the production path (set by [`crate::island`]).
 pub(crate) struct Hooks<D> {
-    /// AccessKit updates the document produced outside its commits (an island's grafted subtree),
-    /// drained after every delivery.
-    pub a11y: Option<Box<dyn FnMut(&mut D) -> Vec<TreeUpdate>>>,
     /// The clipboard text a paste puts on the platform clipboard, for clipboards the document owns.
     pub clipboard: Option<Box<dyn FnMut(&mut D, &str)>>,
     /// Before `render`: draw the document's own textures (an island's) on the harness's device.
@@ -69,7 +67,6 @@ pub(crate) struct Hooks<D> {
 impl<D> Default for Hooks<D> {
     fn default() -> Self {
         Hooks {
-            a11y: None,
             clipboard: None,
             textures: None,
         }
@@ -443,11 +440,6 @@ impl<D: DocumentApi + 'static> Harness<D> {
                 self.a11y.apply(u);
             }
             self.calls.push(c);
-        }
-        if let Some(f) = &mut self.hooks.a11y {
-            for u in f(self.app.doc_mut()) {
-                self.a11y.apply(&u);
-            }
         }
     }
 

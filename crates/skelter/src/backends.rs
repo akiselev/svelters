@@ -30,7 +30,13 @@ pub struct CoreDocument {
     menu_sent: Option<skelter_platform::MenuDesc>,
     /// The windows opened in the document, in order.
     windows: Vec<WindowId>,
+    taps: Vec<EventTap>,
 }
+
+/// Sees every dispatched input and the JS-facing events its dispatch produced, before the script host
+/// does ([`CoreDocument::add_event_tap`]): document services that react to core's events outside the
+/// kinds, e.g. `skelter_egui_island::IslandHost::bridge_events` (in-app drags into egui islands).
+pub type EventTap = Box<dyn FnMut(&mut Document, &InputEnvelope, &[JsEvent])>;
 
 /// skelter-widgets' `menu-bar` kind.
 const MENU_BAR: KindId = KindId::of("menu-bar");
@@ -44,7 +50,14 @@ impl CoreDocument {
             caret_blink: None,
             menu_sent: None,
             windows: Vec::new(),
+            taps: Vec::new(),
         }
+    }
+    /// Calls `tap` after every dispatch with the input and its JS-facing events (in the order added).
+    /// An app with egui islands adds `skelter_egui_island::IslandHost::event_tap`, so in-app drags reach
+    /// the islands.
+    pub fn add_event_tap(&mut self, tap: impl FnMut(&mut Document, &InputEnvelope, &[JsEvent]) + 'static) {
+        self.taps.push(Box::new(tap));
     }
     /// A document whose built-in kinds have their services: the text system, the platform's interaction
     /// policy and the theme (`skelter_widgets::host::install`). The clipboard service follows at
@@ -104,6 +117,9 @@ impl DocumentApi for CoreDocument {
     fn dispatch(&mut self, ev: &InputEnvelope) -> Dispatched {
         let d = self.doc.dispatch(ev);
         let js_events = d.events.len();
+        for tap in &mut self.taps {
+            tap(&mut self.doc, ev, &d.events);
+        }
         self.js_events.extend(d.events);
         Dispatched {
             dirty: d.changed,
