@@ -14,7 +14,8 @@ found that under skelter:
   Text nor Value, so a screen reader (or a QC agent) can't read what the user typed;
 - AT-SPI bounds ignore the UI zoom.
 
-The plan is `PLAN-focus-and-text.md` in this folder (a copy of cadatomic's research note). Its §1 has the root
+The plan was `PLAN-focus-and-text.md`, a copy of cadatomic's private research note; it was removed from this public
+repository (user, 2026-10-26), and the lanes it served are done. Its §1 has the root
 causes with file:line references at `cd2adc4f`, §2 and §3 the design, §5 the tests, §6 the work breakdown,
 §8 the risks. The user decided one change to it: fork AccessKit for the Linux expanded state rather than
 filing upstream; that fork is a later step, not this wave.
