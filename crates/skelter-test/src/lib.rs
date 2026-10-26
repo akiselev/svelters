@@ -33,7 +33,7 @@ pub use convert::TestEvent;
 pub use core_islands::CoreIslands;
 pub use harness::{Harness, HarnessBuilder, Node, NotSettled};
 pub use headless::HeadlessCompositor;
-pub use island::{EguiHarness, EguiHarnessBuilder, IslandDoc};
+pub use island::{EguiHarness, EguiHarnessBuilder, IslandDoc, Registrations, register_textures};
 pub use skelter::platform::{HeadlessPlatform, PlatformCall, VirtualClock};
 pub use skelter_base::accesskit::Role;
 pub use render::{GpuRender, Image, RenderError};

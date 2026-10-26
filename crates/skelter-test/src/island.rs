@@ -330,9 +330,11 @@ impl<S> DocumentApi for IslandDoc<S> {
     }
 }
 
-/// Collects islands' texture registrations for the harness's renderer.
+/// Collects islands' texture registrations for the harness's renderer: pass it to
+/// `EguiIsland::render`, then hand it to [`register_textures`] (a document that renders its own
+/// islands does this in [`Harness::set_textures`](crate::Harness::set_textures)).
 #[derive(Default)]
-pub(crate) struct Registrations(RefCell<Vec<(TextureId, Option<wgpu::Texture>)>>);
+pub struct Registrations(RefCell<Vec<(TextureId, Option<wgpu::Texture>)>>);
 
 impl TextureRegistry for Registrations {
     fn register_texture(&self, id: TextureId, texture: wgpu::Texture) {
@@ -359,7 +361,7 @@ fn render_island<S>(doc: &mut IslandDoc<S>, gpu: &mut GpuRender) {
 }
 
 /// Hand the collected registrations to skelter-render.
-pub(crate) fn register_textures(regs: Registrations, gpu: &mut GpuRender) {
+pub fn register_textures(regs: Registrations, gpu: &mut GpuRender) {
     for (id, tex) in regs.0.into_inner() {
         match tex {
             Some(t) => {

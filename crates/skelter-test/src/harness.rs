@@ -395,6 +395,17 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn calls(&self) -> &[PlatformCall] {
         &self.calls
     }
+    /// Draws the document's own textures (its egui islands, offscreen viewports) on the harness's
+    /// device before every [`render`](Self::render), replacing any earlier hook: with
+    /// [`crate::Registrations`] and [`crate::register_textures`] for the skelter-render side.
+    pub fn set_textures(&mut self, f: impl FnMut(&mut D, &mut GpuRender) + 'static) {
+        self.hooks.textures = Some(Box::new(f));
+    }
+    /// [`set_textures`](Self::set_textures), builder style.
+    pub fn with_textures(mut self, f: impl FnMut(&mut D, &mut GpuRender) + 'static) -> Self {
+        self.set_textures(f);
+        self
+    }
     /// The platform calls made since the last take, removed from the harness.
     pub fn take_calls(&mut self) -> Vec<PlatformCall> {
         std::mem::take(&mut self.calls)
