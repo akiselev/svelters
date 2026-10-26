@@ -192,6 +192,12 @@ impl<'a> SceneSource for SkelterScene<'a> {
             .find(|i| i.bounds.is_some_and(|b| pos.x >= b.min.x && pos.x < b.max.x && pos.y >= b.min.y && pos.y < b.max.y))
             .map(NodeInfo::key)
     }
+    fn parent(&self, n: NodeKey) -> Option<NodeKey> {
+        self.info(n)?.parent
+    }
+    fn contains(&self, n: NodeKey) -> bool {
+        self.index.contains_key(&n)
+    }
     fn select_css(&self, css: &str, among: &[NodeKey]) -> Result<Vec<NodeKey>, Error> {
         let doc = self.doc.ok_or_else(|| {
             Error::new("capability.absent", format!("css `{css}` needs the document (SkelterScene::with_document)"))

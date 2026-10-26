@@ -33,11 +33,12 @@ export const TAG_SETS = [
   ["box", "collapsing-header", "dialog-buttons", "frame", "inner-window", "modal", "panel", "popup", "scroll-area", "status-bar", "tab", "toast"],
   ["box", "collapsing-header", "dialog-buttons", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "status-bar", "tab", "toast", "window"],
   ["dialog-buttons"],
-  ["box", "frame", "grid", "sides"],
-  ["box", "button", "checkbox", "frame", "grid", "hyperlink", "icon", "image", "label", "progress-bar", "radio-button", "separator", "sides", "slider", "spinner", "stack", "switch", "text-edit", "toggle-button"],
-  ["box", "frame", "grid"],
-  ["box", "frame"],
-  ["box", "frame", "grid", "sides", "window"],
+  ["box", "collapsing-header", "frame", "grid", "scroll-area", "sides"],
+  ["box", "button", "checkbox", "collapsing-header", "combo-box", "frame", "grid", "hyperlink", "icon", "image", "label", "progress-bar", "radio-button", "scroll-area", "separator", "sides", "slider", "spinner", "stack", "switch", "table", "table-column", "text-edit", "toggle-button", "tree-view"],
+  ["box", "collapsing-header", "frame", "grid", "scroll-area"],
+  ["box", "collapsing-header", "frame", "scroll-area"],
+  ["box", "collapsing-header", "frame", "grid", "scroll-area", "sides", "window"],
+  ["action", "box", "button", "checkbox", "collapsing-header", "combo-box", "context-menu", "frame", "grid", "hyperlink", "icon", "image", "label", "progress-bar", "radio-button", "scroll-area", "separator", "sides", "slider", "spinner", "stack", "switch", "table", "table-column", "text-edit", "toggle-button", "tree-view"],
 ];
 
 export const STYLE_TABLES = {
@@ -462,7 +463,7 @@ export const STYLE_TABLES = {
       "transition-property": {"via": "css", "type": "transition-property"},
       "transition-timing-function": {"via": "css", "type": "easing-list"},
       "visibility": {"via": "css", "type": "enum", "values": ["visible", "hidden"]},
-      "visible": {"via": "setter", "prop": "visible", "native": "visible", "type": "bool", "kinds": ["Widget"], "tags": 26},
+      "visible": {"via": "setter", "prop": "visible", "native": "visible", "type": "bool", "kinds": ["Widget", "MenuEntry"], "tags": 30},
       "white-space": {"via": "css", "type": "enum", "values": ["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]},
       "width": {"via": "setter", "prop": "width", "native": "width", "type": "length", "kinds": ["Widget"], "tags": 26, "range": {"min": 0.0}},
     },

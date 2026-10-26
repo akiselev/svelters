@@ -882,7 +882,7 @@ impl Document {
             self.refresh_light_dismiss(node, &*k);
             self.kinds[i] = Some(k);
         }
-        if prop == common::ARIA_LIVE || prop == common::ARIA_BUSY {
+        if [common::ARIA_LIVE, common::ARIA_BUSY, common::ROLE, common::ARIA_LEVEL, common::ARIA_EXPANDED, common::ARIA_SELECTED, common::ARIA_DESCRIPTION].contains(&prop) {
             self.mark(node, Dirty::A11Y);
         }
         // ancestors named by their descendants' text re-project

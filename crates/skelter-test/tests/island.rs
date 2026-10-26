@@ -93,11 +93,17 @@ fn modifier_clicks_and_hover_take_egui_types() {
 
 #[test]
 fn an_idle_island_runs_no_passes() {
-    let mut h = harness();
+    // skelter's own rule (`with_pass_every_step(false)`): an idle island is not due
+    let mut h = EguiHarness::builder().with_size(egui::vec2(400.0, 300.0)).with_pass_every_step(false).build_ui_state(ui, S::default());
     assert_eq!(h.busy(), None);
     let before = h.doc().passes();
     h.run_steps(5);
     assert_eq!(h.doc().passes(), before);
+    // kittest parity (the default): one pass per step
+    let mut h = harness();
+    let before = h.doc().passes();
+    h.run_steps(5);
+    assert_eq!(h.doc().passes(), before + 5);
 }
 
 #[test]
@@ -126,4 +132,107 @@ fn state_changed_between_steps_shows_after_run() {
     h.state_mut().clicks = 5;
     h.run();
     assert!(h.query_by_label("Clicks: 5").is_some(), "{}", h.a11y_dump());
+}
+
+#[test]
+fn a_repaint_requested_from_another_thread_shows_after_one_run() {
+    use std::sync::{Arc, Mutex};
+    let inbox: Arc<Mutex<Option<String>>> = Arc::default();
+    let shown = inbox.clone();
+    // skelter's own rule, so only the repaint callback can make the island due
+    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).with_pass_every_step(false).build_ui(move |ui| {
+        let text = shown.lock().unwrap().clone().unwrap_or_else(|| "waiting".into());
+        ui.label(text);
+    });
+    assert!(h.query_by_label("waiting").is_some());
+    let ctx = h.ctx.clone();
+    let sender = inbox.clone();
+    std::thread::spawn(move || {
+        *sender.lock().unwrap() = Some("job done".into());
+        ctx.request_repaint();
+    })
+    .join()
+    .unwrap();
+    let before = h.doc().passes();
+    h.run();
+    assert!(h.doc().passes() > before, "the out-of-pass repaint ran a pass");
+    assert!(h.query_by_label("job done").is_some());
+}
+
+#[test]
+fn step_and_run_always_run_a_pass() {
+    let mut h = harness();
+    let p = h.doc().passes();
+    h.step();
+    assert_eq!(h.doc().passes(), p + 1, "a step with nothing due still runs one pass");
+    h.run();
+    assert!(h.doc().passes() >= p + 2);
+}
+
+#[test]
+#[should_panic(expected = "lack accessible name")]
+fn the_build_runs_the_accessibility_check() {
+    EguiHarness::builder().build_ui(|ui| {
+        ui.add(egui::TextEdit::singleline(&mut String::new()));
+    });
+}
+
+#[test]
+fn the_build_skips_the_check_when_told() {
+    EguiHarness::builder().with_accessibility_check(false).build_ui(|ui| {
+        ui.add(egui::TextEdit::singleline(&mut String::new()));
+    });
+}
+
+#[test]
+fn state_changed_through_a_shared_handle_shows_after_run() {
+    use std::cell::Cell;
+    use std::rc::Rc;
+    let count = Rc::new(Cell::new(0));
+    let read = count.clone();
+    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build_ui(move |ui| {
+        ui.label(format!("Count: {}", read.get()));
+    });
+    assert!(h.query_by_label("Count: 0").is_some());
+    // no input, no repaint request: kittest's parity pass still reads the new state
+    count.set(7);
+    h.run();
+    assert!(h.query_by_label("Count: 7").is_some());
+    // settled although the island requested nothing: run returns after its step
+    assert_eq!(h.busy(), None);
+}
+
+#[test]
+fn a_ctrl_click_is_seen_with_ctrl_held_and_f2_then_typing_edits() {
+    #[derive(Default)]
+    struct E {
+        ctrl_clicks: u32,
+        editing: bool,
+        text: String,
+    }
+    let mut h = EguiHarness::builder().with_size(egui::vec2(300.0, 200.0)).build_ui_state(
+        |ui, s: &mut E| {
+            if ui.button("Pick").clicked() && ui.input(|i| i.modifiers.ctrl) {
+                s.ctrl_clicks += 1;
+            }
+            if ui.input(|i| i.key_pressed(egui::Key::F2)) {
+                s.editing = true;
+            }
+            if s.editing {
+                let r = ui.add(egui::TextEdit::singleline(&mut s.text).hint_text("Name"));
+                if !r.has_focus() && !r.lost_focus() {
+                    r.request_focus();
+                }
+            }
+        },
+        E::default(),
+    );
+    h.get_by_label("Pick").click_modifiers(egui::Modifiers::CTRL);
+    h.run();
+    assert_eq!(h.state().ctrl_clicks, 1, "the press saw the modifier change before it");
+    // F2 shows and focuses the field in its own pass; the typing that follows goes into it
+    h.key_press(egui::Key::F2);
+    h.type_text("ab");
+    h.run();
+    assert_eq!(h.state().text, "ab");
 }

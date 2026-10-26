@@ -403,6 +403,10 @@ pub struct RecordCx<'a> {
     /// it records.
     pub(crate) fixed: &'a mut DisplayList,
     pub(crate) in_fixed: bool,
+    /// The node's overlay part ([`RecordCx::overlay`]); swapped with `list` while it records.
+    pub(crate) overlay: &'a mut DisplayList,
+    pub(crate) overlay_part: &'a mut Option<crate::overlay::OverlayPart>,
+    pub(crate) in_overlay: bool,
     pub(crate) runs: &'a mut RunSink,
     /// The runs this node's list references (replaced runs are dropped when the list is).
     pub(crate) node_runs: &'a mut Vec<RunId>,
@@ -435,6 +439,26 @@ impl RecordCx<'_> {
         let r = f(self);
         self.in_fixed = false;
         std::mem::swap(&mut self.list, &mut self.fixed);
+        r
+    }
+    /// Records what `f` draws (node-local points, as the rest of the list) as the node's overlay
+    /// surface `part`: a popup, a menu, a select's list. It paints in a layer of the window's overlay
+    /// stack, above every content layer and unclipped by the node's ancestors, and pointer input
+    /// inside `part.rect` reaches this node before anything under it (positions stay in the node's
+    /// space, even outside its box). Recording no part closes the surface. One part per node (a
+    /// second call adds to the first, keeping its `part`).
+    pub fn overlay<R>(&mut self, part: crate::overlay::OverlayPart, f: impl FnOnce(&mut Self) -> R) -> R {
+        if self.in_overlay {
+            return f(self);
+        }
+        if self.overlay_part.is_none() {
+            *self.overlay_part = Some(part);
+        }
+        std::mem::swap(&mut self.list, &mut self.overlay);
+        self.in_overlay = true;
+        let r = f(self);
+        self.in_overlay = false;
+        std::mem::swap(&mut self.list, &mut self.overlay);
         r
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {

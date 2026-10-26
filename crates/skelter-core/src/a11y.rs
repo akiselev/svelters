@@ -43,6 +43,25 @@ impl Document {
             if v.prop_bool(crate::common::ARIA_BUSY) {
                 out.set_busy();
             }
+            if let Some(role) = v.prop_str(crate::common::ROLE).and_then(crate::common::role_named) {
+                out.set_role(role);
+            }
+            if let Some(level) = v.prop(crate::common::ARIA_LEVEL).and_then(|v| v.as_i64()).filter(|l| *l > 0) {
+                out.set_level(level as usize);
+            }
+            match v.prop(crate::common::ARIA_EXPANDED).and_then(|v| v.as_enum()) {
+                Some(1) => out.set_expanded(true),
+                Some(2) => out.set_expanded(false),
+                _ => {}
+            }
+            match v.prop(crate::common::ARIA_SELECTED).and_then(|v| v.as_enum()) {
+                Some(1) => out.set_selected(true),
+                Some(2) => out.set_selected(false),
+                _ => {}
+            }
+            if let Some(d) = v.prop_str(crate::common::ARIA_DESCRIPTION).filter(|d| !d.is_empty()) {
+                out.set_description(d);
+            }
         }
         let l = &self.layout[i].layout;
         out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: l.size.width as f64, y1: l.size.height as f64 });

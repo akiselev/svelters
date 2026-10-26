@@ -105,15 +105,15 @@ pub struct Unmet {
 /// `enabled` or `editable`, with what was seen ("still moving: …", "covered by …").
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
-pub struct Actionability {
+pub struct Actionability<N = NodeId> {
     pub check: &'static str,
     pub detail: String,
     /// `hit`: the node that receives the events instead.
-    pub cover: Option<NodeId>,
+    pub cover: Option<N>,
 }
 
-impl Actionability {
-    pub(super) fn new(check: &'static str, detail: impl Into<String>) -> Actionability {
+impl<N> Actionability<N> {
+    pub(super) fn new(check: &'static str, detail: impl Into<String>) -> Actionability<N> {
         Actionability { check, detail: detail.into(), cover: None }
     }
 }
@@ -122,7 +122,7 @@ impl Actionability {
 /// is the error's `data`, [`WaitReport::text`] its message after the first line.
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
-pub struct WaitReport {
+pub struct WaitReport<N = NodeId> {
     /// `wait.event job.finished drc`, `wait.for …`, `wait.settled`, `actionable …`.
     pub wait: String,
     /// The budget that ran out.
@@ -142,11 +142,18 @@ pub struct WaitReport {
     pub pending_input: bool,
     /// The deprecated host predicate ([`Session::set_idle`]) said busy.
     pub host_busy: bool,
-    pub actionability: Option<Actionability>,
+    pub actionability: Option<Actionability<N>>,
 }
 
 impl WaitReport {
     pub fn to_json(&self) -> Value {
+        self.to_json_with(&|n: NodeId| n.to_raw())
+    }
+}
+
+impl<N: Copy> WaitReport<N> {
+    /// [`WaitReport::to_json`] with `raw` giving a node's JSON id.
+    pub fn to_json_with(&self, raw: &dyn Fn(N) -> u64) -> Value {
         json!({
             "wait": self.wait, "exhausted": self.exhausted.as_str(),
             "budget": {"virtual_ms": self.budget.virtual_ms, "wall_ms": self.budget.wall_ms},
@@ -156,7 +163,7 @@ impl WaitReport {
             "events": self.events.iter().map(Event::to_json).collect::<Vec<_>>(),
             "busy": self.busy.iter().map(BusyStatus::to_json).collect::<Vec<_>>(),
             "embed": self.embed, "pending_input": self.pending_input, "host_busy": self.host_busy,
-            "actionability": self.actionability.as_ref().map(|a| json!({"check": a.check, "detail": a.detail, "cover": a.cover.map(|c| c.to_raw())})),
+            "actionability": self.actionability.as_ref().map(|a| json!({"check": a.check, "detail": a.detail, "cover": a.cover.map(raw)})),
         })
     }
 
@@ -229,7 +236,7 @@ pub(super) const METHODS: &[&str] = &[
 /// Scene changes as journal events ([`Session::bridge_scene_changes`]).
 pub const SCENE_CHANGED: &str = "scene.changed";
 
-impl<D: Driver> Session<D> {
+impl<D: SourceDriver> Session<D> {
     // ---- journal and busy sources ----
 
     /// The app's event journal: register kinds and emit on it from any thread (a clone).
@@ -284,9 +291,9 @@ impl<D: Driver> Session<D> {
     pub(super) fn after_frame(&mut self) {
         self.events.set_virtual_ms(self.driver.clock_ms().unwrap_or(self.now_ms));
         if let Some(obs) = &self.scene_bridge {
-            let set = self.driver.scene().take_changes(obs);
-            for (n, m) in set.by_node() {
-                let _ = self.events.emit(SCENE_CHANGED, n.to_raw().to_string(), json!({"what": format!("{m:?}")}));
+            let set = self.driver.take_changes(obs);
+            for (n, m) in set.by_node {
+                let _ = self.events.emit(SCENE_CHANGED, self.driver.node_raw(n).to_string(), json!({"what": m}));
             }
             if set.overflowed {
                 let _ = self.events.emit(SCENE_CHANGED, "", json!({"what": "overflowed"}));
@@ -313,7 +320,7 @@ impl<D: Driver> Session<D> {
     pub fn bridge_scene_changes(&mut self, filter: ChangeFilter) -> Result<(), Error> {
         self.check(false)?;
         self.events.register(EventKind::new(SCENE_CHANGED, ClockDomain::Virtual).field("what", FieldType::String))?;
-        self.scene_bridge = Some(self.driver.scene().observe(filter));
+        self.scene_bridge = Some(self.driver.observe(filter));
         Ok(())
     }
 
@@ -345,7 +352,7 @@ impl<D: Driver> Session<D> {
     }
 
     /// The report of a wait that ran out.
-    fn report(&self, wait: String, d: &Deadline, unmet: Vec<Unmet>, actionability: Option<Actionability>) -> WaitReport {
+    fn report(&self, wait: String, d: &Deadline, unmet: Vec<Unmet>, actionability: Option<Actionability<N<D>>>) -> WaitReport<N<D>> {
         let (virtual_ms, wall_ms) = self.spent(d);
         WaitReport {
             wait,
@@ -372,10 +379,10 @@ impl<D: Driver> Session<D> {
         wait: String,
         d: &Deadline,
         unmet: Vec<Unmet>,
-        actionability: Option<Actionability>,
+        actionability: Option<Actionability<N<D>>>,
     ) -> Error {
         let r = self.report(wait, d, unmet, actionability);
-        Error::new(code, format!("{head}\n{}", r.text())).with_data(r.to_json())
+        Error::new(code, format!("{head}\n{}", r.text())).with_data(r.to_json_with(&self.raw()))
     }
 
     // ---- events ----

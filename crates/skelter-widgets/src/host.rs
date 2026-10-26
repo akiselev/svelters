@@ -533,6 +533,25 @@ impl w::Resources for PrepareRes<'_> {
     }
 }
 
+/// Pushes a widget pass's `list` into `cx` (its list, or the part being recorded): the pass's run
+/// indices become skelter-core's run ids.
+fn push_recorded(cx: &mut RecordCx, list: DisplayList, runs: Vec<Arc<GlyphRun>>) {
+    let ids: Vec<RunId> = runs.into_iter().map(|r| cx.add_run(r)).collect();
+    let bounds = list.bounds;
+    for mut p in list.items {
+        if let Prim::Glyphs(g) = &mut p
+            && let Some(id) = (g.run.0 as usize).checked_sub(1).and_then(|i| ids.get(i))
+        {
+            g.run = *id;
+        }
+        let ink = match &p {
+            Prim::PushClip(_) | Prim::PopClip => skelter_base::geom::Rect::ZERO,
+            _ => bounds,
+        };
+        cx.push(p, ink);
+    }
+}
+
 /// Resources for recording: runs are kept (by index) and handed to skelter-core after the pass; images
 /// are the ones `prepare` uploaded.
 struct RecordRes<'a> {
@@ -749,6 +768,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new(), paths: &self.paths, new_paths: Vec::new(), used_paths: Vec::new() };
             let mut list = DisplayList::new();
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
+            let mut overlay = DisplayList::new();
+            self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
             (res.new, res.used, res.new_paths, res.used_paths)
         };
         for (key, data) in new_paths {
@@ -798,26 +819,19 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let mut list = DisplayList::new();
-        let runs = {
+        let mut overlay = DisplayList::new();
+        let (runs, part, overlay_runs) = {
             let mut text = shaper(cx.service::<skelter_text::TextSystem>());
             let mut res = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
-            res.runs
+            // the open floating surface, for the window's overlay stack
+            let mut ores = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
+            let part = self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut overlay, text: &mut *text, res: &mut ores, scale: node.scale() });
+            (res.runs, part, ores.runs)
         };
-        // the pass's run indices become skelter-core's run ids
-        let ids: Vec<RunId> = runs.into_iter().map(|r| cx.add_run(r)).collect();
-        let bounds = list.bounds;
-        for mut p in list.items {
-            if let Prim::Glyphs(g) = &mut p
-                && let Some(id) = (g.run.0 as usize).checked_sub(1).and_then(|i| ids.get(i))
-            {
-                g.run = *id;
-            }
-            let ink = match &p {
-                Prim::PushClip(_) | Prim::PopClip => skelter_base::geom::Rect::ZERO,
-                _ => bounds,
-            };
-            cx.push(p, ink);
+        push_recorded(cx, list, runs);
+        if let Some(part) = part {
+            cx.overlay(part, |cx| push_recorded(cx, overlay, overlay_runs));
         }
     }
 
@@ -882,6 +896,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn outside_press(&mut self, cx: &mut EventCx, p: &skelter_core::PointerInput) -> Handled {
         let ev = w::Event::OutsidePress(p.local);
         self.run(cx, |w, wcx| w.event(wcx, &ev))
+    }
+
+    fn overlay_closed(&mut self, cx: &mut EventCx, reason: skelter_core::overlay::DismissReason) -> Handled {
+        self.run(cx, |w, wcx| w.overlay_closed(wcx, reason))
     }
 
     fn listen_changed(&mut self, _cx: &mut PropCx, signal: SignalId, listened: bool) {

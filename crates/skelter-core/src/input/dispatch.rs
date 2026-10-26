@@ -270,6 +270,10 @@ impl Document {
 
     /// `scroll`: skip targets that let scrolling through (`HitResult::HitExceptScroll`).
     pub(crate) fn hit_test_ex(&self, window: WindowId, p: Point, scroll: bool) -> Option<NodeId> {
+        // the window's open overlay surfaces first, topmost first
+        if let Some(on) = self.overlay_hit(window, p) {
+            return on;
+        }
         let w = self.window(window)?;
         for e in w.hits.entries.iter().rev() {
             if !e.world.contains(p) || e.clip.is_some_and(|c| !c.contains(p)) {
@@ -290,7 +294,11 @@ impl Document {
 
     /// `p` in `node`'s local space, from the last frame's hit list.
     pub(crate) fn to_local(&self, window: WindowId, node: NodeId, p: Point) -> Point {
-        self.window(window).and_then(|w| w.hits.entries.iter().rev().find(|e| e.node == node)).map_or(p, |e| e.inverse.apply(p))
+        self.window(window)
+            .and_then(|w| w.hits.entries.iter().rev().find(|e| e.node == node))
+            .map(|e| e.inverse)
+            .or_else(|| self.overlay_inverse(window, node))
+            .map_or(p, |inv| inv.apply(p))
     }
 
     fn pointer_input(&self, window: WindowId, node: NodeId, p: &PointerEvent, count: u32) -> PointerInput {
@@ -379,7 +387,9 @@ impl Document {
             }
             PointerPhase::Down => {
                 self.update_hover(window, p, hit, out, emitted);
-                // open surfaces a press outside them dismisses hear of it first, topmost first
+                // open surfaces a press outside them dismisses hear of it first, topmost first: the
+                // window's overlay stack, then the light-dismiss kinds
+                self.overlay_press(window, p.pos, emitted);
                 self.outside_press(window, p, target, emitted);
                 let Some(t) = target else {
                     crate::input::focus::clear_focus(self, window);
@@ -595,7 +605,11 @@ impl Document {
             out.handled = true;
             return;
         }
-        let native = bubble_native(self, target, &Event::Key(k), emitted, None);
+        let mut native = bubble_native(self, target, &Event::Key(k), emitted, None);
+        // Escape the focused kinds left closes the window's topmost overlay surface that takes it
+        if native.is_none() && k.state == KeyState::Pressed && k.key == Some(Key::Escape) && self.overlay_escape(window, emitted) {
+            native = Some(target);
+        }
         out.handled |= native.is_some();
         self.post_js(out, target, signal, pre);
         let plain = !k.modifiers.contains(Modifiers::CTRL) && !k.modifiers.contains(Modifiers::ALT) && !k.modifiers.contains(Modifiers::SUPER);

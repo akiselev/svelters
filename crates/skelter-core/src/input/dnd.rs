@@ -48,6 +48,10 @@ pub(crate) struct Drag {
     pub target: Option<NodeId>,
     /// What it shows under the pointer ([`crate::kind::DragPreview`]).
     pub preview: Option<crate::kind::DragPreview>,
+    /// The preview's generation (bumped when it is replaced), for the window's drag layer.
+    pub generation: u64,
+    /// The pointer's last position in the window (`None` once it left), where the drag layer is.
+    pub pos: Option<Point>,
 }
 
 /// `pattern` (one `drop-types` entry) accepts type `ty`.
@@ -113,7 +117,10 @@ pub(crate) fn pointer(doc: &mut Document, window: WindowId, p: &PointerEvent, ou
         && d.pointer == p.pointer
     {
         match p.phase {
-            PointerPhase::Move | PointerPhase::Enter => retarget(doc, window, Some(p.pos), out),
+            PointerPhase::Move | PointerPhase::Enter => {
+                retarget(doc, window, Some(p.pos), out);
+                move_drag_layer(doc, window, p.pos);
+            }
             PointerPhase::Leave => retarget(doc, window, None, out),
             PointerPhase::Up => finish(doc, window, p, out),
             PointerPhase::Cancel => end(doc, None, out),
@@ -152,7 +159,9 @@ fn begin(doc: &mut Document, window: WindowId, pointer: u32, source: NodeId, ty:
     doc.input.release(pointer);
     doc.input.drag_press = None;
     let preview = preview_of(doc, window, source, press);
-    doc.input.drag = Some(Drag { pointer, window, source, ty, data, target: None, preview });
+    doc.input.drag_generation += 1;
+    let generation = doc.input.drag_generation;
+    doc.input.drag = Some(Drag { pointer, window, source, ty, data, target: None, preview, generation, pos: pos.or(press) });
     doc.set_state(source, StateMask::DRAGGING, true);
     doc.emit_js(out, source, common::DRAG_BEGIN, None);
     if pos.is_some() {
@@ -199,6 +208,8 @@ impl Document {
         match self.input.drag.as_mut() {
             Some(d) => {
                 d.preview = preview;
+                self.input.drag_generation += 1;
+                d.generation = self.input.drag_generation;
                 true
             }
             None => false,
@@ -221,6 +232,18 @@ impl Document {
         self.input_events.append(&mut out.events);
         true
     }
+}
+
+/// The drag image follows the pointer: the drag layer's transform goes to the compositor at once as
+/// a fast commit (no frame, no re-record); the next commit agrees.
+fn move_drag_layer(doc: &mut Document, window: WindowId, pos: Point) {
+    if let Some(d) = doc.input.drag.as_mut() {
+        d.pos = Some(pos);
+    }
+    let Some(l) = doc.window(window).and_then(|w| w.drag_layer.as_ref()) else { return };
+    let local = skelter_base::geom::Affine::translate(pos.x + l.offset.x, pos.y + l.offset.y);
+    let node = l.transform;
+    doc.fast.push(skelter_base::commit::FastCommit::Transform { window, node, local, revision: doc.revision, input_seq: doc.input_seq });
 }
 
 /// The target under `pos` (`None`: the pointer left the window) takes over from the old one.

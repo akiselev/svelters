@@ -10,6 +10,7 @@ mod emits;
 mod focus;
 mod folds;
 mod hooks;
+mod overlay;
 mod ime;
 mod query;
 mod runner;

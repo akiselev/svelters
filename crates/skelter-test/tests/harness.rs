@@ -681,3 +681,30 @@ fn monitor_changes_send_refresh_and_ppi() {
     assert_eq!(h.compositor().ppis(), vec![(w, logical), (w, 218.0), (w, logical)]);
     assert_eq!(h.compositor().refreshes().len(), 3);
 }
+
+#[test]
+fn a_zoom_rescales_the_document_and_its_hit_testing_without_an_os_resize() {
+    let mut h = harness();
+    h.set_size(Size::new(200.0, 100.0));
+    h.run();
+    let (resizes, os_resizes) = (h.state().resizes, h.compositor().resizes().len());
+    h.set_zoom(2.0);
+    h.run();
+    assert_eq!(h.app().zoom(h.window()), 2.0);
+    assert_eq!(h.state().resizes, resizes + 1, "the resize handshake ran again");
+    assert_eq!(h.state().size, Some((Size::new(100.0, 50.0), Scale(2.0))), "points = device / (os scale × zoom)");
+    let (size, scale) = h.compositor().window_size(h.window()).unwrap();
+    assert_eq!((size.w, size.h, scale), (200, 100, Scale(2.0)), "same device size, zoomed scale");
+    assert_eq!(h.compositor().resizes().len(), os_resizes + 1);
+    // (60, 50) window points is (30, 25) in the document: the button, not the checkbox under (60, 50)
+    h.click_at(Point::new(60.0, 50.0));
+    h.run();
+    assert_eq!((h.state().count, h.state().checked), (1, false));
+    assert_eq!(h.state().hovers.last(), Some(&Point::new(30.0, 25.0)));
+    // unchanged factor: nothing re-runs; back to 1: points again
+    h.set_zoom(2.0);
+    assert_eq!(h.state().resizes, resizes + 1);
+    h.set_zoom(1.0);
+    h.run();
+    assert_eq!(h.state().size, Some((Size::new(200.0, 100.0), Scale(1.0))));
+}

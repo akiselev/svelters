@@ -12,6 +12,12 @@
 //!   the TR1 visual channels); the backend keeps them.
 
 pub mod tier0;
+pub mod tier1;
+
+/// The built-in surface: [`tier0`] then [`tier1`] (bases first).
+pub fn builtin() -> Vec<&'static KindSpec> {
+    tier0::ALL.iter().chain(tier1::ALL).copied().collect()
+}
 
 use skelter_base::change::ChangeClass;
 use skelter_base::color::Color;
@@ -31,6 +37,8 @@ pub enum ValueType {
     NumList,
     IdList,
     Record,
+    /// Any plain value, untyped (egui's `other`: a table cell's committed value).
+    Any,
 }
 
 impl ValueType {
@@ -45,6 +53,7 @@ impl ValueType {
             ValueType::Color => "color",
             ValueType::StrList | ValueType::NumList | ValueType::IdList => "list",
             ValueType::Record => "record",
+            ValueType::Any => "other",
         }
     }
 
@@ -80,6 +89,7 @@ impl Value {
     pub fn fits(&self, ty: ValueType, nullable: bool) -> bool {
         match (self, ty) {
             (Value::Null, _) => nullable,
+            (_, ValueType::Any) => true,
             (Value::Bool(_), ValueType::Bool) | (Value::I64(_), ValueType::I64) | (Value::F64(_), ValueType::F64) => true,
             (Value::Str(_), ValueType::Str) | (Value::Color(_), ValueType::Color) | (Value::Record(_), ValueType::Record) => true,
             (Value::Enum(i), ValueType::Enum(names)) => (*i as usize) < names.len(),

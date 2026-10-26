@@ -136,6 +136,9 @@ impl HarnessBuilder {
         // In-app drags (skelter-core's drag-enter/leave/drop over island nodes) reach the islands.
         core.add_event_tap(IslandHost::event_tap);
         let hooks = Hooks {
+            before_step: None,
+            settled: None,
+            one_event_per_step: false,
             clipboard: None,
             textures: Some(Box::new(|d: &mut CoreIslands<U>, g: &mut GpuRender| {
                 let regs = Registrations::default();

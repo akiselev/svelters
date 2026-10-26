@@ -96,6 +96,18 @@ impl Document {
         let mut runs = RunSink { next: self.run_counter, added: Vec::new() };
         let mut images = std::mem::take(&mut self.images);
         let mut a11y_dirty = Vec::new();
+        // removals first: what left the window freed its property and layer ids, and this frame's
+        // walk may reuse them (a node moved to another parent); a Remove after the re-use's Add
+        // would delete the new node (it then drew in window space, at the origin)
+        {
+            let ws = self.window_mut(window).expect("window");
+            for id in std::mem::take(&mut ws.pending.removed_props) {
+                commit.props.ops.push(PropOp::Remove(id));
+            }
+            for l in std::mem::take(&mut ws.pending.removed_layers) {
+                commit.layers.push(LayerDelta::Remove(l));
+            }
+        }
         self.ensure_root_props(window, &mut commit);
         self.dirty_walk(window, root, &mut commit, &mut runs, &mut images, &mut a11y_dirty, &mut stats);
         self.run_counter = runs.next;
@@ -112,6 +124,8 @@ impl Document {
             self.rebuild_walk(window, root, &mut commit);
             stats.rebuilt = true;
         }
+        self.sync_app_overlay(window, &mut commit);
+        self.sync_drag_layer(window, &mut commit);
         self.check_caret(window);
         if rebuild {
             a11y_dirty.extend(std::mem::take(&mut self.window_mut(window).expect("window").a11y_moved));
@@ -491,6 +505,8 @@ impl Document {
         }
         let mut list = DisplayList::new();
         let mut fixed = DisplayList::new();
+        let mut overlay = DisplayList::new();
+        let mut overlay_part = None;
         let mut node_runs = Vec::new();
         let hidden = self.style.computed(i).visibility_hidden;
         if !hidden {
@@ -499,6 +515,9 @@ impl Document {
                 list: &mut list,
                 fixed: &mut fixed,
                 in_fixed: false,
+                overlay: &mut overlay,
+                overlay_part: &mut overlay_part,
+                in_overlay: false,
                 runs,
                 node_runs: &mut node_runs,
                 shaper: shaper.as_deref_mut(),
@@ -535,6 +554,21 @@ impl Document {
             commit.lists.push((crate::record::fixed_key(node), fixed));
         }
         let fixed_changed = had_fixed != p.fixed.is_some();
+        // the overlay part: its layer and stack entry follow at the window's rebuild
+        let had_overlay = p.overlay.is_some();
+        match overlay_part {
+            Some(part) => {
+                let list = Arc::new(overlay);
+                p.overlay = Some((list.clone(), part));
+                commit.lists.push((crate::record::overlay_key(node), list));
+            }
+            None if had_overlay => {
+                p.overlay = None;
+                commit.removed.push(crate::record::overlay_key(node));
+            }
+            None => {}
+        }
+        let overlay_changed = had_overlay || p.overlay.is_some();
         let had = p.list.is_some();
         if list.is_empty() {
             if had {
@@ -548,7 +582,7 @@ impl Document {
         }
         // a layer's `opaque` follows its owner's list
         let owns_layer = self.record[i].layer.is_some() || self.core[i].flags.contains(crate::tree::NodeFlags::ROOT);
-        if (had != self.record[i].list.is_some() || fixed_changed || owns_layer)
+        if (had != self.record[i].list.is_some() || fixed_changed || overlay_changed || owns_layer)
             && let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w))
         {
             w.rebuild = true;
@@ -636,6 +670,7 @@ impl Document {
         let mut z_next = 1;
         let mut used_layers = vec![root_layer];
         let mut moved = Vec::new();
+        let mut overlays = Vec::new();
         // what each visited node passes its children: absolute boxes take their containing block's
         let mut cb_frames: std::collections::HashMap<usize, Frame> = Default::default();
         while let Some(f) = stack.pop() {
@@ -704,6 +739,9 @@ impl Document {
                     _ => (layer, ItemRef { node, transform: p.transform.expect("transform"), clip: f.clip, effect: own_effect }),
                 };
                 items.entry(item.0).or_default().push(item.1);
+            }
+            if drawn && let Some((_, part)) = &p.overlay {
+                overlays.push(crate::toplayer::DrawnPart { node, world, transform: p.transform.expect("transform"), part: part.clone() });
             }
             let world_rect = world.apply_rect(&bounds);
             if drawn && !s.pointer_events_none && let Some(inverse) = world.inverse() {
@@ -781,6 +819,7 @@ impl Document {
         }
         ws.hits = Arc::new(HitList { entries: hits });
         ws.a11y_moved = moved;
+        self.sync_overlays(window, root_t, root_layer, overlays, commit);
     }
 
     /// The last frame's hit list of `window` (for the compositor's scroll hit tests and tests).
