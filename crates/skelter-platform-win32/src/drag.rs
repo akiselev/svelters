@@ -31,8 +31,7 @@ use windows::Win32::System::SystemServices::{MK_LBUTTON, MODIFIERKEYS_FLAGS};
 use windows::Win32::UI::Shell::{DROPFILES, HDROP, SHCreateStdEnumFmtEtc};
 use windows_core::{BOOL, HRESULT, implement};
 
-/// What an OS drag carries. (skelter-platform has no drag-source call yet; [`run_drag`] is ready for
-/// one.)
+/// What an OS drag carries ([`from_platform`] builds it from `PlatformCx::start_drag`'s payload).
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct DragData {
     pub text: Option<String>,
@@ -193,6 +192,52 @@ impl IDropSource_Impl for DropSource_Impl {
     }
 }
 
+/// The OLE payload for a `skelter_platform::DragData`: `text/plain` (UTF-8) as Unicode text and
+/// `text/uri-list` `file:` URIs as a file list. `None` when it carries neither (other MIME types have no
+/// OLE format here).
+pub fn from_platform(data: &skelter_platform::DragData) -> Option<DragData> {
+    let mut out = DragData::default();
+    for (mime, bytes) in &data.items {
+        let base = mime.split(';').next().unwrap_or("").trim();
+        match base {
+            "text/plain" if out.text.is_none() => out.text = Some(String::from_utf8_lossy(bytes).into_owned()),
+            "text/uri-list" => {
+                let list = String::from_utf8_lossy(bytes);
+                out.files.extend(list.lines().map(str::trim).filter(|l| !l.starts_with('#')).filter_map(file_uri_path));
+            }
+            _ => {}
+        }
+    }
+    (out.text.is_some() || !out.files.is_empty()).then_some(out)
+}
+
+/// The path of a `file:///C:/dir/a%20b.txt` URI (`C:\dir\a b.txt`); `None` for other URIs.
+fn file_uri_path(uri: &str) -> Option<PathBuf> {
+    let rest = uri.strip_prefix("file:///")?;
+    let bytes = rest.as_bytes();
+    let mut out = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        let hex = |b: u8| (b as char).to_digit(16);
+        match bytes[i] {
+            b'%' if i + 2 < bytes.len() => {
+                match (hex(bytes[i + 1]), hex(bytes[i + 2])) {
+                    (Some(h), Some(l)) => {
+                        out.push((h * 16 + l) as u8);
+                        i += 3;
+                        continue;
+                    }
+                    _ => out.push(b'%'),
+                }
+            }
+            b'/' => out.push(b'\\'),
+            b => out.push(b),
+        }
+        i += 1;
+    }
+    String::from_utf8(out).ok().map(PathBuf::from)
+}
+
 /// What a finished `DoDragDrop` means.
 pub fn drag_result(hr: HRESULT, effect: DROPEFFECT) -> DragResult {
     if hr != DRAGDROP_S_DROP {
@@ -289,6 +334,21 @@ impl IDropTarget_Impl for DropTarget_Impl {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn platform_payloads_become_text_and_files() {
+        let data = skelter_platform::DragData {
+            items: vec![
+                ("text/plain;charset=utf-8".into(), b"hello".to_vec()),
+                ("text/uri-list".into(), b"# comment\r\nfile:///C:/dir/a%20b.txt\r\nhttps://x.org/\r\n".to_vec()),
+            ],
+        };
+        let d = from_platform(&data).unwrap();
+        assert_eq!(d.text.as_deref(), Some("hello"));
+        assert_eq!(d.files, vec![PathBuf::from("C:\\dir\\a b.txt")]);
+        let own = skelter_platform::DragData { items: vec![("application/x-skelter-tab".into(), vec![1])] };
+        assert_eq!(from_platform(&own), None);
+    }
 
     #[test]
     fn hdrop_layout() {

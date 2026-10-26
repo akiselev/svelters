@@ -124,3 +124,19 @@ At the coordinator's request (TEXT-INPUT's R6):
 `Cargo.lock` gained this crate's dependencies: ashpd 0.13 (async-io, settings, file_chooser),
 wayland-cursor, xkbcommon-dl, wayland-protocols staging/unstable, and wayland-backend `client_system` +
 `dlopen`.
+
+## Questions 2–8 decided (lane skelter-fixes, 2026-10-26, each as recommended)
+
+- **Q2:** the additions are `PlatformCx` default methods (`create_popup`/`PopupDesc`, `create_child_window`,
+  `layer_frame_source`, `client_side_decorations`, `set_window_state` → `bool`, `set_ime_hints`, `start_drag`,
+  `attach_window_to_drag`) plus `AppHandler::drag_ended`; the data types moved to skelter-platform's `api`.
+  `WaylandCx` and `take_finished_drags` are gone. `FrameSource::before_present_sized(frame, size)` (default:
+  `before_present`) is what the compositor calls; the surface lock applies pending state only with a buffer of
+  its size. No target time yet (commit-timing-v1 stays out).
+- **Q3, Q7, Q8:** documented on `PlatformCx::client_side_decorations` and in skelter-platform's `frame` module
+  docs; the border rule is `window::csd_border` (tested).
+- **Q4:** `TextInputClient::surrounding_text` selection offsets are UTF-16 (skelter-widgets' editor, Win32's
+  shadow and `ime_state_from_client` updated).
+- **Q5:** `page << 16 | usage`, else `0xFFFF_0000 | native`, documented in skelter-platform's `keys` and
+  skelter-base's `KeyEvent.physical`; winit, Win32 and macOS now fall back to the native code too.
+- **Q6:** `FrameSourceConfig::fifo` stays opt-in: enable it only with a Mailbox/Immediate swapchain.

@@ -283,6 +283,14 @@ define_class!(
             ));
         }
 
+        #[unsafe(method(windowDidChangeScreen:))]
+        fn did_change_screen(&self, _note: &NSNotification) {
+            app::post(Pending::Window(
+                self.ivars().window,
+                WindowEvent::MonitorChanged,
+            ));
+        }
+
         #[unsafe(method(windowDidBecomeKey:))]
         fn did_become_key(&self, _note: &NSNotification) {
             let id = self.ivars().window;

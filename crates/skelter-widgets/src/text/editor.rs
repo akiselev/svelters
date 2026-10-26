@@ -624,8 +624,9 @@ impl TextEditor {
         }
     }
 
-    /// Text around the caret (at most `max_bytes`) and the selection in it, in bytes; the preedit is
-    /// not part of it (Wayland text-input-v3). `None` for a password field.
+    /// Text around the caret (at most `max_bytes` UTF-8 bytes) and the selection in it as UTF-16
+    /// offsets into that text; the preedit is not part of it (Wayland text-input-v3). `None` for a
+    /// password field.
     pub fn ime_surrounding(&self, max_bytes: usize) -> Option<(String, Range<usize>)> {
         if self.cfg.password {
             return None;
@@ -634,8 +635,9 @@ impl TextEditor {
         let s = self.selection();
         let start = if text.len() <= max_bytes { 0 } else { floor_boundary(&text, s.head.saturating_sub(max_bytes / 2)) };
         let end = floor_boundary(&text, (start + max_bytes).min(text.len()));
-        let clamp = |b: usize| b.clamp(start, end) - start;
-        Some((text[start..end].to_string(), clamp(s.from())..clamp(s.to())))
+        let around = &text[start..end];
+        let clamp = |b: usize| str_byte_to_utf16(around, b.clamp(start, end) - start);
+        Some((around.to_string(), clamp(s.from())..clamp(s.to())))
     }
 }
 
@@ -845,7 +847,8 @@ mod tests {
         assert_eq!(e.text(), "A😀かめいb");
         let (around, s) = e.ime_surrounding(1024).unwrap();
         assert_eq!(around, "A😀かめいb");
-        assert_eq!(s, 14..14);
+        // UTF-16: A, 😀 (a surrogate pair), かめい.
+        assert_eq!(s, 6..6);
     }
 
     #[test]

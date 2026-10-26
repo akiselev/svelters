@@ -111,7 +111,10 @@ impl Document {
                     self.restyle_all();
                 }
             }
-            WindowEvent::Moved { .. } | WindowEvent::Occluded(_) | WindowEvent::CloseRequested => {}
+            WindowEvent::Moved { .. }
+            | WindowEvent::Occluded(_)
+            | WindowEvent::CloseRequested
+            | WindowEvent::MonitorChanged => {}
         }
     }
 
