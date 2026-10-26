@@ -1272,6 +1272,12 @@ impl Document {
             self.core[i].dirty.insert(Dirty::A11Y);
             self.mark_up(i, Dirty::DESC_RECORD);
         }
+        // kinds draw the focus ring from these bits when they record (a hosted button's UA rule),
+        // whether or not a sheet tests `:focus`: re-record however the focus moved (a host's
+        // `focus()` outside a dispatch as much as Tab)
+        if (old.0 ^ new.0) & (StateMask::FOCUSED.0 | StateMask::FOCUS_VISIBLE.0) != 0 {
+            self.core[i].dirty.insert(Dirty::PAINT);
+        }
         self.restyle_state(i, old, new);
         self.journal.push(Change::State { node, state: new });
     }

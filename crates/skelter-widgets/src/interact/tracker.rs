@@ -426,9 +426,10 @@ impl Tracker {
                     pass.input.events.push(FrameEvent::Text(text.clone()));
                 }
             }
-            Event::Focus { gained, .. } => {
+            Event::Focus { gained, reason } => {
                 self.focused = *gained;
                 r.has_focus = *gained;
+                r.focus_reason = gained.then_some(*reason);
             }
             Event::A11y(req) => {
                 if enabled && self.sense.click && req.action == accesskit::Action::Click {

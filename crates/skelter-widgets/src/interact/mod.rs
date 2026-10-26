@@ -213,6 +213,9 @@ pub struct Resp {
     pub drag_delta: Vec2,
     pub interact_pointer_pos: Option<Point>,
     pub has_focus: bool,
+    /// Why focus came this pass, when the host was told (a focus event): its reason, not the pass's
+    /// input, decides `:focus-visible` (a host's `focus()` outside a dispatch has no key press).
+    pub focus_reason: Option<FocusReason>,
     pub enabled: bool,
 }
 
@@ -234,6 +237,7 @@ impl Default for Resp {
             drag_delta: Vec2::ZERO,
             interact_pointer_pos: None,
             has_focus: false,
+            focus_reason: None,
             enabled: true,
         }
     }
