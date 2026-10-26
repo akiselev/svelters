@@ -118,3 +118,31 @@ fn the_backend_counts_its_js_traffic() {
     assert!(t.posts >= 1 && t.checkpoints >= 1, "the click reached JS: {t:?}");
     assert_eq!(t.from_js(), 0, "the mock host asked nothing back: {t:?}");
 }
+
+/// A combo-box's `option-anchors` name its options for AccessKit (their author ids), as egui's
+/// ComboBox gave each option an id: a tour finds an option by anchor and clicks it, which picks it.
+#[test]
+fn combo_box_options_take_anchors() {
+    let r = Rig::new();
+    let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::testing());
+    install_widget_services(&r.backend, skelter_text::TextSystem::new(fonts));
+    let w = r.create("window");
+    let c = r.create("combo-box");
+    r.set(c, "options", Value::List(vec![Value::Str("LED_0603".into()), Value::Str("LED_0805".into())]));
+    r.set(c, "option-anchors", Value::List(vec![Value::Str("fp:LED_0603".into()), Value::Str("fp:LED_0805".into())]));
+    r.set(c, "selected", Value::I64(0));
+    r.set(c, "accessible-name", Value::Str("Footprint".into()));
+    r.listen(c, "changed");
+    r.insert(w, c);
+    r.call(w, "present");
+    let mut doc = SkelterDocument::new(r.backend.clone());
+    for h in r.backend.take_presents() {
+        doc.opening(h);
+    }
+    let mut h = skelter_test::Harness::new(doc);
+    h.run();
+    assert_eq!(h.get_by_author_id("fp:LED_0805").label().as_deref(), Some("LED_0805"));
+    h.get_by_author_id("fp:LED_0805").click_accesskit();
+    h.run();
+    assert_eq!(r.get(c, "selected"), Value::I64(1), "the option by anchor was picked");
+}

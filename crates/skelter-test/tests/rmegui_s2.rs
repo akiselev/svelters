@@ -6,6 +6,7 @@
 //! - SV60: `aria-activedescendant` / `aria-controls` resolve when their target appears later;
 //! - a label stretched past its text that JS listens to for clicks takes them on its whole box.
 //! - FQ-67: a widget re-enabled by its `disabled` prop is enabled for AccessKit too.
+//! - a select's `option-anchors` resolve with svelters-automation's `anchor=` selector.
 
 use skelter::CoreDocument;
 use skelter_base::accesskit::{Action, Role};
@@ -30,6 +31,7 @@ fn harness() -> Harness<CoreDocument> {
     let mut reg = KindRegistry::new();
     skelter_widgets::host::register_tier0(&mut reg).unwrap();
     skelter_widgets::host::register::<skelter_widgets::views::virtual_list::VirtualList>(&mut reg).unwrap();
+    skelter_widgets::host::register::<skelter_widgets::views::select::Select>(&mut reg).unwrap();
     skelter_widgets::table::kinds::register(&mut reg).unwrap();
     reg.register::<skelter_widgets::text::TextEdit>().unwrap();
     let doc = Document::new(Arc::new(reg), Box::new(text()));
@@ -271,4 +273,41 @@ fn a_reenabled_widget_is_enabled_for_accesskit() {
     }
     settle(&mut h);
     assert_eq!(disabled(&h), (false, false), "re-enabled");
+}
+
+/// A select's options carry the anchors of `option-anchors` (AccessKit author ids), so
+/// svelters-automation's `anchor=` selector finds an option as cadatomic's tours address it
+/// (`ecad.lib.part.new.footprint:LED_0805`), and AccessKit's `Click` on it picks it.
+#[test]
+fn select_options_resolve_by_anchor() {
+    use skelter_test::SkelterScene;
+    use svelters_automation::source::query;
+    const SELECT: KindId = KindId::of("select");
+    let mut h = harness();
+    let w = h.window();
+    let sel = {
+        let d = &mut h.state_mut().doc;
+        let root = d.window_root(w).unwrap();
+        let sel = add(d, root, SELECT, "width: 200px; height: 24px");
+        d.set_prop(sel, common::ARIA_LABEL, Value::from("Footprint")).unwrap();
+        prop(d, sel, SELECT, "options", list([Value::from("LED_0603"), Value::from("LED_0805")]));
+        prop(d, sel, SELECT, "option-anchors", list([Value::from("fp:LED_0603"), Value::from("fp:LED_0805")]));
+        sel
+    };
+    settle(&mut h);
+    let opt = {
+        let scene = SkelterScene::new(h.a11y()).with_document(&h.state().doc);
+        let found = query(&scene, "anchor=fp:LED_0805").unwrap();
+        assert_eq!(found.len(), 1, "the option by its anchor");
+        found[0]
+    };
+    h.accesskit_action(skelter_base::accesskit::ActionRequest { action: Action::Click, target_tree: opt.0, target_node: opt.1, data: None });
+    h.run();
+    assert_eq!(d_prop_of(&h, sel, SELECT, "selected"), Some(Value::I64(1)));
+}
+
+fn d_prop_of(h: &Harness<CoreDocument>, n: NodeId, kind: KindId, name: &str) -> Option<Value> {
+    let d = &h.state().doc;
+    let p = d.registry().get(kind).unwrap().spec.prop_named(name).unwrap();
+    d.get_prop(n, p)
 }
