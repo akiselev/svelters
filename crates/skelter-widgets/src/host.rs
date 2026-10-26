@@ -1055,6 +1055,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         self.run(cx, |w, wcx| w.overlay_closed(wcx, reason))
     }
 
+    fn owner_context_click(&mut self, cx: &mut EventCx, at: Point) -> Handled {
+        self.run(cx, |w, wcx| w.owner_context_click(wcx, at))
+    }
+
     fn listen_changed(&mut self, _cx: &mut PropCx, signal: SignalId, listened: bool) {
         let s = Self::spec_ref();
         if let Some(i) = (0..s.core.signals.len()).find(|&i| s.core.signal_id(i) == signal) {
