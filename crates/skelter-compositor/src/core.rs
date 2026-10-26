@@ -76,6 +76,8 @@ pub enum Msg {
     Resize { window: WindowId, size: DeviceSize, scale: Scale, seq: u64 },
     SetVisible { window: WindowId, visible: bool },
     SetRefresh { window: WindowId, interval: Span },
+    /// The pixel density of the window's monitor (fling physics); replaces `EngineConfig::ppi` for it.
+    SetPpi { window: WindowId, ppi: f32 },
     SetCaretBlink { window: WindowId, blink: Option<CaretBlink> },
     RegisterTexture { id: TextureId, texture: wgpu::Texture },
     UnregisterTexture(TextureId),
@@ -113,8 +115,6 @@ pub enum Msg {
 pub struct EngineConfig {
     pub refresh: Span,
     pub clear: Option<Color>,
-    /// The caret colour until a window's first `FastCommit::Caret`, which brings its own.
-    pub caret_color: Color,
     /// The caret blink of new windows; `None` = a steady caret.
     pub caret_blink: Option<CaretBlink>,
     /// Display pixels per inch, for fling physics.
@@ -148,6 +148,8 @@ struct Win {
     tree: WindowTree,
     pacer: Box<dyn FramePacer>,
     interval: Span,
+    /// The window's monitor's pixels per inch, once the UI said (else `EngineConfig::ppi`).
+    ppi: Option<f32>,
     size: DeviceSize,
     scale: Scale,
     visible: bool,
@@ -267,6 +269,7 @@ impl Engine {
             tree: WindowTree::default(),
             pacer: (self.new_pacer)(interval),
             interval,
+            ppi: None,
             size,
             scale,
             visible: true,
@@ -280,7 +283,8 @@ impl Engine {
             animating: false,
             caret: Caret {
                 rect: None,
-                color: self.cfg.caret_color,
+                // hidden until the window's first `FastCommit::Caret`, which brings its colour
+                color: Color::BLACK,
                 transform: PropNodeId::default(),
                 revision: Default::default(),
                 blink: self.cfg.caret_blink,
@@ -410,6 +414,11 @@ impl Engine {
                     w.interval = interval;
                 }
             }
+            Msg::SetPpi { window, ppi } => {
+                if let Some(w) = self.windows.get_mut(&window) {
+                    w.ppi = (ppi > 0.0).then_some(ppi);
+                }
+            }
             Msg::RegisterTexture { id, texture } => gpu.register_texture(id, texture),
             Msg::UnregisterTexture(id) => gpu.unregister_texture(id),
             Msg::TextureUpdated { window, texture } => {
@@ -445,7 +454,7 @@ impl Engine {
             Msg::HighRateInput(window) => self.signal(window, now, Signal::HighRateInput, gpu),
             Msg::UiCost { window, frame, cost } => self.signal(window, now, Signal::UiCost { frame, cost }, gpu),
             Msg::Fling { window, node, velocity, curve, at } => {
-                let ppi = self.cfg.ppi;
+                let ppi = self.windows.get(&window).and_then(|w| w.ppi).unwrap_or(self.cfg.ppi);
                 self.start_motion(window, node, now, gpu, |s| {
                     let curve = Fling::new(curve, velocity, ppi, s.viewport.size());
                     Motion { anim: MotionKind::Fling(curve), base: s.offset, start: at }
@@ -809,7 +818,7 @@ impl Engine {
             };
             if let (Some(f), SurfaceKey::Main, Some(l)) = (frame, key, &w.source) {
                 // Arms the next frame callback and presentation feedback (Wayland).
-                l.source.before_present(f);
+                l.source.before_present_sized(f, size);
             }
             match gpu.draw(window, key, frame, &scene) {
                 DrawOutcome::Presented { submitted } => drew = Some(drew.map_or(submitted, |d: Time| d.max(submitted))),

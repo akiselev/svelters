@@ -10,16 +10,27 @@
 //!   (`selected`, `current`, `sort-column`, …) are written back as native state for `bind:`.
 //! - JS methods (`set-rows`, `set-ids`, `clear-rows`, `scroll-to-row`, `fit-columns`) are
 //!   skelter-core methods ([`Kind::call`]).
-//! - Scrolling: until the views lane's scroll layer hosts the table, the kind keeps the body's offset
-//!   itself (the wheel scrolls it, clamped; keyboard moves and `scroll-to-row` reveal rows), with no
-//!   scroll bars or fling.
+//! - Cells of `editable` columns are edited in place by the text-edit field ([`CellEditor`] over
+//!   [`TextField`](crate::text::field::TextField), the document's text system laying it out): F2 or
+//!   typing on the cursor cell starts an edit (typing replaces the value), the field takes the keys,
+//!   IME and presses in the cell, and Enter, Tab/Shift+Tab (moving to the next or previous editable
+//!   cell) or focus leaving commit (`commit(row, column, value)`; the window shows the value until
+//!   JS answers) while Escape reverts. The caret goes out through core's fast channel.
+//! - Scrolling: the body's offset is a views [`Scroller`]'s: its bars (`::part(thumb-x)`,
+//!   `::part(thumb-y)`, and for classic bars `::part(scrollbar-x)`, `::part(scrollbar-y)`,
+//!   `::part(corner)`, the scroll-area's parts and UA tables) sit over the body's right and bottom
+//!   edges, with thumb drags, track pages (held: repeated) and overlay fading per the platform
+//!   policy; the wheel, keyboard moves and `scroll-to-row` move the same offset, and each move emits
+//!   the common `scroll` event. The offset stays the kind's and a scroll re-records the table: the
+//!   frozen header and sticky columns would move with a `self_scroll` list (core's scroll-offset
+//!   fast path wants a fixed list beside the scrolled one first).
 //!
-//! skelter-core gaps this kind works around (listed in `plans/milestones/SKELTER-widgets-tier1.md`):
-//! - `prepare` cannot emit, so the model's `range` (and a restored `header-state`'s events) are held
-//!   and delivered with the table's next event or method call;
-//! - an event can write only its own node's props, so a user resize stays in the table and is not
-//!   written back to the column's `width` (`column-resized` reports it; JS writes it if it binds it);
-//! - `record` has no clock, so the resize edges' hover delay uses the last event's time.
+//! - The model's `range` (and a restored `header-state`'s events) come out of `prepare` and are
+//!   emitted from there (`PrepareCx::emit`); a user resize writes the `table-column`'s `width` back
+//!   as native state (`EventCx::set_native_on`) and reports it (`column-resized`).
+//!
+//! skelter-core gap this kind works around (listed in `plans/milestones/SKELTER-widgets-tier1.md`):
+//! `record` has no clock, so the resize edges' hover delay uses the last event's time.
 
 use super::column::{ALIGNS, ColumnState, ELIDES, HEADER_ALIGNS, SORTS};
 use super::selection::Mode;
@@ -30,7 +41,20 @@ use crate::theme::Theme;
 use skelter_base::accesskit::Role;
 use skelter_base::change::ChangeClass;
 use skelter_base::event::{KeyState, Modifiers, PointerEvent, PointerPhase, PointerType, ScrollDelta};
-use skelter_base::geom::{Point, Size, Vec2};
+use crate::interact::{Policy, Scrollbars, StateBits};
+use crate::paint::PaintCx;
+use crate::shim::core::Styles;
+use crate::table::text_painter::{CollectRes, NoShaper};
+use crate::text::cell::CellEditor;
+use crate::views::scroll::Scroller;
+use skelter_base::display::DisplayList;
+use crate::text::field::{FieldColors, FieldPointer};
+use crate::text::geometry::SystemLayouter;
+use crate::text::kind::text_style;
+use crate::text::policy::{Platform as TextPlatform, TextPolicy};
+use crate::text::shim::{Layouter, MonoLayouter};
+use skelter_base::geom::{Point, Rect, Size, Vec2};
+use skelter_base::ids::NodeId;
 use skelter_base::time::Time;
 use skelter_core::{
     A11yCx, ArgSpec, Event, EventCx, FocusReason, Handled, Kind, KindRegistry, KindSpec, MeasureCx, MethodId, MethodSpec, NodeView, PrepareCx, PropCx, PropDefault, PropError, PropId,
@@ -77,6 +101,9 @@ static TABLE_SIGNALS: &[SignalSpec] = &[
     SignalSpec::new("columns-changed", Some(ValueType::List), P).args(&[ArgSpec::new("hidden", ValueType::List)]).doc("The hidden columns changed."),
     SignalSpec::new("header-state-changed", Some(ValueType::Str), P).args(&[ArgSpec::new("state", ValueType::Str)]).doc("The header's widths, hidden columns or sort changed by the user."),
     SignalSpec::new("copy", Some(ValueType::List), P).args(&[ArgSpec::new("ids", ValueType::List)]).doc("Ctrl+C (Cmd+C) on the focused table; carries the selected ids."),
+    SignalSpec::new("commit", Some(ValueType::Record), P)
+        .args(&[ArgSpec::new("row", ValueType::I64), ArgSpec::new("column", ValueType::I64), ArgSpec::new("value", ValueType::Str)])
+        .doc("A cell edit was committed (Enter, Tab or focus leaving the editor); carries the row position, the column (child index) and the text."),
 ];
 
 static TABLE_METHODS: &[MethodSpec] = &[
@@ -87,6 +114,12 @@ static TABLE_METHODS: &[MethodSpec] = &[
     MethodSpec::new("fit-columns", &[ArgSpec { name: "column", ty: ValueType::I64, nullable: true }], None).doc("Fits one column (child index) or every one to its contents."),
 ];
 
+/// The scroll bars' paint parts (the scroll-area's).
+const BAR_PARTS: &[&str] = &["thumb-x", "thumb-y", "scrollbar-x", "scrollbar-y", "corner"];
+/// The bars' thickness and their shortest thumb (points).
+const BAR_WIDTH: f32 = 10.0;
+const MIN_THUMB: f32 = 20.0;
+
 /// `table`: a virtual table over its `table-column` children.
 pub static TABLE: KindSpec = KindSpec {
     props: TABLE_PROPS,
@@ -96,6 +129,7 @@ pub static TABLE: KindSpec = KindSpec {
     focusable: true,
     container: true,
     folds_children: true,
+    parts: BAR_PARTS,
     doc: "A virtual table: rows are a JS data window (`range` → `set-rows`), columns its `table-column` children.",
     ..KindSpec::new("table")
 };
@@ -116,6 +150,11 @@ static COLUMN_PROPS: &[PropSpec] = &[
     PropSpec::new("elide", ValueType::Enum, ChangeClass::Paint).enum_values(ELIDES).default(PropDefault::Enum(0)),
     PropSpec::new("tooltip", ValueType::Str, ChangeClass::Property).default(PropDefault::Str("")),
 ];
+
+/// `table-column`'s `width`, which a user resize writes back.
+fn column_width() -> PropId {
+    TABLE_COLUMN.prop_id(1)
+}
 
 /// `table-column`: one column of a `table` (data: never laid out or drawn as a node).
 pub static TABLE_COLUMN: KindSpec = KindSpec { props: COLUMN_PROPS, role: Role::ColumnHeader, doc: "A column of a table (its header title, width and behaviour).", ..KindSpec::new("table-column") };
@@ -213,26 +252,49 @@ fn columns_of(node: NodeView<'_>) -> Vec<ColumnState> {
     (0..node.children().len()).filter_map(|k| node.child(k)).filter(|c| c.kind().spec.name == TABLE_COLUMN.name).map(column_of).collect()
 }
 
+/// The ids of [`columns_of`]'s nodes.
+fn column_nodes_of(node: NodeView<'_>) -> Vec<NodeId> {
+    (0..node.children().len()).filter_map(|k| node.child(k)).filter(|c| c.kind().spec.name == TABLE_COLUMN.name).map(|c| c.id()).collect()
+}
+
 /// The `table` kind.
 #[derive(Default)]
 pub struct TableKind {
     pub table: Table,
     look: TableLook,
-    /// Events the model raised in `prepare`, delivered with the next event or method call.
-    pending: Vec<Emit>,
     /// Each column's `width` prop as last read (a user resize stays until it changes).
     read_widths: Vec<Option<f32>>,
+    /// The `table-column` nodes, by data column.
+    column_nodes: Vec<NodeId>,
     off: Vec2,
     /// The laid-out size (as of the last prepare).
     size: Size,
     /// The last event's time (the clock `record` lacks).
     now: Time,
+    /// The cell being edited.
+    edit: Option<Edit>,
+    /// The body's scroll offset, geometry and bars.
+    scroller: Scroller,
+    /// The platform policy (bars, track clicks), from the document's service.
+    policy: Policy,
+    /// The theme is dark (the bars' UA colours).
+    dark: bool,
+}
+
+/// A cell edit: the cell (row position, data column), its rect (from the last prepare) and the
+/// text-edit field over it.
+struct Edit {
+    pos: u64,
+    data: usize,
+    rect: Rect,
+    editor: CellEditor,
 }
 
 impl TableKind {
     /// Re-reads the columns, keeping a width the user dragged while the column's prop is unchanged.
     fn read_columns(&mut self, node: NodeView<'_>) {
         let cols = columns_of(node);
+        self.column_nodes = column_nodes_of(node);
         let mut next = Vec::with_capacity(cols.len());
         for (k, mut c) in cols.into_iter().enumerate() {
             let prop = c.width;
@@ -256,20 +318,25 @@ impl TableKind {
         self.off.y = self.off.y.clamp(0.0, (content.h - view_h).max(0.0));
     }
 
-    /// Delivers `out` and the held events, writes back what the model changed itself, and applies
-    /// its focus and scroll requests.
-    fn deliver(&mut self, cx: &mut EventCx, mut out: Vec<Emit>) {
-        let mut all = std::mem::take(&mut self.pending);
-        all.append(&mut out);
+    /// Delivers `out`, writes back what the model changed itself (its props, and the widths of the
+    /// columns the user resized), and applies its focus and scroll requests.
+    fn deliver(&mut self, cx: &mut EventCx, out: Vec<Emit>) {
         for name in self.table.take_changed() {
             let Some(i) = TABLE_PROPS.iter().position(|p| p.name == name) else { continue };
             if let Some(v) = self.table.state.get_prop(name) {
                 let _ = cx.set_native(TABLE.prop_id(i), to_core(&v, Some(&TABLE_PROPS[i])));
             }
         }
-        // a user resize stays in the table (see the module doc)
-        self.table.take_changed_columns();
-        for e in &all {
+        for k in self.table.take_changed_columns() {
+            let (Some(&c), Some(w)) = (self.column_nodes.get(k), self.table.columns.get(k).and_then(|c| c.width)) else { continue };
+            // the column's prop now holds the user's width (read back as unchanged)
+            if cx.set_native_on(c, column_width(), Value::F64(w as f64)).is_ok()
+                && let Some(r) = self.read_widths.get_mut(k)
+            {
+                *r = Some(w);
+            }
+        }
+        for e in &out {
             if let Some(i) = TABLE_SIGNALS.iter().position(|s| s.name == e.signal) {
                 cx.emit(TABLE.signal_id(i), emit_arg(&TABLE_SIGNALS[i], &e.args));
             }
@@ -282,11 +349,195 @@ impl TableKind {
             self.clamp_off();
             self.table.set_viewport(self.size, self.off);
         }
-        if let Some(t) = self.table.next_wakeup(self.now) {
+        // the soonest of the model's timers, a held track press and the overlay bars' fade
+        let wake = [self.table.next_wakeup(self.now), self.scroller.hold_wake(), self.scroller.bar_wake(self.now, &self.policy)].into_iter().flatten().min();
+        if let Some(t) = wake {
             cx.wake_at(t);
         }
         cx.set_cursor(self.table.cursor_icon());
         cx.request_paint();
+    }
+
+    /// The offset moved (the bars or the wheel): the model follows, the bars show, and the common
+    /// `scroll` event goes out.
+    fn scrolled(&mut self, cx: &mut EventCx) {
+        self.off = self.scroller.offset();
+        self.clamp_off();
+        self.table.set_viewport(self.size, self.off);
+        self.scroller.touch(self.now);
+        let rec: Vec<(Arc<str>, Value)> = vec![("scrollLeft".into(), Value::F64(self.off.x as f64)), ("scrollTop".into(), Value::F64(self.off.y as f64))];
+        cx.emit(skelter_core::common::SCROLL, Some(Value::Record(rec.into())));
+        cx.request_paint();
+    }
+
+    /// Pointer events over the bars (a thumb drag, a track press and its hold): `Some` when they
+    /// took the event.
+    fn bar_event(&mut self, cx: &mut EventCx, ev: &Event) -> Option<Handled> {
+        let (phase, p) = match ev {
+            Event::PointerDown(p) => (PointerPhase::Down, Some(p)),
+            Event::PointerMove(p) => (PointerPhase::Move, Some(p)),
+            Event::PointerUp(p) => (PointerPhase::Up, Some(p)),
+            Event::PointerCancel => (PointerPhase::Cancel, None),
+            Event::HoverLeave => (PointerPhase::Leave, None),
+            _ => return None,
+        };
+        let pos = p.map_or(Point::new(-1.0, -1.0), |p| p.local);
+        let primary = p.is_some_and(|p| p.button == Some(skelter_base::event::MouseButton::Primary) || (phase != PointerPhase::Down && p.buttons & 1 != 0));
+        let shift = p.is_some_and(|p| p.modifiers.contains(Modifiers::SHIFT));
+        let hovered = self.scroller.hovered();
+        let (ours, moved) = self.scroller.pointer(self.now, &self.policy, phase, primary, pos, shift);
+        if moved {
+            self.scrolled(cx);
+        }
+        if hovered != self.scroller.hovered() || ours {
+            cx.request_paint();
+        }
+        // the table sees the hover end and the cancel too
+        if !ours || matches!(phase, PointerPhase::Leave | PointerPhase::Cancel) {
+            return None;
+        }
+        match phase {
+            PointerPhase::Down => cx.capture_pointer(),
+            PointerPhase::Up => cx.release_pointer(),
+            _ => {}
+        }
+        self.deliver(cx, Vec::new());
+        Some(Handled::Yes)
+    }
+
+    /// Records the bars over the body.
+    fn record_bars(&self, cx: &mut RecordCx) {
+        let node = cx.node;
+        let parts: Vec<(&'static str, &svelters_style::ComputedStyle)> = BAR_PARTS.iter().filter_map(|n| Some((*n, node.part(n)?))).collect();
+        let styles = Styles { computed: node.css(), parts: &parts, children: &[], state: StateBits(node.state().0), dark: self.dark };
+        let classic = self.policy.scrollbars == Scrollbars::Classic;
+        let alpha = self.scroller.bar_alpha(self.now, &self.policy);
+        let mut list = DisplayList::new();
+        let mut res = CollectRes::default();
+        let mut none = NoShaper;
+        {
+            let mut pc = PaintCx::new(&mut list, &mut res, &mut none, node.scale());
+            self.scroller.record_bars(&mut pc, &styles, alpha, classic);
+        }
+        let bounds = list.bounds;
+        for item in list.items {
+            cx.push(item, bounds);
+        }
+    }
+
+    /// The cursor cell: its row position and data column.
+    fn cursor_cell(&self) -> Option<(u64, usize)> {
+        let pos = self.table.state.sel.cursor.and_then(|k| self.table.state.pos_of(k))?;
+        let data = *self.table.shown().get(self.table.state.cur_col)?;
+        Some((pos, data))
+    }
+
+    /// Starts editing cell (`pos`, `data`); `typed` replaces its value (empty: the value, selected).
+    fn begin_edit(&mut self, cx: &mut EventCx, pos: u64, data: usize, typed: &str) {
+        let value = self.table.state.cell(pos, data).unwrap_or("").to_owned();
+        let policy = cx.service::<crate::interact::Policy>().copied().unwrap_or_else(crate::host::os_policy);
+        let editor = CellEditor::begin(&value, typed, TextPolicy::from_policy(TextPlatform::current(), &policy));
+        self.edit = Some(Edit { pos, data, rect: Rect::ZERO, editor });
+        cx.request_paint();
+    }
+
+    /// Routes `ev` to the cell editor while one is open, or starts one (F2 or typing on an editable
+    /// cursor cell). `Some` when the editor took the event; a press elsewhere and focus leaving end
+    /// the edit and go on to the table.
+    fn edit_event(&mut self, cx: &mut EventCx, ev: &Event) -> Option<Handled> {
+        if self.edit.is_none() {
+            let Event::Key(k) = ev else { return None };
+            if k.state != KeyState::Pressed || [Modifiers::CTRL, Modifiers::SUPER, Modifiers::ALT].iter().any(|m| k.modifiers.contains(*m)) {
+                return None;
+            }
+            let typed = match (&k.key, &k.text) {
+                (Some(skelter_base::key::Key::F2), _) => String::new(),
+                (_, Some(t)) if !t.is_empty() && !t.chars().any(char::is_control) => t.clone(),
+                _ => return None,
+            };
+            let (pos, data) = self.cursor_cell().filter(|&(_, d)| self.table.columns.get(d).is_some_and(|c| c.editable))?;
+            self.begin_edit(cx, pos, data, &typed);
+            return Some(Handled::Yes);
+        }
+        let style = cx.view(cx.node()).map(|v| text_style(v.style()))?;
+        let now = cx.time();
+        let took = {
+            let edit = self.edit.as_mut().expect("editing");
+            let mut mono = MonoLayouter { advance: 8.0, line_height: 16.0 };
+            let mut sys: SystemLayouter;
+            let lay: &mut dyn Layouter = match cx.service::<skelter_text::TextSystem>() {
+                Some(ts) => {
+                    sys = SystemLayouter { system: ts, style };
+                    &mut sys
+                }
+                None => &mut mono,
+            };
+            let field = |phase, p: &skelter_core::PointerInput| FieldPointer::new(phase, p.button, p.buttons, p.local);
+            match ev {
+                Event::Key(k) => {
+                    edit.editor.key(k, now, lay);
+                    true
+                }
+                Event::Ime(i) => {
+                    edit.editor.field.ime(i, now, lay);
+                    true
+                }
+                Event::PointerDown(p) if edit.rect.contains(p.local) => {
+                    edit.editor.field.pointer(&field(PointerPhase::Down, p), now, lay);
+                    true
+                }
+                Event::PointerMove(p) if p.buttons != 0 && edit.rect.contains(p.local) => edit.editor.field.pointer(&field(PointerPhase::Move, p), now, lay),
+                Event::PointerUp(p) if edit.rect.contains(p.local) => {
+                    edit.editor.field.pointer(&field(PointerPhase::Up, p), now, lay);
+                    true
+                }
+                Event::PointerDown(_) | Event::FocusOut => {
+                    edit.editor.focus_out();
+                    false
+                }
+                _ => return None,
+            }
+        };
+        self.finish_edit(cx);
+        took.then_some(Handled::Yes)
+    }
+
+    /// After the editor took input: its caret and repaint, and the end of the edit when it asked
+    /// (commit or revert, then the move of Tab/Shift+Tab).
+    fn finish_edit(&mut self, cx: &mut EventCx) {
+        let Some(edit) = self.edit.as_mut() else { return };
+        if let Some(r) = edit.editor.field.caret_update() {
+            cx.set_caret(r);
+        }
+        if edit.editor.field.take_repaint() {
+            cx.request_paint();
+        }
+        let Some(end) = edit.editor.take_end() else { return };
+        let (pos, data) = (edit.pos, edit.data);
+        self.edit = None;
+        cx.set_caret(None);
+        cx.request_paint();
+        if end.commit {
+            let i = TABLE_SIGNALS.iter().position(|s| s.name == "commit").expect("the commit signal");
+            let rec = vec![(Arc::from("row"), Value::I64(pos as i64)), (Arc::from("column"), Value::I64(data as i64)), (Arc::from("value"), Value::Str(Arc::from(end.text.as_str())))];
+            cx.emit(TABLE.signal_id(i), Some(Value::Record(rec.into())));
+            // shown until JS answers with `set-rows`
+            let st = &mut self.table.state;
+            if let Some(cell) = pos.checked_sub(st.first).and_then(|r| st.rows.get_mut(r as usize)).and_then(|row| row.get_mut(data)) {
+                *cell = end.text;
+            }
+        }
+        if end.step != 0 {
+            let shown = self.table.shown();
+            let from = self.table.state.cur_col as i64;
+            let next = std::iter::successors(Some(from + end.step as i64), |k| Some(k + end.step as i64))
+                .take_while(|k| *k >= 0 && (*k as usize) < shown.len())
+                .find(|k| self.table.columns[shown[*k as usize]].editable);
+            if let Some(k) = next {
+                self.table.state.cur_col = k as usize;
+                self.begin_edit(cx, pos, shown[k as usize], "");
+            }
+        }
     }
 
     fn pointer_event(phase: PointerPhase, p: &skelter_core::PointerInput) -> PointerEvent {
@@ -338,26 +589,81 @@ impl Kind for TableKind {
         self.read_columns(node);
         if let Some(t) = cx.service::<Theme>() {
             self.look = TableLook::from_theme(t);
+            self.dark = t.is_dark();
+        }
+        if let Some(p) = cx.service::<Policy>() {
+            self.policy = *p;
         }
         self.size = node.size();
         self.table.set_viewport(self.size, self.off);
         self.clamp_off();
         self.table.set_viewport(self.size, self.off);
-        let (table, look, pending) = (&mut self.table, &self.look, &mut self.pending);
-        with_text(cx.service::<skelter_text::TextSystem>(), |p| table.prepare(look, p, pending));
+        let mut out = Vec::new();
+        let (table, look) = (&mut self.table, &self.look);
+        with_text(cx.service::<skelter_text::TextSystem>(), |p| table.prepare(look, p, &mut out));
+        for e in &out {
+            if let Some(i) = TABLE_SIGNALS.iter().position(|s| s.name == e.signal) {
+                cx.emit(TABLE.signal_id(i), emit_arg(&TABLE_SIGNALS[i], &e.args));
+            }
+        }
         if let Some(off) = self.table.take_scroll_request() {
             self.off = off;
             self.clamp_off();
             self.table.set_viewport(self.size, self.off);
         }
+        // the bars over the body, at the offset
+        let g = self.table.geom();
+        self.scroller.set_geometry(self.table.content_size(), g.body.size());
+        self.scroller.set_offset(self.off);
+        let show = [self.scroller.overflows(0), self.scroller.overflows(1)];
+        self.scroller.layout_bars(g.body, BAR_WIDTH, MIN_THUMB, show);
+        // the cell editor over its cell
+        let shown = self.table.shown();
+        if let Some(edit) = self.edit.as_mut()
+            && let Some(k) = shown.iter().position(|&d| d == edit.data)
+        {
+            let (cr, _) = g.cell_rect(edit.pos, k);
+            edit.rect = cr;
+            let pad = self.look.cell_padding;
+            let content = Rect::new(cr.min.x + pad, cr.min.y, (cr.max.x - pad).max(cr.min.x + pad), cr.max.y);
+            let style = text_style(node.style());
+            let to_window = node.window_transform();
+            match cx.service::<skelter_text::TextSystem>() {
+                Some(ts) => edit.editor.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window),
+                None => edit.editor.field.prepare(&mut MonoLayouter { advance: 8.0, line_height: 16.0 }, content, to_window),
+            }
+            edit.editor.field.take_repaint();
+        }
     }
 
     fn record(&self, cx: &mut RecordCx) {
         record_core(cx, |p, list| self.table.record(&self.look, p, list, self.now));
+        if let Some(edit) = &self.edit {
+            // the field over the cell's own text
+            let q = skelter_base::display::Quad {
+                rect: edit.rect,
+                radii: Default::default(),
+                fill: skelter_base::color::Fill::Solid(self.look.background),
+                border_widths: skelter_base::geom::Insets::all(1.0),
+                border_color: self.look.focus_ring,
+                border_style: Default::default(),
+            };
+            cx.push(skelter_base::display::Prim::Quad(q), edit.rect);
+            let t = self.look.text.color;
+            let colors = FieldColors { text: t, placeholder: t.with_alpha(t.a * 0.5), selection: self.look.selected, selection_inactive: self.look.selected_inactive, preedit_underline: t };
+            edit.editor.field.record(cx, &colors);
+        }
+        self.record_bars(cx);
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         self.now = cx.time();
+        if let Some(h) = self.edit_event(cx, ev) {
+            return h;
+        }
+        if let Some(h) = self.bar_event(cx, ev) {
+            return h;
+        }
         let mut out = Vec::new();
         let handled = match ev {
             Event::PointerDown(p) => {
@@ -379,9 +685,11 @@ impl Kind for TableKind {
                     ScrollDelta::Pages(v) => Vec2::new(v.x * self.size.w, v.y * self.size.h),
                 };
                 let before = self.off;
-                self.off = self.off - d;
-                self.clamp_off();
-                self.table.set_viewport(self.size, self.off);
+                self.scroller.set_offset(self.off);
+                self.scroller.scroll_by([true, true], Vec2::new(-d.x, -d.y));
+                if self.scroller.offset() != before {
+                    self.scrolled(cx);
+                }
                 self.off != before
             }
             Event::Key(k) => {
@@ -403,7 +711,13 @@ impl Kind for TableKind {
                 self.table.set_focus(false, false);
                 true
             }
-            Event::Timer => true,
+            Event::Timer => {
+                let (moved, _) = self.scroller.repeat(self.now);
+                if moved {
+                    self.scrolled(cx);
+                }
+                true
+            }
             _ => false,
         };
         self.deliver(cx, out);
@@ -488,5 +802,149 @@ mod tests {
         let arg = emit_arg(range, &[tshim::Value::I64(3), tshim::Value::I64(40)]);
         assert_eq!(arg, Some(Value::Record(vec![(Arc::from("first"), Value::I64(3)), (Arc::from("last"), Value::I64(40))].into())));
         assert_eq!(emit_arg(&TABLE_SIGNALS[3], &[tshim::Value::I64(7)]), Some(Value::I64(7)));
+    }
+
+    /// A table with two columns (`width` 100 and 80) and `rows` rows in a document.
+    fn table_doc(rows: i64) -> (skelter_core::Document, skelter_base::ids::NodeId, Vec<skelter_base::ids::NodeId>) {
+        use crate::testdoc::{child, doc};
+        let (mut d, root) = doc(Size::new(400.0, 300.0), |r| register(r).unwrap());
+        let t = child(&mut d, root, TABLE.id(), "width: 300px; height: 224px");
+        d.set_prop(t, TABLE.prop_named("row-count").unwrap(), Value::I64(rows)).unwrap();
+        d.set_prop(t, TABLE.prop_named("stretch-last").unwrap(), Value::Bool(false)).unwrap();
+        let cols = [100.0, 80.0]
+            .iter()
+            .map(|w| {
+                let c = child(&mut d, t, TABLE_COLUMN.id(), "");
+                d.set_prop(c, column_width(), Value::F64(*w)).unwrap();
+                c
+            })
+            .collect();
+        (d, t, cols)
+    }
+
+    #[test]
+    fn range_is_emitted_from_prepare_without_an_event() {
+        let (mut d, t, _) = table_doc(1000);
+        let range = TABLE.signal_named("range").unwrap();
+        d.listen(t, range, skelter_core::ListenFlags::EMPTY);
+        crate::testdoc::frame(&mut d);
+        let ev = d.take_events();
+        let r = ev.iter().find(|e| e.signal == range && e.target == t).expect("range after the frame, no event needed");
+        let arg = r.arg.as_ref().unwrap();
+        assert_eq!(arg.field("first"), Some(&Value::I64(0)));
+        assert!(arg.field("last").and_then(Value::as_i64).is_some_and(|l| l >= 9), "the visible rows at least: {arg:?}");
+    }
+
+    #[test]
+    fn a_user_resize_writes_the_column_width_back() {
+        use crate::testdoc::{frame, pointer};
+        use skelter_base::event::PointerPhase as Ph;
+        let (mut d, t, cols) = table_doc(10);
+        let resized = TABLE.signal_named("column-resized").unwrap();
+        d.listen(t, resized, skelter_core::ListenFlags::EMPTY);
+        frame(&mut d);
+        d.take_events();
+        // the first column's right edge, in the header
+        d.dispatch(&pointer(Ph::Move, 100.0, 10.0, 0, false));
+        d.dispatch(&pointer(Ph::Down, 100.0, 10.0, 10, false));
+        d.dispatch(&pointer(Ph::Move, 130.0, 10.0, 20, true));
+        let up = d.dispatch(&pointer(Ph::Up, 130.0, 10.0, 30, false));
+        let mut ev: Vec<_> = up.events.into_iter().filter(|e| e.signal == resized).collect();
+        ev.extend(d.take_events().into_iter().filter(|e| e.signal == resized));
+        assert_eq!(ev.len(), 1, "column-resized reports it");
+        assert_eq!(d.view(cols[0]).unwrap().prop_f64(column_width()), Some(130.0), "written to the column");
+        assert_eq!(d.view(cols[1]).unwrap().prop_f64(column_width()), Some(80.0));
+        // read back next frame as the column's own width: the resize stays
+        frame(&mut d);
+        assert_eq!(d.view(cols[0]).unwrap().prop_f64(column_width()), Some(130.0));
+    }
+
+    #[test]
+    fn typing_on_an_editable_cell_edits_through_the_text_field_and_commits() {
+        use crate::testdoc::{click, frame, key};
+        use skelter_base::key::Key;
+        let (mut d, t, cols) = table_doc(3);
+        d.set_prop(cols[1], TABLE_COLUMN.prop_named("editable").unwrap(), Value::Bool(true)).unwrap();
+        let rows = Value::List(vec![Value::List(vec![Value::from("a"), Value::from("old")].into()), Value::List(vec![Value::from("b"), Value::from("2")].into())].into());
+        d.call(t, TABLE.method_id(0), &[Value::I64(0), rows]).unwrap();
+        let commit = TABLE.signal_named("commit").unwrap();
+        d.listen(t, commit, skelter_core::ListenFlags::EMPTY);
+        frame(&mut d);
+        // the cursor on row 0's editable cell (the header is 24 high, rows 20; column 1 at 100..180)
+        click(&mut d, 140.0, 34.0);
+        assert_eq!(d.focused(crate::testdoc::W), Some(t));
+        let mut commits: Vec<Value> = Vec::new();
+        let send = |d: &mut skelter_core::Document, commits: &mut Vec<Value>, k: Key, text: Option<&str>| {
+            let out = d.dispatch(&key(k, text));
+            frame(d);
+            commits.extend(out.events.into_iter().chain(d.take_events()).filter(|e| e.signal == commit).filter_map(|e| e.arg));
+        };
+        // typing replaces the value; the field edits, Enter commits
+        send(&mut d, &mut commits, Key::A, Some("x"));
+        send(&mut d, &mut commits, Key::A, Some("y"));
+        send(&mut d, &mut commits, Key::Backspace, None);
+        send(&mut d, &mut commits, Key::A, Some("z"));
+        send(&mut d, &mut commits, Key::Enter, Some("\r"));
+        assert_eq!(commits.len(), 1, "{commits:?}");
+        assert_eq!(commits[0].field("row"), Some(&Value::I64(0)));
+        assert_eq!(commits[0].field("column"), Some(&Value::I64(1)));
+        assert_eq!(commits[0].field("value"), Some(&Value::from("xz")), "Backspace went through the field");
+        // F2 selects the (now shown) value: typing replaces it; Escape reverts without a commit
+        send(&mut d, &mut commits, Key::F2, None);
+        send(&mut d, &mut commits, Key::A, Some("q"));
+        send(&mut d, &mut commits, Key::Escape, None);
+        assert_eq!(commits.len(), 1, "reverted");
+        // Tab commits (no editable cell after it: the edit ends)
+        send(&mut d, &mut commits, Key::F2, None);
+        // Right collapses the selection to its end on every platform (End moves nothing on macOS)
+        send(&mut d, &mut commits, Key::ArrowRight, None);
+        send(&mut d, &mut commits, Key::A, Some("!"));
+        send(&mut d, &mut commits, Key::Tab, None);
+        assert_eq!(commits.last().and_then(|c| c.field("value")), Some(&Value::from("xz!")));
+        // a plain key on a non-editable cell is the table's (type-ahead), not an edit
+        click(&mut d, 40.0, 54.0);
+        send(&mut d, &mut commits, Key::A, Some("b"));
+        send(&mut d, &mut commits, Key::Enter, Some("\r"));
+        assert_eq!(commits.len(), 2);
+    }
+
+    #[test]
+    fn the_body_scrolls_by_its_bars_and_emits_scroll() {
+        use crate::testdoc::{frame, pointer};
+        use skelter_base::event::PointerPhase as Ph;
+        let (mut d, t, _) = table_doc(1000);
+        assert_eq!(TABLE.parts, BAR_PARTS, "the scroll-area's bar parts");
+        let range = TABLE.signal_named("range").unwrap();
+        d.listen(t, range, skelter_core::ListenFlags::EMPTY);
+        d.listen(t, skelter_core::common::SCROLL, skelter_core::ListenFlags::EMPTY);
+        let c = frame(&mut d).expect("a commit");
+        // the vertical thumb is recorded at the body's right edge (the body is 300×200 under a 24-point header)
+        let list = c.lists.iter().find(|(n, _)| *n == t).map(|(_, l)| (**l).clone()).expect("the table's list");
+        let thumb = |l: &DisplayList| {
+            l.items.iter().find_map(|i| match i {
+                skelter_base::display::Prim::Quad(q) if q.rect.min.x >= 290.0 - 0.5 && q.rect.width() <= BAR_WIDTH + 0.5 && q.rect.height() >= MIN_THUMB - 0.5 => Some(q.rect),
+                _ => None,
+            })
+        };
+        let r = thumb(&list).expect("the thumb");
+        assert_eq!((r.min.y, r.height()), (24.0, MIN_THUMB), "at the top, the shortest thumb");
+        d.take_events();
+        // drag the thumb halfway down the track
+        let x = (r.min.x + r.max.x) / 2.0;
+        d.dispatch(&pointer(Ph::Down, x, 30.0, 10, false));
+        let mv = d.dispatch(&pointer(Ph::Move, x, 30.0 + 90.0, 20, true));
+        d.dispatch(&pointer(Ph::Up, x, 120.0, 30, false));
+        let scroll = mv.events.iter().find(|e| e.signal == skelter_core::common::SCROLL).expect("the common scroll event").arg.clone().unwrap();
+        let top = scroll.field("scrollTop").and_then(Value::as_f64).unwrap();
+        // 90 of the track's 180 free points: half of the 19 800-point range
+        assert!((top - 9900.0).abs() < 1.0, "{top}");
+        frame(&mut d);
+        let r = d.take_events().into_iter().find(|e| e.signal == range).expect("the rows now in view").arg.unwrap();
+        assert!(r.field("first").and_then(Value::as_i64).is_some_and(|f| f > 400 && f <= 495), "{r:?}");
+        // a press on the track below the thumb pages down
+        let page = d.dispatch(&pointer(Ph::Down, x, 210.0, 40, false));
+        d.dispatch(&pointer(Ph::Up, x, 210.0, 50, false));
+        let top2 = page.events.iter().find(|e| e.signal == skelter_core::common::SCROLL).and_then(|e| e.arg.as_ref()?.field("scrollTop")?.as_f64()).expect("paged");
+        assert!(top2 > top, "{top2} after {top}");
     }
 }

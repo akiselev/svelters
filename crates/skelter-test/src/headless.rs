@@ -53,6 +53,8 @@ struct CompState {
     high_rate: u64,
     skipped: u64,
     caret_blinks: Vec<(WindowId, Option<skelter::compositor_crate::CaretBlink>)>,
+    refreshes: Vec<(WindowId, Span)>,
+    ppis: Vec<(WindowId, f32)>,
     shut_down: bool,
 }
 
@@ -274,6 +276,16 @@ impl HeadlessCompositor {
     pub fn caret_blinks(&self) -> Vec<(WindowId, Option<skelter::compositor_crate::CaretBlink>)> {
         self.lock().caret_blinks.clone()
     }
+
+    /// Every `set_refresh` the app sent (the window's monitor's refresh interval), in order.
+    pub fn refreshes(&self) -> Vec<(WindowId, Span)> {
+        self.lock().refreshes.clone()
+    }
+
+    /// Every `set_ppi` the app sent (the window's monitor's pixel density), in order.
+    pub fn ppis(&self) -> Vec<(WindowId, f32)> {
+        self.lock().ppis.clone()
+    }
     /// `BeginFrame`s the UI answered with nothing.
     pub fn skipped_frames(&self) -> u64 {
         self.lock().skipped
@@ -402,6 +414,12 @@ impl CompositorApi for HeadlessCompositor {
         blink: Option<skelter::compositor_crate::CaretBlink>,
     ) {
         self.lock().caret_blinks.push((window, blink));
+    }
+    fn set_refresh(&self, window: WindowId, interval: Span) {
+        self.lock().refreshes.push((window, interval));
+    }
+    fn set_ppi(&self, window: WindowId, ppi: f32) {
+        self.lock().ppis.push((window, ppi));
     }
     fn ui_frame_skipped(&self, _window: WindowId, _frame: FrameId) {
         self.lock().skipped += 1;

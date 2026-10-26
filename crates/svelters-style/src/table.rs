@@ -36,6 +36,7 @@ pub enum ValueType {
     String,
     /// One of [`Prop::values`].
     Enum,
+    /// A colour, or one of [`Prop::values`] (a keyword, as `caret-color: auto`).
     Color,
     /// One to four lengths, as CSS `margin`.
     Insets,
@@ -70,7 +71,7 @@ pub struct Prop {
     /// The native prop (setter) or child attribute (child-attr); empty for `via: css`.
     pub target: &'static str,
     pub ty: ValueType,
-    /// The keywords of an [`ValueType::Enum`].
+    /// The keywords of an [`ValueType::Enum`], or a [`ValueType::Color`]'s own (`caret-color: auto`).
     pub values: &'static [&'static str],
     /// The tags it applies to (the parents' tags for a child attribute); empty = every tag.
     pub tags: &'static [&'static str],
@@ -97,6 +98,7 @@ impl Prop {
 
 /// The inherited standard properties, sorted.
 const INHERITED: &[&str] = &[
+    "caret-color",
     "color",
     "cursor",
     "direction",
@@ -196,7 +198,10 @@ mod tests {
         for t in crate::tables::ALL {
             assert!(t.props.windows(2).all(|w| w[0].name < w[1].name), "{} props unsorted", t.toolkit);
             for p in t.props {
-                assert_eq!(p.ty == ValueType::Enum, !p.values.is_empty(), "{}.{}", t.toolkit, p.name);
+                // a colour may have keywords of its own (`caret-color: auto`)
+                if p.ty != ValueType::Color {
+                    assert_eq!(p.ty == ValueType::Enum, !p.values.is_empty(), "{}.{}", t.toolkit, p.name);
+                }
             }
         }
         let egui = Table::for_toolkit("egui").unwrap();

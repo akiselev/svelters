@@ -1,9 +1,10 @@
 //! What `date-picker` and `color-picker` share (svelters-egui `picker_popup.rs`, `picker_glyphs.rs`):
 //! the drop button's open/close state ([`DropState`]: a click, Enter/Space, F4 or Alt+Down open it;
 //! Escape, a press outside, a pick or the footer close it), the closed button's geometry and look,
-//! the popup surface's size for a body (placement is the views lane's anchored popup: below the
-//! button, flipped above at the bottom edge), and the Save/Cancel footer of `commit-mode="confirm"`
-//! in the platform's button order.
+//! the popup surface's size for a body, its placement ([`place_popup`], the views' anchored
+//! placement: below the button, flipped above at the bottom edge) and its overlay-stack entry
+//! ([`overlay_spec`]: the popup is a layer of the window's overlay stack, not painted inline), and
+//! the Save/Cancel footer of `commit-mode="confirm"` in the platform's button order.
 
 use super::{PickerLook, Ptr};
 use crate::table::shim::{self, HAlign, Platform, TextPainter};
@@ -11,7 +12,10 @@ use skelter_base::color::Color;
 use skelter_base::display::DisplayList;
 use skelter_base::event::{Modifiers, PointerEvent};
 use skelter_base::geom::{Point, Rect, Size};
+use skelter_base::ids::{LayerId, NodeId, PropNodeId};
 use skelter_base::key::Key;
+use crate::views::overlay::{OverlayClass, OverlaySpec};
+use crate::views::placement::{AnchorParams, Placement, place};
 
 /// Why the popup closed.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -202,6 +206,37 @@ pub fn record_chevron(list: &mut DisplayList, d: Chevron, r: Rect, font_size: f3
     };
     shim::line(list, pts[0], pts[1], width, color);
     shim::line(list, pts[1], pts[2], width, color);
+}
+
+/// The gap between the button and its popup.
+pub const POPUP_OFFSET: f32 = 2.0;
+
+/// Where a `popup` size popup of a `button` size drop button goes (button-local points): below
+/// it, start-aligned, flipped above when `bounds` (the window's room, button-local) lacks the room
+/// below, and shifted back inside `bounds`.
+pub fn place_popup(button: Size, popup: Size, bounds: Rect) -> Rect {
+    place(&AnchorParams {
+        anchor: Rect::from_origin_size(Point::ZERO, button),
+        size: popup,
+        bounds,
+        placement: Placement::BOTTOM_START,
+        gap: POPUP_OFFSET,
+        flip: true,
+        shift: true,
+        ..AnchorParams::default()
+    })
+    .rect
+}
+
+/// The window overlay stack's entry for an open popup of `node` at `popup` (window points) on the
+/// compositor layer `layer` moving with `transform`: a light-dismissable [`OverlayClass::Popup`]
+/// whose `button` (window points) counts as inside (a press on it toggles instead) and which hands
+/// focus back to the node when it closes.
+pub fn overlay_spec(node: NodeId, layer: LayerId, transform: PropNodeId, popup: Rect, button: Rect) -> OverlaySpec {
+    let mut s = OverlaySpec::new(OverlayClass::Popup, node, layer, transform, popup);
+    s.opener = Some(node);
+    s.inside = vec![button];
+    s
 }
 
 /// The popup surface's border box for a body of `body` size (plus the footer row when `footer`).

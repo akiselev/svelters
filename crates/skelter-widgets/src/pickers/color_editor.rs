@@ -12,9 +12,9 @@
 //! (2 points per unit). A drag reports [`ColorOut::Input`] per move and [`ColorOut::Commit`] at the
 //! release; a key step, a swatch and a hex write are both at once.
 //!
-//! The hex field's typing needs TEXT-INPUT's single-line field; until then the body shows the hex
-//! and takes whole-value writes through [`ColorBody::set_hex`] (the field's commit and AccessKit
-//! SetValue both end there).
+//! The hex field's typing is the text-edit field's ([`HexField`](crate::text::hex::HexField), which
+//! the `color-editor` kind runs while the hex box has the body's focus and shows through
+//! [`ColorBody::hex_text`]); its commit and AccessKit SetValue both end in [`ColorBody::set_hex`].
 
 use super::color::{Hsv, HUE_MAX, parse_hex, rgba_color, to_hex};
 use super::{PickerLook, Ptr};
@@ -223,6 +223,8 @@ pub struct ColorBody {
     pub focus: Option<Ctl>,
     /// The last hex write was not a colour (`:invalid` until the next edit).
     pub hex_invalid: bool,
+    /// The hex field's text while it is being edited (shown instead of the colour's hex).
+    pub hex_text: Option<String>,
 }
 
 /// A channel's value of `h`: R/G/B 0..255, H 0..360, S/V 0..100.
@@ -524,7 +526,8 @@ impl ColorBody {
         if let Some(r) = g.hex {
             let border = if self.hex_invalid { look.invalid_border } else { look.control_border };
             shim::frame(list, r, look.control_bg, border, look.stroke, look.radius);
-            text.draw(list, &ColorBody::hex_of(h, cfg), &look.text(field_fg), r.inset(Insets { top: 0.0, right: 4.0, bottom: 0.0, left: 4.0 }), HAlign::Start, true);
+            let shown = self.hex_text.clone().unwrap_or_else(|| ColorBody::hex_of(h, cfg));
+            text.draw(list, &shown, &look.text(field_fg), r.inset(Insets { top: 0.0, right: 4.0, bottom: 0.0, left: 4.0 }), HAlign::Start, true);
             if ring(Ctl::Hex) {
                 shim::frame(list, r.inflate(-1.0), Color::TRANSPARENT, look.focus, 1.0, look.radius);
             }

@@ -401,6 +401,11 @@ impl Scroller {
         }
     }
 
+    /// When a held track press repeats next (`None`: no press is held).
+    pub fn hold_wake(&self) -> Option<Time> {
+        self.hold.map(|h| h.next)
+    }
+
     /// A held track press repeats until the thumb reaches the pointer; returns whether it moved and
     /// when to come back.
     pub fn repeat(&mut self, now: Time) -> (bool, Option<Time>) {

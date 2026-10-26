@@ -137,3 +137,22 @@ fn a_name_from_children_follows_their_text() {
     let u = frame(&mut d).unwrap().a11y.unwrap();
     assert_eq!(u.nodes.iter().find(|(id, _)| *id == ax(b)).expect("re-sent").1.label(), Some("Save as"));
 }
+
+#[test]
+fn aria_live_and_busy_apply_after_the_kinds_own_node() {
+    let (mut d, root) = doc();
+    let status = child(&mut d, root, TEXT, "");
+    frame(&mut d);
+    d.set_prop(status, common::ARIA_LIVE, Value::Enum(1)).unwrap();
+    d.set_prop(status, common::ARIA_BUSY, Value::Bool(true)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.expect("the props re-project the node");
+    let n = &u.nodes.iter().find(|(k, _)| *k == ax(status)).unwrap().1;
+    assert_eq!(n.live(), Some(accesskit::Live::Polite));
+    assert!(n.is_busy());
+    d.set_prop(status, common::ARIA_LIVE, Value::Enum(2)).unwrap();
+    d.set_prop(status, common::ARIA_BUSY, Value::Bool(false)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let n = &u.nodes.iter().find(|(k, _)| *k == ax(status)).unwrap().1;
+    assert_eq!(n.live(), Some(accesskit::Live::Assertive));
+    assert!(!n.is_busy());
+}

@@ -501,7 +501,17 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
             }
             Ok(ComputedValue::String(words.join(" ").into()))
         }
-        ValueType::Color => color(input, cx).map(ComputedValue::Color).map_err(|e| format!("{name}: {e}")),
+        ValueType::Color => {
+            // a colour property's own keywords (`caret-color: auto`) stay keywords
+            let state = input.state();
+            if let Ok(k) = input.expect_ident_cloned()
+                && let Some(v) = prop.values.iter().find(|v| v.eq_ignore_ascii_case(&k))
+            {
+                return Ok(ComputedValue::Keyword(v));
+            }
+            input.reset(&state);
+            color(input, cx).map(ComputedValue::Color).map_err(|e| format!("{name}: {e}"))
+        }
         ValueType::Insets => {
             let mut sides = Vec::new();
             while !input.is_exhausted() && sides.len() < 4 {

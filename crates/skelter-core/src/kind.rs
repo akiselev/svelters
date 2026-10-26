@@ -396,6 +396,21 @@ pub struct SelfScroll {
     pub y: bool,
 }
 
+/// What an in-app drag shows under the pointer (the drag image, architecture §14's top overlay
+/// band). The document keeps it with the drag ([`Document::drag_preview`](crate::Document::drag_preview))
+/// for the runner to put in the window's drag layer, at the pointer plus `offset`.
+#[derive(Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum DragPreview {
+    /// A display list in points relative to the pointer, with the glyph runs it draws: its
+    /// `Prim::Glyphs` name them by position in `runs` plus one (as recorded, before the commit
+    /// assigns ids).
+    List { list: skelter_base::display::DisplayList, runs: Vec<std::sync::Arc<skelter_base::text::GlyphRun>>, offset: skelter_base::geom::Vec2 },
+    /// A snapshot of a node's recorded display list (the source's, or a row's) at `offset` from the
+    /// pointer.
+    Node { node: skelter_base::ids::NodeId, offset: skelter_base::geom::Vec2 },
+}
+
 /// What JS listeners did with a signal delivered at event time
 /// ([`EventCx::emit_sync`](crate::EventCx::emit_sync)).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -551,6 +566,13 @@ pub trait Kind: 'static {
     /// native props, focus, its own peer requests).
     fn peer(&mut self, cx: &mut EventCx, from: skelter_base::ids::NodeId, msg: &PeerMsg) -> Handled {
         Handled::No
+    }
+
+    /// What a drag of this node shows under the pointer ([`DragPreview`]), asked when a drag of it
+    /// starts (`at`: the press, in the node's space). `None` leaves it to the document's provider
+    /// ([`Document::set_drag_preview_provider`](crate::Document::set_drag_preview_provider)).
+    fn drag_preview(&self, node: &NodeView, at: skelter_base::geom::Point) -> Option<DragPreview> {
+        None
     }
 
     /// The kind scrolls its own content (a code editor): its node gets a scroll node, a content

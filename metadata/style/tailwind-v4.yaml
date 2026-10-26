@@ -287,7 +287,7 @@ utilities:
   # ---- interactivity ----
   - { name: accent, reason: "no accent-color; the theme's accent role styles the controls" }
   - { name: appearance, reason: "own widgets draw from CSS; no native appearance" }
-  - { name: caret, reason: "the caret colour is the theme's caret role (later: a caret part)" }
+  - caret
   - { name: scheme, reason: "the colour scheme is the theme's (set_theme)" }
   - cursor
   - { name: field-sizing, reason: "no field-sizing" }

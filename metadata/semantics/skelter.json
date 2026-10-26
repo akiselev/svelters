@@ -6783,6 +6783,14 @@
         "decl_type": "shadow",
         "via": "css"
       },
+      "caret-color": {
+        "change": "paint",
+        "decl_type": "color",
+        "values": [
+          "auto"
+        ],
+        "via": "css"
+      },
       "color": {
         "change": "paint",
         "decl_type": "color",

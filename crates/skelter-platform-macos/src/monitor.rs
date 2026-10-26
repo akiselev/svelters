@@ -4,7 +4,7 @@
 use objc2::rc::Retained;
 use objc2::{MainThreadMarker, msg_send, sel};
 use objc2_app_kit::NSScreen;
-use objc2_foundation::{NSObjectProtocol, NSRect};
+use objc2_foundation::{NSObject, NSObjectProtocol, NSRect, NSString};
 use skelter_base::geom::{DeviceRect, DeviceSize, Point, Rect, Scale};
 use skelter_platform::Monitor;
 
@@ -37,6 +37,30 @@ pub(crate) fn monitors(mtm: MainThreadMarker) -> Vec<Monitor> {
         .collect()
 }
 
+/// The `CGDirectDisplayID` of a screen (`deviceDescription["NSScreenNumber"]`).
+fn display_id(s: &NSScreen) -> Option<u32> {
+    let key = NSString::from_str("NSScreenNumber");
+    // SAFETY: `deviceDescription` returns a dictionary (never nil in practice; checked), and
+    // NSScreenNumber is an NSNumber.
+    unsafe {
+        let desc: Option<Retained<NSObject>> = msg_send![s, deviceDescription];
+        let num: Option<Retained<NSObject>> = msg_send![&*desc?, objectForKey: &*key];
+        let id: u32 = msg_send![&*num?, unsignedIntValue];
+        Some(id)
+    }
+}
+
+/// Pixels per inch of a screen whose framebuffer is `device` pixels and whose panel measures `mm`
+/// (`CGDisplayScreenSize`, millimetres; zero when unknown).
+pub(crate) fn screen_ppi(device: DeviceSize, mm: (f64, f64)) -> Option<f32> {
+    Monitor::ppi_from_mm(device, (mm.0 as f32, mm.1 as f32))
+}
+
+/// The monitor for `s`, given the primary screen's height.
+pub(crate) fn monitor_of_screen(s: &Retained<NSScreen>, ph: f64) -> Monitor {
+    monitor(s, ph, false)
+}
+
 fn monitor(s: &Retained<NSScreen>, ph: f64, _primary: bool) -> Monitor {
     // `localizedName` (10.15) and `maximumFramesPerSecond` (12) are checked before use.
     let name = s
@@ -49,6 +73,11 @@ fn monitor(s: &Retained<NSScreen>, ph: f64, _primary: bool) -> Monitor {
     });
     let scale = s.backingScaleFactor();
     let bounds = to_device(&to_global(s.frame(), ph), scale);
+    let size = DeviceSize {
+        w: bounds.w,
+        h: bounds.h,
+    };
+    let mm = display_id(s).map(|id| objc2_core_graphics::CGDisplayScreenSize(id));
     Monitor {
         name,
         position: (bounds.x, bounds.y),
@@ -59,6 +88,7 @@ fn monitor(s: &Retained<NSScreen>, ph: f64, _primary: bool) -> Monitor {
         work_area: Some(to_device(&to_global(s.visibleFrame(), ph), scale)),
         scale: Scale(scale as f32),
         refresh_millihertz: fps.filter(|f| *f > 0).map(|f| f as u32 * 1000),
+        ppi: mm.and_then(|mm| screen_ppi(size, (mm.width, mm.height))),
     }
 }
 
@@ -93,6 +123,17 @@ mod tests {
             900.0,
         );
         assert_eq!(menu_bar_less.min.y, 25.0);
+    }
+
+    #[test]
+    fn ppi_from_screen_size() {
+        // A 14" MacBook Pro framebuffer (3024x1964) on a 302 x 196 mm panel: about 254 ppi.
+        let p = screen_ppi(DeviceSize { w: 3024, h: 1964 }, (302.0, 196.0)).unwrap();
+        assert!((p - 254.3).abs() < 1.0, "{p}");
+        assert_eq!(
+            screen_ppi(DeviceSize { w: 3024, h: 1964 }, (0.0, 0.0)),
+            None
+        );
     }
 
     #[test]

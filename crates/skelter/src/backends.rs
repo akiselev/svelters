@@ -296,6 +296,9 @@ impl CompositorApi for CompositorHandle {
     fn set_refresh(&self, window: WindowId, interval: Span) {
         CompositorHandle::set_refresh(self, window, interval);
     }
+    fn set_ppi(&self, window: WindowId, ppi: f32) {
+        CompositorHandle::set_ppi(self, window, ppi);
+    }
     fn set_caret_blink(&self, window: WindowId, blink: Option<skelter_compositor::CaretBlink>) {
         CompositorHandle::set_caret_blink(self, window, blink);
     }
@@ -318,16 +321,16 @@ pub fn compositor(
             let (to_ui, wake_ui) = sink.callbacks();
             let mut cfg = config(clock);
             if let Some(m) = monitors.first() {
-                cfg.ppi = logical_ppi(m.scale);
+                cfg.ppi = crate::app::monitor_ppi(m);
             }
             Compositor::spawn(cfg, glyphs, to_ui, wake_ui)
         },
     )
 }
 
-/// A monitor's pixels per inch for fling physics. `Monitor` carries no physical size, so this is the
-/// OS's logical DPI convention times the scale: 72 on macOS (points), 96 elsewhere.
-fn logical_ppi(scale: Scale) -> f32 {
+/// A monitor's pixels per inch when the OS does not report its physical size: the OS's logical DPI
+/// convention times the scale, 72 on macOS (points), 96 elsewhere.
+pub(crate) fn logical_ppi(scale: Scale) -> f32 {
     let base = if cfg!(target_os = "macos") {
         72.0
     } else {

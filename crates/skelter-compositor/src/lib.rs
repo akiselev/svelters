@@ -71,8 +71,6 @@ pub struct CompositorConfig {
     pub limits: Option<gpu::DeviceLimits>,
     /// Clear colour of damaged areas; `None` = draw over the previous frame.
     pub clear: Option<Color>,
-    /// The caret colour until a window's first `FastCommit::Caret`, which brings its own.
-    pub caret_color: Color,
     /// The caret blink of new windows (the OS setting; [`CaretBlink::platform_default`]); `None` = a
     /// steady caret. Per window: [`CompositorHandle::set_caret_blink`].
     pub caret_blink: Option<CaretBlink>,
@@ -91,7 +89,6 @@ impl CompositorConfig {
             adapter: None,
             limits: None,
             clear: Some(Color::TRANSPARENT),
-            caret_color: Color::BLACK,
             caret_blink: Some(CaretBlink::platform_default()),
         }
     }
@@ -127,7 +124,6 @@ impl Compositor {
             EngineConfig {
                 refresh: cfg.refresh,
                 clear: cfg.clear,
-                caret_color: cfg.caret_color,
                 caret_blink: cfg.caret_blink,
                 ppi: cfg.ppi,
             },
@@ -316,6 +312,12 @@ impl CompositorHandle {
     /// The display refresh interval of the window's monitor.
     pub fn set_refresh(&self, window: WindowId, interval: Span) {
         self.post(Msg::SetRefresh { window, interval });
+    }
+
+    /// The pixel density of the window's monitor (fling distances), replacing `CompositorConfig::ppi`
+    /// for that window.
+    pub fn set_ppi(&self, window: WindowId, ppi: f32) {
+        self.post(Msg::SetPpi { window, ppi });
     }
 
     /// A texture produced elsewhere (an egui island, an offscreen viewport), created on [`Self::gpu`]'s
