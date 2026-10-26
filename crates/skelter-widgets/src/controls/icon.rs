@@ -285,7 +285,7 @@ impl Kind for Icon {
             }
             common::cursor(cx, &self.ua());
         }
-        if pass.resp.hovered || pass.resp.down_on || !fired.is_empty() { Handled::Yes } else { Handled::No }
+        if (ev.is_pointer() && (pass.resp.hovered || pass.resp.down_on)) || !fired.is_empty() { Handled::Yes } else { Handled::No }
     }
 
     fn a11y(&self, cx: &mut A11yCx) {
