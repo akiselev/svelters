@@ -657,6 +657,13 @@ impl<D: DocumentApi + 'static> Harness<D> {
         self.push(Queued::Window(self.window, ev));
     }
 
+    /// Set the window's UI zoom ([`App::set_zoom`]), after delivering what is queued.
+    pub fn set_zoom(&mut self, factor: f32) {
+        let now = self.now();
+        self.platform.run_until(&mut self.app, Some(now));
+        self.app.set_zoom(self.platform.cx(), self.window, factor);
+    }
+
     /// Resize the window (points: skelter `Size` or `egui::Vec2`), through the resize handshake.
     pub fn set_size(&self, size: impl IntoSize) {
         let size = size.into_size();
