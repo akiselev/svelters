@@ -2,6 +2,8 @@
 //! native shell, on a real skelter-core document with skelter-widgets' kinds, read through AccessKit's
 //! consumer (and AT-SPI's translation layer on Linux):
 //! - FQ-66: a `table` exposes its header, realised rows and cells, with actions.
+//! - SV59: `setLabels` renames a list's realised options;
+//! - SV60: `aria-activedescendant` / `aria-controls` resolve when their target appears later;
 
 use skelter::CoreDocument;
 use skelter_base::accesskit::{Action, Role};
@@ -165,4 +167,47 @@ fn set_labels_renames_the_realised_options() {
 
 fn list_of<const N: usize>(ids: [i64; N]) -> Value {
     list(ids.into_iter().map(Value::I64))
+}
+
+/// SV60: a field's `aria-activedescendant` and `aria-controls` name anchors that appear only later
+/// (a row realised after the field set them): the field goes out again once they resolve, and again
+/// when its target leaves, without any change of its own.
+#[test]
+fn references_resolve_when_their_target_appears() {
+    use skelter_base::accesskit::NodeId as AxId;
+    let mut h = harness();
+    let w = h.window();
+    {
+        let d = &mut h.state_mut().doc;
+        let root = d.window_root(w).unwrap();
+        let field = add(d, root, KindId::of("text-edit"), "width: 300px; height: 24px");
+        d.set_prop(field, common::ANCHOR, Value::from("query")).unwrap();
+        d.set_prop(field, common::ARIA_LABEL, Value::from("Command")).unwrap();
+        d.set_prop(field, common::ROLE, Value::from("combobox")).unwrap();
+        d.set_prop(field, common::ARIA_CONTROLS, Value::from("list")).unwrap();
+        d.set_prop(field, common::ARIA_ACTIVEDESCENDANT, Value::from("opt-3")).unwrap();
+    }
+    settle(&mut h);
+    let refs = |h: &Harness<CoreDocument>| -> (Option<AxId>, Vec<AxId>) {
+        let c = h.consumer();
+        let f = c.by_author_id("query").unwrap();
+        (f.data().active_descendant(), f.data().controls().to_vec())
+    };
+    assert_eq!(refs(&h), (None, vec![]), "nothing to name yet");
+    // the list and its option appear later; the field is not touched
+    let (list, opt) = {
+        let d = &mut h.state_mut().doc;
+        let root = d.window_root(w).unwrap();
+        let list = add(d, root, BOX, "width: 300px; height: 100px");
+        d.set_prop(list, common::ANCHOR, Value::from("list")).unwrap();
+        let opt = add(d, list, BOX, "width: 300px; height: 20px");
+        d.set_prop(opt, common::ANCHOR, Value::from("opt-3")).unwrap();
+        (list, opt)
+    };
+    settle(&mut h);
+    assert_eq!(refs(&h), (Some(AxId(opt.0)), vec![AxId(list.0)]), "both resolved");
+    // the option goes: the field drops it
+    h.state_mut().doc.remove(list, opt).unwrap();
+    settle(&mut h);
+    assert_eq!(refs(&h), (None, vec![AxId(list.0)]));
 }

@@ -106,6 +106,9 @@ pub struct Document {
     pub(crate) nested: Vec<crate::input::JsEvent>,
     /// The nodes with a non-empty `anchor`.
     pub(crate) anchors: HashMap<NodeId, Arc<str>>,
+    /// SV60: the nodes with `aria-activedescendant` or `aria-controls`, and the nodes those
+    /// resolved to when the node last went out (`a11y.rs`): a change re-sends the node.
+    pub(crate) a11y_refs: HashMap<NodeId, (Option<NodeId>, Vec<NodeId>)>,
     /// Nodes with `focus-scope=dialog` or `autofocus` (the focus rules after style watch them).
     pub(crate) focus_watch: std::collections::HashSet<NodeId>,
     /// The nodes with a non-empty `for` prop (labels), and the anchor it names.
@@ -171,6 +174,7 @@ impl Document {
             delivering: 0,
             nested: Vec::new(),
             anchors: HashMap::new(),
+            a11y_refs: HashMap::new(),
             focus_watch: std::collections::HashSet::new(),
             label_for: HashMap::new(),
             auto_default: false,
