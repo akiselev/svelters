@@ -49,6 +49,11 @@ pub trait Backend {
     fn set_canvas_view(&mut self, _id: CanvasId, _view: skelter_canvas::CanvasView) {}
     /// Rebuilds the device, queue, renderer and surface configurations after device loss.
     fn recover(&mut self) -> bool;
+    /// SV58: renders `scene` (a whole frame of `window`'s main surface) into an offscreen image and
+    /// reads it back; `None` without a device (or for backends that can't).
+    fn read_back(&mut self, _window: WindowId, _scene: &FrameScene<'_>) -> Option<crate::WindowImage> {
+        None
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -107,6 +112,9 @@ pub enum Msg {
     /// Makes DirectComposition changes visible after a surface of `window` is configured.
     SetCommitter { window: WindowId, committer: OsLayerCommitter },
     GpuDone { window: WindowId, frame: FrameId, at: Time },
+    /// SV58 ([`crate::CompositorHandle::read_window`]): the window's image as last drawn, answered on
+    /// `reply` (`None`: no such window, no device, or an empty size).
+    ReadWindow { window: WindowId, reply: std::sync::mpsc::Sender<Option<crate::WindowImage>> },
     DeviceLost,
     Shutdown,
 }
@@ -533,6 +541,9 @@ impl Engine {
                     self.signal(id, now, Signal::CompositorDamage, gpu);
                 }
             }
+            Msg::ReadWindow { window, reply } => {
+                let _ = reply.send(self.read_window(window, gpu));
+            }
             Msg::Shutdown => return false,
         }
         true
@@ -853,6 +864,40 @@ impl Engine {
             w.inputs = inputs;
         }
         self.update_animating(window, now, gpu);
+    }
+
+    /// SV58: `window`'s main surface as its last frame drew it (the applied commits, the sampled
+    /// animations and the caret), rendered whole into an offscreen image and read back. Independent
+    /// of the swapchain, so it works on every platform and for an occluded window; OS layers
+    /// (video, offscreen viewports promoted to their own surface) are not in it.
+    pub fn read_window(&mut self, window: WindowId, gpu: &mut dyn Backend) -> Option<crate::WindowImage> {
+        let w = self.windows.get_mut(&window)?;
+        if w.size.w == 0 || w.size.h == 0 {
+            return None;
+        }
+        let mut flat = w.tree.flatten();
+        if let (Some(rect), true) = (w.caret.rect, w.caret.on) {
+            let world = w.tree.props.world_transform(w.caret.transform, &mut HashMap::new());
+            flat.entry(SurfaceKey::Main).or_default().push(caret_item(rect, w.caret.color, world));
+        }
+        for id in w.tree.canvas_ids() {
+            gpu.set_canvas_view(id, w.tree.canvas_view(id));
+        }
+        let items: &[FlatItem] = flat.get(&SurfaceKey::Main).map(|v| &v[..]).unwrap_or(&[]);
+        let draw_items: Vec<DrawItem<'_>> = items
+            .iter()
+            .filter(|it| it.opacity > 0.0 && !it.bounds.is_empty())
+            .map(|it| DrawItem { transform: it.transform, clip: it.clip, opacity: it.opacity, list: &it.list })
+            .collect();
+        let scene = FrameScene {
+            target: w.size,
+            scale: w.scale,
+            clear: self.cfg.clear,
+            damage: &[],
+            items: &draw_items,
+            resources: &w.tree.resources,
+        };
+        gpu.read_back(window, &scene)
     }
 
     fn update_animating(&mut self, window: WindowId, now: Time, gpu: &mut dyn Backend) {

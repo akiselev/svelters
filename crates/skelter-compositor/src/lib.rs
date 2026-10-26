@@ -47,6 +47,18 @@ use std::sync::{Arc, Mutex, RwLock};
 use std::thread::JoinHandle;
 use std::time::Duration;
 
+/// SV58: a window's image read back from the compositor ([`CompositorHandle::read_window`]).
+#[derive(Clone, Debug, PartialEq)]
+pub struct WindowImage {
+    /// In device pixels.
+    pub size: DeviceSize,
+    /// Device pixels per point when it was drawn.
+    pub scale: Scale,
+    /// `size.w * size.h` pixels, row by row, 4 bytes each (R, G, B, A; the renderer's blended,
+    /// sRGB-encoded values, alpha premultiplied as drawn).
+    pub rgba: Vec<u8>,
+}
+
 /// How the compositor is set up.
 pub struct CompositorConfig {
     /// The process clock every thread shares (the platform's).
@@ -234,6 +246,18 @@ impl CompositorHandle {
         let (tx, rx) = mpsc::channel();
         self.post(Msg::ResizeOsLayer { window, surface_id, size, done: Some(tx) });
         rx.recv_timeout(wait).is_ok()
+    }
+
+    /// SV58: `window`'s image as its last frame drew it (the main surface: the applied commits, the
+    /// animations as sampled, the caret), rendered whole offscreen on the compositor thread and read
+    /// back, so it works on every platform, whatever the swapchain allows and while the window is
+    /// occluded. Blocks the caller until the compositor answers, at most `wait`. `None`: no such
+    /// window, no GPU, an empty window, or the compositor did not answer in time. For
+    /// `screenshot.window` and tour shots, not per frame.
+    pub fn read_window(&self, window: WindowId, wait: Duration) -> Option<WindowImage> {
+        let (tx, rx) = mpsc::channel();
+        self.post(Msg::ReadWindow { window, reply: tx });
+        rx.recv_timeout(wait).ok().flatten()
     }
 
     /// The producer of a registered texture (an offscreen viewport) drew a new image into it: what
