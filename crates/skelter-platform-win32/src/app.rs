@@ -522,6 +522,10 @@ impl PlatformCx for Cx<'_> {
         window::set_mouse_capture(self.app, id, capture);
     }
 
+    fn set_raw_motion(&mut self, id: WindowId, on: bool) -> bool {
+        window::set_raw_motion(self.app, id, on)
+    }
+
     fn set_title(&mut self, id: WindowId, title: &str) {
         window::set_title(self.app, id, title);
     }

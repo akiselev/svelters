@@ -204,3 +204,80 @@ fn an_ime_source_takes_printable_keys_before_the_keymap() {
     d.set_ime_source(W, false);
     assert!(!d.dispatch(&typed(Modifiers::default())).to_ime);
 }
+
+mod raw_motion {
+    use super::*;
+    use crate::KindRegistry;
+    use crate::cx::{EventCx, MeasureCx, RecordCx};
+    use crate::kind::{Event, Handled, Kind, KindSpec};
+    use std::cell::RefCell;
+    use std::sync::Arc;
+
+    const ORBIT: KindId = KindId::of("orbit");
+    static ORBIT_SPEC: KindSpec = KindSpec::new("orbit");
+
+    thread_local! {
+        static SEEN: RefCell<Vec<(NodeId, Vec2)>> = const { RefCell::new(Vec::new()) };
+    }
+
+    /// A viewport: a press captures the mouse; raw motion is recorded.
+    #[derive(Default)]
+    struct Orbit;
+
+    impl Kind for Orbit {
+        fn spec() -> &'static KindSpec {
+            &ORBIT_SPEC
+        }
+        fn measure(&self, _cx: &mut MeasureCx, _k: taffy::Size<Option<f32>>, _a: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+            taffy::Size { width: 50.0, height: 50.0 }
+        }
+        fn record(&self, cx: &mut RecordCx) {
+            cx.draw_box();
+        }
+        fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+            match ev {
+                Event::PointerDown(_) => {
+                    cx.capture_pointer();
+                    Handled::Yes
+                }
+                Event::RawMotion(d) => {
+                    SEEN.with(|s| s.borrow_mut().push((cx.node(), *d)));
+                    Handled::Yes
+                }
+                _ => Handled::No,
+            }
+        }
+    }
+
+    fn raw(dx: f32, dy: f32) -> InputEnvelope {
+        envelope(InputEvent::RawMotion { dx, dy }, 0)
+    }
+
+    #[test]
+    fn raw_motion_reaches_the_capture_holder_then_the_hovered_node() {
+        let mut r = KindRegistry::new();
+        r.register::<testkinds::BoxKind>().unwrap();
+        r.register::<Orbit>().unwrap();
+        let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+        let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+        let view = child(&mut d, root, ORBIT, "width: 50px; height: 50px");
+        let other = child(&mut d, root, BOX, "width: 50px; height: 50px");
+        frame(&mut d);
+        // nothing hovered or captured: nobody gets it
+        let out = d.dispatch(&raw(1.0, 1.0));
+        assert_eq!(out.target, None);
+        // press the viewport (it captures), drag over the other box: raw motion still goes to the viewport
+        d.dispatch(&pointer(PointerPhase::Move, 10.0, 10.0, 0));
+        d.dispatch(&pointer(PointerPhase::Down, 10.0, 10.0, 0));
+        d.dispatch(&pointer(PointerPhase::Move, 10.0, 60.0, 0));
+        let out = d.dispatch(&raw(3.0, -2.0));
+        assert_eq!(out.target, Some(view));
+        assert!(out.handled);
+        // released over the other box: the hovered box gets it, unhandled
+        d.dispatch(&pointer(PointerPhase::Up, 10.0, 60.0, 0));
+        let out = d.dispatch(&raw(1.0, 0.0));
+        assert_eq!(out.target, Some(other));
+        assert!(!out.handled);
+        assert_eq!(SEEN.with(|s| s.borrow().clone()), vec![(view, Vec2::new(3.0, -2.0))]);
+    }
+}

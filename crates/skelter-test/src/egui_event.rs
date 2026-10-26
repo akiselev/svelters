@@ -143,7 +143,7 @@ impl EguiAdapter {
     }
 
     /// Translate one egui event. Events with no skelter counterpart translate to nothing:
-    /// `MouseMoved` (raw motion is off outside 3D capture), `PasteImage`, `MiddleClickPaste`, and IME
+    /// `PasteImage`, `MiddleClickPaste`, and IME
     /// `DeleteSurrounding` (egui counts chars, skelter bytes of text the adapter cannot see).
     #[allow(deprecated)]
     pub fn translate(&mut self, ev: &egui::Event) -> Vec<Injected> {
@@ -156,7 +156,8 @@ impl EguiAdapter {
                 out.extend(self.chord(Key::V));
                 out
             }
-            E::PasteImage(_) | E::MiddleClickPaste { .. } | E::MouseMoved(_) => Vec::new(),
+            E::PasteImage(_) | E::MiddleClickPaste { .. } => Vec::new(),
+            E::MouseMoved(d) => vec![Injected::Input(InputEvent::RawMotion { dx: d.x, dy: d.y })],
             E::Text(t) => vec![Injected::Input(InputEvent::Ime(ImeEvent::Commit(
                 t.clone(),
             )))],

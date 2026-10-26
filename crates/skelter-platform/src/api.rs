@@ -110,6 +110,14 @@ pub trait PlatformCx {
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]);
     /// Locks and hides the pointer and turns raw mouse input on (a 3D view's mouse look), or back off.
     fn set_mouse_capture(&mut self, id: WindowId, capture: bool);
+    /// Turns raw pointer motion on or off for a window: unaccelerated relative deltas delivered as
+    /// `InputEvent::RawMotion` through [`AppHandler::input`] (Wayland `zwp_relative_pointer_v1`, Win32
+    /// raw input, macOS event deltas, winit `DeviceEvent::MouseMotion`), for orbiting while the pointer
+    /// is captured. Independent of [`PlatformCx::set_mouse_capture`]. Returns `false` when the backend
+    /// cannot deliver raw motion (the default); turning it off always succeeds.
+    fn set_raw_motion(&mut self, _id: WindowId, _on: bool) -> bool {
+        false
+    }
     fn set_title(&mut self, id: WindowId, title: &str);
     fn set_visible(&mut self, id: WindowId, visible: bool);
     /// Starts an OS window move from the current pointer press.

@@ -45,7 +45,7 @@ pub(crate) enum UserEvent {
 pub fn run(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
     let event_loop =
         EventLoop::<UserEvent>::with_user_event().build().map_err(|e| PlatformError::EventLoop(e.to_string()))?;
-    // Raw input only feeds DeviceEvents, which skelter uses only during mouse capture.
+    // Raw input only feeds DeviceEvents, which skelter uses only during mouse capture or raw motion.
     event_loop.listen_device_events(DeviceEvents::Never);
     let proxy = event_loop.create_proxy();
     let poster = Poster(Arc::new(Mutex::new(proxy)));
@@ -77,6 +77,8 @@ struct Win {
     input: WindowInput,
     regions: Vec<HitRegion>,
     captured: bool,
+    /// `set_raw_motion` is on: device mouse motion becomes `InputEvent::RawMotion`.
+    raw_motion: bool,
     window: Window,
 }
 
@@ -216,6 +218,17 @@ impl ApplicationHandler<UserEvent> for WinitApp {
 
     fn device_event(&mut self, el: &ActiveEventLoop, _device: DeviceId, ev: DeviceEvent) {
         let DeviceEvent::MouseMotion { delta } = ev else { return };
+        let recv = clock::now();
+        // Device events name no window: every window with raw motion on gets it.
+        let mut raw: Vec<WindowId> = self.state.windows.iter().filter(|(_, w)| w.raw_motion).map(|(id, _)| *id).collect();
+        raw.sort();
+        for id in raw {
+            let seq = InputSeq(self.state.next_seq);
+            self.state.next_seq += 1;
+            let event = skelter_base::event::InputEvent::RawMotion { dx: delta.0 as f32, dy: delta.1 as f32 };
+            let env = InputEnvelope { seq, window: id, os_time: recv, recv_time: recv, event };
+            self.with_cx(el, |h, cx| h.input(cx, env));
+        }
         let Some(id) = self.state.windows.iter().find(|(_, w)| w.captured).map(|(id, _)| *id) else { return };
         self.with_cx(el, |h, cx| h.raw_mouse_motion(cx, id, Vec2::new(delta.0 as f32, delta.1 as f32)));
     }
@@ -278,6 +291,11 @@ impl Cx<'_> {
     fn win_mut(&mut self, id: WindowId) -> Option<&mut Win> {
         self.st.windows.get_mut(&id)
     }
+    /// Device events (raw mouse motion) flow only while a window captures the mouse or wants raw motion.
+    fn sync_device_events(&self) {
+        let any = self.st.windows.values().any(|w| w.captured || w.raw_motion);
+        self.el.listen_device_events(if any { DeviceEvents::Always } else { DeviceEvents::Never });
+    }
 
     fn create(&mut self, desc: WindowDesc) -> Result<WindowId, PlatformError> {
         let window = self.el.create_window(window_attributes(&desc)).map_err(|e| PlatformError::Os(e.to_string()))?;
@@ -307,7 +325,7 @@ impl Cx<'_> {
         self.st.by_winit.insert(window.id(), id);
         self.st.windows.insert(
             id,
-            Win { a11y, shim, input: WindowInput::new(scale), regions: Vec::new(), captured: false, window },
+            Win { a11y, shim, input: WindowInput::new(scale), regions: Vec::new(), captured: false, raw_motion: false, window },
         );
         Ok(id)
     }
@@ -484,8 +502,14 @@ impl PlatformCx for Cx<'_> {
             let _ = w.window.set_cursor_grab(CursorGrabMode::None);
             w.window.set_cursor_visible(true);
         }
-        let any = self.st.windows.values().any(|w| w.captured);
-        self.el.listen_device_events(if any { DeviceEvents::Always } else { DeviceEvents::Never });
+        self.sync_device_events();
+    }
+
+    fn set_raw_motion(&mut self, id: WindowId, on: bool) -> bool {
+        let Some(w) = self.st.windows.get_mut(&id) else { return !on };
+        w.raw_motion = on;
+        self.sync_device_events();
+        true
     }
 
     fn set_title(&mut self, id: WindowId, title: &str) {

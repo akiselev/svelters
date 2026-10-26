@@ -564,8 +564,8 @@ impl<W: w::Kind + Default> Hosted<W> {
             Event::FocusOut => w::Event::Focus { gained: false, reason: WFocus::Program },
             Event::Timer => w::Event::Timer,
             Event::A11y(r) => w::Event::A11y((*r).clone()),
-            // clicks are the tracker's; IME is the text kinds'
-            Event::Click(_) | Event::Ime(_) => return None,
+            // clicks are the tracker's; IME is the text kinds'; raw motion is for viewport kinds
+            Event::Click(_) | Event::Ime(_) | Event::RawMotion(_) => return None,
         })
     }
 

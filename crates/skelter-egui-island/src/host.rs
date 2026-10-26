@@ -103,6 +103,7 @@ impl Kind for EguiIslandKind {
                 momentum: None,
                 modifiers: w.modifiers,
             }),
+            Event::RawMotion(d) => InputEvent::RawMotion { dx: d.x, dy: d.y },
             Event::Key(k) => InputEvent::Key((*k).clone()),
             Event::Ime(i) => InputEvent::Ime((*i).clone()),
             Event::FocusIn(_) | Event::FocusOut => {
