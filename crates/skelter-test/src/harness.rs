@@ -71,6 +71,9 @@ pub(crate) struct Hooks<D> {
     /// `step` delivers queued input one event per step (kittest: one egui pass per event, so a
     /// modifier change is seen by the press after it).
     pub one_event_per_step: bool,
+    /// `type_text` sends key presses carrying the text (an egui island maps them to
+    /// `egui::Event::Text`, as kittest types) instead of an IME commit.
+    pub text_as_keys: bool,
 }
 
 impl<D> Default for Hooks<D> {
@@ -81,6 +84,7 @@ impl<D> Default for Hooks<D> {
             before_step: None,
             settled: None,
             one_event_per_step: false,
+            text_as_keys: false,
         }
     }
 }
@@ -846,8 +850,21 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn key_press_modifiers(&self, m: impl IntoModifiers, key: impl IntoKey) {
         self.key_combination_modifiers(m, &[key.into_key()]);
     }
-    /// Type text into the focused node (an IME commit, as egui's `Event::Text`).
+    /// Type text into the focused node: an IME commit, or in an egui island key presses carrying the
+    /// text (egui's `Event::Text`, as kittest types).
     pub fn type_text(&self, text: &str) {
+        if self.hooks.text_as_keys {
+            self.event(InputEvent::Key(KeyEvent {
+                key: None,
+                physical: 0,
+                text: Some(text.to_owned()),
+                state: KeyState::Pressed,
+                repeat: false,
+                location: KeyLocation::Standard,
+                modifiers: Modifiers::default(),
+            }));
+            return;
+        }
         self.event(InputEvent::Ime(ImeEvent::Commit(text.to_owned())));
     }
 

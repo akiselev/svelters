@@ -76,3 +76,41 @@ fn a_snapshot_of_an_island_compares_with_itself() {
     h.try_snapshot_options("red", &opts).expect("the same frame");
     std::fs::remove_dir_all(&out).ok();
 }
+
+/// A5d: with a pass every step, rendering every step and pointer input, the island's time never moves
+/// backwards (egui panics in its pointer history when it does): input arrives at the clock's now,
+/// the step's pass runs at the frame target, and `render`'s own frame lands between them.
+#[test]
+fn rendering_every_step_with_pointer_input_keeps_egui_time_monotonic() {
+    if !gpu_tests() {
+        return;
+    }
+    #[derive(Default)]
+    struct S {
+        clicks: u32,
+        dragged: f32,
+    }
+    let mut h = EguiHarness::builder()
+        .with_size(egui::vec2(200.0, 120.0))
+        .with_step_dt(1.0 / 60.0)
+        .with_render_every_step(true)
+        .build_ui_state(
+            |ui, s: &mut S| {
+                if ui.button("Measure").clicked() {
+                    s.clicks += 1;
+                }
+                ui.add(egui::Slider::new(&mut s.dragged, 0.0..=100.0).text("Length"));
+            },
+            S::default(),
+        );
+    for _ in 0..3 {
+        h.get_by_label("Measure").click();
+        h.run();
+    }
+    let slider = h.get_by_role(skelter_test::Role::Slider).rect();
+    let c = slider.center();
+    h.drag(egui::pos2(c.x, c.y), egui::pos2(slider.max.x, c.y), 6);
+    h.run();
+    assert_eq!(h.state().clicks, 3);
+    assert!(h.last_render().is_some());
+}

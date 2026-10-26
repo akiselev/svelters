@@ -166,9 +166,14 @@ impl<S> IslandDoc<S> {
     pub fn state_mut(&mut self) -> &mut S {
         &mut self.state
     }
-    /// The last pass's skelter-facing output (cursor, IME, copied text, links, drag-and-drop).
+    /// The last pass's skelter-facing output (cursor, IME, drag-and-drop), with the copied text and
+    /// links of every pass since they were last taken ([`IslandDoc::take_output`]).
     pub fn output(&self) -> &IslandOutput {
         &self.output
+    }
+    /// Takes the output (`output` is empty until the next pass; copied text and links gather anew).
+    pub fn take_output(&mut self) -> IslandOutput {
+        std::mem::take(&mut self.output)
     }
     /// egui passes run so far.
     pub fn passes(&self) -> u64 {
@@ -284,6 +289,15 @@ impl<S> DocumentApi for IslandDoc<S> {
             }
             c.cursor = Some(out.cursor);
             c.ime_area = out.ime.map(|i| i.cursor);
+            // copied text and links stay until taken: with a pass every step, the pass after a copy
+            // would otherwise drop it before the test looks
+            let mut out = out;
+            let mut copied = std::mem::take(&mut self.output.copied);
+            copied.append(&mut out.copied);
+            out.copied = copied;
+            let mut urls = std::mem::take(&mut self.output.open_urls);
+            urls.append(&mut out.open_urls);
+            out.open_urls = urls;
             self.output = out;
         }
         // The texture's content changed with the pass: re-sending the list damages the island.
@@ -426,9 +440,14 @@ impl<S: 'static> EguiHarness<S> {
         self.inner.state_mut()
     }
     /// The last pass's output (kittest's `output()` is egui's `FullOutput`; the island turns it into
-    /// skelter's: cursor, IME, copied text, links, drag-and-drop).
+    /// skelter's: cursor, IME, drag-and-drop), with the copied text and links of every pass since the
+    /// last [`EguiHarness::take_island_output`].
     pub fn island_output(&self) -> &IslandOutput {
         self.doc().output()
+    }
+    /// [`EguiHarness::island_output`], taking the copied text and links gathered since the last take.
+    pub fn take_island_output(&mut self) -> IslandOutput {
+        self.doc_mut().take_output()
     }
     /// The skelter harness, for drivers that own one (`automation::SkelterDriver`).
     pub fn into_harness(self) -> Harness<IslandDoc<S>> {
@@ -628,6 +647,7 @@ impl EguiHarnessBuilder {
             before_step: pass_every_step.then(|| Box::new(|d: &mut IslandDoc<S>| d.request_pass()) as Box<dyn FnMut(&mut IslandDoc<S>)>),
             settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, target: Time| d.settled(target)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
             one_event_per_step: pass_every_step,
+            text_as_keys: true,
         };
         let mut inner = base.build_with(make_doc, hooks, gpu);
         let waker = inner.platform_mut().cx().waker();

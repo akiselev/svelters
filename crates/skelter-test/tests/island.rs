@@ -260,3 +260,55 @@ fn run_waits_for_the_pass_a_click_asks_for() {
     assert!(passes >= 2, "the click's pass and the one it asked for: {passes}");
     assert_eq!(n, passes, "run counts a step per pass");
 }
+
+/// A5e: `type_text` in an island types as kittest does (egui `Event::Text`), not as an IME commit.
+#[test]
+fn type_text_reaches_egui_as_text_events() {
+    #[derive(Default)]
+    struct T {
+        text: String,
+        ime_commits: usize,
+        texts: Vec<String>,
+    }
+    let mut h = EguiHarness::builder().with_size(egui::vec2(300.0, 100.0)).build_ui_state(
+        |ui, s: &mut T| {
+            ui.input(|i| {
+                for e in &i.events {
+                    match e {
+                        egui::Event::Text(t) => s.texts.push(t.clone()),
+                        egui::Event::Ime(egui::ImeEvent::Commit(_)) => s.ime_commits += 1,
+                        _ => {}
+                    }
+                }
+            });
+            ui.add(egui::TextEdit::singleline(&mut s.text).hint_text("Name"));
+        },
+        T::default(),
+    );
+    h.get_by_role(Role::TextInput).click();
+    h.run();
+    h.get_by_role(Role::TextInput).type_text("ab");
+    h.run();
+    assert_eq!(h.state().text, "ab");
+    assert_eq!(h.state().texts, ["ab"]);
+    assert_eq!(h.state().ime_commits, 0);
+}
+
+/// A5f: text egui copied stays in the island output until taken, though a pass runs every step.
+#[test]
+fn copied_text_waits_until_taken() {
+    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 80.0)).build_ui(|ui| {
+        if ui.button("Copy").clicked() {
+            ui.ctx().copy_text("hello".into());
+        }
+    });
+    h.get_by_label("Copy").click();
+    h.run();
+    h.step();
+    h.step();
+    assert_eq!(h.island_output().copied, ["hello"], "still there steps later");
+    let out = h.take_island_output();
+    assert_eq!(out.copied, ["hello"]);
+    h.step();
+    assert!(h.island_output().copied.is_empty(), "taken");
+}
