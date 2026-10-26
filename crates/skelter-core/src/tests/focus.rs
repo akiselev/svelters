@@ -281,3 +281,125 @@ fn autofocus_outside_a_dialog_takes_focus_once_and_never_steals_it() {
     frame(&mut d);
     assert_eq!(d.focused(W), Some(other), "appearing again doesn't steal focus");
 }
+
+// ---- QA11Y F3: what TreeUpdate.focus names ----
+
+static GRAFT: crate::KindSpec = crate::KindSpec { focusable: true, role: accesskit::Role::GenericContainer, ..crate::KindSpec::new("graft") };
+
+/// An island's host node: its AccessKit node grafts a subtree (`tree_id`), and has no children.
+#[derive(Default)]
+struct Graft;
+
+impl crate::Kind for Graft {
+    fn spec() -> &'static crate::KindSpec {
+        &GRAFT
+    }
+    fn record(&self, cx: &mut crate::RecordCx) {
+        cx.draw_box();
+    }
+    fn a11y(&self, cx: &mut crate::A11yCx) {
+        cx.default_a11y();
+        cx.out.set_tree_id(accesskit::TreeId(accesskit::Uuid::from_u128(7)));
+    }
+}
+
+static PARTS: crate::KindSpec = crate::KindSpec { focusable: true, role: accesskit::Role::ListBox, ..crate::KindSpec::new("parts") };
+
+/// A focusable list of three virtual options.
+#[derive(Default)]
+struct Parts;
+
+impl crate::Kind for Parts {
+    fn spec() -> &'static crate::KindSpec {
+        &PARTS
+    }
+    fn record(&self, cx: &mut crate::RecordCx) {
+        cx.draw_box();
+    }
+    fn a11y(&self, cx: &mut crate::A11yCx) {
+        cx.default_a11y();
+        for _ in 0..3 {
+            cx.add_virtual_child(accesskit::Node::new(accesskit::Role::ListBoxOption));
+        }
+    }
+}
+
+fn f3_doc() -> (Document, NodeId) {
+    let mut r = crate::KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<testkinds::ToggleKind>().unwrap();
+    r.register::<Graft>().unwrap();
+    r.register::<Parts>().unwrap();
+    let mut d = Document::new(std::sync::Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    (d, root)
+}
+
+fn focus_of(c: Option<skelter_base::commit::Commit>) -> Option<accesskit::NodeId> {
+    c.and_then(|c| c.a11y).map(|u| u.focus)
+}
+
+#[test]
+fn a_graft_is_never_named_before_its_subtree_went_out() {
+    let (mut d, root) = f3_doc();
+    let pane = child(&mut d, root, BOX, "");
+    let island = child(&mut d, pane, KindId::of("graft"), "");
+    frame(&mut d);
+    d.focus(island, FocusReason::Pointer);
+    assert_eq!(d.focused(W), Some(island));
+    assert_eq!(focus_of(frame(&mut d)), Some(accesskit::NodeId(pane.0)), "the graft's parent until its subtree is out");
+    d.a11y_subtree_sent(island);
+    assert_eq!(focus_of(frame(&mut d)), Some(accesskit::NodeId(island.0)), "the frame after the subtree: the graft");
+    // focus away and back: the graft stays sent
+    let other = child(&mut d, root, TOGGLE, "");
+    d.focus(other, FocusReason::Keyboard);
+    frame(&mut d);
+    d.focus(island, FocusReason::Keyboard);
+    assert_eq!(focus_of(frame(&mut d)), Some(accesskit::NodeId(island.0)));
+    // the graft leaves the tree and comes back: its subtree must go out again first
+    d.remove(pane, island).unwrap();
+    frame(&mut d);
+    d.insert(pane, island, None, None).unwrap();
+    frame(&mut d);
+    d.focus(island, FocusReason::Keyboard);
+    assert_eq!(focus_of(frame(&mut d)), Some(accesskit::NodeId(pane.0)));
+}
+
+#[test]
+fn a_focused_virtual_child_is_the_trees_focus() {
+    let (mut d, root) = f3_doc();
+    let list = child(&mut d, root, KindId::of("parts"), "");
+    frame(&mut d);
+    d.focus(list, FocusReason::Keyboard);
+    assert_eq!(focus_of(frame(&mut d)), Some(accesskit::NodeId(list.0)));
+    d.set_focus_sub(W, Some(2));
+    assert_eq!(d.focus_target(W), Some(crate::FocusTarget { node: list, sub: Some(2) }));
+    assert_eq!(focus_of(frame(&mut d)), Some(crate::a11y::virtual_id(list, 2)));
+    // an index past the children names the owner
+    d.set_focus_sub(W, Some(9));
+    assert_eq!(focus_of(frame(&mut d)), Some(accesskit::NodeId(list.0)));
+    // a focus move clears it
+    d.set_focus_sub(W, Some(1));
+    frame(&mut d);
+    d.blur(W);
+    d.focus(list, FocusReason::Keyboard);
+    assert_eq!(d.focus_target(W).and_then(|t| t.sub), None);
+}
+
+#[test]
+fn the_root_transform_is_the_window_scale() {
+    let (mut d, root) = f3_doc();
+    let b = child(&mut d, root, TOGGLE, "margin-left: 10px");
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let node = |u: &accesskit::TreeUpdate, n: NodeId| u.nodes.iter().find(|(id, _)| id.0 == n.0).map(|(_, x)| x.clone());
+    assert_eq!(node(&u, root).unwrap().transform(), None, "scale 1: identity");
+    let before = node(&u, b).unwrap().transform().copied();
+    // a zoom (or OS scale) change: only the root re-sends, with the new scale
+    d.resize_window(W, Size::new(160.0, 80.0), Scale(1.25));
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let r = node(&u, root).expect("the root re-sends");
+    assert_eq!(r.transform(), Some(&accesskit::Affine::scale(1.25)));
+    if let Some(n) = node(&u, b) {
+        assert_eq!(n.transform().copied(), before, "children stay relative to their parent");
+    }
+}

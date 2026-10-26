@@ -67,9 +67,26 @@ impl A11yAdapter {
         #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
         {
             let inner = accesskit_unix::Adapter::new(Handler(sink.clone()), Handler(sink.clone()), Handler(sink));
-            return Some(A11yAdapter { inner });
+            let mut a = A11yAdapter { inner };
+            // AT-SPI's extents add the window's position: known from the start, not only after the
+            // first move or resize (without a window manager there may be none)
+            a.set_window_bounds(window);
+            return Some(a);
         }
         None
+    }
+
+    /// AT-SPI: the window's outer and inner rectangles (screen pixels), which screen extents add.
+    #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
+    fn set_window_bounds(&mut self, window: &Window) {
+        let outer_pos = window.outer_position().unwrap_or_default().cast::<f64>();
+        let outer_size = window.outer_size().cast::<f64>();
+        let inner_pos = window.inner_position().unwrap_or_default().cast::<f64>();
+        let inner_size = window.inner_size().cast::<f64>();
+        self.inner.set_root_window_bounds(
+            skelter_base::accesskit::Rect::from_origin_size((outer_pos.x, outer_pos.y), (outer_size.width, outer_size.height)),
+            skelter_base::accesskit::Rect::from_origin_size((inner_pos.x, inner_pos.y), (inner_size.width, inner_size.height)),
+        );
     }
 
     /// Applies an update if an assistive technology is attached (otherwise drops it: the full tree
@@ -95,16 +112,7 @@ impl A11yAdapter {
         #[cfg(all(unix, not(any(target_os = "macos", target_os = "ios", target_os = "android"))))]
         match ev {
             winit::event::WindowEvent::Focused(f) => self.inner.update_window_focus_state(*f),
-            winit::event::WindowEvent::Moved(_) | winit::event::WindowEvent::Resized(_) => {
-                let outer_pos = window.outer_position().unwrap_or_default().cast::<f64>();
-                let outer_size = window.outer_size().cast::<f64>();
-                let inner_pos = window.inner_position().unwrap_or_default().cast::<f64>();
-                let inner_size = window.inner_size().cast::<f64>();
-                self.inner.set_root_window_bounds(
-                    skelter_base::accesskit::Rect::from_origin_size((outer_pos.x, outer_pos.y), (outer_size.width, outer_size.height)),
-                    skelter_base::accesskit::Rect::from_origin_size((inner_pos.x, inner_pos.y), (inner_size.width, inner_size.height)),
-                );
-            }
+            winit::event::WindowEvent::Moved(_) | winit::event::WindowEvent::Resized(_) => self.set_window_bounds(window),
             _ => {}
         }
     }

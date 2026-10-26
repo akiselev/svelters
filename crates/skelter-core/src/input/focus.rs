@@ -31,6 +31,16 @@ use smallvec::SmallVec;
 use std::collections::HashSet;
 use svelters_style::StateMask;
 
+/// What has keyboard focus in a window: a node, and inside it optionally a part the node manages
+/// itself (`sub`): a virtual child's index ([`crate::a11y::virtual_id`]), an island's own focus, or
+/// later a semantic object's id. AccessKit's focus is then that virtual child (module docs of
+/// [`crate::a11y`]).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct FocusTarget {
+    pub node: NodeId,
+    pub sub: Option<u32>,
+}
+
 /// `node` can take focus at all (programmatically): a focusable kind or an explicit `tabindex`, not
 /// disabled, not hidden, in a window.
 pub(crate) fn can_focus(doc: &Document, node: NodeId) -> bool {
@@ -185,6 +195,7 @@ pub(crate) fn set_focus(doc: &mut Document, node: Option<NodeId>, reason: FocusR
     let visible = visible_for(doc, node, reason, window);
     if let Some(w) = doc.window_mut(window) {
         w.focus = Some(node);
+        w.focus_sub = None;
         w.focus_visible = visible;
     }
     doc.set_state(node, StateMask::FOCUSED, true);
@@ -211,6 +222,7 @@ pub(crate) fn clear_focus(doc: &mut Document, window: WindowId) {
         blur_node(doc, window, o);
         if let Some(w) = doc.window_mut(window) {
             w.focus = None;
+            w.focus_sub = None;
         }
         crate::input::scope::focus_moved(doc, Some(o), None);
     }

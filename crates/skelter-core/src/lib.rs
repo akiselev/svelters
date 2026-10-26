@@ -72,7 +72,7 @@ pub use layout::LayoutRun;
 pub use settle::Busy;
 pub use ids::{KindId, MethodId, PropId, SignalId, SlotId, fingerprint};
 pub use input::{Delivery, Dispatched, JsEvent, Phase};
-pub use input::focus::{next_focus, open_dialog};
+pub use input::focus::{FocusTarget, next_focus, open_dialog};
 pub use kind::{ArgSpec, DEFAULT_NAME_FROM, DragPreview, Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameSource, NativeState, Outcome, PeerGroup, PeerMsg, PeerTarget, PointerInput, PropSpec, Rove, SelfScroll, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
 pub use registry::{KindEntry, KindRegistry, RegistryError};
 pub use style::{ComputedBox, StyleInput};

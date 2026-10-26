@@ -827,6 +827,14 @@ impl EventCx<'_> {
         let n = self.node;
         self.doc.focus(n, reason);
     }
+    /// While this node has focus: the part of it that has focus (a virtual child's index; `None`:
+    /// the node itself), which AccessKit then reports as focused ([`crate::FocusTarget`]).
+    pub fn set_focus_sub(&mut self, sub: Option<u32>) {
+        let Some(w) = self.doc.window_of(self.node) else { return };
+        if self.doc.focused(w) == Some(self.node) {
+            self.doc.set_focus_sub(w, sub);
+        }
+    }
     pub fn set_cursor(&mut self, c: CursorIcon) {
         self.doc.input.cursor = Some(c);
     }

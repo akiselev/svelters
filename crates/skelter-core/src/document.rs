@@ -506,6 +506,8 @@ impl Document {
                 if let Some(i) = self.idx(root) {
                     self.mark_subtree(i, Dirty::PAINT);
                 }
+                // the root's AccessKit transform is the scale (children are relative to it)
+                self.mark(root, Dirty::A11Y);
             }
         }
     }
@@ -1333,6 +1335,22 @@ impl Document {
     /// The focused node of `window`.
     pub fn focused(&self, window: WindowId) -> Option<NodeId> {
         self.window(window).and_then(|w| w.focus)
+    }
+
+    /// What has focus in `window`: the focused node and the part inside it that has it.
+    pub fn focus_target(&self, window: WindowId) -> Option<crate::FocusTarget> {
+        self.window(window).and_then(|w| w.focus.map(|node| crate::FocusTarget { node, sub: w.focus_sub }))
+    }
+
+    /// Sets the part of `window`'s focused node that has focus (`None`: the node itself); the
+    /// accessibility tree's focus follows at the next frame. No-op without a focused node.
+    pub fn set_focus_sub(&mut self, window: WindowId, sub: Option<u32>) {
+        let Some(w) = self.window_mut(window) else { return };
+        let Some(f) = w.focus else { return };
+        if w.focus_sub != sub {
+            w.focus_sub = sub;
+            self.mark(f, Dirty::A11Y);
+        }
     }
 
     /// JS events queued outside dispatch (focus moves from `focus()`, signals kinds emitted while

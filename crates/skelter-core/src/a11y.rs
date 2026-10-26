@@ -14,6 +14,17 @@
 //! select's options). They go out with their owner every time it is sent, after its real children,
 //! under ids in a range node ids never reach ([`virtual_id`]); an action on one reaches the owner's
 //! kind as [`Event::A11yChild`](crate::Event::A11yChild) with the child's index.
+//!
+//! **Focus** (QA11Y F3): `TreeUpdate.focus` is the window's [`FocusTarget`] resolved to an id the
+//! tree has: the focused node, or its virtual child `sub`; a graft node (an egui island's, a node
+//! carrying a `tree_id`) only once its subtree has gone out ([`Document::a11y_subtree_sent`]), since
+//! AccessKit's consumer panics on a focused graft without its subtree; a node the tree doesn't have
+//! (concealed, a graft waiting for its subtree) names its nearest ancestor that it has. The root only
+//! when nothing is focused.
+//!
+//! **Bounds** are in physical window pixels, as AccessKit wants them: the root's transform is
+//! `scale(window.scale)` (OS scale × UI zoom) over its world transform, and every other node is
+//! relative to its parent, so a scale change re-sends the root only.
 
 use crate::cx::A11yCx;
 use crate::document::Document;
@@ -100,12 +111,26 @@ impl Document {
                 out.set_label(l);
             }
         }
+        let node = self.slots.id_at(i).expect("live");
+        let window = self.core[i].window;
+        let graft = out.tree_id().is_some();
+        if let Some(w) = window.and_then(|w| self.window_mut(w)) {
+            if graft {
+                w.a11y_grafts.insert(node);
+            } else if w.a11y_grafts.remove(&node) {
+                w.a11y_subtrees_sent.remove(&node);
+            }
+        }
         let l = &self.layout[i].layout;
         out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: l.size.width as f64, y1: l.size.height as f64 });
         let world = self.record[i].world_tf;
         let rel = match self.core[i].parent {
             Some(p) => self.record[self.ix(p)].world_tf.inverse().map_or(skelter_base::geom::Affine::IDENTITY, |pi| pi.then(&world)),
-            None => world,
+            // the root scales document points to physical window pixels
+            None => {
+                let s = window.and_then(|w| self.window(w)).map_or(1.0, |w| w.scale.0);
+                skelter_base::geom::Affine::scale(s, s).then(&world)
+            }
         };
         if rel != skelter_base::geom::Affine::IDENTITY {
             out.set_transform(accesskit::Affine::new([rel.a as f64, rel.b as f64, rel.c as f64, rel.d as f64, rel.e as f64, rel.f as f64]));
@@ -116,8 +141,14 @@ impl Document {
             out.set_hidden();
         }
         let kids: Vec<NodeId> = self.a11y_children(i).collect();
-        let node = self.slots.id_at(i).expect("live");
         let virtual_children: Vec<(AxId, Node)> = virtual_children.into_iter().enumerate().map(|(k, n)| (virtual_id(node, k as u32), n)).collect();
+        if let Some(w) = window.and_then(|w| self.window_mut(w)) {
+            if virtual_children.is_empty() {
+                w.a11y_virtual.remove(&node);
+            } else {
+                w.a11y_virtual.insert(node, virtual_children.len() as u32);
+            }
+        }
         out.set_children(kids.iter().map(|&c| ax(c)).chain(virtual_children.iter().map(|(id, _)| *id)).collect::<Vec<_>>());
         if self.state[i].contains(svelters_style::StateMask::INVALID) {
             out.set_invalid(accesskit::Invalid::True);
@@ -189,13 +220,70 @@ impl Document {
             }
             return None;
         }
-        let focus = self.focused(window).filter(|f| known.contains(f)).unwrap_or(root);
+        let focus = self.a11y_focus(window, root, &known);
         if let Some(w) = self.window_mut(window) {
+            // nodes that left the tree take their graft and virtual-child state with them
+            w.a11y_grafts.retain(|n| known.contains(n));
+            w.a11y_subtrees_sent.retain(|n| known.contains(n));
+            w.a11y_virtual.retain(|n, _| known.contains(n));
             w.a11y_sent = known;
         }
-        let update = TreeUpdate { nodes, tree: first.then(|| TreeInfo::new(ax(root))), tree_id: TreeId::ROOT, focus: ax(focus) };
-        let prev: HashSet<AxId> = if first { HashSet::new() } else { before.iter().map(|&n| ax(n)).collect() };
+        let update = TreeUpdate { nodes, tree: first.then(|| TreeInfo::new(ax(root))), tree_id: TreeId::ROOT, focus };
+        let prev: HashSet<AxId> = if first {
+            HashSet::new()
+        } else {
+            // the known nodes and the virtual children they last went out with
+            let virt = self.window(window).map(|w| &w.a11y_virtual);
+            before
+                .iter()
+                .flat_map(|&n| {
+                    let k = virt.and_then(|v| v.get(&n)).copied().unwrap_or(0);
+                    std::iter::once(ax(n)).chain((0..k).map(move |c| virtual_id(n, c)))
+                })
+                .collect()
+        };
         Some(validate(update, ax(root), &prev))
+    }
+
+    /// `TreeUpdate.focus` (module docs): the focus target resolved to an id the tree has.
+    fn a11y_focus(&self, window: WindowId, root: NodeId, known: &HashSet<NodeId>) -> AxId {
+        let Some(w) = self.window(window) else { return ax(root) };
+        let Some(t) = self.focus_target(window) else { return ax(root) };
+        let shown = |n: NodeId| known.contains(&n) && (!w.a11y_grafts.contains(&n) || w.a11y_subtrees_sent.contains(&n));
+        if shown(t.node) {
+            if !w.a11y_grafts.contains(&t.node)
+                && let Some(sub) = t.sub
+                && w.a11y_virtual.get(&t.node).is_some_and(|&k| sub < k)
+            {
+                return virtual_id(t.node, sub);
+            }
+            return ax(t.node);
+        }
+        // the nearest ancestor the tree has (a graft's subtree isn't out yet; the node is concealed)
+        let mut a = self.parent(t.node);
+        while let Some(p) = a {
+            if shown(p) {
+                return ax(p);
+            }
+            a = self.parent(p);
+        }
+        ax(root)
+    }
+
+    /// The subtree grafted at `node` (an egui island's: its AccessKit node carries a `tree_id`) went
+    /// out after the host update that carries `node`: from the next frame, focus on `node` reaches
+    /// AccessKit as the graft (followed into the subtree's own focus) instead of its parent. The
+    /// document that sends the subtrees (`Commit::a11y_subtrees`) calls it once the commit carries one.
+    pub fn a11y_subtree_sent(&mut self, node: NodeId) {
+        let Some(window) = self.window_of(node) else { return };
+        let focused = self.focused(window) == Some(node);
+        let Some(w) = self.window_mut(window) else { return };
+        if !w.a11y_sent.contains(&node) || !w.a11y_subtrees_sent.insert(node) {
+            return;
+        }
+        if focused {
+            self.mark(node, crate::tree::Dirty::A11Y);
+        }
     }
 }
 
