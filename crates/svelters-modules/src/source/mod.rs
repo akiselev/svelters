@@ -199,6 +199,8 @@ struct Cached {
     css: Option<String>,
     /// DZ0 (dev): the sheet's map to the `<style>` text (`ScopedCss::source_map_text`).
     css_map: Option<String>,
+    /// skelter `css_precompiled` (release): the sheet as base64 `svelters_style::binary` bytes.
+    css_bin: Option<String>,
     /// DZ0 (HMR): the source this was compiled from, to tell the next version's edit.
     src: Option<String>,
 }
@@ -450,7 +452,11 @@ impl Inner {
             let key = build::logical_id(&self.cfg.root, Path::new(file));
             let c = self.compiled(Path::new(file), overlay)?;
             let source = c.css_map.as_deref().map(|m| (file, m));
-            return Ok(ModuleCode::Source { js: style_module(&key, c.css.as_deref().unwrap_or(""), source), map: None });
+            let js = match &c.css_bin {
+                Some(bin) => precompiled_style_module(&key, bin),
+                None => style_module(&key, c.css.as_deref().unwrap_or(""), source),
+            };
+            return Ok(ModuleCode::Source { js, map: None });
         }
         let edit = self.changed.get(Path::new(id)).filter(|c| c.js).and_then(|c| c.edit.clone());
         let c = self.compiled(Path::new(id), overlay)?;
@@ -482,12 +488,13 @@ impl Inner {
         }
         self.warnings.extend(warnings);
         let css_map = css.as_ref().filter(|_| self.cfg.dev).map(|c| c.source_map_text());
+        let css_bin = css.as_ref().and_then(|c| c.precompiled_base64());
         let css = css.map(|c| c.code);
         if css.is_some() {
             let spec = serde_json::Value::String(format!("{STYLE_PREFIX}{}", path.to_string_lossy())).to_string();
             js.push_str(&format!("\nimport {spec};\n"));
         }
-        self.cache.insert(path.to_path_buf(), Cached { hash, js, map, css, css_map, src: kept });
+        self.cache.insert(path.to_path_buf(), Cached { hash, js, map, css, css_map, css_bin, src: kept });
         Ok(&self.cache[path])
     }
 
@@ -646,6 +653,13 @@ fn style_module(file: &str, css: &str, source: Option<(&str, &str)>) -> String {
         lit(file),
         lit(css)
     )
+}
+
+/// skelter `css_precompiled`: a release build's sheet module registers the precompiled sheet
+/// (`svelters_style::binary`, base64) instead of its text; the backend loads it without parsing.
+fn precompiled_style_module(file: &str, bin: &str) -> String {
+    let lit = |s: &str| serde_json::Value::String(s.to_string()).to_string();
+    format!("import {{ registerStyles }} from \"@svelters/native-runtime/style\";\nregisterStyles({}, {{ bin: {} }});\n", lit(file), lit(bin))
 }
 
 /// A module id without the `?v=<n>` the host adds to re-evaluated modules (H1).

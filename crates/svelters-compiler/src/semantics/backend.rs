@@ -11,6 +11,8 @@ const APPKIT_JSON: &str = include_str!("../../../../metadata/semantics/appkit.js
 const WINUI_JSON: &str = include_str!("../../../../metadata/semantics/winui.json");
 /// G1: generated from the egui backend's kind table (crates/svelters-egui/src/kinds/builtin.rs).
 const EGUI_JSON: &str = include_str!("../../../../metadata/semantics/egui.json");
+/// Generated from skelter's kind registry (crates/svelters-skelter/src/spec.rs).
+const SKELTER_JSON: &str = include_str!("../../../../metadata/semantics/skelter.json");
 const GTK_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/gtk.json");
 const QT_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/qt.json");
 
@@ -49,7 +51,7 @@ impl SpecBackend {
         SpecBackend::from_json(&text)
     }
 
-    /// The checked-in spec of a built-in backend (`gtk`, `qt`, `appkit` or `winui`), embedded at build time.
+    /// The checked-in spec of a built-in backend (`gtk`, `qt`, `appkit`, `winui`, `egui` or `skelter`), embedded at build time.
     pub fn builtin(backend: &str) -> Result<SpecBackend, String> {
         match backend {
             "gtk" => SpecBackend::from_json(GTK_JSON)?.with_types(GTK_TYPES_JSON),
@@ -57,7 +59,8 @@ impl SpecBackend {
             "appkit" => SpecBackend::from_json(APPKIT_JSON),
             "winui" => SpecBackend::from_json(WINUI_JSON),
             "egui" => SpecBackend::from_json(EGUI_JSON),
-            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui, egui)")),
+            "skelter" => SpecBackend::from_json(SKELTER_JSON),
+            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui, egui, skelter)")),
         }
     }
 
@@ -263,6 +266,23 @@ impl PlatformSemantics for SpecBackend {
         self.spec.row_outlet.as_deref()
     }
 
+    fn capabilities(&self) -> &[String] {
+        &self.spec.capabilities
+    }
+
+    fn spec_hash(&self) -> Option<&str> {
+        self.spec.spec_hash.as_deref()
+    }
+
+    fn kind_id(&self, el: &ElementRef) -> Option<u32> {
+        self.spec.kinds.get(&el.kind)?.id
+    }
+
+    /// The most derived kind of `el`'s chain with accessibility facts.
+    fn a11y(&self, el: &ElementRef) -> Option<&A11ySpec> {
+        self.chain(el).into_iter().find_map(|(_, k)| k.a11y.as_ref())
+    }
+
     fn resolve_element(&self, tag: &str) -> Result<ElementRef, Unresolved> {
         if let Some(kind) = self.spec.tags.get(tag) {
             return Ok(ElementRef { tag: tag.to_string(), kind: kind.clone() });
@@ -315,6 +335,9 @@ impl PlatformSemantics for SpecBackend {
             sync: s.sync,
             phases: s.phases.clone(),
             via_alias: alias.map(str::to_string),
+            cancelable: s.cancelable.unwrap_or(s.sync),
+            passive: s.passive,
+            id: s.id,
         };
         for name in [stripped, attr] {
             if let Some(target) = self.spec.event_aliases.get(name)

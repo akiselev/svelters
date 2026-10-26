@@ -45,7 +45,7 @@ import {
 } from '@svelters/style/runtime';
 import { animatesOpacity } from './motion.js';
 
-const OP = { TARGET: 0, CLASSES: 1, NAME: 2, INLINE: 3, OPACITY: 4, SHEET: 5, SCHEME: 6, DECLS: 7 };
+const OP = { TARGET: 0, CLASSES: 1, NAME: 2, INLINE: 3, OPACITY: 4, SHEET: 5, SCHEME: 6, DECLS: 7, SHEET_BIN: 12 };
 /** `SVL_STYLE_TARGET` answers: 1 GTK CSS, 2 QSS, 3 the decl dialect of AppKit (a toolkit per code). */
 const DECL_TOOLKITS = { 3: 'appkit' };
 /** `SVL_STYLE_TARGET` answer of a backend running the Rust engine in process (egui, CS5e). */
@@ -170,6 +170,14 @@ function sheetText(entry) {
 
 function pushSheet(id, entry) {
   if (state.target === 'decl') return;
+  // skelter `css_precompiled` (release builds): the sheet parsed at compile time, as base64 bytes
+  // (svelters_style::binary) with its rule hints; the engine loads it without parsing
+  if (state.target === 'engine' && entry.bin) {
+    if (entry.sent === entry.bin) return;
+    entry.sent = entry.bin;
+    host().style(OP.SHEET_BIN, 0, `${id}${SEP}${entry.bin}`);
+    return;
+  }
   const text = sheetText(entry);
   if (entry.sent === text) return;
   entry.sent = text;
@@ -188,7 +196,7 @@ export const hasSheets = () => state.sheets.size > 0;
 export function registerStyles(id, sheets) {
   const first = state.sheets.size === 0;
   const prev = state.sheets.get(id);
-  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', css: sheets.css ?? '', rules: sheets.rules ?? null, decl: sheets.decl ?? null, file: sheets.file, map: sheets.map, seq: state.seq++, sent: undefined };
+  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', css: sheets.css ?? '', bin: sheets.bin ?? null, rules: sheets.rules ?? null, decl: sheets.decl ?? null, file: sheets.file, map: sheets.map, seq: state.seq++, sent: undefined };
   state.sheets.set(id, entry);
   if (!ensureInit()) return;
   if (state.target === 'decl') {

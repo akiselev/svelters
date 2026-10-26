@@ -23,6 +23,7 @@ use svelters_abi::{NameKind, Value as AV};
 
 mod buffers;
 mod conv;
+mod fast;
 #[cfg(feature = "intl")]
 mod intl;
 mod platform;
@@ -31,6 +32,11 @@ use conv::QjsConv;
 /// Runtimes leaked on this thread because Rust still held one of their transferred buffers (E2).
 pub(crate) fn leaked_runtimes() -> u64 {
     buffers::LEAKED_RUNTIMES.with(std::cell::Cell::get)
+}
+
+/// W-J1: `SveltersNode` wrappers alive on this thread.
+pub(crate) fn live_node_wrappers() -> usize {
+    fast::LIVE_WRAPPERS.with(std::cell::Cell::get)
 }
 
 /// How long dropping a runtime waits for workers to drop its transferred buffers before it leaks the
@@ -95,6 +101,15 @@ pub(crate) struct QjsCallbacks {
     pub(crate) funcs: RefCell<std::collections::HashMap<u64, rquickjs::Persistent<Function<'static>>>>,
     /// E2: this runtime's transfer tokens.
     pub(crate) home: Arc<buffers::QjsHome>,
+    /// W-J1: the node wrappers the host holds while their nodes live.
+    pub(crate) wrappers: fast::Wrappers,
+}
+
+impl Drop for QjsCallbacks {
+    fn drop(&mut self) {
+        let rt = self.ctx.with(|c| unsafe { rquickjs::qjs::JS_GetRuntime(c.as_raw().as_ptr()) });
+        self.wrappers.free_all(rt);
+    }
 }
 
 impl crate::core::CallbackEngine for QjsCallbacks {
@@ -147,6 +162,19 @@ impl crate::core::CallbackEngine for QjsCallbacks {
     fn drop_function(&self, id: u64) {
         // Dropping a persistent function releases a reference; it runs no JS.
         self.funcs.borrow_mut().remove(&id);
+    }
+
+    fn handle_gone(&self, h: u64) {
+        self.wrappers.handle_gone(h);
+    }
+
+    fn free_released(&self) {
+        // Not re-entrant into the context: frees through the runtime, outside any JS.
+        let rt = match CURRENT_CTX.with(|c| c.get()) {
+            Some(raw) => unsafe { rquickjs::qjs::JS_GetRuntime(raw.as_ptr()) },
+            None => self.ctx.with(|c| unsafe { rquickjs::qjs::JS_GetRuntime(c.as_raw().as_ptr()) }),
+        };
+        self.wrappers.free_gone(rt);
     }
 }
 
@@ -255,6 +283,7 @@ impl QjsEngine {
             core: Rc::downgrade(core),
             funcs: RefCell::default(),
             home: buffers::QjsHome::new(core.ops.queue.clone()),
+            wrappers: fast::Wrappers::default(),
         });
         core.set_callback_engine(callbacks.clone());
         let cbs = callbacks.clone();
@@ -749,6 +778,7 @@ impl Drop for QjsEngine {
     // ZU3: host teardown: waits up to TRANSFER_GRACE for workers to hand back buffers, after the last frame.
     #[allow(clippy::disallowed_methods)]
     fn drop(&mut self) {
+        self.ctx.with(|c| fast::uninstall(&c));
         // E2: a worker may still use a transferred buffer of this runtime (its call was cancelled, but
         // it has not looked yet). Wait a little; past that, leak the runtime rather than free memory
         // under the worker (`docs/notes/egui-rust-exports.md` §8, shutdown order).
@@ -1438,7 +1468,16 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
             })?,
         )?;
     }
+    // W-C3/ABI v2.9: the backend drops unchanged scalar writes itself (`$n.setp` keeps no `last`)
+    host.set("dedupes", core.upgrade().is_some_and(|c| c.dedupes()))?;
+    install_templates(ctx, &host, &core, &cbs)?;
+    // W-C1: the spec hash a backend registered (`register_spec_hash`), or undefined
+    host.set(
+        "specHash",
+        Function::new(ctx.clone(), |backend: String| -> Option<String> { crate::spec_hash::spec_hash(&backend) })?,
+    )?;
     platform::install(ctx, &host, &core)?;
+    fast::install(ctx, &host, core.clone(), cbs.clone())?;
     globals.set("__svelters_host", host)?;
 
     let prelude: Function = ctx.eval(PRELUDE)?;
@@ -1447,6 +1486,129 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
         let seeded: Function = ctx.eval(SEEDED_RANDOM)?;
         seeded.call::<_, ()>((globals, seed as u32, (seed >> 32) as u32))?;
     }
+    Ok(())
+}
+
+/// A member name or id read from JS, owned so several can be held at once.
+enum OwnedName {
+    Str(String),
+    Id(u32),
+}
+
+impl OwnedName {
+    fn read<'js>(ctx: &Ctx<'js>, v: &Value<'js>, what: &str) -> Res<OwnedName> {
+        if let Some(n) = v.as_int() {
+            return u32::try_from(n).map(OwnedName::Id).map_err(|_| Exception::throw_type(ctx, &format!("invalid {what} id")));
+        }
+        if let Some(s) = v.as_string() {
+            return Ok(OwnedName::Str(s.to_string()?));
+        }
+        Err(Exception::throw_type(ctx, &format!("{what} must be a name or an id")))
+    }
+
+    fn name(&self) -> Name<'_> {
+        match self {
+            OwnedName::Str(s) => Name::Str(s),
+            OwnedName::Id(i) => Name::Id(*i),
+        }
+    }
+}
+
+/// FNV-1a of a template's content-hash string (a number hash is used as it is).
+fn hash_of(v: &Value<'_>) -> Res<u64> {
+    if let Some(n) = v.as_number() {
+        return Ok(n as u64);
+    }
+    let s = v.as_string().map(|s| s.to_string()).transpose()?.unwrap_or_default();
+    Ok(s.bytes().fold(0xcbf2_9ce4_8422_2325u64, |h, b| (h ^ b as u64).wrapping_mul(0x0100_0000_01b3)))
+}
+
+/// W-C2 (compiler-and-js.md §3.2): `template(table)` registers a static subtree and returns its
+/// id; `instantiate(id)` builds one instance and returns its base handle (node k is base + k) when
+/// the backend builds templates, else the array of handles of the expansion (the same ops the
+/// runtime would issue, in the same order); `destroyRange(base, n)` destroys a native instance;
+/// `templateRelease(id)` drops a registration. A table is `{ hash, nodes: [kind, parent, slot, ...],
+/// props: [node, prop, value, ...], listens: [node, signal, flags, ...] }`: `parent` is the parent's
+/// index + 1 (0 = a root), `slot` a name, an id or null, the nodes in pre-order.
+fn install_templates<'js>(ctx: &Ctx<'js>, host: &Object<'js>, core: &Weak<Core>, cbs: &Rc<QjsCallbacks>) -> Res<()> {
+    host.set("templates", core.upgrade().is_some_and(|c| c.has_native_templates()))?;
+    let w = core.clone();
+    let cb = cbs.clone();
+    host.set(
+        "template",
+        Function::new(ctx.clone(), move |ctx: Ctx<'js>, table: Object<'js>| -> Res<u32> {
+            let c = core_of(&ctx, &w)?;
+            let hash = hash_of(&table.get::<_, Value>("hash")?)?;
+            let list = |key: &str| -> Res<Vec<Value<'js>>> {
+                let v: Value = table.get(key)?;
+                if v.is_undefined() || v.is_null() {
+                    return Ok(Vec::new());
+                }
+                let a = v.into_array().ok_or_else(|| Exception::throw_type(&ctx, &format!("template.{key} must be an array")))?;
+                a.iter().collect()
+            };
+            let (nodes, props, listens) = (list("nodes")?, list("props")?, list("listens")?);
+            if nodes.len() % 3 != 0 || props.len() % 3 != 0 || listens.len() % 3 != 0 {
+                return Err(Exception::throw_type(&ctx, "template arrays hold triples"));
+            }
+            let index = |v: &Value<'js>, what: &str| -> Res<u32> {
+                v.as_int().and_then(|n| u32::try_from(n).ok()).ok_or_else(|| Exception::throw_type(&ctx, &format!("template: bad {what}")))
+            };
+            let mut node_names = Vec::with_capacity(nodes.len() / 3);
+            for t in nodes.chunks(3) {
+                let slot = if t[2].is_null() || t[2].is_undefined() { None } else { Some(OwnedName::read(&ctx, &t[2], "slot")?) };
+                node_names.push((OwnedName::read(&ctx, &t[0], "kind")?, index(&t[1], "parent")?, slot));
+            }
+            let mut prop_in = Vec::with_capacity(props.len() / 3);
+            for t in props.chunks(3) {
+                prop_in.push((index(&t[0], "node")?, OwnedName::read(&ctx, &t[1], "prop")?, t[2].clone()));
+            }
+            let mut listen_in = Vec::with_capacity(listens.len() / 3);
+            for t in listens.chunks(3) {
+                listen_in.push((index(&t[0], "node")?, OwnedName::read(&ctx, &t[1], "signal")?, index(&t[2], "flags")?));
+            }
+            let nodes: Vec<crate::core::TplNodeIn<'_>> =
+                node_names.iter().map(|(k, p, s)| crate::core::TplNodeIn { kind: k.name(), parent: *p, slot: s.as_ref().map(OwnedName::name) }).collect();
+            let props: Vec<(u32, Name<'_>, Value<'js>)> = prop_in.iter().map(|(n, p, v)| (*n, p.name(), v.clone())).collect();
+            let listens: Vec<(u32, Name<'_>, u32)> = listen_in.iter().map(|(n, s, f)| (*n, s.name(), *f)).collect();
+            let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
+            let r = c.op_template(&conv, hash, &nodes, &props, &listens);
+            op_conv(&ctx, &conv, r)
+        })?,
+    )?;
+    let w = core.clone();
+    host.set(
+        "templateRelease",
+        Function::new(ctx.clone(), move |ctx: Ctx<'js>, id: u32| -> Res<()> {
+            core_of(&ctx, &w)?.op_template_release(id);
+            Ok(())
+        })?,
+    )?;
+    let w = core.clone();
+    host.set(
+        "instantiate",
+        Function::new(ctx.clone(), move |ctx: Ctx<'js>, id: u32| -> Res<Value<'js>> {
+            let c = core_of(&ctx, &w)?;
+            match op(&ctx, c.op_instantiate(id))? {
+                crate::core::Instance::Base(b) => Ok(Value::new_float(ctx.clone(), b as f64)),
+                crate::core::Instance::Handles(hs) => {
+                    let a = rquickjs::Array::new(ctx.clone())?;
+                    for (i, h) in hs.into_iter().enumerate() {
+                        a.set(i, h as f64)?;
+                    }
+                    Ok(a.into_value())
+                }
+            }
+        })?,
+    )?;
+    let w = core.clone();
+    host.set(
+        "destroyRange",
+        Function::new(ctx.clone(), move |ctx: Ctx<'js>, base: f64, n: u32| -> Res<()> {
+            let c = core_of(&ctx, &w)?;
+            op(&ctx, c.op_destroy_range(handle_of(&ctx, base)?, n))
+        })?,
+    )?;
     Ok(())
 }
 

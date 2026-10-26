@@ -162,6 +162,22 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
+## skelter (formerly presto): consolidation 2 (2026-10-26)
+
+Decided (user, 2026-10-25): presto is renamed **skelter** ("go with svelters-skelter"): crates `skelter`,
+`skelter-{anim,base,canvas,compositor,core,egui-island,frame,motion,platform,platform-macos,platform-wayland,
+platform-win32,render,test,text,widgets}` and the svelters backend `svelters-skelter`; spec
+`metadata/semantics/skelter.json`; workflow `skelter.yml` (six workflows now gate master); env vars `SKELTER_*`;
+research `plans/research/skelter/`, records `plans/milestones/SKELTER-*`. Branch names (`ci/presto-*`) and the batch
+folders `plans/cloud/presto-b1..b3` keep the old name as history.
+- Merged into master from `ci/skelter-integration` 63058f55 (consolidation 1's `ci/presto-integration` 6a93efd2 plus
+  `ci/presto-base` e2f1652c, `ci/presto-compiler` 012047d0, `ci/presto-svelters-presto` e605ad54, `ci/presto-test-v2`
+  8cf13d81, then the rename). CI green on all six: js 40246270558, linux-gtk 40246270595, linux-qt 40246270604,
+  macos-appkit 40246270628, skelter 40246270706, windows-winui 40246270594.
+- Open items: `plans/cloud/presto-b1/FIX-QUEUE.md` (F18, F21 Windows dialogs test, F22 intermittent counter-mac,
+  F23 skelter_quire click test), routed to batch 12's `skelter-fixes` lane by the coordinator. berth and quire
+  (`skelter_berth`, `skelter_quire`) are renamed and merged by the coordinator session.
+
 ## Rules rethink (user, 2026-10-25)
 
 Decided (user, 2026-10-25): work runs as Claude Code cloud batches (one lane per container, on its own `ci/<lane>`

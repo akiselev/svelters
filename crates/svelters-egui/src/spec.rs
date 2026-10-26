@@ -14,7 +14,14 @@
 //!
 //! Each element kind also carries the docs fields `category`, `states`, `a11y`, `paint`,
 //! `css_hidden` and `css_note` ([`kinds::docs`], DOC1), which `tools/docs/egui/gen_reference.py` renders into the
-//! widget reference; the compiler ignores them.
+//! widget reference; the compiler reads only `a11y`'s `requires_name`, `name_props` and
+//! `icon_props` (W-C9).
+//!
+//! The skelter compiler integrations (`plans/research/skelter/compiler-and-js.md` §2): the built-in
+//! kinds and their props, signals, methods and slots carry their stable `id` ([`kinds::ids`]) and a
+//! `fingerprint` (a hash of the kind, the member and its type), the spec its `spec_hash` over them;
+//! props and style properties carry their `change` class where it is known, signals `cancelable`
+//! and `passive`; `capabilities` lists the new op shapes egui's runtime path takes (none yet).
 //!
 //! `tests/spec.rs` fails when `egui.json` or `egui.d.ts` is stale
 //! (`SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites them). Writer lane: RUSTAPI.
@@ -31,6 +38,118 @@ pub const TYPINGS_PATH: &str = "packages/native-runtime/types/egui.d.ts";
 
 /// Where the checked-in spec lives, relative to the workspace root.
 pub const SPEC_PATH: &str = "metadata/semantics/egui.json";
+
+/// The capabilities egui advertises (`compiler-and-js.md` §2). `ids` and `templates` wait for the
+/// runtime's id and template paths on egui (lane RUNTIME), `passive` and `change_classes` for a
+/// host that uses the flags; until then the compiler emits today's op shapes for egui.
+pub const CAPABILITIES: &[&str] = &[];
+
+/// W-C5: the sync signals whose default cannot be prevented (`events.rs`: egui always sees a
+/// pointer move; focus changes have happened).
+const NOT_CANCELABLE: &[&str] = &["pointermove", "focusin", "focusout"];
+
+/// W-C5: the signals that drive continuous native work a listener which can cancel them holds
+/// up: scrolling (`wheel`) and pointer tracking (`pointermove`).
+const PASSIVE_SIGNALS: &[&str] = &["wheel", "pointermove"];
+
+/// W-C9: the accessibility roles whose node needs a name (WAI-ARIA's "name required" controls).
+const NAMED_ROLES: &[&str] = &["Button", "CheckBox", "RadioButton", "Switch", "TextInput", "ComboBox", "Slider", "SpinButton", "Link"];
+
+/// W-C4: the change class of an engine style property (CSS semantics: what a change of it can
+/// invalidate on egui's scene). Properties not listed have no class (unknown to the compiler).
+fn css_change(name: &str) -> Option<&'static str> {
+    const PAINT: &[&str] = &[
+        "background-color", "background-image", "border-color", "border-radius", "border-top-color", "border-right-color", "border-bottom-color",
+        "border-left-color", "border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius",
+        "border-top-style", "border-right-style", "border-bottom-style", "border-left-style", "box-shadow", "color", "cursor", "opacity",
+        "outline-color", "outline-offset", "outline-style", "outline-width", "text-decoration-line",
+    ];
+    const LAYOUT: &[&str] = &[
+        "border-width", "border-top-width", "border-right-width", "border-bottom-width", "border-left-width", "content", "display", "font-family",
+        "font-size", "font-style", "font-weight", "grid-column", "grid-row", "grid-template-columns", "grid-template-rows", "letter-spacing",
+        "line-height", "margin", "margin-bottom", "margin-left", "margin-right", "margin-top", "overflow-x", "overflow-y", "padding",
+        "padding-bottom", "padding-left", "padding-right", "padding-top", "scrollbar-gutter", "text-transform", "white-space",
+    ];
+    if PAINT.contains(&name) {
+        Some("paint")
+    } else if LAYOUT.contains(&name) {
+        Some("layout")
+    } else {
+        None
+    }
+}
+
+/// W-C1: the fingerprint of an id: a hash of the kind, the member and its type.
+fn fingerprint(parts: &[&str]) -> String {
+    kinds::ids::hex(kinds::ids::fnv(parts))
+}
+
+fn prop_fingerprint(k: &KindDef, p: &PropDef) -> String {
+    let values = match p.ty {
+        Ty::Enum(v) => v.join("|"),
+        _ => String::new(),
+    };
+    fingerprint(&[k.id, "prop", p.name, ty_name(p.ty), &values, if p.nullable { "null" } else { "" }])
+}
+
+fn signal_fingerprint(k: &KindDef, s: &kinds::SignalDef) -> String {
+    let args: Vec<String> = s.args.iter().map(|(n, t)| format!("{n}:{}", ty_name(*t))).collect();
+    fingerprint(&[k.id, "signal", s.name, &args.join(","), if s.sync { "sync" } else { "" }])
+}
+
+fn method_fingerprint(k: &KindDef, m: &kinds::MethodDef) -> String {
+    fingerprint(&[k.id, "method", m.name])
+}
+
+fn kind_fingerprint(k: &KindDef) -> String {
+    fingerprint(&[k.id, "kind", k.tag.unwrap_or(""), k.base.unwrap_or("")])
+}
+
+/// W-C1: every stable id of the built-in kinds with its fingerprint, as `(what, id, fingerprint)`
+/// rows (`kind:Label`, `prop:Label.text`, ...), sorted.
+pub fn id_rows() -> Vec<(String, u32, String)> {
+    id_rows_of(KindRegistry::global())
+}
+
+/// [`id_rows`] of a registry (the global one is built through this, `KindRegistry::global`).
+pub fn id_rows_of(reg: &KindRegistry) -> Vec<(String, u32, String)> {
+    let mut rows = Vec::new();
+    for i in 0..KINDS.len() {
+        let k = reg.spec_kind(i);
+        rows.push((format!("kind:{}", k.id), reg.kind_id(i), kind_fingerprint(k)));
+        for p in k.props {
+            rows.push((format!("prop:{}.{}", k.id, p.name), reg.find_prop(i, p.name).map_or(0, |(id, _)| id), prop_fingerprint(k, p)));
+        }
+        for s in k.signals {
+            rows.push((format!("signal:{}.{}", k.id, s.name), reg.find_signal(i, s.name).map_or(0, |(id, _)| id), signal_fingerprint(k, s)));
+        }
+        for m in k.methods {
+            rows.push((format!("method:{}.{}", k.id, m.name), reg.find_method(i, m.name).map_or(0, |(id, _)| id), method_fingerprint(k, m)));
+        }
+    }
+    rows.sort();
+    rows
+}
+
+/// W-C1: the spec hash: a hash of every stable id and its fingerprint. Compiled code that carries
+/// ids records it; a host whose hash differs refuses those ids (`$n.ids`).
+pub fn spec_hash() -> String {
+    spec_hash_of(KindRegistry::global())
+}
+
+/// [`spec_hash`] of a registry.
+pub fn spec_hash_of(reg: &KindRegistry) -> String {
+    let lines: Vec<String> = id_rows_of(reg).into_iter().map(|(what, id, fp)| format!("{what}={id}:{fp}")).collect();
+    let mut parts: Vec<&str> = vec!["egui"];
+    parts.extend(lines.iter().map(String::as_str));
+    kinds::ids::hex(kinds::ids::fnv(&parts))
+}
+
+/// W-C1: the stable id table as written to [`kinds::ids::IDS_PATH`] (the checked-in rows plus the
+/// ones this build assigned).
+pub fn ids_text() -> String {
+    KindRegistry::global().stable_ids().text()
+}
 
 fn ty_name(ty: Ty) -> &'static str {
     match ty {
@@ -93,6 +212,10 @@ fn prop_json(k: &KindDef, p: &PropDef) -> J {
         m.insert("of".into(), json!("f64"));
     }
     m.insert("writable".into(), json!(true));
+    // W-C4: taffy reads a layout prop, and a text-content prop changes the measured size
+    if p.layout || k.text_content == Some(p.name) {
+        m.insert("change".into(), json!("layout"));
+    }
     J::Object(m)
 }
 
@@ -106,8 +229,13 @@ fn kind_json(k: &KindDef) -> J {
         .enumerate()
         .map(|(i, p)| {
             let mut j = prop_json(k, p);
-            if let Some(pk) = provider {
-                provider_prop(&mut j, pk, i);
+            match provider {
+                Some(pk) => provider_prop(&mut j, pk, i),
+                None => {
+                    let m = j.as_object_mut().expect("prop object");
+                    m.insert("fingerprint".into(), json!(prop_fingerprint(k, p)));
+                    m.insert("id".into(), json!(kinds::find_prop(index, p.name).map_or(0, |(id, _)| id)));
+                }
             }
             (p.name.to_string(), j)
         })
@@ -130,21 +258,28 @@ fn kind_json(k: &KindDef) -> J {
                     json!({"name": n, "type": ty})
                 })
                 .collect();
-            (
-                s.name.to_string(),
-                json!({
-                    "args": args,
-                    "disconnect_on_drop": true,
-                    "doc": s.doc,
-                    "handler_result": if s.sync { "bool_stop" } else { "none" },
-                    "js_event": s.name,
-                    "name": s.name,
-                    // EV1: the DOM-style events propagate along the scene and take capture listeners
-                    "phases": if kinds::is_dom_event(s.name) { json!(["capture"]) } else { json!([]) },
-                    "sync": s.sync,
-                    "sync_required": false,
-                }),
-            )
+            let mut j = json!({
+                "args": args,
+                // W-C5: a sync signal's listener can prevent its default, except where egui's input
+                // has already happened (`events.rs`)
+                "cancelable": s.sync && !NOT_CANCELABLE.contains(&s.name),
+                "disconnect_on_drop": true,
+                "doc": s.doc,
+                "handler_result": if s.sync { "bool_stop" } else { "none" },
+                "js_event": s.name,
+                "name": s.name,
+                "passive": PASSIVE_SIGNALS.contains(&s.name),
+                // EV1: the DOM-style events propagate along the scene and take capture listeners
+                "phases": if kinds::is_dom_event(s.name) { json!(["capture"]) } else { json!([]) },
+                "sync": s.sync,
+                "sync_required": false,
+            });
+            if provider.is_none() {
+                let m = j.as_object_mut().expect("signal object");
+                m.insert("fingerprint".into(), json!(signal_fingerprint(k, s)));
+                m.insert("id".into(), json!(kinds::find_signal(index, s.name).map_or(0, |(id, _)| id)));
+            }
+            (s.name.to_string(), j)
         })
         .collect();
     let methods: Map<String, J> = k
@@ -172,7 +307,15 @@ fn kind_json(k: &KindDef) -> J {
             }
             (
                 m.name.to_string(),
-                json!({"dispatch": "generated", "doc": m.doc, "native": m.name, "params": [], "returns": {"nullable": false, "type": "void"}}),
+                json!({
+                    "dispatch": "generated",
+                    "doc": m.doc,
+                    "fingerprint": method_fingerprint(k, m),
+                    "id": kinds::find_method(index, m.name).map_or(0, |(id, _)| id),
+                    "native": m.name,
+                    "params": [],
+                    "returns": {"nullable": false, "type": "void"},
+                }),
             )
         })
         .collect();
@@ -257,10 +400,12 @@ fn kind_json(k: &KindDef) -> J {
     };
     let children = k.slot.map(|slot| {
         let mut slots = Map::new();
-        slots.insert(slot.to_string(), json!({"accepts": kinds::slot_accepts(k.id), "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}));
+        // W-C1: slot ids are the ABI's (`kinds::slot_of`, `extra_slots`): the default slot 1, named
+        // slots 2, 3, … in order
+        slots.insert(slot.to_string(), json!({"accepts": kinds::slot_accepts(k.id), "attrs": {}, "id": 1, "many": true, "order": "before_sibling", "route_by_kind": false}));
         // OW1a4: named slots after the default one (collapsing-header's `end`)
-        for s in kinds::extra_slots(index) {
-            slots.insert(s.to_string(), json!({"accepts": ["Widget"], "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}));
+        for (n, s) in kinds::extra_slots(index).iter().enumerate() {
+            slots.insert(s.to_string(), json!({"accepts": ["Widget"], "attrs": {}, "id": n + 2, "many": true, "order": "before_sibling", "route_by_kind": false}));
         }
         json!({
             "default_slot": slot,
@@ -287,6 +432,11 @@ fn kind_json(k: &KindDef) -> J {
     // WG2a: `context-menu` and `popup` attach to the element they are declared in
     if let Some(t) = kinds::attaches_to(k.id) {
         kj.as_object_mut().expect("kind object").insert("attaches_to".into(), json!(t));
+    }
+    if provider.is_none() {
+        let m = kj.as_object_mut().expect("kind object");
+        m.insert("fingerprint".into(), json!(kind_fingerprint(k)));
+        m.insert("id".into(), json!(KindRegistry::global().kind_id(index)));
     }
     kj
 }
@@ -341,14 +491,25 @@ fn states_json(d: &kinds::docs::KindDoc, has_enabled: bool) -> J {
     J::Array(v)
 }
 
-fn a11y_json(a: &kinds::docs::A11yDoc) -> J {
+fn a11y_json(a: &kinds::docs::A11yDoc, k: &KindDef) -> J {
     let variants: Vec<J> = a.variants.iter().map(|(role, when)| json!({"role": role, "when": when})).collect();
+    // W-C9: the props `name_from` names (`tooltip (when `text` is empty)` is `tooltip`); a source
+    // that is not a prop (the shown date, a fixed word) always names the node
+    let index = kinds::kind_index(k.id);
+    let is_prop = |name: &str| index.is_some_and(|i| kinds::find_prop(i, name).is_some());
+    let sources: Vec<&str> = a.name_from.iter().map(|s| s.split(" (").next().unwrap_or(s)).collect();
+    let name_props: Vec<&str> = sources.iter().copied().filter(|s| is_prop(s)).collect();
+    let requires_name = a.role.is_some_and(|r| NAMED_ROLES.contains(&r)) && !name_props.is_empty() && name_props.len() == sources.len();
+    let icon_props: Vec<&str> = if is_prop("icon") { vec!["icon"] } else { vec![] };
     json!({
         "actions": a.actions,
         "author_id": if a.decorated { Some("anchor") } else { None },
+        "icon_props": icon_props,
         "invalid": a.decorated,
         "name_from": a.name_from,
+        "name_props": name_props,
         "note": a.note,
+        "requires_name": requires_name,
         "role": a.role,
         "value": a.value,
         "variants": variants,
@@ -368,7 +529,7 @@ fn add_docs(kj: &mut J, k: &KindDef, provider: Option<&ProviderKind>) {
     // `:disabled` follows `enabled`, which only kinds under `Widget` have (not `window`)
     let has_enabled = kinds::kind_index(k.id).is_none_or(|i| kinds::find_prop(i, "enabled").is_some());
     let m = kj.as_object_mut().expect("kind object");
-    m.insert("a11y".into(), a11y_json(&d.a11y));
+    m.insert("a11y".into(), a11y_json(&d.a11y, k));
     m.insert("category".into(), json!(d.category.name()));
     m.insert("css_hidden".into(), json!(kinds::docs::css_hidden(k.id)));
     m.insert("css_note".into(), json!(d.css_note));
@@ -407,6 +568,8 @@ fn style_json() -> J {
                     m.insert("values".into(), json!(values));
                 }
                 m.insert("via".into(), json!("setter"));
+                // W-C4: taffy reads it
+                m.insert("change".into(), json!("layout"));
                 J::Object(m)
             });
             let m = entry.as_object_mut().unwrap();
@@ -431,6 +594,9 @@ fn style_json() -> J {
     // compiler leaves them to the engine, which computes them because egui has no toolkit CSS.
     for &(name, ty, values) in crate::style::ENGINE_PROPS {
         let mut m = Map::new();
+        if let Some(c) = css_change(name) {
+            m.insert("change".into(), json!(c));
+        }
         m.insert("decl_type".into(), json!(ty));
         if !values.is_empty() {
             m.insert("values".into(), json!(values));
@@ -561,6 +727,7 @@ pub fn semantics() -> J {
             "lowering": "link",
             "module": "svelters:app/*",
         }],
+        "capabilities": CAPABILITIES,
         "event_aliases": {},
         "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
         // RT2: text mixed with runs in a `label` lowers to `span` runs (`kinds/rich.rs`)
@@ -568,7 +735,8 @@ pub fn semantics() -> J {
         "kinds": kinds,
         "method_lookup": "annotated",
         "schema": "svelters-semantics/v0",
-        "source": {"kinds": "crates/svelters-egui/src/kinds/builtin.rs", "generator": "crates/svelters-egui/src/spec.rs"},
+        "source": {"kinds": "crates/svelters-egui/src/kinds/builtin.rs", "generator": "crates/svelters-egui/src/spec.rs", "ids": kinds::ids::IDS_PATH},
+        "spec_hash": spec_hash(),
         "style": style_json(),
         "tags": tags,
         "theme": theme_json(),

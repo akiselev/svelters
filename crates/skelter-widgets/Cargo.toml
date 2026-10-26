@@ -1,0 +1,38 @@
+[package]
+name = "skelter-widgets"
+description = "skelter's built-in kinds: interaction units, paint helpers, theme tokens, Tier 0 and Tier 1 widgets, views, text editing."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+skelter-base = { workspace = true }
+skelter-core = { workspace = true }
+skelter-text = { workspace = true }
+skelter-anim = { workspace = true }
+# The clipboard service (`Box<dyn skelter_platform::Clipboard>`) the text kinds read.
+skelter-platform = { workspace = true }
+# The CSS engine skelter uses as its style system (architecture §3, §5): widgets read computed values.
+svelters-style = { workspace = true }
+taffy = { workspace = true }
+smallvec = { workspace = true }
+serde_json = { workspace = true }
+# Icon kit SVGs rasterised into images (EGUI.md §5 `icon`).
+resvg = { version = "=0.45.1", default-features = false }
+# The icon colour-slot rewrite (`paint::icon::registry::slot_svg`) parses icon SVGs with the roxmltree usvg links.
+roxmltree = "=0.20.0"
+# The text-editing core of the `text` kinds (lane TEXT-INPUT), at QUIRE's `claude/presto-quire` 35b5063a (R1, R2).
+quire-text = { git = "https://github.com/akiselev/quire", rev = "35b5063ab149ca8682241324aff8efb28696f491" }
+# Native file and message dialogs (`dialogs::native`) through rfd; without it they fail as unsupported.
+rfd = { version = "0.17.2", optional = true }
+
+[features]
+dialogs = ["dep:rfd"]
+# The native menu bar's description (`views::menu_model::MenuModel::to_menu_desc`); skelter-platform is a
+# regular dependency since the text kinds read its clipboard.
+native-menu = []
+
+[dev-dependencies]
+# The conformance pins (pins 1–7) against the Linux goldens: tests/text_pins.rs.
+svelters-conformance = { path = "../svelters-conformance" }

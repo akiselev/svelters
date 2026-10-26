@@ -120,6 +120,13 @@ pub struct EmbedConfig {
     /// U3 (UTILITY-CSS §4.6, UQ8): utility classes (`p-4 bg-surface hover:bg-list-hover`). Off by
     /// default; [`EmbedConfig::with_utilities`]. [`EguiBackend::set_utilities`] changes it later.
     pub utilities: crate::style::Utilities,
+    /// W-H1 (plans/research/skelter/compiler-and-js.md §3.10): widget signals (`onclicked`,
+    /// `onchanged`, `bind:`) are only known during the walk, where JS cannot run. On by default:
+    /// a pass whose walk sent any to JS is discarded (`Context::request_discard`) and rerun with
+    /// logic first, so the handlers run and their reaction is drawn in the frame that got the
+    /// input (ARCH-SCENE R17 relaxed: logic may run again in the rerun pass). Costs one more pass
+    /// on interaction frames, within egui's `max_passes`. Off: the reaction is drawn one frame later.
+    pub same_frame_reactions: bool,
 }
 
 impl EmbedConfig {
@@ -159,6 +166,7 @@ impl Default for EmbedConfig {
             policy: None,
             zoom_keys: crate::zoom::ZoomKeys::Host,
             utilities: crate::style::Utilities::default(),
+            same_frame_reactions: true,
         }
     }
 }
@@ -497,6 +505,7 @@ impl Embed {
         let backend = EguiBackend::new();
         backend.bind_ctx(ctx);
         backend.set_utilities(&cfg.utilities);
+        backend.0.same_frame.set(cfg.same_frame_reactions);
         let host = Host::new_owned(backend.clone(), cfg.host.clone()).map_err(EmbedError::Host)?;
         host.start().map_err(|e| EmbedError::Host(JsError::new(ErrorKind::Host, e.to_string())))?;
         host.set_turn_budget(Some(cfg.budgets.interrupt));
@@ -832,7 +841,8 @@ impl Embed {
     pub fn logic(&self, ctx: &egui::Context) {
         let b = &self.inner.backend;
         // R17: this frame's logic ran (or runs only in the first pass): the rest of the pass is `Ui`.
-        if ctx.current_pass_index() != 0 {
+        // W-H1: except in a pass rerun because the last one's walk sent input to JS.
+        if ctx.current_pass_index() != 0 && !b.0.rerun_logic.take() {
             b.0.scene.set_phase(Phase::Ui);
             return;
         }

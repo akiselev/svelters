@@ -171,3 +171,83 @@ fn style_metadata_for_utilities() {
     assert!(tokens["list-hover"]["values"]["dark"].is_string(), "colours differ per set");
     assert!(!tokens.keys().any(|k| k.starts_with("--") || k.starts_with("vscode")), "only --sv-* tokens, by bare name");
 }
+
+/// W-C1: the stable id table is current: every built-in kind and member has its row
+/// (`SVELTERS_UPDATE=1` appends the rows a new kind or member needs; rows are never renumbered or
+/// dropped).
+#[test]
+fn checked_in_ids_are_current() {
+    let path = root().join(kinds::ids::IDS_PATH);
+    let want = spec::ids_text();
+    if std::env::var("SVELTERS_UPDATE").as_deref() == Ok("1") {
+        std::fs::write(&path, &want).unwrap();
+        return;
+    }
+    let have = std::fs::read_to_string(&path).unwrap_or_default();
+    assert!(have == want, "{} lacks rows: run SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec", kinds::ids::IDS_PATH);
+}
+
+/// W-C1: the registry's ids are the table's: a kind's id, and a member's `kind id << 16 | number`
+/// with the declaring kind's id; each id resolves back to the same definition.
+#[test]
+fn registry_ids_are_the_tables() {
+    use kinds::ids::Cat;
+    let table = kinds::ids::checked_in();
+    let reg = kinds::KindRegistry::global();
+    for (i, k) in KINDS.iter().enumerate() {
+        let Some(row) = table.kinds.get(k.id) else { continue };
+        assert_eq!(reg.kind_id(i), row.id, "{}: kind id", k.id);
+        assert_eq!(reg.kind_of_id(row.id), Some(i), "{}: kind id resolves back", k.id);
+        for p in k.props {
+            let (id, def) = reg.find_prop(i, p.name).unwrap();
+            assert!(std::ptr::eq(def, p));
+            let n = reg.stable_ids().member(k.id, Cat::Prop, p.name).unwrap();
+            assert_eq!(id, row.id << 16 | u32::from(n), "{}.{}: prop id", k.id, p.name);
+        }
+        for s in k.signals {
+            let (id, _) = reg.find_signal(i, s.name).unwrap();
+            let n = reg.stable_ids().member(k.id, Cat::Signal, s.name).unwrap();
+            assert_eq!(id, row.id << 16 | u32::from(n), "{}.{}: signal id", k.id, s.name);
+        }
+    }
+    // the top 4 bits of a signal id carry its listen flags (ABI `SVL_SIGNAL_FLAGS_SHIFT`): no
+    // member id, built-in or provider, may reach them
+    for i in reg.indexes() {
+        for s in reg.kind(i).signals {
+            let (id, _) = reg.find_signal(i, s.name).unwrap();
+            assert_eq!(id & !svelters_abi::SVL_SIGNAL_ID_MASK, 0, "{}.{}: id {id:#x} reaches the flag bits", reg.kind(i).id, s.name);
+        }
+    }
+}
+
+/// W-C1: the spec carries the ids and the spec hash; every built-in kind, prop and signal has an id
+/// and a fingerprint, and the hash is [`spec::spec_hash`].
+#[test]
+fn spec_carries_ids() {
+    let spec = spec::semantics();
+    assert_eq!(spec["spec_hash"].as_str(), Some(spec::spec_hash().as_str()));
+    assert_eq!(spec::spec_hash().len(), 16);
+    for k in KINDS {
+        let kj = &spec["kinds"][k.id];
+        assert!(kj["id"].as_u64().is_some_and(|id| id > 0), "{}: id", k.id);
+        assert!(kj["fingerprint"].is_string(), "{}: fingerprint", k.id);
+        for (name, p) in kj["props"].as_object().unwrap() {
+            assert!(p["id"].as_u64().is_some_and(|id| id > 0), "{}.{name}: id", k.id);
+            assert!(p["fingerprint"].is_string(), "{}.{name}: fingerprint", k.id);
+        }
+        for (name, s) in kj["signals"].as_object().unwrap() {
+            assert!(s["id"].as_u64().is_some_and(|id| id > 0), "{}.{name}: id", k.id);
+            assert!(s["cancelable"].is_boolean() && s["passive"].is_boolean(), "{}.{name}: passivity facts", k.id);
+        }
+    }
+    // W-C5: wheel is cancelable and passive-relevant; pointermove is not cancelable
+    let w = &spec["kinds"]["Widget"]["signals"];
+    assert_eq!(w["wheel"]["cancelable"], true);
+    assert_eq!(w["wheel"]["passive"], true);
+    assert_eq!(w["pointermove"]["cancelable"], false);
+    // W-C9: a button needs a name from its text, accessible name or tooltip; it can show an icon
+    let a = &spec["kinds"]["Button"]["a11y"];
+    assert_eq!(a["requires_name"], true);
+    assert_eq!(a["icon_props"], serde_json::json!(["icon"]));
+    assert!(a["name_props"].as_array().unwrap().iter().any(|p| p == "text"));
+}

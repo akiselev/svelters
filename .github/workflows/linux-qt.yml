@@ -3,6 +3,8 @@ name: linux-qt
 on:
   push:
     branches: [master, 'ci/**']
+    # skelter-only pushes (crates/skelter*, lane records) are covered by skelter.yml (coordinator, 2026-10-25)
+    paths-ignore: ['crates/skelter/**', 'crates/skelter-*/**', 'plans/cloud/presto-*/**', 'plans/cloud/skelter-*/**', 'plans/milestones/SKELTER-*', 'plans/research/skelter/**']
   pull_request:
   workflow_dispatch:
 

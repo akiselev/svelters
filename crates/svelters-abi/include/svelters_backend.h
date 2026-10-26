@@ -201,7 +201,10 @@ enum {
   SVL_CB_FOREVER = 4   /* never released: refused by the host */
 };
 
-enum { SVL_CAP_UTF16_IN = 1, SVL_CAP_UTF16_OUT = 2, SVL_CAP_BYTES_RETAIN = 4 };
+enum { SVL_CAP_UTF16_IN = 1, SVL_CAP_UTF16_OUT = 2, SVL_CAP_BYTES_RETAIN = 4,
+       /* ABI v2.9: set_prop drops a scalar write equal to the stored value (typed columns), so the
+        * JS runtime may skip its own last-value cache for typed scalar writes */
+       SVL_CAP_DEDUPE = 8 };
 
 /* Lifetime class of a handle; see plans/architecture/backend-abi.md "ABI v2". */
 typedef enum svl_lifetime {
@@ -254,6 +257,11 @@ typedef struct svl_host {
      have changed: no value, and not a promise that it did (GTK re-notifies identical sets). UI thread
      only; a backend hops there first. A backend may report props nobody observes; the host ignores them. */
   void (*prop_changed)(void *self, svl_handle h, svl_id prop);
+  /* ABI v2.9 (may be NULL). Deliver `signal` now, at event time, and drain the JS jobs it queued, so
+     its result is in the tree when this returns. SVL_SYNC_OK; SVL_SYNC_BUSY when JS was running (the
+     event is queued for the next checkpoint, as post_event); SVL_SYNC_FAILED. UI thread, never while
+     the backend holds its tree borrowed. */
+  int (*dispatch_now)(void *self, svl_handle h, svl_id signal, const svl_value *args, size_t n);
 } svl_host;
 
 /* call_sync return codes (ABI v2.1 semantics). `out` holds the handler result when 0:
@@ -266,6 +274,40 @@ typedef struct svl_host {
    mechanism for this property (Qt: no NOTIFY signal). Other failures are -1. */
 #define SVL_OBSERVE_UNSUPPORTED (-2)
 
+
+/* ---- templates (ABI v2.9, W-C2) --------------------------------------------------------------------
+ * A static subtree built in one call. Instantiating it is, op for op: for each node in pre-order,
+ * `create` and its static props in table order; when a node's subtree is complete, its `insert` into
+ * its template parent (roots are not inserted: the runtime places them), then its listeners. */
+
+typedef struct svl_tpl_node {
+  svl_id kind;
+  uint32_t parent;     /* index + 1 of the template parent; 0 = a root */
+  svl_id slot;         /* SVL_SLOT id of the parent's kind; 0 = default */
+  uint32_t first_prop; /* props[first_prop .. first_prop + n_props] */
+  uint32_t n_props;
+} svl_tpl_node;
+
+typedef struct svl_tpl_prop {
+  svl_id prop;
+  svl_value value;
+} svl_tpl_prop;
+
+typedef struct svl_tpl_listen {
+  uint32_t node;
+  svl_id signal;
+  uint32_t flags; /* SVL_LISTEN_*; 0 = plain listen */
+} svl_tpl_listen;
+
+typedef struct svl_template {
+  uint64_t id; /* content hash of the table */
+  const svl_tpl_node *nodes;
+  size_t n_nodes;
+  const svl_tpl_prop *props;
+  size_t n_props;
+  const svl_tpl_listen *listens;
+  size_t n_listens;
+} svl_template;
 
 /* ---- backend ------------------------------------------------------------------------------------ */
 
@@ -358,6 +400,13 @@ typedef struct svl_backend {
    * that has not been laid out yet reports x = y = 0 and its natural size. 0 = ok, < 0 = error
    * (last_error). */
   int (*bounds)(void *self, svl_handle h, double *out);
+
+  /* ABI v2.9 (both may be NULL: the host expands templates into the ops above). `instantiate` builds
+   * template `t`; node k gets handle *out_base + k (contiguous). `destroy_range` destroys the n
+   * handles base .. base + n - 1 of one instantiation, children before parents. 0 = ok, < 0 =
+   * error (last_error); a failed instantiate leaves nothing behind. */
+  int (*instantiate)(void *self, const svl_template *t, svl_handle *out_base);
+  void (*destroy_range)(void *self, svl_handle base, uint32_t n);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

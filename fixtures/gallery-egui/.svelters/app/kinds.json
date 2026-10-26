@@ -141,11 +141,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "Where it goes: `{ side, x, y, width, height }`.",
           "handler_result": "none",
           "js_event": "placed",
           "name": "placed",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -220,11 +222,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "`{ reason, x, y }`.",
           "handler_result": "none",
           "js_event": "dismiss",
           "name": "dismiss",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -354,11 +358,13 @@
               "type": "f64"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The value at the release (or the restored one after Escape).",
           "handler_result": "none",
           "js_event": "commit",
           "name": "commit",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -370,11 +376,13 @@
               "type": "f64"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The value while dragging.",
           "handler_result": "none",
           "js_event": "scrub",
           "name": "scrub",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -449,11 +457,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "`{ phase, dx, dy }`.",
           "handler_result": "none",
           "js_event": "drag",
           "name": "drag",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -528,11 +538,13 @@
               "type": "bool"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The user opened (`true`) or closed it.",
           "handler_result": "none",
           "js_event": "expand",
           "name": "expand",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -606,11 +618,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "Focus left.",
           "handler_result": "none",
           "js_event": "blur",
           "name": "blur",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -622,11 +636,13 @@
               "type": "string"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "Focus came: `keyboard`, `pointer` or `program`.",
           "handler_result": "none",
           "js_event": "focus",
           "name": "focus",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -663,11 +679,13 @@
               "type": "bool"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The pointer entered (`true`) or left (`false`) the host.",
           "handler_result": "none",
           "js_event": "hover",
           "name": "hover",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -743,11 +761,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The press was cancelled (Escape, focus loss).",
           "handler_result": "none",
           "js_event": "cancel",
           "name": "cancel",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -759,11 +779,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "A button went down on the host.",
           "handler_result": "none",
           "js_event": "down",
           "name": "down",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -775,11 +797,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "A click: `{ count, button }`.",
           "handler_result": "none",
           "js_event": "press",
           "name": "press",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -791,11 +815,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "Auto-repeat while held (`autoRepeat`).",
           "handler_result": "none",
           "js_event": "repeat",
           "name": "repeat",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -807,11 +833,13 @@
               "type": "bool"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The button went up: `inside` the host or not.",
           "handler_result": "none",
           "js_event": "up",
           "name": "up",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -980,11 +1008,13 @@
               "type": "f64"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "",
           "handler_result": "none",
           "js_event": "commit",
           "name": "commit",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -996,11 +1026,13 @@
               "type": "f64"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "",
           "handler_result": "none",
           "js_event": "resize",
           "name": "resize",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1056,11 +1088,13 @@
               "type": "f64"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "Focus moved to member `to` (an index among the group's members).",
           "handler_result": "none",
           "js_event": "rove",
           "name": "rove",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1177,11 +1211,13 @@
               "type": "f64"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The highlight moved to item `to`.",
           "handler_result": "none",
           "js_event": "move",
           "name": "move",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1294,11 +1330,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The new offset: `{ x, y }`.",
           "handler_result": "none",
           "js_event": "scroll",
           "name": "scroll",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1466,11 +1504,13 @@
               "type": "f64"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The new value.",
           "handler_result": "none",
           "js_event": "change",
           "name": "change",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1584,11 +1624,13 @@
               "type": "other"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The user toggled it: `{ checked, indeterminate }`.",
           "handler_result": "none",
           "js_event": "toggle",
           "name": "toggle",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1664,11 +1706,13 @@
               "type": "bool"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "Show (`true`) or hide.",
           "handler_result": "none",
           "js_event": "tip",
           "name": "tip",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1724,11 +1768,13 @@
               "type": "string"
             }
           ],
+          "cancelable": false,
           "disconnect_on_drop": true,
           "doc": "The prefix typed so far.",
           "handler_result": "none",
           "js_event": "search",
           "name": "search",
+          "passive": false,
           "phases": [],
           "sync": false,
           "sync_required": false

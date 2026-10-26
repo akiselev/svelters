@@ -1,6 +1,24 @@
 [workspace]
 resolver = "3"
 members = [
+    "crates/skelter-base",
+    "crates/skelter-core",
+    "crates/skelter-anim",
+    "crates/skelter-frame",
+    "crates/skelter-text",
+    "crates/skelter-render",
+    "crates/skelter-canvas",
+    "crates/skelter-compositor",
+    "crates/skelter-platform",
+    "crates/skelter-widgets",
+    "crates/skelter-motion",
+    "crates/skelter-egui-island",
+    "crates/skelter-test",
+    "crates/skelter",
+    "crates/svelters-skelter",
+    "crates/skelter-platform-win32",
+    "crates/skelter-platform-wayland",
+    "crates/skelter-platform-macos",
     "crates/svelters-abi",
     "crates/svelters-host",
     "crates/svelters-backend-log",
@@ -36,6 +54,21 @@ license = "MIT"
 publish = false
 
 [workspace.dependencies]
+skelter-base = { path = "crates/skelter-base" }
+skelter-core = { path = "crates/skelter-core" }
+skelter-anim = { path = "crates/skelter-anim" }
+skelter-frame = { path = "crates/skelter-frame" }
+skelter-text = { path = "crates/skelter-text" }
+skelter-render = { path = "crates/skelter-render" }
+skelter-canvas = { path = "crates/skelter-canvas" }
+skelter-compositor = { path = "crates/skelter-compositor" }
+skelter-platform = { path = "crates/skelter-platform" }
+skelter-widgets = { path = "crates/skelter-widgets" }
+skelter-motion = { path = "crates/skelter-motion" }
+skelter-egui-island = { path = "crates/skelter-egui-island" }
+skelter-test = { path = "crates/skelter-test" }
+skelter = { path = "crates/skelter" }
+svelters-skelter = { path = "crates/svelters-skelter" }
 svelters-abi = { path = "crates/svelters-abi" }
 svelters-host = { path = "crates/svelters-host" }
 svelters-style = { path = "crates/svelters-style" }
@@ -60,9 +93,24 @@ serde = "1"
 # RA2: `Json<T>` typings (cadatomic uses schemars 1).
 schemars = "1"
 cc = "1"
+# skelter (plans/research/skelter/): third-party versions shared by the skelter crates.
+accesskit = "0.25.1"
+smallvec = { version = "1.16", features = ["union", "const_generics"] }
+bytemuck = { version = "1.25", features = ["derive"] }
+taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
+wgpu = "30.0.1"
+winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"] }
+raw-window-handle = "0.6"
+parley = "0.12"
+etagere = "0.3"
+lyon = "1.0"
 
 # QuickJS is C compiled by the cc crate; at the dev profile's opt-level 0 it runs 5-10x slower, which
 # makes JS-heavy tests (10k-row lists) hit the host's turn budget. Optimise it in every profile.
+# skelter: taffy runs on every relayout; Zed builds it at opt-level 3 in dev for the same reason.
+[profile.dev.package.taffy]
+opt-level = 3
+
 [profile.dev.package.rquickjs-sys]
 opt-level = 2
 

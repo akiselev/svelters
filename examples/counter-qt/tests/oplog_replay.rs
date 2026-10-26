@@ -415,7 +415,7 @@ fn main() {
 }
 
 fn body() {
-    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame, prop_changed: Some(prop_changed) };
+    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame, prop_changed: Some(prop_changed), dispatch_now: None };
     unsafe { counter_qt::set_host(&host) };
     let b = unsafe { BackendRef::from_raw(counter_qt::backend()) }.unwrap();
     let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures");

@@ -82,6 +82,10 @@ pub const SVL_CB_FOREVER: u16 = 4;
 pub const SVL_CAP_UTF16_IN: u32 = 1;
 pub const SVL_CAP_UTF16_OUT: u32 = 2;
 pub const SVL_CAP_BYTES_RETAIN: u32 = 4;
+/// ABI v2.9: `set_prop` compares a scalar write with the value the backend stores and drops it
+/// when equal, cheaply (typed columns), so the JS runtime may skip its own last-value cache for
+/// typed scalar writes (`setp`).
+pub const SVL_CAP_DEDUPE: u32 = 8;
 
 pub const SVL_KIND: u32 = 0;
 pub const SVL_PROP: u32 = 1;
@@ -119,7 +123,13 @@ pub const SVL_STYLE_INERT: u32 = 10;
 /// "delay":ms,"frames":[{"opacity":o,"transform":[6],"clip":[2]},..]}`, or `{"id":n,"cancel":true}`.
 /// The backend interpolates and reports the end with the `animationend` signal (argument: the id).
 /// A backend without it refuses the op (an error) and the runtime plays the animation itself.
+/// skelter (`native_transitions`): an optional `"native":{"kind","params","computed","t1","t2"[,"flip"]}`
+/// names the svelte/transition built-in or `flip` the frames came from (crates/skelter-motion `op`);
+/// other backends ignore it.
 pub const SVL_STYLE_ANIMATE: u32 = 11;
+/// skelter (`css_precompiled`): a precompiled sheet, `id SEP base64` of `svelters_style::binary`
+/// bytes (the sheet, rule hints per element, utility rules); replaces sheet `id` like `SVL_STYLE_SHEET`.
+pub const SVL_STYLE_SHEET_BIN: u32 = 12;
 /// `SVL_STYLE_TARGET` answers: the dialect the backend's sheets use.
 pub const SVL_STYLE_TARGET_NONE: i32 = 0;
 pub const SVL_STYLE_TARGET_CSS: i32 = 1;
@@ -278,6 +288,11 @@ pub struct svl_host {
     pub frame: unsafe extern "C" fn(*mut c_void),
     /// ABI v2.6: an observed property may have changed (no value). Optional.
     pub prop_changed: Option<unsafe extern "C" fn(*mut c_void, svl_handle, svl_id)>,
+    /// ABI v2.9 (W-H1): deliver a signal now, at event time, and drain the JS jobs it queued
+    /// (Svelte's flush), so its result is in the scene when this returns. `SVL_SYNC_OK`,
+    /// `SVL_SYNC_BUSY` (JS was running: queued for the next checkpoint, as `post_event`) or
+    /// `SVL_SYNC_FAILED`. Optional (NULL: a host without it; use `post_event` + `checkpoint`).
+    pub dispatch_now: Option<unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, *const svl_value, usize) -> c_int>,
 }
 
 pub const SVL_SYNC_OK: i32 = 0;
@@ -350,6 +365,61 @@ pub struct svl_backend {
     /// ABI v2.8: the layout rect of a handle in its toplevel (x, y, width, height into `out[4]`,
     /// logical px; natural size at 0, 0 when not laid out yet). Optional.
     pub bounds: Option<unsafe extern "C" fn(*mut c_void, svl_handle, *mut f64) -> c_int>,
+    /// ABI v2.9 (W-C2): build a whole static subtree from a template in one call. Node `k` of the
+    /// template gets handle `*out_base + k` (contiguous). Optional: the host expands a template
+    /// into `create`/`set_prop`/`insert`/`listen_ex` when NULL (`svl_template` has the order).
+    pub instantiate: Option<unsafe extern "C" fn(*mut c_void, *const svl_template, *mut svl_handle) -> c_int>,
+    /// ABI v2.9 (W-C2): destroy the `n` handles `base..base + n` of one instantiation, as `destroy`
+    /// of each, children before parents. Optional (requires `instantiate`).
+    pub destroy_range: Option<unsafe extern "C" fn(*mut c_void, svl_handle, u32)>,
+}
+
+/// ABI v2.9 (W-C2): one node of an [`svl_template`], in pre-order.
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct svl_tpl_node {
+    pub kind: svl_id,
+    /// Index + 1 of the template parent; 0 for a root (the runtime places roots itself).
+    pub parent: u32,
+    /// Slot in the parent (`SVL_SLOT` id of the parent's kind), 0 = default.
+    pub slot: svl_id,
+    /// This node's static props: `props[first_prop..first_prop + n_props]`.
+    pub first_prop: u32,
+    pub n_props: u32,
+}
+
+/// ABI v2.9: a static prop of a template node: an id of the node's kind and a typed constant.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct svl_tpl_prop {
+    pub prop: svl_id,
+    pub value: svl_value,
+}
+
+/// ABI v2.9: a listener of a template node (`listen_ex` with `flags`; 0 = plain `listen`).
+#[repr(C)]
+#[derive(Clone, Copy, Debug)]
+pub struct svl_tpl_listen {
+    pub node: u32,
+    pub signal: svl_id,
+    pub flags: u32,
+}
+
+/// ABI v2.9 (W-C2, plans/research/skelter/compiler-and-js.md §3.2): a static subtree. Instantiating
+/// it is, op for op, this sequence (the host writes it to the op log when it expands one): for
+/// each node in pre-order, `create` and its static props in table order; when a node's subtree is
+/// complete, its `insert` into its template parent (roots are not inserted), then its listeners.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct svl_template {
+    /// Content hash of the template table (stable across instantiations and reloads).
+    pub id: u64,
+    pub nodes: *const svl_tpl_node,
+    pub n_nodes: usize,
+    pub props: *const svl_tpl_prop,
+    pub n_props: usize,
+    pub listens: *const svl_tpl_listen,
+    pub n_listens: usize,
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.

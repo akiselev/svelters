@@ -252,6 +252,7 @@ impl Harness {
             release_callback: h_release,
             frame: h_frame,
             prop_changed: Some(h_prop_changed),
+            dispatch_now: None,
         });
         unsafe { backend.attach_host(&*host) };
         Harness { backend, rec, _host: host, kinds: RefCell::new(HashMap::new()), sig_names: RefCell::new(HashMap::new()) }

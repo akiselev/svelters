@@ -21,7 +21,7 @@ pub mod warn;
 use crate::svelte::ast::{FragmentNode, Root};
 use crate::svelte::errors::{CompileError, CompileWarning};
 use crate::svelte::scope::analyze::ComponentScopeAnalysis;
-use crate::svelte::scope::walk::NodeKey;
+use crate::svelte::scope::walk::{NodeKey, NodeRef};
 use ast::{Node, Rule, StyleSheet};
 use std::cell::Cell;
 use std::collections::HashSet;
@@ -138,6 +138,33 @@ pub struct CssOutput {
     /// DZ0: the runs of `code` that are untouched `<style>` text: `(offset in code, offset from
     /// the style content's start, length)`, bytes
     pub source_map: Vec<(u32, u32, u32)>,
+    /// SVELTERS (skelter `css_precompiled`): what pruning found, per rule.
+    pub matches: SelectorMatches,
+}
+
+/// SVELTERS: which rules the pruning pass found might apply to which template elements, for
+/// precompiled sheets' rule hints (`crate::scoped_css`).
+#[derive(Clone, Debug, Default)]
+pub struct SelectorMatches {
+    /// Per rule id, its prelude's (start, end) source offsets.
+    pub preludes: Vec<(u32, u32)>,
+    /// (rule id, element start offset): a selector of the rule might apply to the element.
+    pub pairs: Vec<(usize, u32)>,
+    /// Rules with a selector that is entirely global.
+    pub global_rules: Vec<usize>,
+    /// Every element (RegularElement / SvelteElement) with what is static about it.
+    pub elements: Vec<StaticElement>,
+}
+
+/// A template element's tag, and its class and id when they are static text.
+#[derive(Clone, Debug)]
+pub struct StaticElement {
+    pub start: u32,
+    pub tag: String,
+    /// `None` when the classes can change (an expression, `class:`, a spread).
+    pub classes: Option<Vec<String>>,
+    /// `Err(())` when the id can change.
+    pub id: Result<Option<String>, ()>,
 }
 
 /// `hash(str)` of `svelte/src/utils.js`: djb2 over UTF-16 units (without `\r`), base 36.
@@ -248,7 +275,9 @@ pub fn compile_css<'a>(src: &str, root: &'a Root, analysis: &ComponentScopeAnaly
 
     let tpl = template::Template::build(root, analysis);
     let synth = prune::Synthetic::new();
-    let scoped: HashSet<NodeKey> = prune::prune(&css, &tpl, &synth);
+    let pruned = prune::prune_matches(&css, &tpl, &synth);
+    let matches = selector_matches(&css, &tpl, &pruned);
+    let scoped: HashSet<NodeKey> = pruned.scoped;
 
     let mut warnings = Vec::new();
     let ignore = style_comment(root, block.start).is_some_and(|c| ignores_unused_selector(c, analysis.runes));
@@ -286,7 +315,59 @@ pub fn compile_css<'a>(src: &str, root: &'a Root, analysis: &ComponentScopeAnaly
         || root.options.as_ref().is_some_and(|o| o.custom_element.is_some() || o.css.as_deref() == Some("injected"));
     let (code, source_map) = transform::render_stylesheet_mapped(src, &css, &hash, inject, opts.dev);
     let scoped_elements = tpl.elements.iter().filter(|e| scoped.contains(&e.key())).map(|e| e.span().start).collect();
-    Ok(Some(CssOutput { code, has_global: css.has_global, hash, injected: inject, warnings, scoped_elements, source_map }))
+    Ok(Some(CssOutput { code, has_global: css.has_global, hash, injected: inject, warnings, scoped_elements, source_map, matches }))
+}
+
+/// SVELTERS: [`SelectorMatches`] from the pruner's complex-selector matches.
+fn selector_matches(css: &Css, tpl: &template::Template, pruned: &prune::Pruner) -> SelectorMatches {
+    use crate::svelte::ast::{AttributeLike, AttributeValue, TextOrExpressionTag};
+    let rule_of = |c: usize| css.meta.complex[c].rule.get();
+    let preludes = css.rules.iter().map(|r| (r.prelude.start as u32, r.prelude.end as u32)).collect();
+    let start_of: std::collections::HashMap<NodeKey, u32> = tpl.elements.iter().map(|e| (e.key(), e.span().start)).collect();
+    let mut pairs: Vec<(usize, u32)> = pruned.matched.iter().filter_map(|(c, e)| Some((rule_of(*c)?, *start_of.get(e)?))).collect();
+    pairs.sort_unstable();
+    pairs.dedup();
+    let mut global_rules: Vec<usize> = pruned.global.iter().filter_map(|c| rule_of(*c)).collect();
+    global_rules.sort_unstable();
+    global_rules.dedup();
+    let text = |v: &AttributeValue| -> Option<String> {
+        match v {
+            AttributeValue::Sequence(parts) => parts.iter().map(|p| if let TextOrExpressionTag::Text(t) = p { Some(t.data.clone()) } else { None }).collect(),
+            AttributeValue::True(_) => Some(String::new()),
+            AttributeValue::Expression(_) => None,
+        }
+    };
+    let elements = tpl
+        .elements
+        .iter()
+        .filter_map(|&e| {
+            let (tag, attrs) = template::element_parts(e)?;
+            let mut classes = Some(Vec::new());
+            let mut id = Ok(None);
+            for a in attrs {
+                match a {
+                    AttributeLike::Attribute(a) if a.name == "class" => match text(&a.value) {
+                        Some(t) => classes = classes.map(|mut c: Vec<String>| {
+                            c.extend(t.split_ascii_whitespace().map(str::to_string));
+                            c
+                        }),
+                        None => classes = None,
+                    },
+                    AttributeLike::Attribute(a) if a.name == "id" => id = text(&a.value).map(Some).ok_or(()),
+                    AttributeLike::ClassDirective(_) => classes = None,
+                    AttributeLike::SpreadAttribute(_) => {
+                        classes = None;
+                        id = Err(());
+                    }
+                    _ => {}
+                }
+            }
+            // <svelte:element this={..}>: the tag is dynamic
+            let tag = if matches!(e, NodeRef::SvelteElement(_)) { String::new() } else { tag.to_string() };
+            Some(StaticElement { start: e.span().start, tag, classes, id })
+        })
+        .collect();
+    SelectorMatches { preludes, pairs, global_rules, elements }
 }
 
 /// The whole pipeline from source: `parse` (`native`: the svelters native element syntax),

@@ -3,6 +3,10 @@ export interface SheetSet {
   gtk?: string;
   qt?: string;
   qtDark?: string;
+  /** The scoped sheet as CSS, for a backend that runs the Rust CSS engine (egui, skelter). */
+  css?: string;
+  /** skelter `css_precompiled` (release builds): the scoped sheet precompiled, base64 `svelters_style::binary`. */
+  bin?: string;
   /** Setter rules per toolkit (setter and child-attr properties, applied with setProp / setChildAttr). */
   rules?: Partial<Record<'gtk' | 'qt', SetterRule[]>>;
 }

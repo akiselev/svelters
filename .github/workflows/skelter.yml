@@ -1,0 +1,76 @@
+name: skelter
+
+on:
+  push:
+    branches: [master, 'ci/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  # GPU tests (skelter-render, skelter-compositor) run only where an adapter exists: lavapipe on
+  # Linux, WARP on Windows, the runner's Metal device on macOS.
+  SKELTER_GPU_TESTS: "1"
+
+jobs:
+  skelter:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    steps:
+      - name: git config
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.longpaths true
+      - uses: actions/checkout@v4
+      # skelter-test's automation tests load svelters' JS runtime sources (node_modules).
+      - uses: ./.github/actions/setup-pnpm
+      - name: Linux packages (Wayland, X11, xkb, lavapipe)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwayland-dev libxkbcommon-dev libxkbcommon-x11-dev libx11-dev \
+            libxcursor-dev libxrandr-dev libxi-dev libfontconfig1-dev libfreetype-dev mesa-vulkan-drivers libvulkan1 vulkan-tools xvfb
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: skelter-${{ matrix.os }}
+      - name: Which skelter crates exist
+        id: crates
+        shell: bash
+        run: |
+          crates=$( (ls -d crates/skelter crates/skelter-* crates/svelters-skelter 2>/dev/null || true) | xargs -n1 basename | sed 's/^/-p /' | tr '\n' ' ')
+          echo "list=$crates" >> "$GITHUB_OUTPUT"
+          echo "$crates"
+      - name: cargo check (all targets)
+        shell: bash
+        run: cargo check ${{ steps.crates.outputs.list }} --all-targets
+      - name: cargo check (optional features)
+        shell: bash
+        run: |
+          if grep -q '^dialogs' crates/skelter-widgets/Cargo.toml 2>/dev/null; then
+            cargo check -p skelter-widgets --all-targets --features dialogs
+          fi
+      - name: cargo test
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then export WGPU_BACKEND=vulkan; fi
+          cargo test ${{ steps.crates.outputs.list }} --no-fail-fast
+      - name: clippy (advisory during the build-out)
+        if: runner.os == 'Linux'
+        continue-on-error: true
+        shell: bash
+        run: cargo clippy ${{ steps.crates.outputs.list }} --all-targets -- -D warnings

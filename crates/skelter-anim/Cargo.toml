@@ -1,0 +1,10 @@
+[package]
+name = "skelter-anim"
+description = "skelter's animation math: curves, keyframe interpolation, Web Animations timing, springs and scroll physics, as pure functions of time."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+skelter-base = { workspace = true }

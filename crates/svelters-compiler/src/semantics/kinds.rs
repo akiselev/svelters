@@ -138,7 +138,7 @@ mod tests {
 
     #[test]
     fn every_builtin_spec_builds() {
-        for tk in ["gtk", "qt", "appkit", "winui", "egui"] {
+        for tk in ["gtk", "qt", "appkit", "winui", "egui", "skelter"] {
             let b = SpecBackend::builtin(tk).unwrap();
             let m = kinds_module(b.spec());
             assert!(m.len() > 1000, "{tk}");

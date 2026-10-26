@@ -125,6 +125,9 @@ export const HIDDEN_MODULES = {
   [LOOP_SPECIFIER]: loopPath,
   [RENDER_SPECIFIER]: renderPath,
   [CONSTANTS_SPECIFIER]: constantsPath,
+  // MOTION-CSS: svelters:motion re-exports Svelte's Tween and spring store
+  'svelte/internal/motion/spring': ALIASES['svelte/internal/motion/spring'],
+  'svelte/internal/motion/tweened': ALIASES['svelte/internal/motion/tweened'],
 };
 
 /** TR1: `svelte/transition` and `svelte/animate` as app code sees them: native ports of Svelte's built-ins. */
@@ -320,6 +323,24 @@ export function withoutBindings(src) {
  * setter declarations (the Rust compiler matches those itself). Returns null when nothing remains
  * for the toolkit's dialect.
  */
+const engineCache = new Map();
+/**
+ * Whether `backend` runs the Rust CSS engine in process (its spec's `style.engine` is `backend`: egui,
+ * skelter; CS5e): it gets a component's scoped CSS as Svelte wrote it instead of X6-translated sheets.
+ */
+function runsCssEngine(backend) {
+  if (!engineCache.has(backend)) {
+    let engine = false;
+    try {
+      engine = JSON.parse(fs.readFileSync(path.join(repoRoot, "metadata/semantics", `${backend}.json`), "utf8")).style?.engine === 'backend';
+    } catch {
+      engine = false;
+    }
+    engineCache.set(backend, engine);
+  }
+  return engineCache.get(backend);
+}
+
 const tagCache = new Map();
 /**
  * The element tags of a backend (metadata/semantics/<backend>.json) plus those of its spec fragments
@@ -372,8 +393,8 @@ export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
     return null;
   }
-  // egui runs the Rust CSS engine in process (CS5e): it gets the scoped CSS as Svelte wrote it
-  if (toolkit === 'egui') return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
+  // egui and skelter run the Rust CSS engine in process (CS5e): they get the scoped CSS as Svelte wrote it
+  if (runsCssEngine(toolkit)) return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
   return translatedSheets(r.css?.code ?? '', scope, native, toolkit, warn, specFragments);
 }
 
@@ -448,7 +469,7 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
       const style = isModule ? null : styleBlock(code);
       let css = null;
       let res;
-      if (style && backend !== 'egui') {
+      if (style && !runsCssEngine(backend)) {
         const { native } = nativeBlocks(style[2], file);
         const scope = scopeOf(file);
         res = run(['--css', '--css-scope', scope]);

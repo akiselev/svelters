@@ -77,7 +77,7 @@ fn commit_on_a_kind_without_a_commit_event_is_diagnosed_with_a_fix() {
 #[test]
 fn commit_modifier_misuse_is_an_error() {
     let b = egui();
-    let src = |m: &str| format!("<script>let t = $state('');</script><window><text-edit bind:text{m}={{t}} /></window>");
+    let src = |m: &str| format!("<script>let t = $state('');</script><window><text-edit hint-text=\"Name\" bind:text{m}={{t}} /></window>");
     assert_eq!(codes(&src("|commit|nonreactive"), &b), ["bind_modifier_invalid"]);
     assert_eq!(codes(&src("|commit|commit"), &b), ["bind_modifier_invalid"]);
     let r = run_with(&src("|commit|nonreactive"), &b);

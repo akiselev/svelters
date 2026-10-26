@@ -51,6 +51,92 @@ pub struct Spec {
     /// Fragments append to it.
     #[serde(default)]
     pub bind_sources: Vec<BindSourceSpec>,
+    /// The new op shapes the backend's runtime path accepts (skelter `compiler-and-js.md` §2):
+    /// [`capability::IDS`], [`capability::TEMPLATES`], ... Codegen emits them only for a backend
+    /// that lists them; every other backend keeps today's ops.
+    #[serde(default)]
+    pub capabilities: Vec<String>,
+    /// W-C1: a hash of the stable ids and their fingerprints. Code compiled with
+    /// [`capability::IDS`] records it, and the runtime refuses the ids on a host whose spec differs.
+    #[serde(default)]
+    pub spec_hash: Option<String>,
+}
+
+/// The capability names of [`Spec::capabilities`].
+pub mod capability {
+    /// W-C1: kinds, props and signals travel as the spec's stable integer ids.
+    pub const IDS: &str = "ids";
+    /// W-C2: a fragment's static part is instantiated from a module-scope template table.
+    pub const TEMPLATES: &str = "templates";
+    /// W-C5: listeners carry `LISTEN_PASSIVE` when they cannot cancel their event.
+    pub const PASSIVE: &str = "passive";
+    /// W-C4: dynamic writes carry their change class. (A raw string: `cx1_codes` reads plain
+    /// string constants with underscores as diagnostic codes.)
+    pub const CHANGE_CLASSES: &str = r"change_classes";
+    /// MOTION-CSS: svelte/transition's built-ins and svelte/animate's `flip` as `$n.transition_native`
+    /// / `$n.flip_native` (skelter evaluates them from their parameters).
+    pub const NATIVE_TRANSITIONS: &str = r"native_transitions";
+    /// MOTION-CSS: `svelte/motion` is imported from `svelters:motion`.
+    pub const NATIVE_MOTION: &str = r"native_motion";
+    /// MOTION-CSS: release builds carry the scoped sheet precompiled (`svelters_style::binary`).
+    pub const CSS_PRECOMPILED: &str = r"css_precompiled";
+}
+
+/// W-C4: what a change of a prop or style property can invalidate in the toolkit (architecture
+/// §4.3), cheapest first.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ChangeClass {
+    /// Nothing visible is recomputed: a compositor property (opacity, transform) or no pixels.
+    Property,
+    /// Restyle and repaint, no relayout.
+    Paint,
+    /// Relayout.
+    Layout,
+    /// The tree changes (children, slots).
+    Structure,
+}
+
+impl ChangeClass {
+    /// The code generated writes carry (`$n.set(node, prop, value, change)`): 1 property, 2 paint,
+    /// 3 layout, 4 structure (0 = unknown).
+    pub fn code(self) -> u32 {
+        match self {
+            ChangeClass::Property => 1,
+            ChangeClass::Paint => 2,
+            ChangeClass::Layout => 3,
+            ChangeClass::Structure => 4,
+        }
+    }
+
+    pub fn name(self) -> &'static str {
+        match self {
+            ChangeClass::Property => "property",
+            ChangeClass::Paint => "paint",
+            ChangeClass::Layout => "layout",
+            ChangeClass::Structure => "structure",
+        }
+    }
+}
+
+/// W-C9: the accessibility facts of a kind the compiler checks (the spec's `a11y` object; its
+/// other fields are docs).
+#[derive(Debug, Clone, Default, PartialEq, Eq, Deserialize)]
+pub struct A11ySpec {
+    #[serde(default)]
+    pub role: Option<String>,
+    /// The node is a control that needs an accessible name.
+    #[serde(default)]
+    pub requires_name: bool,
+    /// The props whose (non-empty) value names the node, in the order the backend tries them.
+    #[serde(default)]
+    pub name_props: Vec<String>,
+    /// The props that show an icon (an icon alone does not name the node).
+    #[serde(default)]
+    pub icon_props: Vec<String>,
+    /// The prop that names another node as the label (`labelled-by`), if the backend has one.
+    #[serde(default)]
+    pub labelled_by: Option<String>,
 }
 
 /// CX3: one row of the bind-target lowering table.
@@ -148,6 +234,14 @@ pub struct KindSpec {
     /// no slot and no position. None for every other kind.
     #[serde(default)]
     pub attaches_to: Option<String>,
+    /// W-C1: the kind's stable id (absent: the backend has none, or a provider kind).
+    #[serde(default)]
+    pub id: Option<u32>,
+    #[serde(default)]
+    pub fingerprint: Option<String>,
+    /// W-C9: what the accessibility checks need.
+    #[serde(default)]
+    pub a11y: Option<A11ySpec>,
 }
 
 /// A parameter or return type of a method: a spec type name (`bool|i32|...|other`, or `void` for
@@ -185,6 +279,11 @@ pub struct MethodSpec {
     pub params: Option<Vec<ParamSpec>>,
     #[serde(default)]
     pub returns: Option<TypeSpec>,
+    /// W-C1: the method's stable id.
+    #[serde(default)]
+    pub id: Option<u32>,
+    #[serde(default)]
+    pub fingerprint: Option<String>,
 }
 
 fn methods_map<'de, D: serde::Deserializer<'de>>(d: D) -> Result<BTreeMap<String, MethodSpec>, D::Error> {
@@ -280,6 +379,14 @@ pub struct PropertySpec {
     /// R0, `metadata/observe/<tk>.json`). `None`: no fact (unknown), as in specs from before R0.
     #[serde(default)]
     pub observe: Option<ObserveSpec>,
+    /// W-C1: the prop's stable id (`declaring kind id << 16 | number`).
+    #[serde(default)]
+    pub id: Option<u32>,
+    #[serde(default)]
+    pub fingerprint: Option<String>,
+    /// W-C4: what a change of the prop invalidates (absent: unknown).
+    #[serde(default)]
+    pub change: Option<ChangeClass>,
     /// Kind id that declares the property (filled in at load).
     #[serde(skip)]
     pub owner: String,
@@ -415,6 +522,19 @@ pub struct SignalSpec {
     /// Listen phases the backend accepts besides the plain one (`after`, `capture`).
     #[serde(default)]
     pub phases: Vec<String>,
+    /// W-C1: the signal's stable id.
+    #[serde(default)]
+    pub id: Option<u32>,
+    #[serde(default)]
+    pub fingerprint: Option<String>,
+    /// W-C5: a listener can cancel the signal's default (`preventDefault`, a sync result). Absent:
+    /// the compiler takes every sync signal as cancelable.
+    #[serde(default)]
+    pub cancelable: Option<bool>,
+    /// W-C5: the signal drives continuous native work (scrolling, pointer tracking) that a listener
+    /// which can cancel it holds up: such a listener gets `nonpassive_scroll_listener`.
+    #[serde(default)]
+    pub passive: bool,
     #[serde(skip)]
     pub owner: String,
 }
@@ -523,6 +643,9 @@ pub struct SlotSpec {
     /// templates), by JS name.
     #[serde(default)]
     pub attrs: BTreeMap<String, AttrSpec>,
+    /// W-C1: the slot's id.
+    #[serde(default)]
+    pub id: Option<u32>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
@@ -627,6 +750,9 @@ pub struct StylePropSpec {
     pub inline_only: bool,
     #[serde(default)]
     pub note: Option<String>,
+    /// W-C4: what a change of the property invalidates (absent: unknown).
+    #[serde(default)]
+    pub change: Option<ChangeClass>,
 }
 
 impl Spec {

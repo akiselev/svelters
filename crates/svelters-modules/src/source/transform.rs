@@ -75,10 +75,11 @@ pub(crate) struct Output {
 
 impl Compiler {
     /// LD2: this backend takes a component's scoped `<style>` as text (`registerStyles(id, { css })`,
-    /// installed by its style engine). The other backends get their sheets from the Vite build's JS
+    /// installed by its style engine): its spec says the backend runs the CSS engine (`style.engine`
+    /// `backend`: egui, skelter). The other backends get their sheets from the Vite build's JS
     /// translator (`@svelters/style/build`), which the live loader does not run.
     pub(crate) fn styles(&self) -> bool {
-        self.sem.spec().backend == "egui"
+        self.sem.spec().style.engine == "backend"
     }
 
     /// Compiles a component or a runes module (without the error check): the raw result, for
@@ -119,7 +120,7 @@ impl Compiler {
                 let mut warnings = rendered(Severity::Warning);
                 if kind == Kind::Component && !self.styles() && has_style(&src) {
                     warnings.push(format!(
-                        "{shown}: <style> is applied from source on egui only ({} sheets are translated by the Vite build); build with Vite to get its styles",
+                        "{shown}: <style> is applied from source only on backends that run the CSS engine (egui, skelter; {} sheets are translated by the Vite build); build with Vite to get its styles",
                         self.sem.spec().backend
                     ));
                 }

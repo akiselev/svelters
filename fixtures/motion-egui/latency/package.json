@@ -1,0 +1,10 @@
+{
+  "name": "@svelters-fixtures/latency-egui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "W-H1 (plans/milestones/SKELTER-runtime.md): input-latency probes, loaded from source by crates/svelters-egui/tests/input_latency.rs only (not a workspace package).",
+  "svelters": {
+    "toolkit": "egui"
+  }
+}

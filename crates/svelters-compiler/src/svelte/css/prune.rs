@@ -124,15 +124,25 @@ pub struct Pruner<'c, 'p, 'a> {
     synth: &'p Synthetic,
     /// `element.metadata.scoped`
     pub scoped: HashSet<NodeKey>,
+    /// SVELTERS (skelter `css_precompiled`): (complex selector id, element) for every element a
+    /// complex selector might apply to.
+    pub matched: Vec<(usize, NodeKey)>,
+    /// SVELTERS: complex selectors that are entirely global (they may match any element).
+    pub global: Vec<usize>,
 }
 
 /// `prune(stylesheet, elements)`; returns the keys of the elements that got `metadata.scoped`.
 pub fn prune<'p, 'a>(css: &Css<'p>, t: &Template<'a>, synth: &'p Synthetic) -> HashSet<NodeKey> {
-    let mut p = Pruner { css, t, synth, scoped: HashSet::new() };
+    prune_matches(css, t, synth).scoped
+}
+
+/// [`prune`], keeping which complex selectors might apply to which elements.
+pub fn prune_matches<'c, 'p, 'a>(css: &'c Css<'p>, t: &'c Template<'a>, synth: &'p Synthetic) -> Pruner<'c, 'p, 'a> {
+    let mut p = Pruner { css, t, synth, scoped: HashSet::new(), matched: Vec::new(), global: Vec::new() };
     for n in &css.sheet.children {
         p.visit(n);
     }
-    p.scoped
+    p
 }
 
 impl<'c, 'p, 'a> Pruner<'c, 'p, 'a> {
@@ -187,6 +197,7 @@ impl<'c, 'p, 'a> Pruner<'c, 'p, 'a> {
         // Global and ICSS export rules do not depend on an element in this component
         if self.every_is_global(&selectors, 0, selectors.len(), rule) {
             self.set_used(node);
+            self.global.push(node.id);
         }
 
         for element in self.t.elements.clone() {
@@ -194,6 +205,7 @@ impl<'c, 'p, 'a> Pruner<'c, 'p, 'a> {
             let in_head = self.t.path(element).iter().any(|a| matches!(a, NodeRef::SvelteHead(_)));
             if !in_head && self.apply_selector(&selectors, rule, element, Dir::Backward, 0, selectors.len()) {
                 self.set_used(node);
+                self.matched.push((node.id, element.key()));
             }
         }
     }

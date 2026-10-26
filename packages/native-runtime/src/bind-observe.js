@@ -50,7 +50,7 @@ function afterLayout(node, fn) {
 export function bind_prop(node, prop, get, setv, signal, arg = -1) {
   $.template_effect(() => set(node, prop, get()));
   const take = (v) => {
-    node.last.set(prop, v);
+    (node.last ??= new Map()).set(prop, v);
     if (!Object.is(v, $.untrack(get))) setv(v);
   };
   if (observeFor(node, prop, take) || signal == null) return;
@@ -86,8 +86,8 @@ export function bind_link(node, prop, obj, field, fallback) {
 export function bind_readonly(node, prop, setv) {
   if (!alive(node)) return;
   const take = (v) => {
-    if (node.last.has(prop) && Object.is(node.last.get(prop), v)) return;
-    node.last.set(prop, v);
+    if (node.last?.has(prop) && Object.is(node.last.get(prop), v)) return;
+    (node.last ??= new Map()).set(prop, v);
     setv(v);
   };
   const read = () => take(node.host.getProp(node.h, prop));
@@ -106,7 +106,7 @@ export function bind_once(node, prop, get, setv, readonly = false) {
   if (readonly) {
     afterLayout(node, () => {
       const v = node.host.getProp(node.h, prop);
-      node.last.set(prop, v);
+      (node.last ??= new Map()).set(prop, v);
       setv(v);
     });
     return;
@@ -122,6 +122,6 @@ export function bind_once(node, prop, get, setv, readonly = false) {
   });
   if (!alive(node)) return;
   const v = node.host.getProp(node.h, prop);
-  node.last.set(prop, v);
+  (node.last ??= new Map()).set(prop, v);
   if (!Object.is(v, $.untrack(get))) setv(v);
 }

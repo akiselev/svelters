@@ -40,6 +40,7 @@ mod quickjs;
 mod reload;
 pub mod sched;
 mod sourcemap;
+mod spec_hash;
 pub mod testing;
 
 pub use crate::core::{BudgetInterrupt, ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timing};
@@ -54,6 +55,7 @@ pub use svelters_sched;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
 pub use hooks::ModuleHooks;
+pub use spec_hash::{register_spec_hash, spec_hash};
 pub use platform::{ClipboardBackend, ClipboardKind, MimeData, Platform, ShellBackend};
 pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
 /// IN1: locale-aware formatting and parsing (ICU4X), the same the host's `Intl` uses.
@@ -150,6 +152,11 @@ impl HostCallbacks for Callbacks {
     fn frame(&self) {
         self.toolkit_up();
         core::frame(&self.core, &self.engine);
+    }
+
+    fn dispatch_now(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<(), SyncError> {
+        self.toolkit_up();
+        core::dispatch_now(&self.core, &self.engine, h, signal, args)
     }
 
     fn prop_changed(&self, h: svl_handle, prop: svl_id) {
@@ -539,11 +546,24 @@ impl<'a> Host<'a> {
         core::frame(&self.core, &self.engine);
     }
 
+    /// W-H1 (ABI v2.9 `svl_host.dispatch_now`): delivers `signal` on `h` at event time and drains
+    /// the jobs its handlers queued, so their effects are applied when this returns. Earlier queued
+    /// events and changes go first. `Err(SyncError::Busy)` while JS runs (the event is queued for
+    /// the next checkpoint instead).
+    pub fn dispatch_now(&self, h: svl_handle, signal: svl_id, args: &[Value]) -> Result<(), SyncError> {
+        core::dispatch_now(&self.core, &self.engine, h, signal, args)
+    }
+
     /// Runs a full garbage collection. Values JS dropped without `dispose()` are queued for release
     /// by their finalization callbacks (jobs) and handed to the backend at the next checkpoint.
     pub fn collect_garbage(&self) {
         let Some(_guard) = self.core.enter() else { return };
         self.engine.borrow_mut().collect_garbage();
+    }
+
+    /// W-J1: `host.wrap` node wrappers alive on this thread (not yet finalized by the GC).
+    pub fn live_node_wrappers(&self) -> usize {
+        quickjs::live_node_wrappers()
     }
 
     /// Number of callbacks that are still registered.
