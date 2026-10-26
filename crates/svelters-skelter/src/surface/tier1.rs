@@ -66,5 +66,104 @@ pub static COLLAPSINGHEADER: KindSpec = KindSpec {
     native_state: &["open"],
 };
 
+static TABLE_PROPS: &[PropSpec] = &[
+    PropSpec { name: "column-menu", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "A right click on the header opens a menu that hides and shows the `hideable` columns (after `header-context`, unless prevented)." },
+    PropSpec { name: "current", ty: ValueType::I64, default: DefaultValue::I64(-1), nullable: false, change: ChangeClass::Paint, native: true, doc: "The cursor row's id (keyboard focus inside the table), -1 for none." },
+    PropSpec { name: "current-column", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Paint, native: true, doc: "The cursor column (Left/Right move it; F2 and typing edit that cell)." },
+    PropSpec { name: "header-state", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: true, doc: "The header as JSON (Qt `saveState`): `{\"widths\":{name:points},\"hidden\":[name],\"sort\":{\"column\":name,\"order\":…}}`. The table writes it after the user resizes, hides or sorts; setting it restores them. Persist it with DX1's `uiState()` (`bind:header-state={ui.header}`): the table itself never writes files." },
+    PropSpec { name: "hidden-columns", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: true, doc: "The hidden columns, by `name` (a column without one by its child index, `\"2\"`). The column menu changes it." },
+    PropSpec { name: "overscan", ty: ValueType::I64, default: DefaultValue::I64(20), nullable: false, change: ChangeClass::Layout, native: false, doc: "Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view)." },
+    PropSpec { name: "row-count", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Number of rows (the scroll extent). Rows without data yet are drawn empty." },
+    PropSpec { name: "row-height", ty: ValueType::F64, default: DefaultValue::F64(20.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Height of every row (and of the header row), in points." },
+    PropSpec { name: "selected", ty: ValueType::IdList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: true, doc: "The selected row ids (`bind:selected`); clicks (Ctrl/Shift with `selection=\"multi\"`) and the keyboard change it. Kept by id across `set-ids` (sorts, filters)." },
+    PropSpec { name: "selection", ty: ValueType::Enum(&["none", "single", "multi"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Layout, native: false, doc: "`single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only)." },
+    PropSpec { name: "sort-column", ty: ValueType::I64, default: DefaultValue::I64(-1), nullable: false, change: ChangeClass::Paint, native: true, doc: "The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows." },
+    PropSpec { name: "sort-order", ty: ValueType::Enum(&["none", "ascending", "descending"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Paint, native: true, doc: "The order shown on `sort-column`." },
+    PropSpec { name: "sortable", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`)." },
+    PropSpec { name: "sticky-columns", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Number of leading columns that do not scroll horizontally." },
+    PropSpec { name: "stretch-last", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The last shown column fills the width the columns leave (Qt `stretchLastSection`)." },
+    PropSpec { name: "striped", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Alternate rows get a faint background." },
+];
+static TABLE_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "activated", args: &[("row", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A row was double-clicked (a cell of a column that is not `editable`) or Enter pressed on the cursor row; carries its position." },
+    SignalSpec { name: "changed", args: &[("selected", ValueType::IdList)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user changed the selection; carries the selected row ids (`bind:selected`)." },
+    SignalSpec { name: "column-resized", args: &[("column", ValueType::I64), ("width", ValueType::F64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable." },
+    SignalSpec { name: "columns-changed", args: &[("hidden-columns", ValueType::IdList)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The column menu hid or showed a column; carries the hidden columns." },
+    SignalSpec { name: "commit", args: &[("row", ValueType::I64), ("column", ValueType::I64), ("value", ValueType::Any)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts." },
+    SignalSpec { name: "copy", args: &[("ids", ValueType::IdList)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds)." },
+    SignalSpec { name: "header-clicked", args: &[("column", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A column header was clicked (sort on it in JS and set the column's `sort`)." },
+    SignalSpec { name: "header-context", args: &[("column", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A right click on the header (Menu key on the focused table); carries the column under the pointer. Unless prevented, `column-menu` opens." },
+    SignalSpec { name: "header-double-clicked", args: &[("column", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A column header was double-clicked (not its resize edge); carries the column (child index)." },
+    SignalSpec { name: "header-state-changed", args: &[("header-state", ValueType::Str)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user resized, hid or sorted; carries the new `header-state` (save it)." },
+    SignalSpec { name: "range", args: &[("first", ValueType::I64), ("last", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`." },
+    SignalSpec { name: "row-toggled", args: &[("id", ValueType::I64), ("expanded", ValueType::Bool)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now." },
+    SignalSpec { name: "selectionchange", args: &[("ids", ValueType::IdList)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user changed the selection; carries the selected row ids." },
+    SignalSpec { name: "sort-changed", args: &[("sort-column", ValueType::I64), ("sort-order", ValueType::Enum(&[]))], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table)." },
+];
+static TABLE_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "clear-rows", params: &[], ret: None, doc: "Drops the data window (every row draws empty until `set-rows`)." },
+    MethodSpec { name: "edit", params: &[], ret: None, doc: "`edit(rowId, column)`: starts editing that cell (its column must be `editable`)." },
+    MethodSpec { name: "end-edit", params: &[], ret: None, doc: "`end-edit(commit)`: ends the open edit; true commits (`commit`), false reverts." },
+    MethodSpec { name: "fit-columns", params: &[], ret: None, doc: "`fit-columns(column?)`: sizes that column (child index), or every resizable shown column, to its header and the cells in the data window (Qt `resizeColumnsToContents`); `column-resized` for each." },
+    MethodSpec { name: "scroll-to-row", params: &[], ret: None, doc: "`scroll-to-row(row)`: scrolls the row into view on the next frame." },
+    MethodSpec { name: "set-ids", params: &[], ret: None, doc: "`set-ids(ids, labels?)`: the id of every row by position (and the text type-ahead matches); the row count is then `ids.length`. Selection, cursor and edits follow ids across sorts and filters. null: ids are positions again." },
+    MethodSpec { name: "set-rows", params: &[], ret: None, doc: "`set-rows(first, rows)`: the data window, rows `first..first + rows.length`, each row a list of cell values (strings, numbers, booleans; null for empty). Replaces the previous window." },
+];
+static TABLE_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "columns", accepts: &["TableColumn"], many: true },
+];
+pub static TABLE: KindSpec = KindSpec {
+    name: "Table",
+    tag: Some("table"),
+    extends: Some(&WIDGET),
+    doc: "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+    props: TABLE_PROPS,
+    signals: TABLE_SIGNALS,
+    methods: TABLE_METHODS,
+    slots: TABLE_SLOTS,
+    a11y: A11ySpec { role: "Table", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["current", "current-column", "header-state", "hidden-columns", "selected", "sort-column", "sort-order"],
+};
+
+static TABLECOLUMN_PROPS: &[PropSpec] = &[
+    PropSpec { name: "align", ty: ValueType::Enum(&["start", "center", "end"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Horizontal alignment of its cells." },
+    PropSpec { name: "editable", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field." },
+    PropSpec { name: "editor", ty: ValueType::Any, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: false, doc: "The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit." },
+    PropSpec { name: "elide", ty: ValueType::Enum(&["end", "middle", "start", "none"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Where text too wide for a cell or the header is cut with `…` (`none`: clipped)." },
+    PropSpec { name: "header-align", ty: ValueType::Enum(&["auto", "start", "center", "end"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Alignment of its header text (`auto`: its `align`)." },
+    PropSpec { name: "hideable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The column menu lists it (it can be hidden)." },
+    PropSpec { name: "name", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Its name in `hidden-columns` and `header-state` (empty: its child index)." },
+    PropSpec { name: "resizable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Its right edge can be dragged (double-click: fit the content)." },
+    PropSpec { name: "sort", ty: ValueType::Enum(&["none", "ascending", "descending"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1." },
+    PropSpec { name: "title", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The header text." },
+];
+static TABLECOLUMN_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "editor-bind", args: &[("row", ValueType::I64), ("value", ValueType::Str), ("typed", ValueType::Str)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`)." },
+    SignalSpec { name: "editor-unbind", args: &[], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Runtime protocol: the edit ended; the editor stays realised for the next one." },
+    SignalSpec { name: "editor-value", args: &[], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Runtime protocol: the editor's value to commit (the handler sets `e.result`)." },
+];
+static TABLECOLUMN_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "end-edit", params: &[], ret: None, doc: "`end-edit(commit)`: ends this column's open edit; true commits, false reverts." },
+    MethodSpec { name: "set-editor", params: &[], ret: None, doc: "Runtime protocol: `set-editor(outlet)`, the realised editor snippet of this column (null drops it)." },
+];
+static TABLECOLUMN_SLOTS: &[SlotSpec] = &[
+];
+pub static TABLECOLUMN: KindSpec = KindSpec {
+    name: "TableColumn",
+    tag: Some("table-column"),
+    extends: Some(&WIDGET),
+    doc: "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell.",
+    props: TABLECOLUMN_PROPS,
+    signals: TABLECOLUMN_SIGNALS,
+    methods: TABLECOLUMN_METHODS,
+    slots: TABLECOLUMN_SLOTS,
+    a11y: A11ySpec { role: "ColumnHeader", name_from: &["title"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN];

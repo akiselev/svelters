@@ -31,6 +31,34 @@ fn scroll_area_is_skelter_widgets_with_eguis_surface() {
 }
 
 #[test]
+fn table_and_columns_are_skelter_widgets_with_eguis_surface() {
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    assert!(kinds.by_tag("table").unwrap().hosted && kinds.by_tag("table-column").unwrap().hosted);
+    let t = r.create("table");
+    let c = r.create("table-column");
+    let columns = r.br().resolve(NameKind::Slot, r.kind(t), "columns");
+    assert_ne!(columns, 0, "egui's `columns` slot");
+    r.br().insert(t, c, None, columns).unwrap();
+    r.set(c, "title", Value::Str("Name".into()));
+    assert_eq!(r.get(c, "title"), Value::Str("Name".into()));
+    r.set(t, "striped", Value::Bool(false));
+    assert_eq!(r.get(t, "striped"), Value::Bool(false));
+    r.set(t, "selection", Value::Str("multi".into()));
+    assert_eq!(r.get(t, "selection"), Value::Str("multi".into()));
+    // egui lists no params for generated methods: the core method's type the args
+    let m = r.br().resolve(NameKind::Method, r.kind(t), "set-ids");
+    r.br().call(t, m, &[Value::List(vec![Value::I64(1), Value::I64(2)])]).unwrap();
+    // a cell editor snippet (egui's `other`) is kept by the backend
+    let ed = r.prop_id(c, "editor");
+    r.br().set_prop(c, ed, &Value::Str("snippet".into())).unwrap();
+    r.listen(t, "changed");
+    r.emit(t, "changed", vec![PValue::List(vec![PValue::I64(2)])]);
+    r.backend.pump();
+    assert_eq!(r.take().events, [(t, r.signal_id(t, "changed"), vec![Value::List(vec![Value::I64(2)])])]);
+}
+
+#[test]
 fn collapsing_header_has_eguis_surface() {
     let r = Rig::new();
     let kinds = r.backend.kinds().clone();

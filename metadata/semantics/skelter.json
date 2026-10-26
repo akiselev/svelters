@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "6db86aecedd3750a"
+    "spec_hash": "acaf66d9a3b4a2c3"
   },
   "inline_text": {
     "kind": "span",
@@ -4259,6 +4259,1260 @@
       "text_content": "text",
       "widget": "skelter-widgets"
     },
+    "Table": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Table"
+      },
+      "abstract": false,
+      "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-skelter: <table> writes current into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "current-column": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current-column",
+          "provenance": "svelters-skelter: <table> writes current-column into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "header-state": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "header-state",
+          "provenance": "svelters-skelter: <table> writes header-state into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "hidden-columns": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "hidden-columns",
+          "provenance": "svelters-skelter: <table> writes hidden-columns into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-skelter: <table> writes selected into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sort-column": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-column",
+          "provenance": "svelters-skelter: <table> writes sort-column into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sort-order": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-order",
+          "provenance": "svelters-skelter: <table> writes sort-order into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Table",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "columns",
+        "policy": "ordered",
+        "slots": {
+          "columns": {
+            "accepts": [
+              "TableColumn"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+      "fingerprint": "c29a8855",
+      "id": 3264907349,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "clear-rows": {
+          "dispatch": "generated",
+          "doc": "Drops the data window (every row draws empty until `set-rows`).",
+          "fingerprint": "b3f977e5",
+          "id": 3019470821,
+          "native": "clear-rows",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "edit": {
+          "dispatch": "generated",
+          "doc": "`edit(rowId, column)`: starts editing that cell (its column must be `editable`).",
+          "fingerprint": "ad0fd40c",
+          "id": 2903495692,
+          "native": "edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "end-edit": {
+          "dispatch": "generated",
+          "doc": "`end-edit(commit)`: ends the open edit; true commits (`commit`), false reverts.",
+          "fingerprint": "aa8f1a94",
+          "id": 2861505172,
+          "native": "end-edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "fit-columns": {
+          "dispatch": "generated",
+          "doc": "`fit-columns(column?)`: sizes that column (child index), or every resizable shown column, to its header and the cells in the data window (Qt `resizeColumnsToContents`); `column-resized` for each.",
+          "fingerprint": "aba74dcd",
+          "id": 2879868365,
+          "native": "fit-columns",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scroll-to-row": {
+          "dispatch": "generated",
+          "doc": "`scroll-to-row(row)`: scrolls the row into view on the next frame.",
+          "fingerprint": "389a356c",
+          "id": 949630316,
+          "native": "scroll-to-row",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-ids": {
+          "dispatch": "generated",
+          "doc": "`set-ids(ids, labels?)`: the id of every row by position (and the text type-ahead matches); the row count is then `ids.length`. Selection, cursor and edits follow ids across sorts and filters. null: ids are positions again.",
+          "fingerprint": "4bc4c37b",
+          "id": 1271186299,
+          "native": "set-ids",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-rows": {
+          "dispatch": "generated",
+          "doc": "`set-rows(first, rows)`: the data window, rows `first..first + rows.length`, each row a list of cell values (strings, numbers, booleans; null for empty). Replaces the previous window.",
+          "fingerprint": "c39c358a",
+          "id": 3281794442,
+          "native": "set-rows",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter Table",
+      "native_state": [
+        "current",
+        "current-column",
+        "header-state",
+        "hidden-columns",
+        "selected",
+        "sort-column",
+        "sort-order"
+      ],
+      "present": null,
+      "props": {
+        "column-menu": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "A right click on the header opens a menu that hides and shows the `hideable` columns (after `header-context`, unless prevented).",
+          "fingerprint": "36de6eec",
+          "id": 920547052,
+          "js": "column-menu",
+          "native": "column-menu",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:column-menu",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "current": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "The cursor row's id (keyboard focus inside the table), -1 for none.",
+          "fingerprint": "56c9a5c0",
+          "id": 1456055744,
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:current",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "current-column": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 0,
+          "doc": "The cursor column (Left/Right move it; F2 and typing edit that cell).",
+          "fingerprint": "8516fc55",
+          "id": 2232876117,
+          "js": "current-column",
+          "native": "current-column",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:current-column",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "header-state": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The header as JSON (Qt `saveState`): `{\"widths\":{name:points},\"hidden\":[name],\"sort\":{\"column\":name,\"order\":…}}`. The table writes it after the user resizes, hides or sorts; setting it restores them. Persist it with DX1's `uiState()` (`bind:header-state={ui.header}`): the table itself never writes files.",
+          "fingerprint": "efcba148",
+          "id": 4023099720,
+          "js": "header-state",
+          "native": "header-state",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:header-state",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "hidden-columns": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "The hidden columns, by `name` (a column without one by its child index, `\"2\"`). The column menu changes it.",
+          "fingerprint": "c094bfb4",
+          "id": 3230973876,
+          "js": "hidden-columns",
+          "native": "hidden-columns",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:hidden-columns",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "overscan": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 20,
+          "doc": "Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view).",
+          "fingerprint": "b875d56a",
+          "id": 3094730090,
+          "js": "overscan",
+          "native": "overscan",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:overscan",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "row-count": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 0,
+          "doc": "Number of rows (the scroll extent). Rows without data yet are drawn empty.",
+          "fingerprint": "031028dd",
+          "id": 51390685,
+          "js": "row-count",
+          "native": "row-count",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:row-count",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "row-height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 20.0,
+          "doc": "Height of every row (and of the header row), in points.",
+          "fingerprint": "cd682589",
+          "id": 3446154633,
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:row-height",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "selected": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "The selected row ids (`bind:selected`); clicks (Ctrl/Shift with `selection=\"multi\"`) and the keyboard change it. Kept by id across `set-ids` (sorts, filters).",
+          "fingerprint": "9325df93",
+          "id": 2468732819,
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:selected",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "i64",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "selection": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only).",
+          "fingerprint": "247c53df",
+          "id": 612127711,
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:selection",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single",
+            "multi"
+          ],
+          "writable": true
+        },
+        "sort-column": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows.",
+          "fingerprint": "2da273ac",
+          "id": 765621164,
+          "js": "sort-column",
+          "native": "sort-column",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:sort-column",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "sort-order": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "none",
+          "doc": "The order shown on `sort-column`.",
+          "fingerprint": "6b444e20",
+          "id": 1799638560,
+          "js": "sort-order",
+          "native": "sort-order",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:sort-order",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "ascending",
+            "descending"
+          ],
+          "writable": true
+        },
+        "sortable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`).",
+          "fingerprint": "43435c7a",
+          "id": 1128488058,
+          "js": "sortable",
+          "native": "sortable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:sortable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "sticky-columns": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 0,
+          "doc": "Number of leading columns that do not scroll horizontally.",
+          "fingerprint": "f3896efc",
+          "id": 4085870332,
+          "js": "sticky-columns",
+          "native": "sticky-columns",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:sticky-columns",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "stretch-last": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "The last shown column fills the width the columns leave (Qt `stretchLastSection`).",
+          "fingerprint": "d18dd13e",
+          "id": 3515732286,
+          "js": "stretch-last",
+          "native": "stretch-last",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:stretch-last",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "striped": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Alternate rows get a faint background.",
+          "fingerprint": "83befb05",
+          "id": 2210331397,
+          "js": "striped",
+          "native": "striped",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:striped",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activated": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A row was double-clicked (a cell of a column that is not `editable`) or Enter pressed on the cursor row; carries its position.",
+          "fingerprint": "8c1e4fa1",
+          "handler_result": "none",
+          "id": 2350796705,
+          "js_event": "activated",
+          "name": "activated",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection; carries the selected row ids (`bind:selected`).",
+          "fingerprint": "3757e7db",
+          "handler_result": "none",
+          "id": 928507867,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "column-resized": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            },
+            {
+              "name": "width",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable.",
+          "fingerprint": "d5e1dae9",
+          "handler_result": "none",
+          "id": 3588348649,
+          "js_event": "column-resized",
+          "name": "column-resized",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "columns-changed": {
+          "args": [
+            {
+              "name": "hidden-columns",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The column menu hid or showed a column; carries the hidden columns.",
+          "fingerprint": "1a433b85",
+          "handler_result": "none",
+          "id": 440613765,
+          "js_event": "columns-changed",
+          "name": "columns-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "column",
+              "type": "i64"
+            },
+            {
+              "name": "value",
+              "type": "other"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts.",
+          "fingerprint": "2e8abb43",
+          "handler_result": "bool_stop",
+          "id": 780843843,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds).",
+          "fingerprint": "da672160",
+          "handler_result": "none",
+          "id": 3664191840,
+          "js_event": "copy",
+          "name": "copy",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-clicked": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A column header was clicked (sort on it in JS and set the column's `sort`).",
+          "fingerprint": "c6cf8189",
+          "handler_result": "none",
+          "id": 3335487881,
+          "js_event": "header-clicked",
+          "name": "header-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-context": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A right click on the header (Menu key on the focused table); carries the column under the pointer. Unless prevented, `column-menu` opens.",
+          "fingerprint": "53e3ce0f",
+          "handler_result": "none",
+          "id": 1407438351,
+          "js_event": "header-context",
+          "name": "header-context",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-double-clicked": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A column header was double-clicked (not its resize edge); carries the column (child index).",
+          "fingerprint": "5bb45893",
+          "handler_result": "none",
+          "id": 1538545811,
+          "js_event": "header-double-clicked",
+          "name": "header-double-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-state-changed": {
+          "args": [
+            {
+              "name": "header-state",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user resized, hid or sorted; carries the new `header-state` (save it).",
+          "fingerprint": "d2858722",
+          "handler_result": "none",
+          "id": 3531966242,
+          "js_event": "header-state-changed",
+          "name": "header-state-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "range": {
+          "args": [
+            {
+              "name": "first",
+              "type": "i64"
+            },
+            {
+              "name": "last",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`.",
+          "fingerprint": "5bfb2e61",
+          "handler_result": "none",
+          "id": 1543188065,
+          "js_event": "range",
+          "name": "range",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-toggled": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "expanded",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now.",
+          "fingerprint": "9c553fe5",
+          "handler_result": "none",
+          "id": 2622832613,
+          "js_event": "row-toggled",
+          "name": "row-toggled",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selectionchange": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection; carries the selected row ids.",
+          "fingerprint": "6ab1bc31",
+          "handler_result": "none",
+          "id": 1790032945,
+          "js_event": "selectionchange",
+          "name": "selectionchange",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "sort-changed": {
+          "args": [
+            {
+              "name": "sort-column",
+              "type": "i64"
+            },
+            {
+              "name": "sort-order",
+              "type": "enum"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table).",
+          "fingerprint": "096c8087",
+          "handler_result": "none",
+          "id": 158105735,
+          "js_event": "sort-changed",
+          "name": "sort-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "columns": 610474464
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "TableColumn": {
+      "a11y": {
+        "name_from": [
+          "title"
+        ],
+        "name_required": false,
+        "role": "ColumnHeader"
+      },
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "TableColumn",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell.",
+      "fingerprint": "adccfed6",
+      "id": 2915892950,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "end-edit": {
+          "dispatch": "generated",
+          "doc": "`end-edit(commit)`: ends this column's open edit; true commits, false reverts.",
+          "fingerprint": "e6e482ad",
+          "id": 3873735341,
+          "native": "end-edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-editor": {
+          "dispatch": "generated",
+          "doc": "Runtime protocol: `set-editor(outlet)`, the realised editor snippet of this column (null drops it).",
+          "fingerprint": "710ad35f",
+          "id": 1896534879,
+          "native": "set-editor",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter TableColumn",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "align": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "start",
+          "doc": "Horizontal alignment of its cells.",
+          "fingerprint": "dc5c9663",
+          "id": 3697055331,
+          "js": "align",
+          "native": "align",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:align",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "writable": true
+        },
+        "editable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field.",
+          "fingerprint": "f82023bf",
+          "id": 4162855871,
+          "js": "editable",
+          "native": "editable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:editable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "editor": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit.",
+          "fingerprint": "3b96adb5",
+          "id": 999730613,
+          "js": "editor",
+          "native": "editor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:editor",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "other",
+          "writable": true
+        },
+        "elide": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "end",
+          "doc": "Where text too wide for a cell or the header is cut with `…` (`none`: clipped).",
+          "fingerprint": "5c454435",
+          "id": 1548043317,
+          "js": "elide",
+          "native": "elide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:elide",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "end",
+            "middle",
+            "start",
+            "none"
+          ],
+          "writable": true
+        },
+        "header-align": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "auto",
+          "doc": "Alignment of its header text (`auto`: its `align`).",
+          "fingerprint": "4c25265d",
+          "id": 1277503069,
+          "js": "header-align",
+          "native": "header-align",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:header-align",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "start",
+            "center",
+            "end"
+          ],
+          "writable": true
+        },
+        "hideable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "The column menu lists it (it can be hidden).",
+          "fingerprint": "31e4652b",
+          "id": 837051691,
+          "js": "hideable",
+          "native": "hideable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:hideable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "name": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Its name in `hidden-columns` and `header-state` (empty: its child index).",
+          "fingerprint": "5c25b5b7",
+          "id": 1545975223,
+          "js": "name",
+          "native": "name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:name",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "resizable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Its right edge can be dragged (double-click: fit the content).",
+          "fingerprint": "74017010",
+          "id": 1946251280,
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:resizable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "sort": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "none",
+          "doc": "The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1.",
+          "fingerprint": "e05cebc0",
+          "id": 3764186048,
+          "js": "sort",
+          "native": "sort",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:sort",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "ascending",
+            "descending"
+          ],
+          "writable": true
+        },
+        "title": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The header text.",
+          "fingerprint": "4f4c5600",
+          "id": 1330402816,
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:title",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "editor-bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "value",
+              "type": "string"
+            },
+            {
+              "name": "typed",
+              "type": "string"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`).",
+          "fingerprint": "af79362e",
+          "handler_result": "bool_stop",
+          "id": 2943956526,
+          "js_event": "editor-bind",
+          "name": "editor-bind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "editor-unbind": {
+          "args": [],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: the edit ended; the editor stays realised for the next one.",
+          "fingerprint": "ff13ebd4",
+          "handler_result": "bool_stop",
+          "id": 4279495636,
+          "js_event": "editor-unbind",
+          "name": "editor-unbind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "editor-value": {
+          "args": [],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: the editor's value to commit (the handler sets `e.result`).",
+          "fingerprint": "33d05e99",
+          "handler_result": "bool_stop",
+          "id": 869293721,
+          "js_event": "editor-value",
+          "name": "editor-value",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "TextEdit": {
       "a11y": {
         "name_from": [
@@ -6922,6 +8176,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7146,6 +8402,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7258,6 +8516,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7314,6 +8574,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7372,6 +8634,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7408,6 +8672,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7538,6 +8804,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7614,6 +8882,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7685,6 +8955,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7721,6 +8993,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7757,6 +9031,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7793,6 +9069,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7944,6 +9222,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -7982,6 +9262,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -8053,6 +9335,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -8135,6 +9419,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -8212,6 +9498,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -8261,6 +9549,8 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
           "toggle-button"
         ],
@@ -8415,6 +9705,8 @@
     "spinner": "Spinner",
     "stack": "Stack",
     "switch": "Switch",
+    "table": "Table",
+    "table-column": "TableColumn",
     "text-edit": "TextEdit",
     "toggle-button": "ToggleButton",
     "window": "Window"

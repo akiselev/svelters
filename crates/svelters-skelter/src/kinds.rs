@@ -142,6 +142,7 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
     skelter_widgets::host::register_tier0(reg)?;
     // the tier-1 views whose surface is egui's (A9, `surface::tier1`)
     skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
+    skelter_widgets::table::kinds::register(reg)?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
@@ -364,7 +365,7 @@ fn core_args(args: &[(&'static str, ValueType)]) -> &'static [core::ArgSpec] {
 }
 
 /// The surface type of a core type (a list is a list of strings; an enum's names are the prop's).
-fn surface_type(t: core::ValueType, names: &'static [&'static str]) -> ValueType {
+pub(crate) fn surface_type(t: core::ValueType, names: &'static [&'static str]) -> ValueType {
     match t {
         core::ValueType::Bool => ValueType::Bool,
         core::ValueType::I64 => ValueType::I64,
