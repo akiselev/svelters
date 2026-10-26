@@ -7,33 +7,34 @@ a generic backend C ABI. Status comes from `STATUS.md` (handoff block and milest
 
 ## Current focus (user, 2026-10-21)
 
-**svelters + egui for cadatomic** (the MCAD + ECAD + simulation IDE, `github.com/akiselev/cadatomic`).
-cadatomic's UI is built on svelters' egui backend (`crates/svelters-egui`): Rust owns the shell
-plumbing (docking, tabs, toolbars, menus, windows); Svelte renders the contents of panels,
-dialogs, windows and overlays, with many roots at once. AppKit, WinUI and Qt get maintenance only.
+**svelters + skelter for cadatomic** (the MCAD + ECAD + simulation IDE, `github.com/akiselev/cadatomic`).
+cadatomic's UI is built on **skelter**, svelters' own retained GUI framework (`crates/skelter-*`, the facade `skelter`,
+the Svelte backend `svelters-skelter`), which replaced the egui backend (user, 2026-10-25, "go with svelters-skelter";
+2026-10-26, cadatomic removes egui). Rust owns the shell plumbing (docking, tabs, toolbars, menus, windows); Svelte
+renders the contents of panels, dialogs, windows and overlays, with many roots at once. svelters-egui, AppKit, WinUI and
+Qt get maintenance only; skelter-test and svelters-automation must build without egui by default.
 
 Read, in order:
-1. `plans/research/TRACKS.md`: the parallel tracks (svelters and cadatomic), waves, critical path.
+1. `plans/research/skelter/README.md` and `architecture.md`: skelter's design; `plan.md` for its tracks.
 2. `plans/research/CADATOMIC.md`: svelters' answer to cadatomic's requests SV1–SV47 (plus SVP1–SVP9).
-3. `plans/research/EGUI.md`, `plans/research/CSS.md`, `plans/research/HMR.md` for the track you own.
-4. `docs/egui/START-HERE.md`: the egui backend's docs (own widgets in Rust and CSS, icons, automation,
-   loading code, hot reload), with when to read each page. Read it before writing egui widget or embed code.
+3. `plans/research/CSS.md`, `plans/research/HMR.md` for the track you own; `docs/skelter/` for skelter's docs.
+4. The newest `plans/cloud/<batch>/` brief when you are in a batch.
 
-Decisions already made by the user (2026-10-21):
+Decisions already made by the user (2026-10-21, updated for skelter 2026-10-26):
 - Stock QuickJS-NG; no rquickjs fork, no determinism work.
 - A bare `on:event` on a component compiles to forwarding an `on<event>` callback prop; no legacy
   component events.
-- One retained scene, owned by svelters-egui; cadatomic extends it through kind, behaviour and
+- One retained scene, owned by skelter-core; cadatomic extends it through kind, behaviour and
   state providers.
-- The Rust CSS engine is on, with the CSS research's recommended D1–D10, **egui first** (engine
-  crate, then egui and the selector/MCP queries, then the other backends). ST2's JS decl engine
-  (AppKit) stays until the Rust engine replaces it.
+- The Rust CSS engine is on, with the CSS research's recommended D1–D10. ST2's JS decl engine (AppKit) stays until the
+  Rust engine replaces it.
 - svelters gets its **own Rust module loader**: loads JS modules and native libraries into
   QuickJS and compiles `.svelte`/`.svelte.js` live with our compiler, in release builds too (the
   GUI is self-editable through its text-edit components). It is the hot-reload path, with
   `$state` kept. Vite is a dev convenience only.
-- egui stays at 0.37 and is upgraded together with cadatomic. The Svelte UI sources live in
-  cadatomic. SC1 (one real cadatomic panel rendered by Svelte inside the running app) comes first.
+- The Svelte UI sources live in cadatomic.
+- AccessKit is a fork for the Linux expanded state (`akiselev/accesskit`, `[patch.crates-io]` in the root manifest), not
+  an upstream PR (user, 2026-10-26).
 
 Decided by the user (2026-10-22): **leave room for extension security policies, build none now.**
 cadatomic may later serve high-security fields (aerospace) where extensions get deny-by-default,
