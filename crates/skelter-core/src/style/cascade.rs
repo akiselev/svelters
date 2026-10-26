@@ -899,6 +899,7 @@ impl Document {
     /// from the value shown now (the old box holds the last sample).
     fn start_ui_transitions(&mut self, node: NodeId, old: &ComputedBox, new: &ComputedBox, old_size: taffy::Size<taffy::Dimension>, new_size: taffy::Size<taffy::Dimension>) {
         use crate::anim::{UiProp, UiTransition};
+        let reduced = self.style.stylist.media_env().reduced_motion;
         let solid = |f: &Fill| match f {
             Fill::Solid(c) => Some(*c),
             Fill::Linear { .. } => None,
@@ -929,7 +930,8 @@ impl Document {
             if self.anim.ui_running(node, prop).is_some_and(|t| t.to == to) {
                 continue;
             }
-            let spec = transition_for(new, prop.css()).or_else(|| (prop == UiProp::Background).then(|| transition_for(new, "background")).flatten());
+            // reduced motion: values jump (a running transition stops)
+            let spec = transition_for(new, prop.css()).or_else(|| (prop == UiProp::Background).then(|| transition_for(new, "background")).flatten()).filter(|_| !reduced);
             let list = self.anim.ui.entry(node).or_default();
             list.retain(|t| t.prop != prop);
             let Some(t) = spec else {
@@ -1031,8 +1033,10 @@ impl Document {
 
     /// Starts engine animations for the compositor properties whose change a `transition` covers.
     fn start_transitions(&mut self, window: WindowId, node: NodeId, old: &ComputedBox, new: &ComputedBox) {
+        // reduced motion (SV66): no transition starts, the value jumps
+        let reduced = self.style.stylist.media_env().reduced_motion;
         let start = |doc: &mut Document, prop: AnimProperty, name: &str, from: AnimValue, to: AnimValue| {
-            let Some(t) = transition_for(new, name) else { return };
+            let Some(t) = transition_for(new, name).filter(|_| !reduced) else { return };
             // a running transition of the same property is replaced (it continues from the old
             // computed value, not from its current sample: see SKELTER-core.md)
             let running = doc.anim.running.entry(node).or_default();

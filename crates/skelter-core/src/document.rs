@@ -50,6 +50,22 @@ pub type SyncDelivery = Box<dyn FnMut(&mut Document, &crate::input::JsEvent) -> 
 /// press in its space, to the drag image.
 pub type DragPreviewProvider = Box<dyn FnMut(&mut Document, NodeId, skelter_base::geom::Point) -> Option<crate::kind::DragPreview>>;
 
+/// The user's media preferences ([`Document::set_media_preferences`]).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MediaPreferences {
+    /// `prefers-reduced-motion: reduce`.
+    pub reduced_motion: bool,
+    /// `prefers-contrast`.
+    pub contrast: svelters_style::Contrast,
+}
+
+impl MediaPreferences {
+    pub fn new(reduced_motion: bool, contrast: svelters_style::Contrast) -> MediaPreferences {
+        MediaPreferences { reduced_motion, contrast }
+    }
+}
+
 /// The retained tree of one app.
 pub struct Document {
     pub(crate) registry: Arc<KindRegistry>,
@@ -1195,6 +1211,24 @@ impl Document {
             self.restyle_inputs(i, old.as_ref(), &style);
             self.journal.push(Change::Style { node, revision: rev });
         }
+    }
+
+    /// The user's media preferences (SV66): `prefers-reduced-motion` and `prefers-contrast` match
+    /// them, and with reduced motion CSS transitions don't run (values jump). The host sets them from
+    /// the OS or from its own settings; the default is no preference. A change restyles every window.
+    pub fn set_media_preferences(&mut self, prefs: MediaPreferences) {
+        let env = svelters_style::MediaEnv { reduced_motion: prefs.reduced_motion, contrast: prefs.contrast, ..*self.style.stylist.media_env() };
+        if env != *self.style.stylist.media_env() {
+            let _ = self.style.stylist.set_media(env);
+            self.style.caches.clear();
+            self.restyle_all();
+        }
+    }
+
+    /// The media preferences in effect ([`Document::set_media_preferences`]).
+    pub fn media_preferences(&self) -> MediaPreferences {
+        let env = self.style.stylist.media_env();
+        MediaPreferences { reduced_motion: env.reduced_motion, contrast: env.contrast }
     }
 
     /// Adds a style sheet to every window (an `Origin::Author` sheet).

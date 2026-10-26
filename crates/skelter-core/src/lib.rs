@@ -67,7 +67,7 @@ mod anim;
 mod tests;
 
 pub use cx::{Services, A11yCx, ChildLayoutCx, EventCx, RealizeCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
-pub use document::{Document, DragPreviewProvider, SyncDelivery, Writer};
+pub use document::{Document, DragPreviewProvider, MediaPreferences, SyncDelivery, Writer};
 pub use error::{PropError, TreeError};
 pub use frame::FrameStats;
 pub use layout::LayoutRun;
@@ -81,5 +81,5 @@ pub use style::{ComputedBox, StyleInput};
 pub use tree::{Dirty, ListenFlags, Listener, NodeFlags};
 pub use value::{PropDefault, Value, ValueType};
 pub use skelter_base;
-pub use svelters_style::StateMask;
+pub use svelters_style::{Contrast, StateMask};
 pub use taffy;
