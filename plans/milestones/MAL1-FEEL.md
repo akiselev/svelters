@@ -115,7 +115,9 @@ Added by the coordinator. `ATTACHES_TO` was declared and `ContextMenu::context_c
 
 ## CI
 
-See the last section, filled in after the run.
+Green on `92794840` (all six workflow runs): js 40415247882, linux-gtk 40415248069, linux-qt
+40415247974, macos-appkit 40415247924, skelter 40415247883, windows-winui 40415248190. The record
+commit that adds these ids changes only this file.
 
 ## Not run locally
 
