@@ -12,6 +12,7 @@
 //! | [`render`] | pixels: the committed tree drawn by `skelter_render` on the environment's adapter (lavapipe in CI) |
 //! | [`snapshot`] | the pixel tier: kittest's `snapshot` (dify's comparison, PNG goldens, `UPDATE_SNAPSHOTS`) |
 //! | `automation` | (feature `automation`) `svelters_automation::Driver` for a harness, so selector and MCP queries drive skelter |
+//! | `scene_source` | (feature `automation`) `SkelterScene`: skelter-native UI as a `svelters_automation::SceneSource` (selectors, snapshot) |
 
 pub mod a11y;
 #[cfg(feature = "automation")]
@@ -23,6 +24,8 @@ pub mod harness;
 pub mod headless;
 pub mod island;
 pub mod render;
+#[cfg(feature = "automation")]
+pub mod scene_source;
 pub mod snapshot;
 
 pub use a11y::{A11yTree, AkNode, By, NodeInfo, NodeKey, by};
@@ -34,4 +37,6 @@ pub use island::{EguiHarness, EguiHarnessBuilder, IslandDoc};
 pub use skelter::platform::{HeadlessPlatform, PlatformCall, VirtualClock};
 pub use skelter_base::accesskit::Role;
 pub use render::{GpuRender, Image, RenderError};
+#[cfg(feature = "automation")]
+pub use scene_source::SkelterScene;
 pub use snapshot::{SnapshotError, SnapshotOptions, image_snapshot, try_image_snapshot, try_image_snapshot_options};

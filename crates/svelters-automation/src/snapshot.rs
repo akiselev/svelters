@@ -11,8 +11,7 @@
 //! Nodes without a role of their own (`generic`) and no text are flattened: their children take
 //! their place. A `label` shows its text as its name. Pointer and focus states are left out.
 
-use crate::role::{role_of, states_of};
-use svelters_egui::accessible_name;
+use crate::source::SceneSource;
 use svelters_egui::scene::{NodeRef, W};
 
 /// The value a snapshot shows after the name (`: value`), for value-bearing roles.
@@ -57,16 +56,17 @@ fn quote(s: &str) -> String {
     format!("\"{}\"", s.replace('\\', "\\\\").replace('"', "\\\""))
 }
 
-/// Appends the YAML lines of `n`'s subtree at `depth`.
-pub(crate) fn yaml(n: NodeRef<'_>, depth: usize, out: &mut String) {
-    if !n.is_visible() {
+/// Appends the YAML lines of `n`'s subtree at `depth` (any [`SceneSource`]; the egui scene is one).
+pub(crate) fn yaml_in<S: SceneSource>(s: &S, n: S::Node, depth: usize, out: &mut String) {
+    if !s.is_visible(n) {
         return;
     }
-    let role = role_of(n);
-    let name = accessible_name(n);
+    let role = s.role(n);
+    let name = s.name(n);
+    let children = s.children(n);
     if role == "generic" && name.is_empty() {
-        for c in n.children() {
-            yaml(c, depth, out);
+        for c in children {
+            yaml_in(s, c, depth, out);
         }
         return;
     }
@@ -79,14 +79,14 @@ pub(crate) fn yaml(n: NodeRef<'_>, depth: usize, out: &mut String) {
         out.push(' ');
         out.push_str(&quote(&name));
     }
-    for s in states_of(n) {
+    for st in s.states(n) {
         // pointer and focus states are transient: a snapshot is a regression artefact
-        if !matches!(s, "hovered" | "pressed" | "focused" | "focus-within" | "focus-visible") {
-            out.push_str(&format!(" [{s}]"));
+        if !matches!(st, "hovered" | "pressed" | "focused" | "focus-within" | "focus-visible") {
+            out.push_str(&format!(" [{st}]"));
         }
     }
-    let kids = n.children().count() > 0;
-    match value_of(n) {
+    let kids = !children.is_empty();
+    match s.value(n) {
         Some(v) if !kids => out.push_str(&format!(
             ": {}",
             if v.is_empty() { "\"\"".to_string() } else { v }
@@ -95,7 +95,7 @@ pub(crate) fn yaml(n: NodeRef<'_>, depth: usize, out: &mut String) {
         _ => {}
     }
     out.push('\n');
-    for c in n.children() {
-        yaml(c, depth + 1, out);
+    for c in children {
+        yaml_in(s, c, depth + 1, out);
     }
 }
