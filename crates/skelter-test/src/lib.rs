@@ -7,6 +7,7 @@
 //! | [`island`] | [`EguiHarness`]: egui_kittest's `Harness` for egui closures in a skelter egui island |
 //! | [`headless`] | the GPU-less compositor the harness runs on (with `skelter_platform::HeadlessPlatform`) |
 //! | [`a11y`] | the AccessKit snapshot (grafted island subtrees included) and kittest's queries |
+//! | [`consumer`] | AccessKit's own consumers on the app's updates: an `accesskit_consumer::Tree` and, on Linux, an AT-SPI adapter recording interfaces and events |
 //! | [`convert`] | verb arguments in skelter's or egui's types |
 //! | [`egui_event`] | the `egui::Event`-shaped injection adapter for tests moving off egui_kittest |
 //! | [`render`] | pixels: the committed tree drawn by `skelter_render` on the environment's adapter (lavapipe in CI) |
@@ -17,6 +18,7 @@
 pub mod a11y;
 #[cfg(feature = "automation")]
 pub mod automation;
+pub mod consumer;
 pub mod convert;
 pub mod core_islands;
 pub mod egui_event;
@@ -29,6 +31,7 @@ pub mod scene_source;
 pub mod snapshot;
 
 pub use a11y::{A11yTree, AkNode, By, NodeInfo, NodeKey, by};
+pub use consumer::{Consumer, FocusMove, Located};
 pub use convert::TestEvent;
 pub use core_islands::CoreIslands;
 pub use harness::{Harness, HarnessBuilder, Node, NotSettled};

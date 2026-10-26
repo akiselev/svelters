@@ -386,6 +386,36 @@ fn key_press_moves_focus_and_activates() {
 }
 
 #[test]
+fn the_consumer_follows_focus_and_atspi_announces_it() {
+    let mut h = Harness::<Doc>::builder().with_consumer(true).build(Doc {
+        dirty: true,
+        ..Doc::default()
+    });
+    assert!(h.consumer().updates() >= 1);
+    assert_eq!(h.consumer().focus_located().map(|l| l.0), Some(accesskit::NodeId(ROOT)));
+    h.key_press(Key::Tab);
+    h.run();
+    assert_eq!(h.consumer().focus_author_id(), Some("inc"));
+    h.key_press(Key::Tab);
+    h.run();
+    assert_eq!(h.consumer().focus_author_id(), Some("enabled"));
+    let moves: Vec<_> = h.consumer().focus_moves().iter().filter_map(|m| m.to.map(|t| t.0)).collect();
+    assert_eq!(moves, [accesskit::NodeId(BUTTON), accesskit::NodeId(CHECK)]);
+    #[cfg(target_os = "linux")]
+    {
+        use skelter_test::consumer::{CoordType, Interface};
+        let c = h.consumer();
+        let a = c.atspi().expect("the AT-SPI adapter is on");
+        let check = c.by_author_id("enabled").unwrap().id();
+        let button = c.by_author_id("inc").unwrap().id();
+        assert_eq!(a.focused_events(), [c.state().root_id(), button, check], "AT-SPI announced each focus");
+        assert!(a.interfaces(check).contains(Interface::Component));
+        let e = a.node(button).extents(CoordType::Window).unwrap();
+        assert_eq!((e.x, e.y, e.width, e.height), (10, 10, 100, 30), "window extents of the button");
+    }
+}
+
+#[test]
 fn type_text_focuses_through_accesskit_then_commits_text() {
     let mut h = harness();
     let field = h.get_by_label("Name");

@@ -4990,6 +4990,9 @@ dependencies = [
 name = "skelter-test"
 version = "0.0.0"
 dependencies = [
+ "accesskit_atspi_common",
+ "accesskit_consumer",
+ "atspi-common",
  "dify",
  "egui",
  "egui-wgpu",
