@@ -96,12 +96,15 @@ touches only skelter crates runs only the skelter workflow (paths-ignore of the 
 | A21 | island pass time monotonic | island `a_pass_earlier_than_the_last_does_not_move_time_backwards` |
 | A22 | Kind::layout_style sees the style just computed (inline box layout CSS) | widgets `box_::inline_css` |
 | A23, A24 | `PointerInput.history`; `Event::Gesture` to the hovered node | `tests::dispatch::canvas_input` |
+| A26 | a will-change/animated layer gets a continuation layer (later siblings stay above it) | `tests::commit::a_will_change_layer_keeps_later_siblings_above_it` |
+| A27 | `:state()` in sheets resolves through the host's provider states (`Document::set_state_names`) | `tests::style::a_state_rule_matches_the_hosts_state_bit`, svelters-skelter `ops::a_state_rule_in_an_app_sheet_matches_the_hosts_bit` |
+| A29 | in-flow nodes created after the first frame draw at their parent's origin: the cause is A16's freed-id reuse (destroy + create, or Svelte's remove-and-insert in one frame); fixed by A16 (in master since 4bf37234), so no code change. With A16 disabled, the destroy + recreate case fails; inserting a row, inserting a leaf into a nested slot, and showing after display:none pass either way | `tests::absolute::in_flow_nodes_created_after_the_first_frame_draw_where_they_are_laid_out` (5 cases, checked against the committed transform locals) |
 | (1) | `PrepareCx::{scroll_offset, scroll_to, set_caret}`; text-edit self-scrolls with its box fixed | `a_prepare_scrolls_...`, `text::kind::tests::a_long_line_scrolls_...` |
 | (4) | a Layouter over the document's TextSystem for hosted kinds; hex box caret | `pickers::kinds::tests::the_editing_hex_box_...` |
 | (5) | automation `Session` over `SourceDriver`; skelter-test `SkelterNativeDriver` | `native_session.rs` |
 | (6) | `caret-color` in svelters-style; `CompositorConfig::caret_color` removed | `cascade::caret_color_auto_or_a_colour_inherits` |
 
-\* placeholder/incomplete, being made real in A9b. In progress: A9b, A25 (virtual-list).
+\* placeholder/incomplete, being made real in A9b. In progress: A9b, A25 (virtual-list). Queued: A28 (window overlay carrying AccessKit anchors, low).
 
 Build note: `.cargo/config.toml` sets `build-dir = {workspace-root}/target/build`; a second checkout needs both
 `CARGO_TARGET_DIR` and `CARGO_BUILD_BUILD_DIR` set, and a target shared between checkouts mixes their sources.
