@@ -425,7 +425,19 @@ impl Document {
                 if t.doc.core[i].window != Some(window) {
                     continue;
                 }
-                if *b == root || !t.boundary(*b) {
+                if *b == root {
+                    full = true;
+                    break;
+                }
+                if !t.boundary(*b) {
+                    // an absolute box inside escapes to a containing block above: the blocks above
+                    // lay out again (a cached one would keep its old hoisted list, without the box)
+                    let mut a = t.doc.core[i].parent;
+                    while let Some(p) = a {
+                        let pi = p.index() as usize;
+                        t.doc.layout[pi].cache.clear();
+                        a = t.doc.core[pi].parent;
+                    }
                     full = true;
                     break;
                 }

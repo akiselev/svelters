@@ -608,6 +608,7 @@ impl Document {
     fn detach_as(&mut self, parent: NodeId, child: NodeId, keep_input: bool) {
         let pi = self.ix(parent);
         let ci = self.ix(child);
+        self.unhoist(pi, child);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
         self.core[ci].slot = None;
@@ -620,6 +621,37 @@ impl Document {
             self.refresh_desc_nonpassive(pi);
         }
         self.refresh_inert(ci);
+    }
+
+    /// `child`'s subtree leaves the tree above it: absolute boxes in it leave the hoisted lists of
+    /// their containing blocks (`parent` and its ancestors). A containing block whose layout is
+    /// cached keeps its list, and rounding walks it: a destroyed box was a stale id, a moved one got
+    /// this tree's layout (A31).
+    fn unhoist(&mut self, parent: usize, child: NodeId) {
+        let mut a = Some(parent);
+        while let Some(i) = a {
+            if !self.layout[i].hoisted.is_empty() {
+                let mut list = std::mem::take(&mut self.layout[i].hoisted);
+                list.retain(|&h| !self.in_subtree(h, child));
+                self.layout[i].hoisted = list;
+            }
+            a = self.core[i].parent.map(|p| self.ix(p));
+        }
+    }
+
+    /// `n` is `root` or below it; a stale `n` counts as inside (it is dropped either way).
+    fn in_subtree(&self, n: NodeId, root: NodeId) -> bool {
+        let mut cur = n;
+        loop {
+            if cur == root {
+                return true;
+            }
+            let Some(i) = self.idx(cur) else { return true };
+            match self.core[i].parent {
+                Some(p) => cur = p,
+                None => return false,
+            }
+        }
     }
 
     /// Destroys `node` and its subtree (removing it from its parent first). Stale ids are ignored.

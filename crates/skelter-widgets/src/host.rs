@@ -1048,6 +1048,26 @@ mod tests {
     use super::*;
     use crate::controls::Button;
 
+    /// A30: `aria-label` names a button over its text content (ARIA's precedence).
+    #[test]
+    fn aria_label_names_a_button_over_its_text() {
+        use crate::testdoc::{child, doc, frame};
+        let (mut d, root) = doc(skelter_base::geom::Size::new(200.0, 100.0), |r| {
+            register::<Button>(r).unwrap();
+        });
+        let b = child(&mut d, root, skelter_core::KindId::of("button"), "");
+        let text = d.registry().get(skelter_core::KindId::of("button")).unwrap().spec.prop_named("text").unwrap();
+        d.set_prop(b, text, Value::from("3")).unwrap();
+        d.set_prop(b, skelter_core::common::ARIA_LABEL, Value::from("Toggle problems")).unwrap();
+        let c = frame(&mut d).unwrap();
+        let label = |c: &skelter_base::commit::Commit| c.a11y.as_ref()?.nodes.iter().find(|(id, _)| id.0 == b.0).map(|(_, n)| n.label().map(str::to_owned));
+        assert_eq!(label(&c), Some(Some("Toggle problems".into())));
+        // without it, the text content names the button
+        d.set_prop(b, skelter_core::common::ARIA_LABEL, Value::from("")).unwrap();
+        let c = frame(&mut d).unwrap();
+        assert_eq!(label(&c), Some(Some("3".into())));
+    }
+
     #[test]
     fn the_documents_theme_reaches_a_stock_buttons_tokens() {
         use crate::testdoc::{child, doc, frame};
