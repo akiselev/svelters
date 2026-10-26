@@ -2,8 +2,8 @@
 //! `skelter.json` speak.
 //!
 //! **Kinds.** A surface kind whose widget skelter-widgets has written (the 18 Tier 0 controls and
-//! containers, and the inline runs a `label` folds; not yet `window` and `text-edit`) is registered through
-//! `skelter_widgets::host::register_tier0`; every other concrete kind gets a core kind synthesized
+//! containers, and the inline runs a `label` folds; not yet `window`) is registered through
+//! `skelter_widgets::host::register_tier0` (`text-edit` directly: it is a `Kind` of its own); every other concrete kind gets a core kind synthesized
 //! from its surface spec ([`Placeholder`]: the props, signals and slots are real tree members, the
 //! node draws nothing) until its widget lands. Abstract bases (`Widget`, `Run`) have no core kind.
 //!
@@ -175,6 +175,8 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
     skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::menu::ContextMenu>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::menu::MenuItemKind>(reg)?;
+    // a `Kind` of its own (IME, the text-input client: not the host bridge)
+    reg.register::<skelter_widgets::text::TextEdit>()?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
@@ -709,7 +711,7 @@ mod tests {
         assert_eq!(label.prop_named("enabled").unwrap().wire, button.prop_named("enabled").unwrap().wire);
         assert!(label.hosted);
         assert!(k.by_tag("slider").unwrap().hosted);
-        assert!(!k.by_tag("text-edit").unwrap().hosted, "text-edit is a placeholder until skelter-widgets has it");
+        assert!(k.by_tag("text-edit").unwrap().hosted, "text-edit is skelter-widgets' (its AccessKit text runs, qc-a11y §3.2)");
         assert!(k.by_tag("window").unwrap().core.is_some());
     }
 }
