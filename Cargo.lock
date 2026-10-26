@@ -5043,6 +5043,7 @@ dependencies = [
  "svelters-conformance",
  "svelters-style",
  "taffy",
+ "unicode-segmentation",
 ]
 
 [[package]]

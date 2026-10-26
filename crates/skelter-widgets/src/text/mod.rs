@@ -15,6 +15,7 @@
 //! | [`caret`] | the caret as a compositor fast commit |
 //! | [`geometry`] | skelter-text's `TextLayout` as a field's geometry; the `TextSystem` layouter |
 //! | [`lines`] | quire-text's `VisualLines` over a layout (Up/Down on wrapped rows) |
+//! | [`runs`] | [`TextRanges`]: the shown text as accessibility runs (AccessKit `TextRun`s: rows, chunks, characters, word starts) |
 //! | [`shown`] | the shown text (password mask, preedit) and its byte mapping |
 //! | [`utf16`] | document-wide UTF-16 offsets over quire-text's `Text` |
 //! | [`shim`] | stand-ins for wave-1 APIs not there yet (`TextLayout`, `TextSystem::layout`, `Clipboard`) |
@@ -30,6 +31,7 @@ pub mod keys;
 pub mod lines;
 pub mod number;
 pub mod policy;
+pub mod runs;
 pub mod shim;
 pub mod shown;
 pub mod utf16;
@@ -42,3 +44,4 @@ pub use kind::TextEdit;
 pub use keys::{KeyAction, KeyRoute};
 pub use number::{NumFormat, NumberField, NumberSignal, Steps};
 pub use policy::{Platform, TextPolicy};
+pub use runs::{TextRanges, TextRun};

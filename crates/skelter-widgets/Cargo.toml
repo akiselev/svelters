@@ -26,6 +26,8 @@ roxmltree = "=0.20.0"
 i_overlay = "=9.1.0"
 # The text-editing core of the `text` kinds (lane TEXT-INPUT), at QUIRE's `claude/presto-quire` 35b5063a (R1, R2).
 quire-text = { git = "https://github.com/akiselev/quire", rev = "35b5063ab149ca8682241324aff8efb28696f491" }
+# Grapheme clusters: the characters of the text fields' accessibility runs (`text::runs`).
+unicode-segmentation = "=1.13.3"
 # Native file and message dialogs (`dialogs::native`) through rfd; without it they fail as unsupported.
 rfd = { version = "0.17.2", optional = true }
 
