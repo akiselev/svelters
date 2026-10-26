@@ -178,6 +178,18 @@ fn core_default(p: &w::PropSpec) -> PropDefault {
     }
 }
 
+/// skelter-core's id of signal `name` of the widget kind `ws` (what its registered spec declares):
+/// for [`w::EventCx::emit_at`] on a descendant of another kind (a menu's items).
+pub fn core_signal_id(ws: &w::KindSpec, name: &str) -> Option<SignalId> {
+    let s = ws.signals.iter().find(|s| s.name == name)?;
+    let arg = match s.args {
+        [] => None,
+        [(_, t)] => Some(core_type(*t)),
+        _ => Some(ValueType::Record),
+    };
+    Some(SignalId::of(ws.tag, s.name, arg.map_or("void", ValueType::name)))
+}
+
 fn is_common(name: &str) -> bool {
     skelter_core::common::COMMON.props.iter().any(|p| p.name == name)
 }
@@ -641,12 +653,13 @@ impl<W: w::Kind + Default> Hosted<W> {
             let Some(sig) = ws.signals.get(i) else { continue };
             cx.emit(s.core.signal_id(i), signal_arg(sig, &e.args));
         }
-        if !emitted_on.is_empty() {
-            let children: Vec<NodeId> = cx.view(node).map(|v| v.children().to_vec()).unwrap_or_default();
-            for (k, sig, arg) in emitted_on {
-                if let Some(&c) = children.get(k) {
-                    cx.emit_on(c, sig, arg);
-                }
+        for (path, sig, arg) in emitted_on {
+            let mut at = Some(node);
+            for k in path {
+                at = at.and_then(|n| cx.view(n)).and_then(|v| v.children().get(k).copied());
+            }
+            if let Some(c) = at.filter(|c| *c != node) {
+                cx.emit_on(c, sig, arg);
             }
         }
         for r in peers {

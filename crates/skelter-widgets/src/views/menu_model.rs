@@ -62,6 +62,9 @@ pub struct Entry {
     pub checked: bool,
     pub children: Vec<EntryIx>,
     pub parent: Option<EntryIx>,
+    /// Where its element is under the root ([`MenuModel::from_elements`]): the child index at each
+    /// level (empty for an entry not built from elements).
+    pub path: Vec<usize>,
 }
 
 impl Entry {
@@ -80,6 +83,7 @@ impl Entry {
             checked: false,
             children: Vec::new(),
             parent: None,
+            path: Vec::new(),
         }
     }
     /// A submenu (or a bar title).
@@ -257,6 +261,7 @@ impl MenuModel {
             };
             e.enabled = flag("enabled", true);
             e.visible = flag("visible", true);
+            e.path = here.split('.').filter_map(|k| k.parse().ok()).collect();
             let ix = self.add(parent, e);
             if tag == "menu"
                 && let Some(Value::List(kids)) = field(el, "children")

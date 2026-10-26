@@ -634,17 +634,34 @@ impl Menus {
                     }
                     emit(cx, spec, "close", vec![Value::str(&self.model.get(c).id)]);
                 }
-                MenuOut::Current(r) => emit(cx, spec, "hover", vec![Value::str(&self.model.get(r).id)]),
+                MenuOut::Current(r) => {
+                    emit(cx, spec, "hover", vec![Value::str(&self.model.get(r).id)]);
+                    self.emit_item(cx, Some(r), "hover", None);
+                }
                 MenuOut::Picked(Picked { activated, toggled }) => {
                     for (id, c) in toggled {
                         emit(cx, spec, "toggled", vec![Value::str(&id), Value::Bool(c)]);
+                        self.emit_item(cx, self.model.find(&id), "toggled", Some(c));
                     }
                     if let Some((id, c)) = activated {
                         emit(cx, spec, "activate", vec![Value::str(&id), Value::Bool(c)]);
+                        self.emit_item(cx, self.model.find(&id), "activate", Some(c));
                     }
                 }
                 MenuOut::BarKeys(_) => {}
             }
+        }
+    }
+
+    /// The root's signal `name` also on the `menu-item` node of entry `ix` (its own `activate`,
+    /// `toggled` and `hover`, svelters-egui's `action`), with its check state when `checked` is set.
+    fn emit_item(&self, cx: &mut EventCx<'_>, ix: Option<EntryIx>, name: &str, checked: Option<bool>) {
+        let Some(e) = ix.map(|ix| self.model.get(ix)) else { return };
+        if e.kind != EntryKind::Item || e.path.is_empty() {
+            return;
+        }
+        if let Some(sig) = crate::host::core_signal_id(&MENU_ITEM_SPEC, name) {
+            cx.emit_at(e.path.clone(), sig, checked.map(skelter_core::Value::Bool));
         }
     }
 
@@ -693,6 +710,24 @@ impl Menus {
         }
         self.report(cx, spec, open, out);
         h
+    }
+
+    /// The open levels into the window's overlay stack ([`Kind::record_overlay`]): their lists in
+    /// one menu layer whose hit area spans them (each level counts as inside; a press between
+    /// them is the root's surface, outside every level, and closes the menu). `None` while closed.
+    pub fn record_overlay(&self, cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
+        if !self.nav.is_open() || self.levels.is_empty() {
+            return None;
+        }
+        let RecordCx { list, text, res, style, scale, .. } = cx;
+        for l in self.record_levels(&mut **text, &mut **res, style, *scale) {
+            list.bounds = list.bounds.union(&l.bounds);
+            list.items.extend(l.items);
+        }
+        let span = self.levels.iter().skip(1).fold(self.levels[0].rect, |a, l| a.union(&l.rect));
+        let mut part = skelter_core::overlay::OverlayPart::new(skelter_core::overlay::OverlayClass::Menu, span);
+        part.inside = self.levels.iter().map(|l| l.rect).chain(self.titles.iter().map(|t| t.1)).collect();
+        Some(part)
     }
 
     /// A menu is open or the bar is highlighted: a press outside dismisses it ([`Kind::light_dismiss`]).
@@ -917,6 +952,16 @@ impl Kind for MenuBar {
         let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
         self.menus.record_bar(&mut PaintCx::of(cx), &style);
     }
+    /// The open menus, into the overlay stack ([`Menus::record_overlay`]).
+    fn record_overlay(&self, cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
+        if self.props.native_bar { None } else { self.menus.record_overlay(cx) }
+    }
+    fn overlay_closed(&mut self, cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
+        let mut out = Vec::new();
+        self.menus.close(&mut out);
+        self.menus.report(cx, &MENU_BAR_SPEC, None, out);
+        Handled::Yes
+    }
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         if self.props.native_bar {
             return Handled::No;
@@ -1007,8 +1052,18 @@ impl Kind for ContextMenu {
         self.menus.sync_elements(cx.style.children);
         self.menus.prepare(cx.text, &cx.style);
     }
-    /// Out of flow: its levels are recorded into the overlay stack ([`Menus::record_levels`]).
+    /// Out of flow: its levels are recorded into the overlay stack ([`Menus::record_overlay`]).
     fn record(&self, _cx: &mut RecordCx) {}
+    fn record_overlay(&self, cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
+        self.menus.record_overlay(cx)
+    }
+    fn overlay_closed(&mut self, cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
+        let mut out = Vec::new();
+        self.menus.close(&mut out);
+        self.sync_open();
+        self.menus.report(cx, &CONTEXT_MENU_SPEC, Some(context_props::P::open.id()), out);
+        Handled::Yes
+    }
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         let h = self.menus.event(cx, ev, &CONTEXT_MENU_SPEC, Some(context_props::P::open.id()));
         self.sync_open();
@@ -1083,10 +1138,18 @@ pub static MENU_SPEC: KindSpec = KindSpec {
     focusable: false,
 };
 
+/// `menu-item`'s own signals (svelters-egui's `action`): its root emits them on it along with its
+/// own `activate`, `toggled` and `hover`.
+pub const ITEM_SIGNALS: &[SignalSpec] = &[
+    SignalSpec::new("activate", &[("checked", ValueType::Bool)], "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick."),
+    SignalSpec::new("toggled", &[("checked", ValueType::Bool)], "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state."),
+    SignalSpec::new("hover", &[], "It became the open menu's current row (the pointer or the arrow keys)."),
+];
+
 pub static MENU_ITEM_SPEC: KindSpec = KindSpec {
     tag: "menu-item",
     props: item_props::ItemProps::SPECS,
-    signals: &[],
+    signals: ITEM_SIGNALS,
     slots: &[],
     children: false,
     role: accesskit::Role::MenuItem,
@@ -1687,5 +1750,51 @@ mod tests {
         assert_eq!(items[1], MenuNode::Separator);
         assert_eq!(items[2], MenuNode::Item { id: "0.2".into(), label: "Auto Save".into(), shortcut: String::new(), enabled: true, checked: Some(true) });
         assert!(matches!(&d.menus[1], MenuNode::Submenu { label, enabled: false, .. } if label == "Edit"));
+    }
+
+    type OnItems = Vec<(Vec<usize>, skelter_core::SignalId, Option<skelter_core::Value>)>;
+
+    /// Sends `ev` to the context menu; returns the signals it emitted on its items.
+    fn on_items(c: &mut ContextMenu, policy: &Policy, now: Time, ev: Event) -> OnItems {
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(now, Size::new(400.0, 300.0), &mut state, policy);
+        c.event(&mut cx, &ev);
+        cx.emitted_on
+    }
+
+    /// A9b: an item's own `activate`, `toggled` and `hover` (svelters-egui's `action`) fire on the
+    /// item's node (by its path under the root), not only the root's.
+    #[test]
+    fn items_get_their_own_activate_toggled_and_hover() {
+        let mut c = ContextMenu::default();
+        let els = vec![
+            el("menu-item", "cut", &[("label", Value::str("Cut"))], vec![]),
+            el("menu-separator", "", &[], vec![]),
+            el("menu-item", "", &[("label", Value::str("Wrap")), ("checkable", Value::Bool(true))], vec![]),
+        ];
+        c.menus.sync_elements(&els);
+        c.menus.bounds = Rect::new(0.0, 0.0, 400.0, 300.0);
+        assert_eq!(c.menus.model.get(c.menus.model.find("2").unwrap()).path, [2], "the element's place under the root");
+        let policy = policy(Platform::Linux);
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(ms(0), Size::new(400.0, 300.0), &mut state, &policy);
+        c.context_click(&mut cx, Point::new(10.0, 10.0));
+        prepare(&mut c.menus);
+        let sig = |name| crate::host::core_signal_id(&MENU_ITEM_SPEC, name).unwrap();
+        let cut = center(row(&c.menus, 0, "cut"));
+        let out = on_items(&mut c, &policy, ms(400), ptr(PointerPhase::Move, cut));
+        assert_eq!(out, [(vec![0], sig("hover"), None)], "the row under the pointer");
+        on_items(&mut c, &policy, ms(450), ptr(PointerPhase::Down, cut));
+        let out = on_items(&mut c, &policy, ms(500), ptr(PointerPhase::Up, cut));
+        assert!(out.contains(&(vec![0], sig("activate"), Some(skelter_core::Value::Bool(false)))), "{out:?}");
+        // a check item: toggled, then activate, with the new state
+        c.context_click(&mut cx, Point::new(10.0, 10.0));
+        prepare(&mut c.menus);
+        let wrap = center(row(&c.menus, 0, "2"));
+        on_items(&mut c, &policy, ms(900), ptr(PointerPhase::Move, wrap));
+        on_items(&mut c, &policy, ms(950), ptr(PointerPhase::Down, wrap));
+        let out = on_items(&mut c, &policy, ms(1000), ptr(PointerPhase::Up, wrap));
+        let on: Vec<_> = out.iter().filter(|o| o.0 == [2] && o.1 != sig("hover")).cloned().collect();
+        assert_eq!(on, [(vec![2], sig("toggled"), Some(skelter_core::Value::Bool(true))), (vec![2], sig("activate"), Some(skelter_core::Value::Bool(true)))]);
     }
 }

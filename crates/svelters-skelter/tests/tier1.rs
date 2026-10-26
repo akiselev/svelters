@@ -135,10 +135,92 @@ fn action_is_skelter_widgets_menu_item_with_eguis_surface() {
     assert_eq!(r.get(a, "checked"), Value::Bool(true));
     let n = r.backend.node(a).unwrap();
     assert_eq!(r.backend.with_doc(|d| d.get_prop(n, skelter_core::PropId::of("menu-item", "label", "string"))), Some(skelter_core::Value::Str("Save".into())));
-    // egui's signals resolve and take listeners; skelter-widgets' menu root emits the picks itself
-    // (`activate` on the context-menu), so an action's own `activate` does not fire yet
-    r.listen(a, "activate");
-    assert!(m.signal_named("activate").unwrap().native.is_none());
+    // egui's signals are the menu-item's own (A9b: its menu root emits them on it)
+    for s in ["activate", "toggled", "hover"] {
+        assert!(m.signal_named(s).unwrap().native.is_some(), "{s}");
+    }
+}
+
+/// The context menu's open level's row rects, in its node's points.
+fn menu_rows(r: &Rig, menu: svl_handle) -> Vec<skelter_base::geom::Rect> {
+    let n = r.backend.node(menu).unwrap();
+    r.backend
+        .with_doc(|d| {
+            d.with_kind(n, |k| {
+                let c = k.as_any().and_then(|a| a.downcast_ref::<skelter_widgets::views::menu::ContextMenu>()).expect("skelter-widgets' context menu");
+                c.menus.levels().first().map(|l| l.rows.iter().map(|(_, r)| *r).collect()).unwrap_or_default()
+            })
+        })
+        .unwrap()
+}
+
+/// A primary pointer event at `p` in window 1, delivered to the host.
+fn pointer_at(r: &Rig, n: &mut u64, phase: skelter_base::event::PointerPhase, p: skelter_base::geom::Point) {
+    use skelter_base::event::{InputEnvelope, InputEvent, Modifiers, MouseButton, PointerEvent, PointerPhase, PointerType};
+    *n += 1;
+    let ev = PointerEvent {
+        phase,
+        pointer: 0,
+        kind: PointerType::Mouse,
+        button: matches!(phase, PointerPhase::Down | PointerPhase::Up).then_some(MouseButton::Primary),
+        buttons: if phase == PointerPhase::Down { 1 } else { 0 },
+        pos: p,
+        modifiers: Modifiers::default(),
+        pressure: 0.5,
+        tilt: skelter_base::geom::Vec2::ZERO,
+        history: Default::default(),
+    };
+    let t = skelter_base::time::Time(*n * 100_000_000);
+    r.backend.dispatch(&InputEnvelope { seq: skelter_base::ids::InputSeq(*n), window: skelter_base::ids::WindowId(1), os_time: t, recv_time: t, event: InputEvent::Pointer(ev) });
+    r.backend.pump();
+}
+
+/// svelters-egui's action events (tests/menus.rs, OW3): picking an action fires its own
+/// `activate(checked)`, a check action also `toggled(checked)`, and the current row's `hover`.
+#[test]
+fn action_fires_its_own_activate_toggled_and_hover() {
+    use skelter_base::event::PointerPhase;
+    use skelter_base::geom::{Point, Scale, Size};
+    use skelter_base::ids::WindowId;
+    use skelter_base::time::Time;
+    let r = Rig::new();
+    let root = r.create("box");
+    r.backend.attach_presented(root, WindowId(1), Size::new(400.0, 300.0), Scale(1.0)).unwrap();
+    let menu = r.create("context-menu");
+    r.insert(root, menu);
+    let items = r.br().resolve(NameKind::Slot, r.kind(menu), "items");
+    let (cut, wrap) = (r.create("action"), r.create("action"));
+    r.br().insert(menu, cut, None, items).unwrap();
+    r.br().insert(menu, wrap, None, items).unwrap();
+    r.set(cut, "label", Value::Str("Cut".into()));
+    r.set(wrap, "label", Value::Str("Wrap".into()));
+    r.set(wrap, "checkable", Value::Bool(true));
+    for (h, s) in [(cut, "activate"), (cut, "hover"), (wrap, "activate"), (wrap, "toggled")] {
+        r.listen(h, s);
+    }
+    let frame = || r.backend.with_doc(|d| d.frame(WindowId(1), Time(0)));
+    frame();
+    r.call(menu, "popup");
+    frame();
+    let rows = menu_rows(&r, menu);
+    assert_eq!(rows.len(), 2, "open with both rows");
+    let origin = r.backend.with_doc(|d| d.layout_rect(r.backend.node(menu).unwrap())).unwrap().min;
+    let at = |k: usize| Point::new(origin.x + (rows[k].min.x + rows[k].max.x) / 2.0, origin.y + (rows[k].min.y + rows[k].max.y) / 2.0);
+    let mut n = 0;
+    for phase in [PointerPhase::Move, PointerPhase::Down, PointerPhase::Up] {
+        pointer_at(&r, &mut n, phase, at(0));
+    }
+    let ev = r.take().events;
+    assert!(ev.contains(&(cut, r.signal_id(cut, "hover"), vec![])), "{ev:?}");
+    assert!(ev.contains(&(cut, r.signal_id(cut, "activate"), vec![Value::Bool(false)])), "{ev:?}");
+    // the check action: toggled, then activate, with the new state
+    r.call(menu, "popup");
+    frame();
+    for phase in [PointerPhase::Move, PointerPhase::Down, PointerPhase::Up] {
+        pointer_at(&r, &mut n, phase, at(1));
+    }
+    let ev: Vec<_> = r.take().events.into_iter().filter(|e| e.0 == wrap).collect();
+    assert_eq!(ev, [(wrap, r.signal_id(wrap, "toggled"), vec![Value::Bool(true)]), (wrap, r.signal_id(wrap, "activate"), vec![Value::Bool(true)])]);
 }
 
 #[test]

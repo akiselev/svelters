@@ -423,10 +423,10 @@ pub mod core {
         /// Delivers a signal to JS now and reports whether a listener prevented its default
         /// ([`EventCx::emit_sync`]); `None`: signals are queued and nothing is prevented.
         pub sync: Option<&'a mut SyncEmit<'a>>,
-        /// Signals for the node's children, by child index, with skelter-core's signal ids (the
-        /// child's kind declares them): the host emits them on the child
-        /// (`skelter_core::EventCx::emit_on`).
-        pub emitted_on: Vec<(usize, skelter_core::SignalId, Option<skelter_core::Value>)>,
+        /// Signals for the node's descendants, by the path of child indices from the node (one
+        /// index: a child), with skelter-core's signal ids (the descendant's kind declares them):
+        /// the host emits them on that node (`skelter_core::EventCx::emit_on`).
+        pub emitted_on: Vec<(Vec<usize>, skelter_core::SignalId, Option<skelter_core::Value>)>,
     }
 
     impl<'a> EventCx<'a> {
@@ -439,7 +439,12 @@ pub mod core {
         }
         /// Emits `signal` (a signal of the child's kind) on the node's `child`-th child.
         pub fn emit_on(&mut self, child: usize, signal: skelter_core::SignalId, arg: Option<skelter_core::Value>) {
-            self.emitted_on.push((child, signal, arg));
+            self.emitted_on.push((vec![child], signal, arg));
+        }
+        /// Emits `signal` on the descendant at `path` (child indices from the node: a menu's item
+        /// inside a submenu).
+        pub fn emit_at(&mut self, path: Vec<usize>, signal: skelter_core::SignalId, arg: Option<skelter_core::Value>) {
+            self.emitted_on.push((path, signal, arg));
         }
         /// Emits `signal` at event time when the host can deliver it now (a cancelable signal whose
         /// default action follows); returns whether a listener prevented that default.
