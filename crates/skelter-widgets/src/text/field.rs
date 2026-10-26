@@ -1049,6 +1049,95 @@ mod tests {
         assert_eq!(f.editor.caret(), 8);
     }
 
+    fn ax(f: &TextField) -> (accesskit::Node, Vec<accesskit::Node>) {
+        let mut n = accesskit::Node::new(accesskit::Role::TextInput);
+        let runs = f.a11y(&mut n, &|k| accesskit::NodeId(1000 + k as u64));
+        (n, runs)
+    }
+
+    fn select(f: &mut TextField, anchor: (usize, usize), focus: (usize, usize)) -> bool {
+        let pos = |(k, c): (usize, usize)| accesskit::TextPosition { node: accesskit::NodeId(1000 + k as u64), character_index: c };
+        let req = accesskit::ActionRequest {
+            action: accesskit::Action::SetTextSelection,
+            target_tree: accesskit::TreeId::ROOT,
+            target_node: accesskit::NodeId(1),
+            data: Some(accesskit::ActionData::SetTextSelection(accesskit::TextSelection { anchor: pos(anchor), focus: pos(focus) })),
+        };
+        f.a11y_action(&req, &|id| id.0.checked_sub(1000).map(|k| k as usize))
+    }
+
+    #[test]
+    fn runs_carry_the_text_and_the_selection_names_them() {
+        let (mut f, mut lay) = field("hello wörld", EditorConfig::default());
+        f.focus_in(FocusReason::Pointer);
+        // the end: "ö" is two bytes
+        f.editor.set_selection(12, 12);
+        f.take_a11y();
+        press(&mut f, &mut lay, Key::Exclamationmark, Modifiers::default(), Some("!"));
+        assert!(f.take_a11y(), "typing re-sends the node");
+        press(&mut f, &mut lay, Key::ArrowLeft, Modifiers::SHIFT, None);
+        assert!(f.take_a11y(), "a selection change re-sends it");
+        let (n, runs) = ax(&f);
+        assert_eq!(n.value(), Some("hello wörld!"));
+        assert_eq!(runs.len(), 1);
+        assert_eq!(runs[0].role(), accesskit::Role::TextRun);
+        assert_eq!(runs[0].value(), Some("hello wörld!"));
+        assert_eq!(runs[0].character_lengths().len(), 12);
+        assert_eq!(runs[0].character_lengths()[7], 2, "ö is two bytes");
+        assert_eq!(runs[0].word_starts(), &[0, 6]);
+        assert_eq!(runs[0].character_positions().unwrap()[1], 10.0);
+        let sel = n.text_selection().unwrap();
+        assert_eq!((sel.anchor.node, sel.anchor.character_index), (accesskit::NodeId(1000), 12));
+        assert_eq!((sel.focus.node, sel.focus.character_index), (accesskit::NodeId(1000), 11));
+        assert!(n.supports_action(accesskit::Action::SetTextSelection));
+        // AT moves the selection: "hello" (characters 0..5)
+        assert!(select(&mut f, (0, 0), (0, 5)));
+        let s = f.editor.selection();
+        assert_eq!((s.anchor, s.head), (0, 5));
+        assert!(f.take_a11y());
+    }
+
+    #[test]
+    fn an_empty_field_has_one_empty_run_and_a_password_no_clear_text() {
+        let (f, _) = field("", EditorConfig::default());
+        let (n, runs) = ax(&f);
+        assert_eq!(runs.len(), 1);
+        assert_eq!(runs[0].value(), Some(""));
+        assert!(runs[0].character_lengths().is_empty());
+        assert_eq!(n.text_selection().map(|s| s.focus.character_index), Some(0));
+
+        let (p, _) = field("hunter2", EditorConfig { password: true, ..EditorConfig::default() });
+        let (n, runs) = ax(&p);
+        assert_eq!(n.role(), accesskit::Role::PasswordInput);
+        for v in std::iter::once(n.value()).chain(runs.iter().map(|r| r.value())) {
+            let v = v.unwrap_or("");
+            assert!(!v.contains("hunter") && !v.contains('2'), "clear text left the field: {v:?}");
+        }
+        assert_eq!(runs[0].character_lengths().len(), 7, "one mask a character");
+        assert!(runs[0].word_starts().is_empty());
+    }
+
+    #[test]
+    fn multiline_runs_end_in_line_feeds_and_leave_value_unset() {
+        let cfg = EditorConfig { multiline: true, ..EditorConfig::default() };
+        let mut f = TextField::new("ab\ncd", cfg, TextPolicy::of(Platform::Gtk));
+        let mut lay = LAY;
+        f.prepare(&mut lay, Rect::new(4.0, 2.0, 104.0, 42.0), Affine::IDENTITY);
+        let (n, runs) = ax(&f);
+        assert_eq!(n.role(), accesskit::Role::MultilineTextInput);
+        assert_eq!(n.value(), None, "consumers read the runs");
+        assert_eq!(runs.iter().map(|r| r.value().unwrap()).collect::<Vec<_>>(), vec!["ab\n", "cd"]);
+        assert_eq!(runs[0].character_widths().unwrap()[2], 0.0);
+        // bounds in node space: the content box's origin
+        let b = runs[1].bounds().unwrap();
+        assert_eq!((b.x0, b.y0, b.x1, b.y1), (4.0, 22.0, 24.0, 42.0));
+        // a selection after the line feed starts the second run
+        f.editor.set_selection(3, 4);
+        let (n, _) = ax(&f);
+        let s = n.text_selection().unwrap();
+        assert_eq!((s.anchor.node, s.anchor.character_index, s.focus.character_index), (accesskit::NodeId(1001), 0, 1));
+    }
+
     struct Board {
         text: Option<String>,
         primary: Option<String>,
