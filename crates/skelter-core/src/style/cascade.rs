@@ -897,7 +897,10 @@ impl Document {
                 changes.push((p, AnimValue::Color(a), AnimValue::Color(b)));
             }
         };
-        color(UiProp::Color, old.color, new.color);
+        // a node that draws only from its palette (an icon) animates `color` on the compositor
+        if !self.palette_only(node) {
+            color(UiProp::Color, old.color, new.color);
+        }
         if let (Some(a), Some(b)) = (solid(&old.background), solid(&new.background)) {
             color(UiProp::Background, a, b);
         }
@@ -996,6 +999,24 @@ impl Document {
         }
     }
 
+    /// Whether `node`'s recorded list draws only slotted primitives (an icon whose colours are
+    /// palette slots): its `color` transitions run on the compositor as `AnimProperty::Palette(0)`.
+    pub(crate) fn palette_only(&self, node: NodeId) -> bool {
+        use skelter_base::display::Prim;
+        let Some(list) = self.idx(node).and_then(|i| self.record[i].list.as_ref()) else { return false };
+        let mut slotted = false;
+        for p in &list.items {
+            match p {
+                Prim::Icon(ic) if ic.slot.is_some() && ic.color.is_some() => slotted |= ic.slot.is_some_and(|s| s.index == 0),
+                Prim::Path(pp) if pp.slot.is_some() => slotted |= pp.slot.is_some_and(|s| s.index == 0),
+                Prim::Icon(_) | Prim::Path(_) => return false,
+                Prim::PushClip(_) | Prim::PopClip => {}
+                _ => return false,
+            }
+        }
+        slotted
+    }
+
     /// Starts engine animations for the compositor properties whose change a `transition` covers.
     fn start_transitions(&mut self, window: WindowId, node: NodeId, old: &ComputedBox, new: &ComputedBox) {
         let start = |doc: &mut Document, prop: AnimProperty, name: &str, from: AnimValue, to: AnimValue| {
@@ -1034,6 +1055,16 @@ impl Document {
                 ws.pending.animations.push(AnimationCmd::Start(spec));
             }
         };
+        if old.color != new.color && self.palette_only(node) {
+            start(self, AnimProperty::Palette(0), "color", AnimValue::Color(old.color), AnimValue::Color(new.color));
+            // the palette lives on the node's effect node, made by the property pass
+            if self.animates(node, AnimProperty::Palette(0)) {
+                self.mark(node, Dirty::PROPERTY);
+                if let Some(ws) = self.window_mut(window) {
+                    ws.rebuild = true;
+                }
+            }
+        }
         if old.opacity != new.opacity {
             start(self, AnimProperty::Opacity, "opacity", AnimValue::Number(old.opacity), AnimValue::Number(new.opacity));
         }

@@ -174,6 +174,9 @@ pub enum AnimProperty {
     Transform,
     Clip,
     ScrollOffset,
+    /// One slot of the effect node's palette (`display::Palette`; `AnimValue::Color`): live icon
+    /// colours, a `color` transition of a node whose list draws only from its palette.
+    Palette(u8),
     // paint
     Color,
     BackgroundColor,

@@ -125,6 +125,7 @@ fn wire_ids_decode_and_the_spec_hash_ignores_order() {
     let mut b = KindRegistry::new();
     b.register::<testkinds::ToggleKind>().unwrap();
     b.register::<testkinds::TextKind>().unwrap();
+    b.register::<testkinds::IconKind>().unwrap();
     b.register::<testkinds::BoxKind>().unwrap();
     assert_eq!(a.spec_hash(), b.spec_hash());
     let mut c = KindRegistry::new();

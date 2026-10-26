@@ -9,7 +9,7 @@
 
 use skelter_base::anim::AnimationCmd;
 use skelter_base::commit::{Commit, FastCommit, ImageData, PathData};
-use skelter_base::display::{CanvasPrim, DisplayList, Prim, SurfacePrim};
+use skelter_base::display::{CanvasPrim, DisplayList, Palette, Prim, SurfacePrim};
 use skelter_base::geom::{Affine, Rect, Vec2};
 use skelter_base::ids::{CanvasId, ImageId, InputSeq, LayerId, NodeId, PathId, PropNodeId, Revision, RunId, SurfaceId, TextureId};
 use skelter_canvas::{Camera, CanvasView, LodParams};
@@ -36,6 +36,9 @@ pub struct PropTrees {
     pub anim_opacity: HashMap<PropNodeId, f32>,
     /// A running clip animation's value, replacing the node's committed shape.
     pub anim_clip: HashMap<PropNodeId, Rect>,
+    /// Running palette animations' values on effect nodes (live icon colours): the slots they set
+    /// replace the recorded colours of the slotted primitives drawn under that node.
+    pub anim_palette: HashMap<PropNodeId, Palette>,
 }
 
 impl PropTrees {
@@ -61,6 +64,7 @@ impl PropTrees {
                 self.anim_transform.remove(id);
                 self.anim_opacity.remove(id);
                 self.anim_clip.remove(id);
+                self.anim_palette.remove(id);
             }
         }
     }
@@ -169,6 +173,30 @@ impl PropTrees {
             cur = node.parent;
         }
         o
+    }
+}
+
+impl PropTrees {
+    /// The palette of the effect chain from `id`: each slot from the nearest node that sets it.
+    pub fn palette(&self, id: Option<PropNodeId>) -> Palette {
+        let mut p = Palette::EMPTY;
+        if self.anim_palette.is_empty() {
+            return p;
+        }
+        let mut cur = id;
+        let mut depth = 0;
+        while let Some(c) = cur {
+            let Some(node) = self.effects.get(&c) else { break };
+            depth += 1;
+            if depth > MAX_CHAIN {
+                break;
+            }
+            if let Some(q) = self.anim_palette.get(&c) {
+                p = p.over(q);
+            }
+            cur = node.parent;
+        }
+        p
     }
 }
 
@@ -607,6 +635,11 @@ fn push_item(
         ClipShape::Rounded(rr) => ClipShape::Rect(base.apply_rect(&rr.rect)),
     });
     let opacity = props.opacity(item.effect);
+    // a running palette animation draws the list's slotted primitives in its colours
+    let list = match props.palette(item.effect).apply(&list) {
+        Some(l) => Arc::new(l),
+        None => list,
+    };
     let mut bounds = transform.apply_rect(&list.bounds);
     if let Some(c) = &clip {
         bounds = bounds.intersect(&clip_rect(c));

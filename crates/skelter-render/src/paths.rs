@@ -56,12 +56,23 @@ pub struct GpuMesh {
     pub indices: wgpu::Buffer,
 }
 
+/// What the path cache did since it was made (tests and the budget counts read it).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct PathCacheStats {
+    /// Lookups served from a cached mesh.
+    pub hits: u64,
+    /// Meshes tessellated (misses that produced a mesh).
+    pub tessellations: u64,
+}
+
 #[derive(Default)]
 pub struct PathCache {
     meshes: HashMap<MeshKey, Mesh>,
     fill: FillTessellator,
     stroke: StrokeTessellator,
     frame: u64,
+    #[cfg_attr(not(test), allow(dead_code))]
+    stats: PathCacheStats,
 }
 
 fn build_path(data: &PathData) -> Path {
@@ -116,9 +127,12 @@ fn build_path(data: &PathData) -> Path {
 impl PathCache {
     /// The mesh for `key`, tessellating `data` on a miss. `None` when the path is empty or lyon fails.
     pub fn get(&mut self, key: MeshKey, data: &PathData) -> Option<&mut Mesh> {
-        if !self.meshes.contains_key(&key) {
+        if self.meshes.contains_key(&key) {
+            self.stats.hits += 1;
+        } else {
             let mesh = self.tessellate(&key, data)?;
             self.meshes.insert(key, mesh);
+            self.stats.tessellations += 1;
         }
         let frame = self.frame;
         let mesh = self.meshes.get_mut(&key)?;
@@ -185,9 +199,15 @@ impl PathCache {
         }
     }
 
+    /// How many meshes are cached.
     #[cfg(test)]
     pub fn len(&self) -> usize {
         self.meshes.len()
+    }
+
+    #[cfg(test)]
+    pub fn stats(&self) -> PathCacheStats {
+        self.stats
     }
 
     pub fn end_frame(&mut self) {

@@ -989,6 +989,111 @@ pub(crate) mod tests {
         }
     }
 
+    impl State {
+        /// One frame of `items` (each a list under its transform) at `scale`.
+        fn flatten_at(&mut self, items: &[(Affine, &DisplayList)], res: &Res, scale: f32) -> Frame {
+            let items: Vec<DrawItem<'_>> = items.iter().map(|(t, list)| DrawItem { transform: *t, clip: None, opacity: 1.0, list }).collect();
+            let scene = FrameScene { target: BIG, scale: Scale(scale), clear: Some(Color::WHITE), damage: &[], items: &items, resources: res };
+            let mut ctx = Ctx {
+                mask: &mut self.mask,
+                color: &mut self.color,
+                paths: &mut self.paths,
+                glyph_index: &mut self.glyph_index,
+                glyphs: &BoxGlyphs,
+                surfaces: &self.surfaces,
+                tree: &mut self.tree,
+            };
+            let f = flatten(&scene, ALL, &mut ctx);
+            self.paths.end_frame();
+            f
+        }
+        fn atlas_uploads(&mut self) -> usize {
+            self.mask.take_uploads().len() + self.color.take_uploads().len()
+        }
+    }
+
+    /// A 24-unit vector icon: a filled body and a stroke outline (as skelter-widgets' `VectorArt`
+    /// makes them), drawn by every icon of a toolbar from the same two paths.
+    fn icon_paths(res: &mut Res) -> [PathId; 2] {
+        let sq = |a: f32, b: f32| PathData {
+            cmds: vec![PathCmd::MoveTo(a, a), PathCmd::LineTo(b, a), PathCmd::QuadTo(b + 2.0, (a + b) / 2.0, b, b), PathCmd::LineTo(a, b), PathCmd::Close],
+            fill_rule: Default::default(),
+        };
+        res.paths.insert(PathId(1), sq(4.0, 20.0));
+        res.paths.insert(PathId(2), sq(8.0, 16.0));
+        [PathId(1), PathId(2)]
+    }
+
+    fn icon_list(ids: [PathId; 2], at: Affine) -> Vec<Prim> {
+        let slot = Some(display::PaletteSlot::new(0, 1.0));
+        ids.iter()
+            .enumerate()
+            .map(|(i, &path)| Prim::Path(display::PathPrim { path, transform: at, paint: PathPaint::Fill(if i == 0 { Color::BLACK } else { Color::WHITE }), slot }))
+            .collect()
+    }
+
+    #[test]
+    fn a_zoom_and_a_scale_change_draw_vector_icons_from_the_mesh_cache() {
+        let mut res = Res::default();
+        let ids = icon_paths(&mut res);
+        let mut l = DisplayList::new();
+        for p in icon_list(ids, Affine::scale(2.0, 2.0)) {
+            l.push(p, Rect::new(0.0, 0.0, 48.0, 48.0));
+        }
+        let mut st = State::new();
+        // a zoom animation over 20 frames: the item's transform scales 1x → 2x
+        for f in 0..20 {
+            let k = 1.0 + f as f32 / 19.0;
+            let frame = st.flatten_at(&[(Affine::scale(k, k), &l)], &res, 1.0);
+            assert_eq!(frame.paths.len(), 2);
+        }
+        let zoom = st.paths.stats();
+        assert_eq!(st.atlas_uploads(), 0, "a zoom never rasterises a vector icon");
+        // 8 steps per octave over one octave: 9 meshes per path
+        assert!(zoom.tessellations <= 2 * 9, "{zoom:?}");
+        assert_eq!(zoom.hits + zoom.tessellations, 40);
+        assert!(zoom.hits >= 22, "{zoom:?}");
+        // a scale change (1x → 1.5x → 2x and back) draws from the cache as well
+        for scale in [1.5, 2.0, 1.0, 1.5] {
+            st.flatten_at(&[(Affine::IDENTITY, &l)], &res, scale);
+        }
+        let scaled = st.paths.stats();
+        assert_eq!(st.atlas_uploads(), 0);
+        assert!(scaled.tessellations - zoom.tessellations <= 2, "only 1.5x is a new step for the mesh at rest: {scaled:?}");
+        eprintln!("SKELTER-svg zoom: {zoom:?}; after the scale changes: {scaled:?}; meshes cached: {}", st.paths.len());
+    }
+
+    #[test]
+    fn a_toolbar_of_200_vector_icons_is_one_path_batch_per_layer_run() {
+        let mut res = Res::default();
+        let ids = icon_paths(&mut res);
+        // the toolbar's background, then 200 icons of two layers (32 px, the 24-unit art at 4/3) in
+        // eight rows of 25
+        let mut bar = DisplayList::new();
+        bar.push(solid(Rect::new(0.0, 0.0, 1000.0, 300.0), Color::WHITE), Rect::new(0.0, 0.0, 1000.0, 300.0));
+        let k = 32.0 / 24.0;
+        let lists: Vec<DisplayList> = (0..200)
+            .map(|_| {
+                let mut l = DisplayList::new();
+                for p in icon_list(ids, Affine::scale(k, k)) {
+                    l.push(p, Rect::new(0.0, 0.0, 32.0, 32.0));
+                }
+                l
+            })
+            .collect();
+        let mut items = vec![(Affine::IDENTITY, &bar)];
+        items.extend(lists.iter().enumerate().map(|(i, l)| (Affine::translate((i % 25) as f32 * 38.0 + 2.0, (i / 25) as f32 * 36.0 + 2.0), l)));
+        let mut st = State::new();
+        let f = st.flatten_at(&items, &res, 1.0);
+        let path_batches = f.batches.iter().filter(|b| b.kind == Kind::Path).count();
+        assert_eq!(f.paths.len(), 400);
+        assert_eq!(path_batches, f.path_targets.len(), "one MSAA intermediate per path batch");
+        assert!(path_batches <= 2, "one path batch per layer run: {path_batches}");
+        assert_eq!(st.paths.len(), 2, "one mesh per path and scale step");
+        assert_eq!(st.atlas_uploads(), 0);
+        eprintln!("SKELTER-svg budget: 200 icons, {} paths, {path_batches} path batches, {} MSAA intermediates {:?}, {} meshes cached", f.paths.len(), f.path_targets.len(), f.path_targets.iter().map(|t| (t.rect[2], t.rect[3])).collect::<Vec<_>>(), st.paths.len());
+    }
+
     const BIG: DeviceSize = DeviceSize { w: 1000, h: 1000 };
     const ALL: Rect = Rect::new(0.0, 0.0, 1000.0, 1000.0);
 
@@ -1109,12 +1214,12 @@ pub(crate) mod tests {
             },
         );
         let path = |x: f32| {
-            Prim::Path(display::PathPrim { path: PathId(1), transform: Affine::translate(x, 0.0), paint: PathPaint::Fill(Color::BLACK) })
+            Prim::Path(display::PathPrim { path: PathId(1), transform: Affine::translate(x, 0.0), paint: PathPaint::Fill(Color::BLACK), slot: None })
         };
         let prims = vec![
             path(0.0),
             path(100.0),
-            Prim::Path(display::PathPrim { path: PathId(9), transform: Affine::IDENTITY, paint: PathPaint::Fill(Color::BLACK) }),
+            Prim::Path(display::PathPrim { path: PathId(9), transform: Affine::IDENTITY, paint: PathPaint::Fill(Color::BLACK), slot: None }),
         ];
         let f = State::new().flatten(&[list(prims)], &res, BIG, ALL);
         assert_eq!(f.paths.len(), 2);
