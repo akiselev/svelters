@@ -7,20 +7,23 @@ pub use waits::{Actionability, Budget, Condition, NeverId, SeenId, Unmet, WaitRe
 use waits::{Deadline, SeenLatch};
 
 use crate::busy::BusyRegistry;
-use crate::driver::{A11yNode, Driver};
+use crate::driver::{A11yNode, Changes, SourceDriver};
 use crate::journal::{Cursor, Journal, Matcher};
-use crate::engine::{Roots, resolve};
-use crate::role::{has_state, role_of, states_of};
+use crate::engine::Roots;
 use crate::selector::{Selector, TextMatch, parse};
-use crate::snapshot::{value_of, yaml_in};
+use crate::snapshot::yaml_in;
+use crate::source::SceneSource;
 use crate::{Error, PROTOCOL, is_enabled};
 use egui::accesskit::{Action, ActionData, ActionRequest};
 use serde_json::{Value, json};
+use std::borrow::Cow;
 use std::collections::BTreeSet;
 use std::time::{Duration, Instant};
-use svelters_egui::accessible_name;
-use svelters_egui::scene::{ChangeFilter, NodeId, NodeRef, Observer, ProviderId, SceneRef};
+use svelters_egui::scene::{ChangeFilter, NodeId};
 use svelters_egui::style::{MatchedRuleInfo, StyleSource};
+
+/// A JSON id of a node ([`SourceDriver::node_raw`]).
+type RawFn<'a, N> = &'a dyn Fn(N) -> u64;
 
 /// What a session may do (§1.2). `os_input`, `clock` and `eval` are test-build grants (§6 Q1);
 /// AU1b adds `clock` (`clock.advance`); `os_input` and `eval` have no method yet.
@@ -56,17 +59,17 @@ impl Grants {
 }
 
 /// An element ref (§1.3): a node and the reload epoch it was read in. A ref from an older epoch,
-/// or to a freed node, fails with `node.stale`.
+/// or to a freed node, fails with `node.stale`. `N` is the scene's node ([`SourceDriver::Node`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Ref {
-    pub id: NodeId,
+pub struct Ref<N = NodeId> {
+    pub id: N,
     pub epoch: u64,
 }
 
 /// One node as `scene.query` returns it.
 #[derive(Clone, Debug, PartialEq)]
-pub struct NodeInfo {
-    pub r#ref: Ref,
+pub struct NodeInfo<N = NodeId> {
+    pub r#ref: Ref<N>,
     pub tag: String,
     pub role: &'static str,
     pub name: String,
@@ -106,25 +109,32 @@ impl SourceInfo {
 
 /// DZ0b2: a node's computed style, as `style.computed` returns it.
 #[derive(Clone, Debug, PartialEq)]
-pub struct ComputedInfo {
+pub struct ComputedInfo<N = NodeId> {
     /// Every set property with its computed value as CSS text, in the backend table's order.
     pub values: Vec<(String, String)>,
     /// Custom properties (`--name`) with their computed text, by name.
     pub custom: Vec<(String, String)>,
     /// The inherited properties (custom ones included) the node doesn't declare, by name, each
     /// with the nearest ancestor that declares it (`None`: none does).
-    pub inherited: Vec<(String, Option<Ref>)>,
+    pub inherited: Vec<(String, Option<Ref<N>>)>,
     /// The matched rules, as `style.matched` returns them.
     pub rules: Vec<MatchedRuleInfo>,
 }
 
 impl ComputedInfo {
     pub fn to_json(&self) -> Value {
+        self.to_json_with(&|n: NodeId| n.to_raw())
+    }
+}
+
+impl<N: Copy> ComputedInfo<N> {
+    /// [`ComputedInfo::to_json`] with `raw` giving a node's JSON id.
+    pub fn to_json_with(&self, raw: RawFn<'_, N>) -> Value {
         let map = |v: &[(String, String)]| Value::Object(v.iter().map(|(k, v)| (k.clone(), json!(v))).collect());
         json!({
             "values": map(&self.values),
             "custom": map(&self.custom),
-            "inherited": Value::Object(self.inherited.iter().map(|(k, r)| (k.clone(), r.map_or(Value::Null, ref_json))).collect()),
+            "inherited": Value::Object(self.inherited.iter().map(|(k, r)| (k.clone(), r.map_or(Value::Null, |r| ref_json(r, raw)))).collect()),
             "rules": self.rules.iter().map(rule_json).collect::<Vec<_>>(),
         })
     }
@@ -144,16 +154,23 @@ pub fn rule_json(r: &MatchedRuleInfo) -> Value {
 
 impl NodeInfo {
     pub fn to_json(&self) -> Value {
-        let mut v = self.json();
+        self.to_json_with(&|n: NodeId| n.to_raw())
+    }
+}
+
+impl<N: Copy> NodeInfo<N> {
+    /// [`NodeInfo::to_json`] with `raw` giving a node's JSON id.
+    pub fn to_json_with(&self, raw: RawFn<'_, N>) -> Value {
+        let mut v = self.json(raw);
         if let Some(src) = &self.source {
             v["source"] = src.to_json();
         }
         v
     }
 
-    fn json(&self) -> Value {
+    fn json(&self, raw: RawFn<'_, N>) -> Value {
         json!({
-            "ref": ref_json(self.r#ref),
+            "ref": ref_json(self.r#ref, raw),
             "tag": self.tag, "role": self.role, "name": self.name, "text": self.text, "value": self.value,
             "anchor": self.anchor, "root": self.root,
             "rect": self.rect.map(|r| json!([r.min.x, r.min.y, r.width(), r.height()])),
@@ -233,19 +250,19 @@ struct Aim {
 
 /// SV51: where a drag ends.
 #[derive(Clone, Debug)]
-pub enum DragTo {
+pub enum DragTo<N = NodeId> {
     /// A point in the target's local points.
     Local(egui::Pos2),
     /// The centre of another node (resolved when the drag starts).
-    Node(Target),
+    Node(Target<N>),
 }
 
 /// SV51: `input.drag`: a press at `from`, `steps` moves (one frame each) to `to`, a release there.
 #[non_exhaustive]
 #[derive(Clone, Debug)]
-pub struct Drag {
+pub struct Drag<N = NodeId> {
     pub from: At,
-    pub to: DragTo,
+    pub to: DragTo<N>,
     /// Moves between the press and the release (at least 1), each in its own frame.
     pub steps: u32,
     pub button: egui::PointerButton,
@@ -253,31 +270,31 @@ pub struct Drag {
     pub modifiers: egui::Modifiers,
 }
 
-impl Drag {
+impl<N> Drag<N> {
     /// From the target's centre to `to` (its local points), 10 steps, primary button.
-    pub fn to(to: egui::Pos2) -> Drag {
+    pub fn to(to: egui::Pos2) -> Drag<N> {
         Drag::new(DragTo::Local(to))
     }
     /// From the target's centre to `node`'s centre.
-    pub fn to_node(node: impl Into<Target>) -> Drag {
+    pub fn to_node(node: impl Into<Target<N>>) -> Drag<N> {
         Drag::new(DragTo::Node(node.into()))
     }
-    fn new(to: DragTo) -> Drag {
+    fn new(to: DragTo<N>) -> Drag<N> {
         Drag { from: At::Center, to, steps: 10, button: egui::PointerButton::Primary, modifiers: egui::Modifiers::NONE }
     }
-    pub fn from(mut self, at: At) -> Drag {
+    pub fn from(mut self, at: At) -> Drag<N> {
         self.from = at;
         self
     }
-    pub fn steps(mut self, n: u32) -> Drag {
+    pub fn steps(mut self, n: u32) -> Drag<N> {
         self.steps = n.max(1);
         self
     }
-    pub fn button(mut self, b: egui::PointerButton) -> Drag {
+    pub fn button(mut self, b: egui::PointerButton) -> Drag<N> {
         self.button = b;
         self
     }
-    pub fn modifiers(mut self, m: egui::Modifiers) -> Drag {
+    pub fn modifiers(mut self, m: egui::Modifiers) -> Drag<N> {
         self.modifiers = m;
         self
     }
@@ -316,13 +333,13 @@ impl Wheel {
 
 /// What an act did, read after the app settled.
 #[derive(Clone, Debug, PartialEq)]
-pub struct ActResult {
+pub struct ActResult<N = NodeId> {
     pub frame: u64,
     pub epoch: u64,
     /// The tier that ran (a semantic act without an AccessKit node runs synthetic).
     pub tier: Tier,
     /// Nodes that changed, with what changed (`ChangeMask` names).
-    pub changed: Vec<(NodeId, String)>,
+    pub changed: Vec<(N, String)>,
 }
 
 /// What `wait.for` waits for.
@@ -343,8 +360,8 @@ pub enum Expect {
     Value(TextMatch),
 }
 
-/// One client of the protocol, over a [`Driver`].
-pub struct Session<D: Driver> {
+/// One client of the protocol, over a [`SourceDriver`] (every [`Driver`](crate::Driver) is one).
+pub struct Session<D: SourceDriver> {
     driver: D,
     grants: Grants,
     include_tooling: bool,
@@ -355,7 +372,7 @@ pub struct Session<D: Driver> {
     /// Virtual ms run by this session's frames.
     now_ms: f64,
     pending_input: bool,
-    journal: Option<Observer>,
+    journal: Option<D::Observer>,
     // ---- AU7 ----
     /// The app's event journal (shared: [`Session::set_journal`]).
     events: Journal,
@@ -369,10 +386,13 @@ pub struct Session<D: Driver> {
     held_wall: Duration,
     clock_held: bool,
     /// [`Session::bridge_scene_changes`]: SG2's journal as `scene.changed` events.
-    scene_bridge: Option<Observer>,
+    scene_bridge: Option<D::Observer>,
 }
 
-impl<D: Driver> Session<D> {
+/// The node of a session's scene.
+type N<D> = <D as SourceDriver>::Node;
+
+impl<D: SourceDriver> Session<D> {
     /// A session with `grants`. Fails with `automation.disabled` unless [`crate::enable`] ran.
     pub fn new(driver: D, grants: Grants) -> Result<Session<D>, Error> {
         if !is_enabled() {
@@ -477,12 +497,31 @@ impl<D: Driver> Session<D> {
         Ok(())
     }
 
-    fn with_scene<R>(&self, f: impl FnOnce(SceneRef<'_>, &Roots<'_>) -> R) -> R {
+    fn with_scene<R>(&self, f: impl for<'s> FnOnce(&D::Scene<'s>, &Roots<'_>) -> R) -> R {
         let skip_tooling = !self.include_tooling;
         let tooling = &self.tooling;
         let skip = move |k: &str| skip_tooling && tooling(k);
         let roots = Roots { skip: &skip };
-        self.driver.scene().read(|s| f(s, &roots))
+        self.driver.read(|s| f(s, &roots))
+    }
+
+    /// A node's JSON id.
+    fn raw(&self) -> impl Fn(N<D>) -> u64 + '_ {
+        |n| self.driver.node_raw(n)
+    }
+
+    /// Resolves `target` to one live node.
+    fn target_node<S: SceneSource<Node = N<D>>>(&self, s: &S, target: &Target<N<D>>, roots: &Roots<'_>) -> Result<N<D>, Error> {
+        match target {
+            Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?),
+            Target::Invalid(e) => Err(e.clone()),
+            Target::Ref(r) => {
+                if r.epoch != self.epoch || !s.contains(r.id) {
+                    return Err(stale(*r));
+                }
+                Ok(r.id)
+            }
+        }
     }
 
     // ---- session ----
@@ -512,14 +551,12 @@ impl<D: Driver> Session<D> {
         self.check(false)?;
         Ok(self.with_scene(|s, roots| {
             s.roots()
-                .filter(|&(r, _)| !r.is_detached() && s.root_top(r).is_some())
-                .filter_map(|(r, _)| {
-                    let key = s.root_key(r);
-                    (!key.is_some_and(roots.skip)).then(|| RootInfo {
-                        key: key.map(str::to_string),
-                        visible: s.root_visible(r),
-                        tooling: key.is_some_and(|k| (self.tooling)(k)),
-                    })
+                .into_iter()
+                .filter(|r| !r.key.as_deref().is_some_and(roots.skip))
+                .map(|r| RootInfo {
+                    tooling: r.key.as_deref().is_some_and(|k| (self.tooling)(k)),
+                    key: r.key,
+                    visible: r.visible,
                 })
                 .collect()
         }))
@@ -528,7 +565,7 @@ impl<D: Driver> Session<D> {
     // ---- query and read ----
 
     /// The nodes `selector` matches (§1.4 `scene.query`), at most `limit`.
-    pub fn query(&self, selector: &str, limit: Option<usize>) -> Result<Vec<NodeInfo>, Error> {
+    pub fn query(&self, selector: &str, limit: Option<usize>) -> Result<Vec<NodeInfo<N<D>>>, Error> {
         self.check(false)?;
         let sel = parse(selector)?;
         self.with_scene(|s, roots| {
@@ -536,14 +573,15 @@ impl<D: Driver> Session<D> {
             Ok(ids
                 .into_iter()
                 .take(limit.unwrap_or(usize::MAX))
-                .filter_map(|id| s.get(id).map(|n| self.info(s, n)))
+                .filter(|&id| s.contains(id))
+                .map(|id| self.info(s, id))
                 .collect())
         })
     }
 
     /// The single node `selector` matches (strict, §1.3): `node.not_found` for none,
     /// `node.ambiguous` for more than one.
-    pub fn locate(&self, selector: &str) -> Result<Ref, Error> {
+    pub fn locate(&self, selector: &str) -> Result<Ref<N<D>>, Error> {
         self.check(false)?;
         let sel = parse(selector)?;
         let id = self.with_scene(|s, roots| strict(&sel, resolve(s, &sel, roots)?))?;
@@ -554,39 +592,38 @@ impl<D: Driver> Session<D> {
     }
 
     /// The node behind `r` (§1.4 `scene.node`).
-    pub fn node(&self, r: Ref) -> Result<NodeInfo, Error> {
+    pub fn node(&self, r: Ref<N<D>>) -> Result<NodeInfo<N<D>>, Error> {
         self.check(false)?;
         self.live(r)?;
-        self.with_scene(|s, _| s.get(r.id).map(|n| self.info(s, n)))
+        self.with_scene(|s, _| s.contains(r.id).then(|| self.info(s, r.id)))
             .ok_or_else(|| stale(r))
     }
 
     /// DZ0b2 `style.matched`: the rules that match the node, in cascade order (lowest priority
     /// first), each declaration marked when it wins its property (egui's
     /// `NodeRef::matched_rules`).
-    pub fn style_matched(&self, r: Ref) -> Result<Vec<MatchedRuleInfo>, Error> {
+    pub fn style_matched(&self, r: Ref<N<D>>) -> Result<Vec<MatchedRuleInfo>, Error> {
         self.check(false)?;
         self.live(r)?;
-        self.with_scene(|s, _| s.get(r.id).map(|n| n.matched_rules())).ok_or_else(|| stale(r))
+        self.with_scene(|s, _| s.matched_rules(r.id)).ok_or_else(no_style)
     }
 
     /// DZ0b2 `style.computed` (E2E-INSPECTOR §1.4): the computed values, the matched rules and,
     /// for each inherited property the node doesn't declare, the ancestor it comes from.
-    pub fn style_computed(&self, r: Ref) -> Result<ComputedInfo, Error> {
+    pub fn style_computed(&self, r: Ref<N<D>>) -> Result<ComputedInfo<N<D>>, Error> {
         self.check(false)?;
         self.live(r)?;
         let epoch = self.epoch;
         self.with_scene(|s, _| {
-            let n = s.get(r.id)?;
-            let c = n.computed_style();
+            let c = s.computed_style(r.id)?;
             Some(ComputedInfo {
-                values: c.as_deref().map(|c| c.iter().map(|(p, v)| (p.name.to_string(), v.to_string())).collect()).unwrap_or_default(),
-                custom: c.as_deref().map(|c| c.customs().map(|(k, v)| (k.to_string(), v.to_string())).collect()).unwrap_or_default(),
-                inherited: n.inherited_from().into_iter().map(|(k, at)| (k, at.map(|id| Ref { id, epoch }))).collect(),
-                rules: n.matched_rules(),
+                values: c.values,
+                custom: c.custom,
+                inherited: c.inherited.into_iter().map(|(k, at)| (k, at.map(|id| Ref { id, epoch }))).collect(),
+                rules: c.rules,
             })
         })
-        .ok_or_else(|| stale(r))
+        .ok_or_else(no_style)
     }
 
     /// A text snapshot of `scope` (every visible non-tooling root when `None`), §1.8.
@@ -598,20 +635,15 @@ impl<D: Driver> Session<D> {
             match &sel {
                 Some(sel) => {
                     for id in resolve(s, sel, roots)? {
-                        yaml_in(&s, id, 0, &mut out);
+                        yaml_in(s, id, 0, &mut out);
                     }
                 }
                 None => {
-                    for (r, _) in s.roots() {
-                        if r.is_detached()
-                            || s.root_key(r).is_some_and(roots.skip)
-                            || !s.root_visible(r)
-                        {
+                    for r in s.roots() {
+                        if r.key.as_deref().is_some_and(roots.skip) || !r.visible {
                             continue;
                         }
-                        if let Some(top) = s.root_top(r) {
-                            yaml_in(&s, top.id(), 0, &mut out);
-                        }
+                        yaml_in(s, r.top, 0, &mut out);
                     }
                 }
             }
@@ -625,32 +657,29 @@ impl<D: Driver> Session<D> {
         Ok(self.driver.a11y_nodes())
     }
 
-    fn info(&self, s: SceneRef<'_>, n: NodeRef<'_>) -> NodeInfo {
+    fn info<S: SceneSource<Node = N<D>>>(&self, s: &S, n: N<D>) -> NodeInfo<N<D>> {
+        let drawn = s.drawn(n);
         NodeInfo {
             r#ref: Ref {
-                id: n.id(),
+                id: n,
                 epoch: self.epoch,
             },
-            tag: n.tag().to_string(),
-            role: role_of(n),
-            name: accessible_name(n),
-            text: n.text().to_string(),
-            value: value_of(n),
-            anchor: n.anchor().map(str::to_string),
-            root: s.root_key(n.root()).map(str::to_string),
-            rect: n.shown().map(|sh| sh.rect),
-            visible_rect: n.shown().map(|sh| sh.visible),
-            states: states_of(n),
-            source: n.source_loc().map(|l| SourceInfo {
-                file: l.element().file.to_string(),
-                offset: l.element().offset,
-                sites: l.sites().map(|x| (x.file.to_string(), x.offset)).collect(),
-            }),
+            tag: s.tag(n).into_owned(),
+            role: s.role(n),
+            name: s.name(n).into_owned(),
+            text: s.text(n).into_owned(),
+            value: s.value(n),
+            anchor: s.anchor(n).map(Cow::into_owned),
+            root: s.root_key_of(n).map(Cow::into_owned),
+            rect: drawn.map(|sh| sh.rect),
+            visible_rect: drawn.map(|sh| sh.visible),
+            states: s.states(n),
+            source: s.source_info(n),
         }
     }
 
-    fn live(&self, r: Ref) -> Result<(), Error> {
-        let alive = self.with_scene(|s, _| s.get(r.id).is_some());
+    fn live(&self, r: Ref<N<D>>) -> Result<(), Error> {
+        let alive = self.with_scene(|s, _| s.contains(r.id));
         if r.epoch != self.epoch || !alive {
             Err(stale(r))
         } else {
@@ -790,12 +819,12 @@ impl<D: Driver> Session<D> {
         state: WaitState,
         expect: Option<&Expect>,
         timeout_ms: f64,
-    ) -> Result<Vec<NodeInfo>, Error> {
+    ) -> Result<Vec<NodeInfo<N<D>>>, Error> {
         self.wait_for_within(&Condition::new(selector, state, expect.cloned()), Budget::from(timeout_ms))
     }
 
     /// [`Session::wait_for`] on a [`Condition`], with a budget per clock domain (AU7).
-    pub fn wait_for_within(&mut self, cond: &Condition, budget: Budget) -> Result<Vec<NodeInfo>, Error> {
+    pub fn wait_for_within(&mut self, cond: &Condition, budget: Budget) -> Result<Vec<NodeInfo<N<D>>>, Error> {
         self.check(false)?;
         let sel = parse(&cond.selector)?;
         let d = self.deadline(budget, false);
@@ -820,27 +849,27 @@ impl<D: Driver> Session<D> {
     }
 
     /// Whether `cond` holds now: `(met, last value for reports, the matches)`.
-    fn evaluate(&self, sel: &Selector, cond: &Condition) -> Result<(bool, String, Vec<NodeInfo>), Error> {
+    fn evaluate(&self, sel: &Selector, cond: &Condition) -> Result<(bool, String, Vec<NodeInfo<N<D>>>), Error> {
         let (state, expect) = (cond.state, cond.expect.as_ref());
         self.with_scene(|s, roots| -> Result<_, Error> {
             let ids = resolve(s, sel, roots)?;
-            let nodes: Vec<NodeRef<'_>> = ids.iter().filter_map(|&id| s.get(id)).collect();
+            let nodes: Vec<N<D>> = ids.into_iter().filter(|&id| s.contains(id)).collect();
             let in_state = match state {
                 WaitState::Attached => !nodes.is_empty(),
                 WaitState::Detached => nodes.is_empty(),
-                WaitState::Visible => !nodes.is_empty() && nodes.iter().all(|n| n.is_shown()),
-                WaitState::Hidden => nodes.iter().all(|n| !n.is_shown()),
-                WaitState::Enabled => !nodes.is_empty() && nodes.iter().all(|&n| has_state(n, "enabled")),
+                WaitState::Visible => !nodes.is_empty() && nodes.iter().all(|&n| s.is_shown(n)),
+                WaitState::Hidden => nodes.iter().all(|&n| !s.is_shown(n)),
+                WaitState::Enabled => !nodes.is_empty() && nodes.iter().all(|&n| s.has_state(n, "enabled")),
             };
             let (met, why) = match expect {
                 None => (true, String::new()),
                 Some(Expect::Count(c)) => (nodes.len() == *c, format!("count {} (want {c})", nodes.len())),
                 Some(Expect::Text(t)) => {
-                    let texts: Vec<String> = nodes.iter().map(|&n| text_of(n)).collect();
+                    let texts: Vec<String> = nodes.iter().map(|&n| text_of(s, n)).collect();
                     (texts.iter().any(|x| t.matches(x)), format!("texts {texts:?} (want {t:?})"))
                 }
                 Some(Expect::Value(t)) => {
-                    let vals: Vec<Option<String>> = nodes.iter().map(|&n| value_of(n)).collect();
+                    let vals: Vec<Option<String>> = nodes.iter().map(|&n| s.value(n)).collect();
                     (vals.iter().flatten().any(|x| t.matches(x)), format!("values {vals:?} (want {t:?})"))
                 }
             };
@@ -861,60 +890,46 @@ impl<D: Driver> Session<D> {
     /// [`WaitReport`].
     fn actionable(
         &mut self,
-        target: &Target,
+        target: &Target<N<D>>,
         opts: &ActOptions,
         editable: bool,
-    ) -> Result<(NodeId, Aim), Error> {
+    ) -> Result<(N<D>, Aim), Error> {
         if let Target::Invalid(e) = target {
             return Err(e.clone());
         }
         let d = self.deadline(Budget::from(opts.timeout_ms), false);
         let mut prev: Option<egui::Rect> = None;
         let mut scrolled = false;
-        let mut failed: Actionability;
+        let mut failed: Actionability<N<D>>;
         loop {
             self.check_nevers()?;
-            let found: Result<Probe, Error> = self.with_scene(|s, roots| {
-                let id = match target {
-                    Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
-                    Target::Invalid(e) => return Err(e.clone()),
-                    Target::Ref(r) => {
-                        if r.epoch != self.epoch || s.get(r.id).is_none() {
-                            return Err(stale(*r));
-                        }
-                        r.id
-                    }
-                };
-                let n = s.get(id).expect("resolved");
-                let shown = n.shown().filter(|sh| sh.rect.area() > 0.0);
+            let found: Result<Probe<N<D>>, Error> = self.with_scene(|s, roots| {
+                let id = self.target_node(s, target, roots)?;
+                let shown = s.drawn(id).filter(|sh| sh.rect.area() > 0.0);
                 // out of view: wholly (not drawn this pass, below a culled container or row) or
                 // partly (clipped); only once for a node larger than its view
-                let out = n.is_visible()
+                let out = s.is_visible(id)
                     && match shown {
-                        None => n.is_shown(),
+                        None => s.is_shown(id),
                         Some(sh) => !scrolled && sh.visible.area() + 0.5 < sh.rect.area(),
                     };
                 let check = if out {
                     Err(Actionability::new("visible", OUT_OF_VIEW))
-                } else if !n.is_shown() || shown.is_none_or(|sh| sh.visible.area() <= 0.0) {
+                } else if !s.is_shown(id) || shown.is_none_or(|sh| sh.visible.area() <= 0.0) {
                     Err(Actionability::new("visible", "not visible"))
-                } else if !has_state(n, "enabled") {
+                } else if !s.has_state(id, "enabled") {
                     Err(Actionability::new("enabled", "disabled"))
-                } else if editable && !is_editable(n) {
-                    Err(Actionability::new("editable", format!("not editable (a {}{})", role_of(n), if has_state(n, "read-only") { ", read-only" } else { "" })))
+                } else if editable && !is_editable(s, id) {
+                    Err(Actionability::new("editable", format!("not editable (a {}{})", s.role(id), if s.has_state(id, "read-only") { ", read-only" } else { "" })))
                 } else {
                     let c = shown.expect("checked").visible.center();
-                    match s.hit_node(egui::ViewportId::ROOT, c) {
-                        Some(h)
-                            if h.id() != id
-                                && !h.ancestors().any(|a| a.id() == id)
-                                && !n.ancestors().any(|a| a.id() == h.id()) =>
-                        {
+                    match s.hit(c) {
+                        Some(h) if h != id && !is_ancestor(s, id, h) && !is_ancestor(s, h, id) => {
                             let mut a = Actionability::new(
                                 "hit",
-                                format!("covered by {} at ({:.0}, {:.0})", describe_node(h), c.x, c.y),
+                                format!("covered by {} at ({:.0}, {:.0})", describe_node(s, h), c.x, c.y),
                             );
-                            a.cover = Some(h.id());
+                            a.cover = Some(h);
                             Err(a)
                         }
                         _ => Ok(()),
@@ -972,12 +987,8 @@ impl<D: Driver> Session<D> {
 
     /// AX1: asks the scrollables around `id` (every `scroll-area`, a `virtual-list` whose realised
     /// row it is in) to bring it into view at the next pass.
-    fn request_scroll(&mut self, id: NodeId, center: bool) {
-        let _ = self.driver.scene().write(ProviderId::APP, |m| {
-            if let Some(mut n) = m.node(id) {
-                n.scroll_into_view(center);
-            }
-        });
+    fn request_scroll(&mut self, id: N<D>, center: bool) {
+        self.driver.scroll_into_view(id, center);
         self.pending_input = true;
     }
 
@@ -1037,44 +1048,42 @@ impl<D: Driver> Session<D> {
     /// changed.
     fn act(
         &mut self,
-        target: Target,
+        target: Target<N<D>>,
         opts: ActOptions,
-        inject: impl FnOnce(&mut Self, NodeId, Aim) -> Tier,
-    ) -> Result<ActResult, Error> {
+        inject: impl FnOnce(&mut Self, N<D>, Aim) -> Tier,
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act_on(target, opts, false, inject)
     }
 
     /// [`Session::act`]; `editable`: the target must also take text (`fill`).
     fn act_on(
         &mut self,
-        target: Target,
+        target: Target<N<D>>,
         opts: ActOptions,
         editable: bool,
-        inject: impl FnOnce(&mut Self, NodeId, Aim) -> Tier,
-    ) -> Result<ActResult, Error> {
+        inject: impl FnOnce(&mut Self, N<D>, Aim) -> Tier,
+    ) -> Result<ActResult<N<D>>, Error> {
         self.check(true)?;
         let (id, aim) = self.actionable(&target, &opts, editable)?;
-        let scene = self.driver.scene();
-        let obs = scene.observe(ChangeFilter::all());
+        let obs = self.driver.observe(ChangeFilter::all());
         let tier = inject(self, id, aim);
         let settled = self.wait_settled(opts.timeout_ms);
-        let set = scene.take_changes(&obs);
+        let set = self.driver.take_changes(&obs);
         settled?;
-        Ok(ActResult {
-            frame: self.frame,
-            epoch: self.epoch,
-            tier,
-            changed: set.by_node().map(|(n, m)| (n, format!("{m:?}"))).collect(),
-        })
+        Ok(self.act_result(tier, set))
+    }
+
+    fn act_result(&self, tier: Tier, set: Changes<N<D>>) -> ActResult<N<D>> {
+        ActResult { frame: self.frame, epoch: self.epoch, tier, changed: set.by_node }
     }
 
     /// `input.click`: a click on the target (AccessKit `Click`, or a primary press and release at
     /// its centre in one frame).
     pub fn click(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
             if opts.tier == Tier::Semantic
                 && let Some(n) = me.a11y_target(rect)
@@ -1092,9 +1101,9 @@ impl<D: Driver> Session<D> {
     /// only.
     pub fn context_click(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act(target.into(), opts, |me, _, Aim { at, .. }| {
             me.pointer_click(at, egui::PointerButton::Secondary);
             Tier::Synthetic
@@ -1108,31 +1117,20 @@ impl<D: Driver> Session<D> {
     /// themselves; call it to look at (snapshot, screenshot) a node out of view.
     pub fn scroll_into_view(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         center: bool,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.check(true)?;
         let target = target.into();
-        let scene = self.driver.scene();
-        let obs = scene.observe(ChangeFilter::all());
+        let obs = self.driver.observe(ChangeFilter::all());
         let start = self.now_ms;
         let mut asked = 0u32;
         let mut prev = None;
         loop {
             let probe = self.with_scene(|s, roots| -> Result<_, Error> {
-                let id = match &target {
-                    Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
-                    Target::Invalid(e) => return Err(e.clone()),
-                    Target::Ref(r) => {
-                        if r.epoch != self.epoch || s.get(r.id).is_none() {
-                            return Err(stale(*r));
-                        }
-                        r.id
-                    }
-                };
-                let n = s.get(id).expect("resolved");
-                Ok((id, n.is_shown(), n.shown().filter(|sh| sh.rect.area() > 0.0)))
+                let id = self.target_node(s, &target, roots)?;
+                Ok((id, s.is_shown(id), s.drawn(id).filter(|sh| sh.rect.area() > 0.0)))
             });
             let (id, visible, shown) = match probe {
                 Err(e) if e.code == "node.not_found" && self.now_ms - start < opts.timeout_ms => {
@@ -1160,14 +1158,9 @@ impl<D: Driver> Session<D> {
             self.step();
         }
         let settled = self.wait_settled(opts.timeout_ms);
-        let set = scene.take_changes(&obs);
+        let set = self.driver.take_changes(&obs);
         settled?;
-        Ok(ActResult {
-            frame: self.frame,
-            epoch: self.epoch,
-            tier: Tier::Synthetic,
-            changed: set.by_node().map(|(n, m)| (n, format!("{m:?}"))).collect(),
-        })
+        Ok(self.act_result(Tier::Synthetic, set))
     }
 
     /// AX1 `input.scroll_into_view {row}`: scrolls `list` (a `virtual-list`, so a `ListView` or
@@ -1175,44 +1168,33 @@ impl<D: Driver> Session<D> {
     /// can be found (`key=<item key> >> anchor=…`). Replies after the settle.
     pub fn scroll_to_row(
         &mut self,
-        list: impl Into<Target>,
+        list: impl Into<Target<N<D>>>,
         pos: usize,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.check(true)?;
         let target = list.into();
-        let id = self.with_scene(|s, roots| match &target {
-            Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?),
-            Target::Invalid(e) => Err(e.clone()),
-            Target::Ref(r) if r.epoch == self.epoch && s.get(r.id).is_some() => Ok(r.id),
-            Target::Ref(r) => Err(stale(*r)),
+        let id = self.with_scene(|s, roots| self.target_node(s, &target, roots))?;
+        let obs = self.driver.observe(ChangeFilter::all());
+        self.driver.scroll_list_to(id, pos).map_err(|e| match e.code {
+            "params.invalid" => Error::new(e.code, format!("{}: {}", target.describe(), e.message)),
+            _ => e,
         })?;
-        let scene = self.driver.scene();
-        let obs = scene.observe(ChangeFilter::all());
-        let wrote = scene
-            .write(ProviderId::APP, |m| m.scroll_list_to(id, pos))
-            .map_err(|_| Error::new("scene.busy", "the scene is being drawn"))?;
-        wrote.map_err(|e| Error::new("params.invalid", format!("{}: {e}", target.describe())))?;
         self.pending_input = true;
         // the offset is decided next pass, the rows bound in it and drawn in the one after
         self.step();
         let settled = self.wait_settled(opts.timeout_ms);
-        let set = scene.take_changes(&obs);
+        let set = self.driver.take_changes(&obs);
         settled?;
-        Ok(ActResult {
-            frame: self.frame,
-            epoch: self.epoch,
-            tier: Tier::Synthetic,
-            changed: set.by_node().map(|(n, m)| (n, format!("{m:?}"))).collect(),
-        })
+        Ok(self.act_result(Tier::Synthetic, set))
     }
 
     /// `input.hover`: the pointer moves to the target's centre.
     pub fn hover(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act(target.into(), opts, |me, _, Aim { at: aim, .. }| {
             me.send(egui::Event::PointerMoved(aim));
             Tier::Synthetic
@@ -1223,11 +1205,11 @@ impl<D: Driver> Session<D> {
     /// `modifiers` held during the move. Synthetic only.
     pub fn pointer_move(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         at: At,
         modifiers: egui::Modifiers,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
             me.with_modifiers(modifiers, |me| me.send(egui::Event::PointerMoved(at.in_rect(rect, aim))));
             Tier::Synthetic
@@ -1238,10 +1220,10 @@ impl<D: Driver> Session<D> {
     /// `MouseWheel`: line, point or page deltas, with its modifiers). Synthetic only.
     pub fn wheel(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         wheel: Wheel,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
             let p = wheel.at.in_rect(rect, aim);
             me.send(egui::Event::PointerMoved(p));
@@ -1265,10 +1247,10 @@ impl<D: Driver> Session<D> {
     /// Synthetic only. A `DragTo::Node` end must resolve (to one node) when the drag starts.
     pub fn drag(
         &mut self,
-        target: impl Into<Target>,
-        drag: Drag,
+        target: impl Into<Target<N<D>>>,
+        drag: Drag<N<D>>,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         let end = match &drag.to {
             DragTo::Local(_) => None,
             DragTo::Node(t) => Some(self.resolve_rect(t)?),
@@ -1312,20 +1294,11 @@ impl<D: Driver> Session<D> {
     }
 
     /// The screen rect of `target` now (one node), for a drag's end.
-    fn resolve_rect(&self, target: &Target) -> Result<egui::Rect, Error> {
+    fn resolve_rect(&self, target: &Target<N<D>>) -> Result<egui::Rect, Error> {
         self.with_scene(|s, roots| {
-            let id = match target {
-                Target::Selector(sel) => strict(sel, resolve(s, sel, roots)?)?,
-                Target::Invalid(e) => return Err(e.clone()),
-                Target::Ref(r) => {
-                    if r.epoch != self.epoch || s.get(r.id).is_none() {
-                        return Err(stale(*r));
-                    }
-                    r.id
-                }
-            };
-            s.get(id)
-                .and_then(|n| n.shown().map(|sh| sh.rect))
+            let id = self.target_node(s, target, roots)?;
+            s.drawn(id)
+                .map(|sh| sh.rect)
                 .ok_or_else(|| Error::new("node.not_actionable", format!("{} is not drawn", target.describe())))
         })
     }
@@ -1333,9 +1306,9 @@ impl<D: Driver> Session<D> {
     /// `input.focus`: keyboard focus on the target (AccessKit `Focus`; synthetic: a click).
     pub fn focus(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act(target.into(), opts, |me, _, Aim { rect, at: aim }| {
             if let Some(n) = me.a11y_target(rect) {
                 me.accesskit(&n, Action::Focus, None);
@@ -1350,10 +1323,10 @@ impl<D: Driver> Session<D> {
     /// focus by click, select all, then the text as one `Text` event (as typed).
     pub fn fill(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         text: &str,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         let text = text.to_string();
         self.act_on(target.into(), opts, true, move |me, _, Aim { rect, at: aim }| {
             if opts.tier == Tier::Semantic
@@ -1373,10 +1346,10 @@ impl<D: Driver> Session<D> {
     /// `input.set_value`: a numeric value (slider, drag value) through AccessKit `SetValue`.
     pub fn set_value(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         value: f64,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         self.act(target.into(), opts, move |me, _, Aim { rect, .. }| {
             // no AccessKit node: nothing to set, and the reply shows no change
             if let Some(n) = me.a11y_target(rect) {
@@ -1392,11 +1365,11 @@ impl<D: Driver> Session<D> {
     /// in left-to-right order (`"1"`). Fails with `node.not_found` when no handle matches.
     pub fn set_value_handle(
         &mut self,
-        target: impl Into<Target>,
+        target: impl Into<Target<N<D>>>,
         handle: &str,
         value: f64,
         opts: ActOptions,
-    ) -> Result<ActResult, Error> {
+    ) -> Result<ActResult<N<D>>, Error> {
         let mut missing = None;
         let r = self.act(target.into(), opts, |me, _, Aim { rect, .. }| {
             let area = rect.expand(2.0);
@@ -1442,32 +1415,26 @@ impl<D: Driver> Session<D> {
 
     /// `input.press`: a key chord to the focused widget, e.g. `"Enter"`, `"Ctrl+A"`,
     /// `"Shift+Tab"` (egui key names; `Cmd`/`Command` is Ctrl on Linux and Windows).
-    pub fn press(&mut self, chord: &str) -> Result<ActResult, Error> {
+    pub fn press(&mut self, chord: &str) -> Result<ActResult<N<D>>, Error> {
         self.check(true)?;
         let (key, m) = parse_chord(chord)?;
         self.untargeted(move |me| me.key(key, m))
     }
 
     /// `input.type`: text to the focused widget, as typed (one `Text` event).
-    pub fn type_text(&mut self, text: &str) -> Result<ActResult, Error> {
+    pub fn type_text(&mut self, text: &str) -> Result<ActResult<N<D>>, Error> {
         self.check(true)?;
         let text = text.to_string();
         self.untargeted(move |me| me.send(egui::Event::Text(text)))
     }
 
-    fn untargeted(&mut self, inject: impl FnOnce(&mut Self)) -> Result<ActResult, Error> {
-        let scene = self.driver.scene();
-        let obs = scene.observe(ChangeFilter::all());
+    fn untargeted(&mut self, inject: impl FnOnce(&mut Self)) -> Result<ActResult<N<D>>, Error> {
+        let obs = self.driver.observe(ChangeFilter::all());
         inject(self);
         let settled = self.wait_settled(ActOptions::default().timeout_ms);
-        let set = scene.take_changes(&obs);
+        let set = self.driver.take_changes(&obs);
         settled?;
-        Ok(ActResult {
-            frame: self.frame,
-            epoch: self.epoch,
-            tier: Tier::Synthetic,
-            changed: set.by_node().map(|(n, m)| (n, format!("{m:?}"))).collect(),
-        })
+        Ok(self.act_result(Tier::Synthetic, set))
     }
 
     // ---- capture ----
@@ -1480,10 +1447,7 @@ impl<D: Driver> Session<D> {
             Some(sel) => Some(self.with_scene(|s, roots| {
                 let sel = parse(sel)?;
                 let id = strict(&sel, resolve(s, &sel, roots)?)?;
-                s.get(id)
-                    .and_then(|n| n.screen_rect())
-                    .map(|(_, r)| r)
-                    .ok_or_else(|| Error::new("node.not_actionable", "not drawn"))
+                s.screen_rect(id).ok_or_else(|| Error::new("node.not_actionable", "not drawn"))
             })?),
             None => None,
         };
@@ -1502,30 +1466,27 @@ impl<D: Driver> Session<D> {
     /// `journal.subscribe`: from now on, scene changes are collected for [`Session::journal_take`].
     pub fn journal_subscribe(&mut self, filter: ChangeFilter) -> Result<(), Error> {
         self.check(false)?;
-        self.journal = Some(self.driver.scene().observe(filter));
+        self.journal = Some(self.driver.observe(filter));
         Ok(())
     }
 
     /// `journal.take`: the changes since the last take, coalesced per node (`overflowed`: records
     /// were lost, re-read).
-    pub fn journal_take(&mut self) -> Result<(Vec<(NodeId, String)>, bool), Error> {
+    pub fn journal_take(&mut self) -> Result<(Vec<(N<D>, String)>, bool), Error> {
         self.check(false)?;
         let obs = self
             .journal
             .as_ref()
             .ok_or_else(|| Error::new("params.invalid", "journal.subscribe first"))?;
-        let set = self.driver.scene().take_changes(obs);
-        Ok((
-            set.by_node().map(|(n, m)| (n, format!("{m:?}"))).collect(),
-            set.overflowed,
-        ))
+        let set = self.driver.take_changes(obs);
+        Ok((set.by_node, set.overflowed))
     }
 
     // ---- JSON ----
 
     /// A JSON target (`{"selector"}` or `{"ref"}`) as a ref: a selector must match one node.
-    fn target_ref(&self, p: &Value) -> Result<Ref, Error> {
-        match target_param(p)? {
+    fn target_ref(&self, p: &Value) -> Result<Ref<N<D>>, Error> {
+        match self.target_param(p)? {
             Target::Ref(r) => Ok(r),
             Target::Selector(s) => self.locate(&s.source),
             Target::Invalid(e) => Err(e),
@@ -1534,6 +1495,32 @@ impl<D: Driver> Session<D> {
 
     /// One method by name with JSON params (§1.1's schema; the in-process JSON path and, from AU2,
     /// the IPC transport). Targets are `{"selector": "…"}` or `{"ref": {"id": n, "epoch": e}}`.
+    /// A JSON target: `{"ref": {"id", "epoch"}}` or `{"selector"}`.
+    fn target_param(&self, p: &Value) -> Result<Target<N<D>>, Error> {
+        if let Some(r) = p.get("ref") {
+            let id = r
+                .get("id")
+                .and_then(Value::as_u64)
+                .and_then(|raw| self.driver.node_from_raw(raw))
+                .ok_or_else(|| Error::new("params.invalid", "`ref.id` wants a node id"))?;
+            let epoch = r.get("epoch").and_then(Value::as_u64).unwrap_or(0);
+            return Ok(Target::Ref(Ref { id, epoch }));
+        }
+        Ok(Target::Selector(parse(str_param(p, "selector")?)?))
+    }
+
+    fn act_json(&self, r: ActResult<N<D>>) -> Value {
+        json!({
+            "frame": r.frame, "epoch": r.epoch,
+            "tier": match r.tier { Tier::Semantic => "semantic", Tier::Synthetic => "synthetic" },
+            "changed": self.changes_json(&r.changed),
+        })
+    }
+
+    fn changes_json(&self, changed: &[(N<D>, String)]) -> Value {
+        json!(changed.iter().map(|&(n, ref m)| json!({"id": self.driver.node_raw(n), "what": m})).collect::<Vec<_>>())
+    }
+
     pub fn call(&mut self, method: &str, p: &Value) -> Result<Value, Error> {
         let opts = || act_options(p);
         Ok(match method {
@@ -1541,12 +1528,13 @@ impl<D: Driver> Session<D> {
             "app.roots" => json!(self.roots()?.iter().map(|r| json!({"key": r.key, "visible": r.visible, "tooling": r.tooling})).collect::<Vec<_>>()),
             "scene.query" => {
                 let limit = p.get("limit").and_then(Value::as_u64).map(|l| l as usize);
-                json!(self.query(str_param(p, "selector")?, limit)?.iter().map(NodeInfo::to_json).collect::<Vec<_>>())
+                let found = self.query(str_param(p, "selector")?, limit)?;
+                json!(found.iter().map(|n| n.to_json_with(&self.raw())).collect::<Vec<_>>())
             }
-            "scene.locate" => ref_json(self.locate(str_param(p, "selector")?)?),
+            "scene.locate" => ref_json(self.locate(str_param(p, "selector")?)?, &self.raw()),
             "scene.node" => {
                 let r = self.target_ref(p)?;
-                self.node(r)?.to_json()
+                self.node(r)?.to_json_with(&self.raw())
             }
             "style.matched" => {
                 let r = self.target_ref(p)?;
@@ -1554,7 +1542,7 @@ impl<D: Driver> Session<D> {
             }
             "style.computed" => {
                 let r = self.target_ref(p)?;
-                self.style_computed(r)?.to_json()
+                self.style_computed(r)?.to_json_with(&self.raw())
             }
             "scene.snapshot" => json!({"format": "yaml", "text": self.snapshot(p.get("selector").and_then(Value::as_str))?}),
             "a11y.tree" => json!(
@@ -1564,23 +1552,23 @@ impl<D: Driver> Session<D> {
                     .collect::<Vec<_>>()
             ),
             "input.click" => match p.get("button").and_then(Value::as_str).unwrap_or("primary") {
-                "primary" | "left" => act_json(self.click(target_param(p)?, opts()?)?),
-                "secondary" | "right" => act_json(self.context_click(target_param(p)?, opts()?)?),
+                "primary" | "left" => { let r = self.click(self.target_param(p)?, opts()?)?; self.act_json(r) },
+                "secondary" | "right" => { let r = self.context_click(self.target_param(p)?, opts()?)?; self.act_json(r) },
                 b => return Err(Error::new("params.invalid", format!("unknown button `{b}` (primary, secondary)"))),
             },
             "input.scroll_into_view" => match p.get("row") {
                 None | Some(Value::Null) => {
                     let center = p.get("align").and_then(Value::as_str) == Some("center");
-                    act_json(self.scroll_into_view(target_param(p)?, center, opts()?)?)
+                    { let r = self.scroll_into_view(self.target_param(p)?, center, opts()?)?; self.act_json(r) }
                 }
                 Some(r) => {
                     let pos = r.as_u64().ok_or_else(|| Error::new("params.invalid", "`row` wants a position (0-based)"))?;
-                    act_json(self.scroll_to_row(target_param(p)?, pos as usize, opts()?)?)
+                    { let r = self.scroll_to_row(self.target_param(p)?, pos as usize, opts()?)?; self.act_json(r) }
                 }
             },
-            "input.hover" => act_json(self.hover(target_param(p)?, opts()?)?),
-            "input.focus" => act_json(self.focus(target_param(p)?, opts()?)?),
-            "input.pointer_move" => act_json(self.pointer_move(target_param(p)?, at_param(p, "at")?, modifiers_param(p)?, opts()?)?),
+            "input.hover" => { let r = self.hover(self.target_param(p)?, opts()?)?; self.act_json(r) },
+            "input.focus" => { let r = self.focus(self.target_param(p)?, opts()?)?; self.act_json(r) },
+            "input.pointer_move" => { let r = self.pointer_move(self.target_param(p)?, at_param(p, "at")?, modifiers_param(p)?, opts()?)?; self.act_json(r) },
             "input.wheel" => {
                 let unit = match p.get("unit").and_then(Value::as_str).unwrap_or("line") {
                     "line" => egui::MouseWheelUnit::Line,
@@ -1590,7 +1578,7 @@ impl<D: Driver> Session<D> {
                 };
                 let num = |k: &str| p.get(k).map_or(Ok(0.0), |v| v.as_f64().ok_or_else(|| Error::new("params.invalid", format!("`{k}` wants a number"))));
                 let wheel = Wheel { at: at_param(p, "at")?, delta: egui::vec2(num("dx")? as f32, num("dy")? as f32), unit, modifiers: modifiers_param(p)? };
-                act_json(self.wheel(target_param(p)?, wheel, opts()?)?)
+                { let r = self.wheel(self.target_param(p)?, wheel, opts()?)?; self.act_json(r) }
             }
             "input.drag" => {
                 let to = match (p.get("to"), p.get("to_selector"), p.get("to_ref")) {
@@ -1599,7 +1587,7 @@ impl<D: Driver> Session<D> {
                         At::Center => return Err(Error::new("params.invalid", "`to` wants [x, y]")),
                     },
                     (None, Some(_), None) => DragTo::Node(Target::Selector(parse(str_param(p, "to_selector")?)?)),
-                    (None, None, Some(_)) => DragTo::Node(target_param(&json!({"ref": p["to_ref"]}))?),
+                    (None, None, Some(_)) => DragTo::Node(self.target_param(&json!({"ref": p["to_ref"]}))?),
                     _ => return Err(Error::new("params.invalid", "input.drag wants one of `to` ([x, y] in the target), `to_selector` or `to_ref`")),
                 };
                 let button = match p.get("button").and_then(Value::as_str).unwrap_or("primary") {
@@ -1610,23 +1598,23 @@ impl<D: Driver> Session<D> {
                 };
                 let steps = p.get("steps").and_then(Value::as_u64).unwrap_or(10) as u32;
                 let drag = Drag { from: at_param(p, "from")?, to, steps: steps.max(1), button, modifiers: modifiers_param(p)? };
-                act_json(self.drag(target_param(p)?, drag, opts()?)?)
+                { let r = self.drag(self.target_param(p)?, drag, opts()?)?; self.act_json(r) }
             }
-            "input.fill" => act_json(self.fill(target_param(p)?, str_param(p, "text")?, opts()?)?),
+            "input.fill" => { let r = self.fill(self.target_param(p)?, str_param(p, "text")?, opts()?)?; self.act_json(r) },
             "input.set_value" => {
                 let v = p.get("value").and_then(Value::as_f64).ok_or_else(|| Error::new("params.invalid", "`value` wants a number"))?;
                 match p.get("handle") {
-                    Some(Value::String(h)) => act_json(self.set_value_handle(target_param(p)?, h, v, opts()?)?),
-                    Some(Value::Number(i)) => act_json(self.set_value_handle(target_param(p)?, &i.to_string(), v, opts()?)?),
-                    _ => act_json(self.set_value(target_param(p)?, v, opts()?)?),
+                    Some(Value::String(h)) => { let r = self.set_value_handle(self.target_param(p)?, h, v, opts()?)?; self.act_json(r) },
+                    Some(Value::Number(i)) => { let r = self.set_value_handle(self.target_param(p)?, &i.to_string(), v, opts()?)?; self.act_json(r) },
+                    _ => { let r = self.set_value(self.target_param(p)?, v, opts()?)?; self.act_json(r) },
                 }
             }
-            "input.press" => act_json(self.press(str_param(p, "key")?)?),
-            "input.type" => act_json(self.type_text(str_param(p, "text")?)?),
+            "input.press" => { let r = self.press(str_param(p, "key")?)?; self.act_json(r) },
+            "input.type" => { let r = self.type_text(str_param(p, "text")?)?; self.act_json(r) },
             "wait.settled" => json!({"frames": self.wait_settled_within(waits::budget(p))?}),
             "wait.for" => {
                 let found = self.wait_for_within(&Condition::from_json(p)?, waits::budget(p))?;
-                json!(found.iter().map(NodeInfo::to_json).collect::<Vec<_>>())
+                json!(found.iter().map(|n| n.to_json_with(&self.raw())).collect::<Vec<_>>())
             }
             "capture.screenshot" => {
                 let img = self.screenshot(p.get("selector").and_then(Value::as_str))?;
@@ -1647,7 +1635,7 @@ impl<D: Driver> Session<D> {
             }
             "journal.take" => {
                 let (changes, overflowed) = self.journal_take()?;
-                json!({"changes": changes.iter().map(|(n, m)| json!({"id": n.to_raw(), "what": m})).collect::<Vec<_>>(), "overflowed": overflowed})
+                json!({"changes": self.changes_json(&changes), "overflowed": overflowed})
             }
             m if waits::METHODS.contains(&m) => self.call_waits(m, p)?,
             m => return Err(Error::new("method.unknown", format!("`{m}`"))),
@@ -1656,81 +1644,106 @@ impl<D: Driver> Session<D> {
 }
 
 /// One actionability probe: the node, where to aim, and the check it fails.
-type Probe = (NodeId, Option<Aim>, Result<(), Actionability>);
+type Probe<N> = (N, Option<Aim>, Result<(), Actionability<N>>);
+
+/// [`crate::engine::resolve`] on a session's scene.
+fn resolve<S: SceneSource>(s: &S, sel: &Selector, roots: &Roots<'_>) -> Result<Vec<S::Node>, Error> {
+    crate::engine::resolve_in(s, sel, roots.skip)
+}
+
+/// Whether `a` is an ancestor of `n`.
+fn is_ancestor<S: SceneSource>(s: &S, a: S::Node, n: S::Node) -> bool {
+    let mut at = s.parent(n);
+    while let Some(p) = at {
+        if p == a {
+            return true;
+        }
+        at = s.parent(p);
+    }
+    false
+}
+
+/// A scene without a style engine (`style.*`).
+fn no_style() -> Error {
+    Error::new("capability.absent", "this scene has no style engine")
+}
 
 /// AX1: the probe's detail for a node out of view (it is scrolled in, then probed again).
 const OUT_OF_VIEW: &str = "out of view";
 
 /// `fill`'s editable check: not read-only, and not a role that never takes text.
-fn is_editable(n: NodeRef<'_>) -> bool {
-    !has_state(n, "read-only")
+fn is_editable<S: SceneSource>(s: &S, n: S::Node) -> bool {
+    !s.has_state(n, "read-only")
         && !matches!(
-            role_of(n),
+            s.role(n),
             "button" | "checkbox" | "radio" | "switch" | "label" | "link" | "img" | "separator" | "slider" | "progressbar" | "menu" | "tab"
         )
 }
 
 /// `button #12 "Overlay" (anchor=cover)`, for reports.
-fn describe_node(n: NodeRef<'_>) -> String {
-    let mut s = format!("{} {}", n.tag(), n.id());
-    let name = accessible_name(n);
+fn describe_node<S: SceneSource>(s: &S, n: S::Node) -> String
+where
+    S::Node: std::fmt::Debug,
+{
+    let mut out = format!("{} {n:?}", s.tag(n));
+    let name = s.name(n);
     if !name.is_empty() {
-        s.push_str(&format!(" {name:?}"));
+        out.push_str(&format!(" {name:?}"));
     }
-    if let Some(a) = n.anchor() {
-        s.push_str(&format!(" (anchor={a})"));
+    if let Some(a) = s.anchor(n) {
+        out.push_str(&format!(" (anchor={a})"));
     }
-    s
+    out
 }
 
 /// What an act aims at: a selector (resolved strictly before each try) or an element ref.
 #[derive(Clone, Debug)]
-pub enum Target {
+pub enum Target<N = NodeId> {
     Selector(Selector),
-    Ref(Ref),
+    Ref(Ref<N>),
     /// A selector string that did not parse; the act fails with its error.
     Invalid(Error),
 }
 
-impl Target {
+impl<N: std::fmt::Debug> Target<N> {
     fn describe(&self) -> String {
         match self {
             Target::Selector(s) => format!("`{}`", s.source),
-            Target::Ref(r) => format!("{} (epoch {})", r.id, r.epoch),
+            Target::Ref(r) => format!("{:?} (epoch {})", r.id, r.epoch),
             Target::Invalid(e) => e.message.clone(),
         }
     }
 }
 
-impl From<Ref> for Target {
-    fn from(r: Ref) -> Target {
+impl<N> From<Ref<N>> for Target<N> {
+    fn from(r: Ref<N>) -> Target<N> {
         Target::Ref(r)
     }
 }
 
-impl From<Selector> for Target {
-    fn from(s: Selector) -> Target {
+impl<N> From<Selector> for Target<N> {
+    fn from(s: Selector) -> Target<N> {
         Target::Selector(s)
     }
 }
 
 /// A selector string; an invalid one fails at the act with `selector.invalid`.
-impl From<&str> for Target {
-    fn from(s: &str) -> Target {
+impl<N> From<&str> for Target<N> {
+    fn from(s: &str) -> Target<N> {
         parse(s).map_or_else(Target::Invalid, Target::Selector)
     }
 }
 
-fn text_of(n: NodeRef<'_>) -> String {
-    let t = n.text();
+fn text_of<S: SceneSource>(s: &S, n: S::Node) -> String {
+    let t = s.text(n);
     if !t.is_empty() {
-        t.to_string()
+        t.into_owned()
     } else {
-        accessible_name(n)
+        s.name(n).into_owned()
     }
 }
 
-fn strict(sel: &Selector, ids: Vec<NodeId>) -> Result<NodeId, Error> {
+fn strict<N: Copy>(sel: &Selector, ids: Vec<N>) -> Result<N, Error> {
     match ids.as_slice() {
         [] => Err(Error::new(
             "node.not_found",
@@ -1748,11 +1761,11 @@ fn strict(sel: &Selector, ids: Vec<NodeId>) -> Result<NodeId, Error> {
     }
 }
 
-fn stale(r: Ref) -> Error {
+fn stale<N: std::fmt::Debug>(r: Ref<N>) -> Error {
     Error::new(
         "node.stale",
         format!(
-            "{} from epoch {} is gone; re-resolve its locator",
+            "{:?} from epoch {} is gone; re-resolve its locator",
             r.id, r.epoch
         ),
     )
@@ -1765,16 +1778,8 @@ fn disabled() -> Error {
     )
 }
 
-fn ref_json(r: Ref) -> Value {
-    json!({"id": r.id.to_raw(), "epoch": r.epoch})
-}
-
-fn act_json(r: ActResult) -> Value {
-    json!({
-        "frame": r.frame, "epoch": r.epoch,
-        "tier": match r.tier { Tier::Semantic => "semantic", Tier::Synthetic => "synthetic" },
-        "changed": r.changed.iter().map(|(n, m)| json!({"id": n.to_raw(), "what": m})).collect::<Vec<_>>(),
-    })
+fn ref_json<N: Copy>(r: Ref<N>, raw: RawFn<'_, N>) -> Value {
+    json!({"id": raw(r.id), "epoch": r.epoch})
 }
 
 fn str_param<'v>(p: &'v Value, k: &str) -> Result<&'v str, Error> {
@@ -1817,19 +1822,6 @@ fn modifiers_param(p: &Value) -> Result<egui::Modifiers, Error> {
 
 fn timeout(p: &Value) -> f64 {
     p.get("timeout").and_then(Value::as_f64).unwrap_or(5_000.0)
-}
-
-fn target_param(p: &Value) -> Result<Target, Error> {
-    if let Some(r) = p.get("ref") {
-        let id = r
-            .get("id")
-            .and_then(Value::as_u64)
-            .and_then(NodeId::from_raw)
-            .ok_or_else(|| Error::new("params.invalid", "`ref.id` wants a node id"))?;
-        let epoch = r.get("epoch").and_then(Value::as_u64).unwrap_or(0);
-        return Ok(Target::Ref(Ref { id, epoch }));
-    }
-    Ok(Target::Selector(parse(str_param(p, "selector")?)?))
 }
 
 fn act_options(p: &Value) -> Result<ActOptions, Error> {

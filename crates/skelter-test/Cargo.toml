@@ -8,8 +8,8 @@ publish.workspace = true
 
 [features]
 default = []
-# The automation bridge: `svelters_automation::Driver` for a harness hosting svelters-egui roots in
-# egui islands (`crate::automation`).
+# The automation bridge (`crate::automation`): a `svelters_automation::Session` on a harness, over
+# skelter-native UI (`SkelterNativeDriver`) or svelters-egui roots in egui islands (`SkelterDriver`).
 automation = ["dep:svelters-automation", "dep:svelters-egui"]
 
 [dependencies]
@@ -39,6 +39,8 @@ skelter-test = { path = ".", features = ["automation"] }
 svelters-egui = { path = "../svelters-egui", default-features = false, features = ["source"] }
 svelters-host = { workspace = true }
 svelters-modules = { workspace = true, features = ["source"] }
+# JSON params of `Session::call` (tests/native_session.rs).
+serde_json = { workspace = true }
 # A real document with the built-in kinds (tests/menu.rs).
 skelter-core = { workspace = true }
 skelter-widgets = { workspace = true, features = ["native-menu"] }

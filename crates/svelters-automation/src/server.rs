@@ -19,7 +19,7 @@
 //! policy are not here yet (the user's cut, 2026-10-22); `session.hello`'s `token` is ignored.
 
 use crate::rpc::{self, LineRead, Request};
-use crate::{Driver, Error, Session};
+use crate::{Error, Session, SourceDriver};
 use serde_json::{Value, json};
 use std::io::{self, BufReader, Read, Write};
 use std::net::{Ipv4Addr, SocketAddr, TcpListener, TcpStream};
@@ -219,7 +219,7 @@ impl Server {
     /// Listens on `endpoint` for `session`'s clients. Fails with `automation.disabled` until the
     /// app has called [`crate::enable`]; a Unix socket path that a live server holds fails with
     /// `transport.address`, a stale one is replaced.
-    pub fn start<D: Driver>(session: &Session<D>, endpoint: Endpoint) -> Result<Server, Error> {
+    pub fn start<D: SourceDriver>(session: &Session<D>, endpoint: Endpoint) -> Result<Server, Error> {
         let _ = session;
         if !crate::is_enabled() {
             return Err(Error::new(
@@ -298,7 +298,7 @@ impl Server {
 
     /// Runs every queued request through `session` and queues the replies; never blocks. Call it
     /// on the UI thread between frames. Returns how many requests ran.
-    pub fn pump<D: Driver>(&self, session: &mut Session<D>) -> usize {
+    pub fn pump<D: SourceDriver>(&self, session: &mut Session<D>) -> usize {
         self.pump_session(
             None,
             &mut |s: &mut Session<D>, m: &str, p: &Value| s.call(m, p),
@@ -308,7 +308,7 @@ impl Server {
 
     /// [`Server::pump`] for a runner with nothing else to do: waits up to `timeout` for the first
     /// request, then drains the queue.
-    pub fn pump_wait<D: Driver>(&self, session: &mut Session<D>, timeout: Duration) -> usize {
+    pub fn pump_wait<D: SourceDriver>(&self, session: &mut Session<D>, timeout: Duration) -> usize {
         self.pump_session(
             Some(timeout),
             &mut |s: &mut Session<D>, m: &str, p: &Value| s.call(m, p),
@@ -319,7 +319,7 @@ impl Server {
     /// [`Server::pump`] (`wait: None`) or [`Server::pump_wait`] with the app's own dispatch in
     /// front of the session's: extra methods, or answers decorated with app facts, and
     /// `session.call` for the rest.
-    pub fn pump_session<D: Driver>(
+    pub fn pump_session<D: SourceDriver>(
         &self,
         wait: Option<Duration>,
         call: &mut SessionCall<'_, D>,
