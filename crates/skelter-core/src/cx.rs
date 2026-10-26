@@ -782,12 +782,12 @@ impl EventCx<'_> {
         self.doc.peer_queue.push_back((self.node, to, msg));
     }
     /// Moves keyboard focus to the node of this window whose `anchor` is `anchor` (a label's
-    /// `for`); false when none can take it.
+    /// `for`); false when none can take it (now, or after the next restyle: [`Document::focus`]).
     pub fn focus_anchor(&mut self, anchor: &str) -> bool {
         let Some(w) = self.doc.window_of(self.node) else { return false };
         let Some(n) = self.doc.find_anchor(w, anchor) else { return false };
         self.doc.focus(n, crate::kind::FocusReason::Programmatic);
-        self.doc.focused(w) == Some(n)
+        self.doc.focused(w) == Some(n) || self.doc.pending_focus(w) == Some(n)
     }
     /// Keeps the current pointer on this node until release.
     pub fn capture_pointer(&mut self) {

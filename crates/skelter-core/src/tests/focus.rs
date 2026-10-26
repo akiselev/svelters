@@ -107,3 +107,177 @@ fn the_keymap_hook_runs_before_the_focused_kind() {
     assert!(out.handled);
     assert_eq!(d.get_prop(t, crate::testkinds::TOGGLE_CHECKED), Some(Value::Bool(false)), "the keymap took Space");
 }
+
+// ---- QA11Y F1, F2: focus that follows style ----
+
+fn show(d: &mut Document, n: NodeId, css: &str) {
+    d.set_style(n, crate::StyleInput { inline: Some(css.into()), ..Default::default() });
+}
+
+fn dialog_scope(d: &mut Document, parent: NodeId, css: &str) -> NodeId {
+    let s = child(d, parent, BOX, css);
+    d.set_prop(s, common::FOCUS_SCOPE, Value::Enum(2)).unwrap();
+    s
+}
+
+#[test]
+fn focus_under_a_backdrop_shown_in_the_same_transaction_applies_after_restyle() {
+    let (mut d, root) = doc();
+    let backdrop = child(&mut d, root, BOX, "display: none");
+    let field = child(&mut d, backdrop, TOGGLE, "");
+    frame(&mut d);
+    // focus first, then the class change that shows it (cadatomic's palette order), and the reverse
+    for focus_first in [true, false] {
+        d.blur(W);
+        show(&mut d, backdrop, "display: none");
+        frame(&mut d);
+        if focus_first {
+            d.focus(field, FocusReason::Programmatic);
+            show(&mut d, backdrop, "");
+        } else {
+            show(&mut d, backdrop, "");
+            d.focus(field, FocusReason::Programmatic);
+        }
+        assert_eq!(d.focused(W), None, "computed style still hides it: the request waits");
+        assert_eq!(d.pending_focus(W), Some(field));
+        d.listen(field, common::FOCUS, ListenFlags::EMPTY);
+        let c = frame(&mut d).expect("a frame");
+        assert_eq!(d.focused(W), Some(field), "applied after the frame's restyle");
+        assert_eq!(d.pending_focus(W), None);
+        assert_eq!(c.a11y.expect("an a11y update").focus, accesskit::NodeId(field.0), "TreeUpdate.focus names the field");
+        assert!(d.take_events().iter().any(|e| e.signal == common::FOCUS && e.target == field), "focus fired in that frame");
+    }
+}
+
+#[test]
+fn focus_on_a_node_still_hidden_after_restyle_is_dropped() {
+    let (mut d, root) = doc();
+    let backdrop = child(&mut d, root, BOX, "display: none");
+    let field = child(&mut d, backdrop, TOGGLE, "");
+    frame(&mut d);
+    d.focus(field, FocusReason::Programmatic);
+    assert_eq!(d.pending_focus(W), Some(field));
+    assert!(frame(&mut d).is_some(), "the request brings a frame");
+    assert_eq!(d.focused(W), None);
+    assert_eq!(d.pending_focus(W), None, "dropped, not kept for a later frame");
+    show(&mut d, backdrop, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), None, "showing it later doesn't apply the old request");
+    // a disabled node never queues one
+    d.set_prop(field, common::DISABLED, Value::Bool(true)).unwrap();
+    d.focus(field, FocusReason::Programmatic);
+    assert_eq!(d.pending_focus(W), None);
+}
+
+#[test]
+fn hiding_the_focused_nodes_container_moves_focus_to_the_restore_entry_or_none() {
+    let (mut d, root) = doc();
+    let opener = child(&mut d, root, TOGGLE, "");
+    let panel = child(&mut d, root, BOX, "");
+    let inner = child(&mut d, panel, TOGGLE, "");
+    frame(&mut d);
+    d.focus(inner, FocusReason::Keyboard);
+    show(&mut d, panel, "display: none");
+    frame(&mut d);
+    assert_eq!(d.focused(W), None, "nothing to restore: focus goes to nothing");
+    assert!(!d.state(inner).contains(StateMask::FOCUSED));
+    // inside a dialog scope that hides: back to its opener
+    show(&mut d, panel, "");
+    d.set_prop(panel, common::FOCUS_SCOPE, Value::Enum(2)).unwrap();
+    d.focus(opener, FocusReason::Keyboard);
+    frame(&mut d);
+    // the scope was already shown: it counts as appearing only once it is a scope at a frame
+    assert_eq!(d.focused(W), Some(inner), "the dialog scope took focus when it became one");
+    show(&mut d, panel, "visibility: hidden");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(opener), "the hidden dialog gave focus back");
+}
+
+#[test]
+fn a_dialog_that_appears_focuses_its_autofocus_node_and_gives_focus_back_on_hide() {
+    let (mut d, root) = doc();
+    let opener = child(&mut d, root, TOGGLE, "");
+    let dialog = dialog_scope(&mut d, root, "display: none");
+    let first = child(&mut d, dialog, TOGGLE, "");
+    let field = child(&mut d, dialog, TOGGLE, "");
+    d.set_prop(field, common::AUTOFOCUS, Value::Bool(true)).unwrap();
+    frame(&mut d);
+    d.focus(opener, FocusReason::Keyboard);
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(opener), "a hidden dialog takes nothing");
+    show(&mut d, dialog, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(field), "the autofocus node, not the first stop");
+    d.dispatch(&key(Key::Tab, Modifiers::default()));
+    assert_eq!(d.focused(W), Some(first), "Tab wraps inside the dialog");
+    show(&mut d, dialog, "display: none");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(opener), "hidden: focus back on the opener");
+    // shown again: it opens again (the first stop when no autofocus node)
+    d.set_prop(field, common::AUTOFOCUS, Value::Bool(false)).unwrap();
+    show(&mut d, dialog, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(first));
+}
+
+#[test]
+fn a_dialog_focused_into_before_it_shows_still_restores_the_opener() {
+    let (mut d, root) = doc();
+    let opener = child(&mut d, root, TOGGLE, "");
+    let dialog = dialog_scope(&mut d, root, "display: none");
+    let _first = child(&mut d, dialog, TOGGLE, "");
+    let field = child(&mut d, dialog, TOGGLE, "");
+    d.focus(opener, FocusReason::Keyboard);
+    frame(&mut d);
+    // the palette's order: focus() on its field, then show it
+    d.focus(field, FocusReason::Programmatic);
+    show(&mut d, dialog, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(field), "the app's focus() wins over the first stop");
+    show(&mut d, dialog, "display: none");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(opener));
+}
+
+#[test]
+fn initial_focus_is_opt_in() {
+    for opt_in in [false, true] {
+        let (mut d, root) = doc();
+        if opt_in {
+            d.set_prop(root, common::INITIAL_FOCUS, Value::Bool(true)).unwrap();
+        }
+        let _a = child(&mut d, root, TOGGLE, "");
+        let b = child(&mut d, root, TOGGLE, "");
+        d.set_prop(b, common::AUTOFOCUS, Value::Bool(true)).unwrap();
+        let c = frame(&mut d).expect("the first frame");
+        if opt_in {
+            assert_eq!(d.focused(W), Some(b), "the first frame focuses the autofocus node");
+            assert_eq!(c.a11y.expect("the full tree").focus, accesskit::NodeId(b.0));
+        } else {
+            assert_eq!(d.focused(W), None, "without initial-focus nothing changes");
+        }
+    }
+}
+
+#[test]
+fn autofocus_outside_a_dialog_takes_focus_once_and_never_steals_it() {
+    let (mut d, root) = doc();
+    d.set_prop(root, common::INITIAL_FOCUS, Value::Bool(true)).unwrap();
+    let other = child(&mut d, root, TOGGLE, "");
+    frame(&mut d);
+    let late = child(&mut d, root, TOGGLE, "display: none");
+    d.set_prop(late, common::AUTOFOCUS, Value::Bool(true)).unwrap();
+    frame(&mut d);
+    assert_eq!(d.focused(W), None);
+    show(&mut d, late, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(late), "focused when it appeared");
+    d.focus(other, FocusReason::Keyboard);
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(other), "once only");
+    show(&mut d, late, "display: none");
+    frame(&mut d);
+    show(&mut d, late, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(other), "appearing again doesn't steal focus");
+}

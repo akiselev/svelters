@@ -111,7 +111,12 @@ pub static COMMON: KindSpec = KindSpec {
             .default(PropDefault::Bool(false))
             .doc("The node is being updated: AccessKit `busy`, applied after the kind's own accessibility node."),
         PropSpec::new("title", ValueType::Str, ChangeClass::Paint),
-        PropSpec::new("autofocus", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)),
+        PropSpec::new("autofocus", ValueType::Bool, ChangeClass::Paint)
+            .default(PropDefault::Bool(false))
+            .doc("Takes focus when its `dialog` scope opens; outside one, with `initial-focus` on the window's root, takes focus once when it appears if nothing has focus."),
+        PropSpec::new("initial-focus", ValueType::Bool, ChangeClass::Paint)
+            .default(PropDefault::Bool(false))
+            .doc("On a window's root: `autofocus` nodes outside `dialog` scopes take focus when they appear, the window's first frame included (opt-in, so assistive technology has a focus from the start)."),
         PropSpec::new("focus-scope", ValueType::Enum, ChangeClass::Paint).default(PropDefault::Enum(0)).enum_values(FOCUS_SCOPES),
         PropSpec::new("anchor", ValueType::Str, ChangeClass::Paint)
             .default(PropDefault::Str(""))
@@ -202,6 +207,7 @@ ids!(PropId:
     ARIA_DESCRIPTION = "aria-description": "string",
     TITLE = "title": "string",
     AUTOFOCUS = "autofocus": "bool",
+    INITIAL_FOCUS = "initial-focus": "bool",
     FOCUS_SCOPE = "focus-scope": "enum",
     ANCHOR = "anchor": "string",
     ANCHOR_SCOPE = "anchor-scope": "string",
@@ -260,7 +266,7 @@ mod tests {
         for i in 0..COMMON.props.len() {
             assert!(prop(COMMON.prop_id(i)).is_some());
         }
-        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, ARIA_LIVE, ARIA_BUSY, ROLE, ARIA_LEVEL, ARIA_EXPANDED, ARIA_SELECTED, ARIA_DESCRIPTION, TITLE, AUTOFOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
+        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, ARIA_LIVE, ARIA_BUSY, ROLE, ARIA_LEVEL, ARIA_EXPANDED, ARIA_SELECTED, ARIA_DESCRIPTION, TITLE, AUTOFOCUS, INITIAL_FOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
             assert!(prop(id).is_some(), "{id:?}");
         }
         for id in [POINTERDOWN, CLICK, WHEEL, KEYDOWN, FOCUS, FOCUSIN, SCROLL, ANIMATIONEND, DRAG_BEGIN, DRAG_END, DRAG_ENTER, DRAG_LEAVE, DROP] {

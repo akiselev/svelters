@@ -1,15 +1,34 @@
 //! The focus model (architecture §11.6, svelters EV3): one focused node per window; Tab order is tree
 //! order with positive `tabindex` first (as the DOM); a `contain` or `dialog` focus scope keeps Tab
 //! inside it, and a `dialog` scope takes focus when it opens and gives it back when it closes;
-//! `:focus-visible` follows the input modality; programmatic `focus()` takes effect in the same
-//! transaction. Focus changes queue `blur`/`focusout` on the old node and `focus`/`focusin` on the new.
+//! `:focus-visible` follows the input modality. Focus changes queue `blur`/`focusout` on the old node
+//! and `focus`/`focusin` on the new.
+//!
+//! Programmatic `focus()` ([`Document::focus`]) takes effect in the same transaction when the node can
+//! take focus now. When it can't only because it is hidden (a field under a backdrop whose
+//! `display: none` the same transaction clears, before or after the call: computed style changes only
+//! at the next restyle), the request is kept and applied after the frame's restyle ([`after_style`]),
+//! or dropped if the node is still hidden then: "focus applies at the next style pass".
+//!
+//! After every restyle the frame also runs the focus rules that follow style (QA11Y F1, F2, ported
+//! from svelters-egui EV3):
+//! - a `dialog` scope that becomes available (shown, not inert) takes focus: its `autofocus` node,
+//!   else its first tab stop, remembering the opener; when it stops being available (hidden, inert,
+//!   removed) focus inside it goes back to the opener;
+//! - with `initial-focus` on the window's root, an `autofocus` node outside a dialog takes focus once
+//!   when it appears (the window's first frame included) if nothing in the window has focus;
+//! - the focus fixup rule: a focused node that can no longer take focus (hidden, `display: none`,
+//!   concealed, disabled) loses it, to its dialog scope's first stop, else the restore stack's top,
+//!   else nothing.
 
 use crate::common;
 use crate::document::Document;
 use crate::input::JsEvent;
 use crate::kind::{Event, FocusReason};
+use crate::tree::{Dirty, NodeFlags};
 use skelter_base::ids::{NodeId, WindowId};
 use smallvec::SmallVec;
+use std::collections::HashSet;
 use svelters_style::StateMask;
 
 /// `node` can take focus at all (programmatically): a focusable kind or an explicit `tabindex`, not
@@ -28,6 +47,42 @@ pub(crate) fn can_focus(doc: &Document, node: NodeId) -> bool {
 /// container that places its children).
 pub(crate) fn shown(doc: &Document, node: NodeId) -> bool {
     doc.idx(node).is_some_and(|i| !hidden_by_ancestor(doc, i))
+}
+
+/// `node` could take focus once shown: a focusable kind or an explicit `tabindex`, not disabled, in a
+/// window. [`can_focus`] fails for it only because it or an ancestor is hidden.
+fn focusable_when_shown(doc: &Document, node: NodeId) -> bool {
+    let Some(i) = doc.idx(node) else { return false };
+    if doc.core[i].window.is_none() {
+        return false;
+    }
+    let v = doc.view_at(i);
+    (v.kind().spec.focusable || v.prop(common::TABINDEX).is_some()) && !v.disabled()
+}
+
+/// Programmatic focus ([`Document::focus`]): now when `node` can take it. A node that only is hidden
+/// keeps the request until the frame's next restyle (it may be shown in this transaction, before or
+/// after the call; the style that shows it is computed then), which applies it or drops it. A node
+/// that can't take focus at all takes nothing.
+pub(crate) fn request_focus(doc: &mut Document, node: NodeId, reason: FocusReason) {
+    if can_focus(doc, node) {
+        set_focus(doc, Some(node), reason);
+        return;
+    }
+    if !focusable_when_shown(doc, node) {
+        return;
+    }
+    let Some(window) = doc.window_of(node) else { return };
+    if let Some(w) = doc.window_mut(window) {
+        w.pending_focus = Some((node, reason));
+    }
+    // the next frame decides (one is needed even when nothing else changed)
+    doc.mark(node, Dirty::A11Y);
+}
+
+/// The focus request [`after_style`] applies (`None`: none).
+pub(crate) fn pending_focus(doc: &Document, window: WindowId) -> Option<NodeId> {
+    doc.window(window).and_then(|w| w.pending_focus).map(|(n, _)| n)
 }
 
 fn hidden_by_ancestor(doc: &Document, mut i: usize) -> bool {
@@ -113,6 +168,10 @@ pub(crate) fn set_focus(doc: &mut Document, node: Option<NodeId>, reason: FocusR
         return;
     }
     let window = doc.window_of(node).expect("focusable nodes are in a window");
+    // a focus move supersedes a request still waiting for style
+    if let Some(w) = doc.window_mut(window) {
+        w.pending_focus = None;
+    }
     let old = doc.focused(window);
     if old == Some(node) {
         // the modality may still change :focus-visible
@@ -143,8 +202,11 @@ pub(crate) fn set_focus(doc: &mut Document, node: Option<NodeId>, reason: FocusR
     crate::input::scope::focus_moved(doc, old, Some(node));
 }
 
-/// Clears the window's focus.
+/// Clears the window's focus (and a request waiting for style).
 pub(crate) fn clear_focus(doc: &mut Document, window: WindowId) {
+    if let Some(w) = doc.window_mut(window) {
+        w.pending_focus = None;
+    }
     if let Some(o) = doc.focused(window) {
         blur_node(doc, window, o);
         if let Some(w) = doc.window_mut(window) {
@@ -206,16 +268,170 @@ fn queue(doc: &mut Document, target: NodeId, signal: crate::ids::SignalId, bubbl
     }
 }
 
-/// Opens a `dialog` scope: remembers the focus to give back and focuses the scope's first tab stop.
+/// Opens a `dialog` scope: remembers the focus to give back and focuses the scope's `autofocus` node,
+/// else its first tab stop. The frame's [`after_style`] does this for a scope that becomes available;
+/// calling it directly opens one now (and the frame then counts it as open).
 pub fn open_dialog(doc: &mut Document, scope: NodeId) {
     let Some(window) = doc.window_of(scope) else { return };
-    if let Some(prev) = doc.focused(window)
+    let before = doc.focused(window);
+    open_dialog_from(doc, window, scope, before);
+    if let Some(w) = doc.window_mut(window) {
+        w.focus_seen.insert(scope);
+    }
+}
+
+/// [`open_dialog`] with the opener `before` (the window's focus before this pass moved it): focus
+/// already inside the scope stays where it is.
+fn open_dialog_from(doc: &mut Document, window: WindowId, scope: NodeId, before: Option<NodeId>) {
+    if let Some(prev) = before.filter(|&b| doc.contains(b) && !doc.is_ancestor_or_self(scope, b))
         && let Some(w) = doc.window_mut(window)
     {
+        w.restore.retain(|&(s, _)| s != scope);
         w.restore.push((scope, prev));
     }
-    if let Some(first) = tab_sequence(doc, scope).first().copied() {
+    if doc.focused(window).is_some_and(|f| doc.is_ancestor_or_self(scope, f)) {
+        return;
+    }
+    if let Some(first) = initial_in(doc, scope) {
         set_focus(doc, Some(first), FocusReason::Programmatic);
+    }
+}
+
+/// Where focus goes in a scope that opens: its first `autofocus` node that can take focus (tree
+/// order), else its first tab stop.
+fn initial_in(doc: &Document, scope: NodeId) -> Option<NodeId> {
+    let mut stack = vec![scope];
+    while let Some(n) = stack.pop() {
+        if n != scope && autofocus(doc, n) && can_focus(doc, n) {
+            return Some(n);
+        }
+        stack.extend(doc.children(n).iter().rev());
+    }
+    tab_sequence(doc, scope).first().copied()
+}
+
+fn autofocus(doc: &Document, n: NodeId) -> bool {
+    doc.view(n).is_some_and(|v| v.prop_bool(common::AUTOFOCUS))
+}
+
+fn is_dialog(doc: &Document, n: NodeId) -> bool {
+    doc.view(n).and_then(|v| v.prop(common::FOCUS_SCOPE)).and_then(|v| v.as_enum()) == Some(2)
+}
+
+/// A node the focus rules after style watch: a `dialog` scope or an `autofocus` node.
+pub(crate) fn watched(doc: &Document, n: NodeId) -> bool {
+    is_dialog(doc, n) || autofocus(doc, n)
+}
+
+/// A scope is available while it is in its window, shown and not inert (nor making its content inert:
+/// an outro).
+fn available(doc: &Document, window: WindowId, n: NodeId) -> bool {
+    doc.window_of(n) == Some(window) && shown(doc, n) && doc.idx(n).is_some_and(|i| !doc.core[i].flags.intersects(NodeFlags::INERT.union(NodeFlags::INERT_CHILDREN)))
+}
+
+/// The innermost available `dialog` scope around `n` (itself included).
+fn dialog_around(doc: &Document, window: WindowId, n: NodeId) -> Option<NodeId> {
+    let mut a = Some(n);
+    while let Some(x) = a {
+        if is_dialog(doc, x) && available(doc, window, x) {
+            return Some(x);
+        }
+        a = doc.parent(x);
+    }
+    None
+}
+
+/// The focus rules that follow style, run by the frame after its restyle (before layout and the
+/// accessibility update): the deferred request, `dialog` scopes and `autofocus` nodes that appeared
+/// or went away, then the focus fixup. Their focus events are queued as any focus move's.
+pub(crate) fn after_style(doc: &mut Document, window: WindowId) {
+    let Some(root) = doc.window_root(window) else { return };
+    let before = doc.focused(window);
+    // 1. the request that waited for style
+    if let Some((n, reason)) = doc.window_mut(window).and_then(|w| w.pending_focus.take())
+        && doc.window_of(n) == Some(window)
+        && can_focus(doc, n)
+    {
+        set_focus(doc, Some(n), reason);
+    }
+    // 2. scopes and autofocus nodes: what is available now against the last pass
+    let live: HashSet<NodeId> = doc.focus_watch.iter().copied().filter(|&n| doc.contains(n)).collect();
+    doc.focus_watch = live;
+    let mut watch: Vec<(usize, NodeId)> =
+        doc.focus_watch.iter().copied().filter(|&n| doc.window_of(n) == Some(window)).map(|n| (depth(doc, n), n)).collect();
+    // outer scopes first, then a stable order
+    watch.sort_unstable_by_key(|&(d, n)| (d, n.0));
+    let seen_before = doc.window_mut(window).map(|w| std::mem::take(&mut w.focus_seen)).unwrap_or_default();
+    let mut seen = HashSet::new();
+    let mut opened = Vec::new();
+    let mut auto = Vec::new();
+    for &(_, n) in &watch {
+        if is_dialog(doc, n) {
+            if available(doc, window, n) {
+                seen.insert(n);
+                if !seen_before.contains(&n) {
+                    opened.push(n);
+                }
+            }
+        } else if can_focus(doc, n) {
+            seen.insert(n);
+            if !seen_before.contains(&n) {
+                auto.push(n);
+            }
+        }
+    }
+    // scopes that went away give focus back (removed ones already did, `scopes_closed`)
+    let gone: Vec<NodeId> = seen_before.iter().copied().filter(|n| !seen.contains(n)).collect();
+    for s in gone {
+        scope_gone(doc, window, s);
+    }
+    for s in opened {
+        open_dialog_from(doc, window, s, before);
+    }
+    let initial = doc.view(root).is_some_and(|v| v.prop_bool(common::INITIAL_FOCUS));
+    if initial
+        && doc.focused(window).is_none()
+        && let Some(&a) = auto.iter().find(|&&a| dialog_around(doc, window, a).is_none())
+    {
+        set_focus(doc, Some(a), FocusReason::Programmatic);
+    }
+    if let Some(w) = doc.window_mut(window) {
+        w.focus_seen = seen;
+    }
+    // 3. the focus fixup rule
+    if let Some(f) = doc.focused(window)
+        && !can_focus(doc, f)
+    {
+        let to = dialog_around(doc, window, f).and_then(|s| initial_in(doc, s)).filter(|&t| t != f).or_else(|| {
+            doc.window(window).and_then(|w| w.restore.iter().rev().map(|&(_, p)| p).find(|&p| p != f && can_focus(doc, p)))
+        });
+        match to {
+            Some(t) => set_focus(doc, Some(t), FocusReason::Programmatic),
+            None => clear_focus(doc, window),
+        }
+    }
+}
+
+fn depth(doc: &Document, mut n: NodeId) -> usize {
+    let mut d = 0;
+    while let Some(p) = doc.parent(n) {
+        d += 1;
+        n = p;
+    }
+    d
+}
+
+/// A `dialog` scope stopped being available (hidden, inert, no longer a scope): its restore entries
+/// go, and focus inside it (or lost with it) goes back to its opener.
+fn scope_gone(doc: &mut Document, window: WindowId, scope: NodeId) {
+    let Some(w) = doc.window_mut(window) else { return };
+    let back: SmallVec<[NodeId; 2]> = w.restore.iter().filter(|(s, _)| *s == scope).map(|&(_, p)| p).collect();
+    w.restore.retain(|(s, _)| *s != scope);
+    let Some(&prev) = back.last() else { return };
+    let focus = doc.focused(window);
+    let lost = focus.is_none_or(|f| !can_focus(doc, f) || (doc.contains(scope) && doc.is_ancestor_or_self(scope, f)));
+    if lost && can_focus(doc, prev) {
+        set_focus(doc, Some(prev), FocusReason::Programmatic);
     }
 }
 

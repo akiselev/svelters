@@ -969,6 +969,8 @@ fn no_caret_for_an_editor_that_isnt_rendered() {
     let caret_color = |d: &mut Document, extra: &str| {
         restyle(d, extra);
         frame(d);
+        // hidden, the page lost focus (the focus fixup rule): shown again, it takes it back
+        d.focus(page, crate::FocusReason::Keyboard);
         d.take_fast_commits();
         d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
         d.take_fast_commits().iter().find_map(|f| match f {

@@ -86,6 +86,9 @@ impl DocumentApi for SkelterDocument {
         self.backend.pump();
         let c = self.backend.with_doc(|d| d.frame(window, target));
         self.framed.insert(window, self.backend.revision());
+        // focus the frame moved after its restyle (a deferred `focus()`, a dialog scope opening, the
+        // focus fixup) queued `focus`/`blur` for JS: delivered now; what JS changes gets a next frame
+        self.backend.pump();
         c
     }
 

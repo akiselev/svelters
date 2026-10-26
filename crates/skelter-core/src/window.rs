@@ -71,8 +71,14 @@ pub(crate) struct WindowState {
     pub laid_out: bool,
     pub focus: Option<NodeId>,
     pub focus_visible: bool,
-    /// Focus to restore when a `dialog` scope closes: (scope, the node focused before it opened).
+    /// The restore stack: focus to give back when a `dialog` scope stops being available (removed,
+    /// hidden, inert): (scope, the node focused before it opened), innermost last.
     pub restore: Vec<(NodeId, NodeId)>,
+    /// A programmatic focus request waiting for the next restyle (`focus::after_style`).
+    pub pending_focus: Option<(NodeId, crate::kind::FocusReason)>,
+    /// The watched nodes (`dialog` scopes, `autofocus` nodes) that were available at the last
+    /// `focus::after_style`: one that is not any more went away, one that is new appeared.
+    pub focus_seen: HashSet<NodeId>,
     pub props: IdAlloc,
     pub layer_ids: IdAlloc,
     /// The window's root transform node and layer.
@@ -154,6 +160,8 @@ impl WindowState {
             focus: None,
             focus_visible: false,
             restore: Vec::new(),
+            pending_focus: None,
+            focus_seen: HashSet::new(),
             props: IdAlloc::default(),
             layer_ids: IdAlloc::default(),
             root_transform: None,
