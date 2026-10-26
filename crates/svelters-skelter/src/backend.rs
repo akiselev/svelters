@@ -439,6 +439,13 @@ impl SkelterBackend {
     }
 
     /// The document, shared with the host that handed it over (or the backend's own).
+    /// The host's provider states for `:state(ns.name)` in the app's sheets (cadatomic's
+    /// `cad.pending` against its kinds' state bits): sheets sent from now on resolve through `names`
+    /// (A27). See `skelter_core::Document::set_state_names`.
+    pub fn set_state_names(&self, names: Box<dyn svelters_style::StateNames>) {
+        self.doc_mut().set_state_names(names);
+    }
+
     pub fn document(&self) -> Rc<RefCell<Document>> {
         self.0.doc.clone()
     }

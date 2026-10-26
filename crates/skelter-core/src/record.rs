@@ -30,6 +30,9 @@ pub(crate) struct NodePaint {
     /// The external layer's id, and the continuation layer that takes what paints after it.
     pub ext_layer: Option<LayerId>,
     pub ext_cont: Option<LayerId>,
+    /// The continuation layer after this node's own content layer (will-change, an animation): what
+    /// paints after the node in its parent's layer goes there, above the node's layer (A26).
+    pub layer_cont: Option<LayerId>,
     /// The clip node its children draw under (the dirty walk's; absolute descendants whose
     /// containing block this is take it).
     pub child_clip: Option<PropNodeId>,
@@ -59,6 +62,7 @@ impl Default for NodePaint {
             external: None,
             ext_layer: None,
             ext_cont: None,
+            layer_cont: None,
             child_clip: None,
             world: Rect::ZERO,
             world_tf: Affine::IDENTITY,

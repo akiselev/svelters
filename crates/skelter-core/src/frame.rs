@@ -739,10 +739,26 @@ impl Document {
                     content_layer = Some(id);
                 } else {
                     layer = id;
+                    // what paints after this node in the parent's layer goes into a continuation
+                    // above the node's layer, not below it in the parent's items (A26, as A15)
+                    let ws = self.window_mut(window).expect("window");
+                    let c = p.layer_cont.unwrap_or_else(|| LayerId(ws.layer_ids.alloc()));
+                    self.record[i].layer_cont = Some(c);
+                    let host = *layers.iter().find(|d| d.id == f.layer).expect("the parent's layer");
+                    layers.push(LayerDesc { id: c, parent: Some(f.layer), kind: LayerKind::Content, transform: host.transform, clip: None, effect: None, z: z_next, bounds: host.bounds, opaque: false });
+                    z_next += 1;
+                    items.entry(c).or_default();
+                    used_layers.push(c);
+                    split.insert(f.layer, c);
                 }
             } else if let Some(old) = p.layer {
                 // it had a layer and needs none now
                 self.record[i].layer = None;
+                let ws = self.window_mut(window).expect("window");
+                ws.layer_ids.free(old.0);
+            }
+            if !matches!(kind, Some(LayerKind::Content)) && let Some(old) = p.layer_cont {
+                self.record[i].layer_cont = None;
                 let ws = self.window_mut(window).expect("window");
                 ws.layer_ids.free(old.0);
             }

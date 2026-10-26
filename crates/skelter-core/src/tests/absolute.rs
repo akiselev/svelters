@@ -245,3 +245,116 @@ fn a_subtree_under_an_absolute_ancestor_that_moves_later_draws_at_the_new_place(
     assert!(seen.lists.contains(&new), "the inserted node paints");
     assert_eq!(seen.origin(new), Some((120.0, 60.0)), "where it is laid out");
 }
+
+/// Each painting node of `nodes` is drawn where it is laid out.
+fn assert_each_in_place(d: &Document, seen: &Painted, nodes: &[NodeId], case: &str) {
+    for &n in nodes {
+        let r = d.world_rect(n).unwrap();
+        assert!(seen.lists.contains(&n), "{case}: {n:?} is drawn");
+        assert_eq!(seen.origin(n), Some((r.min.x, r.min.y)), "{case}: {n:?} is drawn where it is laid out");
+    }
+}
+
+/// A row of three 30×10 boxes under `parent`, before `before`.
+fn three_boxes(d: &mut Document, parent: NodeId, before: Option<NodeId>) -> Vec<NodeId> {
+    let row = d.create(BOX);
+    d.set_style(row, StyleInput { inline: Some("flex-direction: row; height: 10px; gap: 4px; background-color: #222222".into()), ..Default::default() });
+    d.insert(parent, row, before, None).unwrap();
+    let mut out = vec![row];
+    for _ in 0..3 {
+        out.push(child(d, row, BOX, "width: 30px; height: 10px; background-color: #ff0000"));
+    }
+    out
+}
+
+/// A29: in-flow nodes created after the window's first frame get their final transform, not their
+/// parent's origin (the compositor's transform locals, not only `world_rect`).
+#[test]
+fn in_flow_nodes_created_after_the_first_frame_draw_where_they_are_laid_out() {
+    const COLUMN: &str = "flex-direction: column; gap: 3px; padding: 5px; width: 200px; height: 100px";
+    // 1. a new in-flow row inserted into the root column, between two rows
+    let (mut d, root) = doc();
+    d.set_style(root, StyleInput { inline: Some(COLUMN.into()), ..Default::default() });
+    let first = three_boxes(&mut d, root, None);
+    let last = three_boxes(&mut d, root, None);
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    let mid = three_boxes(&mut d, root, Some(last[0]));
+    settle(&mut d, &mut seen);
+    assert_each_in_place(&d, &seen, &[first, mid, last].concat(), "row inserted into the root column");
+    // 2. a flex row's children destroyed and created again
+    let (mut d, root) = doc();
+    d.set_style(root, StyleInput { inline: Some(COLUMN.into()), ..Default::default() });
+    let _top = three_boxes(&mut d, root, None);
+    let row = three_boxes(&mut d, root, None);
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    for &c in &row[1..] {
+        d.destroy(c);
+    }
+    let mut again = vec![row[0]];
+    for w in [20, 40, 30] {
+        again.push(child(&mut d, row[0], BOX, &format!("width: {w}px; height: 10px; background-color: #00ff00")));
+    }
+    settle(&mut d, &mut seen);
+    assert_each_in_place(&d, &seen, &again, "row children rebuilt");
+    // 3. a leaf inserted into a nested slot
+    let (mut d, root) = doc();
+    d.set_style(root, StyleInput { inline: Some(COLUMN.into()), ..Default::default() });
+    let _top = three_boxes(&mut d, root, None);
+    let outer = child(&mut d, root, BOX, "flex-direction: row; padding: 6px; height: 40px; background-color: #333333");
+    let _side = child(&mut d, outer, BOX, "width: 50px; height: 20px; background-color: #444444");
+    let slot = child(&mut d, outer, BOX, "flex-direction: column; padding: 2px; width: 80px; height: 30px; background-color: #555555");
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    let leaf = child(&mut d, slot, BOX, "width: 10px; height: 10px; margin-left: 7px; background-color: #ff00ff");
+    settle(&mut d, &mut seen);
+    assert_each_in_place(&d, &seen, &[outer, slot, leaf], "leaf inserted into a nested slot");
+    // 4. a subtree shown after display: none
+    let (mut d, root) = doc();
+    d.set_style(root, StyleInput { inline: Some(COLUMN.into()), ..Default::default() });
+    let _top = three_boxes(&mut d, root, None);
+    let hidden = three_boxes(&mut d, root, None);
+    d.set_style(hidden[0], StyleInput { inline: Some("display: none; flex-direction: row; height: 10px; gap: 4px; background-color: #222222".into()), ..Default::default() });
+    let below = three_boxes(&mut d, root, None);
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    d.set_style(hidden[0], StyleInput { inline: Some("flex-direction: row; height: 10px; gap: 4px; background-color: #222222".into()), ..Default::default() });
+    settle(&mut d, &mut seen);
+    assert_each_in_place(&d, &seen, &[hidden, below].concat(), "subtree shown after display: none");
+    // 5. a block swapped as Svelte does it: the old row and an anchor removed, a new row inserted in
+    // the same frame (the freed ids are reused by the new nodes)
+    let (mut d, root) = doc();
+    d.set_style(root, StyleInput { inline: Some(COLUMN.into()), ..Default::default() });
+    let _top = three_boxes(&mut d, root, None);
+    let old = three_boxes(&mut d, root, None);
+    let anchor = child(&mut d, root, BOX, "height: 0px");
+    let below = three_boxes(&mut d, root, None);
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    d.destroy(old[0]);
+    d.destroy(anchor);
+    let new = three_boxes(&mut d, root, Some(below[0]));
+    settle(&mut d, &mut seen);
+    assert_each_in_place(&d, &seen, &[new, below].concat(), "block swapped in one frame");
+    // 6. a dock that fills the window (percent and flex sizes) through resizes, with a pane built
+    // after the first frame
+    let (mut d, root) = doc();
+    d.set_style(root, StyleInput { inline: Some("flex-direction: column".into()), ..Default::default() });
+    let _bar = three_boxes(&mut d, root, None);
+    let dock = child(&mut d, root, BOX, "flex-direction: row; flex-grow: 1; background-color: #111111");
+    let side = child(&mut d, dock, BOX, "width: 30%; background-color: #333333");
+    let group = child(&mut d, dock, BOX, "position: relative; flex-grow: 1; padding: 4px; background-color: #222222");
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    let pane = three_boxes(&mut d, group, None);
+    let floating = child(&mut d, group, BOX, "position: absolute; right: 5px; bottom: 5px; width: 20px; height: 20px; background-color: #00ffff");
+    let nodes = [&[dock, side, group, floating][..], &pane].concat();
+    settle(&mut d, &mut seen);
+    assert_each_in_place(&d, &seen, &nodes, "dock before a resize");
+    for (w, h) in [(400.0, 300.0), (150.0, 80.0), (640.0, 480.0)] {
+        d.resize_window(W, skelter_base::geom::Size::new(w, h), skelter_base::geom::Scale(1.0));
+        settle(&mut d, &mut seen);
+        assert_each_in_place(&d, &seen, &nodes, &format!("dock after a resize to {w}x{h}"));
+    }
+}

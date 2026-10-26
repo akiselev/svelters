@@ -178,3 +178,24 @@ fn timers_frames_and_wakes_go_through_the_driver_seam() {
     r.backend.poll_wake();
     assert_eq!(r.take().checkpoints, 1);
 }
+
+/// A27: the host's provider states resolve `:state(ns.name)` in the app's sheets.
+#[test]
+fn a_state_rule_in_an_app_sheet_matches_the_hosts_bit() {
+    use skelter_base::geom::{Scale, Size};
+    use skelter_base::ids::WindowId;
+    let r = Rig::new();
+    let pending = svelters_style::StateMask(1 << 40);
+    r.backend.set_state_names(Box::new([("cad.pending", pending)]));
+    let sheet = format!("app.svelte{SVL_STYLE_SEP}box:state(cad.pending) {{ width: 33px }}");
+    r.br().style(SVL_STYLE_SHEET, 0, Some(&sheet)).unwrap();
+    let root = r.create("box");
+    let b = r.create("box");
+    r.insert(root, b);
+    r.backend.attach_presented(root, WindowId(1), Size::new(200.0, 100.0), Scale(1.0)).unwrap();
+    let n = r.backend.node(b).unwrap();
+    let doc = r.backend.document();
+    doc.borrow_mut().set_state(n, pending, true);
+    doc.borrow_mut().frame(WindowId(1), skelter_base::time::Time(0));
+    assert_eq!(doc.borrow().world_rect(n).unwrap().width(), 33.0);
+}
