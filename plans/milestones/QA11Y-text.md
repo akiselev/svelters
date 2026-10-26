@@ -69,7 +69,15 @@ focus's `Consumer` (`HarnessBuilder::with_consumer`) and run on a real `CoreDocu
 svelters-skelter (`cargo test -p svelters-skelter --test text_edit --test spec`, and `--lib kinds::`, all passed
 locally): `text_edit_is_skelter_widgets_and_sends_text_runs`, plus the flipped spec and kinds asserts.
 
-**CI:** see the run ids in the coordinator report for the last push (filled in below once green).
+**CI:** all green on 8e29873b (origin/master 3d01c2ef merged in): js 40331637532, linux-gtk 40331637603,
+linux-qt 40331637535, macos-appkit 40331637849, skelter 40331637527, windows-winui 40331637581. An earlier run
+(skelter 40325227204, on bc800e3b) failed on macOS because the test pressed End, which doesn't move the caret
+there (and focus had selected all). Fixed in 12d6b7b9: the test places the caret with `SetTextSelection`.
+
+## Handoff
+
+The lane is done. Nothing is in flight. The self-scroll A11Y mark (deviation 3) went to lane focus
+(coordinator, 2026-10-26). The pushes after 8e29873b are only this record (docs).
 
 **Not run locally:** everything else, including the full skelter-widgets, skelter-test and svelters-skelter
 suites. `svelters-skelter --test host_document` fails locally only with "run `pnpm install` first" (no JS deps
