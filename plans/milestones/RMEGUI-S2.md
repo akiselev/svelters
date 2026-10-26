@@ -20,6 +20,9 @@ Lane S2 of the rmegui round. Branch `ci/rmegui-svelters-2` from master `a59acb27
 | FQ-73 | `d4597cf1` | **`PrepareCx::set_native(prop, v)`**: a kind writes native state while preparing (a bound value it settles at mount). Checked at the call (the kind's or a common prop, the right type), applied once the prepare returns as `EventCx::set_native`'s (journalled native for `bind:`, a repaint next frame). |
 | FQ-74 | `14e37405` | **Record and `any` props take plain objects.** `describe` gave a record prop `SVL_RECORD` with no type descriptor (the host refused every object: "no descriptor for type 0") and an `any` prop an untyped slot that refuses objects. Both are variant slots now (`value::slot_of`): a plain object arrives as a record with its fields, nested records and lists included. |
 | FQ-75 | `4a955acd` | **App kind methods: argument descriptors and coded errors.** svelters-skelter describes an app kind's methods from its core `MethodSpec` (`describe_method`): records, lists and enums as variants, nullable arguments optional, integers integral, the return typed; `call` types an app kind's arguments the same way (lists were string lists). Built-in kinds' methods stay undescribed. skelter-core `PropError::Coded { code, message }` (`PropError::coded`): a kind method refusing with it is a JS `NativeError` with `.code` and `.message` (domain: the kind's tag). |
+| non_exhaustive | `6abc4d9a` | skelter-core `PropError` is `#[non_exhaustive]` (coordinator, 2026-10-26). |
+| FQ-67 | `583325f6` | **A re-enabled widget is enabled for AccessKit.** A hosted widget's `disabled` mirror was synced in `prop_changed` from the node's state, which core updates after that hook: a button re-enabled by `set_prop(DISABLED, false)` stayed disabled (and inertness never reached the mirror). `Hosted` syncs the mirror in `prepare`, and its a11y takes `disabled` from the node's state for every widget whose `disabled` is that mirror (a widget disabled by a prop of its own keeps what it said). |
+| select anchors | `75ecaf3c` | **`<combo-box option-anchors>`**: skelter's `select` already published `option-anchors` as the options' author ids; the Svelte surface now exposes it (a string list parallel to `options`; `skelter.json` regenerated), so tours find an option with `anchor=` and click it. |
 | FQ-76 | `b725f2d7` | **JS traffic counters**: `SkelterBackend::traffic()` / `take_traffic()` give a `Traffic` (native → JS: syncs, posts, prop changes, checkpoints, animation frames; JS → native: creates, tree edits, prop writes and reads, method calls, listener changes, style ops; `to_js()` / `from_js()` totals), as svelters-egui's `Stats`. |
 
 ## Tests
@@ -36,7 +39,9 @@ Lane S2 of the rmegui round. Branch `ci/rmegui-svelters-2` from master `a59acb27
   `tests/app_values.rs` (compiled Svelte through the real svelters-host on an app kind:
   `a_record_prop_reaches_the_kind_with_its_shape`, which fails without the change, and
   `methods_take_records_and_raise_coded_errors`). FQ-76: svelters-skelter `tests/run.rs`
-  `the_backend_counts_its_js_traffic`.
+  `the_backend_counts_its_js_traffic`. FQ-67: skelter-test `rmegui_s2` `a_reenabled_widget_is_enabled_for_accesskit`
+  (fails without the change). Select anchors: svelters-skelter `run` `combo_box_options_take_anchors`, skelter-test
+  `rmegui_s2` `select_options_resolve_by_anchor` (svelters-automation's `anchor=` selector).
 - skelter-core `tests::a11y::nested_virtual_children_hang_under_their_parent`; skelter-widgets
   `controls::label::tests::a_clickable_label_is_hit_on_its_whole_box`.
 
@@ -60,7 +65,8 @@ full suites, the rest of the workspace, clippy, conformance (no compiler change)
 5. **Clickable labels**: nothing; a stretched `<label onclick>` takes clicks on its whole box.
 6. **Own kinds** building `skelter_core::KindSpec` without `..KindSpec::new(..)` need the new `conceals_children`
    field; an exhaustive `match` on `skelter_core::PropError` needs a `Coded` arm.
-7. **Code editor** (FQ-73..76): `cx.set_native` in `prepare`; record props and record/list method arguments work
+7. **Combo boxes** (tours): `<combo-box options={names} option-anchors={parts.map((p) => 'ecad.sch.tool.part:' + p.lib + ':' + p.name)}>`.
+8. **Code editor** (FQ-73..76): `cx.set_native` in `prepare`; record props and record/list method arguments work
    as plain objects; refuse with `PropError::coded("E_…", "…")` to throw a JS error with `.code`; host tests read
    `backend.take_traffic()` around an interaction and assert `to_js() == 0`.
 
@@ -77,4 +83,4 @@ full suites, the rest of the workspace, clippy, conformance (no compiler change)
 
 `cdfe9ff5`: the skelter workflow (run 40377622751) failed on all three OSes in one test, svelters-skelter
 `host_document` `a_palette_list_places_its_rows_in_its_own_box` (the `anchor` clash above, fixed in `75a6f580`).
-Final runs on `b725f2d7`: pending.
+Final runs on `75ecaf3c` (the last code commit): pending.
