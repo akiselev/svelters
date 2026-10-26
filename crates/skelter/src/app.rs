@@ -149,6 +149,8 @@ pub struct App<D: DocumentApi, C: CompositorApi> {
     resize_seq: u64,
     /// The platform timer armed for the documents' wakeups.
     timer: Option<Time>,
+    /// The caret blink last sent to every window (`DocumentApi::caret_blink`).
+    caret_blink: Option<Option<skelter_compositor::CaretBlink>>,
 }
 
 impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
@@ -170,6 +172,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             clock: None,
             resize_seq: 0,
             timer: None,
+            caret_blink: None,
         }
     }
 
@@ -255,6 +258,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             && let Some(c) = &self.compositor
         {
             c.set_caret_blink(id, blink);
+            self.caret_blink = Some(blink);
         }
         let position = self.windows.get(&id).and_then(|w| w.position).or(position);
         self.sync_monitor(cx, id, position);
@@ -499,6 +503,16 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             .and_then(|ws| ws.frame.committed(now, c.revision));
         if report.is_some_and(|r| r.late) {
             self.latency.counters_mut(w).ui_missed += 1;
+        }
+        // A policy change since the last commit: every window blinks the new way.
+        if let Some(blink) = self.doc.caret_blink()
+            && self.caret_blink != Some(blink)
+            && let Some(comp) = &self.compositor
+        {
+            self.caret_blink = Some(blink);
+            for &id in self.windows.keys() {
+                comp.set_caret_blink(id, blink);
+            }
         }
         if let Some(comp) = &self.compositor {
             // Fast commits queued while the frame ran (a caret placed in prepare) go first.

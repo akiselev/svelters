@@ -1243,6 +1243,15 @@ impl Document {
         }
     }
 
+    /// Re-records every node of every window, without a restyle or a re-measure: a service that only
+    /// paint and behaviour read changed (the interaction policy's scroll bars).
+    pub fn rerecord_all(&mut self) {
+        for i in 0..self.core.len() {
+            let Some(node) = self.slots.id_at(i) else { continue };
+            self.mark(node, Dirty::PAINT | Dirty::A11Y);
+        }
+    }
+
     pub(crate) fn restyle_all(&mut self) {
         let roots: Vec<NodeId> = self.windows.iter().map(|w| w.root).collect();
         for r in roots {
@@ -1399,6 +1408,10 @@ impl Document {
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
+    }
+    /// A service by type, read-only.
+    pub fn service_ref<T: 'static>(&self) -> Option<&T> {
+        self.services.get()
     }
 
     pub(crate) fn set_timer(&mut self, node: NodeId, at: Option<skelter_base::time::Time>) {

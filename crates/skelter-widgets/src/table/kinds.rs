@@ -55,7 +55,7 @@ use crate::text::policy::{Platform as TextPlatform, TextPolicy};
 use crate::text::shim::{Layouter, MonoLayouter};
 use skelter_base::geom::{Point, Rect, Size, Vec2};
 use skelter_base::ids::NodeId;
-use skelter_base::time::Time;
+use skelter_base::time::{Span, Time};
 use skelter_core::{
     A11yCx, ArgSpec, Event, EventCx, FocusReason, Handled, Kind, KindRegistry, KindSpec, MeasureCx, MethodId, MethodSpec, NodeView, PrepareCx, PropCx, PropDefault, PropError, PropId,
     PropSpec, RecordCx, RegistryError, SignalFlags, SignalSpec, Value, ValueType,
@@ -449,6 +449,13 @@ impl TableKind {
         }
     }
 
+    /// The document's policy: the bars' behaviour and the click and drag metrics.
+    fn set_policy(&mut self, p: Policy) {
+        self.policy = p;
+        self.table.metrics.drag_threshold = p.drag_threshold;
+        self.table.metrics.double_click = Span::from_millis(p.double_click_ms as i64);
+    }
+
     /// The cursor cell: its row position and data column.
     fn cursor_cell(&self) -> Option<(u64, usize)> {
         let pos = self.table.state.sel.cursor.and_then(|k| self.table.state.pos_of(k))?;
@@ -616,8 +623,8 @@ impl Kind for TableKind {
             self.look = TableLook::from_theme(t);
             self.dark = t.is_dark();
         }
-        if let Some(p) = cx.service::<Policy>() {
-            self.policy = *p;
+        if let Some(p) = cx.service::<Policy>().copied() {
+            self.set_policy(p);
         }
         self.size = node.size();
         self.table.set_viewport(self.size, self.off);
@@ -683,6 +690,10 @@ impl Kind for TableKind {
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         self.now = cx.time();
+        // read on use: a policy set since the last frame applies to this event (SV62)
+        if let Some(p) = cx.service::<Policy>().copied() {
+            self.set_policy(p);
+        }
         if let Some(h) = self.edit_event(cx, ev) {
             return h;
         }

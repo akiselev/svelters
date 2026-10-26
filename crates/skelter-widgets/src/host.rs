@@ -423,14 +423,34 @@ fn part_styles<'a>(node: NodeView<'a>, parts: &[&'static str]) -> Vec<(&'static 
 }
 
 /// Installs what the built-in kinds read from `doc`'s services: the text system, the platform policy
-/// (and its auto-default rule) and the theme; and the drag ghost as the default drag image
-/// ([`crate::dnd::ghost::install`]).
+/// (with the document flags it decides, [`set_policy`]) and the theme; and the drag ghost as the
+/// default drag image ([`crate::dnd::ghost::install`]).
 pub fn install(doc: &mut skelter_core::Document, text: skelter_text::TextSystem, policy: Policy, theme: crate::theme::Theme) {
     crate::dnd::ghost::install(doc, crate::dnd::ghost::GhostLook::default());
     doc.set_service(text);
-    doc.set_auto_default(policy.auto_default);
-    doc.set_service(policy);
+    apply_policy(doc, policy);
     doc.set_service(theme);
+}
+
+/// Replaces the document's interaction policy (drag threshold, double-click time, tooltip delays,
+/// caret blink, auto-default buttons, one selection owner) while the app runs. The kinds read the
+/// policy when they use it, so the next event, hover or frame follows it; the document flags copied
+/// from it are set again here, and every node re-records (no restyle).
+pub fn set_policy(doc: &mut skelter_core::Document, policy: Policy) {
+    apply_policy(doc, policy);
+    doc.rerecord_all();
+}
+
+/// The document's policy, else the OS's.
+pub fn policy_of(doc: &mut skelter_core::Document) -> Policy {
+    doc.service::<Policy>().copied().unwrap_or_else(os_policy)
+}
+
+fn apply_policy(doc: &mut skelter_core::Document, policy: Policy) {
+    doc.set_auto_default(policy.auto_default);
+    // GTK's one app-wide text selection
+    doc.set_single_selection(policy.one_selection_owner);
+    doc.set_service(policy);
 }
 
 /// Replaces the document's theme (High Contrast, density, the app's accent, `--sv-*` overrides):
