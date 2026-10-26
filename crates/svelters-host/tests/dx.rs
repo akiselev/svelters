@@ -167,3 +167,28 @@ impl tracing::Subscriber for Capture {
     fn enter(&self, _: &tracing::span::Id) {}
     fn exit(&self, _: &tracing::span::Id) {}
 }
+
+const LIVE: &str = r#"<script>
+  import { setting } from 'svelters:settings';
+  const fov = setting('viewport.fov', 45);
+  const seen = setting('test.seen', 0);
+  // no console here: tracing's callsite cache would hide another test's capture
+  $effect(() => { seen.value = fov.value; });
+</script>
+<window><label>x</label></window>
+"#;
+
+/// SV63: a change the backend reports (from any thread) re-runs what read the key at the next
+/// checkpoint, without `refresh()`.
+#[test]
+fn a_backend_change_reaches_the_effects_that_read_it() {
+    let dir = scratch("live", LIVE);
+    let settings = Arc::new(MemorySettings::new());
+    let dx = Dx { app: app_id(), paths: svelters_host::dx::Paths::under(dir.join("store")), settings: settings.clone(), ui_state: Arc::new(MemoryUiState::new()) };
+    let (_, host) = run(&dir, Some(dx));
+    assert_eq!(settings.get("test.seen"), Some(serde_json::json!(45)));
+    let s = settings.clone();
+    std::thread::spawn(move || s.set("viewport.fov", serde_json::json!(90)).unwrap()).join().unwrap();
+    host.checkpoint();
+    assert_eq!(settings.get("test.seen"), Some(serde_json::json!(90)));
+}

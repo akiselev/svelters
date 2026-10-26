@@ -312,7 +312,18 @@ impl<'a> Host<'a> {
     ///
     /// Q2: unless [`Host::set_bytecode_cache`] was called, it also opens the bytecode cache under
     /// `dx.paths.cache()/bytecode` (a cache that cannot be opened is logged and skipped).
+    ///
+    /// SV63: the host subscribes to the backend ([`dx::SettingsBackend::subscribe`]): keys it reports
+    /// changed, from any thread, re-run the effects that read them at the next checkpoint.
     pub fn set_dx(&self, dx: dx::Dx) {
+        // drop the old subscription first: its keys are not this backend's
+        drop(self.core.settings_sub.borrow_mut().take());
+        let (pending, waker) = (self.core.settings_changed.clone(), self.core.waker());
+        let sub = dx.settings.subscribe(Box::new(move |keys: &[String]| {
+            pending.lock().unwrap_or_else(|e| e.into_inner()).extend(keys.iter().cloned());
+            waker.wake_by_ref();
+        }));
+        *self.core.settings_sub.borrow_mut() = Some(sub);
         if !self.core.bytecode_explicit.get() {
             let dir = dx.paths.cache().join("bytecode");
             match bytecode::BytecodeCache::open(&dir) {
