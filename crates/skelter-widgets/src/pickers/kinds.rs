@@ -25,10 +25,14 @@
 //! Escape drops the edit. Hosted kinds' events have no text system, so the field's caret geometry is
 //! monospace ([`MonoLayouter`]) and the box draws the field's text, not its caret or selection.
 //!
-//! Left out: the runner that owns the window's overlay stack (it pushes `overlay_spec`, puts
-//! `record_popup` in the layer and routes presses on it to the node: core hit-tests the node's box
-//! only), and Tab between the colour editor's inner stops (the focus model has no sub-node stops;
-//! focus lands on the first stop).
+//! The open popup is the node's overlay part (`record_overlay`): skelter-core enters it in the
+//! window's overlay stack, draws it in a layer above the content and routes presses inside it to the
+//! node (in the node's points, outside its box); the stack's light dismiss and Escape reach the kind
+//! as `overlay_closed`. `overlay_spec` and `record_popup` stay for a host that keeps its own stack.
+//!
+//! Left out: Tab between the colour editor's inner stops (the focus model has no sub-node stops;
+//! focus lands on the first stop), and the popup's room (`PopupHost::bounds`, unbounded: the
+//! window's content area is not handed to `prepare` yet).
 
 use super::calendar::{CalBody, Calendar, CalCfg, FIRST_DAY, WEEKDAY_FORMAT, grid_days};
 use super::color::{ALPHA, Hsv, parse_hex};
@@ -48,7 +52,7 @@ use crate::interact::StateBits;
 use crate::shim::core::{self as w, A11yCx, Event, EventCx, Handled, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, SignalSpec, ValueType};
 use crate::shim::text as w_text;
 use crate::table::shim::TextPainter as _;
-use crate::views::overlay::{Closed, OverlaySpec};
+use crate::views::overlay::{Closed, DismissReason, OverlayClass, OverlayPart, OverlaySpec};
 use crate::table::shim::{self as tshim, Emit};
 use crate::table::text_painter::ShaperPainter;
 use crate::theme::Theme;
@@ -693,6 +697,21 @@ impl PopupHost {
         Some(local)
     }
 
+    /// Records the open popup with `f` into `cx.list` in the node's local points, as the node's
+    /// overlay part ([`w::Kind::record_overlay`]): a light-dismissable popup whose button counts as
+    /// inside.
+    fn record_part(&self, cx: &mut RecordCx, f: impl FnOnce(&mut DisplayList, &mut dyn tshim::TextPainter)) -> Option<OverlayPart> {
+        let r = self.placed?;
+        let RecordCx { list, text, res, .. } = cx;
+        let mut popup = self.record(&mut **text, &mut **res, f)?;
+        popup.translate(Vec2::new(r.min.x, r.min.y));
+        list.bounds = list.bounds.union(&popup.bounds);
+        list.items.extend(popup.items);
+        let mut part = OverlayPart::new(OverlayClass::Popup, r);
+        part.inside = vec![Rect::from_origin_size(Point::ZERO, self.button)];
+        Some(part)
+    }
+
     /// Records the popup (popup-local points) with `f`, registering its runs through `res`.
     fn record(&self, text: &mut dyn w_text::TextShaper, res: &mut dyn w::Resources, f: impl FnOnce(&mut DisplayList, &mut dyn tshim::TextPainter)) -> Option<DisplayList> {
         self.placed?;
@@ -826,6 +845,18 @@ impl w::Kind for DatePickerKind {
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
         self.model.record_button(list, &mut painter, look, size, Date::today_utc(), fv, on);
+    }
+
+    /// The open popup, in a layer of the window's overlay stack.
+    fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
+        let look = look(cx.style.dark);
+        self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), Date::today_utc()))
+    }
+
+    fn overlay_closed(&mut self, cx: &mut EventCx, _reason: DismissReason) -> Handled {
+        self.model.dismiss();
+        self.deliver(cx, Vec::new());
+        Handled::Yes
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
@@ -1008,6 +1039,20 @@ impl w::Kind for ColorPickerKind {
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
         let look = look(cx.style.dark);
         self.model.record_button(cx.list, look, cx.size, fv, on);
+    }
+
+    /// The open popup, in a layer of the window's overlay stack.
+    fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
+        let look = look(cx.style.dark);
+        let fv = cx.style.state.contains(StateBits::FOCUS_VISIBLE);
+        self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), fv))
+    }
+
+    /// Live edits made in the popup are committed.
+    fn overlay_closed(&mut self, cx: &mut EventCx, _reason: DismissReason) -> Handled {
+        let emits = self.model.dismiss();
+        self.deliver(cx, emits);
+        Handled::Yes
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
