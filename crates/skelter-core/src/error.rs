@@ -38,7 +38,10 @@ impl std::fmt::Display for TreeError {
 
 impl std::error::Error for TreeError {}
 
+/// Non-exhaustive (coordinator, 2026-10-26): a new refusal is not a breaking change for kinds
+/// that match on it.
 #[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum PropError {
     Stale(NodeId),
     /// Neither the node's kind nor the common props have this prop.
