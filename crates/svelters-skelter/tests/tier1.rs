@@ -337,3 +337,77 @@ fn collapsing_header_toggles_open_and_lays_out_its_body() {
     r.backend.pump();
     assert!(r.take().changed.is_empty());
 }
+
+/// A9b: tree-view's egui `indent` and `row-height` are ints; skelter's tree takes floats. They are
+/// the tree's own props, written as floats and read back as ints.
+#[test]
+fn tree_view_indent_and_row_height_are_the_trees_own() {
+    use svelters_skelter::kinds::PropTarget;
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    let m = kinds.by_tag("tree-view").unwrap();
+    for p in ["indent", "row-height"] {
+        assert!(matches!(m.prop_named(p).unwrap().target, PropTarget::Native(_)), "{p}");
+    }
+    let t = r.create("tree-view");
+    let n = r.backend.node(t).unwrap();
+    r.set(t, "indent", Value::I64(20));
+    r.set(t, "row-height", Value::I64(28));
+    assert_eq!(r.get(t, "indent"), Value::I64(20));
+    assert_eq!(r.get(t, "row-height"), Value::I64(28));
+    assert_eq!(r.backend.with_doc(|d| d.get_prop(n, skelter_core::PropId::of("tree-view", "indent", "number"))), Some(skelter_core::Value::F64(20.0)));
+    assert_eq!(r.backend.with_doc(|d| d.get_prop(n, skelter_core::PropId::of("tree-view", "row-height", "number"))), Some(skelter_core::Value::F64(28.0)));
+}
+
+/// A9b: the table's `sort-changed` reaches JS under egui's argument names (`sort-column`,
+/// `sort-order`); skelter's table names the record's fields `column` and `order`.
+#[test]
+fn table_sort_changed_carries_eguis_keys() {
+    let r = Rig::new();
+    let t = r.create("table");
+    r.listen(t, "sort-changed");
+    let n = r.backend.node(t).unwrap();
+    // what skelter-widgets' table emits: a record keyed `column`/`order`
+    let mut ev = r.backend.target_event(n, "sort-changed", vec![]).expect("listened");
+    ev.arg = Some(skelter_core::Value::Record(vec![("column".into(), skelter_core::Value::I64(1)), ("order".into(), skelter_core::Value::Str("ascending".into()))].into()));
+    r.backend.queue(svelters_skelter::Output { events: vec![ev], ..Default::default() });
+    r.backend.pump();
+    let sig = r.signal_id(t, "sort-changed");
+    assert_eq!(r.take().events, [(t, sig, vec![Value::I64(1), Value::Str("ascending".into())])]);
+}
+
+/// A9b: scroll-area takes egui's box props (it is a `box` there): they are the scroll area's own and
+/// lay its content out.
+#[test]
+fn scroll_area_takes_the_box_props() {
+    use skelter_base::geom::{Scale, Size};
+    use skelter_base::ids::WindowId;
+    use skelter_base::time::Time;
+    use svelters_skelter::kinds::PropTarget;
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    let m = kinds.by_tag("scroll-area").unwrap();
+    for p in ["flex-direction", "flex-wrap", "gap", "row-gap", "column-gap", "padding", "align-items", "justify-content"] {
+        assert!(matches!(m.prop_named(p).unwrap().target, PropTarget::Native(_)), "{p}");
+    }
+    let root = r.create("box");
+    r.backend.attach_presented(root, WindowId(1), Size::new(300.0, 200.0), Scale(1.0)).unwrap();
+    let s = r.create("scroll-area");
+    r.insert(root, s);
+    r.set(s, "flex-direction", Value::Str("row".into()));
+    r.set(s, "gap", Value::F64(6.0));
+    r.set(s, "padding", Value::F64(4.0));
+    assert_eq!(r.get(s, "flex-direction"), Value::Str("row".into()));
+    let kids: Vec<_> = (0..2)
+        .map(|_| {
+            let b = r.create("box");
+            r.set(b, "padding", Value::F64(10.0));
+            r.insert(s, b);
+            r.backend.node(b).unwrap()
+        })
+        .collect();
+    r.backend.with_doc(|d| d.frame(WindowId(1), Time(0)));
+    let (a, b) = r.backend.with_doc(|d| (d.layout_rect(kids[0]).unwrap(), d.layout_rect(kids[1]).unwrap()));
+    assert_eq!((a.min.x, a.min.y), (4.0, 4.0), "inside the padding");
+    assert_eq!(b.min.x, a.max.x + 6.0, "in a row, the gap apart: {a:?} {b:?}");
+}

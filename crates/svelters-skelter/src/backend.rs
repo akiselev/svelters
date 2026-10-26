@@ -492,7 +492,10 @@ impl SkelterBackend {
                         let ci = crate::kinds::enum_to_core(pm.spec.ty, c, i).ok_or_else(|| format!("<{}> {}: the value is not one skelter has", m.tag(), pm.spec.name))?;
                         Some(skelter_core::Value::Enum(ci))
                     }
-                    v => value::to_core(v),
+                    v => value::to_core(v).map(|cv| match crate::kinds::core_prop(self.0.kinds.registry(), m.core.expect("a live node's kind"), pid) {
+                        Some(c) => crate::kinds::num_to_core(pm.spec.ty, c, cv),
+                        None => cv,
+                    }),
                 };
                 (pid, cv)
             }
@@ -755,7 +758,10 @@ impl Backend for SkelterBackend {
                 skelter_core::Value::Enum(ci) => crate::kinds::core_prop(self.0.kinds.registry(), km.core.expect("a live node's kind"), pid)
                     .and_then(|c| crate::kinds::enum_from_core(pm.spec.ty, c, ci))
                     .map_or(surface::Value::Null, surface::Value::Enum),
-                v => value::from_core(&v),
+                v => match crate::kinds::core_prop(self.0.kinds.registry(), km.core.expect("a live node's kind"), pid) {
+                    Some(c) => value::from_core(&crate::kinds::num_from_core(pm.spec.ty, c, v)),
+                    None => value::from_core(&v),
+                },
             }),
             PropTarget::Inverted(pid) => self.doc().get_prop(n, pid).and_then(|v| v.as_bool()).map(|b| surface::Value::Bool(!b)),
         };

@@ -34,7 +34,7 @@ use skelter_base::anim::FlingCurve;
 use crate::interact::{Kinetic, Platform, Policy, Scrollbars, StateBits, TrackClick};
 use crate::kind_props;
 use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Styles, Value, ValueType};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, StyleCx, Styles, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::color::{Color, Fill};
 use skelter_base::display::{Prim, Quad};
@@ -729,6 +729,16 @@ kind_props! {
     scroll_y "scroll-y": f64 = F64(0.0) ; F64, Property, bindable;
     /// At an edge, a new gesture goes on to the scroll area around (`auto`) or stays (`contain`, `none`).
     overscroll_behavior "overscroll-behavior": String = Enum("auto") ; Enum(&["auto", "contain", "none"]), Property;
+    /// The box props of the content (svelters-egui's scroll-area is a `box`, A9b); each applies
+    /// only once the runtime sets it, so an area nobody configures lays out as before.
+    flex_direction "flex-direction": String = Enum("column") ; Enum(crate::controls::box_::DIRECTION), Layout;
+    flex_wrap "flex-wrap": String = Enum("nowrap") ; Enum(crate::controls::box_::WRAP), Layout;
+    gap "gap": f64 = F64(0.0) ; F64, Layout;
+    row_gap "row-gap": Option<f64> = None ; F64, Layout;
+    column_gap "column-gap": Option<f64> = None ; F64, Layout;
+    padding "padding": f64 = F64(0.0) ; F64, Layout;
+    align_items "align-items": String = Enum("stretch") ; Enum(crate::controls::box_::ALIGN), Layout;
+    justify_content "justify-content": String = Enum("start") ; Enum(crate::controls::box_::JUSTIFY), Layout;
 }
 
 /// The signals, in spec order.
@@ -754,6 +764,8 @@ pub static SPEC: KindSpec = KindSpec {
 #[derive(Clone, Debug)]
 pub struct ScrollArea {
     pub props: ScrollAreaProps,
+    /// The box props the runtime set ([`Kind::layout_style`] applies only those).
+    explicit: crate::controls::box_::Explicit,
     /// `prefers-reduced-motion`: wheel and key steps jump instead of animating (the host sets it;
     /// the platform policy has no such field yet).
     pub reduced_motion: bool,
@@ -784,6 +796,7 @@ impl Default for ScrollArea {
     fn default() -> Self {
         ScrollArea {
             props: ScrollAreaProps::default(),
+            explicit: Default::default(),
             reduced_motion: false,
             axes: [false, true],
             overscroll: OverscrollBehavior::None,
@@ -1044,6 +1057,7 @@ impl Kind for ScrollArea {
             return Err(PropError::Stale);
         }
         self.props.set(prop, v)?;
+        self.explicit.mark(prop);
         if let Some(d) = axis {
             let mut o = self.scroller.offset();
             set(&mut o, d, if d == 0 { self.props.scroll_x } else { self.props.scroll_y } as f32);
@@ -1057,6 +1071,39 @@ impl Kind for ScrollArea {
     }
     fn get_prop(&self, prop: PropId) -> Option<Value> {
         self.props.get(prop)
+    }
+
+    /// The cascade's layout with the box props the runtime set (a CSS rule for one still wins
+    /// only where the runtime set none, as on `box`).
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        let p = &self.props;
+        let boxed = [P::flex_direction, P::flex_wrap, P::gap, P::row_gap, P::column_gap, P::padding, P::align_items, P::justify_content];
+        if !boxed.iter().any(|b| self.explicit.has(b.id())) {
+            return s;
+        }
+        let set = |b: P| self.explicit.has(b.id());
+        let l = crate::controls::box_::Layout { cx, explicit: self.explicit };
+        l.display(&mut s, taffy::Display::Flex);
+        if set(P::flex_direction) {
+            l.direction(&mut s, P::flex_direction.id(), &p.flex_direction);
+        }
+        if set(P::flex_wrap) {
+            l.wrap(&mut s, P::flex_wrap.id(), &p.flex_wrap);
+        }
+        if set(P::gap) || set(P::row_gap) || set(P::column_gap) {
+            l.gaps(&mut s, (P::gap.id(), p.gap), Some((P::row_gap.id(), p.row_gap)), Some((P::column_gap.id(), p.column_gap)));
+        }
+        if set(P::padding) {
+            l.padding(&mut s, P::padding.id(), p.padding);
+        }
+        if set(P::align_items) {
+            l.align_items(&mut s, P::align_items.id(), &p.align_items);
+        }
+        if set(P::justify_content) {
+            l.justify_content(&mut s, P::justify_content.id(), &p.justify_content);
+        }
+        s
     }
 
     fn record(&self, cx: &mut RecordCx) {
