@@ -355,3 +355,33 @@ mod tests {
         assert_eq!(n.role(), accesskit::Role::GenericContainer);
     }
 }
+
+/// A22: inline CSS on a real document (the El builders' boxes) drives the box's layout props.
+#[cfg(test)]
+mod inline_css {
+    use skelter_base::geom::{Scale, Size};
+    use skelter_core::testkinds::FixedText;
+    use skelter_core::{Document, KindId, KindRegistry};
+    use std::sync::Arc;
+
+    const BOX: KindId = KindId::of("box");
+
+    #[test]
+    fn inline_flex_direction_gap_and_padding_apply() {
+        let mut r = KindRegistry::new();
+        crate::host::register_tier0(&mut r).unwrap();
+        let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+        let root = d.create_window(crate::testdoc::W, BOX, Size::new(300.0, 200.0), Scale(1.0));
+        let row = crate::testdoc::child(&mut d, root, BOX, "display: flex; flex-direction: row; gap: 10px; padding: 5px; align-items: center; justify-content: end; width: 200px; height: 60px");
+        let a = crate::testdoc::child(&mut d, row, BOX, "width: 20px; height: 20px");
+        let b = crate::testdoc::child(&mut d, row, BOX, "width: 20px; height: 30px");
+        crate::testdoc::frame(&mut d);
+        let at = |n| {
+            let r = d.world_rect(n).unwrap();
+            (r.min.x, r.min.y)
+        };
+        // a row, packed at the end: 200 - 5 padding - 20 - 10 gap - 20 = 145
+        assert_eq!(at(a), (145.0, 20.0), "row, end-justified, centred across (60 - 20) / 2");
+        assert_eq!(at(b), (175.0, 15.0), "after a 10px gap");
+    }
+}
