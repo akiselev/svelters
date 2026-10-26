@@ -10,6 +10,12 @@
 //!   (`selected`, `current`, `sort-column`, …) are written back as native state for `bind:`.
 //! - JS methods (`set-rows`, `set-ids`, `clear-rows`, `scroll-to-row`, `fit-columns`) are
 //!   skelter-core methods ([`Kind::call`]).
+//! - Cells of `editable` columns are edited in place by the text-edit field ([`CellEditor`] over
+//!   [`TextField`](crate::text::field::TextField), the document's text system laying it out): F2 or
+//!   typing on the cursor cell starts an edit (typing replaces the value), the field takes the keys,
+//!   IME and presses in the cell, and Enter, Tab/Shift+Tab (moving to the next or previous editable
+//!   cell) or focus leaving commit (`commit(row, column, value)`; the window shows the value until
+//!   JS answers) while Escape reverts. The caret goes out through core's fast channel.
 //! - Scrolling: until the views lane's scroll layer hosts the table, the kind keeps the body's offset
 //!   itself (the wheel scrolls it, clamped; keyboard moves and `scroll-to-row` reveal rows), with no
 //!   scroll bars or fling.
@@ -30,7 +36,13 @@ use crate::theme::Theme;
 use skelter_base::accesskit::Role;
 use skelter_base::change::ChangeClass;
 use skelter_base::event::{KeyState, Modifiers, PointerEvent, PointerPhase, PointerType, ScrollDelta};
-use skelter_base::geom::{Point, Size, Vec2};
+use crate::text::cell::CellEditor;
+use crate::text::field::{FieldColors, FieldPointer};
+use crate::text::geometry::SystemLayouter;
+use crate::text::kind::text_style;
+use crate::text::policy::{Platform as TextPlatform, TextPolicy};
+use crate::text::shim::{Layouter, MonoLayouter};
+use skelter_base::geom::{Point, Rect, Size, Vec2};
 use skelter_base::ids::NodeId;
 use skelter_base::time::Time;
 use skelter_core::{
@@ -78,6 +90,9 @@ static TABLE_SIGNALS: &[SignalSpec] = &[
     SignalSpec::new("columns-changed", Some(ValueType::List), P).args(&[ArgSpec::new("hidden", ValueType::List)]).doc("The hidden columns changed."),
     SignalSpec::new("header-state-changed", Some(ValueType::Str), P).args(&[ArgSpec::new("state", ValueType::Str)]).doc("The header's widths, hidden columns or sort changed by the user."),
     SignalSpec::new("copy", Some(ValueType::List), P).args(&[ArgSpec::new("ids", ValueType::List)]).doc("Ctrl+C (Cmd+C) on the focused table; carries the selected ids."),
+    SignalSpec::new("commit", Some(ValueType::Record), P)
+        .args(&[ArgSpec::new("row", ValueType::I64), ArgSpec::new("column", ValueType::I64), ArgSpec::new("value", ValueType::Str)])
+        .doc("A cell edit was committed (Enter, Tab or focus leaving the editor); carries the row position, the column (child index) and the text."),
 ];
 
 static TABLE_METHODS: &[MethodSpec] = &[
@@ -238,6 +253,17 @@ pub struct TableKind {
     size: Size,
     /// The last event's time (the clock `record` lacks).
     now: Time,
+    /// The cell being edited.
+    edit: Option<Edit>,
+}
+
+/// A cell edit: the cell (row position, data column), its rect (from the last prepare) and the
+/// text-edit field over it.
+struct Edit {
+    pos: u64,
+    data: usize,
+    rect: Rect,
+    editor: CellEditor,
 }
 
 impl TableKind {
@@ -304,6 +330,121 @@ impl TableKind {
         }
         cx.set_cursor(self.table.cursor_icon());
         cx.request_paint();
+    }
+
+    /// The cursor cell: its row position and data column.
+    fn cursor_cell(&self) -> Option<(u64, usize)> {
+        let pos = self.table.state.sel.cursor.and_then(|k| self.table.state.pos_of(k))?;
+        let data = *self.table.shown().get(self.table.state.cur_col)?;
+        Some((pos, data))
+    }
+
+    /// Starts editing cell (`pos`, `data`); `typed` replaces its value (empty: the value, selected).
+    fn begin_edit(&mut self, cx: &mut EventCx, pos: u64, data: usize, typed: &str) {
+        let value = self.table.state.cell(pos, data).unwrap_or("").to_owned();
+        let policy = cx.service::<crate::interact::Policy>().copied().unwrap_or_else(crate::host::os_policy);
+        let editor = CellEditor::begin(&value, typed, TextPolicy::from_policy(TextPlatform::current(), &policy));
+        self.edit = Some(Edit { pos, data, rect: Rect::ZERO, editor });
+        cx.request_paint();
+    }
+
+    /// Routes `ev` to the cell editor while one is open, or starts one (F2 or typing on an editable
+    /// cursor cell). `Some` when the editor took the event; a press elsewhere and focus leaving end
+    /// the edit and go on to the table.
+    fn edit_event(&mut self, cx: &mut EventCx, ev: &Event) -> Option<Handled> {
+        if self.edit.is_none() {
+            let Event::Key(k) = ev else { return None };
+            if k.state != KeyState::Pressed || [Modifiers::CTRL, Modifiers::SUPER, Modifiers::ALT].iter().any(|m| k.modifiers.contains(*m)) {
+                return None;
+            }
+            let typed = match (&k.key, &k.text) {
+                (Some(skelter_base::key::Key::F2), _) => String::new(),
+                (_, Some(t)) if !t.is_empty() && !t.chars().any(char::is_control) => t.clone(),
+                _ => return None,
+            };
+            let (pos, data) = self.cursor_cell().filter(|&(_, d)| self.table.columns.get(d).is_some_and(|c| c.editable))?;
+            self.begin_edit(cx, pos, data, &typed);
+            return Some(Handled::Yes);
+        }
+        let style = cx.view(cx.node()).map(|v| text_style(v.style()))?;
+        let now = cx.time();
+        let took = {
+            let edit = self.edit.as_mut().expect("editing");
+            let mut mono = MonoLayouter { advance: 8.0, line_height: 16.0 };
+            let mut sys: SystemLayouter;
+            let lay: &mut dyn Layouter = match cx.service::<skelter_text::TextSystem>() {
+                Some(ts) => {
+                    sys = SystemLayouter { system: ts, style };
+                    &mut sys
+                }
+                None => &mut mono,
+            };
+            let field = |phase, p: &skelter_core::PointerInput| FieldPointer::new(phase, p.button, p.buttons, p.local);
+            match ev {
+                Event::Key(k) => {
+                    edit.editor.key(k, now, lay);
+                    true
+                }
+                Event::Ime(i) => {
+                    edit.editor.field.ime(i, now, lay);
+                    true
+                }
+                Event::PointerDown(p) if edit.rect.contains(p.local) => {
+                    edit.editor.field.pointer(&field(PointerPhase::Down, p), now, lay);
+                    true
+                }
+                Event::PointerMove(p) if p.buttons != 0 && edit.rect.contains(p.local) => edit.editor.field.pointer(&field(PointerPhase::Move, p), now, lay),
+                Event::PointerUp(p) if edit.rect.contains(p.local) => {
+                    edit.editor.field.pointer(&field(PointerPhase::Up, p), now, lay);
+                    true
+                }
+                Event::PointerDown(_) | Event::FocusOut => {
+                    edit.editor.focus_out();
+                    false
+                }
+                _ => return None,
+            }
+        };
+        self.finish_edit(cx);
+        took.then_some(Handled::Yes)
+    }
+
+    /// After the editor took input: its caret and repaint, and the end of the edit when it asked
+    /// (commit or revert, then the move of Tab/Shift+Tab).
+    fn finish_edit(&mut self, cx: &mut EventCx) {
+        let Some(edit) = self.edit.as_mut() else { return };
+        if let Some(r) = edit.editor.field.caret_update() {
+            cx.set_caret(r);
+        }
+        if edit.editor.field.take_repaint() {
+            cx.request_paint();
+        }
+        let Some(end) = edit.editor.take_end() else { return };
+        let (pos, data) = (edit.pos, edit.data);
+        self.edit = None;
+        cx.set_caret(None);
+        cx.request_paint();
+        if end.commit {
+            let i = TABLE_SIGNALS.iter().position(|s| s.name == "commit").expect("the commit signal");
+            let rec = vec![(Arc::from("row"), Value::I64(pos as i64)), (Arc::from("column"), Value::I64(data as i64)), (Arc::from("value"), Value::Str(Arc::from(end.text.as_str())))];
+            cx.emit(TABLE.signal_id(i), Some(Value::Record(rec.into())));
+            // shown until JS answers with `set-rows`
+            let st = &mut self.table.state;
+            if let Some(cell) = pos.checked_sub(st.first).and_then(|r| st.rows.get_mut(r as usize)).and_then(|row| row.get_mut(data)) {
+                *cell = end.text;
+            }
+        }
+        if end.step != 0 {
+            let shown = self.table.shown();
+            let from = self.table.state.cur_col as i64;
+            let next = std::iter::successors(Some(from + end.step as i64), |k| Some(k + end.step as i64))
+                .take_while(|k| *k >= 0 && (*k as usize) < shown.len())
+                .find(|k| self.table.columns[shown[*k as usize]].editable);
+            if let Some(k) = next {
+                self.table.state.cur_col = k as usize;
+                self.begin_edit(cx, pos, shown[k as usize], "");
+            }
+        }
     }
 
     fn pointer_event(phase: PointerPhase, p: &skelter_core::PointerInput) -> PointerEvent {
@@ -373,14 +514,50 @@ impl Kind for TableKind {
             self.clamp_off();
             self.table.set_viewport(self.size, self.off);
         }
+        // the cell editor over its cell
+        let g = self.table.geom();
+        let shown = self.table.shown();
+        if let Some(edit) = self.edit.as_mut()
+            && let Some(k) = shown.iter().position(|&d| d == edit.data)
+        {
+            let (cr, _) = g.cell_rect(edit.pos, k);
+            edit.rect = cr;
+            let pad = self.look.cell_padding;
+            let content = Rect::new(cr.min.x + pad, cr.min.y, (cr.max.x - pad).max(cr.min.x + pad), cr.max.y);
+            let style = text_style(node.style());
+            let to_window = node.window_transform();
+            match cx.service::<skelter_text::TextSystem>() {
+                Some(ts) => edit.editor.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window),
+                None => edit.editor.field.prepare(&mut MonoLayouter { advance: 8.0, line_height: 16.0 }, content, to_window),
+            }
+            edit.editor.field.take_repaint();
+        }
     }
 
     fn record(&self, cx: &mut RecordCx) {
         record_core(cx, |p, list| self.table.record(&self.look, p, list, self.now));
+        if let Some(edit) = &self.edit {
+            // the field over the cell's own text
+            let q = skelter_base::display::Quad {
+                rect: edit.rect,
+                radii: Default::default(),
+                fill: skelter_base::color::Fill::Solid(self.look.background),
+                border_widths: skelter_base::geom::Insets::all(1.0),
+                border_color: self.look.focus_ring,
+                border_style: Default::default(),
+            };
+            cx.push(skelter_base::display::Prim::Quad(q), edit.rect);
+            let t = self.look.text.color;
+            let colors = FieldColors { text: t, placeholder: t.with_alpha(t.a * 0.5), selection: self.look.selected, selection_inactive: self.look.selected_inactive, preedit_underline: t };
+            edit.editor.field.record(cx, &colors);
+        }
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         self.now = cx.time();
+        if let Some(h) = self.edit_event(cx, ev) {
+            return h;
+        }
         let mut out = Vec::new();
         let handled = match ev {
             Event::PointerDown(p) => {
@@ -566,5 +743,53 @@ mod tests {
         // read back next frame as the column's own width: the resize stays
         frame(&mut d);
         assert_eq!(d.view(cols[0]).unwrap().prop_f64(column_width()), Some(130.0));
+    }
+
+    #[test]
+    fn typing_on_an_editable_cell_edits_through_the_text_field_and_commits() {
+        use crate::testdoc::{click, frame, key};
+        use skelter_base::key::Key;
+        let (mut d, t, cols) = table_doc(3);
+        d.set_prop(cols[1], TABLE_COLUMN.prop_named("editable").unwrap(), Value::Bool(true)).unwrap();
+        let rows = Value::List(vec![Value::List(vec![Value::from("a"), Value::from("old")].into()), Value::List(vec![Value::from("b"), Value::from("2")].into())].into());
+        d.call(t, TABLE.method_id(0), &[Value::I64(0), rows]).unwrap();
+        let commit = TABLE.signal_named("commit").unwrap();
+        d.listen(t, commit, skelter_core::ListenFlags::EMPTY);
+        frame(&mut d);
+        // the cursor on row 0's editable cell (the header is 24 high, rows 20; column 1 at 100..180)
+        click(&mut d, 140.0, 34.0);
+        assert_eq!(d.focused(crate::testdoc::W), Some(t));
+        let mut commits: Vec<Value> = Vec::new();
+        let send = |d: &mut skelter_core::Document, commits: &mut Vec<Value>, k: Key, text: Option<&str>| {
+            let out = d.dispatch(&key(k, text));
+            frame(d);
+            commits.extend(out.events.into_iter().chain(d.take_events()).filter(|e| e.signal == commit).filter_map(|e| e.arg));
+        };
+        // typing replaces the value; the field edits, Enter commits
+        send(&mut d, &mut commits, Key::A, Some("x"));
+        send(&mut d, &mut commits, Key::A, Some("y"));
+        send(&mut d, &mut commits, Key::Backspace, None);
+        send(&mut d, &mut commits, Key::A, Some("z"));
+        send(&mut d, &mut commits, Key::Enter, Some("\r"));
+        assert_eq!(commits.len(), 1, "{commits:?}");
+        assert_eq!(commits[0].field("row"), Some(&Value::I64(0)));
+        assert_eq!(commits[0].field("column"), Some(&Value::I64(1)));
+        assert_eq!(commits[0].field("value"), Some(&Value::from("xz")), "Backspace went through the field");
+        // F2 selects the (now shown) value: typing replaces it; Escape reverts without a commit
+        send(&mut d, &mut commits, Key::F2, None);
+        send(&mut d, &mut commits, Key::A, Some("q"));
+        send(&mut d, &mut commits, Key::Escape, None);
+        assert_eq!(commits.len(), 1, "reverted");
+        // Tab commits (no editable cell after it: the edit ends)
+        send(&mut d, &mut commits, Key::F2, None);
+        send(&mut d, &mut commits, Key::End, None);
+        send(&mut d, &mut commits, Key::A, Some("!"));
+        send(&mut d, &mut commits, Key::Tab, None);
+        assert_eq!(commits.last().and_then(|c| c.field("value")), Some(&Value::from("xz!")));
+        // a plain key on a non-editable cell is the table's (type-ahead), not an edit
+        click(&mut d, 40.0, 54.0);
+        send(&mut d, &mut commits, Key::A, Some("b"));
+        send(&mut d, &mut commits, Key::Enter, Some("\r"));
+        assert_eq!(commits.len(), 2);
     }
 }

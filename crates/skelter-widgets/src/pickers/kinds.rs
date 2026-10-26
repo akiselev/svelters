@@ -19,6 +19,12 @@
 //!   [`PickerLook::from_theme`] of the built-in theme for the node's scheme.
 //! - "Today" is [`Date::today_utc`]: skelter has no time-zone database yet.
 //!
+//! The colour editor's hex box edits through the text-edit field ([`HexField`]): a press on it gives
+//! it the body's focus and the field takes the keys (hex digits and `#` only); Enter or the focus
+//! leaving applies a valid hex (`changed`, `commit`), an invalid one marks the box `:invalid`, and
+//! Escape drops the edit. Hosted kinds' events have no text system, so the field's caret geometry is
+//! monospace ([`MonoLayouter`]) and the box draws the field's text, not its caret or selection.
+//!
 //! Left out: the runner that owns the window's overlay stack (it pushes `overlay_spec`, puts
 //! `record_popup` in the layer and routes presses on it to the node: core hit-tests the node's box
 //! only), and Tab between the colour editor's inner stops (the focus model has no sub-node stops;
@@ -26,7 +32,12 @@
 
 use super::calendar::{CalBody, Calendar, CalCfg, FIRST_DAY, WEEKDAY_FORMAT, grid_days};
 use super::color::{ALPHA, Hsv, parse_hex};
-use super::color_editor::{COLOR_COMMIT_MODE, ColorBody, ColorCfg, ColorEditor};
+use super::color_editor::{COLOR_COMMIT_MODE, ColorBody, ColorCfg, ColorEditor, Ctl};
+use crate::text::editor::FocusReason as FieldFocus;
+use crate::text::hex::{HexField, HexSignal, color_bytes, color_hex};
+use crate::text::keys::KeyAction;
+use crate::text::policy::{Platform as TextPlatform, TextPolicy};
+use crate::text::shim::MonoLayouter;
 use super::date::{Date, parse_date_prop};
 use super::color_picker::ColorPicker;
 use super::date_picker::{DATE_COMMIT_MODE, DatePicker};
@@ -403,9 +414,51 @@ impl w::Kind for CalendarKind {
 pub struct ColorEditorKind {
     pub props: ColorEditorProps,
     pub model: ColorEditor,
+    /// The hex box's text-edit field while the box has the body's focus.
+    pub hex: Option<HexField>,
 }
 
 impl ColorEditorKind {
+    /// Opens the hex field when the hex box got the body's focus, and closes it (applying its edit)
+    /// when the focus went elsewhere.
+    fn sync_hex(&mut self, cx: &mut EventCx) {
+        let focused = self.model.body.focus == Some(Ctl::Hex);
+        match (&mut self.hex, focused) {
+            (None, true) => {
+                let [r, g, b, a] = self.model.rgba();
+                let mut h = HexField::new(skelter_base::color::Color::from_rgba8(r, g, b, a), self.model.cfg.alpha, TextPolicy::from_policy(TextPlatform::current(), cx.policy));
+                h.focus_in(FieldFocus::Pointer);
+                // a press on the box selects the hex: typing replaces it
+                h.field.editor.select_all();
+                self.model.body.hex_text = Some(h.field.text());
+                self.hex = Some(h);
+            }
+            (Some(h), false) => {
+                h.focus_out();
+                self.hex_applied(cx);
+                self.hex = None;
+                self.model.body.hex_text = None;
+            }
+            _ => {}
+        }
+    }
+
+    /// Applies what the hex field committed (a valid hex: `changed`, `commit`) and shows its text.
+    fn hex_applied(&mut self, cx: &mut EventCx) {
+        let Some(h) = self.hex.as_mut() else { return };
+        let signals = h.take_signals();
+        let (text, invalid) = (h.field.text(), h.invalid());
+        let mut emits = Vec::new();
+        for sig in signals {
+            let HexSignal::Commit(c) = sig;
+            let outs = self.model.body.set_hex(&color_hex(color_bytes(c)), &self.model.cfg);
+            emits.extend(self.model.apply(outs));
+        }
+        self.model.body.hex_invalid = invalid;
+        self.model.body.hex_text = Some(text);
+        self.deliver(cx, emits);
+    }
+
     fn sync(&mut self) {
         let p = &self.props;
         let (hex, rgb, hsv) = ColorCfg::fields_of(&p.fields);
@@ -489,8 +542,19 @@ impl w::Kind for ColorEditorKind {
         if let Some(p) = pointer_of(cx, ev) {
             let emits = self.model.pointer(&p, look, on);
             self.deliver(cx, emits);
+            self.sync_hex(cx);
             cx.repaint = true;
             return Handled::Yes;
+        }
+        // the hex box's keys are its text field's
+        if let (Event::Key(k), Some(h)) = (ev, self.hex.as_mut())
+            && on
+        {
+            let mut lay = MonoLayouter { advance: look.font_size * 0.6, line_height: look.font_size * 1.3 };
+            let action = h.key(k, cx.now, &mut lay);
+            self.hex_applied(cx);
+            cx.repaint = true;
+            return if matches!(action, KeyAction::Ignore) { Handled::No } else { Handled::Yes };
         }
         match ev {
             Event::Key(k) if k.state == KeyState::Pressed => {
@@ -509,6 +573,7 @@ impl w::Kind for ColorEditorKind {
             }
             Event::Focus { gained: false, .. } => {
                 self.model.body.focus = None;
+                self.sync_hex(cx);
                 cx.repaint = true;
                 Handled::No
             }
@@ -526,8 +591,9 @@ impl w::Kind for ColorEditorKind {
         }
     }
 
+    /// The body's stepping keys, and every key but Tab while the hex field edits.
     fn claims_key(&self, key: Key, _m: skelter_base::event::Modifiers) -> bool {
-        self.model.body.claims(key)
+        self.model.body.claims(key) || (self.hex.is_some() && key != Key::Tab)
     }
 }
 
@@ -1176,5 +1242,47 @@ mod tests {
         let mut reg = KindRegistry::new();
         register(&mut reg).unwrap();
         assert!(reg.by_name("date-picker").is_some() && reg.by_name("color-picker").is_some());
+    }
+
+    #[test]
+    fn typing_in_the_hex_box_edits_through_the_text_field() {
+        use crate::pickers::test_util::ptr;
+        use skelter_base::event::{KeyEvent, KeyLocation};
+        let mut k = ColorEditorKind::default();
+        k.set_prop(COLOR_EDITOR.prop("value").unwrap(), &w::Value::str("#ff0000")).unwrap();
+        let hex = k.model.geom(look(true)).hex.expect("a hex box by default");
+        let policy = Policy::default();
+        let mut state = StateBits::FOCUSED;
+        let size = skelter_base::geom::Size::new(300.0, 400.0);
+        let (x, y) = (hex.min.x + 4.0, hex.min.y + 4.0);
+        let mut cx = EventCx::new(Time(1), size, &mut state, &policy);
+        k.event(&mut cx, &Event::Pointer(ptr(PointerPhase::Down, x, y)));
+        k.event(&mut cx, &Event::Pointer(ptr(PointerPhase::Up, x, y)));
+        assert!(k.hex.is_some(), "the box's field is open");
+        assert_eq!(k.model.body.hex_text.as_deref(), Some("#ff0000"));
+        let key = |k: Key, text: Option<&str>| Event::Key(KeyEvent { key: Some(k), physical: 0, text: text.map(str::to_owned), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Default::default() });
+        let mut cx = EventCx::new(Time(2), size, &mut state, &policy);
+        // `x` is filtered out by the field
+        for c in ["#", "0", "x", "f", "0"] {
+            assert_eq!(k.event(&mut cx, &key(Key::A, Some(c))), Handled::Yes);
+        }
+        assert_eq!(k.model.body.hex_text.as_deref(), Some("#0f0"), "shown as typed");
+        assert_eq!(k.model.value, "#ff0000", "not applied before Enter");
+        assert!(w::Kind::claims_key(&k, Key::A, Default::default()) && !w::Kind::claims_key(&k, Key::Tab, Default::default()));
+        k.event(&mut cx, &key(Key::Enter, Some("\r")));
+        assert_eq!(k.model.value, "#00ff00");
+        let names: Vec<&str> = cx.emitted.iter().map(|e| COLOR_EDITOR.signals[e.signal.0 as usize].name).collect();
+        assert_eq!(names, ["changed", "commit"]);
+        assert!(cx.changed.contains(&COLOR_EDITOR.prop("value").unwrap()), "bind:value");
+        // an invalid hex keeps the colour and marks the box; focus leaving closes the field
+        let mut cx = EventCx::new(Time(3), size, &mut state, &policy);
+        k.hex.as_mut().unwrap().field.editor.select_all();
+        k.event(&mut cx, &key(Key::A, Some("1")));
+        k.event(&mut cx, &key(Key::A, Some("2")));
+        k.event(&mut cx, &key(Key::Enter, Some("\r")));
+        assert!(k.model.body.hex_invalid && cx.emitted.is_empty());
+        assert_eq!(k.model.value, "#00ff00");
+        k.event(&mut cx, &Event::Focus { gained: false, reason: crate::interact::FocusReason::Program });
+        assert!(k.hex.is_none() && k.model.body.hex_text.is_none());
     }
 }
