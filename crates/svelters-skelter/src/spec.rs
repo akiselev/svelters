@@ -318,6 +318,25 @@ fn style_json(all: &[&'static KindSpec]) -> J {
     })
 }
 
+/// `name` is a layout prop that is also a CSS property.
+pub(crate) fn is_style_setter(name: &str) -> bool {
+    STYLE_SETTERS.contains(&name) && !matches!(name, "dialog-role" | "status-section")
+}
+
+/// The CSS declaration value of setter `name` set to `v` (`None`: unset, or not a CSS value).
+pub(crate) fn setter_declaration(name: &str, ty: crate::surface::ValueType, v: &crate::surface::Value) -> Option<String> {
+    use crate::surface::{Value as V, ValueType as T};
+    let unitless = matches!(name, "flex-grow" | "flex-shrink");
+    let num = |x: f64| if unitless { format!("{x}") } else { format!("{x}px") };
+    match (v, ty) {
+        (V::F64(x), _) => Some(num(*x)),
+        (V::I64(x), _) => Some(num(*x as f64)),
+        (V::Str(s), _) if !s.is_empty() => Some(s.clone()),
+        (V::Enum(i), T::Enum(names)) => names.get(*i as usize).map(|n| n.to_string()),
+        _ => None,
+    }
+}
+
 /// The layout props that are also CSS properties (the egui style table's setters).
 const STYLE_SETTERS: &[&str] = &[
     "align-items",

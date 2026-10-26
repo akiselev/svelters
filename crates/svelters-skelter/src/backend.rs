@@ -139,6 +139,10 @@ pub struct Inner {
     pub(crate) side: RefCell<HashMap<(NodeId, svl_id), surface::Value>>,
     /// Each styled node's style inputs (skelter-core takes them whole).
     pub(crate) styles: RefCell<HashMap<NodeId, StyleInput>>,
+    /// Layout props that are CSS properties with no core prop on the node's kind (`flex-grow` on a
+    /// `virtual-list`, a `width` set at run time): their declarations, which go into the node's
+    /// inline style before JS's own (A25c).
+    pub(crate) setters: RefCell<HashMap<NodeId, Vec<(&'static str, String)>>>,
     pub(crate) visuals: RefCell<HashMap<NodeId, Visual>>,
     pub(crate) scheme: Cell<Option<ColorScheme>>,
     /// Sheets by the runtime's id: skelter-core's id and the text.
@@ -234,6 +238,7 @@ impl SkelterBackend {
             kinds,
             side: RefCell::new(HashMap::new()),
             styles: RefCell::new(HashMap::new()),
+            setters: RefCell::new(HashMap::new()),
             visuals: RefCell::new(HashMap::new()),
             scheme: Cell::new(None),
             sheets: RefCell::new(BTreeMap::new()),
@@ -289,6 +294,20 @@ impl SkelterBackend {
 
     pub fn kinds(&self) -> &Arc<Kinds> {
         &self.0.kinds
+    }
+
+    /// Sends `n`'s style inputs to the document: JS's, with the declarations of its CSS-property
+    /// layout props before JS's inline style (which wins).
+    pub(crate) fn restyle_inputs(&self, n: NodeId) {
+        let mut s = self.0.styles.borrow().get(&n).cloned().unwrap_or_default();
+        if let Some(decls) = self.0.setters.borrow().get(&n).filter(|d| !d.is_empty()) {
+            let mut inline: String = decls.iter().map(|(name, v)| format!("{name}: {v}; ")).collect();
+            if let Some(own) = &s.inline {
+                inline.push_str(own);
+            }
+            s.inline = Some(inline.into());
+        }
+        self.doc_mut().set_style(n, s);
     }
 
     /// The style inputs JS gave `n` (classes, `#id`, inline style).
@@ -428,6 +447,7 @@ impl SkelterBackend {
         if let Some(n) = self.0.handles.borrow_mut().unbind(h) {
             self.0.side.borrow_mut().retain(|&(x, _), _| x != n);
             self.0.styles.borrow_mut().remove(&n);
+            self.0.setters.borrow_mut().remove(&n);
             self.0.visuals.borrow_mut().remove(&n);
         }
         self.forget(h);
@@ -484,11 +504,26 @@ impl SkelterBackend {
         let v = value::from_abi(v, pm.spec.ty, pm.spec.nullable).map_err(|e| format!("<{}> {}: {e}", m.tag(), pm.spec.name))?;
         let (pid, v) = match pm.target {
             PropTarget::Side => {
-                let mut side = self.0.side.borrow_mut();
-                match v {
-                    surface::Value::Null => side.remove(&(n, prop)),
-                    v => side.insert((n, prop), v),
-                };
+                let decl = crate::spec::setter_declaration(pm.spec.name, pm.spec.ty, &v);
+                {
+                    let mut side = self.0.side.borrow_mut();
+                    match v {
+                        surface::Value::Null => side.remove(&(n, prop)),
+                        v => side.insert((n, prop), v),
+                    };
+                }
+                // a layout prop that is a CSS property: its declaration styles the node
+                if crate::spec::is_style_setter(pm.spec.name) {
+                    {
+                        let mut setters = self.0.setters.borrow_mut();
+                        let list = setters.entry(n).or_default();
+                        list.retain(|(name, _)| *name != pm.spec.name);
+                        if let Some(d) = decl {
+                            list.push((pm.spec.name, d));
+                        }
+                    }
+                    self.restyle_inputs(n);
+                }
                 return Ok(());
             }
             PropTarget::Native(pid) => {
@@ -676,6 +711,7 @@ impl SkelterBackend {
         }
         self.0.side.borrow_mut().retain(|&(x, _), _| x != n);
         self.0.styles.borrow_mut().remove(&n);
+        self.0.setters.borrow_mut().remove(&n);
         self.0.visuals.borrow_mut().remove(&n);
         self.forget(h);
     }

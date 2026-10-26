@@ -89,9 +89,8 @@ impl SkelterBackend {
                     SVL_STYLE_NAME => s.id = text.filter(|t| !t.is_empty()).map(Arc::from),
                     _ => s.inline = text.filter(|t| !t.trim().is_empty()).map(Arc::from),
                 }
-                let s = s.clone();
                 drop(styles);
-                self.doc_mut().set_style(n, s);
+                self.restyle_inputs(n);
             }
             SVL_STYLE_OPACITY | SVL_STYLE_TRANSFORM | SVL_STYLE_CLIP | SVL_STYLE_INERT => {
                 // kept until skelter-core's effect and transform trees take JS channels (TR1)
