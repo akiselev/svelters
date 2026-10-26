@@ -635,6 +635,9 @@ impl Embed {
         self.apply_commands();
         self.sync_info();
         self.inner.backend.poll_wake();
+        // what kinds emitted outside input dispatch since the last logic (a list's row requests
+        // from the frame, a programmatic focus move) reaches JS here (A25b)
+        self.inner.backend.pump();
         self.inner.host.checkpoint();
         self.collect();
         // faults found above dispose their roots now
@@ -661,7 +664,7 @@ impl Embed {
         let b = &self.inner.backend;
         let st = self.inner.st.borrow();
         let mut busy = Busy::empty();
-        busy.set(Busy::EVENTS, hb.events || hb.running);
+        busy.set(Busy::EVENTS, hb.events || hb.running || b.with_doc(|d| d.busy().contains(skelter_core::Busy::EVENTS)));
         busy.set(Busy::CHANGES, hb.changes);
         busy.set(Busy::JOBS, hb.jobs);
         busy.set(Busy::OPS_IN_FLIGHT, hb.ops_in_flight > 0);

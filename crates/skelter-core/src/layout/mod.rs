@@ -156,6 +156,30 @@ impl LayoutPartialTree for Tree<'_> {
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);
             let container = !tree.doc.layout_children(i).is_empty();
+            // a virtualising node sizes as its kind measures it (its rows' full extent), not by its
+            // realised rows (placed absolutely, they add nothing): a list in a column takes its
+            // content height and shrinks to what the column leaves it (A25b)
+            let virtualising = tree.doc.slots.id_at(i).is_some_and(|n| tree.doc.virt.contains_key(&n));
+            if container && virtualising {
+                let style = tree.doc.layout[i].style.clone();
+                let doc = &mut *tree.doc;
+                let leaf = compute_leaf_layout(inputs, &*style, |_, _| 0.0, |known, avail| {
+                    if let Size { width: Some(w), height: Some(h) } = known {
+                        return Size { width: w, height: h };
+                    }
+                    let s = measure_leaf(doc, i, known, avail);
+                    // it scrolls its rows: no min-content height (a column it is in shrinks it)
+                    let h = if avail.height == AvailableSpace::MinContent { 0.0 } else { s.height.ceil() };
+                    Size { width: known.width.unwrap_or(s.width.ceil()), height: known.height.unwrap_or(h) }
+                });
+                if inputs.run_mode != RunMode::PerformLayout {
+                    return leaf;
+                }
+                let sized = LayoutInput { known_dimensions: Size { width: Some(leaf.size.width), height: Some(leaf.size.height) }, ..inputs };
+                let mut out = compute_flexbox_layout(tree, id, sized);
+                compute_oof_layout(tree, id, &mut out);
+                return out;
+            }
             if container {
                 let mut out = match tree.doc.layout[i].style.display {
                     Display::Grid => compute_grid_layout(tree, id, inputs),

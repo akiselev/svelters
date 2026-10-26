@@ -23,6 +23,9 @@ struct St {
     bound: HashMap<i64, (i64, i64)>,
     events: Vec<(&'static str, Vec<Value>)>,
     setups: usize,
+    /// As `@svelters/lists` does it: `setup` gives an empty outlet, the row's content is mounted
+    /// into it at its first `bind`.
+    late_content: bool,
 }
 
 /// The JS side of the protocol, in Rust.
@@ -42,9 +45,12 @@ impl Js {
         match name {
             "setup" => {
                 let row = int(0);
+                let late = self.0.borrow().late_content;
                 let bx = br.create(br.resolve(NameKind::Kind, 0, "box")).unwrap();
-                let label = br.create(br.resolve(NameKind::Kind, 0, "label")).unwrap();
-                br.insert(bx, label, None, 0).unwrap();
+                let label = if late { 0 } else { br.create(br.resolve(NameKind::Kind, 0, "label")).unwrap() };
+                if !late {
+                    br.insert(bx, label, None, 0).unwrap();
+                }
                 let lk = br.handle_info(h).unwrap().kind;
                 br.call(h, br.resolve(NameKind::Method, lk, "setRow"), &[Value::I64(row), Value::Handle(bx)]).unwrap();
                 let mut st = self.0.borrow_mut();
@@ -53,7 +59,15 @@ impl Js {
             }
             "bind" => {
                 let (row, pos, id) = (int(0), int(1), int(2));
-                let label = self.0.borrow().rows[&row].1;
+                let (bx, mut label) = self.0.borrow().rows[&row];
+                if label == 0 {
+                    // the row component mounts into the outlet: a box with padding, then the label
+                    let inner = br.create(br.resolve(NameKind::Kind, 0, "box")).unwrap();
+                    label = br.create(br.resolve(NameKind::Kind, 0, "label")).unwrap();
+                    br.insert(inner, label, None, 0).unwrap();
+                    br.insert(bx, inner, None, 0).unwrap();
+                    self.0.borrow_mut().rows.insert(row, (bx, label));
+                }
                 let lk = br.handle_info(label).unwrap().kind;
                 br.set_prop(label, br.resolve(NameKind::Prop, lk, "text"), &Value::Str(format!("Item {id}"))).unwrap();
                 self.0.borrow_mut().bound.insert(row, (pos, id));
@@ -91,9 +105,60 @@ const VIEW_H: f32 = 240.0;
 
 impl ListRig {
     fn new(kind: &str) -> ListRig {
+        ListRig::new_with(kind, false)
+    }
+
+    /// Frames and pumps until the rows settle; the nodes whose lists the commits sent (and did not
+    /// remove since).
+    fn run_drawn(&self) -> std::collections::HashSet<NodeId> {
+        let mut drawn = std::collections::HashSet::new();
+        for _ in 0..6 {
+            if let Some(c) = self.backend.with_doc(|d| d.frame(WindowId(1), Time(0))) {
+                for n in &c.removed {
+                    drawn.remove(n);
+                }
+                drawn.extend(c.lists.iter().map(|(n, _)| *n));
+            }
+            self.backend.pump();
+        }
+        drawn
+    }
+
+    /// The labels of the rows at `first..` are drawn in the list's viewport, with a size.
+    fn check_drawn(&self, drawn: &std::collections::HashSet<NodeId>, first: usize) {
+        let n = self.node();
+        let text = skelter_core::PropId::of("label", "text", "string");
+        self.backend.with_doc(|d| {
+            // rows are placed in the list's content space: its viewport there is shifted by the offset
+            let off = d.scroll_offset(n).y;
+            let w = d.world_rect(n).unwrap();
+            let view = skelter_base::geom::Rect::new(w.min.x, w.min.y + off, w.max.x, w.max.y + off);
+            let rows = d.virtual_rows(n).to_vec();
+            let mut seen = 0;
+            for &(pos, row) in &rows {
+                let mut label = d.children(row)[0];
+                if d.get_prop(label, text).is_none() {
+                    label = d.children(label)[0];
+                }
+                let r = d.world_rect(label).unwrap();
+                if r.min.y >= view.min.y && r.max.y <= view.max.y {
+                    assert!(r.width() > 0.0 && r.height() > 0.0, "row {pos}'s label has a size: {r:?}");
+                    assert!(drawn.contains(&label), "row {pos}'s label is drawn");
+                    assert!(pos >= first, "row {pos} in view after scrolling to {first}");
+                    seen += 1;
+                }
+            }
+            assert!(seen >= 8, "{seen} rows drawn in the viewport");
+        });
+    }
+
+    fn new_with(kind: &str, late_content: bool) -> ListRig {
         let backend = SkelterBackend::builtin();
+        // text shaping, as the app installs it (labels measure their text)
+        svelters_skelter::app::install_widget_services(&backend, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())));
         let vt: &'static BackendVtable = Box::leak(Box::new(BackendVtable::new(backend.clone())));
         let st: Rc<RefCell<St>> = Rc::default();
+        st.borrow_mut().late_content = late_content;
         let hv: &'static HostVtable = Box::leak(Box::new(HostVtable::new(Js(st.clone()))));
         let br = vt.backend_ref();
         br.start(hv).expect("start");
@@ -159,7 +224,10 @@ impl ListRig {
         self.backend.with_doc(|d| {
             let rows = d.virtual_rows(n).to_vec();
             for &(pos, row) in &rows {
-                let label = d.children(row)[0];
+                let mut label = d.children(row)[0];
+                if d.get_prop(label, text).is_none() && !d.children(label).is_empty() {
+                    label = d.children(label)[0];
+                }
                 assert_eq!(d.get_prop(label, text), Some(skelter_core::Value::Str(format!("Item {}", ids[pos]).into())), "row at {pos}");
                 let r = d.layout_rect(row).unwrap();
                 assert_eq!(r.min.y as f64, pos as f64 * ROW_H, "row {pos} placed at its offset");
@@ -287,3 +355,23 @@ fn tree_view_splice_set_nodes_and_rows() {
     r.call("setSelection", &[Value::List(vec![Value::I64(2)])]);
     assert_eq!(r.call("selection", &[]), Value::List(vec![Value::I64(2)]));
 }
+
+/// A25b: rows as `@svelters/lists` makes them (an empty outlet at `setup`, the row component mounted
+/// into it at the first `bind`) lay out, draw and scroll: each visible row's label is drawn (its
+/// list sent) inside the viewport with a size, and `scrollTo` and the wheel bring later rows in.
+#[test]
+fn rows_mounted_at_bind_lay_out_draw_and_scroll() {
+    let r = ListRig::new_with("virtual-list", true);
+    let ids: Vec<i64> = (1..=1000).collect();
+    r.splice(0, 0, ids.iter().copied());
+    let drawn = r.run_drawn();
+    let shown = r.check_rows(&ids);
+    assert!(shown >= 10, "{shown} rows realised");
+    r.check_drawn(&drawn, 0);
+    r.call("scrollTo", &[Value::I64(600), Value::Str("top".into())]);
+    let drawn = r.run_drawn();
+    assert_eq!(r.offset(), 600.0 * ROW_H);
+    r.check_rows(&ids);
+    r.check_drawn(&drawn, 600);
+}
+

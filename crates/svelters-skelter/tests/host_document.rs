@@ -180,3 +180,95 @@ fn a_skelter_click_runs_the_svelte_onclicked_handler() {
     embed.logic();
     assert_eq!(text(label), Value::Str("n=1".into()), "the onclicked handler ran");
 }
+
+const LIST: &str = r#"<script>
+  import { ListView } from '@svelters/lists';
+  const items = Array.from({ length: 1000 }, (_, i) => ({ id: i, text: `Item ${i}` }));
+  let list;
+  export function scrollTo(i) { list.scrollTo(i); }
+</script>
+<box style="flex-direction: column; flex-grow: 1">
+  <ListView bind:this={list} {items} key={(it) => it.id} row-height={24}>
+    {#snippet row(item)}
+      <box><label text={item.text} /></box>
+    {/snippet}
+  </ListView>
+</box>
+"#;
+
+/// A25b: a `ListView` in an embed, run as the shell runs it (`logic`, then the document's frame,
+/// nothing else): the rows the list asks for during the frame reach JS at the next `logic`, so the
+/// visible rows lay out with their text; the embed is busy until they do, and scrolling brings later
+/// rows in. No wall clock: a fixed number of logic/frame rounds.
+#[test]
+fn an_embedded_list_view_shows_its_rows() {
+    let (mut doc, pane) = host_doc();
+    let w = skelter_base::ids::WindowId(1);
+    let root = doc.create_window(w, KindId::of("box"), skelter_base::geom::Size::new(300.0, 240.0), skelter_base::geom::Scale(1.0));
+    doc.insert(root, pane, None, None).unwrap();
+    doc.set_style(pane, skelter_core::StyleInput { inline: Some("flex-direction: column; width: 300px; height: 240px".into()), ..Default::default() });
+    let backend = SkelterBackend::over(doc).unwrap();
+    svelters_skelter::app::install_widget_services(&backend, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())));
+    let host = svelters_host::HostConfig { echo_console: false, echo_errors: true, quit_on_last_window: false, ..svelters_host::HostConfig::default() };
+    let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, ..EmbedConfig::default() }).unwrap();
+    let dir = scratch("list", &[("List.svelte", LIST)]);
+    let mut cfg = svelters_host::modules::SourceConfig::for_path(&dir).unwrap();
+    cfg.backend = "skelter".into();
+    let entry = embed.load_from(Rc::new(svelters_host::modules::SourceProvider::new(cfg).unwrap())).unwrap();
+    let slot = embed.adopt_slot("panel.list", pane).unwrap();
+    let root_id = embed.mount(MountSpec::new(entry, "List", slot, "panel.list")).unwrap();
+    embed.set_slot_layout(slot, w, [300.0, 240.0], 1.0);
+    let doc = backend.document();
+    let rounds = |n: usize| {
+        for _ in 0..n {
+            embed.logic();
+            doc.borrow_mut().frame(w, skelter_base::time::Time(0));
+        }
+    };
+    rounds(6);
+    let errors: Vec<_> = embed.take_events().into_iter().filter(|e| matches!(e, EmbedEvent::Error { .. } | EmbedEvent::Faulted { .. })).collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    let list = {
+        let d = doc.borrow();
+        let mut found = None;
+        let mut stack = vec![pane];
+        while let Some(n) = stack.pop() {
+            if d.kind_of(n) == Some(KindId::of("virtual-list")) {
+                found = Some(n);
+            }
+            stack.extend(d.children(n).iter().copied());
+        }
+        found.expect("the list")
+    };
+    let text = skelter_core::PropId::of("label", "text", "string");
+    // the visible rows: their labels show their items and have a size
+    let shown = |d: &skelter_core::Document| -> Vec<String> {
+        let off = d.scroll_offset(list).y;
+        let view = d.world_rect(list).unwrap();
+        let mut out = Vec::new();
+        for &(_, row) in d.virtual_rows(list) {
+            let mut stack = vec![row];
+            while let Some(n) = stack.pop() {
+                if let Some(skelter_core::Value::Str(s)) = d.get_prop(n, text) {
+                    let r = d.world_rect(n).unwrap();
+                    if r.height() > 0.0 && r.min.y >= view.min.y + off && r.max.y <= view.max.y + off {
+                        out.push(s.to_string());
+                    }
+                }
+                stack.extend(d.children(n).iter().copied());
+            }
+        }
+        out.sort_by_key(|s| s[5..].parse::<usize>().unwrap_or(0));
+        out
+    };
+    let rows = shown(&doc.borrow());
+    assert!(rows.len() >= 8, "visible rows: {rows:?}");
+    assert_eq!(rows[0], "Item 0");
+    assert!(embed.settled().busy.is_empty() || !embed.settled().busy.contains(svelters_skelter::embed::Busy::EVENTS), "settled: {:?}", embed.settled());
+    // the wheel (a scroll offset) brings later rows in
+    doc.borrow_mut().set_scroll_offset(list, skelter_base::geom::Vec2::new(0.0, 500.0 * 24.0));
+    rounds(6);
+    let rows = shown(&doc.borrow());
+    assert!(rows.len() >= 8 && rows[0] == "Item 500", "after scrolling: {rows:?}");
+    let _ = root_id;
+}
