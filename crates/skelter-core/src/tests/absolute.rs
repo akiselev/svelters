@@ -220,4 +220,17 @@ fn a_subtree_under_an_absolute_ancestor_that_moves_later_draws_at_the_new_place(
     d.set_style(slot, StyleInput { inline: Some(PLACED.into()), ..Default::default() });
     settle(&mut d, &mut seen);
     assert_drawn_in_place(&d, &seen, &rows, "detached pane inserted, then the slot placed");
+    // 4. berth's reconcile: a placed group re-inserts its tab strip and pane in place (same parent)
+    let (mut d, root) = doc();
+    let group = child(&mut d, root, BOX, "position: absolute; left: 326px; top: 146px; width: 300px; height: 200px; overflow: hidden; background-color: #111111");
+    let tabs = child(&mut d, group, BOX, "height: 24px; background-color: #333333");
+    let (pane, rows) = pane_rows(&mut d, group);
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    d.insert(group, tabs, Some(pane), None).unwrap();
+    d.insert(group, pane, None, None).unwrap();
+    settle(&mut d, &mut seen);
+    assert_drawn_in_place(&d, &seen, &rows, "group re-inserted its children");
+    let r = d.world_rect(group).unwrap();
+    assert_eq!(seen.origin(group), Some((r.min.x, r.min.y)), "the group's own box");
 }
