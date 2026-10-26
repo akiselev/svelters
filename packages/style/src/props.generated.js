@@ -34,11 +34,11 @@ export const TAG_SETS = [
   ["box", "collapsing-header", "dialog-buttons", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "status-bar", "tab", "toast", "window"],
   ["dialog-buttons"],
   ["box", "collapsing-header", "frame", "grid", "scroll-area", "sides"],
-  ["box", "button", "checkbox", "collapsing-header", "combo-box", "frame", "grid", "hyperlink", "icon", "image", "label", "progress-bar", "radio-button", "scroll-area", "separator", "sides", "slider", "spinner", "stack", "switch", "table", "table-column", "text-edit", "toggle-button", "tree-view"],
+  ["box", "button", "checkbox", "collapsing-header", "combo-box", "frame", "grid", "hyperlink", "icon", "image", "label", "progress-bar", "radio-button", "scroll-area", "separator", "sides", "slider", "spinner", "stack", "switch", "table", "table-column", "text-edit", "toggle-button", "tree-view", "virtual-list"],
   ["box", "collapsing-header", "frame", "grid", "scroll-area"],
   ["box", "collapsing-header", "frame", "scroll-area"],
   ["box", "collapsing-header", "frame", "grid", "scroll-area", "sides", "window"],
-  ["action", "box", "button", "checkbox", "collapsing-header", "combo-box", "context-menu", "frame", "grid", "hyperlink", "icon", "image", "label", "progress-bar", "radio-button", "scroll-area", "separator", "sides", "slider", "spinner", "stack", "switch", "table", "table-column", "text-edit", "toggle-button", "tree-view"],
+  ["action", "box", "button", "checkbox", "collapsing-header", "combo-box", "context-menu", "frame", "grid", "hyperlink", "icon", "image", "label", "progress-bar", "radio-button", "scroll-area", "separator", "sides", "slider", "spinner", "stack", "switch", "table", "table-column", "text-edit", "toggle-button", "tree-view", "virtual-list"],
 ];
 
 export const STYLE_TABLES = {

@@ -362,9 +362,9 @@ mod tests {
         let mut m = open_modal();
         assert_eq!(m.prop_state(), StateBits::OPEN);
         let mut style = taffy::Style::default();
-        assert!(m.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert!(m.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
         m.props.open = false;
-        assert!(!m.child_layout(&ChildCx { index: 0, anchors: &[""] }, &mut style));
+        assert!(!m.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
         assert_eq!(style.display, taffy::Display::None);
         assert_eq!(m.prop_state(), StateBits::NONE);
         assert_eq!(Modal::prop_states(), StateBits::OPEN);

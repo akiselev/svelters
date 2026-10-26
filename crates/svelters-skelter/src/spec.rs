@@ -212,6 +212,7 @@ fn kind_json(km: &kinds::KindMap) -> J {
     json!({
         "a11y": {"name_from": k.a11y.name_from, "name_required": k.a11y.name_required, "role": if k.a11y.role.is_empty() { J::Null } else { json!(k.a11y.role) }},
         "abstract": k.tag.is_none(),
+        "attaches_to": ATTACHES_TO.iter().find(|a| a.0 == k.name).map(|a| a.1),
         "bindings": bindings_json(k),
         "chain": chain,
         "children": children_json(k),
@@ -232,6 +233,10 @@ fn kind_json(km: &kinds::KindMap) -> J {
         "widget": widget,
     })
 }
+
+/// Kinds an element of any `Widget` kind takes as an attached child whatever its slots accept
+/// (svelters-egui's `attaches_to`, A9b): `<context-menu>` inside a `<box>` attaches to the box.
+pub const ATTACHES_TO: &[(&str, &str)] = &[("ContextMenu", "Widget")];
 
 fn range_json(name: &str) -> Option<J> {
     let &(_, min, max) = crate::css::PROP_RANGES.iter().find(|r| r.0 == name)?;

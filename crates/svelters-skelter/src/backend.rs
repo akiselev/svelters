@@ -499,7 +499,10 @@ impl SkelterBackend {
                         let ci = crate::kinds::enum_to_core(pm.spec.ty, c, i).ok_or_else(|| format!("<{}> {}: the value is not one skelter has", m.tag(), pm.spec.name))?;
                         Some(skelter_core::Value::Enum(ci))
                     }
-                    v => value::to_core(v),
+                    v => value::to_core(v).map(|cv| match crate::kinds::core_prop(self.0.kinds.registry(), m.core.expect("a live node's kind"), pid) {
+                        Some(c) => crate::kinds::num_to_core(pm.spec.ty, c, cv),
+                        None => cv,
+                    }),
                 };
                 (pid, cv)
             }
@@ -762,7 +765,10 @@ impl Backend for SkelterBackend {
                 skelter_core::Value::Enum(ci) => crate::kinds::core_prop(self.0.kinds.registry(), km.core.expect("a live node's kind"), pid)
                     .and_then(|c| crate::kinds::enum_from_core(pm.spec.ty, c, ci))
                     .map_or(surface::Value::Null, surface::Value::Enum),
-                v => value::from_core(&v),
+                v => match crate::kinds::core_prop(self.0.kinds.registry(), km.core.expect("a live node's kind"), pid) {
+                    Some(c) => value::from_core(&crate::kinds::num_from_core(pm.spec.ty, c, v)),
+                    None => value::from_core(&v),
+                },
             }),
             PropTarget::Inverted(pid) => self.doc().get_prop(n, pid).and_then(|v| v.as_bool()).map(|b| surface::Value::Bool(!b)),
         };
@@ -771,6 +777,25 @@ impl Backend for SkelterBackend {
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
+        /// `popup`'s point: none (`None` inside: below the owner), `(x, y)`, or one `{x, y}` map
+        /// or `[x, y]` list; `None` for anything else.
+        fn popup_point(args: &[Value]) -> Option<Option<(f64, f64)>> {
+            let num = |v: &Value| match v {
+                Value::I64(i) => Some(*i as f64),
+                Value::F64(f) => Some(*f),
+                _ => None,
+            };
+            match args {
+                [] | [Value::Null] => Some(None),
+                [x, y] => Some(Some((num(x)?, num(y)?))),
+                [Value::List(l)] if l.len() == 2 => Some(Some((num(&l[0])?, num(&l[1])?))),
+                [Value::Map(m)] => {
+                    let f = |k: &str| m.iter().find(|(n, _)| n == k).and_then(|(_, v)| num(v));
+                    Some(Some((f("x")?, f("y")?)))
+                }
+                _ => None,
+            }
+        }
         let (_, km) = self.live(h)?;
         let m = km.method(method).ok_or_else(|| format!("unknown method id {method} on <{}>", km.tag()))?;
         // the core kind's own method: its params type the args where the surface lists none (egui's
@@ -791,12 +816,28 @@ impl Backend for SkelterBackend {
                 }
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
-            // egui's `popup()` / `popdown()` (A9): skelter-widgets' context menu opens on its `open`
-            // prop, at its owner's last context click (a point argument is not taken yet)
-            ("ContextMenu", "popup" | "popdown") => {
+            // egui's `popup()` (A9b): opens below its owner (the owner's bottom left, as svelters-egui
+            // does); `popup(x, y)` (or a `{x, y}` point) at that point of the owner, in the owner's
+            // points. The menu's own space is its node's: the point moves by the menu's offset in
+            // its owner (its parent).
+            ("ContextMenu", "popup") => {
+                let (n, _) = self.live(h)?;
+                let at = popup_point(args).ok_or("<context-menu>.popup(): the point is `(x, y)` or `{x, y}`")?;
+                let mid = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.method_named("open-at")).ok_or("<context-menu>.popup(): no open-at")?;
+                let (ret, events) = {
+                    let mut doc = self.doc_mut();
+                    let owner = doc.parent(n).and_then(|p| doc.layout_rect(p)).unwrap_or_default();
+                    let own = doc.layout_rect(n).unwrap_or_default();
+                    let (x, y) = at.unwrap_or((0.0, owner.height() as f64));
+                    doc.call(n, mid, &[skelter_core::Value::F64(x - own.min.x as f64), skelter_core::Value::F64(y - own.min.y as f64)]).map_err(|e| format!("<context-menu>.popup(): {e}"))?
+                };
+                let _ = ret;
+                self.queue(Output { events, ..Output::default() });
+            }
+            ("ContextMenu", "popdown") => {
                 let (n, _) = self.live(h)?;
                 let open = skelter_core::PropId::of("context-menu", "open", "bool");
-                self.doc_mut().set_prop(n, open, skelter_core::Value::Bool(m.spec.name == "popup")).map_err(|e| format!("<context-menu>.{}(): {e}", m.spec.name))?;
+                self.doc_mut().set_prop(n, open, skelter_core::Value::Bool(false)).map_err(|e| format!("<context-menu>.popdown(): {e}"))?;
             }
             (_, "request-focus") => {
                 let (n, _) = self.live(h)?;
@@ -824,15 +865,45 @@ impl Backend for SkelterBackend {
                         .collect(),
                     (ps, _) => ps.to_vec(),
                 };
-                for (a, (pname, ty)) in args.iter().zip(params) {
-                    let v = value::from_abi(a, ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
-                    core_args.extend(value::to_core(v));
+                if name == "setRow" && matches!(m.decl.name, "VirtualList" | "TreeView") {
+                    // the row protocol (A25): `setRow(row, widget)` takes the outlet JS made (a root
+                    // of its own); it becomes a child of the list, which places it as the row
+                    let row = match args.first() {
+                        Some(Value::I64(r)) => *r,
+                        Some(Value::F64(r)) if r.fract() == 0.0 => *r as i64,
+                        other => return Err(format!("<{}>.setRow(): row is {other:?}", km.tag())),
+                    };
+                    core_args.push(skelter_core::Value::I64(row));
+                    let widget = match args.get(1) {
+                        Some(Value::Handle(w)) => Some(*w),
+                        Some(Value::I64(w)) if *w > 0 => Some(*w as svl_handle),
+                        None | Some(Value::Null) => None,
+                        Some(other) => return Err(format!("<{}>.setRow(): expected a widget, got {other:?}", km.tag())),
+                    };
+                    if let Some(w) = widget {
+                        let (wn, _) = self.live(w)?;
+                        let mut doc = self.doc_mut();
+                        if doc.parent(wn) != Some(n) {
+                            if let Some(old) = doc.parent(wn) {
+                                doc.remove(old, wn).map_err(|e| format!("<{}>.setRow(): {e}", km.tag()))?;
+                            }
+                            doc.insert(n, wn, None, None).map_err(|e| format!("<{}>.setRow(): {e}", km.tag()))?;
+                        }
+                        core_args.push(skelter_core::Value::I64(wn.0 as i64));
+                    }
+                } else {
+                    for (a, (pname, ty)) in args.iter().zip(params) {
+                        let v = value::from_abi(a, ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
+                        core_args.extend(value::to_core(v));
+                    }
                 }
                 let (ret, events) = self.doc_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;
                 self.queue(Output { events, ..Output::default() });
-                return Ok(match (ret, m.spec.ret) {
-                    (Some(v), Some(ty)) => value::to_abi(&value::from_core(&v), ty),
-                    _ => Value::Null,
+                // egui's specs type generated methods' returns `void`: the core method's answer
+                // (`count()`, `rowAt(pos)`, `selection()`) goes back as it is
+                return Ok(match ret {
+                    Some(v) => value::to_abi(&value::from_core(&v), m.spec.ret.unwrap_or(surface::ValueType::Any)),
+                    None => Value::Null,
                 });
             }
             // scrolling a node into view needs skelter-core's scroll model on a laid-out window

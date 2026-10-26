@@ -32,7 +32,7 @@ use super::common::{emit, ms, platform};
 use crate::interact::{Platform, StateBits};
 use crate::kind_props;
 use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, SignalSpec, StyleCx, Value};
 use skelter_base::accesskit;
 use skelter_base::event::{KeyState, MouseButton, PointerPhase};
 use skelter_base::geom::{Point, Rect, Size, Vec2};
@@ -595,6 +595,9 @@ pub struct VirtualList {
     /// The last primary click (id, time): a second one within the double-click time activates.
     last_click: Option<(u64, Time)>,
     stats: ListStats,
+    /// The viewport (content space) the document last asked rows for, while the list is a
+    /// document node that scrolls itself ([`VirtualChildren::visible`](skelter_core::VirtualChildren::visible)).
+    seen: std::cell::Cell<Option<Rect>>,
 }
 
 impl Default for VirtualList {
@@ -624,6 +627,7 @@ impl VirtualList {
             focused: false,
             last_click: None,
             stats: ListStats::default(),
+            seen: std::cell::Cell::new(None),
         }
     }
 
@@ -802,8 +806,31 @@ impl VirtualList {
         !self.uniform && self.heights.set(pos, h.max(self.heights.estimate()))
     }
 
-    /// The position under `p` (list-local).
+    /// On a document the list scrolls itself ([`skelter_core::Kind::self_scroll`]): vertically,
+    /// over its rows' full height; it records in content space.
+    pub fn self_scroll_extent(&self) -> skelter_core::SelfScroll {
+        skelter_core::SelfScroll { content: Size::new(self.width, self.content_height() as f32), x: false, y: true }
+    }
+
+    /// An offset waits to be scrolled to ([`Self::scroll_to`], the cursor, scroll anchoring).
+    pub fn reveal_pending(&self) -> bool {
+        self.reveal.is_some()
+    }
+
+    /// How far the list has scrolled itself (0 while an enclosing scroll-area scrolls it): what
+    /// separates its node-local points from its content's.
+    pub fn scroll_top(&self) -> f32 {
+        self.seen.get().map_or(0.0, |v| v.min.y)
+    }
+
+    /// Node-local `p` in content points.
+    pub fn to_content(&self, p: Point) -> Point {
+        Point::new(p.x, p.y + self.scroll_top())
+    }
+
+    /// The position under `p` (node-local).
     pub fn pos_at(&self, p: Point) -> Option<usize> {
+        let p = self.to_content(p);
         if self.is_empty() || p.y < 0.0 || p.y as f64 >= self.content_height() {
             return None;
         }
@@ -837,8 +864,10 @@ impl VirtualList {
                 emit(cx, spec, "select", vec![Value::I64(p as i64)]);
             }
             emit(cx, spec, "selectionchange", vec![self.selected_value()]);
-            if let Some(id) = spec.prop("selected-ids") {
-                cx.prop_changed(id);
+            for name in ["selected-ids", "selected"] {
+                if let Some(id) = spec.prop(name) {
+                    cx.prop_changed(id);
+                }
             }
             cx.repaint = true;
         }
@@ -1126,6 +1155,7 @@ impl skelter_core::VirtualChildren for VirtualList {
     }
     /// The rows to realise for `viewport` (list-local): the rows it overlaps plus the overscan.
     fn visible(&self, viewport: Rect) -> Range<usize> {
+        self.seen.set(Some(viewport));
         self.window_in(viewport.min.y as f64, viewport.height())
     }
     fn row_rect(&self, i: usize) -> Rect {
@@ -1134,7 +1164,124 @@ impl skelter_core::VirtualChildren for VirtualList {
     fn content_extent(&self) -> Vec2 {
         Vec2::new(self.width, self.content_height() as f32)
     }
+    fn realize(&mut self, cx: &mut skelter_core::RealizeCx, _rows: Range<usize>) -> Vec<(usize, NodeId)> {
+        self.realize_rows(cx, &SPEC)
+    }
 }
+
+/// The JS row protocol on a document (`@svelters/lists`, svelters-egui's `virtual-list`), shared
+/// with `tree-view`: the list is a scroll container of its own (`overflow-y: scroll`, sized by its
+/// layout), the document asks it for the rows of its viewport before layout, and it answers with
+/// the slots bound there. The slot requests go to JS as `setup(row)`, `bind(row, pos, id, gen)`,
+/// `unbind(row, gen)` and `teardown(row)`, queued with the frame's events: JS answers after the
+/// frame (`setRow`, the row's content), and the list realises again.
+impl VirtualList {
+    /// [`skelter_core::VirtualChildren::realize`] under `spec` (the list's or the tree's signals):
+    /// takes the viewport, applies a pending reveal (`scrollTo`, the cursor, scroll anchoring) to
+    /// the node's scroll offset, plans the slots, emits the requests and returns the bound rows.
+    pub fn realize_rows(&mut self, cx: &mut skelter_core::RealizeCx, spec: &KindSpec) -> Vec<(usize, NodeId)> {
+        let node = cx.node();
+        if let Some(v) = self.seen.get() {
+            self.set_viewport(v.min.y as f64, v.height(), v.width());
+        }
+        if let Some(to) = self.reveal.take() {
+            cx.doc().set_scroll_offset(node, Vec2::new(0.0, to as f32));
+            self.view_top = cx.doc().scroll_offset(node).y as f64;
+            let top = self.view_top as f32;
+            self.seen.set(self.seen.get().map(|v| Rect::new(v.min.x, top, v.max.x, top + v.height())));
+        }
+        for r in self.plan() {
+            let (name, args) = r.signal();
+            if let Some((sig, arg)) = crate::host::core_signal(spec, name, &args) {
+                cx.emit(sig, arg);
+            }
+        }
+        self.realised().into_iter().map(|(n, p)| (p, n)).collect()
+    }
+
+    /// svelters-egui's list methods ([`LIST_METHODS`], by name): `splice(pos, removed, ids,
+    /// labels?)`, `count()`, `scrollTo(pos, hint?)`, `setRow(row, widget)` (the widget is the
+    /// document node the host made a child of the list, by its raw id) and `rowAt(pos)`. `None`:
+    /// not one of them.
+    pub fn call_list(&mut self, cx: &mut EventCx<'_>, name: &str, args: &[skelter_core::Value]) -> Option<Handled> {
+        use skelter_core::Value as V;
+        let int = |k: usize| args.get(k).and_then(V::as_i64);
+        let done = match name {
+            "splice" => {
+                let (Some(pos), Some(removed)) = (int(0), int(1)) else { return Some(Handled::No) };
+                let ids: Vec<u64> = match args.get(2) {
+                    Some(V::List(l)) => l.iter().filter_map(V::as_i64).map(|i| i as u64).collect(),
+                    _ => Vec::new(),
+                };
+                let labels: Option<Vec<String>> = match args.get(3) {
+                    Some(V::List(l)) => Some(l.iter().map(|x| x.as_str().unwrap_or("").to_string()).collect()),
+                    _ => None,
+                };
+                self.splice(pos.max(0) as usize, removed.max(0) as usize, &ids, labels.as_deref()).is_ok()
+            }
+            "count" => {
+                cx.ret = Some(V::I64(self.len() as i64));
+                return Some(Handled::Yes);
+            }
+            "scrollTo" => {
+                let Some(pos) = int(0) else { return Some(Handled::No) };
+                let hint = match args.get(1).and_then(V::as_str) {
+                    Some(h) => match Reveal::parse(h) {
+                        Some(h) => h,
+                        None => return Some(Handled::No),
+                    },
+                    None => Reveal::Nearest,
+                };
+                if pos >= 0 {
+                    self.scroll_to(pos as usize, hint);
+                }
+                true
+            }
+            "setRow" => {
+                let Some(row) = int(0).filter(|r| *r >= 0) else { return Some(Handled::No) };
+                self.set_row(row as usize, int(1).filter(|w| *w > 0).map(|w| NodeId(w as u64)));
+                true
+            }
+            "rowAt" => {
+                let pos = int(0).unwrap_or(-1);
+                cx.ret = Some(V::I64(if pos < 0 { -1 } else { self.row_at_pos(pos as usize).map_or(-1, |r| r as i64) }));
+                return Some(Handled::Yes);
+            }
+            _ => return None,
+        };
+        if done {
+            cx.refresh_virtual = true;
+            cx.repaint = true;
+        }
+        Some(if done { Handled::Yes } else { Handled::No })
+    }
+}
+
+/// svelters-egui's `virtual-list` methods (`VirtualList::call_list`), in order.
+pub const LIST_METHODS: &[skelter_core::MethodSpec] = &[
+    skelter_core::MethodSpec::new(
+        "splice",
+        &[
+            skelter_core::ArgSpec::new("pos", skelter_core::ValueType::I64),
+            skelter_core::ArgSpec::new("removed", skelter_core::ValueType::I64),
+            skelter_core::ArgSpec::new("ids", skelter_core::ValueType::List).nullable(),
+            skelter_core::ArgSpec::new("labels", skelter_core::ValueType::List).nullable(),
+        ],
+        None,
+    ),
+    skelter_core::MethodSpec::new("count", &[], Some(skelter_core::ArgSpec::new("return", skelter_core::ValueType::I64))),
+    skelter_core::MethodSpec::new(
+        "scrollTo",
+        &[skelter_core::ArgSpec::new("pos", skelter_core::ValueType::I64), skelter_core::ArgSpec::new("hint", skelter_core::ValueType::Str).nullable()],
+        None,
+    ),
+    skelter_core::MethodSpec::new(
+        "setRow",
+        &[skelter_core::ArgSpec::new("row", skelter_core::ValueType::I64), skelter_core::ArgSpec::new("widget", skelter_core::ValueType::I64).nullable()],
+        None,
+    ),
+    skelter_core::MethodSpec::new("rowAt", &[skelter_core::ArgSpec::new("pos", skelter_core::ValueType::I64)], Some(skelter_core::ArgSpec::new("return", skelter_core::ValueType::I64))),
+];
 
 /// The list's own look: none (CSS may give it a box); its rows are [`ROW_UA`].
 pub const UA: Ua = Ua(&[]);
@@ -1170,6 +1317,10 @@ kind_props! {
     current "current": i64 = I64(-1) ; I64, Paint, bindable;
     /// Free row slots kept for reuse beyond the window's needs.
     pool_limit "pool-limit": i64 = I64(8) ; I64, Property;
+    /// svelters-egui's `selected`: the position of the (first) selected item, -1 for none
+    /// (native-owned: clicks and keys change it; a write selects that item and raises nothing).
+    /// The list's own: `tree-view` forwards only the six above.
+    selected "selected": i64 = I64(-1) ; I64, Paint, bindable;
 }
 
 /// A sync M5 signal: the slot request waits for JS.
@@ -1222,7 +1373,7 @@ pub(crate) fn id_list(v: &Value) -> Option<Vec<u64>> {
     }
 }
 
-const PROPS: [P; 6] = [P::selection, P::row_height, P::uniform_rows, P::selected_ids, P::current, P::pool_limit];
+const PROPS: [P; 7] = [P::selection, P::row_height, P::uniform_rows, P::selected_ids, P::current, P::pool_limit, P::selected];
 
 impl VirtualList {
     /// Writes one of the list props (by [`ListProps`] index; `tree-view` forwards its first six).
@@ -1234,6 +1385,7 @@ impl VirtualList {
             P::row_height => v.as_f64().is_some_and(|h| h > 0.0),
             P::pool_limit => v.as_i64().is_some_and(|n| n >= 0),
             P::selected_ids => id_list(v).is_some(),
+            P::selected => v.as_i64().is_some(),
             _ => true,
         };
         if !ok {
@@ -1254,6 +1406,11 @@ impl VirtualList {
             }
             P::current => self.sel.cursor = (self.props.current >= 0).then_some(self.props.current as u64),
             P::pool_limit => self.pool_limit = self.props.pool_limit as usize,
+            P::selected => {
+                let pos = self.props.selected;
+                let id = (pos >= 0).then(|| self.ids.get(pos as usize).copied()).flatten();
+                self.sel.set(id);
+            }
         }
         Ok(())
     }
@@ -1263,6 +1420,7 @@ impl VirtualList {
         match PROPS.get(prop.0 as usize)? {
             P::selected_ids => Some(self.selected_value()),
             P::current => Some(Value::I64(self.sel.cursor.map_or(-1, |c| c as i64))),
+            P::selected => Some(Value::I64(self.ids.iter().position(|id| self.sel.is_selected(*id)).map_or(-1, |p| p as i64))),
             _ => self.props.get(prop),
         }
     }
@@ -1298,15 +1456,46 @@ impl Kind for VirtualList {
         let s = intrinsic_size(self, known.width.unwrap_or(self.width));
         taffy::Size { width: s.w, height: s.h }
     }
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        scrolling_layout(cx)
+    }
     fn record(&self, cx: &mut RecordCx) {
         self.record_rows(cx);
     }
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
-        self.handle(cx, &SPEC, ev)
+        let h = self.handle(cx, &SPEC, ev);
+        if self.reveal.is_some() {
+            cx.refresh_virtual = true;
+        }
+        h
+    }
+    fn methods() -> &'static [skelter_core::MethodSpec] {
+        LIST_METHODS
+    }
+    fn call(&mut self, cx: &mut EventCx, method: usize, args: &[skelter_core::Value]) -> Handled {
+        LIST_METHODS.get(method).and_then(|m| self.call_list(cx, m.name, args)).unwrap_or(Handled::No)
+    }
+    fn virtual_children(&mut self) -> Option<&mut dyn skelter_core::VirtualChildren> {
+        Some(self)
+    }
+    fn self_scroll(&self) -> Option<skelter_core::SelfScroll> {
+        Some(self.self_scroll_extent())
     }
     fn a11y(&self, cx: &mut A11yCx) {
         self.list_a11y(cx.node);
     }
+}
+
+/// The layout of a list (or tree) on a document: the cascade's, scrolling vertically itself (a
+/// scroll container's automatic minimum size is zero, so its size is its layout's: `flex-grow`,
+/// a CSS `height`), unless CSS says otherwise.
+pub fn scrolling_layout(cx: &StyleCx) -> taffy::Style {
+    let mut s = cx.default_layout();
+    if !cx.computed.is_some_and(|c| c.get("overflow-y").is_some() || c.get("overflow").is_some()) {
+        s.overflow = taffy::Point { x: taffy::Overflow::Hidden, y: taffy::Overflow::Scroll };
+        s.scrollbar_width = 0.0;
+    }
+    s
 }
 
 /// The list's measured size for layout: its width as given, its full content height.

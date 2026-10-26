@@ -27,6 +27,7 @@ pub mod switch;
 pub mod toggle_button;
 
 pub mod box_;
+pub mod collapsing;
 pub mod frame;
 pub mod grid;
 pub mod sides;
@@ -35,6 +36,7 @@ pub mod stack;
 pub use box_::FlexBox;
 pub use button::Button;
 pub use checkbox::Checkbox;
+pub use collapsing::CollapsingHeader;
 pub use frame::Frame;
 pub use grid::Grid;
 pub use hyperlink::Hyperlink;

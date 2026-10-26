@@ -168,8 +168,10 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
     skelter_widgets::host::register_tier0(reg)?;
     // the tier-1 views whose surface is egui's (A9, `surface::tier1`)
     skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::controls::CollapsingHeader>(reg)?;
     skelter_widgets::table::kinds::register(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::virtual_list::VirtualList>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::menu::ContextMenu>(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::menu::MenuItemKind>(reg)?;
@@ -177,14 +179,32 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
 }
 
 /// Whether surface type `t` can live in core prop `c`: the same core type and, for an enum, every
-/// surface name among core's values (the index is remapped by name, [`enum_to_core`]).
+/// surface name among core's values (the index is remapped by name, [`enum_to_core`]). A surface
+/// integer lives in a core float (egui's `indent: int` is the tree's `indent: float`, A9b): the
+/// value is converted both ways ([`num_to_core`], [`num_from_core`]).
 fn fits(t: ValueType, c: &core::PropSpec) -> bool {
     t != ValueType::Any
-        && c.ty == core_type(t)
+        && (c.ty == core_type(t) || (t == ValueType::I64 && c.ty == core::ValueType::F64))
         && match t {
             ValueType::Enum(names) => names.iter().all(|n| c.enum_values.contains(n)),
             _ => true,
         }
+}
+
+/// A surface value for core prop `c` of type `t` (an integer for a float prop becomes a float).
+pub fn num_to_core(t: ValueType, c: &core::PropSpec, v: core::Value) -> core::Value {
+    match (t, c.ty, v) {
+        (ValueType::I64, core::ValueType::F64, core::Value::I64(i)) => core::Value::F64(i as f64),
+        (_, _, v) => v,
+    }
+}
+
+/// Core prop `c`'s value as surface type `t` (a float prop read as an integer is rounded).
+pub fn num_from_core(t: ValueType, c: &core::PropSpec, v: core::Value) -> core::Value {
+    match (t, c.ty, v) {
+        (ValueType::I64, core::ValueType::F64, core::Value::F64(f)) => core::Value::I64(f.round() as i64),
+        (_, _, v) => v,
+    }
 }
 
 /// A surface enum index as core prop `c`'s index (by name).
