@@ -1941,6 +1941,52 @@ mod tests {
         assert!(root.is_multiselectable());
     }
 
+    /// SV76: a press on a nested node inside row 1 reaches the list at the list's own local point
+    /// (not the nested node's), so row 1 is selected.
+    #[test]
+    fn a_press_on_a_rows_content_selects_that_row() {
+        use crate::testdoc::{child, doc, frame, pointer};
+        use skelter_base::event::PointerPhase;
+        use skelter_core::Value as V;
+        let (mut d, root) = doc(Size::new(300.0, 200.0), |r| {
+            crate::host::register::<VirtualList>(r).unwrap();
+        });
+        let spec = d.registry().get(skelter_core::KindId::of("virtual-list")).unwrap().spec;
+        let (splice, set_row) = (spec.method_named("splice").unwrap(), spec.method_named("setRow").unwrap());
+        let bind = spec.signal_named("bind").unwrap();
+        let list = child(&mut d, root, skelter_core::KindId::of("virtual-list"), "width: 200px; height: 150px");
+        d.call(list, splice, &[V::I64(0), V::I64(0), V::List(vec![V::I64(10), V::I64(11), V::I64(12)].into())]).unwrap();
+        // JS listens to the row requests (svelters-skelter's ListView does)
+        for name in ["setup", "bind", "unbind", "teardown"] {
+            d.listen(list, spec.signal_named(name).unwrap(), skelter_core::ListenFlags::EMPTY);
+        }
+        let (setup, bind) = (spec.signal_named("setup").unwrap(), bind);
+        let field = |e: &skelter_core::JsEvent, f: &str| e.arg.as_ref().and_then(|a| a.field(f).and_then(V::as_i64).or_else(|| a.as_i64()));
+        frame(&mut d);
+        // setup(slot): the slot's widget, with content 8 points into the row (another origin)
+        let mut inner_of_slot = std::collections::HashMap::new();
+        for e in d.take_events().iter().filter(|e| e.signal == setup) {
+            let slot = field(e, "row").unwrap();
+            let row = d.create(skelter_core::KindId::of("box"));
+            d.insert(list, row, None, None).unwrap();
+            let inner = child(&mut d, row, skelter_core::KindId::of("box"), "margin-top: 8px; margin-left: 8px; width: 40px; height: 12px; background-color: #ff0000");
+            d.call(list, set_row, &[V::I64(slot), V::I64(row.0 as i64)]).unwrap();
+            inner_of_slot.insert(slot, inner);
+        }
+        assert!(inner_of_slot.len() >= 3, "{inner_of_slot:?}");
+        frame(&mut d);
+        let inner_of: std::collections::HashMap<i64, NodeId> =
+            d.take_events().iter().filter(|e| e.signal == bind).map(|e| (field(e, "pos").unwrap(), inner_of_slot[&field(e, "row").unwrap()])).collect();
+        frame(&mut d);
+        let r = d.world_rect(inner_of[&1]).unwrap();
+        let (x, y) = ((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0);
+        assert_eq!(d.hit_test(crate::testdoc::W, skelter_base::geom::Point::new(x, y)), Some(inner_of[&1]), "{r:?}");
+        d.dispatch(&pointer(PointerPhase::Down, x, y, 1_000, false));
+        d.dispatch(&pointer(PointerPhase::Up, x, y, 2_000, false));
+        let ids = spec.prop_named("selected-ids").unwrap();
+        assert_eq!(d.get_prop(list, ids), Some(V::List(vec![V::I64(11)].into())));
+    }
+
     #[test]
     fn core_virtual_children_follow_the_window() {
         use skelter_core::VirtualChildren as _;

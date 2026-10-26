@@ -46,8 +46,25 @@ pub(crate) fn call_kind(doc: &mut Document, node: NodeId, ev: &Event, emitted: &
 fn bubble_native(doc: &mut Document, target: NodeId, ev: &Event, emitted: &mut Vec<Emitted>, pointer: Option<u32>) -> Option<NodeId> {
     let mut a = Some(target);
     while let Some(n) = a {
-        if !doc.state(n).contains(StateMask::DISABLED) && call_kind(doc, n, ev, emitted, pointer) == Handled::Yes {
-            return Some(n);
+        if !doc.state(n).contains(StateMask::DISABLED) {
+            // SV76: each ancestor gets the pointer in its own local space, not the target's
+            let local = |doc: &Document, p: &PointerInput| {
+                let mut q = p.clone();
+                if let Some(w) = doc.window_of(n) {
+                    q.local = doc.to_local(w, n, p.pos);
+                }
+                q
+            };
+            let h = match ev {
+                Event::PointerDown(p) if n != target => call_kind(doc, n, &Event::PointerDown(&local(doc, p)), emitted, pointer),
+                Event::PointerUp(p) if n != target => call_kind(doc, n, &Event::PointerUp(&local(doc, p)), emitted, pointer),
+                Event::PointerMove(p) if n != target => call_kind(doc, n, &Event::PointerMove(&local(doc, p)), emitted, pointer),
+                Event::Click(p) if n != target => call_kind(doc, n, &Event::Click(&local(doc, p)), emitted, pointer),
+                _ => call_kind(doc, n, ev, emitted, pointer),
+            };
+            if h == Handled::Yes {
+                return Some(n);
+            }
         }
         a = doc.parent(n);
     }
