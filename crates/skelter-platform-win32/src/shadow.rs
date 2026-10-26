@@ -273,9 +273,7 @@ impl TextInputClient for ShadowClient {
         if s.len() > max_bytes {
             return None;
         }
-        let start = utf8_len(&self.text[..self.selection.start]);
-        let end = utf8_len(&self.text[..self.selection.end]);
-        Some((s, start..end))
+        Some((s, self.selection.clone()))
     }
 
     fn purpose(&self) -> InputPurpose {
@@ -359,5 +357,13 @@ mod tests {
         c.replace_and_mark_text_in_range(None, "ab", None);
         assert_eq!(c.bounds_for_range(1..2), Some(Rect::new(10.0, 0.0, 20.0, 20.0)));
         assert_eq!(c.bounds_for_range(0..2), Some(Rect::new(0.0, 0.0, 20.0, 20.0)));
+    }
+
+    #[test]
+    fn surrounding_text_keeps_utf16_offsets() {
+        // é is one unit, 😀 two.
+        let c = field("é😀x", 1..3);
+        assert_eq!(c.surrounding_text(64), Some(("é😀x".to_owned(), 1..3)));
+        assert_eq!(c.surrounding_text(2), None);
     }
 }

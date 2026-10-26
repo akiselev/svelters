@@ -318,6 +318,12 @@ impl CompositorHandle {
         self.post(Msg::SetRefresh { window, interval });
     }
 
+    /// The pixel density of the window's monitor (fling distances), replacing `CompositorConfig::ppi`
+    /// for that window.
+    pub fn set_ppi(&self, window: WindowId, ppi: f32) {
+        self.post(Msg::SetPpi { window, ppi });
+    }
+
     /// A texture produced elsewhere (an egui island, an offscreen viewport), created on [`Self::gpu`]'s
     /// device, drawn by `Prim::Surface` and `LayerKind::Texture`.
     pub fn register_texture(&self, id: TextureId, texture: wgpu::Texture) {

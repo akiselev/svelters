@@ -381,7 +381,7 @@ mod tests {
             None
         }
         fn surrounding_text(&self, _: usize) -> Option<(String, std::ops::Range<usize>)> {
-            Some((self.text.clone(), self.byte(self.sel.start)..self.byte(self.sel.end)))
+            Some((self.text.clone(), self.sel.clone()))
         }
     }
 

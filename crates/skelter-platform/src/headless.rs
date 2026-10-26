@@ -4,7 +4,7 @@
 
 use crate::api::{
     A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, PlatformError, SurfaceTarget, WindowDesc,
-    Waker, MenuDesc,
+    Waker, MenuDesc, DragId, DragOutcome, ImeHints, WindowStateRequest,
 };
 use crate::clipboard::{Clipboard, MemoryClipboard};
 use skelter_base::accesskit;
@@ -51,6 +51,8 @@ pub enum Scripted {
     A11y { window: WindowId, event: A11yEvent },
     /// The user asked to quit (Cmd-Q).
     QuitRequested,
+    /// A drag the app started ended ([`AppHandler::drag_ended`]).
+    DragEnded { drag: DragId, outcome: DragOutcome },
 }
 
 /// A call the app made, in order.
@@ -74,6 +76,8 @@ pub enum PlatformCall {
     DragWindow(WindowId),
     UpdateA11y(WindowId, accesskit::TreeUpdate),
     SetMenuBar(Option<MenuDesc>),
+    SetWindowState(WindowId, WindowStateRequest),
+    SetImeHints(WindowId, ImeHints),
     Exit,
 }
 
@@ -84,6 +88,9 @@ pub struct HeadlessWindow {
     pub scale: Scale,
     pub size: DeviceSize,
     pub layers: Vec<SurfaceId>,
+    /// The index into the monitors of the one holding the window ([`HeadlessPlatform::set_window_monitor`]);
+    /// `None`: the one at `desc.position`, else the first.
+    pub monitor: Option<usize>,
 }
 
 /// The state the app reaches through [`PlatformCx`].
@@ -136,6 +143,7 @@ impl HeadlessPlatform {
                     work_area: None,
                     scale: Scale(1.0),
                     refresh_millihertz: Some(60_000),
+                    ppi: None,
                 }],
                 calls: Vec::new(),
                 exit: false,
@@ -154,6 +162,14 @@ impl HeadlessPlatform {
 
     pub fn set_monitors(&mut self, monitors: Vec<Monitor>) {
         self.cx.monitors = monitors;
+    }
+
+    /// Puts `window` on monitor `index` (what `monitor_of` answers). Script a
+    /// [`WindowEvent::MonitorChanged`] to tell the app, as a real OS would.
+    pub fn set_window_monitor(&mut self, window: WindowId, index: usize) {
+        if let Some(w) = self.cx.windows.get_mut(&window) {
+            w.monitor = Some(index);
+        }
     }
 
     /// Queues an event at `at` (events at the same time keep their order).
@@ -242,6 +258,7 @@ impl HeadlessPlatform {
                     self.cx.exit = true;
                 }
             }
+            Scripted::DragEnded { drag, outcome } => handler.drag_ended(&mut self.cx, drag, outcome),
         }
     }
 
@@ -278,7 +295,7 @@ impl PlatformCx for HeadlessCx {
         let scale = self.default_scale;
         let size = DeviceSize { w: (desc.size.w * scale.0).round() as u32, h: (desc.size.h * scale.0).round() as u32 };
         self.calls.push(PlatformCall::CreateWindow(id, desc.clone()));
-        self.windows.insert(id, HeadlessWindow { desc, scale, size, layers: Vec::new() });
+        self.windows.insert(id, HeadlessWindow { desc, scale, size, layers: Vec::new(), monitor: None });
         Ok(id)
     }
 
@@ -360,6 +377,32 @@ impl PlatformCx for HeadlessCx {
         self.monitors.clone()
     }
 
+    fn monitor_of(&self, id: WindowId) -> Option<Monitor> {
+        let w = self.windows.get(&id)?;
+        let at = w.desc.position;
+        let held = w.monitor.and_then(|i| self.monitors.get(i)).or_else(|| {
+            at.and_then(|(x, y)| {
+                self.monitors.iter().find(|m| {
+                    x >= m.position.0
+                        && y >= m.position.1
+                        && x < m.position.0 + m.size.w as i32
+                        && y < m.position.1 + m.size.h as i32
+                })
+            })
+        });
+        held.or(self.monitors.first()).cloned()
+    }
+
+    /// Recorded; headless windows have no state to change, so nothing was sent.
+    fn set_window_state(&mut self, id: WindowId, req: WindowStateRequest) -> bool {
+        self.calls.push(PlatformCall::SetWindowState(id, req));
+        false
+    }
+
+    fn set_ime_hints(&mut self, id: WindowId, hints: ImeHints) {
+        self.calls.push(PlatformCall::SetImeHints(id, hints));
+    }
+
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]) {
         self.calls.push(PlatformCall::SetHitTestRegions(id, regions.to_vec()));
     }
@@ -412,6 +455,7 @@ impl PlatformCx for HeadlessCx {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::api::{DragData, PopupDesc};
     use skelter_base::event::{KeyEvent, KeyLocation, KeyState, Modifiers};
     use skelter_base::geom::Size;
     use skelter_base::key::Key;
@@ -422,6 +466,7 @@ mod tests {
         seen: Vec<(Time, String)>,
         waker: Option<Waker>,
         veto_quit: bool,
+        drags: Vec<(DragId, DragOutcome)>,
     }
 
     impl AppHandler for Recorder {
@@ -456,6 +501,9 @@ mod tests {
         }
         fn quit_requested(&mut self, _: &mut dyn PlatformCx) -> bool {
             !self.veto_quit
+        }
+        fn drag_ended(&mut self, _: &mut dyn PlatformCx, drag: DragId, outcome: DragOutcome) {
+            self.drags.push((drag, outcome));
         }
     }
 
@@ -546,5 +594,53 @@ mod tests {
         let w = &p.windows()[&WindowId(1)];
         assert_eq!((w.size, w.scale), (DeviceSize { w: 10, h: 20 }, Scale(2.0)));
         assert_eq!(p.cx().window_scale(WindowId(1)), Some(Scale(2.0)));
+    }
+
+    fn monitor(x: i32, refresh: u32) -> Monitor {
+        Monitor {
+            name: None,
+            position: (x, 0),
+            size: DeviceSize { w: 1000, h: 1000 },
+            work_area: None,
+            scale: Scale(1.0),
+            refresh_millihertz: Some(refresh),
+            ppi: None,
+        }
+    }
+
+    #[test]
+    fn monitor_of_follows_the_set_monitor_then_the_position() {
+        let mut p = HeadlessPlatform::new();
+        p.set_monitors(vec![monitor(0, 60_000), monitor(1000, 120_000)]);
+        let mut app = Recorder::default();
+        p.run_until(&mut app, Some(Time(1)));
+        let w = WindowId(1);
+        assert_eq!(p.cx().monitor_of(w).map(|m| m.position), Some((0, 0)));
+        p.set_window_monitor(w, 1);
+        assert_eq!(p.cx().monitor_of(w).map(|m| m.refresh_millihertz), Some(Some(120_000)));
+        let id = p.cx().create_window(WindowDesc { position: Some((1500, 10)), ..Default::default() });
+        assert_eq!(p.cx().monitor_of(id).map(|m| m.position), Some((1000, 0)));
+        assert_eq!(p.cx().monitor_of(WindowId(99)), None);
+    }
+
+    #[test]
+    fn state_requests_are_recorded_and_unsent_and_drags_end_through_the_handler() {
+        let mut p = HeadlessPlatform::new();
+        p.push(Time(5), Scripted::DragEnded { drag: DragId(3), outcome: DragOutcome::Dropped });
+        let mut app = Recorder::default();
+        p.run_until(&mut app, Some(Time(6)));
+        assert_eq!(app.drags, vec![(DragId(3), DragOutcome::Dropped)]);
+        let w = WindowId(1);
+        assert!(!p.cx().set_window_state(w, WindowStateRequest::Fullscreen));
+        p.cx().set_ime_hints(w, ImeHints { multiline: true, ..Default::default() });
+        let calls = p.take_calls();
+        assert!(calls.contains(&PlatformCall::SetWindowState(w, WindowStateRequest::Fullscreen)));
+        assert!(calls.contains(&PlatformCall::SetImeHints(w, ImeHints { multiline: true, ..Default::default() })));
+        // What the headless platform does not offer stays the trait's honest default.
+        assert!(matches!(p.cx().start_drag(w, DragData::default()), Err(PlatformError::Unsupported(_))));
+        let popup = PopupDesc { parent: w, anchor: Rect::default(), gravity: Default::default(), grab: true };
+        assert!(matches!(p.cx().create_popup(WindowDesc::default(), popup), Err(PlatformError::Unsupported(_))));
+        assert!(p.cx().layer_frame_source(w, SurfaceId(1)).is_none());
+        assert!(!p.cx().client_side_decorations(w));
     }
 }

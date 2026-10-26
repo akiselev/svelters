@@ -5,7 +5,7 @@
 use crate::a11y::{A11yAdapter, A11ySink};
 use crate::api::{
     A11yEvent, AppHandler, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, PlatformError, SurfaceTarget,
-    WindowDesc, Waker,
+    WindowDesc, WindowStateRequest, Waker,
 };
 use crate::clipboard::{Clipboard, SystemClipboard};
 use crate::clock::{self, OsClock};
@@ -77,6 +77,8 @@ struct Win {
     input: WindowInput,
     regions: Vec<HitRegion>,
     captured: bool,
+    /// The monitor the window was last seen on, to report `WindowEvent::MonitorChanged`.
+    monitor: Option<winit::monitor::MonitorHandle>,
     window: Window,
 }
 
@@ -210,7 +212,26 @@ impl ApplicationHandler<UserEvent> for WinitApp {
                 let env = InputEnvelope { seq, window: id, os_time, recv_time: recv, event };
                 self.with_cx(el, |h, cx| h.input(cx, env));
             }
-            Translated::Window(event) => self.with_cx(el, |h, cx| h.window_event(cx, id, event)),
+            Translated::Window(event) => {
+                // winit has no monitor-change event: a move, resize or scale change may have taken the
+                // window to another monitor.
+                let moved = matches!(
+                    event,
+                    skelter_base::event::WindowEvent::Moved { .. }
+                        | skelter_base::event::WindowEvent::Resized { .. }
+                        | skelter_base::event::WindowEvent::ScaleChanged { .. }
+                );
+                let changed = moved && {
+                    let now = win.window.current_monitor();
+                    let changed = now != win.monitor;
+                    win.monitor = now;
+                    changed
+                };
+                self.with_cx(el, |h, cx| h.window_event(cx, id, event));
+                if changed {
+                    self.with_cx(el, |h, cx| h.window_event(cx, id, skelter_base::event::WindowEvent::MonitorChanged));
+                }
+            }
         }
     }
 
@@ -233,6 +254,21 @@ impl ApplicationHandler<UserEvent> for WinitApp {
         // The Wayland clipboard holds winit's display pointer: drop it before the loop goes.
         self.state.clipboard = None;
         self.state.windows.clear();
+    }
+}
+
+fn monitor(m: &winit::monitor::MonitorHandle) -> Monitor {
+    let pos = m.position();
+    let size = m.size();
+    Monitor {
+        name: m.name(),
+        position: (pos.x, pos.y),
+        size: DeviceSize { w: size.width, h: size.height },
+        work_area: os::monitor_work_area(m),
+        scale: Scale(m.scale_factor() as f32),
+        refresh_millihertz: m.refresh_rate_millihertz(),
+        // winit 0.30 does not expose the panel's physical size.
+        ppi: None,
     }
 }
 
@@ -307,7 +343,15 @@ impl Cx<'_> {
         self.st.by_winit.insert(window.id(), id);
         self.st.windows.insert(
             id,
-            Win { a11y, shim, input: WindowInput::new(scale), regions: Vec::new(), captured: false, window },
+            Win {
+                a11y,
+                shim,
+                input: WindowInput::new(scale),
+                regions: Vec::new(),
+                captured: false,
+                monitor: window.current_monitor(),
+                window,
+            },
         );
         Ok(id)
     }
@@ -446,21 +490,24 @@ impl PlatformCx for Cx<'_> {
     }
 
     fn monitors(&self) -> Vec<Monitor> {
-        self.el
-            .available_monitors()
-            .map(|m| {
-                let pos = m.position();
-                let size = m.size();
-                Monitor {
-                    name: m.name(),
-                    position: (pos.x, pos.y),
-                    size: DeviceSize { w: size.width, h: size.height },
-                    work_area: os::monitor_work_area(&m),
-                    scale: Scale(m.scale_factor() as f32),
-                    refresh_millihertz: m.refresh_rate_millihertz(),
-                }
-            })
-            .collect()
+        self.el.available_monitors().map(|m| monitor(&m)).collect()
+    }
+
+    fn monitor_of(&self, id: WindowId) -> Option<Monitor> {
+        self.win(id)?.window.current_monitor().map(|m| monitor(&m))
+    }
+
+    fn set_window_state(&mut self, id: WindowId, req: WindowStateRequest) -> bool {
+        let Some(w) = self.win(id) else { return false };
+        match req {
+            WindowStateRequest::Maximize => w.window.set_maximized(true),
+            WindowStateRequest::Unmaximize => w.window.set_maximized(false),
+            WindowStateRequest::Minimize => w.window.set_minimized(true),
+            WindowStateRequest::Fullscreen => w.window.set_fullscreen(Some(winit::window::Fullscreen::Borderless(None))),
+            WindowStateRequest::Unfullscreen => w.window.set_fullscreen(None),
+            WindowStateRequest::Activate => w.window.focus_window(),
+        }
+        true
     }
 
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]) {

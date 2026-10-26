@@ -4,7 +4,7 @@
 //! fractional scale, the integer buffer scale) is applied on the commit that carries a buffer of the matching
 //! size, and that commit is wgpu's present on the compositor thread. So the UI thread never sends that state
 //! itself: it records it in the surface's [`SurfaceLock`] keyed by buffer size, and the frame source applies
-//! it in [`FrameSource::before_present`] when the compositor presents a buffer of that size (the scheme of
+//! it in [`FrameSource::before_present_sized`] when the compositor presents a buffer of that size (the scheme of
 //! Firefox's `WaylandSurfaceLock`). The lock also holds the toplevel's subsurfaces: they switch to sync mode
 //! when a resize starts, so their new content lands atomically with the parent's, and back to desync after the
 //! parent's first present at the new size (and not before an interactive resize ends).
@@ -12,7 +12,9 @@
 //! **The frame source** is skelter-platform's [`FrameSource`], with its own event queue on the shared
 //! connection (`wait` on the compositor's vsync thread, `before_present` on the compositor thread):
 //! - frame callbacks are the vsync signal: armed with each present, or with a bare commit when `wait` finds
-//!   none armed (nothing was presented since the last callback);
+//!   none armed (nothing was presented since the last callback). A bare commit also applies a pending
+//!   `ack_configure` (sctk acks at once) with the old buffer, so it is skipped while the lock holds a
+//!   resize's pending state; the resize's state then lands with the first buffer of the new size;
 //! - `wp_presentation` feedback reports when each frame reached the screen and the output's refresh interval;
 //! - the 100 ms rule: a frame callback outstanding for 100 ms means the compositor stopped drawing the surface
 //!   (hidden, minimised, on another workspace): `wait` reports `Occluded(true)`, and `Occluded(false)` on the
@@ -142,11 +144,15 @@ impl SurfaceLock {
         }
     }
 
-    /// Before a present: applies the pending state on `surface` and returns the buffer size it is for. The
-    /// frame source does not learn the presented buffer's size, so the pending state goes with the next
-    /// present (the compositor presents at the new size once the resize handshake ran; see the lane record).
-    fn before_present(&self, surface: &WlSurface) -> Option<DeviceSize> {
+    /// Before a present of a `presented`-size buffer: applies the pending state on `surface` when it is for
+    /// that size, and returns the buffer size the surface's state is for. An old-size frame presented after a
+    /// configure keeps the old state (an integer `buffer_scale` the buffer does not divide is a protocol
+    /// error). `None` (the caller did not say the size) applies the pending state with this present.
+    fn before_present(&self, surface: &WlSurface, presented: Option<DeviceSize>) -> Option<DeviceSize> {
         let mut l = self.0.lock().unwrap();
+        if !l.pending.as_ref().is_some_and(|g| applies_with(g.buffer, presented)) {
+            return l.applied;
+        }
         let Some(g) = l.pending.take() else { return l.applied };
         match &g.viewport {
             Some(vp) => {
@@ -188,7 +194,10 @@ impl SurfaceLock {
 /// Opt-in protocols for a frame source (see the module docs).
 #[derive(Clone, Copy, Debug, Default)]
 pub struct FrameSourceConfig {
-    /// Use `wp_fifo_v1` barriers (only when the swapchain is not in FIFO present mode).
+    /// Use `wp_fifo_v1` barriers. Off by default, and enable it **only with a Mailbox or Immediate
+    /// swapchain**: for FIFO present mode Mesa's Vulkan WSI creates its own `wp_fifo_v1` on the surface, and
+    /// a second one is a protocol error that kills the connection (decided as the lane recommended,
+    /// 2026-10-26).
     pub fifo: bool,
 }
 
@@ -331,21 +340,11 @@ impl FrameSource for WaylandFrameSource {
     }
 
     fn before_present(&self, frame: FrameId) {
-        let mut g = self.inner.lock().unwrap();
-        // The previous present landed: a resize waiting for it leaves sync mode.
-        self.lock.after_present(g.last_presented.take());
-        g.last_presented = self.lock.before_present(&self.surface);
-        if g.callback_since.is_none() {
-            self.surface.frame(&self.qh, ());
-            g.callback_since = Some(time::now());
-        }
-        if let Some(p) = &self.presentation {
-            p.feedback(&self.surface, &self.qh, FeedbackData { frame });
-        }
-        if let Some(f) = &self.fifo {
-            f.set_barrier();
-            f.wait_barrier();
-        }
+        self.present(frame, None)
+    }
+
+    fn before_present_sized(&self, frame: FrameId, size: DeviceSize) {
+        self.present(frame, Some(size))
     }
 
     fn take_presented(&self) -> Vec<Presented> {
@@ -357,6 +356,27 @@ impl FrameSource for WaylandFrameSource {
 
     fn interval(&self) -> Option<Span> {
         self.inner.lock().unwrap().state.interval
+    }
+}
+
+impl WaylandFrameSource {
+    /// `before_present`, with the presented buffer's size when the compositor says it.
+    fn present(&self, frame: FrameId, size: Option<DeviceSize>) {
+        let mut g = self.inner.lock().unwrap();
+        // The previous present landed: a resize waiting for it leaves sync mode.
+        self.lock.after_present(g.last_presented.take());
+        g.last_presented = self.lock.before_present(&self.surface, size);
+        if g.callback_since.is_none() {
+            self.surface.frame(&self.qh, ());
+            g.callback_since = Some(time::now());
+        }
+        if let Some(p) = &self.presentation {
+            p.feedback(&self.surface, &self.qh, FeedbackData { frame });
+        }
+        if let Some(f) = &self.fifo {
+            f.set_barrier();
+            f.wait_barrier();
+        }
     }
 }
 
@@ -397,4 +417,24 @@ impl Dispatch<WpPresentationFeedback, FeedbackData> for Queue {
 
 impl Dispatch<WpFifoV1, ()> for Queue {
     fn event(_: &mut Self, _: &WpFifoV1, _: <WpFifoV1 as wayland_client::Proxy>::Event, _: &(), _: &Connection, _: &QueueHandle<Self>) {}
+}
+
+/// Whether pending surface state for a `pending`-size buffer goes with a present of `presented` (size not
+/// given: yes).
+fn applies_with(pending: DeviceSize, presented: Option<DeviceSize>) -> bool {
+    presented.is_none_or(|p| p == pending)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn pending_state_waits_for_a_buffer_of_its_size() {
+        let new = DeviceSize { w: 1600, h: 1200 };
+        let old = DeviceSize { w: 800, h: 600 };
+        assert!(applies_with(new, Some(new)));
+        assert!(!applies_with(new, Some(old)));
+        assert!(applies_with(new, None));
+    }
 }

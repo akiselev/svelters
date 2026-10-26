@@ -39,6 +39,20 @@ pub enum Role {
     Popup(Popup),
 }
 
+/// Whether the platform's own resize border (`PlatformCx::client_side_decorations`) is active: with client-side
+/// decorations on a resizable window that is floating (not maximised, fullscreen or tiled on any edge).
+pub fn csd_border(csd: bool, resizable: bool, states: WindowState) -> bool {
+    let constrained = states.intersects(
+        WindowState::MAXIMIZED
+            | WindowState::FULLSCREEN
+            | WindowState::TILED_LEFT
+            | WindowState::TILED_RIGHT
+            | WindowState::TILED_TOP
+            | WindowState::TILED_BOTTOM,
+    );
+    csd && resizable && !constrained
+}
+
 pub struct Window {
     pub id: WindowId,
     pub role: Role,
@@ -64,6 +78,9 @@ pub struct Window {
     pub text_client: Option<Box<dyn skelter_base::input::TextInputClient>>,
     pub layers: HashMap<SurfaceId, Layer>,
     pub lock: Arc<SurfaceLock>,
+    /// The outputs the window's surface is on (`wl_surface.enter`), in the order it entered them; the first
+    /// is the window's monitor.
+    pub outputs: Vec<wayland_client::protocol::wl_output::WlOutput>,
     reported: Option<(DeviceSize, f32)>,
 }
 
@@ -77,17 +94,9 @@ impl Window {
 
     /// What the CSD module needs: the size and whether the resize border is active.
     pub fn csd_frame(&self) -> CsdFrame {
-        let constrained = self.states.intersects(
-            WindowState::MAXIMIZED
-                | WindowState::FULLSCREEN
-                | WindowState::TILED_LEFT
-                | WindowState::TILED_RIGHT
-                | WindowState::TILED_TOP
-                | WindowState::TILED_BOTTOM,
-        );
         CsdFrame {
             size: (self.size.0 as f32, self.size.1 as f32),
-            border: self.client_side_decorations() && self.desc.resizable && !constrained,
+            border: csd_border(self.client_side_decorations(), self.desc.resizable, self.states),
         }
     }
 
@@ -230,6 +239,7 @@ pub fn create(
         text_client: None,
         layers: HashMap::new(),
         lock: Arc::new(SurfaceLock::default()),
+        outputs: Vec::new(),
         reported: None,
     };
     if let Role::Toplevel(w) = &window.role {
@@ -422,5 +432,15 @@ mod tests {
         assert_eq!(clamp_size((100, 100), &desc), (300, 200));
         assert_eq!(clamp_size((2000, 900), &desc), (1000, 800));
         assert_eq!(clamp_size((500, 500), &desc), (500, 500));
+    }
+
+    #[test]
+    fn csd_border_only_on_floating_resizable_csd_windows() {
+        assert!(csd_border(true, true, WindowState::ACTIVATED));
+        assert!(!csd_border(false, true, WindowState::empty()));
+        assert!(!csd_border(true, false, WindowState::empty()));
+        assert!(!csd_border(true, true, WindowState::MAXIMIZED));
+        assert!(!csd_border(true, true, WindowState::FULLSCREEN));
+        assert!(!csd_border(true, true, WindowState::TILED_LEFT));
     }
 }

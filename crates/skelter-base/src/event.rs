@@ -130,7 +130,8 @@ pub struct KeyEvent {
     /// The logical key (layout-mapped), egui-named; `None` when it has no egui name.
     pub key: Option<Key>,
     /// The physical key's platform-independent code: the USB HID usage as `page << 16 | usage`
-    /// (Chromium's form; keyboard keys are page 7, so A is `0x0007_0004`), 0 when unknown.
+    /// (Chromium's form; keyboard keys are page 7, so A is `0x0007_0004`); a key with no HID usage is
+    /// `0xFFFF_0000 | native` (the OS's own code in the low 16 bits); 0 when the OS named no key.
     pub physical: u32,
     /// Text this key press produces (after dead keys), if any.
     pub text: Option<String>,
@@ -214,4 +215,8 @@ pub enum WindowEvent {
     Occluded(bool),
     CloseRequested,
     ThemeChanged(Theme),
+    /// The window moved to another monitor, or the set of monitors (or one's mode) changed: refresh
+    /// rate and pixel density may differ. Ask the platform which monitor holds the window
+    /// (`PlatformCx::monitor_of`, else by position in `monitors`).
+    MonitorChanged,
 }

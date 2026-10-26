@@ -122,6 +122,8 @@ pub trait CompositorApi {
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
     /// The refresh interval of the window's monitor.
     fn set_refresh(&self, _window: WindowId, _interval: Span) {}
+    /// The pixel density of the window's monitor (fling physics).
+    fn set_ppi(&self, _window: WindowId, _ppi: f32) {}
     /// The window's caret blink; `None` = a steady caret.
     fn set_caret_blink(&self, _window: WindowId, _blink: Option<skelter_compositor::CaretBlink>) {}
     /// The window's frame-clock snapshot for the urgent-frame rule; `None` = not known (the frame
