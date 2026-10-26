@@ -38,6 +38,8 @@ struct Drawn {
     frame: Option<FrameId>,
     damage: Vec<DeviceRect>,
     items: usize,
+    /// The tints of the icons drawn.
+    icons: Vec<Color>,
     /// The topmost item's transform and its first quad's solid colour (the caret, when shown).
     top: Option<(Affine, Option<Color>)>,
 }
@@ -54,6 +56,7 @@ impl Backend for FakeGpu {
     fn register_texture(&mut self, _: TextureId, _: wgpu::Texture) {}
     fn unregister_texture(&mut self, _: TextureId) {}
     fn draw(&mut self, _: WindowId, _: SurfaceKey, frame: Option<FrameId>, scene: &FrameScene<'_>) -> DrawOutcome {
+        let icons = scene.items.iter().flat_map(|i| i.list.items.iter()).filter_map(|p| if let Prim::Icon(i) = p { i.color } else { None }).collect();
         let top = scene.items.last().map(|it| {
             let color = it.list.items.iter().find_map(|p| match p {
                 Prim::Quad(Quad { fill: Fill::Solid(c), .. }) => Some(*c),
@@ -61,7 +64,7 @@ impl Backend for FakeGpu {
             });
             (it.transform, color)
         });
-        self.draws.push(Drawn { frame, damage: scene.damage.to_vec(), items: scene.items.len(), top });
+        self.draws.push(Drawn { frame, damage: scene.damage.to_vec(), items: scene.items.len(), icons, top });
         DrawOutcome::Presented { submitted: Time(0) }
     }
     fn forget(&mut self, _: &[skelter_base::ids::ImageId], _: &[skelter_base::ids::PathId]) {}
@@ -475,6 +478,63 @@ fn compositor_opacity_animation_runs_and_holds_with_fill_forwards() {
     assert!(gpu.draws.len() >= 6, "about 6 frames over 100 ms");
     assert_eq!(e.tree(W).unwrap().props.anim_opacity[&EFFECT], 1.0, "fill: forwards holds the end value");
     assert!(e.next_wakeup().is_none());
+}
+
+#[test]
+fn a_palette_animation_recolours_slotted_icons_without_commits() {
+    use skelter_base::display::{Icon, PaletteSlot};
+    let (mut e, sent) = engine();
+    let mut gpu = FakeGpu::default();
+    let (red, blue) = (Color::from_rgba8(255, 0, 0, 255), Color::from_rgba8(0, 0, 255, 255));
+    let mut c = base_commit(1);
+    let r = Rect::new(10.0, 10.0, 26.0, 26.0);
+    let mut list = DisplayList::new();
+    // slot 0 at half alpha (a layer's opacity), and an unslotted icon that keeps its colour
+    list.push(Prim::Icon(Icon { image: skelter_base::ids::ImageId(1), rect: r, color: Some(blue.with_alpha(0.5)), slot: Some(PaletteSlot::new(0, 0.5)) }), r);
+    list.push(Prim::Icon(Icon { image: skelter_base::ids::ImageId(2), rect: r, color: Some(Color::BLACK), slot: None }), r);
+    c.lists[0] = (A, Arc::new(list));
+    c.animations = vec![AnimationCmd::Start(AnimationSpec {
+        id: AnimationId(5),
+        node: A,
+        target: Some(EFFECT),
+        property: AnimProperty::Palette(0),
+        generator: Generator::Keyframes {
+            keyframes: vec![
+                Keyframe { offset: 0.0, value: AnimValue::Color(red), easing: None },
+                Keyframe { offset: 1.0, value: AnimValue::Color(blue), easing: None },
+            ],
+            timing: Timing {
+                delay: Span::ZERO,
+                end_delay: Span::ZERO,
+                duration: Span::from_millis(200),
+                iterations: 1.0,
+                iteration_start: 0.0,
+                direction: PlaybackDirection::Normal,
+                fill: FillMode::Backwards,
+                easing: Easing::Linear,
+            },
+        },
+        start: StartTime::NextFrame,
+    })];
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(c)), T0, &mut gpu);
+    complete(&mut e, &mut gpu, T0);
+    for _ in 0..100 {
+        if step(&mut e, &mut gpu).is_none() {
+            break;
+        }
+    }
+    let slotted: Vec<Color> = gpu.draws.iter().filter_map(|d| d.icons.first().copied()).collect();
+    assert!(slotted.len() >= 10, "about 12 frames over 200 ms: {}", slotted.len());
+    assert!(slotted.iter().all(|c| (c.a - 0.5).abs() < 1e-6), "the slot's alpha applies: {slotted:?}");
+    // red towards blue, then the recorded colour once the override is cleared
+    assert!(slotted[1].r > slotted[slotted.len() / 2].r && slotted[slotted.len() / 2].r > 0.0, "{slotted:?}");
+    assert_eq!(*slotted.last().unwrap(), blue.with_alpha(0.5));
+    assert!(gpu.draws.iter().all(|d| d.icons.get(1) == Some(&Color::BLACK) || d.icons.is_empty()), "an unslotted icon keeps its colour");
+    assert!(gpu.draws.iter().skip(1).all(|d| !d.damage.is_empty()), "each recoloured frame damages the icon");
+    let begins = sent.lock().unwrap().iter().filter(|m| matches!(m, ToUi::BeginFrame { .. })).count();
+    assert_eq!(begins, 0, "no UI frame was asked for");
+    assert!(e.tree(W).unwrap().props.anim_palette.is_empty(), "the override is cleared when it ends");
 }
 
 #[test]

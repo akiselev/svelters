@@ -353,7 +353,7 @@ fn images_icons_and_rounded_image() {
         sampling: Sampling::Nearest,
     };
     let rounded = Image { rect: Rect::new(32.0, 0.0, 64.0, 32.0), radii: Corners::all(10.0), sampling: Sampling::Linear, src: Some(Rect::new(1.0, 1.0, 3.0, 3.0)), ..nearest };
-    let icon = Icon { image: ImageId(2), rect: Rect::new(0.0, 32.0, 32.0, 64.0), color: Some(BLUE) };
+    let icon = Icon { image: ImageId(2), rect: Rect::new(0.0, 32.0, 32.0, 64.0), color: Some(BLUE), slot: None };
     let img = g.image(vec![Prim::Image(nearest), Prim::Image(rounded), Prim::Icon(icon)], &res);
     assert_eq!(px(&img, 4, 4), [255, 0, 0, 255]);
     assert_eq!(px(&img, 12, 4), [0, 0, 255, 255]);
@@ -384,11 +384,12 @@ fn paths_fill_and_stroke() {
             fill_rule: FillRule::NonZero,
         },
     );
-    let fill = PathPrim { path: PathId(1), transform: Affine::IDENTITY, paint: PathPaint::Fill(BLUE) };
+    let fill = PathPrim { path: PathId(1), transform: Affine::IDENTITY, paint: PathPaint::Fill(BLUE), slot: None };
     let stroke = PathPrim {
         path: PathId(2),
         transform: Affine::translate(32.0, 32.0),
         paint: PathPaint::Stroke { color: RED, width: 3.0 },
+        slot: None,
     };
     let img = g.image(vec![Prim::Path(fill), Prim::Path(stroke)], &res);
     assert_eq!(px(&img, 8, 8), [0, 0, 255, 255]);
@@ -534,4 +535,49 @@ fn real_text_through_skelter_text() {
     let img = target.read_rgba(&device, &queue).expect("readback");
     assert!(img.chunks(4).any(|p| p[0] < 64), "no dark pixels: the glyphs did not draw");
     check("real_text", &img);
+}
+
+/// SKELTER-svg: a vector icon at 200 px (a 24-unit drawing scaled up, as skelter-widgets'
+/// `VectorArt` draws one) keeps sharp edges: across an edge, at most two pixels are partly covered,
+/// at 1x and at a fractional 1.25x.
+#[test]
+fn vector_icons_stay_sharp_at_200_px() {
+    let Some(mut g) = Gpu::new() else { return };
+    // a disc of radius 10 at (12, 12) in four cubics, and a square ring (two subpaths, even-odd)
+    let k = 0.552_284_8 * 10.0;
+    let (cx, cy) = (12.0, 12.0);
+    let disc = PathData {
+        cmds: vec![
+            PathCmd::MoveTo(cx + 10.0, cy),
+            PathCmd::CubicTo(cx + 10.0, cy + k, cx + k, cy + 10.0, cx, cy + 10.0),
+            PathCmd::CubicTo(cx - k, cy + 10.0, cx - 10.0, cy + k, cx - 10.0, cy),
+            PathCmd::CubicTo(cx - 10.0, cy - k, cx - k, cy - 10.0, cx, cy - 10.0),
+            PathCmd::CubicTo(cx + k, cy - 10.0, cx + 10.0, cy - k, cx + 10.0, cy),
+            PathCmd::Close,
+        ],
+        fill_rule: FillRule::NonZero,
+    };
+    let mut res = Res::default();
+    res.paths.insert(PathId(1), disc);
+    let size = DeviceSize { w: 256, h: 256 };
+    for scale in [1.0f32, 1.25] {
+        // 200 device pixels for the 24 units, from (20, 20)
+        let ppu = 200.0 / 24.0;
+        let t = Affine::scale(1.0 / scale, 1.0 / scale).then(&Affine::translate(20.0, 20.0)).then(&Affine::scale(ppu, ppu));
+        let slot = Some(PaletteSlot::new(0, 1.0));
+        let l = list(vec![Prim::Path(PathPrim { path: PathId(1), transform: t, paint: PathPaint::Fill(Color::BLACK), slot })]);
+        let items = [DrawItem { transform: Affine::IDENTITY, clip: None, opacity: 1.0, list: &l }];
+        let target = HeadlessTarget::new(&g.device, size);
+        let scene = FrameScene { target: size, scale: Scale(scale), clear: Some(Color::WHITE), damage: &[], items: &items, resources: &res };
+        target.render(&g.device, &g.queue, &mut g.renderer, &scene);
+        let img = target.read_rgba(&g.device, &g.queue).expect("readback");
+        let at = |x: u32, y: u32| img[((y * size.w + x) * 4) as usize];
+        // the disc spans 20 + 8.33 .. 20 + 191.67 device pixels; its centre is black
+        assert!(at(120, 120) < 5, "inside: {}", at(120, 120));
+        assert!(at(25, 120) > 250 && at(215, 120) > 250, "outside");
+        for (name, line) in [("left", (0..60).map(|x| at(x, 120)).collect::<Vec<_>>()), ("top", (0..60).map(|y| at(120, y)).collect()), ("diagonal", (20..90).map(|d| at(d, d)).collect())] {
+            let partial = line.iter().filter(|&&v| v > 8 && v < 247).count();
+            assert!(partial <= 2, "{scale}x {name} edge: {partial} partly covered pixels: {line:?}");
+        }
+    }
 }

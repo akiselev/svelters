@@ -18,7 +18,7 @@
 use crate::controls::common::{self, Units};
 use crate::interact::{Hoverable, Intents, Press, PressParams, Pressable, Sense, StateBits, Unit};
 use crate::kind_props;
-use crate::paint::icon::registry;
+use crate::paint::icon::{registry, vector};
 use crate::paint::{self, PaintCx, Ua, UaRule, UaValue::*};
 use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, Resources, SignalId, SignalSpec, Value};
 use skelter_base::accesskit;
@@ -80,6 +80,39 @@ impl Loaded {
                 Some((id, px))
             }
         }
+    }
+}
+
+impl Loaded {
+    /// Records an SVG source as vectors in `dest`, clipped to `rect` and the style's rounded corners
+    /// as the raster would be, when it is drawn larger than the vector threshold, vectorises, is not
+    /// sampled pixelated, and the resources take paths: in its own colours, or tinted by `tint` from
+    /// palette slot 0. `false`: the caller draws the raster.
+    pub fn record_vector(&self, pc: &mut PaintCx, s: &paint::StyleView, dest: Rect, rect: Rect, tint: Option<Color>) -> bool {
+        let Pixels::Svg(bytes) = &self.pixels else { return false };
+        let px = device(dest.size(), pc.scale);
+        if !vector::is_vector_size(px.w.max(px.h)) || matches!(s.keyword("image-rendering"), Some("pixelated" | "crisp-edges")) {
+            return false;
+        }
+        let shown = dest.intersect(&rect);
+        if shown.is_empty() {
+            return false;
+        }
+        let [tl, tr, br, bl] = s.radii();
+        let radii = Corners { tl, tr, br, bl };
+        let clip = shown != dest || !radii.is_zero();
+        let mark = pc.list.items.len();
+        if clip {
+            pc.push(Prim::PushClip(skelter_base::geom::RoundedRect { rect: shown, radii }), Rect::ZERO);
+        }
+        if !vector::record_svg(pc, bytes, dest, tint) {
+            pc.list.items.truncate(mark);
+            return false;
+        }
+        if clip {
+            pc.push(Prim::PopClip, Rect::ZERO);
+        }
+        true
     }
 }
 
@@ -268,6 +301,9 @@ impl Kind for Image {
         if let Ok(l) = load(&self.props.source) {
             let fit = host.keyword("object-fit").unwrap_or(self.props.fit.as_str());
             let dest = paint::fit_rect(fit, l.size, rect);
+            if l.record_vector(&mut pc, &host, dest, rect, None) {
+                return;
+            }
             if let Some((id, pixels)) = l.image(pc.res, &self.props.source, device(dest.size(), pc.scale), false) {
                 paint::paint_image_pixels(&mut pc, &host, fit, id, l.size, pixels, rect);
                 return;
@@ -400,20 +436,31 @@ pub(crate) mod tests {
         register_image("image-test.svg", SVG_20X10).unwrap();
         let mut i = Image::default();
         i.props.source = "image-test.svg".into();
-        // contain: 40x20 in the middle of 40x40, rasterised at that size
-        let (list, res) = testkit::record(&i, Size::new(40.0, 40.0), StateBits::NONE);
+        // contain: 20x10 in the middle of 20x20, rasterised at that size (at or below the vector
+        // threshold)
+        let (list, res) = testkit::record(&i, Size::new(20.0, 20.0), StateBits::NONE);
         assert_eq!(testkit::kinds(&list), ["image"]);
         let Prim::Image(p) = &list.items[0] else { unreachable!() };
-        assert_eq!((p.rect, p.src), (Rect::new(0.0, 10.0, 40.0, 30.0), None));
-        let (_, data) = res.images.values().next().unwrap();
-        assert_eq!((data.format, data.size), (ImageFormat::Rgba8Premul, DeviceSize { w: 40, h: 20 }));
+        assert_eq!((p.rect, p.src), (Rect::new(0.0, 5.0, 20.0, 15.0), None));
+        assert_eq!(res.images.values().next().unwrap().1.size, DeviceSize { w: 20, h: 10 });
+        // larger: its paths, clipped to the corners, no raster
+        let (list, res) = testkit::record(&i, Size::new(40.0, 40.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&list), ["push-clip", "path", "pop-clip"]);
+        let Prim::Path(p) = &list.items[1] else { unreachable!() };
+        assert_eq!((p.paint, p.slot), (skelter_base::display::PathPaint::Fill(Color::from_rgba8(0, 0, 255, 255)), None), "its own colour");
+        assert_eq!(p.transform.apply_rect(&Rect::new(0.0, 0.0, 20.0, 10.0)), Rect::new(0.0, 10.0, 40.0, 30.0));
+        assert!(res.images.is_empty() && res.paths.len() == 1);
         // cover: fills the box, cropped in the raster's pixels
         i.props.fit = "cover".into();
-        let (list, res) = testkit::record(&i, Size::new(40.0, 40.0), StateBits::NONE);
+        let (list, res) = testkit::record(&i, Size::new(10.0, 10.0), StateBits::NONE);
         let Prim::Image(p) = &list.items[0] else { unreachable!() };
-        assert_eq!(p.rect, Rect::new(0.0, 0.0, 40.0, 40.0));
-        assert_eq!(p.src, Some(Rect::new(20.0, 0.0, 60.0, 40.0)));
-        assert_eq!(res.images.values().next().unwrap().1.size, DeviceSize { w: 80, h: 40 });
+        assert_eq!(p.rect, Rect::new(0.0, 0.0, 10.0, 10.0));
+        assert_eq!(p.src, Some(Rect::new(5.0, 0.0, 15.0, 10.0)));
+        assert_eq!(res.images.values().next().unwrap().1.size, DeviceSize { w: 20, h: 10 });
+        // as vectors: clipped to the box
+        let (list, _) = testkit::record(&i, Size::new(40.0, 40.0), StateBits::NONE);
+        let Prim::PushClip(c) = &list.items[0] else { unreachable!() };
+        assert_eq!(c.rect, Rect::new(0.0, 0.0, 40.0, 40.0));
     }
 
     #[test]

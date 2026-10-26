@@ -135,6 +135,25 @@ impl Kind for BoxKind {
     }
 }
 
+/// `icon`: a leaf drawing a coverage mask tinted by its computed `color` from palette slot 0, as
+/// skelter-widgets' registry icons do (a node that draws only from its palette).
+#[derive(Default)]
+pub struct IconKind;
+
+static ICON_SPEC: KindSpec = KindSpec::new("icon");
+
+impl Kind for IconKind {
+    fn spec() -> &'static KindSpec {
+        &ICON_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        let r = cx.bounds();
+        let color = cx.node.style.color;
+        let icon = skelter_base::display::Icon { image: skelter_base::ids::ImageId(1), rect: r, color: Some(color), slot: Some(skelter_base::display::PaletteSlot::new(0, 1.0)) };
+        cx.push(Prim::Icon(icon), r);
+    }
+}
+
 /// `text`: a leaf showing its `text` prop in the computed font.
 #[derive(Default)]
 pub struct TextKind;
@@ -266,6 +285,7 @@ pub fn registry() -> Arc<KindRegistry> {
     r.register::<BoxKind>().expect("box");
     r.register::<TextKind>().expect("text");
     r.register::<ToggleKind>().expect("toggle");
+    r.register::<IconKind>().expect("icon");
     Arc::new(r)
 }
 
