@@ -812,7 +812,9 @@ impl Document {
             self.start_ui_transitions(node, &old_box, &new_box, old_size, tstyle.size);
         }
         let (text, paint, property) = box_diff(&old_box, &new_box);
-        let inherited = first || inherited_differs(&old_box, &new_box);
+        // custom properties inherit too: a changed map restyles the descendants that read it (SV65)
+        let customs_changed = self.style.nodes[i].css.as_ref().is_some_and(|old| !old.custom_eq(&css));
+        let inherited = first || customs_changed || inherited_differs(&old_box, &new_box);
         let new_box = if *old_box == new_box { old_box } else { Arc::new(new_box) };
         self.style.nodes[i].computed = new_box;
         self.style.nodes[i].css = Some(Arc::new(css));

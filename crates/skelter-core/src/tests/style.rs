@@ -40,6 +40,22 @@ fn inherited_values_reach_descendants() {
 }
 
 #[test]
+fn a_custom_property_change_restyles_descendants() {
+    // SV65: `background-color` does not inherit, so only the changed custom map reaches the leaf
+    let (mut d, root) = doc();
+    d.add_sheet(".leaf { background-color: var(--accent) }");
+    let a = child(&mut d, root, BOX, "--accent: #00ff00");
+    let b = child(&mut d, a, BOX, "");
+    let leaf = child(&mut d, b, BOX, "");
+    d.set_style(leaf, classes(&["leaf"]));
+    frame(&mut d);
+    assert_eq!(d.computed(leaf).unwrap().background, Fill::Solid(Color::rgba(0.0, 1.0, 0.0, 1.0)));
+    d.set_style(a, StyleInput { inline: Some("--accent: #ff0000".into()), ..Default::default() });
+    frame(&mut d);
+    assert_eq!(d.computed(leaf).unwrap().background, Fill::Solid(Color::rgba(1.0, 0.0, 0.0, 1.0)));
+}
+
+#[test]
 fn a_state_rule_restyles_with_paint_only() {
     let (mut d, root) = doc();
     d.add_sheet("toggle:hover { background-color: #ff0000 }");
