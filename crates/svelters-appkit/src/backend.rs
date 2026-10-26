@@ -124,6 +124,8 @@ pub(crate) struct Inner {
     frame_pending: Cell<bool>,
     /// Frames delivered by (display-link tick, timer), for tests.
     frame_sources: Cell<(u32, u32)>,
+    /// How long a requested frame waits for a link tick ([`FRAME_WATCHDOG_MS`]; tests raise it).
+    frame_watchdog_ms: Cell<u64>,
     /// (window handle, CADisplayLink)
     display_link: RefCell<Option<(u64, Retained<AnyObject>)>>,
     frame_target: Retained<SveltersTarget>,
@@ -306,6 +308,7 @@ impl AppKitBackend {
             graveyard: RefCell::new(Vec::new()),
             frame_pending: Cell::new(false),
             frame_sources: Cell::new((0, 0)),
+            frame_watchdog_ms: Cell::new(FRAME_WATCHDOG_MS),
             display_link: RefCell::new(None),
             frame_target: SveltersTarget::new(mtm, 0),
             cur_owner: Cell::new(0),
@@ -370,6 +373,13 @@ impl AppKitBackend {
     /// Frames delivered so far by (display-link tick, timer) (tests: the link must really tick).
     pub fn frame_sources(&self) -> (u32, u32) {
         self.inner.frame_sources.get()
+    }
+
+    /// Sets how long a requested frame waits for a display-link tick before the timer delivers it
+    /// (default [`FRAME_WATCHDOG_MS`]). Tests that check the link really ticks raise it: a CI VM's
+    /// resumed link can tick later than 64 ms, and then the watchdog rightly delivers (F22).
+    pub fn set_frame_watchdog_ms(&self, ms: u64) {
+        self.inner.frame_watchdog_ms.set(ms);
     }
 
     /// Every live handle (test cleanup).
@@ -1113,7 +1123,7 @@ impl Inner {
             Some((_, link)) => {
                 let _: () = unsafe { msg_send![&**link, setPaused: false] };
                 trace_frames(|| "request: link unpaused, watchdog armed".into());
-                self.rl.frame_fallback(FRAME_WATCHDOG_MS);
+                self.rl.frame_fallback(self.frame_watchdog_ms.get());
             }
             None => {
                 trace_frames(|| "request: no link, 16 ms timer".into());

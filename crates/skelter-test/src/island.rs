@@ -65,8 +65,6 @@ pub struct IslandDoc<S> {
     /// Layers and the host's AccessKit tree are not committed yet (first frame, resize).
     host_dirty: bool,
     sent_layers: bool,
-    /// The island's AccessKit updates, waiting for the harness.
-    subtree: Vec<TreeUpdate>,
     output: IslandOutput,
     passes: u64,
 }
@@ -98,7 +96,6 @@ impl<S> IslandDoc<S> {
             revision: 0,
             host_dirty: true,
             sent_layers: false,
-            subtree: Vec::new(),
             output: IslandOutput::default(),
             passes: 0,
         }
@@ -223,8 +220,9 @@ impl<S> DocumentApi for IslandDoc<S> {
             } = self;
             let out = island.run(target, |ui| app(ui, state));
             self.passes += 1;
+            // The island's subtree reaches the platform adapter after the host tree that grafts it.
             if let Some(u) = &out.a11y {
-                self.subtree.push(u.clone());
+                c.a11y_subtrees.push(u.clone());
             }
             c.cursor = Some(out.cursor);
             c.ime_area = out.ime.map(|i| i.cursor);
@@ -544,7 +542,6 @@ impl EguiHarnessBuilder {
             doc
         };
         let hooks = Hooks {
-            a11y: Some(Box::new(|d: &mut IslandDoc<S>| std::mem::take(&mut d.subtree))),
             clipboard: Some(Box::new(|d: &mut IslandDoc<S>, text: &str| {
                 d.clipboard.set_text(ClipboardKind::Clipboard, text);
             })),

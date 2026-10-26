@@ -71,6 +71,7 @@ pub struct CompositorConfig {
     pub limits: Option<gpu::DeviceLimits>,
     /// Clear colour of damaged areas; `None` = draw over the previous frame.
     pub clear: Option<Color>,
+    /// The caret colour until a window's first `FastCommit::Caret`, which brings its own.
     pub caret_color: Color,
     /// The caret blink of new windows (the OS setting; [`CaretBlink::platform_default`]); `None` = a
     /// steady caret. Per window: [`CompositorHandle::set_caret_blink`].

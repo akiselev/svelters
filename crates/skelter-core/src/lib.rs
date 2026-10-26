@@ -32,6 +32,7 @@
 //! | [`settle`] | [`Busy`]: why the document is not idle |
 
 pub mod a11y;
+mod caret;
 pub mod common;
 mod compact;
 pub mod cx;

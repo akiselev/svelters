@@ -165,6 +165,31 @@ fn borders_outline_and_radii() {
 }
 
 #[test]
+fn overflow_shorthand_sets_both_axes() {
+    for table in [&tables::EGUI, &tables::SKELTER] {
+        let mut s = Stylist::new(table);
+        let sheet = Stylesheet::parse(
+            "#ok { overflow-y: scroll; overflow: hidden } #cancel { overflow: clip auto } #opt { overflow: hidden; overflow-x: visible }",
+            &ParseOptions::default(),
+        );
+        let (_, diags) = s.add_sheet(&sheet, Origin::Author);
+        assert!(diags.is_empty(), "{}: {diags:?}", table.toolkit);
+        let tree = Tree::parse(TREE);
+        let axes = |id: &str| {
+            let c = style_of(&s, &tree, id);
+            let v = StyleView::new(&c);
+            (v.keyword("overflow-x"), v.keyword("overflow-y"))
+        };
+        assert_eq!(axes("ok"), (Some("hidden"), Some("hidden")), "the later shorthand wins over the longhand");
+        assert_eq!(axes("cancel"), (Some("clip"), Some("auto")));
+        assert_eq!(axes("opt"), (Some("visible"), Some("hidden")), "a later longhand wins over the shorthand");
+        let bad = Stylesheet::parse("a { overflow: hidden wavy }", &ParseOptions::default());
+        let (_, diags) = Stylist::new(table).add_sheet(&bad, Origin::Author);
+        assert_eq!(diags.len(), 1, "{diags:?}");
+    }
+}
+
+#[test]
 fn shorthand_and_value_diagnostics() {
     let mut s = Stylist::new(&tables::EGUI);
     let sheet = Stylesheet::parse(

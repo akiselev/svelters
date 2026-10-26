@@ -2,6 +2,7 @@
 //! messages ([`ToUi`]).
 
 use crate::anim::{AnimationCmd, AnimationEvent};
+use crate::color::Color;
 use crate::cursor::CursorIcon;
 use crate::display::DisplayList;
 use crate::geom::{Affine, DeviceSize, Rect, Scale, Vec2};
@@ -34,6 +35,9 @@ pub struct Commit {
     pub resources: ResourceDelta,
     pub animations: Vec<AnimationCmd>,
     pub a11y: Option<accesskit::TreeUpdate>,
+    /// AccessKit updates of subtrees grafted under nodes of this commit's tree (an egui island's tree,
+    /// under its node's `tree_id`), sent to the platform adapter after [`Commit::a11y`], in order.
+    pub a11y_subtrees: Vec<accesskit::TreeUpdate>,
     pub cursor: Option<CursorIcon>,
     /// The IME candidate area (window points), when it moved.
     pub ime_area: Option<Rect>,
@@ -92,8 +96,11 @@ pub enum FastCommit {
     Transform { window: WindowId, node: PropNodeId, local: Affine, revision: Revision, input_seq: InputSeq },
     Opacity { window: WindowId, node: PropNodeId, opacity: f32, revision: Revision },
     CanvasView { window: WindowId, canvas: CanvasId, view: Affine, input_seq: InputSeq },
-    /// Show or move the caret (the compositor blinks it).
-    Caret { window: WindowId, rect: Option<Rect>, revision: Revision },
+    /// Show or move the caret (the compositor blinks it). `rect` is in the space of property node
+    /// `transform` (the editor's own transform node), so the caret follows scrolls and transform
+    /// animations the compositor runs on that node's chain; an unknown node is the window space.
+    /// `color` is the editor's resolved caret colour (`caret-color`, else `currentColor`).
+    Caret { window: WindowId, rect: Option<Rect>, color: Color, transform: PropNodeId, revision: Revision },
 }
 
 /// Compositor → UI thread.

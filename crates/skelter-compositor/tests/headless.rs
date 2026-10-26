@@ -242,6 +242,8 @@ fn caret_only_frames_keep_the_content_on_every_swapchain_image() {
         let caret = skelter_base::commit::FastCommit::Caret {
             window: w,
             rect: Some(Rect::new(x, 8.0, x + 1.0, 24.0)),
+            color: Color::BLACK,
+            transform: Default::default(),
             revision: Revision(revision),
         };
         engine.handle(Msg::Fast(caret), clock.now(), &mut gpu);

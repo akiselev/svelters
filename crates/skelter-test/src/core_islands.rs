@@ -1,8 +1,9 @@
 //! [`CoreIslands`]: a skelter-core document whose `egui-island` nodes carry islands mounted through
 //! `skelter_egui_island::IslandHost` (cadatomic's panes as real nodes, W-D1), with the island steps the app
-//! runner does not take yet: `IslandHost::run` before each frame, its AccessKit subtrees handed to the
-//! harness (the walk descends into them under their graft nodes), `IslandHost::render` before `render`,
-//! AccessKit actions aimed at an island's tree routed to that island, and the islands' wakeups.
+//! runner does not take yet: `IslandHost::run` before each frame, its AccessKit subtrees carried by the
+//! frame's commit (`Commit::a11y_subtrees`, which the app sends to the platform adapter), `IslandHost::render` before `render`,
+//! AccessKit actions aimed at an island's tree routed to that island, the islands' wakeups, and
+//! core's in-app drags bridged into the islands (`IslandHost::event_tap` on the `CoreDocument`).
 //!
 //! Build one with [`HarnessBuilder::build_core_islands`]; every kittest verb and query then works on the
 //! skelter tree and the egui widgets inside its islands alike.
@@ -29,6 +30,7 @@ pub struct CoreIslands<U: FnMut(NodeId, &mut egui::Ui)> {
     clock: Arc<dyn Clock>,
     /// The islands' earliest pass, refreshed after every call that can change it.
     wakeup: Option<Time>,
+    /// Island AccessKit updates waiting for the next commit (`Commit::a11y_subtrees`).
     subtree: Vec<TreeUpdate>,
     outputs: Vec<(NodeId, IslandOutput)>,
 }
@@ -66,7 +68,12 @@ impl<U: FnMut(NodeId, &mut egui::Ui)> DocumentApi for CoreIslands<U> {
             self.outputs.push((node, out));
         }
         self.refresh();
-        self.core.frame(window, target)
+        let mut c = self.core.frame(window, target);
+        // The subtrees ride the commit that carries their graft nodes (or the next one).
+        if let Some(c) = &mut c {
+            c.a11y_subtrees.append(&mut self.subtree);
+        }
+        c
     }
 
     fn needs_frame(&self, window: WindowId) -> bool {
@@ -118,15 +125,17 @@ impl<U: FnMut(NodeId, &mut egui::Ui)> DocumentApi for CoreIslands<U> {
 
 impl HarnessBuilder {
     /// A harness on a skelter-core document with islands mounted through `IslandHost` (mount them before
-    /// building, or later through `state_mut().doc()`); `ui(node, ui)` draws each island's pass.
+    /// building, or later through `state_mut().doc()`); `ui(node, ui)` draws each island's pass. It adds
+    /// `IslandHost::event_tap` to `core` (don't add it yourself).
     #[track_caller]
     pub fn build_core_islands<U: FnMut(NodeId, &mut egui::Ui) + 'static>(
         self,
-        core: CoreDocument,
+        mut core: CoreDocument,
         ui: U,
     ) -> Harness<CoreIslands<U>> {
+        // In-app drags (skelter-core's drag-enter/leave/drop over island nodes) reach the islands.
+        core.add_event_tap(IslandHost::event_tap);
         let hooks = Hooks {
-            a11y: Some(Box::new(|d: &mut CoreIslands<U>| std::mem::take(&mut d.subtree))),
             clipboard: None,
             textures: Some(Box::new(|d: &mut CoreIslands<U>, g: &mut GpuRender| {
                 let regs = Registrations::default();

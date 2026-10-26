@@ -1,7 +1,7 @@
 //! Tree edits (ported from svelters-egui's SG1 scene tests where they apply).
 
 use super::*;
-use crate::TreeError;
+use crate::{FocusReason, TreeError};
 
 #[test]
 fn insert_orders_and_moves_children() {
@@ -103,4 +103,41 @@ fn flag_bits_are_distinct() {
             assert!(!a.intersects(*b), "{a:?} and {b:?} share a bit");
         }
     }
+}
+
+#[test]
+fn a_move_inside_the_window_keeps_capture_focus_and_hover() {
+    // berth's reconcile re-inserts a dragged tab: the drag must keep its pointer capture
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "");
+    let b = child(&mut d, root, BOX, "");
+    let tab = child(&mut d, a, TOGGLE, "");
+    frame(&mut d);
+    d.focus(tab, FocusReason::Programmatic);
+    d.input.capture(1, tab);
+    d.input.hover.insert(1, vec![tab, a, root]);
+    // reordered under the same parent, then moved to another parent in the same window
+    d.insert(a, tab, None, None).unwrap();
+    d.insert(b, tab, None, None).unwrap();
+    assert_eq!(d.input.capture.get(&1), Some(&tab), "capture survives the move");
+    assert_eq!(d.focused(W), Some(tab), "focus survives the move");
+    assert!(d.input.hover[&1].contains(&tab), "hover survives the move");
+    // leaving the tree drops them
+    d.remove(b, tab).unwrap();
+    assert_eq!(d.input.capture.get(&1), None);
+    assert_eq!(d.focused(W), None);
+    assert!(!d.input.hover[&1].contains(&tab));
+}
+
+#[test]
+fn a_move_to_another_window_drops_capture_and_focus() {
+    let (mut d, root) = doc();
+    let other = d.create_window(WindowId(2), BOX, Size::new(50.0, 50.0), Scale(1.0));
+    let tab = child(&mut d, root, TOGGLE, "");
+    frame(&mut d);
+    d.focus(tab, FocusReason::Programmatic);
+    d.input.capture(1, tab);
+    d.insert(other, tab, None, None).unwrap();
+    assert_eq!(d.input.capture.get(&1), None, "capture stays with its window");
+    assert_eq!(d.focused(W), None);
 }

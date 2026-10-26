@@ -457,6 +457,10 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         if let Some(u) = &c.a11y {
             cx.update_a11y(w, u.clone());
         }
+        // Grafted subtrees (egui islands) after the host tree that carries their graft nodes.
+        for u in std::mem::take(&mut c.a11y_subtrees) {
+            cx.update_a11y(w, u);
+        }
         let report = self
             .windows
             .get_mut(&w)
