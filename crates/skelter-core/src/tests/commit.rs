@@ -178,3 +178,118 @@ fn a_nonpassive_listener_inside_a_scroller_makes_it_wait_for_js() {
     d.insert(mid, leaf, None, None).unwrap();
     assert!(d.flags(s).unwrap().contains(NodeFlags::DESC_NONPASSIVE));
 }
+
+mod external_layer {
+    use super::*;
+    use crate::KindRegistry;
+    use crate::cx::{MeasureCx, RecordCx};
+    use crate::kind::{Kind, KindSpec};
+    use skelter_base::geom::Rect;
+    use skelter_base::ids::{LayerId, TextureId};
+    use skelter_base::layer::LayerDesc;
+    use std::collections::HashMap;
+    use std::sync::Arc;
+
+    const VIEWPORT: KindId = KindId::of("viewport");
+    static VIEWPORT_SPEC: KindSpec = KindSpec { container: true, ..KindSpec::new("viewport") };
+    const TEX: TextureId = TextureId(7);
+
+    /// A 3D viewport: its box, then an offscreen texture over it.
+    #[derive(Default)]
+    struct Viewport;
+
+    impl Kind for Viewport {
+        fn spec() -> &'static KindSpec {
+            &VIEWPORT_SPEC
+        }
+        fn measure(&self, _cx: &mut MeasureCx, _k: taffy::Size<Option<f32>>, _a: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+            taffy::Size { width: 0.0, height: 0.0 }
+        }
+        fn record(&self, cx: &mut RecordCx) {
+            cx.draw_box();
+            cx.external_layer(LayerKind::Texture(TEX), Rect::new(0.0, 0.0, 80.0, 40.0));
+        }
+    }
+
+    fn vdoc() -> (Document, NodeId) {
+        let mut r = KindRegistry::new();
+        r.register::<crate::testkinds::BoxKind>().unwrap();
+        r.register::<Viewport>().unwrap();
+        let mut d = Document::new(Arc::new(r), Box::new(crate::testkinds::FixedText));
+        let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+        (d, root)
+    }
+
+    /// The layers and items the commits sent so far, applied in order.
+    #[derive(Default)]
+    struct Applied {
+        layers: HashMap<LayerId, LayerDesc>,
+        items: HashMap<LayerId, Vec<NodeId>>,
+    }
+
+    impl Applied {
+        fn apply(&mut self, c: &skelter_base::commit::Commit) {
+            for l in &c.layers {
+                match l {
+                    LayerDelta::Add(desc) | LayerDelta::Update(desc) => {
+                        self.layers.insert(desc.id, *desc);
+                    }
+                    LayerDelta::Remove(id) => {
+                        self.layers.remove(id);
+                        self.items.remove(id);
+                    }
+                    LayerDelta::Items { layer, items } => {
+                        self.items.insert(*layer, items.iter().map(|i| i.node).collect());
+                    }
+                    LayerDelta::Damage { .. } => {}
+                }
+            }
+        }
+        /// Paint order as the compositor flattens it: a layer's items, then its children by z.
+        fn order(&self) -> Vec<String> {
+            let root = self.layers.values().find(|l| l.parent.is_none()).expect("root").id;
+            let mut out = Vec::new();
+            self.walk(root, &mut out);
+            out
+        }
+        fn walk(&self, id: LayerId, out: &mut Vec<String>) {
+            let desc = self.layers[&id];
+            if let LayerKind::Texture(t) = desc.kind {
+                out.push(format!("texture {}", t.0));
+            }
+            for n in self.items.get(&id).into_iter().flatten() {
+                out.push(format!("node {}", n.0));
+            }
+            let mut kids: Vec<_> = self.layers.values().filter(|l| l.parent == Some(id)).collect();
+            kids.sort_by_key(|l| l.z);
+            for k in kids {
+                self.walk(k.id, out);
+            }
+        }
+    }
+
+    #[test]
+    fn an_external_layer_sits_between_what_paints_before_and_after_it() {
+        let (mut d, root) = vdoc();
+        let red = "background-color: #ff0000; width: 80px; height: 20px";
+        let below = child(&mut d, root, BOX, red);
+        let view = child(&mut d, root, VIEWPORT, "background-color: #00ff00; width: 80px; height: 40px");
+        let overlay = child(&mut d, view, BOX, red);
+        let above = child(&mut d, root, BOX, red);
+        let mut a = Applied::default();
+        a.apply(&frame(&mut d).unwrap());
+        let n = |id: NodeId| format!("node {}", id.0);
+        assert_eq!(a.order(), [n(below), n(view), "texture 7".into(), n(overlay), n(above)]);
+        let tex = a.layers.values().find(|l| l.kind == LayerKind::Texture(TEX)).copied().unwrap();
+        assert_eq!(tex.bounds, Rect::new(0.0, 0.0, 80.0, 40.0));
+        assert_eq!(a.layers.len(), 3, "root, the texture and the continuation: {:?}", a.layers);
+        // an idle frame changes nothing; removing the viewport removes both layers
+        assert!(frame(&mut d).is_none());
+        d.destroy(view);
+        let c = frame(&mut d).unwrap();
+        assert_eq!(c.layers.iter().filter(|l| matches!(l, LayerDelta::Remove(_))).count(), 2, "{:?}", c.layers);
+        a.apply(&c);
+        assert_eq!(a.layers.len(), 1);
+        assert_eq!(a.order(), [n(below), n(above)]);
+    }
+}
