@@ -16,7 +16,9 @@
 use crate::a11y::{A11yTree, AkNode, By, NodeInfo, NodeKey};
 use crate::consumer::Consumer;
 use crate::convert::{IntoButton, IntoKey, IntoModifiers, IntoPoint, IntoSize, TestEvent};
-use crate::egui_event::{EguiAdapter, Injected};
+use crate::egui_event::EguiAdapter;
+#[cfg(feature = "egui")]
+use crate::egui_event::Injected;
 use crate::headless::HeadlessCompositor;
 use crate::render::{GpuRender, Image, RenderError};
 use crate::snapshot::{SnapshotError, SnapshotOptions};
@@ -240,6 +242,7 @@ impl HarnessBuilder {
     }
 
     /// The glyph rasteriser `render` uses.
+    #[cfg(feature = "egui")]
     pub(crate) fn default_glyphs(&self) -> Arc<dyn GlyphRasterizer> {
         match &self.glyphs {
             Some(g) => g.clone(),
@@ -335,6 +338,7 @@ enum Queued {
     Input(WindowId, InputEvent),
     A11y(WindowId, ActionRequest),
     Window(WindowId, WindowEvent),
+    #[cfg_attr(not(feature = "egui"), allow(dead_code))]
     Clipboard(String),
 }
 
@@ -686,7 +690,7 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn unnamed_widgets(&self) -> Vec<String> {
         let walk = self.a11y.walk();
         walk.iter()
-            .filter(|n| egui::accessibility::is_input(n.role()) && !n.is_hidden())
+            .filter(|n| is_input(n.role()) && !n.is_hidden())
             .filter(|n| !n.node.is_read_only())
             .filter(|n| {
                 let ak = AkNode { info: **n, tree: &self.a11y };
@@ -728,6 +732,7 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn event(&self, ev: impl Into<TestEvent>) {
         match ev.into() {
             TestEvent::Skelter(e) => self.push(Queued::Input(self.window, e)),
+            #[cfg(feature = "egui")]
             TestEvent::Egui(e) => {
                 let injected = self.egui.borrow_mut().translate(&e);
                 for i in injected {
@@ -743,6 +748,7 @@ impl<D: DocumentApi + 'static> Harness<D> {
     }
 
     /// An egui event (kept for tests written before `event` took both).
+    #[cfg(feature = "egui")]
     pub fn event_egui(&self, ev: egui::Event) {
         self.event(ev);
     }
@@ -1374,6 +1380,7 @@ impl<'h, D: DocumentApi + 'static> Node<'h, D> {
         self.info.bounds
     }
     /// Window-space bounds in points as an `egui::Rect` (kittest's `rect`); panics without bounds.
+    #[cfg(feature = "egui")]
     #[track_caller]
     pub fn rect(&self) -> egui::Rect {
         let b = self.info.bounds.unwrap_or_else(|| {
@@ -1489,4 +1496,45 @@ impl<'h, D: DocumentApi + 'static> Node<'h, D> {
         self.focus();
         self.harness.key_press(key);
     }
+}
+
+/// egui's `accessibility::is_input` (egui 0.37): a role a user reaches by name, something to click,
+/// toggle, pick from, drag or type into. Copied so the check needs no egui.
+fn is_input(role: Role) -> bool {
+    matches!(
+        role,
+        Role::Button
+            | Role::CheckBox
+            | Role::ColorWell
+            | Role::ComboBox
+            | Role::DateInput
+            | Role::DateTimeInput
+            | Role::DefaultButton
+            | Role::DisclosureTriangle
+            | Role::EditableComboBox
+            | Role::EmailInput
+            | Role::Link
+            | Role::ListBoxOption
+            | Role::MenuItem
+            | Role::MenuItemCheckBox
+            | Role::MenuItemRadio
+            | Role::MenuListOption
+            | Role::MonthInput
+            | Role::MultilineTextInput
+            | Role::NumberInput
+            | Role::PasswordInput
+            | Role::PhoneNumberInput
+            | Role::RadioButton
+            | Role::SearchInput
+            | Role::Slider
+            | Role::SpinButton
+            | Role::Splitter
+            | Role::Switch
+            | Role::Tab
+            | Role::TextInput
+            | Role::TimeInput
+            | Role::TreeItem
+            | Role::UrlInput
+            | Role::WeekInput
+    )
 }

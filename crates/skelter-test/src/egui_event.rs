@@ -1,13 +1,18 @@
 //! The `egui::Event`-shaped injection adapter (architecture §16.1): tests written against egui_kittest
 //! keep their `harness.event(egui::Event::…)` calls during the transition. Each egui event becomes the
 //! skelter input the platform would deliver for it, so it takes the production dispatch path.
+//!
+//! Without feature `egui` only the adapter's state is here (the pointer the harness's verbs track, the
+//! platform's primary modifier); the translation needs egui.
 
 use skelter_base::accesskit::ActionRequest;
+#[cfg_attr(not(feature = "egui"), allow(unused_imports))]
 use skelter_base::event::{
     GestureEvent, GesturePhase, ImeEvent, InputEvent, KeyEvent, KeyLocation, KeyState, Modifiers,
     MouseButton, PointerEvent, PointerPhase, PointerType, ScrollDelta, WheelEvent,
 };
 use skelter_base::geom::{Point, Vec2};
+#[cfg(feature = "egui")]
 use skelter_base::key::Key;
 use skelter_base::smallvec::SmallVec;
 
@@ -46,6 +51,7 @@ impl Default for EguiAdapter {
     }
 }
 
+#[cfg(feature = "egui")]
 pub fn modifiers(m: egui::Modifiers, macos: bool) -> Modifiers {
     let mut out = Modifiers::default();
     if m.shift {
@@ -63,11 +69,13 @@ pub fn modifiers(m: egui::Modifiers, macos: bool) -> Modifiers {
     out
 }
 
+#[cfg(feature = "egui")]
 /// egui's key → skelter's (they share egui's names).
 pub fn key(k: egui::Key) -> Option<Key> {
     Key::from_name(k.name())
 }
 
+#[cfg(feature = "egui")]
 pub fn button(b: egui::PointerButton) -> MouseButton {
     match b {
         egui::PointerButton::Primary => MouseButton::Primary,
@@ -78,6 +86,7 @@ pub fn button(b: egui::PointerButton) -> MouseButton {
     }
 }
 
+#[cfg(feature = "egui")]
 fn button_bit(b: MouseButton) -> u32 {
     match b {
         MouseButton::Primary => 1,
@@ -89,6 +98,7 @@ fn button_bit(b: MouseButton) -> u32 {
     }
 }
 
+#[cfg(feature = "egui")]
 fn gesture(p: egui::TouchPhase) -> GesturePhase {
     match p {
         egui::TouchPhase::Start => GesturePhase::Started,
@@ -120,6 +130,7 @@ impl EguiAdapter {
         }
     }
 
+    #[cfg(feature = "egui")]
     fn chord(&self, k: Key) -> Vec<Injected> {
         let m = if self.macos {
             Modifiers::SUPER
@@ -142,6 +153,7 @@ impl EguiAdapter {
             .collect()
     }
 
+    #[cfg(feature = "egui")]
     /// Translate one egui event. Events with no skelter counterpart translate to nothing:
     /// `PasteImage`, `MiddleClickPaste`, and IME
     /// `DeleteSurrounding` (egui counts chars, skelter bytes of text the adapter cannot see).
