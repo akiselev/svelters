@@ -46,6 +46,10 @@ pub enum Writer {
 /// The deliverer of JS events at event time ([`Document::set_sync_delivery`]).
 pub type SyncDelivery = Box<dyn FnMut(&mut Document, &crate::input::JsEvent) -> crate::kind::Outcome>;
 
+/// The app's drag previews ([`Document::set_drag_preview_provider`]): the source node and the
+/// press in its space, to the drag image.
+pub type DragPreviewProvider = Box<dyn FnMut(&mut Document, NodeId, skelter_base::geom::Point) -> Option<crate::kind::DragPreview>>;
+
 /// The retained tree of one app.
 pub struct Document {
     pub(crate) registry: Arc<KindRegistry>,
@@ -92,6 +96,8 @@ pub struct Document {
     pub(crate) peer_running: bool,
     /// Delivers a JS event at event time and answers what its listeners did.
     pub(crate) sync_delivery: Option<SyncDelivery>,
+    /// Makes the drag image of drags whose source kind supplies none.
+    pub(crate) drag_preview_provider: Option<DragPreviewProvider>,
     /// Prop writes made while their node's kind was out (JS run during the kind's own handler):
     /// the kind gets `prop_changed` for them when it is back.
     pub(crate) missed_props: Vec<(NodeId, PropId)>,
@@ -158,6 +164,7 @@ impl Document {
             peer_queue: Default::default(),
             peer_running: false,
             sync_delivery: None,
+            drag_preview_provider: None,
             missed_props: Vec::new(),
             delivering: 0,
             nested: Vec::new(),

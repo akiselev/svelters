@@ -419,7 +419,7 @@ mod tests {
 
     fn prepare(k: &mut Frame, size: Size) {
         let mut text = MonoShaper;
-        k.prepare(&mut PrepareCx { size, style: styles(StateBits::NONE), text: &mut text });
+        k.prepare(&mut PrepareCx { size, style: styles(StateBits::NONE), text: &mut text, emitted: Vec::new() });
     }
 
     /// The caption line's height under the monospace shaper (13px body text: 16px lines).

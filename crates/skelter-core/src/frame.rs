@@ -465,8 +465,9 @@ impl Document {
         let node = self.slots.id_at(i).expect("live");
         let mut shaper = self.shaper.take();
         let mut services = std::mem::take(&mut self.services);
+        let mut emitted = Vec::new();
         let request = {
-            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services };
+            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted };
             k.prepare(&mut cx);
             cx.request
         };
@@ -510,6 +511,9 @@ impl Document {
         self.services = services;
         self.kinds[i] = Some(k);
         let _ = request;
+        for e in emitted {
+            crate::input::dispatch::queue_emitted(self, e);
+        }
         let p = &mut self.record[i];
         let old_runs = std::mem::replace(&mut p.runs, node_runs);
         commit.dropped_runs.extend(old_runs);

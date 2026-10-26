@@ -17,8 +17,8 @@
 //!   Ctrl moves alone), Left/Right the cursor column, Space and Ctrl+A select, Enter activates,
 //!   Ctrl+C raises `copy(ids)`, typing is type-ahead; Escape cancels a column drag.
 //!
-//! Not here yet: the cell editor (F2, typing and double clicks on `editable` columns; it needs the
-//! TEXT-INPUT lane's text field), the column menu (a views-lane popup), the Rust row model
+//! The cell editor (F2 and typing on `editable` columns, the text-edit field) is the kind's
+//! ([`kinds`]). Not here yet: double clicks starting an edit, the column menu (a views-lane popup), the Rust row model
 //! (`svelters_host::rows`), the scroll bars and edge shadows (the scroll layer's), and AccessKit
 //! (written by the kind from [`Table::geom`] once skelter-core's `A11yCx` exists).
 
@@ -61,6 +61,7 @@ pub const SIGNALS: &[&str] = &[
     "columns-changed",
     "header-state-changed",
     "copy",
+    "commit",
 ];
 
 /// Sizes that place the table's parts and decide its hit zones (from the computed style).

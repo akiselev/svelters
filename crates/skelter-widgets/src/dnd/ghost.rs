@@ -1,9 +1,13 @@
 //! What a drag draws: the ghost label that follows the pointer (the source's `::part(ghost)`: a
 //! floating surface at `elev-3`, 0.9 opacity, recorded into the window's drag layer, architecture
 //! §6.3 and §14) and the active target's outline (`::part(drop-line)`: a 2-point `focus` stroke
-//! inside the target's box).
+//! inside the target's box). [`install`] makes the ghost the drag image of skelter-core's in-app
+//! drags ([`skelter_core::DragPreview`]) whose source kind supplies none; `host::install` installs it.
 
+use crate::shim::text::TextShaper;
 use crate::table::shim::{HAlign, TextPainter, TextStyle};
+use crate::table::text_painter::{CollectRes, NoShaper, ShaperPainter};
+use skelter_core::{Document, DragPreview, common};
 use skelter_base::color::{Color, Fill};
 use skelter_base::display::{BorderStyle, DisplayList, Prim, Quad, Shadow};
 use skelter_base::geom::{Corners, Insets, Point, Rect, Vec2};
@@ -73,6 +77,33 @@ pub fn record_drop_line(rect: Rect, color: Color, width: f32, list: &mut Display
     list.push(Prim::Quad(q), rect);
 }
 
+/// The ghost as a drag image: recorded with the pointer at the list's origin, its glyph runs
+/// collected (a run's `Prim::Glyphs` names it by position plus one).
+pub fn ghost_preview(text: &str, look: &GhostLook, shaper: &mut dyn TextShaper) -> DragPreview {
+    let mut res = CollectRes::default();
+    let mut list = DisplayList::new();
+    {
+        let mut p = ShaperPainter { text: shaper, res: Some(&mut res) };
+        record_ghost(text, Point::ZERO, look, &mut p, &mut list);
+    }
+    DragPreview::List { list, runs: res.runs, offset: Vec2::ZERO }
+}
+
+/// Installs the ghost in `look` as the drag image of `doc`'s drags whose source kind supplies none:
+/// the source's text content, else its `drag-type`, shaped by the document's text system.
+pub fn install(doc: &mut Document, look: GhostLook) {
+    doc.set_drag_preview_provider(Box::new(move |doc, n, _at| {
+        let v = doc.view(n)?;
+        let text = ghost_text(v.text(), v.prop_str(common::DRAG_TYPE).unwrap_or("")).to_owned();
+        let mut none = NoShaper;
+        let shaper: &mut dyn TextShaper = match doc.service::<skelter_text::TextSystem>() {
+            Some(t) => t,
+            None => &mut none,
+        };
+        Some(ghost_preview(&text, &look, shaper))
+    }));
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -94,5 +125,24 @@ mod tests {
         let mut outline = DisplayList::new();
         record_drop_line(Rect::new(0.0, 0.0, 50.0, 20.0), Color::BLACK, 2.0, &mut outline);
         assert_eq!(outline.items.len(), 1);
+    }
+
+    #[test]
+    fn a_core_drag_carries_the_ghost_as_its_preview() {
+        use crate::testdoc::{BOX, child, doc, frame, pointer};
+        use skelter_base::event::PointerPhase;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(200.0, 100.0), |_| {});
+        let src = child(&mut d, root, BOX, "width: 40px; height: 40px");
+        d.set_prop(src, common::DRAG_TYPE, skelter_core::Value::from("cad/part")).unwrap();
+        install(&mut d, GhostLook::default());
+        frame(&mut d);
+        d.dispatch(&pointer(PointerPhase::Down, 10.0, 10.0, 0, false));
+        d.dispatch(&pointer(PointerPhase::Move, 40.0, 10.0, 10, true));
+        let Some(DragPreview::List { list, offset, .. }) = d.drag_preview() else { panic!("the ghost: {:?}", d.drag_preview()) };
+        assert_eq!(*offset, Vec2::ZERO);
+        let look = GhostLook::default();
+        assert!(matches!(list.items[0], Prim::Shadow(_)), "the ghost's shadow");
+        let at = Point::new(look.offset.x, look.offset.y);
+        assert!(matches!(&list.items[1], Prim::Quad(q) if q.rect.min == at), "its surface, at the pointer plus its offset");
     }
 }

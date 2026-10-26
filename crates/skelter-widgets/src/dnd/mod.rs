@@ -32,8 +32,9 @@
 //! tests still state the order core keeps). Still only here: OS file drags (core ignores
 //! `FileHovered`/`FileDropped`; [`DragSession::files_hovered`]/[`DragSession::files_dropped`],
 //! [`uri_list`]), JS-side id payloads ([`PayloadData::Js`]; core's `drag-data` is a string),
-//! [`edge_scroll`], and the ghost and drop-line recording ([`ghost`]): core has no drag-layer or
-//! drop-indication hook to call them from yet (the target only gets `:drop-target` for CSS).
+//! [`edge_scroll`], and the drop-line recording ([`ghost`]): core has no drop-indication hook to
+//! call it from yet (the target only gets `:drop-target` for CSS). The ghost is core's drag image
+//! through its preview provider ([`ghost::install`]).
 
 pub mod ghost;
 pub mod session;
