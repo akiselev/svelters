@@ -174,7 +174,20 @@ CI green on each (run ids in the records):
 - **text** (`fd61ae12`, record `plans/milestones/QA11Y-text.md`): TextRun children, selection, value and actions for
   `text-edit`; svelters-skelter's `<text-edit>` now hosts skelter-widgets' `TextEdit` (was a placeholder).
 - Also merged: cadatomic QC fix `94400eeb` (a signal the surface does not declare sync is posted).
-- Next: cadatomic wave 2 (its lane `claude/qa11y-shell` moves the svelters pin to `fd61ae12`).
+- cadatomic wave 2 (`claude/qa11y-shell`) merged into cadatomic master (2a79858d) on svelters `9f4cc1ec`.
+- **fixes** (`6689112c`, record `plans/milestones/QA11Y-fixes.md`): list rows as `ListBoxOption`/`TreeItem` with
+  selected and position, `role`/`aria-selected` on the Widget surface; the focus ring repaints on a focus move made
+  outside a dispatch; sibling dialog scopes open outermost first, then in tree order. CI green on 6dd49c0b (js
+  40357329975, linux-gtk 40357329943, linux-qt 40357329883, macos-appkit 40357329997, skelter 40357330023,
+  windows-winui 40357330093); the record lists only the earlier, superseded runs.
+
+## rmegui for cadatomic (2026-10-26)
+
+cadatomic is removing egui (`docs/notes/rmegui/PLAN.md` there). Lane **S** (`fa19495f`, record
+`plans/milestones/RMEGUI-S.md`): skelter-test and svelters-automation build without egui by default
+(`tools/dev/check-egui-free`), svelters-skelter's designer scene API and preview overrides, compositor window readback
+(`read_window`; real macOS/Windows checks pending), and the hovered-control key fix in skelter-widgets. CI green on
+2567201f (run ids in the record).
 
 ## skelter (formerly presto): consolidation 2 (2026-10-26)
 
