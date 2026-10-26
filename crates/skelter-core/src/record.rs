@@ -11,6 +11,9 @@ pub(crate) struct NodePaint {
     pub list: Option<Arc<DisplayList>>,
     /// A self-scrolling kind's fixed part ([`crate::RecordCx::fixed`]), sent under [`fixed_key`].
     pub fixed: Option<Arc<DisplayList>>,
+    /// The node's overlay surface ([`crate::RecordCx::overlay`]), sent under [`overlay_key`] and
+    /// placed in a layer of its window's overlay stack.
+    pub overlay: Option<(Arc<DisplayList>, crate::overlay::OverlayPart)>,
     pub runs: Vec<RunId>,
     /// The node's own transform space (its layout offset and CSS transform).
     pub transform: Option<PropNodeId>,
@@ -38,6 +41,7 @@ impl Default for NodePaint {
         NodePaint {
             list: None,
             fixed: None,
+            overlay: None,
             runs: Vec::new(),
             transform: None,
             clip: None,
@@ -58,6 +62,21 @@ impl Default for NodePaint {
 /// there).
 pub(crate) const fn fixed_key(node: NodeId) -> NodeId {
     NodeId(node.0 | 1 << 63)
+}
+
+/// The list key of a node's overlay part: the node id with bit 62 set.
+pub(crate) const fn overlay_key(node: NodeId) -> NodeId {
+    NodeId(node.0 | 1 << 62)
+}
+
+/// The list key of window `window`'s drag image (a [`crate::DragPreview::List`]): bits 61 and 62 set.
+pub(crate) const fn drag_key(window: skelter_base::ids::WindowId) -> NodeId {
+    NodeId(window.0 as u64 | 3 << 61)
+}
+
+/// The list key of window `window`'s app overlay list: bits 61 and 63 set.
+pub(crate) const fn app_overlay_key(window: skelter_base::ids::WindowId) -> NodeId {
+    NodeId(window.0 as u64 | 5 << 61)
 }
 
 impl NodePaint {

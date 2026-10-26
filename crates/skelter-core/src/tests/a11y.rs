@@ -156,3 +156,29 @@ fn aria_live_and_busy_apply_after_the_kinds_own_node() {
     assert_eq!(n.live(), Some(accesskit::Live::Assertive));
     assert!(!n.is_busy());
 }
+
+#[test]
+fn role_level_expanded_selected_and_description_make_a_row_a_tree_item() {
+    let (mut d, root) = doc();
+    let row = child(&mut d, root, BOX, "width: 50px; height: 20px");
+    frame(&mut d);
+    d.set_prop(row, common::ROLE, Value::from("treeitem")).unwrap();
+    d.set_prop(row, common::ARIA_LEVEL, Value::I64(2)).unwrap();
+    d.set_prop(row, common::ARIA_EXPANDED, Value::Enum(1)).unwrap();
+    d.set_prop(row, common::ARIA_SELECTED, Value::Enum(2)).unwrap();
+    d.set_prop(row, common::ARIA_DESCRIPTION, Value::from("3 children")).unwrap();
+    let u = frame(&mut d).unwrap().a11y.expect("the props re-project the node");
+    let n = &u.nodes.iter().find(|(k, _)| *k == ax(row)).unwrap().1;
+    assert_eq!(n.role(), Role::TreeItem);
+    assert_eq!(n.level(), Some(2));
+    assert_eq!(n.is_expanded(), Some(true));
+    assert_eq!(n.is_selected(), Some(false));
+    assert_eq!(n.description(), Some("3 children"));
+    // an unknown role keeps the kind's; unset leaves the states off
+    d.set_prop(row, common::ROLE, Value::from("bogus")).unwrap();
+    d.set_prop(row, common::ARIA_EXPANDED, Value::Enum(0)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let n = &u.nodes.iter().find(|(k, _)| *k == ax(row)).unwrap().1;
+    assert_eq!(n.role(), Role::GenericContainer);
+    assert_eq!(n.is_expanded(), None);
+}

@@ -17,12 +17,15 @@ use skelter_compositor::{Compositor, CompositorConfig, CompositorHandle};
 use skelter_core::{Document, JsEvent, KindId};
 use skelter_frame::{CommitReport, UiFrameState, Urgency};
 use skelter_platform::SurfaceTarget;
+use std::cell::RefCell;
+use std::rc::Rc;
 use std::sync::Arc;
 
 /// `skelter_core::Document` behind [`DocumentApi`]. It opens each window's root with `root_kind` and
 /// keeps the JS-facing events of the last dispatch for the script host ([`CoreDocument::take_js_events`]).
-pub struct CoreDocument {
-    pub doc: Document,
+pub struct CoreDocument<H: DocHandle = Document> {
+    /// The document: owned, or shared with the script host ([`CoreDocument::shared`]).
+    pub doc: H,
     root_kind: KindId,
     js_events: Vec<JsEvent>,
     caret_blink: Option<Option<skelter_compositor::CaretBlink>>,
@@ -41,23 +44,45 @@ pub type EventTap = Box<dyn FnMut(&mut Document, &InputEnvelope, &[JsEvent])>;
 /// skelter-widgets' `menu-bar` kind.
 const MENU_BAR: KindId = KindId::of("menu-bar");
 
+/// How [`CoreDocument`] holds its document: owned (`Document`) or shared (`Rc<RefCell<Document>>`,
+/// the one `svelters_skelter::SkelterBackend::shared` holds). A shared document is borrowed for each
+/// call only, so the script host can borrow it between calls.
+pub trait DocHandle: 'static {
+    type Ref<'a>: std::ops::Deref<Target = Document>
+    where
+        Self: 'a;
+    type Mut<'a>: std::ops::DerefMut<Target = Document>
+    where
+        Self: 'a;
+    fn lend(&self) -> Self::Ref<'_>;
+    fn lend_mut(&mut self) -> Self::Mut<'_>;
+}
+
+impl DocHandle for Document {
+    type Ref<'a> = &'a Document;
+    type Mut<'a> = &'a mut Document;
+    fn lend(&self) -> &Document {
+        self
+    }
+    fn lend_mut(&mut self) -> &mut Document {
+        self
+    }
+}
+
+impl DocHandle for Rc<RefCell<Document>> {
+    type Ref<'a> = std::cell::Ref<'a, Document>;
+    type Mut<'a> = std::cell::RefMut<'a, Document>;
+    fn lend(&self) -> std::cell::Ref<'_, Document> {
+        self.borrow()
+    }
+    fn lend_mut(&mut self) -> std::cell::RefMut<'_, Document> {
+        self.borrow_mut()
+    }
+}
+
 impl CoreDocument {
     pub fn new(doc: Document, root_kind: KindId) -> Self {
-        Self {
-            doc,
-            root_kind,
-            js_events: Vec::new(),
-            caret_blink: None,
-            menu_sent: None,
-            windows: Vec::new(),
-            taps: Vec::new(),
-        }
-    }
-    /// Calls `tap` after every dispatch with the input and its JS-facing events (in the order added).
-    /// An app with egui islands adds `skelter_egui_island::IslandHost::event_tap`, so in-app drags reach
-    /// the islands.
-    pub fn add_event_tap(&mut self, tap: impl FnMut(&mut Document, &InputEnvelope, &[JsEvent]) + 'static) {
-        self.taps.push(Box::new(tap));
+        Self::over(doc, root_kind)
     }
     /// A document whose built-in kinds have their services: the text system, the platform's interaction
     /// policy and the theme (`skelter_widgets::host::install`). The clipboard service follows at
@@ -86,61 +111,92 @@ impl CoreDocument {
         d.caret_blink = Some(blink);
         d
     }
+}
+
+impl CoreDocument<Rc<RefCell<Document>>> {
+    /// Over a document shared with the script host (`SkelterBackend::shared`), so embedders don't
+    /// re-implement [`DocumentApi`].
+    pub fn shared(doc: Rc<RefCell<Document>>, root_kind: KindId) -> Self {
+        Self::over(doc, root_kind)
+    }
+}
+
+impl<H: DocHandle> CoreDocument<H> {
+    pub fn over(doc: H, root_kind: KindId) -> Self {
+        Self {
+            doc,
+            root_kind,
+            js_events: Vec::new(),
+            caret_blink: None,
+            menu_sent: None,
+            windows: Vec::new(),
+            taps: Vec::new(),
+        }
+    }
+    /// Calls `tap` after every dispatch with the input and its JS-facing events (in the order added).
+    /// An app with egui islands adds `skelter_egui_island::IslandHost::event_tap`, so in-app drags reach
+    /// the islands.
+    pub fn add_event_tap(&mut self, tap: impl FnMut(&mut Document, &InputEnvelope, &[JsEvent]) + 'static) {
+        self.taps.push(Box::new(tap));
+    }
     /// The `menu-bar` nodes of every window, in tree order.
     fn menu_bars(&self) -> Vec<skelter_core::skelter_base::ids::NodeId> {
         let mut out = Vec::new();
         let mut stack: Vec<_> = self.windows_roots();
         while let Some(n) = stack.pop() {
-            if self.doc.kind_of(n) == Some(MENU_BAR) {
+            if self.doc.lend().kind_of(n) == Some(MENU_BAR) {
                 out.push(n);
             }
-            stack.extend(self.doc.children(n).iter().rev().copied());
+            stack.extend(self.doc.lend().children(n).iter().rev().copied());
         }
         out
     }
     fn windows_roots(&self) -> Vec<skelter_core::skelter_base::ids::NodeId> {
         self.windows
             .iter()
-            .filter_map(|w| self.doc.window_root(*w))
+            .filter_map(|w| self.doc.lend().window_root(*w))
             .collect()
     }
     /// The JS-facing events of the last dispatch, then those queued outside dispatch (focus moves,
     /// hover enter/leave, AccessKit actions).
     pub fn take_js_events(&mut self) -> Vec<JsEvent> {
         let mut out = std::mem::take(&mut self.js_events);
-        out.extend(self.doc.take_events());
+        out.extend(self.doc.lend_mut().take_events());
         out
     }
 }
 
-impl DocumentApi for CoreDocument {
+impl<H: DocHandle> DocumentApi for CoreDocument<H> {
     fn dispatch(&mut self, ev: &InputEnvelope) -> Dispatched {
-        let d = self.doc.dispatch(ev);
+        let d = self.doc.lend_mut().dispatch(ev);
         let js_events = d.events.len();
+        let mut doc = self.doc.lend_mut();
         for tap in &mut self.taps {
-            tap(&mut self.doc, ev, &d.events);
+            tap(&mut doc, ev, &d.events);
         }
+        let fast = doc.take_fast_commits();
+        drop(doc);
         self.js_events.extend(d.events);
         Dispatched {
             dirty: d.changed,
             js_events,
-            fast: self.doc.take_fast_commits(),
+            fast,
         }
     }
     fn frame(&mut self, window: WindowId, target: Time) -> Option<Commit> {
-        self.doc.frame(window, target)
+        self.doc.lend_mut().frame(window, target)
     }
     fn needs_frame(&self, window: WindowId) -> bool {
-        self.doc.needs_frame(window)
+        self.doc.lend().needs_frame(window)
     }
     fn hover(&mut self, window: WindowId, pos: Point) -> bool {
-        self.doc.hover(window, pos)
+        self.doc.lend_mut().hover(window, pos)
     }
     fn ime_state(&mut self, window: WindowId) -> Option<(Rect, InputPurpose)> {
-        self.doc.ime_state(window)
+        self.doc.lend_mut().ime_state(window)
     }
     fn take_fast_commits(&mut self) -> Vec<FastCommit> {
-        self.doc.take_fast_commits()
+        self.doc.lend_mut().take_fast_commits()
     }
     fn caret_blink(&self) -> Option<Option<skelter_compositor::CaretBlink>> {
         self.caret_blink
@@ -151,7 +207,7 @@ impl DocumentApi for CoreDocument {
         for node in self.menu_bars() {
             let Some(method) = self
                 .doc
-                .registry()
+                .lend_mut().registry()
                 .get(MENU_BAR)
                 .and_then(|e| e.spec.method_named("menu-activated"))
             else {
@@ -159,7 +215,7 @@ impl DocumentApi for CoreDocument {
             };
             if let Ok((_, events)) =
                 self.doc
-                    .call(node, method, &[skelter_core::Value::Str(id.into())])
+                    .lend_mut().call(node, method, &[skelter_core::Value::Str(id.into())])
             {
                 self.js_events.extend(events);
                 return true;
@@ -169,7 +225,7 @@ impl DocumentApi for CoreDocument {
     }
     fn take_menu_bar(&mut self) -> Option<Option<skelter_platform::MenuDesc>> {
         let desc = self.menu_bars().into_iter().find_map(|n| {
-            self.doc.with_kind(n, |k| {
+            self.doc.lend_mut().with_kind(n, |k| {
                 k.as_any()
                     .and_then(|a| a.downcast_ref::<skelter_widgets::views::menu::MenuBar>())
                     .map(|b| b.to_menu_desc())
@@ -184,53 +240,56 @@ impl DocumentApi for CoreDocument {
     fn menu_bar_native(&mut self, native: bool) {
         let Some(prop) = self
             .doc
-            .registry()
+            .lend_mut().registry()
             .get(MENU_BAR)
             .and_then(|e| e.spec.prop_named("native-bar"))
         else {
             return;
         };
         for node in self.menu_bars() {
-            if self.doc.get_prop(node, prop) != Some(skelter_core::Value::Bool(native)) {
+            if self.doc.lend_mut().get_prop(node, prop) != Some(skelter_core::Value::Bool(native)) {
                 let _ = self
                     .doc
-                    .set_prop(node, prop, skelter_core::Value::Bool(native));
+                    .lend_mut().set_prop(node, prop, skelter_core::Value::Bool(native));
             }
         }
     }
     fn install_clipboard(&mut self, clipboard: Box<dyn skelter_platform::Clipboard>) {
         // skelter-widgets' text kinds read it as `cx.service::<Box<dyn skelter_platform::Clipboard>>()`.
-        self.doc.set_service(clipboard);
+        self.doc.lend_mut().set_service(clipboard);
     }
     fn resize(&mut self, window: WindowId, size: Size, scale: Scale) {
-        if self.doc.window_root(window).is_some() {
-            self.doc.resize_window(window, size, scale);
+        if self.doc.lend_mut().window_root(window).is_some() {
+            self.doc.lend_mut().resize_window(window, size, scale);
         } else {
-            self.doc.create_window(window, self.root_kind, size, scale);
+            self.doc.lend_mut().create_window(window, self.root_kind, size, scale);
             self.windows.push(window);
         }
     }
     fn close_window(&mut self, window: WindowId) {
-        self.doc.close_window(window);
+        self.doc.lend_mut().close_window(window);
         self.windows.retain(|w| *w != window);
     }
     fn scroll_moved(&mut self, window: WindowId, node: PropNodeId, offset: Vec2) {
-        self.doc.apply_scroll(window, node, offset);
+        self.doc.lend_mut().apply_scroll(window, node, offset);
     }
     fn animation_event(&mut self, _window: WindowId, ev: AnimationEvent) {
-        self.doc.animation_event(ev);
+        self.doc.lend_mut().animation_event(ev);
     }
     fn accessibility_action(&mut self, window: WindowId, req: &ActionRequest) -> bool {
-        self.doc.accessibility_action(window, req)
+        self.doc.lend_mut().accessibility_action(window, req)
     }
     fn accessibility_activated(&mut self, window: WindowId) {
-        self.doc.a11y_full_tree(window);
+        self.doc.lend_mut().a11y_full_tree(window);
     }
     fn window_event(&mut self, window: WindowId, ev: &WindowEvent) {
-        self.doc.window_event(window, ev);
+        self.doc.lend_mut().window_event(window, ev);
     }
     fn device_reset(&mut self) {
-        self.doc.device_reset();
+        self.doc.lend_mut().device_reset();
+    }
+    fn commit_applied(&mut self, window: WindowId, revision: Revision) {
+        self.doc.lend_mut().commit_applied(window, revision);
     }
 }
 

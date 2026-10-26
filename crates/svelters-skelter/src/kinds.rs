@@ -81,8 +81,10 @@ pub struct KindMap {
     /// `None` for an abstract base.
     pub core: Option<core::KindId>,
     pub wire: svl_id,
-    /// Its widget is skelter-widgets' (not a [`Placeholder`]).
+    /// Its widget is skelter-widgets' or the app's (not a [`Placeholder`]).
     pub hosted: bool,
+    /// The app registered its core kind ([`Kinds::with_app`]).
+    pub app: bool,
     pub props: Vec<PropMap>,
     pub signals: Vec<SignalMap>,
     pub methods: Vec<MethodMap>,
@@ -134,17 +136,51 @@ pub const COMMON_ALIASES: &[(&str, &str, bool)] = &[
     ("autofocus", "autofocus", false),
 ];
 
+/// Surface tags whose core kind has another tag (A9): egui's `combo-box` is skelter-widgets'
+/// `select`, its `action` a `menu-item`. CSS type selectors match the core tag.
+pub const CORE_TAGS: &[(&str, &str)] = &[("combo-box", "select"), ("action", "menu-item")];
+
+/// The core kind's tag for surface tag `tag`.
+pub fn core_tag(tag: &str) -> &str {
+    CORE_TAGS.iter().find(|(s, _)| *s == tag).map_or(tag, |(_, c)| c)
+}
+
+/// A10: registers svelters-skelter's built-in kinds ([`surface::builtin`]: skelter-widgets' where it
+/// has them, placeholders otherwise) into a host's own `reg`, so a host that builds its registry
+/// (its own kinds first) can hand its `Document` to [`crate::SkelterBackend::shared`] with
+/// [`crate::builtin_kinds`]: the kinds, member ids and tags are the same as the built-in registry's.
+/// A host kind with a built-in kind's tag is an error ([`RegistryError::DuplicateKind`]).
+pub fn register_builtin(reg: &mut KindRegistry) -> Result<(), RegistryError> {
+    register_hosted(reg)?;
+    for k in surface::builtin() {
+        if let Some(t) = k.tag
+            && reg.by_name(core_tag(t)).is_none()
+        {
+            reg.register_with(synthesize(k), placeholder)?;
+        }
+    }
+    Ok(())
+}
+
 /// The kinds skelter-widgets has written, registered through its host bridge.
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
     let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
     skelter_widgets::host::register_tier0(reg)?;
+    // the tier-1 views whose surface is egui's (A9, `surface::tier1`)
+    skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
+    skelter_widgets::table::kinds::register(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::menu::ContextMenu>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::menu::MenuItemKind>(reg)?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
 /// Whether surface type `t` can live in core prop `c`: the same core type and, for an enum, every
 /// surface name among core's values (the index is remapped by name, [`enum_to_core`]).
 fn fits(t: ValueType, c: &core::PropSpec) -> bool {
-    c.ty == core_type(t)
+    t != ValueType::Any
+        && c.ty == core_type(t)
         && match t {
             ValueType::Enum(names) => names.iter().all(|n| c.enum_values.contains(n)),
             _ => true,
@@ -180,7 +216,8 @@ pub fn core_type(t: ValueType) -> core::ValueType {
         ValueType::Enum(_) => core::ValueType::Enum,
         ValueType::Color => core::ValueType::Color,
         ValueType::StrList | ValueType::NumList | ValueType::IdList => core::ValueType::List,
-        ValueType::Record => core::ValueType::Record,
+        // stored by the backend ([`PropTarget::Side`]): never a core prop
+        ValueType::Record | ValueType::Any => core::ValueType::Record,
     }
 }
 
@@ -202,27 +239,32 @@ pub fn decl_key(k: &KindSpec) -> String {
     }
 }
 
+/// Wire ids live in the host's id space: the host splits the top bits of a signal id off as listen
+/// flags (`SVL_SIGNAL_FLAGS_SHIFT`), so every wire id is skelter-core's fingerprint masked to
+/// `SVL_SIGNAL_ID_MASK` (A18; the spec test fails on a collision after masking).
+pub const WIRE_MASK: svl_id = svelters_abi::SVL_SIGNAL_ID_MASK;
+
 pub fn kind_wire(k: &KindSpec) -> svl_id {
     match k.tag {
-        Some(t) => core::KindId::of(t).0,
-        None => core::KindId::of(&decl_key(k)).0,
+        Some(t) => core::KindId::of(t).0 & WIRE_MASK,
+        None => core::KindId::of(&decl_key(k)).0 & WIRE_MASK,
     }
 }
 
 pub fn prop_wire(decl: &KindSpec, p: &PropSpec) -> svl_id {
-    core::PropId::of(&decl_key(decl), p.name, core_type(p.ty).name()).0
+    core::PropId::of(&decl_key(decl), p.name, core_type(p.ty).name()).0 & WIRE_MASK
 }
 
 pub fn signal_wire(decl: &KindSpec, s: &SignalSpec) -> svl_id {
-    core::SignalId::of(&decl_key(decl), s.name, signal_arg_type(s.args).map_or("void", core::ValueType::name)).0
+    core::SignalId::of(&decl_key(decl), s.name, signal_arg_type(s.args).map_or("void", core::ValueType::name)).0 & WIRE_MASK
 }
 
 pub fn method_wire(decl: &KindSpec, m: &MethodSpec) -> svl_id {
-    core::MethodId::of(&decl_key(decl), m.name, m.ret.map_or("void", |t| core_type(t).name())).0
+    core::MethodId::of(&decl_key(decl), m.name, m.ret.map_or("void", |t| core_type(t).name())).0 & WIRE_MASK
 }
 
 pub fn slot_wire(decl: &KindSpec, s: &SlotSpec) -> svl_id {
-    core::SlotId::of(&decl_key(decl), s.name, "slot").0
+    core::SlotId::of(&decl_key(decl), s.name, "slot").0 & WIRE_MASK
 }
 
 /// The surface kind that owns `k`'s slots (the nearest in its chain with any).
@@ -277,7 +319,7 @@ fn synthesize(k: &'static KindSpec) -> &'static core::KindSpec {
     let mut props: Vec<core::PropSpec> = Vec::new();
     for decl in k.chain() {
         for p in decl.props {
-            if common_alias(decl, p).is_some() || props.iter().any(|q| q.name == p.name) {
+            if common_alias(decl, p).is_some() || p.ty == ValueType::Any || props.iter().any(|q| q.name == p.name) {
                 continue;
             }
             let mut c = core::PropSpec::new(p.name, core_type(p.ty), p.change).default(core_default(p));
@@ -357,6 +399,120 @@ fn core_args(args: &[(&'static str, ValueType)]) -> &'static [core::ArgSpec] {
     Box::leak(args.iter().map(|(n, t)| core::ArgSpec::new(n, core_type(*t))).collect::<Vec<_>>().into_boxed_slice())
 }
 
+/// The surface type of a core type (a list is a list of strings; an enum's names are the prop's).
+pub(crate) fn surface_type(t: core::ValueType, names: &'static [&'static str]) -> ValueType {
+    match t {
+        core::ValueType::Bool => ValueType::Bool,
+        core::ValueType::I64 => ValueType::I64,
+        core::ValueType::F64 => ValueType::F64,
+        core::ValueType::Str => ValueType::Str,
+        core::ValueType::Enum => ValueType::Enum(names),
+        core::ValueType::Color => ValueType::Color,
+        core::ValueType::List => ValueType::StrList,
+        core::ValueType::Record => ValueType::Record,
+    }
+}
+
+fn surface_args(args: &[core::ArgSpec]) -> &'static [(&'static str, ValueType)] {
+    if args.is_empty() {
+        return &[];
+    }
+    Box::leak(args.iter().map(|a| (a.name, surface_type(a.ty, &[]))).collect::<Vec<_>>().into_boxed_slice())
+}
+
+/// `property-grid` → `PropertyGrid`.
+fn kind_name(tag: &str) -> &'static str {
+    let mut name = String::new();
+    for w in tag.split(['-', '_']) {
+        let mut c = w.chars();
+        if let Some(f) = c.next() {
+            name.push(f.to_ascii_uppercase());
+            name.extend(c);
+        }
+    }
+    Box::leak(name.into_boxed_str())
+}
+
+/// The JS-facing spec of an app's core kind (A1): its props (an `Unset` default reads as `null`, so
+/// such a prop is nullable), signals (an unnamed argument is `value`), methods, slots (a container
+/// has the default `children` slot before its named ones), role, name sources, text prop and docs,
+/// on the `Widget` base. Its own members' wire ids are the core kind's ids ([`prop_wire`] hashes
+/// under the tag, as skelter-core does).
+pub fn surface_of(k: &'static core::KindSpec) -> &'static KindSpec {
+    let props: Vec<PropSpec> = k
+        .props
+        .iter()
+        .map(|p| PropSpec {
+            name: p.name,
+            ty: surface_type(p.ty, p.enum_values),
+            default: match p.default {
+                core::PropDefault::Unset | core::PropDefault::Color(_) => DefaultValue::Null,
+                core::PropDefault::Bool(b) => DefaultValue::Bool(b),
+                core::PropDefault::I64(i) => DefaultValue::I64(i),
+                core::PropDefault::F64(f) => DefaultValue::F64(f),
+                core::PropDefault::Str(s) => DefaultValue::Str(s),
+                core::PropDefault::Enum(i) => DefaultValue::Enum(i as u16),
+            },
+            nullable: p.nullable || matches!(p.default, core::PropDefault::Unset),
+            change: p.change,
+            native: p.native_owned,
+            doc: p.doc,
+        })
+        .collect();
+    let signals: Vec<SignalSpec> = k
+        .signals
+        .iter()
+        .map(|s| SignalSpec {
+            name: s.name,
+            args: match (s.args.is_empty(), s.arg) {
+                (false, _) => surface_args(s.args),
+                (true, Some(t)) => Box::leak(Box::new([("value", surface_type(t, &[]))])),
+                (true, None) => &[],
+            },
+            passive: s.flags.contains(core::SignalFlags::PASSIVE),
+            cancelable: s.flags.contains(core::SignalFlags::CANCELABLE),
+            sync: s.flags.contains(core::SignalFlags::SYNC),
+            bubbles: s.flags.contains(core::SignalFlags::BUBBLES),
+            doc: s.doc,
+        })
+        .collect();
+    let methods: Vec<MethodSpec> = k.methods.iter().map(|m| MethodSpec { name: m.name, params: surface_args(m.params), ret: m.ret.map(|r| surface_type(r.ty, &[])), doc: m.doc }).collect();
+    let mut slots: Vec<SlotSpec> = Vec::new();
+    if k.container || !k.slots.is_empty() {
+        slots.push(SlotSpec { name: "children", accepts: &["Widget"], many: true });
+        slots.extend(k.slots.iter().map(|s| SlotSpec { name: s.name, accepts: &["Widget"], many: !s.single }));
+    }
+    let name_from: Vec<&'static str> = k
+        .name_from
+        .iter()
+        .filter_map(|n| match *n {
+            core::NameSource::AriaLabel => Some("accessible-name"),
+            core::NameSource::Text => k.text_prop,
+            core::NameSource::Prop(p) => Some(p),
+            core::NameSource::Children => Some("children"),
+        })
+        .collect();
+    let role: &'static str = match k.role {
+        Role::GenericContainer => "",
+        r => Box::leak(format!("{r:?}").into_boxed_str()),
+    };
+    let native_state: Vec<&'static str> = k.props.iter().filter(|p| p.native_owned).map(|p| p.name).collect();
+    Box::leak(Box::new(KindSpec {
+        name: kind_name(k.name),
+        tag: Some(k.name),
+        extends: Some(&surface::tier0::WIDGET),
+        doc: k.doc,
+        props: Box::leak(props.into_boxed_slice()),
+        signals: Box::leak(signals.into_boxed_slice()),
+        methods: Box::leak(methods.into_boxed_slice()),
+        slots: Box::leak(slots.into_boxed_slice()),
+        a11y: surface::A11ySpec { role, name_from: Box::leak(name_from.into_boxed_slice()), name_required: false },
+        text_content: k.text_prop,
+        toplevel: false,
+        native_state: Box::leak(native_state.into_boxed_slice()),
+    }))
+}
+
 /// The node value of a synthesized kind: lays out by the default rules, draws nothing.
 #[derive(Default)]
 pub struct Placeholder;
@@ -386,25 +542,49 @@ pub struct Kinds {
 impl Kinds {
     /// The Tier 0 kinds: skelter-widgets' where it has them, synthesized otherwise.
     pub fn builtin() -> Result<Kinds, RegistryError> {
-        Kinds::new(surface::tier0::ALL)
+        Kinds::new(&surface::builtin())
     }
 
     /// The kinds of `surface` (bases included).
     pub fn new(surface: &[&'static KindSpec]) -> Result<Kinds, RegistryError> {
+        Kinds::with_app(surface, |_| Ok(()))
+    }
+
+    /// The kinds of `surface` plus the app's (A1): `app` registers its core kinds (its own widgets)
+    /// on the registry after skelter-widgets' and before any placeholder is synthesized. An app kind
+    /// gets its JS-facing spec from its core `KindSpec` ([`surface_of`]: docs, methods, signal
+    /// arguments, nullable props) unless `surface` has a spec with its tag: that one is used instead
+    /// (the override, for names the core spec does not carry, such as egui's JS names). A surface
+    /// kind that would be a placeholder is the app's real kind when the app registers its tag.
+    /// `surface` must hold [`surface::tier0::WIDGET`], the base of derived kinds.
+    pub fn with_app(surface: &[&'static KindSpec], app: impl FnOnce(&mut KindRegistry) -> Result<(), RegistryError>) -> Result<Kinds, RegistryError> {
         let mut reg = KindRegistry::new();
-        let hosted = register_hosted(&mut reg)?;
-        for k in surface {
+        let mut hosted = register_hosted(&mut reg)?;
+        let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
+        app(&mut reg)?;
+        let added: Vec<core::KindId> = reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect();
+        hosted.extend(added.iter().copied());
+        let mut all: Vec<&'static KindSpec> = surface.to_vec();
+        for id in &added {
+            let spec = reg.get(*id).expect("registered").spec;
+            if !surface.iter().any(|k| k.tag == Some(spec.name)) {
+                all.push(surface_of(spec));
+            }
+        }
+        for k in &all {
             if let Some(t) = k.tag
-                && reg.by_name(t).is_none()
+                && reg.by_name(core_tag(t)).is_none()
             {
                 reg.register_with(synthesize(k), placeholder)?;
             }
         }
         let reg = Arc::new(reg);
         let mut list = Vec::new();
-        for &k in surface {
-            let core = k.tag.and_then(|t| reg.by_name(t));
-            list.push(Kinds::map(k, core, hosted.iter().any(|h| Some(*h) == core.map(|e| e.id))));
+        for &k in &all {
+            let core = k.tag.and_then(|t| reg.by_name(core_tag(t)));
+            let mut m = Kinds::map(k, core, hosted.iter().any(|h| Some(*h) == core.map(|e| e.id)));
+            m.app = m.core.is_some_and(|c| added.contains(&c));
+            list.push(m);
         }
         let by_wire = list.iter().enumerate().map(|(i, m)| (m.wire, i)).collect();
         let by_tag = list.iter().enumerate().filter_map(|(i, m)| Some((m.surface.tag?, i))).collect();
@@ -457,7 +637,7 @@ impl Kinds {
                 .collect(),
             None => Vec::new(),
         };
-        KindMap { surface: k, core: entry.map(|e| e.id), wire: kind_wire(k), hosted, props, signals, methods, slots }
+        KindMap { surface: k, core: entry.map(|e| e.id), wire: kind_wire(k), hosted, app: false, props, signals, methods, slots }
     }
 
     pub fn registry(&self) -> &Arc<KindRegistry> {
@@ -495,14 +675,14 @@ mod tests {
         let k = Kinds::builtin().unwrap();
         let button = k.by_tag("button").unwrap();
         assert!(button.hosted, "button is skelter-widgets'");
-        assert_eq!(button.wire, core::KindId::of("button").0);
+        assert_eq!(button.wire, core::KindId::of("button").0 & WIRE_MASK);
         // Q2: egui's names onto core's common props
         assert_eq!(button.prop_named("enabled").unwrap().target, PropTarget::Inverted(core::common::DISABLED));
         assert_eq!(button.prop_named("accessible-name").unwrap().target, PropTarget::Native(core::common::ARIA_LABEL));
         // Q1: a kind's own native member has its core id on the wire
         let text = button.prop_named("text").unwrap();
         assert_eq!(text.target, PropTarget::Native(core::PropId::of("button", "text", "string")));
-        assert_eq!(text.wire, core::PropId::of("button", "text", "string").0);
+        assert_eq!(text.wire, core::PropId::of("button", "text", "string").0 & WIRE_MASK);
         assert_eq!(button.signal_named("keydown").unwrap().native, Some(core::common::KEYDOWN));
         // inherited members have one id on every kind
         let label = k.by_tag("label").unwrap();

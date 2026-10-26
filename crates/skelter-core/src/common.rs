@@ -6,6 +6,7 @@
 use crate::ids::{PropId, SignalId};
 use crate::kind::{ArgSpec, KindSpec, PropSpec, SignalFlags, SignalSpec};
 use crate::value::{PropDefault, ValueType};
+use skelter_base::accesskit;
 use skelter_base::change::ChangeClass;
 
 const B: SignalFlags = SignalFlags::BUBBLES;
@@ -32,6 +33,53 @@ pub const STATUS_SECTIONS: &[&str] = &["temporary", "start", "end"];
 /// `aria-live`: how assistive technology announces changes inside the node.
 pub const ARIA_LIVE_VALUES: &[&str] = &["off", "polite", "assertive"];
 
+/// `aria-expanded` / `aria-selected`: unset leaves the kind's own state.
+pub const ARIA_TRISTATE: &[&str] = &["unset", "true", "false"];
+
+/// The ARIA role names `role` takes, with their AccessKit roles.
+pub const ROLES: &[(&str, accesskit::Role)] = &[
+    ("alert", accesskit::Role::Alert),
+    ("article", accesskit::Role::Article),
+    ("button", accesskit::Role::Button),
+    ("cell", accesskit::Role::Cell),
+    ("checkbox", accesskit::Role::CheckBox),
+    ("combobox", accesskit::Role::ComboBox),
+    ("dialog", accesskit::Role::Dialog),
+    ("generic", accesskit::Role::GenericContainer),
+    ("grid", accesskit::Role::Grid),
+    ("group", accesskit::Role::Group),
+    ("heading", accesskit::Role::Heading),
+    ("img", accesskit::Role::Image),
+    ("link", accesskit::Role::Link),
+    ("list", accesskit::Role::List),
+    ("listbox", accesskit::Role::ListBox),
+    ("listitem", accesskit::Role::ListItem),
+    ("menu", accesskit::Role::Menu),
+    ("menuitem", accesskit::Role::MenuItem),
+    ("navigation", accesskit::Role::Navigation),
+    ("option", accesskit::Role::ListBoxOption),
+    ("progressbar", accesskit::Role::ProgressIndicator),
+    ("radio", accesskit::Role::RadioButton),
+    ("region", accesskit::Role::Region),
+    ("row", accesskit::Role::Row),
+    ("separator", accesskit::Role::Splitter),
+    ("slider", accesskit::Role::Slider),
+    ("status", accesskit::Role::Status),
+    ("switch", accesskit::Role::Switch),
+    ("tab", accesskit::Role::Tab),
+    ("tablist", accesskit::Role::TabList),
+    ("tabpanel", accesskit::Role::TabPanel),
+    ("textbox", accesskit::Role::TextInput),
+    ("toolbar", accesskit::Role::Toolbar),
+    ("tree", accesskit::Role::Tree),
+    ("treeitem", accesskit::Role::TreeItem),
+];
+
+/// The AccessKit role of an ARIA role name (`None`: unknown or empty, the kind's own role stays).
+pub fn role_named(name: &str) -> Option<accesskit::Role> {
+    ROLES.iter().find(|(n, _)| *n == name).map(|(_, r)| *r)
+}
+
 pub static COMMON: KindSpec = KindSpec {
     props: &[
         PropSpec::new("tabindex", ValueType::I64, ChangeClass::Paint),
@@ -42,6 +90,23 @@ pub static COMMON: KindSpec = KindSpec {
             .default(PropDefault::Enum(0))
             .enum_values(ARIA_LIVE_VALUES)
             .doc("A live region: AccessKit `live` (`off`, `polite`, `assertive`), applied after the kind's own accessibility node."),
+        PropSpec::new("role", ValueType::Str, ChangeClass::Paint)
+            .default(PropDefault::Str(""))
+            .doc("An ARIA role overriding the kind's AccessKit role (`treeitem`, `listitem`, `heading`, …; see `ROLES`); empty or unknown keeps the kind's."),
+        PropSpec::new("aria-level", ValueType::I64, ChangeClass::Paint)
+            .default(PropDefault::I64(0))
+            .doc("The hierarchical level (tree items, headings): AccessKit `level`; 0 leaves it unset."),
+        PropSpec::new("aria-expanded", ValueType::Enum, ChangeClass::Paint)
+            .default(PropDefault::Enum(0))
+            .enum_values(ARIA_TRISTATE)
+            .doc("AccessKit `expanded`; `unset` leaves the kind's own."),
+        PropSpec::new("aria-selected", ValueType::Enum, ChangeClass::Paint)
+            .default(PropDefault::Enum(0))
+            .enum_values(ARIA_TRISTATE)
+            .doc("AccessKit `selected`; `unset` leaves the kind's own."),
+        PropSpec::new("aria-description", ValueType::Str, ChangeClass::Paint)
+            .default(PropDefault::Str(""))
+            .doc("AccessKit `description`; empty leaves it unset."),
         PropSpec::new("aria-busy", ValueType::Bool, ChangeClass::Paint)
             .default(PropDefault::Bool(false))
             .doc("The node is being updated: AccessKit `busy`, applied after the kind's own accessibility node."),
@@ -130,6 +195,11 @@ ids!(PropId:
     ARIA_LABEL = "aria-label": "string",
     ARIA_LIVE = "aria-live": "enum",
     ARIA_BUSY = "aria-busy": "bool",
+    ROLE = "role": "string",
+    ARIA_LEVEL = "aria-level": "int",
+    ARIA_EXPANDED = "aria-expanded": "enum",
+    ARIA_SELECTED = "aria-selected": "enum",
+    ARIA_DESCRIPTION = "aria-description": "string",
     TITLE = "title": "string",
     AUTOFOCUS = "autofocus": "bool",
     FOCUS_SCOPE = "focus-scope": "enum",
@@ -190,7 +260,7 @@ mod tests {
         for i in 0..COMMON.props.len() {
             assert!(prop(COMMON.prop_id(i)).is_some());
         }
-        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, ARIA_LIVE, ARIA_BUSY, TITLE, AUTOFOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
+        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, ARIA_LIVE, ARIA_BUSY, ROLE, ARIA_LEVEL, ARIA_EXPANDED, ARIA_SELECTED, ARIA_DESCRIPTION, TITLE, AUTOFOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
             assert!(prop(id).is_some(), "{id:?}");
         }
         for id in [POINTERDOWN, CLICK, WHEEL, KEYDOWN, FOCUS, FOCUSIN, SCROLL, ANIMATIONEND, DRAG_BEGIN, DRAG_END, DRAG_ENTER, DRAG_LEAVE, DROP] {

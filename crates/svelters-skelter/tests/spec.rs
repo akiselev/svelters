@@ -47,19 +47,45 @@ fn ids_are_unique_and_every_member_has_one() {
     assert_eq!(spec["ids"]["spec_hash"].as_str().map(str::len), Some(16));
 }
 
+/// A18: the host splits a signal id's top bits off as listen flags, so no wire id may reach them.
+#[test]
+fn no_wire_id_reaches_the_flag_bits() {
+    let spec: serde_json::Value = serde_json::from_str(&builtin_text()).unwrap();
+    let max = svelters_abi::SVL_SIGNAL_ID_MASK as u64;
+    let mut n = 0;
+    for (name, k) in spec["kinds"].as_object().unwrap() {
+        let mut ids = vec![(name.clone(), k["id"].as_u64().unwrap())];
+        for section in ["props", "signals", "methods"] {
+            for (m, j) in k[section].as_object().unwrap() {
+                ids.push((format!("{name}.{m}"), j["id"].as_u64().unwrap()));
+            }
+        }
+        for (s, id) in k["slot_ids"].as_object().into_iter().flatten() {
+            ids.push((format!("{name} slot {s}"), id.as_u64().unwrap()));
+        }
+        for (what, id) in ids {
+            assert!(id <= max, "{what}: id {id:#x} sets flag bits");
+            n += 1;
+        }
+    }
+    assert!(n > 200);
+}
+
 #[test]
 fn ids_are_skelter_core_hashes() {
     use skelter_core::{KindId, PropId, SignalId, common};
     let spec: serde_json::Value = serde_json::from_str(&builtin_text()).unwrap();
     let button = &spec["kinds"]["Button"];
-    assert_eq!(button["id"].as_u64(), Some(KindId::of("button").0 as u64));
+    // core's fingerprints in the host's id space (A18)
+    let m = |id: u32| Some((id & svelters_abi::SVL_SIGNAL_ID_MASK) as u64);
+    assert_eq!(button["id"].as_u64(), m(KindId::of("button").0));
     // a kind's own native member: its core id
-    assert_eq!(button["props"]["text"]["id"].as_u64(), Some(PropId::of("button", "text", "string").0 as u64));
-    assert_eq!(button["signals"]["clicked"]["id"].as_u64(), Some(SignalId::of("button", "clicked", "void").0 as u64));
+    assert_eq!(button["props"]["text"]["id"].as_u64(), m(PropId::of("button", "text", "string").0));
+    assert_eq!(button["signals"]["clicked"]["id"].as_u64(), m(SignalId::of("button", "clicked", "void").0));
     // `Widget` members hash under core's common pseudo-kind; same-named ones are core's
     let widget = &spec["kinds"]["Widget"];
-    assert_eq!(widget["props"]["autofocus"]["id"].as_u64(), Some(common::AUTOFOCUS.0 as u64));
-    assert_eq!(widget["signals"]["click"]["id"].as_u64(), Some(common::CLICK.0 as u64));
+    assert_eq!(widget["props"]["autofocus"]["id"].as_u64(), m(common::AUTOFOCUS.0));
+    assert_eq!(widget["signals"]["click"]["id"].as_u64(), m(common::CLICK.0));
     // Q2: egui's names, core's native names
     assert_eq!(widget["props"]["enabled"]["native"], "disabled");
     assert_eq!(widget["props"]["accessible-name"]["native"], "aria-label");

@@ -252,6 +252,11 @@ impl HeadlessCompositor {
     }
 
     /// Every commit applied so far, oldest first.
+    /// Reads `w`'s folded scene (what `render` draws: its layers, lists and property trees, with
+    /// the fast commits applied); `None` before its first commit.
+    pub fn with_tree<R>(&self, w: WindowId, f: impl FnOnce(&mut WindowTree) -> R) -> Option<R> {
+        self.lock().trees.get_mut(&w).map(f)
+    }
     pub fn applied(&self) -> Vec<Commit> {
         self.lock().applied.clone()
     }

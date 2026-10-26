@@ -604,6 +604,13 @@ pub trait Kind: 'static {
         Handled::No
     }
 
+    /// The window's overlay stack closed the node's overlay surface ([`RecordCx::overlay`](crate::RecordCx::overlay)):
+    /// a press outside it (`OutsidePress`), Escape, or its parent surface closing. The kind closes its
+    /// state (and records no part); a part it keeps recording opens again.
+    fn overlay_closed(&mut self, cx: &mut EventCx, reason: crate::overlay::DismissReason) -> Handled {
+        Handled::No
+    }
+
     /// JS started (`listened`) or stopped listening to `signal` on this node (an icon takes clicks
     /// only while its click signal is listened). [`NodeView::listened`](crate::NodeView::listened)
     /// answers the same at any time.

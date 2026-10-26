@@ -117,7 +117,10 @@ fn monitor_at(monitors: &[Monitor], at: Option<(i32, i32)>) -> Option<&Monitor> 
 struct WindowState {
     frame: UiFrame,
     size: DeviceSize,
+    /// The OS scale; the document and compositor get `scale × zoom`.
     scale: Scale,
+    /// The host's UI zoom ([`App::set_zoom`]), 1 by default.
+    zoom: f32,
     visible: bool,
     /// The refresh interval last sent to the compositor (the window's monitor's).
     refresh: Option<Span>,
@@ -243,6 +246,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
                 position: None,
                 size,
                 scale,
+                zoom: 1.0,
                 visible: true,
             },
         );
@@ -477,7 +481,10 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             && ws.ime != ime
         {
             ws.ime = ime;
-            cx.set_ime(w, ime.map(|(area, purpose)| ImeState::new(area, purpose)));
+            // document points → window points
+            let z = ws.zoom;
+            let zoomed = |a: Rect| Rect::new(a.min.x * z, a.min.y * z, a.max.x * z, a.max.y * z);
+            cx.set_ime(w, ime.map(|(area, purpose)| ImeState::new(zoomed(area), purpose)));
         }
         if let Some(u) = &c.a11y {
             cx.update_a11y(w, u.clone());
@@ -556,6 +563,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             }
             ToUi::CommitApplied { window, revision } => {
                 self.latency.commit_applied(window, revision, now);
+                self.doc.commit_applied(window, revision);
                 let again = self
                     .windows
                     .get_mut(&window)
@@ -650,6 +658,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         };
         ws.size = size;
         ws.scale = scale;
+        let scale = Scale(scale.0 * ws.zoom);
         let pts = Size::new(size.w as f32 / scale.0, size.h as f32 / scale.0);
         self.doc.resize(w, pts, scale);
         self.urgent(cx, w);
@@ -671,6 +680,25 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             }
         }
         self.pump(cx);
+    }
+
+    /// Sets window `w`'s UI zoom (the host owns it, like svelters-egui's `set_zoom_factor`): the
+    /// document and compositor run at `os scale × factor`, so the window holds `device / scale`
+    /// points; pointer and IME positions are converted. A change re-runs the resize handshake.
+    pub fn set_zoom(&mut self, cx: &mut dyn PlatformCx, w: WindowId, factor: f32) {
+        let factor = if factor.is_finite() && factor > 0.0 { factor } else { 1.0 };
+        let Some(ws) = self.windows.get_mut(&w) else { return };
+        if ws.zoom == factor {
+            return;
+        }
+        ws.zoom = factor;
+        let (size, scale) = (ws.size, ws.scale);
+        self.resize(cx, w, size, scale);
+    }
+
+    /// Window `w`'s UI zoom (1 when unset or unknown).
+    pub fn zoom(&self, w: WindowId) -> f32 {
+        self.windows.get(&w).map_or(1.0, |s| s.zoom)
     }
 
     /// An AccessKit action (from the platform adapter or a test): handled by the tree like discrete
@@ -786,10 +814,13 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> AppHandler for App<D,
 }
 
 impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
-    fn input_one(&mut self, cx: &mut dyn PlatformCx, ev: InputEnvelope) {
+    fn input_one(&mut self, cx: &mut dyn PlatformCx, mut ev: InputEnvelope) {
         let w = ev.window;
-        if !self.windows.contains_key(&w) {
+        let Some(zoom) = self.windows.get(&w).map(|s| s.zoom) else {
             return;
+        };
+        if zoom != 1.0 {
+            unzoom(&mut ev.event, zoom);
         }
         self.latency.begin(&ev);
         if !ev.event.is_discrete() {
@@ -859,5 +890,30 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             }
             A11yEvent::Deactivated => {}
         }
+    }
+}
+
+/// Window points → document points under a UI zoom of `z`.
+fn unzoom(ev: &mut InputEvent, z: f32) {
+    use skelter_base::event::ScrollDelta;
+    let p = |p: &mut skelter_base::geom::Point| {
+        p.x /= z;
+        p.y /= z;
+    };
+    match ev {
+        InputEvent::Pointer(e) => {
+            p(&mut e.pos);
+            for s in &mut e.history {
+                p(&mut s.pos);
+            }
+        }
+        InputEvent::Wheel(e) => {
+            p(&mut e.pos);
+            if let ScrollDelta::Pixels(d) = &mut e.delta {
+                d.x /= z;
+                d.y /= z;
+            }
+        }
+        _ => {}
     }
 }

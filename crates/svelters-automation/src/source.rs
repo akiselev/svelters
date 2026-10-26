@@ -8,15 +8,42 @@
 //! give the same matches by construction.
 //!
 //! [`query`], [`snapshot`] and [`actionable_point`] are the source-generic reads and the synthetic
-//! act's target point; the [`Session`](crate::Session) (acts, waits, journal, JSON methods) still
-//! runs on a svelters-egui scene through its [`Driver`](crate::Driver).
+//! act's target point. The [`Session`](crate::Session) (acts, waits, journal, JSON methods) runs on
+//! any source through a [`SourceDriver`](crate::SourceDriver) (every svelters-egui
+//! [`Driver`](crate::Driver) is one); the methods below `select_css` are what it reads besides the
+//! selectors' (ancestry for the hit check, the drawn rects, and the egui scene's tag, root, source
+//! location and style).
 
 use crate::Error;
 use crate::selector::{Selector, parse};
+use crate::session::SourceInfo;
 use std::borrow::Cow;
 use std::hash::Hash;
 use svelters_egui::accessible_name;
 use svelters_egui::scene::{NodeId, SceneRef};
+use svelters_egui::style::MatchedRuleInfo;
+
+/// Where a node was drawn ([`SceneSource::drawn`]).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Drawn {
+    /// Its rect on screen, as drawn.
+    pub rect: egui::Rect,
+    /// The part of `rect` in view (inside its clips).
+    pub visible: egui::Rect,
+}
+
+/// A node's computed style ([`SceneSource::computed_style`]; `style.computed`).
+#[derive(Clone, Debug, PartialEq)]
+pub struct ComputedStyle<N> {
+    /// Every set property with its computed value as CSS text.
+    pub values: Vec<(String, String)>,
+    /// Custom properties (`--name`) with their computed text.
+    pub custom: Vec<(String, String)>,
+    /// The inherited properties the node doesn't declare, each with the nearest ancestor that
+    /// declares it (`None`: none does).
+    pub inherited: Vec<(String, Option<N>)>,
+    pub rules: Vec<MatchedRuleInfo>,
+}
 
 /// A root of a [`SceneSource`], in scene order.
 #[derive(Clone, Debug, PartialEq)]
@@ -107,6 +134,59 @@ pub trait SceneSource {
     fn select_css(&self, css: &str, among: &[Self::Node]) -> Result<Vec<Self::Node>, Error> {
         let _ = among;
         Err(Error::new("capability.absent", format!("this scene source has no CSS matcher (css `{css}`)")))
+    }
+
+    // ---- what the session reads besides the selectors ----
+
+    /// `n`'s parent (`None`: a root's top, or gone). The default searches the roots.
+    fn parent(&self, n: Self::Node) -> Option<Self::Node> {
+        let mut stack: Vec<Self::Node> = self.roots().into_iter().map(|r| r.top).collect();
+        while let Some(p) = stack.pop() {
+            let kids = self.children(p);
+            if kids.contains(&n) {
+                return Some(p);
+            }
+            stack.extend(kids);
+        }
+        None
+    }
+    /// Whether `n` is in the scene (a ref to a node that is gone is stale). The default searches
+    /// the roots.
+    fn contains(&self, n: Self::Node) -> bool {
+        self.roots().into_iter().any(|r| r.top == n || self.descendants(r.top).contains(&n))
+    }
+    /// The element name `scene.query` reports as `tag` (the role when the scene has none).
+    fn tag(&self, n: Self::Node) -> Cow<'_, str> {
+        Cow::Borrowed(self.role(n))
+    }
+    /// The key of the root `n` is in (`None`: unkeyed).
+    fn root_key_of(&self, n: Self::Node) -> Option<Cow<'_, str>> {
+        let _ = n;
+        None
+    }
+    /// Where `n` was drawn in the last frame: its rect and the part of it in view (`None`: not
+    /// drawn). The default is [`SceneSource::rect`], wholly in view, for a visible node.
+    fn drawn(&self, n: Self::Node) -> Option<Drawn> {
+        self.rect(n).filter(|_| self.is_visible(n)).map(|rect| Drawn { rect, visible: rect })
+    }
+    /// The rect a screenshot of `n` crops to.
+    fn screen_rect(&self, n: Self::Node) -> Option<egui::Rect> {
+        self.drawn(n).map(|d| d.rect)
+    }
+    /// DZ0: where a dev build declared `n`.
+    fn source_info(&self, n: Self::Node) -> Option<SourceInfo> {
+        let _ = n;
+        None
+    }
+    /// DZ0b2: the rules that match `n`, in cascade order (`None`: this scene has no style engine).
+    fn matched_rules(&self, n: Self::Node) -> Option<Vec<MatchedRuleInfo>> {
+        let _ = n;
+        None
+    }
+    /// DZ0b2: `n`'s computed style (`None`: this scene has no style engine).
+    fn computed_style(&self, n: Self::Node) -> Option<ComputedStyle<Self::Node>> {
+        let _ = n;
+        None
     }
 }
 
@@ -231,5 +311,44 @@ impl<'a> SceneSource for SceneRef<'a> {
             .copied()
             .filter(|&id| self.get(id).is_some_and(|n| svelters_style::matches(&list, n, &mut caches)))
             .collect())
+    }
+    fn parent(&self, n: NodeId) -> Option<NodeId> {
+        self.get(n)?.parent().map(|p| p.id())
+    }
+    fn contains(&self, n: NodeId) -> bool {
+        self.get(n).is_some()
+    }
+    fn tag(&self, n: NodeId) -> Cow<'_, str> {
+        Cow::Borrowed(self.get(n).map_or("", |n| n.tag()))
+    }
+    fn root_key_of(&self, n: NodeId) -> Option<Cow<'_, str>> {
+        let s = *self;
+        s.root_key(s.get(n)?.root()).map(Cow::Borrowed)
+    }
+    fn drawn(&self, n: NodeId) -> Option<Drawn> {
+        self.get(n)?.shown().map(|sh| Drawn { rect: sh.rect, visible: sh.visible })
+    }
+    fn screen_rect(&self, n: NodeId) -> Option<egui::Rect> {
+        self.get(n)?.screen_rect().map(|(_, r)| r)
+    }
+    fn source_info(&self, n: NodeId) -> Option<SourceInfo> {
+        self.get(n)?.source_loc().map(|l| SourceInfo {
+            file: l.element().file.to_string(),
+            offset: l.element().offset,
+            sites: l.sites().map(|x| (x.file.to_string(), x.offset)).collect(),
+        })
+    }
+    fn matched_rules(&self, n: NodeId) -> Option<Vec<MatchedRuleInfo>> {
+        self.get(n).map(|n| n.matched_rules())
+    }
+    fn computed_style(&self, n: NodeId) -> Option<ComputedStyle<NodeId>> {
+        let n = self.get(n)?;
+        let c = n.computed_style();
+        Some(ComputedStyle {
+            values: c.as_deref().map(|c| c.iter().map(|(p, v)| (p.name.to_string(), v.to_string())).collect()).unwrap_or_default(),
+            custom: c.as_deref().map(|c| c.customs().map(|(k, v)| (k.to_string(), v.to_string())).collect()).unwrap_or_default(),
+            inherited: n.inherited_from(),
+            rules: n.matched_rules(),
+        })
     }
 }

@@ -49,6 +49,42 @@ fn a_document_on_another_registry_is_refused() {
     assert!(own.document().borrow().is_empty());
 }
 
+/// A10: a host registry with its own kind and the built-ins registered into it
+/// (`kinds::register_builtin`) takes JS's nodes through `SkelterBackend::shared`.
+#[test]
+fn a_host_registry_takes_the_builtin_kinds() {
+    static PANE: skelter_core::KindSpec = skelter_core::KindSpec { container: true, ..skelter_core::KindSpec::new("host-pane") };
+    #[derive(Default)]
+    struct Pane;
+    impl skelter_core::Kind for Pane {
+        fn spec() -> &'static skelter_core::KindSpec {
+            &PANE
+        }
+        fn record(&self, _cx: &mut skelter_core::RecordCx) {}
+    }
+    let mut reg = KindRegistry::new();
+    reg.register::<Pane>().unwrap();
+    svelters_skelter::kinds::register_builtin(&mut reg).unwrap();
+    assert!(reg.by_name("scroll-area").is_some() && reg.by_name("collapsing-header").is_some());
+    let mut doc = Document::new(std::sync::Arc::new(reg), Box::new(svelters_skelter::backend::NoText));
+    let host_pane = doc.create(KindId::of("host-pane"));
+    let pane = doc.create(KindId::of("box"));
+    doc.insert(host_pane, pane, None, None).unwrap();
+    let doc = Rc::new(std::cell::RefCell::new(doc));
+    let b = SkelterBackend::shared(svelters_skelter::builtin_kinds(), doc.clone()).unwrap();
+    let slot = b.adopt(pane).unwrap();
+    for tag in ["button", "collapsing-header", "combo-box"] {
+        let h = b.create(b.resolve(NameKind::Kind, 0, tag)).unwrap();
+        b.insert(slot, h, None, 0).unwrap();
+    }
+    assert_eq!(doc.borrow().children(pane).len(), 3);
+    // a host kind under a built-in tag is refused
+    static BUTTON: skelter_core::KindSpec = skelter_core::KindSpec::new("button");
+    let mut clash = KindRegistry::new();
+    clash.register_with(&BUTTON, || Box::new(svelters_skelter::kinds::Placeholder)).unwrap();
+    assert!(svelters_skelter::kinds::register_builtin(&mut clash).is_err());
+}
+
 /// A scratch app (like svelters-egui's `cv1.rs`): `components` exported by file stem, for skelter.
 fn scratch(name: &str, components: &[(&str, &str)]) -> PathBuf {
     let fixture = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/embed-egui").canonicalize().unwrap();
@@ -100,4 +136,47 @@ fn a_svelte_root_mounts_into_a_node_of_the_host_document() {
     embed.logic();
     assert!(doc.borrow().contains(pane));
     assert!(doc.borrow().children(pane).is_empty());
+}
+
+const COUNTER: &str = r#"<script>
+  let count = $state(0);
+</script>
+<box>
+  <button text="Go" onclicked={() => count++} />
+  <label text={`n=${count}`} />
+</box>
+"#;
+
+/// A18: compiled Svelte through the real svelters-host: a skelter `clicked` runs the `onclicked`
+/// handler (the host masks signal ids to `SVL_SIGNAL_ID_MASK`, so wire ids must fit in it).
+#[test]
+fn a_skelter_click_runs_the_svelte_onclicked_handler() {
+    let (doc, pane) = host_doc();
+    let backend = SkelterBackend::over(doc).unwrap();
+    let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..svelters_host::HostConfig::default() };
+    let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, ..EmbedConfig::default() }).unwrap();
+    let dir = scratch("counter", &[("Counter.svelte", COUNTER)]);
+    let mut cfg = svelters_host::modules::SourceConfig::for_path(&dir).unwrap();
+    cfg.backend = "skelter".into();
+    let entry = embed.load_from(Rc::new(svelters_host::modules::SourceProvider::new(cfg).unwrap())).unwrap();
+    let slot = embed.adopt_slot("panel.counter", pane).unwrap();
+    embed.mount(MountSpec::new(entry, "Counter", slot, "panel.counter")).unwrap();
+    embed.logic();
+    let doc = backend.document();
+    let bx = doc.borrow().children(pane)[0];
+    let (button, label) = {
+        let d = doc.borrow();
+        (d.children(bx)[0], d.children(bx)[1])
+    };
+    let text = |n| {
+        let h = backend.handle(n).unwrap();
+        let p = backend.resolve(NameKind::Prop, backend.handle_info(h).unwrap().kind, "text");
+        backend.get_prop(h, p).unwrap()
+    };
+    assert_eq!(text(label), Value::Str("n=0".into()));
+    let ev = backend.target_event(button, "clicked", vec![]).expect("the handler listens on the button");
+    backend.queue(svelters_skelter::Output { events: vec![ev], ..Default::default() });
+    backend.pump();
+    embed.logic();
+    assert_eq!(text(label), Value::Str("n=1".into()), "the onclicked handler ran");
 }
