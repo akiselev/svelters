@@ -1343,8 +1343,11 @@ impl Document {
 
     /// An assistive technology's action request: the target's kind handles it first; unhandled
     /// `Focus`, `Blur` and `ScrollIntoView` get their defaults.
+    /// An action on a virtual child ([`crate::a11y::virtual_id`]) reaches its owner's kind as
+    /// [`Event::A11yChild`](crate::Event::A11yChild); unhandled, `Focus` focuses the owner.
     pub fn a11y_action(&mut self, window: WindowId, req: &accesskit::ActionRequest) -> crate::input::Dispatched {
-        let node = NodeId(req.target_node.0);
+        let child = crate::a11y::virtual_child(req.target_node);
+        let node = child.map_or(NodeId(req.target_node.0), |(owner, _)| owner);
         let mut out = crate::input::Dispatched { window, revision: self.revision, ..Default::default() };
         if self.window_of(node) != Some(window) {
             return out;
@@ -1353,8 +1356,11 @@ impl Document {
         let mut emitted = Vec::new();
         let before = self.revision;
         self.transaction(|doc| {
-            let handled = !doc.state(node).contains(StateMask::DISABLED)
-                && crate::input::dispatch::call_kind(doc, node, &crate::kind::Event::A11y(req), &mut emitted, None) == crate::kind::Handled::Yes;
+            let ev = match child {
+                Some((_, index)) => crate::kind::Event::A11yChild(req, index),
+                None => crate::kind::Event::A11y(req),
+            };
+            let handled = !doc.state(node).contains(StateMask::DISABLED) && crate::input::dispatch::call_kind(doc, node, &ev, &mut emitted, None) == crate::kind::Handled::Yes;
             out.handled = handled;
             if !handled {
                 match req.action {

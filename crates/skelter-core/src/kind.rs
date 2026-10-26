@@ -332,6 +332,9 @@ pub enum Event<'a> {
     Timer,
     /// An assistive technology asked for an action on this node.
     A11y(&'a accesskit::ActionRequest),
+    /// An assistive technology asked for an action on the node's virtual child with this index
+    /// ([`A11yCx::add_virtual_child`](crate::A11yCx::add_virtual_child)).
+    A11yChild(&'a accesskit::ActionRequest, u32),
 }
 
 /// A node's peer group: the siblings (same parent, tree order, the node included) of the node's own

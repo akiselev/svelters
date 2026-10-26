@@ -252,6 +252,9 @@ pub mod core {
         Focus { gained: bool, reason: FocusReason },
         /// An assistive-technology action addressed to this node.
         A11y(accesskit::ActionRequest),
+        /// An assistive-technology action addressed to the node's virtual child `index` (one of the
+        /// [`A11yCx::children`] its `a11y` added).
+        A11yChild { index: u32, req: accesskit::ActionRequest },
         /// The time the kind asked for with [`EventCx::wake_at`] came (press repeat, a press held long
         /// enough to become a drag).
         Timer,
@@ -498,6 +501,10 @@ pub mod core {
         pub node: &'a mut accesskit::Node,
         pub state: StateBits,
         pub size: Size,
+        /// Virtual children: AccessKit nodes for parts the kind draws without nodes of their own (a
+        /// select's options), bounds in the node's space. Core sends them after the node's real
+        /// children; an action on child `i` comes back as [`Event::A11yChild`] with `index: i`.
+        pub children: Vec<accesskit::Node>,
     }
 
     /// Stands in for `skelter_core::Kind` (architecture §4.2). Prop storage is the kind's own: core calls

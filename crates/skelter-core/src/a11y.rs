@@ -8,6 +8,12 @@
 //! panics on an invalid update (a focus or child id not in the tree, a node reachable from nowhere),
 //! so the builder repairs what it can and drops the rest, with a debug assertion, never a panic in
 //! release.
+//!
+//! A kind can add **virtual children** in [`Kind::a11y`](crate::Kind::a11y) through
+//! [`A11yCx::add_virtual_child`]: AccessKit nodes for parts it draws without nodes of their own (a
+//! select's options). They go out with their owner every time it is sent, after its real children,
+//! under ids in a range node ids never reach ([`virtual_id`]); an action on one reaches the owner's
+//! kind as [`Event::A11yChild`](crate::Event::A11yChild) with the child's index.
 
 use crate::cx::A11yCx;
 use crate::document::Document;
@@ -19,15 +25,41 @@ fn ax(id: NodeId) -> AxId {
     AxId(id.0)
 }
 
+/// The bit that marks a virtual child's id. Node ids stay below 2^52 (`generation << 24 | index`
+/// with generations below 2^28) and fixed-part list keys use bit 63, so ids with bit 62 set are
+/// never a node's.
+pub const VIRTUAL_BIT: u64 = 1 << 62;
+/// Bits of the child index in a virtual id: a kind has at most this many virtual children
+/// (`2^10`); further ones are dropped.
+pub const VIRTUAL_INDEX_BITS: u32 = 10;
+/// The most virtual children one node has.
+pub const MAX_VIRTUAL_CHILDREN: usize = 1 << VIRTUAL_INDEX_BITS;
+
+/// The AccessKit id of `owner`'s virtual child `index`: `1 << 62 | owner << 10 | index`.
+pub const fn virtual_id(owner: NodeId, index: u32) -> AxId {
+    AxId(VIRTUAL_BIT | owner.0 << VIRTUAL_INDEX_BITS | index as u64)
+}
+
+/// The owner and index of a virtual child's id; `None` for any other id.
+pub const fn virtual_child(id: AxId) -> Option<(NodeId, u32)> {
+    if id.0 & VIRTUAL_BIT == 0 || id.0 & (1 << 63) != 0 {
+        return None;
+    }
+    let rest = id.0 & !VIRTUAL_BIT;
+    Some((NodeId(rest >> VIRTUAL_INDEX_BITS), (rest & (MAX_VIRTUAL_CHILDREN as u64 - 1)) as u32))
+}
+
 impl Document {
     /// The AccessKit node of node `i`: the kind's, with its box in its own space and its transform
-    /// relative to its parent (so a move re-sends only the node that moved), and its children.
-    fn a11y_node(&mut self, i: usize) -> Node {
+    /// relative to its parent (so a move re-sends only the node that moved), and its children; then
+    /// the virtual children the kind added, with their ids.
+    fn a11y_node(&mut self, i: usize) -> (Node, Vec<(AxId, Node)>) {
         let role = self.view_at(i).kind().spec.role;
         let mut out = Node::new(role);
+        let mut virtual_children = Vec::new();
         if let Some(k) = self.kinds[i].take() {
             {
-                let mut cx = A11yCx { node: self.view_at(i), out: &mut out };
+                let mut cx = A11yCx { node: self.view_at(i), out: &mut out, virtual_children: &mut virtual_children };
                 k.a11y(&mut cx);
             }
             self.kinds[i] = Some(k);
@@ -48,12 +80,13 @@ impl Document {
             out.set_hidden();
         }
         let kids: Vec<NodeId> = self.a11y_children(i).collect();
-        out.set_children(kids.iter().map(|&c| ax(c)).collect::<Vec<_>>());
+        let node = self.slots.id_at(i).expect("live");
+        let virtual_children: Vec<(AxId, Node)> = virtual_children.into_iter().enumerate().map(|(k, n)| (virtual_id(node, k as u32), n)).collect();
+        out.set_children(kids.iter().map(|&c| ax(c)).chain(virtual_children.iter().map(|(id, _)| *id)).collect::<Vec<_>>());
         if self.state[i].contains(svelters_style::StateMask::INVALID) {
             out.set_invalid(accesskit::Invalid::True);
         }
         // the anchor is the author id; the labels whose `for` names it label the node
-        let node = self.slots.id_at(i).expect("live");
         if let Some(a) = self.anchors.get(&node) {
             out.set_author_id(a.to_string());
             let w = self.core[i].window;
@@ -64,7 +97,7 @@ impl Document {
             }
         }
         self.record[i].a11y_kids = kids;
-        out
+        (out, virtual_children)
     }
 
     /// The children in the accessibility tree: all but those their container conceals.
@@ -92,8 +125,10 @@ impl Document {
                 continue;
             }
             let old_kids = std::mem::take(&mut self.record[i].a11y_kids);
-            let node = self.a11y_node(i);
+            let (node, virtual_children) = self.a11y_node(i);
             nodes.push((ax(n), node));
+            // virtual children go out with their owner (and leave with it): never in the known set
+            nodes.extend(virtual_children);
             known.insert(n);
             // children that joined the tree come with this node
             for &c in &self.record[i].a11y_kids {

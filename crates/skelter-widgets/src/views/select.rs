@@ -18,6 +18,12 @@
 //! `:open` takes the focus colour, `:placeholder-shown` while the hint shows); the list is
 //! `::part(list)` (the menu surface's tokens) with `::part(option)` rows (`:selected` is the
 //! highlighted row, `:checked` the picked one).
+//!
+//! Accessibility: a combo box with one virtual child per option (`ListBoxOption`, its label, selected
+//! when picked, its row's bounds while the list shows), each with the author id at its index in
+//! `option-anchors` (missing or empty: none), so automation and tours address an option by anchor.
+//! A `Click` on an option picks it as a pointer pick does (`changed`, `commit`, the list closes);
+//! `Focus` on one highlights it while the list is open.
 
 use super::common::{emit, platform};
 use super::menu::{check_mark, stroke};
@@ -87,6 +93,9 @@ kind_props! {
     options "options": Vec<Value> = None ; List, Layout;
     /// The picked option's index (`-1` or out of range: none, the hint shows); set natively by a pick.
     selected "selected": i64 = I64(-1) ; I64, Layout, bindable;
+    /// One anchor per option, by index (a list of strings): the option's AccessKit author id
+    /// (missing or empty: none).
+    option_anchors "option-anchors": Vec<Value> = None ; List, Paint;
     /// Shown while nothing is picked.
     hint_text "hint-text": String = Str("") ; Str, Layout;
     enabled "enabled": bool = Bool(true) ; Bool, Paint;
@@ -516,6 +525,21 @@ impl Kind for Select {
                 self.set_open(cx, false);
                 Handled::No
             }
+            // an assistive technology or automation on an option: a pick, as a pointer pick
+            Event::A11yChild { index, req } if (*index as usize) < self.options.len() => match req.action {
+                accesskit::Action::Click => {
+                    self.pick(cx, *index as usize);
+                    self.set_open(cx, false);
+                    Handled::Yes
+                }
+                accesskit::Action::Focus if self.props.open => {
+                    self.highlight = Some(*index as usize);
+                    self.reveal();
+                    cx.repaint = true;
+                    Handled::Yes
+                }
+                _ => Handled::No,
+            },
             // light dismiss: a press outside the button and its list closes the list
             Event::OutsidePress(p) => {
                 if self.props.open && !self.list.is_some_and(|l| l.rect.contains(*p)) {
@@ -575,6 +599,28 @@ impl Kind for Select {
         cx.node.set_has_popup(accesskit::HasPopup::Listbox);
         if !self.props.enabled {
             cx.node.set_disabled();
+        }
+        let shown = self.list.map(|l| (l, self.first..(self.first + l.visible).min(self.options.len())));
+        for (i, text) in self.options.iter().enumerate() {
+            let mut o = accesskit::Node::new(accesskit::Role::ListBoxOption);
+            o.set_label(text.as_str());
+            o.set_selected(self.selected == Some(i));
+            if let Some(a) = self.props.option_anchors.get(i).and_then(Value::as_str).filter(|a| !a.is_empty()) {
+                o.set_author_id(a);
+            }
+            if let Some((l, rows)) = shown.as_ref().filter(|(_, rows)| rows.contains(&i)) {
+                let y = l.rect.min.y + l.pad + (i - rows.start) as f32 * l.row_h;
+                o.set_bounds(accesskit::Rect { x0: (l.rect.min.x + l.pad) as f64, y0: y as f64, x1: (l.rect.max.x - l.pad) as f64, y1: (y + l.row_h) as f64 });
+            }
+            if self.props.enabled {
+                o.add_action(accesskit::Action::Click);
+                if self.props.open {
+                    o.add_action(accesskit::Action::Focus);
+                }
+            } else {
+                o.set_disabled();
+            }
+            cx.children.push(o);
         }
     }
 
@@ -783,6 +829,38 @@ mod tests {
         let l = s.record_list(&mut MonoShaper, &mut MemResources::default(), &styles(), 1.0).unwrap();
         let kinds = testkit::kinds(&l);
         assert_eq!(kinds.iter().filter(|k| **k == "glyphs").count(), 4, "every option");
+    }
+
+    #[test]
+    fn options_are_virtual_children_with_anchors_and_take_clicks() {
+        let policy = policy(Platform::Windows);
+        let mut s = sel();
+        set(&mut s, "option-anchors", Value::List(["pins.in", "", "pins.out"].map(Value::str).to_vec())).unwrap();
+        let (_, kids) = testkit::a11y_with_children(&s, StateBits::NONE, SIZE);
+        assert_eq!(kids.len(), 4, "one per option");
+        assert_eq!(kids.iter().map(|k| k.author_id()).collect::<Vec<_>>(), [Some("pins.in"), None, Some("pins.out"), None], "empty or missing: no author id");
+        assert_eq!(kids[1].label(), Some("Banana"));
+        assert_eq!(kids[0].is_selected(), Some(true));
+        assert!(kids[2].supports_action(accesskit::Action::Click));
+        assert!(kids.iter().all(|k| k.bounds().is_none()), "closed: no rows on screen");
+        // Click on child 2 picks option 2, as a pointer pick does
+        let req = accesskit::ActionRequest { action: accesskit::Action::Click, target_tree: accesskit::TreeId::ROOT, target_node: accesskit::NodeId(1), data: None };
+        let (h, sig) = send(&mut s, &policy, 0, Event::A11yChild { index: 2, req: req.clone() });
+        assert_eq!(h, Handled::Yes);
+        assert_eq!((s.selected, changed(&sig)), (Some(2), Some(2)));
+        assert!(sig.iter().any(|e| e.0 == "commit" && e.1 == vec![Value::I64(2)]));
+        assert_eq!(s.get_prop(P::selected.id()), Some(Value::I64(2)));
+        // open: the shown rows have bounds, and Focus highlights
+        send(&mut s, &policy, 0, key(Key::F4));
+        let (_, kids) = testkit::a11y_with_children(&s, StateBits::NONE, SIZE);
+        let l = s.list().unwrap();
+        let b = kids[2].bounds().expect("a shown row");
+        assert_eq!(b.y0 as f32, l.rect.min.y + l.pad + 2.0 * l.row_h);
+        let focus = accesskit::ActionRequest { action: accesskit::Action::Focus, ..req.clone() };
+        send(&mut s, &policy, 0, Event::A11yChild { index: 3, req: focus });
+        assert_eq!((s.highlight, s.selected), (Some(3), Some(2)));
+        let (h, _) = send(&mut s, &policy, 0, Event::A11yChild { index: 9, req });
+        assert_eq!(h, Handled::No, "out of range");
     }
 
     #[test]

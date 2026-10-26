@@ -119,7 +119,7 @@ impl Kind for EguiIslandKind {
                     .is_some_and(|i| i.handle_a11y_action((*req).clone()));
                 return if taken { Handled::Yes } else { Handled::No };
             }
-            Event::Click(_) | Event::HoverEnter | Event::Timer => return Handled::No,
+            Event::Click(_) | Event::HoverEnter | Event::Timer | Event::A11yChild(..) => return Handled::No,
         };
         let Some(island) = cx.service::<IslandHost>().and_then(|h| h.islands.get_mut(&node)) else {
             return Handled::No;

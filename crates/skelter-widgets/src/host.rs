@@ -564,6 +564,7 @@ impl<W: w::Kind + Default> Hosted<W> {
             Event::FocusOut => w::Event::Focus { gained: false, reason: WFocus::Program },
             Event::Timer => w::Event::Timer,
             Event::A11y(r) => w::Event::A11y((*r).clone()),
+            Event::A11yChild(r, index) => w::Event::A11yChild { index: *index, req: (*r).clone() },
             // clicks are the tracker's; IME is the text kinds'
             Event::Click(_) | Event::Ime(_) => return None,
         })
@@ -858,7 +859,11 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn a11y(&self, cx: &mut A11yCx) {
         cx.default_a11y();
         let (state, size) = (StateBits(cx.state().0), cx.size());
-        self.widget.a11y(&mut w::A11yCx { node: cx.out, state, size });
+        let mut wcx = w::A11yCx { node: cx.out, state, size, children: Vec::new() };
+        self.widget.a11y(&mut wcx);
+        for c in std::mem::take(&mut wcx.children) {
+            cx.add_virtual_child(c);
+        }
     }
 }
 

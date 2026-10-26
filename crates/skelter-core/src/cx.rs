@@ -733,6 +733,8 @@ fn descendant_text(v: &NodeView) -> String {
 pub struct A11yCx<'a> {
     pub node: NodeView<'a>,
     pub out: &'a mut accesskit::Node,
+    /// The virtual children added so far ([`A11yCx::add_virtual_child`]).
+    pub(crate) virtual_children: &'a mut Vec<accesskit::Node>,
 }
 
 impl<'a> std::ops::Deref for A11yCx<'a> {
@@ -743,6 +745,20 @@ impl<'a> std::ops::Deref for A11yCx<'a> {
 }
 
 impl A11yCx<'_> {
+    /// Adds a virtual child: an AccessKit node for a part the kind draws without a node of its own
+    /// (a select's option), placed after the real children, its bounds in the node's own space. It
+    /// is sent with the node every time the node is, under [`crate::a11y::virtual_id`]; an action
+    /// on it reaches the kind as [`Event::A11yChild`](crate::Event::A11yChild) with the returned
+    /// index (the order of the calls). A node has at most [`crate::a11y::MAX_VIRTUAL_CHILDREN`];
+    /// further ones are dropped (`None`).
+    pub fn add_virtual_child(&mut self, node: accesskit::Node) -> Option<u32> {
+        if self.virtual_children.len() >= crate::a11y::MAX_VIRTUAL_CHILDREN {
+            return None;
+        }
+        self.virtual_children.push(node);
+        Some(self.virtual_children.len() as u32 - 1)
+    }
+
     /// The defaults: the label from `aria-label` or the text content, disabled, focusable.
     pub fn default_a11y(&mut self) {
         let v = self.node;

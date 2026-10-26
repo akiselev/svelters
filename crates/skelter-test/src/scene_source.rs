@@ -198,8 +198,9 @@ impl<'a> SceneSource for SkelterScene<'a> {
         })?;
         let mut out = Vec::new();
         for &n in among {
-            // The document's own nodes (AccessKit ids are skelter's node ids); island subtrees have no CSS.
-            if n.0 != TreeId::ROOT {
+            // The document's own nodes (AccessKit ids are skelter's node ids); island subtrees and a
+            // kind's virtual children (a select's options) have no CSS.
+            if n.0 != TreeId::ROOT || skelter_core::a11y::virtual_child(n.1).is_some() {
                 continue;
             }
             let node = skelter_base::ids::NodeId(n.1.0);
