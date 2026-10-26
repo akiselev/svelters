@@ -117,3 +117,12 @@ opt-level = 2
 # svelters-cli builds and reads its deflated docs packs with it; unoptimised it takes ~4 s per pack.
 [profile.dev.package.miniz_oxide]
 opt-level = 2
+
+# The cadatomic fork of AccessKit's AT-SPI layer: it publishes Expandable/Expanded and emits
+# StateChanged(Expanded) on Linux (0.21.0 never does; owner's decision 2026-10-26, QA11Y). cadatomic carries
+# the same patch. Drop it when upstream ships the change. `accesskit` and `accesskit_consumer` come from the same
+# rev: the fork's AT-SPI layer depends on them by path, and one copy of AccessKit's types must serve every crate.
+[patch.crates-io]
+accesskit = { git = "https://github.com/akiselev/accesskit", rev = "b22e1418f323f15c93ed0d76e16d4c097ba6cce0" }
+accesskit_atspi_common = { git = "https://github.com/akiselev/accesskit", rev = "b22e1418f323f15c93ed0d76e16d4c097ba6cce0" }
+accesskit_consumer = { git = "https://github.com/akiselev/accesskit", rev = "b22e1418f323f15c93ed0d76e16d4c097ba6cce0" }

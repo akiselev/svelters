@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "e52362005dd4dec9"
+    "spec_hash": "29c1533cf7fcc9f0"
   },
   "inline_text": {
     "kind": "span",
@@ -8216,11 +8216,126 @@
           "type": "string",
           "writable": true
         },
+        "aria-activedescendant": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The `anchor` of the node that has focus inside this one for assistive technology (a palette's selected row): AccessKit `active_descendant`. Empty: none.",
+          "fingerprint": "0e8c1842",
+          "id": 244062274,
+          "js": "aria-activedescendant",
+          "native": "aria-activedescendant",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:aria-activedescendant",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "aria-checked": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "unset",
+          "doc": "AccessKit `toggled` (`menuitemcheckbox`, `menuitemradio`); `unset` leaves the widget's own.",
+          "fingerprint": "08db4f6e",
+          "id": 148590446,
+          "js": "aria-checked",
+          "native": "aria-checked",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:aria-checked",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "unset",
+            "true",
+            "false",
+            "mixed"
+          ],
+          "writable": true
+        },
+        "aria-controls": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The `anchor`s (separated by spaces) of the nodes this one controls: AccessKit `controls`.",
+          "fingerprint": "0af3e795",
+          "id": 183756693,
+          "js": "aria-controls",
+          "native": "aria-controls",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:aria-controls",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "aria-haspopup": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "false",
+          "doc": "What the widget opens: AccessKit `has_popup` (`true` is `menu`).",
+          "fingerprint": "03055575",
+          "id": 50681205,
+          "js": "aria-haspopup",
+          "native": "aria-haspopup",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:aria-haspopup",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "false",
+            "true",
+            "menu",
+            "listbox",
+            "tree",
+            "grid",
+            "dialog"
+          ],
+          "writable": true
+        },
+        "aria-modal": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "A dialog that blocks the rest of the window: AccessKit `modal`.",
+          "fingerprint": "009bbb55",
+          "id": 10206037,
+          "js": "aria-modal",
+          "native": "aria-modal",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:aria-modal",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "autofocus": {
           "change": "paint",
           "construct_only": false,
           "default": false,
-          "doc": "Takes keyboard focus when it first appears (in a `dialog` scope: when the dialog opens).",
+          "doc": "Takes keyboard focus when it first appears (in a `dialog` scope: when the dialog opens); outside a dialog only with `initial-focus` on the window's root, and only when nothing has focus.",
           "fingerprint": "00529075",
           "id": 5410933,
           "js": "autofocus",
@@ -8444,6 +8559,26 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "initial-focus": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "On a window's root: `autofocus` widgets outside `dialog` scopes take focus when they appear, the first frame included, so assistive technology has a focus from the start (opt-in).",
+          "fingerprint": "0d837471",
+          "id": 226718833,
+          "js": "initial-focus",
+          "native": "initial-focus",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:initial-focus",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "invalid": {

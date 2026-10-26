@@ -106,6 +106,8 @@ pub struct Document {
     pub(crate) nested: Vec<crate::input::JsEvent>,
     /// The nodes with a non-empty `anchor`.
     pub(crate) anchors: HashMap<NodeId, Arc<str>>,
+    /// Nodes with `focus-scope=dialog` or `autofocus` (the focus rules after style watch them).
+    pub(crate) focus_watch: std::collections::HashSet<NodeId>,
     /// The nodes with a non-empty `for` prop (labels), and the anchor it names.
     pub(crate) label_for: HashMap<NodeId, Arc<str>>,
     /// The focused push button of a dialog scope is its default (`Policy::auto_default`).
@@ -169,6 +171,7 @@ impl Document {
             delivering: 0,
             nested: Vec::new(),
             anchors: HashMap::new(),
+            focus_watch: std::collections::HashSet::new(),
             label_for: HashMap::new(),
             auto_default: false,
             kind_sets: Default::default(),
@@ -503,6 +506,8 @@ impl Document {
                 if let Some(i) = self.idx(root) {
                     self.mark_subtree(i, Dirty::PAINT);
                 }
+                // the root's AccessKit transform is the scale (children are relative to it)
+                self.mark(root, Dirty::A11Y);
             }
         }
     }
@@ -876,6 +881,12 @@ impl Document {
             };
             // its `labelled_by` follows the labels naming the new anchor
             self.mark(node, Dirty::A11Y);
+        } else if prop == common::FOCUS_SCOPE || prop == common::AUTOFOCUS {
+            if crate::input::focus::watched(self, node) {
+                self.focus_watch.insert(node);
+            } else {
+                self.focus_watch.remove(&node);
+            }
         } else if prop == common::DIALOG_ROLE || prop == common::STATUS_SECTION {
             // the containers that order their children by it
             if let Some(p) = self.core[i].parent {
@@ -914,7 +925,22 @@ impl Document {
             self.refresh_light_dismiss(node, &*k);
             self.kinds[i] = Some(k);
         }
-        if [common::ARIA_LIVE, common::ARIA_BUSY, common::ROLE, common::ARIA_LEVEL, common::ARIA_EXPANDED, common::ARIA_SELECTED, common::ARIA_DESCRIPTION].contains(&prop) {
+        if [
+            common::ARIA_LIVE,
+            common::ARIA_BUSY,
+            common::ROLE,
+            common::ARIA_LEVEL,
+            common::ARIA_EXPANDED,
+            common::ARIA_SELECTED,
+            common::ARIA_DESCRIPTION,
+            common::ARIA_CHECKED,
+            common::ARIA_HASPOPUP,
+            common::ARIA_MODAL,
+            common::ARIA_ACTIVEDESCENDANT,
+            common::ARIA_CONTROLS,
+        ]
+        .contains(&prop)
+        {
             self.mark(node, Dirty::A11Y);
         }
         // ancestors named by their descendants' text re-project
@@ -1303,22 +1329,50 @@ impl Document {
 
     // ---- focus ----
 
-    /// Moves keyboard focus to `node` (in its window), in this transaction.
+    /// Moves keyboard focus to `node` (in its window): in this transaction when it can take focus now;
+    /// when only being hidden stops it (it or an ancestor may be shown in this transaction), after the
+    /// frame's next restyle, with its focus events then. A node still hidden then, or one that can't
+    /// take focus at all, doesn't take it (as the DOM's `focus()`).
     pub fn focus(&mut self, node: NodeId, reason: FocusReason) {
-        crate::input::focus::set_focus(self, Some(node), reason);
+        crate::input::focus::request_focus(self, node, reason);
     }
 
-    /// Clears focus in `window`.
+    /// Moves focus as Tab (Shift+Tab with `backwards`) does from the window's focus, wrapping inside its
+    /// focus scope (an egui island that Tab leaves hands the move back to the document this way). False
+    /// when there is no stop.
+    pub fn tab(&mut self, window: WindowId, backwards: bool) -> bool {
+        crate::input::focus::tab(self, window, backwards)
+    }
+
+    /// The node a [`Document::focus`] call waits to focus at the next restyle (`None`: none).
+    pub fn pending_focus(&self, window: WindowId) -> Option<NodeId> {
+        crate::input::focus::pending_focus(self, window)
+    }
+
+    /// Clears focus in `window` (and a focus request waiting for style).
     pub fn blur(&mut self, window: WindowId) {
-        if let Some(f) = self.focused(window) {
-            let _ = f;
-            crate::input::focus::clear_focus(self, window);
-        }
+        crate::input::focus::clear_focus(self, window);
     }
 
     /// The focused node of `window`.
     pub fn focused(&self, window: WindowId) -> Option<NodeId> {
         self.window(window).and_then(|w| w.focus)
+    }
+
+    /// What has focus in `window`: the focused node and the part inside it that has it.
+    pub fn focus_target(&self, window: WindowId) -> Option<crate::FocusTarget> {
+        self.window(window).and_then(|w| w.focus.map(|node| crate::FocusTarget { node, sub: w.focus_sub }))
+    }
+
+    /// Sets the part of `window`'s focused node that has focus (`None`: the node itself); the
+    /// accessibility tree's focus follows at the next frame. No-op without a focused node.
+    pub fn set_focus_sub(&mut self, window: WindowId, sub: Option<u32>) {
+        let Some(w) = self.window_mut(window) else { return };
+        let Some(f) = w.focus else { return };
+        if w.focus_sub != sub {
+            w.focus_sub = sub;
+            self.mark(f, Dirty::A11Y);
+        }
     }
 
     /// JS events queued outside dispatch (focus moves from `focus()`, signals kinds emitted while

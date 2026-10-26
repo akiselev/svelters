@@ -70,9 +70,20 @@ pub(crate) struct WindowState {
     /// Laid out at least once.
     pub laid_out: bool,
     pub focus: Option<NodeId>,
+    /// Inside the focused node, what has focus: a virtual child's index, an island's own focus, a
+    /// semantic object (`FocusTarget::sub`). Cleared when focus moves.
+    pub focus_sub: Option<u32>,
     pub focus_visible: bool,
-    /// Focus to restore when a `dialog` scope closes: (scope, the node focused before it opened).
+    /// While a Tab moves focus: whether it goes backwards (Shift+Tab); `None` otherwise.
+    pub tab_direction: Option<bool>,
+    /// The restore stack: focus to give back when a `dialog` scope stops being available (removed,
+    /// hidden, inert): (scope, the node focused before it opened), innermost last.
     pub restore: Vec<(NodeId, NodeId)>,
+    /// A programmatic focus request waiting for the next restyle (`focus::after_style`).
+    pub pending_focus: Option<(NodeId, crate::kind::FocusReason)>,
+    /// The watched nodes (`dialog` scopes, `autofocus` nodes) that were available at the last
+    /// `focus::after_style`: one that is not any more went away, one that is new appeared.
+    pub focus_seen: HashSet<NodeId>,
     pub props: IdAlloc,
     pub layer_ids: IdAlloc,
     /// The window's root transform node and layer.
@@ -88,6 +99,12 @@ pub(crate) struct WindowState {
     pub scroll_nodes: HashMap<PropNodeId, NodeId>,
     /// The AccessKit ids sent so far (to know what an update must re-send after removals).
     pub a11y_sent: HashSet<NodeId>,
+    /// Sent nodes that graft a subtree (their AccessKit node carries a `tree_id`), and those whose
+    /// subtree has gone out too (`Document::a11y_subtree_sent`): only those can be the focus.
+    pub a11y_grafts: HashSet<NodeId>,
+    pub a11y_subtrees_sent: HashSet<NodeId>,
+    /// Sent nodes with virtual children: how many they last went out with.
+    pub a11y_virtual: HashMap<NodeId, u32>,
     /// The IME area the last commit carried.
     pub ime_sent: Option<skelter_base::geom::Rect>,
     /// Nodes whose transform relative to their parent changed at the last rebuild (their
@@ -152,8 +169,12 @@ impl WindowState {
             dirty: RootDirty { full: true, ..Default::default() },
             laid_out: false,
             focus: None,
+            focus_sub: None,
             focus_visible: false,
+            tab_direction: None,
             restore: Vec::new(),
+            pending_focus: None,
+            focus_seen: HashSet::new(),
             props: IdAlloc::default(),
             layer_ids: IdAlloc::default(),
             root_transform: None,
@@ -164,6 +185,9 @@ impl WindowState {
             hits: Arc::new(HitList::default()),
             scroll_nodes: HashMap::new(),
             a11y_sent: HashSet::new(),
+            a11y_grafts: HashSet::new(),
+            a11y_subtrees_sent: HashSet::new(),
+            a11y_virtual: HashMap::new(),
             ime_sent: None,
             a11y_moved: Vec::new(),
             rebuild: true,
@@ -205,6 +229,7 @@ impl WindowState {
         if !keep_focus {
             if self.focus == Some(node) {
                 self.focus = None;
+                self.focus_sub = None;
             }
             self.restore.retain(|&(s, n)| s != node && n != node);
         }

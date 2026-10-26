@@ -782,12 +782,12 @@ impl EventCx<'_> {
         self.doc.peer_queue.push_back((self.node, to, msg));
     }
     /// Moves keyboard focus to the node of this window whose `anchor` is `anchor` (a label's
-    /// `for`); false when none can take it.
+    /// `for`); false when none can take it (now, or after the next restyle: [`Document::focus`]).
     pub fn focus_anchor(&mut self, anchor: &str) -> bool {
         let Some(w) = self.doc.window_of(self.node) else { return false };
         let Some(n) = self.doc.find_anchor(w, anchor) else { return false };
         self.doc.focus(n, crate::kind::FocusReason::Programmatic);
-        self.doc.focused(w) == Some(n)
+        self.doc.focused(w) == Some(n) || self.doc.pending_focus(w) == Some(n)
     }
     /// Keeps the current pointer on this node until release.
     pub fn capture_pointer(&mut self) {
@@ -826,6 +826,20 @@ impl EventCx<'_> {
     pub fn focus(&mut self, reason: crate::kind::FocusReason) {
         let n = self.node;
         self.doc.focus(n, reason);
+    }
+    /// During a `FocusIn` that a Tab caused: whether it went backwards (Shift+Tab); `None` for any
+    /// other focus move. A node that manages focus inside itself (an egui island) starts at its last
+    /// part for Shift+Tab, its first for Tab.
+    pub fn tab_direction(&self) -> Option<bool> {
+        self.doc.window_of(self.node).and_then(|w| self.doc.window(w)).and_then(|w| w.tab_direction)
+    }
+    /// While this node has focus: the part of it that has focus (a virtual child's index; `None`:
+    /// the node itself), which AccessKit then reports as focused ([`crate::FocusTarget`]).
+    pub fn set_focus_sub(&mut self, sub: Option<u32>) {
+        let Some(w) = self.doc.window_of(self.node) else { return };
+        if self.doc.focused(w) == Some(self.node) {
+            self.doc.set_focus_sub(w, sub);
+        }
     }
     pub fn set_cursor(&mut self, c: CursorIcon) {
         self.doc.input.cursor = Some(c);

@@ -1,8 +1,10 @@
 //! The AccessKit snapshot the harness queries (architecture §16.1): every tree the app sent, folded
 //! from its `TreeUpdate`s, walked as one tree. A node carrying a `tree_id` is a graft point (an egui
 //! island, `skelter_egui_island::A11yGraft`): the walk descends into that subtree's root under it, so
-//! queries reach island widgets as kittest reaches egui's. Bounds are window points, through every
-//! ancestor's transform, the graft node's and the subtree root's placement included. Author ids (EM1)
+//! queries reach island widgets as kittest reaches egui's. Bounds are document points, through every
+//! ancestor's transform, the graft node's and the subtree root's placement included, except the host
+//! root's (`scale(os scale × zoom)`, to physical pixels): AccessKit's own consumers
+//! ([`crate::consumer`]) see pixels. Author ids (EM1)
 //! are the stable locators.
 //!
 //! [`By`] has kittest's semantics: a label query matches a `Label` node by its value (its text), drops
@@ -125,7 +127,10 @@ impl A11yTree {
                 continue;
             }
             let Some(n) = self.node((tree, id)) else { continue };
+            // the host root's transform is the window scale (points → physical pixels): skipped, so
+            // bounds stay in points
             let xf = match n.transform() {
+                Some(_) if parent.is_none() => parent_xf,
                 Some(t) => parent_xf * *t,
                 None => parent_xf,
             };
