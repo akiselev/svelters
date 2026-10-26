@@ -242,8 +242,8 @@ impl Document {
             InputEvent::Key(k) => doc.dispatch_key(ev.window, k, &mut out, &mut emitted),
             InputEvent::Ime(i) => doc.dispatch_ime(ev.window, i, &mut out, &mut emitted),
             InputEvent::RawMotion { dx, dy } => doc.dispatch_raw_motion(Vec2::new(*dx, *dy), &mut out, &mut emitted),
+            InputEvent::Gesture(g) => doc.dispatch_gesture(*g, &mut out, &mut emitted),
             InputEvent::ModifiersChanged(_)
-            | InputEvent::Gesture(_)
             | InputEvent::FileHovered(_)
             | InputEvent::FileDropped(_)
             | InputEvent::FileHoverCancelled => {}
@@ -313,6 +313,7 @@ impl Document {
             modifiers: p.modifiers,
             pressure: p.pressure,
             count,
+            history: p.history.iter().map(|s| skelter_base::event::PointerSample { pos: self.to_local(window, node, s.pos), ..*s }).collect(),
         }
     }
 
@@ -548,6 +549,13 @@ impl Document {
         let Some(t) = captured.or_else(hovered) else { return };
         out.target = Some(t);
         out.handled |= bubble_native(self, t, &Event::RawMotion(delta), emitted, Some(0)).is_some();
+    }
+
+    /// A gesture goes to the hovered node (the pointer's position is where it happens) and bubbles.
+    fn dispatch_gesture(&mut self, g: skelter_base::event::GestureEvent, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
+        let Some(t) = self.input.hover.get(&0).and_then(|p| p.first().copied()).filter(|&n| self.contains(n)) else { return };
+        out.target = Some(t);
+        out.handled |= bubble_native(self, t, &Event::Gesture(g), emitted, Some(0)).is_some();
     }
 
     /// Scrolls the innermost scroll container around `t` that can move by the wheel delta.

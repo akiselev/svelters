@@ -638,7 +638,7 @@ impl<W: w::Kind + Default> Hosted<W> {
             Event::A11y(r) => w::Event::A11y((*r).clone()),
             Event::A11yChild(r, index) => w::Event::A11yChild { index: *index, req: (*r).clone() },
             // clicks are the tracker's; IME is the text kinds'; raw motion is for viewport kinds
-            Event::Click(_) | Event::Ime(_) | Event::RawMotion(_) => return None,
+            Event::Click(_) | Event::Ime(_) | Event::RawMotion(_) | Event::Gesture(_) => return None,
         })
     }
 

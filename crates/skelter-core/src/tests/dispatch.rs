@@ -281,3 +281,85 @@ mod raw_motion {
         assert_eq!(SEEN.with(|s| s.borrow().clone()), vec![(view, Vec2::new(3.0, -2.0))]);
     }
 }
+
+/// A23/A24: a canvas kind gets the coalesced pointer history with its moves, and gestures over it.
+mod canvas_input {
+    use super::*;
+    use crate::KindRegistry;
+    use crate::cx::{EventCx, MeasureCx, RecordCx};
+    use crate::kind::{Event, Handled, Kind, KindSpec};
+    use skelter_base::event::{GestureEvent, GesturePhase, PointerEvent, PointerSample, PointerType};
+    use skelter_base::time::Time;
+    use std::cell::RefCell;
+    use std::sync::Arc;
+
+    const SKETCH: KindId = KindId::of("sketch");
+    static SKETCH_SPEC: KindSpec = KindSpec::new("sketch");
+
+    thread_local! {
+        static HISTORY: RefCell<Vec<Point>> = const { RefCell::new(Vec::new()) };
+        static GESTURES: RefCell<Vec<GestureEvent>> = const { RefCell::new(Vec::new()) };
+    }
+
+    #[derive(Default)]
+    struct Sketch;
+
+    impl Kind for Sketch {
+        fn spec() -> &'static KindSpec {
+            &SKETCH_SPEC
+        }
+        fn measure(&self, _cx: &mut MeasureCx, _k: taffy::Size<Option<f32>>, _a: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+            taffy::Size { width: 100.0, height: 50.0 }
+        }
+        fn record(&self, cx: &mut RecordCx) {
+            cx.draw_box();
+        }
+        fn event(&mut self, _cx: &mut EventCx, ev: &Event) -> Handled {
+            match ev {
+                Event::PointerMove(p) => {
+                    HISTORY.with(|h| h.borrow_mut().extend(p.history.iter().map(|s| s.pos)));
+                    Handled::Yes
+                }
+                Event::Gesture(g) => {
+                    GESTURES.with(|v| v.borrow_mut().push(*g));
+                    Handled::Yes
+                }
+                _ => Handled::No,
+            }
+        }
+    }
+
+    #[test]
+    fn moves_carry_the_coalesced_history_and_gestures_reach_the_hovered_node() {
+        let mut r = KindRegistry::new();
+        r.register::<testkinds::BoxKind>().unwrap();
+        r.register::<Sketch>().unwrap();
+        let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+        let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+        child(&mut d, root, BOX, "height: 20px");
+        let sketch = child(&mut d, root, SKETCH, "width: 100px; height: 50px");
+        frame(&mut d);
+        let pinch = InputEvent::Gesture(GestureEvent::Pinch { delta: 0.1, phase: GesturePhase::Moved });
+        assert_eq!(d.dispatch(&envelope(pinch.clone(), 0)).target, None, "nothing hovered: nobody gets it");
+        let sample = |x, y| PointerSample { pos: Point::new(x, y), time: Time(0), pressure: 0.5 };
+        let mv = PointerEvent {
+            phase: PointerPhase::Move,
+            pointer: 0,
+            kind: PointerType::Mouse,
+            button: None,
+            buttons: 0,
+            pos: Point::new(30.0, 40.0),
+            modifiers: Modifiers::default(),
+            pressure: 0.5,
+            tilt: Vec2::ZERO,
+            history: [sample(10.0, 30.0), sample(20.0, 35.0)].into_iter().collect(),
+        };
+        d.dispatch(&envelope(InputEvent::Pointer(mv), 0));
+        // the sketch sits 20 points down: its local space
+        assert_eq!(HISTORY.with(|h| h.borrow().clone()), vec![Point::new(10.0, 10.0), Point::new(20.0, 15.0)]);
+        let out = d.dispatch(&envelope(pinch, 0));
+        assert_eq!(out.target, Some(sketch));
+        assert!(out.handled);
+        assert_eq!(GESTURES.with(|g| g.borrow().len()), 1);
+    }
+}

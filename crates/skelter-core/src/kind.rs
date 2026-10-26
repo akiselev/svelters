@@ -293,6 +293,9 @@ pub struct PointerInput {
     pub pressure: f32,
     /// 1 for a single click, 2 for a double click, … (pointer down and click only).
     pub count: u32,
+    /// The earlier samples the runner coalesced into this move, oldest first, in the node's local
+    /// space like [`local`](Self::local) (empty when the OS gave none; moves only).
+    pub history: Vec<skelter_base::event::PointerSample>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -327,6 +330,9 @@ pub enum Event<'a> {
     /// the node holding the mouse's pointer capture, else the hovered node, and bubbled natively. Only
     /// arrives while the platform's raw motion is on for the window.
     RawMotion(Vec2),
+    /// A touchpad or touch gesture (pinch, rotate, double tap), sent to the hovered node and bubbled
+    /// natively.
+    Gesture(skelter_base::event::GestureEvent),
     Key(&'a KeyEvent),
     Ime(&'a ImeEvent),
     FocusIn(FocusReason),
