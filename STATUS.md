@@ -189,6 +189,16 @@ cadatomic is removing egui (`docs/notes/rmegui/PLAN.md` there). Lane **S** (`fa1
 (`read_window`; real macOS/Windows checks pending), and the hovered-control key fix in skelter-widgets. CI green on
 2567201f (run ids in the record).
 
+Lane **S2** (`ci/rmegui-svelters-2` `7821ca10`, record `plans/milestones/RMEGUI-S2.md`), merged 2026-10-26 ~19:45 UTC
+when the session stopped on the user's quota: sync handler args, table cells, ListView `label`/`rowAnchor` (SV59; the
+row prop is `rowAnchor`, `anchor` stays the list's), activedescendant re-resolve, label hit area, FQ-67 (a re-enabled
+hosted widget is enabled for AccessKit), FQ-73..76 (`PrepareCx::set_native`, record/any props as variant slots,
+method-argument descriptors and `PropError::coded`, `SkelterBackend::traffic()`), `<combo-box option-anchors>`;
+`PropError` is `#[non_exhaustive]`. **CI exception (coordinator, 2026-10-26):** five of six workflows green on code head
+`c122e95c` (skelter, js, macos-appkit, windows-winui, linux-qt); linux-gtk was cancelled by the docs-only push
+`7821ca10`, whose own runs were still going. The next session checks linux-gtk on master first and fixes it if red.
+cadatomic still pins `6689112c`; its pin move takes this.
+
 ## skelter (formerly presto): consolidation 2 (2026-10-26)
 
 Decided (user, 2026-10-25): presto is renamed **skelter** ("go with svelters-skelter"): crates `skelter`,
