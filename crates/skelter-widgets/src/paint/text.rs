@@ -38,7 +38,7 @@ impl Align {
 pub fn text_style(s: &StyleView) -> TextStyle {
     let family = match s.keyword("font-family") {
         Some(f) if !f.is_empty() => Arc::from(f),
-        _ => Arc::from(super::ua_theme(s.is_dark()).fonts().family.as_str()),
+        _ => Arc::from(s.theme().fonts().family.as_str()),
     };
     let deco = s.keyword("text-decoration-line").or(s.keyword("text-decoration")).unwrap_or("");
     TextStyle {

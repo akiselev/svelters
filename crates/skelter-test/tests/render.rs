@@ -200,3 +200,27 @@ fn render_is_in_device_pixels() {
         img.pixel(110, 40)
     );
 }
+
+/// A19: a document that renders its own textures (cadatomic's ShellDocument and its islands) hooks
+/// them in publicly; the hook runs on the harness's device before every render.
+#[test]
+fn a_documents_own_textures_hook_runs_before_render() {
+    // the public pieces a document's hook uses
+    let _ = skelter_test::Registrations::default;
+    let _ = skelter_test::register_textures;
+    if !gpu_tests() {
+        return;
+    }
+    let calls = std::rc::Rc::new(std::cell::Cell::new(0));
+    let seen = calls.clone();
+    let mut h = Harness::<QuadDoc>::builder()
+        .with_size(Size::new(100.0, 60.0))
+        .build(QuadDoc { sent_layers: false, color: RED, dirty: true, revision: 0 })
+        .with_textures(move |_doc: &mut QuadDoc, gpu| {
+            seen.set(seen.get() + 1);
+            skelter_test::register_textures(skelter_test::Registrations::default(), gpu);
+        });
+    h.render().expect("render");
+    h.render().expect("render");
+    assert_eq!(calls.get(), 2);
+}

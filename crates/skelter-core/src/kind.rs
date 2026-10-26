@@ -293,6 +293,9 @@ pub struct PointerInput {
     pub pressure: f32,
     /// 1 for a single click, 2 for a double click, … (pointer down and click only).
     pub count: u32,
+    /// The earlier samples the runner coalesced into this move, oldest first, in the node's local
+    /// space like [`local`](Self::local) (empty when the OS gave none; moves only).
+    pub history: Vec<skelter_base::event::PointerSample>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -323,6 +326,13 @@ pub enum Event<'a> {
     HoverEnter,
     HoverLeave,
     Wheel(&'a WheelInput),
+    /// Raw relative pointer motion (unaccelerated device counts, see `InputEvent::RawMotion`), sent to
+    /// the node holding the mouse's pointer capture, else the hovered node, and bubbled natively. Only
+    /// arrives while the platform's raw motion is on for the window.
+    RawMotion(Vec2),
+    /// A touchpad or touch gesture (pinch, rotate, double tap), sent to the hovered node and bubbled
+    /// natively.
+    Gesture(skelter_base::event::GestureEvent),
     Key(&'a KeyEvent),
     Ime(&'a ImeEvent),
     FocusIn(FocusReason),
@@ -332,6 +342,9 @@ pub enum Event<'a> {
     Timer,
     /// An assistive technology asked for an action on this node.
     A11y(&'a accesskit::ActionRequest),
+    /// An assistive technology asked for an action on the node's virtual child with this index
+    /// ([`A11yCx::add_virtual_child`](crate::A11yCx::add_virtual_child)).
+    A11yChild(&'a accesskit::ActionRequest, u32),
 }
 
 /// A node's peer group: the siblings (same parent, tree order, the node included) of the node's own

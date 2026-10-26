@@ -914,7 +914,7 @@ impl Kind for MenuBar {
         self.menus.prepare(cx.text, &cx.style);
     }
     fn record(&self, cx: &mut RecordCx) {
-        let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
+        let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme };
         self.menus.record_bar(&mut PaintCx::of(cx), &style);
     }
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
@@ -1250,7 +1250,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }
     }
 
     fn bar() -> MenuBar {

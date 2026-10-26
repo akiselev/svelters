@@ -201,3 +201,20 @@ pub(crate) fn key(e: &NSEvent, state: KeyState, policy: OptionAsAlt) -> (KeyEven
     };
     (ev, option_alt)
 }
+
+/// A mouse-moved/dragged event's `deltaX`/`deltaY` (unaccelerated device deltas, y down) as raw
+/// motion; `None` when the event did not move.
+pub(crate) fn raw_motion(dx: f64, dy: f64) -> Option<InputEvent> {
+    (dx != 0.0 || dy != 0.0).then_some(InputEvent::RawMotion { dx: dx as f32, dy: dy as f32 })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn event_deltas_become_raw_motion() {
+        assert_eq!(raw_motion(2.0, -3.5), Some(InputEvent::RawMotion { dx: 2.0, dy: -3.5 }));
+        assert_eq!(raw_motion(0.0, 0.0), None, "a move without motion sends nothing");
+    }
+}

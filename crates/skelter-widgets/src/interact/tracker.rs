@@ -437,7 +437,8 @@ impl Tracker {
                 }
                 pass.a11y.push(req.clone());
             }
-            Event::Timer => {}
+            // a virtual child's action is the kind's, not a click on the node
+            Event::Timer | Event::A11yChild { .. } => {}
             Event::CaptureLost => self.cancel_press(),
             Event::OutsidePress(p) => pass.input.outside_press = Some(*p),
         }

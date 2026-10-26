@@ -104,7 +104,7 @@ impl Look<'_> {
     fn paragraph(&self, shaper: &mut dyn TextShaper, s: &StyleView, width: Option<f32>) -> (RichText, Option<f32>) {
         let base = paint::text_style(s);
         if let Some(r) = self.rich {
-            let mut t = rich::rich_text(r, &base, &paint::ua_theme(s.is_dark()).fonts().mono);
+            let mut t = rich::rich_text(r, &base, &s.theme().fonts().mono);
             if let (Some(w), true) = (width, self.wrap_mode == "truncate" || self.elision(s).is_some()) {
                 t.ellipsis = true;
                 t.max_lines = Some(1);
@@ -327,7 +327,7 @@ impl Label {
         if self.props.disabled {
             state |= StateBits::DISABLED;
         }
-        StyleView::new(s.computed, UA, state, s.dark).with_font_weight(Some(self.props.font_weight))
+        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_font_weight(Some(self.props.font_weight))
     }
 }
 
@@ -508,7 +508,7 @@ mod tests {
 
     fn measure_at(l: &Label, w: f32) -> Size {
         let mut text = MonoShaper;
-        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true }, text: &mut text, scale: 1.0 };
+        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }, text: &mut text, scale: 1.0 };
         let avail = taffy::Size { width: taffy::AvailableSpace::Definite(w), height: taffy::AvailableSpace::MaxContent };
         let s = l.measure(&mut cx, taffy::Size { width: None, height: None }, avail);
         Size::new(s.width, s.height)

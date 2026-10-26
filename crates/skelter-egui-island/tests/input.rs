@@ -134,6 +134,19 @@ fn pinch_over_the_island_is_egui_zoom() {
 }
 
 #[test]
+fn raw_motion_over_the_island_is_egui_mouse_moved() {
+    let mut t = translator();
+    let mut out = Vec::new();
+    let raw = InputEvent::RawMotion { dx: 3.0, dy: -2.0 };
+    assert!(!t.translate(&raw, &mut out).consumed);
+    assert!(out.is_empty());
+    t.translate(&wheel(Point::new(110.0, 60.0)), &mut out);
+    out.clear();
+    assert!(t.translate(&raw, &mut out).consumed);
+    assert_eq!(out, vec![egui::Event::MouseMoved(egui::vec2(3.0, -2.0))]);
+}
+
+#[test]
 fn physical_keys_map_by_us_layout_position() {
     use skelter_egui_island::input::physical_key;
     assert_eq!(physical_key(0x07_0004), Some(egui::Key::A));

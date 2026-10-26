@@ -180,6 +180,13 @@ impl InputTranslator {
                 }
             }
             InputEvent::FileHoverCancelled => self.files.hovered.clear(),
+            // egui-winit's mapping of winit's `DeviceEvent::MouseMotion`.
+            InputEvent::RawMotion { dx, dy } => {
+                if self.inside || self.captured != 0 {
+                    routed.consumed = true;
+                    out.push(egui::Event::MouseMoved(egui::vec2(*dx, *dy)));
+                }
+            }
         }
         routed.queued = out.len() > before || routed.paste || matches!(ev, InputEvent::FileHovered(_) | InputEvent::FileDropped(_) | InputEvent::FileHoverCancelled);
         routed

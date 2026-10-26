@@ -155,14 +155,14 @@ impl Kind for ToggleButton {
 
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let state = self.mirror(cx.style.state);
-        let host = StyleView::new(cx.style.computed, UA, state, cx.style.dark).with_font_weight(Some(self.props.font_weight));
+        let host = StyleView::new(cx.style.computed, UA, state, cx.style.dark).with_theme(cx.style.theme).with_font_weight(Some(self.props.font_weight));
         let s = measure(cx.text, &host, &self.props.text);
         taffy::Size { width: s.x, height: s.y }
     }
 
     fn record(&self, cx: &mut RecordCx) {
         let state = self.mirror(cx.style.state);
-        let host = StyleView::new(cx.style.computed, UA, state, cx.style.dark);
+        let host = StyleView::new(cx.style.computed, UA, state, cx.style.dark).with_theme(cx.style.theme);
         let rect = cx.rect();
         paint(&mut PaintCx::of(cx), &host, rect, &self.props.text, self.props.frame, self.props.font_weight);
     }

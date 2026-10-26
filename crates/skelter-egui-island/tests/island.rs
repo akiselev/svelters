@@ -453,3 +453,16 @@ mod dnd {
         assert!(!egui::DragAndDrop::has_any_payload(rig.island.context()));
     }
 }
+
+/// A21: an urgent input frame may target `now` after a vsync frame targeted a later deadline; the
+/// island clamps the pass time instead of letting egui panic ("Time shouldn't move backwards").
+#[test]
+fn a_pass_earlier_than_the_last_does_not_move_time_backwards() {
+    let mut r = Rig::new(1.0);
+    let later = Time(5_000_000_000);
+    let seen = Cell::new(0.0);
+    r.island.run(later, |ui| seen.set(ui.input(|i| i.time)));
+    let first = seen.get();
+    r.island.run(Time(4_000_000_000), |ui| seen.set(ui.input(|i| i.time)));
+    assert!(seen.get() >= first, "egui's time stayed monotonic: {} then {}", first, seen.get());
+}

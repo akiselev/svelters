@@ -101,6 +101,7 @@ impl InputClass {
                 _ => InputClass::Other,
             },
             InputEvent::Wheel(_) => InputClass::Wheel,
+            InputEvent::RawMotion { .. } => InputClass::PointerMove,
             InputEvent::Ime(_) => InputClass::Ime,
             _ => InputClass::Other,
         }

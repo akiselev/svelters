@@ -71,6 +71,7 @@ pub enum PlatformCall {
     SetTimer(Option<Time>),
     SetHitTestRegions(WindowId, Vec<HitRegion>),
     SetMouseCapture(WindowId, bool),
+    SetRawMotion(WindowId, bool),
     SetTitle(WindowId, String),
     SetVisible(WindowId, bool),
     DragWindow(WindowId),
@@ -109,6 +110,8 @@ pub struct HeadlessCx {
     pub default_scale: Scale,
     /// What `set_menu_bar` answers: whether this headless OS shows menu bars natively (macOS-like).
     pub native_menu_bar: bool,
+    /// What `set_raw_motion` answers when turning raw motion on (default `true`).
+    pub raw_motion_supported: bool,
 }
 
 /// The headless platform: script events, then [`HeadlessPlatform::run`] a handler through them.
@@ -149,6 +152,7 @@ impl HeadlessPlatform {
                 exit: false,
                 default_scale: Scale(1.0),
                 native_menu_bar: false,
+                raw_motion_supported: true,
             },
             script: VecDeque::new(),
             next_seq: 1,
@@ -180,6 +184,12 @@ impl HeadlessPlatform {
 
     pub fn push_input(&mut self, at: Time, window: WindowId, event: InputEvent) {
         self.push(at, Scripted::Input { window, event });
+    }
+
+    /// Scripts raw pointer motion (`InputEvent::RawMotion`), as a backend sends it while
+    /// `set_raw_motion` is on.
+    pub fn push_raw_motion(&mut self, at: Time, window: WindowId, dx: f32, dy: f32) {
+        self.push_input(at, window, InputEvent::RawMotion { dx, dy });
     }
 
     pub fn push_window_event(&mut self, at: Time, window: WindowId, event: WindowEvent) {
@@ -411,6 +421,11 @@ impl PlatformCx for HeadlessCx {
         self.calls.push(PlatformCall::SetMouseCapture(id, capture));
     }
 
+    fn set_raw_motion(&mut self, id: WindowId, on: bool) -> bool {
+        self.calls.push(PlatformCall::SetRawMotion(id, on));
+        !on || self.raw_motion_supported
+    }
+
     fn set_title(&mut self, id: WindowId, title: &str) {
         if let Some(w) = self.windows.get_mut(&id) {
             w.desc.title = title.to_owned();
@@ -570,6 +585,25 @@ mod tests {
         assert_eq!(app.seen.len(), 1);
         p.run(&mut app);
         assert_eq!(app.seen.len(), 3);
+    }
+
+    #[test]
+    fn raw_motion_calls_are_recorded_and_scripted_motion_arrives() {
+        let mut p = HeadlessPlatform::new();
+        let w = WindowId(1);
+        p.push_raw_motion(Time(100), w, 2.5, -1.0);
+        let mut app = Recorder::default();
+        p.run(&mut app);
+        assert!(app.seen.iter().any(|(t, s)| t.0 == 100 && s.ends_with("RawMotion { dx: 2.5, dy: -1.0 }")));
+        assert!(p.cx().set_raw_motion(w, true));
+        assert!(p.cx().set_raw_motion(w, false));
+        p.cx().raw_motion_supported = false;
+        assert!(!p.cx().set_raw_motion(w, true));
+        let raw: Vec<_> = p.calls().iter().filter(|c| matches!(c, PlatformCall::SetRawMotion(..))).cloned().collect();
+        assert_eq!(
+            raw,
+            vec![PlatformCall::SetRawMotion(w, true), PlatformCall::SetRawMotion(w, false), PlatformCall::SetRawMotion(w, true)]
+        );
     }
 
     #[test]

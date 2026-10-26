@@ -67,6 +67,18 @@ pub fn key(k: Key, text: Option<&str>) -> InputEnvelope {
     envelope(InputEvent::Key(e), 0)
 }
 
+/// The line-start (`end: false`) or line-end key of this platform: Home/End, Cmd+Left/Right on macOS
+/// (where Home and End scroll and leave the caret).
+pub fn line_edge(end: bool) -> InputEnvelope {
+    let (k, m) = if cfg!(target_os = "macos") {
+        (if end { Key::ArrowRight } else { Key::ArrowLeft }, Modifiers::SUPER)
+    } else {
+        (if end { Key::End } else { Key::Home }, Modifiers::default())
+    };
+    let e = KeyEvent { key: Some(k), physical: 0, text: None, state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: m };
+    envelope(InputEvent::Key(e), 0)
+}
+
 /// Down then up at (x, y).
 pub fn click(d: &mut Document, x: f32, y: f32) -> Vec<Dispatched> {
     vec![d.dispatch(&pointer(PointerPhase::Down, x, y, 1_000, false)), d.dispatch(&pointer(PointerPhase::Up, x, y, 2_000, false))]

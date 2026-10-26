@@ -124,6 +124,9 @@ pub struct EguiIsland {
     pending: Option<Pending>,
     /// The next pass is due at this time (`None`: wait for input).
     pass_at: Option<Time>,
+    /// The last pass's time: egui panics when time moves backwards (an urgent input frame targets
+    /// `now` after a vsync frame targeted a later deadline), so passes never go before it.
+    last_pass: Option<Time>,
     graft: A11yGraft,
     /// The host set its own placement for the AccessKit subtree (else it follows the rect).
     a11y_placement_set: bool,
@@ -155,6 +158,7 @@ impl EguiIsland {
             events: Vec::new(),
             pending: None,
             pass_at: Some(Time::ZERO),
+            last_pass: None,
             graft: A11yGraft::new(desc.tree),
             a11y_placement_set: false,
             dnd: DndBridge::default(),
@@ -450,7 +454,10 @@ impl EguiIsland {
     }
 
     /// One egui pass at `now`, running `ui` (cadatomic's `PaneHost::ui` for the pane the island hosts).
+    /// `now` is clamped to the last pass's time, so hosts may pass a target earlier than the last one.
     pub fn run(&mut self, now: Time, mut ui: impl FnMut(&mut egui::Ui)) -> IslandOutput {
+        let now = self.last_pass.map_or(now, |l| now.max(l));
+        self.last_pass = Some(now);
         let raw = self.raw_input(now);
         let full = self.ctx.run_ui(raw, |root| ui(root));
         let jobs = self.ctx.tessellate(full.shapes, full.pixels_per_point);

@@ -28,6 +28,7 @@ use wayland_client::protocol::wl_touch::{self, WlTouch};
 use wayland_client::{Connection, Dispatch, Proxy, QueueHandle, WEnum, event_created_child};
 use wayland_protocols::wp::cursor_shape::v1::client::wp_cursor_shape_device_v1::{Shape, WpCursorShapeDeviceV1};
 use wayland_protocols::wp::pointer_gestures::zv1::client::zwp_pointer_gesture_pinch_v1::{self, ZwpPointerGesturePinchV1};
+use wayland_protocols::wp::relative_pointer::zv1::client::zwp_relative_pointer_v1::{self, ZwpRelativePointerV1};
 use wayland_protocols::wp::tablet::zv2::client::{
     zwp_tablet_pad_group_v2::{self, ZwpTabletPadGroupV2},
     zwp_tablet_pad_ring_v2::ZwpTabletPadRingV2,
@@ -54,6 +55,8 @@ pub struct PointerDev {
     pub shown: Option<CursorIcon>,
     /// The CSD region under the pointer, when it overrides the cursor.
     pub csd_hover: Option<csd::CsdHit>,
+    /// Relative motion, while some window has raw motion on ([`sync_relative`]).
+    pub relative: Option<ZwpRelativePointerV1>,
 }
 
 pub struct KeyboardDev {
@@ -183,6 +186,9 @@ fn release_pointer(p: Option<PointerDev>) {
     if let Some((pinch, _, _)) = p.pinch {
         pinch.destroy();
     }
+    if let Some(r) = p.relative {
+        r.destroy();
+    }
     if p.pointer.version() >= 3 {
         p.pointer.release();
     }
@@ -191,6 +197,7 @@ fn release_pointer(p: Option<PointerDev>) {
 pub fn add_capability(state: &mut State, qh: &QueueHandle<State>, seat: &WlSeat, cap: Capability) {
     let shape_mgr = state.protocols.cursor_shape.clone();
     let gestures = state.protocols.gestures.clone();
+    let relative_mgr = state.protocols.relative_pointer.clone().filter(|_| !state.raw_motion.is_empty());
     let Some(s) = state.seats.iter_mut().find(|s| &s.seat == seat) else { return };
     let key = s.key;
     match cap {
@@ -198,6 +205,7 @@ pub fn add_capability(state: &mut State, qh: &QueueHandle<State>, seat: &WlSeat,
             let pointer = seat.get_pointer(qh, key);
             let shape = shape_mgr.as_ref().map(|m| m.get_pointer(&pointer, qh, ()));
             let pinch = gestures.as_ref().map(|g| (g.get_pinch_gesture(&pointer, qh, key), PinchAssembler::default(), None));
+            let relative = relative_mgr.as_ref().map(|m| m.get_relative_pointer(&pointer, qh, key));
             let framed = pointer.version() >= 5;
             s.pointer = Some(PointerDev {
                 pointer,
@@ -208,6 +216,7 @@ pub fn add_capability(state: &mut State, qh: &QueueHandle<State>, seat: &WlSeat,
                 pinch,
                 shown: None,
                 csd_hover: None,
+                relative,
             });
         }
         Capability::Keyboard if s.keyboard.is_none() => {
@@ -708,6 +717,44 @@ impl Dispatch<WlTouch, SeatKey> for State {
     }
 }
 
+// ---- relative motion ----
+
+/// Gives every pointer a relative pointer while some window has raw motion on, and drops them when none does.
+pub fn sync_relative(state: &mut State, qh: &QueueHandle<State>) {
+    let mgr = state.protocols.relative_pointer.clone().filter(|_| !state.raw_motion.is_empty());
+    for s in &mut state.seats {
+        let key = s.key;
+        let Some(p) = s.pointer.as_mut() else { continue };
+        match (&mgr, p.relative.is_some()) {
+            (Some(m), false) => p.relative = Some(m.get_relative_pointer(&p.pointer, qh, key)),
+            (None, true) => {
+                if let Some(r) = p.relative.take() {
+                    r.destroy();
+                }
+            }
+            _ => {}
+        }
+    }
+}
+
+/// The raw motion for the window under the pointer, when that window has raw motion on. The deltas are the
+/// unaccelerated ones (`dx_unaccel`/`dy_unaccel`).
+pub(crate) fn relative_motion(focus: Option<WindowId>, raw: &std::collections::HashSet<WindowId>, dx: f64, dy: f64) -> Option<(WindowId, InputEvent)> {
+    let w = focus.filter(|w| raw.contains(w))?;
+    Some((w, InputEvent::RawMotion { dx: dx as f32, dy: dy as f32 }))
+}
+
+impl Dispatch<ZwpRelativePointerV1, SeatKey> for State {
+    fn event(state: &mut Self, _: &ZwpRelativePointerV1, event: zwp_relative_pointer_v1::Event, key: &SeatKey, _: &Connection, _: &QueueHandle<Self>) {
+        let zwp_relative_pointer_v1::Event::RelativeMotion { utime_hi, utime_lo, dx_unaccel, dy_unaccel, .. } = event else { return };
+        let now = time::now();
+        let focus = seat_mut(state, *key).and_then(|s| s.pointer.as_ref()).and_then(|p| p.asm.focus());
+        if let Some((w, ev)) = relative_motion(focus, &state.raw_motion, dx_unaccel, dy_unaccel) {
+            state.push_input(w, time::from_event_us(utime_hi, utime_lo, now), ev);
+        }
+    }
+}
+
 // ---- pinch ----
 
 impl Dispatch<ZwpPointerGesturePinchV1, SeatKey> for State {
@@ -1007,6 +1054,14 @@ pub fn end_composition(state: &mut State, window: WindowId, commit: bool) -> boo
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn relative_motion_goes_to_the_focused_raw_window() {
+        let raw: std::collections::HashSet<WindowId> = [WindowId(2)].into_iter().collect();
+        assert_eq!(relative_motion(Some(WindowId(2)), &raw, 1.5, -2.0), Some((WindowId(2), InputEvent::RawMotion { dx: 1.5, dy: -2.0 })));
+        assert_eq!(relative_motion(Some(WindowId(1)), &raw, 1.0, 1.0), None, "raw motion is off there");
+        assert_eq!(relative_motion(None, &raw, 1.0, 1.0), None, "the pointer is on no window of ours");
+    }
 
     #[test]
     fn every_cursor_has_a_shape_and_xcursor_names() {

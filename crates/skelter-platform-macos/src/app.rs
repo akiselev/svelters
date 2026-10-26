@@ -660,6 +660,11 @@ impl PlatformCx for MacCx {
         }
     }
 
+    fn set_raw_motion(&mut self, id: WindowId, on: bool) -> bool {
+        // NSEvent's deltaX/deltaY are the unaccelerated device deltas; nothing to turn on in AppKit.
+        with_window(id, |w| w.raw_motion = on).is_some() || !on
+    }
+
     fn set_title(&mut self, id: WindowId, title: &str) {
         if let Some(w) = with_window(id, |w| w.ns_window.clone()) {
             w.setTitle(&objc2_foundation::NSString::from_str(title));

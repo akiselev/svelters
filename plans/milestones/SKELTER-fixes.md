@@ -66,6 +66,46 @@ keep_focus)`. Tests: `tests::tree::a_move_inside_the_window_keeps_capture_focus_
 - **Table scroll bars on the views scroll layer** (partial): the table's offset is a `views::scroll::Scroller` with the
   scroll-area's bar parts. Test: `table::kinds::tests::the_body_scrolls_by_its_bars_and_emits_scroll`.
 
+## Coordinator requests (batch 12 lanes), 2026-10-26
+
+Merged to master so far: 4cc51839 (6e1c17c2), 4a837595 (e98d2a64), a867e915 (4bf37234). CI note: a push that
+touches only skelter crates runs only the skelter workflow (paths-ignore of the five svelters ones).
+
+| Item | What | Test |
+|---|---|---|
+| capture on move | a same-window move keeps capture, focus, hover | `tests::tree::a_move_inside_the_window_keeps_capture_focus_and_hover` |
+| OverlayStack | per-window stack in skelter-core's Document; `RecordCx::overlay`, light dismiss, Escape, `Kind::overlay_closed`; `Document::set_window_overlay` app list; drag layer moved by fast commits | `tests::overlay` (3), skelter-test `overlay.rs` (3) |
+| A1 | app kinds: `Kinds::with_app`, surface specs from core KindSpecs, `spec::fragment` | svelters-skelter `app_kinds.rs` |
+| A2 | `use:` behaviours: `SkelterBackend::register_behavior`, `add_event_tap` | `behaviors.rs` |
+| A3 | common `aria-live`, `aria-busy` | `tests::a11y::aria_live_and_busy_apply_after_the_kinds_own_node` |
+| A4 | `App::set_zoom` (scale = os × zoom; pointer/IME converted) | `harness::a_zoom_rescales_...` |
+| A5, A5b | EguiHarness kittest parity: a pass per step, kittest's settle rule, one event per pass; `with_pass_every_step(false)`; out-of-pass repaint callback | skelter-test `island.rs` |
+| A6, A7 | build-time a11y check; PREDICTABLE renderer + `with_renderer_options` | `island.rs`, `island::tests` |
+| A8 | select options as AccessKit virtual children (`A11yCx::add_virtual_child`, `Event::A11yChild`), `option-anchors` | core a11y, widgets select, skelter-test `select.rs` |
+| A9, A10 | tier-1 kinds on svelters-skelter (scroll-area, collapsing-header*, table, tree-view, combo-box, context-menu, action*); `kinds::register_builtin` | `tier1.rs`, `host_document` |
+| A11 | `CoreDocument<H: DocHandle>`, `CoreDocument::shared(Rc<RefCell<Document>>)` | skelter-test `shared_doc.rs` |
+| A12 | `DocumentApi::commit_applied` (Document::busy no longer keeps COMMIT_IN_FLIGHT) | `shared_doc.rs` |
+| A13 | Theme service reaches stock kinds (`StyleView::with_theme`, `host::set_theme`, `Document::repaint_all`) | `host::tests::the_documents_theme_reaches_a_stock_buttons_tokens` |
+| A14 | raw pointer motion (`InputEvent::RawMotion`, `PlatformCx::set_raw_motion`) on Wayland/Win32/macOS/winit | 7 tests; Win32/macOS ones CI only |
+| A15 | `RecordCx::external_layer` in paint order | `tests::commit::external_layer` |
+| A16 | a frame sends prop/layer removals before additions (moved nodes reused freed ids and drew at the origin) | `tests::absolute::a_subtree_under_...` (5 cases) |
+| A17 | common `role`, `aria-level`, `aria-expanded`, `aria-selected`, `aria-description` | `tests::a11y::role_level_...` |
+| A18 | svelters-skelter wire ids masked to 28 bits (host flag bits) | `host_document::a_skelter_click_runs_the_svelte_onclicked_handler`, `spec::no_wire_id_reaches_the_flag_bits` |
+| A19 | `Harness::set_textures`, public `Registrations`/`register_textures` | `render::a_documents_own_textures_hook_runs_before_render` (GPU) |
+| A20 | `Harness::take_calls`, `with_calls_cap` | `harness::calls_can_be_taken_and_capped` |
+| A21 | island pass time monotonic | island `a_pass_earlier_than_the_last_does_not_move_time_backwards` |
+| A22 | Kind::layout_style sees the style just computed (inline box layout CSS) | widgets `box_::inline_css` |
+| A23, A24 | `PointerInput.history`; `Event::Gesture` to the hovered node | `tests::dispatch::canvas_input` |
+| (1) | `PrepareCx::{scroll_offset, scroll_to, set_caret}`; text-edit self-scrolls with its box fixed | `a_prepare_scrolls_...`, `text::kind::tests::a_long_line_scrolls_...` |
+| (4) | a Layouter over the document's TextSystem for hosted kinds; hex box caret | `pickers::kinds::tests::the_editing_hex_box_...` |
+| (5) | automation `Session` over `SourceDriver`; skelter-test `SkelterNativeDriver` | `native_session.rs` |
+| (6) | `caret-color` in svelters-style; `CompositorConfig::caret_color` removed | `cascade::caret_color_auto_or_a_colour_inherits` |
+
+\* placeholder/incomplete, being made real in A9b. In progress: A9b, A25 (virtual-list).
+
+Build note: `.cargo/config.toml` sets `build-dir = {workspace-root}/target/build`; a second checkout needs both
+`CARGO_TARGET_DIR` and `CARGO_BUILD_BUILD_DIR` set, and a target shared between checkouts mixes their sources.
+
 ## Local runs (after the last merge, 10241d82)
 
 skelter-core `--lib tests::` 134/134; skelter-test `harness monitor` 1/1; skelter-widgets `table:: pickers:: tabs::
@@ -77,6 +117,13 @@ core_islands/island/scene_source/automation/harness/queries/menu, skelter-platfo
 Not run: Win32/macOS tests and counter-mac (CI only), GPU tests, full workspace, GTK/Qt crates, nothing on hardware.
 
 ## Not done / open questions (recommendations)
+
+Later (2026-10-26): (2) and (8) stay follow-ups (coordinator). (7) Win32 fullscreen/grabs/tear-off/custom-MIME and
+macOS drag source need hardware. New: ordinary will-change/animated layers paint later siblings below them (A15's
+splitting would fix it); Wayland pointer lock (zwp_pointer_constraints_v1) for orbiting; JS `rawmotion` signal when
+a Svelte viewport needs one; table and picker looks still ignore the Theme service; text-edit's scrolled text is
+clipped at the padding box.
+
 
 1. text-edit on `RecordCx::fixed()`: needs a scroll setter on `PrepareCx` (the caret-into-view scroll runs in
    prepare). *Recommend* a follow-up: add it, then text-edit becomes `self_scroll` + `cx.fixed(draw_box)`.

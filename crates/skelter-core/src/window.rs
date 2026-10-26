@@ -195,7 +195,7 @@ impl WindowState {
             self.props.free(p.0);
         }
         self.pending.dropped_runs.extend(paint.runs);
-        if let Some(l) = paint.layer {
+        for l in [paint.layer, paint.ext_layer, paint.ext_cont].into_iter().flatten() {
             self.pending.removed_layers.push(l);
             self.layers.remove(&l);
             self.items.remove(&l);

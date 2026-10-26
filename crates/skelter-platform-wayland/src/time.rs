@@ -36,6 +36,14 @@ pub fn from_event_ms(ms: u32, recv: Time) -> Time {
     recv - Span::from_millis(age_ms as i64) - Span::from_nanos(sub_ms as i64)
 }
 
+/// Maps a 64-bit microsecond timestamp (`zwp_relative_pointer_v1.relative_motion`'s `utime_hi`/`utime_lo`,
+/// `CLOCK_MONOTONIC` in practice) onto skelter time; like [`from_event_ms`], a timestamp ahead of `recv` or
+/// more than ten seconds old falls back to `recv`.
+pub fn from_event_us(hi: u32, lo: u32, recv: Time) -> Time {
+    let t = Time((((hi as u64) << 32) | lo as u64).saturating_mul(1_000));
+    if t.0 > recv.0 || recv.0 - t.0 > 10_000_000_000 { recv } else { t }
+}
+
 /// A `wp_presentation_feedback.presented` timestamp as skelter time; `None` for a clock other than
 /// `CLOCK_MONOTONIC` (the caller then uses its receive time and marks the sample estimated).
 pub fn from_presentation(clock_id: u32, tv_sec_hi: u32, tv_sec_lo: u32, tv_nsec: u32) -> Option<Time> {
@@ -55,6 +63,15 @@ pub fn to_timespec_parts(t: Time) -> (u32, u32, u32) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn event_us_is_monotonic_time_unless_implausible() {
+        let us = |u: u64, recv: Time| from_event_us((u >> 32) as u32, u as u32, recv);
+        let recv = Time(5_000_000_000_123);
+        assert_eq!(us(4_999_000_000, recv), Time(4_999_000_000_000));
+        assert_eq!(us(5_000_001_000, recv), recv, "from the future");
+        assert_eq!(us(1_000, recv), recv, "too old");
+    }
 
     #[test]
     fn event_ms_maps_back_from_receive_time() {

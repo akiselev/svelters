@@ -105,7 +105,7 @@ pub(crate) fn part_css<'c>(parts: &[(&'static str, &'c ComputedStyle)], name: &s
 /// A part's view with no `::part()` style: the host's computed style (`host_css`: true for parts the
 /// base sheet styles through the host rule) over the part's UA table, in the host's state.
 pub(crate) fn part_view<'a>(host: &StyleView<'a>, ua: Ua, host_css: bool) -> StyleView<'a> {
-    StyleView::new(if host_css { host.computed() } else { None }, ua, host.state(), host.is_dark())
+    StyleView::new(if host_css { host.computed() } else { None }, ua, host.state(), host.is_dark()).with_theme(Some(host.theme()))
 }
 
 /// A part's view from its computed style `css` (a `::part()` rule over the UA table `ua`), else
@@ -119,7 +119,7 @@ pub(crate) fn part_with<'a>(host: &'a StyleView<'a>, css: Option<&'a ComputedSty
 
 /// A part's size from its UA table (`width`, `height`), never the host's CSS size.
 pub(crate) fn part_size(host: &StyleView<'_>, ua: Ua, default: f32) -> Vec2 {
-    let s = StyleView::ua_only(ua, host.state(), host.is_dark());
+    let s = StyleView::ua_only(ua, host.state(), host.is_dark()).with_theme(Some(host.theme()));
     Vec2::new(s.px("width").unwrap_or(default), s.px("height").unwrap_or(default))
 }
 
@@ -237,7 +237,7 @@ pub(crate) fn paint_dot(pc: &mut PaintCx, at: Point, radius: f32, fill: Color) {
 
 /// The host's view of an indicator kind in `state` (the node's state with the kind's prop mirrors).
 pub(crate) fn host_in<'a>(style: &crate::shim::core::Styles<'a>, ua: Ua, state: StateBits) -> StyleView<'a> {
-    StyleView::new(style.computed, ua, state, style.dark)
+    StyleView::new(style.computed, ua, state, style.dark).with_theme(style.theme)
 }
 
 // ---- the kind ----

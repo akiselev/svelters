@@ -8,7 +8,7 @@ use skelter_base::time::Span;
 
 /// The node's style view: its computed style over `ua`, in its state and scheme.
 pub fn host_view<'a>(s: &Styles<'a>, ua: Ua) -> StyleView<'a> {
-    StyleView::new(s.computed, ua, s.state, s.dark)
+    StyleView::new(s.computed, ua, s.state, s.dark).with_theme(s.theme)
 }
 
 /// A kind's interaction substrate: one [`Tracker`] for the node.

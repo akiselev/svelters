@@ -12,8 +12,11 @@
 //! (`EventCx::set_caret`), the IME's window-space queries through the node's window transform.
 //! Without a text system the kind records its box only and takes no input (it cannot place a caret);
 //! without a clipboard it edits without one. Keys reach the IME first by core's dispatch
-//! (`Document::set_ime_source`, set by the platform layer). Scrolling re-records the field: a
-//! `self_scroll` kind's whole list would move with its content, border included. GTK's one selection is core's
+//! (`Document::set_ime_source`, set by the platform layer). The field scrolls itself (`self_scroll`):
+//! its box is the fixed part (`RecordCx::fixed`), its text is recorded in content space, and a scroll
+//! (the caret into view, in an event or in `prepare` through `PrepareCx::scroll_to`) is a compositor
+//! offset, never a re-record; the field takes the document's offset back before each event and
+//! prepare (a wheel or fling moved it). GTK's one selection is core's
 //! (`Document::set_single_selection`): the field claims it when it selects and collapses on
 //! `selection_lost`.
 
@@ -111,7 +114,10 @@ pub struct TextEdit {
 impl Default for TextEdit {
     fn default() -> Self {
         let policy = TextPolicy::from_policy(Platform::current(), &crate::host::os_policy());
-        TextEdit { field: TextField::new("", EditorConfig::default(), policy) }
+        let mut field = TextField::new("", EditorConfig::default(), policy);
+        // a scroll is the compositor's offset of the content space
+        field.set_scroll_repaints(false);
+        TextEdit { field }
     }
 }
 
@@ -187,10 +193,15 @@ impl TextEdit {
         }
     }
 
-    /// After input: serve the clipboard, send the caret, emit, repaint when the content changed.
+    /// After input: serve the clipboard, scroll (fast), send the caret, emit, repaint when the content
+    /// changed.
     fn finish(&mut self, cx: &mut EventCx) {
         if let Some(cb) = cx.service::<Box<dyn skelter_platform::Clipboard>>() {
             self.field.serve(&mut PlatformClipboard(&mut **cb));
+        }
+        let node = cx.node();
+        if self.field.scroll_offset() != cx.document().scroll_offset(node) {
+            cx.scroll_fast(self.field.scroll_offset());
         }
         if let Some(rect) = self.field.caret_update() {
             cx.set_caret(rect);
@@ -256,8 +267,17 @@ impl Kind for TextEdit {
         let style = text_style(cx.style());
         let content = cx.content_box();
         let to_window = cx.window_transform();
+        let offset = cx.scroll_offset();
+        self.field.set_scroll_offset(offset);
         if let Some(ts) = cx.service::<skelter_text::TextSystem>() {
             self.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window);
+        }
+        // the layout scrolled the caret into view: a compositor offset, and the caret follows
+        if self.field.scroll_offset() != offset {
+            cx.scroll_to(self.field.scroll_offset());
+        }
+        if let Some(rect) = self.field.caret_update() {
+            cx.set_caret(rect);
         }
         if self.field.take_repaint() {
             cx.request_paint();
@@ -265,9 +285,17 @@ impl Kind for TextEdit {
     }
 
     fn record(&self, cx: &mut RecordCx) {
-        cx.draw_box();
+        cx.fixed(|cx| cx.draw_box());
         let c = colors(cx.style());
-        self.field.record(cx, &c);
+        self.field.record_content(cx, &c);
+    }
+
+    /// The text scrolls in the padding box by the field's range ([`TextField::scroll_max`]).
+    fn self_scroll(&self, node: &skelter_core::NodeView) -> Option<skelter_core::SelfScroll> {
+        let b = node.style().border_widths;
+        let view = skelter_base::geom::Size::new((node.size().w - b.left - b.right).max(0.0), (node.size().h - b.top - b.bottom).max(0.0));
+        let max = self.field.scroll_max();
+        Some(skelter_core::SelfScroll { content: skelter_base::geom::Size::new(view.w + max.x, view.h + max.y), x: true, y: true })
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
@@ -276,6 +304,9 @@ impl Kind for TextEdit {
             self.field.editor.set_policy(TextPolicy::from_policy(Platform::current(), &p));
         }
         let now = cx.time();
+        // the offset a wheel or fling may have moved
+        let offset = cx.document().scroll_offset(cx.node());
+        self.field.set_scroll_offset(offset);
         // what the input asks of the document, applied once the text system is given back
         let (mut focus, mut capture, mut cursor) = (false, None::<bool>, None);
         let handled = {
@@ -367,5 +398,49 @@ mod tests {
         for name in super::super::field::TEXT_EDIT_SIGNALS {
             assert!(s.signal_named(name).is_some(), "signal {name}");
         }
+    }
+
+    #[test]
+    fn a_long_line_scrolls_on_the_compositor_and_its_box_stays_fixed() {
+        use crate::testdoc::{W, child, doc, frame, line_edge};
+        use skelter_base::commit::FastCommit;
+        use skelter_base::display::Prim;
+        use skelter_base::ids::NodeId;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 100.0), |r| {
+            r.register::<TextEdit>().unwrap();
+        });
+        d.set_service(skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())));
+        let f = child(&mut d, root, skelter_core::KindId::of("text-edit"), "width: 60px; height: 24px; padding: 2px; border-width: 1px; background-color: #ffffff");
+        d.set_prop(f, SPEC.prop_named("text").unwrap(), Value::from("a long single line that does not fit")).unwrap();
+        let c = frame(&mut d).unwrap();
+        let fixed_key = NodeId(f.0 | 1 << 63);
+        let list = |c: &skelter_base::commit::Commit, n: NodeId| c.lists.iter().find(|(k, _)| *k == n).map(|(_, l)| l.clone());
+        assert!(list(&c, fixed_key).is_some_and(|l| matches!(l.items[0], Prim::Quad(_))), "the box is the fixed part");
+        assert!(list(&c, f).is_some_and(|l| l.items.iter().any(|p| matches!(p, Prim::Glyphs(_)))), "the text is the scrolled content");
+        d.focus(f, FocusReason::Keyboard);
+        // a collapsed caret first (focus may have selected all): that re-records
+        d.dispatch(&line_edge(false));
+        frame(&mut d);
+        d.take_fast_commits();
+        let offset = |d: &skelter_core::Document| d.scroll_offset(f).x;
+        assert_eq!(offset(&d), 0.0);
+        // End: the caret goes past the box, the content moves on the compositor
+        d.dispatch(&line_edge(true));
+        let fast = d.take_fast_commits();
+        let scrolled = fast.iter().find_map(|c| match c {
+            FastCommit::ScrollOffset { offset, .. } => Some(offset.x),
+            _ => None,
+        });
+        assert!(scrolled.is_some_and(|x| x > 0.0), "a fast scroll: {fast:?}");
+        assert_eq!(Some(offset(&d)), scrolled);
+        assert!(fast.iter().any(|c| matches!(c, FastCommit::Caret { rect: Some(_), .. })), "the caret follows");
+        let c = frame(&mut d);
+        assert!(c.as_ref().is_none_or(|c| list(c, f).is_none() && list(c, fixed_key).is_none()), "neither the text nor the box re-records");
+        // Home scrolls back the same way
+        d.dispatch(&line_edge(false));
+        assert!(d.take_fast_commits().iter().any(|c| matches!(c, FastCommit::ScrollOffset { offset, .. } if offset.x == 0.0)));
+        let c = frame(&mut d);
+        assert!(c.as_ref().is_none_or(|c| list(c, f).is_none()));
+        let _ = W;
     }
 }

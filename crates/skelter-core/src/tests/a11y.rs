@@ -138,6 +138,93 @@ fn a_name_from_children_follows_their_text() {
     assert_eq!(u.nodes.iter().find(|(id, _)| *id == ax(b)).expect("re-sent").1.label(), Some("Save as"));
 }
 
+static OPTS: crate::KindSpec = crate::KindSpec {
+    props: &[
+        crate::PropSpec::new("count", crate::ValueType::I64, skelter_base::change::ChangeClass::Paint).default(crate::PropDefault::I64(0)),
+        crate::PropSpec::new("picked", crate::ValueType::I64, skelter_base::change::ChangeClass::Paint).default(crate::PropDefault::I64(-1)).native(),
+    ],
+    role: Role::ListBox,
+    container: true,
+    ..crate::KindSpec::new("opts")
+};
+const OPTS_COUNT: crate::PropId = crate::PropId::of("opts", "count", "int");
+const OPTS_PICKED: crate::PropId = crate::PropId::of("opts", "picked", "int");
+
+/// A list drawn without nodes: `count` virtual options with author ids `opt-<i>`; a click on one
+/// writes its index to `picked`.
+#[derive(Default)]
+struct Opts;
+
+impl crate::Kind for Opts {
+    fn spec() -> &'static crate::KindSpec {
+        &OPTS
+    }
+    fn record(&self, cx: &mut crate::RecordCx) {
+        cx.draw_box();
+    }
+    fn event(&mut self, cx: &mut crate::EventCx, ev: &crate::Event) -> crate::Handled {
+        match ev {
+            crate::Event::A11yChild(r, i) if r.action == accesskit::Action::Click => {
+                let _ = cx.set_native(OPTS_PICKED, Value::I64(*i as i64));
+                crate::Handled::Yes
+            }
+            _ => crate::Handled::No,
+        }
+    }
+    fn a11y(&self, cx: &mut crate::A11yCx) {
+        cx.default_a11y();
+        let n = cx.node.prop(OPTS_COUNT).and_then(Value::as_i64).unwrap_or(0);
+        for i in 0..n {
+            let mut o = accesskit::Node::new(Role::ListBoxOption);
+            o.set_author_id(format!("opt-{i}"));
+            o.add_action(accesskit::Action::Click);
+            assert_eq!(cx.add_virtual_child(o), Some(i as u32));
+        }
+    }
+}
+
+#[test]
+fn virtual_children_go_out_with_their_owner_and_take_actions() {
+    let mut r = crate::KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<Opts>().unwrap();
+    let mut d = Document::new(std::sync::Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let l = child(&mut d, root, KindId::of("opts"), "");
+    let b = child(&mut d, l, BOX, "");
+    d.set_prop(l, OPTS_COUNT, Value::I64(3)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let v = |i| crate::a11y::virtual_id(l, i);
+    let owner = &u.nodes.iter().find(|(id, _)| *id == ax(l)).unwrap().1;
+    assert_eq!(owner.children(), &[ax(b), v(0), v(1), v(2)], "after the real children");
+    for i in 0..3 {
+        let n = &u.nodes.iter().find(|(id, _)| *id == v(i)).expect("sent with the owner").1;
+        assert_eq!(n.author_id(), Some(format!("opt-{i}").as_str()));
+        assert_ne!(v(i).0 & crate::a11y::VIRTUAL_BIT, 0);
+        assert_eq!(crate::a11y::virtual_child(v(i)), Some((l, i)));
+    }
+    assert_eq!(crate::a11y::virtual_child(ax(l)), None, "a node's id is not virtual");
+    // an action on child 2 reaches the kind with its index
+    let req = accesskit::ActionRequest { action: accesskit::Action::Click, target_tree: accesskit::TreeId::ROOT, target_node: v(2), data: None };
+    let out = d.a11y_action(W, &req);
+    assert!(out.handled);
+    assert_eq!(out.target, Some(l));
+    assert_eq!(d.get_prop(l, OPTS_PICKED), Some(Value::I64(2)));
+    let _ = frame(&mut d);
+    // fewer children: the owner is re-sent without the dropped ones, which are not sent
+    d.set_prop(l, OPTS_COUNT, Value::I64(1)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let owner = &u.nodes.iter().find(|(id, _)| *id == ax(l)).expect("re-sent").1;
+    assert_eq!(owner.children(), &[ax(b), v(0)]);
+    let ids: HashSet<AxId> = u.nodes.iter().map(|(id, _)| *id).collect();
+    assert!(ids.contains(&v(0)) && !ids.contains(&v(1)) && !ids.contains(&v(2)));
+    // an update that does not re-send the owner names none of them
+    d.set_prop(b, BOX_TINT, Value::Color(Color::WHITE)).unwrap();
+    if let Some(u) = frame(&mut d).and_then(|c| c.a11y) {
+        assert!(u.nodes.iter().all(|(id, _)| crate::a11y::virtual_child(*id).is_none()), "virtual children only with their owner");
+    }
+}
+
 #[test]
 fn aria_live_and_busy_apply_after_the_kinds_own_node() {
     let (mut d, root) = doc();

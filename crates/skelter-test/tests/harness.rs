@@ -52,6 +52,7 @@ struct Doc {
     duplicates: bool,
     hovers: Vec<Point>,
     menu: Vec<String>,
+    raw: Vec<(f32, f32)>,
 }
 
 impl Doc {
@@ -173,6 +174,7 @@ impl DocumentApi for Doc {
             InputEvent::Ime(ImeEvent::Commit(t)) if self.focus == Some(FIELD) => {
                 self.text.push_str(t)
             }
+            InputEvent::RawMotion { dx, dy } => self.raw.push((*dx, *dy)),
             _ => {}
         }
         let after = (self.count, self.checked, self.text.clone(), self.focus);
@@ -428,6 +430,15 @@ fn egui_events_translate_to_the_same_dispatch() {
     });
     h.run();
     assert!(h.get_by_label("Increment").is_focused());
+}
+
+#[test]
+fn raw_motion_coalesces_by_summing_before_dispatch() {
+    let mut h = harness();
+    h.event_egui(egui::Event::MouseMoved(egui::vec2(2.0, 1.0)));
+    h.event(InputEvent::RawMotion { dx: 3.0, dy: -4.0 });
+    h.run();
+    assert_eq!(h.state().raw, vec![(5.0, -3.0)]);
 }
 
 #[test]
@@ -707,4 +718,17 @@ fn a_zoom_rescales_the_document_and_its_hit_testing_without_an_os_resize() {
     h.set_zoom(1.0);
     h.run();
     assert_eq!(h.state().size, Some((Size::new(200.0, 100.0), Scale(1.0))));
+}
+
+#[test]
+fn calls_can_be_taken_and_capped() {
+    let mut h = harness();
+    assert!(!h.take_calls().is_empty(), "the window's opening calls");
+    assert!(h.calls().is_empty(), "taken");
+    let mut capped = Harness::<Doc>::builder().with_calls_cap(3).build(Doc { dirty: true, ..Doc::default() });
+    for _ in 0..10 {
+        capped.key_press(Key::Tab);
+        capped.run();
+    }
+    assert!(capped.calls().len() <= 3, "{} calls kept", capped.calls().len());
 }

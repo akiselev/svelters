@@ -1,6 +1,7 @@
 //! Continuous input coalescing (architecture §11.1): pointer moves and wheel deltas of one window are
 //! merged until the next UI frame (or the next discrete event, which flushes them first so order is
-//! kept). A merged pointer move keeps every earlier sample in its history; merged wheel deltas add up.
+//! kept). A merged pointer move keeps every earlier sample in its history; merged wheel deltas and raw
+//! motion deltas add up.
 
 use skelter_base::event::{
     GesturePhase, InputEnvelope, InputEvent, PointerEvent, PointerPhase, PointerSample,
@@ -31,8 +32,8 @@ impl Coalescer {
     }
 
     /// Hold a continuous event. It merges with the newest pending event of its window when the two are
-    /// the same stream: the same pointer with the same buttons and modifiers, or wheel deltas of the
-    /// same unit and gesture state.
+    /// the same stream: the same pointer with the same buttons and modifiers, wheel deltas of the
+    /// same unit and gesture state, or raw motion deltas.
     pub fn push(&mut self, ev: InputEnvelope) -> Pushed {
         let q = self.pending.entry(ev.window).or_default();
         if let Some(last) = q.last_mut()
@@ -72,6 +73,9 @@ fn merge(old: &InputEnvelope, new: &InputEnvelope) -> Option<InputEnvelope> {
             InputEvent::Pointer(merge_pointer(a, b, old)?)
         }
         (InputEvent::Wheel(a), InputEvent::Wheel(b)) => InputEvent::Wheel(merge_wheel(a, b)?),
+        (InputEvent::RawMotion { dx: ax, dy: ay }, InputEvent::RawMotion { dx: bx, dy: by }) => {
+            InputEvent::RawMotion { dx: ax + bx, dy: ay + by }
+        }
         _ => return None,
     };
     Some(InputEnvelope {

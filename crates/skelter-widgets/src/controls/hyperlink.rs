@@ -89,7 +89,7 @@ impl Hyperlink {
         if self.props.disabled {
             state |= StateBits::DISABLED;
         }
-        StyleView::new(s.computed, UA, state, s.dark)
+        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme)
     }
 }
 

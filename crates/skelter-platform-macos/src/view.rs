@@ -488,13 +488,19 @@ impl SkelterView {
     }
 
     fn pointer(&self, event: &NSEvent, phase: PointerPhase, with_button: bool) {
-        // While the pointer is captured (mouse look) moves are raw deltas; the cursor stays put.
-        if phase == PointerPhase::Move
-            && app::with_app(|st| st.mouse_capture) == Some(Some(self.window_id()))
-        {
-            let delta = skelter_base::geom::Vec2::new(event.deltaX() as f32, event.deltaY() as f32);
-            post(Pending::RawMotion(self.window_id(), delta));
-            return;
+        if phase == PointerPhase::Move {
+            let id = self.window_id();
+            if app::with_window(id, |w| w.raw_motion) == Some(true)
+                && let Some(raw) = events::raw_motion(event.deltaX(), event.deltaY())
+            {
+                post_input(id, events::os_time(event), raw);
+            }
+            // While the pointer is captured (mouse look) moves are raw deltas; the cursor stays put.
+            if app::with_app(|st| st.mouse_capture) == Some(Some(id)) {
+                let delta = skelter_base::geom::Vec2::new(event.deltaX() as f32, event.deltaY() as f32);
+                post(Pending::RawMotion(id, delta));
+                return;
+            }
         }
         post_input(
             self.window_id(),

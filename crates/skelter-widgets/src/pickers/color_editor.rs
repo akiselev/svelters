@@ -225,6 +225,9 @@ pub struct ColorBody {
     pub hex_invalid: bool,
     /// The hex field's text while it is being edited (shown instead of the colour's hex).
     pub hex_text: Option<String>,
+    /// The editing field records the hex box's text itself (with its caret and selection): the
+    /// body draws the box without it.
+    pub hex_by_field: bool,
 }
 
 /// A channel's value of `h`: R/G/B 0..255, H 0..360, S/V 0..100.
@@ -527,7 +530,9 @@ impl ColorBody {
             let border = if self.hex_invalid { look.invalid_border } else { look.control_border };
             shim::frame(list, r, look.control_bg, border, look.stroke, look.radius);
             let shown = self.hex_text.clone().unwrap_or_else(|| ColorBody::hex_of(h, cfg));
-            text.draw(list, &shown, &look.text(field_fg), r.inset(Insets { top: 0.0, right: 4.0, bottom: 0.0, left: 4.0 }), HAlign::Start, true);
+            if !(self.hex_by_field && self.hex_text.is_some()) {
+                text.draw(list, &shown, &look.text(field_fg), r.inset(Insets { top: 0.0, right: 4.0, bottom: 0.0, left: 4.0 }), HAlign::Start, true);
+            }
             if ring(Ctl::Hex) {
                 shim::frame(list, r.inflate(-1.0), Color::TRANSPARENT, look.focus, 1.0, look.radius);
             }
