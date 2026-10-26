@@ -369,6 +369,7 @@ static VIRTUALLIST_METHODS: &[MethodSpec] = &[
     MethodSpec { name: "count", params: &[], ret: None, doc: "The number of items." },
     MethodSpec { name: "rowAt", params: &[], ret: None, doc: "`rowAt(pos)`: the slot bound to `pos`, or -1." },
     MethodSpec { name: "scrollTo", params: &[], ret: None, doc: "`scrollTo(pos, hint?)`: scrolls the item into view; `hint` (Qt `ScrollHint`): `nearest` (the default, the least scroll), `top`, `bottom` or `center`." },
+    MethodSpec { name: "setLabels", params: &[], ret: None, doc: "`setLabels(labels)`: every row's label (one per id): its accessible name and type-ahead text (SV59, `<ListView label>`)." },
     MethodSpec { name: "setRow", params: &[], ret: None, doc: "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it." },
     MethodSpec { name: "splice", params: &[], ret: None, doc: "`splice(pos, removed, ids, labels?)`: replaces `removed` ids at `pos` with `ids` (unique integers); `labels` (strings, one per id) are what type-ahead matches." },
 ];

@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "1e6e8de8bc3295b6"
+    "spec_hash": "8d1d4b38a50932d3"
   },
   "inline_text": {
     "kind": "span",
@@ -7525,6 +7525,18 @@
           "fingerprint": "0240a41c",
           "id": 37790748,
           "native": "scrollTo",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setLabels": {
+          "dispatch": "generated",
+          "doc": "`setLabels(labels)`: every row's label (one per id): its accessible name and type-ahead text (SV59, `<ListView label>`).",
+          "fingerprint": "06b80863",
+          "id": 112724067,
+          "native": "setLabels",
           "params": [],
           "returns": {
             "nullable": false,

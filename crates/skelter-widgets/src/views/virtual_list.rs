@@ -1222,7 +1222,7 @@ impl VirtualList {
     }
 
     /// svelters-egui's list methods ([`LIST_METHODS`], by name): `splice(pos, removed, ids,
-    /// labels?)`, `count()`, `scrollTo(pos, hint?)`, `setRow(row, widget)` (the widget is the
+    /// labels?)`, `setLabels(labels)` (SV59), `count()`, `scrollTo(pos, hint?)`, `setRow(row, widget)` (the widget is the
     /// document node the host made a child of the list, by its raw id) and `rowAt(pos)`. `None`:
     /// not one of them.
     pub fn call_list(&mut self, cx: &mut EventCx<'_>, name: &str, args: &[skelter_core::Value]) -> Option<Handled> {
@@ -1240,6 +1240,11 @@ impl VirtualList {
                     _ => None,
                 };
                 self.splice(pos.max(0) as usize, removed.max(0) as usize, &ids, labels.as_deref()).is_ok()
+            }
+            "setLabels" => {
+                let Some(V::List(l)) = args.first() else { return Some(Handled::No) };
+                // the realised rows go out again with their names (`row_a11y`)
+                self.set_labels(l.iter().map(|x| x.as_str().unwrap_or("").to_string()).collect())
             }
             "count" => {
                 cx.ret = Some(V::I64(self.len() as i64));
@@ -1302,7 +1307,8 @@ pub const LIST_METHODS: &[skelter_core::MethodSpec] = &[
         &[skelter_core::ArgSpec::new("row", skelter_core::ValueType::I64), skelter_core::ArgSpec::new("widget", skelter_core::ValueType::I64).nullable()],
         None,
     ),
-    skelter_core::MethodSpec::new("rowAt", &[skelter_core::ArgSpec::new("pos", skelter_core::ValueType::I64)], Some(skelter_core::ArgSpec::new("return", skelter_core::ValueType::I64))),
+    skelter_core::MethodSpec::new("rowAt", &[skelter_core::ArgSpec::new("pos", skelter_core::ValueType::I64)], Some(skelter_core::ArgSpec::new("return", skelter_core::ValueType::I64))),    // SV59 (last: `tree-view` takes the first five by index)
+    skelter_core::MethodSpec::new("setLabels", &[skelter_core::ArgSpec::new("labels", skelter_core::ValueType::List)], None),
 ];
 
 /// The list's own look: none (CSS may give it a box); its rows are [`ROW_UA`].

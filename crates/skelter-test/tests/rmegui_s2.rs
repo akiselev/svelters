@@ -132,3 +132,37 @@ fn d_prop(h: &Harness<CoreDocument>, n: NodeId, name: &str) -> Option<Value> {
     let p = d.registry().get(TABLE).unwrap().spec.prop_named(name).unwrap();
     d.get_prop(n, p)
 }
+
+/// SV59: `<ListView label>` sends the row labels with `splice` and, when only a label changed,
+/// with `setLabels`: the realised options are renamed. (`anchor` is the runtime's: it writes the row
+/// outlet's `anchor`, which `list_rows_are_options_and_a_combobox_names_the_selected_one` covers.)
+#[test]
+fn set_labels_renames_the_realised_options() {
+    const LIST: KindId = KindId::of("virtual-list");
+    let mut h = harness();
+    let w = h.window();
+    let view = {
+        let d = &mut h.state_mut().doc;
+        let root = d.window_root(w).unwrap();
+        let view = add(d, root, LIST, "width: 300px; height: 200px");
+        prop(d, view, LIST, "row-height", Value::F64(20.0));
+        prop(d, view, LIST, "uniform-rows", Value::Bool(true));
+        call(d, view, LIST, "splice", &[Value::I64(0), Value::I64(0), list_of([1, 2]), list([Value::from("Top"), Value::from("Bottom")])]);
+        for k in 0..2 {
+            let row = add(d, view, BOX, "");
+            d.set_prop(row, common::ANCHOR, Value::from(format!("layer:{k}"))).unwrap();
+            call(d, view, LIST, "setRow", &[Value::I64(k), Value::I64(row.0 as i64)]);
+        }
+        view
+    };
+    settle(&mut h);
+    let names = |h: &Harness<CoreDocument>| -> Vec<Option<String>> { (0..2).map(|k| h.consumer().by_author_id(&format!("layer:{k}")).unwrap().data().label().map(str::to_owned)).collect() };
+    assert_eq!(names(&h), [Some("Top".into()), Some("Bottom".into())]);
+    call(&mut h.state_mut().doc, view, LIST, "setLabels", &[list([Value::from("Top copper"), Value::from("Bottom")])]);
+    settle(&mut h);
+    assert_eq!(names(&h), [Some("Top copper".into()), Some("Bottom".into())]);
+}
+
+fn list_of<const N: usize>(ids: [i64; N]) -> Value {
+    list(ids.into_iter().map(Value::I64))
+}
