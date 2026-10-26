@@ -126,6 +126,10 @@ impl SkelterBackend {
 
     /// What skelter-core's dispatch calls for a cancelable event: `doc` is lent for the call.
     fn deliver_lent(&self, doc: &mut Document, ev: &JsEvent) -> Outcome {
+        if !self.0.taps.borrow().is_empty() {
+            // the event taps see the events delivered at event time too (A2)
+            self.0.tapped.borrow_mut().push(ev.clone());
+        }
         let prev = self.0.lent.replace(doc as *mut Document);
         let borrows = self.0.lent_borrows.replace(0);
         let out = self.deliver_cancelable(ev);

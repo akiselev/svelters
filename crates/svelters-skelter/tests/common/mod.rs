@@ -57,7 +57,11 @@ pub struct Rig {
 
 impl Rig {
     pub fn new() -> Rig {
-        let backend = SkelterBackend::builtin();
+        Rig::with_backend(SkelterBackend::builtin())
+    }
+
+    /// The rig around `backend` (an app's kinds, A1).
+    pub fn with_backend(backend: SkelterBackend) -> Rig {
         let vt: &'static BackendVtable = Box::leak(Box::new(BackendVtable::new(backend.clone())));
         let log: Rc<RefCell<Log>> = Rc::default();
         let hv: &'static HostVtable = Box::leak(Box::new(HostVtable::new(Rec(log.clone()))));

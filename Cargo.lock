@@ -5397,6 +5397,7 @@ dependencies = [
  "skelter-widgets",
  "smallvec",
  "svelters-abi",
+ "svelters-compiler",
  "svelters-host",
  "svelters-modules",
  "svelters-style",

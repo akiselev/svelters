@@ -74,6 +74,7 @@ impl SkelterBackend {
     /// produced now.
     pub fn dispatch(&self, ev: &InputEnvelope) -> (Dispatched, Delivered) {
         let d = self.doc_mut().dispatch(ev);
+        self.run_taps(ev, &d.events);
         let mut out = Output { events: d.events.clone(), changed: Vec::new(), revision: Some(d.revision) };
         out.append(self.collect());
         (d, self.deliver(out))

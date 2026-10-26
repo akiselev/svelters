@@ -196,10 +196,18 @@ fn kind_json(km: &kinds::KindMap) -> J {
         })
         .collect();
     let slot_ids: Map<String, J> = k.slots.iter().map(|s| (s.name.to_string(), json!(kinds::slot_wire(k, s)))).collect();
-    let widget = match (km.core, km.hosted) {
-        (None, _) => J::Null,
-        (Some(_), true) => json!("skelter-widgets"),
-        (Some(_), false) => json!("placeholder"),
+    let widget = match (km.core, km.hosted, km.app) {
+        (None, _, _) => J::Null,
+        (Some(_), _, true) => json!("app"),
+        (Some(_), true, false) => json!("skelter-widgets"),
+        (Some(_), false, false) => json!("placeholder"),
+    };
+    let provenance = if km.app {
+        "the app's core kind (svelters_skelter::Kinds::with_app)"
+    } else if crate::surface::tier1::ALL.iter().any(|t| std::ptr::eq(*t, k)) {
+        "crates/svelters-skelter/src/surface/tier1.rs"
+    } else {
+        "crates/svelters-skelter/src/surface/tier0.rs"
     };
     json!({
         "a11y": {"name_from": k.a11y.name_from, "name_required": k.a11y.name_required, "role": if k.a11y.role.is_empty() { J::Null } else { json!(k.a11y.role) }},
@@ -217,7 +225,7 @@ fn kind_json(km: &kinds::KindMap) -> J {
         "native_state": k.native_state,
         "present": if k.toplevel { json!("present") } else { J::Null },
         "props": props,
-        "provenance": {"kind": "crates/svelters-skelter/src/surface/tier0.rs"},
+        "provenance": {"kind": provenance},
         "signals": signals,
         "slot_ids": slot_ids,
         "text_content": k.text_content,
@@ -379,6 +387,37 @@ pub fn semantics(all: &Kinds) -> J {
 /// The checked-in text for the built-in registry: pretty JSON with a trailing newline.
 pub fn builtin_text() -> String {
     let mut s = serde_json::to_string_pretty(&semantics(&crate::builtin_kinds())).expect("spec serializes");
+    s.push('\n');
+    s
+}
+
+/// The app's kinds ([`Kinds::with_app`]) as a `svelters-semantics/v0` fragment, as egui's
+/// `spec::fragment` dumps its provider kinds: `kinds` and `tags` only. The compiler merges it into
+/// the built-in `skelter.json` (`svelters-compile --spec-fragment kinds.json`, or
+/// `SourceConfig::spec_fragments` for live compiles); a tag or kind already there is an error.
+pub fn fragment(all: &Kinds) -> J {
+    let mut kinds = Map::new();
+    let mut tags = Map::new();
+    for km in all.iter().filter(|m| m.app) {
+        let k = km.surface;
+        kinds.insert(k.name.to_string(), kind_json(km));
+        if let Some(t) = k.tag {
+            tags.insert(t.to_string(), json!(k.name));
+        }
+    }
+    json!({
+        "backend": "skelter",
+        "fragment": true,
+        "kinds": kinds,
+        "schema": "svelters-semantics/v0",
+        "source": {"generator": "crates/svelters-skelter/src/spec.rs (svelters_skelter::spec::fragment)"},
+        "tags": tags,
+    })
+}
+
+/// [`fragment`] as written to `kinds.json`.
+pub fn fragment_text(all: &Kinds) -> String {
+    let mut s = serde_json::to_string_pretty(&fragment(all)).expect("fragment json");
     s.push('\n');
     s
 }

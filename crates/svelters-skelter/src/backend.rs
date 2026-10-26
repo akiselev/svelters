@@ -175,6 +175,12 @@ pub struct Inner {
     pub(crate) frame_pending: Cell<bool>,
     pub(crate) quitting: Cell<bool>,
     pub(crate) driver: RefCell<Option<Rc<dyn Driver>>>,
+    /// `use:` behaviours: the registered factories and the live instances (`behavior.rs`, A2).
+    pub(crate) behaviors: RefCell<crate::behavior::Behaviors>,
+    /// What sees each dispatched input (`SkelterBackend::add_event_tap`).
+    pub(crate) taps: RefCell<Vec<crate::behavior::EventTap>>,
+    /// The events of the running dispatch delivered at event time (`sync.rs`), for the taps.
+    pub(crate) tapped: RefCell<Vec<skelter_core::JsEvent>>,
 }
 
 /// The svelters backend on skelter. Cheap to clone (shared state).
@@ -248,6 +254,9 @@ impl SkelterBackend {
             frame_pending: Cell::new(false),
             quitting: Cell::new(false),
             driver: RefCell::new(None),
+            behaviors: RefCell::new(Default::default()),
+            taps: RefCell::new(Vec::new()),
+            tapped: RefCell::new(Vec::new()),
         }));
         b.install_sync_delivery();
         b
@@ -637,6 +646,11 @@ impl SkelterBackend {
     /// the ABI leaves them to the host (skelter-core's `destroy` takes the subtree).
     pub(crate) fn free(&self, h: svl_handle) {
         let Some(n) = self.0.handles.borrow_mut().unbind(h) else { return };
+        // A2: the `use:` behaviours on the node leave it with it
+        let attached = self.0.behaviors.borrow().attached_to(n);
+        for b in attached {
+            self.behavior_detach(b);
+        }
         {
             let mut doc = self.doc_mut();
             let known: Vec<NodeId> = doc.children(n).iter().copied().filter(|&c| self.0.handles.borrow().handle(c).is_some()).collect();
@@ -659,7 +673,14 @@ impl Backend for SkelterBackend {
     fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
         let kinds = &self.0.kinds;
         if what == NameKind::Kind {
-            return kinds.by_tag(name).map_or(0, |m| m.wire);
+            return kinds.by_tag(name).map_or_else(|| self.0.behaviors.borrow().kind_named(name).unwrap_or(0), |m| m.wire);
+        }
+        if self.0.behaviors.borrow().is_kind(kind) {
+            // a behaviour's params and events are untyped and open (A2)
+            return match what {
+                NameKind::Prop | NameKind::Signal => self.0.behaviors.borrow_mut().member(kind, name),
+                _ => 0,
+            };
         }
         let Some(m) = kinds.by_wire(kind) else { return 0 };
         match what {
@@ -673,15 +694,29 @@ impl Backend for SkelterBackend {
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
         let h = self.0.handles.borrow_mut().reserve(1);
+        if self.0.behaviors.borrow().is_kind(kind) {
+            self.behavior_create(h, kind)?;
+            return Ok(h);
+        }
         self.create_at(h, kind)?;
         Ok(h)
     }
 
     fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
+        if self.0.behaviors.borrow().is_live(child) {
+            // `use:`: the behaviour attaches to the element (no slot, no position)
+            let (p, _) = self.live(parent)?;
+            self.behavior_attach(child, p);
+            return Ok(());
+        }
         self.write_insert(parent, child, before, slot)
     }
 
     fn remove(&self, parent: svl_handle, child: svl_handle) -> StrResult<()> {
+        if self.0.behaviors.borrow().is_live(child) {
+            self.behavior_detach(child);
+            return Ok(());
+        }
         let (p, c) = (self.node(parent), self.node(child));
         let (Some(p), Some(c)) = (p, c) else { return Err("stale or foreign handle".into()) };
         self.doc_mut().remove(p, c).map_err(|e| e.to_string())
@@ -692,14 +727,24 @@ impl Backend for SkelterBackend {
         if self.0.borrowed.borrow().contains(&h) {
             return;
         }
+        if self.0.behaviors.borrow().is_live(h) {
+            self.behavior_destroy(h);
+            return;
+        }
         self.free(h);
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
+        if self.0.behaviors.borrow().is_live(h) {
+            return self.behavior_set(h, prop, v);
+        }
         self.write_prop(h, prop, v)
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
+        if self.0.behaviors.borrow().is_live(h) {
+            return self.0.behaviors.borrow().get(h, prop).ok_or_else(|| format!("unknown param id {prop}"));
+        }
         let (n, km) = self.live(h)?;
         let pm = km.prop(prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", km.tag()))?;
         let stored = match pm.target {
@@ -770,10 +815,17 @@ impl Backend for SkelterBackend {
 
     /// EV1 capture on the DOM-style events, and `LISTEN_PASSIVE` (compiler-and-js §3.5).
     fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> StrResult<()> {
+        if self.0.behaviors.borrow().is_live(h) {
+            // a behaviour emits nothing to JS yet: its listeners never fire
+            return Ok(());
+        }
         self.write_listen(h, signal, on, flags)
     }
 
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
+        if let Some(kind) = self.0.behaviors.borrow().kind_of(h) {
+            return Ok(svl_handle_info { kind, lifetime: SVL_LIFE_OWNED, flags: 0 });
+        }
         let (_, km) = self.live(h)?;
         Ok(svl_handle_info {
             kind: km.wire,
