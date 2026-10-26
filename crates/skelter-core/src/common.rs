@@ -36,9 +36,16 @@ pub const ARIA_LIVE_VALUES: &[&str] = &["off", "polite", "assertive"];
 /// `aria-expanded` / `aria-selected`: unset leaves the kind's own state.
 pub const ARIA_TRISTATE: &[&str] = &["unset", "true", "false"];
 
+/// `aria-checked`: unset leaves the kind's own toggled state.
+pub const ARIA_CHECKED_VALUES: &[&str] = &["unset", "true", "false", "mixed"];
+
+/// `aria-haspopup`: what the node opens (`true` is `menu`, as ARIA's).
+pub const ARIA_HASPOPUP_VALUES: &[&str] = &["false", "true", "menu", "listbox", "tree", "grid", "dialog"];
+
 /// The ARIA role names `role` takes, with their AccessKit roles.
 pub const ROLES: &[(&str, accesskit::Role)] = &[
     ("alert", accesskit::Role::Alert),
+    ("alertdialog", accesskit::Role::AlertDialog),
     ("article", accesskit::Role::Article),
     ("button", accesskit::Role::Button),
     ("cell", accesskit::Role::Cell),
@@ -55,15 +62,23 @@ pub const ROLES: &[(&str, accesskit::Role)] = &[
     ("listbox", accesskit::Role::ListBox),
     ("listitem", accesskit::Role::ListItem),
     ("menu", accesskit::Role::Menu),
+    ("menubar", accesskit::Role::MenuBar),
     ("menuitem", accesskit::Role::MenuItem),
+    ("menuitemcheckbox", accesskit::Role::MenuItemCheckBox),
+    ("menuitemradio", accesskit::Role::MenuItemRadio),
     ("navigation", accesskit::Role::Navigation),
+    // no semantics of its own: AccessKit's generic container (filtered out when it has no name)
+    ("none", accesskit::Role::GenericContainer),
     ("option", accesskit::Role::ListBoxOption),
+    ("presentation", accesskit::Role::GenericContainer),
     ("progressbar", accesskit::Role::ProgressIndicator),
     ("radio", accesskit::Role::RadioButton),
     ("region", accesskit::Role::Region),
     ("row", accesskit::Role::Row),
+    ("searchbox", accesskit::Role::SearchInput),
     ("separator", accesskit::Role::Splitter),
     ("slider", accesskit::Role::Slider),
+    ("spinbutton", accesskit::Role::SpinButton),
     ("status", accesskit::Role::Status),
     ("switch", accesskit::Role::Switch),
     ("tab", accesskit::Role::Tab),
@@ -71,6 +86,7 @@ pub const ROLES: &[(&str, accesskit::Role)] = &[
     ("tabpanel", accesskit::Role::TabPanel),
     ("textbox", accesskit::Role::TextInput),
     ("toolbar", accesskit::Role::Toolbar),
+    ("tooltip", accesskit::Role::Tooltip),
     ("tree", accesskit::Role::Tree),
     ("treeitem", accesskit::Role::TreeItem),
 ];
@@ -104,6 +120,23 @@ pub static COMMON: KindSpec = KindSpec {
             .default(PropDefault::Enum(0))
             .enum_values(ARIA_TRISTATE)
             .doc("AccessKit `selected`; `unset` leaves the kind's own."),
+        PropSpec::new("aria-checked", ValueType::Enum, ChangeClass::Paint)
+            .default(PropDefault::Enum(0))
+            .enum_values(ARIA_CHECKED_VALUES)
+            .doc("AccessKit `toggled` (`menuitemcheckbox`, `menuitemradio`, a drawn checkbox); `unset` leaves the kind's own."),
+        PropSpec::new("aria-haspopup", ValueType::Enum, ChangeClass::Paint)
+            .default(PropDefault::Enum(0))
+            .enum_values(ARIA_HASPOPUP_VALUES)
+            .doc("AccessKit `has_popup`: the node opens a `menu` (`true`), `listbox`, `tree`, `grid` or `dialog`; `false` sets none."),
+        PropSpec::new("aria-modal", ValueType::Bool, ChangeClass::Paint)
+            .default(PropDefault::Bool(false))
+            .doc("A `dialog` or `alertdialog` that blocks the rest of the window: AccessKit `modal`."),
+        PropSpec::new("aria-activedescendant", ValueType::Str, ChangeClass::Paint)
+            .default(PropDefault::Str(""))
+            .doc("The `anchor` of the node that has focus inside this one for assistive technology (the selected row of a palette, a menu opened from the keyboard): AccessKit `active_descendant`, which AT reports as focused while this node has focus. Empty: none."),
+        PropSpec::new("aria-controls", ValueType::Str, ChangeClass::Paint)
+            .default(PropDefault::Str(""))
+            .doc("The `anchor`s (separated by spaces) of the nodes this one controls: AccessKit `controls`. Empty: none."),
         PropSpec::new("aria-description", ValueType::Str, ChangeClass::Paint)
             .default(PropDefault::Str(""))
             .doc("AccessKit `description`; empty leaves it unset."),
@@ -203,6 +236,11 @@ ids!(PropId:
     ROLE = "role": "string",
     ARIA_LEVEL = "aria-level": "int",
     ARIA_EXPANDED = "aria-expanded": "enum",
+    ARIA_CHECKED = "aria-checked": "enum",
+    ARIA_HASPOPUP = "aria-haspopup": "enum",
+    ARIA_MODAL = "aria-modal": "bool",
+    ARIA_ACTIVEDESCENDANT = "aria-activedescendant": "string",
+    ARIA_CONTROLS = "aria-controls": "string",
     ARIA_SELECTED = "aria-selected": "enum",
     ARIA_DESCRIPTION = "aria-description": "string",
     TITLE = "title": "string",
@@ -266,7 +304,7 @@ mod tests {
         for i in 0..COMMON.props.len() {
             assert!(prop(COMMON.prop_id(i)).is_some());
         }
-        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, ARIA_LIVE, ARIA_BUSY, ROLE, ARIA_LEVEL, ARIA_EXPANDED, ARIA_SELECTED, ARIA_DESCRIPTION, TITLE, AUTOFOCUS, INITIAL_FOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
+        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, ARIA_LIVE, ARIA_BUSY, ROLE, ARIA_LEVEL, ARIA_EXPANDED, ARIA_CHECKED, ARIA_HASPOPUP, ARIA_MODAL, ARIA_ACTIVEDESCENDANT, ARIA_CONTROLS, ARIA_SELECTED, ARIA_DESCRIPTION, TITLE, AUTOFOCUS, INITIAL_FOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
             assert!(prop(id).is_some(), "{id:?}");
         }
         for id in [POINTERDOWN, CLICK, WHEEL, KEYDOWN, FOCUS, FOCUSIN, SCROLL, ANIMATIONEND, DRAG_BEGIN, DRAG_END, DRAG_ENTER, DRAG_LEAVE, DROP] {

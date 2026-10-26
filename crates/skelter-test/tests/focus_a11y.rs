@@ -186,3 +186,21 @@ fn focus_on_an_island_waits_for_its_subtree_and_never_panics_the_consumer() {
         c.focus_moves()
     );
 }
+
+#[test]
+fn an_active_descendant_is_what_assistive_technology_sees_focused() {
+    let (mut h, _) = shell();
+    h.key_press(Key::Tab);
+    h.key_press(Key::Tab);
+    h.run();
+    assert_eq!(focus(&h).as_deref(), Some("b"));
+    let w = h.window();
+    let d = &mut h.state_mut().doc;
+    let b = d.find_anchor(w, "b").unwrap();
+    // the combobox pattern: focus stays on the input, AT focus is on the option
+    d.set_prop(b, common::ARIA_ACTIVEDESCENDANT, Value::from("a")).unwrap();
+    h.key_press(Key::F24);
+    h.run();
+    assert_eq!(h.state().doc.focused(w), Some(b));
+    assert_eq!(focus(&h).as_deref(), Some("a"), "accesskit_consumer reports the active descendant");
+}

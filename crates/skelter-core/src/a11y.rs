@@ -105,6 +105,23 @@ impl Document {
             if let Some(d) = v.prop_str(crate::common::ARIA_DESCRIPTION).filter(|d| !d.is_empty()) {
                 out.set_description(d);
             }
+            match v.prop(crate::common::ARIA_CHECKED).and_then(|v| v.as_enum()) {
+                Some(1) => out.set_toggled(accesskit::Toggled::True),
+                Some(2) => out.set_toggled(accesskit::Toggled::False),
+                Some(3) => out.set_toggled(accesskit::Toggled::Mixed),
+                _ => {}
+            }
+            match v.prop(crate::common::ARIA_HASPOPUP).and_then(|v| v.as_enum()) {
+                Some(1 | 2) => out.set_has_popup(accesskit::HasPopup::Menu),
+                Some(3) => out.set_has_popup(accesskit::HasPopup::Listbox),
+                Some(4) => out.set_has_popup(accesskit::HasPopup::Tree),
+                Some(5) => out.set_has_popup(accesskit::HasPopup::Grid),
+                Some(6) => out.set_has_popup(accesskit::HasPopup::Dialog),
+                _ => {}
+            }
+            if v.prop_bool(crate::common::ARIA_MODAL) {
+                out.set_modal();
+            }
             // ARIA's precedence: `aria-label` names the node over its text content, whatever the
             // kind set from its content (a button labelled "Toggle problems" that shows "3", A30)
             if let Some(l) = v.prop_str(crate::common::ARIA_LABEL).filter(|l| !l.trim().is_empty()) {
@@ -161,6 +178,21 @@ impl Document {
             if !labels.is_empty() {
                 labels.sort_by_key(|l| l.0);
                 out.set_labelled_by(labels.into_iter().map(ax).collect::<Vec<_>>());
+            }
+        }
+        // references by anchor (validated against the tree before the update leaves)
+        if let Some(w) = window {
+            let v = self.view_at(i);
+            let ad = v.prop_str(crate::common::ARIA_ACTIVEDESCENDANT).filter(|a| !a.is_empty()).map(str::to_owned);
+            let controls = v.prop_str(crate::common::ARIA_CONTROLS).filter(|a| !a.trim().is_empty()).map(str::to_owned);
+            if let Some(t) = ad.and_then(|a| self.find_anchor(w, &a)) {
+                out.set_active_descendant(ax(t));
+            }
+            if let Some(c) = controls {
+                let ids: Vec<AxId> = c.split_whitespace().filter_map(|a| self.find_anchor(w, a)).map(ax).collect();
+                if !ids.is_empty() {
+                    out.set_controls(ids);
+                }
             }
         }
         self.record[i].a11y_kids = kids;
@@ -318,6 +350,22 @@ pub fn validate(mut update: TreeUpdate, root: AxId, known: &HashSet<AxId>) -> Tr
         }
     }
     debug_assert!(!repaired, "a11y: an update named children that are in no tree");
+    // ARIA references (by anchor) may name a node the tree doesn't have (hidden, concealed):
+    // accesskit_consumer unwraps `controls`, so they go
+    for (_, node) in update.nodes.iter_mut() {
+        if node.active_descendant().is_some_and(|a| !exists(&a)) {
+            node.clear_active_descendant();
+        }
+        let controls = node.controls().to_vec();
+        if controls.iter().any(|c| !exists(c)) {
+            let keep: Vec<AxId> = controls.into_iter().filter(|c| exists(c)).collect();
+            if keep.is_empty() {
+                node.clear_controls();
+            } else {
+                node.set_controls(keep);
+            }
+        }
+    }
     // reachability: from the root through updated children, or a known node whose parent is unchanged
     if update.tree.is_some() || !known.contains(&root) {
         let mut reach = HashSet::new();

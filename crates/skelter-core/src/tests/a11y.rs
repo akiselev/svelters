@@ -269,3 +269,50 @@ fn role_level_expanded_selected_and_description_make_a_row_a_tree_item() {
     assert_eq!(n.role(), Role::GenericContainer);
     assert_eq!(n.is_expanded(), None);
 }
+
+#[test]
+fn menu_roles_and_the_aria_props_of_qa11y_f4() {
+    let (mut d, root) = doc();
+    let bar = child(&mut d, root, BOX, "width: 100px; height: 20px");
+    let file = child(&mut d, bar, BOX, "width: 40px; height: 20px");
+    let menu = child(&mut d, root, BOX, "width: 60px; height: 40px");
+    let item = child(&mut d, menu, BOX, "width: 60px; height: 20px");
+    let hidden = child(&mut d, menu, BOX, "display: none");
+    d.set_prop(item, common::ANCHOR, Value::from("wrap")).unwrap();
+    d.set_prop(menu, common::ANCHOR, Value::from("file-menu")).unwrap();
+    d.set_prop(hidden, common::ANCHOR, Value::from("gone")).unwrap();
+    d.set_prop(bar, common::ROLE, Value::from("menubar")).unwrap();
+    d.set_prop(file, common::ROLE, Value::from("menuitem")).unwrap();
+    d.set_prop(file, common::ARIA_HASPOPUP, Value::Enum(1)).unwrap();
+    d.set_prop(file, common::ARIA_CONTROLS, Value::from("file-menu nowhere")).unwrap();
+    d.set_prop(menu, common::ROLE, Value::from("menu")).unwrap();
+    d.set_prop(menu, common::ARIA_ACTIVEDESCENDANT, Value::from("wrap")).unwrap();
+    d.set_prop(item, common::ROLE, Value::from("menuitemcheckbox")).unwrap();
+    d.set_prop(item, common::ARIA_CHECKED, Value::Enum(1)).unwrap();
+    d.set_prop(root, common::ARIA_MODAL, Value::Bool(true)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let n = |id: NodeId| u.nodes.iter().find(|(k, _)| *k == ax(id)).unwrap().1.clone();
+    assert_eq!(n(bar).role(), Role::MenuBar);
+    assert_eq!(n(file).has_popup(), Some(accesskit::HasPopup::Menu));
+    assert_eq!(n(file).controls(), &[ax(menu)], "an anchor that names no node is left out");
+    assert_eq!(n(menu).active_descendant(), Some(ax(item)));
+    assert_eq!(n(item).role(), Role::MenuItemCheckBox);
+    assert_eq!(n(item).toggled(), Some(Toggled::True));
+    assert!(n(root).is_modal());
+    for (name, role) in [("menuitemradio", Role::MenuItemRadio), ("alertdialog", Role::AlertDialog), ("searchbox", Role::SearchInput), ("spinbutton", Role::SpinButton), ("tooltip", Role::Tooltip), ("none", Role::GenericContainer), ("presentation", Role::GenericContainer)] {
+        assert_eq!(common::role_named(name), Some(role), "{name}");
+    }
+    // a reference to a node outside the tree is dropped before the update leaves
+    d.set_prop(menu, common::ARIA_ACTIVEDESCENDANT, Value::from("gone")).unwrap();
+    d.set_prop(file, common::ARIA_CONTROLS, Value::from("gone")).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let n = |id: NodeId| u.nodes.iter().find(|(k, _)| *k == ax(id)).unwrap().1.clone();
+    // `gone` is sent hidden (display: none keeps it in the tree), so it may stay; a stale id never does
+    let present = |a: AxId| u.nodes.iter().any(|(k, _)| *k == a) || a == ax(hidden);
+    assert!(n(menu).active_descendant().is_none_or(present));
+    assert!(n(file).controls().iter().all(|c| present(*c)));
+    // unset: the kind's own
+    d.set_prop(item, common::ARIA_CHECKED, Value::Enum(0)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    assert_eq!(u.nodes.iter().find(|(k, _)| *k == ax(item)).unwrap().1.toggled(), None);
+}
