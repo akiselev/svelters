@@ -291,3 +291,38 @@ fn a_widget_that_locks_focus_keeps_tab() {
     assert_eq!(h.state_mut().doc().focused(w), Some(island));
     assert!(text.borrow().contains('\t'), "and indented: {:?}", text.borrow());
 }
+
+/// The cadatomic AccessKit fork (root `Cargo.toml` `[patch.crates-io]`): AT-SPI shows `aria-expanded` as
+/// Expandable / Expanded and announces the change.
+#[cfg(target_os = "linux")]
+#[test]
+fn aria_expanded_reaches_atspi_as_expandable_and_expanded() {
+    use accesskit_atspi_common::{Event, NodeIdOrRoot, ObjectEvent, State};
+    let (mut h, _) = shell();
+    let w = h.window();
+    let set = |h: &mut Harness<CoreDocument>, v: u32| {
+        let d = &mut h.state_mut().doc;
+        let a = d.find_anchor(w, "a").unwrap();
+        d.set_prop(a, common::ARIA_EXPANDED, Value::Enum(v)).unwrap();
+        h.key_press(Key::F24);
+        h.run();
+    };
+    let states = |h: &Harness<CoreDocument>| {
+        let c = h.consumer();
+        c.atspi().unwrap().node(c.by_author_id("a").unwrap().id()).state()
+    };
+    assert!(!states(&h).contains(State::Expandable), "no expanded state: not expandable");
+    set(&mut h, 2);
+    let s = states(&h);
+    assert!(s.contains(State::Expandable) && !s.contains(State::Expanded), "collapsed");
+    h.consumer().atspi().unwrap().take_events();
+    set(&mut h, 1);
+    let s = states(&h);
+    assert!(s.contains(State::Expandable) && s.contains(State::Expanded), "open");
+    let c = h.consumer();
+    let a = c.by_author_id("a").unwrap().id();
+    let changed = c.atspi().unwrap().take_events().into_iter().any(|e| {
+        matches!(e, Event::Object { target: NodeIdOrRoot::Node(t), event: ObjectEvent::StateChanged(State::Expanded, true) } if t == a)
+    });
+    assert!(changed, "StateChanged(Expanded, true) on the toggle");
+}

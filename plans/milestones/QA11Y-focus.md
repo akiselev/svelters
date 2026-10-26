@@ -14,6 +14,18 @@ Steps: Q1's focus half, F1–F5. `origin/master` merged (nothing new since the b
 | F4 | `f2302ccc` | ROLES additions; `aria-checked`, `aria-haspopup`, `aria-modal`, `aria-activedescendant`, `aria-controls`; svelters-skelter Widget props (and `initial-focus`), `metadata/semantics/skelter.json` regenerated. |
 | F5 | `c892fb25` | skelter-egui-island's tab-out protocol (`EguiIsland::focus_entered`, `IslandOutput::tab_out`, `IslandHost::run` moves focus on); skelter-core `Document::tab`, `EventCx::tab_direction`. |
 
+Added on the coordinator's request (2026-10-26), in the commit after the record's first version:
+- **The AccessKit fork** (owner's decision, replaces plan §2.5's "file upstream"): root `Cargo.toml` `[patch.crates-io]`
+  takes `accesskit`, `accesskit_atspi_common` and `accesskit_consumer` from `github.com/akiselev/accesskit` rev
+  `b22e1418` (0.25.2 / 0.21.1 / 0.39.2). The fork's AT-SPI layer depends on its own `accesskit` and
+  `accesskit_consumer` by path, so patching only `accesskit_atspi_common` would have linked two copies of AccessKit's
+  types; all three come from the rev, one copy each in `Cargo.lock`. Test: skelter-test `tests/focus_a11y.rs`
+  `aria_expanded_reaches_atspi_as_expandable_and_expanded` (Expandable when collapsed, Expanded when open,
+  `StateChanged(Expanded, true)` on the toggle).
+- **Lane text's request:** `Document::set_scroll_offset` (the path wheel, `scroll_to` and compositor flings through
+  `apply_scroll` all take) marks a self-scrolling node `A11Y`, so its text runs re-send with the offset. Test: skelter-core
+  `tests/hooks.rs` `a_kind_that_scrolls_itself_scrolls_on_the_compositor` (extended).
+
 ### The Q1 helper's API (lane text uses it)
 
 `skelter_test::consumer::Consumer`: `new()` (consumer tree plus, on Linux, AT-SPI) or `tree_only()`; `apply(&TreeUpdate)`
@@ -157,7 +169,10 @@ conformance; CI is the gate. CI: see the end of this record.
 7. **Fixup rule:** a focused node that gets hidden now loses focus (to its dialog's first stop, the restore stack, or
    nothing). Code that hid a focused field and expected it to keep focus while hidden must refocus it when shown.
 8. **Dialog scopes** (`focus-scope=dialog`) now take focus when they become shown, not only through `open_dialog`.
-9. **`FocusTarget.sub`** is the hook for canvas semantic objects (§2.3, §7): a kind that publishes virtual children calls
+9. **The AccessKit fork:** cadatomic needs the same `[patch.crates-io]` block (all three crates, same rev
+   `b22e1418f323f15c93ed0d76e16d4c097ba6cce0`, not only `accesskit_atspi_common`) and a `forks.toml` row for
+   `akiselev/accesskit`.
+10. **`FocusTarget.sub`** is the hook for canvas semantic objects (§2.3, §7): a kind that publishes virtual children calls
    `cx.set_focus_sub(Some(i))` while focused.
 
 ## CI

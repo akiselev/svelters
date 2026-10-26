@@ -752,6 +752,12 @@ fn a_kind_that_scrolls_itself_scrolls_on_the_compositor() {
     assert_eq!(Some(space), d.record[d.ix(page)].transform, "the node's transform node, which places it 10 points in");
     let c = frame(&mut d).unwrap();
     assert!(c.lists.is_empty(), "a scroll is no re-record");
+    let resent = |c: &skelter_base::commit::Commit| c.a11y.as_ref().is_some_and(|u| u.nodes.iter().any(|(id, _)| id.0 == page.0));
+    assert!(resent(&c), "its accessibility node re-sends with the offset (text runs follow it)");
+    // a wheel or fling scroll the compositor reports does too
+    let sc = d.record[d.ix(page)].scroll.expect("its scroll node");
+    d.apply_scroll(W, sc, skelter_base::geom::Vec2::new(0.0, 40.0));
+    assert!(resent(&frame(&mut d).unwrap()));
 }
 
 const FIXED_PAGE: KindId = KindId::of("fixed-page");
