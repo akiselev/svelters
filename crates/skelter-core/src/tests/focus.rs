@@ -102,9 +102,17 @@ fn the_keymap_hook_runs_before_the_focused_kind() {
     let (mut d, root) = doc();
     let t = toggles(&mut d, root, 1)[0];
     d.focus(t, FocusReason::Keyboard);
-    d.set_key_hook(Box::new(|_, k| k.key == Some(Key::Space)));
+    let seen = std::rc::Rc::new(std::cell::Cell::new(None));
+    let s = seen.clone();
+    // SV64: the hook sees the document and the key's target
+    d.set_key_hook(Box::new(move |cx| {
+        assert_eq!(cx.doc.focused(cx.window), Some(cx.target));
+        s.set(Some(cx.target));
+        cx.key.key == Some(Key::Space)
+    }));
     let out = d.dispatch(&key(Key::Space, Modifiers::default()));
     assert!(out.handled);
+    assert_eq!(seen.get(), Some(t));
     assert_eq!(d.get_prop(t, crate::testkinds::TOGGLE_CHECKED), Some(Value::Bool(false)), "the keymap took Space");
 }
 

@@ -604,7 +604,7 @@ impl Document {
         out.target = Some(target);
         // outside a composition the command layer's keymap comes first, then the focused kind, then JS
         if let Some(mut hook) = self.key_hook.take() {
-            let taken = hook(window, k);
+            let taken = hook(&KeyHookCx { doc: self, window, target, key: k });
             self.key_hook = Some(hook);
             if taken {
                 out.handled = true;
@@ -694,9 +694,9 @@ impl Document {
         }
     }
 
-    /// The command layer's keymap (cadatomic's one command path): called for every key outside a
-    /// composition before the focused kind; returning true consumes the key.
-    pub fn set_key_hook(&mut self, hook: Box<dyn FnMut(WindowId, &KeyEvent) -> bool>) {
+    /// The command layer's keymap: called for every key outside a composition before the focused
+    /// kind, with the focus target (or the window root) in [`KeyHookCx`]; returning true consumes the key.
+    pub fn set_key_hook(&mut self, hook: KeyHook) {
         self.key_hook = Some(hook);
     }
 
@@ -705,3 +705,18 @@ impl Document {
         self.revision > rev && self.last_change >= self.revision
     }
 }
+
+/// What the key hook ([`Document::set_key_hook`]) sees. Fields are added over time (a pre-dispatch
+/// pointer filter shares this shape), so it is built only here.
+#[non_exhaustive]
+pub struct KeyHookCx<'a> {
+    /// The document, read-only: the hook runs before any kind sees the key.
+    pub doc: &'a Document,
+    pub window: WindowId,
+    /// The focused node, else the window's root: the node the key is dispatched to.
+    pub target: NodeId,
+    pub key: &'a KeyEvent,
+}
+
+/// The command layer's keymap hook; returns true to consume the key.
+pub type KeyHook = Box<dyn FnMut(&KeyHookCx<'_>) -> bool>;

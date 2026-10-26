@@ -85,7 +85,7 @@ pub struct Document {
     /// Run and image ids are unique per document (the compositor holds them per window).
     pub(crate) run_counter: u64,
     pub(crate) images: crate::cx::ImageSink,
-    pub(crate) key_hook: Option<Box<dyn FnMut(WindowId, &skelter_base::event::KeyEvent) -> bool>>,
+    pub(crate) key_hook: Option<crate::input::KeyHook>,
     pub(crate) services: crate::cx::Services,
     /// Kinds' deadlines (`EventCx::wake_at`).
     pub(crate) timers: HashMap<NodeId, skelter_base::time::Time>,
