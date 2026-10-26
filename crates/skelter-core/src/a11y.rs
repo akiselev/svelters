@@ -75,6 +75,22 @@ impl Document {
             }
             self.kinds[i] = Some(k);
         }
+        // a realised row of a virtualising parent: what it is as the parent's member (a list box's
+        // option), under its own props
+        if self.core[i].flags.contains(crate::tree::NodeFlags::ROW)
+            && let Some(p) = self.core[i].parent
+        {
+            let id = self.slots.id_at(i).expect("live");
+            let row = self.virt.get(&p).and_then(|st| st.rows.iter().find(|&&(_, n)| n == id)).map(|&(r, _)| r);
+            if let (Some(row), Some(pi)) = (row, self.idx(p))
+                && let Some(mut k) = self.kinds[pi].take()
+            {
+                if let Some(vc) = k.virtual_children() {
+                    vc.row_a11y(row, &mut out);
+                }
+                self.kinds[pi] = Some(k);
+            }
+        }
         // common props a behaviour may set win over the kind's own node
         {
             let v = self.view_at(i);
@@ -234,6 +250,10 @@ impl Document {
                 if !known.contains(&c) {
                     queue.push(c);
                 }
+            }
+            // a virtualising node's realised rows carry its state (`selected`, positions): with it
+            if let Some(st) = self.virt.get(&n) {
+                queue.extend(st.rows.iter().map(|&(_, r)| r).filter(|r| known.contains(r)));
             }
             // children that left it take their subtrees out of the known set
             for c in old_kids.into_iter().filter(|c| !self.record[i].a11y_kids.contains(c)) {
