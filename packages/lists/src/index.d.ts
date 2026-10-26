@@ -37,7 +37,7 @@ export interface ListViewProps<T = any> {
    * Native runtime, array mode (SV59): the anchor of the row itself (the node assistive technology
    * sees as the option), so a combobox's `aria-activedescendant` can name it.
    */
-  anchor?: (item: T, index: number) => string;
+  rowAnchor?: (item: T, index: number) => string;
   /**
    * Model mode, GTK: the generated class rows wrap their native item as (`FileInfo` for a
    * `DirectoryList`). An item that already has a wrapper keeps it (identity).

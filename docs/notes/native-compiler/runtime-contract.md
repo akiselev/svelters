@@ -392,7 +392,7 @@ Props: `items` (array or iterable), `key(item, index)` (default: the index), `ro
 `(item, index)`, `layout` (`list` | `grid`), `selection` (`none` | `single`), `bind:selected`
 (position, -1 for none), `rowHeight` (Qt's uniform row height, default 32), `onactivate(item, pos)`,
 and in array mode `label(item, index)` (SV59: each row's accessible name and type-ahead text, sent
-with `splice` and, for a rename, `setLabels`) and `anchor(item, index)` (SV59: the anchor of the row
+with `splice` and, for a rename, `setLabels`) and `rowAnchor(item, index)` (SV59: the anchor of the row
 outlet, the node AT sees as the option, so `aria-activedescendant` can name it; cleared while the
 slot is unbound); any other prop is set on the native `virtuallist` unchanged (`vexpand`, `minHeight`, ...).
 `bind:this` gives the exports `{ scrollTo(index), controller() }`.

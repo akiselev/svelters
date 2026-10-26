@@ -306,7 +306,7 @@ export class ListController {
   }
 
   /**
-   * SV59: the row outlet (the node the list's option is) gets `anchor(item, index)`, so a
+   * SV59: the row outlet (the node the list's option is) gets `rowAnchor(item, index)`, so a
    * combobox's `aria-activedescendant` names the option itself; an unbound slot has none.
    */
   #anchorRow(s) {
@@ -424,10 +424,10 @@ export class ListController {
   }
 }
 
-const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 'item', 'itemClass', 'key', 'label', 'anchor', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
+const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 'item', 'itemClass', 'key', 'label', 'rowAnchor', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
 
 /**
- * `<ListView items key label anchor row layout selection bind:selected row-height onactivate ...rest>`, the
+ * `<ListView items key label rowAnchor row layout selection bind:selected row-height onactivate ...rest>`, the
  * component API of @svelters/lists, in the shape the compiler generates for a component
  * (`ListView(container, $$props)`, returns its exports `{ scrollTo, controller }`). Other props go
  * to the native `virtual-list` unchanged (`vexpand`, `min-height`, ...).
@@ -438,8 +438,9 @@ const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 
  * model directly.
  *
  * SV59 (array mode): `label(item, index)` names each row (the option's accessible name, as
- * `<TreeView>`'s `label`, and type-ahead text); `anchor(item, index)` is the row's own anchor, on
- * the node AccessKit sees as the option, so `aria-activedescendant` can name it.
+ * `<TreeView>`'s `label`, and type-ahead text); `rowAnchor(item, index)` is the row's own anchor,
+ * on the node AccessKit sees as the option, so `aria-activedescendant` can name it. (`anchor`
+ * stays the list's own, passed to the native list as any other prop.)
  */
 export function ListView($$anchor, $$props) {
   $.push($$props, true);
@@ -455,7 +456,7 @@ export function ListView($$anchor, $$props) {
   const ctl = new ListController({
     key: (item, index) => key()(item, index),
     label: () => $$props.label,
-    anchor: () => $$props.anchor,
+    anchor: () => $$props.rowAnchor,
     row: () => $$props.row,
     context: () => contexts,
     onactivate: (pos, item) => $$props.onactivate?.(item, pos),

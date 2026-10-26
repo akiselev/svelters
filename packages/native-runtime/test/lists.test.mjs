@@ -157,9 +157,9 @@ test('bound rows follow splices and item replacements without a rebind', () => {
   assert.deepEqual(t.take(), ['set #5 label "1:C!"']);
 });
 
-test('SV59: `label` names the rows (splice labels, setLabels on a rename) and `anchor` anchors the option node', () => {
+test('SV59: `label` names the rows (splice labels, setLabels on a rename) and `rowAnchor` anchors the option node', () => {
   const t = harness();
-  const l = mountList({ extra: { label: (it) => it.text, anchor: (it) => `row:${it.id}` } });
+  const l = mountList({ extra: { label: (it) => it.text, rowAnchor: (it) => `row:${it.id}` } });
   assert.ok(t.take().includes('call #2 splice [0,0,[1,2,3],["A","B","C"]]'), 'labels ride the splice');
   $.set(l.items, [...$.get(l.items), { id: 'd', text: 'D' }]);
   $.flush();
