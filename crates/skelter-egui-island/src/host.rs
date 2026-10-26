@@ -21,6 +21,7 @@
 //!    releases the islands of destroyed nodes.
 //! 3. [`IslandHost::bridge_events`] with each `Dispatched`'s events (and `Document::take_events`): skelter-core's
 //!    in-app drags over an island reach egui's `DragAndDrop`, and drags that left an island report their end.
+//!    [`IslandHost::event_tap`] does it, with [`IslandHost::drag_moved`], as the facade's `CoreDocument` event tap.
 //!
 //! [`IslandHost::next_wakeup`] joins `Document::next_timer` in the runner's wait; on `ToUi::DeviceReset` the
 //! runner calls [`IslandHost::device_reset`] next to `Document::device_reset`.
@@ -30,7 +31,7 @@ use crate::dnd::DragData;
 use crate::island::{EguiIsland, IslandOutput, TextureRegistry};
 use skelter_base::change::ChangeClass;
 use skelter_base::display::{Prim, SurfacePrim};
-use skelter_base::event::{InputEvent, PointerEvent, PointerPhase, WheelEvent};
+use skelter_base::event::{InputEnvelope, InputEvent, PointerEvent, PointerPhase, WheelEvent};
 use skelter_base::geom::{Point, Rect, Scale, Vec2};
 use skelter_base::ids::NodeId;
 use skelter_base::time::Time;
@@ -397,6 +398,18 @@ impl IslandHost {
                 island.drag_enter(&DragData::new(ty.clone(), data.clone()), at);
                 island.drag_drop(at);
             }
+        }
+    }
+
+    /// [`bridge_events`](Self::bridge_events) and, for pointer moves, [`drag_moved`](Self::drag_moved): one
+    /// dispatch's worth, in the shape of the facade's `CoreDocument::add_event_tap`
+    /// (`core.add_event_tap(IslandHost::event_tap)`).
+    pub fn event_tap(doc: &mut Document, ev: &InputEnvelope, events: &[JsEvent]) {
+        Self::bridge_events(doc, events);
+        if let InputEvent::Pointer(p) = &ev.event
+            && p.phase == PointerPhase::Move
+        {
+            Self::drag_moved(doc, p.pos);
         }
     }
 

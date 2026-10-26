@@ -35,6 +35,9 @@ pub struct Commit {
     pub resources: ResourceDelta,
     pub animations: Vec<AnimationCmd>,
     pub a11y: Option<accesskit::TreeUpdate>,
+    /// AccessKit updates of subtrees grafted under nodes of this commit's tree (an egui island's tree,
+    /// under its node's `tree_id`), sent to the platform adapter after [`Commit::a11y`], in order.
+    pub a11y_subtrees: Vec<accesskit::TreeUpdate>,
     pub cursor: Option<CursorIcon>,
     /// The IME candidate area (window points), when it moved.
     pub ime_area: Option<Rect>,
