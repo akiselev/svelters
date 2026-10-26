@@ -1137,6 +1137,17 @@ impl Document {
         id
     }
 
+    /// The host's provider states (cadatomic's `cad.pending`, kinds' state bits): sheets added from now
+    /// on resolve `:state(ns.name)` through `names`, and a rule matches a node whose state has that bit
+    /// ([`Document::set_state`], `EventCx::set_state`). Without it `:state()` is a parse error.
+    pub fn set_state_names(&mut self, names: Box<dyn svelters_style::StateNames>) {
+        self.style.state_names = Some(names);
+    }
+    /// The resolver [`Document::set_state_names`] set, for parsing sheets elsewhere (a precompiled one).
+    pub fn state_names(&self) -> Option<&dyn svelters_style::StateNames> {
+        self.style.state_names.as_deref()
+    }
+
     pub fn remove_sheet(&mut self, id: svelters_style::SheetId) {
         self.style.remove_sheet(id);
         self.restyle_all();

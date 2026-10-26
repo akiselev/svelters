@@ -171,3 +171,18 @@ fn a_change_without_a_transition_stops_a_running_one() {
     assert_eq!(d.computed(a).unwrap().color, Color::rgba(1.0, 0.0, 0.0, 1.0));
     assert!(!d.busy().contains(crate::Busy::ANIMATING));
 }
+
+/// A27: the host's provider states resolve `:state(ns.name)`, and a rule matches a node with the bit.
+#[test]
+fn a_state_rule_matches_the_hosts_state_bit() {
+    let (mut d, root) = doc();
+    let pending = StateMask(1 << 40);
+    d.set_state_names(Box::new([("cad.pending", pending)]));
+    d.add_sheet("box:state(cad.pending) { width: 33px }");
+    let n = child(&mut d, root, BOX, "height: 10px");
+    frame(&mut d);
+    assert_ne!(d.world_rect(n).unwrap().width(), 33.0);
+    d.set_state(n, pending, true);
+    frame(&mut d);
+    assert_eq!(d.world_rect(n).unwrap().width(), 33.0, "the rule applies with the bit set");
+}

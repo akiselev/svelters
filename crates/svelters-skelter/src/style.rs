@@ -27,8 +27,8 @@ impl SkelterBackend {
                 let t = text.ok_or("SVL_STYLE_SHEET_BIN without a sheet")?;
                 let (name, b64) = t.split_once(SVL_STYLE_SEP).ok_or("SVL_STYLE_SHEET_BIN: expected `id SEP base64`")?;
                 let bytes = svelters_style::binary::from_base64(b64)?;
-                let pre = svelters_style::binary::decode(&bytes, &Default::default())?;
                 let mut doc = self.doc_mut();
+                let pre = svelters_style::binary::decode(&bytes, &svelters_style::ParseOptions { states: doc.state_names() })?;
                 let id = doc.add_parsed_sheet(&pre.sheet);
                 doc.preload_utilities(&pre.utilities);
                 if let Some((old, _)) = self.0.sheets.borrow_mut().insert(name.to_string(), (id, String::from("(precompiled)"))) {

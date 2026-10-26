@@ -42,6 +42,8 @@ pub(crate) struct DocStyle {
     pub nodes: Vec<NodeStyle>,
     pub default: Arc<ComputedBox>,
     pub caches: svelters_style::MatchCaches,
+    /// Resolves `:state(ns.name)` in sheets to the host's state bits ([`crate::Document::set_state_names`]).
+    pub state_names: Option<Box<dyn svelters_style::StateNames>>,
 }
 
 impl Default for DocStyle {
@@ -51,6 +53,7 @@ impl Default for DocStyle {
             nodes: Vec::new(),
             default: Arc::new(ComputedBox::default()),
             caches: svelters_style::MatchCaches::new(),
+            state_names: None,
         }
     }
 }
@@ -79,7 +82,8 @@ impl DocStyle {
         true
     }
     pub fn add_sheet(&mut self, css: &str) -> SheetId {
-        let sheet = svelters_style::Stylesheet::parse(css, &Default::default());
+        let opts = svelters_style::ParseOptions { states: self.state_names.as_deref() };
+        let sheet = svelters_style::Stylesheet::parse(css, &opts);
         self.add_parsed(&sheet)
     }
     pub fn add_parsed(&mut self, sheet: &svelters_style::Stylesheet) -> SheetId {
