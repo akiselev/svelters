@@ -18,7 +18,10 @@ static PROBE: core::KindSpec = core::KindSpec {
         PropSpec::new("range", ValueType::Record, ChangeClass::Paint).doc("A selection range: `{start, end: {line, tags}}`."),
         PropSpec::new("last", ValueType::Str, ChangeClass::Paint).doc("What the last call got."),
     ],
-    methods: &[MethodSpec::new("echo", &[ArgSpec::new("at", ValueType::Record), ArgSpec::new("ids", ValueType::List)], Some(ArgSpec::new("value", ValueType::Record))).doc("Returns its arguments as one record.")],
+    methods: &[
+        MethodSpec::new("echo", &[ArgSpec::new("at", ValueType::Record), ArgSpec::new("ids", ValueType::List), ArgSpec::new("note", ValueType::Str).nullable()], Some(ArgSpec::new("value", ValueType::Record))).doc("Returns its arguments as one record."),
+        MethodSpec::new("fail", &[], None).doc("Refuses with the code `E_RANGE`."),
+    ],
     ..core::KindSpec::new("probe")
 };
 
@@ -32,8 +35,11 @@ impl Kind for Probe {
     }
     fn record(&self, _cx: &mut RecordCx) {}
     fn call(&mut self, _cx: &mut EventCx, method: MethodId, args: &[CValue]) -> Result<Option<CValue>, core::PropError> {
+        if method == MethodId::of("probe", "fail", "void") {
+            return Err(core::PropError::coded("E_RANGE", "line 99 is past the end"));
+        }
         assert_eq!(method, MethodId::of("probe", "echo", "record"));
-        let rec = vec![(Arc::from("at"), args[0].clone()), (Arc::from("ids"), args[1].clone())];
+        let rec = vec![(Arc::from("at"), args[0].clone()), (Arc::from("ids"), args[1].clone()), (Arc::from("n"), CValue::I64(args.len() as i64))];
         Ok(Some(CValue::Record(rec.into())))
     }
 }
@@ -99,5 +105,35 @@ fn a_record_prop_reaches_the_kind_with_its_shape() {
     let end = r.field("end").expect("a nested record");
     assert_eq!(end.field("line"), Some(&CValue::I64(2)));
     assert_eq!(end.field("tags"), Some(&CValue::List(vec![CValue::from("a"), CValue::from("b")].into())));
-    let _ = LAST;
+}
+
+const METHODS: &str = r#"<script>
+  let el;
+  let out = $state('');
+  $effect(() => {
+    const r = el.call('echo', { line: 3, col: { x: 1 } }, [1, 2]);
+    let caught = 'none';
+    try {
+      el.call('fail');
+    } catch (e) {
+      caught = `${e.code}|${e.message}|${e instanceof Error}`;
+    }
+    out = JSON.stringify(r) + ' ' + caught;
+  });
+</script>
+<probe bind:this={el} last={out} />
+"#;
+
+/// FQ-75: an app kind's method takes record and list arguments (described from its core
+/// `MethodSpec`; a nullable one may be left out) and returns a record; a coded refusal
+/// (`PropError::Coded`) is a JS error with `.code`.
+#[test]
+fn methods_take_records_and_raise_coded_errors() {
+    let (backend, pane, _embed, errors) = mount("methods", "Methods", METHODS);
+    assert!(errors.is_empty(), "{errors:?}");
+    let doc = backend.document();
+    let d = doc.borrow();
+    let probe = d.children(pane)[0];
+    let last = d.get_prop(probe, LAST).expect("set");
+    assert_eq!(last.as_str(), Some(r#"{"at":{"line":3,"col":{"x":1}},"ids":[1,2],"n":2} E_RANGE|line 99 is past the end|true"#));
 }

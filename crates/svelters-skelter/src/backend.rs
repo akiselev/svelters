@@ -200,6 +200,41 @@ pub struct Inner {
 pub struct SkelterBackend(pub(crate) Rc<Inner>);
 
 impl SkelterBackend {
+    /// FQ-75: an app kind's method as the host sees it, from its core `MethodSpec`: each argument's
+    /// slot (records, lists and enums as variants: a plain object arrives as a record; a nullable
+    /// argument may be left out) and the return's, so the host converts what JS passes and gets
+    /// back. Built-in kinds' methods stay undescribed (their row protocol passes nodes as numbers).
+    fn describe_method(&self, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        let km = self.0.kinds.by_wire(kind)?;
+        if !km.app {
+            return None;
+        }
+        let m = km.method(member)?;
+        let c = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.methods.iter().find(|x| x.name == m.spec.name))?;
+        let ty = |t: skelter_core::ValueType| match t {
+            skelter_core::ValueType::List | skelter_core::ValueType::Record | skelter_core::ValueType::Enum => surface::ValueType::Any,
+            t => crate::kinds::surface_type(t, &[]),
+        };
+        let params = c
+            .params
+            .iter()
+            .map(|p| {
+                let t = ty(p.ty);
+                let mut s = value::slot_of(t).named(p.name);
+                if p.nullable {
+                    s = s.flags(SVL_D_NULLABLE | SVL_D_OPTIONAL);
+                }
+                if t == surface::ValueType::I64 {
+                    s = s.flags(SVL_D_INTEGRAL);
+                }
+                s
+            })
+            .collect();
+        // named: an unnamed variant slot reads as `void`
+        let ret = c.ret.map_or_else(|| SlotDesc::new(SVL_NULL), |r| value::slot_of(ty(r.ty)).named(r.name));
+        Some(MemberDesc { name: m.spec.name.to_string(), params, ret, flags: SVL_M_THROWS })
+    }
+
     /// A backend over a fresh [`Document`] of `kinds`, measuring no text (the runner gives it
     /// skelter-text's system with [`SkelterBackend::with_text`]).
     pub fn new(kinds: Arc<Kinds>) -> SkelterBackend {
@@ -911,7 +946,8 @@ impl Backend for SkelterBackend {
                 let mid = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.method_named(name)).expect("checked");
                 let mut core_args = Vec::new();
                 let params: Vec<(&str, surface::ValueType)> = match (m.spec.params, core_method) {
-                    ([], Some(c)) => c
+                    // an app kind's own core method: its params as `describe_method` gives them (FQ-75)
+                    (_, Some(c)) if m.spec.params.is_empty() || km.app => c
                         .params
                         .iter()
                         .map(|p| match p.ty {
@@ -954,7 +990,14 @@ impl Backend for SkelterBackend {
                         core_args.extend(value::to_core(v));
                     }
                 }
-                let (ret, events) = self.doc_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;
+                let (ret, events) = match self.doc_mut().call(n, mid, &core_args) {
+                    Ok(r) => r,
+                    // FQ-75: a coded refusal is a `NativeError` in JS (`.code`, `.message`)
+                    Err(skelter_core::PropError::Coded { code, message }) => {
+                        return Ok(Value::Error(Box::new(svelters_abi::NativeError { domain: km.tag().to_string(), code: Value::Str(code), message })));
+                    }
+                    Err(e) => return Err(format!("<{}>.{name}(): {e}", km.tag())),
+                };
                 self.queue(Output { events, ..Output::default() });
                 // egui's specs type generated methods' returns `void`: the core method's answer
                 // (`count()`, `rowAt(pos)`, `selection()`) goes back as it is
@@ -1075,6 +1118,9 @@ impl Backend for SkelterBackend {
     }
 
     fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        if what == NameKind::Method {
+            return self.describe_method(kind, member);
+        }
         if what != NameKind::Prop {
             return None;
         }

@@ -49,6 +49,16 @@ pub enum PropError {
     /// A JS write of a native-owned prop the kind changed after the event JS saw (architecture §4.5).
     /// The write is ignored.
     Superseded { prop: PropId, changed: Revision, seen: Revision },
+    /// The kind refused with a code a caller can test (FQ-75): a method's `NativeError` in JS, with
+    /// `.code` and `.message`.
+    Coded { code: String, message: String },
+}
+
+impl PropError {
+    /// [`PropError::Coded`].
+    pub fn coded(code: impl Into<String>, message: impl Into<String>) -> PropError {
+        PropError::Coded { code: code.into(), message: message.into() }
+    }
 }
 
 impl std::fmt::Display for PropError {
@@ -58,6 +68,7 @@ impl std::fmt::Display for PropError {
             PropError::Unknown(p) => write!(f, "unknown prop {p:?}"),
             PropError::WrongType { prop, expected, got } => write!(f, "prop {prop:?} takes {}, got {}", expected.name(), got.name()),
             PropError::Rejected(m) => write!(f, "{m}"),
+            PropError::Coded { code, message } => write!(f, "{message} ({code})"),
             PropError::Superseded { prop, changed, seen } => {
                 write!(f, "prop {prop:?} changed natively at revision {} after the write's revision {}", changed.0, seen.0)
             }
