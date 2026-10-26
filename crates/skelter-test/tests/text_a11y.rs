@@ -48,11 +48,26 @@ fn harness(value: &str, props: &[(&str, Value)]) -> (Harness<CoreDocument>, Node
     (h, f)
 }
 
-/// Focuses the field through AccessKit and puts the caret at the end.
+/// Focuses the field through AccessKit and puts the caret at the end, as AT does (`SetTextSelection`
+/// on the last run): the same on every platform (focus selects all on macOS and GTK, and End does
+/// not move the caret on macOS).
 fn focus_at_end(h: &mut Harness<CoreDocument>) {
+    use skelter_base::accesskit::{Action, ActionData, ActionRequest, TextPosition, TextSelection, TreeId};
     h.get_by_author_id("field").focus();
     h.run();
-    h.key_press(Key::End);
+    let req = {
+        let c = h.consumer();
+        let n = c.by_author_id("field").unwrap();
+        let last = n.children().last().expect("a run");
+        let end = TextPosition { node: last.locate().0, character_index: last.data().character_lengths().len() };
+        ActionRequest {
+            action: Action::SetTextSelection,
+            target_tree: TreeId::ROOT,
+            target_node: n.locate().0,
+            data: Some(ActionData::SetTextSelection(TextSelection { anchor: end, focus: end })),
+        }
+    };
+    h.accesskit_action(req);
     h.run();
 }
 
