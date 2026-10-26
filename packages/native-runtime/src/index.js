@@ -1182,6 +1182,12 @@ function inertNode(node) {
  * comes from this object: `e.result = v` wins, else `e.preventDefault()` / `e.stopPropagation()`
  * give `true`, else `null` (toolkit default). Listeners get `(event, ...args)`. When `deferred`
  * the toolkit did not wait (JS was busy): the flags stay settable but are ignored.
+ *
+ * FQ-65: a signal the spec does not declare `sync` but a backend calls synchronously so it can be
+ * cancelled (skelter's checkbox, switch, slider `changed`; `SIGNAL_ARGS` in the call's flags) keeps
+ * the arguments it has when posted, on every backend: listeners get `(...args, event)`, so
+ * `onchanged={(v) => setVisible(v)}` gets the value, and `(v, e) => e.preventDefault()` cancels.
+ * A handler's return value is ignored there (an arrow's accidental `true` cancels nothing).
  */
 export class NativeEvent {
   constructor(type, signal, target, args, deferred) {
@@ -1214,10 +1220,17 @@ export class NativeEvent {
 
 
 /**
+ * `call_sync` flag (ABI `SVL_SIGNAL_ARGS`, FQ-65): the signal's listeners take its arguments, with
+ * the NativeEvent last (see NativeEvent). Never part of a handler key.
+ */
+export const SIGNAL_ARGS = 8;
+
+/**
  * `__svelters_dispatch(h, signal, args, deferred, flags)`: runs the handlers registered for
  * (signal, flags) in registration order. Plain signals: handlers get the args. `deferred`: a
- * sync signal delivered late; handlers get `(NativeEvent, ...args)` as from `dispatch_sync`, and
- * the result is ignored. Unknown (destroyed or dead) handles are ignored.
+ * sync signal delivered late; handlers get `(NativeEvent, ...args)` as from `dispatch_sync`
+ * (`(...args, NativeEvent)` with `SIGNAL_ARGS`), and the result is ignored. Unknown (destroyed or
+ * dead) handles are ignored.
  */
 export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const node = table().get(h);
@@ -1268,6 +1281,11 @@ export function targetNode(h) {
 }
 
 function dispatchTo(node, signal, args, deferred, flags) {
+  if (deferred && flags & SIGNAL_ARGS) {
+    const ev = new NativeEvent(signal, signal, node, args, true);
+    argsFirst(node, signal, args, flags & ~SIGNAL_ARGS, ev);
+    return;
+  }
   if (deferred) {
     const ev = new NativeEvent(signal, signal, node, args, true);
     const shape = PROPAGATING.get(signal);
@@ -1283,6 +1301,15 @@ function dispatchTo(node, signal, args, deferred, flags) {
   }
   if (flags === 0 && node.passive !== null) for (const fn of node.passive.get(signal) ?? []) fn.apply(node, args);
   for (const fn of handlersOf(node, signal, flags)) fn.apply(node, args);
+}
+
+/** FQ-65: a `SIGNAL_ARGS` delivery: the handlers as for a posted signal, the event after the args. */
+function argsFirst(node, signal, args, flags, ev) {
+  if (flags === 0 && node.passive !== null) for (const fn of node.passive.get(signal) ?? []) fn.apply(node, args);
+  for (const fn of handlersOf(node, signal, flags)) {
+    fn.call(node, ...args, ev);
+    if (ev.immediateStopped) break;
+  }
 }
 
 /**
@@ -1365,6 +1392,11 @@ function propagatingEvent(ev, node, args, shape) {
 
 function dispatchSyncTo(node, signal, args, flags) {
   const ev = new NativeEvent(signal, signal, node, args, false);
+  if (flags & SIGNAL_ARGS) {
+    argsFirst(node, signal, args, flags & ~SIGNAL_ARGS, ev);
+    if (ev.result !== undefined) return ev.result;
+    return ev.defaultPrevented || ev.cancelBubble ? true : null;
+  }
   const shape = PROPAGATING.get(signal);
   if (shape) propagatingEvent(ev, node, args, shape);
   for (const fn of handlersOf(node, signal, flags)) {

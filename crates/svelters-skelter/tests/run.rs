@@ -52,3 +52,36 @@ fn closing_the_window_frees_its_handle() {
     assert!(r.backend.windows().is_empty());
     assert_eq!(r.take().gone, [(w, SVL_GONE_CLOSED)]);
 }
+
+/// FQ-65: a click on a checkbox goes to JS at event time (its `changed` is cancelable) as a call
+/// with `SVL_SIGNAL_ARGS` and the value alone, and a `true` answer (`preventDefault`) keeps it
+/// unchecked.
+#[test]
+fn a_checkbox_click_calls_changed_with_its_value_and_can_be_cancelled() {
+    let r = Rig::new();
+    let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::testing());
+    install_widget_services(&r.backend, skelter_text::TextSystem::new(fonts));
+    let w = r.create("window");
+    let c = r.create("checkbox");
+    r.set(c, "text", Value::Str("Copper".into()));
+    r.listen(c, "changed");
+    r.insert(w, c);
+    r.call(w, "present");
+    let mut doc = SkelterDocument::new(r.backend.clone());
+    for h in r.backend.take_presents() {
+        doc.opening(h);
+    }
+    let mut h = skelter_test::Harness::new(doc);
+    r.take();
+    r.log.borrow_mut().sync_answer = Some(Value::Null);
+    h.get_by_label("Copper").click();
+    h.run();
+    let wire = r.signal_id(c, "changed") | SVL_SIGNAL_ARGS << SVL_SIGNAL_FLAGS_SHIFT;
+    let l = r.take();
+    assert!(l.syncs.iter().any(|s| s.0 == c && s.1 == wire && s.2 == [Value::Bool(true)]), "{:?}", l.syncs);
+    assert_eq!(r.get(c, "checked"), Value::Bool(true));
+    r.log.borrow_mut().sync_answer = Some(Value::Bool(true));
+    h.get_by_label("Copper").click();
+    h.run();
+    assert_eq!(r.get(c, "checked"), Value::Bool(true), "cancelled: still checked");
+}

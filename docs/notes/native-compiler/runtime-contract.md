@@ -172,6 +172,15 @@ skips the remaining handlers. When JS was busy the host delivers the event later
 (`sync_handler_arguments`) about one whose first parameter is named like the signal's first
 argument.
 
+**Cancelable value signals** (FQ-65). A signal whose spec record has `sync: false` keeps the
+`(...args)` shape on every backend, even when a backend calls it through `call_sync` so a listener
+can cancel it (skelter's `checkbox`/`switch`/`slider`/`radio` `changed`). The backend sets
+`SVL_SIGNAL_ARGS` (8) in the flags bits of the call's signal id (`SIGNAL_ARGS` here); handlers then
+get **`(...args, event)`**: `onchanged={(v) => setVisible(v)}` gets the value, and
+`onchanged={(v, e) => e.preventDefault()}` keeps the old one. Return values are ignored there too
+(an arrow's accidental `true` cancels nothing). The flag selects no handler set; a late delivery
+(`__svelters_dispatch(h, signal, args, true, flags)`) has the same shape.
+
 **Phases** (X3). `on<event>capture={fn}` (Svelte's capture suffix) listens with `LISTEN_CAPTURE`;
 `{@attach listen(sig, fn, { after: true })}` with `LISTEN_AFTER`. The spec lists the phases each
 signal accepts (`phases`); anything else is `listen_phase_unsupported` at compile time (GTK:

@@ -101,6 +101,12 @@ pub const SVL_LISTEN_CAPTURE: u32 = 2;
 /// Listener flags ride in these bits of the signal id of `post_event` / `call_sync`.
 pub const SVL_SIGNAL_FLAGS_SHIFT: u32 = 28;
 pub const SVL_SIGNAL_ID_MASK: u32 = (1 << SVL_SIGNAL_FLAGS_SHIFT) - 1;
+/// A delivery flag in the same bits, `call_sync` only (FQ-65): the signal is not a `sync` one in
+/// the spec (its listeners take its arguments, as when posted) and the backend calls it
+/// synchronously only so a listener can cancel it (skelter's cancelable widget signals). The
+/// runtime passes `(...args, event)`: the arguments as posted, then the `NativeEvent` whose
+/// `preventDefault()` cancels. Not a listen flag: it never selects a handler set.
+pub const SVL_SIGNAL_ARGS: u32 = 8;
 
 /// ABI v2.3 `style` ops (X6 styling). Payloads are UTF-8 strings; see plans/architecture/backend-abi.md.
 pub const SVL_STYLE_TARGET: u32 = 0;

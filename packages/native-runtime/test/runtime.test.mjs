@@ -427,6 +427,33 @@ test('a deferred sync signal stops at stopImmediatePropagation, as dispatch_sync
   assert.deepEqual(seen, ['first']);
 });
 
+test('FQ-65: a cancelable value signal called synchronously (SIGNAL_ARGS) gets its arguments first, the event last', () => {
+  harness();
+  const seen = [];
+  let h;
+  let veto = false;
+  mountInWindow((c) => {
+    const b = $n.element('checkbox');
+    h = b.h;
+    $n.on(b, 'changed', (v) => {
+      seen.push(v);
+      return true; // an arrow's result cancels nothing
+    });
+    $n.on(b, 'changed', (v, e) => {
+      if (veto) e.preventDefault();
+    });
+    $n.append(c, b);
+  });
+  $.flush();
+  assert.equal($n.SIGNAL_ARGS, 8);
+  assert.equal(globalThis.__svelters_dispatch_sync(h, 'changed', [true], $n.SIGNAL_ARGS), null, 'not cancelled');
+  veto = true;
+  assert.equal(globalThis.__svelters_dispatch_sync(h, 'changed', [false], $n.SIGNAL_ARGS), true, 'preventDefault cancels');
+  // a late (deferred) delivery passes the same arguments
+  globalThis.__svelters_dispatch(h, 'changed', [true], true, $n.SIGNAL_ARGS);
+  assert.deepEqual(seen, [true, false, true]);
+});
+
 test('lis', () => {
   assert.deepEqual([...$n.lis([4, 3, 2, 1])].length, 1);
   assert.deepEqual([...$n.lis([0, -1, 1, 5, 2, 3])].sort(), [0, 2, 4, 5]);
