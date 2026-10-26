@@ -556,8 +556,9 @@ pub trait Kind: 'static {
     /// The kind scrolls its own content (a code editor): its node gets a scroll node, a content
     /// space and a scroll layer as an `overflow: auto` box does, and its own display list is
     /// recorded in content space and placed in that layer, so a scroll is a compositor offset
-    /// ([`EventCx::scroll_fast`](crate::EventCx::scroll_fast)) and never a re-record. Pointer
-    /// positions stay in the border box: add [`Document::scroll_offset`](crate::Document::scroll_offset).
+    /// ([`EventCx::scroll_fast`](crate::EventCx::scroll_fast)) and never a re-record. What it records
+    /// in [`RecordCx::fixed`](crate::RecordCx::fixed) (its box) stays in the border box, below the
+    /// scroll layer. Pointer positions stay in the border box: add [`Document::scroll_offset`](crate::Document::scroll_offset).
     /// Asked after each `prepare`.
     fn self_scroll(&self, node: &NodeView) -> Option<SelfScroll> {
         None

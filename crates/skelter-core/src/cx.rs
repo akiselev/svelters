@@ -366,6 +366,10 @@ pub(crate) struct RunSink {
 pub struct RecordCx<'a> {
     pub node: NodeView<'a>,
     pub(crate) list: &'a mut DisplayList,
+    /// The part outside the node's scroll layer ([`RecordCx::fixed`]); swapped with `list` while
+    /// it records.
+    pub(crate) fixed: &'a mut DisplayList,
+    pub(crate) in_fixed: bool,
     pub(crate) runs: &'a mut RunSink,
     /// The runs this node's list references (replaced runs are dropped when the list is).
     pub(crate) node_runs: &'a mut Vec<RunId>,
@@ -384,6 +388,21 @@ impl RecordCx<'_> {
     /// Adds a primitive with its ink rect.
     pub fn push(&mut self, p: Prim, ink: Rect) {
         self.list.push(p, ink);
+    }
+    /// Records what `f` draws as the node's fixed part, in its border-box space: for a kind with
+    /// [`Kind::self_scroll`](crate::Kind::self_scroll) it stays outside the scroll layer (its box:
+    /// background, border), so a scroll moves only the rest and re-records nothing. The fixed part
+    /// paints below the rest of the list; for any other kind it simply goes first in the one list.
+    pub fn fixed<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
+        if self.in_fixed {
+            return f(self);
+        }
+        std::mem::swap(&mut self.list, &mut self.fixed);
+        self.in_fixed = true;
+        let r = f(self);
+        self.in_fixed = false;
+        std::mem::swap(&mut self.list, &mut self.fixed);
+        r
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
@@ -576,12 +595,12 @@ impl EventCx<'_> {
         self.doc.scroll_fast(n, offset);
     }
     /// Shows the caret at `rect` (local coordinates; `None` hides it) through a fast commit: the
-    /// compositor draws and blinks it, so a caret move costs no frame.
+    /// compositor draws and blinks it, so a caret move costs no frame. It goes out in the space of
+    /// the node's transform node, in the node's `color`; while the node isn't rendered the caret is
+    /// hidden and comes back once it is (`crate::caret`).
     pub fn set_caret(&mut self, rect: Option<Rect>) {
-        let Some(window) = self.doc.window_of(self.node) else { return };
-        let rect = rect.map(|r| self.doc.view(self.node).map_or(r, |v| v.window_transform().apply_rect(&r)));
-        let revision = self.doc.revision;
-        self.doc.fast.push(skelter_base::commit::FastCommit::Caret { window, rect, revision });
+        let n = self.node;
+        self.doc.set_caret(n, rect);
     }
     /// The node now has a non-empty text selection: with single selection on (GTK), the previous
     /// owner's [`Kind::selection_lost`](crate::Kind::selection_lost) collapses its own.

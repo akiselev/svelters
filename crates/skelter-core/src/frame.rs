@@ -112,6 +112,7 @@ impl Document {
             self.rebuild_walk(window, root, &mut commit);
             stats.rebuilt = true;
         }
+        self.check_caret(window);
         if rebuild {
             a11y_dirty.extend(std::mem::take(&mut self.window_mut(window).expect("window").a11y_moved));
         }
@@ -482,11 +483,28 @@ impl Document {
             }
         }
         let mut list = DisplayList::new();
+        let mut fixed = DisplayList::new();
         let mut node_runs = Vec::new();
         let hidden = self.style.computed(i).visibility_hidden;
         if !hidden {
-            let mut cx = RecordCx { node: self.view_at(i), list: &mut list, runs, node_runs: &mut node_runs, shaper: shaper.as_deref_mut(), services: &mut services };
+            let mut cx = RecordCx {
+                node: self.view_at(i),
+                list: &mut list,
+                fixed: &mut fixed,
+                in_fixed: false,
+                runs,
+                node_runs: &mut node_runs,
+                shaper: shaper.as_deref_mut(),
+                services: &mut services,
+            };
             k.record(&mut cx);
+        }
+        // only a kind that scrolls itself keeps its fixed part apart; any other paints it first
+        if !self.self_scroll.contains_key(&node) && !fixed.is_empty() {
+            let rest = std::mem::take(&mut list);
+            list = std::mem::take(&mut fixed);
+            list.bounds = list.bounds.union(&rest.bounds);
+            list.items.extend(rest.items);
         }
         self.shaper = shaper;
         self.services = services;
@@ -495,6 +513,18 @@ impl Document {
         let p = &mut self.record[i];
         let old_runs = std::mem::replace(&mut p.runs, node_runs);
         commit.dropped_runs.extend(old_runs);
+        let had_fixed = p.fixed.is_some();
+        if fixed.is_empty() {
+            if had_fixed {
+                p.fixed = None;
+                commit.removed.push(crate::record::fixed_key(node));
+            }
+        } else {
+            let fixed = Arc::new(fixed);
+            p.fixed = Some(fixed.clone());
+            commit.lists.push((crate::record::fixed_key(node), fixed));
+        }
+        let fixed_changed = had_fixed != p.fixed.is_some();
         let had = p.list.is_some();
         if list.is_empty() {
             if had {
@@ -508,7 +538,7 @@ impl Document {
         }
         // a layer's `opaque` follows its owner's list
         let owns_layer = self.record[i].layer.is_some() || self.core[i].flags.contains(crate::tree::NodeFlags::ROOT);
-        if (had != self.record[i].list.is_some() || owns_layer)
+        if (had != self.record[i].list.is_some() || fixed_changed || owns_layer)
             && let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w))
         {
             w.rebuild = true;
@@ -652,6 +682,11 @@ impl Document {
                 ws.layer_ids.free(old.0);
             }
             let drawn = !s.visibility_hidden;
+            if drawn && p.fixed.is_some() {
+                // a self-scrolling kind's fixed part stays in the node's own space, below its scroll layer
+                let fixed = ItemRef { node: crate::record::fixed_key(node), transform: p.transform.expect("transform"), clip: f.clip, effect: own_effect };
+                items.entry(layer).or_default().push(fixed);
+            }
             if drawn && p.list.is_some() {
                 // a kind that scrolls itself draws in its content space, in its scroll layer
                 let item = match (self.self_scroll.contains_key(&node), content_layer, p.content) {

@@ -135,6 +135,9 @@ impl WindowState {
         if paint.list.is_some() {
             self.pending.removed_lists.push(node);
         }
+        if paint.fixed.is_some() {
+            self.pending.removed_lists.push(crate::record::fixed_key(node));
+        }
         if let Some(s) = paint.scroll {
             self.scroll_nodes.remove(&s);
         }

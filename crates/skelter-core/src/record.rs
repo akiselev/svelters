@@ -9,6 +9,8 @@ use std::sync::Arc;
 #[derive(Clone, Debug)]
 pub(crate) struct NodePaint {
     pub list: Option<Arc<DisplayList>>,
+    /// A self-scrolling kind's fixed part ([`crate::RecordCx::fixed`]), sent under [`fixed_key`].
+    pub fixed: Option<Arc<DisplayList>>,
     pub runs: Vec<RunId>,
     /// The node's own transform space (its layout offset and CSS transform).
     pub transform: Option<PropNodeId>,
@@ -35,6 +37,7 @@ impl Default for NodePaint {
     fn default() -> Self {
         NodePaint {
             list: None,
+            fixed: None,
             runs: Vec::new(),
             transform: None,
             clip: None,
@@ -49,6 +52,12 @@ impl Default for NodePaint {
             a11y_kids: Vec::new(),
         }
     }
+}
+
+/// The list key of a node's fixed part: the node id with its top bit set (generations never get
+/// there).
+pub(crate) const fn fixed_key(node: NodeId) -> NodeId {
+    NodeId(node.0 | 1 << 63)
 }
 
 impl NodePaint {
