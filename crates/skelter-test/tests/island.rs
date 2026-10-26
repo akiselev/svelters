@@ -201,3 +201,38 @@ fn state_changed_through_a_shared_handle_shows_after_run() {
     // settled although the island requested nothing: run returns after its step
     assert_eq!(h.busy(), None);
 }
+
+#[test]
+fn a_ctrl_click_is_seen_with_ctrl_held_and_f2_then_typing_edits() {
+    #[derive(Default)]
+    struct E {
+        ctrl_clicks: u32,
+        editing: bool,
+        text: String,
+    }
+    let mut h = EguiHarness::builder().with_size(egui::vec2(300.0, 200.0)).build_ui_state(
+        |ui, s: &mut E| {
+            if ui.button("Pick").clicked() && ui.input(|i| i.modifiers.ctrl) {
+                s.ctrl_clicks += 1;
+            }
+            if ui.input(|i| i.key_pressed(egui::Key::F2)) {
+                s.editing = true;
+            }
+            if s.editing {
+                let r = ui.add(egui::TextEdit::singleline(&mut s.text).hint_text("Name"));
+                if !r.has_focus() && !r.lost_focus() {
+                    r.request_focus();
+                }
+            }
+        },
+        E::default(),
+    );
+    h.get_by_label("Pick").click_modifiers(egui::Modifiers::CTRL);
+    h.run();
+    assert_eq!(h.state().ctrl_clicks, 1, "the press saw the modifier change before it");
+    // F2 shows and focuses the field in its own pass; the typing that follows goes into it
+    h.key_press(egui::Key::F2);
+    h.type_text("ab");
+    h.run();
+    assert_eq!(h.state().text, "ab");
+}

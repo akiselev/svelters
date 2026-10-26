@@ -539,7 +539,7 @@ impl EguiHarnessBuilder {
         self
     }
     /// kittest parity (default on): every step runs one island pass whether or not the island is due,
-    /// and `run` settles when the last pass requested no repaint and no input is queued. Off: the
+    /// queued input is delivered one event per pass, and `run` settles when the last pass requested no repaint and no input is queued. Off: the
     /// island passes only when due and `run` settles when nothing needs a frame (skelter's own rule).
     pub fn with_pass_every_step(mut self, on: bool) -> Self {
         self.pass_every_step = on;
@@ -624,6 +624,7 @@ impl EguiHarnessBuilder {
             textures: Some(Box::new(|d: &mut IslandDoc<S>, g: &mut GpuRender| render_island(d, g))),
             before_step: pass_every_step.then(|| Box::new(|d: &mut IslandDoc<S>| d.request_pass()) as Box<dyn FnMut(&mut IslandDoc<S>)>),
             settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, now: Time| d.settled(now)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
+            one_event_per_step: pass_every_step,
         };
         let mut inner = base.build_with(make_doc, hooks, gpu);
         let waker = inner.platform_mut().cx().waker();

@@ -67,6 +67,9 @@ pub(crate) struct Hooks<D> {
     /// Replaces the settle rule after queued input (kittest's: the last pass requested no repaint);
     /// commits in flight then don't count, and `render` applies them first.
     pub settled: Option<Box<dyn Fn(&D, Time) -> bool>>,
+    /// `step` delivers queued input one event per step (kittest: one egui pass per event, so a
+    /// modifier change is seen by the press after it).
+    pub one_event_per_step: bool,
 }
 
 impl<D> Default for Hooks<D> {
@@ -76,6 +79,7 @@ impl<D> Default for Hooks<D> {
             textures: None,
             before_step: None,
             settled: None,
+            one_event_per_step: false,
         }
     }
 }
@@ -413,6 +417,18 @@ impl<D: DocumentApi + 'static> Harness<D> {
     /// One vsync on the virtual clock.
     #[track_caller]
     pub fn step(&mut self) {
+        if self.hooks.one_event_per_step && self.queue.borrow().len() > 1 {
+            let queued = std::mem::take(&mut *self.queue.borrow_mut());
+            for q in queued {
+                self.queue.borrow_mut().push(q);
+                self.step_one();
+            }
+            return;
+        }
+        self.step_one();
+    }
+
+    fn step_one(&mut self) {
         if let Some(f) = &mut self.hooks.before_step {
             f(self.app.doc_mut());
         }
