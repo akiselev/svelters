@@ -117,6 +117,8 @@ pub struct Document {
     pub(crate) light_dismiss: std::collections::HashSet<NodeId>,
     /// Fast commits queued for the compositor ([`Document::take_fast_commits`]).
     pub(crate) fast: Vec<skelter_base::commit::FastCommit>,
+    /// The last caret a kind placed (`crate::caret`).
+    pub(crate) caret: Option<crate::caret::CaretSlot>,
 }
 
 impl Document {
@@ -169,6 +171,7 @@ impl Document {
             selection_owner: None,
             single_selection: false,
             fast: Vec::new(),
+            caret: None,
         }
     }
 

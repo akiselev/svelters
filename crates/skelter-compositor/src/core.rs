@@ -18,7 +18,7 @@ use skelter_base::anim::{
 use skelter_base::color::{Color, Fill};
 use skelter_base::commit::{Commit, FastCommit, ToUi};
 use skelter_base::display::{DisplayList, Prim, Quad};
-use skelter_base::geom::{Corners, DeviceSize, Insets, Rect, Scale, Vec2};
+use skelter_base::geom::{Affine, Corners, DeviceSize, Insets, Rect, Scale, Vec2};
 use skelter_base::ids::{CanvasId, FrameId, ImageId, InputSeq, PathId, LayerId, NodeId, PropNodeId, Revision, SurfaceId, TextureId, WindowId};
 use skelter_canvas::{Camera, LodParams};
 use skelter_base::scene::{DrawItem, FrameScene};
@@ -113,6 +113,7 @@ pub enum Msg {
 pub struct EngineConfig {
     pub refresh: Span,
     pub clear: Option<Color>,
+    /// The caret colour until a window's first `FastCommit::Caret`, which brings its own.
     pub caret_color: Color,
     /// The caret blink of new windows; `None` = a steady caret.
     pub caret_blink: Option<CaretBlink>,
@@ -131,7 +132,10 @@ struct Anim {
 }
 
 struct Caret {
+    /// In the space of property node `transform`.
     rect: Option<Rect>,
+    color: Color,
+    transform: PropNodeId,
     revision: skelter_base::ids::Revision,
     blink: Option<CaretBlink>,
     /// The last caret change (the blink restarts there).
@@ -276,6 +280,8 @@ impl Engine {
             animating: false,
             caret: Caret {
                 rect: None,
+                color: self.cfg.caret_color,
+                transform: PropNodeId::default(),
                 revision: Default::default(),
                 blink: self.cfg.caret_blink,
                 since: Time::ZERO,
@@ -544,13 +550,15 @@ impl Engine {
         };
         let Some(w) = self.windows.get_mut(&window) else { return };
         match f {
-            FastCommit::Caret { rect, revision, .. } => {
+            FastCommit::Caret { rect, color, transform, revision, .. } => {
                 if revision < w.caret.revision {
                     self.stats.fast_rejected += 1;
                     return;
                 }
                 w.caret.revision = revision;
                 w.caret.rect = rect;
+                w.caret.color = color;
+                w.caret.transform = transform;
                 w.caret.on = true;
                 w.caret.since = now;
                 w.caret.next_toggle = rect.and(w.caret.blink).and_then(|b| b.next_change(now, now));
@@ -754,7 +762,9 @@ impl Engine {
 
         let mut flat = w.tree.flatten();
         if let (Some(rect), true) = (w.caret.rect, w.caret.on) {
-            flat.entry(SurfaceKey::Main).or_default().push(caret_item(rect, self.cfg.caret_color));
+            // in its editor's space, so it follows the scrolls and transforms of that chain
+            let world = w.tree.props.world_transform(w.caret.transform, &mut HashMap::new());
+            flat.entry(SurfaceKey::Main).or_default().push(caret_item(rect, w.caret.color, world));
         }
         let mut extra: HashMap<SurfaceKey, Vec<Rect>> = HashMap::new();
         for (k, r) in w.tree.take_layer_damage() {
@@ -1128,7 +1138,7 @@ impl Motion {
     }
 }
 
-fn caret_item(rect: Rect, color: Color) -> FlatItem {
+fn caret_item(rect: Rect, color: Color, transform: Affine) -> FlatItem {
     let mut list = DisplayList::new();
     list.push(
         Prim::Quad(Quad {
@@ -1144,11 +1154,11 @@ fn caret_item(rect: Rect, color: Color) -> FlatItem {
     FlatItem {
         layer: CARET_LAYER,
         node: CARET_NODE,
-        transform: Default::default(),
+        transform,
         clip: None,
         opacity: 1.0,
         list: Arc::new(list),
-        bounds: rect,
+        bounds: transform.apply_rect(&rect),
     }
 }
 
