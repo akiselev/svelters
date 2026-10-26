@@ -29,11 +29,11 @@ use crate::controls::run::{self, RunNode};
 use crate::interact::{FocusReason as WFocus, Native, Policy, StateBits};
 use crate::shim::core as w;
 use crate::shim::text::{PlacedRun, RichText, TextLayout, TextShaper};
-use skelter_base::commit::ImageData;
+use skelter_base::commit::{ImageData, PathData};
 use skelter_base::display::{DisplayList, Prim};
 use skelter_base::event::{PointerEvent, PointerPhase, WheelEvent};
 use skelter_base::geom::{Insets, Point, Vec2};
-use skelter_base::ids::{ImageId, NodeId, RunId};
+use skelter_base::ids::{ImageId, NodeId, PathId, RunId};
 use skelter_base::text::GlyphRun;
 use skelter_core::{
     A11yCx, ChildLayoutCx, Event, EventCx, NodeView, PeerGroup, PeerMsg, PeerTarget, Rove as CoreRove, SignalId, FocusReason, Handled, HitCx, HitResult, Kind, KindRegistry, KindSpec, MeasureCx, PrepareCx, PropCx, PropDefault, PropError, PropId, PropSpec, RecordCx, RegistryError,
@@ -407,11 +407,13 @@ pub struct Hosted<W: w::Kind + Default> {
     pub widget: W,
     /// Images uploaded in `prepare`, by the widget's image key.
     images: HashMap<String, ImageId>,
+    /// Paths this node uses (skelter-core shares them by key across the document).
+    paths: HashMap<String, PathId>,
 }
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new() }
+        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new() }
     }
 }
 
@@ -497,6 +499,9 @@ struct PrepareRes<'a> {
     images: &'a HashMap<String, ImageId>,
     new: Vec<(String, ImageData)>,
     used: Vec<String>,
+    paths: &'a HashMap<String, PathId>,
+    new_paths: Vec<(String, Arc<PathData>)>,
+    used_paths: Vec<String>,
 }
 
 impl w::Resources for PrepareRes<'_> {
@@ -513,6 +518,18 @@ impl w::Resources for PrepareRes<'_> {
         }
         // the dry pass's lists are dropped: any id will do
         Some(ImageId(0))
+    }
+    fn path(&mut self, key: &str, make: &mut dyn FnMut() -> Option<Arc<PathData>>) -> Option<PathId> {
+        if !self.used_paths.iter().any(|k| k == key) {
+            self.used_paths.push(key.to_owned());
+        }
+        if let Some(id) = self.paths.get(key) {
+            return Some(*id);
+        }
+        if !self.new_paths.iter().any(|(k, _)| k == key) {
+            self.new_paths.push((key.to_owned(), make()?));
+        }
+        Some(PathId(0))
     }
 }
 
@@ -540,6 +557,7 @@ fn push_recorded(cx: &mut RecordCx, list: DisplayList, runs: Vec<Arc<GlyphRun>>)
 struct RecordRes<'a> {
     runs: Vec<Arc<GlyphRun>>,
     images: &'a HashMap<String, ImageId>,
+    paths: &'a HashMap<String, PathId>,
 }
 
 impl w::Resources for RecordRes<'_> {
@@ -549,6 +567,9 @@ impl w::Resources for RecordRes<'_> {
     }
     fn image(&mut self, key: &str, _make: &mut dyn FnMut() -> Option<ImageData>) -> Option<ImageId> {
         self.images.get(key).copied()
+    }
+    fn path(&mut self, key: &str, _make: &mut dyn FnMut() -> Option<Arc<PathData>>) -> Option<PathId> {
+        self.paths.get(key).copied()
     }
 }
 
@@ -738,19 +759,36 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let emitted: Vec<w::Emitted>;
-        let (new, used) = {
+        let (new, used, new_paths, used_paths) = {
             let mut text = shaper(cx.service::<skelter_text::TextSystem>());
             // the widget's own prepare (layout of what it places or draws itself) runs before the dry recording
             let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, emitted: Vec::new() };
             self.widget.prepare(&mut pcx);
             emitted = pcx.emitted;
-            let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
+            let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new(), paths: &self.paths, new_paths: Vec::new(), used_paths: Vec::new() };
             let mut list = DisplayList::new();
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             let mut overlay = DisplayList::new();
             self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
-            (res.new, res.used)
+            (res.new, res.used, res.new_paths, res.used_paths)
         };
+        for (key, data) in new_paths {
+            let mut data = Some(data);
+            if let Some(id) = cx.share_path(&key, &mut || data.take()) {
+                self.paths.insert(key, id);
+            }
+        }
+        let mut unshared = Vec::new();
+        self.paths.retain(|k, _| {
+            let keep = used_paths.iter().any(|u| u == k);
+            if !keep {
+                unshared.push(k.clone());
+            }
+            keep
+        });
+        for k in unshared {
+            cx.unshare_path(&k);
+        }
         for (key, data) in new {
             let id = cx.upload_image(Arc::new(data));
             self.images.insert(key, id);
@@ -784,10 +822,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let mut overlay = DisplayList::new();
         let (runs, part, overlay_runs) = {
             let mut text = shaper(cx.service::<skelter_text::TextSystem>());
-            let mut res = RecordRes { runs: Vec::new(), images: &self.images };
+            let mut res = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             // the open floating surface, for the window's overlay stack
-            let mut ores = RecordRes { runs: Vec::new(), images: &self.images };
+            let mut ores = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
             let part = self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut overlay, text: &mut *text, res: &mut ores, scale: node.scale() });
             (res.runs, part, ores.runs)
         };
