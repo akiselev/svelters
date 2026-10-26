@@ -1164,4 +1164,39 @@ mod tests {
         assert_eq!(from_core_value(&p, &v), Some(w::Value::Enum("vertical")));
         assert_eq!(core_default(&p), PropDefault::Enum(0));
     }
+
+    /// QA11Y fixes: a host's `Document::focus` outside a dispatch (cadatomic's title-bar buttons on
+    /// Left/Right) repaints the focus ring on the node that loses focus and the one that takes it.
+    #[test]
+    fn a_programmatic_focus_move_repaints_both_rings() {
+        use crate::testdoc::{W, child, doc, frame, key};
+        use skelter_core::FocusReason;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(200.0, 100.0), |r| {
+            register::<Button>(r).unwrap();
+        });
+        install(&mut d, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())), os_policy(), crate::theme::Theme::dark_modern());
+        let a = child(&mut d, root, skelter_core::KindId::of("button"), "width: 40px; height: 20px");
+        let b = child(&mut d, root, skelter_core::KindId::of("button"), "width: 40px; height: 20px");
+        frame(&mut d);
+        // re-recorded this frame: `Some(ring drawn)` (the ring lies outside the box)
+        let ring = |c: &skelter_base::commit::Commit, n: NodeId| -> Option<bool> {
+            let (_, l) = c.lists.iter().find(|(k, _)| *k == n)?;
+            Some(l.bounds.min.x < 0.0)
+        };
+        // Tab (in a dispatch) is the reference
+        d.dispatch(&key(skelter_base::key::Key::Tab, None));
+        let c = frame(&mut d).unwrap();
+        assert_eq!(d.focused(W), Some(a));
+        assert_eq!(ring(&c, a), Some(true), "Tab draws the ring");
+        // the host moves focus outside a dispatch (keyboard reason, no key in this pass)
+        d.focus(b, FocusReason::Keyboard);
+        let c = frame(&mut d).expect("a frame");
+        assert_eq!(d.focused(W), Some(b));
+        assert_eq!(ring(&c, a), Some(false), "the old button's ring goes");
+        assert_eq!(ring(&c, b), Some(true), "the new button draws it");
+        // a programmatic move keeps the window's modality (keyboard): the ring stays visible
+        d.focus(a, FocusReason::Programmatic);
+        let c = frame(&mut d).expect("a frame");
+        assert_eq!((ring(&c, a), ring(&c, b)), (Some(true), Some(false)));
+    }
 }

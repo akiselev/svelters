@@ -66,7 +66,11 @@ impl Unit for Focusable {
         }
         let has = cx.focus.has && cx.enabled;
         if has && !self.focused {
-            let reason = if self.by_pointer || pressed_here || r.clicked || cx.focus.pointer_pressed {
+            // the focus event's reason when there is one (a move made outside a dispatch has no
+            // input to infer it from), else the pass's input
+            let reason = if let Some(reason) = r.focus_reason.filter(|_| !self.by_pointer) {
+                reason
+            } else if self.by_pointer || pressed_here || r.clicked || cx.focus.pointer_pressed {
                 FocusReason::Pointer
             } else if cx.focus.key_pressed {
                 FocusReason::Keyboard

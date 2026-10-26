@@ -220,6 +220,48 @@ fn a_dialog_that_appears_focuses_its_autofocus_node_and_gives_focus_back_on_hide
     assert_eq!(d.focused(W), Some(first));
 }
 
+/// QA11Y fixes 3: scopes that open in one pass open outermost first, then in tree order, whatever their
+/// ids: the later sibling (the one on top) ends with focus, and an inner scope over its outer one.
+#[test]
+fn sibling_dialogs_opening_together_open_in_tree_order() {
+    let (mut d, root) = doc();
+    let opener = child(&mut d, root, TOGGLE, "");
+    // `late` is created first (the lower id) but comes after `early` in the tree
+    let late = dialog_scope(&mut d, root, "display: none");
+    let early = d.create(BOX);
+    d.set_style(early, crate::StyleInput { inline: Some("display: none".into()), ..Default::default() });
+    d.set_prop(early, common::FOCUS_SCOPE, Value::Enum(2)).unwrap();
+    d.insert(root, early, Some(late), None).unwrap();
+    assert!(late.0 < early.0 && d.children(root).iter().position(|&c| c == early) < d.children(root).iter().position(|&c| c == late));
+    let in_late = child(&mut d, late, TOGGLE, "");
+    let in_early = child(&mut d, early, TOGGLE, "");
+    d.focus(opener, FocusReason::Keyboard);
+    frame(&mut d);
+    show(&mut d, late, "");
+    show(&mut d, early, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(in_late), "the last sibling in tree order wins");
+    assert_ne!(d.focused(W), Some(in_early));
+    // both hide: focus back on the opener
+    show(&mut d, late, "display: none");
+    show(&mut d, early, "display: none");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(opener));
+
+    // nested, the inner one created first: the inner scope wins over the outer one
+    let inner = d.create(BOX);
+    d.set_prop(inner, common::FOCUS_SCOPE, Value::Enum(2)).unwrap();
+    let outer = dialog_scope(&mut d, root, "display: none");
+    let outer_stop = child(&mut d, outer, TOGGLE, "");
+    d.insert(outer, inner, None, None).unwrap();
+    let inner_stop = child(&mut d, inner, TOGGLE, "");
+    frame(&mut d);
+    show(&mut d, outer, "");
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(inner_stop), "the innermost scope ends with focus");
+    assert_ne!(d.focused(W), Some(outer_stop));
+}
+
 #[test]
 fn a_dialog_focused_into_before_it_shows_still_restores_the_opener() {
     let (mut d, root) = doc();

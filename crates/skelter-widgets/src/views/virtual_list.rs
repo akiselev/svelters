@@ -1036,8 +1036,27 @@ impl VirtualList {
     /// The AccessKit node of the row at `pos` (realised rows only: AccessKit has no virtualised
     /// list, so the set size and position carry the rest).
     pub fn row_a11y(&self, pos: usize, role: accesskit::Role) -> Option<accesskit::Node> {
-        let id = *self.ids.get(pos)?;
         let mut n = accesskit::Node::new(role);
+        if !self.member_a11y(pos, &mut n) {
+            return None;
+        }
+        let r = self.heights.rect(pos, self.width);
+        n.set_bounds(accesskit::Rect { x0: r.min.x as f64, y0: r.min.y as f64, x1: r.max.x as f64, y1: r.max.y as f64 });
+        n.add_action(accesskit::Action::Click);
+        n.add_action(accesskit::Action::ScrollIntoView);
+        Some(n)
+    }
+
+    /// The row role of this list's members: an option of a list box, an item of a plain list.
+    pub fn member_role(&self) -> accesskit::Role {
+        if self.sel.mode == SelectMode::None { accesskit::Role::ListItem } else { accesskit::Role::ListBoxOption }
+    }
+
+    /// What the row at `pos` is as a member of the list, on `n`: its position and the set size, and,
+    /// in a selecting list, `selected`; its label when [`VirtualList::splice`] gave one. False when
+    /// there is no such row.
+    pub fn member_a11y(&self, pos: usize, n: &mut accesskit::Node) -> bool {
+        let Some(&id) = self.ids.get(pos) else { return false };
         n.set_position_in_set(pos + 1);
         n.set_size_of_set(self.len());
         if self.sel.mode != SelectMode::None {
@@ -1046,11 +1065,7 @@ impl VirtualList {
         if let Some(l) = self.labels.get(pos).filter(|l| !l.is_empty()) {
             n.set_label(l.as_str());
         }
-        let r = self.heights.rect(pos, self.width);
-        n.set_bounds(accesskit::Rect { x0: r.min.x as f64, y0: r.min.y as f64, x1: r.max.x as f64, y1: r.max.y as f64 });
-        n.add_action(accesskit::Action::Click);
-        n.add_action(accesskit::Action::ScrollIntoView);
-        Some(n)
+        true
     }
 
     fn set_mode(&mut self, mode: SelectMode) {
@@ -1166,6 +1181,13 @@ impl skelter_core::VirtualChildren for VirtualList {
     }
     fn realize(&mut self, cx: &mut skelter_core::RealizeCx, _rows: Range<usize>) -> Vec<(usize, NodeId)> {
         self.realize_rows(cx, &SPEC)
+    }
+    /// The node bound to a row is an option of the list box (`selected`, its position and the set
+    /// size), a list item when the list doesn't select, whatever kind renders it.
+    fn row_a11y(&self, row: usize, node: &mut accesskit::Node) {
+        if self.member_a11y(row, node) {
+            node.set_role(self.member_role());
+        }
     }
 }
 

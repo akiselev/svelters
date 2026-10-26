@@ -739,6 +739,8 @@ fn a_kind_that_scrolls_itself_scrolls_on_the_compositor() {
     assert!(scroll, "it has a scroll node");
     assert!(c.layers.iter().any(|l| matches!(l, skelter_base::layer::LayerDelta::Add(desc) if matches!(desc.kind, skelter_base::layer::LayerKind::Scroll { .. }))));
     d.focus(page, crate::FocusReason::Keyboard);
+    // the focus move re-records the node (its ring): not the scroll's frame
+    frame(&mut d);
     d.take_fast_commits();
     d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
     let fast = d.take_fast_commits();
@@ -945,6 +947,8 @@ fn no_caret_for_an_editor_that_isnt_rendered() {
     let page = child(&mut d, root, PAGE, css);
     frame(&mut d);
     d.focus(page, crate::FocusReason::Keyboard);
+    // the focus move re-records the node (its ring): not the scroll's frame
+    frame(&mut d);
     d.take_fast_commits();
     d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
     let fast = d.take_fast_commits();

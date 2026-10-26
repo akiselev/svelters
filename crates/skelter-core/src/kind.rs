@@ -467,6 +467,13 @@ pub trait VirtualChildren {
         let _ = (cx, rows);
         Vec::new()
     }
+    /// What the node bound to `row` is as a member of this node, added to its own AccessKit node
+    /// before its `role` and `aria-*` props apply (they win): a list box's option with `selected`,
+    /// its position and the set size, whatever the row's content kind is. Sent again with the
+    /// virtualising node (a selection change, a realise). Default: nothing.
+    fn row_a11y(&self, row: usize, node: &mut accesskit::Node) {
+        let _ = (row, node);
+    }
 }
 
 /// The retained behaviour of one node.

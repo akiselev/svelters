@@ -424,6 +424,8 @@ impl Document {
                         self.core[ci].flags.insert(crate::tree::NodeFlags::ROW);
                     }
                     self.virt.insert(node, VirtState { range, count, extent, rows, dirty: false, realised: true });
+                    // the rows' positions changed: they go out again with the node (`row_a11y`)
+                    self.mark(node, crate::tree::Dirty::A11Y);
                     realised = true;
                 }
                 if let Some(st) = self.virt.get(&node) {

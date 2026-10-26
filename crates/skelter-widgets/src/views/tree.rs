@@ -390,14 +390,19 @@ impl TreeView {
 
     /// The AccessKit node of the row at `pos`.
     pub fn row_a11y(&self, pos: usize) -> Option<accesskit::Node> {
-        let r = self.rows.get(pos)?;
         let mut n = self.list.row_a11y(pos, accesskit::Role::TreeItem)?;
+        self.item_a11y(pos, &mut n);
+        Some(n)
+    }
+
+    /// The tree's part of the row at `pos` on `n`: its level and expanded state.
+    fn item_a11y(&self, pos: usize, n: &mut accesskit::Node) {
+        let Some(r) = self.rows.get(pos) else { return };
         n.set_level(r.depth as usize + 1);
         if r.expandable {
             n.set_expanded(r.expanded);
             n.add_action(if r.expanded { accesskit::Action::Collapse } else { accesskit::Action::Expand });
         }
-        Some(n)
     }
 }
 
@@ -420,6 +425,14 @@ impl skelter_core::VirtualChildren for TreeView {
     }
     fn realize(&mut self, cx: &mut skelter_core::RealizeCx, _rows: Range<usize>) -> Vec<(usize, skelter_base::ids::NodeId)> {
         self.list.realize_rows(cx, &SPEC)
+    }
+    /// The node bound to a row is a tree item: its level, expanded state, `selected`, position and
+    /// set size.
+    fn row_a11y(&self, row: usize, node: &mut accesskit::Node) {
+        if self.list.member_a11y(row, node) {
+            node.set_role(accesskit::Role::TreeItem);
+            self.item_a11y(row, node);
+        }
     }
 }
 

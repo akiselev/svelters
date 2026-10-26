@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "29c1533cf7fcc9f0"
+    "spec_hash": "1e6e8de8bc3295b6"
   },
   "inline_text": {
     "kind": "span",
@@ -8331,6 +8331,31 @@
           "type": "bool",
           "writable": true
         },
+        "aria-selected": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "unset",
+          "doc": "AccessKit `selected` (an `option`, a `tab`, a `treeitem`); `unset` leaves the widget's own (a list's row: whether the list selects it).",
+          "fingerprint": "0cbf7786",
+          "id": 213874566,
+          "js": "aria-selected",
+          "native": "aria-selected",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:aria-selected",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "unset",
+            "true",
+            "false"
+          ],
+          "writable": true
+        },
         "autofocus": {
           "change": "paint",
           "construct_only": false,
@@ -8764,6 +8789,26 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "role": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "An ARIA role name (`listbox`, `option`, `combobox`, `menuitem`, …) for the AccessKit role over the widget's own; empty or unknown keeps the widget's. A list's rows are already `option`s (`treeitem`s in a tree).",
+          "fingerprint": "08a5809b",
+          "id": 145064091,
+          "js": "role",
+          "native": "role",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:role",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
           "writable": true
         },
         "source-loc": {
