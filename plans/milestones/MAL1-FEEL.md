@@ -1,4 +1,4 @@
-# MAL1-FEEL: live feel for skelter (SV61–SV66)
+# MAL1-FEEL: live feel for skelter (SV61–SV66, SV76, SV77)
 
 Lane `S-A feel` of cadatomic's MAL1 batch (`plans/cloud/mal1/LANE-SA-feel.md`), branch `ci/mal1-feel`,
 base master `6c1ea458`. Coordinator: cadatomic's batch coordinator session. Every seam is generic:
@@ -79,6 +79,27 @@ no app names, keys or concepts.
   for macOS or Windows in a Linux container, so it is over the lane's 0.5 d bar. The host can drive
   the document from its own setting today.
 
+### SV76: a bubbled pointer event keeps each node's own local point (`skelter-core/src/input/dispatch.rs`)
+
+Added by the coordinator (cadatomic's finish lane found it). `bubble_native` gave every ancestor the
+hit target's `PointerInput.local`; now each ancestor of a pointer down/up/move or click gets
+`to_local(window, node, pos)`. A press on a row's content no longer selects the row its offset falls
+in. Test: `views::virtual_list::tests::a_press_on_a_rows_content_selects_that_row` (the JS row
+protocol by hand: setup → `setRow` → bind; content 8 points into each row; a press on row 1's content
+selects id 11; it fails without the fix).
+
+### SV77: a `<context-menu>` opens on its owner's secondary click
+
+Added by the coordinator. `ATTACHES_TO` was declared and `ContextMenu::context_click` had no caller.
+- skelter-core: the secondary click's `contextmenu` is now delivered before the default
+  (cancelable, as its spec says); unless prevented, the document offers the click to the children
+  of the clicked node and then of each ancestor, innermost first:
+  `Kind::owner_context_click(cx, at)` (new, default `No`; `at` in the child's own points).
+- skelter-widgets: the shim kind trait gets the same hook (forwarded by the host); `ContextMenu`
+  opens at the pointer.
+- Test: `views::menu::tests::an_owners_secondary_click_opens_its_context_menu`; svelters-skelter's
+  three `tier1` context-menu tests still pass.
+
 ## Lines for cadatomic's `04-kernel-requests.md`
 
 | Id | State |
@@ -88,6 +109,8 @@ no app names, keys or concepts.
 | SV63 | done: `Host::set_dx` subscribes; changed keys invalidate `s:<key>` at the next checkpoint |
 | SV64 | done: `set_key_hook(Box<dyn FnMut(&KeyHookCx) -> bool>)`, `KeyHookCx { doc, window, target, key }` (`#[non_exhaustive]`); breaking for existing hooks |
 | SV65 | done: custom-map change sets `inherited` (pointer-equal first), with a test |
+| SV76 | done: each ancestor gets its own local point in `bubble_native`, with a virtual-list test |
+| SV77 | done: `contextmenu` cancelable before the default; `Kind::owner_context_click`; `context-menu` opens at the pointer |
 | SV66 | document half done (`Document::set_media_preferences`; reduced motion stops CSS transitions); OS probe → MAL2 |
 
 ## CI

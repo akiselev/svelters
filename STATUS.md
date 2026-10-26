@@ -301,6 +301,8 @@ cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomi
 | SV64 the key hook takes `(&Document, WindowId, target, &KeyEvent)` through an extensible context struct | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
 | SV65 a custom-property change restyles descendants (`inherited` set when the custom map changed, pointer-equal first) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
 | SV66 host-set media preferences (reduced motion, contrast) on the document, plus an OS probe | document half done on `ci/mal1-feel`; OS probe → MAL2 | MAL1-FEEL.md |
+| SV76 a bubbled pointer event gets each ancestor's own local point (`bubble_native`; a press on a row's content selected the wrong row) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
+| SV77 a `<context-menu>` opens on its owner's secondary click (`Kind::owner_context_click`) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
 | Tours (cadatomic TU1–TU10): the generic half, `svelters-tour` (`.tour.md` → JS define phase → IR), `@svelters/tour` overlay components, the gate and placement on SV6/SV7, `capture.frames` and `clock.advance_to`, `svelters-tts` (Kokoro and the narration manifest), `svelters-tour-video` | proposed; the user wants the svelters and cadatomic halves developed in tandem (2026-10-23); not yet placed on TRACKS.md | cadatomic `docs/research/2026-10-23-tours-tests-tutorials-videos.md` §8–§9 |
 
 ## Handoff (2026-10-19, superseded)
