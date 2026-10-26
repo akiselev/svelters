@@ -312,3 +312,45 @@ fn copied_text_waits_until_taken() {
     h.step();
     assert!(h.island_output().copied.is_empty(), "taken");
 }
+
+/// A5g: `build_ui`/`build_ui_state` run the closure in kittest's central-panel frame (an 8-point
+/// outer margin); `build`/`build_state` (context closures) run bare.
+#[test]
+fn ui_closures_get_kittests_central_panel_margin() {
+    let h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build_ui(|ui| {
+        let _ = ui.button("Corner");
+    });
+    let r = h.get_by_label("Corner").rect();
+    assert_eq!((r.min.x, r.min.y), (8.0, 8.0), "inside the 8-point margin: {r:?}");
+    let h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build(|ctx| {
+        egui::Area::new(egui::Id::new("bare")).fixed_pos(egui::pos2(0.0, 0.0)).show(ctx, |ui| {
+            let _ = ui.button("Bare");
+        });
+    });
+    let r = h.get_by_label("Bare").rect();
+    assert_eq!((r.min.x, r.min.y), (0.0, 0.0), "a context closure has no frame: {r:?}");
+}
+
+/// A5h: kittest's context defaults: the `Nix` OS, no caret blink, no scroll animation, no
+/// animation time (and its missing-glyph policy).
+#[test]
+fn the_context_has_kittests_defaults() {
+    let h = EguiHarness::builder().build_ui(|ui| {
+        ui.label("x");
+    });
+    let ctx = &h.ctx;
+    assert_eq!(ctx.os(), egui::os::OperatingSystem::Nix);
+    assert_eq!(ctx.missing_glyph_policy(), egui::MissingGlyphPolicy::Panic);
+    for theme in [egui::Theme::Dark, egui::Theme::Light] {
+        let st = ctx.style_of(theme);
+        assert!(!st.visuals.text_cursor.blink);
+        assert_eq!(st.animation_time, 0.0);
+        assert_eq!(st.scroll_animation, egui::style::ScrollAnimation::none());
+    }
+    // a setup runs first; the defaults apply over it, as kittest
+    let h = EguiHarness::builder().with_os(egui::os::OperatingSystem::Mac).with_context_setup(|c| c.all_styles_mut(|s| s.animation_time = 1.0)).build_ui(|ui| {
+        ui.label("x");
+    });
+    assert_eq!(h.ctx.os(), egui::os::OperatingSystem::Mac);
+    assert_eq!(h.ctx.style_of(egui::Theme::Dark).animation_time, 0.0);
+}

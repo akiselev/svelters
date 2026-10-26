@@ -35,6 +35,17 @@ impl Clock for InstantClock {
     }
 }
 
+/// The next message, which must be the frame's `GpuDone`: waits on the event (the backend's waiter
+/// thread polls the device until the submission finishes), with only a safety cap that says what
+/// it was waiting for.
+fn gpu_done(rx: &mpsc::Receiver<Msg>) -> Msg {
+    const CAP: Duration = Duration::from_secs(120);
+    match rx.recv_timeout(CAP) {
+        Ok(m) => m,
+        Err(e) => panic!("no GpuDone for the submitted frame after {CAP:?} (the GPU never finished it, or its completion was not reported): {e}"),
+    }
+}
+
 #[test]
 fn headless_frame_renders_and_reports_gpu_completion() {
     let clock: Arc<dyn Clock> = Arc::new(InstantClock(Instant::now()));
@@ -101,7 +112,7 @@ fn headless_frame_renders_and_reports_gpu_completion() {
     engine.handle(Msg::Commit(Box::new(c)), clock.now(), &mut gpu);
     assert_eq!(engine.stats.frames_drawn, 1);
 
-    let done = rx.recv_timeout(Duration::from_secs(10)).expect("GpuDone");
+    let done = gpu_done(&rx);
     assert!(matches!(done, Msg::GpuDone { window, .. } if window == w));
     engine.handle(done, clock.now(), &mut gpu);
     assert!(sent.lock().unwrap().iter().any(|m| matches!(m, ToUi::Presented { estimated: true, .. })));
@@ -232,7 +243,8 @@ fn caret_only_frames_keep_the_content_on_every_swapchain_image() {
 
     // Caret-only frames, more than the swapchain has images: each moves the caret on the white half.
     let mut revision = 2;
-    let deadline = Instant::now() + Duration::from_secs(20);
+    // driven by the frames' GpuDone (each frame waits on the last); the deadline is a safety cap
+    let deadline = Instant::now() + Duration::from_secs(120);
     while engine.stats.frames_drawn < 12 && Instant::now() < deadline {
         if let Ok(m) = rx.recv_timeout(Duration::from_millis(5)) {
             engine.handle(m, clock.now(), &mut gpu);
@@ -249,7 +261,7 @@ fn caret_only_frames_keep_the_content_on_every_swapchain_image() {
         revision += 1;
         engine.advance(clock.now(), &mut gpu);
     }
-    assert!(engine.stats.frames_drawn >= 12, "only {} frames", engine.stats.frames_drawn);
+    assert!(engine.stats.frames_drawn >= 12, "only {} caret frames drawn after 120 s (waiting for their GpuDone)", engine.stats.frames_drawn);
 
     let (_, format, pixels) = gpu.read_pixels(w, SurfaceKey::Main).expect("read back");
     let (r, g, b) = match format {

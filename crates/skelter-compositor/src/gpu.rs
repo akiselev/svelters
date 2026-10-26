@@ -459,9 +459,24 @@ fn spawn_waiter() -> Sender<(wgpu::Device, wgpu::SubmissionIndex)> {
     let (tx, rx) = mpsc::channel::<(wgpu::Device, wgpu::SubmissionIndex)>();
     let spawned = std::thread::Builder::new().name("skelter-gpu-wait".into()).spawn(move || {
         for (device, index) in rx {
-            let poll = wgpu::PollType::Wait { submission_index: Some(index), timeout: Some(Duration::from_secs(2)) };
-            if let Err(e) = device.poll(poll) {
-                log::warn!("skelter-compositor: waiting for the GPU failed: {e}");
+            // until the submission is done: one timed-out wait would drop its `GpuDone` (a slow
+            // software adapter takes longer than one wait), and nothing else polls the device
+            let mut waits = 0u32;
+            loop {
+                let poll = wgpu::PollType::Wait { submission_index: Some(index.clone()), timeout: Some(Duration::from_secs(2)) };
+                match device.poll(poll) {
+                    Ok(_) => break,
+                    Err(wgpu::PollError::Timeout) => {
+                        waits += 1;
+                        if waits == 5 {
+                            log::warn!("skelter-compositor: the GPU has not finished a submission after 10 s; still waiting");
+                        }
+                    }
+                    Err(e) => {
+                        log::warn!("skelter-compositor: waiting for the GPU failed: {e}");
+                        break;
+                    }
+                }
             }
         }
     });

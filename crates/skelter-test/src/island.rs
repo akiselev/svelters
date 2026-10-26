@@ -487,6 +487,8 @@ pub struct EguiHarnessBuilder {
     renderer_setup: Option<RendererSetup>,
     renderer: egui_wgpu::RendererOptions,
     pass_every_step: bool,
+    os: egui::os::OperatingSystem,
+    missing_glyph_policy: egui::MissingGlyphPolicy,
 }
 
 impl Default for EguiHarnessBuilder {
@@ -499,6 +501,9 @@ impl Default for EguiHarnessBuilder {
             // kittest's: no dithering, so snapshots are stable
             renderer: egui_wgpu::RendererOptions::PREDICTABLE,
             pass_every_step: true,
+            // kittest's defaults (egui_kittest's builder)
+            os: egui::os::OperatingSystem::Nix,
+            missing_glyph_policy: egui::MissingGlyphPolicy::Panic,
         }
     }
 }
@@ -545,6 +550,17 @@ impl EguiHarnessBuilder {
         self.theme = theme;
         self
     }
+    /// The operating system egui is told it runs on (default `Nix`, as kittest; keyboard shortcuts
+    /// follow it).
+    pub fn with_os(mut self, os: egui::os::OperatingSystem) -> Self {
+        self.os = os;
+        self
+    }
+    /// What egui does with a glyph its fonts lack (default `Panic`, as kittest).
+    pub fn with_missing_glyph_policy(mut self, policy: egui::MissingGlyphPolicy) -> Self {
+        self.missing_glyph_policy = policy;
+        self
+    }
     /// Configure the island's context before the first pass (fonts, style, shortcuts).
     pub fn with_context_setup(mut self, setup: impl FnOnce(&egui::Context) + 'static) -> Self {
         self.context_setup = Some(Box::new(setup));
@@ -581,10 +597,17 @@ impl EguiHarnessBuilder {
     #[track_caller]
     pub fn build_ui_state<S: 'static>(
         self,
-        app: impl FnMut(&mut egui::Ui, &mut S) + 'static,
+        mut app: impl FnMut(&mut egui::Ui, &mut S) + 'static,
         state: S,
     ) -> EguiHarness<S> {
-        self.build_boxed(Box::new(app), state)
+        // kittest runs `Ui` closures in a central panel's frame with an 8-point outer margin
+        // (egui_kittest's `AppKind::run_ui`); context closures (`build`, `build_state`) run bare
+        self.build_boxed(
+            Box::new(move |ui: &mut egui::Ui, s: &mut S| {
+                egui::Frame::central_panel(ui.style()).outer_margin(8.0).inner_margin(0.0).show(ui, |ui| app(ui, s));
+            }),
+            state,
+        )
     }
 
     #[track_caller]
@@ -598,7 +621,7 @@ impl EguiHarnessBuilder {
         mut app: impl FnMut(&egui::Context, &mut S) + 'static,
         state: S,
     ) -> EguiHarness<S> {
-        self.build_ui_state(move |ui, s| app(ui.ctx(), s), state)
+        self.build_boxed(Box::new(move |ui: &mut egui::Ui, s: &mut S| app(ui.ctx(), s)), state)
     }
 
     #[track_caller]
@@ -615,6 +638,8 @@ impl EguiHarnessBuilder {
             renderer_setup,
             renderer,
             pass_every_step,
+            os,
+            missing_glyph_policy,
         } = self;
         let gpu = renderer_setup.is_some().then(|| {
             GpuRender::new(base.default_glyphs())
@@ -625,10 +650,18 @@ impl EguiHarnessBuilder {
         let make_doc = |clock: Arc<dyn Clock>, gpu: Option<&GpuRender>| {
             let mut doc = IslandDoc::new(app, state, clock, size, scale, gpu.map(|g| &g.device), renderer);
             let ctx = doc.island.context().clone();
-            ctx.set_theme(theme);
+            // kittest's order: the setup, then its defaults over it
             if let Some(setup) = context_setup {
                 setup(&ctx);
             }
+            ctx.set_theme(theme);
+            ctx.set_os(os);
+            ctx.set_missing_glyph_policy(missing_glyph_policy);
+            ctx.all_styles_mut(|style| {
+                style.visuals.text_cursor.blink = false;
+                style.scroll_animation = egui::style::ScrollAnimation::none();
+                style.animation_time = 0.0;
+            });
             if let (Some(setup), Some(g)) = (renderer_setup, gpu) {
                 let r = doc
                     .island
