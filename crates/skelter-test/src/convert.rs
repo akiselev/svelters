@@ -103,6 +103,16 @@ pub enum TestEvent {
     Skelter(InputEvent),
     #[cfg(feature = "egui")]
     Egui(egui::Event),
+    /// svelters-automation's input (feature `automation`).
+    #[cfg(feature = "automation")]
+    Automation(svelters_automation::input::Event),
+}
+
+#[cfg(feature = "automation")]
+impl From<svelters_automation::input::Event> for TestEvent {
+    fn from(e: svelters_automation::input::Event) -> Self {
+        TestEvent::Automation(e)
+    }
 }
 
 impl From<InputEvent> for TestEvent {

@@ -115,7 +115,7 @@ fn one(s: &Session<EmbedHarness>, sel: &str) -> svelters_automation::NodeInfo {
     s.node(r).unwrap()
 }
 
-fn inside(a: egui::Rect, b: egui::Rect) -> bool {
+fn inside(a: svelters_automation::Rect, b: svelters_automation::Rect) -> bool {
     b.expand(0.5).contains_rect(a)
 }
 

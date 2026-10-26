@@ -64,7 +64,10 @@ jobs:
         run: tools/dev/check-egui-free
       - name: cargo check (egui-free default features)
         shell: bash
-        run: cargo check -p skelter-test
+        run: |
+          cargo check -p skelter-test
+          cargo check -p skelter-test --features automation
+          cargo check -p svelters-automation
       - name: cargo check (optional features)
         shell: bash
         run: |

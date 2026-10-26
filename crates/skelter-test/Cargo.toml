@@ -12,9 +12,11 @@ default = []
 # `IslandHost`), and the egui vocabulary of the verbs (`egui::Event`, `egui::Key`, `egui::Pos2`, …).
 # Off by default: a skelter-only consumer (cadatomic after rmegui) links no egui-family crate.
 egui = ["dep:egui", "dep:egui-wgpu", "dep:skelter-egui-island"]
-# The automation bridge (`crate::automation`): a `svelters_automation::Session` on a harness, over
-# skelter-native UI (`SkelterNativeDriver`) or svelters-egui roots in egui islands (`SkelterDriver`).
-automation = ["egui", "dep:svelters-automation", "dep:svelters-egui"]
+# The automation bridge (`crate::automation`): a `svelters_automation::Session` on a harness over
+# skelter-native UI (`SkelterNativeDriver`, `SkelterScene`); no egui.
+automation = ["dep:svelters-automation"]
+# `SkelterDriver`: svelters-egui roots in egui islands, through the egui `Driver`.
+automation-egui = ["automation", "egui", "dep:svelters-egui", "svelters-automation/egui"]
 
 [dependencies]
 skelter-base = { workspace = true }
@@ -45,7 +47,7 @@ accesskit_atspi_common = "0.21.0"
 atspi-common = { version = "0.13", default-features = false }
 
 [dev-dependencies]
-skelter-test = { path = ".", features = ["egui", "automation"] }
+skelter-test = { path = ".", features = ["egui", "automation", "automation-egui"] }
 # The automation test loads an app from source (fixtures/counter-egui) into an island.
 svelters-egui = { path = "../svelters-egui", default-features = false, features = ["source"] }
 svelters-host = { workspace = true }

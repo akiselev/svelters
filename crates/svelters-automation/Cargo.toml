@@ -1,6 +1,6 @@
 [package]
 name = "svelters-automation"
-description = "AU1: the automation protocol core (query, read, act, wait, capture, journal) over the egui scene, in process, and AU2: its NDJSON JSON-RPC transport over a local socket"
+description = "AU1: the automation protocol core (query, read, act, wait, capture, journal) over any scene source, in process, and AU2: its NDJSON JSON-RPC transport over a local socket; svelters-egui's scene and drivers with feature egui"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -8,8 +8,12 @@ publish.workspace = true
 
 [features]
 default = []
+# svelters-egui's retained scene as a `SceneSource`, the egui `Driver` (every one a `SourceDriver`),
+# `Clocked`/`RealTime`, and egui conversions of the input, geometry and image types. Off by default:
+# a skelter-only host (cadatomic after rmegui) links no egui-family crate.
+egui = ["dep:svelters-egui", "dep:egui"]
 # `Driver` for svelters-egui's kittest harnesses (`TestApp`, `EmbedHarness`). Test builds turn it on.
-kittest = ["dep:egui_kittest", "svelters-egui/kittest"]
+kittest = ["egui", "dep:egui_kittest", "svelters-egui/kittest"]
 # AU2's reference host `svelters-run` (headless, apps compiled live from source), and AU1b's
 # `#[svelters_automation::test]` with its `e2e` module.
 run = ["kittest", "svelters-egui/source", "dep:svelters-macros"]
@@ -20,16 +24,18 @@ path = "src/bin/svelters-run.rs"
 required-features = ["run"]
 
 [dependencies]
-svelters-egui = { path = "../svelters-egui", default-features = false }
+svelters-egui = { path = "../svelters-egui", default-features = false, optional = true }
 svelters-style.workspace = true
+# The semantic tier's action requests and `A11yNode`'s ids and roles (the version egui and skelter use).
+accesskit.workspace = true
 svelters-host.workspace = true
 # OW1b: own widgets' prop values (`NodeRef::value_of`) in snapshots
 svelters-abi.workspace = true
 svelters-macros = { path = "../svelters-macros", optional = true }
 serde_json.workspace = true
-egui = { version = "=0.37.0", default-features = false }
+egui = { version = "=0.37.0", default-features = false, optional = true }
 egui_kittest = { version = "=0.37.0", optional = true }
 
 [dev-dependencies]
-svelters-automation = { path = ".", features = ["kittest", "run"] }
+svelters-automation = { path = ".", features = ["egui", "kittest", "run"] }
 svelters-egui = { path = "../svelters-egui", features = ["kittest", "source"] }

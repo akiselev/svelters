@@ -6,8 +6,8 @@
 //! - **Read**: [`Session::query`], [`Session::node`], [`Session::snapshot`] (SG7's text snapshot in
 //!   the aria-snapshot shape), [`Session::roots`], [`Session::a11y_tree`].
 //! - **Act**: semantic actions through AccessKit action requests ([`Tier::Semantic`]) or synthetic
-//!   egui input at the node ([`Tier::Synthetic`]), after the actionability checks (§1.5); every
-//!   act replies after the app settles, with what changed.
+//!   input ([`input::Event`]) at the node ([`Tier::Synthetic`]), after the actionability checks
+//!   (§1.5); every act replies after the app settles, with what changed.
 //! - **Wait**: [`Session::wait_settled`], [`Session::wait_for`]: the embed's busy reasons, no
 //!   pending input, and the host's idle predicate ([`Session::set_idle`]: cadatomic's
 //!   IdleBarrier). Timeouts count virtual time (frames × the driver's step).
@@ -20,9 +20,13 @@
 //!   sources, and one [`WaitReport`] on every wait timeout.
 //! - [`SceneSource`] ([`source`]): the scene the engine and the snapshot read, behind a trait
 //!   (svelters-egui's scene implements it; skelter-test's `SkelterScene` reads skelter-native UI).
-//! - [`Driver`]: what runs the frames; kittest's harnesses implement it (feature `kittest`).
-//!   [`SourceDriver`] is what a [`Session`] runs on: frames over any [`SceneSource`] (every `Driver`
-//!   is one; skelter-test's `SkelterNativeDriver` runs sessions on skelter-native UI).
+//! - [`SourceDriver`] is what a [`Session`] runs on: frames and input ([`input`], points and rects in
+//!   [`geom`], captures as [`Image`]) over any [`SceneSource`]; skelter-test's `SkelterNativeDriver`
+//!   runs sessions on skelter-native UI.
+//! - **egui** (feature `egui`, off by default, so a skelter-only host links no egui): svelters-egui's
+//!   scene as a `SceneSource`, `Driver` (what runs svelters-egui's frames; every `Driver` is a
+//!   `SourceDriver`; kittest's harnesses implement it with feature `kittest`), `Clocked`/`RealTime`,
+//!   and `From` conversions between egui's input, geometry and image types and this crate's.
 //! - [`Session::call`]: the same methods as JSON (`scene.query {selector}` …), the schema AU2's
 //!   IPC transport and cadatomic's socket server carry unchanged.
 //!
@@ -42,8 +46,12 @@ pub mod driver;
 #[cfg(feature = "run")]
 pub mod e2e;
 pub mod engine;
+pub mod geom;
+pub mod image;
+pub mod input;
 pub mod journal;
 pub mod replay;
+#[cfg(feature = "egui")]
 pub mod role;
 pub mod rpc;
 pub mod selector;
@@ -52,7 +60,11 @@ mod session;
 mod snapshot;
 pub mod source;
 
-pub use driver::{A11yNode, Changes, Driver, SourceDriver};
+pub use driver::{A11yNode, Changes, SourceDriver};
+#[cfg(feature = "egui")]
+pub use driver::Driver;
+pub use geom::{Pos2, Rect, Vec2, pos2, vec2};
+pub use image::Image;
 /// AU1b: `#[svelters_automation::test]`, one body in process or out of process (see [`e2e`]).
 #[cfg(feature = "run")]
 pub use svelters_macros::test;
@@ -61,7 +73,7 @@ pub use journal::{ClockDomain, Cursor, Event, EventKind, FieldType, Journal, Mat
 pub use selector::{Selector, TextMatch};
 pub use source::{ComputedStyle, Drawn, SceneSource, SourceRoot};
 pub use session::{
-    ActOptions, ActResult, Actionability, At, Budget, ComputedInfo, Condition, Drag, DragTo, Expect, Grants, NeverId,
+    ActOptions, ActResult, Actionability, At, Budget, ComputedInfo, Condition, DefaultNode, Drag, DragTo, Expect, Grants, NeverId,
     NodeInfo, Ref, RootInfo, SeenId, Session, SourceInfo, Target, Tier, Unmet, WaitReport, WaitState, Wheel, rule_json,
 };
 

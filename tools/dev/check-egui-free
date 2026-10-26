@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 # Fails when a crate that must build without egui (rmegui: cadatomic links no egui-family crate)
 # pulls one in with its default features. Normal and build edges only; dev-dependencies (the crates'
-# own egui tests) don't count. Usage: check-egui-free [crate…] (default: the list below). Run by
-# CI (skelter.yml).
+# own egui tests) don't count. Usage: check-egui-free [crate[:features]…] (default: the list below).
+# Run by CI (skelter.yml).
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 crates=("$@")
-[ ${#crates[@]} -gt 0 ] || crates=(skelter-test)
+[ ${#crates[@]} -gt 0 ] || crates=(skelter-test skelter-test:automation svelters-automation)
 family='^(egui|eframe|epaint|emath|ecolor|egui-wgpu|egui-winit|egui_kittest|egui_extras|skelter-egui-island|svelters-egui) '
 fail=0
 for c in "${crates[@]}"; do
-  found=$(cargo tree -p "$c" -e normal,build --prefix none | grep -E "$family" | sort -u || true)
+  args=(-p "${c%%:*}")
+  [ "$c" = "${c%%:*}" ] || args+=(--features "${c#*:}")
+  found=$(cargo tree "${args[@]}" -e normal,build --prefix none | grep -E "$family" | sort -u || true)
   if [ -n "$found" ]; then
     echo "check-egui-free: $c pulls egui-family crates with its default features:" >&2
     printf '%s\n' "$found" >&2

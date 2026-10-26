@@ -12,7 +12,7 @@
 //! | [`egui_event`] | the injection adapter's state; with feature `egui`, the `egui::Event`-shaped adapter for tests moving off egui_kittest |
 //! | [`render`] | pixels: the committed tree drawn by `skelter_render` on the environment's adapter (lavapipe in CI) |
 //! | [`snapshot`] | the pixel tier: kittest's `snapshot` (dify's comparison, PNG goldens, `UPDATE_SNAPSHOTS`) |
-//! | `automation` | (feature `automation`) `SkelterNativeDriver` (skelter-native UI) and `SkelterDriver` (svelters-egui in an island): a `svelters_automation::Session` (selectors, acts, waits, journal, MCP methods) on a harness |
+//! | `automation` | (feature `automation`) `SkelterNativeDriver` (skelter-native UI, no egui) and `SkelterDriver` (feature `automation-egui`: svelters-egui in an island): a `svelters_automation::Session` (selectors, acts, waits, journal, MCP methods) on a harness |
 //! | `scene_source` | (feature `automation`) `SkelterScene`: skelter-native UI as a `svelters_automation::SceneSource` (selectors, snapshot) |
 
 pub mod a11y;
@@ -47,5 +47,7 @@ pub use render::{GpuRender, Image, RenderError};
 #[cfg(feature = "automation")]
 pub use scene_source::SkelterScene;
 #[cfg(feature = "automation")]
-pub use automation::{SkelterDriver, SkelterNativeDriver};
+pub use automation::SkelterNativeDriver;
+#[cfg(feature = "automation-egui")]
+pub use automation::SkelterDriver;
 pub use snapshot::{SnapshotError, SnapshotOptions, image_snapshot, try_image_snapshot, try_image_snapshot_options};

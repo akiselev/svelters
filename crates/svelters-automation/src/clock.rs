@@ -4,10 +4,10 @@
 //!   host's timers, `performance.now()` and timer wakeups; its spawner runs `#[js(worker)]` and
 //!   `#[js(blocking)]` jobs on the UI thread in a seeded order (E1 ordering); its seed also seeds
 //!   `Math.random` (`HostSched::seed`). Time moves only when frames run.
-//! - [`Clocked`]: a [`Driver`] whose every frame first lets one frame of virtual time pass on its
+//! - `Clocked` (feature `egui`): a `Driver` whose every frame first lets one frame of virtual time pass on its
 //!   [`VirtualClock`] (`run_for(frame_ms)`: due timers wake the host, ready jobs complete), then runs
 //!   the frame. A 30 s `wait.for` costs frames, not 30 s.
-//! - [`RealTime`]: a [`Driver`] paced by the wall clock (`--clock real`): each frame starts no
+//! - `RealTime` (feature `egui`): a `Driver` paced by the wall clock (`--clock real`): each frame starts no
 //!   earlier than one frame time after the last. The host keeps the wall clock.
 //!
 //! ```ignore
@@ -17,8 +17,12 @@
 //! s.advance_clock(1000.0)?; // one virtual second, frame by frame
 //! ```
 
+#[cfg(feature = "egui")]
 use crate::driver::{A11yNode, Driver};
-use std::time::{Duration, Instant};
+use std::time::Duration;
+#[cfg(feature = "egui")]
+use std::time::Instant;
+#[cfg(feature = "egui")]
 use svelters_egui::scene::SceneHandle;
 use svelters_host::svelters_sched::TestScheduler;
 use svelters_host::{HostConfig, HostSched};
@@ -28,7 +32,7 @@ use svelters_host::{HostConfig, HostSched};
 pub enum ClockMode {
     /// [`VirtualClock`]: time moves with the frames.
     Virtual,
-    /// The wall clock; frames are paced in wall time ([`RealTime`]).
+    /// The wall clock; frames are paced in wall time (`RealTime`).
     Real,
 }
 
@@ -103,6 +107,7 @@ impl VirtualClock {
     }
 }
 
+#[cfg(feature = "egui")]
 /// A driver on a [`VirtualClock`]: each frame advances the clock by the frame time first.
 pub struct Clocked<D> {
     // Dropped first: the host goes before the scheduler its hooks point at.
@@ -112,6 +117,7 @@ pub struct Clocked<D> {
     held: bool,
 }
 
+#[cfg(feature = "egui")]
 impl<D: Driver> Clocked<D> {
     /// `driver`'s host must have been made with `clock.config(..)` (or `clock.host_sched()`).
     pub fn new(driver: D, clock: VirtualClock) -> Clocked<D> {
@@ -123,18 +129,21 @@ impl<D: Driver> Clocked<D> {
     }
 }
 
+#[cfg(feature = "egui")]
 /// A driver paced by the wall clock (see the module docs).
 pub struct RealTime<D> {
     pub driver: D,
     last: Option<Instant>,
 }
 
+#[cfg(feature = "egui")]
 impl<D: Driver> RealTime<D> {
     pub fn new(driver: D) -> RealTime<D> {
         RealTime { driver, last: None }
     }
 }
 
+#[cfg(feature = "egui")]
 macro_rules! delegate {
     () => {
         fn scene(&self) -> SceneHandle {
@@ -158,6 +167,7 @@ macro_rules! delegate {
     };
 }
 
+#[cfg(feature = "egui")]
 impl<D: Driver> Driver for Clocked<D> {
     delegate!();
     fn step(&mut self) {
@@ -178,6 +188,7 @@ impl<D: Driver> Driver for Clocked<D> {
     }
 }
 
+#[cfg(feature = "egui")]
 impl<D: Driver> Driver for RealTime<D> {
     delegate!();
     fn step(&mut self) {

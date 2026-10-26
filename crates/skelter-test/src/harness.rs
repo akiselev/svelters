@@ -16,9 +16,8 @@
 use crate::a11y::{A11yTree, AkNode, By, NodeInfo, NodeKey};
 use crate::consumer::Consumer;
 use crate::convert::{IntoButton, IntoKey, IntoModifiers, IntoPoint, IntoSize, TestEvent};
-use crate::egui_event::EguiAdapter;
-#[cfg(feature = "egui")]
-use crate::egui_event::Injected;
+#[cfg_attr(not(any(feature = "egui", feature = "automation")), allow(unused_imports))]
+use crate::egui_event::{EguiAdapter, Injected};
 use crate::headless::HeadlessCompositor;
 use crate::render::{GpuRender, Image, RenderError};
 use crate::snapshot::{SnapshotError, SnapshotOptions};
@@ -735,15 +734,25 @@ impl<D: DocumentApi + 'static> Harness<D> {
             #[cfg(feature = "egui")]
             TestEvent::Egui(e) => {
                 let injected = self.egui.borrow_mut().translate(&e);
-                for i in injected {
-                    self.push(match i {
-                        Injected::Input(e) => Queued::Input(self.window, e),
-                        Injected::A11y(r) => Queued::A11y(self.window, r),
-                        Injected::Focused(f) => Queued::Window(self.window, WindowEvent::Focused(f)),
-                        Injected::SetClipboard(t) => Queued::Clipboard(t),
-                    });
-                }
+                self.inject(injected);
             }
+            #[cfg(feature = "automation")]
+            TestEvent::Automation(e) => {
+                let injected = self.egui.borrow_mut().translate_automation(&e);
+                self.inject(injected);
+            }
+        }
+    }
+
+    #[cfg(any(feature = "egui", feature = "automation"))]
+    fn inject(&self, injected: Vec<Injected>) {
+        for i in injected {
+            self.push(match i {
+                Injected::Input(e) => Queued::Input(self.window, e),
+                Injected::A11y(r) => Queued::A11y(self.window, r),
+                Injected::Focused(f) => Queued::Window(self.window, WindowEvent::Focused(f)),
+                Injected::SetClipboard(t) => Queued::Clipboard(t),
+            });
         }
     }
 
