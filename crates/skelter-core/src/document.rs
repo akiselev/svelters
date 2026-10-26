@@ -1159,6 +1159,17 @@ impl Document {
         n
     }
 
+    /// Restyles, re-measures and re-records every node of every window: a service the kinds paint or
+    /// measure from changed (the widgets' theme: scheme, contrast, density, accent, token overrides).
+    pub fn repaint_all(&mut self) {
+        self.restyle_all();
+        for i in 0..self.core.len() {
+            let Some(node) = self.slots.id_at(i) else { continue };
+            self.mark_measure(i);
+            self.mark(node, Dirty::PAINT | Dirty::A11Y);
+        }
+    }
+
     pub(crate) fn restyle_all(&mut self) {
         let roots: Vec<NodeId> = self.windows.iter().map(|w| w.root).collect();
         for r in roots {

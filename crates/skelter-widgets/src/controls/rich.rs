@@ -277,7 +277,7 @@ pub(crate) mod testing {
         let mut list = DisplayList::new();
         let mut res = MemResources::default();
         let mut text = SpanShaper;
-        let mut cx = RecordCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
+        let mut cx = RecordCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
         k.record(&mut cx);
         (list, res)
     }
@@ -285,7 +285,7 @@ pub(crate) mod testing {
     /// Runs the kind's `prepare` at `size` (what skelter-core does after layout).
     pub fn prepare(k: &mut dyn Kind, size: Size, state: StateBits) {
         let mut text = SpanShaper;
-        let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, text: &mut text, emitted: Vec::new(), layouts: None };
+        let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None }, text: &mut text, emitted: Vec::new(), layouts: None };
         k.prepare(&mut cx);
     }
 }

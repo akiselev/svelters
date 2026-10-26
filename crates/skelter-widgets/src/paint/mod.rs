@@ -180,7 +180,7 @@ const INHERITED: &[&str] = &["color", "font-size", "font-weight", "font-family",
 #[derive(Clone, Copy)]
 enum Got<'a> {
     Css(&'a ComputedValue),
-    Ua(UaValue, bool),
+    Ua(UaValue, &'a crate::theme::Theme),
 }
 
 /// What primitives read: one node's (or part's) computed style, the widget's UA table under it,
@@ -199,6 +199,9 @@ pub struct StyleView<'a> {
     ua: Ua,
     state: StateBits,
     dark: bool,
+    /// The theme UA tokens resolve in: the document's (`Theme` service, [`StyleView::with_theme`]),
+    /// else the built-in one of the scheme ([`ua_theme`]).
+    theme: Option<&'a crate::theme::Theme>,
     weight: Option<u16>,
     parent: Option<&'a StyleView<'a>>,
 }
@@ -213,18 +216,33 @@ impl<'a> StyleView<'a> {
     /// `css` (the cascade's computed style, `None` when no sheet reaches the node) over `ua`, in
     /// `state`; `dark` picks the scheme UA tokens resolve in.
     pub fn new(css: Option<&'a ComputedStyle>, ua: Ua, state: StateBits, dark: bool) -> StyleView<'a> {
-        StyleView { css, over: &[], ua, state, dark, weight: None, parent: None }
+        StyleView { css, over: &[], ua, state, dark, theme: None, weight: None, parent: None }
+    }
+
+    /// With the document's theme (its `Theme` service) for UA tokens and the scheme; `None` keeps
+    /// the built-in theme of the scheme.
+    pub fn with_theme(mut self, theme: Option<&'a crate::theme::Theme>) -> StyleView<'a> {
+        if let Some(t) = theme {
+            self.dark = t.is_dark();
+        }
+        self.theme = theme;
+        self
+    }
+
+    /// The theme UA tokens resolve in.
+    pub fn theme(&self) -> &'a crate::theme::Theme {
+        self.theme.unwrap_or_else(|| ua_theme(self.dark))
     }
 
     /// The UA table alone (no cascade): a foreign painter's styled control.
     pub fn ua_only(ua: Ua, state: StateBits, dark: bool) -> StyleView<'static> {
-        StyleView { css: None, over: &[], ua, state, dark, weight: None, parent: None }
+        StyleView { css: None, over: &[], ua, state, dark, theme: None, weight: None, parent: None }
     }
 
     /// A part's view: its own computed style (`::part(name)`, `None` until a rule reaches it) and
     /// UA table, inheriting from this view (its host). The part shares the host's state.
     pub fn part(&'a self, css: Option<&'a ComputedStyle>, ua: Ua) -> StyleView<'a> {
-        StyleView { css, over: &[], ua, state: self.state, dark: self.dark, weight: None, parent: Some(self) }
+        StyleView { css, over: &[], ua, state: self.state, dark: self.dark, theme: self.theme, weight: None, parent: Some(self) }
     }
 
     /// With running transitions' values over the computed style (the node's or part's sample this
@@ -282,19 +300,19 @@ impl<'a> StyleView<'a> {
             return Some(Got::Css(v));
         }
         if let Some(v) = self.ua.find_own(name, self.state) {
-            return Some(Got::Ua(v, self.dark));
+            return Some(Got::Ua(v, self.theme()));
         }
         if let Some(p) = self.parent
             && INHERITED.contains(&name)
         {
             return p.get(name);
         }
-        Ua::ROOT.find_own(name, self.state).map(|v| Got::Ua(v, self.dark))
+        Ua::ROOT.find_own(name, self.state).map(|v| Got::Ua(v, self.theme()))
     }
 
-    fn ua_px_of(v: UaValue, dark: bool) -> Option<f32> {
+    fn ua_px_of(v: UaValue, theme: &crate::theme::Theme) -> Option<f32> {
         match v {
-            UaValue::Token(t) => ua_theme(dark).px(t),
+            UaValue::Token(t) => theme.px(t),
             UaValue::Px(p) | UaValue::Number(p) => Some(p),
             _ => None,
         }
@@ -305,7 +323,7 @@ impl<'a> StyleView<'a> {
         match self.get(name)? {
             Got::Css(ComputedValue::Color(k)) => Some(color_of(*k)),
             Got::Css(_) => None,
-            Got::Ua(UaValue::Token(t), dark) => ua_theme(dark).color(t),
+            Got::Ua(UaValue::Token(t), theme) => theme.color(t),
             Got::Ua(UaValue::Color(c), _) => Some(c),
             Got::Ua(..) => None,
         }
@@ -317,7 +335,7 @@ impl<'a> StyleView<'a> {
             Got::Css(ComputedValue::Length(l)) => Some(l.px),
             Got::Css(ComputedValue::Number(n)) => Some(*n),
             Got::Css(_) => None,
-            Got::Ua(v, dark) => Self::ua_px_of(v, dark),
+            Got::Ua(v, theme) => Self::ua_px_of(v, theme),
         }
     }
 
@@ -327,7 +345,7 @@ impl<'a> StyleView<'a> {
             Got::Css(ComputedValue::Number(n)) => Some(*n),
             Got::Css(ComputedValue::Int(n)) => Some(*n as f32),
             Got::Css(_) => None,
-            Got::Ua(v, dark) => Self::ua_px_of(v, dark),
+            Got::Ua(v, theme) => Self::ua_px_of(v, theme),
         }
     }
 
@@ -353,7 +371,7 @@ impl<'a> StyleView<'a> {
             Some(ComputedValue::Number(n)) => return *n as i64,
             _ => {}
         }
-        if let Some(v) = self.ua.find_own("font-weight", self.state).and_then(|v| Self::ua_px_of(v, self.dark)) {
+        if let Some(v) = self.ua.find_own("font-weight", self.state).and_then(|v| Self::ua_px_of(v, self.theme())) {
             return v as i64;
         }
         match self.parent {
@@ -375,7 +393,7 @@ impl<'a> StyleView<'a> {
         match self.ua.find_own("box-shadow", self.state)? {
             UaValue::Shadows(l) if !l.is_empty() => Some(Cow::Borrowed(l)),
             UaValue::Token(t) => {
-                let s = ua_theme(self.dark).shadow(t)?;
+                let s = self.theme().shadow(t)?;
                 (s != crate::theme::Shadow::NONE).then(|| Cow::Owned(vec![css_shadow(s)]))
             }
             _ => None,
@@ -457,7 +475,7 @@ impl<'a> StyleView<'a> {
         for (k, n) in names.iter().enumerate() {
             out[k] = match self.css(n) {
                 Some(ComputedValue::Length(l)) => l.px,
-                _ => all.map(|a| a[k]).or(one).or_else(|| self.ua.find_own(n, self.state).and_then(|v| Self::ua_px_of(v, self.dark))).unwrap_or(0.0),
+                _ => all.map(|a| a[k]).or(one).or_else(|| self.ua.find_own(n, self.state).and_then(|v| Self::ua_px_of(v, self.theme()))).unwrap_or(0.0),
             };
         }
         out

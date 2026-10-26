@@ -54,6 +54,15 @@ impl Services {
     pub fn remove<T: 'static>(&mut self) -> Option<T> {
         self.map.remove(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast().ok().map(|b| *b))
     }
+    /// Two services at once: `A` to read and `B` to write (a kind that paints from the theme while
+    /// it shapes with the text system). `A` and `B` are different types.
+    pub fn pair<A: 'static, B: 'static>(&mut self) -> (Option<&A>, Option<&mut B>) {
+        let (ta, tb) = (std::any::TypeId::of::<A>(), std::any::TypeId::of::<B>());
+        assert_ne!(ta, tb, "Services::pair: two different services");
+        match self.map.get_disjoint_mut([&ta, &tb]) {
+            [a, b] => (a.and_then(|a| a.downcast_ref()), b.and_then(|b| b.downcast_mut())),
+        }
+    }
 }
 
 fn common_defaults() -> &'static [Option<Value>] {
@@ -245,10 +254,14 @@ impl<'a> std::ops::Deref for StyleCx<'a> {
     }
 }
 
-impl StyleCx<'_> {
+impl<'a> StyleCx<'a> {
     /// The taffy style the cascade computed for the node (CSS over the kind's defaults).
     pub fn default_layout(&self) -> taffy::Style {
         self.cascaded.clone()
+    }
+    /// A document service, read only (the theme a kind's layout follows).
+    pub fn service<T: 'static>(&self) -> Option<&'a T> {
+        self.node.doc.services.get()
     }
 }
 
@@ -282,6 +295,10 @@ impl MeasureCx<'_> {
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
+    }
+    /// All the services ([`Services::pair`] borrows two at once).
+    pub fn services(&mut self) -> &mut Services {
+        self.services
     }
 }
 
@@ -358,6 +375,10 @@ impl PrepareCx<'_> {
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
+    }
+    /// All the services ([`Services::pair`] borrows two at once).
+    pub fn services(&mut self) -> &mut Services {
+        self.services
     }
     /// Emits `signal` with `arg` from this node: queued as a JS event once the prepare returns
     /// ([`Document::take_events`]), not cancelable (a data window a virtual table needs, a restored
@@ -459,6 +480,10 @@ impl RecordCx<'_> {
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
+    }
+    /// All the services ([`Services::pair`] borrows two at once).
+    pub fn services(&mut self) -> &mut Services {
+        self.services
     }
     /// Hands a shaped run to the compositor; the id is valid for this node's list.
     pub fn add_run(&mut self, run: Arc<GlyphRun>) -> RunId {

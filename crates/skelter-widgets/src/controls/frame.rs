@@ -206,7 +206,7 @@ impl Frame {
     fn indicator_view<'a>(host: &'a StyleView<'a>, css: Option<&'a ComputedStyle>) -> StyleView<'a> {
         match css {
             Some(c) => host.part(Some(c), INDICATOR),
-            None => StyleView::new(None, INDICATOR, host.state(), host.is_dark()),
+            None => StyleView::new(None, INDICATOR, host.state(), host.is_dark()).with_theme(Some(host.theme())),
         }
     }
 
@@ -327,7 +327,7 @@ impl Kind for Frame {
             if self.props.checked {
                 let mark = match mark_css {
                     Some(c) => host.part(Some(c), MARK),
-                    None => StyleView::new(None, MARK, host.state(), host.is_dark()),
+                    None => StyleView::new(None, MARK, host.state(), host.is_dark()).with_theme(Some(host.theme())),
                 };
                 paint_mark(&mut pc, ir, mark.color("color").unwrap_or(Color::BLACK));
             }
@@ -409,7 +409,7 @@ mod tests {
     }
 
     fn styles(state: StateBits) -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state, dark: true }
+        Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None }
     }
 
     fn chrome(k: &Frame) -> [f32; 4] {

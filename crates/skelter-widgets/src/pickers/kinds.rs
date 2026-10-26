@@ -1403,14 +1403,14 @@ mod tests {
         let mut lender = Lender(0);
         let prepare = |k: &mut ColorEditorKind, lender: &mut Lender| {
             let mut text = MonoShaper;
-            let style = w::Styles { computed: None, parts: &[], children: &[], state: StateBits::FOCUSED, dark: true };
+            let style = w::Styles { computed: None, parts: &[], children: &[], state: StateBits::FOCUSED, dark: true, theme: None };
             w::Kind::prepare(k, &mut PrepareCx { size, style, text: &mut text, emitted: Vec::new(), layouts: Some(lender) });
         };
         let record = |k: &ColorEditorKind| {
             let mut list = DisplayList::new();
             let mut res = MemResources::default();
             let mut text = MonoShaper;
-            let style = w::Styles { computed: None, parts: &[], children: &[], state: StateBits::FOCUSED, dark: true };
+            let style = w::Styles { computed: None, parts: &[], children: &[], state: StateBits::FOCUSED, dark: true, theme: None };
             w::Kind::record(k, &mut RecordCx { size, style, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 });
             list.items.iter().filter_map(|p| match p { Prim::Quad(q) => Some((q.rect, q.fill.clone())), _ => None }).collect::<Vec<_>>()
         };

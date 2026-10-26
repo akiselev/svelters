@@ -291,6 +291,9 @@ pub mod core {
         pub children: &'a [Value],
         pub state: StateBits,
         pub dark: bool,
+        /// The document's theme (its `Theme` service) UA tokens resolve in; `None`: the built-in
+        /// theme of `dark`'s scheme.
+        pub theme: Option<&'a crate::theme::Theme>,
     }
 
     impl<'a> Styles<'a> {

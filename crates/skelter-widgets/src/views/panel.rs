@@ -232,7 +232,7 @@ impl Kind for Panel {
 
     fn record(&self, cx: &mut RecordCx) {
         let host = host_view(&cx.style, UA);
-        let styles = crate::shim::core::Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
+        let styles = crate::shim::core::Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme };
         let rect = cx.rect();
         let mut pc = PaintCx::of(cx);
         paint::paint_box(&mut pc, &host, rect);
@@ -385,10 +385,10 @@ mod tests {
         let st = p.layout_style(&StyleCx { computed: None, state: crate::interact::StateBits::NONE, dark: true, base: None });
         assert_eq!((st.size.width, st.flex_shrink), (taffy::Dimension::length(240.0), 0.0));
         let mut text = crate::shim::testing::MonoShaper;
-        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true };
+        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true, theme: None };
         let mut mcx = MeasureCx { style, text: &mut text, scale: 1.0 };
         assert_eq!(p.chrome_padding(&mut mcx), Some([1.0, 0.0, 0.0, 0.0]), "a right panel's inner edge is its left");
-        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true };
+        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true, theme: None };
         let mut text = crate::shim::testing::MonoShaper;
         p.prepare(&mut PrepareCx { size: Size::new(240.0, 300.0), style, text: &mut text, emitted: Vec::new(), layouts: None });
         assert_eq!(p.edge_rects().0, Rect::new(0.0, 0.0, 1.0, 300.0));

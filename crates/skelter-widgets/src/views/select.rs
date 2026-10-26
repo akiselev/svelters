@@ -666,7 +666,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }
     }
 
     fn set(s: &mut Select, name: &str, v: Value) -> Result<(), PropError> {

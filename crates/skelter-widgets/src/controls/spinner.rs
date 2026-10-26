@@ -70,7 +70,7 @@ impl Spinner {
     fn view<'a>(&self, s: &Styles<'a>) -> StyleView<'a> {
         let mut state = s.state;
         state.set(crate::interact::StateBits::BUSY, self.props.spinning);
-        StyleView::new(s.computed, UA, state, s.dark)
+        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme)
     }
 }
 

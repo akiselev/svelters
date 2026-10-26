@@ -307,7 +307,7 @@ impl Sash {
 /// Records a sash under the node's styles: the line (`::part(sash)`), then (shown) the hover bar and
 /// its three-dot grip.
 pub(crate) fn record_sash(pc: &mut PaintCx, styles: &Styles, line: Rect, axis: usize, shown: bool, dragging: bool) {
-    let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark);
+    let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark).with_theme(styles.theme);
     let base = host.part(styles.part_css("sash"), SASH_UA).in_state(StateBits::NONE);
     paint::paint_box(pc, &base, line);
     if !shown {
@@ -788,7 +788,7 @@ impl Kind for SplitView {
 
     fn record(&self, cx: &mut RecordCx) {
         let ax = self.axis();
-        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark };
+        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme };
         let mut pc = PaintCx::of(cx);
         for k in 0..self.sashes.len() {
             let (line, _) = self.sash_rects(k);
@@ -797,7 +797,7 @@ impl Kind for SplitView {
         if let Some((k, size)) = self.ghost {
             let at = self.laid[..k].iter().sum::<f32>() + self.line * k as f32 + size;
             let g = if ax == 0 { Rect::new(at - 1.0, 0.0, at + 1.0, self.size.h) } else { Rect::new(0.0, at - 1.0, self.size.w, at + 1.0) };
-            let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark);
+            let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark).with_theme(styles.theme);
             let guide = host.part(styles.part_css("guide"), GUIDE_UA);
             paint::paint_box(&mut pc, &guide, g);
         }
@@ -970,7 +970,7 @@ mod tests {
         assert_eq!(styles[0].min_size.width, taffy::LengthPercentageAuto::length(32.0));
         // 302 wide, two 1-point sash lines: 100 each
         let mut text = crate::shim::testing::MonoShaper;
-        let style = Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true };
+        let style = Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None };
         s.prepare(&mut PrepareCx { size: Size::new(302.0, 50.0), style, text: &mut text, emitted: Vec::new(), layouts: None });
         assert_eq!(s.laid(), &[100.0, 100.0, 100.0]);
         assert_eq!(s.sash_rects(0).0, Rect::new(100.0, 0.0, 101.0, 50.0));
