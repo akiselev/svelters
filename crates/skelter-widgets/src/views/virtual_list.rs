@@ -1491,9 +1491,23 @@ impl Kind for VirtualList {
 /// a CSS `height`), unless CSS says otherwise.
 pub fn scrolling_layout(cx: &StyleCx) -> taffy::Style {
     let mut s = cx.default_layout();
-    if !cx.computed.is_some_and(|c| c.get("overflow-y").is_some() || c.get("overflow").is_some()) {
+    let set = |name: &str| cx.computed.is_some_and(|c| c.get(name).is_some());
+    if !set("overflow-y") && !set("overflow") {
         s.overflow = taffy::Point { x: taffy::Overflow::Hidden, y: taffy::Overflow::Scroll };
         s.scrollbar_width = 0.0;
+    }
+    // it takes the room its siblings leave (egui's lists fill what is available), not its rows'
+    // full height (that would squeeze its siblings away); CSS `flex-grow: 0` or a `flex-basis`
+    // sizes it by its content instead (A25c)
+    if !set("flex-grow") && !set("flex") {
+        s.flex_grow = 1.0;
+    }
+    if s.flex_grow > 0.0 && !set("flex-basis") && !set("flex") {
+        s.flex_basis = taffy::Dimension::length(0.0);
+    }
+    // its rows are absolute boxes placed in its own box: it is their containing block
+    if s.position == taffy::Position::Relative || !set("position") {
+        s.position = taffy::Position::Relative;
     }
     s
 }

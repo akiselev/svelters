@@ -129,10 +129,8 @@ impl ListRig {
         let n = self.node();
         let text = skelter_core::PropId::of("label", "text", "string");
         self.backend.with_doc(|d| {
-            // rows are placed in the list's content space: its viewport there is shifted by the offset
-            let off = d.scroll_offset(n).y;
-            let w = d.world_rect(n).unwrap();
-            let view = skelter_base::geom::Rect::new(w.min.x, w.min.y + off, w.max.x, w.max.y + off);
+            // rows are placed in the list (their containing block), scrolled with its content
+            let view = d.world_rect(n).unwrap();
             let rows = d.virtual_rows(n).to_vec();
             let mut seen = 0;
             for &(pos, row) in &rows {
@@ -351,6 +349,21 @@ fn tree_view_splice_set_nodes_and_rows() {
     assert_eq!(r.call("count", &[]), Value::I64(2));
     assert_eq!(r.check_rows(&ids), 2);
     assert_ne!(r.call("rowAt", &[Value::I64(1)]), Value::I64(-1));
+    // a row's content (its label) starts after its disclosure triangle, at every level
+    r.backend.with_doc(|d| {
+        d.with_kind(n, |k| {
+            let t = k.as_any().and_then(|a| a.downcast_ref::<skelter_widgets::views::tree::TreeView>()).unwrap();
+            for &(pos, row) in d.virtual_rows(n) {
+                let label = d.children(row)[0];
+                let lr = d.layout_rect(row).unwrap();
+                let label_x = lr.min.x + d.layout_rect(label).unwrap().min.x;
+                if let Some(tri) = t.disclosure_rect(pos) {
+                    assert!(label_x >= tri.max.x, "row {pos}: the label at {label_x} starts after its chevron {tri:?}");
+                }
+                assert!(label_x > 0.0, "row {pos} is indented past its level's triangle");
+            }
+        });
+    });
     // selection
     r.call("setSelection", &[Value::List(vec![Value::I64(2)])]);
     assert_eq!(r.call("selection", &[]), Value::List(vec![Value::I64(2)]));

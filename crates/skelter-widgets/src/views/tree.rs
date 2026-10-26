@@ -408,8 +408,12 @@ impl skelter_core::VirtualChildren for TreeView {
     fn visible(&self, viewport: Rect) -> Range<usize> {
         skelter_core::VirtualChildren::visible(&self.list, viewport)
     }
+    /// The row's content starts after its level's disclosure triangle (`(depth + 1) × indent`, the
+    /// same for leaves, so labels line up), not under it.
     fn row_rect(&self, i: usize) -> Rect {
-        skelter_core::VirtualChildren::row_rect(&self.list, i)
+        let r = skelter_core::VirtualChildren::row_rect(&self.list, i);
+        let x = self.rows.get(i).map_or(0.0, |row| (row.depth as f32 + 1.0) * self.indent);
+        Rect::new((r.min.x + x).min(r.max.x), r.min.y, r.max.x, r.max.y)
     }
     fn content_extent(&self) -> Vec2 {
         skelter_core::VirtualChildren::content_extent(&self.list)

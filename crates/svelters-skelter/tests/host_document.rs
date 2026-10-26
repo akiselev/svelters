@@ -243,7 +243,7 @@ fn an_embedded_list_view_shows_its_rows() {
     let text = skelter_core::PropId::of("label", "text", "string");
     // the visible rows: their labels show their items and have a size
     let shown = |d: &skelter_core::Document| -> Vec<String> {
-        let off = d.scroll_offset(list).y;
+        // rows are placed in the list (their containing block), scrolled with its content
         let view = d.world_rect(list).unwrap();
         let mut out = Vec::new();
         for &(_, row) in d.virtual_rows(list) {
@@ -251,7 +251,7 @@ fn an_embedded_list_view_shows_its_rows() {
             while let Some(n) = stack.pop() {
                 if let Some(skelter_core::Value::Str(s)) = d.get_prop(n, text) {
                     let r = d.world_rect(n).unwrap();
-                    if r.height() > 0.0 && r.min.y >= view.min.y + off && r.max.y <= view.max.y + off {
+                    if r.height() > 0.0 && r.min.y >= view.min.y && r.max.y <= view.max.y {
                         out.push(s.to_string());
                     }
                 }
@@ -272,3 +272,66 @@ fn an_embedded_list_view_shows_its_rows() {
     assert!(rows.len() >= 8 && rows[0] == "Item 500", "after scrolling: {rows:?}");
     let _ = root_id;
 }
+
+const PALETTE: &str = r#"<script>
+  import { ListView } from '@svelters/lists';
+  const keys = Array.from({ length: 200 }, (_, i) => `cmd.${i}`);
+</script>
+<box flex-direction="column" flex-grow={1}>
+  <box anchor="palette-search" height={28}><text-edit text="" flex-grow={1} /></box>
+  <ListView anchor="palette-list" items={keys} row-height={26} flex-grow={1}>
+    {#snippet row(key)}
+      <box><label text={key} /></box>
+    {/snippet}
+  </ListView>
+  <label anchor="palette-footer" text="Enter to run" />
+</box>
+"#;
+
+/// A25c: the palette's shape (an overlay: a search field, a list growing into the rest, a footer): the rows
+/// are placed in the list's own box (its first row at its top), each `row-height` tall, inside
+/// the list (clipped by it), between the search field and the footer.
+#[test]
+fn a_palette_list_places_its_rows_in_its_own_box() {
+    // the host's document measures text (the search field has a line's height)
+    let reg = svelters_skelter::builtin_kinds().registry().clone();
+    let mut doc = Document::new(reg, Box::new(skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing()))));
+    let pane = doc.create(KindId::of("box"));
+    let w = skelter_base::ids::WindowId(1);
+    let root = doc.create_window(w, KindId::of("box"), skelter_base::geom::Size::new(300.0, 300.0), skelter_base::geom::Scale(1.0));
+    doc.insert(root, pane, None, None).unwrap();
+    doc.set_style(pane, skelter_core::StyleInput { inline: Some("position: absolute; left: 20px; top: 30px; flex-direction: column; width: 300px; height: 300px".into()), ..Default::default() });
+    let backend = SkelterBackend::over(doc).unwrap();
+    svelters_skelter::app::install_widget_services(&backend, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())));
+    let host = svelters_host::HostConfig { echo_console: false, echo_errors: true, quit_on_last_window: false, ..svelters_host::HostConfig::default() };
+    let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, ..EmbedConfig::default() }).unwrap();
+    let dir = scratch("palette", &[("Palette.svelte", PALETTE)]);
+    let mut cfg = svelters_host::modules::SourceConfig::for_path(&dir).unwrap();
+    cfg.backend = "skelter".into();
+    let entry = embed.load_from(Rc::new(svelters_host::modules::SourceProvider::new(cfg).unwrap())).unwrap();
+    let slot = embed.adopt_slot("palette", pane).unwrap();
+    embed.mount(MountSpec::new(entry, "Palette", slot, "palette")).unwrap();
+    embed.set_slot_layout(slot, w, [300.0, 300.0], 1.0);
+    let doc = backend.document();
+    for _ in 0..6 {
+        embed.logic();
+        doc.borrow_mut().frame(w, skelter_base::time::Time(0));
+    }
+    let errors: Vec<_> = embed.take_events().into_iter().filter(|e| matches!(e, EmbedEvent::Error { .. } | EmbedEvent::Faulted { .. })).collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    let d = doc.borrow();
+    let search = d.find_anchor(w, "palette-search").expect("search");
+    let list = d.find_anchor(w, "palette-list").expect("list");
+    let footer = d.find_anchor(w, "palette-footer").expect("footer");
+    let (s, l, f) = (d.world_rect(search).unwrap(), d.world_rect(list).unwrap(), d.world_rect(footer).unwrap());
+    assert!(s.height() > 10.0 && s.max.y <= l.min.y && l.max.y <= f.min.y && l.height() > 100.0, "search {s:?}, list {l:?}, footer {f:?}");
+    let rows = d.virtual_rows(list).to_vec();
+    assert!(rows.len() >= 5, "{rows:?}");
+    for &(pos, row) in &rows {
+        let r = d.world_rect(row).unwrap();
+        assert_eq!(r.height(), 26.0, "row {pos} is row-height tall");
+        assert_eq!(r.min.y, l.min.y + 26.0 * pos as f32, "row {pos} placed from the list's top: {r:?} in {l:?}");
+        assert_eq!((r.min.x, r.max.x), (l.min.x, l.max.x), "row {pos} spans the list");
+    }
+}
+
