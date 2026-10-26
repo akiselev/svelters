@@ -4,13 +4,13 @@ As of 2026-10-21 (reactivity R0–R4, OV1, N3, N4, E0+G0, FU1, G1 and WP-A merge
 
 ## Summary
 
-| | GTK 4 | Qt 6 Widgets | AppKit | WinUI 3 | iOS (UIKit) | Android |
-| --- | --- | --- | --- | --- | --- | --- |
-| Features (table below) | 97% | 98% | 44% | 52% | 0% | 0% |
-| Widgets: element tags / widget classes | 66% (67/102) | 68% (52/77) | 16% (9/~56) | 9% (8/87) | 0% (0/46) | 0% |
-| Non-GUI classes with a JS binding | 46% (309/669) | 29% (118/411) | 0% | 0% | 0% | 0% |
-| Members bound on those classes | 90% | 92% | – | – | – | – |
-| State | main target | main target | slice, tested on macOS CI | slice, tested on Windows CI | research done, decisions I1–I9 open | research done, decisions A1–A10 open |
+| | GTK 4 | Qt 6 Widgets | AppKit | WinUI 3 | iOS (UIKit) | Android | skelter (own toolkit) |
+| --- | --- | --- | --- | --- | --- | --- |  --- |
+| Features (table below) | 97% | 98% | 44% | 52% | 0% | 0% |  – (not scored yet) |
+| Widgets: element tags / widget classes | 66% (67/102) | 68% (52/77) | 16% (9/~56) | 9% (8/87) | 0% (0/46) | 0% |  27 kinds, 25 tags (`skelter.json`) |
+| Non-GUI classes with a JS binding | 46% (309/669) | 29% (118/411) | 0% | 0% | 0% | 0% |  – |
+| Members bound on those classes | 90% | 92% | – | – | – | – |  – |
+| State | main target | main target | slice, tested on macOS CI | slice, tested on Windows CI | research done, decisions I1–I9 open | research done, decisions A1–A10 open |  built (presto b1–b3, renamed 2026-10-25); merged to master, CI on Linux, macOS, Windows |
 
 egui (M7) is planned and not started.
 
