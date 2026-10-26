@@ -208,7 +208,9 @@ impl SkelterBackend {
     }
 
     /// [`SkelterBackend::over`] on a document the host keeps a handle to (its own `Rc`), with `kinds`.
-    /// The document's registry must have every concrete kind of `kinds`, under the same tag. The
+    /// The document's registry must have every concrete kind of `kinds`, under the same tag (a host
+    /// with kinds of its own registers the built-ins into its registry with
+    /// [`crate::kinds::register_builtin`], A10). The
     /// backend installs its sync deliverer on it (`Document::set_sync_delivery`): the cancelable
     /// events of the host's dispatches reach JS listeners.
     pub fn shared(kinds: Arc<Kinds>, doc: Rc<RefCell<Document>>) -> StrResult<SkelterBackend> {
@@ -217,9 +219,9 @@ impl SkelterBackend {
             let reg = d.registry();
             for m in kinds.iter() {
                 if let Some(k) = m.core
-                    && reg.get(k).is_none_or(|e| Some(e.spec.name) != m.surface.tag)
+                    && reg.get(k).is_none_or(|e| Some(e.spec.name) != m.surface.tag.map(crate::kinds::core_tag))
                 {
-                    return Err(format!("the host document's registry lacks <{}>: build it on svelters_skelter::builtin_kinds().registry()", m.tag()));
+                    return Err(format!("the host document's registry lacks <{}>: build it on svelters_skelter::builtin_kinds().registry(), or register them into it with svelters_skelter::kinds::register_builtin", m.tag()));
                 }
             }
         }
@@ -764,7 +766,11 @@ impl Backend for SkelterBackend {
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let (_, km) = self.live(h)?;
         let m = km.method(method).ok_or_else(|| format!("unknown method id {method} on <{}>", km.tag()))?;
-        if !args.is_empty() && m.spec.params.is_empty() {
+        // the core kind's own method: its params type the args where the surface lists none (egui's
+        // specs leave generated methods' params out, A9)
+        let core_method = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.methods.iter().find(|x| x.name == m.spec.name));
+        let popup = (m.decl.name, m.spec.name) == ("ContextMenu", "popup");
+        if !args.is_empty() && !popup && m.spec.params.is_empty() && core_method.is_none_or(|c| c.params.is_empty()) {
             return Err(format!("{} takes no arguments", m.spec.name));
         }
         match (m.decl.name, m.spec.name) {
@@ -778,6 +784,13 @@ impl Backend for SkelterBackend {
                 }
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
+            // egui's `popup()` / `popdown()` (A9): skelter-widgets' context menu opens on its `open`
+            // prop, at its owner's last context click (a point argument is not taken yet)
+            ("ContextMenu", "popup" | "popdown") => {
+                let (n, _) = self.live(h)?;
+                let open = skelter_core::PropId::of("context-menu", "open", "bool");
+                self.doc_mut().set_prop(n, open, skelter_core::Value::Bool(m.spec.name == "popup")).map_err(|e| format!("<context-menu>.{}(): {e}", m.spec.name))?;
+            }
             (_, "request-focus") => {
                 let (n, _) = self.live(h)?;
                 let mut doc = self.doc_mut();
@@ -792,8 +805,20 @@ impl Backend for SkelterBackend {
                 let (n, _) = self.live(h)?;
                 let mid = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.method_named(name)).expect("checked");
                 let mut core_args = Vec::new();
-                for (a, (pname, ty)) in args.iter().zip(m.spec.params) {
-                    let v = value::from_abi(a, *ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
+                let params: Vec<(&str, surface::ValueType)> = match (m.spec.params, core_method) {
+                    ([], Some(c)) => c
+                        .params
+                        .iter()
+                        .map(|p| match p.ty {
+                            // lists and records as they come (ids, rows of cells)
+                            skelter_core::ValueType::List | skelter_core::ValueType::Record | skelter_core::ValueType::Enum => (p.name, surface::ValueType::Any),
+                            t => (p.name, crate::kinds::surface_type(t, &[])),
+                        })
+                        .collect(),
+                    (ps, _) => ps.to_vec(),
+                };
+                for (a, (pname, ty)) in args.iter().zip(params) {
+                    let v = value::from_abi(a, ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
                     core_args.extend(value::to_core(v));
                 }
                 let (ret, events) = self.doc_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;

@@ -136,19 +136,51 @@ pub const COMMON_ALIASES: &[(&str, &str, bool)] = &[
     ("autofocus", "autofocus", false),
 ];
 
+/// Surface tags whose core kind has another tag (A9): egui's `combo-box` is skelter-widgets'
+/// `select`, its `action` a `menu-item`. CSS type selectors match the core tag.
+pub const CORE_TAGS: &[(&str, &str)] = &[("combo-box", "select"), ("action", "menu-item")];
+
+/// The core kind's tag for surface tag `tag`.
+pub fn core_tag(tag: &str) -> &str {
+    CORE_TAGS.iter().find(|(s, _)| *s == tag).map_or(tag, |(_, c)| c)
+}
+
+/// A10: registers svelters-skelter's built-in kinds ([`surface::builtin`]: skelter-widgets' where it
+/// has them, placeholders otherwise) into a host's own `reg`, so a host that builds its registry
+/// (its own kinds first) can hand its `Document` to [`crate::SkelterBackend::shared`] with
+/// [`crate::builtin_kinds`]: the kinds, member ids and tags are the same as the built-in registry's.
+/// A host kind with a built-in kind's tag is an error ([`RegistryError::DuplicateKind`]).
+pub fn register_builtin(reg: &mut KindRegistry) -> Result<(), RegistryError> {
+    register_hosted(reg)?;
+    for k in surface::builtin() {
+        if let Some(t) = k.tag
+            && reg.by_name(core_tag(t)).is_none()
+        {
+            reg.register_with(synthesize(k), placeholder)?;
+        }
+    }
+    Ok(())
+}
+
 /// The kinds skelter-widgets has written, registered through its host bridge.
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
     let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
     skelter_widgets::host::register_tier0(reg)?;
     // the tier-1 views whose surface is egui's (A9, `surface::tier1`)
     skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
+    skelter_widgets::table::kinds::register(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::menu::ContextMenu>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::menu::MenuItemKind>(reg)?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
 /// Whether surface type `t` can live in core prop `c`: the same core type and, for an enum, every
 /// surface name among core's values (the index is remapped by name, [`enum_to_core`]).
 fn fits(t: ValueType, c: &core::PropSpec) -> bool {
-    c.ty == core_type(t)
+    t != ValueType::Any
+        && c.ty == core_type(t)
         && match t {
             ValueType::Enum(names) => names.iter().all(|n| c.enum_values.contains(n)),
             _ => true,
@@ -184,7 +216,8 @@ pub fn core_type(t: ValueType) -> core::ValueType {
         ValueType::Enum(_) => core::ValueType::Enum,
         ValueType::Color => core::ValueType::Color,
         ValueType::StrList | ValueType::NumList | ValueType::IdList => core::ValueType::List,
-        ValueType::Record => core::ValueType::Record,
+        // stored by the backend ([`PropTarget::Side`]): never a core prop
+        ValueType::Record | ValueType::Any => core::ValueType::Record,
     }
 }
 
@@ -281,7 +314,7 @@ fn synthesize(k: &'static KindSpec) -> &'static core::KindSpec {
     let mut props: Vec<core::PropSpec> = Vec::new();
     for decl in k.chain() {
         for p in decl.props {
-            if common_alias(decl, p).is_some() || props.iter().any(|q| q.name == p.name) {
+            if common_alias(decl, p).is_some() || p.ty == ValueType::Any || props.iter().any(|q| q.name == p.name) {
                 continue;
             }
             let mut c = core::PropSpec::new(p.name, core_type(p.ty), p.change).default(core_default(p));
@@ -362,7 +395,7 @@ fn core_args(args: &[(&'static str, ValueType)]) -> &'static [core::ArgSpec] {
 }
 
 /// The surface type of a core type (a list is a list of strings; an enum's names are the prop's).
-fn surface_type(t: core::ValueType, names: &'static [&'static str]) -> ValueType {
+pub(crate) fn surface_type(t: core::ValueType, names: &'static [&'static str]) -> ValueType {
     match t {
         core::ValueType::Bool => ValueType::Bool,
         core::ValueType::I64 => ValueType::I64,
@@ -535,7 +568,7 @@ impl Kinds {
         }
         for k in &all {
             if let Some(t) = k.tag
-                && reg.by_name(t).is_none()
+                && reg.by_name(core_tag(t)).is_none()
             {
                 reg.register_with(synthesize(k), placeholder)?;
             }
@@ -543,7 +576,7 @@ impl Kinds {
         let reg = Arc::new(reg);
         let mut list = Vec::new();
         for &k in &all {
-            let core = k.tag.and_then(|t| reg.by_name(t));
+            let core = k.tag.and_then(|t| reg.by_name(core_tag(t)));
             let mut m = Kinds::map(k, core, hosted.iter().any(|h| Some(*h) == core.map(|e| e.id)));
             m.app = m.core.is_some_and(|c| added.contains(&c));
             list.push(m);

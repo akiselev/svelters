@@ -19,13 +19,226 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "7d58b1d15c98c7c0"
+    "spec_hash": "51c641b87678158c"
   },
   "inline_text": {
     "kind": "span",
     "prop": "text"
   },
   "kinds": {
+    "Action": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "label"
+        ],
+        "name_required": true,
+        "role": "Button"
+      },
+      "abstract": false,
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "activate",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-skelter: <action> writes checked into the tree as native-owned state (architecture §4.5) and emits `activate` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Action",
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "A menu item: plain, a check item (`checkable`) or a radio item (`group`), with an optional `shortcut`. AccessKit role Button, CheckBox or RadioButton.",
+      "fingerprint": "a7d581cb",
+      "id": 2815787467,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Action",
+      "native_state": [
+        "checked"
+      ],
+      "present": null,
+      "props": {
+        "checkable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "A check item: picking it toggles `checked`.",
+          "fingerprint": "4ceb1dce",
+          "id": 1290477006,
+          "js": "checkable",
+          "native": "checkable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:checkable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "checked": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Check or radio state; picking a check item toggles it, picking a radio item sets it.",
+          "fingerprint": "c3ac3b33",
+          "id": 3282844467,
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Action:checked",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "group": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "A radio item: the actions of one parent with the same group form an exclusive set; picking one checks it and unchecks the others (each announced).",
+          "fingerprint": "d2b2dfbe",
+          "id": 3534938046,
+          "js": "group",
+          "native": "group",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:group",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "label": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "fingerprint": "d314b86b",
+          "id": 3541350507,
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:label",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "shortcut": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error.",
+          "fingerprint": "819314f7",
+          "id": 2173900023,
+          "js": "shortcut",
+          "native": "shortcut",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Action:shortcut",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick.",
+          "fingerprint": "49bd9e26",
+          "handler_result": "none",
+          "id": 1237163558,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "hover": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3).",
+          "fingerprint": "0a13fddd",
+          "handler_result": "none",
+          "id": 169082333,
+          "js_event": "hover",
+          "name": "hover",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggled": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state.",
+          "fingerprint": "399ff851",
+          "handler_result": "none",
+          "id": 966785105,
+          "js_event": "toggled",
+          "name": "toggled",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": "label",
+      "widget": "skelter-widgets"
+    },
     "Anchor": {
       "a11y": {
         "name_from": [
@@ -982,6 +1195,557 @@
         "runs": 1554193940
       },
       "text_content": "text",
+      "widget": "skelter-widgets"
+    },
+    "CollapsingHeader": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "text"
+        ],
+        "name_required": false,
+        "role": "DisclosureTriangle"
+      },
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <collapsing-header> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "CollapsingHeader",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          },
+          "end": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`.",
+      "fingerprint": "88cbd337",
+      "id": 2295059255,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter CollapsingHeader",
+      "native_state": [
+        "open"
+      ],
+      "present": null,
+      "props": {
+        "accordion": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The group of sibling headers of which one is open at a time (QToolBox); empty: none.",
+          "fingerprint": "572230fd",
+          "id": 1461858557,
+          "js": "accordion",
+          "native": "accordion",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:CollapsingHeader:accordion",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "icon": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "An icon before the caption (a key, or `family:name`).",
+          "fingerprint": "d180bae2",
+          "id": 3514874594,
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:CollapsingHeader:icon",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows the children; a click on the header (or Enter/Space on it) toggles it.",
+          "fingerprint": "506af6cc",
+          "id": 1349187276,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:CollapsingHeader:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The header's caption (also its accessible name).",
+          "fingerprint": "119488fc",
+          "id": 294947068,
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:CollapsingHeader:text",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user opened or closed it; carries the new state.",
+          "fingerprint": "837c06e5",
+          "handler_result": "none",
+          "id": 2205943525,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 2966986928,
+        "end": 3866319464
+      },
+      "text_content": "text",
+      "widget": "placeholder"
+    },
+    "ComboBox": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "name_required": true,
+        "role": "ComboBox"
+      },
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <combo-box> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selected": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-skelter: <combo-box> writes selected into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "ComboBox",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A drop-down list: shows the selected option, picks one from a popup. Name it with `accessible-name` (it has no caption).",
+      "fingerprint": "73acce77",
+      "id": 1940704887,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter ComboBox",
+      "native_state": [
+        "open",
+        "selected"
+      ],
+      "present": null,
+      "props": {
+        "hint-text": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Shown while `selected` is out of range.",
+          "fingerprint": "d47f7c84",
+          "id": 3565124740,
+          "js": "hint-text",
+          "native": "hint-text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:hint-text",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "max-visible": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 30,
+          "doc": "Rows shown before the list scrolls (QComboBox `maxVisibleItems`).",
+          "fingerprint": "7b094896",
+          "id": 2064205974,
+          "js": "max-visible",
+          "native": "max-visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:max-visible",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The list is open; the user opening or closing it changes it, setting it opens or closes it\n(QComboBox `showPopup`/`hidePopup`).",
+          "fingerprint": "383ad4b0",
+          "id": 943379632,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ComboBox:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "options": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "The choices, in order (the popup's rows).",
+          "fingerprint": "0288431a",
+          "id": 42484506,
+          "js": "options",
+          "native": "options",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:options",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "selected": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 0,
+          "doc": "Index of the chosen option; picking a row changes it. Out of range shows no text.",
+          "fingerprint": "b99ae61a",
+          "id": 3113936410,
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ComboBox:selected",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "wheel": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "off",
+          "doc": "The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`.",
+          "fingerprint": "a883d220",
+          "id": 2827211296,
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:wheel",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "off",
+            "hover",
+            "focused"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked an option, the same one or not (QComboBox `activated`); carries its index.",
+          "fingerprint": "75d76c2f",
+          "handler_result": "none",
+          "id": 1977052207,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked a row; carries its index.",
+          "fingerprint": "c5f8e56a",
+          "handler_result": "none",
+          "id": 3321423210,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A pick finished the edit (§2.4); carries the index.",
+          "fingerprint": "737aaf23",
+          "handler_result": "none",
+          "id": 1937420067,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "highlight": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The current row of the open list moved (keyboard or pointer; `highlighted`).",
+          "fingerprint": "112c314e",
+          "handler_result": "none",
+          "id": 288108878,
+          "js_event": "highlight",
+          "name": "highlight",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "ContextMenu": {
+      "a11y": {
+        "name_from": [],
+        "name_required": false,
+        "role": null
+      },
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "ContextMenu",
+        "MenuEntry"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn.",
+      "fingerprint": "f980c2fa",
+      "id": 4185965306,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it.",
+          "fingerprint": "b5cc39d8",
+          "id": 3050060248,
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (a context menu below its owner).",
+          "fingerprint": "602fa449",
+          "id": 1613734985,
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter ContextMenu",
+      "native_state": [],
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {},
+      "slot_ids": {
+        "items": 2177963758
+      },
+      "text_content": null,
       "widget": "skelter-widgets"
     },
     "Frame": {
@@ -2206,6 +2970,179 @@
       },
       "text_content": "text",
       "widget": "skelter-widgets"
+    },
+    "MenuEntry": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": null
+      },
+      "abstract": true,
+      "bindings": {},
+      "chain": [
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "Common properties of the menu entries (`menu`, `action`, `menu-separator`, `context-menu`): drawn inside a menu, never laid out by taffy.",
+      "fingerprint": "4affd3be",
+      "id": 1258279870,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter MenuEntry",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "accessible-name": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "AccessKit name; the label by default.",
+          "fingerprint": "99ca107e",
+          "id": 2580156542,
+          "js": "accessible-name",
+          "native": "aria-label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:accessible-name",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "anchor": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`).",
+          "fingerprint": "b3bf4c3b",
+          "id": 3015658555,
+          "js": "anchor",
+          "native": "anchor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:anchor",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "anchor-scope": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set.",
+          "fingerprint": "8015f00a",
+          "id": 2148921354,
+          "js": "anchor-scope",
+          "native": "anchor-scope",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:anchor-scope",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "enabled": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Can be picked when true; drawn greyed out otherwise.",
+          "fingerprint": "896d9052",
+          "id": 2305658962,
+          "js": "enabled",
+          "native": "disabled",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:enabled",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "source-loc": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set.",
+          "fingerprint": "3f292cc0",
+          "id": 1059663040,
+          "js": "source-loc",
+          "native": "source-loc",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:source-loc",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "tooltip": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Hover text; empty for none.",
+          "fingerprint": "33b3e953",
+          "id": 867428691,
+          "js": "tooltip",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:tooltip",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "visible": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown in its menu when true.",
+          "fingerprint": "8dadb311",
+          "id": 2376971025,
+          "js": "visible",
+          "native": "hidden",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:visible",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {},
+      "slot_ids": {},
+      "text_content": null,
+      "widget": null
     },
     "ProgressBar": {
       "a11y": {
@@ -4074,6 +5011,1260 @@
       "text_content": "text",
       "widget": "skelter-widgets"
     },
+    "Table": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Table"
+      },
+      "abstract": false,
+      "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-skelter: <table> writes current into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "current-column": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current-column",
+          "provenance": "svelters-skelter: <table> writes current-column into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "header-state": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "header-state",
+          "provenance": "svelters-skelter: <table> writes header-state into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "hidden-columns": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "hidden-columns",
+          "provenance": "svelters-skelter: <table> writes hidden-columns into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-skelter: <table> writes selected into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sort-column": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-column",
+          "provenance": "svelters-skelter: <table> writes sort-column into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sort-order": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-order",
+          "provenance": "svelters-skelter: <table> writes sort-order into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Table",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "columns",
+        "policy": "ordered",
+        "slots": {
+          "columns": {
+            "accepts": [
+              "TableColumn"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`, or a Rust row model (LS2: `SceneMut::set_table_model`, sorted, filtered and tree rows expanded in Rust, no JS call per page). Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+      "fingerprint": "c29a8855",
+      "id": 3264907349,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "clear-rows": {
+          "dispatch": "generated",
+          "doc": "Drops the data window (every row draws empty until `set-rows`).",
+          "fingerprint": "b3f977e5",
+          "id": 3019470821,
+          "native": "clear-rows",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "edit": {
+          "dispatch": "generated",
+          "doc": "`edit(rowId, column)`: starts editing that cell (its column must be `editable`).",
+          "fingerprint": "ad0fd40c",
+          "id": 2903495692,
+          "native": "edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "end-edit": {
+          "dispatch": "generated",
+          "doc": "`end-edit(commit)`: ends the open edit; true commits (`commit`), false reverts.",
+          "fingerprint": "aa8f1a94",
+          "id": 2861505172,
+          "native": "end-edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "fit-columns": {
+          "dispatch": "generated",
+          "doc": "`fit-columns(column?)`: sizes that column (child index), or every resizable shown column, to its header and the cells in the data window (Qt `resizeColumnsToContents`); `column-resized` for each.",
+          "fingerprint": "aba74dcd",
+          "id": 2879868365,
+          "native": "fit-columns",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scroll-to-row": {
+          "dispatch": "generated",
+          "doc": "`scroll-to-row(row)`: scrolls the row into view on the next frame.",
+          "fingerprint": "389a356c",
+          "id": 949630316,
+          "native": "scroll-to-row",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-ids": {
+          "dispatch": "generated",
+          "doc": "`set-ids(ids, labels?)`: the id of every row by position (and the text type-ahead matches); the row count is then `ids.length`. Selection, cursor and edits follow ids across sorts and filters. null: ids are positions again.",
+          "fingerprint": "4bc4c37b",
+          "id": 1271186299,
+          "native": "set-ids",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-rows": {
+          "dispatch": "generated",
+          "doc": "`set-rows(first, rows)`: the data window, rows `first..first + rows.length`, each row a list of cell values (strings, numbers, booleans; null for empty). Replaces the previous window.",
+          "fingerprint": "c39c358a",
+          "id": 3281794442,
+          "native": "set-rows",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter Table",
+      "native_state": [
+        "current",
+        "current-column",
+        "header-state",
+        "hidden-columns",
+        "selected",
+        "sort-column",
+        "sort-order"
+      ],
+      "present": null,
+      "props": {
+        "column-menu": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "A right click on the header opens a menu that hides and shows the `hideable` columns (after `header-context`, unless prevented).",
+          "fingerprint": "36de6eec",
+          "id": 920547052,
+          "js": "column-menu",
+          "native": "column-menu",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:column-menu",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "current": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "The cursor row's id (keyboard focus inside the table), -1 for none.",
+          "fingerprint": "56c9a5c0",
+          "id": 1456055744,
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:current",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "current-column": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 0,
+          "doc": "The cursor column (Left/Right move it; F2 and typing edit that cell).",
+          "fingerprint": "8516fc55",
+          "id": 2232876117,
+          "js": "current-column",
+          "native": "current-column",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:current-column",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "header-state": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The header as JSON (Qt `saveState`): `{\"widths\":{name:points},\"hidden\":[name],\"sort\":{\"column\":name,\"order\":…}}`. The table writes it after the user resizes, hides or sorts; setting it restores them. Persist it with DX1's `uiState()` (`bind:header-state={ui.header}`): the table itself never writes files.",
+          "fingerprint": "efcba148",
+          "id": 4023099720,
+          "js": "header-state",
+          "native": "header-state",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:header-state",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "hidden-columns": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "The hidden columns, by `name` (a column without one by its child index, `\"2\"`). The column menu changes it.",
+          "fingerprint": "c094bfb4",
+          "id": 3230973876,
+          "js": "hidden-columns",
+          "native": "hidden-columns",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:hidden-columns",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "overscan": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 20,
+          "doc": "Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view).",
+          "fingerprint": "b875d56a",
+          "id": 3094730090,
+          "js": "overscan",
+          "native": "overscan",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:overscan",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "row-count": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 0,
+          "doc": "Number of rows (the scroll extent). Rows without data yet are drawn empty.",
+          "fingerprint": "031028dd",
+          "id": 51390685,
+          "js": "row-count",
+          "native": "row-count",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:row-count",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "row-height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 20.0,
+          "doc": "Height of every row (and of the header row), in points.",
+          "fingerprint": "cd682589",
+          "id": 3446154633,
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:row-height",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "selected": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "The selected row ids (`bind:selected`); clicks (Ctrl/Shift with `selection=\"multi\"`) and the keyboard change it. Kept by id across `set-ids` (sorts, filters).",
+          "fingerprint": "9325df93",
+          "id": 2468732819,
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:selected",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "i64",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "selection": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only).",
+          "fingerprint": "247c53df",
+          "id": 612127711,
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:selection",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single",
+            "multi"
+          ],
+          "writable": true
+        },
+        "sort-column": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows.",
+          "fingerprint": "2da273ac",
+          "id": 765621164,
+          "js": "sort-column",
+          "native": "sort-column",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:sort-column",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "sort-order": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "none",
+          "doc": "The order shown on `sort-column`.",
+          "fingerprint": "6b444e20",
+          "id": 1799638560,
+          "js": "sort-order",
+          "native": "sort-order",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Table:sort-order",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "ascending",
+            "descending"
+          ],
+          "writable": true
+        },
+        "sortable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`).",
+          "fingerprint": "43435c7a",
+          "id": 1128488058,
+          "js": "sortable",
+          "native": "sortable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:sortable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "sticky-columns": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 0,
+          "doc": "Number of leading columns that do not scroll horizontally.",
+          "fingerprint": "f3896efc",
+          "id": 4085870332,
+          "js": "sticky-columns",
+          "native": "sticky-columns",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:sticky-columns",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "stretch-last": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "The last shown column fills the width the columns leave (Qt `stretchLastSection`).",
+          "fingerprint": "d18dd13e",
+          "id": 3515732286,
+          "js": "stretch-last",
+          "native": "stretch-last",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:stretch-last",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "striped": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Alternate rows get a faint background.",
+          "fingerprint": "83befb05",
+          "id": 2210331397,
+          "js": "striped",
+          "native": "striped",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Table:striped",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activated": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A row was double-clicked (a cell of a column that is not `editable`) or Enter pressed on the cursor row; carries its position.",
+          "fingerprint": "8c1e4fa1",
+          "handler_result": "none",
+          "id": 2350796705,
+          "js_event": "activated",
+          "name": "activated",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection; carries the selected row ids (`bind:selected`).",
+          "fingerprint": "3757e7db",
+          "handler_result": "none",
+          "id": 928507867,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "column-resized": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            },
+            {
+              "name": "width",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable.",
+          "fingerprint": "d5e1dae9",
+          "handler_result": "none",
+          "id": 3588348649,
+          "js_event": "column-resized",
+          "name": "column-resized",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "columns-changed": {
+          "args": [
+            {
+              "name": "hidden-columns",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The column menu hid or showed a column; carries the hidden columns.",
+          "fingerprint": "1a433b85",
+          "handler_result": "none",
+          "id": 440613765,
+          "js_event": "columns-changed",
+          "name": "columns-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "column",
+              "type": "i64"
+            },
+            {
+              "name": "value",
+              "type": "other"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts.",
+          "fingerprint": "2e8abb43",
+          "handler_result": "bool_stop",
+          "id": 780843843,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds).",
+          "fingerprint": "da672160",
+          "handler_result": "none",
+          "id": 3664191840,
+          "js_event": "copy",
+          "name": "copy",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-clicked": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A column header was clicked (sort on it in JS and set the column's `sort`).",
+          "fingerprint": "c6cf8189",
+          "handler_result": "none",
+          "id": 3335487881,
+          "js_event": "header-clicked",
+          "name": "header-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-context": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A right click on the header (Menu key on the focused table); carries the column under the pointer. Unless prevented, `column-menu` opens.",
+          "fingerprint": "53e3ce0f",
+          "handler_result": "none",
+          "id": 1407438351,
+          "js_event": "header-context",
+          "name": "header-context",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-double-clicked": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A column header was double-clicked (not its resize edge); carries the column (child index).",
+          "fingerprint": "5bb45893",
+          "handler_result": "none",
+          "id": 1538545811,
+          "js_event": "header-double-clicked",
+          "name": "header-double-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-state-changed": {
+          "args": [
+            {
+              "name": "header-state",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user resized, hid or sorted; carries the new `header-state` (save it).",
+          "fingerprint": "d2858722",
+          "handler_result": "none",
+          "id": 3531966242,
+          "js_event": "header-state-changed",
+          "name": "header-state-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "range": {
+          "args": [
+            {
+              "name": "first",
+              "type": "i64"
+            },
+            {
+              "name": "last",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`.",
+          "fingerprint": "5bfb2e61",
+          "handler_result": "none",
+          "id": 1543188065,
+          "js_event": "range",
+          "name": "range",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-toggled": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "expanded",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A tree row of a Rust model was expanded or collapsed (its expander, Right/Left); carries its id and whether it is expanded now.",
+          "fingerprint": "9c553fe5",
+          "handler_result": "none",
+          "id": 2622832613,
+          "js_event": "row-toggled",
+          "name": "row-toggled",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selectionchange": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection; carries the selected row ids.",
+          "fingerprint": "6ab1bc31",
+          "handler_result": "none",
+          "id": 1790032945,
+          "js_event": "selectionchange",
+          "name": "selectionchange",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "sort-changed": {
+          "args": [
+            {
+              "name": "sort-column",
+              "type": "i64"
+            },
+            {
+              "name": "sort-order",
+              "type": "enum"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS; a Rust model is sorted by the table).",
+          "fingerprint": "096c8087",
+          "handler_result": "none",
+          "id": 158105735,
+          "js_event": "sort-changed",
+          "name": "sort-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "columns": 610474464
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "TableColumn": {
+      "a11y": {
+        "name_from": [
+          "title"
+        ],
+        "name_required": false,
+        "role": "ColumnHeader"
+      },
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "TableColumn",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell.",
+      "fingerprint": "adccfed6",
+      "id": 2915892950,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "end-edit": {
+          "dispatch": "generated",
+          "doc": "`end-edit(commit)`: ends this column's open edit; true commits, false reverts.",
+          "fingerprint": "e6e482ad",
+          "id": 3873735341,
+          "native": "end-edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-editor": {
+          "dispatch": "generated",
+          "doc": "Runtime protocol: `set-editor(outlet)`, the realised editor snippet of this column (null drops it).",
+          "fingerprint": "710ad35f",
+          "id": 1896534879,
+          "native": "set-editor",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter TableColumn",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "align": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "start",
+          "doc": "Horizontal alignment of its cells.",
+          "fingerprint": "dc5c9663",
+          "id": 3697055331,
+          "js": "align",
+          "native": "align",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:align",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "writable": true
+        },
+        "editable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field.",
+          "fingerprint": "f82023bf",
+          "id": 4162855871,
+          "js": "editable",
+          "native": "editable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:editable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "editor": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit.",
+          "fingerprint": "3b96adb5",
+          "id": 999730613,
+          "js": "editor",
+          "native": "editor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:editor",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "other",
+          "writable": true
+        },
+        "elide": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "end",
+          "doc": "Where text too wide for a cell or the header is cut with `…` (`none`: clipped).",
+          "fingerprint": "5c454435",
+          "id": 1548043317,
+          "js": "elide",
+          "native": "elide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:elide",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "end",
+            "middle",
+            "start",
+            "none"
+          ],
+          "writable": true
+        },
+        "header-align": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "auto",
+          "doc": "Alignment of its header text (`auto`: its `align`).",
+          "fingerprint": "4c25265d",
+          "id": 1277503069,
+          "js": "header-align",
+          "native": "header-align",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:header-align",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "start",
+            "center",
+            "end"
+          ],
+          "writable": true
+        },
+        "hideable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "The column menu lists it (it can be hidden).",
+          "fingerprint": "31e4652b",
+          "id": 837051691,
+          "js": "hideable",
+          "native": "hideable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:hideable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "name": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Its name in `hidden-columns` and `header-state` (empty: its child index).",
+          "fingerprint": "5c25b5b7",
+          "id": 1545975223,
+          "js": "name",
+          "native": "name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:name",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "resizable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Its right edge can be dragged (double-click: fit the content).",
+          "fingerprint": "74017010",
+          "id": 1946251280,
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:resizable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "sort": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "none",
+          "doc": "The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1.",
+          "fingerprint": "e05cebc0",
+          "id": 3764186048,
+          "js": "sort",
+          "native": "sort",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:sort",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "ascending",
+            "descending"
+          ],
+          "writable": true
+        },
+        "title": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The header text.",
+          "fingerprint": "4f4c5600",
+          "id": 1330402816,
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TableColumn:title",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "editor-bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "value",
+              "type": "string"
+            },
+            {
+              "name": "typed",
+              "type": "string"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`).",
+          "fingerprint": "af79362e",
+          "handler_result": "bool_stop",
+          "id": 2943956526,
+          "js_event": "editor-bind",
+          "name": "editor-bind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "editor-unbind": {
+          "args": [],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: the edit ended; the editor stays realised for the next one.",
+          "fingerprint": "ff13ebd4",
+          "handler_result": "bool_stop",
+          "id": 4279495636,
+          "js_event": "editor-unbind",
+          "name": "editor-unbind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "editor-value": {
+          "args": [],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: the editor's value to commit (the handler sets `e.result`).",
+          "fingerprint": "33d05e99",
+          "handler_result": "bool_stop",
+          "id": 869293721,
+          "js_event": "editor-value",
+          "name": "editor-value",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "TextEdit": {
       "a11y": {
         "name_from": [
@@ -4552,6 +6743,642 @@
       },
       "slot_ids": {},
       "text_content": "text",
+      "widget": "skelter-widgets"
+    },
+    "TreeView": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Tree"
+      },
+      "abstract": false,
+      "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-skelter: <tree-view> writes current into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "TreeView",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
+      "fingerprint": "f777f3d3",
+      "id": 4151833555,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "count": {
+          "dispatch": "generated",
+          "doc": "The number of visible rows.",
+          "fingerprint": "466d3c61",
+          "id": 1181564001,
+          "native": "count",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "rowAt": {
+          "dispatch": "generated",
+          "doc": "`rowAt(pos)`: the slot bound to `pos`, or -1.",
+          "fingerprint": "30656b6b",
+          "id": 811953003,
+          "native": "rowAt",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scrollTo": {
+          "dispatch": "generated",
+          "doc": "`scrollTo(pos, hint?)`: scrolls the row into view; `hint`: `nearest` (default), `top`, `bottom`, `center`.",
+          "fingerprint": "6dfb7916",
+          "id": 1845197078,
+          "native": "scrollTo",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "selection": {
+          "dispatch": "generated",
+          "doc": "The selected ids, hidden ones included.",
+          "fingerprint": "7cc24cac",
+          "id": 2093108396,
+          "native": "selection",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setNodes": {
+          "dispatch": "generated",
+          "doc": "`setNodes(ids, levels, flags, labels, data)`: the tree facts of rows by id (flags: 1 expandable, 2 expanded; a level < 0 forgets the id).",
+          "fingerprint": "f389760f",
+          "id": 4085872143,
+          "native": "setNodes",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setRow": {
+          "dispatch": "generated",
+          "doc": "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it.",
+          "fingerprint": "d29f0dee",
+          "id": 3533639150,
+          "native": "setRow",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setSelection": {
+          "dispatch": "generated",
+          "doc": "`setSelection(ids)`: replaces the selection (single keeps the first); raises nothing.",
+          "fingerprint": "1ed7c50c",
+          "id": 517457164,
+          "native": "setSelection",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "splice": {
+          "dispatch": "generated",
+          "doc": "`splice(pos, removed, ids)`: replaces `removed` rows at `pos` with `ids` (the visible rows, flattened).",
+          "fingerprint": "681bbc2a",
+          "id": 1746648106,
+          "native": "splice",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter TreeView",
+      "native_state": [
+        "current"
+      ],
+      "present": null,
+      "props": {
+        "current": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "OW5a1b: the cursor's row id (`bind:current`), -1 for none. Setting it moves the cursor without selecting.",
+          "fingerprint": "afc59536",
+          "id": 2948961590,
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:TreeView:current",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "expand-on": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "twistie",
+          "doc": "What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`).",
+          "fingerprint": "ddfc7391",
+          "id": 3724309393,
+          "js": "expand-on",
+          "native": "expand-on",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:expand-on",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "twistie",
+            "click",
+            "double-click"
+          ],
+          "writable": true
+        },
+        "indent": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 16,
+          "doc": "Points per level; the disclosure triangle sits in the last one.",
+          "fingerprint": "36366ac3",
+          "id": 909535939,
+          "js": "indent",
+          "native": "indent",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:indent",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "root-decorated": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Level-0 rows show their twistie (Qt's `rootIsDecorated`).",
+          "fingerprint": "f90efe1c",
+          "id": 4178509340,
+          "js": "root-decorated",
+          "native": "root-decorated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:root-decorated",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "row-drag-type": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels).",
+          "fingerprint": "6a6a61bb",
+          "id": 1785356731,
+          "js": "row-drag-type",
+          "native": "row-drag-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:row-drag-type",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-drop-types": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`.",
+          "fingerprint": "f1520319",
+          "id": 4048683801,
+          "js": "row-drop-types",
+          "native": "row-drop-types",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:row-drop-types",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 24,
+          "doc": "The height a row is assumed to have before it is measured, and its minimum, in points.",
+          "fingerprint": "66753009",
+          "id": 1718956041,
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:row-height",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selection": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable.",
+          "fingerprint": "946563f9",
+          "id": 2489672697,
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:selection",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single",
+            "multi",
+            "toggle",
+            "range"
+          ],
+          "writable": true
+        },
+        "uniform-rows": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`).",
+          "fingerprint": "4b8843e2",
+          "id": 1267221474,
+          "js": "uniform-rows",
+          "native": "uniform-rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:uniform-rows",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user activated the row at `pos` (double click, Enter).",
+          "fingerprint": "c4ff66bf",
+          "handler_result": "none",
+          "id": 3305072319,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot.",
+          "fingerprint": "ce408bfb",
+          "handler_result": "bool_stop",
+          "id": 3460336635,
+          "js_event": "bind",
+          "name": "bind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "collapse": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user collapsed node `id` (disclosure click, Left): splice its children out.",
+          "fingerprint": "774a9cad",
+          "handler_result": "none",
+          "id": 2001378477,
+          "js_event": "collapse",
+          "name": "collapse",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Ctrl+C on the focused tree: copy the selected rows.",
+          "fingerprint": "90aa4c60",
+          "handler_result": "none",
+          "id": 2427079776,
+          "js_event": "copy",
+          "name": "copy",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drop-row": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "where",
+              "type": "string"
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took.",
+          "fingerprint": "7a3c3dd4",
+          "handler_result": "none",
+          "id": 2050768340,
+          "js_event": "drop-row",
+          "name": "drop-row",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "expand": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user expanded node `id` (disclosure click, Right): splice its children in.",
+          "fingerprint": "d75b8070",
+          "handler_result": "none",
+          "id": 3613098096,
+          "js_event": "expand",
+          "name": "expand",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "fingerprint": "474bc356",
+          "handler_result": "none",
+          "id": 1196147542,
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy).",
+          "fingerprint": "10f2bd00",
+          "handler_result": "none",
+          "id": 284343552,
+          "js_event": "row-context",
+          "name": "row-context",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-hovered": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`).",
+          "fingerprint": "388a6ea8",
+          "handler_result": "none",
+          "id": 948596392,
+          "js_event": "row-hovered",
+          "name": "row-hovered",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selection-changed": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection: read it with `selection()`.",
+          "fingerprint": "29981370",
+          "handler_result": "none",
+          "id": 697832304,
+          "js_event": "selection-changed",
+          "name": "selection-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "setup": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Row slot `row` was created: give it content with `setRow`.",
+          "fingerprint": "9c7b5255",
+          "handler_result": "bool_stop",
+          "id": 2625327701,
+          "js_event": "setup",
+          "name": "setup",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "teardown": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` is gone: release its widget.",
+          "fingerprint": "407eedd8",
+          "handler_result": "bool_stop",
+          "id": 1082060248,
+          "js_event": "teardown",
+          "name": "teardown",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "unbind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` no longer shows binding `gen`.",
+          "fingerprint": "dfb4116c",
+          "handler_result": "bool_stop",
+          "id": 3753120108,
+          "js_event": "unbind",
+          "name": "unbind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
       "widget": "skelter-widgets"
     },
     "Widget": {
@@ -6694,6 +9521,7 @@
         "prop": "align-items",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area",
@@ -6720,6 +9548,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -6735,8 +9565,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -6943,6 +9776,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -6958,8 +9793,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -6995,6 +9833,7 @@
         },
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area"
@@ -7061,6 +9900,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7076,8 +9917,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -7116,6 +9960,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7131,8 +9977,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7146,6 +9995,7 @@
         "prop": "flex-direction",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "scroll-area"
         ],
@@ -7172,6 +10022,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7187,8 +10039,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "number",
         "via": "setter"
@@ -7207,6 +10062,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7222,8 +10079,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "number",
         "via": "setter"
@@ -7237,6 +10097,7 @@
         "prop": "flex-wrap",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "scroll-area"
         ],
@@ -7291,6 +10152,7 @@
         },
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area",
@@ -7334,6 +10196,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7349,8 +10213,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7364,6 +10231,7 @@
         "prop": "justify-content",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "scroll-area"
         ],
@@ -7408,6 +10276,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7423,8 +10293,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7478,6 +10351,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7493,8 +10368,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7513,6 +10391,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7528,8 +10408,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7548,6 +10431,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7563,8 +10448,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7583,6 +10471,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7598,8 +10488,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7733,6 +10626,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7748,8 +10643,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -7770,6 +10668,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7785,8 +10685,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7804,6 +10707,7 @@
         },
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area"
@@ -7839,6 +10743,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7854,8 +10760,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -7920,6 +10829,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -7935,8 +10846,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -7988,14 +10902,19 @@
       "visible": {
         "change": "layout",
         "kinds": [
-          "Widget"
+          "Widget",
+          "MenuEntry"
         ],
         "native": "visible",
         "prop": "visible",
         "tags": [
+          "action",
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "context-menu",
           "frame",
           "grid",
           "hyperlink",
@@ -8011,8 +10930,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "bool",
         "via": "setter"
@@ -8044,6 +10966,8 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -8059,8 +10983,11 @@
           "spinner",
           "stack",
           "switch",
+          "table",
+          "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -8190,11 +11117,15 @@
   },
   "tags": {
     "a": "Anchor",
+    "action": "Action",
     "b": "Bold",
     "box": "Box",
     "button": "Button",
     "checkbox": "Checkbox",
     "code": "Code",
+    "collapsing-header": "CollapsingHeader",
+    "combo-box": "ComboBox",
+    "context-menu": "ContextMenu",
     "frame": "Frame",
     "grid": "Grid",
     "hyperlink": "Hyperlink",
@@ -8212,8 +11143,11 @@
     "spinner": "Spinner",
     "stack": "Stack",
     "switch": "Switch",
+    "table": "Table",
+    "table-column": "TableColumn",
     "text-edit": "TextEdit",
     "toggle-button": "ToggleButton",
+    "tree-view": "TreeView",
     "window": "Window"
   }
 }
