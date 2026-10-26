@@ -21,6 +21,18 @@ P (Z2). Then:
 draw as vectors, clipped to the box and its corners, in the SVG's own colours (or tinted, for an
 icon with `tint`). `image-rendering: pixelated` keeps the raster.
 
+## Monochrome or multicolour: `IconColors`
+
+Whether an icon keeps its literal colours is chosen per icon when it is registered, never inferred:
+
+- `Icon::svg(..)` is `IconColors::Tint` (the default). The icon is monochrome: its shapes are
+  coverage tinted by `color`. Literal colours keep only their alpha, unless slots are set.
+- `Icon::multicolour(..)`, or `.colors(IconColors::Own)`, keeps its literal colours at every size:
+  - at 24 px or below, one RGBA raster of the literal colours plus one live mask per slot it uses;
+  - above 24 px, its vectors in their literal colours.
+
+  Its `currentColor` and slot layers stay live palette slots either way.
+
 ## `VectorArt`
 
 `paint::icon::vector::VectorArt::parse(svg)` parses an SVG once per content (cached). It returns

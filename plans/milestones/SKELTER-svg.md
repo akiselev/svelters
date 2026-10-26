@@ -49,6 +49,22 @@ Branch `ci/skelter-svg`, from master fc7903fe. Brief: the coordinator's message 
   compositor's `Finished`. Other nodes keep the UI-thread transition. A theme switch re-records the
   icon lists with new colours: no raster and no upload.
 
+**3. Multicolour icons (coordinator request for cadatomic lane theme, 2026-10-26)**
+
+- `IconColors::{Tint, Own}` (`#[non_exhaustive]`) is an explicit per-icon flag on `Icon::Svg`. Set
+  it with `Icon::multicolour(size, svg)` or `.colors(IconColors::Own)`. `Tint` is the default and
+  today's behaviour.
+- With `Own`, literal colours are drawn as they are:
+  - at 24 px or below: an RGBA raster of the literals plus live per-slot masks;
+  - above 24 px: vectors in their literal colours.
+
+  `currentColor` and the slots stay live either way.
+- Mask keys now encode the colour mode and which slots are set. Without that, two slot sets could
+  share a key and get different masks.
+- Test: `a_multicolour_icon_keeps_its_colours_and_current_color_stays_live`. A red plus
+  `currentColor` icon keeps red at 16 and 96 px with no slot set; its `currentColor` part follows
+  `color` with no new raster; the same SVG registered `Tint` stays monochrome.
+
 ## The threshold
 
 Raster when P ≤ 24 physical pixels, vectors above that. I rendered side-by-side screenshots on

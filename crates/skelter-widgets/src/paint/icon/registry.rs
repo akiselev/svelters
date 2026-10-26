@@ -231,15 +231,41 @@ impl From<Vec<u8>> for IconData {
 pub enum Icon {
     /// One SVG per optical size (pixels at 1x), and optionally High Contrast copies (IC1's `hc/`:
     /// the subject tone at .6).
-    Svg { masters: BTreeMap<u32, IconData>, hc: BTreeMap<u32, IconData> },
+    Svg { masters: BTreeMap<u32, IconData>, hc: BTreeMap<u32, IconData>, colors: IconColors },
     /// A glyph of a registered icon font ([`register_icon_font`]), sized by the box.
     Glyph { family: String, text: String },
 }
 
+/// How an SVG icon's colours are drawn (a per-icon registration choice, never inferred).
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+pub enum IconColors {
+    /// A monochrome icon: its shapes are coverage tinted by `color` (literal colours keep only their
+    /// alpha), unless slots are set.
+    #[default]
+    Tint,
+    /// A multicolour icon: literal colours are drawn as they are, at every size; `currentColor` and
+    /// slot layers stay live (palette slots).
+    Own,
+}
+
 impl Icon {
-    /// An SVG icon with its `size` master.
+    /// An SVG icon with its `size` master, tinted ([`IconColors::Tint`]).
     pub fn svg(size: u32, data: impl Into<IconData>) -> Icon {
-        Icon::Svg { masters: BTreeMap::from([(size, data.into())]), hc: BTreeMap::new() }
+        Icon::Svg { masters: BTreeMap::from([(size, data.into())]), hc: BTreeMap::new(), colors: IconColors::Tint }
+    }
+
+    /// A multicolour SVG icon with its `size` master ([`IconColors::Own`]).
+    pub fn multicolour(size: u32, data: impl Into<IconData>) -> Icon {
+        Icon::svg(size, data).colors(IconColors::Own)
+    }
+
+    /// Sets how an SVG icon's colours are drawn; no-op on a glyph.
+    pub fn colors(mut self, c: IconColors) -> Icon {
+        if let Icon::Svg { colors, .. } = &mut self {
+            *colors = c;
+        }
+        self
     }
 
     /// Adds (or replaces) the `size` master of an SVG icon; no-op on a glyph.
@@ -699,8 +725,14 @@ pub fn coverage(img: &ImageData) -> ImageData {
 /// coverage mask of white `currentColor` (to be tinted) when `slots` is empty, else premultiplied
 /// RGBA in `color` (its alpha applied to the whole raster) and the slots, drawn untinted.
 pub fn rasterize(svg: &[u8], px: u32, color: Color, slots: &Slots) -> Result<ImageData, String> {
+    rasterize_colors(svg, px, color, slots, IconColors::Tint)
+}
+
+/// [`rasterize`] for an icon registered with `colors`: an [`IconColors::Own`] icon is premultiplied
+/// RGBA in its own colours (with `color` and the slots) even when no slot is set.
+pub fn rasterize_colors(svg: &[u8], px: u32, color: Color, slots: &Slots, colors: IconColors) -> Result<ImageData, String> {
     let px = px.max(1);
-    if slots.is_empty() {
+    if slots.is_empty() && colors == IconColors::Tint {
         return render(svg, px, px, MONO_STYLE, true).map(|i| coverage(&i));
     }
     let mut img = render(&slot_svg(svg)?, px, px, &slot_style_sheet(color, slots), true)?;
@@ -718,9 +750,9 @@ pub fn rasterize(svg: &[u8], px: u32, color: Color, slots: &Slots) -> Result<Ima
 /// The [`Resources::image`](crate::shim::core::Resources::image) key of a raster: the registry key,
 /// its registration, the master (and whether High Contrast), the physical size, and the colours
 /// when slots are set (a tinted mask does not depend on them).
-fn raster_key(key: &str, generation: u64, choice: &Choice, hc: bool, style: &IconStyle) -> String {
+fn raster_key(key: &str, generation: u64, choice: &Choice, hc: bool, style: &IconStyle, literal: bool) -> String {
     let mut k = format!("icon:{key}#{generation}@{}{}/{}", choice.master, if hc { "hc" } else { "" }, choice.px);
-    if !style.slots.is_empty() {
+    if literal {
         let hex = |c: Option<Color>| c.map_or("-".to_string(), |c| rgba8(c).iter().map(|b| format!("{b:02x}")).collect());
         k.push_str(&format!(";{},{},{},{}", hex(Some(style.color)), hex(style.slots.subject), hex(style.slots.accent), hex(style.slots.badge)));
     }
@@ -779,7 +811,7 @@ pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, s
             super::super::paint_runs(cx, &l, pos, &|_| color);
             Some(Painted { rect: Rect::from_origin_size(pos, l.size()), choice: None, tint: Some(color), vector: false })
         }
-        Icon::Svg { masters, hc } => {
+        Icon::Svg { masters, hc, colors } => {
             // Z1: the box on whole device pixels, centred in `rect`
             let scale = cx.scale;
             let p = physical(style.size, scale);
@@ -791,7 +823,9 @@ pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, s
             let side = choice.px as f32 / scale;
             let min = Point::new((origin.x + choice.offset as f32) / scale, (origin.y + choice.offset as f32) / scale);
             let r = Rect::from_origin_size(min, Size::new(side, side));
-            let tint = style.slots.is_empty().then_some(style.color);
+            // literal colours drawn as they are: a multicolour icon, or slots set
+            let literal = colors == IconColors::Own || !style.slots.is_empty();
+            let tint = (!literal).then_some(style.color);
             let art = match VectorArt::parse(data.bytes()) {
                 Ok(a) => Some(a),
                 Err(NotVector::Unsupported(why)) => {
@@ -805,15 +839,17 @@ pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, s
             // above the threshold: the layers as paths, in live palette colours
             if let Some(art) = &art
                 && is_vector_size(choice.px)
-                && art.record(cx, art.fit(r), &|src, op| layer_paint(style, src, op))
+                && art.record(cx, art.fit(r), &|src, op| layer_paint(style, literal, src, op))
             {
                 return Some(Painted { rect: r, choice: Some(choice), tint, vector: true });
             }
-            // slots on a vectorisable icon: one coverage mask per colour, tinted at draw time
-            if let Some(art) = art.as_ref().filter(|_| !style.slots.is_empty()) {
-                let mono = IconStyle { slots: Slots::default(), ..*style };
-                let base = raster_key(key, generation, &choice, use_hc, &mono);
-                let channel = |src: PaintSource| mask_channel(style, src);
+            // literal colours or slots on a vectorisable icon: one coverage mask per palette slot,
+            // tinted at draw time, and one RGBA raster of the literal colours
+            if let Some(art) = art.as_ref().filter(|_| literal) {
+                // the masks depend on which slots are set and on the colour mode, not on the colours
+                let set: String = IconSlot::ALL.iter().map(|s| if style.slots.get(*s).is_some() { '1' } else { '0' }).collect();
+                let base = format!("{};m{}{set}", raster_key(key, generation, &choice, use_hc, style, false), if colors == IconColors::Own { "o" } else { "t" });
+                let channel = |src: PaintSource| mask_channel(style, literal, src);
                 let mut masks: Option<Vec<(MaskChannel, ImageData)>> = None;
                 let mut drawn = Vec::new();
                 for ch in mask_channels(art, &channel) {
@@ -839,9 +875,9 @@ pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, s
                     return Some(Painted { rect: r, choice: Some(choice), tint, vector: false });
                 }
             }
-            let ck = raster_key(key, generation, &choice, use_hc, style);
+            let ck = raster_key(key, generation, &choice, use_hc, style, literal);
             let mut failed = None;
-            let image = cx.res.image(&ck, &mut || match rasterize(data.bytes(), choice.px, style.color, &style.slots) {
+            let image = cx.res.image(&ck, &mut || match rasterize_colors(data.bytes(), choice.px, style.color, &style.slots, colors) {
                 Ok(i) => Some(i),
                 Err(why) => {
                     failed = Some(why);
@@ -867,23 +903,23 @@ fn slot_color(style: &IconStyle, index: u8) -> Color {
 }
 
 /// The palette slot a layer of `src` draws from under `style`: its slot when the style sets it, else
-/// `currentColor` (0); a literal colour is a slot-0 coverage when no slot is set (a monochrome icon,
-/// as the `A8` raster draws it), else its own colour.
-fn layer_slot(style: &IconStyle, src: PaintSource) -> Option<u8> {
+/// `currentColor` (0); a literal colour is its own colour when `literal` (a multicolour icon, or slots
+/// set), else a slot-0 coverage (a monochrome icon, as the `A8` raster draws it).
+fn layer_slot(style: &IconStyle, literal: bool, src: PaintSource) -> Option<u8> {
     match src {
         PaintSource::Slot(s) if style.slots.get(s).is_some() => Some(s.index()),
-        PaintSource::Color(_) if !style.slots.is_empty() => None,
+        PaintSource::Color(_) if literal => None,
         _ => Some(0),
     }
 }
 
 /// A vector layer's colour and palette slot under `style`.
-fn layer_paint(style: &IconStyle, src: PaintSource, opacity: f32) -> (Color, Option<PaletteSlot>) {
+fn layer_paint(style: &IconStyle, literal: bool, src: PaintSource, opacity: f32) -> (Color, Option<PaletteSlot>) {
     let lit = match src {
         PaintSource::Color(c) => c,
         _ => Color::WHITE,
     };
-    match layer_slot(style, src) {
+    match layer_slot(style, literal, src) {
         Some(i) => {
             let slot = PaletteSlot::new(i, opacity * lit.a);
             (slot.resolve(slot_color(style, i)), Some(slot))
@@ -893,8 +929,8 @@ fn layer_paint(style: &IconStyle, src: PaintSource, opacity: f32) -> (Color, Opt
 }
 
 /// Where a layer of `src` goes in the per-slot masks under `style`.
-fn mask_channel(style: &IconStyle, src: PaintSource) -> MaskChannel {
-    match layer_slot(style, src) {
+fn mask_channel(style: &IconStyle, literal: bool, src: PaintSource) -> MaskChannel {
+    match layer_slot(style, literal, src) {
         Some(i) => MaskChannel::Slot(i),
         None => MaskChannel::Literal,
     }
@@ -1224,6 +1260,49 @@ mod tests {
     }
 
     #[test]
+    fn a_multicolour_icon_keeps_its_colours_and_current_color_stays_live() {
+        // a red half (a literal colour) and a `currentColor` half
+        const TWO: &[u8] = br##"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><rect width="8" height="16" fill="#ff0000"/><rect x="8" width="8" height="16" fill="currentColor"/></svg>"##;
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "reg-test.two", Icon::multicolour(16, TWO)).unwrap();
+        reg.register(Owner::Host, "reg-test.two-tinted", Icon::svg(16, TWO)).unwrap();
+        let red = Color::from_rgba8(255, 0, 0, 255);
+        let blue = Color::from_rgba8(0, 0, 255, 255);
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        for side in [16.0f32, 96.0] {
+            let r = Rect::new(0.0, 0.0, side, side);
+            let mut list = DisplayList::new();
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+            let p = paint(&mut cx, &reg, "reg-test.two", r, &IconStyle::new(side, blue)).unwrap();
+            assert_eq!((p.vector, p.tint), (side > 24.0, None));
+            if p.vector {
+                let paints: Vec<_> = list.items.iter().map(|i| if let Prim::Path(p) = i { (p.paint.color(), p.slot.map(|s| s.index)) } else { panic!() }).collect();
+                assert_eq!(paints, [(red, None), (blue, Some(0))], "at {side}");
+            } else {
+                // the literal colours' RGBA raster, then `currentColor`'s mask tinted from slot 0
+                let tints: Vec<_> = list.items.iter().map(|i| if let Prim::Icon(i) = i { (i.color, i.slot.map(|s| s.index)) } else { panic!() }).collect();
+                assert_eq!(tints, [(None, None), (Some(blue), Some(0))]);
+                let lit = res.images.iter().find(|(k, _)| k.contains("reg-test.two#") && k.ends_with(";lit")).map(|(_, (_, d))| d.clone()).unwrap();
+                assert_eq!(lit.format, ImageFormat::Rgba8Premul);
+                assert_eq!(&lit.pixels[(8 * 16 + 2) * 4..(8 * 16 + 2) * 4 + 4], &[255, 0, 0, 255], "red stays red");
+                assert_eq!(lit.pixels[(8 * 16 + 12) * 4 + 3], 0, "the currentColor half is the mask's");
+            }
+            // `currentColor` follows `color` with no new raster
+            let n = res.images.len();
+            let mut list = DisplayList::new();
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+            paint(&mut cx, &reg, "reg-test.two", r, &IconStyle::new(side, Color::WHITE)).unwrap();
+            assert_eq!(res.images.len(), n);
+            assert!(list.items.iter().any(|i| matches!(i, Prim::Icon(i) if i.color == Some(Color::WHITE)) || matches!(i, Prim::Path(p) if p.paint.color() == Color::WHITE)));
+            // the same SVG registered tinted is monochrome
+            let mut list = DisplayList::new();
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+            assert_eq!(paint(&mut cx, &reg, "reg-test.two-tinted", r, &IconStyle::new(side, blue)).unwrap().tint, Some(blue));
+        }
+    }
+
+    #[test]
     fn re_registering_draws_a_new_raster() {
         let reg = IconRegistry::new();
         reg.register(Owner::Host, "file.new", Icon::svg(16, SQUARE)).unwrap();
@@ -1244,7 +1323,7 @@ mod tests {
         let reg = IconRegistry::new();
         assert!(matches!(reg.register(Owner::Host, "Bad", Icon::svg(16, SQUARE)), Err(IconError::BadKey { .. })));
         assert!(matches!(reg.register(Owner::Host, "ext.acme.gear", Icon::svg(16, SQUARE)), Err(IconError::Namespace { .. })));
-        let empty = Icon::Svg { masters: BTreeMap::new(), hc: BTreeMap::new() };
+        let empty = Icon::Svg { masters: BTreeMap::new(), hc: BTreeMap::new(), colors: IconColors::Tint };
         assert!(matches!(reg.register(Owner::Host, "reg-test.empty", empty), Err(IconError::BadIcon { .. })));
         assert!(matches!(reg.register(Owner::Host, "reg-test.zero", Icon::svg(0, SQUARE)), Err(IconError::BadIcon { .. })));
         assert!(reg.keys().is_empty());
