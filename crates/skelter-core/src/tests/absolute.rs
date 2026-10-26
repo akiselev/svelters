@@ -233,4 +233,15 @@ fn a_subtree_under_an_absolute_ancestor_that_moves_later_draws_at_the_new_place(
     assert_drawn_in_place(&d, &seen, &rows, "group re-inserted its children");
     let r = d.world_rect(group).unwrap();
     assert_eq!(seen.origin(group), Some((r.min.x, r.min.y)), "the group's own box");
+    // 5. a z-indexed absolute node is removed and another inserted in the same frame
+    let (mut d, root) = doc();
+    let old = child(&mut d, root, BOX, "position: absolute; z-index: 5; left: 40px; top: 30px; width: 50px; height: 20px; background-color: #ff0000");
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    d.remove(root, old).unwrap();
+    let new = child(&mut d, root, BOX, "position: absolute; z-index: 5; left: 120px; top: 60px; width: 50px; height: 20px; background-color: #00ff00");
+    settle(&mut d, &mut seen);
+    assert!(!seen.lists.contains(&old), "the removed node leaves no paint");
+    assert!(seen.lists.contains(&new), "the inserted node paints");
+    assert_eq!(seen.origin(new), Some((120.0, 60.0)), "where it is laid out");
 }
