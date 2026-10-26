@@ -638,6 +638,7 @@ impl Embed {
         // what kinds emitted outside input dispatch since the last logic (a list's row requests
         // from the frame, a programmatic focus move) reaches JS here (A25b)
         self.inner.backend.pump();
+        self.inner.backend.count(|t| t.checkpoints += 1);
         self.inner.host.checkpoint();
         self.collect();
         // faults found above dispose their roots now

@@ -163,6 +163,7 @@ impl SkelterBackend {
             // now only so it can be cancelled: its listeners get its arguments as when posted
             // (as on egui), the event last (`SVL_SIGNAL_ARGS`).
             let wire = if sm.spec.sync { sm.wire } else { sm.wire | SVL_SIGNAL_ARGS << SVL_SIGNAL_FLAGS_SHIFT };
+            self.count(|t| t.syncs += 1);
             match host.call_sync(h, wire, &args) {
                 Ok(Value::Bool(true)) => {
                     out.prevented = ev.cancelable;

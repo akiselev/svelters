@@ -33,7 +33,7 @@ pub mod sync;
 pub mod template;
 pub mod value;
 
-pub use backend::{Driver, SkelterBackend, SVL_LISTEN_PASSIVE, WakeState};
+pub use backend::{Driver, SkelterBackend, SVL_LISTEN_PASSIVE, Traffic, WakeState};
 pub use deliver::{Delivered, Output};
 pub use kinds::Kinds;
 pub use template::{Template, TemplateNode};

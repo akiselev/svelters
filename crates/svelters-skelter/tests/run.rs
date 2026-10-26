@@ -85,3 +85,36 @@ fn a_checkbox_click_calls_changed_with_its_value_and_can_be_cancelled() {
     h.run();
     assert_eq!(r.get(c, "checked"), Value::Bool(true), "cancelled: still checked");
 }
+
+/// FQ-76: the backend counts its JS traffic both ways, so a test asserts that an interaction made
+/// no JS round trip (a hover over a button JS only listens to for clicks) and that one did (the click).
+#[test]
+fn the_backend_counts_its_js_traffic() {
+    let r = Rig::new();
+    let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::testing());
+    install_widget_services(&r.backend, skelter_text::TextSystem::new(fonts));
+    let w = r.create("window");
+    let b = r.create("button");
+    r.set(b, "text", Value::Str("Run".into()));
+    r.listen(b, "clicked");
+    r.insert(w, b);
+    r.call(w, "present");
+    let t = r.backend.take_traffic();
+    assert!(t.creates == 2 && t.sets >= 1 && t.listens == 1 && t.tree == 1 && t.calls == 1, "{t:?}");
+    let mut doc = SkelterDocument::new(r.backend.clone());
+    for h in r.backend.take_presents() {
+        doc.opening(h);
+    }
+    let mut h = skelter_test::Harness::new(doc);
+    h.run();
+    r.backend.take_traffic();
+    h.get_by_label("Run").hover();
+    h.run();
+    let t = r.backend.take_traffic();
+    assert_eq!(t.to_js(), 0, "a hover is native only: {t:?}");
+    h.get_by_label("Run").click();
+    h.run();
+    let t = r.backend.take_traffic();
+    assert!(t.posts >= 1 && t.checkpoints >= 1, "the click reached JS: {t:?}");
+    assert_eq!(t.from_js(), 0, "the mock host asked nothing back: {t:?}");
+}
