@@ -353,7 +353,7 @@ impl Kind for Checkbox {
         }
         // a prevented toggle leaves the unit's bits at the new value: back to the props
         *cx.state = self.mirror(*cx.state);
-        if pass.resp.hovered || pass.resp.down_on || !pressed.is_empty() || !toggled.is_empty() { Handled::Yes } else { Handled::No }
+        if (ev.is_pointer() && (pass.resp.hovered || pass.resp.down_on)) || !pressed.is_empty() || !toggled.is_empty() { Handled::Yes } else { Handled::No }
     }
 
     fn a11y(&self, cx: &mut A11yCx) {

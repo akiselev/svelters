@@ -136,5 +136,10 @@ pub trait CompositorApi {
     fn frame_args(&self, _window: WindowId) -> Option<skelter_frame::FrameArgs> {
         None
     }
+    /// SV58: the window's image as the compositor last drew it (`None`: this compositor can't, or
+    /// the window has none). `CompositorHandle` renders it offscreen on the compositor thread.
+    fn read_window(&self, _window: WindowId) -> Option<skelter_compositor::WindowImage> {
+        None
+    }
     fn shutdown(&self);
 }

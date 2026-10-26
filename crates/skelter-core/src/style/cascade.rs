@@ -105,10 +105,10 @@ impl<'a> Element for El<'a> {
         v.to_text().map(Cow::Owned)
     }
     fn state(&self) -> StateMask {
-        self.doc.state[self.i]
+        StateMask(self.doc.state[self.i].0 | self.doc.style.nodes[self.i].forced.0)
     }
     fn is_focus_visible(&self) -> bool {
-        self.doc.state[self.i].contains(StateMask::FOCUS_VISIBLE)
+        self.state().contains(StateMask::FOCUS_VISIBLE)
     }
 }
 

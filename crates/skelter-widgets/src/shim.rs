@@ -265,6 +265,15 @@ pub mod core {
         OutsidePress(Point),
     }
 
+    impl Event {
+        /// A pointer, hover, wheel or capture event: what the pointer being over a node is about. A
+        /// kind that claims events because it is hovered claims only these; a key while hovered is
+        /// the focused node's to handle (Tab must bubble to the document's focus traversal).
+        pub fn is_pointer(&self) -> bool {
+            matches!(self, Event::Pointer(_) | Event::Hover(_) | Event::Wheel(_) | Event::CaptureLost | Event::OutsidePress(_))
+        }
+    }
+
     /// Stands in for `skelter_core::StyleCx`: the node's computed style and state, for `layout_style`.
     pub struct StyleCx<'a> {
         pub computed: Option<&'a ComputedStyle>,

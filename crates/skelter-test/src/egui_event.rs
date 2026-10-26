@@ -1,13 +1,18 @@
 //! The `egui::Event`-shaped injection adapter (architecture §16.1): tests written against egui_kittest
 //! keep their `harness.event(egui::Event::…)` calls during the transition. Each egui event becomes the
 //! skelter input the platform would deliver for it, so it takes the production dispatch path.
+//!
+//! Without feature `egui` only the adapter's state is here (the pointer the harness's verbs track, the
+//! platform's primary modifier); the translation needs egui.
 
 use skelter_base::accesskit::ActionRequest;
+#[cfg_attr(not(all(feature = "egui", feature = "automation")), allow(unused_imports))]
 use skelter_base::event::{
     GestureEvent, GesturePhase, ImeEvent, InputEvent, KeyEvent, KeyLocation, KeyState, Modifiers,
     MouseButton, PointerEvent, PointerPhase, PointerType, ScrollDelta, WheelEvent,
 };
 use skelter_base::geom::{Point, Vec2};
+#[cfg(any(feature = "egui", feature = "automation"))]
 use skelter_base::key::Key;
 use skelter_base::smallvec::SmallVec;
 
@@ -46,6 +51,7 @@ impl Default for EguiAdapter {
     }
 }
 
+#[cfg(feature = "egui")]
 pub fn modifiers(m: egui::Modifiers, macos: bool) -> Modifiers {
     let mut out = Modifiers::default();
     if m.shift {
@@ -63,11 +69,13 @@ pub fn modifiers(m: egui::Modifiers, macos: bool) -> Modifiers {
     out
 }
 
+#[cfg(feature = "egui")]
 /// egui's key → skelter's (they share egui's names).
 pub fn key(k: egui::Key) -> Option<Key> {
     Key::from_name(k.name())
 }
 
+#[cfg(feature = "egui")]
 pub fn button(b: egui::PointerButton) -> MouseButton {
     match b {
         egui::PointerButton::Primary => MouseButton::Primary,
@@ -78,6 +86,7 @@ pub fn button(b: egui::PointerButton) -> MouseButton {
     }
 }
 
+#[cfg(any(feature = "egui", feature = "automation"))]
 fn button_bit(b: MouseButton) -> u32 {
     match b {
         MouseButton::Primary => 1,
@@ -89,6 +98,7 @@ fn button_bit(b: MouseButton) -> u32 {
     }
 }
 
+#[cfg(feature = "egui")]
 fn gesture(p: egui::TouchPhase) -> GesturePhase {
     match p {
         egui::TouchPhase::Start => GesturePhase::Started,
@@ -120,6 +130,7 @@ impl EguiAdapter {
         }
     }
 
+    #[cfg(feature = "egui")]
     fn chord(&self, k: Key) -> Vec<Injected> {
         let m = if self.macos {
             Modifiers::SUPER
@@ -142,6 +153,7 @@ impl EguiAdapter {
             .collect()
     }
 
+    #[cfg(feature = "egui")]
     /// Translate one egui event. Events with no skelter counterpart translate to nothing:
     /// `PasteImage`, `MiddleClickPaste`, and IME
     /// `DeleteSurrounding` (egui counts chars, skelter bytes of text the adapter cannot see).
@@ -306,6 +318,102 @@ impl EguiAdapter {
             }
             E::WindowFocused(f) => vec![Injected::Focused(*f)],
             E::AccessKitActionRequest(r) => vec![Injected::A11y(r.clone())],
+        }
+    }
+}
+
+/// svelters-automation's input ([`svelters_automation::input::Event`], in window points) as the
+/// platform would deliver it: what `SkelterNativeDriver` sends a session's acts through.
+#[cfg(feature = "automation")]
+mod automation {
+    use super::*;
+    use svelters_automation::input::{Event, Modifiers as AuModifiers, MouseWheelUnit, PointerButton};
+
+    pub fn modifiers(m: AuModifiers, macos: bool) -> Modifiers {
+        let mut out = Modifiers::default();
+        if m.shift {
+            out = out.union(Modifiers::SHIFT);
+        }
+        if m.alt {
+            out = out.union(Modifiers::ALT);
+        }
+        if m.ctrl || (m.command && !macos) {
+            out = out.union(Modifiers::CTRL);
+        }
+        if m.mac_cmd || (m.command && macos) {
+            out = out.union(Modifiers::SUPER);
+        }
+        out
+    }
+
+    pub fn button(b: PointerButton) -> MouseButton {
+        match b {
+            PointerButton::Primary => MouseButton::Primary,
+            PointerButton::Secondary => MouseButton::Secondary,
+            PointerButton::Middle => MouseButton::Middle,
+            PointerButton::Extra1 => MouseButton::Back,
+            PointerButton::Extra2 => MouseButton::Forward,
+        }
+    }
+
+    impl EguiAdapter {
+        /// Translate one automation event (the same mapping as the egui events it mirrors).
+        pub fn translate_automation(&mut self, ev: &Event) -> Vec<Injected> {
+            match ev {
+                Event::PointerMoved(p) => {
+                    self.pointer = Point::new(p.x, p.y);
+                    let e = self.pointer_event(PointerPhase::Move, self.pointer, None, self.held);
+                    vec![Injected::Input(InputEvent::Pointer(e))]
+                }
+                Event::PointerButton { pos, button: b, pressed, modifiers: m } => {
+                    self.pointer = Point::new(pos.x, pos.y);
+                    self.held = modifiers(*m, self.macos);
+                    let b = button(*b);
+                    if *pressed {
+                        self.buttons |= button_bit(b);
+                    } else {
+                        self.buttons &= !button_bit(b);
+                    }
+                    let phase = if *pressed { PointerPhase::Down } else { PointerPhase::Up };
+                    let e = self.pointer_event(phase, self.pointer, Some(b), self.held);
+                    vec![Injected::Input(InputEvent::Pointer(e))]
+                }
+                Event::MouseWheel { unit, delta, modifiers: m } => {
+                    let d = Vec2::new(delta.x, delta.y);
+                    let delta = match unit {
+                        MouseWheelUnit::Point => ScrollDelta::Pixels(d),
+                        MouseWheelUnit::Line => ScrollDelta::Lines(d),
+                        MouseWheelUnit::Page => ScrollDelta::Pages(d),
+                    };
+                    vec![Injected::Input(InputEvent::Wheel(WheelEvent {
+                        pos: self.pointer,
+                        delta,
+                        phase: None,
+                        momentum: None,
+                        modifiers: modifiers(*m, self.macos),
+                    }))]
+                }
+                Event::ModifiersChanged(m) => {
+                    self.held = modifiers(*m, self.macos);
+                    vec![Injected::Input(InputEvent::ModifiersChanged(self.held))]
+                }
+                Event::Key { key, pressed, repeat, modifiers: m } => {
+                    self.held = modifiers(*m, self.macos);
+                    vec![Injected::Input(InputEvent::Key(KeyEvent {
+                        key: Key::from_name(key.name()),
+                        physical: 0,
+                        text: None,
+                        state: if *pressed { KeyState::Pressed } else { KeyState::Released },
+                        repeat: *repeat,
+                        location: KeyLocation::Standard,
+                        modifiers: self.held,
+                    }))]
+                }
+                Event::Text(t) => vec![Injected::Input(InputEvent::Ime(ImeEvent::Commit(t.clone())))],
+                Event::AccessKit(r) => vec![Injected::A11y(r.clone())],
+                // `input::Event` is non-exhaustive: an event added later is dropped until mapped here
+                _ => Vec::new(),
+            }
         }
     }
 }

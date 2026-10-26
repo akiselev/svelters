@@ -6,6 +6,7 @@
 
 pub(crate) mod cascade;
 mod computed;
+mod inspect;
 mod invalidate;
 pub mod table;
 
@@ -34,6 +35,15 @@ pub(crate) struct NodeStyle {
     pub computed: Arc<ComputedBox>,
     /// The computed style of each of the kind's paint parts ([`KindSpec::parts`](crate::KindSpec::parts)).
     pub parts: Vec<(&'static str, Arc<svelters_style::ComputedStyle>)>,
+    /// State bits a tool forces for matching ([`crate::Document::force_state`]), ORed over the node's.
+    pub forced: svelters_style::StateMask,
+}
+
+/// What an inspector shows about a sheet ([`crate::Document::set_sheet_info`]).
+#[derive(Clone, Debug, Default)]
+pub(crate) struct SheetInfo {
+    pub name: Option<String>,
+    pub source: Option<Arc<svelters_style::SheetSource>>,
 }
 
 /// The document's style state: the stylist with its sheets, and the per-node column.
@@ -44,6 +54,8 @@ pub(crate) struct DocStyle {
     pub caches: svelters_style::MatchCaches,
     /// Resolves `:state(ns.name)` in sheets to the host's state bits ([`crate::Document::set_state_names`]).
     pub state_names: Option<Box<dyn svelters_style::StateNames>>,
+    /// Sheet names and (dev) their `<style>` sources, for matched rules.
+    pub sheet_info: std::collections::HashMap<SheetId, SheetInfo>,
 }
 
 impl Default for DocStyle {
@@ -54,6 +66,7 @@ impl Default for DocStyle {
             default: Arc::new(ComputedBox::default()),
             caches: svelters_style::MatchCaches::new(),
             state_names: None,
+            sheet_info: std::collections::HashMap::new(),
         }
     }
 }
@@ -98,6 +111,7 @@ impl DocStyle {
     }
     pub fn remove_sheet(&mut self, id: SheetId) {
         self.stylist.remove_sheet(id);
+        self.sheet_info.remove(&id);
         self.caches.clear();
     }
 }

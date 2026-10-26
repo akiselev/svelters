@@ -1,6 +1,7 @@
 //! Arguments the harness verbs take in either vocabulary: skelter's (`Key`, `Point`, `Size`,
 //! `Modifiers`, `MouseButton`, `InputEvent`) or egui's, so tests written against egui_kittest keep their
 //! calls (`h.key_press(egui::Key::Enter)`, `h.hover_at(egui::pos2(..))`, `h.event(egui::Event::..)`).
+//! The egui side needs feature `egui`.
 
 use skelter_base::event::{InputEvent, Modifiers, MouseButton};
 use skelter_base::geom::{Point, Size};
@@ -16,6 +17,7 @@ impl IntoKey for Key {
     }
 }
 
+#[cfg(feature = "egui")]
 impl IntoKey for egui::Key {
     /// skelter's key table is egui's, by name.
     #[track_caller]
@@ -35,6 +37,7 @@ impl IntoPoint for Point {
     }
 }
 
+#[cfg(feature = "egui")]
 impl IntoPoint for egui::Pos2 {
     fn into_point(self) -> Point {
         Point::new(self.x, self.y)
@@ -51,6 +54,7 @@ impl IntoSize for Size {
     }
 }
 
+#[cfg(feature = "egui")]
 impl IntoSize for egui::Vec2 {
     fn into_size(self) -> Size {
         Size::new(self.x, self.y)
@@ -68,6 +72,7 @@ impl IntoModifiers for Modifiers {
     }
 }
 
+#[cfg(feature = "egui")]
 impl IntoModifiers for egui::Modifiers {
     fn into_modifiers(self, macos: bool) -> Modifiers {
         crate::egui_event::modifiers(self, macos)
@@ -84,6 +89,7 @@ impl IntoButton for MouseButton {
     }
 }
 
+#[cfg(feature = "egui")]
 impl IntoButton for egui::PointerButton {
     fn into_button(self) -> MouseButton {
         crate::egui_event::button(self)
@@ -95,7 +101,18 @@ impl IntoButton for egui::PointerButton {
 #[derive(Clone, Debug)]
 pub enum TestEvent {
     Skelter(InputEvent),
+    #[cfg(feature = "egui")]
     Egui(egui::Event),
+    /// svelters-automation's input (feature `automation`).
+    #[cfg(feature = "automation")]
+    Automation(svelters_automation::input::Event),
+}
+
+#[cfg(feature = "automation")]
+impl From<svelters_automation::input::Event> for TestEvent {
+    fn from(e: svelters_automation::input::Event) -> Self {
+        TestEvent::Automation(e)
+    }
 }
 
 impl From<InputEvent> for TestEvent {
@@ -104,6 +121,7 @@ impl From<InputEvent> for TestEvent {
     }
 }
 
+#[cfg(feature = "egui")]
 impl From<egui::Event> for TestEvent {
     fn from(e: egui::Event) -> Self {
         TestEvent::Egui(e)

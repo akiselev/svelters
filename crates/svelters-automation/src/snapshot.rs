@@ -12,9 +12,11 @@
 //! their place. A `label` shows its text as its name. Pointer and focus states are left out.
 
 use crate::source::SceneSource;
+#[cfg(feature = "egui")]
 use svelters_egui::scene::{NodeRef, W};
 
 /// The value a snapshot shows after the name (`: value`), for value-bearing roles.
+#[cfg(feature = "egui")]
 pub(crate) fn value_of(n: NodeRef<'_>) -> Option<String> {
     let num = |v: f64| {
         if v.fract() == 0.0 {

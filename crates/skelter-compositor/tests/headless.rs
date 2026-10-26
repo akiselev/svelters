@@ -275,3 +275,96 @@ fn caret_only_frames_keep_the_content_on_every_swapchain_image() {
     assert_eq!(at(8, 16), [255, 0, 0, 255], "the content survives caret-only frames");
     assert_eq!(at(36, 2), [255, 255, 255, 255], "so does the background");
 }
+
+/// SV58: `Msg::ReadWindow` reads back a window's image as its last frame drew it, rendered offscreen
+/// (not from the swapchain, so every platform can), in device pixels at the window's scale, as RGBA.
+#[test]
+fn a_drawn_window_reads_back_as_rgba() {
+    let clock: Arc<dyn Clock> = Arc::new(InstantClock(Instant::now()));
+    let (tx, rx) = mpsc::channel();
+    let mut gpu = GpuBackend::new(
+        skelter_compositor::gpu::create_instance(None),
+        wgpu::PowerPreference::LowPower,
+        Arc::new(std::sync::RwLock::new(None)),
+        seams::skelter_renderer(),
+        Arc::new(NoGlyphs),
+        tx,
+        clock.clone(),
+    );
+    let w = WindowId(1);
+    let size = DeviceSize { w: 64, h: 32 };
+    if !gpu.attach_offscreen(w, SurfaceKey::Main, size) {
+        eprintln!("no GPU adapter: skipping");
+        return;
+    }
+    let white = Color::WHITE;
+    let mut engine = Engine::new(
+        EngineConfig { refresh: Span::from_micros(16_667), clear: Some(white), caret_blink: None, ppi: 96.0 },
+        Box::new(seams::frame_clock),
+        Box::new(|_: ToUi| {}),
+        Box::new(|| {}),
+    );
+    // 32 × 16 points at scale 2: a blue quad on the left half (points 0..16)
+    engine.insert_window(w, size, Scale(2.0));
+    let mut c = Commit { window: w, revision: Revision(1), ..Default::default() };
+    c.layers = vec![LayerDelta::Add(LayerDesc {
+        id: LayerId(1),
+        parent: None,
+        kind: LayerKind::Root,
+        transform: PropNodeId(1),
+        clip: None,
+        effect: None,
+        z: 0,
+        bounds: Rect::new(0.0, 0.0, 32.0, 16.0),
+        opaque: true,
+    })];
+    c.props.ops = vec![PropOp::Transform(PropNodeId(1), TransformNode { parent: None, local: Affine::IDENTITY, scroll: None })];
+    let node = NodeId::new(1, 1);
+    c.layers.push(LayerDelta::Items {
+        layer: LayerId(1),
+        items: vec![ItemRef { node, transform: PropNodeId(1), clip: None, effect: None }],
+    });
+    let left = Rect::new(0.0, 0.0, 16.0, 16.0);
+    let mut list = DisplayList::new();
+    list.push(
+        Prim::Quad(Quad {
+            rect: left,
+            radii: Corners::ZERO,
+            fill: Fill::Solid(Color::rgba(0.0, 0.0, 1.0, 1.0)),
+            border_widths: Insets::ZERO,
+            border_color: Color::TRANSPARENT,
+            border_style: Default::default(),
+        }),
+        left,
+    );
+    c.lists = vec![(node, Arc::new(list))];
+    engine.handle(Msg::Commit(Box::new(c)), clock.now(), &mut gpu);
+    assert_eq!(engine.stats.frames_drawn, 1);
+    let done = gpu_done(&rx);
+    engine.handle(done, clock.now(), &mut gpu);
+
+    let (reply, answer) = mpsc::channel();
+    engine.handle(Msg::ReadWindow { window: w, reply }, clock.now(), &mut gpu);
+    let img = answer.recv().unwrap().expect("a drawn window reads back");
+    assert_eq!(img.size, size);
+    assert_eq!(img.scale, Scale(2.0));
+    assert_eq!(img.rgba.len(), (size.w * size.h * 4) as usize);
+    let at = |x: u32, y: u32| {
+        let i = ((y * size.w + x) * 4) as usize;
+        [img.rgba[i], img.rgba[i + 1], img.rgba[i + 2], img.rgba[i + 3]]
+    };
+    assert_eq!(at(16, 16), [0, 0, 255, 255], "inside the quad (device pixels 0..32)");
+    assert_eq!(at(48, 16), [255, 255, 255, 255], "the clear colour outside it");
+
+    // the same pixels the presented target holds (the swapchain stand-in), in RGBA order
+    let (_, format, presented) = gpu.read_pixels(w, SurfaceKey::Main).expect("read back the target");
+    let presented: Vec<u8> = match format {
+        wgpu::TextureFormat::Bgra8Unorm => presented.chunks_exact(4).flat_map(|p| [p[2], p[1], p[0], p[3]]).collect(),
+        _ => presented,
+    };
+    assert!(presented == img.rgba, "the readback matches what was presented");
+
+    let (reply, answer) = mpsc::channel();
+    engine.handle(Msg::ReadWindow { window: WindowId(9), reply }, clock.now(), &mut gpu);
+    assert!(answer.recv().unwrap().is_none(), "no such window");
+}

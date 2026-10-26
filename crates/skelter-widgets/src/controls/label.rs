@@ -468,7 +468,7 @@ impl Kind for Label {
                 }
             }
         }
-        if handled || pass.resp.hovered { Handled::Yes } else { Handled::No }
+        if handled || (ev.is_pointer() && pass.resp.hovered) { Handled::Yes } else { Handled::No }
     }
 
     fn a11y(&self, cx: &mut A11yCx) {

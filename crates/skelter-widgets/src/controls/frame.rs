@@ -371,7 +371,7 @@ impl Kind for Frame {
             }
         }
         self.mirror(cx.state);
-        if self.props.checkable && (pass.resp.down_on || changed) { Handled::Yes } else { Handled::No }
+        if self.props.checkable && ((ev.is_pointer() && pass.resp.down_on) || changed) { Handled::Yes } else { Handled::No }
     }
 
     fn a11y(&self, cx: &mut A11yCx) {

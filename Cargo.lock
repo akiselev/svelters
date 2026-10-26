@@ -5250,6 +5250,7 @@ dependencies = [
 name = "svelters-automation"
 version = "0.0.0"
 dependencies = [
+ "accesskit",
  "egui",
  "egui_kittest",
  "serde_json",

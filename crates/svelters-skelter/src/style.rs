@@ -30,6 +30,7 @@ impl SkelterBackend {
                 let mut doc = self.doc_mut();
                 let pre = svelters_style::binary::decode(&bytes, &svelters_style::ParseOptions { states: doc.state_names() })?;
                 let id = doc.add_parsed_sheet(&pre.sheet);
+                doc.set_sheet_info(id, Some(name.to_string()), None);
                 doc.preload_utilities(&pre.utilities);
                 if let Some((old, _)) = self.0.sheets.borrow_mut().insert(name.to_string(), (id, String::from("(precompiled)"))) {
                     doc.remove_sheet(old);
@@ -47,9 +48,15 @@ impl SkelterBackend {
                     }
                     Some(t) => match t.split_once(SVL_STYLE_SEP) {
                         Some((name, rest)) => {
-                            let css = rest.split_once(SVL_STYLE_SEP).map_or(rest, |(css, _)| css);
+                            let (css, dev) = match rest.split_once(SVL_STYLE_SEP) {
+                                Some((css, dev)) => (css, dev.split_once(SVL_STYLE_SEP)),
+                                None => (rest, None),
+                            };
                             let mut doc = self.doc_mut();
                             let id = doc.add_sheet(css);
+                            // DZ0 (dev): the component file and the compiler's map, for matched rules
+                            let source = dev.and_then(|(file, map)| svelters_style::SheetSource::new(file, map, css));
+                            doc.set_sheet_info(id, Some(name.to_string()), source);
                             if let Some((old, _)) = self.0.sheets.borrow_mut().insert(name.to_string(), (id, css.to_string())) {
                                 doc.remove_sheet(old);
                             }
@@ -150,4 +157,18 @@ mod tests {
         visual_channel(&mut v, SVL_STYLE_INERT, None).unwrap();
         assert!(!v.inert);
     }
+}
+
+/// DZ2b: the state bits a pseudo-class tests, as written in a selector (with or without the `:`):
+/// `hover`, `active`, `focus`, `focus-visible`, `disabled`, `checked`, … — what
+/// [`SkelterBackend::force_state`] forces to show that state's rules (svelters-egui's
+/// `style::pseudo_state`). `None` for an unknown name, for the negated ones (`:enabled`, `:valid`, …),
+/// which no forced bit can turn on, and for `:state(…)` (the host's provider states:
+/// [`SkelterBackend::pseudo_state`]).
+pub fn pseudo_state(name: &str) -> Option<crate::designer::StateBits> {
+    let name = name.trim().trim_start_matches(':');
+    if name == "focus-visible" {
+        return Some(svelters_style::StateMask::FOCUS_VISIBLE);
+    }
+    svelters_style::STATE_PSEUDO_CLASSES.iter().find(|(n, _, negated)| *n == name && !*negated).map(|(_, m, _)| *m)
 }
