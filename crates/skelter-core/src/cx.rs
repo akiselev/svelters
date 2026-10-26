@@ -827,6 +827,12 @@ impl EventCx<'_> {
         let n = self.node;
         self.doc.focus(n, reason);
     }
+    /// During a `FocusIn` that a Tab caused: whether it went backwards (Shift+Tab); `None` for any
+    /// other focus move. A node that manages focus inside itself (an egui island) starts at its last
+    /// part for Shift+Tab, its first for Tab.
+    pub fn tab_direction(&self) -> Option<bool> {
+        self.doc.window_of(self.node).and_then(|w| self.doc.window(w)).and_then(|w| w.tab_direction)
+    }
     /// While this node has focus: the part of it that has focus (a virtual child's index; `None`:
     /// the node itself), which AccessKit then reports as focused ([`crate::FocusTarget`]).
     pub fn set_focus_sub(&mut self, sub: Option<u32>) {

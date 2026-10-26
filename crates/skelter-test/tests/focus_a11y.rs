@@ -204,3 +204,90 @@ fn an_active_descendant_is_what_assistive_technology_sees_focused() {
     assert_eq!(h.state().doc.focused(w), Some(b));
     assert_eq!(focus(&h).as_deref(), Some("a"), "accesskit_consumer reports the active descendant");
 }
+
+// ---- QA11Y F5: the island tab-out protocol ----
+
+/// Toggles `a` and `b` around a 300 × 200 island drawn by `ui`.
+fn island_shell(ui: Ui) -> (Harness<skelter_test::CoreIslands<Ui>>, NodeId) {
+    let mut reg = KindRegistry::new();
+    reg.register::<BoxKind>().unwrap();
+    reg.register::<ToggleKind>().unwrap();
+    IslandHost::register(&mut reg).unwrap();
+    let mut doc = Document::new(Arc::new(reg), Box::new(FixedText));
+    doc.set_text_shaper(Box::new(FixedText));
+    let mut h = skelter_test::HarnessBuilder::new()
+        .with_size(Size::new(400.0, 300.0))
+        .with_accessibility_check(false)
+        .with_consumer(true)
+        .build_core_islands(CoreDocument::new(doc, BOX), ui);
+    let window = h.window();
+    let doc = h.state_mut().doc();
+    let root = doc.window_root(window).unwrap();
+    add(doc, root, TOGGLE, "a", "width: 40px; height: 20px");
+    let node = doc.create(EGUI_ISLAND);
+    style(doc, node, "width: 300px; height: 200px");
+    doc.insert(root, node, None, None).unwrap();
+    add(doc, root, TOGGLE, "b", "width: 40px; height: 20px");
+    let island = EguiIsland::new(IslandDesc {
+        texture: TextureId(9),
+        tree: island_tree_id(0),
+        rect: Rect::ZERO,
+        scale: Scale(1.0),
+        renderer: Default::default(),
+    });
+    IslandHost::mount(doc, node, island).unwrap_or_else(|_| panic!("mounts"));
+    h.run();
+    (h, node)
+}
+
+/// What AccessKit's consumer reports focused: a skelter node's author id, or an egui widget's label
+/// (its role when it has none).
+fn at<D: skelter::seams::DocumentApi>(h: &Harness<D>) -> String {
+    let c = h.consumer();
+    let n = c.focus().expect("a focus");
+    n.data().author_id().map(str::to_owned).or_else(|| n.label()).unwrap_or_else(|| format!("{:?}", n.role()))
+}
+
+fn press<D: skelter::seams::DocumentApi>(h: &mut Harness<D>, back: bool) -> String {
+    if back {
+        h.key_press_modifiers(Modifiers::SHIFT, Key::Tab);
+    } else {
+        h.key_press(Key::Tab);
+    }
+    h.run();
+    at(h)
+}
+
+#[test]
+fn tab_enters_an_island_moves_through_its_widgets_and_leaves_it() {
+    let ui: Ui = Box::new(|_, ui| {
+        let _ = ui.button("One");
+        let _ = ui.button("Two");
+    });
+    let (mut h, island) = island_shell(ui);
+    let w = h.window();
+    let forward: Vec<String> = (0..4).map(|_| press(&mut h, false)).collect();
+    assert_eq!(forward, ["a", "One", "Two", "b"], "into the island at its first widget, out after its last");
+    let back: Vec<String> = (0..3).map(|_| press(&mut h, true)).collect();
+    assert_eq!(back, ["Two", "One", "a"], "Shift+Tab enters at the last widget and leaves before the first");
+    assert_ne!(h.state_mut().doc().focused(w), Some(island));
+}
+
+#[test]
+fn a_widget_that_locks_focus_keeps_tab() {
+    let text = std::rc::Rc::new(std::cell::RefCell::new(String::from("fn main() {}")));
+    let t = text.clone();
+    let ui: Ui = Box::new(move |_, ui| {
+        let _ = ui.button("One");
+        ui.add(egui::TextEdit::multiline(&mut *t.borrow_mut()).code_editor());
+    });
+    let (mut h, island) = island_shell(ui);
+    let w = h.window();
+    assert_eq!(press(&mut h, false), "a");
+    assert_eq!(press(&mut h, false), "One");
+    let editor = press(&mut h, false);
+    assert_ne!(editor, "b", "into the editor");
+    assert_eq!(press(&mut h, false), editor, "the code editor keeps Tab (lock_focus)");
+    assert_eq!(h.state_mut().doc().focused(w), Some(island));
+    assert!(text.borrow().contains('\t'), "and indented: {:?}", text.borrow());
+}

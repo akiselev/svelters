@@ -80,6 +80,21 @@ pub struct IslandOutput {
     pub dnd: DndOutput,
     /// When egui wants its next pass without new input (`None`: not until input arrives).
     pub repaint_at: Option<Time>,
+    /// Tab (`Some(false)`) or Shift+Tab (`Some(true)`) left egui's widgets: the host moves skelter's
+    /// focus to the next stop ([`crate::IslandHost::run`] does).
+    pub tab_out: Option<bool>,
+}
+
+/// A Tab egui took while the island had focus, checked after the pass (the tab-out protocol, QA11Y
+/// F5): egui moves focus inside the island, keeps it (a widget's `lock_focus`), or runs off its last
+/// (first) widget, and then Tab leaves the island.
+#[derive(Clone, Copy, Debug)]
+struct TabProbe {
+    backwards: bool,
+    /// egui's focus before the pass.
+    before: Option<egui::Id>,
+    /// Shift+Tab: egui moves focus at the pass after the key, so the check waits a pass.
+    waited: bool,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -140,6 +155,9 @@ pub struct EguiIsland {
     /// The renderer is new (first render, or after a device reset): upload the mirror before the
     /// pending deltas.
     replay: bool,
+    tab_probe: Option<TabProbe>,
+    /// egui's focusable widgets in AccessKit tree order, from the last pass's update.
+    focus_order: Vec<accesskit::NodeId>,
 }
 
 impl EguiIsland {
@@ -168,6 +186,8 @@ impl EguiIsland {
             cursor: CursorIcon::Default,
             mirror: TextureMirror::default(),
             replay: false,
+            tab_probe: None,
+            focus_order: Vec::new(),
         };
         island.place_a11y();
         island
@@ -308,6 +328,23 @@ impl EguiIsland {
         self.input.focused()
     }
 
+    /// Focus entered the island by Tab (`backwards`: Shift+Tab), as into an iframe: egui's first (last)
+    /// widget takes it, through a Tab egui sees from no focus.
+    pub fn focus_entered(&mut self, backwards: bool) {
+        self.set_focused(true);
+        self.ctx.memory_mut(|m| {
+            if let Some(f) = m.focused() {
+                m.surrender_focus(f);
+            }
+        });
+        let modifiers = if backwards { egui::Modifiers::SHIFT } else { egui::Modifiers::NONE };
+        for pressed in [true, false] {
+            self.events.push(egui::Event::Key { key: egui::Key::Tab, physical_key: None, pressed, repeat: false, modifiers });
+        }
+        self.tab_probe = None;
+        self.pass_at = Some(Time::ZERO);
+    }
+
     /// A skelter input event. Returns whether the island took it (the host stops dispatching it).
     pub fn handle_input(&mut self, ev: &InputEnvelope) -> bool {
         self.handle_event(&ev.event, ev.recv_time)
@@ -315,6 +352,18 @@ impl EguiIsland {
 
     /// [`handle_input`](Self::handle_input) for an event that arrived at `at` (positions in window points).
     pub fn handle_event(&mut self, ev: &InputEvent, at: Time) -> bool {
+        // a plain Tab (or Shift+Tab) goes to egui; whether it left the island is known after the pass
+        if let InputEvent::Key(k) = ev
+            && self.input.focused()
+            && k.state == skelter_base::event::KeyState::Pressed
+            && k.key == Some(skelter_base::key::Key::Tab)
+        {
+            use skelter_base::event::Modifiers as M;
+            if ![M::CTRL, M::ALT, M::SUPER].iter().any(|m| k.modifiers.contains(*m)) {
+                let before = self.ctx.memory(|m| m.focused());
+                self.tab_probe = Some(TabProbe { backwards: k.modifiers.contains(M::SHIFT), before, waited: false });
+            }
+        }
         let Routed { consumed, queued, paste } = self.input.translate(ev, &mut self.events);
         if paste {
             let text = self.clipboard.as_mut().and_then(|c| c.get_text(ClipboardKind::Clipboard)).map(|t| t.replace("\r\n", "\n"));
@@ -506,9 +555,47 @@ impl EguiIsland {
             }
         }
         out.a11y = po.accesskit_update.map(|u| self.graft.graft(u));
+        if let Some(u) = &out.a11y {
+            self.focus_order = focus_order(u);
+        }
+        out.tab_out = self.check_tab();
         let leaving = self.input.captured() && !self.input.pointer_inside();
         out.dnd = self.dnd.after_pass(&self.ctx, leaving);
         out
+    }
+
+    /// The tab-out check after a pass ([`TabProbe`]): `Some(backwards)` when Tab left egui's widgets
+    /// (egui's focus is then dropped, so a Tab back in starts at the edge again).
+    fn check_tab(&mut self) -> Option<bool> {
+        let p = self.tab_probe.take()?;
+        let after = self.ctx.memory(|m| m.focused());
+        let leave = match (p.backwards, p.before) {
+            // forwards egui gives focus to the next widget in the same pass, or to none past the last
+            (false, _) | (true, None) => after.is_none(),
+            (true, Some(_)) if !p.waited => {
+                self.tab_probe = Some(TabProbe { waited: true, ..p });
+                self.pass_at = Some(Time::ZERO);
+                return None;
+            }
+            // backwards from the first widget egui wraps to the last: a move to a later widget
+            (true, Some(x)) => match after {
+                None => true,
+                Some(y) if y == x => false,
+                Some(y) => {
+                    let at = |id: egui::Id| self.focus_order.iter().position(|n| *n == id.accesskit_id());
+                    matches!((at(x), at(y)), (Some(a), Some(b)) if b > a)
+                }
+            },
+        };
+        if !leave {
+            return None;
+        }
+        self.ctx.memory_mut(|m| {
+            if let Some(f) = m.focused() {
+                m.surrender_focus(f);
+            }
+        });
+        Some(p.backwards)
     }
 
     /// The device-pixel size of the island's texture.
@@ -674,4 +761,20 @@ impl egui::DroppedFile for PathFile {
     fn bytes(&self) -> Result<Vec<u8>, String> {
         std::fs::read(&self.0).map_err(|e| e.to_string())
     }
+}
+
+/// egui's focusable widgets (those offering `Action::Focus`) in tree order.
+fn focus_order(u: &accesskit::TreeUpdate) -> Vec<accesskit::NodeId> {
+    let nodes: HashMap<accesskit::NodeId, &accesskit::Node> = u.nodes.iter().map(|(id, n)| (*id, n)).collect();
+    let Some(root) = u.tree.as_ref().map(|t| t.root) else { return Vec::new() };
+    let mut out = Vec::new();
+    let mut stack = vec![root];
+    while let Some(id) = stack.pop() {
+        let Some(n) = nodes.get(&id) else { continue };
+        if n.supports_action(accesskit::Action::Focus) {
+            out.push(id);
+        }
+        stack.extend(n.children().iter().rev().copied());
+    }
+    out
 }

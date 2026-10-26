@@ -171,6 +171,20 @@ pub fn next_focus(doc: &Document, window: WindowId, backwards: bool) -> Option<N
     })
 }
 
+/// Tab (or Shift+Tab with `backwards`): focus moves to [`next_focus`]; the kind that takes it sees the
+/// direction during its `FocusIn` ([`crate::EventCx::tab_direction`]). False when there is no stop.
+pub(crate) fn tab(doc: &mut Document, window: WindowId, backwards: bool) -> bool {
+    let Some(n) = next_focus(doc, window, backwards) else { return false };
+    if let Some(w) = doc.window_mut(window) {
+        w.tab_direction = Some(backwards);
+    }
+    set_focus(doc, Some(n), FocusReason::Keyboard);
+    if let Some(w) = doc.window_mut(window) {
+        w.tab_direction = None;
+    }
+    true
+}
+
 /// Moves focus to `node` (or clears it for `None`).
 pub(crate) fn set_focus(doc: &mut Document, node: Option<NodeId>, reason: FocusReason) {
     let Some(node) = node else { return };

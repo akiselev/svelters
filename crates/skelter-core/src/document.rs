@@ -1337,6 +1337,13 @@ impl Document {
         crate::input::focus::request_focus(self, node, reason);
     }
 
+    /// Moves focus as Tab (Shift+Tab with `backwards`) does from the window's focus, wrapping inside its
+    /// focus scope (an egui island that Tab leaves hands the move back to the document this way). False
+    /// when there is no stop.
+    pub fn tab(&mut self, window: WindowId, backwards: bool) -> bool {
+        crate::input::focus::tab(self, window, backwards)
+    }
+
     /// The node a [`Document::focus`] call waits to focus at the next restyle (`None`: none).
     pub fn pending_focus(&self, window: WindowId) -> Option<NodeId> {
         crate::input::focus::pending_focus(self, window)

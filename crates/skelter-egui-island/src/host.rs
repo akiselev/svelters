@@ -6,6 +6,11 @@
 //! - records the island's texture over its border box (`record`);
 //! - forwards its native input to the island (`event`: pointer with capture, wheel, keys, IME, focus,
 //!   AccessKit actions), so egui sees the production dispatch path, hit testing and focus included;
+//! - is one Tab stop whose inside egui manages (the tab-out protocol, QA11Y F5): focus entering by Tab
+//!   goes to egui's first widget (Shift+Tab: its last, [`EguiIsland::focus_entered`]); while the node
+//!   has focus Tab goes to egui, which moves between its widgets or keeps focus where a widget locks
+//!   it (`TextEdit::lock_focus`); Tab past egui's last (Shift+Tab before its first) widget hands the
+//!   move back to the document after the pass ([`IslandOutput::tab_out`], applied by [`IslandHost::run`]);
 //! - marks itself as the graft point of the island's AccessKit subtree (`a11y`), whose tree id follows the
 //!   node ([`island_tree_id`] of its id).
 //!
@@ -109,8 +114,13 @@ impl Kind for EguiIslandKind {
             Event::Ime(i) => InputEvent::Ime((*i).clone()),
             Event::FocusIn(_) | Event::FocusOut => {
                 let focused = matches!(ev, Event::FocusIn(_));
+                // entered by Tab: egui's first (Shift+Tab: last) widget takes focus
+                let tab = if focused { cx.tab_direction() } else { None };
                 if let Some(island) = cx.service::<IslandHost>().and_then(|h| h.islands.get_mut(&node)) {
-                    island.set_focused(focused);
+                    match tab {
+                        Some(backwards) => island.focus_entered(backwards),
+                        None => island.set_focused(focused),
+                    }
                 }
                 return Handled::No;
             }
@@ -310,6 +320,20 @@ impl IslandHost {
                 }
             } else {
                 out.dnd.drag_out = Some(drag);
+            }
+        }
+        // Tab left an island's widgets: skelter's focus moves on from its node (QA11Y F5)
+        for (node, out) in &outputs {
+            let (Some(backwards), Some(window)) = (out.tab_out, doc.window_of(*node)) else { continue };
+            if doc.focused(window) != Some(*node) {
+                continue;
+            }
+            doc.tab(window, backwards);
+            // the island is the only stop: Tab comes back in at the other edge
+            if doc.focused(window) == Some(*node)
+                && let Some(island) = Self::island_mut(doc, *node)
+            {
+                island.focus_entered(backwards);
             }
         }
         for (node, _) in &outputs {

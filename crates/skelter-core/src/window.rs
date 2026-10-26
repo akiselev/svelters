@@ -74,6 +74,8 @@ pub(crate) struct WindowState {
     /// semantic object (`FocusTarget::sub`). Cleared when focus moves.
     pub focus_sub: Option<u32>,
     pub focus_visible: bool,
+    /// While a Tab moves focus: whether it goes backwards (Shift+Tab); `None` otherwise.
+    pub tab_direction: Option<bool>,
     /// The restore stack: focus to give back when a `dialog` scope stops being available (removed,
     /// hidden, inert): (scope, the node focused before it opened), innermost last.
     pub restore: Vec<(NodeId, NodeId)>,
@@ -169,6 +171,7 @@ impl WindowState {
             focus: None,
             focus_sub: None,
             focus_visible: false,
+            tab_direction: None,
             restore: Vec::new(),
             pending_focus: None,
             focus_seen: HashSet::new(),
