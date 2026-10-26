@@ -858,15 +858,45 @@ impl Backend for SkelterBackend {
                         .collect(),
                     (ps, _) => ps.to_vec(),
                 };
-                for (a, (pname, ty)) in args.iter().zip(params) {
-                    let v = value::from_abi(a, ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
-                    core_args.extend(value::to_core(v));
+                if name == "setRow" && matches!(m.decl.name, "VirtualList" | "TreeView") {
+                    // the row protocol (A25): `setRow(row, widget)` takes the outlet JS made (a root
+                    // of its own); it becomes a child of the list, which places it as the row
+                    let row = match args.first() {
+                        Some(Value::I64(r)) => *r,
+                        Some(Value::F64(r)) if r.fract() == 0.0 => *r as i64,
+                        other => return Err(format!("<{}>.setRow(): row is {other:?}", km.tag())),
+                    };
+                    core_args.push(skelter_core::Value::I64(row));
+                    let widget = match args.get(1) {
+                        Some(Value::Handle(w)) => Some(*w),
+                        Some(Value::I64(w)) if *w > 0 => Some(*w as svl_handle),
+                        None | Some(Value::Null) => None,
+                        Some(other) => return Err(format!("<{}>.setRow(): expected a widget, got {other:?}", km.tag())),
+                    };
+                    if let Some(w) = widget {
+                        let (wn, _) = self.live(w)?;
+                        let mut doc = self.doc_mut();
+                        if doc.parent(wn) != Some(n) {
+                            if let Some(old) = doc.parent(wn) {
+                                doc.remove(old, wn).map_err(|e| format!("<{}>.setRow(): {e}", km.tag()))?;
+                            }
+                            doc.insert(n, wn, None, None).map_err(|e| format!("<{}>.setRow(): {e}", km.tag()))?;
+                        }
+                        core_args.push(skelter_core::Value::I64(wn.0 as i64));
+                    }
+                } else {
+                    for (a, (pname, ty)) in args.iter().zip(params) {
+                        let v = value::from_abi(a, ty, true).map_err(|e| format!("<{}>.{name}() {pname}: {e}", km.tag()))?;
+                        core_args.extend(value::to_core(v));
+                    }
                 }
                 let (ret, events) = self.doc_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;
                 self.queue(Output { events, ..Output::default() });
-                return Ok(match (ret, m.spec.ret) {
-                    (Some(v), Some(ty)) => value::to_abi(&value::from_core(&v), ty),
-                    _ => Value::Null,
+                // egui's specs type generated methods' returns `void`: the core method's answer
+                // (`count()`, `rowAt(pos)`, `selection()`) goes back as it is
+                return Ok(match ret {
+                    Some(v) => value::to_abi(&value::from_core(&v), m.spec.ret.unwrap_or(surface::ValueType::Any)),
+                    None => Value::Null,
                 });
             }
             // scrolling a node into view needs skelter-core's scroll model on a laid-out window

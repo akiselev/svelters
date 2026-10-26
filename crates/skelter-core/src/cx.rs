@@ -613,6 +613,12 @@ impl EventCx<'_> {
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node, signal, arg });
     }
+    /// The node's virtual rows are stale (its model or row content changed): it realises them
+    /// again before the next layout ([`Document::refresh_virtual`]).
+    pub fn refresh_virtual(&mut self) {
+        let n = self.node;
+        self.doc.refresh_virtual(n);
+    }
     /// Emits `signal` with `arg` from `node`, the node itself or one of its descendants (a
     /// `tab-view`'s `close-requested` on the `tab` whose close button was clicked), delivered after
     /// the event as [`EventCx::emit`]'s are. False (nothing emitted) for any other node.
@@ -761,6 +767,13 @@ impl RealizeCx<'_> {
     /// The document (the node's own kind value is out while it realises).
     pub fn doc(&mut self) -> &mut Document {
         self.doc
+    }
+    /// Emits `signal` on the node for JS, queued with the frame's other events (a virtual list's
+    /// `setup`/`bind`/`unbind`/`teardown` row requests: JS answers after the frame and the node
+    /// asks for its rows again, [`Document::refresh_virtual`]).
+    pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
+        let node = self.node;
+        crate::input::dispatch::queue_emitted(self.doc, Emitted { node, signal, arg });
     }
 }
 

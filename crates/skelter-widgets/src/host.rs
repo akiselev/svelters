@@ -346,6 +346,14 @@ fn plain_from_core(v: &Value) -> Option<w::Value> {
 
 /// A signal's arguments as skelter-core's one argument: none, the one value, or a record by the spec's
 /// argument names.
+/// skelter-core's id and argument of signal `name` of widget kind `ws` with `args` (what the
+/// host emits for the widget's own signals): for a kind emitting outside an event
+/// (`skelter_core::RealizeCx::emit`, a virtual list's row requests).
+pub fn core_signal(ws: &w::KindSpec, name: &str, args: &[w::Value]) -> Option<(SignalId, Option<Value>)> {
+    let s = ws.signals.iter().find(|s| s.name == name)?;
+    Some((core_signal_id(ws, name)?, signal_arg(s, args)))
+}
+
 fn signal_arg(s: &w::SignalSpec, args: &[w::Value]) -> Option<Value> {
     match args {
         [] => None,
@@ -419,11 +427,13 @@ pub struct Hosted<W: w::Kind + Default> {
     pub widget: W,
     /// Images uploaded in `prepare`, by the widget's image key.
     images: HashMap<String, ImageId>,
+    /// What the last method call answered ([`w::EventCx::ret`]).
+    ret: Option<Value>,
 }
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new() }
+        Hosted { widget: W::default(), images: HashMap::new(), ret: None }
     }
 }
 
@@ -626,10 +636,14 @@ impl<W: w::Kind + Default> Hosted<W> {
             wcx.focused = mask.contains(StateMask::FOCUSED);
             wcx.sync = Some(&mut sync);
             let handled = f(&mut self.widget, &mut wcx);
-            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, .. } = wcx;
-            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on))
+            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual, .. } = wcx;
+            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual))
         };
-        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on) = out;
+        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual) = out;
+        self.ret = ret;
+        if refresh_virtual {
+            cx.refresh_virtual();
+        }
         let diff = StateBits((state.0 ^ before.0) & !CORE_BITS.0);
         for (_, bit) in StateBits::BUILTIN {
             if diff.contains(*bit) {
@@ -832,13 +846,21 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             return Err(skelter_core::PropError::Rejected(format!("{method:?} is not a method of {}", core.name)));
         };
         match self.run(cx, |w, wcx| w.call(wcx, i, args)) {
-            Handled::Yes => Ok(None),
+            Handled::Yes => Ok(self.ret.take()),
             Handled::No => Err(skelter_core::PropError::Rejected(format!("{} did not take {}", core.name, core.methods[i].name))),
         }
     }
 
     fn as_any(&self) -> Option<&dyn std::any::Any> {
         Some(&self.widget)
+    }
+
+    fn virtual_children(&mut self) -> Option<&mut dyn skelter_core::VirtualChildren> {
+        self.widget.virtual_children()
+    }
+
+    fn self_scroll(&self, _node: &NodeView) -> Option<skelter_core::SelfScroll> {
+        self.widget.self_scroll()
     }
 
     fn peer_group(&self, _node: &NodeView) -> Option<PeerGroup> {
