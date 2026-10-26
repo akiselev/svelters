@@ -319,7 +319,7 @@ pub struct Harness<D: DocumentApi + 'static> {
     gpu: Option<GpuRender>,
     render_every_step: bool,
     last_render: Option<Image>,
-    check_accessibility: bool,
+    pub(crate) check_accessibility: bool,
     snapshot: SnapshotOptions,
     /// `snapshot` failures, reported when the harness drops (kittest's `SnapshotResults`).
     snapshot_failures: Vec<SnapshotError>,

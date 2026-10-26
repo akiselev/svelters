@@ -1,7 +1,7 @@
 //! `EguiHarness`: egui closures in a skelter egui island, driven with kittest's verbs through skelter's
 //! input path. No GPU: passes, input and AccessKit work without a device.
 
-use skelter_test::{EguiHarness, Role};
+use skelter_test::{EguiHarness, Harness, Role};
 use skelter_base::accesskit::TreeId;
 
 #[derive(Default)]
@@ -96,8 +96,12 @@ fn an_idle_island_runs_no_passes() {
     let mut h = harness();
     assert_eq!(h.busy(), None);
     let before = h.doc().passes();
-    h.run_steps(5);
+    // skelter's own steps: an idle island is not due
+    Harness::run_steps(&mut h, 5);
     assert_eq!(h.doc().passes(), before);
+    // kittest's steps run one pass each (A5)
+    h.run_steps(5);
+    assert_eq!(h.doc().passes(), before + 5);
 }
 
 #[test]
@@ -126,4 +130,54 @@ fn state_changed_between_steps_shows_after_run() {
     h.state_mut().clicks = 5;
     h.run();
     assert!(h.query_by_label("Clicks: 5").is_some(), "{}", h.a11y_dump());
+}
+
+#[test]
+fn a_repaint_requested_from_another_thread_shows_after_one_run() {
+    use std::sync::{Arc, Mutex};
+    let inbox: Arc<Mutex<Option<String>>> = Arc::default();
+    let shown = inbox.clone();
+    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build_ui(move |ui| {
+        let text = shown.lock().unwrap().clone().unwrap_or_else(|| "waiting".into());
+        ui.label(text);
+    });
+    assert!(h.query_by_label("waiting").is_some());
+    let ctx = h.ctx.clone();
+    let sender = inbox.clone();
+    std::thread::spawn(move || {
+        *sender.lock().unwrap() = Some("job done".into());
+        ctx.request_repaint();
+    })
+    .join()
+    .unwrap();
+    // the plain skelter run (no forced pass): the repaint callback made the island due
+    let before = h.doc().passes();
+    Harness::run(&mut h);
+    assert!(h.doc().passes() > before, "the out-of-pass repaint ran a pass");
+    assert!(h.query_by_label("job done").is_some());
+}
+
+#[test]
+fn step_and_run_always_run_a_pass() {
+    let mut h = harness();
+    let p = h.doc().passes();
+    h.step();
+    assert_eq!(h.doc().passes(), p + 1, "a step with nothing due still runs one pass");
+    h.run();
+    assert!(h.doc().passes() >= p + 2);
+}
+
+#[test]
+#[should_panic(expected = "lack accessible name")]
+fn the_build_runs_the_accessibility_check() {
+    EguiHarness::builder().build_ui(|ui| {
+        ui.add(egui::TextEdit::singleline(&mut String::new()));
+    });
+}
+
+#[test]
+fn the_build_skips_the_check_when_told() {
+    EguiHarness::builder().with_accessibility_check(false).build_ui(|ui| {
+        ui.add(egui::TextEdit::singleline(&mut String::new()));
+    });
 }
