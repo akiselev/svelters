@@ -224,3 +224,22 @@ fn virtual_children_go_out_with_their_owner_and_take_actions() {
         assert!(u.nodes.iter().all(|(id, _)| crate::a11y::virtual_child(*id).is_none()), "virtual children only with their owner");
     }
 }
+
+#[test]
+fn aria_live_and_busy_apply_after_the_kinds_own_node() {
+    let (mut d, root) = doc();
+    let status = child(&mut d, root, TEXT, "");
+    frame(&mut d);
+    d.set_prop(status, common::ARIA_LIVE, Value::Enum(1)).unwrap();
+    d.set_prop(status, common::ARIA_BUSY, Value::Bool(true)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.expect("the props re-project the node");
+    let n = &u.nodes.iter().find(|(k, _)| *k == ax(status)).unwrap().1;
+    assert_eq!(n.live(), Some(accesskit::Live::Polite));
+    assert!(n.is_busy());
+    d.set_prop(status, common::ARIA_LIVE, Value::Enum(2)).unwrap();
+    d.set_prop(status, common::ARIA_BUSY, Value::Bool(false)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let n = &u.nodes.iter().find(|(k, _)| *k == ax(status)).unwrap().1;
+    assert_eq!(n.live(), Some(accesskit::Live::Assertive));
+    assert!(!n.is_busy());
+}

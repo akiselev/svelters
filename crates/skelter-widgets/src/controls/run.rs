@@ -248,7 +248,7 @@ mod tests {
         let runs = fold(&[node("span", "a ", vec![]), node("b", "b", vec![])]);
         let mut l = Label::default();
         let mut text = crate::shim::testing::MonoShaper;
-        let mut cx = crate::shim::core::PrepareCx { size: Size::new(200.0, 20.0), style: crate::shim::core::Styles { computed: None, parts: &[], children: &runs, state: StateBits::NONE, dark: true }, text: &mut text };
+        let mut cx = crate::shim::core::PrepareCx { size: Size::new(200.0, 20.0), style: crate::shim::core::Styles { computed: None, parts: &[], children: &runs, state: StateBits::NONE, dark: true }, text: &mut text, emitted: Vec::new() };
         l.prepare(&mut cx);
         let r = l.rich().expect("the children make it rich");
         assert_eq!(r.plain, "a b");

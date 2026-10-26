@@ -8,7 +8,7 @@ use skelter_base::anim::AnimationEvent;
 use skelter_base::commit::{Commit, FastCommit};
 use skelter_base::event::{InputEnvelope, WindowEvent};
 use skelter_base::geom::{DeviceSize, Point, Rect, Scale, Size, Vec2};
-use skelter_base::ids::{FrameId, PropNodeId, WindowId};
+use skelter_base::ids::{FrameId, PropNodeId, Revision, WindowId};
 use skelter_base::input::InputPurpose;
 use skelter_base::time::{Span, Time};
 use skelter_platform::SurfaceTarget;
@@ -79,6 +79,11 @@ pub trait DocumentApi {
     fn window_event(&mut self, window: WindowId, ev: &WindowEvent);
     /// The GPU device was reset: the next commit re-sends every resource.
     fn device_reset(&mut self);
+    /// The compositor applied `window`'s commit `revision` (back-pressure release; wait-idle's
+    /// `COMMIT_IN_FLIGHT` clears with it).
+    fn commit_applied(&mut self, window: WindowId, revision: Revision) {
+        let _ = (window, revision);
+    }
     /// When the window's tree next wants a frame without input (a delayed repaint, a timer);
     /// `None` = not until something changes. The runner arms a platform timer for it and asks for a
     /// frame when it fires and [`DocumentApi::needs_frame`] says so.
@@ -122,6 +127,8 @@ pub trait CompositorApi {
     fn ui_frame_skipped(&self, window: WindowId, frame: FrameId);
     /// The refresh interval of the window's monitor.
     fn set_refresh(&self, _window: WindowId, _interval: Span) {}
+    /// The pixel density of the window's monitor (fling physics).
+    fn set_ppi(&self, _window: WindowId, _ppi: f32) {}
     /// The window's caret blink; `None` = a steady caret.
     fn set_caret_blink(&self, _window: WindowId, _blink: Option<skelter_compositor::CaretBlink>) {}
     /// The window's frame-clock snapshot for the urgent-frame rule; `None` = not known (the frame

@@ -87,7 +87,7 @@ impl WindowInput {
             }
             W::KeyboardInput { event, .. } => Translated::Input(InputEvent::Key(KeyEvent {
                 key: keys::key_from_winit(&event.logical_key, event.physical_key),
-                physical: keys::hid_usage(event.physical_key),
+                physical: keys::physical_code(event.physical_key),
                 text: event.text.as_ref().map(|t| t.to_string()),
                 state: key_state(event.state),
                 repeat: event.repeat,

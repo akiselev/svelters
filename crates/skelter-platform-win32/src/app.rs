@@ -19,6 +19,7 @@
 
 use crate::clipboard::Win32Clipboard;
 use crate::dcomp::DComp;
+use crate::drag;
 use crate::frame::Win32Frames;
 use crate::keyboard::KeyTranslator;
 use crate::monitor;
@@ -35,8 +36,8 @@ use skelter_base::time::{Clock, Time};
 use skelter_platform::clock::OsClock;
 use skelter_platform::frame::FrameSource;
 use skelter_platform::{
-    A11yEvent, AppHandler, Clipboard, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx,
-    PlatformError, SurfaceTarget, Waker, WindowDesc,
+    A11yEvent, AppHandler, Clipboard, DragData, DragId, DragOutcome, HitRegion, ImeState, Monitor, OsLayerCommitter,
+    OsLayerDesc, PlatformCx, PlatformError, PopupDesc, SurfaceTarget, Waker, WindowDesc, WindowStateRequest,
 };
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, VecDeque};
@@ -63,6 +64,8 @@ pub(crate) const WM_SKELTER_WAKE: u32 = WM_APP + 1;
 pub(crate) const WM_SKELTER_TIMER: u32 = WM_APP + 2;
 /// Posted to the message window when an accessibility event is queued (they arrive on any thread).
 pub(crate) const WM_SKELTER_A11Y: u32 = WM_APP + 3;
+/// Posted to the message window by `start_drag`: the OLE drag's modal loop runs outside the handler.
+pub(crate) const WM_SKELTER_DRAG: u32 = WM_APP + 4;
 
 thread_local! {
     static APP: RefCell<Option<Rc<App>>> = const { RefCell::new(None) };
@@ -82,6 +85,7 @@ pub(crate) enum Pending {
     Timer,
     RawMotion(WindowId, Vec2),
     A11y(WindowId, A11yEvent),
+    DragEnded(DragId, DragOutcome),
 }
 
 pub(crate) struct Inner {
@@ -115,6 +119,9 @@ pub(crate) struct App {
     clock: Arc<OsClock>,
     exit: Cell<bool>,
     seq: Cell<u64>,
+    /// The drag `start_drag` asked for, run when `WM_SKELTER_DRAG` arrives.
+    drag: RefCell<Option<(DragId, drag::DragData)>>,
+    next_drag: Cell<u64>,
     weak: Weak<App>,
 }
 
@@ -185,6 +192,7 @@ impl App {
                     Pending::Timer => handler.timer(&mut cx, self.now()),
                     Pending::RawMotion(w, d) => handler.raw_mouse_motion(&mut cx, w, d),
                     Pending::A11y(w, e) => handler.a11y_event(&mut cx, w, e),
+                    Pending::DragEnded(d, o) => handler.drag_ended(&mut cx, d, o),
                 }
             }
             *self.handler.borrow_mut() = Some(handler);
@@ -264,6 +272,17 @@ impl App {
             self.queue.borrow_mut().push_back(Pending::A11y(w, e));
         }
         self.flush();
+    }
+
+    /// Runs the drag `start_drag` queued (`DoDragDrop`'s modal loop keeps dispatching messages, so the
+    /// app keeps getting events and frames) and reports how it ended.
+    pub fn on_drag(&self) {
+        let Some((id, data)) = self.drag.borrow_mut().take() else { return };
+        let outcome = match drag::run_drag(data) {
+            drag::DragResult::Copied | drag::DragResult::Moved => DragOutcome::Dropped,
+            drag::DragResult::Cancelled => DragOutcome::Cancelled,
+        };
+        self.deliver(Pending::DragEnded(id, outcome));
     }
 
     pub fn raw_motion(&self, window: WindowId, delta: Vec2) {
@@ -512,6 +531,43 @@ impl PlatformCx for Cx<'_> {
         monitor::monitors()
     }
 
+    fn monitor_of(&self, id: WindowId) -> Option<Monitor> {
+        monitor::monitor_info(monitor::monitor_handle(self.app.hwnd(id)?))
+    }
+
+    fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> Result<WindowId, PlatformError> {
+        window::create_popup(self.app, desc, &popup)
+    }
+
+    fn create_child_window(&mut self, desc: WindowDesc, parent: WindowId) -> Result<WindowId, PlatformError> {
+        let owner = self.app.hwnd(parent).ok_or_else(|| PlatformError::Os("parent window is gone".into()))?;
+        window::create_owned(self.app, desc, Some(owner))
+    }
+
+    fn set_window_state(&mut self, id: WindowId, req: WindowStateRequest) -> bool {
+        window::set_window_state(self.app, id, req)
+    }
+
+    /// Text and `file:` URIs only (see [`drag::from_platform`]); the drag starts once the handler returns.
+    fn start_drag(&mut self, window: WindowId, data: DragData) -> Result<DragId, PlatformError> {
+        if self.app.hwnd(window).is_none() {
+            return Err(PlatformError::Os("drag source window is gone".into()));
+        }
+        let data = drag::from_platform(&data).ok_or(PlatformError::Unsupported("drag payloads other than text and files"))?;
+        if self.app.drag.borrow().is_some() {
+            return Err(PlatformError::Os("a drag is already starting".into()));
+        }
+        let id = DragId(self.app.next_drag.get() + 1);
+        self.app.next_drag.set(id.0);
+        *self.app.drag.borrow_mut() = Some((id, data));
+        let posted = unsafe { PostMessageW(Some(self.app.msg_hwnd.get()), WM_SKELTER_DRAG, WPARAM(0), LPARAM(0)) };
+        if let Err(e) = posted {
+            self.app.drag.borrow_mut().take();
+            return Err(os_err("PostMessageW (drag)", e));
+        }
+        Ok(id)
+    }
+
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]) {
         if let Some(w) = self.app.inner.borrow_mut().windows.get_mut(&id) {
             w.regions = regions.to_vec();
@@ -610,6 +666,8 @@ fn run_inner(handler: Box<dyn AppHandler>) -> Result<(), PlatformError> {
         clock,
         exit: Cell::new(false),
         seq: Cell::new(0),
+        drag: RefCell::new(None),
+        next_drag: Cell::new(0),
         weak: weak.clone(),
     });
     APP.with(|a| *a.borrow_mut() = Some(app.clone()));

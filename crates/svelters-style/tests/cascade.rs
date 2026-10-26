@@ -19,6 +19,7 @@ static TABLE: Table = Table {
     props: &[
         prop("background", Via::Css, ValueType::Raw, &[]),
         prop("box-shadow", Via::Setter, ValueType::Shadow, &[]),
+        prop("caret-color", Via::Setter, ValueType::Color, &["auto"]),
         prop("color", Via::Setter, ValueType::Color, &[]),
         prop("flex-direction", Via::Setter, ValueType::Enum, &["row", "column"]),
         prop("font-size", Via::Setter, ValueType::Length, &[]),
@@ -143,6 +144,25 @@ fn layers() {
     // !important reverses the layer order
     let s = setup(&[(Origin::Author, "@layer base, ui; @layer base { button { gap: 1px !important } } @layer ui { button { gap: 2px !important } } button { gap: 3px !important }")]);
     assert_eq!(s.style("ok").get("gap"), Some(&len(1.0)));
+}
+
+/// `caret-color: auto | <color>`, inherited, initial `auto` (none computed): a colour inherits,
+/// `auto` stays a keyword and inherits as one; skelter's and egui's tables carry it.
+#[test]
+fn caret_color_auto_or_a_colour_inherits() {
+    let s = setup(&[(Origin::Author, "#card { caret-color: #00ff00 } button { caret-color: auto }")]);
+    assert_eq!(s.style("root").get("caret-color"), None, "initial: auto, nothing computed");
+    assert_eq!(rgb(&s.style("card"), "caret-color"), [0, 255, 0, 255]);
+    assert_eq!(rgb(&s.style("title"), "caret-color"), [0, 255, 0, 255], "caret-color inherits");
+    assert_eq!(s.style("ok").get("caret-color"), Some(&ComputedValue::Keyword("auto")));
+    let s = setup(&[(Origin::Author, "#card { caret-color: AUTO; color: red } .title { caret-color: currentcolor }")]);
+    assert_eq!(s.style("ok").get("caret-color"), Some(&ComputedValue::Keyword("auto")), "auto inherits as auto");
+    assert_eq!(rgb(&s.style("title"), "caret-color"), [255, 0, 0, 255]);
+    for t in [Table::for_toolkit("skelter").unwrap(), Table::for_toolkit("egui").unwrap()] {
+        let p = t.props.iter().find(|p| p.name == "caret-color").expect("caret-color");
+        assert_eq!((p.ty, p.values), (ValueType::Color, &["auto"][..]), "{}", t.toolkit);
+        assert!(p.is_inherited());
+    }
 }
 
 #[test]

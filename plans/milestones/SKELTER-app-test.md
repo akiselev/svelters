@@ -281,3 +281,6 @@ both sides; see the cross-lane edits) and `ci/presto-base`.
 13. **PLATFORM: `Monitor` has no physical size or ppi, and `PlatformCx` no window→monitor query or monitor
     change event.** Recommend `Monitor::ppi: Option<f32>` (from the OS's physical size) and a
     `WindowEvent::MonitorChanged`, so refresh and ppi stop being inferred from positions and conventions.
+    *Done (lane skelter-fixes, 2026-10-26):* `Monitor::ppi`, `PlatformCx::monitor_of` and
+    `WindowEvent::MonitorChanged` (all four backends; winit has no physical size, so `ppi: None` there); `App`
+    takes refresh and ppi from `monitor_of` (else the position) and sends `CompositorApi::set_ppi`.

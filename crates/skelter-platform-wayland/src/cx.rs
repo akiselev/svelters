@@ -4,8 +4,8 @@ use crate::app::State;
 use crate::layers::Layer;
 use crate::present::{FrameSourceConfig, SurfaceLock, WaylandFrameSource};
 use crate::shim::{
-    Clipboard, ClipboardKind, DragData, DragId, DragOutcome, FrameSource, HitRegion, ImeHints, ImeState, Monitor, OsLayerCommitter,
-    OsLayerDesc, PlatformCx, PlatformError, PopupDesc, SurfaceTarget, Waker, WaylandCx, WindowDesc, WindowStateRequest,
+    Clipboard, ClipboardKind, DragData, DragId, FrameSource, HitRegion, ImeHints, ImeState, Monitor, OsLayerCommitter,
+    OsLayerDesc, PlatformCx, PlatformError, PopupDesc, SurfaceTarget, Waker, WindowDesc, WindowStateRequest,
 };
 use crate::time::MonotonicClock;
 use crate::window;
@@ -20,6 +20,29 @@ use std::ptr::NonNull;
 use std::sync::Arc;
 use wayland_client::protocol::wl_surface::WlSurface;
 use wayland_client::{EventQueue, Proxy};
+
+/// A `wl_output` as a skelter monitor.
+fn monitor(info: &smithay_client_toolkit::output::OutputInfo) -> Monitor {
+    let mode = info.modes.iter().find(|m| m.current).or(info.modes.first());
+    let (w, h) = mode.map_or((0, 0), |m| m.dimensions);
+    let pos = info.logical_position.unwrap_or(info.location);
+    let size = DeviceSize { w: w.max(0) as u32, h: h.max(0) as u32 };
+    Monitor {
+        name: info.name.clone().or_else(|| info.description.clone()),
+        position: pos,
+        size,
+        work_area: None,
+        scale: Scale(info.scale_factor as f32),
+        refresh_millihertz: mode.and_then(|m| u32::try_from(m.refresh_rate).ok()).filter(|&r| r > 0),
+        ppi: output_ppi(size, info.physical_size),
+    }
+}
+
+/// Pixels per inch from `wl_output.geometry`'s physical size (millimetres; 0 when unknown, as for projectors
+/// and virtual outputs) and the current mode's pixels.
+pub(crate) fn output_ppi(mode: DeviceSize, physical_mm: (i32, i32)) -> Option<f32> {
+    Monitor::ppi_from_mm(mode, (physical_mm.0.max(0) as f32, physical_mm.1.max(0) as f32))
+}
 
 pub struct Cx<'a> {
     state: &'a mut State,
@@ -75,9 +98,6 @@ impl<'a> Cx<'a> {
         Some(Arc::new(WaylandFrameSource::new(&self.state.conn, surface, lock, &globals, FrameSourceConfig::default())))
     }
 
-    pub(crate) fn state_mut(&mut self) -> &mut State {
-        self.state
-    }
 
     fn refresh_cursor(&mut self, id: WindowId) {
         let keys: Vec<_> = self
@@ -195,23 +215,12 @@ impl PlatformCx for Cx<'_> {
 
     fn monitors(&self) -> Vec<Monitor> {
         let outputs = &self.state.outputs;
-        outputs
-            .outputs()
-            .filter_map(|o| outputs.info(&o))
-            .map(|info| {
-                let mode = info.modes.iter().find(|m| m.current).or(info.modes.first());
-                let (w, h) = mode.map_or((0, 0), |m| m.dimensions);
-                let pos = info.logical_position.unwrap_or(info.location);
-                Monitor {
-                    name: info.name.clone().or_else(|| info.description.clone()),
-                    position: pos,
-                    size: DeviceSize { w: w.max(0) as u32, h: h.max(0) as u32 },
-                    work_area: None,
-                    scale: Scale(info.scale_factor as f32),
-                    refresh_millihertz: mode.and_then(|m| u32::try_from(m.refresh_rate).ok()).filter(|&r| r > 0),
-                }
-            })
-            .collect()
+        outputs.outputs().filter_map(|o| outputs.info(&o)).map(|info| monitor(&info)).collect()
+    }
+
+    fn monitor_of(&self, id: WindowId) -> Option<Monitor> {
+        let output = self.state.windows.get(&id)?.outputs.first()?;
+        self.state.outputs.info(output).map(|info| monitor(&info))
     }
 
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]) {
@@ -306,9 +315,7 @@ impl PlatformCx for Cx<'_> {
             self.state.surfaces.remove(&l.surface.id());
         }
     }
-}
 
-impl WaylandCx for Cx<'_> {
     fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> Result<WindowId, PlatformError> {
         self.open(desc, Some(popup), None)
     }
@@ -325,10 +332,6 @@ impl WaylandCx for Cx<'_> {
         }
     }
 
-    fn take_finished_drags(&mut self) -> Vec<(DragId, DragOutcome)> {
-        std::mem::take(&mut self.state.finished_drags)
-    }
-
     fn layer_frame_source(&mut self, id: WindowId, layer: SurfaceId) -> Option<Arc<dyn FrameSource>> {
         self.make_frame_source(id, Some(layer))
     }
@@ -337,24 +340,24 @@ impl WaylandCx for Cx<'_> {
         self.state.windows.get(&id).is_some_and(|w| w.client_side_decorations())
     }
 
-    fn set_window_state(&mut self, id: WindowId, req: WindowStateRequest) {
-        let Some(w) = self.state.windows.get(&id) else { return };
+    fn set_window_state(&mut self, id: WindowId, req: WindowStateRequest) -> bool {
+        let Some(w) = self.state.windows.get(&id) else { return false };
         if req == WindowStateRequest::Activate {
-            if let Some(a) = &self.state.activation {
-                let seat_and_serial = crate::seat::latest_press(self.state);
-                a.request_token(&self.state.qh, RequestData { app_id: w.desc.app_id.clone(), seat_and_serial, surface: Some(w.surface.clone()) });
-            }
-            return;
+            let Some(a) = &self.state.activation else { return false };
+            let seat_and_serial = crate::seat::latest_press(self.state);
+            a.request_token(&self.state.qh, RequestData { app_id: w.desc.app_id.clone(), seat_and_serial, surface: Some(w.surface.clone()) });
+            return true;
         }
-        let Some(top) = w.toplevel() else { return };
+        let Some(top) = w.toplevel() else { return false };
         match req {
             WindowStateRequest::Maximize => top.set_maximized(),
             WindowStateRequest::Unmaximize => top.unset_maximized(),
             WindowStateRequest::Minimize => top.set_minimized(),
             WindowStateRequest::Fullscreen => top.set_fullscreen(None),
             WindowStateRequest::Unfullscreen => top.unset_fullscreen(),
-            WindowStateRequest::Activate => {}
+            _ => return false,
         }
+        true
     }
 
     fn start_drag(&mut self, window: WindowId, data: DragData) -> Result<DragId, PlatformError> {
@@ -388,5 +391,20 @@ impl Clipboard for Cx<'_> {
 
     fn clear_primary(&mut self) -> bool {
         crate::data::clear_primary(self.state)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn output_ppi_from_geometry_and_mode() {
+        // A 14" 2880x1800 laptop panel: 302 x 189 mm, about 242 ppi.
+        let p = output_ppi(DeviceSize { w: 2880, h: 1800 }, (302, 189)).unwrap();
+        assert!((p - 242.0).abs() < 1.0, "{p}");
+        // Unknown size (virtual outputs, projectors).
+        assert_eq!(output_ppi(DeviceSize { w: 1920, h: 1080 }, (0, 0)), None);
+        assert_eq!(output_ppi(DeviceSize { w: 1920, h: 1080 }, (-1, -1)), None);
     }
 }

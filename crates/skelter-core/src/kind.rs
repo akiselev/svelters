@@ -399,6 +399,21 @@ pub struct SelfScroll {
     pub y: bool,
 }
 
+/// What an in-app drag shows under the pointer (the drag image, architecture §14's top overlay
+/// band). The document keeps it with the drag ([`Document::drag_preview`](crate::Document::drag_preview))
+/// for the runner to put in the window's drag layer, at the pointer plus `offset`.
+#[derive(Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub enum DragPreview {
+    /// A display list in points relative to the pointer, with the glyph runs it draws: its
+    /// `Prim::Glyphs` name them by position in `runs` plus one (as recorded, before the commit
+    /// assigns ids).
+    List { list: skelter_base::display::DisplayList, runs: Vec<std::sync::Arc<skelter_base::text::GlyphRun>>, offset: skelter_base::geom::Vec2 },
+    /// A snapshot of a node's recorded display list (the source's, or a row's) at `offset` from the
+    /// pointer.
+    Node { node: skelter_base::ids::NodeId, offset: skelter_base::geom::Vec2 },
+}
+
 /// What JS listeners did with a signal delivered at event time
 /// ([`EventCx::emit_sync`](crate::EventCx::emit_sync)).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -556,6 +571,13 @@ pub trait Kind: 'static {
         Handled::No
     }
 
+    /// What a drag of this node shows under the pointer ([`DragPreview`]), asked when a drag of it
+    /// starts (`at`: the press, in the node's space). `None` leaves it to the document's provider
+    /// ([`Document::set_drag_preview_provider`](crate::Document::set_drag_preview_provider)).
+    fn drag_preview(&self, node: &NodeView, at: skelter_base::geom::Point) -> Option<DragPreview> {
+        None
+    }
+
     /// The kind scrolls its own content (a code editor): its node gets a scroll node, a content
     /// space and a scroll layer as an `overflow: auto` box does, and its own display list is
     /// recorded in content space and placed in that layer, so a scroll is a compositor offset
@@ -582,6 +604,13 @@ pub trait Kind: 'static {
     /// A press outside the node's subtree while [`Kind::light_dismiss`] is true (`p.local` in the
     /// node's space), before the press is dispatched as usual (it is not consumed).
     fn outside_press(&mut self, cx: &mut EventCx, p: &PointerInput) -> Handled {
+        Handled::No
+    }
+
+    /// The window's overlay stack closed the node's overlay surface ([`RecordCx::overlay`](crate::RecordCx::overlay)):
+    /// a press outside it (`OutsidePress`), Escape, or its parent surface closing. The kind closes its
+    /// state (and records no part); a part it keeps recording opens again.
+    fn overlay_closed(&mut self, cx: &mut EventCx, reason: crate::overlay::DismissReason) -> Handled {
         Handled::No
     }
 

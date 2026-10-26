@@ -98,6 +98,48 @@ pub(crate) struct WindowState {
     /// The revision of the last commit built, and of the last one the compositor applied.
     pub built: Option<Revision>,
     pub applied: Option<Revision>,
+    /// The window's overlay stack (its top layer), made at the first rebuild.
+    pub overlays: Option<crate::overlay::OverlayStack>,
+    /// Each open overlay part's node → its layer, the transform node its item was sent with, and
+    /// the window → node-local transform (input positions on the part).
+    pub overlay_nodes: HashMap<NodeId, OverlayNode>,
+    /// The drag image's layer while an in-app drag of this window shows one.
+    pub drag_layer: Option<DragLayer>,
+    /// The app's overlay display list ([`crate::Document::set_window_overlay`]).
+    pub app_overlay: AppOverlay,
+}
+
+/// The app's own display list above the window's content: what it set and what was sent.
+#[derive(Default)]
+pub(crate) struct AppOverlay {
+    /// A new list (or `None`: removed) not sent yet.
+    pub pending: Option<Option<(skelter_base::display::DisplayList, Vec<Arc<skelter_base::text::GlyphRun>>)>>,
+    pub layer: Option<LayerId>,
+    pub runs: Vec<RunId>,
+}
+
+/// An open overlay part as the window last sent it.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct OverlayNode {
+    pub layer: LayerId,
+    pub transform: PropNodeId,
+    pub inverse: skelter_base::geom::Affine,
+}
+
+/// The drag layer: an overlay layer above everything, moved by its own transform node.
+#[derive(Clone, Debug)]
+pub(crate) struct DragLayer {
+    pub layer: LayerId,
+    pub transform: PropNodeId,
+    /// The list its item draws (the drag key's, or the snapshot node's own).
+    pub list: NodeId,
+    /// The preview's offset from the pointer, and the pointer position last sent.
+    pub offset: skelter_base::geom::Vec2,
+    pub pos: skelter_base::geom::Point,
+    /// The drag's preview generation it shows.
+    pub generation: u64,
+    /// Runs its own list references.
+    pub runs: Vec<RunId>,
 }
 
 impl WindowState {
@@ -127,6 +169,10 @@ impl WindowState {
             rebuild: true,
             built: None,
             applied: None,
+            overlays: None,
+            overlay_nodes: HashMap::new(),
+            drag_layer: None,
+            app_overlay: AppOverlay::default(),
         }
     }
 
@@ -137,6 +183,9 @@ impl WindowState {
         }
         if paint.fixed.is_some() {
             self.pending.removed_lists.push(crate::record::fixed_key(node));
+        }
+        if paint.overlay.is_some() {
+            self.pending.removed_lists.push(crate::record::overlay_key(node));
         }
         if let Some(s) = paint.scroll {
             self.scroll_nodes.remove(&s);

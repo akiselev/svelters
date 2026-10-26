@@ -46,6 +46,12 @@ pub(crate) struct Drag {
     pub ty: Arc<str>,
     pub data: Arc<str>,
     pub target: Option<NodeId>,
+    /// What it shows under the pointer ([`crate::kind::DragPreview`]).
+    pub preview: Option<crate::kind::DragPreview>,
+    /// The preview's generation (bumped when it is replaced), for the window's drag layer.
+    pub generation: u64,
+    /// The pointer's last position in the window (`None` once it left), where the drag layer is.
+    pub pos: Option<Point>,
 }
 
 /// `pattern` (one `drop-types` entry) accepts type `ty`.
@@ -111,7 +117,10 @@ pub(crate) fn pointer(doc: &mut Document, window: WindowId, p: &PointerEvent, ou
         && d.pointer == p.pointer
     {
         match p.phase {
-            PointerPhase::Move | PointerPhase::Enter => retarget(doc, window, Some(p.pos), out),
+            PointerPhase::Move | PointerPhase::Enter => {
+                retarget(doc, window, Some(p.pos), out);
+                move_drag_layer(doc, window, p.pos);
+            }
             PointerPhase::Leave => retarget(doc, window, None, out),
             PointerPhase::Up => finish(doc, window, p, out),
             PointerPhase::Cancel => end(doc, None, out),
@@ -128,14 +137,16 @@ pub(crate) fn pointer(doc: &mut Document, window: WindowId, p: &PointerEvent, ou
     let v = doc.view(press.source).expect("checked");
     let ty: Arc<str> = Arc::from(v.prop_str(common::DRAG_TYPE).unwrap_or(""));
     let data: Arc<str> = Arc::from(v.prop_str(common::DRAG_DATA).unwrap_or(""));
-    begin(doc, window, p.pointer, press.source, ty, data, Some(p.pos), out);
+    begin(doc, window, p.pointer, press.source, ty, data, Some(p.pos), Some(press.at), out);
     out.handled = true;
     true
 }
 
 /// Starts a drag of `source` by `pointer` (already held): the pointer's press ends without a click,
 /// the source gets `:dragging` and `drag-begin`, and the target under `pos` (if any) is entered.
-fn begin(doc: &mut Document, window: WindowId, pointer: u32, source: NodeId, ty: Arc<str>, data: Arc<str>, pos: Option<Point>, out: &mut Dispatched) {
+/// `press` (window points) is where the drag was grabbed, for its preview.
+#[allow(clippy::too_many_arguments)]
+fn begin(doc: &mut Document, window: WindowId, pointer: u32, source: NodeId, ty: Arc<str>, data: Arc<str>, pos: Option<Point>, press: Option<Point>, out: &mut Dispatched) {
     // the press becomes the drag: the pressed node's press ends without a click
     if let Some(n) = doc.input.press.remove(&pointer).filter(|&n| doc.contains(n)) {
         doc.set_state(n, StateMask::PRESSED, false);
@@ -147,7 +158,10 @@ fn begin(doc: &mut Document, window: WindowId, pointer: u32, source: NodeId, ty:
     }
     doc.input.release(pointer);
     doc.input.drag_press = None;
-    doc.input.drag = Some(Drag { pointer, window, source, ty, data, target: None });
+    let preview = preview_of(doc, window, source, press);
+    doc.input.drag_generation += 1;
+    let generation = doc.input.drag_generation;
+    doc.input.drag = Some(Drag { pointer, window, source, ty, data, target: None, preview, generation, pos: pos.or(press) });
     doc.set_state(source, StateMask::DRAGGING, true);
     doc.emit_js(out, source, common::DRAG_BEGIN, None);
     if pos.is_some() {
@@ -155,7 +169,53 @@ fn begin(doc: &mut Document, window: WindowId, pointer: u32, source: NodeId, ty:
     }
 }
 
+/// The drag image of a drag of `source` pressed at `pos` (window points): the source kind's
+/// [`Kind::drag_preview`](crate::Kind::drag_preview), else the document's provider.
+fn preview_of(doc: &mut Document, window: WindowId, source: NodeId, pos: Option<Point>) -> Option<crate::kind::DragPreview> {
+    let at = pos.map_or(Point::ZERO, |p| doc.to_local(window, source, p));
+    let own = doc.idx(source).and_then(|i| {
+        let v = doc.view(source)?;
+        doc.kinds[i].as_ref()?.drag_preview(&v, at)
+    });
+    if own.is_some() {
+        return own;
+    }
+    let mut f = doc.drag_preview_provider.take()?;
+    let p = f(doc, source, at);
+    if doc.drag_preview_provider.is_none() {
+        doc.drag_preview_provider = Some(f);
+    }
+    p
+}
+
 impl Document {
+    /// Installs the app's drag images: called when a drag starts whose source kind supplies none
+    /// ([`Kind::drag_preview`](crate::Kind::drag_preview)), with the source and the press in its
+    /// space (skelter-widgets' ghost label).
+    pub fn set_drag_preview_provider(&mut self, f: crate::document::DragPreviewProvider) {
+        self.drag_preview_provider = Some(f);
+    }
+
+    /// The drag image of the drag in progress (`None` without a drag or when nothing supplied one),
+    /// for the runner's drag layer.
+    pub fn drag_preview(&self) -> Option<&crate::kind::DragPreview> {
+        self.input.drag.as_ref().and_then(|d| d.preview.as_ref())
+    }
+
+    /// Replaces the drag image of the drag in progress (an app that knows better mid-drag, a drag
+    /// started with [`Document::start_drag`] from an egui island). False without a drag.
+    pub fn set_drag_preview(&mut self, preview: Option<crate::kind::DragPreview>) -> bool {
+        match self.input.drag.as_mut() {
+            Some(d) => {
+                d.preview = preview;
+                self.input.drag_generation += 1;
+                d.generation = self.input.drag_generation;
+                true
+            }
+            None => false,
+        }
+    }
+
     /// Starts an in-app drag for `pointer`, which is already held, of `source` with payload
     /// type `ty` and `data`, whatever the source's own `drag-type` (a drag that began inside an
     /// egui island becomes a skelter drag). From here on the pointer's moves, release and cancel go to
@@ -168,10 +228,22 @@ impl Document {
         }
         let pos = self.input.last_pos.get(&window).copied();
         let mut out = Dispatched { window, revision: self.revision, ..Default::default() };
-        self.transaction(|doc| begin(doc, window, pointer, source, Arc::from(ty), Arc::from(data), pos, &mut out));
+        self.transaction(|doc| begin(doc, window, pointer, source, Arc::from(ty), Arc::from(data), pos, pos, &mut out));
         self.input_events.append(&mut out.events);
         true
     }
+}
+
+/// The drag image follows the pointer: the drag layer's transform goes to the compositor at once as
+/// a fast commit (no frame, no re-record); the next commit agrees.
+fn move_drag_layer(doc: &mut Document, window: WindowId, pos: Point) {
+    if let Some(d) = doc.input.drag.as_mut() {
+        d.pos = Some(pos);
+    }
+    let Some(l) = doc.window(window).and_then(|w| w.drag_layer.as_ref()) else { return };
+    let local = skelter_base::geom::Affine::translate(pos.x + l.offset.x, pos.y + l.offset.y);
+    let node = l.transform;
+    doc.fast.push(skelter_base::commit::FastCommit::Transform { window, node, local, revision: doc.revision, input_seq: doc.input_seq });
 }
 
 /// The target under `pos` (`None`: the pointer left the window) takes over from the old one.

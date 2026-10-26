@@ -29,12 +29,22 @@ pub const DIALOG_ROLES: &[&str] = &["auto", "accept", "reject", "destructive", "
 /// shows), `start` and `end` (permanent).
 pub const STATUS_SECTIONS: &[&str] = &["temporary", "start", "end"];
 
+/// `aria-live`: how assistive technology announces changes inside the node.
+pub const ARIA_LIVE_VALUES: &[&str] = &["off", "polite", "assertive"];
+
 pub static COMMON: KindSpec = KindSpec {
     props: &[
         PropSpec::new("tabindex", ValueType::I64, ChangeClass::Paint),
         PropSpec::new("disabled", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)),
         PropSpec::new("hidden", ValueType::Bool, ChangeClass::Layout).default(PropDefault::Bool(false)),
         PropSpec::new("aria-label", ValueType::Str, ChangeClass::Paint),
+        PropSpec::new("aria-live", ValueType::Enum, ChangeClass::Paint)
+            .default(PropDefault::Enum(0))
+            .enum_values(ARIA_LIVE_VALUES)
+            .doc("A live region: AccessKit `live` (`off`, `polite`, `assertive`), applied after the kind's own accessibility node."),
+        PropSpec::new("aria-busy", ValueType::Bool, ChangeClass::Paint)
+            .default(PropDefault::Bool(false))
+            .doc("The node is being updated: AccessKit `busy`, applied after the kind's own accessibility node."),
         PropSpec::new("title", ValueType::Str, ChangeClass::Paint),
         PropSpec::new("autofocus", ValueType::Bool, ChangeClass::Paint).default(PropDefault::Bool(false)),
         PropSpec::new("focus-scope", ValueType::Enum, ChangeClass::Paint).default(PropDefault::Enum(0)).enum_values(FOCUS_SCOPES),
@@ -118,6 +128,8 @@ ids!(PropId:
     DISABLED = "disabled": "bool",
     HIDDEN = "hidden": "bool",
     ARIA_LABEL = "aria-label": "string",
+    ARIA_LIVE = "aria-live": "enum",
+    ARIA_BUSY = "aria-busy": "bool",
     TITLE = "title": "string",
     AUTOFOCUS = "autofocus": "bool",
     FOCUS_SCOPE = "focus-scope": "enum",
@@ -178,7 +190,7 @@ mod tests {
         for i in 0..COMMON.props.len() {
             assert!(prop(COMMON.prop_id(i)).is_some());
         }
-        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, TITLE, AUTOFOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
+        for id in [TABINDEX, DISABLED, HIDDEN, ARIA_LABEL, ARIA_LIVE, ARIA_BUSY, TITLE, AUTOFOCUS, FOCUS_SCOPE, ANCHOR, ANCHOR_SCOPE, INVALID, DIALOG_ROLE, STATUS_TIP, STATUS_SECTION, DRAG_DATA, DRAG_TYPE, DROP_TYPES] {
             assert!(prop(id).is_some(), "{id:?}");
         }
         for id in [POINTERDOWN, CLICK, WHEEL, KEYDOWN, FOCUS, FOCUSIN, SCROLL, ANIMATIONEND, DRAG_BEGIN, DRAG_END, DRAG_ENTER, DRAG_LEAVE, DROP] {

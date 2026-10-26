@@ -37,7 +37,7 @@ pub fn measure(k: &dyn Kind, state: StateBits) -> Size {
 /// recording and the events that follow).
 pub fn prepare(k: &mut dyn Kind, size: Size, state: StateBits) {
     let mut text = MonoShaper;
-    let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, text: &mut text };
+    let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, text: &mut text, emitted: Vec::new() };
     k.prepare(&mut cx);
 }
 

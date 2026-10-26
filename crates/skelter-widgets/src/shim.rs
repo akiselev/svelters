@@ -324,6 +324,15 @@ pub mod core {
         pub size: Size,
         pub style: Styles<'a>,
         pub text: &'a mut dyn TextShaper,
+        /// Signals emitted while preparing ([`PrepareCx::emit`]); the host queues them after the
+        /// prepare (`skelter_core::PrepareCx::emit`).
+        pub emitted: Vec<Emitted>,
+    }
+
+    impl PrepareCx<'_> {
+        pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
+            self.emitted.push(Emitted { signal, args });
+        }
     }
 
     /// The resources a recording registers (runs and images), the stand-in for skelter-core's commit
@@ -411,15 +420,23 @@ pub mod core {
         /// Delivers a signal to JS now and reports whether a listener prevented its default
         /// ([`EventCx::emit_sync`]); `None`: signals are queued and nothing is prevented.
         pub sync: Option<&'a mut SyncEmit<'a>>,
+        /// Signals for the node's children, by child index, with skelter-core's signal ids (the
+        /// child's kind declares them): the host emits them on the child
+        /// (`skelter_core::EventCx::emit_on`).
+        pub emitted_on: Vec<(usize, skelter_core::SignalId, Option<skelter_core::Value>)>,
     }
 
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new() }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
+        }
+        /// Emits `signal` (a signal of the child's kind) on the node's `child`-th child.
+        pub fn emit_on(&mut self, child: usize, signal: skelter_core::SignalId, arg: Option<skelter_core::Value>) {
+            self.emitted_on.push((child, signal, arg));
         }
         /// Emits `signal` at event time when the host can deliver it now (a cancelable signal whose
         /// default action follows); returns whether a listener prevented that default.
@@ -583,6 +600,19 @@ pub mod core {
         /// It wants [`Event::OutsidePress`] now (an open floating surface: light dismiss).
         fn light_dismiss(&self) -> bool {
             false
+        }
+        /// Records the kind's open floating surface (a picker's popup, a select's list) into
+        /// `cx.list`, in the node's local points, and returns what it is: skelter-core puts it in a
+        /// layer of the window's overlay stack (above the content) and routes pointer input inside
+        /// `part.rect` to this node first (`skelter_core::RecordCx::overlay`). `None`: no surface
+        /// is open (the default).
+        fn record_overlay(&self, _cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
+            None
+        }
+        /// The window's overlay stack closed the surface of [`Kind::record_overlay`] (a press
+        /// outside, Escape, its parent closing).
+        fn overlay_closed(&mut self, _cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
+            Handled::No
         }
         /// The state bits the kind derives from its props alone (`:checked`, `:busy`); skelter-core sets
         /// them after every prop write (bits outside [`Kind::prop_states`] are ignored).

@@ -28,6 +28,7 @@
 use super::common::{emit, platform};
 use super::menu::{check_mark, stroke};
 use super::menu_model::{Typeahead, next_by, typeahead_find};
+use super::overlay::{DismissReason, OverlayClass, OverlayPart};
 use super::placement::{AnchorParams, Placement, place};
 use crate::controls::common::host_view;
 use crate::interact::{Platform, StateBits};
@@ -509,6 +510,23 @@ impl Kind for Select {
         stroke(&mut pc, Point::new(c.x - 4.0, c.y - 2.0), Point::new(c.x, c.y + 2.0), 1.25, color);
         stroke(&mut pc, Point::new(c.x, c.y + 2.0), Point::new(c.x + 4.0, c.y - 2.0), 1.25, color);
         paint::paint_outline(&mut pc, &host, rect);
+    }
+
+    /// The open list, in a layer of the window's overlay stack (the button counts as inside).
+    fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
+        let l = self.list?;
+        let RecordCx { list, text, res, style, scale, size } = cx;
+        let open = self.record_list(&mut **text, &mut **res, style, *scale)?;
+        list.bounds = list.bounds.union(&open.bounds);
+        list.items.extend(open.items);
+        let mut part = OverlayPart::new(OverlayClass::Popup, l.rect);
+        part.inside = vec![Rect::from_origin_size(Point::ZERO, *size)];
+        Some(part)
+    }
+
+    fn overlay_closed(&mut self, cx: &mut EventCx, _reason: DismissReason) -> Handled {
+        self.set_open(cx, false);
+        Handled::Yes
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {

@@ -35,6 +35,8 @@ pub trait AppHandler: 'static {
     }
     /// An item of the native menu bar ([`PlatformCx::set_menu_bar`]) was chosen: its [`MenuNode::Item`] id.
     fn menu_activated(&mut self, _cx: &mut dyn PlatformCx, _id: &str) {}
+    /// A drag started with [`PlatformCx::start_drag`] ended.
+    fn drag_ended(&mut self, _cx: &mut dyn PlatformCx, _drag: DragId, _outcome: DragOutcome) {}
     /// The loop is about to exit.
     fn exiting(&mut self, _cx: &mut dyn PlatformCx) {}
 }
@@ -105,6 +107,11 @@ pub trait PlatformCx {
     fn waker(&self) -> Waker;
     fn clock(&self) -> Arc<dyn Clock>;
     fn monitors(&self) -> Vec<Monitor>;
+    /// The monitor showing most of the window, where the OS tells (`None`: the app falls back to the
+    /// window's position). [`WindowEvent::MonitorChanged`] says when the answer may have changed.
+    fn monitor_of(&self, _id: WindowId) -> Option<Monitor> {
+        None
+    }
     /// Regions of a custom title bar (window points); later regions win. Windows answers
     /// `WM_NCHITTEST` from them (snap layouts); elsewhere a caption press starts a window drag.
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]);
@@ -120,6 +127,47 @@ pub trait PlatformCx {
     /// What the compositor paces this window's frames by (`Send + Sync`, for the compositor
     /// thread). `None` where the platform has none (headless).
     fn frame_source(&mut self, id: WindowId) -> Option<Arc<dyn crate::frame::FrameSource>>;
+    /// An OS layer's own frame source, where the layer gets frame callbacks of its own (a desync
+    /// Wayland subsurface). `None`: the layer is paced by its window's [`PlatformCx::frame_source`].
+    fn layer_frame_source(&mut self, _id: WindowId, _layer: SurfaceId) -> Option<Arc<dyn crate::frame::FrameSource>> {
+        None
+    }
+    /// A popup (menu, tooltip, combo list) placed against its parent by [`PopupDesc`]; the OS may flip
+    /// or slide it to stay on screen. [`PlatformError::Unsupported`] where the backend has none (the
+    /// app then draws the popup inside its window).
+    fn create_popup(&mut self, _desc: WindowDesc, _popup: PopupDesc) -> Result<WindowId, PlatformError> {
+        Err(PlatformError::Unsupported("popup windows"))
+    }
+    /// A toplevel that is a transient child (dialog) of `parent`: stays above it, minimises with it.
+    fn create_child_window(&mut self, _desc: WindowDesc, _parent: WindowId) -> Result<WindowId, PlatformError> {
+        Err(PlatformError::Unsupported("child windows"))
+    }
+    /// Whether the app must draw the window's title bar and frame itself because the OS draws none
+    /// (Wayland without server-side decorations). The platform then resizes from a border along the
+    /// window's edges by itself (6 points, 16-point corners; off while maximised, fullscreen, tiled or
+    /// not resizable); the app's [`HitRegion`]s cover the title bar.
+    fn client_side_decorations(&self, _id: WindowId) -> bool {
+        false
+    }
+    /// Asks the OS to change the window's state. Returns `false` when this backend cannot (the request
+    /// was not sent); `true` means it was sent, and the OS reports the result through `Resized`,
+    /// `Focused` and the like.
+    fn set_window_state(&mut self, _id: WindowId, _req: WindowStateRequest) -> bool {
+        false
+    }
+    /// Input hints for the window's text input beyond [`InputPurpose`] (with `set_ime` or
+    /// `set_text_input`). Ignored where the IME takes none.
+    fn set_ime_hints(&mut self, _id: WindowId, _hints: ImeHints) {}
+    /// Starts dragging `data` out of `window` (a pointer button must be held). The end arrives as
+    /// [`AppHandler::drag_ended`]. [`PlatformError::Unsupported`] where the backend has no drag source.
+    fn start_drag(&mut self, _window: WindowId, _data: DragData) -> Result<DragId, PlatformError> {
+        Err(PlatformError::Unsupported("drag source"))
+    }
+    /// Tab tear-off: attaches `window` to the running `drag` with the pointer at `offset` inside it
+    /// (window points); the OS moves the window with the pointer until the drag ends.
+    fn attach_window_to_drag(&mut self, _drag: DragId, _window: WindowId, _offset: Vec2) -> Result<(), PlatformError> {
+        Err(PlatformError::Unsupported("window drags"))
+    }
     fn exit(&mut self);
 }
 
@@ -274,6 +322,10 @@ pub fn hit_test(regions: &[HitRegion], p: Point) -> HitKind {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Monitor {
+    /// Physical pixels per inch, where the OS reports the panel's physical size (EDID); `None` when
+    /// it does not or the size is implausible (projectors, TVs reporting an aspect ratio). Apps then
+    /// fall back to the OS's logical DPI convention (96 × scale, 72 × scale on macOS).
+    pub ppi: Option<f32>,
     pub name: Option<String>,
     /// Top-left in the desktop's device pixels.
     pub position: (i32, i32),
@@ -282,6 +334,21 @@ pub struct Monitor {
     pub work_area: Option<DeviceRect>,
     pub scale: Scale,
     pub refresh_millihertz: Option<u32>,
+}
+
+impl Monitor {
+    /// Pixels per inch along the diagonal of a panel of `pixels` that measures `mm` (width, height in
+    /// millimetres). `None` for a missing size (0) or an implausible one (outside 40..=1000 ppi: a
+    /// projector, or an EDID holding the aspect ratio in centimetres).
+    pub fn ppi_from_mm(pixels: skelter_base::geom::DeviceSize, mm: (f32, f32)) -> Option<f32> {
+        let (wmm, hmm) = mm;
+        if !(wmm > 0.0 && hmm > 0.0) || pixels.w == 0 || pixels.h == 0 {
+            return None;
+        }
+        let px = (pixels.w as f32).hypot(pixels.h as f32);
+        let inches = wmm.hypot(hmm) / 25.4;
+        Some(px / inches).filter(|p| (40.0..=1000.0).contains(p))
+    }
 }
 
 /// A native menu bar: its top-level menus, in order (skelter-widgets' `MenuModel` converts into it).
@@ -310,6 +377,79 @@ pub enum MenuNode {
         checked: Option<bool>,
     },
     Separator,
+}
+
+/// A popup's placement: `anchor` is a rect in the parent's window points; the popup opens on
+/// `gravity`'s side of it, and the OS may flip or slide it to stay on screen.
+#[derive(Clone, Debug, PartialEq)]
+pub struct PopupDesc {
+    pub parent: WindowId,
+    pub anchor: Rect,
+    pub gravity: PopupGravity,
+    /// Take an explicit grab (menus): the popup closes when the user clicks outside it.
+    pub grab: bool,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub enum PopupGravity {
+    #[default]
+    Below,
+    Above,
+    Right,
+    Left,
+}
+
+impl PopupDesc {
+    /// The popup's top-left (parent window points) for a popup of `size` when the OS places nothing
+    /// itself: against the anchor's edge on `gravity`'s side, aligned with its start.
+    pub fn origin(&self, size: Size) -> Point {
+        let a = self.anchor;
+        match self.gravity {
+            PopupGravity::Below => Point::new(a.min.x, a.max.y),
+            PopupGravity::Above => Point::new(a.min.x, a.min.y - size.h),
+            PopupGravity::Right => Point::new(a.max.x, a.min.y),
+            PopupGravity::Left => Point::new(a.min.x - size.w, a.min.y),
+        }
+    }
+}
+
+/// A window state change [`PlatformCx::set_window_state`] asks for.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum WindowStateRequest {
+    Maximize,
+    Unmaximize,
+    Minimize,
+    Fullscreen,
+    Unfullscreen,
+    /// Raise and focus the window (Wayland: `xdg_activation_v1`).
+    Activate,
+}
+
+/// Text-input hints beyond the [`InputPurpose`].
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+pub struct ImeHints {
+    pub multiline: bool,
+    /// Turn off completion, spell checking and auto-capitalisation (code, identifiers).
+    pub no_assist: bool,
+    pub sensitive: bool,
+}
+
+/// A drag's payload: MIME type → bytes. Within the app the payload is usually one id under skelter's
+/// own MIME type.
+#[derive(Clone, Debug, PartialEq, Default)]
+pub struct DragData {
+    pub items: Vec<(String, Vec<u8>)>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct DragId(pub u64);
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum DragOutcome {
+    /// Dropped on a target that accepted it.
+    Dropped,
+    Cancelled,
 }
 
 /// What an assistive technology did.
@@ -346,6 +486,8 @@ pub enum PlatformError {
     /// The OS event loop could not start (no display, already running).
     EventLoop(String),
     Os(String),
+    /// This backend does not offer what was asked (named).
+    Unsupported(&'static str),
 }
 
 impl std::fmt::Display for PlatformError {
@@ -353,8 +495,39 @@ impl std::fmt::Display for PlatformError {
         match self {
             PlatformError::EventLoop(s) => write!(f, "event loop: {s}"),
             PlatformError::Os(s) => write!(f, "os: {s}"),
+            PlatformError::Unsupported(what) => write!(f, "unsupported on this platform: {what}"),
         }
     }
 }
 
 impl std::error::Error for PlatformError {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use skelter_base::geom::DeviceSize;
+
+    #[test]
+    fn ppi_from_physical_size() {
+        // A 27" 4K panel: 597 x 336 mm.
+        let p = Monitor::ppi_from_mm(DeviceSize { w: 3840, h: 2160 }, (597.0, 336.0)).unwrap();
+        assert!((p - 163.2).abs() < 0.5, "{p}");
+        // A 24" 1080p panel: 531 x 299 mm, about 92 ppi.
+        let p = Monitor::ppi_from_mm(DeviceSize { w: 1920, h: 1080 }, (531.0, 299.0)).unwrap();
+        assert!((p - 91.8).abs() < 0.5, "{p}");
+        // Unknown, and an EDID holding the aspect ratio (16 x 9 mm).
+        assert_eq!(Monitor::ppi_from_mm(DeviceSize { w: 1920, h: 1080 }, (0.0, 0.0)), None);
+        assert_eq!(Monitor::ppi_from_mm(DeviceSize { w: 1920, h: 1080 }, (16.0, 9.0)), None);
+        assert_eq!(Monitor::ppi_from_mm(DeviceSize { w: 0, h: 0 }, (300.0, 200.0)), None);
+    }
+
+    #[test]
+    fn popup_origin_sits_on_the_gravity_side() {
+        let anchor = Rect::new(10.0, 20.0, 50.0, 30.0);
+        let p = |gravity| PopupDesc { parent: WindowId(1), anchor, gravity, grab: false }.origin(Size::new(100.0, 40.0));
+        assert_eq!(p(PopupGravity::Below), Point::new(10.0, 30.0));
+        assert_eq!(p(PopupGravity::Above), Point::new(10.0, -20.0));
+        assert_eq!(p(PopupGravity::Right), Point::new(50.0, 20.0));
+        assert_eq!(p(PopupGravity::Left), Point::new(-90.0, 20.0));
+    }
+}

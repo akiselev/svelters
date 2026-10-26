@@ -23,6 +23,7 @@
 //! | [`frame`] | the UI phases and the commit builder |
 //! | [`input`] | hit testing, dispatch, hover, capture, focus |
 //! | [`hit`] | hit lists |
+//! | [`overlay`] | each window's overlay stack (its top layer: popups, menus, modals) and the drag layer |
 //! | [`journal`] | the change journal |
 //! | [`query`] | kind sets, anchors, [`Query`](query::Query), CSS selector queries |
 //! | [`a11y`] | the AccessKit projection and its validating builder |
@@ -45,6 +46,7 @@ pub mod input;
 pub mod journal;
 pub mod kind;
 pub mod layout;
+pub mod overlay;
 pub mod query;
 mod record;
 pub mod registry;
@@ -53,6 +55,7 @@ mod scroll;
 pub mod settle;
 pub mod style;
 pub mod testkinds;
+mod toplayer;
 mod tree;
 pub mod value;
 pub mod virt;
@@ -62,7 +65,7 @@ mod anim;
 mod tests;
 
 pub use cx::{Services, A11yCx, ChildLayoutCx, EventCx, RealizeCx, HitCx, MeasureCx, NodeView, PrepareCx, PropCx, RecordCx, ShapedText, StyleCx, TextShaper};
-pub use document::{Document, SyncDelivery, Writer};
+pub use document::{Document, DragPreviewProvider, SyncDelivery, Writer};
 pub use error::{PropError, TreeError};
 pub use frame::FrameStats;
 pub use layout::LayoutRun;
@@ -70,7 +73,7 @@ pub use settle::Busy;
 pub use ids::{KindId, MethodId, PropId, SignalId, SlotId, fingerprint};
 pub use input::{Delivery, Dispatched, JsEvent, Phase};
 pub use input::focus::{next_focus, open_dialog};
-pub use kind::{ArgSpec, DEFAULT_NAME_FROM, Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameSource, NativeState, Outcome, PeerGroup, PeerMsg, PeerTarget, PointerInput, PropSpec, Rove, SelfScroll, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
+pub use kind::{ArgSpec, DEFAULT_NAME_FROM, DragPreview, Event, FocusReason, Handled, HitResult, Kind, KindSpec, MethodSpec, NameSource, NativeState, Outcome, PeerGroup, PeerMsg, PeerTarget, PointerInput, PropSpec, Rove, SelfScroll, SignalFlags, SignalSpec, SlotSpec, VirtualChildren, WheelInput};
 pub use registry::{KindEntry, KindRegistry, RegistryError};
 pub use style::{ComputedBox, StyleInput};
 pub use tree::{Dirty, ListenFlags, Listener, NodeFlags};

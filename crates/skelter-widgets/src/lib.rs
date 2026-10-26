@@ -18,3 +18,6 @@ pub mod text;
 pub mod theme;
 pub mod views;
 pub mod zoom;
+
+#[cfg(test)]
+mod testdoc;

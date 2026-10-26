@@ -32,6 +32,8 @@ pub const ENGINE_PROPS: &[(&str, &str, &[&str], ChangeClass)] = &[
     ("border-bottom-right-radius", "length", &[], Paint),
     ("border-bottom-left-radius", "length", &[], Paint),
     ("box-shadow", "shadow", &[], Paint),
+    // the caret's colour; `auto` (initial) = `color`; skelter-core sends it with the caret's fast commits
+    ("caret-color", "color", &["auto"], Paint),
     ("color", "color", &[], Paint),
     ("content", "content", &[], Layout),
     ("cursor", "enum", CURSORS, Paint),

@@ -65,6 +65,8 @@ pub struct TransitionSpec {
 pub struct ComputedBox {
     // text (inherited)
     pub color: Color,
+    /// `caret-color` (inherited); `None` = `auto`, the caret takes `color`.
+    pub caret_color: Option<Color>,
     pub font_family: Arc<str>,
     pub font_size: f32,
     pub font_weight: u16,
@@ -106,6 +108,7 @@ impl Default for ComputedBox {
     fn default() -> Self {
         ComputedBox {
             color: Color::BLACK,
+            caret_color: None,
             font_family: Arc::from("system-ui, sans-serif"),
             font_size: 13.0,
             font_weight: 400,
@@ -139,6 +142,10 @@ impl Default for ComputedBox {
 }
 
 impl ComputedBox {
+    /// The caret's colour: `caret-color`, or `color` when it is `auto`.
+    pub fn caret(&self) -> Color {
+        self.caret_color.unwrap_or(self.color)
+    }
     /// Paints something of its own (background, border, shadow or outline).
     pub fn has_box_paint(&self) -> bool {
         let bg = match &self.background {
@@ -166,6 +173,7 @@ impl ComputedBox {
     pub fn inherited(&self) -> ComputedBox {
         ComputedBox {
             color: self.color,
+            caret_color: self.caret_color,
             font_family: self.font_family.clone(),
             font_size: self.font_size,
             font_weight: self.font_weight,

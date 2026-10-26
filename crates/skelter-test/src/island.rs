@@ -24,10 +24,22 @@ use skelter_base::props::{PropOp, TransformNode};
 use skelter_base::time::{Clock, Span, Time};
 use skelter_egui_island::{EguiIsland, IslandDesc, IslandOutput, TextureRegistry, island_tree_id};
 use skelter_platform::clipboard::{Clipboard, ClipboardKind, MemoryClipboard};
+use skelter_platform::{PlatformCx, Waker};
 use std::cell::RefCell;
 use std::ops::{Deref, DerefMut};
 use std::rc::Rc;
 use std::sync::Arc;
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicBool, Ordering};
+
+/// egui repaints requested outside a pass (`ctx.request_repaint()` from another thread: app events,
+/// jobs, RPC): they make the island due and wake the app.
+#[derive(Default)]
+struct Repaint {
+    due: AtomicBool,
+    in_pass: AtomicBool,
+    waker: Mutex<Option<Waker>>,
+}
 
 /// The node whose display list is the island's texture.
 const ISLAND_NODE: NodeId = NodeId::new(1, 1);
@@ -67,16 +79,25 @@ pub struct IslandDoc<S> {
     sent_layers: bool,
     output: IslandOutput,
     passes: u64,
+    repaint: Arc<Repaint>,
 }
 
 impl<S> IslandDoc<S> {
-    fn new(app: UiFn<S>, state: S, clock: Arc<dyn Clock>, size: Size, scale: f32, device: Option<&wgpu::Device>) -> Self {
+    fn new(
+        app: UiFn<S>,
+        state: S,
+        clock: Arc<dyn Clock>,
+        size: Size,
+        scale: f32,
+        device: Option<&wgpu::Device>,
+        renderer: egui_wgpu::RendererOptions,
+    ) -> Self {
         let desc = IslandDesc {
             texture: TEXTURE,
             tree: island_tree_id(1),
             rect: Rect::from_origin_size(Point::ZERO, size),
             scale: Scale(scale),
-            renderer: egui_wgpu::RendererOptions::default(),
+            renderer,
         };
         let mut island = match device {
             Some(d) => EguiIsland::with_device(d, desc),
@@ -87,6 +108,17 @@ impl<S> IslandDoc<S> {
         island.set_focused(true);
         let clipboard = SharedClipboard::default();
         island.set_clipboard(Box::new(clipboard.clone()));
+        let repaint = Arc::new(Repaint::default());
+        let r = repaint.clone();
+        island.context().set_request_repaint_callback(move |_| {
+            // a pass's own requests are the island's `pass_at`
+            if !r.in_pass.load(Ordering::Acquire) {
+                r.due.store(true, Ordering::Release);
+                if let Some(w) = r.waker.lock().unwrap().as_ref() {
+                    w.wake();
+                }
+            }
+        });
         IslandDoc {
             island,
             app,
@@ -98,7 +130,27 @@ impl<S> IslandDoc<S> {
             sent_layers: false,
             output: IslandOutput::default(),
             passes: 0,
+            repaint,
         }
+    }
+
+    /// The app's waker, woken by an egui repaint requested outside a pass.
+    pub fn set_waker(&self, waker: Waker) {
+        *self.repaint.waker.lock().unwrap() = Some(waker);
+    }
+
+    /// Run a pass at the next frame (kittest runs at least one per step).
+    pub fn request_pass(&self) {
+        self.repaint.due.store(true, Ordering::Release);
+    }
+
+    /// kittest's settle rule: the last pass requested no immediate repaint and nothing is due.
+    fn settled(&self, now: Time) -> bool {
+        !self.due() && !self.host_dirty && !self.island.needs_pass(now)
+    }
+
+    fn due(&self) -> bool {
+        self.repaint.due.load(Ordering::Acquire)
     }
 
     pub fn island(&self) -> &EguiIsland {
@@ -185,6 +237,9 @@ impl<S> DocumentApi for IslandDoc<S> {
     }
 
     fn frame(&mut self, window: WindowId, target: Time) -> Option<Commit> {
+        if self.repaint.due.swap(false, Ordering::AcqRel) {
+            self.island.request_pass();
+        }
         let pass = self.island.needs_pass(target);
         if !pass && !self.host_dirty {
             return None;
@@ -218,7 +273,9 @@ impl<S> DocumentApi for IslandDoc<S> {
             let IslandDoc {
                 island, app, state, ..
             } = self;
+            self.repaint.in_pass.store(true, Ordering::Release);
             let out = island.run(target, |ui| app(ui, state));
+            self.repaint.in_pass.store(false, Ordering::Release);
             self.passes += 1;
             // The island's subtree reaches the platform adapter after the host tree that grafts it.
             if let Some(u) = &out.a11y {
@@ -235,11 +292,11 @@ impl<S> DocumentApi for IslandDoc<S> {
     }
 
     fn needs_frame(&self, _window: WindowId) -> bool {
-        self.host_dirty || self.island.needs_pass(self.clock.now())
+        self.host_dirty || self.due() || self.island.needs_pass(self.clock.now())
     }
 
     fn next_wakeup(&self, _window: WindowId) -> Option<Time> {
-        self.island.next_wakeup()
+        if self.due() { Some(self.clock.now()) } else { self.island.next_wakeup() }
     }
 
     fn resize(&mut self, _window: WindowId, size: Size, scale: Scale) {
@@ -406,6 +463,8 @@ pub struct EguiHarnessBuilder {
     theme: egui::Theme,
     context_setup: Option<Box<dyn FnOnce(&egui::Context)>>,
     renderer_setup: Option<RendererSetup>,
+    renderer: egui_wgpu::RendererOptions,
+    pass_every_step: bool,
 }
 
 impl Default for EguiHarnessBuilder {
@@ -415,6 +474,9 @@ impl Default for EguiHarnessBuilder {
             theme: egui::Theme::Dark,
             context_setup: None,
             renderer_setup: None,
+            // kittest's: no dithering, so snapshots are stable
+            renderer: egui_wgpu::RendererOptions::PREDICTABLE,
+            pass_every_step: true,
         }
     }
 }
@@ -476,6 +538,18 @@ impl EguiHarnessBuilder {
         self.renderer_setup = Some(Box::new(setup));
         self
     }
+    /// kittest parity (default on): every step runs one island pass whether or not the island is due,
+    /// queued input is delivered one event per pass, and `run` settles when the last pass requested no repaint and no input is queued. Off: the
+    /// island passes only when due and `run` settles when nothing needs a frame (skelter's own rule).
+    pub fn with_pass_every_step(mut self, on: bool) -> Self {
+        self.pass_every_step = on;
+        self
+    }
+    /// The island's egui-wgpu renderer options (default `PREDICTABLE`, as kittest).
+    pub fn with_renderer_options(mut self, options: egui_wgpu::RendererOptions) -> Self {
+        self.renderer = options;
+        self
+    }
     /// The underlying skelter harness builder (glyphs, clear colour, app config).
     pub fn skelter(mut self, f: impl FnOnce(HarnessBuilder) -> HarnessBuilder) -> Self {
         self.base = f(self.base);
@@ -517,6 +591,8 @@ impl EguiHarnessBuilder {
             theme,
             context_setup,
             renderer_setup,
+            renderer,
+            pass_every_step,
         } = self;
         let gpu = renderer_setup.is_some().then(|| {
             GpuRender::new(base.default_glyphs())
@@ -525,7 +601,7 @@ impl EguiHarnessBuilder {
         let (size, scale) = (base.size, base.scale);
         let mut ctx_out = None;
         let make_doc = |clock: Arc<dyn Clock>, gpu: Option<&GpuRender>| {
-            let mut doc = IslandDoc::new(app, state, clock, size, scale, gpu.map(|g| &g.device));
+            let mut doc = IslandDoc::new(app, state, clock, size, scale, gpu.map(|g| &g.device), renderer);
             let ctx = doc.island.context().clone();
             ctx.set_theme(theme);
             if let Some(setup) = context_setup {
@@ -546,12 +622,34 @@ impl EguiHarnessBuilder {
                 d.clipboard.set_text(ClipboardKind::Clipboard, text);
             })),
             textures: Some(Box::new(|d: &mut IslandDoc<S>, g: &mut GpuRender| render_island(d, g))),
+            before_step: pass_every_step.then(|| Box::new(|d: &mut IslandDoc<S>| d.request_pass()) as Box<dyn FnMut(&mut IslandDoc<S>)>),
+            settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, now: Time| d.settled(now)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
+            one_event_per_step: pass_every_step,
         };
         let mut inner = base.build_with(make_doc, hooks, gpu);
+        let waker = inner.platform_mut().cx().waker();
+        inner.state().set_waker(waker);
         inner.run_ok();
+        // kittest's build checks accessible names too (`with_accessibility_check`)
+        if inner.check_accessibility {
+            inner.check_accessibility();
+        }
         EguiHarness {
             inner,
             ctx: ctx_out.expect("the document was made"),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn the_harness_renders_predictably_unless_told_otherwise() {
+        let b = EguiHarnessBuilder::default();
+        assert!(!b.renderer.dithering && b.renderer.predictable_texture_filtering, "kittest's PREDICTABLE");
+        let b = b.with_renderer_options(egui_wgpu::RendererOptions::default());
+        assert!(b.renderer.dithering);
     }
 }

@@ -64,6 +64,18 @@ impl Document {
             }
             self.kinds[i] = Some(k);
         }
+        // common props a behaviour may set win over the kind's own node
+        {
+            let v = self.view_at(i);
+            match v.prop(crate::common::ARIA_LIVE).and_then(|v| v.as_enum()) {
+                Some(1) => out.set_live(accesskit::Live::Polite),
+                Some(2) => out.set_live(accesskit::Live::Assertive),
+                _ => {}
+            }
+            if v.prop_bool(crate::common::ARIA_BUSY) {
+                out.set_busy();
+            }
+        }
         let l = &self.layout[i].layout;
         out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: l.size.width as f64, y1: l.size.height as f64 });
         let world = self.record[i].world_tf;

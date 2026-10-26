@@ -306,6 +306,8 @@ pub struct PrepareCx<'a> {
     pub(crate) images: &'a mut ImageSink,
     pub(crate) request: Dirty,
     pub(crate) services: &'a mut Services,
+    /// Signals emitted while preparing ([`PrepareCx::emit`]), queued after the prepare.
+    pub(crate) emitted: &'a mut Vec<Emitted>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -353,6 +355,12 @@ impl PrepareCx<'_> {
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
     }
+    /// Emits `signal` with `arg` from this node: queued as a JS event once the prepare returns
+    /// ([`Document::take_events`]), not cancelable (a data window a virtual table needs, a restored
+    /// state's report).
+    pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
+        self.emitted.push(Emitted { node: self.node.id, signal, arg });
+    }
 }
 
 /// Glyph runs recorded this frame; the commit sends the new ones.
@@ -370,6 +378,10 @@ pub struct RecordCx<'a> {
     /// it records.
     pub(crate) fixed: &'a mut DisplayList,
     pub(crate) in_fixed: bool,
+    /// The node's overlay part ([`RecordCx::overlay`]); swapped with `list` while it records.
+    pub(crate) overlay: &'a mut DisplayList,
+    pub(crate) overlay_part: &'a mut Option<crate::overlay::OverlayPart>,
+    pub(crate) in_overlay: bool,
     pub(crate) runs: &'a mut RunSink,
     /// The runs this node's list references (replaced runs are dropped when the list is).
     pub(crate) node_runs: &'a mut Vec<RunId>,
@@ -402,6 +414,26 @@ impl RecordCx<'_> {
         let r = f(self);
         self.in_fixed = false;
         std::mem::swap(&mut self.list, &mut self.fixed);
+        r
+    }
+    /// Records what `f` draws (node-local points, as the rest of the list) as the node's overlay
+    /// surface `part`: a popup, a menu, a select's list. It paints in a layer of the window's overlay
+    /// stack, above every content layer and unclipped by the node's ancestors, and pointer input
+    /// inside `part.rect` reaches this node before anything under it (positions stay in the node's
+    /// space, even outside its box). Recording no part closes the surface. One part per node (a
+    /// second call adds to the first, keeping its `part`).
+    pub fn overlay<R>(&mut self, part: crate::overlay::OverlayPart, f: impl FnOnce(&mut Self) -> R) -> R {
+        if self.in_overlay {
+            return f(self);
+        }
+        if self.overlay_part.is_none() {
+            *self.overlay_part = Some(part);
+        }
+        std::mem::swap(&mut self.list, &mut self.overlay);
+        self.in_overlay = true;
+        let r = f(self);
+        self.in_overlay = false;
+        std::mem::swap(&mut self.list, &mut self.overlay);
         r
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
@@ -574,6 +606,25 @@ impl EventCx<'_> {
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node, signal, arg });
     }
+    /// Emits `signal` with `arg` from `node`, the node itself or one of its descendants (a
+    /// `tab-view`'s `close-requested` on the `tab` whose close button was clicked), delivered after
+    /// the event as [`EventCx::emit`]'s are. False (nothing emitted) for any other node.
+    pub fn emit_on(&mut self, node: NodeId, signal: SignalId, arg: Option<Value>) -> bool {
+        if !self.doc.contains(node) || !self.doc.is_ancestor_or_self(self.node, node) {
+            return false;
+        }
+        self.emitted.push(Emitted { node, signal, arg });
+        true
+    }
+    /// Writes a prop of `node`, the node itself or one of its descendants, as native-owned state
+    /// ([`EventCx::set_native`]): a table writes back the width of the `table-column` the user
+    /// resized. An error for any other node.
+    pub fn set_native_on(&mut self, node: NodeId, prop: PropId, v: Value) -> Result<(), crate::PropError> {
+        if !self.doc.contains(node) || !self.doc.is_ancestor_or_self(self.node, node) {
+            return Err(crate::PropError::Stale(node));
+        }
+        self.doc.set_prop_native(node, prop, v).map(|_| ())
+    }
     /// Emits `signal` and, when JS listens and the document has a sync deliverer
     /// ([`Document::set_sync_delivery`]), delivers it now and reports what the listeners did, so a
     /// default action can honour `preventDefault` (a checkbox keeps its state when its cancelable
@@ -596,7 +647,7 @@ impl EventCx<'_> {
     }
     /// Shows the caret at `rect` (local coordinates; `None` hides it) through a fast commit: the
     /// compositor draws and blinks it, so a caret move costs no frame. It goes out in the space of
-    /// the node's transform node, in the node's `color`; while the node isn't rendered the caret is
+    /// the node's transform node, in its `caret-color` (`color` when `auto`); while the node isn't rendered the caret is
     /// hidden and comes back once it is (`crate::caret`).
     pub fn set_caret(&mut self, rect: Option<Rect>) {
         let n = self.node;

@@ -101,7 +101,6 @@ pub struct State {
     pub(crate) timer: Option<Time>,
     pub(crate) exit: bool,
     pub(crate) theme: Option<Theme>,
-    pub(crate) finished_drags: Vec<(DragId, DragOutcome)>,
 }
 
 impl State {
@@ -144,7 +143,6 @@ impl State {
             timer: None,
             exit: false,
             theme: None,
-            finished_drags: Vec::new(),
             conn,
             qh,
         })
@@ -311,10 +309,7 @@ fn deliver(handler: &mut dyn AppHandler, state: &mut State, queue: &mut EventQue
         match p {
             Pending::Input(env) => handler.input(&mut cx, env),
             Pending::Window(id, ev) => handler.window_event(&mut cx, id, ev),
-            Pending::DragEnded(id, outcome) => {
-                cx.state_mut().finished_drags.push((id, outcome));
-                handler.wake(&mut cx);
-            }
+            Pending::DragEnded(id, outcome) => handler.drag_ended(&mut cx, id, outcome),
         }
         if state.exit {
             return;
@@ -337,18 +332,57 @@ impl CompositorHandler for State {
         // Frame callbacks run on the frame sources' own queues (present.rs), never on this one.
     }
 
-    fn surface_enter(&mut self, _: &Connection, _: &QueueHandle<Self>, _: &wl_surface::WlSurface, _: &wl_output::WlOutput) {}
+    fn surface_enter(&mut self, _: &Connection, _: &QueueHandle<Self>, surface: &wl_surface::WlSurface, output: &wl_output::WlOutput) {
+        self.surface_outputs_changed(surface, |outputs| {
+            if !outputs.contains(output) {
+                outputs.push(output.clone());
+            }
+        });
+    }
 
-    fn surface_leave(&mut self, _: &Connection, _: &QueueHandle<Self>, _: &wl_surface::WlSurface, _: &wl_output::WlOutput) {}
+    fn surface_leave(&mut self, _: &Connection, _: &QueueHandle<Self>, surface: &wl_surface::WlSurface, output: &wl_output::WlOutput) {
+        self.surface_outputs_changed(surface, |outputs| outputs.retain(|o| o != output));
+    }
+}
+
+impl State {
+    /// Applies `f` to the outputs of the window whose main surface is `surface`; when its first output (its
+    /// monitor) changed, the window gets `MonitorChanged`.
+    fn surface_outputs_changed(&mut self, surface: &wl_surface::WlSurface, f: impl FnOnce(&mut Vec<wl_output::WlOutput>)) {
+        let Some(id) = self.window_of(surface) else { return };
+        let Some(w) = self.windows.get_mut(&id).filter(|w| w.surface == *surface) else { return };
+        let before = w.outputs.first().cloned();
+        f(&mut w.outputs);
+        if w.outputs.first() != before.as_ref() {
+            self.push_window(id, WindowEvent::MonitorChanged);
+        }
+    }
+
+    /// The monitor set or an output's mode, scale or size changed: every window may now see another monitor.
+    fn monitors_changed(&mut self) {
+        let ids: Vec<WindowId> = self.windows.keys().copied().collect();
+        for id in ids {
+            self.push_window(id, WindowEvent::MonitorChanged);
+        }
+    }
 }
 
 impl OutputHandler for State {
     fn output_state(&mut self) -> &mut OutputState {
         &mut self.outputs
     }
-    fn new_output(&mut self, _: &Connection, _: &QueueHandle<Self>, _: wl_output::WlOutput) {}
-    fn update_output(&mut self, _: &Connection, _: &QueueHandle<Self>, _: wl_output::WlOutput) {}
-    fn output_destroyed(&mut self, _: &Connection, _: &QueueHandle<Self>, _: wl_output::WlOutput) {}
+    fn new_output(&mut self, _: &Connection, _: &QueueHandle<Self>, _: wl_output::WlOutput) {
+        self.monitors_changed();
+    }
+    fn update_output(&mut self, _: &Connection, _: &QueueHandle<Self>, _: wl_output::WlOutput) {
+        self.monitors_changed();
+    }
+    fn output_destroyed(&mut self, _: &Connection, _: &QueueHandle<Self>, output: wl_output::WlOutput) {
+        for w in self.windows.values_mut() {
+            w.outputs.retain(|o| *o != output);
+        }
+        self.monitors_changed();
+    }
 }
 
 impl SeatHandler for State {

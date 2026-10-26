@@ -10,9 +10,8 @@
 //! - Input reaches the model in local points; a press on a caption selects it, takes focus and
 //!   captures the pointer. A user pick raises `changed(selected)` and writes `selected` back as native
 //!   state (`bind:selected`).
-//! - **`close-requested` is raised on the tab-view with the page index**, not on the `tab`:
-//!   skelter-core's event context emits only from the node it handles. svelters-skelter (or a core
-//!   `emit_on(child)`) moves it to the tab; the `tab` kind declares the signal for that.
+//! - **`close-requested`** is raised on the `tab` whose close button was clicked (core's
+//!   `EventCx::emit_on`), and on the tab-view with the page index (any page, a `tab` or not).
 //!
 //! Left out: AccessKit nodes for the captions (core builds one node per tree node; the captions are
 //! not nodes), and a strip refresh when only a `tab`'s `title` changes (core tells the parent of a
@@ -165,7 +164,12 @@ impl TabViewKind {
                 cx.request_layout();
             }
         }
+        let pages: Vec<_> = if o.close.is_empty() { Vec::new() } else { cx.view(cx.node()).map(|v| v.children().to_vec()).unwrap_or_default() };
         for k in o.close {
+            let tab = pages.get(k).copied().filter(|&c| cx.view(c).is_some_and(|v| v.kind().spec.name == TAB.name));
+            if let Some(t) = tab {
+                cx.emit_on(t, TAB.signal_id(0), None);
+            }
             cx.emit(TAB_VIEW.signal_id(1), Some(Value::I64(k as i64)));
         }
         if o.take_focus {
@@ -322,5 +326,40 @@ mod tests {
         if let Some(fg) = t.color("fg") {
             assert_eq!(look.text.color, fg);
         }
+    }
+
+    #[test]
+    fn close_requested_reaches_the_tab() {
+        use crate::table::text_painter::with_text;
+        use crate::testdoc::{child, click, doc, frame};
+        let (mut d, root) = doc(skelter_base::geom::Size::new(400.0, 300.0), |r| register(r).unwrap());
+        let tv = child(&mut d, root, TAB_VIEW.id(), "width: 300px; height: 200px");
+        let tabs: Vec<_> = (0..2)
+            .map(|k| {
+                let t = child(&mut d, tv, TAB.id(), "");
+                d.set_prop(t, TAB.prop_named("title").unwrap(), Value::from(if k == 0 { "One" } else { "Two" })).unwrap();
+                d.set_prop(t, TAB.prop_named("closable").unwrap(), Value::Bool(true)).unwrap();
+                t
+            })
+            .collect();
+        let tab_close = TAB.signal_id(0);
+        let view_close = TAB_VIEW.signal_id(1);
+        for &t in &tabs {
+            d.listen(t, tab_close, skelter_core::ListenFlags::EMPTY);
+        }
+        d.listen(tv, view_close, skelter_core::ListenFlags::EMPTY);
+        frame(&mut d);
+        // the second caption's close button, as the strip lays it out (no text system: no theme either)
+        let caps: Vec<TabCaption> = ["One", "Two"].iter().enumerate().map(|(k, t)| caption_of(k, Some(t), true, "")).collect();
+        let look = TabLook::default();
+        let strip = with_text(None, |p| super::super::TabStrip::layout(&caps, &look, p));
+        let r = strip.tabs[1].close.expect("closable");
+        let out = click(&mut d, (r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0);
+        let mut ev: Vec<_> = out.into_iter().flat_map(|o| o.events).collect();
+        ev.extend(d.take_events());
+        let on_tab: Vec<_> = ev.iter().filter(|e| e.signal == tab_close).map(|e| e.target).collect();
+        assert_eq!(on_tab, [tabs[1]], "on the tab whose button was clicked");
+        let on_view: Vec<_> = ev.iter().filter(|e| e.signal == view_close).map(|e| e.arg.clone()).collect();
+        assert_eq!(on_view, [Some(Value::I64(1))], "and on the tab-view with its index");
     }
 }

@@ -461,7 +461,7 @@ mod tests {
         let mut i = icon("icon-kind-test.hit");
         let mut text = MonoShaper;
         let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true };
-        i.prepare(&mut PrepareCx { size: Size::new(40.0, 20.0), style, text: &mut text });
+        i.prepare(&mut PrepareCx { size: Size::new(40.0, 20.0), style, text: &mut text, emitted: Vec::new() });
         let hit = HitCx { size: Size::new(40.0, 20.0) };
         assert_eq!(i.hit_test(&hit, Point::new(8.0, 10.0)), HitResult::Hit);
         assert_eq!(i.hit_test(&hit, Point::new(30.0, 10.0)), HitResult::Miss);

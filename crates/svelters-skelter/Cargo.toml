@@ -26,3 +26,5 @@ svelters-style = { workspace = true }
 [dev-dependencies]
 # `tests/run.rs`: the app runner on the headless platform and compositor
 skelter-test = { workspace = true }
+# `tests/app_kinds.rs`: the app's kinds fragment merged into the compiler's skelter.json
+svelters-compiler = { workspace = true }

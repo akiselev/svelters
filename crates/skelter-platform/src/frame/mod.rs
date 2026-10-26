@@ -10,6 +10,21 @@
 //! | macOS | `CVDisplayLink` (`CAMetalDisplayLink` is the planned replacement) |
 //! | Wayland | frame callbacks plus `wp_presentation` feedback, occlusion after 100 ms without a callback |
 //! | X11, fallback | [`IntervalSource`], estimated |
+//!
+//! Behaviour every caller can rely on (recorded from the Wayland lane's questions, 2026-10-26):
+//! - **One source per surface, independent waits.** `wait` returns only for its own surface (a frame,
+//!   an occlusion change or the timeout). Sources of several windows may share one OS connection
+//!   (Wayland's socket): a wait on one reads the others' events into their own queues, and they pick
+//!   them up on their next `wait` or `take_presented` with no extra delay. A thread waiting on several
+//!   windows therefore waits on each source in turn (or one thread per source).
+//! - **A source may commit by itself.** With nothing presented since the last frame callback, the
+//!   Wayland source asks for the next callback with a bare `wl_surface.commit` (no buffer), so `wait`
+//!   keeps ticking while the app draws nothing. Such a commit also applies a pending `ack_configure`
+//!   with the old buffer; it is skipped while a resize's surface state is pending, so a resize's state
+//!   always lands with a buffer of the new size ([`FrameSource::before_present_sized`]).
+//! - **FIFO pacing is opt-in.** A source never adds `wp_fifo_v1` on its own: Mesa's Vulkan WSI makes
+//!   its own for a FIFO swapchain and a second one is a protocol error. Enable it only with a Mailbox
+//!   or Immediate swapchain (skelter-platform-wayland's `FrameSourceConfig::fifo`).
 
 use skelter_base::ids::FrameId;
 use skelter_base::time::{Clock, Span, Time};
@@ -41,11 +56,19 @@ pub struct Presented {
 
 pub trait FrameSource: Send + Sync {
     fn name(&self) -> &'static str;
-    /// Blocks until the next frame opportunity, or `timeout`.
+    /// Blocks until this source's next frame opportunity or occlusion change, or `timeout` (see the
+    /// module docs for sources that share a connection).
     fn wait(&self, timeout: Span) -> FrameWait;
     /// Called right before presenting `frame`: arms the next frame callback and presentation
     /// feedback where the OS works that way.
     fn before_present(&self, _frame: FrameId) {}
+    /// [`FrameSource::before_present`] knowing the buffer size `frame` presents at (device pixels).
+    /// Sources that apply resize state with a present (Wayland's viewport and buffer scale) apply it
+    /// only with a buffer of the new size, so an old-size frame after a configure stays valid. The
+    /// compositor calls this one; the default forwards to `before_present`.
+    fn before_present_sized(&self, frame: FrameId, _size: skelter_base::geom::DeviceSize) {
+        self.before_present(frame)
+    }
     /// Presentation feedback that arrived since the last call.
     fn take_presented(&self) -> Vec<Presented> {
         Vec::new()
