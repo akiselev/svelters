@@ -175,6 +175,10 @@ pub enum InputEvent {
     FileHovered(std::path::PathBuf),
     FileDropped(std::path::PathBuf),
     FileHoverCancelled,
+    /// Raw relative pointer motion: unaccelerated device deltas (mouse counts, not points), sent only
+    /// while the platform's `PlatformCx::set_raw_motion` is on for the window (orbiting a viewport
+    /// while the pointer is captured). It carries no position; consecutive samples coalesce by summing.
+    RawMotion { dx: f32, dy: f32 },
 }
 
 impl InputEvent {
@@ -182,7 +186,9 @@ impl InputEvent {
     pub fn is_discrete(&self) -> bool {
         !matches!(
             self,
-            InputEvent::Pointer(PointerEvent { phase: PointerPhase::Move, .. }) | InputEvent::Wheel(_)
+            InputEvent::Pointer(PointerEvent { phase: PointerPhase::Move, .. })
+                | InputEvent::Wheel(_)
+                | InputEvent::RawMotion { .. }
         )
     }
 }

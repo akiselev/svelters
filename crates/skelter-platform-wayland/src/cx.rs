@@ -125,6 +125,10 @@ impl PlatformCx for Cx<'_> {
 
     fn close_window(&mut self, id: WindowId) {
         let Some(w) = self.state.windows.remove(&id) else { return };
+        if self.state.raw_motion.remove(&id) {
+            let qh = self.state.qh.clone();
+            crate::seat::sync_relative(self.state, &qh);
+        }
         self.state.surfaces.remove(&w.surface.id());
         for l in w.layers.values() {
             self.state.surfaces.remove(&l.surface.id());
@@ -249,7 +253,20 @@ impl PlatformCx for Cx<'_> {
 
     fn set_mouse_capture(&mut self, _id: WindowId, _capture: bool) {
         // Wayland has no explicit capture: a pressed button grabs the pointer implicitly until release, and
-        // relative motion (pointer-constraints, relative-pointer) is not bound yet (see the lane record).
+        // relative motion comes through `set_raw_motion` (relative-pointer); pointer-constraints is not bound yet.
+    }
+
+    fn set_raw_motion(&mut self, id: WindowId, on: bool) -> bool {
+        if on && (self.state.protocols.relative_pointer.is_none() || !self.state.windows.contains_key(&id)) {
+            return false;
+        }
+        let changed = if on { self.state.raw_motion.insert(id) } else { self.state.raw_motion.remove(&id) };
+        if changed {
+            let qh = self.state.qh.clone();
+            crate::seat::sync_relative(self.state, &qh);
+            let _ = self.queue.flush();
+        }
+        true
     }
 
     fn set_title(&mut self, id: WindowId, title: &str) {

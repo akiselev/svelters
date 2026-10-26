@@ -502,6 +502,7 @@ impl Document {
         let mut overlay = DisplayList::new();
         let mut overlay_part = None;
         let mut node_runs = Vec::new();
+        let mut external = None;
         let hidden = self.style.computed(i).visibility_hidden;
         if !hidden {
             let mut cx = RecordCx {
@@ -516,6 +517,7 @@ impl Document {
                 node_runs: &mut node_runs,
                 shaper: shaper.as_deref_mut(),
                 services: &mut services,
+                external: &mut external,
             };
             k.record(&mut cx);
         }
@@ -563,6 +565,8 @@ impl Document {
             None => {}
         }
         let overlay_changed = had_overlay || p.overlay.is_some();
+        // an external layer placed, moved or dropped changes the layer tree
+        let external_changed = std::mem::replace(&mut p.external, external) != external;
         let had = p.list.is_some();
         if list.is_empty() {
             if had {
@@ -576,7 +580,7 @@ impl Document {
         }
         // a layer's `opaque` follows its owner's list
         let owns_layer = self.record[i].layer.is_some() || self.core[i].flags.contains(crate::tree::NodeFlags::ROOT);
-        if (had != self.record[i].list.is_some() || fixed_changed || overlay_changed || owns_layer)
+        if (had != self.record[i].list.is_some() || fixed_changed || overlay_changed || external_changed || owns_layer)
             && let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w))
         {
             w.rebuild = true;
@@ -663,11 +667,20 @@ impl Document {
         let mut stack = vec![Frame { i: ri, parent_world: Affine::IDENTITY, clip_world: None, layer: root_layer, clip: None, effect: None }];
         let mut z_next = 1;
         let mut used_layers = vec![root_layer];
+        // a layer split by an external layer → the continuation that takes what paints after it
+        let mut split: std::collections::HashMap<LayerId, LayerId> = Default::default();
+        let resolve = |split: &std::collections::HashMap<LayerId, LayerId>, mut l: LayerId| {
+            while let Some(&c) = split.get(&l) {
+                l = c;
+            }
+            l
+        };
         let mut moved = Vec::new();
         let mut overlays = Vec::new();
         // what each visited node passes its children: absolute boxes take their containing block's
         let mut cb_frames: std::collections::HashMap<usize, Frame> = Default::default();
-        while let Some(f) = stack.pop() {
+        while let Some(mut f) = stack.pop() {
+            f.layer = resolve(&split, f.layer);
             let i = f.i;
             let node = self.slots.id_at(i).expect("live");
             let s = self.style.nodes[i].computed.clone();
@@ -736,6 +749,44 @@ impl Document {
             }
             if drawn && let Some((_, part)) = &p.overlay {
                 overlays.push(crate::toplayer::DrawnPart { node, world, transform: p.transform.expect("transform"), part: part.clone() });
+            }
+            // an external layer in paint order: above what its layer holds so far (the node's own list
+            // included), below a continuation layer that takes everything painted after it
+            match p.external.filter(|_| drawn) {
+                Some((kind, ebounds)) => {
+                    let ws = self.window_mut(window).expect("window");
+                    let e = p.ext_layer.unwrap_or_else(|| LayerId(ws.layer_ids.alloc()));
+                    let c = p.ext_cont.unwrap_or_else(|| LayerId(ws.layer_ids.alloc()));
+                    self.record[i].ext_layer = Some(e);
+                    self.record[i].ext_cont = Some(c);
+                    let host = *layers.iter().find(|d| d.id == layer).expect("the node's layer");
+                    let transform = p.transform.expect("transform");
+                    layers.push(LayerDesc { id: e, parent: Some(layer), kind, transform, clip: f.clip, effect: own_effect, z: z_next, bounds: ebounds, opaque: false });
+                    layers.push(LayerDesc {
+                        id: c,
+                        parent: Some(layer),
+                        kind: LayerKind::Content,
+                        transform: host.transform,
+                        clip: None,
+                        effect: None,
+                        z: z_next + 1,
+                        bounds: host.bounds,
+                        opaque: false,
+                    });
+                    z_next += 2;
+                    items.entry(e).or_default();
+                    items.entry(c).or_default();
+                    used_layers.extend([e, c]);
+                    split.insert(layer, c);
+                }
+                None => {
+                    let ws = self.window_mut(window).expect("window");
+                    for l in [p.ext_layer, p.ext_cont].into_iter().flatten() {
+                        ws.layer_ids.free(l.0);
+                    }
+                    self.record[i].ext_layer = None;
+                    self.record[i].ext_cont = None;
+                }
             }
             let world_rect = world.apply_rect(&bounds);
             if drawn && !s.pointer_events_none && let Some(inverse) = world.inverse() {

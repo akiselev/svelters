@@ -41,6 +41,8 @@ pub(crate) struct WindowState {
     pub os_layers: HashMap<SurfaceId, Retained<CAMetalLayer>>,
     pub cursor: CursorIcon,
     pub hit_regions: Vec<HitRegion>,
+    /// `set_raw_motion` is on: mouse-moved/dragged deltas also arrive as `InputEvent::RawMotion`.
+    pub raw_motion: bool,
     /// Text input without a client ([`PlatformCx::set_ime`](crate::PlatformCx::set_ime)).
     pub ime: Option<SimpleIme>,
     /// A full text-input client ([`set_text_input_client`](crate::set_text_input_client)); lent out
@@ -125,6 +127,7 @@ impl WindowState {
             os_layers: HashMap::new(),
             cursor: CursorIcon::Default,
             hit_regions: Vec::new(),
+            raw_motion: false,
             ime: None,
             client: None,
             has_client: false,

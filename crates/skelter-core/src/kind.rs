@@ -323,6 +323,10 @@ pub enum Event<'a> {
     HoverEnter,
     HoverLeave,
     Wheel(&'a WheelInput),
+    /// Raw relative pointer motion (unaccelerated device counts, see `InputEvent::RawMotion`), sent to
+    /// the node holding the mouse's pointer capture, else the hovered node, and bubbled natively. Only
+    /// arrives while the platform's raw motion is on for the window.
+    RawMotion(Vec2),
     Key(&'a KeyEvent),
     Ime(&'a ImeEvent),
     FocusIn(FocusReason),

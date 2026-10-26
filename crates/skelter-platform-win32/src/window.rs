@@ -97,6 +97,8 @@ pub(crate) struct Window {
     pub frames: Option<Arc<Win32Frames>>,
     /// The pointer is locked and hidden, raw motion on.
     pub mouse_captured: bool,
+    /// `set_raw_motion` is on: `WM_INPUT` mouse reports become `InputEvent::RawMotion`.
+    pub raw_motion: bool,
     pub drop_target: Option<windows::Win32::System::Ole::IDropTarget>,
     pub a11y: Option<accesskit_windows::SubclassingAdapter>,
     /// The `HMONITOR` the window was last seen on, to report `WindowEvent::MonitorChanged`.
@@ -345,6 +347,7 @@ pub(crate) fn create_owned(app: &Rc<App>, desc: WindowDesc, owner: Option<HWND>)
                 dm_timer: false,
                 frames: None,
                 mouse_captured: false,
+                raw_motion: false,
                 drop_target,
                 a11y,
                 monitor: monitor_handle(hwnd).0 as isize,
@@ -477,19 +480,42 @@ pub(crate) fn end_composition(app: &App, id: WindowId, commit: bool) -> bool {
     true
 }
 
-pub(crate) fn set_mouse_capture(app: &App, id: WindowId, capture: bool) {
-    let Some((hwnd, was)) = app.inner.borrow().windows.get(&id).map(|w| (w.hwnd, w.mouse_captured)) else { return };
-    if was == capture {
-        return;
-    }
+/// Registers (or removes) the window as the target of the mouse's raw input reports (`WM_INPUT`).
+fn register_raw_mouse(hwnd: HWND, on: bool) -> bool {
     let device = RAWINPUTDEVICE {
         usUsagePage: 0x01, // generic desktop
         usUsage: 0x02,     // mouse
-        dwFlags: if capture { RAWINPUTDEVICE_FLAGS(0) } else { RIDEV_REMOVE },
-        hwndTarget: if capture { hwnd } else { HWND::default() },
+        dwFlags: if on { RAWINPUTDEVICE_FLAGS(0) } else { RIDEV_REMOVE },
+        hwndTarget: if on { hwnd } else { HWND::default() },
     };
+    unsafe { RegisterRawInputDevices(&[device], std::mem::size_of::<RAWINPUTDEVICE>() as u32) }.is_ok()
+}
+
+/// Turns raw input on when capture or raw motion wants it, off when neither does.
+fn sync_raw_mouse(hwnd: HWND, was: bool, now: bool) -> bool {
+    if was == now { true } else { register_raw_mouse(hwnd, now) }
+}
+
+pub(crate) fn set_raw_motion(app: &App, id: WindowId, on: bool) -> bool {
+    let Some((hwnd, captured, was)) = app.inner.borrow().windows.get(&id).map(|w| (w.hwnd, w.mouse_captured, w.raw_motion)) else {
+        return !on;
+    };
+    if !sync_raw_mouse(hwnd, captured || was, captured || on) && on {
+        return false;
+    }
+    if let Some(w) = app.inner.borrow_mut().windows.get_mut(&id) {
+        w.raw_motion = on;
+    }
+    true
+}
+
+pub(crate) fn set_mouse_capture(app: &App, id: WindowId, capture: bool) {
+    let Some((hwnd, was, raw)) = app.inner.borrow().windows.get(&id).map(|w| (w.hwnd, w.mouse_captured, w.raw_motion)) else { return };
+    if was == capture {
+        return;
+    }
+    sync_raw_mouse(hwnd, was || raw, capture || raw);
     unsafe {
-        let _ = RegisterRawInputDevices(&[device], std::mem::size_of::<RAWINPUTDEVICE>() as u32);
         if capture {
             let mut r = RECT::default();
             let _ = GetClientRect(hwnd, &mut r);
@@ -647,6 +673,15 @@ fn screen_to_points(hwnd: HWND, scale: Scale, lparam: LPARAM) -> Point {
     Point::new(p.x as f32 / scale.0, p.y as f32 / scale.0)
 }
 
+/// The relative motion of a `RAWMOUSE` report: `None` for absolute reports (tablets, remote desktop),
+/// which carry a position, not a delta.
+pub(crate) fn rawmouse_delta(flags: u16, last_x: i32, last_y: i32) -> Option<Vec2> {
+    if flags & MOUSE_MOVE_ABSOLUTE.0 != 0 {
+        return None;
+    }
+    Some(Vec2::new(last_x as f32, last_y as f32))
+}
+
 /// The relative motion of a `WM_INPUT` mouse report.
 fn raw_mouse_delta(lparam: LPARAM) -> Option<Vec2> {
     let mut raw = RAWINPUT::default();
@@ -664,10 +699,7 @@ fn raw_mouse_delta(lparam: LPARAM) -> Option<Vec2> {
         return None;
     }
     let mouse = unsafe { raw.data.mouse };
-    if mouse.usFlags.0 & MOUSE_MOVE_ABSOLUTE.0 != 0 {
-        return None;
-    }
-    Some(Vec2::new(mouse.lLastX as f32, mouse.lLastY as f32))
+    rawmouse_delta(mouse.usFlags.0, mouse.lLastX, mouse.lLastY)
 }
 
 unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
@@ -1021,7 +1053,14 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
         }
         WM_INPUT => {
             if let Some(delta) = raw_mouse_delta(lparam) {
-                app.raw_motion(id, delta);
+                let (captured, raw) = with_window(app, id, |w| (w.mouse_captured, w.raw_motion)).unwrap_or_default();
+                if raw {
+                    let t = message_time_to_time(unsafe { GetMessageTime() });
+                    app.input(id, t, InputEvent::RawMotion { dx: delta.x, dy: delta.y });
+                }
+                if captured {
+                    app.raw_motion(id, delta);
+                }
             }
             None
         }
@@ -1116,6 +1155,14 @@ mod tests {
         assert!(!sys_key_to_os(WM_SYSKEYUP, VK_F10.0));
         assert!(sys_key_to_os(WM_SYSKEYDOWN, VK_F4.0));
         assert!(sys_key_to_os(WM_SYSKEYDOWN, VK_SPACE.0));
+    }
+
+    #[test]
+    fn raw_mouse_reports_to_deltas() {
+        assert_eq!(rawmouse_delta(0, 3, -7), Some(Vec2::new(3.0, -7.0)), "MOUSE_MOVE_RELATIVE");
+        assert_eq!(rawmouse_delta(MOUSE_MOVE_ABSOLUTE.0, 32_000, 16_000), None, "absolute reports carry positions");
+        assert_eq!(rawmouse_delta(MOUSE_MOVE_ABSOLUTE.0 | 0x02, 10, 10), None, "virtual desktop absolute");
+        assert_eq!(rawmouse_delta(0x04, 1, 0), Some(Vec2::new(1.0, 0.0)), "attributes-changed relative report");
     }
 
     #[test]

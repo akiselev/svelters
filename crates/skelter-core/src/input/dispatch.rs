@@ -241,6 +241,7 @@ impl Document {
             InputEvent::Wheel(w) => doc.dispatch_wheel(ev.window, w, &mut out, &mut emitted),
             InputEvent::Key(k) => doc.dispatch_key(ev.window, k, &mut out, &mut emitted),
             InputEvent::Ime(i) => doc.dispatch_ime(ev.window, i, &mut out, &mut emitted),
+            InputEvent::RawMotion { dx, dy } => doc.dispatch_raw_motion(Vec2::new(*dx, *dy), &mut out, &mut emitted),
             InputEvent::ModifiersChanged(_)
             | InputEvent::Gesture(_)
             | InputEvent::FileHovered(_)
@@ -538,6 +539,15 @@ impl Document {
             // the default: scroll the nearest scroll container that can move in this direction
             out.handled |= self.scroll_by_wheel(t, &input, out);
         }
+    }
+
+    /// Raw motion goes to the mouse's capture holder (an orbiting viewport), else the hovered node.
+    fn dispatch_raw_motion(&mut self, delta: Vec2, out: &mut Dispatched, emitted: &mut Vec<Emitted>) {
+        let captured = self.input.capture.get(&0).copied().filter(|&n| self.contains(n));
+        let hovered = || self.input.hover.get(&0).and_then(|p| p.first().copied()).filter(|&n| self.contains(n));
+        let Some(t) = captured.or_else(hovered) else { return };
+        out.target = Some(t);
+        out.handled |= bubble_native(self, t, &Event::RawMotion(delta), emitted, Some(0)).is_some();
     }
 
     /// Scrolls the innermost scroll container around `t` that can move by the wheel delta.

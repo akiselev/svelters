@@ -374,6 +374,30 @@ fn wheel_deltas_add_but_gesture_boundaries_stay() {
 }
 
 #[test]
+fn raw_motion_deltas_sum_and_stay_continuous() {
+    let raw = |seq: u64, dx: f32, dy: f32| InputEnvelope {
+        seq: InputSeq(seq),
+        window: W,
+        os_time: ms(seq),
+        recv_time: ms(seq),
+        event: InputEvent::RawMotion { dx, dy },
+    };
+    assert!(!raw(1, 0.0, 0.0).event.is_discrete());
+    let mut c = Coalescer::new();
+    assert_eq!(c.push(raw(1, 3.0, -1.0)), Pushed::Held);
+    assert_eq!(c.push(raw(2, 2.0, 4.0)), Pushed::Merged { old: InputSeq(1) });
+    assert_eq!(c.push(raw(3, -1.0, 0.5)), Pushed::Merged { old: InputSeq(2) });
+    // A pointer move in between starts a new stream.
+    c.push(pointer(4, ms(4), PointerPhase::Move, 1.0, 0));
+    assert_eq!(c.push(raw(5, 1.0, 1.0)), Pushed::Held);
+    let out = c.take(W);
+    assert_eq!(out.len(), 3);
+    assert_eq!(out[0].seq, InputSeq(3));
+    assert_eq!(out[0].event, InputEvent::RawMotion { dx: 4.0, dy: 3.5 });
+    assert_eq!(out[2].event, InputEvent::RawMotion { dx: 1.0, dy: 1.0 });
+}
+
+#[test]
 fn discrete_events_are_never_coalesced() {
     // The app sends discrete events straight to dispatch; the coalescer still refuses to merge them.
     let mut c = Coalescer::new();

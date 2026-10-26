@@ -4,6 +4,7 @@
 use skelter_base::display::DisplayList;
 use skelter_base::geom::{Affine, Rect};
 use skelter_base::ids::{LayerId, NodeId, PropNodeId, RunId};
+use skelter_base::layer::LayerKind;
 use std::sync::Arc;
 
 #[derive(Clone, Debug)]
@@ -23,6 +24,12 @@ pub(crate) struct NodePaint {
     /// A scroll container's content space (translated by the scroll offset).
     pub content: Option<PropNodeId>,
     pub layer: Option<LayerId>,
+    /// An external layer placed at this node in paint order ([`crate::RecordCx::external_layer`]):
+    /// its kind and bounds in the node's border-box space.
+    pub external: Option<(LayerKind, Rect)>,
+    /// The external layer's id, and the continuation layer that takes what paints after it.
+    pub ext_layer: Option<LayerId>,
+    pub ext_cont: Option<LayerId>,
     /// The clip node its children draw under (the dirty walk's; absolute descendants whose
     /// containing block this is take it).
     pub child_clip: Option<PropNodeId>,
@@ -49,6 +56,9 @@ impl Default for NodePaint {
             scroll: None,
             content: None,
             layer: None,
+            external: None,
+            ext_layer: None,
+            ext_cont: None,
             child_clip: None,
             world: Rect::ZERO,
             world_tf: Affine::IDENTITY,

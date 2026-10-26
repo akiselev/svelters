@@ -16,6 +16,7 @@ use skelter_base::cursor::CursorIcon;
 use skelter_base::display::{DisplayList, Glyphs, Line, LineCap, Prim, Quad, Shadow};
 use skelter_base::geom::{Point, Rect, RoundedRect, Size};
 use skelter_base::ids::{ImageId, NodeId, RunId, WindowId};
+use skelter_base::layer::LayerKind;
 use skelter_base::text::{GlyphRun, TextMeasure, TextSpec};
 use std::sync::{Arc, OnceLock};
 use svelters_style::StateMask;
@@ -387,6 +388,8 @@ pub struct RecordCx<'a> {
     pub(crate) node_runs: &'a mut Vec<RunId>,
     pub(crate) shaper: Option<&'a mut (dyn TextShaper + 'static)>,
     pub(crate) services: &'a mut Services,
+    /// The external layer this node places ([`RecordCx::external_layer`]).
+    pub(crate) external: &'a mut Option<(LayerKind, Rect)>,
 }
 
 impl<'a> std::ops::Deref for RecordCx<'a> {
@@ -435,6 +438,18 @@ impl RecordCx<'_> {
         self.in_overlay = false;
         std::mem::swap(&mut self.list, &mut self.overlay);
         r
+    }
+
+    /// Places an external layer at this node in paint order: a [`LayerKind::Texture`] (an offscreen
+    /// viewport, an egui island), [`LayerKind::OsLayer`] or [`LayerKind::Canvas`], with `bounds` in the
+    /// node's border-box space. The node's own list paints below the layer; its children and whatever
+    /// paints after the node (later siblings, later subtrees of the same layer) paint above it, in a
+    /// continuation layer the document adds after the external one. Other kinds are ignored. Not for
+    /// scroll containers (their content layer stays below). Recording without it removes the layer.
+    pub fn external_layer(&mut self, kind: LayerKind, bounds: Rect) {
+        if matches!(kind, LayerKind::Texture(_) | LayerKind::OsLayer(_) | LayerKind::Canvas(_)) {
+            *self.external = Some((kind, bounds));
+        }
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()

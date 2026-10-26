@@ -28,7 +28,7 @@ use smithay_client_toolkit::{
     delegate_activation, delegate_compositor, delegate_output, delegate_registry, delegate_seat, delegate_shm,
     delegate_subcompositor, delegate_xdg_popup, delegate_xdg_shell, delegate_xdg_window, registry_handlers,
 };
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::os::fd::OwnedFd;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, mpsc};
@@ -41,6 +41,7 @@ use wayland_protocols::wp::fifo::v1::client::wp_fifo_manager_v1::WpFifoManagerV1
 use wayland_protocols::wp::fractional_scale::v1::client::wp_fractional_scale_manager_v1::WpFractionalScaleManagerV1;
 use wayland_protocols::wp::pointer_gestures::zv1::client::zwp_pointer_gestures_v1::ZwpPointerGesturesV1;
 use wayland_protocols::wp::presentation_time::client::wp_presentation::{self, WpPresentation};
+use wayland_protocols::wp::relative_pointer::zv1::client::zwp_relative_pointer_manager_v1::ZwpRelativePointerManagerV1;
 use wayland_protocols::wp::tablet::zv2::client::zwp_tablet_manager_v2::ZwpTabletManagerV2;
 use wayland_protocols::wp::text_input::zv3::client::zwp_text_input_manager_v3::ZwpTextInputManagerV3;
 use wayland_protocols::wp::viewporter::client::wp_viewporter::WpViewporter;
@@ -73,6 +74,7 @@ pub(crate) struct Protocols {
     pub text_input: Option<ZwpTextInputManagerV3>,
     pub tablet: Option<ZwpTabletManagerV2>,
     pub gestures: Option<ZwpPointerGesturesV1>,
+    pub relative_pointer: Option<ZwpRelativePointerManagerV1>,
 }
 
 pub struct State {
@@ -92,6 +94,8 @@ pub struct State {
     /// Every surface we own (toplevels, popups, layers) → its window.
     pub(crate) surfaces: HashMap<ObjectId, WindowId>,
     pub(crate) seats: Vec<Seat>,
+    /// Windows with `set_raw_motion` on: their pointers' relative motion becomes `InputEvent::RawMotion`.
+    pub(crate) raw_motion: HashSet<WindowId>,
     pub(crate) data: DataState,
     pub(crate) pending: VecDeque<Pending>,
     pub(crate) next_window: u32,
@@ -119,6 +123,7 @@ impl State {
             text_input: globals.bind(&qh, 1..=1, ()).ok(),
             tablet: globals.bind(&qh, 1..=1, ()).ok(),
             gestures: globals.bind(&qh, 1..=3, ()).ok(),
+            relative_pointer: globals.bind(&qh, 1..=1, ()).ok(),
         };
         Ok(State {
             registry: RegistryState::new(globals),
@@ -135,6 +140,7 @@ impl State {
             windows: HashMap::new(),
             surfaces: HashMap::new(),
             seats: Vec::new(),
+            raw_motion: HashSet::new(),
             pending: VecDeque::new(),
             next_window: 1,
             next_layer: 1,
@@ -469,5 +475,6 @@ no_events!(
     ZwpTextInputManagerV3,
     ZwpTabletManagerV2,
     ZwpPointerGesturesV1,
+    ZwpRelativePointerManagerV1,
     wayland_client::protocol::wl_region::WlRegion,
 );
