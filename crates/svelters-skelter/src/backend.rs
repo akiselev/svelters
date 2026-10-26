@@ -1079,7 +1079,7 @@ impl Backend for SkelterBackend {
             return None;
         }
         let p = self.0.kinds.by_wire(kind)?.prop(member)?.spec;
-        let mut slot = SlotDesc::new(value::tag_of(p.ty)).named(p.name);
+        let mut slot = value::slot_of(p.ty).named(p.name);
         if p.nullable {
             slot = slot.flags(SVL_D_NULLABLE);
         }
