@@ -350,8 +350,10 @@ fn part_styles<'a>(node: NodeView<'a>, parts: &[&'static str]) -> Vec<(&'static 
 }
 
 /// Installs what the built-in kinds read from `doc`'s services: the text system, the platform policy
-/// (and its auto-default rule) and the theme.
+/// (and its auto-default rule) and the theme; and the drag ghost as the default drag image
+/// ([`crate::dnd::ghost::install`]).
 pub fn install(doc: &mut skelter_core::Document, text: skelter_text::TextSystem, policy: Policy, theme: crate::theme::Theme) {
+    crate::dnd::ghost::install(doc, crate::dnd::ghost::GhostLook::default());
     doc.set_service(text);
     doc.set_auto_default(policy.auto_default);
     doc.set_service(policy);
