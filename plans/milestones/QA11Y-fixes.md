@@ -69,6 +69,13 @@ these crates, the rest of the workspace, clippy, conformance (no compiler change
    probe locating rows by `Button`/`Label` role must use `ListBoxOption`/`TreeItem`, or the author id.
 5. **Sibling dialogs:** if two `focus-scope=dialog` panels show in one frame, the later one in tree order gets focus.
 
+- skelter-core `tests::hooks::a_kind_that_scrolls_itself_scrolls_on_the_compositor` (and its fixed-part twin) now
+  run a frame after `focus(page)`. A focus move re-records the node now (item 2), and the test checks that the
+  *scroll's* frame records no list.
+
 ## CI
 
-Pending on f427a087 (see the next update of this record).
+Run on 08fec53c (master fa19495f merged in): js 40353934393, linux-gtk 40353934386, linux-qt 40353934205,
+macos-appkit 40353934351 and windows-winui 40353934280 green; skelter 40353934387 failed on all three OSes, in one
+test, `tests::hooks::a_kind_that_scrolls_itself_scrolls_on_the_compositor` (the expectation above). Fixed in the next
+commit; its runs are in the coordinator report.
