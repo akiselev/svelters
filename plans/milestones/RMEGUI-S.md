@@ -13,7 +13,7 @@ coordinator (`session_01Kt5cvt9hDGVcXNCATLsKRK`). `origin/master` merged (`029a4
 | 3 | `7e246372` | `svelters_skelter::designer`: the designer scene API (below); skelter-core `Document::{matched_rules, force_state, forced_state, hit_stack, set_sheet_info}`; `SheetSource` moves to svelters-style. |
 | 4 | `1a5f1cf4` | skelter-compositor: `CompositorHandle::read_window` / `CompositorApi::read_window` (SV58), with a lavapipe test. |
 | fix | `6ef8ce70` | (coordinator, first priority) skelter-widgets: a hovered (or pressed) control claims only pointer events (`shim::Event::is_pointer`), so Tab after a click reaches focus traversal: button, checkbox, hyperlink, icon, image, label, radio, slider, switch, toggle-button, and frame/collapsing's `down_on`. Test: skelter-test `tests/hover_keys.rs` (fails without the fix). Self-contained: cherry-pickable. |
-| preview | see CI | (coordinator) `SkelterBackend::{set_override, clear_override, clear_overrides, overrides}`: the designer's live preview, as svelters-egui's (runtime writes held back, the last one restored; freed nodes drop theirs). Test: svelters-skelter `tests/designer.rs` `overrides_preview_a_prop_and_give_the_runtimes_value_back`. |
+| preview | `2567201f` | (coordinator) `SkelterBackend::{set_override, clear_override, clear_overrides, overrides}`: the designer's live preview, as svelters-egui's (runtime writes held back, the last one restored; freed nodes drop theirs). Test: svelters-skelter `tests/designer.rs` `overrides_preview_a_prop_and_give_the_runtimes_value_back`. |
 
 ### Step 2 in detail (svelters-automation)
 
@@ -116,4 +116,6 @@ an adapter exists, so a real-device check by cadatomic's viewport-tours lane is 
 
 ## CI
 
-See the end of this record.
+All six workflows green on `2567201f` (the last code commit): js 40350066938, linux-gtk 40350066641, linux-qt
+40350066407, macos-appkit 40350066597, skelter 40350067419, windows-winui 40350066636. The commit adding these ids is
+docs-only.
