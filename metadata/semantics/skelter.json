@@ -36,6 +36,7 @@
         "role": "Button"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -249,6 +250,7 @@
         "role": "Link"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Anchor",
@@ -337,6 +339,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Bold",
@@ -388,6 +391,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Box",
@@ -651,6 +655,7 @@
         "role": "Button"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Button",
@@ -943,6 +948,7 @@
         "role": "CheckBox"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -1153,6 +1159,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Code",
@@ -1207,6 +1214,7 @@
         "role": "DisclosureTriangle"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "open": {
           "compare_before_set": true,
@@ -1392,6 +1400,7 @@
         "role": "ComboBox"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "open": {
           "commit": {
@@ -1681,6 +1690,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": "Widget",
       "bindings": {},
       "chain": [
         "ContextMenu",
@@ -1755,6 +1765,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -1936,6 +1947,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Grid",
@@ -2140,6 +2152,7 @@
         "role": "Link"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Hyperlink",
@@ -2267,6 +2280,7 @@
         "role": "Image"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Icon",
@@ -2528,6 +2542,7 @@
         "role": "Image"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Image",
@@ -2623,6 +2638,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Italic",
@@ -2677,6 +2693,7 @@
         "role": "Label"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "selection-end": {
           "compare_before_set": true,
@@ -2980,6 +2997,7 @@
         "role": null
       },
       "abstract": true,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "MenuEntry"
@@ -3155,6 +3173,7 @@
         "role": "ProgressIndicator"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "ProgressBar",
@@ -3415,6 +3434,7 @@
         "role": "RadioButton"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -3629,6 +3649,7 @@
         "role": null
       },
       "abstract": true,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Run"
@@ -3742,6 +3763,7 @@
         "role": "ScrollView"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "scroll-x": {
           "compare_before_set": true,
@@ -3923,6 +3945,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Separator",
@@ -3979,6 +4002,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Sides",
@@ -4098,6 +4122,7 @@
         "role": "Slider"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "value": {
           "commit": {
@@ -4630,6 +4655,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Span",
@@ -4684,6 +4710,7 @@
         "role": "ProgressIndicator"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Spinner",
@@ -4756,6 +4783,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Stack",
@@ -4888,6 +4916,7 @@
         "role": "Switch"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "active": {
           "compare_before_set": true,
@@ -5020,6 +5049,7 @@
         "role": "Table"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "current": {
           "compare_before_set": true,
@@ -5934,6 +5964,7 @@
         "role": "ColumnHeader"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "TableColumn",
@@ -6276,6 +6307,7 @@
         "role": "TextInput"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "text": {
           "commit": {
@@ -6542,6 +6574,7 @@
         "role": "Button"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -6754,6 +6787,7 @@
         "role": "Tree"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "current": {
           "compare_before_set": true,
@@ -7390,6 +7424,7 @@
         "role": null
       },
       "abstract": true,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Widget"
@@ -8725,6 +8760,7 @@
         "role": "Window"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Window"

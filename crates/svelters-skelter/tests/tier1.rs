@@ -471,3 +471,37 @@ fn context_menu_popup_opens_below_the_owner_or_at_the_point() {
     let m = r.br().resolve(NameKind::Method, r.kind(menu), "popup");
     assert!(r.br().call(menu, m, &[Value::Str("here".into())]).is_err(), "not a point");
 }
+
+/// A9b: cadatomic's Problems panel shape: a `<context-menu>` inside a `<box>` (and a scroll area)
+/// attaches to it, as on egui (`attaches_to: Widget`); before, the compiler refused it ("slot
+/// `children` of <box> accepts Widget, not <context-menu>"). Compiled through the real compiler
+/// against skelter's spec, then run: the menu is the box's child node.
+#[test]
+fn context_menu_attaches_to_a_box_through_the_compiler() {
+    use svelters_compiler::compile::{CompileOptions, compile};
+    use svelters_compiler::diag::Severity;
+    use svelters_compiler::semantics::SpecBackend;
+    let spec: serde_json::Value = serde_json::from_str(&svelters_skelter::spec::builtin_text()).unwrap();
+    assert_eq!(spec["kinds"]["ContextMenu"]["attaches_to"], "Widget");
+    let b = SpecBackend::from_json(&spec.to_string()).unwrap();
+    let src = "<script>let picked = $state('');</script>\n\
+<box class=\"problems\">\n  <label text=\"3 problems\" />\n  <context-menu>\n    <action label=\"Copy\" onactivate={() => (picked = 'copy')} />\n  </context-menu>\n\
+  <scroll-area><box><label text=\"row\" /><context-menu><action label=\"Go to\" /></context-menu></box></scroll-area>\n</box>\n";
+    let r = compile(src, &CompileOptions::new("Problems.svelte", &b));
+    let errors: Vec<String> = r.diagnostics.iter().filter(|d| d.severity == Severity::Error).map(|d| format!("{}: {}", d.code, d.message)).collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    assert!(r.js.as_deref().is_some_and(|js| js.contains("context-menu")));
+    // (without `attaches_to`, the slot typing refuses it: what the spec fixes)
+    let mut bare = spec.clone();
+    bare["kinds"]["ContextMenu"]["attaches_to"] = serde_json::Value::Null;
+    let bb = SpecBackend::from_json(&bare.to_string()).unwrap();
+    let r = compile(src, &CompileOptions::new("Problems.svelte", &bb));
+    assert!(r.diagnostics.iter().any(|d| d.severity == Severity::Error && d.message.contains("context-menu")), "{:?}", r.diagnostics.iter().map(|d| &d.message).collect::<Vec<_>>());
+    // what the attach does on skelter: an insert with no slot, into the box's children
+    let rig = Rig::new();
+    let bx = rig.create("box");
+    let menu = rig.create("context-menu");
+    rig.br().insert(bx, menu, None, 0).unwrap();
+    let (bn, mn) = (rig.backend.node(bx).unwrap(), rig.backend.node(menu).unwrap());
+    assert_eq!(rig.backend.with_doc(|d| d.parent(mn)), Some(bn));
+}
