@@ -236,3 +236,27 @@ fn a_ctrl_click_is_seen_with_ctrl_held_and_f2_then_typing_edits() {
     h.run();
     assert_eq!(h.state().text, "ab");
 }
+
+/// A5c: an effect drawn above the button that causes it shows only in the pass after the click;
+/// egui asks for that pass (repaint delay 0, at the next frame's time), and `run` waits for it.
+/// `run` counts the steps the passes took.
+#[test]
+fn run_waits_for_the_pass_a_click_asks_for() {
+    fn panel_above(ui: &mut egui::Ui, s: &mut S) {
+        if s.on {
+            ui.label("Problems: 3");
+        }
+        if ui.button("Show problems").clicked() {
+            s.on = true;
+        }
+    }
+    let mut h = EguiHarness::builder().with_size(egui::vec2(400.0, 300.0)).build_ui_state(panel_above, S::default());
+    let p = h.doc().passes();
+    h.get_by_label("Show problems").click();
+    let n = h.run();
+    assert!(h.state().on);
+    assert!(h.query_by_label("Problems: 3").is_some(), "the click's effect is drawn when run returns");
+    let passes = h.doc().passes() - p;
+    assert!(passes >= 2, "the click's pass and the one it asked for: {passes}");
+    assert_eq!(n, passes, "run counts a step per pass");
+}

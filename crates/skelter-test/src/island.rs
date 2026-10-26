@@ -144,9 +144,10 @@ impl<S> IslandDoc<S> {
         self.repaint.due.store(true, Ordering::Release);
     }
 
-    /// kittest's settle rule: the last pass requested no immediate repaint and nothing is due.
-    fn settled(&self, now: Time) -> bool {
-        !self.due() && !self.host_dirty && !self.island.needs_pass(now)
+    /// kittest's settle rule: the last pass requested no repaint by the next frame (`target`) and
+    /// nothing is due.
+    fn settled(&self, target: Time) -> bool {
+        !self.due() && !self.host_dirty && !self.island.needs_pass(target)
     }
 
     fn due(&self) -> bool {
@@ -625,7 +626,7 @@ impl EguiHarnessBuilder {
             })),
             textures: Some(Box::new(|d: &mut IslandDoc<S>, g: &mut GpuRender| render_island(d, g))),
             before_step: pass_every_step.then(|| Box::new(|d: &mut IslandDoc<S>| d.request_pass()) as Box<dyn FnMut(&mut IslandDoc<S>)>),
-            settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, now: Time| d.settled(now)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
+            settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, target: Time| d.settled(target)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
             one_event_per_step: pass_every_step,
         };
         let mut inner = base.build_with(make_doc, hooks, gpu);
