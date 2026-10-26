@@ -86,6 +86,11 @@ in this container); CI runs it. Conformance was not run (no compiler change).
    instead of being an inert box. The surface's `gained-focus`/`lost-focus` signals are not `TextEdit`'s own,
    so they resolve as the kinds map resolves any non-native signal (the common one if it exists, else
    none).
+   Surface/core mismatches, noted rather than widened (coordinator, 2026-10-26): the core kind's
+   `read-only` and `wrap` props have no surface prop, so Svelte can't set them yet; the surface's
+   `request-focus` method and `gained-focus`/`lost-focus` signals are not `TextEdit`'s own; the core's
+   `cancel` and `select` signals have no surface signal. Surface `char-limit`, `hint-text`,
+   `multiline`, `password` and `text` match the core props by name and type.
 2. **Run bounds are not clipped to the content box.** Clipping the box while `character_positions` stay
    relative to the run's start would misplace every character's extents, so runs scrolled out of the box
    keep their true position. A consumer can intersect them with the field's bounds.
@@ -113,8 +118,11 @@ events.
 
 - Any cadatomic code that registers `skelter_widgets::text::TextEdit` itself gets runs and selection with no
   change. cadatomic registries built through `svelters_skelter::kinds::register_builtin` now get `TextEdit`
-  for `<text-edit>`. A cadatomic kind registered under the tag `text-edit` now collides
-  (`RegistryError::DuplicateKind`).
+  for `<text-edit>`. The hosted kind is the same `skelter_widgets::text::kind::TextEdit` with the same spec
+  (`KindId::of("text-edit")`), so cadatomic's `registry_with_svelters` merge, which skips any kind whose id or
+  name it already has, still skips it, and nothing is registered twice (the coordinator's constraint,
+  2026-10-26). Only a host that registers its own `text-edit` *before* `register_builtin` would get
+  `RegistryError::DuplicateKind`.
 - `TextField::a11y` changed signature: `a11y(&mut Node, run_id: &dyn Fn(usize) -> NodeId) -> Vec<Node>` (the
   caller adds the runs as virtual children in order), and `a11y_action(&req, run_of) -> bool`. Wrappers of
   `TextField` outside `TextEdit` (none in svelters today) must follow.
