@@ -46,12 +46,60 @@ pub(crate) fn call_kind(doc: &mut Document, node: NodeId, ev: &Event, emitted: &
 fn bubble_native(doc: &mut Document, target: NodeId, ev: &Event, emitted: &mut Vec<Emitted>, pointer: Option<u32>) -> Option<NodeId> {
     let mut a = Some(target);
     while let Some(n) = a {
-        if !doc.state(n).contains(StateMask::DISABLED) && call_kind(doc, n, ev, emitted, pointer) == Handled::Yes {
-            return Some(n);
+        if !doc.state(n).contains(StateMask::DISABLED) {
+            // SV76: each ancestor gets the pointer in its own local space, not the target's
+            let local = |doc: &Document, p: &PointerInput| {
+                let mut q = p.clone();
+                if let Some(w) = doc.window_of(n) {
+                    q.local = doc.to_local(w, n, p.pos);
+                }
+                q
+            };
+            let h = match ev {
+                Event::PointerDown(p) if n != target => call_kind(doc, n, &Event::PointerDown(&local(doc, p)), emitted, pointer),
+                Event::PointerUp(p) if n != target => call_kind(doc, n, &Event::PointerUp(&local(doc, p)), emitted, pointer),
+                Event::PointerMove(p) if n != target => call_kind(doc, n, &Event::PointerMove(&local(doc, p)), emitted, pointer),
+                Event::Click(p) if n != target => call_kind(doc, n, &Event::Click(&local(doc, p)), emitted, pointer),
+                _ => call_kind(doc, n, ev, emitted, pointer),
+            };
+            if h == Handled::Yes {
+                return Some(n);
+            }
         }
         a = doc.parent(n);
     }
     None
+}
+
+/// Offers a context click at `pos` (window points) to the children of `node` and of each ancestor,
+/// innermost owner first, until one takes it ([`Kind::owner_context_click`](crate::Kind::owner_context_click)).
+fn owner_context_click(doc: &mut Document, node: NodeId, pos: Point, emitted: &mut Vec<Emitted>) -> bool {
+    let mut a = Some(node);
+    while let Some(owner) = a {
+        for c in doc.children(owner).to_vec() {
+            if doc.state(c).contains(StateMask::DISABLED) {
+                continue;
+            }
+            // the node's own space from its box (an out-of-flow menu draws nothing to hit)
+            let origin = doc.world_rect(c).map_or(Point::ZERO, |r| r.min);
+            let at = Point::new(pos.x - origin.x, pos.y - origin.y);
+            let Some(i) = doc.idx(c) else { continue };
+            let Some(mut k) = doc.kinds[i].take() else { continue };
+            let h = {
+                let mut cx = EventCx { doc, node: c, emitted, pointer: None };
+                k.owner_context_click(&mut cx, at)
+            };
+            doc.restore_kind(c, k);
+            if !doc.peer_queue.is_empty() {
+                crate::input::peers::run(doc, emitted);
+            }
+            if h == Handled::Yes {
+                return true;
+            }
+        }
+        a = doc.parent(owner);
+    }
+    false
 }
 
 /// The listener calls of `signal` dispatched at `target`: capture from the root down, the target,
@@ -250,6 +298,16 @@ impl Document {
         });
         for e in emitted {
             queue_emitted(self, e);
+        }
+        // the `title` tooltip follows hover, presses, scrolls and Escape (SV61)
+        let tip = match &ev.event {
+            InputEvent::Pointer(p) => Some((p.phase == PointerPhase::Down, false, false)),
+            InputEvent::Wheel(_) => Some((false, true, false)),
+            InputEvent::Key(k) => (k.state == KeyState::Pressed && k.key == Some(Key::Escape)).then_some((false, false, true)),
+            _ => None,
+        };
+        if let Some((pressed, scrolled, escape)) = tip {
+            self.step_tip(ev.window, pressed, scrolled, escape);
         }
         let mut events = std::mem::take(&mut self.input_events);
         events.append(&mut out.events);
@@ -451,7 +509,13 @@ impl Document {
                     let count = self.input.last_click.filter(|c| c.0 == n).map_or(1, |c| c.3);
                     let input = self.pointer_input(window, n, p, count);
                     if p.button == Some(MouseButton::Secondary) {
-                        self.emit_js(out, n, common::CONTEXTMENU, Some(pointer_record(&input)));
+                        // SV77: cancelable; unless prevented, a child that attaches to an owner on
+                        // the path (a `context-menu`) opens at the pointer
+                        let pre = self.pre_js(n, common::CONTEXTMENU, Some(pointer_record(&input)));
+                        if !pre.prevented() {
+                            out.handled |= owner_context_click(self, n, p.pos, emitted);
+                        }
+                        self.post_js(out, n, common::CONTEXTMENU, pre);
                     } else if matches!(p.button, Some(MouseButton::Primary) | None) {
                         let pre = self.pre_js(n, common::CLICK, Some(pointer_record(&input)));
                         if !pre.prevented() {
@@ -604,7 +668,7 @@ impl Document {
         out.target = Some(target);
         // outside a composition the command layer's keymap comes first, then the focused kind, then JS
         if let Some(mut hook) = self.key_hook.take() {
-            let taken = hook(window, k);
+            let taken = hook(&KeyHookCx { doc: self, window, target, key: k });
             self.key_hook = Some(hook);
             if taken {
                 out.handled = true;
@@ -694,9 +758,9 @@ impl Document {
         }
     }
 
-    /// The command layer's keymap (cadatomic's one command path): called for every key outside a
-    /// composition before the focused kind; returning true consumes the key.
-    pub fn set_key_hook(&mut self, hook: Box<dyn FnMut(WindowId, &KeyEvent) -> bool>) {
+    /// The command layer's keymap: called for every key outside a composition before the focused
+    /// kind, with the focus target (or the window root) in [`KeyHookCx`]; returning true consumes the key.
+    pub fn set_key_hook(&mut self, hook: KeyHook) {
         self.key_hook = Some(hook);
     }
 
@@ -705,3 +769,18 @@ impl Document {
         self.revision > rev && self.last_change >= self.revision
     }
 }
+
+/// What the key hook ([`Document::set_key_hook`]) sees. Fields are added over time (a pre-dispatch
+/// pointer filter shares this shape), so it is built only here.
+#[non_exhaustive]
+pub struct KeyHookCx<'a> {
+    /// The document, read-only: the hook runs before any kind sees the key.
+    pub doc: &'a Document,
+    pub window: WindowId,
+    /// The focused node, else the window's root: the node the key is dispatched to.
+    pub target: NodeId,
+    pub key: &'a KeyEvent,
+}
+
+/// The command layer's keymap hook; returns true to consume the key.
+pub type KeyHook = Box<dyn FnMut(&KeyHookCx<'_>) -> bool>;

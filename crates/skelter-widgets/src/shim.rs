@@ -707,6 +707,11 @@ pub mod core {
         fn overlay_closed(&mut self, _cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
             Handled::No
         }
+        /// A secondary click on the node's owner (its parent) or inside it, at `at` in the node's
+        /// own points ([`skelter_core::Kind::owner_context_click`]). `Handled::Yes`: it opened.
+        fn owner_context_click(&mut self, _cx: &mut EventCx, _at: skelter_base::geom::Point) -> Handled {
+            Handled::No
+        }
         /// The state bits the kind derives from its props alone (`:checked`, `:busy`); skelter-core sets
         /// them after every prop write (bits outside [`Kind::prop_states`] are ignored).
         fn prop_state(&self) -> StateBits {

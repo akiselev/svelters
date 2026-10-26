@@ -295,6 +295,14 @@ cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomi
 | Scene graph with full Rust access | SG1, SG2, SG3 done (SC1 path complete); SG4, SG5 in progress | ARCH-SCENE.md §14 |
 | SV41/SV44/SV47/SV52 Rust row models, columns, tree rows, benches | DONE (LS2, merge `f26d1063`) | LS2-rust-row-models.md |
 | SV49 pane hit tests, SV50 `pointermove`, SV51 automation drag/move/wheel, SV53 keyed anchor ids | DONE (CV1, merge `f1006bf1`) | CV1-canvas-seams.md |
+| SV61 `title` prop shows the `tooltip` surface (hover → `Tooltip::step` with the document's `Policy` → overlay; folds in `interact::Tooltipable`) | done on `ci/mal1-feel` (MAL1 lane S-A), awaiting merge | MAL1-FEEL.md |
+| SV62 live `Policy`: `host::set_policy` re-derives the copied fields; readers read `Policy` on use; the table drops its own 4.0 px / 500 ms | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
+| SV63 the host subscribes to `SettingsBackend::subscribe` and invalidates `s:<key>` on the JS thread | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
+| SV64 the key hook takes `(&Document, WindowId, target, &KeyEvent)` through an extensible context struct | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
+| SV65 a custom-property change restyles descendants (`inherited` set when the custom map changed, pointer-equal first) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
+| SV66 host-set media preferences (reduced motion, contrast) on the document, plus an OS probe | document half done on `ci/mal1-feel`; OS probe → MAL2 | MAL1-FEEL.md |
+| SV76 a bubbled pointer event gets each ancestor's own local point (`bubble_native`; a press on a row's content selected the wrong row) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
+| SV77 a `<context-menu>` opens on its owner's secondary click (`Kind::owner_context_click`) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
 | Tours (cadatomic TU1–TU10): the generic half, `svelters-tour` (`.tour.md` → JS define phase → IR), `@svelters/tour` overlay components, the gate and placement on SV6/SV7, `capture.frames` and `clock.advance_to`, `svelters-tts` (Kokoro and the narration manifest), `svelters-tour-video` | proposed; the user wants the svelters and cadatomic halves developed in tandem (2026-10-23); not yet placed on TRACKS.md | cadatomic `docs/research/2026-10-23-tours-tests-tutorials-videos.md` §8–§9 |
 
 ## Handoff (2026-10-19, superseded)

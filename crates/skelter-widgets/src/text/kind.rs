@@ -234,6 +234,10 @@ impl Kind for TextEdit {
         &SPEC
     }
 
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
+    }
+
     fn prop_changed(&mut self, cx: &mut PropCx, prop: PropId, value: Option<&Value>) -> Result<(), PropError> {
         let Some(name) = Self::prop_name(cx, prop) else { return Ok(()) };
         let s = |v: Option<&Value>| v.and_then(Value::as_str).unwrap_or("").to_string();
@@ -319,8 +323,12 @@ impl Kind for TextEdit {
             return if took { Handled::Yes } else { Handled::No };
         }
         let Some(style) = cx.view(cx.node()).map(|v| text_style(v.style())) else { return Handled::No };
-        if let (Event::FocusIn(_), Some(p)) = (ev, cx.service::<crate::interact::Policy>().copied()) {
-            self.field.editor.set_policy(TextPolicy::from_policy(Platform::current(), &p));
+        // read on use: a policy set while the field is focused applies to its next event (SV62)
+        if let Some(p) = cx.service::<crate::interact::Policy>().copied() {
+            let tp = TextPolicy::from_policy(Platform::current(), &p);
+            if tp != *self.field.editor.policy() {
+                self.field.editor.set_policy(tp);
+            }
         }
         let now = cx.time();
         // the offset a wheel or fling may have moved
@@ -422,6 +430,28 @@ mod tests {
         for name in super::super::field::TEXT_EDIT_SIGNALS {
             assert!(s.signal_named(name).is_some(), "signal {name}");
         }
+    }
+
+    #[test]
+    fn a_focused_field_follows_a_new_policy_without_refocusing() {
+        // SV62: `host::set_policy` while the field has focus reaches its next event
+        use crate::testdoc::{child, doc, line_edge};
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 100.0), |r| {
+            r.register::<TextEdit>().unwrap();
+        });
+        d.set_service(skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())));
+        let first = crate::host::os_policy();
+        d.set_service(first);
+        let f = child(&mut d, root, skelter_core::KindId::of("text-edit"), "width: 60px; height: 24px");
+        d.focus(f, FocusReason::Keyboard);
+        d.dispatch(&line_edge(true));
+        let ms = |d: &skelter_core::Document| d.with_kind(f, |k| k.as_any().unwrap().downcast_ref::<TextEdit>().unwrap().field.editor.policy().double_click_ms).unwrap();
+        assert_eq!(ms(&d), first.double_click_ms);
+        let mut next = first;
+        next.double_click_ms = first.double_click_ms + 123;
+        crate::host::set_policy(&mut d, next);
+        d.dispatch(&line_edge(false));
+        assert_eq!(ms(&d), next.double_click_ms);
     }
 
     #[test]

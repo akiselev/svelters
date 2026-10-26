@@ -642,6 +642,14 @@ pub trait Kind: 'static {
         Handled::No
     }
 
+    /// A secondary click (released over the pressed node) landed on this node's parent or inside
+    /// it, and no `contextmenu` listener prevented it. `at` is the pointer in this node's local
+    /// points. A kind that attaches to its owner (a context menu) opens there and returns
+    /// `Handled::Yes`; the children of the innermost owner are asked first.
+    fn owner_context_click(&mut self, cx: &mut EventCx, at: skelter_base::geom::Point) -> Handled {
+        Handled::No
+    }
+
     /// JS started (`listened`) or stopped listening to `signal` on this node (an icon takes clicks
     /// only while its click signal is listened). [`NodeView::listened`](crate::NodeView::listened)
     /// answers the same at any time.

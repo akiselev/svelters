@@ -93,6 +93,11 @@ pub(crate) const fn app_overlay_key(window: skelter_base::ids::WindowId) -> Node
     NodeId(window.0 as u64 | 5 << 61)
 }
 
+/// The list key of window `window`'s `title` tooltip: bits 61, 62 and 63 set.
+pub(crate) const fn tip_key(window: skelter_base::ids::WindowId) -> NodeId {
+    NodeId(window.0 as u64 | 7 << 61)
+}
+
 impl NodePaint {
     pub fn prop_nodes(&self) -> impl Iterator<Item = PropNodeId> {
         [self.transform, self.clip, self.effect, self.scroll, self.content].into_iter().flatten()

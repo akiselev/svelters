@@ -16,6 +16,8 @@ pub(crate) mod focus;
 pub(crate) mod peers;
 pub(crate) mod scope;
 
+pub use dispatch::{KeyHook, KeyHookCx};
+
 use crate::ids::SignalId;
 use crate::tree::ListenFlags;
 use crate::value::Value;

@@ -40,6 +40,22 @@ fn inherited_values_reach_descendants() {
 }
 
 #[test]
+fn a_custom_property_change_restyles_descendants() {
+    // SV65: `background-color` does not inherit, so only the changed custom map reaches the leaf
+    let (mut d, root) = doc();
+    d.add_sheet(".leaf { background-color: var(--accent) }");
+    let a = child(&mut d, root, BOX, "--accent: #00ff00");
+    let b = child(&mut d, a, BOX, "");
+    let leaf = child(&mut d, b, BOX, "");
+    d.set_style(leaf, classes(&["leaf"]));
+    frame(&mut d);
+    assert_eq!(d.computed(leaf).unwrap().background, Fill::Solid(Color::rgba(0.0, 1.0, 0.0, 1.0)));
+    d.set_style(a, StyleInput { inline: Some("--accent: #ff0000".into()), ..Default::default() });
+    frame(&mut d);
+    assert_eq!(d.computed(leaf).unwrap().background, Fill::Solid(Color::rgba(1.0, 0.0, 0.0, 1.0)));
+}
+
+#[test]
 fn a_state_rule_restyles_with_paint_only() {
     let (mut d, root) = doc();
     d.add_sheet("toggle:hover { background-color: #ff0000 }");
@@ -185,4 +201,24 @@ fn a_state_rule_matches_the_hosts_state_bit() {
     d.set_state(n, pending, true);
     frame(&mut d);
     assert_eq!(d.world_rect(n).unwrap().width(), 33.0, "the rule applies with the bit set");
+}
+
+/// SV66: host-set media preferences match `prefers-*` and, with reduced motion, values jump.
+#[test]
+fn media_preferences_match_queries_and_reduced_motion_jumps() {
+    let (mut d, root) = doc();
+    d.add_sheet("@media (prefers-contrast: more) { .c { border-width: 3px } }");
+    let base = "width: 20px; height: 20px; transition: background-color 100ms linear";
+    let a = child(&mut d, root, BOX, &format!("{base}; background-color: #000000"));
+    d.set_style(a, StyleInput { classes: vec!["c".into()], inline: Some(format!("{base}; background-color: #000000").into()), ..Default::default() });
+    d.frame(W, ms(0));
+    assert_eq!(d.computed(a).unwrap().border_widths.left, 0.0);
+    d.set_media_preferences(crate::MediaPreferences::new(true, crate::Contrast::More));
+    assert_eq!(d.media_preferences(), crate::MediaPreferences::new(true, crate::Contrast::More));
+    d.frame(W, ms(10));
+    assert_eq!(d.computed(a).unwrap().border_widths.left, 3.0);
+    d.set_style(a, StyleInput { classes: vec!["c".into()], inline: Some(format!("{base}; background-color: #ffffff").into()), ..Default::default() });
+    d.frame(W, ms(1000));
+    assert_eq!(d.computed(a).unwrap().background, Fill::Solid(Color::rgba(1.0, 1.0, 1.0, 1.0)), "no transition");
+    assert!(!d.busy().contains(crate::Busy::ANIMATING));
 }

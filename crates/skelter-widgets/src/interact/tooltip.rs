@@ -31,70 +31,40 @@ pub enum Tip {
     Hide,
 }
 
+/// The egui-style unit over [`crate::views::tooltip::TooltipTimer`], the one tooltip timer (the
+/// `title` tooltip and the `tooltip` surface step it too): seconds in, [`Tip`] intents out.
 #[derive(Clone, Debug, Default)]
 pub struct Tooltipable {
-    /// When the pointer came to rest on the host.
-    since: Option<f64>,
-    /// When it showed.
-    shown: Option<f64>,
-    /// A press hid it: not again until the pointer leaves.
-    pressed: bool,
+    timer: crate::views::tooltip::TooltipTimer,
     wait: Option<f64>,
+}
+
+fn at(secs: f64) -> skelter_base::time::Time {
+    skelter_base::time::Time((secs.max(0.0) * 1e9) as u64)
+}
+
+fn span(secs: f64) -> skelter_base::time::Span {
+    skelter_base::time::Span::from_secs_f64(secs.max(0.0))
 }
 
 impl Tooltipable {
     pub fn shown(&self) -> bool {
-        self.shown.is_some()
+        self.timer.shown()
     }
 
     /// One pass: `over` the pointer is on the host (also when disabled), `pressed` a pointer
     /// button went down this pass, at time `now`.
     pub fn step(&mut self, p: &TooltipParams, over: bool, pressed: bool, now: f64, out: &mut Intents<Tip>) {
-        self.wait = None;
-        let was = self.shown.is_some();
-        if !p.has_tip || !over {
-            self.since = None;
-            self.pressed = false;
-        } else if pressed {
-            self.pressed = true;
-        } else if self.since.is_none() {
-            self.since = Some(now);
-        }
-        let mut show = false;
-        if let Some(since) = self.since
-            && !self.pressed
-        {
-            let due = if p.warm || was { since } else { since + p.delay };
-            if now >= due {
-                show = true;
-            } else {
-                self.wait = Some(due - now);
-            }
-        }
-        if show
-            && let Some(at) = self.shown
-            && p.duration > 0.0
-        {
-            if now >= at + p.duration {
-                show = false;
-                self.pressed = true; // stays hidden until the pointer leaves
-            } else {
-                self.wait = Some(at + p.duration - now);
-            }
-        }
-        match (was, show) {
-            (false, true) => {
-                self.shown = Some(now);
-                if p.duration > 0.0 {
-                    self.wait = Some(p.duration);
-                }
-                out.push(Tip::Show);
-            }
-            (true, false) => {
-                self.shown = None;
-                out.push(Tip::Hide);
-            }
-            _ => {}
+        use crate::views::tooltip::{Tip as T, TipInput, TooltipWarmth};
+        let input = TipInput { over: over && p.has_tip, pressed, ..TipInput::default() };
+        // warm: as if a tip hid just now (zero follow-on window)
+        let mut warmth = if p.warm { TooltipWarmth::hidden_at(at(now)) } else { TooltipWarmth::default() };
+        let r = self.timer.step(input, at(now), span(p.delay), span(p.duration), skelter_base::time::Span::ZERO, &mut warmth);
+        self.wait = self.timer.wake().map(|w| (w.0 as f64 / 1e9 - now).max(0.0));
+        match r {
+            Some(T::Show) => out.push(Tip::Show),
+            Some(T::Hide) => out.push(Tip::Hide),
+            None => {}
         }
     }
 }

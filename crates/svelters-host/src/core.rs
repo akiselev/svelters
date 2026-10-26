@@ -403,6 +403,10 @@ pub(crate) struct Core {
     pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
     /// IN1: a locale change made while JS was running, delivered by the next checkpoint.
     pub(crate) pending_locale: RefCell<Option<String>>,
+    /// SV63: setting keys the backend changed (from any thread), delivered by the next checkpoint,
+    /// and the subscription that fills it.
+    pub(crate) settings_changed: Arc<std::sync::Mutex<std::collections::BTreeSet<String>>>,
+    pub(crate) settings_sub: RefCell<Option<crate::dx::Subscription>>,
     /// SCHED1: the backend's wake plus `cfg.sched.wake` (see `sched.rs`); every host wake goes here.
     waker: std::task::Waker,
     wake_state: Arc<crate::sched::HostWake>,
@@ -467,6 +471,8 @@ impl Core {
             last_interrupt: Cell::new(None),
             root_msgs: RefCell::new(Vec::new()),
             pending_locale: RefCell::new(None),
+            settings_changed: Arc::default(),
+            settings_sub: RefCell::new(None),
             waker,
             wake_state,
             wake_key: svelters_sched::wake_key(),
@@ -482,6 +488,11 @@ impl Core {
     /// Asks for a checkpoint: the backend's `wake`, and the scheduler's when one drives this host.
     pub(crate) fn wake(&self) {
         self.waker.wake_by_ref();
+    }
+
+    /// The host's waker, for callbacks on other threads.
+    pub(crate) fn waker(&self) -> std::task::Waker {
+        self.waker.clone()
     }
 
     /// SCHED1: the spawner offloaded jobs go to, if the embedder or a test set one.
@@ -1111,6 +1122,13 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     let locale = core.pending_locale.borrow_mut().take();
     if let Some(tag) = locale
         && let Err(e) = eng.locale_changed(&tag)
+    {
+        core.report(e);
+    }
+    // SV63: settings the backend changed re-run what read them (`svelters:settings` `refresh`)
+    let keys: Vec<String> = std::mem::take(&mut *core.settings_changed.lock().unwrap_or_else(|e| e.into_inner())).into_iter().collect();
+    if !keys.is_empty()
+        && let Err(e) = eng.settings_changed(&keys)
     {
         core.report(e);
     }

@@ -50,6 +50,22 @@ pub type SyncDelivery = Box<dyn FnMut(&mut Document, &crate::input::JsEvent) -> 
 /// press in its space, to the drag image.
 pub type DragPreviewProvider = Box<dyn FnMut(&mut Document, NodeId, skelter_base::geom::Point) -> Option<crate::kind::DragPreview>>;
 
+/// The user's media preferences ([`Document::set_media_preferences`]).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct MediaPreferences {
+    /// `prefers-reduced-motion: reduce`.
+    pub reduced_motion: bool,
+    /// `prefers-contrast`.
+    pub contrast: svelters_style::Contrast,
+}
+
+impl MediaPreferences {
+    pub fn new(reduced_motion: bool, contrast: svelters_style::Contrast) -> MediaPreferences {
+        MediaPreferences { reduced_motion, contrast }
+    }
+}
+
 /// The retained tree of one app.
 pub struct Document {
     pub(crate) registry: Arc<KindRegistry>,
@@ -85,7 +101,10 @@ pub struct Document {
     /// Run and image ids are unique per document (the compositor holds them per window).
     pub(crate) run_counter: u64,
     pub(crate) images: crate::cx::ImageSink,
-    pub(crate) key_hook: Option<Box<dyn FnMut(WindowId, &skelter_base::event::KeyEvent) -> bool>>,
+    pub(crate) key_hook: Option<crate::input::KeyHook>,
+    /// The `title` tooltip provider, and when each window's tip steps next ([`crate::tips`]).
+    pub(crate) title_tips: Option<Box<dyn crate::tips::TitleTips>>,
+    pub(crate) tip_wakes: HashMap<WindowId, skelter_base::time::Time>,
     pub(crate) services: crate::cx::Services,
     /// Kinds' deadlines (`EventCx::wake_at`).
     pub(crate) timers: HashMap<NodeId, skelter_base::time::Time>,
@@ -163,6 +182,8 @@ impl Document {
             run_counter: 0,
             images: Default::default(),
             key_hook: None,
+            title_tips: None,
+            tip_wakes: HashMap::new(),
             services: Default::default(),
             timers: HashMap::new(),
             virt: HashMap::new(),
@@ -1192,6 +1213,24 @@ impl Document {
         }
     }
 
+    /// The user's media preferences (SV66): `prefers-reduced-motion` and `prefers-contrast` match
+    /// them, and with reduced motion CSS transitions don't run (values jump). The host sets them from
+    /// the OS or from its own settings; the default is no preference. A change restyles every window.
+    pub fn set_media_preferences(&mut self, prefs: MediaPreferences) {
+        let env = svelters_style::MediaEnv { reduced_motion: prefs.reduced_motion, contrast: prefs.contrast, ..*self.style.stylist.media_env() };
+        if env != *self.style.stylist.media_env() {
+            let _ = self.style.stylist.set_media(env);
+            self.style.caches.clear();
+            self.restyle_all();
+        }
+    }
+
+    /// The media preferences in effect ([`Document::set_media_preferences`]).
+    pub fn media_preferences(&self) -> MediaPreferences {
+        let env = self.style.stylist.media_env();
+        MediaPreferences { reduced_motion: env.reduced_motion, contrast: env.contrast }
+    }
+
     /// Adds a style sheet to every window (an `Origin::Author` sheet).
     pub fn add_sheet(&mut self, css: &str) -> svelters_style::SheetId {
         let id = self.style.add_sheet(css);
@@ -1239,6 +1278,15 @@ impl Document {
         for i in 0..self.core.len() {
             let Some(node) = self.slots.id_at(i) else { continue };
             self.mark_measure(i);
+            self.mark(node, Dirty::PAINT | Dirty::A11Y);
+        }
+    }
+
+    /// Re-records every node of every window, without a restyle or a re-measure: a service that only
+    /// paint and behaviour read changed (the interaction policy's scroll bars).
+    pub fn rerecord_all(&mut self) {
+        for i in 0..self.core.len() {
+            let Some(node) = self.slots.id_at(i) else { continue };
             self.mark(node, Dirty::PAINT | Dirty::A11Y);
         }
     }
@@ -1400,6 +1448,10 @@ impl Document {
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
     }
+    /// A service by type, read-only.
+    pub fn service_ref<T: 'static>(&self) -> Option<&T> {
+        self.services.get()
+    }
 
     pub(crate) fn set_timer(&mut self, node: NodeId, at: Option<skelter_base::time::Time>) {
         match at {
@@ -1412,14 +1464,15 @@ impl Document {
         }
     }
 
-    /// The earliest kind deadline (the platform's `set_timer`).
+    /// The earliest kind deadline or tooltip wake-up (the platform's `set_timer`).
     pub fn next_timer(&self) -> Option<skelter_base::time::Time> {
-        self.timers.values().min().copied()
+        self.timers.values().min().copied().into_iter().chain(self.next_tip_wake()).min()
     }
 
     /// Delivers [`Event::Timer`](crate::Event::Timer) to every node whose deadline is at or before
     /// `now`, as one transaction; returns the JS events their kinds emitted.
     pub fn run_timers(&mut self, now: skelter_base::time::Time) -> Vec<crate::input::JsEvent> {
+        self.run_tip_wakes(now);
         let mut due: Vec<(skelter_base::time::Time, NodeId)> = self.timers.iter().filter(|&(_, &t)| t <= now).map(|(&n, &t)| (t, n)).collect();
         if due.is_empty() {
             return Vec::new();

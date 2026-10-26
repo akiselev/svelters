@@ -32,6 +32,9 @@ export function refresh(list) {
   for (const k of list ?? [...keys]) touch('s:' + k);
 }
 
+// SV63: the host calls this at a checkpoint with the keys its settings backend reported changed.
+globalThis.__svelters_settings_changed = (list) => refresh(list);
+
 /**
  * A reactive setting. `value` reads the backend (tracked); assigning writes it and throws an error
  * with `code === 'settings/locked'` when the key is locked. `source` is `{ layer, locked }` or null;

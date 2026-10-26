@@ -46,7 +46,8 @@ pub trait DocumentApi {
     fn take_fast_commits(&mut self) -> Vec<FastCommit> {
         Vec::new()
     }
-    /// The caret blink new windows get (the text policy's); `None` = leave the compositor's default.
+    /// The caret blink windows get (the text policy's), read when a window opens and after each
+    /// commit (a change reaches every open window); `None` = leave the compositor's default.
     fn caret_blink(&self) -> Option<Option<skelter_compositor::CaretBlink>> {
         None
     }

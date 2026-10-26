@@ -617,6 +617,16 @@ impl JsEngine for QjsEngine {
         })
     }
 
+    fn settings_changed(&mut self, keys: &[String]) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_settings_changed")?;
+            let Some(f) = f.as_function() else {
+                return Ok(());
+            };
+            f.call::<_, Value>((keys.to_vec(),)).map(|_| ())
+        })
+    }
+
     fn assets_changed(&mut self, refs: &[String]) -> Result<(), JsError> {
         self.call_guarded(|ctx| {
             let f: Value = ctx.globals().get("__svelters_assets_changed")?;

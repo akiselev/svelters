@@ -82,6 +82,12 @@ impl ComputedStyle {
         self.custom.iter().map(|(k, v)| (&**k, &**v))
     }
 
+    /// Whether both styles have the same custom properties: pointer-equal first (an element
+    /// that declares none shares its parent's map), then by value.
+    pub fn custom_eq(&self, other: &ComputedStyle) -> bool {
+        Arc::ptr_eq(&self.custom, &other.custom) || self.custom == other.custom
+    }
+
     /// The indexes of the properties whose value differs from `before` (what a setter backend
     /// pushes, and what it restores to the native default when the value went away).
     pub fn changed_since(&self, before: &ComputedStyle) -> Vec<usize> {

@@ -124,6 +124,8 @@ pub(crate) struct WindowState {
     pub drag_layer: Option<DragLayer>,
     /// The app's overlay display list ([`crate::Document::set_window_overlay`]).
     pub app_overlay: AppOverlay,
+    /// The `title` tooltip's list ([`crate::Document::set_window_tip`]).
+    pub tip: AppOverlay,
 }
 
 /// The app's own display list above the window's content: what it set and what was sent.
@@ -197,6 +199,7 @@ impl WindowState {
             overlay_nodes: HashMap::new(),
             drag_layer: None,
             app_overlay: AppOverlay::default(),
+            tip: AppOverlay::default(),
         }
     }
 

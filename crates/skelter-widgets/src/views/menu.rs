@@ -1078,6 +1078,14 @@ impl Kind for ContextMenu {
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
         self.menus.record_overlay(cx)
     }
+    /// SV77: the owner's context click opens it at the pointer (svelters-egui's A9b).
+    fn owner_context_click(&mut self, cx: &mut EventCx, at: Point) -> Handled {
+        if !self.menus.enabled {
+            return Handled::No;
+        }
+        self.context_click(cx, at);
+        Handled::Yes
+    }
     fn overlay_closed(&mut self, cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
         let mut out = Vec::new();
         self.menus.close(&mut out);
@@ -1320,6 +1328,41 @@ entry_kind!(MenuSeparatorKind, MENU_SEPARATOR_SPEC);
 mod tests {
     use super::*;
     use crate::controls::testkit;
+
+    /// SV77: a secondary click inside a node opens the `context-menu` among its children, at the
+    /// pointer; a primary click does not.
+    #[test]
+    fn an_owners_secondary_click_opens_its_context_menu() {
+        use crate::testdoc::{child, doc, frame, pointer};
+        use skelter_base::event::InputEvent;
+        let (mut d, root) = doc(Size::new(300.0, 200.0), |r| crate::views::register_all(r).unwrap());
+        let owner = child(&mut d, root, skelter_core::KindId::of("box"), "position: absolute; left: 50px; top: 40px; width: 100px; height: 60px; background-color: #ff0000");
+        let inner = child(&mut d, owner, skelter_core::KindId::of("box"), "width: 20px; height: 20px; background-color: #00ff00");
+        let menu = child(&mut d, owner, skelter_core::KindId::of("context-menu"), "");
+        let item = d.create(skelter_core::KindId::of("menu-item"));
+        let label = d.registry().get(skelter_core::KindId::of("menu-item")).unwrap().spec.prop_named("label").unwrap();
+        d.set_prop(item, label, skelter_core::Value::from("Cut")).unwrap();
+        d.insert(menu, item, None, None).unwrap();
+        frame(&mut d);
+        let open = d.registry().get(skelter_core::KindId::of("context-menu")).unwrap().spec.prop_named("open").unwrap();
+        let secondary = |phase, x, y, t| {
+            let mut e = pointer(phase, x, y, t, false);
+            if let InputEvent::Pointer(p) = &mut e.event {
+                p.button = Some(MouseButton::Secondary);
+                p.buttons = if phase == PointerPhase::Down { 2 } else { 0 };
+            }
+            e
+        };
+        // a primary click leaves it closed
+        d.dispatch(&pointer(PointerPhase::Down, 55.0, 45.0, 1_000, false));
+        d.dispatch(&pointer(PointerPhase::Up, 55.0, 45.0, 2_000, false));
+        assert_eq!(d.get_prop(menu, open), Some(skelter_core::Value::Bool(false)));
+        // a secondary click on the owner's child (inside the owner) opens it
+        d.dispatch(&secondary(PointerPhase::Down, 55.0, 45.0, 3_000_000_000));
+        d.dispatch(&secondary(PointerPhase::Up, 55.0, 45.0, 3_100_000_000));
+        assert_eq!(d.get_prop(menu, open), Some(skelter_core::Value::Bool(true)));
+        let _ = inner;
+    }
     use crate::interact::{Native, Policy};
     use crate::shim::testing::{MemResources, MonoShaper};
     use skelter_base::change::ChangeClass;

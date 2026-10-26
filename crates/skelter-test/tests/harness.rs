@@ -53,6 +53,8 @@ struct Doc {
     hovers: Vec<Point>,
     menu: Vec<String>,
     raw: Vec<(f32, f32)>,
+    /// The caret blink the document asks for (`None`: GTK's).
+    blink: Option<Option<skelter::compositor_crate::CaretBlink>>,
 }
 
 impl Doc {
@@ -276,7 +278,7 @@ impl DocumentApi for Doc {
     }
 
     fn caret_blink(&self) -> Option<Option<skelter::compositor_crate::CaretBlink>> {
-        Some(Some(skelter::compositor_crate::CaretBlink::GTK))
+        Some(self.blink.unwrap_or(Some(skelter::compositor_crate::CaretBlink::GTK)))
     }
 
     fn hover(&mut self, _window: WindowId, pos: Point) -> bool {
@@ -682,6 +684,22 @@ fn new_windows_get_the_policy_caret_blink() {
         h.compositor().caret_blinks(),
         vec![(h.window(), Some(skelter::compositor_crate::CaretBlink::GTK))]
     );
+}
+
+#[test]
+fn a_caret_blink_change_reaches_open_windows() {
+    // SV62: the policy changed while the window was open (no blink now)
+    let mut h = harness();
+    h.state_mut().blink = Some(None);
+    h.state_mut().dirty = true;
+    h.app_mut().request_dirty_frames();
+    h.run();
+    assert_eq!(h.compositor().caret_blinks().last(), Some(&(h.window(), None)));
+    let n = h.compositor().caret_blinks().len();
+    h.state_mut().dirty = true;
+    h.app_mut().request_dirty_frames();
+    h.run();
+    assert_eq!(h.compositor().caret_blinks().len(), n, "sent only when it changed");
 }
 
 fn monitor(x: i32, refresh_hz: u32, scale: f32, ppi: Option<f32>) -> skelter::platform::Monitor {

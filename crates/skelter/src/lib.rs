@@ -21,7 +21,7 @@ pub mod run;
 pub mod seams;
 
 pub use app::{App, AppConfig, SpawnCompositor, ToUiSink};
-pub use backends::{CoreDocument, UiFrame, compositor};
+pub use backends::{CoreDocument, UiFrame, caret_blink_of, compositor};
 pub use skelter_base as base;
 pub use skelter_compositor as compositor_crate;
 pub use skelter_core as core;

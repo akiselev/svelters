@@ -128,7 +128,8 @@ impl Document {
             self.rebuild_walk(window, root, &mut commit);
             stats.rebuilt = true;
         }
-        self.sync_app_overlay(window, &mut commit);
+        self.sync_list_layer(window, crate::toplayer::ListLayer::App, &mut commit);
+        self.sync_list_layer(window, crate::toplayer::ListLayer::Tip, &mut commit);
         self.sync_drag_layer(window, &mut commit);
         self.check_caret(window);
         if rebuild {

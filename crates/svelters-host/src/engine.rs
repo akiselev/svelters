@@ -244,6 +244,13 @@ pub trait JsEngine {
         Ok(())
     }
 
+    /// SV63: the settings backend changed `keys` (`SettingsBackend::subscribe`); calls
+    /// `globalThis.__svelters_settings_changed(keys)` if `svelters:settings` installed it, which
+    /// invalidates `s:<key>` for each.
+    fn settings_changed(&mut self, _keys: &[String]) -> Result<(), JsError> {
+        Ok(())
+    }
+
     /// ABI v2.6: calls `globalThis.__svelters_changed([h, prop, value, h, prop, value, ...])` once
     /// with the whole batch, if the runtime installed it (REACTIVITY.md §5.2). `value` is
     /// `undefined` for a proportional property.

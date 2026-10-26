@@ -224,3 +224,57 @@ fn a_drag_shows_its_preview_in_the_drag_layer_which_follows_the_pointer_until_th
     assert!(c.removed.contains(&key) && c.props.ops.contains(&PropOp::Remove(tf)));
     assert_eq!(d.drag_layer(W), None);
 }
+
+/// SV61: a provider that logs what the document reports and shows a fixed tip while a host is hovered.
+struct LogTips(std::rc::Rc<std::cell::RefCell<Vec<(crate::tips::TitleInput, Time)>>>);
+
+impl crate::tips::TitleTips for LogTips {
+    fn step(&mut self, doc: &mut Document, window: skelter_base::ids::WindowId, input: &crate::tips::TitleInput, now: Time) -> Option<Time> {
+        self.0.borrow_mut().push((input.clone(), now));
+        let r = Rect::new(20.0, 60.0, 60.0, 80.0);
+        let tip = input.host.as_ref().map(|_| {
+            let mut list = DisplayList::new();
+            list.push(quad(r), r);
+            (list, Vec::new())
+        });
+        doc.set_window_tip(window, tip);
+        input.host.as_ref().map(|_| Time(now.0 + 500))
+    }
+}
+
+#[test]
+fn the_title_host_reaches_the_tip_provider_and_its_layer_tops_the_overlays() {
+    let (mut d, root) = odoc();
+    let host = child(&mut d, root, BOX, "position: absolute; left: 0px; top: 0px; width: 50px; height: 40px; background-color: red");
+    let inner = child(&mut d, host, BOX, "width: 10px; height: 10px; background-color: blue");
+    d.set_prop(host, common::TITLE, Value::from("Save")).unwrap();
+    let log = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
+    d.set_title_tips(Some(Box::new(LogTips(log.clone()))));
+    frame(&mut d);
+    // over the inner box: the innermost node with a title is the host
+    d.dispatch(&pointer(PointerPhase::Move, 5.0, 5.0, 1_000));
+    assert_eq!(log.borrow().last().unwrap().0.host, Some((host, Arc::from("Save"))));
+    assert_eq!(d.title_host(W).map(|h| h.0), Some(host));
+    assert_eq!(d.next_timer(), Some(Time(1_500)), "the provider's wake-up is the document's");
+    let c = frame(&mut d).expect("the tip's commit");
+    let adds = overlay_adds(&c);
+    assert_eq!(adds.len(), 1, "{:?}", c.layers);
+    assert_eq!(adds[0].z, crate::toplayer::TIP_Z);
+    assert!(adds[0].z > crate::toplayer::OVERLAY_Z && adds[0].z < crate::toplayer::DRAG_Z);
+    assert_eq!(d.window_tip_layer(W), Some(adds[0].id));
+    // the wake-up steps it without input
+    d.run_timers(Time(1_500));
+    assert_eq!(log.borrow().last().unwrap().1, Time(1_500));
+    // a press and Escape are reported
+    d.dispatch(&pointer(PointerPhase::Down, 5.0, 5.0, 2_000));
+    assert!(log.borrow().last().unwrap().0.pressed);
+    d.dispatch(&key(Key::Escape, Modifiers::default()));
+    assert!(log.borrow().last().unwrap().0.escape);
+    d.dispatch(&pointer(PointerPhase::Up, 5.0, 5.0, 2_100));
+    // off the host: no host, the layer goes
+    d.dispatch(&pointer(PointerPhase::Move, 150.0, 90.0, 3_000));
+    assert_eq!(log.borrow().last().unwrap().0.host, None);
+    let c = frame(&mut d).expect("the removal");
+    assert!(c.layers.contains(&LayerDelta::Remove(adds[0].id)));
+    let _ = inner;
+}

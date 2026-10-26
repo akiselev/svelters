@@ -185,7 +185,7 @@ fn an_ime_source_takes_printable_keys_before_the_keymap() {
     d.focus(t, crate::FocusReason::Programmatic);
     let hooked = std::rc::Rc::new(std::cell::Cell::new(0));
     let h = hooked.clone();
-    d.set_key_hook(Box::new(move |_, _| {
+    d.set_key_hook(Box::new(move |_| {
         h.set(h.get() + 1);
         false
     }));

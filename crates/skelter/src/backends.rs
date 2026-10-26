@@ -28,7 +28,8 @@ pub struct CoreDocument<H: DocHandle = Document> {
     pub doc: H,
     root_kind: KindId,
     js_events: Vec<JsEvent>,
-    caret_blink: Option<Option<skelter_compositor::CaretBlink>>,
+    /// The built-in kinds' services are installed: the caret blink follows the document's policy.
+    widgets: bool,
     /// The native menu bar last handed to the platform (`None`: none sent).
     menu_sent: Option<skelter_platform::MenuDesc>,
     /// The windows opened in the document, in order.
@@ -94,23 +95,20 @@ impl CoreDocument {
         policy: skelter_widgets::interact::Policy,
         theme: skelter_widgets::theme::Theme,
     ) -> Self {
-        // GTK's one app-wide text selection follows the policy.
-        doc.set_single_selection(policy.one_selection_owner);
-        let tp = skelter_widgets::text::TextPolicy::from_policy(
-            skelter_widgets::text::Platform::current(),
-            &policy,
-        );
-        let blink = (tp.caret_blink_ms > 0).then(|| skelter_compositor::CaretBlink {
-            cycle: std::time::Duration::from_millis(tp.caret_blink_ms as u64),
-            timeout: tp
-                .caret_blink_timeout_ms
-                .map(|ms| std::time::Duration::from_millis(ms as u64)),
-        });
         skelter_widgets::host::install(&mut doc, text, policy, theme);
         let mut d = Self::new(doc, root_kind);
-        d.caret_blink = Some(blink);
+        d.widgets = true;
         d
     }
+}
+
+/// The caret blink a policy asks for (its text policy's cycle and timeout); `None`: a steady caret.
+pub fn caret_blink_of(policy: &skelter_widgets::interact::Policy) -> Option<skelter_compositor::CaretBlink> {
+    let tp = skelter_widgets::text::TextPolicy::from_policy(skelter_widgets::text::Platform::current(), policy);
+    (tp.caret_blink_ms > 0).then(|| skelter_compositor::CaretBlink {
+        cycle: std::time::Duration::from_millis(tp.caret_blink_ms as u64),
+        timeout: tp.caret_blink_timeout_ms.map(|ms| std::time::Duration::from_millis(ms as u64)),
+    })
 }
 
 impl CoreDocument<Rc<RefCell<Document>>> {
@@ -127,7 +125,7 @@ impl<H: DocHandle> CoreDocument<H> {
             doc,
             root_kind,
             js_events: Vec::new(),
-            caret_blink: None,
+            widgets: false,
             menu_sent: None,
             windows: Vec::new(),
             taps: Vec::new(),
@@ -199,7 +197,12 @@ impl<H: DocHandle> DocumentApi for CoreDocument<H> {
         self.doc.lend_mut().take_fast_commits()
     }
     fn caret_blink(&self) -> Option<Option<skelter_compositor::CaretBlink>> {
-        self.caret_blink
+        // read on use: `skelter_widgets::host::set_policy` reaches open windows (SV62)
+        if !self.widgets {
+            return None;
+        }
+        let doc = self.doc.lend();
+        doc.service_ref::<skelter_widgets::interact::Policy>().map(caret_blink_of)
     }
     fn menu_activated(&mut self, id: &str) -> bool {
         // The pick goes to the menu bar kind as `menu-activated(id)` (it gets its EventCx there);
