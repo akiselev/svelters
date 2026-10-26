@@ -19,8 +19,8 @@
 //!
 //! The cell editor (F2 and typing on `editable` columns, the text-edit field) is the kind's
 //! ([`kinds`]). Not here yet: double clicks starting an edit, the column menu (a views-lane popup), the Rust row model
-//! (`svelters_host::rows`), the scroll bars and edge shadows (the scroll layer's), and AccessKit
-//! (written by the kind from [`Table::geom`] once skelter-core's `A11yCx` exists).
+//! (`svelters_host::rows`), the scroll bars and edge shadows (the scroll layer's). AccessKit is the
+//! kind's: the header row and the realised rows with their cells, as virtual children (FQ-66).
 
 pub mod column;
 pub mod text_painter;
@@ -426,12 +426,7 @@ impl Table {
                         if double {
                             out.push(Emit::new("header-double-clicked", vec![Value::I64(d as i64)]));
                         } else {
-                            out.push(Emit::new("header-clicked", vec![Value::I64(d as i64)]));
-                            if self.state.sort_click(d) {
-                                self.mark(&["sort-column", "sort-order"]);
-                                out.push(Emit::new("sort-changed", vec![Value::I64(self.state.sort_column), Value::Str(self.state.sort_order.into())]));
-                                self.header_state_changed(out);
-                            }
+                            self.click_header(d, out);
                         }
                     }
                     Target::Row { row, col, mods } => {
@@ -439,21 +434,7 @@ impl Table {
                             out.push(Emit::new("activated", vec![Value::I64(row as i64)]));
                             return true;
                         }
-                        let ids = self.state.all_ids();
-                        let key = self.state.key_of(row);
-                        let ch = self.state.sel.click(&ids, key, mods);
-                        if ch.cursor {
-                            self.mark(&["current"]);
-                        }
-                        if let Some(k) = col
-                            && k != self.state.cur_col
-                        {
-                            self.state.cur_col = k;
-                            self.mark(&["current-column"]);
-                        }
-                        if ch.selection {
-                            self.selection_changed(out);
-                        }
+                        self.click_row(row, col, mods, out);
                     }
                 }
                 true
@@ -464,6 +445,37 @@ impl Table {
                 false
             }
             _ => false,
+        }
+    }
+
+    /// A click on the header of data column `d` (a pointer's, or AccessKit's `Click`): `header-clicked`
+    /// and, `sortable`, the sort.
+    pub fn click_header(&mut self, d: usize, out: &mut Vec<Emit>) {
+        out.push(Emit::new("header-clicked", vec![Value::I64(d as i64)]));
+        if self.state.sort_click(d) {
+            self.mark(&["sort-column", "sort-order"]);
+            out.push(Emit::new("sort-changed", vec![Value::I64(self.state.sort_column), Value::Str(self.state.sort_order.into())]));
+            self.header_state_changed(out);
+        }
+    }
+
+    /// A click on row `row` (in shown column `col`) with `mods` (a pointer's, or AccessKit's
+    /// `Click` on a row or cell): the cursor, the cursor column and the selection, as a click sets them.
+    pub fn click_row(&mut self, row: u64, col: Option<usize>, mods: Mods, out: &mut Vec<Emit>) {
+        let ids = self.state.all_ids();
+        let key = self.state.key_of(row);
+        let ch = self.state.sel.click(&ids, key, mods);
+        if ch.cursor {
+            self.mark(&["current"]);
+        }
+        if let Some(k) = col
+            && k != self.state.cur_col
+        {
+            self.state.cur_col = k;
+            self.mark(&["current-column"]);
+        }
+        if ch.selection {
+            self.selection_changed(out);
         }
     }
 

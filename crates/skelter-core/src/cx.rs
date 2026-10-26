@@ -909,8 +909,9 @@ fn descendant_text(v: &NodeView) -> String {
 pub struct A11yCx<'a> {
     pub node: NodeView<'a>,
     pub out: &'a mut accesskit::Node,
-    /// The virtual children added so far ([`A11yCx::add_virtual_child`]).
-    pub(crate) virtual_children: &'a mut Vec<accesskit::Node>,
+    /// The virtual children added so far ([`A11yCx::add_virtual_child`]), each with the virtual
+    /// child it is under ([`A11yCx::add_virtual_child_of`]; `None`: under the node).
+    pub(crate) virtual_children: &'a mut Vec<(accesskit::Node, Option<u32>)>,
 }
 
 impl<'a> std::ops::Deref for A11yCx<'a> {
@@ -931,7 +932,19 @@ impl A11yCx<'_> {
         if self.virtual_children.len() >= crate::a11y::MAX_VIRTUAL_CHILDREN {
             return None;
         }
-        self.virtual_children.push(node);
+        self.virtual_children.push((node, None));
+        Some(self.virtual_children.len() as u32 - 1)
+    }
+
+    /// Adds a virtual child under the earlier virtual child `parent` (a table row's cell), after
+    /// that one's other children. Its bounds are still in the node's own space (virtual children
+    /// have no transform), its index and its actions as [`A11yCx::add_virtual_child`]'s. `None`
+    /// when `parent` is not an earlier virtual child or the node has no room left.
+    pub fn add_virtual_child_of(&mut self, parent: u32, node: accesskit::Node) -> Option<u32> {
+        if parent as usize >= self.virtual_children.len() || self.virtual_children.len() >= crate::a11y::MAX_VIRTUAL_CHILDREN {
+            return None;
+        }
+        self.virtual_children.push((node, Some(parent)));
         Some(self.virtual_children.len() as u32 - 1)
     }
 

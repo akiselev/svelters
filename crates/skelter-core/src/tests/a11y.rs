@@ -142,6 +142,7 @@ static OPTS: crate::KindSpec = crate::KindSpec {
     props: &[
         crate::PropSpec::new("count", crate::ValueType::I64, skelter_base::change::ChangeClass::Paint).default(crate::PropDefault::I64(0)),
         crate::PropSpec::new("picked", crate::ValueType::I64, skelter_base::change::ChangeClass::Paint).default(crate::PropDefault::I64(-1)).native(),
+        crate::PropSpec::new("nest", crate::ValueType::Bool, skelter_base::change::ChangeClass::Paint).default(crate::PropDefault::Bool(false)),
     ],
     role: Role::ListBox,
     container: true,
@@ -149,9 +150,10 @@ static OPTS: crate::KindSpec = crate::KindSpec {
 };
 const OPTS_COUNT: crate::PropId = crate::PropId::of("opts", "count", "int");
 const OPTS_PICKED: crate::PropId = crate::PropId::of("opts", "picked", "int");
+const OPTS_NEST: crate::PropId = crate::PropId::of("opts", "nest", "bool");
 
 /// A list drawn without nodes: `count` virtual options with author ids `opt-<i>`; a click on one
-/// writes its index to `picked`.
+/// writes its index to `picked`. With `nest`, each option has one cell under it.
 #[derive(Default)]
 struct Opts;
 
@@ -174,6 +176,16 @@ impl crate::Kind for Opts {
     fn a11y(&self, cx: &mut crate::A11yCx) {
         cx.default_a11y();
         let n = cx.node.prop(OPTS_COUNT).and_then(Value::as_i64).unwrap_or(0);
+        if cx.node.prop_bool(OPTS_NEST) {
+            for i in 0..n {
+                let row = cx.add_virtual_child(accesskit::Node::new(Role::Row)).unwrap();
+                let mut c = accesskit::Node::new(Role::Cell);
+                c.add_action(accesskit::Action::Click);
+                assert_eq!(cx.add_virtual_child_of(row, c), Some(2 * i as u32 + 1));
+            }
+            assert_eq!(cx.add_virtual_child_of(999, accesskit::Node::new(Role::Cell)), None, "no such parent");
+            return;
+        }
         for i in 0..n {
             let mut o = accesskit::Node::new(Role::ListBoxOption);
             o.set_author_id(format!("opt-{i}"));
@@ -223,6 +235,30 @@ fn virtual_children_go_out_with_their_owner_and_take_actions() {
     if let Some(u) = frame(&mut d).and_then(|c| c.a11y) {
         assert!(u.nodes.iter().all(|(id, _)| crate::a11y::virtual_child(*id).is_none()), "virtual children only with their owner");
     }
+}
+
+/// A virtual child under another (a table row's cell) is that one's child, not the owner's, and
+/// takes actions by its own index.
+#[test]
+fn nested_virtual_children_hang_under_their_parent() {
+    let mut r = crate::KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<Opts>().unwrap();
+    let mut d = Document::new(std::sync::Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let l = child(&mut d, root, KindId::of("opts"), "");
+    d.set_prop(l, OPTS_NEST, Value::Bool(true)).unwrap();
+    d.set_prop(l, OPTS_COUNT, Value::I64(2)).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let v = |i| crate::a11y::virtual_id(l, i);
+    let node = |id| &u.nodes.iter().find(|(x, _)| *x == id).expect("sent").1;
+    assert_eq!(node(ax(l)).children(), &[v(0), v(2)], "only the rows under the owner");
+    assert_eq!(node(v(0)).children(), &[v(1)]);
+    assert_eq!(node(v(2)).children(), &[v(3)]);
+    assert_eq!(node(v(3)).role(), Role::Cell);
+    let req = accesskit::ActionRequest { action: accesskit::Action::Click, target_tree: accesskit::TreeId::ROOT, target_node: v(3), data: None };
+    assert!(d.a11y_action(W, &req).handled);
+    assert_eq!(d.get_prop(l, OPTS_PICKED), Some(Value::I64(3)));
 }
 
 #[test]

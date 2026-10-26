@@ -174,7 +174,26 @@ impl Document {
             out.set_hidden();
         }
         let kids: Vec<NodeId> = self.a11y_children(i).collect();
-        let virtual_children: Vec<(AxId, Node)> = virtual_children.into_iter().enumerate().map(|(k, n)| (virtual_id(node, k as u32), n)).collect();
+        // nested virtual children (a row's cells) are their parent's children, not the node's
+        let mut top = Vec::new();
+        let mut nested: Vec<Vec<AxId>> = vec![Vec::new(); virtual_children.len()];
+        for (k, (_, parent)) in virtual_children.iter().enumerate() {
+            match parent {
+                Some(p) => nested[*p as usize].push(virtual_id(node, k as u32)),
+                None => top.push(virtual_id(node, k as u32)),
+            }
+        }
+        let virtual_children: Vec<(AxId, Node)> = virtual_children
+            .into_iter()
+            .zip(nested)
+            .enumerate()
+            .map(|(k, ((mut n, _), kids))| {
+                if !kids.is_empty() {
+                    n.set_children(kids);
+                }
+                (virtual_id(node, k as u32), n)
+            })
+            .collect();
         if let Some(w) = window.and_then(|w| self.window_mut(w)) {
             if virtual_children.is_empty() {
                 w.a11y_virtual.remove(&node);
@@ -182,7 +201,7 @@ impl Document {
                 w.a11y_virtual.insert(node, virtual_children.len() as u32);
             }
         }
-        out.set_children(kids.iter().map(|&c| ax(c)).chain(virtual_children.iter().map(|(id, _)| *id)).collect::<Vec<_>>());
+        out.set_children(kids.iter().map(|&c| ax(c)).chain(top).collect::<Vec<_>>());
         if self.state[i].contains(svelters_style::StateMask::INVALID) {
             out.set_invalid(accesskit::Invalid::True);
         }
@@ -217,7 +236,8 @@ impl Document {
 
     /// The children in the accessibility tree: all but those their container conceals.
     fn a11y_children(&self, i: usize) -> impl Iterator<Item = NodeId> + '_ {
-        self.children[i].iter().copied().filter(|&c| !self.core[self.ix(c)].flags.contains(crate::tree::NodeFlags::CONCEALED))
+        let kids: &[NodeId] = if self.view_at(i).kind().spec.conceals_children { &[] } else { &self.children[i] };
+        kids.iter().copied().filter(|&c| !self.core[self.ix(c)].flags.contains(crate::tree::NodeFlags::CONCEALED))
     }
 
     /// The update for this frame (`None`: nothing changed). The whole tree goes out on the window's
