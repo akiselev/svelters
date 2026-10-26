@@ -136,7 +136,45 @@ impl TextMeasure for NoText {
     }
 }
 
+/// JS traffic through the backend (FQ-76), as svelters-egui's `Stats` count it: what native code
+/// sent to JS and what JS asked of the backend, so a test can assert that an interaction made no
+/// JS round trip ([`SkelterBackend::traffic`], [`SkelterBackend::take_traffic`]).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Traffic {
+    /// Native → JS: synchronous calls (`call_sync`: cancelable events, the row protocol).
+    pub syncs: u64,
+    /// Native → JS: events posted for the next checkpoint.
+    pub posts: u64,
+    /// Native → JS: observed native prop changes reported.
+    pub changes: u64,
+    /// Native → JS: checkpoints run (each drains JS's queue) and animation frames.
+    pub checkpoints: u64,
+    pub frames: u64,
+    /// JS → native: nodes created, tree edits (insert, remove, destroy), prop writes and reads,
+    /// method calls, listener changes and style ops.
+    pub creates: u64,
+    pub tree: u64,
+    pub sets: u64,
+    pub gets: u64,
+    pub calls: u64,
+    pub listens: u64,
+    pub styles: u64,
+}
+
+impl Traffic {
+    /// Everything native code sent to JS.
+    pub fn to_js(&self) -> u64 {
+        self.syncs + self.posts + self.changes + self.checkpoints + self.frames
+    }
+    /// Everything JS asked of the backend.
+    pub fn from_js(&self) -> u64 {
+        self.creates + self.tree + self.sets + self.gets + self.calls + self.listens + self.styles
+    }
+}
+
 pub struct Inner {
+    /// FQ-76: the JS traffic counters.
+    pub(crate) traffic: Cell<Traffic>,
     /// The tree: the backend's own, or the host's ([`SkelterBackend::shared`]), shared with it.
     pub(crate) doc: Rc<RefCell<Document>>,
     pub(crate) kinds: Arc<Kinds>,
@@ -200,6 +238,57 @@ pub struct Inner {
 pub struct SkelterBackend(pub(crate) Rc<Inner>);
 
 impl SkelterBackend {
+    /// FQ-76: the JS traffic since the backend was made or [`SkelterBackend::take_traffic`] last ran.
+    pub fn traffic(&self) -> Traffic {
+        self.0.traffic.get()
+    }
+
+    /// The traffic so far, and zeroes the counters (the start of an interaction under test).
+    pub fn take_traffic(&self) -> Traffic {
+        self.0.traffic.replace(Traffic::default())
+    }
+
+    pub(crate) fn count(&self, f: impl FnOnce(&mut Traffic)) {
+        let mut t = self.0.traffic.get();
+        f(&mut t);
+        self.0.traffic.set(t);
+    }
+
+    /// FQ-75: an app kind's method as the host sees it, from its core `MethodSpec`: each argument's
+    /// slot (records, lists and enums as variants: a plain object arrives as a record; a nullable
+    /// argument may be left out) and the return's, so the host converts what JS passes and gets
+    /// back. Built-in kinds' methods stay undescribed (their row protocol passes nodes as numbers).
+    fn describe_method(&self, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        let km = self.0.kinds.by_wire(kind)?;
+        if !km.app {
+            return None;
+        }
+        let m = km.method(member)?;
+        let c = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.methods.iter().find(|x| x.name == m.spec.name))?;
+        let ty = |t: skelter_core::ValueType| match t {
+            skelter_core::ValueType::List | skelter_core::ValueType::Record | skelter_core::ValueType::Enum => surface::ValueType::Any,
+            t => crate::kinds::surface_type(t, &[]),
+        };
+        let params = c
+            .params
+            .iter()
+            .map(|p| {
+                let t = ty(p.ty);
+                let mut s = value::slot_of(t).named(p.name);
+                if p.nullable {
+                    s = s.flags(SVL_D_NULLABLE | SVL_D_OPTIONAL);
+                }
+                if t == surface::ValueType::I64 {
+                    s = s.flags(SVL_D_INTEGRAL);
+                }
+                s
+            })
+            .collect();
+        // named: an unnamed variant slot reads as `void`
+        let ret = c.ret.map_or_else(|| SlotDesc::new(SVL_NULL), |r| value::slot_of(ty(r.ty)).named(r.name));
+        Some(MemberDesc { name: m.spec.name.to_string(), params, ret, flags: SVL_M_THROWS })
+    }
+
     /// A backend over a fresh [`Document`] of `kinds`, measuring no text (the runner gives it
     /// skelter-text's system with [`SkelterBackend::with_text`]).
     pub fn new(kinds: Arc<Kinds>) -> SkelterBackend {
@@ -242,6 +331,7 @@ impl SkelterBackend {
 
     fn build(kinds: Arc<Kinds>, doc: Rc<RefCell<Document>>) -> SkelterBackend {
         let b = SkelterBackend(Rc::new(Inner {
+            traffic: Cell::new(Traffic::default()),
             doc,
             kinds,
             side: RefCell::new(HashMap::new()),
@@ -390,6 +480,7 @@ impl SkelterBackend {
     pub fn fire_timer(&self) {
         self.0.deadline.set(None);
         if let Some(h) = self.host() {
+            self.count(|t| t.checkpoints += 1);
             h.checkpoint();
         }
     }
@@ -399,6 +490,7 @@ impl SkelterBackend {
         if self.0.frame_pending.replace(false)
             && let Some(h) = self.host()
         {
+            self.count(|t| t.frames += 1);
             h.frame();
         }
     }
@@ -408,6 +500,7 @@ impl SkelterBackend {
         if self.0.wake.take()
             && let Some(h) = self.host()
         {
+            self.count(|t| t.checkpoints += 1);
             h.checkpoint();
         }
     }
@@ -762,6 +855,7 @@ impl Backend for SkelterBackend {
     }
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
+        self.count(|t| t.creates += 1);
         let h = self.0.handles.borrow_mut().reserve(1);
         if self.0.behaviors.borrow().is_kind(kind) {
             self.behavior_create(h, kind)?;
@@ -772,6 +866,7 @@ impl Backend for SkelterBackend {
     }
 
     fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
+        self.count(|t| t.tree += 1);
         if self.0.behaviors.borrow().is_live(child) {
             // `use:`: the behaviour attaches to the element (no slot, no position)
             let (p, _) = self.live(parent)?;
@@ -782,6 +877,7 @@ impl Backend for SkelterBackend {
     }
 
     fn remove(&self, parent: svl_handle, child: svl_handle) -> StrResult<()> {
+        self.count(|t| t.tree += 1);
         if self.0.behaviors.borrow().is_live(child) {
             self.behavior_detach(child);
             return Ok(());
@@ -792,6 +888,7 @@ impl Backend for SkelterBackend {
     }
 
     fn destroy(&self, h: svl_handle) {
+        self.count(|t| t.tree += 1);
         // Children still attached are orphaned: the host destroys them itself.
         if self.0.borrowed.borrow().contains(&h) {
             return;
@@ -804,6 +901,7 @@ impl Backend for SkelterBackend {
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
+        self.count(|t| t.sets += 1);
         if self.0.behaviors.borrow().is_live(h) {
             return self.behavior_set(h, prop, v);
         }
@@ -811,6 +909,7 @@ impl Backend for SkelterBackend {
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
+        self.count(|t| t.gets += 1);
         if self.0.behaviors.borrow().is_live(h) {
             return self.0.behaviors.borrow().get(h, prop).ok_or_else(|| format!("unknown param id {prop}"));
         }
@@ -834,6 +933,7 @@ impl Backend for SkelterBackend {
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
+        self.count(|t| t.calls += 1);
         /// `popup`'s point: none (`None` inside: below the owner), `(x, y)`, or one `{x, y}` map
         /// or `[x, y]` list; `None` for anything else.
         fn popup_point(args: &[Value]) -> Option<Option<(f64, f64)>> {
@@ -911,7 +1011,8 @@ impl Backend for SkelterBackend {
                 let mid = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.method_named(name)).expect("checked");
                 let mut core_args = Vec::new();
                 let params: Vec<(&str, surface::ValueType)> = match (m.spec.params, core_method) {
-                    ([], Some(c)) => c
+                    // an app kind's own core method: its params as `describe_method` gives them (FQ-75)
+                    (_, Some(c)) if m.spec.params.is_empty() || km.app => c
                         .params
                         .iter()
                         .map(|p| match p.ty {
@@ -954,7 +1055,14 @@ impl Backend for SkelterBackend {
                         core_args.extend(value::to_core(v));
                     }
                 }
-                let (ret, events) = self.doc_mut().call(n, mid, &core_args).map_err(|e| format!("<{}>.{name}(): {e}", km.tag()))?;
+                let (ret, events) = match self.doc_mut().call(n, mid, &core_args) {
+                    Ok(r) => r,
+                    // FQ-75: a coded refusal is a `NativeError` in JS (`.code`, `.message`)
+                    Err(skelter_core::PropError::Coded { code, message }) => {
+                        return Ok(Value::Error(Box::new(svelters_abi::NativeError { domain: km.tag().to_string(), code: Value::Str(code), message })));
+                    }
+                    Err(e) => return Err(format!("<{}>.{name}(): {e}", km.tag())),
+                };
                 self.queue(Output { events, ..Output::default() });
                 // egui's specs type generated methods' returns `void`: the core method's answer
                 // (`count()`, `rowAt(pos)`, `selection()`) goes back as it is
@@ -975,6 +1083,7 @@ impl Backend for SkelterBackend {
 
     /// EV1 capture on the DOM-style events, and `LISTEN_PASSIVE` (compiler-and-js §3.5).
     fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> StrResult<()> {
+        self.count(|t| t.listens += 1);
         if self.0.behaviors.borrow().is_live(h) {
             // a behaviour emits nothing to JS yet: its listeners never fire
             return Ok(());
@@ -1038,6 +1147,7 @@ impl Backend for SkelterBackend {
     }
 
     fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<i32> {
+        self.count(|t| t.styles += 1);
         self.style_op(op, h, text)
     }
 
@@ -1075,11 +1185,14 @@ impl Backend for SkelterBackend {
     }
 
     fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        if what == NameKind::Method {
+            return self.describe_method(kind, member);
+        }
         if what != NameKind::Prop {
             return None;
         }
         let p = self.0.kinds.by_wire(kind)?.prop(member)?.spec;
-        let mut slot = SlotDesc::new(value::tag_of(p.ty)).named(p.name);
+        let mut slot = value::slot_of(p.ty).named(p.name);
         if p.nullable {
             slot = slot.flags(SVL_D_NULLABLE);
         }

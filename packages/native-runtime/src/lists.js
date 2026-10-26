@@ -100,6 +100,7 @@ export class ListController {
     this.view = null; // the virtual-list native
     this.keys = []; // key per position
     this.ids = []; // native id per position
+    this.labels = null; // SV59: the row labels the native list has, by position (with `label`)
     this.entries = new Map(); // key -> id
     this.keyOf = opts.keepIds ? new Map() : null; // keepIds (TreeView): id -> key, ids kept for good
     this.list = []; // current items snapshot, by position
@@ -140,28 +141,50 @@ export class ListController {
     const key = this.opts.key;
     const newKeys = new Array(list.length);
     for (let i = 0; i < list.length; i++) newKeys[i] = key(list[i], i);
+    // SV59: the rows' accessible names (and type-ahead text), read tracked so a rename re-sends them
+    const labelOf = this.opts.label?.();
+    const labels = labelOf ? list.map((item, i) => String(labelOf(item, i) ?? '')) : null;
     $.untrack(() => {
       this.list = list;
       if (this.view?.handle != null) {
         const ops = diffKeys(this.keys, newKeys);
-        if (ops.length) this.#applyOps(ops, newKeys);
+        if (ops.length) this.#applyOps(ops, newKeys, labels);
+        if (labels) this.#syncLabels(labels);
       }
       this.keys = newKeys;
       this.#refreshBound();
     });
   }
 
-  #applyOps(ops, newKeys) {
+  /** SV59: labels that changed without a splice (an item renamed) go out with `setLabels`. */
+  #syncLabels(labels) {
+    const had = this.labels;
+    this.labels = labels;
+    if (!had || had.length !== labels.length || had.some((l, i) => l !== labels[i])) {
+      try {
+        this.view.call('setLabels', labels);
+      } catch {
+        // a backend without `setLabels` keeps the labels its splices gave
+      }
+    }
+  }
+
+  #applyOps(ops, newKeys, labels) {
     if (!this.keyOf) {
       const present = new Set(newKeys);
       for (const k of this.keys) if (!present.has(k)) this.entries.delete(k);
     }
     for (const k of newKeys) if (!this.entries.has(k)) this.idOf(k);
+    const labelOf = labels && new Map(newKeys.map((k, i) => [k, labels[i]]));
     for (const op of ops) {
       const ids = op.add.map((k) => this.entries.get(k));
       this.ids = spliceArray(this.ids, op.pos, op.removed, ids);
       this.#shiftBound(op.pos, op.removed, ids.length);
-      this.view.call('splice', op.pos, op.removed, ids);
+      if (labelOf) {
+        const added = op.add.map((k) => labelOf.get(k));
+        this.labels = spliceArray(this.labels ?? [], op.pos, op.removed, added);
+        this.view.call('splice', op.pos, op.removed, ids, added);
+      } else this.view.call('splice', op.pos, op.removed, ids);
       this.splices++;
     }
   }
@@ -174,6 +197,7 @@ export class ListController {
     if (m === this.model) return;
     this.keys = [];
     this.ids = [];
+    this.labels = null;
     this.entries.clear();
     this.list = [];
     for (const s of this.slots.values()) s.pos = -1;
@@ -277,14 +301,28 @@ export class ListController {
       const item = this.list[s.pos];
       if (s.item.v !== item) $.set(s.item, item);
       if (s.index.v !== s.pos) $.set(s.index, s.pos);
+      this.#anchorRow(s);
     }
+  }
+
+  /**
+   * SV59: the row outlet (the node the list's option is) gets `rowAnchor(item, index)`, so a
+   * combobox's `aria-activedescendant` names the option itself; an unbound slot has none.
+   */
+  #anchorRow(s) {
+    const anchorOf = this.opts.anchor?.();
+    if (!anchorOf || !s.outlet) return;
+    const a = s.pos >= 0 ? String(anchorOf(this.list[s.pos], s.pos) ?? '') : '';
+    if (s.anchor === a) return;
+    s.anchor = a;
+    set(s.outlet, 'anchor', a);
   }
 
   // ---- native events ----
 
   setup(row) {
     if (this.destroyed || this.slots.has(row) || !this.view) return;
-    const s = { outlet: null, unmountOutlet: null, unmountRow: null, item: $.state(undefined), index: $.state(-1), ver: $.state(0), id: -1, pos: -1, gen: 0, epoch: 0 };
+    const s = { outlet: null, unmountOutlet: null, unmountRow: null, item: $.state(undefined), index: $.state(-1), ver: $.state(0), id: -1, pos: -1, gen: 0, epoch: 0, anchor: '' };
     // The outlet is a root of its own: it belongs to the slot, not to the component tree.
     s.unmountOutlet = mount(() => {
       s.outlet = element(rowOutlet());
@@ -325,6 +363,7 @@ export class ListController {
     this.#mountRow(s);
     // AX1: the row's anchors are scoped by its item's key (SV53), after the mount wrote them
     rowScope(s.outlet, this.keys[pos]);
+    this.#anchorRow(s);
     flush();
   }
 
@@ -350,6 +389,7 @@ export class ListController {
     if (!s || s.gen !== gen) return; // a late unbind of an older binding
     s.id = -1;
     s.pos = -1;
+    this.#anchorRow(s);
   }
 
   teardown(row) {
@@ -384,10 +424,10 @@ export class ListController {
   }
 }
 
-const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 'item', 'itemClass', 'key', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
+const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 'item', 'itemClass', 'key', 'label', 'rowAnchor', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
 
 /**
- * `<ListView items key row layout selection bind:selected row-height onactivate ...rest>`, the
+ * `<ListView items key label rowAnchor row layout selection bind:selected row-height onactivate ...rest>`, the
  * component API of @svelters/lists, in the shape the compiler generates for a component
  * (`ListView(container, $$props)`, returns its exports `{ scrollTo, controller }`). Other props go
  * to the native `virtual-list` unchanged (`vexpand`, `min-height`, ...).
@@ -396,6 +436,11 @@ const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 
  * then unused, rows get the model's items (`itemClass` wraps GTK items as that generated class;
  * `item(model, pos, raw)` overrides how a row's item is found), and the toolkit's view reads the
  * model directly.
+ *
+ * SV59 (array mode): `label(item, index)` names each row (the option's accessible name, as
+ * `<TreeView>`'s `label`, and type-ahead text); `rowAnchor(item, index)` is the row's own anchor,
+ * on the node AccessKit sees as the option, so `aria-activedescendant` can name it. (`anchor`
+ * stays the list's own, passed to the native list as any other prop.)
  */
 export function ListView($$anchor, $$props) {
   $.push($$props, true);
@@ -410,6 +455,8 @@ export function ListView($$anchor, $$props) {
   const contexts = getAllContexts();
   const ctl = new ListController({
     key: (item, index) => key()(item, index),
+    label: () => $$props.label,
+    anchor: () => $$props.rowAnchor,
     row: () => $$props.row,
     context: () => contexts,
     onactivate: (pos, item) => $$props.onactivate?.(item, pos),

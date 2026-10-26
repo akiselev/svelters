@@ -69,6 +69,7 @@ function mountList(props = {}) {
             $.set(selected, v);
           },
           'min-height': 100,
+          ...props.extra,
         });
       },
     );
@@ -154,6 +155,28 @@ test('bound rows follow splices and item replacements without a rebind', () => {
   $.set(l.items, $.get(l.items).map((it) => (it.id === 'c' ? { ...it, text: 'C!' } : it)));
   $.flush();
   assert.deepEqual(t.take(), ['set #5 label "1:C!"']);
+});
+
+test('SV59: `label` names the rows (splice labels, setLabels on a rename) and `rowAnchor` anchors the option node', () => {
+  const t = harness();
+  const l = mountList({ extra: { label: (it) => it.text, rowAnchor: (it) => `row:${it.id}` } });
+  assert.ok(t.take().includes('call #2 splice [0,0,[1,2,3],["A","B","C"]]'), 'labels ride the splice');
+  $.set(l.items, [...$.get(l.items), { id: 'd', text: 'D' }]);
+  $.flush();
+  assert.deepEqual(t.take(), ['call #2 splice [3,0,[4],["D"]]']);
+  // a rename keeps the key: no splice, the labels go out whole
+  $.set(l.items, $.get(l.items).map((it) => (it.id === 'b' ? { ...it, text: 'B!' } : it)));
+  $.flush();
+  assert.deepEqual(t.take(), ['call #2 setLabels [["A","B!","C","D"]]']);
+  // the row outlet (the option) takes the item's anchor at bind, and drops it unbound
+  t.sync(2, 'setup', [7]);
+  t.take();
+  t.sync(2, 'bind', [7, 1, 2, 1]);
+  assert.ok(t.take().includes('set #3 anchor "row:b"'));
+  t.sync(2, 'unbind', [7, 1]);
+  assert.deepEqual(t.take(), ['set #3 anchor ""']);
+  t.sync(2, 'bind', [7, 2, 3, 2]);
+  assert.ok(t.take().includes('set #3 anchor "row:c"'));
 });
 
 test('deferred delivery: raw args accepted, a stale bind finds its id, a late unbind of an older binding is ignored', () => {

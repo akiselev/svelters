@@ -29,6 +29,16 @@ export interface ListViewProps<T = any> {
   /** The key of an array item (array mode only; defaults to the index). */
   key?: (item: T, index: number) => unknown;
   /**
+   * Native runtime, array mode (SV59): the row's label, its option's accessible name and type-ahead
+   * text (as `<TreeView label>`).
+   */
+  label?: (item: T, index: number) => string;
+  /**
+   * Native runtime, array mode (SV59): the anchor of the row itself (the node assistive technology
+   * sees as the option), so a combobox's `aria-activedescendant` can name it.
+   */
+  rowAnchor?: (item: T, index: number) => string;
+  /**
    * Model mode, GTK: the generated class rows wrap their native item as (`FileInfo` for a
    * `DirectoryList`). An item that already has a wrapper keeps it (identity).
    */

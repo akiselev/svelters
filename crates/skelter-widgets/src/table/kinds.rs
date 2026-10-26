@@ -129,6 +129,7 @@ pub static TABLE: KindSpec = KindSpec {
     focusable: true,
     container: true,
     folds_children: true,
+    conceals_children: true,
     parts: BAR_PARTS,
     doc: "A virtual table: rows are a JS data window (`range` → `set-rows`), columns its `table-column` children.",
     ..KindSpec::new("table")
@@ -279,6 +280,22 @@ pub struct TableKind {
     policy: Policy,
     /// The theme is dark (the bars' UA colours).
     dark: bool,
+    /// What each virtual child of the last a11y node is, by index (FQ-66): actions on them.
+    a11y_targets: std::cell::RefCell<Vec<A11yTarget>>,
+}
+
+/// A virtual child of the table's a11y node: the header row, a column header (data column), a
+/// realised row (position) or one of its cells (position, shown column).
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum A11yTarget {
+    HeaderRow,
+    Header(usize),
+    Row(u64),
+    Cell(u64, usize),
+}
+
+fn ax_rect(r: Rect) -> skelter_base::accesskit::Rect {
+    skelter_base::accesskit::Rect { x0: r.min.x as f64, y0: r.min.y as f64, x1: r.max.x as f64, y1: r.max.y as f64 }
 }
 
 /// A cell edit: the cell (row position, data column), its rect (from the last prepare) and the
@@ -321,7 +338,12 @@ impl TableKind {
     /// Delivers `out`, writes back what the model changed itself (its props, and the widths of the
     /// columns the user resized), and applies its focus and scroll requests.
     fn deliver(&mut self, cx: &mut EventCx, out: Vec<Emit>) {
-        for name in self.table.take_changed() {
+        let changed = self.table.take_changed();
+        // a selection, cursor, sort or data change: the rows' a11y nodes follow (a hover does not)
+        if !out.is_empty() || !changed.is_empty() {
+            cx.request_a11y();
+        }
+        for name in changed {
             let Some(i) = TABLE_PROPS.iter().position(|p| p.name == name) else { continue };
             if let Some(v) = self.table.state.get_prop(name) {
                 let _ = cx.set_native(TABLE.prop_id(i), to_core(&v, Some(&TABLE_PROPS[i])));
@@ -368,6 +390,8 @@ impl TableKind {
         let rec: Vec<(Arc<str>, Value)> = vec![("scrollLeft".into(), Value::F64(self.off.x as f64)), ("scrollTop".into(), Value::F64(self.off.y as f64))];
         cx.emit(skelter_core::common::SCROLL, Some(Value::Record(rec.into())));
         cx.request_paint();
+        // other rows are realised
+        cx.request_a11y();
     }
 
     /// Pointer events over the bars (a thumb drag, a track press and its hold): `Some` when they
@@ -567,6 +591,7 @@ impl Kind for TableKind {
         };
         let Some(v) = v else { return Err(PropError::Rejected(format!("{}: not a value the table takes", p.name))) };
         let class = self.table.state.set_prop(p.name, &v).map_err(PropError::Rejected)?;
+        cx.request_a11y();
         if class >= ChangeClass::Layout {
             cx.request_layout();
         } else {
@@ -703,6 +728,17 @@ impl Kind for TableKind {
                     _ => used,
                 }
             }
+            // FQ-66: AccessKit's `Click` on a row, a cell or a column header, as a pointer's click
+            Event::A11yChild(req, i) if req.action == skelter_base::accesskit::Action::Click => {
+                let target = self.a11y_targets.borrow().get(*i as usize).copied();
+                match target {
+                    Some(A11yTarget::Header(d)) => self.table.click_header(d, &mut out),
+                    Some(A11yTarget::Row(pos)) => self.table.click_row(pos, None, Default::default(), &mut out),
+                    Some(A11yTarget::Cell(pos, k)) => self.table.click_row(pos, Some(k), Default::default(), &mut out),
+                    Some(A11yTarget::HeaderRow) | None => {}
+                }
+                target.is_some_and(|t| t != A11yTarget::HeaderRow)
+            }
             Event::FocusIn(reason) => {
                 self.table.set_focus(true, *reason == FocusReason::Keyboard);
                 true
@@ -745,14 +781,87 @@ impl Kind for TableKind {
         }
         self.deliver(cx, Vec::new());
         cx.request_layout();
+        cx.request_a11y();
         Ok(None)
     }
 
+    /// The table, its header row of column headers and its realised rows with their cells, as
+    /// virtual children (FQ-66): rows and cells named from the cell text, with their row and column
+    /// index and selected state, and `Click` (a row's, a cell's: select as a click; a header's:
+    /// `header-clicked` and the sort). Only the rows and columns in view, as drawn.
     fn a11y(&self, cx: &mut A11yCx) {
+        use skelter_base::accesskit::{Action, Node, SortDirection};
         cx.default_a11y();
         cx.out.set_role(Role::Table);
-        cx.out.set_row_count(self.table.state.len() as usize);
-        cx.out.set_column_count(self.table.shown().len());
+        let t = &self.table;
+        let len = t.state.len();
+        let shown = t.shown();
+        cx.out.set_row_count(len as usize);
+        cx.out.set_column_count(shown.len());
+        let g = t.geom();
+        let cols: Vec<usize> = g.visible_cols().collect();
+        let mut targets = Vec::new();
+        let mut head = Node::new(Role::Row);
+        head.set_bounds(ax_rect(g.head));
+        if let Some(hi) = cx.add_virtual_child(head) {
+            targets.push(A11yTarget::HeaderRow);
+            for &k in &cols {
+                let d = shown[k];
+                let col = &t.columns[d];
+                let (r, clip) = g.head_rect(k);
+                let mut n = Node::new(Role::ColumnHeader);
+                n.set_label(col.title.as_str());
+                n.set_column_index(k);
+                n.set_bounds(ax_rect(r.intersect(&clip)));
+                match t.state.shown_sort(d, col) {
+                    "ascending" => n.set_sort_direction(SortDirection::Ascending),
+                    "descending" => n.set_sort_direction(SortDirection::Descending),
+                    _ => {}
+                }
+                n.add_action(Action::Click);
+                if cx.add_virtual_child_of(hi, n).is_none() {
+                    break;
+                }
+                targets.push(A11yTarget::Header(d));
+            }
+        }
+        let (first, end) = g.visible_rows(len);
+        'rows: for pos in first..end {
+            let selected = t.state.sel.is_selected(t.state.key_of(pos));
+            let texts: Vec<&str> = shown.iter().filter_map(|&d| t.state.cell(pos, d)).filter(|s| !s.is_empty()).collect();
+            let mut row = Node::new(Role::Row);
+            row.set_row_index(pos as usize);
+            row.set_bounds(ax_rect(g.row_rect(pos).intersect(&g.body)));
+            match texts.is_empty() {
+                false => row.set_label(texts.join(" ")),
+                true => {
+                    if let Some(l) = t.state.label(pos as usize) {
+                        row.set_label(l);
+                    }
+                }
+            }
+            row.set_selected(selected);
+            row.add_action(Action::Click);
+            let Some(ri) = cx.add_virtual_child(row) else { break };
+            targets.push(A11yTarget::Row(pos));
+            for &k in &cols {
+                let (r, clip) = g.cell_rect(pos, k);
+                let mut n = Node::new(Role::Cell);
+                if let Some(text) = t.state.cell(pos, shown[k]) {
+                    n.set_label(text);
+                }
+                n.set_row_index(pos as usize);
+                n.set_column_index(k);
+                n.set_bounds(ax_rect(r.intersect(&clip)));
+                n.set_selected(selected);
+                n.add_action(Action::Click);
+                if cx.add_virtual_child_of(ri, n).is_none() {
+                    break 'rows;
+                }
+                targets.push(A11yTarget::Cell(pos, k));
+            }
+        }
+        *self.a11y_targets.borrow_mut() = targets;
     }
 }
 

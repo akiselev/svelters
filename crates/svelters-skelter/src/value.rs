@@ -141,6 +141,17 @@ pub fn signal_args(s: &SignalSpec, arg: Option<&core::Value>, target: i64, phase
         .collect()
 }
 
+/// The host's slot for a value of type `ty` (`describe`). A record or `any` value has no type
+/// descriptor of its own here (FQ-74): it is a variant slot, so a plain object arrives as a map (a
+/// record with its fields, nested ones too), an array as a list, a number, string or boolean as
+/// itself.
+pub fn slot_of(ty: ValueType) -> svelters_abi::SlotDesc {
+    match ty {
+        ValueType::Record | ValueType::Any => svelters_abi::SlotDesc::new(svelters_abi::SVL_NULL).typed(svelters_abi::SVL_T_VARIANT).flags(svelters_abi::SVL_D_NULLABLE),
+        t => svelters_abi::SlotDesc::new(tag_of(t)),
+    }
+}
+
 /// The ABI value tag a prop of type `ty` reads back as (`describe`).
 pub fn tag_of(ty: ValueType) -> u16 {
     match ty {

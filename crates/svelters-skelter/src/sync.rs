@@ -159,7 +159,12 @@ impl SkelterBackend {
                 Phase::Bubble => PHASE_BUBBLE,
             };
             let args = value::signal_args(sm.spec, ev.arg.as_ref(), target, phase);
-            match host.call_sync(h, sm.wire, &args) {
+            // FQ-65: a signal the surface does not declare sync (a checkbox's `changed`) is called
+            // now only so it can be cancelled: its listeners get its arguments as when posted
+            // (as on egui), the event last (`SVL_SIGNAL_ARGS`).
+            let wire = if sm.spec.sync { sm.wire } else { sm.wire | SVL_SIGNAL_ARGS << SVL_SIGNAL_FLAGS_SHIFT };
+            self.count(|t| t.syncs += 1);
+            match host.call_sync(h, wire, &args) {
                 Ok(Value::Bool(true)) => {
                     out.prevented = ev.cancelable;
                     out.stopped = true;

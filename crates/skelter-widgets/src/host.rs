@@ -183,6 +183,15 @@ impl crate::shim::text::TextGeometry for SkelterGeometry {
     }
 }
 
+/// The node has a JS listener for a click or a press (the DOM-style events, or its kind's own
+/// `clicked`): its whole box takes the pointer.
+fn takes_clicks(node: skelter_core::NodeView<'_>) -> bool {
+    use skelter_core::common::{CLICK, CONTEXTMENU, DBLCLICK, POINTERDOWN, POINTERUP};
+    let spec = node.kind().spec;
+    let own = spec.signals.iter().position(|s| s.name == "clicked").map(|i| spec.signal_id(i));
+    node.listeners().iter().any(|l| [CLICK, DBLCLICK, POINTERDOWN, POINTERUP, CONTEXTMENU].contains(&l.signal) || Some(l.signal) == own)
+}
+
 // ---- specs ----
 
 /// skelter-core's spec for a widget, and the maps between the two prop index spaces.
@@ -840,6 +849,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        // FQ-67: the widget's `disabled` mirror follows the node's state before it paints (a
+        // `disabled` write reaches `prop_changed` before core updates the state; inertness never does)
+        self.sync_disabled(cx.node.disabled());
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
@@ -930,6 +942,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
         match self.widget.hit_test(&w::HitCx { size: cx.size() }, p) {
             w::HitResult::Hit => cx.box_hit(p),
+            // a widget whose hit area is smaller than its box (a label's text) that JS listens to
+            // for clicks or presses takes them on its whole box, as a button does
+            w::HitResult::Miss if takes_clicks(cx.node) => cx.box_hit(p),
             w::HitResult::Miss => HitResult::Miss,
         }
     }
@@ -1046,7 +1061,16 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let (state, size) = (StateBits(cx.state().0), cx.size());
         let mut wcx = w::A11yCx { node: cx.out, state, size, children: Vec::new() };
         self.widget.a11y(&mut wcx);
-        for c in std::mem::take(&mut wcx.children) {
+        // FQ-67: `disabled` is the node's state (its `disabled` prop or an inert ancestor), not the
+        // widget's mirror, which may lag it (a button re-enabled by a prop write stayed disabled).
+        // A widget disabled by a prop of its own (not the mirror) keeps what it said.
+        let children = std::mem::take(&mut wcx.children);
+        if cx.node.disabled() {
+            cx.out.set_disabled();
+        } else if Self::spec_ref().disabled.is_some() {
+            cx.out.clear_disabled();
+        }
+        for c in children {
             cx.add_virtual_child(c);
         }
     }

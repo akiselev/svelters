@@ -119,3 +119,34 @@ fn a_signal_the_surface_does_not_declare_sync_is_posted_with_its_arguments() {
     assert!(l.syncs.is_empty(), "not run as a sync signal: {:?}", l.syncs);
     assert_eq!(l.events, [(t, r.signal_id(t, "changed"), vec![Value::Str("cyl".into())])]);
 }
+
+/// FQ-65 (cadatomic rmegui): a checkbox's `changed` is cancelable, so skelter-core delivers it at
+/// event time and the backend calls it synchronously, but the surface signal is not sync: its
+/// listeners take the value (`(v) => setVisible(v)`), not a `NativeEvent` first. The call carries
+/// `SVL_SIGNAL_ARGS`, and the runtime's `true` (a `preventDefault()`) still cancels.
+#[test]
+fn a_cancelable_widget_signal_is_called_with_its_arguments_first() {
+    let r = Rig::new();
+    let c = r.create("checkbox");
+    r.listen(c, "changed");
+    let n = r.backend.node(c).unwrap();
+    let mut ev = r.backend.target_event(n, "changed", vec![PValue::Bool(true)]).unwrap();
+    ev.cancelable = true; // as skelter-core marks skelter-widgets' checkbox `changed`
+    r.log.borrow_mut().sync_answer = Some(Value::Bool(true));
+    let o = r.backend.deliver_cancelable(&ev);
+    assert!(o.prevented, "preventDefault cancels the toggle");
+    let l = r.take();
+    assert_eq!(l.syncs.len(), 1);
+    let (h, id, args) = &l.syncs[0];
+    assert_eq!(*h, c);
+    assert_eq!(*id, r.signal_id(c, "changed") | SVL_SIGNAL_ARGS << SVL_SIGNAL_FLAGS_SHIFT);
+    assert_eq!(args, &vec![Value::Bool(true)]);
+    // a DOM-style event keeps the `(event, ...args)` call: no flag
+    let b = r.create("button");
+    r.listen(b, "keydown");
+    let nb = r.backend.node(b).unwrap();
+    let kd = r.backend.target_event(nb, "keydown", vec![PValue::I64(b as i64), PValue::I64(2), PValue::Str("a".into()), PValue::Bool(false), PValue::I64(0)]).unwrap();
+    r.backend.deliver_cancelable(&kd);
+    let l = r.take();
+    assert_eq!(l.syncs[0].1, r.signal_id(b, "keydown"));
+}

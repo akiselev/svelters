@@ -94,6 +94,7 @@ The compiler writes its output as edits over your source rather than reprinting 
 | `on<signal>capture={f}` | works | Where the spec allows the capture phase; else `listen_phase_unsupported`. |
 | `{@attach listen(sig, fn, { after, capture })}` | works | `listen` from `@svelters/native-runtime`. |
 | Sync signals (`close-request`, `key-pressed`) | works | Handlers get a `NativeEvent` first: `e.preventDefault()`, `e.result = v`. |
+| Cancelable value signals (skelter's `changed` on checkbox, switch, slider) | works | Handlers get the arguments as on any signal, then the `NativeEvent` last: `(v, e) => e.preventDefault()` cancels. |
 | Legacy `on:name={handler}` | works | A listener like `onname={handler}`; on a component, the prop `onname={handler}`. Modifiers are errors. |
 | Bare `on:name` (forwarding) | works | Forwards the component's own `onname` callback prop to one handler, the parent's; no component events ([events guide](/guides/events/)). |
 

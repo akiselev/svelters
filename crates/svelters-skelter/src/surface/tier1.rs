@@ -222,6 +222,8 @@ static COMBOBOX_PROPS: &[PropSpec] = &[
     PropSpec { name: "hint-text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Shown while `selected` is out of range." },
     PropSpec { name: "max-visible", ty: ValueType::I64, default: DefaultValue::I64(30), nullable: false, change: ChangeClass::Layout, native: false, doc: "Rows shown before the list scrolls (QComboBox `maxVisibleItems`)." },
     PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The list is open; the user opening or closing it changes it, setting it opens or closes it\n(QComboBox `showPopup`/`hidePopup`)." },
+    // skelter's addition (not in egui.json): the options' anchors, as egui's ComboBox gave each option an id
+    PropSpec { name: "option-anchors", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: false, doc: "Each option's anchor, by position (empty: none): the option's AccessKit author id, so automation and tours address it (`ecad.lib.part.new.footprint:LED_0805`). Build it with the options: `option-anchors={parts.map((p) => 'part:' + p.name)}`." },
     PropSpec { name: "options", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: false, doc: "The choices, in order (the popup's rows)." },
     PropSpec { name: "selected", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Paint, native: true, doc: "Index of the chosen option; picking a row changes it. Out of range shows no text." },
     PropSpec { name: "wheel", ty: ValueType::Enum(&["off", "hover", "focused"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`." },
@@ -369,6 +371,7 @@ static VIRTUALLIST_METHODS: &[MethodSpec] = &[
     MethodSpec { name: "count", params: &[], ret: None, doc: "The number of items." },
     MethodSpec { name: "rowAt", params: &[], ret: None, doc: "`rowAt(pos)`: the slot bound to `pos`, or -1." },
     MethodSpec { name: "scrollTo", params: &[], ret: None, doc: "`scrollTo(pos, hint?)`: scrolls the item into view; `hint` (Qt `ScrollHint`): `nearest` (the default, the least scroll), `top`, `bottom` or `center`." },
+    MethodSpec { name: "setLabels", params: &[], ret: None, doc: "`setLabels(labels)`: every row's label (one per id): its accessible name and type-ahead text (SV59, `<ListView label>`)." },
     MethodSpec { name: "setRow", params: &[], ret: None, doc: "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it." },
     MethodSpec { name: "splice", params: &[], ret: None, doc: "`splice(pos, removed, ids, labels?)`: replaces `removed` ids at `pos` with `ids` (unique integers); `labels` (strings, one per id) are what type-ahead matches." },
 ];

@@ -109,6 +109,7 @@ impl SkelterBackend {
             if ends > 0
                 && let Some(h) = self.host()
             {
+                self.count(|t| t.checkpoints += 1);
                 h.checkpoint();
             }
             return Delivered { events: ends, ..Delivered::default() };
@@ -143,6 +144,7 @@ impl SkelterBackend {
             let (Some(h), Some(m)) = (self.handle(*node), kind_of(*node)) else { continue };
             for pm in m.of_native_prop(*prop) {
                 if self.0.observed.borrow().contains_key(&(h, pm.wire)) {
+                    self.count(|t| t.changes += 1);
                     host.prop_changed(h, pm.wire);
                     done.changes += 1;
                 }
@@ -168,14 +170,17 @@ impl SkelterBackend {
                 // arguments alone, as on egui, not a `NativeEvent` first. Posting keeps the order:
                 // a later sync event flushes the posted ones first (QC1-EXP-002, QC1-EXP-005).
                 if !ev.sync || !sm.spec.sync {
+                    self.count(|t| t.posts += 1);
                     host.post_event(h, sm.wire, &args);
                     posted = true;
                     continue;
                 }
                 if posted {
+                    self.count(|t| t.checkpoints += 1);
                     host.checkpoint();
                     posted = false;
                 }
+                self.count(|t| t.syncs += 1);
                 match host.call_sync(h, sm.wire, &args) {
                     Ok(Value::Bool(true)) => {
                         cancelled = true;
@@ -193,6 +198,7 @@ impl SkelterBackend {
             done.cancelled.push(cancelled);
         }
         if done.events > 0 || done.changes > 0 {
+            self.count(|t| t.checkpoints += 1);
             host.checkpoint();
         }
         self.0.seen.set(prev);

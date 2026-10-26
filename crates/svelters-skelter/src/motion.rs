@@ -112,6 +112,7 @@ impl SkelterBackend {
         for (h, op) in ended {
             let Ok(km) = self.kind_map(h) else { continue };
             let Some(sm) = km.signal_named("animationend") else { continue };
+            self.count(|t| t.posts += 1);
             host.post_event(h, sm.wire, &[Value::I64(op as i64)]);
             n += 1;
         }

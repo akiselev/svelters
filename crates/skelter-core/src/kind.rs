@@ -188,6 +188,9 @@ pub struct KindSpec {
     /// runs): the node is a layout leaf (its `measure` is called), its children are not laid out,
     /// recorded or hit, and a child's prop, style or structure change remeasures and repaints it.
     pub folds_children: bool,
+    /// Its children stay out of the accessibility tree: the kind publishes what they stand for
+    /// itself, as virtual children (a table's `table-column`s are its column headers).
+    pub conceals_children: bool,
     pub methods: &'static [MethodSpec],
     /// The accessible name's sources, in order.
     pub name_from: &'static [NameSource],
@@ -216,6 +219,7 @@ impl KindSpec {
             focusable: false,
             container: false,
             folds_children: false,
+            conceals_children: false,
             methods: &[],
             name_from: DEFAULT_NAME_FROM,
             parts: &[],

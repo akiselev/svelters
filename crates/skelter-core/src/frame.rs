@@ -490,10 +490,10 @@ impl Document {
         let mut shaper = self.shaper.take();
         let mut services = std::mem::take(&mut self.services);
         let mut emitted = Vec::new();
-        let (request, scroll, caret) = {
-            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None };
+        let (request, scroll, caret, native) = {
+            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None, native: Vec::new() };
             k.prepare(&mut cx);
-            (cx.request, cx.scroll, cx.caret)
+            (cx.request, cx.scroll, cx.caret, cx.native)
         };
         // a kind that scrolls itself may have grown or shrunk its content
         let own = k.self_scroll(&self.view_at(i));
@@ -549,6 +549,10 @@ impl Document {
         self.services = services;
         self.kinds[i] = Some(k);
         let _ = request;
+        // the prepare's native writes (FQ-73), as an event's: journalled for JS, a repaint next frame
+        for (prop, v) in native {
+            let _ = self.set_prop_native(node, prop, v);
+        }
         for e in emitted {
             crate::input::dispatch::queue_emitted(self, e);
         }

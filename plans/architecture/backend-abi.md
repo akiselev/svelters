@@ -430,7 +430,8 @@ int (*get_child_attr)(void *self, svl_handle parent, svl_handle child, svl_id at
 int (*listen_ex)(void *self, svl_handle h, svl_id signal, bool on, uint32_t flags);
 
 enum { SVL_LISTEN_AFTER = 1, SVL_LISTEN_CAPTURE = 2 };   /* listen_ex flags; 4 is reserved for SYNC */
-#define SVL_SIGNAL_FLAGS_SHIFT 28                         /* flags ride in bits 28..30 of the signal id of post_event/call_sync */
+#define SVL_SIGNAL_FLAGS_SHIFT 28                         /* flags ride in bits 28..31 of the signal id of post_event/call_sync */
+#define SVL_SIGNAL_ARGS 8   /* call_sync only (FQ-65): a non-`sync` signal called synchronously so it can be cancelled; listeners get (...args, event) */
 ```
 
 **Child attributes.**

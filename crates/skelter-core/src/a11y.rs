@@ -174,7 +174,26 @@ impl Document {
             out.set_hidden();
         }
         let kids: Vec<NodeId> = self.a11y_children(i).collect();
-        let virtual_children: Vec<(AxId, Node)> = virtual_children.into_iter().enumerate().map(|(k, n)| (virtual_id(node, k as u32), n)).collect();
+        // nested virtual children (a row's cells) are their parent's children, not the node's
+        let mut top = Vec::new();
+        let mut nested: Vec<Vec<AxId>> = vec![Vec::new(); virtual_children.len()];
+        for (k, (_, parent)) in virtual_children.iter().enumerate() {
+            match parent {
+                Some(p) => nested[*p as usize].push(virtual_id(node, k as u32)),
+                None => top.push(virtual_id(node, k as u32)),
+            }
+        }
+        let virtual_children: Vec<(AxId, Node)> = virtual_children
+            .into_iter()
+            .zip(nested)
+            .enumerate()
+            .map(|(k, ((mut n, _), kids))| {
+                if !kids.is_empty() {
+                    n.set_children(kids);
+                }
+                (virtual_id(node, k as u32), n)
+            })
+            .collect();
         if let Some(w) = window.and_then(|w| self.window_mut(w)) {
             if virtual_children.is_empty() {
                 w.a11y_virtual.remove(&node);
@@ -182,7 +201,7 @@ impl Document {
                 w.a11y_virtual.insert(node, virtual_children.len() as u32);
             }
         }
-        out.set_children(kids.iter().map(|&c| ax(c)).chain(virtual_children.iter().map(|(id, _)| *id)).collect::<Vec<_>>());
+        out.set_children(kids.iter().map(|&c| ax(c)).chain(top).collect::<Vec<_>>());
         if self.state[i].contains(svelters_style::StateMask::INVALID) {
             out.set_invalid(accesskit::Invalid::True);
         }
@@ -201,6 +220,12 @@ impl Document {
             let v = self.view_at(i);
             let ad = v.prop_str(crate::common::ARIA_ACTIVEDESCENDANT).filter(|a| !a.is_empty()).map(str::to_owned);
             let controls = v.prop_str(crate::common::ARIA_CONTROLS).filter(|a| !a.trim().is_empty()).map(str::to_owned);
+            // SV60: watched, so a target that appears (or goes) later sends this node again
+            if ad.is_some() || controls.is_some() {
+                self.a11y_refs.entry(node).or_default();
+            } else {
+                self.a11y_refs.remove(&node);
+            }
             if let Some(t) = ad.and_then(|a| self.find_anchor(w, &a)) {
                 out.set_active_descendant(ax(t));
             }
@@ -217,7 +242,8 @@ impl Document {
 
     /// The children in the accessibility tree: all but those their container conceals.
     fn a11y_children(&self, i: usize) -> impl Iterator<Item = NodeId> + '_ {
-        self.children[i].iter().copied().filter(|&c| !self.core[self.ix(c)].flags.contains(crate::tree::NodeFlags::CONCEALED))
+        let kids: &[NodeId] = if self.view_at(i).kind().spec.conceals_children { &[] } else { &self.children[i] };
+        kids.iter().copied().filter(|&c| !self.core[self.ix(c)].flags.contains(crate::tree::NodeFlags::CONCEALED))
     }
 
     /// The update for this frame (`None`: nothing changed). The whole tree goes out on the window's
@@ -234,37 +260,52 @@ impl Document {
         let mut nodes = Vec::new();
         let mut sent: HashSet<NodeId> = HashSet::new();
         let mut queue: Vec<NodeId> = if first { vec![root] } else { dirty.iter().copied().filter(|n| known.contains(n)).collect() };
-        while let Some(n) = queue.pop() {
-            let Some(i) = self.idx(n) else { continue };
-            if self.core[i].window != Some(window) || !sent.insert(n) {
-                continue;
-            }
-            let old_kids = std::mem::take(&mut self.record[i].a11y_kids);
-            let (node, virtual_children) = self.a11y_node(i);
-            nodes.push((ax(n), node));
-            // virtual children go out with their owner (and leave with it): never in the known set
-            nodes.extend(virtual_children);
-            known.insert(n);
-            // children that joined the tree come with this node
-            for &c in &self.record[i].a11y_kids {
-                if !known.contains(&c) {
-                    queue.push(c);
+        self.a11y_refs.retain(|n, _| self.slots.index(*n).is_some());
+        loop {
+            while let Some(n) = queue.pop() {
+                let Some(i) = self.idx(n) else { continue };
+                if self.core[i].window != Some(window) || !sent.insert(n) {
+                    continue;
                 }
-            }
-            // a virtualising node's realised rows carry its state (`selected`, positions): with it
-            if let Some(st) = self.virt.get(&n) {
-                queue.extend(st.rows.iter().map(|&(_, r)| r).filter(|r| known.contains(r)));
-            }
-            // children that left it take their subtrees out of the known set
-            for c in old_kids.into_iter().filter(|c| !self.record[i].a11y_kids.contains(c)) {
-                let mut stack = vec![c];
-                while let Some(g) = stack.pop() {
-                    // a node moved under a parent sent earlier in this update stays
-                    if !sent.contains(&g) && known.remove(&g) {
-                        stack.extend(self.children(g).iter().copied());
+                let old_kids = std::mem::take(&mut self.record[i].a11y_kids);
+                let (node, virtual_children) = self.a11y_node(i);
+                nodes.push((ax(n), node));
+                // virtual children go out with their owner (and leave with it): never in the known set
+                nodes.extend(virtual_children);
+                known.insert(n);
+                // children that joined the tree come with this node
+                for &c in &self.record[i].a11y_kids {
+                    if !known.contains(&c) {
+                        queue.push(c);
+                    }
+                }
+                // a virtualising node's realised rows carry its state (`selected`, positions): with it
+                if let Some(st) = self.virt.get(&n) {
+                    queue.extend(st.rows.iter().map(|&(_, r)| r).filter(|r| known.contains(r)));
+                }
+                // children that left it take their subtrees out of the known set
+                for c in old_kids.into_iter().filter(|c| !self.record[i].a11y_kids.contains(c)) {
+                    let mut stack = vec![c];
+                    while let Some(g) = stack.pop() {
+                        // a node moved under a parent sent earlier in this update stays
+                        if !sent.contains(&g) && known.remove(&g) {
+                            stack.extend(self.children(g).iter().copied());
+                        }
                     }
                 }
             }
+            // SV60: a node naming anchors whose targets the tree has now (a row realised after the field
+            // set `aria-activedescendant`) or no longer has goes out again
+            let stale: Vec<NodeId> = self.a11y_refs.iter().filter(|&(n, was)| known.contains(n) && !sent.contains(n) && self.a11y_refs_now(window, *n, &known) != *was).map(|(n, _)| *n).collect();
+            if stale.is_empty() {
+                break;
+            }
+            queue.extend(stale);
+        }
+        let refs: Vec<NodeId> = self.a11y_refs.keys().copied().filter(|n| sent.contains(n)).collect();
+        for n in refs {
+            let now = self.a11y_refs_now(window, n, &known);
+            self.a11y_refs.insert(n, now);
         }
         if nodes.is_empty() {
             if let Some(w) = self.window_mut(window) {
@@ -295,6 +336,16 @@ impl Document {
                 .collect()
         };
         Some(validate(update, ax(root), &prev))
+    }
+
+    /// The nodes `n`'s `aria-activedescendant` and `aria-controls` name that the tree has (`known`).
+    fn a11y_refs_now(&self, window: WindowId, n: NodeId, known: &HashSet<NodeId>) -> (Option<NodeId>, Vec<NodeId>) {
+        let Some(i) = self.idx(n) else { return Default::default() };
+        let v = self.view_at(i);
+        let find = |a: &str| self.find_anchor(window, a).filter(|t| known.contains(t));
+        let ad = v.prop_str(crate::common::ARIA_ACTIVEDESCENDANT).filter(|a| !a.is_empty()).and_then(find);
+        let controls = v.prop_str(crate::common::ARIA_CONTROLS).map_or_else(Vec::new, |c| c.split_whitespace().filter_map(find).collect());
+        (ad, controls)
     }
 
     /// `TreeUpdate.focus` (module docs): the focus target resolved to an id the tree has.
