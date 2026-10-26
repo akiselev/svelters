@@ -43,3 +43,70 @@ pub struct MatchedRuleInfo {
     pub source: Option<StyleSource>,
     pub decls: Vec<DeclInfo>,
 }
+
+/// DZ0 (dev): where a component sheet's text came from: the component's `.svelte` path (as the
+/// compiler got it), the runs of the sheet text that are untouched `<style>` text, and the sheet's
+/// line starts (rules and declarations carry a line and a UTF-16 column).
+#[derive(Debug)]
+pub struct SheetSource {
+    file: String,
+    map: Vec<(u32, u32, u32)>,
+    css: String,
+    lines: Vec<u32>,
+}
+
+impl SheetSource {
+    /// `None` when `map` (`out,src,len;…`) doesn't parse.
+    pub fn new(file: &str, map: &str, css: &str) -> Option<SheetSource> {
+        let map = parse_map(map)?;
+        let lines = std::iter::once(0).chain(css.match_indices('\n').map(|(i, _)| i as u32 + 1)).collect();
+        Some(SheetSource { file: file.to_string(), map, css: css.to_string(), lines })
+    }
+
+    /// The `<style>`-relative offset of the sheet text at `line` (1-based) and `column` (1-based,
+    /// UTF-16 units, as cssparser counts), if that text is untouched style text.
+    pub fn at(&self, line: u32, column: u32) -> Option<u32> {
+        let start = *self.lines.get(line.checked_sub(1)? as usize)? as usize;
+        let text = self.css.get(start..)?;
+        let mut units = 1;
+        let mut byte = start;
+        for c in text.chars() {
+            if units >= column || c == '\n' {
+                break;
+            }
+            units += c.len_utf16() as u32;
+            byte += c.len_utf8();
+        }
+        let at = byte as u32;
+        let k = self.map.partition_point(|&(o, _, _)| o <= at).checked_sub(1)?;
+        let (o, s, l) = self.map[k];
+        (at < o + l).then_some(s + (at - o))
+    }
+}
+
+/// `out,src,len;…` runs (svelters-compiler `ScopedCss::source_map_text`; parsed here, as the
+/// backends do not depend on the compiler).
+fn parse_map(text: &str) -> Option<Vec<(u32, u32, u32)>> {
+    if text.is_empty() {
+        return Some(Vec::new());
+    }
+    text.split(';')
+        .map(|run| {
+            let mut it = run.split(',').map(|x| x.parse::<u32>().ok());
+            Some((it.next()??, it.next()??, it.next()??))
+        })
+        .collect()
+}
+
+impl SheetSource {
+    /// The component's `.svelte` path.
+    pub fn file(&self) -> &str {
+        &self.file
+    }
+
+    /// The [`StyleSource`] of the sheet text at `line` and `column` (a rule's or a declaration's),
+    /// if that text is untouched style text.
+    pub fn source_at(&self, line: u32, column: u32) -> Option<StyleSource> {
+        Some(StyleSource { file: self.file.clone(), style_offset: self.at(line, column)? })
+    }
+}

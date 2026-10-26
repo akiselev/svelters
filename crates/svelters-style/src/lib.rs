@@ -46,7 +46,7 @@ pub use cascade::{MatchCaches, MatchedRule, Origin, RuleId, SheetId, Stylist, ma
 pub use computed::{ComputeContext, ComputedStyle};
 pub use diag::{Diagnostic, Severity};
 pub use element::Element;
-pub use info::{DeclInfo, MatchedRuleInfo, StyleSource};
+pub use info::{DeclInfo, MatchedRuleInfo, SheetSource, StyleSource};
 pub use invalidation::{Invalidation, Reach, for_each_reached};
 pub use media::{ColorScheme, Contrast, MEDIA_FEATURES, MediaEnv, MediaList, Platform};
 pub use selector::{Impl, Logical, PseudoClass, PseudoElement, Selector, SelectorList, SelectorParser, parse_selector_list};

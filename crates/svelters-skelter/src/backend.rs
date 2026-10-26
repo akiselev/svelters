@@ -103,6 +103,11 @@ impl Handles {
         self.handles.get(&n).copied()
     }
 
+    /// Every bound node with its handle.
+    pub(crate) fn pairs(&self) -> impl Iterator<Item = (NodeId, svl_handle)> + '_ {
+        self.handles.iter().map(|(&n, &h)| (n, h))
+    }
+
     pub(crate) fn set_kind(&mut self, h: svl_handle, kind: svl_id) {
         self.kinds.insert(h, kind);
     }
