@@ -124,21 +124,42 @@ touches only skelter crates runs only the skelter workflow (paths-ignore of the 
 Build note: `.cargo/config.toml` sets `build-dir = {workspace-root}/target/build`; a second checkout needs both
 `CARGO_TARGET_DIR` and `CARGO_BUILD_BUILD_DIR` set, and a target shared between checkouts mixes their sources.
 
-## Local runs (after the last merge, 10241d82)
+## Pushes since a867e915 (merged as master 4bf37234)
 
-skelter-core `--lib tests::` 134/134; skelter-test `harness monitor` 1/1; skelter-widgets `table:: pickers:: tabs::
-dnd:: text:: host::` 131/131; compositor `engine caret` 2/2; svelters-style `overflow` 2/2. `cargo check --all-targets`
-of the skelter crates, svelters-automation and svelters-egui clean; skelter-platform-win32 and -macos cross-checked
-(x86_64-pc-windows-msvc, aarch64-apple-darwin). Workers ran their filtered tests (svelters-automation's suites, skelter-test
-core_islands/island/scene_source/automation/harness/queries/menu, skelter-platform-wayland lib 57).
+| Sha | What | CI |
+|---|---|---|
+| 8023b2e2 | A13, A15, A19–A24, macOS line-edge keys | skelter green (skelter-only) |
+| 7859f3ac | merge of master 992fffb2 (skelter-svg) alone | all six green; merged (f54f3689) |
+| 3d460b36 | A26, A27, A29 test, A28 test | all six green; merged (9928ccdc) |
+| 414467d6 | A31, A30, A5c–A5f, A9b, A25, master cb849283 | skelter red: lavapipe GpuDone timeout (the waiter bug, fixed in 6519074e); gtk cancelled |
+| 59b9d674 | + A32 | skelter red on macOS: the A32 test raced the icon diagnostics (fixed in 73bde26b) |
+| 73bde26b | + A25b, A9c, the race fix | all six green |
+| 6519074e | + A5g, A5h, the GPU waiter fix, event-driven headless waits | skelter green (skelter-only) |
+| 14311c0a | + A25c | running at the time of writing |
 
-Not run: Win32/macOS tests and counter-mac (CI only), GPU tests, full workspace, GTK/Qt crates, nothing on hardware.
+## Local runs (on the final tree, 14311c0a)
+
+skelter-core (all), skelter-widgets (all, 530 lib), svelters-skelter (all: vlist, host_document with real Svelte
+embeds, tier1, ops, spec), skelter-test (all suites); skelter.json regenerated; `gen_props --check` and
+`gen_utilities --check` clean. A16, A29, A31, A25b, A25c, A30, A5c, A9c were checked failing with their fix disabled.
+
+Not run: GPU tests (no device here; CI runs them on lavapipe/WARP/Metal), Win32/macOS-only tests, the full workspace,
+GTK/Qt crates, conformance; nothing on hardware.
+
+## Carry-overs (coordinator-agreed)
+
+- collapsing-header `accordion` and header `icon`; virtual-list `layout`, row drag/drop and `move`; table and
+  picker looks honouring the Theme service.
+- a `text-edit` measures 0 tall unless CSS sizes it (found writing A25c's test; the live search field is sized by CSS).
+- designer adorners move onto a top z-index root child (A28) after the consolidation.
+- Wayland pointer lock (zwp_pointer_constraints_v1) and a JS `rawmotion` signal; Win32 fullscreen/grabs/tear-off/
+  custom-MIME and the macOS drag source (hardware); text-edit's scrolled text clipped at the padding box.
+- The A29 live recheck (shell, viewport lane) at the consolidation on master ≥ cb849283.
 
 ## Not done / open questions (recommendations)
 
 Later (2026-10-26): (2) and (8) stay follow-ups (coordinator). (7) Win32 fullscreen/grabs/tear-off/custom-MIME and
-macOS drag source need hardware. New: ordinary will-change/animated layers paint later siblings below them (A15's
-splitting would fix it); Wayland pointer lock (zwp_pointer_constraints_v1) for orbiting; JS `rawmotion` signal when
+macOS drag source need hardware. Ordinary will-change/animated layers painting later siblings below them is fixed (A26); Wayland pointer lock (zwp_pointer_constraints_v1) for orbiting; JS `rawmotion` signal when
 a Svelte viewport needs one; table and picker looks still ignore the Theme service; text-edit's scrolled text is
 clipped at the padding box.
 
