@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "acaf66d9a3b4a2c3"
+    "spec_hash": "90ca2bebe9e034ef"
   },
   "inline_text": {
     "kind": "span",
@@ -5993,6 +5993,642 @@
       "text_content": "text",
       "widget": "skelter-widgets"
     },
+    "TreeView": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Tree"
+      },
+      "abstract": false,
+      "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-skelter: <tree-view> writes current into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "TreeView",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
+      "fingerprint": "f777f3d3",
+      "id": 4151833555,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "count": {
+          "dispatch": "generated",
+          "doc": "The number of visible rows.",
+          "fingerprint": "466d3c61",
+          "id": 1181564001,
+          "native": "count",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "rowAt": {
+          "dispatch": "generated",
+          "doc": "`rowAt(pos)`: the slot bound to `pos`, or -1.",
+          "fingerprint": "30656b6b",
+          "id": 811953003,
+          "native": "rowAt",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scrollTo": {
+          "dispatch": "generated",
+          "doc": "`scrollTo(pos, hint?)`: scrolls the row into view; `hint`: `nearest` (default), `top`, `bottom`, `center`.",
+          "fingerprint": "6dfb7916",
+          "id": 1845197078,
+          "native": "scrollTo",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "selection": {
+          "dispatch": "generated",
+          "doc": "The selected ids, hidden ones included.",
+          "fingerprint": "7cc24cac",
+          "id": 2093108396,
+          "native": "selection",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setNodes": {
+          "dispatch": "generated",
+          "doc": "`setNodes(ids, levels, flags, labels, data)`: the tree facts of rows by id (flags: 1 expandable, 2 expanded; a level < 0 forgets the id).",
+          "fingerprint": "f389760f",
+          "id": 4085872143,
+          "native": "setNodes",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setRow": {
+          "dispatch": "generated",
+          "doc": "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it.",
+          "fingerprint": "d29f0dee",
+          "id": 3533639150,
+          "native": "setRow",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setSelection": {
+          "dispatch": "generated",
+          "doc": "`setSelection(ids)`: replaces the selection (single keeps the first); raises nothing.",
+          "fingerprint": "1ed7c50c",
+          "id": 517457164,
+          "native": "setSelection",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "splice": {
+          "dispatch": "generated",
+          "doc": "`splice(pos, removed, ids)`: replaces `removed` rows at `pos` with `ids` (the visible rows, flattened).",
+          "fingerprint": "681bbc2a",
+          "id": 1746648106,
+          "native": "splice",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter TreeView",
+      "native_state": [
+        "current"
+      ],
+      "present": null,
+      "props": {
+        "current": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "OW5a1b: the cursor's row id (`bind:current`), -1 for none. Setting it moves the cursor without selecting.",
+          "fingerprint": "afc59536",
+          "id": 2948961590,
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:TreeView:current",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "expand-on": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "twistie",
+          "doc": "What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`).",
+          "fingerprint": "ddfc7391",
+          "id": 3724309393,
+          "js": "expand-on",
+          "native": "expand-on",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:expand-on",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "twistie",
+            "click",
+            "double-click"
+          ],
+          "writable": true
+        },
+        "indent": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 16,
+          "doc": "Points per level; the disclosure triangle sits in the last one.",
+          "fingerprint": "36366ac3",
+          "id": 909535939,
+          "js": "indent",
+          "native": "indent",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:indent",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "root-decorated": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Level-0 rows show their twistie (Qt's `rootIsDecorated`).",
+          "fingerprint": "f90efe1c",
+          "id": 4178509340,
+          "js": "root-decorated",
+          "native": "root-decorated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:root-decorated",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "row-drag-type": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels).",
+          "fingerprint": "6a6a61bb",
+          "id": 1785356731,
+          "js": "row-drag-type",
+          "native": "row-drag-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:row-drag-type",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-drop-types": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`.",
+          "fingerprint": "f1520319",
+          "id": 4048683801,
+          "js": "row-drop-types",
+          "native": "row-drop-types",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:row-drop-types",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 24,
+          "doc": "The height a row is assumed to have before it is measured, and its minimum, in points.",
+          "fingerprint": "66753009",
+          "id": 1718956041,
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:row-height",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selection": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable.",
+          "fingerprint": "946563f9",
+          "id": 2489672697,
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:selection",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single",
+            "multi",
+            "toggle",
+            "range"
+          ],
+          "writable": true
+        },
+        "uniform-rows": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`).",
+          "fingerprint": "4b8843e2",
+          "id": 1267221474,
+          "js": "uniform-rows",
+          "native": "uniform-rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:uniform-rows",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user activated the row at `pos` (double click, Enter).",
+          "fingerprint": "c4ff66bf",
+          "handler_result": "none",
+          "id": 3305072319,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot.",
+          "fingerprint": "ce408bfb",
+          "handler_result": "bool_stop",
+          "id": 3460336635,
+          "js_event": "bind",
+          "name": "bind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "collapse": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user collapsed node `id` (disclosure click, Left): splice its children out.",
+          "fingerprint": "774a9cad",
+          "handler_result": "none",
+          "id": 2001378477,
+          "js_event": "collapse",
+          "name": "collapse",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Ctrl+C on the focused tree: copy the selected rows.",
+          "fingerprint": "90aa4c60",
+          "handler_result": "none",
+          "id": 2427079776,
+          "js_event": "copy",
+          "name": "copy",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drop-row": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "where",
+              "type": "string"
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took.",
+          "fingerprint": "7a3c3dd4",
+          "handler_result": "none",
+          "id": 2050768340,
+          "js_event": "drop-row",
+          "name": "drop-row",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "expand": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user expanded node `id` (disclosure click, Right): splice its children in.",
+          "fingerprint": "d75b8070",
+          "handler_result": "none",
+          "id": 3613098096,
+          "js_event": "expand",
+          "name": "expand",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "fingerprint": "474bc356",
+          "handler_result": "none",
+          "id": 1196147542,
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy).",
+          "fingerprint": "10f2bd00",
+          "handler_result": "none",
+          "id": 284343552,
+          "js_event": "row-context",
+          "name": "row-context",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-hovered": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`).",
+          "fingerprint": "388a6ea8",
+          "handler_result": "none",
+          "id": 948596392,
+          "js_event": "row-hovered",
+          "name": "row-hovered",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selection-changed": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection: read it with `selection()`.",
+          "fingerprint": "29981370",
+          "handler_result": "none",
+          "id": 697832304,
+          "js_event": "selection-changed",
+          "name": "selection-changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "setup": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Row slot `row` was created: give it content with `setRow`.",
+          "fingerprint": "9c7b5255",
+          "handler_result": "bool_stop",
+          "id": 2625327701,
+          "js_event": "setup",
+          "name": "setup",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "teardown": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` is gone: release its widget.",
+          "fingerprint": "407eedd8",
+          "handler_result": "bool_stop",
+          "id": 1082060248,
+          "js_event": "teardown",
+          "name": "teardown",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "unbind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` no longer shows binding `gen`.",
+          "fingerprint": "dfb4116c",
+          "handler_result": "bool_stop",
+          "id": 3753120108,
+          "js_event": "unbind",
+          "name": "unbind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "Widget": {
       "a11y": {
         "name_from": [
@@ -8179,7 +8815,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -8405,7 +9042,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -8519,7 +9157,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -8577,7 +9216,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -8637,7 +9277,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "number",
         "via": "setter"
@@ -8675,7 +9316,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "number",
         "via": "setter"
@@ -8807,7 +9449,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -8885,7 +9528,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -8958,7 +9602,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -8996,7 +9641,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -9034,7 +9680,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -9072,7 +9719,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -9225,7 +9873,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -9265,7 +9914,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -9338,7 +9988,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "enum",
         "values": [
@@ -9422,7 +10073,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -9501,7 +10153,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "bool",
         "via": "setter"
@@ -9552,7 +10205,8 @@
           "table",
           "table-column",
           "text-edit",
-          "toggle-button"
+          "toggle-button",
+          "tree-view"
         ],
         "type": "length",
         "via": "setter"
@@ -9709,6 +10363,7 @@
     "table-column": "TableColumn",
     "text-edit": "TextEdit",
     "toggle-button": "ToggleButton",
+    "tree-view": "TreeView",
     "window": "Window"
   }
 }

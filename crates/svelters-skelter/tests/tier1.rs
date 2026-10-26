@@ -59,6 +59,24 @@ fn table_and_columns_are_skelter_widgets_with_eguis_surface() {
 }
 
 #[test]
+fn tree_view_is_skelter_widgets_with_eguis_surface() {
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    let m = kinds.by_tag("tree-view").unwrap();
+    assert!(m.hosted);
+    assert!(matches!(m.prop_named("current").unwrap().target, svelters_skelter::kinds::PropTarget::Native(_)));
+    let t = r.create("tree-view");
+    r.set(t, "current", Value::I64(7));
+    assert_eq!(r.get(t, "current"), Value::I64(7));
+    r.set(t, "expand-on", Value::Str("click".into()));
+    assert_eq!(r.get(t, "expand-on"), Value::Str("click".into()));
+    r.listen(t, "expand");
+    r.emit(t, "expand", vec![PValue::I64(3)]);
+    r.backend.pump();
+    assert_eq!(r.take().events, [(t, r.signal_id(t, "expand"), vec![Value::I64(3)])]);
+}
+
+#[test]
 fn collapsing_header_has_eguis_surface() {
     let r = Rig::new();
     let kinds = r.backend.kinds().clone();

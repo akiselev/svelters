@@ -165,5 +165,58 @@ pub static TABLECOLUMN: KindSpec = KindSpec {
     native_state: &[],
 };
 
+static TREEVIEW_PROPS: &[PropSpec] = &[
+    PropSpec { name: "current", ty: ValueType::I64, default: DefaultValue::I64(-1), nullable: false, change: ChangeClass::Paint, native: true, doc: "OW5a1b: the cursor's row id (`bind:current`), -1 for none. Setting it moves the cursor without selecting." },
+    PropSpec { name: "expand-on", ty: ValueType::Enum(&["twistie", "click", "double-click"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`)." },
+    PropSpec { name: "indent", ty: ValueType::I64, default: DefaultValue::I64(16), nullable: false, change: ChangeClass::Layout, native: false, doc: "Points per level; the disclosure triangle sits in the last one." },
+    PropSpec { name: "root-decorated", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Level-0 rows show their twistie (Qt's `rootIsDecorated`)." },
+    PropSpec { name: "row-drag-type", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels)." },
+    PropSpec { name: "row-drop-types", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`." },
+    PropSpec { name: "row-height", ty: ValueType::I64, default: DefaultValue::I64(24), nullable: false, change: ChangeClass::Layout, native: false, doc: "The height a row is assumed to have before it is measured, and its minimum, in points." },
+    PropSpec { name: "selection", ty: ValueType::Enum(&["none", "single", "multi", "toggle", "range"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Layout, native: false, doc: "`single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable." },
+    PropSpec { name: "uniform-rows", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`)." },
+];
+static TREEVIEW_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "activate", args: &[("pos", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user activated the row at `pos` (double click, Enter)." },
+    SignalSpec { name: "bind", args: &[("row", ValueType::I64), ("pos", ValueType::I64), ("id", ValueType::I64), ("gen", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot." },
+    SignalSpec { name: "collapse", args: &[("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user collapsed node `id` (disclosure click, Left): splice its children out." },
+    SignalSpec { name: "copy", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Ctrl+C on the focused tree: copy the selected rows." },
+    SignalSpec { name: "drop-row", args: &[("id", ValueType::I64), ("where", ValueType::Str), ("type", ValueType::Str), ("data", ValueType::Str)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took." },
+    SignalSpec { name: "expand", args: &[("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user expanded node `id` (disclosure click, Right): splice its children in." },
+    SignalSpec { name: "row-clicked", args: &[("pos", ValueType::I64), ("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a: a click on the row at `pos` (item `id`), after the selection moved." },
+    SignalSpec { name: "row-context", args: &[("pos", ValueType::I64), ("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy)." },
+    SignalSpec { name: "row-hovered", args: &[("pos", ValueType::I64), ("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`)." },
+    SignalSpec { name: "selection-changed", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user changed the selection: read it with `selection()`." },
+    SignalSpec { name: "setup", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Row slot `row` was created: give it content with `setRow`." },
+    SignalSpec { name: "teardown", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` is gone: release its widget." },
+    SignalSpec { name: "unbind", args: &[("row", ValueType::I64), ("gen", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` no longer shows binding `gen`." },
+];
+static TREEVIEW_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "count", params: &[], ret: None, doc: "The number of visible rows." },
+    MethodSpec { name: "rowAt", params: &[], ret: None, doc: "`rowAt(pos)`: the slot bound to `pos`, or -1." },
+    MethodSpec { name: "scrollTo", params: &[], ret: None, doc: "`scrollTo(pos, hint?)`: scrolls the row into view; `hint`: `nearest` (default), `top`, `bottom`, `center`." },
+    MethodSpec { name: "selection", params: &[], ret: None, doc: "The selected ids, hidden ones included." },
+    MethodSpec { name: "setNodes", params: &[], ret: None, doc: "`setNodes(ids, levels, flags, labels, data)`: the tree facts of rows by id (flags: 1 expandable, 2 expanded; a level < 0 forgets the id)." },
+    MethodSpec { name: "setRow", params: &[], ret: None, doc: "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it." },
+    MethodSpec { name: "setSelection", params: &[], ret: None, doc: "`setSelection(ids)`: replaces the selection (single keeps the first); raises nothing." },
+    MethodSpec { name: "splice", params: &[], ret: None, doc: "`splice(pos, removed, ids)`: replaces `removed` rows at `pos` with `ids` (the visible rows, flattened)." },
+];
+static TREEVIEW_SLOTS: &[SlotSpec] = &[
+];
+pub static TREEVIEW: KindSpec = KindSpec {
+    name: "TreeView",
+    tag: Some("tree-view"),
+    extends: Some(&WIDGET),
+    doc: "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
+    props: TREEVIEW_PROPS,
+    signals: TREEVIEW_SIGNALS,
+    methods: TREEVIEW_METHODS,
+    slots: TREEVIEW_SLOTS,
+    a11y: A11ySpec { role: "Tree", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["current"],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW];

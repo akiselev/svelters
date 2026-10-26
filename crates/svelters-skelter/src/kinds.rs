@@ -143,6 +143,7 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
     // the tier-1 views whose surface is egui's (A9, `surface::tier1`)
     skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
     skelter_widgets::table::kinds::register(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
