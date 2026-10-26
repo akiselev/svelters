@@ -162,6 +162,20 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
+## qc-a11y wave 1 for cadatomic (2026-10-26)
+
+Coordinator: cadatomic's qc1 coordinator (`session_01Kt5cvt9hDGVcXNCATLsKRK`); briefs `plans/cloud/qc-a11y/`. Both lanes merged,
+CI green on each (run ids in the records):
+- **focus** (`3d01c2ef`, record `plans/milestones/QA11Y-focus.md`): one focus owner in skelter-core (deferred requests, fixup,
+  restore stack, dialog scopes on appear, opt-in `initial-focus`), `FocusTarget` and the graft-sent guard, the host root's
+  `scale(os × zoom)`, menu roles and ARIA props, skelter-egui-island's tab-out protocol, the consumer/AT-SPI test helper,
+  and the AccessKit fork (`[patch.crates-io]` for accesskit, accesskit_atspi_common, accesskit_consumer from
+  `akiselev/accesskit` b22e1418: expanded/expandable on AT-SPI; user 2026-10-26: fork, no upstream PR).
+- **text** (`fd61ae12`, record `plans/milestones/QA11Y-text.md`): TextRun children, selection, value and actions for
+  `text-edit`; svelters-skelter's `<text-edit>` now hosts skelter-widgets' `TextEdit` (was a placeholder).
+- Also merged: cadatomic QC fix `94400eeb` (a signal the surface does not declare sync is posted).
+- Next: cadatomic wave 2 (its lane `claude/qa11y-shell` moves the svelters pin to `fd61ae12`).
+
 ## skelter (formerly presto): consolidation 2 (2026-10-26)
 
 Decided (user, 2026-10-25): presto is renamed **skelter** ("go with svelters-skelter"): crates `skelter`,
