@@ -74,6 +74,10 @@ impl Document {
             return (None, stats);
         }
         self.restyle(window);
+        // focus that follows style: deferred requests, dialog scopes, autofocus, the fixup rule (the
+        // focus states it moves restyle again)
+        crate::input::focus::after_style(self, window);
+        self.restyle(window);
         self.sample_ui_transitions(window, target);
         // virtualising nodes realise their rows before layout, and again when layout moved their
         // viewport (new rows are styled before they are laid out)

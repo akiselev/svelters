@@ -100,3 +100,22 @@ fn the_lent_document_follows_the_borrow_rules() {
     r.set(b, "text", Value::Str("x".into()));
     assert_eq!(r.get(b, "text"), Value::Str("x".into()));
 }
+
+/// QC1-EXP-002/005 (cadatomic qc1): skelter-core delivers a text field's `changed` at event time
+/// (`JsEvent::sync`), but the surface signal is not sync. Its listeners get the text alone, as on
+/// egui, not a `NativeEvent` first; a handler `(t) => setQuery(t)` got the event object.
+#[test]
+fn a_signal_the_surface_does_not_declare_sync_is_posted_with_its_arguments() {
+    let r = Rig::new();
+    let t = r.create("text-edit");
+    r.listen(t, "changed");
+    let n = r.backend.node(t).unwrap();
+    let mut ev = r.backend.target_event(n, "changed", vec![PValue::Str("cyl".into())]).unwrap();
+    ev.sync = true; // as skelter-core marks skelter-widgets' text-field signals
+    r.backend.queue(svelters_skelter::Output { events: vec![ev], ..Default::default() });
+    let d = r.backend.pump();
+    assert_eq!(d.events, 1);
+    let l = r.take();
+    assert!(l.syncs.is_empty(), "not run as a sync signal: {:?}", l.syncs);
+    assert_eq!(l.events, [(t, r.signal_id(t, "changed"), vec![Value::Str("cyl".into())])]);
+}

@@ -633,10 +633,7 @@ impl Document {
         let plain = !k.modifiers.contains(Modifiers::CTRL) && !k.modifiers.contains(Modifiers::ALT) && !k.modifiers.contains(Modifiers::SUPER);
         if native.is_none() && k.state == KeyState::Pressed && k.key == Some(Key::Tab) && plain {
             let back = k.modifiers.contains(Modifiers::SHIFT);
-            if let Some(n) = crate::input::focus::next_focus(self, window, back) {
-                crate::input::focus::set_focus(self, Some(n), FocusReason::Keyboard);
-                out.handled = true;
-            }
+            out.handled |= crate::input::focus::tab(self, window, back);
         }
         // Enter and Escape that the focused kind left go to its scope's default and cancel buttons
         if native.is_none() && k.state == KeyState::Pressed && plain && !k.modifiers.contains(Modifiers::SHIFT) && matches!(k.key, Some(Key::Enter | Key::Escape)) {

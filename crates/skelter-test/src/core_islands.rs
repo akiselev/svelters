@@ -31,7 +31,7 @@ pub struct CoreIslands<U: FnMut(NodeId, &mut egui::Ui)> {
     /// The islands' earliest pass, refreshed after every call that can change it.
     wakeup: Option<Time>,
     /// Island AccessKit updates waiting for the next commit (`Commit::a11y_subtrees`).
-    subtree: Vec<TreeUpdate>,
+    subtree: Vec<(NodeId, TreeUpdate)>,
     outputs: Vec<(NodeId, IslandOutput)>,
 }
 
@@ -63,15 +63,19 @@ impl<U: FnMut(NodeId, &mut egui::Ui)> DocumentApi for CoreIslands<U> {
         let outs = IslandHost::run(&mut self.core.doc, target, &mut self.ui);
         for (node, out) in outs {
             if let Some(u) = &out.a11y {
-                self.subtree.push(u.clone());
+                self.subtree.push((node, u.clone()));
             }
             self.outputs.push((node, out));
         }
         self.refresh();
         let mut c = self.core.frame(window, target);
-        // The subtrees ride the commit that carries their graft nodes (or the next one).
+        // The subtrees ride the commit that carries their graft nodes (or the next one); from then
+        // on focus on the graft node reaches AccessKit (`Document::a11y_subtree_sent`).
         if let Some(c) = &mut c {
-            c.a11y_subtrees.append(&mut self.subtree);
+            for (node, u) in std::mem::take(&mut self.subtree) {
+                c.a11y_subtrees.push(u);
+                self.core.doc.a11y_subtree_sent(node);
+            }
         }
         c
     }

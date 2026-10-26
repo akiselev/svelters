@@ -69,7 +69,10 @@ impl Document {
         }
         self.stamp();
         self.scroll.insert(node, v);
-        self.mark(node, Dirty::PROPERTY);
+        // a kind that scrolls itself places its accessibility parts (text runs) by the offset: they
+        // re-send with it (a scroll container's children re-send as they move)
+        let own = if self.self_scroll.contains_key(&node) { Dirty::A11Y } else { Dirty::EMPTY };
+        self.mark(node, Dirty::PROPERTY.union(own));
         if let Some(w) = self.core[i].window
             && let Some(ws) = self.window_mut(w)
         {

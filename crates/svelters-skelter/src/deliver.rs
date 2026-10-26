@@ -163,7 +163,11 @@ impl SkelterBackend {
                 };
                 let args = value::signal_args(sm.spec, ev.arg.as_ref(), target, phase);
                 done.events += 1;
-                if !ev.sync {
+                // A signal the surface does not declare sync is posted even when skelter-core
+                // delivers it at event time (the text field's `changed`): its listeners get its
+                // arguments alone, as on egui, not a `NativeEvent` first. Posting keeps the order:
+                // a later sync event flushes the posted ones first (QC1-EXP-002, QC1-EXP-005).
+                if !ev.sync || !sm.spec.sync {
                     host.post_event(h, sm.wire, &args);
                     posted = true;
                     continue;
