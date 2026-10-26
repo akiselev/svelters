@@ -343,6 +343,8 @@ pub struct PrepareCx<'a> {
     pub(crate) scroll: Option<skelter_base::geom::Vec2>,
     /// The caret asked for ([`PrepareCx::set_caret`]), sent after the prepare.
     pub(crate) caret: Option<Option<Rect>>,
+    /// Native prop writes ([`PrepareCx::set_native`]), applied after the prepare.
+    pub(crate) native: Vec<(PropId, Value)>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -439,6 +441,17 @@ impl PrepareCx<'_> {
     /// does, once the prepare returns: a caret a layout or a scroll in the prepare moved.
     pub fn set_caret(&mut self, rect: Option<Rect>) {
         self.caret = Some(rect);
+    }
+    /// Writes `prop` as native state, as [`EventCx::set_native`] does, once the prepare returns
+    /// (FQ-73): a value the kind works out while preparing (at mount, a bound prop's value
+    /// normalised by the kind), journalled as the kind's own so `bind:` reads it back. Checked now:
+    /// an unknown prop or a value of the wrong type is refused.
+    pub fn set_native(&mut self, prop: PropId, v: Value) -> Result<(), crate::PropError> {
+        let spec = self.node.entry.prop(prop).or_else(|| crate::common::prop(prop)).ok_or(crate::PropError::Unknown(prop))?;
+        let got = v.ty();
+        let v = v.coerce(spec.ty).ok_or(crate::PropError::WrongType { prop, expected: spec.ty, got })?;
+        self.native.push((prop, v));
+        Ok(())
     }
 }
 

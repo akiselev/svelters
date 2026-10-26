@@ -168,3 +168,53 @@ fn a_drag_keeps_the_preview_its_source_or_the_app_supplies() {
     assert!(d.set_drag_preview(None));
     assert_eq!(d.drag_preview(), None);
 }
+
+const UPPER: KindId = KindId::of("upper");
+const UPPER_TEXT: PropId = PropId::of("upper", "text", "string");
+
+static UPPER_SPEC: KindSpec = KindSpec {
+    props: &[PropSpec::new("text", ValueType::Str, ChangeClass::Paint).default(PropDefault::Str("")).native()],
+    ..KindSpec::new("upper")
+};
+
+/// A kind that normalises its bound `text` while preparing (upper case), as a code editor settles a
+/// bound value at mount (FQ-73); a write of the wrong type is refused at the call.
+#[derive(Default)]
+struct Upper;
+
+impl Kind for Upper {
+    fn spec() -> &'static KindSpec {
+        &UPPER_SPEC
+    }
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        let t = cx.node.prop_str(UPPER_TEXT).unwrap_or("").to_owned();
+        if t != t.to_uppercase() {
+            cx.set_native(UPPER_TEXT, Value::from(t.to_uppercase())).unwrap();
+        }
+        assert!(cx.set_native(UPPER_TEXT, Value::Bool(true)).is_err(), "wrong type");
+        assert!(cx.set_native(ITEM_LABEL, Value::from("x")).is_err(), "not its prop");
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+}
+
+#[test]
+fn a_kind_writes_native_state_from_prepare() {
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<Upper>().unwrap();
+    r.register::<Item>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let u = child(&mut d, root, UPPER, "width: 50px; height: 20px");
+    d.set_prop(u, UPPER_TEXT, Value::from("net1")).unwrap();
+    d.drain_changes();
+    frame(&mut d);
+    assert_eq!(d.view(u).unwrap().prop_str(UPPER_TEXT), Some("NET1"), "applied once the prepare returned");
+    let changes = d.drain_changes();
+    assert!(
+        changes.iter().any(|c| matches!(c, crate::journal::Change::Prop { node, prop, native: true, .. } if *node == u && *prop == UPPER_TEXT)),
+        "journalled as the kind's own (for `bind:`): {changes:?}"
+    );
+}
