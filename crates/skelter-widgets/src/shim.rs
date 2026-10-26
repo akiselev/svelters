@@ -303,15 +303,21 @@ pub mod core {
     }
 
     /// What a container that places or hides its children itself reads about one child in
-    /// [`Kind::child_layout`]: its index and the `anchor` of every child (empty when it has none).
+    /// [`Kind::child_layout`]: its index, the `anchor` of every child (empty when it has none) and
+    /// the name of the slot each child is in (`""`: the default slot; `slots` may be empty then).
     pub struct ChildCx<'a> {
         pub index: usize,
         pub anchors: &'a [&'a str],
+        pub slots: &'a [&'a str],
     }
 
     impl ChildCx<'_> {
         pub fn count(&self) -> usize {
             self.anchors.len()
+        }
+        /// The slot child `k` is in (`""`: the default slot).
+        pub fn slot_of(&self, k: usize) -> &str {
+            self.slots.get(k).copied().unwrap_or("")
         }
     }
 
@@ -466,10 +472,15 @@ pub mod core {
         /// Delivers a signal to JS now and reports whether a listener prevented its default
         /// ([`EventCx::emit_sync`]); `None`: signals are queued and nothing is prevented.
         pub sync: Option<&'a mut SyncEmit<'a>>,
-        /// Signals for the node's children, by child index, with skelter-core's signal ids (the
-        /// child's kind declares them): the host emits them on the child
-        /// (`skelter_core::EventCx::emit_on`).
-        pub emitted_on: Vec<(usize, skelter_core::SignalId, Option<skelter_core::Value>)>,
+        /// Signals for the node's descendants, by the path of child indices from the node (one
+        /// index: a child), with skelter-core's signal ids (the descendant's kind declares them):
+        /// the host emits them on that node (`skelter_core::EventCx::emit_on`).
+        pub emitted_on: Vec<(Vec<usize>, skelter_core::SignalId, Option<skelter_core::Value>)>,
+        /// What a method call answers ([`Kind::call`]: `count()`, `rowAt(pos)`); `None`: nothing.
+        pub ret: Option<skelter_core::Value>,
+        /// The kind's virtual rows are stale (`skelter_core::EventCx::refresh_virtual`): realise
+        /// them again before the next layout.
+        pub refresh_virtual: bool,
         /// Text layouts with caret geometry over the document's text system ([`LayoutLender`]);
         /// `None`: no text system (or a test without one).
         pub layouts: Option<&'a mut dyn LayoutLender>,
@@ -478,7 +489,7 @@ pub mod core {
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new(), layouts: None }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new(), ret: None, refresh_virtual: false, layouts: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
@@ -489,7 +500,12 @@ pub mod core {
         }
         /// Emits `signal` (a signal of the child's kind) on the node's `child`-th child.
         pub fn emit_on(&mut self, child: usize, signal: skelter_core::SignalId, arg: Option<skelter_core::Value>) {
-            self.emitted_on.push((child, signal, arg));
+            self.emitted_on.push((vec![child], signal, arg));
+        }
+        /// Emits `signal` on the descendant at `path` (child indices from the node: a menu's item
+        /// inside a submenu).
+        pub fn emit_at(&mut self, path: Vec<usize>, signal: skelter_core::SignalId, arg: Option<skelter_core::Value>) {
+            self.emitted_on.push((path, signal, arg));
         }
         /// Emits `signal` at event time when the host can deliver it now (a cancelable signal whose
         /// default action follows); returns whether a listener prevented that default.
@@ -600,6 +616,11 @@ pub mod core {
         fn chrome_padding(&self, _cx: &mut MeasureCx) -> Option<[f32; 4]> {
             None
         }
+        /// Stands in for skelter-core's `Kind::chrome_min_size`: the least `[width, height]` the
+        /// kind's own chrome needs, made the min size where CSS sets none. `None`: no minimum.
+        fn chrome_min_size(&self, _cx: &mut MeasureCx) -> Option<[f32; 2]> {
+            None
+        }
         /// Stands in for skelter-core's per-child layout hook: a container that places or hides its
         /// children itself (`stack`) adjusts child `cx.index`'s taffy style, after core mapped the
         /// child's computed style. Returns whether the child is shown (painted, hit and in the
@@ -645,6 +666,16 @@ pub mod core {
         /// A member of its peer group sent it `msg` (core applies [`PeerRequest`]s through this).
         fn peer(&mut self, _cx: &mut EventCx, _msg: &PeerMsg) -> Handled {
             Handled::No
+        }
+        /// Stands in for [`skelter_core::Kind::virtual_children`]: rows supplied on demand (a virtual
+        /// list's, a tree's), realised by the document before layout.
+        fn virtual_children(&mut self) -> Option<&mut dyn skelter_core::VirtualChildren> {
+            None
+        }
+        /// Stands in for [`skelter_core::Kind::self_scroll`]: the kind scrolls its own content (its
+        /// display list is recorded in content space; pointer positions stay in the border box).
+        fn self_scroll(&self) -> Option<skelter_core::SelfScroll> {
+            None
         }
         /// Stands in for core telling the kind that JS now listens to `signal` (`listened`) or no
         /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:

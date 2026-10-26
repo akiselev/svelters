@@ -787,6 +787,16 @@ impl Document {
         {
             crate::layout::add_padding(&mut tstyle, pad);
         }
+        if container
+            && let Some(min) = crate::layout::with_measure_cx(self, i, Some(&new_box), |k, cx| k.chrome_min_size(cx)).flatten()
+        {
+            if tstyle.min_size.width.is_auto() {
+                tstyle.min_size.width = taffy::LengthPercentageAuto::length(min.w);
+            }
+            if tstyle.min_size.height.is_auto() {
+                tstyle.min_size.height = taffy::LengthPercentageAuto::length(min.h);
+            }
+        }
         // a parent that places its children has the last word
         self.place_child(i, &mut tstyle);
         // a window root's size is the window's (set by layout)

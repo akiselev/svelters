@@ -64,12 +64,16 @@ pub(crate) struct Hooks<D> {
     pub textures: Option<Box<dyn FnMut(&mut D, &mut GpuRender)>>,
     /// At the start of each step (an egui island's parity mode: one pass per step, as kittest).
     pub before_step: Option<Box<dyn FnMut(&mut D)>>,
-    /// Replaces the settle rule after queued input (kittest's: the last pass requested no repaint);
-    /// commits in flight then don't count, and `render` applies them first.
+    /// Replaces the settle rule after queued input (kittest's: the last pass requested no repaint),
+    /// given the next frame's target time; commits in flight then don't count, and `render` applies
+    /// them first.
     pub settled: Option<Box<dyn Fn(&D, Time) -> bool>>,
     /// `step` delivers queued input one event per step (kittest: one egui pass per event, so a
     /// modifier change is seen by the press after it).
     pub one_event_per_step: bool,
+    /// `type_text` sends key presses carrying the text (an egui island maps them to
+    /// `egui::Event::Text`, as kittest types) instead of an IME commit.
+    pub text_as_keys: bool,
 }
 
 impl<D> Default for Hooks<D> {
@@ -80,6 +84,7 @@ impl<D> Default for Hooks<D> {
             before_step: None,
             settled: None,
             one_event_per_step: false,
+            text_as_keys: false,
         }
     }
 }
@@ -573,7 +578,9 @@ impl<D: DocumentApi + 'static> Harness<D> {
             return Some("queued input".into());
         }
         if let Some(settled) = &self.hooks.settled {
-            return (!settled(self.app.doc(), self.now())).then(|| "the last pass requested a repaint".into());
+            // the next pass runs at the next frame's target: a repaint requested for it (egui's
+            // delay 0 after input) is not settled
+            return (!settled(self.app.doc(), self.now() + self.interval)).then(|| "the last pass requested a repaint".into());
         }
         if !self.app.is_idle() {
             return Some("the app has a frame to run".into());
@@ -608,10 +615,11 @@ impl<D: DocumentApi + 'static> Harness<D> {
     /// Step until settled, at most `max` steps. Always steps at least once.
     #[track_caller]
     pub fn run_until_settled(&mut self, max: u64) -> Result<u64, NotSettled> {
-        let mut n = 0;
+        // counted in vsyncs: a step that delivers one event per vsync takes several
+        let start = self.steps;
         loop {
             self.step();
-            n += 1;
+            let n = self.steps - start;
             match self.busy() {
                 None => return Ok(n),
                 Some(reason) if n >= max => return Err(NotSettled { steps: n, reason }),
@@ -842,8 +850,21 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn key_press_modifiers(&self, m: impl IntoModifiers, key: impl IntoKey) {
         self.key_combination_modifiers(m, &[key.into_key()]);
     }
-    /// Type text into the focused node (an IME commit, as egui's `Event::Text`).
+    /// Type text into the focused node: an IME commit, or in an egui island key presses carrying the
+    /// text (egui's `Event::Text`, as kittest types).
     pub fn type_text(&self, text: &str) {
+        if self.hooks.text_as_keys {
+            self.event(InputEvent::Key(KeyEvent {
+                key: None,
+                physical: 0,
+                text: Some(text.to_owned()),
+                state: KeyState::Pressed,
+                repeat: false,
+                location: KeyLocation::Standard,
+                modifiers: Modifiers::default(),
+            }));
+            return;
+        }
         self.event(InputEvent::Ime(ImeEvent::Commit(text.to_owned())));
     }
 

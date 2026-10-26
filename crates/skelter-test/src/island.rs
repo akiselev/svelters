@@ -144,9 +144,10 @@ impl<S> IslandDoc<S> {
         self.repaint.due.store(true, Ordering::Release);
     }
 
-    /// kittest's settle rule: the last pass requested no immediate repaint and nothing is due.
-    fn settled(&self, now: Time) -> bool {
-        !self.due() && !self.host_dirty && !self.island.needs_pass(now)
+    /// kittest's settle rule: the last pass requested no repaint by the next frame (`target`) and
+    /// nothing is due.
+    fn settled(&self, target: Time) -> bool {
+        !self.due() && !self.host_dirty && !self.island.needs_pass(target)
     }
 
     fn due(&self) -> bool {
@@ -165,9 +166,14 @@ impl<S> IslandDoc<S> {
     pub fn state_mut(&mut self) -> &mut S {
         &mut self.state
     }
-    /// The last pass's skelter-facing output (cursor, IME, copied text, links, drag-and-drop).
+    /// The last pass's skelter-facing output (cursor, IME, drag-and-drop), with the copied text and
+    /// links of every pass since they were last taken ([`IslandDoc::take_output`]).
     pub fn output(&self) -> &IslandOutput {
         &self.output
+    }
+    /// Takes the output (`output` is empty until the next pass; copied text and links gather anew).
+    pub fn take_output(&mut self) -> IslandOutput {
+        std::mem::take(&mut self.output)
     }
     /// egui passes run so far.
     pub fn passes(&self) -> u64 {
@@ -283,6 +289,15 @@ impl<S> DocumentApi for IslandDoc<S> {
             }
             c.cursor = Some(out.cursor);
             c.ime_area = out.ime.map(|i| i.cursor);
+            // copied text and links stay until taken: with a pass every step, the pass after a copy
+            // would otherwise drop it before the test looks
+            let mut out = out;
+            let mut copied = std::mem::take(&mut self.output.copied);
+            copied.append(&mut out.copied);
+            out.copied = copied;
+            let mut urls = std::mem::take(&mut self.output.open_urls);
+            urls.append(&mut out.open_urls);
+            out.open_urls = urls;
             self.output = out;
         }
         // The texture's content changed with the pass: re-sending the list damages the island.
@@ -425,9 +440,14 @@ impl<S: 'static> EguiHarness<S> {
         self.inner.state_mut()
     }
     /// The last pass's output (kittest's `output()` is egui's `FullOutput`; the island turns it into
-    /// skelter's: cursor, IME, copied text, links, drag-and-drop).
+    /// skelter's: cursor, IME, drag-and-drop), with the copied text and links of every pass since the
+    /// last [`EguiHarness::take_island_output`].
     pub fn island_output(&self) -> &IslandOutput {
         self.doc().output()
+    }
+    /// [`EguiHarness::island_output`], taking the copied text and links gathered since the last take.
+    pub fn take_island_output(&mut self) -> IslandOutput {
+        self.doc_mut().take_output()
     }
     /// The skelter harness, for drivers that own one (`automation::SkelterDriver`).
     pub fn into_harness(self) -> Harness<IslandDoc<S>> {
@@ -467,6 +487,8 @@ pub struct EguiHarnessBuilder {
     renderer_setup: Option<RendererSetup>,
     renderer: egui_wgpu::RendererOptions,
     pass_every_step: bool,
+    os: egui::os::OperatingSystem,
+    missing_glyph_policy: egui::MissingGlyphPolicy,
 }
 
 impl Default for EguiHarnessBuilder {
@@ -479,6 +501,9 @@ impl Default for EguiHarnessBuilder {
             // kittest's: no dithering, so snapshots are stable
             renderer: egui_wgpu::RendererOptions::PREDICTABLE,
             pass_every_step: true,
+            // kittest's defaults (egui_kittest's builder)
+            os: egui::os::OperatingSystem::Nix,
+            missing_glyph_policy: egui::MissingGlyphPolicy::Panic,
         }
     }
 }
@@ -525,6 +550,17 @@ impl EguiHarnessBuilder {
         self.theme = theme;
         self
     }
+    /// The operating system egui is told it runs on (default `Nix`, as kittest; keyboard shortcuts
+    /// follow it).
+    pub fn with_os(mut self, os: egui::os::OperatingSystem) -> Self {
+        self.os = os;
+        self
+    }
+    /// What egui does with a glyph its fonts lack (default `Panic`, as kittest).
+    pub fn with_missing_glyph_policy(mut self, policy: egui::MissingGlyphPolicy) -> Self {
+        self.missing_glyph_policy = policy;
+        self
+    }
     /// Configure the island's context before the first pass (fonts, style, shortcuts).
     pub fn with_context_setup(mut self, setup: impl FnOnce(&egui::Context) + 'static) -> Self {
         self.context_setup = Some(Box::new(setup));
@@ -561,10 +597,17 @@ impl EguiHarnessBuilder {
     #[track_caller]
     pub fn build_ui_state<S: 'static>(
         self,
-        app: impl FnMut(&mut egui::Ui, &mut S) + 'static,
+        mut app: impl FnMut(&mut egui::Ui, &mut S) + 'static,
         state: S,
     ) -> EguiHarness<S> {
-        self.build_boxed(Box::new(app), state)
+        // kittest runs `Ui` closures in a central panel's frame with an 8-point outer margin
+        // (egui_kittest's `AppKind::run_ui`); context closures (`build`, `build_state`) run bare
+        self.build_boxed(
+            Box::new(move |ui: &mut egui::Ui, s: &mut S| {
+                egui::Frame::central_panel(ui.style()).outer_margin(8.0).inner_margin(0.0).show(ui, |ui| app(ui, s));
+            }),
+            state,
+        )
     }
 
     #[track_caller]
@@ -578,7 +621,7 @@ impl EguiHarnessBuilder {
         mut app: impl FnMut(&egui::Context, &mut S) + 'static,
         state: S,
     ) -> EguiHarness<S> {
-        self.build_ui_state(move |ui, s| app(ui.ctx(), s), state)
+        self.build_boxed(Box::new(move |ui: &mut egui::Ui, s: &mut S| app(ui.ctx(), s)), state)
     }
 
     #[track_caller]
@@ -595,6 +638,8 @@ impl EguiHarnessBuilder {
             renderer_setup,
             renderer,
             pass_every_step,
+            os,
+            missing_glyph_policy,
         } = self;
         let gpu = renderer_setup.is_some().then(|| {
             GpuRender::new(base.default_glyphs())
@@ -605,10 +650,18 @@ impl EguiHarnessBuilder {
         let make_doc = |clock: Arc<dyn Clock>, gpu: Option<&GpuRender>| {
             let mut doc = IslandDoc::new(app, state, clock, size, scale, gpu.map(|g| &g.device), renderer);
             let ctx = doc.island.context().clone();
-            ctx.set_theme(theme);
+            // kittest's order: the setup, then its defaults over it
             if let Some(setup) = context_setup {
                 setup(&ctx);
             }
+            ctx.set_theme(theme);
+            ctx.set_os(os);
+            ctx.set_missing_glyph_policy(missing_glyph_policy);
+            ctx.all_styles_mut(|style| {
+                style.visuals.text_cursor.blink = false;
+                style.scroll_animation = egui::style::ScrollAnimation::none();
+                style.animation_time = 0.0;
+            });
             if let (Some(setup), Some(g)) = (renderer_setup, gpu) {
                 let r = doc
                     .island
@@ -625,8 +678,9 @@ impl EguiHarnessBuilder {
             })),
             textures: Some(Box::new(|d: &mut IslandDoc<S>, g: &mut GpuRender| render_island(d, g))),
             before_step: pass_every_step.then(|| Box::new(|d: &mut IslandDoc<S>| d.request_pass()) as Box<dyn FnMut(&mut IslandDoc<S>)>),
-            settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, now: Time| d.settled(now)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
+            settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, target: Time| d.settled(target)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
             one_event_per_step: pass_every_step,
+            text_as_keys: true,
         };
         let mut inner = base.build_with(make_doc, hooks, gpu);
         let waker = inner.platform_mut().cx().waker();

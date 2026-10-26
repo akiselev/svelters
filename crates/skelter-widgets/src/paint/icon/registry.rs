@@ -1169,6 +1169,60 @@ mod tests {
         assert!(matches!(VectorArt::parse(b"<svg").unwrap_err(), NotVector::Invalid(_)));
     }
 
+    /// A kit-style icon with knockout gaps: a square with a halo cut (a black circle in a white
+    /// mask) and a slit (a black bar), the badge in the cut, and an even-odd ring masked by an alpha
+    /// mask.
+    const HALO_CUT: &[u8] = br##"<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs><mask id="halo"><rect width="24" height="24" fill="white"/><circle cx="17" cy="17" r="6.5" fill="black"/><rect x="2" y="9" width="12" height="1.5" fill="black"/></mask><mask id="half" mask-type="alpha"><rect width="4" height="24" fill="#123456"/></mask></defs><g mask="url(#halo)"><rect x="2" y="2" width="16" height="16" rx="2" fill="currentColor"/></g><circle class="badge" cx="17" cy="17" r="4.5"/><g mask="url(#half)"><path fill-rule="evenodd" d="M2 21a2 2 0 1 0 4 0a2 2 0 1 0-4 0zM3 21a1 1 0 1 0 2 0a1 1 0 1 0-2 0z" fill="currentColor"/></g></svg>"##;
+
+    /// A32: a mask of solid shapes draws as vectors (a path boolean) and matches resvg's raster.
+    #[test]
+    fn a_mask_of_solid_shapes_draws_as_vectors_and_matches_resvg() {
+        let art = VectorArt::parse(HALO_CUT).expect("vector art");
+        assert_eq!(art.layers.len(), 3, "the cut square, the badge and the half ring");
+        // the halo cut and the slit are holes in the square; the ring keeps its left half only
+        let b = art.layers[2].bounds;
+        assert!(b.max.x <= 4.01 && b.min.x >= 1.99, "{b:?}");
+        // coverage from the vector geometry against resvg's, at 96 pixels
+        let px = 96;
+        let vec_cov = slot_masks(&art, px, &|_| MaskChannel::Slot(0));
+        let (_, ImageData { pixels: v, .. }) = &vec_cov[0];
+        let r = rasterize(HALO_CUT, px, Color::WHITE, &Slots::default()).unwrap();
+        assert_eq!(r.format, ImageFormat::A8);
+        let diff: Vec<i32> = v.iter().zip(&r.pixels).map(|(a, b)| (i32::from(*a) - i32::from(*b)).abs()).collect();
+        let max = diff.iter().copied().max().unwrap();
+        let mean = diff.iter().sum::<i32>() as f64 / diff.len() as f64;
+        assert!(max <= 64 && mean < 1.0, "max {max}, mean {mean}");
+        let at = |x: u32, y: u32| v[(y * px + x) as usize];
+        assert_eq!(at(20, 20), 255, "inside the square");
+        assert_eq!(at(40, 39), 0, "in the slit");
+        assert_eq!(at(68, 46), 0, "in the halo, outside the badge");
+        assert_eq!(at(68, 68), 255, "the badge");
+        // drawn as paths at 96 px, no fallback reported
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "reg-test.halo", Icon::svg(24, HALO_CUT)).unwrap();
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+        let p = paint(&mut cx, &reg, "reg-test.halo", Rect::new(0.0, 0.0, 96.0, 96.0), &IconStyle::new(96.0, Color::WHITE)).unwrap();
+        // vector paths (a fallback draws one raster and is reported; the diagnostics are drained by
+        // `refusals_missing_and_broken_icons_are_reported` alone, which tests running in parallel
+        // would race)
+        assert!(p.vector);
+        assert_eq!(kinds(&list), [true, true, true]);
+        // the kit's own masked icon (a front block knocked out of the body) at 96 pixels
+        let kit: &[u8] = include_bytes!("../../../../svelters-egui/tests/icons/build/24/mcad.extrude+remove.svg");
+        let art = VectorArt::parse(kit).expect("the kit icon is vector art");
+        let v = slot_masks(&art, px, &|_| MaskChannel::Slot(0));
+        let r = rasterize(kit, px, Color::WHITE, &Slots::default()).unwrap();
+        let diff: Vec<i32> = v[0].1.pixels.iter().zip(&r.pixels).map(|(a, b)| (i32::from(*a) - i32::from(*b)).abs()).collect();
+        let (max, mean) = (diff.iter().copied().max().unwrap(), diff.iter().sum::<i32>() as f64 / diff.len() as f64);
+        assert!(max <= 64 && mean < 0.1, "kit icon: max {max}, mean {mean}");
+        // a grey mask still falls back
+        let grey = br##"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><mask id="m"><rect width="16" height="16" fill="#808080"/></mask><rect width="16" height="16" fill="currentColor" mask="url(#m)"/></svg>"##;
+        assert_eq!(VectorArt::parse(grey).unwrap_err(), NotVector::Unsupported("grey mask".into()));
+    }
+
     /// The prims an icon painted: `true` for a path, `false` for a raster.
     fn kinds(list: &DisplayList) -> Vec<bool> {
         list.items.iter().map(|p| matches!(p, Prim::Path(_))).collect()

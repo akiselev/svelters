@@ -358,3 +358,65 @@ fn in_flow_nodes_created_after_the_first_frame_draw_where_they_are_laid_out() {
         assert_each_in_place(&d, &seen, &nodes, &format!("dock after a resize to {w}x{h}"));
     }
 }
+
+/// A31: an absolute box removed from a relayout boundary leaves its containing block's hoisted
+/// list (the block above the boundary keeps its cached layout, and rounding walked the stale id:
+/// `stale node`). Covers destroy, destroying an ancestor, and a move to another window.
+#[test]
+fn a_removed_absolute_box_leaves_its_containing_blocks_hoisted_list() {
+    for case in 0..3 {
+        let (mut d, root) = doc();
+        let dock = child(&mut d, root, BOX, "position: relative; flex-shrink: 0; width: 180px; height: 90px");
+        let pane = child(&mut d, dock, BOX, "flex-shrink: 0; width: 160px; height: 80px; padding: 4px");
+        let holder = child(&mut d, pane, BOX, "flex-shrink: 0; width: 100px; height: 40px");
+        let group = child(&mut d, holder, BOX, "position: absolute; left: 20px; top: 10px; width: 60px; height: 30px; background-color: #ff0000");
+        let slot = child(&mut d, group, BOX, "position: absolute; left: 2px; top: 2px; width: 20px; height: 10px; background-color: #00ff00");
+        let other = child(&mut d, dock, BOX, "position: absolute; left: 100px; top: 50px; width: 20px; height: 20px; background-color: #0000ff");
+        let mut seen = Painted::default();
+        settle(&mut d, &mut seen);
+        match case {
+            0 => d.destroy(group),
+            1 => d.destroy(holder),
+            _ => {
+                let w2 = WindowId(2);
+                let r2 = d.create_window(w2, BOX, skelter_base::geom::Size::new(100.0, 100.0), skelter_base::geom::Scale(1.0));
+                d.insert(r2, group, None, None).unwrap();
+                d.frame(w2, Time(0));
+            }
+        }
+        // the dock is laid out again (a resize keeps the root's own cache: the dock's is reused)
+        settle(&mut d, &mut seen);
+        d.resize_window(W, skelter_base::geom::Size::new(200.0, 100.0), skelter_base::geom::Scale(1.0));
+        settle(&mut d, &mut seen);
+        let r = d.world_rect(other).unwrap();
+        assert_eq!((r.min.x, r.min.y), (100.0, 50.0), "case {case}");
+        if case == 2 {
+            // the old window's layout no longer writes the moved box's
+            assert_eq!(d.layout_rect(group).map(|r| (r.min.x, r.min.y)), Some((20.0, 10.0)), "the moved box keeps its new window's layout");
+            assert_eq!(d.layout_rect(slot).map(|r| (r.min.x, r.min.y)), Some((2.0, 2.0)));
+        }
+        // the window root as the containing block: the same frame that removes the box makes a
+        // full layout that reuses the root's cached layout (an absolute box whose containing block
+        // is outside its boundary appears elsewhere)
+        let (mut d, root) = doc();
+        let holder = child(&mut d, root, BOX, "flex-shrink: 0; width: 100px; height: 40px");
+        let group = child(&mut d, holder, BOX, "position: absolute; left: 20px; top: 10px; width: 60px; height: 30px; background-color: #ff0000");
+        let _slot = child(&mut d, group, BOX, "position: absolute; left: 2px; top: 2px; width: 20px; height: 10px; background-color: #00ff00");
+        let side = child(&mut d, root, BOX, "flex-shrink: 0; width: 50px; height: 40px");
+        let mut seen = Painted::default();
+        settle(&mut d, &mut seen);
+        match case {
+            0 => d.destroy(group),
+            1 => d.destroy(holder),
+            _ => {
+                let w2 = WindowId(2);
+                let r2 = d.create_window(w2, BOX, skelter_base::geom::Size::new(100.0, 100.0), skelter_base::geom::Scale(1.0));
+                d.insert(r2, group, None, None).unwrap();
+            }
+        }
+        let late = child(&mut d, side, BOX, "position: absolute; left: 150px; top: 60px; width: 10px; height: 10px; background-color: #0000ff");
+        settle(&mut d, &mut seen);
+        let r = d.world_rect(late).unwrap();
+        assert_eq!((r.min.x, r.min.y), (150.0, 60.0), "root case {case}");
+    }
+}

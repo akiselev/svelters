@@ -119,7 +119,7 @@ pub const PHASE_TARGET: i64 = 2;
 pub const PHASE_BUBBLE: i64 = 3;
 
 /// A core event argument as the surface signal's argument list for JS: a record's fields by the
-/// spec's names, `target` and `phase` from the delivery (EV1), a single value as the one argument.
+/// spec's names (by place when the names differ and the counts match), `target` and `phase` from the delivery (EV1), a single value as the one argument.
 pub fn signal_args(s: &SignalSpec, arg: Option<&core::Value>, target: i64, phase: i64) -> Vec<Abi> {
     s.args
         .iter()
@@ -129,7 +129,9 @@ pub fn signal_args(s: &SignalSpec, arg: Option<&core::Value>, target: i64, phase
             "phase" if s.bubbles => Abi::I64(phase),
             _ => {
                 let v = match arg {
-                    Some(r @ core::Value::Record(_)) => r.field(name).map(from_core),
+                    // a record's field by the surface name, else at the same place (skelter's
+                    // table names `sort-changed`'s fields `column`/`order`, egui `sort-column`/`sort-order`)
+                    Some(r @ core::Value::Record(fields)) => r.field(name).or_else(|| (fields.len() == s.args.len()).then(|| &fields[i].1)).map(from_core),
                     Some(v) if i == 0 => Some(from_core(v)),
                     _ => None,
                 };

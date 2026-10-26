@@ -32,7 +32,7 @@ use crate::shim::text::{PlacedRun, RichText, TextLayout, TextShaper};
 use skelter_base::commit::{ImageData, PathData};
 use skelter_base::display::{DisplayList, Prim};
 use skelter_base::event::{PointerEvent, PointerPhase, WheelEvent};
-use skelter_base::geom::{Insets, Point, Vec2};
+use skelter_base::geom::{Insets, Point, Size, Vec2};
 use skelter_base::ids::{ImageId, NodeId, PathId, RunId};
 use skelter_base::text::GlyphRun;
 use skelter_core::{
@@ -222,6 +222,18 @@ fn core_default(p: &w::PropSpec) -> PropDefault {
     }
 }
 
+/// skelter-core's id of signal `name` of the widget kind `ws` (what its registered spec declares):
+/// for [`w::EventCx::emit_at`] on a descendant of another kind (a menu's items).
+pub fn core_signal_id(ws: &w::KindSpec, name: &str) -> Option<SignalId> {
+    let s = ws.signals.iter().find(|s| s.name == name)?;
+    let arg = match s.args {
+        [] => None,
+        [(_, t)] => Some(core_type(*t)),
+        _ => Some(ValueType::Record),
+    };
+    Some(SignalId::of(ws.tag, s.name, arg.map_or("void", ValueType::name)))
+}
+
 fn is_common(name: &str) -> bool {
     skelter_core::common::COMMON.props.iter().any(|p| p.name == name)
 }
@@ -378,6 +390,14 @@ fn plain_from_core(v: &Value) -> Option<w::Value> {
 
 /// A signal's arguments as skelter-core's one argument: none, the one value, or a record by the spec's
 /// argument names.
+/// skelter-core's id and argument of signal `name` of widget kind `ws` with `args` (what the
+/// host emits for the widget's own signals): for a kind emitting outside an event
+/// (`skelter_core::RealizeCx::emit`, a virtual list's row requests).
+pub fn core_signal(ws: &w::KindSpec, name: &str, args: &[w::Value]) -> Option<(SignalId, Option<Value>)> {
+    let s = ws.signals.iter().find(|s| s.name == name)?;
+    Some((core_signal_id(ws, name)?, signal_arg(s, args)))
+}
+
 fn signal_arg(s: &w::SignalSpec, args: &[w::Value]) -> Option<Value> {
     match args {
         [] => None,
@@ -461,11 +481,13 @@ pub struct Hosted<W: w::Kind + Default> {
     images: HashMap<String, ImageId>,
     /// Paths this node uses (skelter-core shares them by key across the document).
     paths: HashMap<String, PathId>,
+    /// What the last method call answered ([`w::EventCx::ret`]).
+    ret: Option<Value>,
 }
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new() }
+        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new(), ret: None }
     }
 }
 
@@ -694,10 +716,14 @@ impl<W: w::Kind + Default> Hosted<W> {
                 wcx.layouts = Some(&mut lender);
             }
             let handled = f(&mut self.widget, &mut wcx);
-            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, .. } = wcx;
-            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on))
+            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual, .. } = wcx;
+            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual))
         };
-        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on) = out;
+        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual) = out;
+        self.ret = ret;
+        if refresh_virtual {
+            cx.refresh_virtual();
+        }
         let diff = StateBits((state.0 ^ before.0) & !CORE_BITS.0);
         for (_, bit) in StateBits::BUILTIN {
             if diff.contains(*bit) {
@@ -721,12 +747,13 @@ impl<W: w::Kind + Default> Hosted<W> {
             let Some(sig) = ws.signals.get(i) else { continue };
             cx.emit(s.core.signal_id(i), signal_arg(sig, &e.args));
         }
-        if !emitted_on.is_empty() {
-            let children: Vec<NodeId> = cx.view(node).map(|v| v.children().to_vec()).unwrap_or_default();
-            for (k, sig, arg) in emitted_on {
-                if let Some(&c) = children.get(k) {
-                    cx.emit_on(c, sig, arg);
-                }
+        for (path, sig, arg) in emitted_on {
+            let mut at = Some(node);
+            for k in path {
+                at = at.and_then(|n| cx.view(n)).and_then(|v| v.children().get(k).copied());
+            }
+            if let Some(c) = at.filter(|c| *c != node) {
+                cx.emit_on(c, sig, arg);
             }
         }
         for r in peers {
@@ -922,13 +949,21 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             return Err(skelter_core::PropError::Rejected(format!("{method:?} is not a method of {}", core.name)));
         };
         match self.run(cx, |w, wcx| w.call(wcx, i, args)) {
-            Handled::Yes => Ok(None),
+            Handled::Yes => Ok(self.ret.take()),
             Handled::No => Err(skelter_core::PropError::Rejected(format!("{} did not take {}", core.name, core.methods[i].name))),
         }
     }
 
     fn as_any(&self) -> Option<&dyn std::any::Any> {
         Some(&self.widget)
+    }
+
+    fn virtual_children(&mut self) -> Option<&mut dyn skelter_core::VirtualChildren> {
+        self.widget.virtual_children()
+    }
+
+    fn self_scroll(&self, _node: &NodeView) -> Option<skelter_core::SelfScroll> {
+        self.widget.self_scroll()
     }
 
     fn peer_group(&self, _node: &NodeView) -> Option<PeerGroup> {
@@ -983,9 +1018,19 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         Some(Insets { top, right, bottom, left })
     }
 
+    fn chrome_min_size(&self, cx: &mut MeasureCx) -> Option<Size> {
+        let node = cx.node;
+        let parts = part_styles(node, Self::spec_ref().core.parts);
+        let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+        let mut text = shaper(ts);
+        let [w, h] = self.widget.chrome_min_size(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() })?;
+        Some(Size::new(w, h))
+    }
+
     fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
         let anchors: Vec<&str> = (0..cx.count).map(|k| cx.anchor_of(k)).collect();
-        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors }, style)
+        let slots: Vec<&str> = (0..cx.count).map(|k| cx.parent.child(k).map_or("", |c| c.slot_name())).collect();
+        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors, slots: &slots }, style)
     }
 
     fn children_inert(&self) -> bool {
@@ -1011,6 +1056,26 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 mod tests {
     use super::*;
     use crate::controls::Button;
+
+    /// A30: `aria-label` names a button over its text content (ARIA's precedence).
+    #[test]
+    fn aria_label_names_a_button_over_its_text() {
+        use crate::testdoc::{child, doc, frame};
+        let (mut d, root) = doc(skelter_base::geom::Size::new(200.0, 100.0), |r| {
+            register::<Button>(r).unwrap();
+        });
+        let b = child(&mut d, root, skelter_core::KindId::of("button"), "");
+        let text = d.registry().get(skelter_core::KindId::of("button")).unwrap().spec.prop_named("text").unwrap();
+        d.set_prop(b, text, Value::from("3")).unwrap();
+        d.set_prop(b, skelter_core::common::ARIA_LABEL, Value::from("Toggle problems")).unwrap();
+        let c = frame(&mut d).unwrap();
+        let label = |c: &skelter_base::commit::Commit| c.a11y.as_ref()?.nodes.iter().find(|(id, _)| id.0 == b.0).map(|(_, n)| n.label().map(str::to_owned));
+        assert_eq!(label(&c), Some(Some("Toggle problems".into())));
+        // without it, the text content names the button
+        d.set_prop(b, skelter_core::common::ARIA_LABEL, Value::from("")).unwrap();
+        let c = frame(&mut d).unwrap();
+        assert_eq!(label(&c), Some(Some("3".into())));
+    }
 
     #[test]
     fn the_documents_theme_reaches_a_stock_buttons_tokens() {

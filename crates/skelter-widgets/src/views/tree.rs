@@ -70,6 +70,11 @@ pub struct TreeView {
     expanded: HashSet<u64>,
     /// The flattened visible rows, by position (the list's ids, in the same order).
     rows: Vec<TreeRow>,
+    /// JS flattens the tree (svelters-egui's protocol: `splice` and `setNodes`): the rows come
+    /// from the list's ids and [`Self::facts`], and expanding or collapsing only asks JS.
+    js: bool,
+    /// `setNodes`' facts by id: level, flags (1 expandable, 2 expanded), label.
+    facts: HashMap<u64, (i64, i64, String)>,
     /// Points per level.
     pub indent: f32,
     /// The collapsed node a drag hovers over, and since when.
@@ -91,6 +96,8 @@ impl TreeView {
             roots: Vec::new(),
             expanded: HashSet::new(),
             rows: Vec::new(),
+            js: false,
+            facts: HashMap::new(),
             indent: 16.0,
             drag_hover: None,
         }
@@ -215,6 +222,13 @@ impl TreeView {
 
     /// Expands `id`; raises `expand(id)` so JS can load lazy children. False if nothing changed.
     pub fn expand(&mut self, cx: &mut EventCx<'_>, id: u64) -> bool {
+        if self.js {
+            if !self.row(id).is_some_and(|r| r.expandable && !r.expanded) {
+                return false;
+            }
+            emit(cx, &SPEC, "expand", vec![Value::I64(id as i64)]);
+            return true;
+        }
         let Some(n) = self.nodes.get(&id) else { return false };
         if !n.expandable || !self.expanded.insert(id) {
             return false;
@@ -227,6 +241,13 @@ impl TreeView {
 
     /// Collapses `id`; a cursor inside it moves to it. False if nothing changed.
     pub fn collapse(&mut self, cx: &mut EventCx<'_>, id: u64) -> bool {
+        if self.js {
+            if !self.row(id).is_some_and(|r| r.expanded) {
+                return false;
+            }
+            emit(cx, &SPEC, "collapse", vec![Value::I64(id as i64)]);
+            return true;
+        }
         if !self.expanded.remove(&id) {
             return false;
         }
@@ -277,10 +298,18 @@ impl TreeView {
     /// Left: collapse, or go to the parent.
     fn left(&mut self, cx: &mut EventCx<'_>, m: Mods) -> bool {
         let Some(c) = self.list.sel.cursor else { return false };
-        if self.is_expanded(c) {
+        if self.is_expanded(c) || (self.js && self.row(c).is_some_and(|r| r.expanded)) {
             return self.collapse(cx, c);
         }
-        match self.nodes.get(&c).and_then(|n| n.parent) {
+        let parent = match self.js {
+            // JS mode: the nearest row above one level up
+            true => self.rows.iter().position(|r| r.id == c).and_then(|p| {
+                let d = self.rows[p].depth;
+                self.rows[..p].iter().rev().find(|r| r.depth + 1 == d).map(|r| r.id)
+            }),
+            false => self.nodes.get(&c).and_then(|n| n.parent),
+        };
+        match parent {
             Some(p) => self.go(cx, p, m),
             None => false,
         }
@@ -330,7 +359,8 @@ impl TreeView {
     /// The pointer position's row, if it is on that row's disclosure triangle.
     fn on_disclosure(&self, p: Point) -> Option<u64> {
         let pos = self.list.pos_at(p)?;
-        self.disclosure_rect(pos).filter(|r| r.contains(p)).map(|_| self.rows[pos].id)
+        let c = self.list.to_content(p);
+        self.disclosure_rect(pos).filter(|r| r.contains(c)).map(|_| self.rows[pos].id)
     }
 
     /// A drag hovers `into` the node `id` (`None`: it left, or hovers between rows). A collapsed
@@ -384,6 +414,9 @@ impl skelter_core::VirtualChildren for TreeView {
     fn content_extent(&self) -> Vec2 {
         skelter_core::VirtualChildren::content_extent(&self.list)
     }
+    fn realize(&mut self, cx: &mut skelter_core::RealizeCx, _rows: Range<usize>) -> Vec<(usize, skelter_base::ids::NodeId)> {
+        self.list.realize_rows(cx, &SPEC)
+    }
 }
 
 /// `::part(twisty)`: the disclosure chevron, in the theme's icon colour.
@@ -424,6 +457,149 @@ pub static SPEC: KindSpec = KindSpec {
 
 /// The list's props are the first six of the tree's.
 const LIST_PROPS: u32 = 6;
+
+/// svelters-egui's `tree-view` methods: the list's ([`super::virtual_list::LIST_METHODS`], same
+/// order), then `setNodes(ids, levels, flags, labels?, data?)`, `selection()` and
+/// `setSelection(ids)`.
+pub static TREE_METHODS: &[skelter_core::MethodSpec] = &[
+    super::virtual_list::LIST_METHODS[0],
+    super::virtual_list::LIST_METHODS[1],
+    super::virtual_list::LIST_METHODS[2],
+    super::virtual_list::LIST_METHODS[3],
+    super::virtual_list::LIST_METHODS[4],
+    skelter_core::MethodSpec::new(
+        "setNodes",
+        &[
+            skelter_core::ArgSpec::new("ids", skelter_core::ValueType::List),
+            skelter_core::ArgSpec::new("levels", skelter_core::ValueType::List),
+            skelter_core::ArgSpec::new("flags", skelter_core::ValueType::List),
+            skelter_core::ArgSpec::new("labels", skelter_core::ValueType::List).nullable(),
+            skelter_core::ArgSpec::new("data", skelter_core::ValueType::List).nullable(),
+        ],
+        None,
+    ),
+    skelter_core::MethodSpec::new("selection", &[], Some(skelter_core::ArgSpec::new("return", skelter_core::ValueType::List))),
+    skelter_core::MethodSpec::new("setSelection", &[skelter_core::ArgSpec::new("ids", skelter_core::ValueType::List)], None),
+];
+
+impl TreeView {
+    /// The tree's keys and disclosure presses, then the list's defaults.
+    fn tree_event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        let macos = platform(cx.policy) == Platform::Macos;
+        match ev {
+            Event::Key(k) if k.state == KeyState::Pressed => {
+                let m = Mods { shift: k.modifiers.contains(skelter_base::event::Modifiers::SHIFT), ctrl: k.modifiers.primary(macos) };
+                let done = match k.key {
+                    Some(Key::ArrowRight) => Some(self.right(cx, m)),
+                    Some(Key::ArrowLeft) => Some(self.left(cx, m)),
+                    _ if k.text.as_deref() == Some("*") => Some(self.expand_siblings(cx)),
+                    _ => None,
+                };
+                match done {
+                    Some(_) => {
+                        cx.repaint = true;
+                        Handled::Yes
+                    }
+                    None => self.list.handle(cx, &SPEC, ev),
+                }
+            }
+            Event::Pointer(p) if p.phase == PointerPhase::Down && p.button == Some(MouseButton::Primary) => match self.on_disclosure(p.pos) {
+                Some(id) => {
+                    if !self.collapse(cx, id) {
+                        self.expand(cx, id);
+                    }
+                    Handled::Yes
+                }
+                None => self.list.handle(cx, &SPEC, ev),
+            },
+            Event::Timer => {
+                self.drag_timer(cx);
+                Handled::No
+            }
+            Event::A11y(r) if matches!(r.action, accesskit::Action::Expand | accesskit::Action::Collapse) => {
+                // the action addresses the cursor row (rows are not nodes of their own yet)
+                let Some(c) = self.list.sel.cursor else { return Handled::No };
+                if r.action == accesskit::Action::Expand { self.expand(cx, c) } else { self.collapse(cx, c) };
+                Handled::Yes
+            }
+            _ => self.list.handle(cx, &SPEC, ev),
+        }
+    }
+
+
+    /// svelters-egui's tree methods (JS flattens the tree: `splice` is the visible rows, `setNodes`
+    /// their facts), then the list's.
+    fn call_tree(&mut self, cx: &mut EventCx, name: &str, args: &[skelter_core::Value]) -> Handled {
+        use skelter_core::Value as V;
+        let ints = |k: usize| -> Vec<i64> {
+            match args.get(k) {
+                Some(V::List(l)) => l.iter().map(|x| x.as_i64().unwrap_or(0)).collect(),
+                _ => Vec::new(),
+            }
+        };
+        let strs = |k: usize| -> Vec<String> {
+            match args.get(k) {
+                Some(V::List(l)) => l.iter().map(|x| x.as_str().unwrap_or("").to_string()).collect(),
+                _ => Vec::new(),
+            }
+        };
+        match name {
+            "setNodes" => {
+                let (ids, levels, flags, labels) = (ints(0), ints(1), ints(2), strs(3));
+                self.set_nodes(&ids.iter().map(|&i| i as u64).collect::<Vec<_>>(), &levels, &flags, &labels);
+            }
+            "selection" => {
+                cx.ret = Some(V::List(self.list.sel.selected.iter().map(|&i| V::I64(i as i64)).collect::<Vec<_>>().into()));
+                return Handled::Yes;
+            }
+            "setSelection" => {
+                if self.list.sel.mode != super::virtual_list::SelectMode::None {
+                    self.list.sel.set(ints(0).into_iter().map(|i| i as u64));
+                }
+            }
+            "splice" => {
+                self.js = true;
+                let h = self.list.call_list(cx, name, args).unwrap_or(Handled::No);
+                self.js_rows();
+                return h;
+            }
+            other => return self.list.call_list(cx, other, args).unwrap_or(Handled::No),
+        }
+        cx.refresh_virtual = true;
+        cx.repaint = true;
+        Handled::Yes
+    }
+
+    /// `setNodes(ids, levels, flags, labels)`: the facts of rows by id (flags: 1 expandable, 2
+    /// expanded; a level < 0 forgets the id). JS owns the flattening from then on.
+    pub fn set_nodes(&mut self, ids: &[u64], levels: &[i64], flags: &[i64], labels: &[String]) {
+        self.js = true;
+        for (k, &id) in ids.iter().enumerate() {
+            let level = levels.get(k).copied().unwrap_or(0);
+            if level < 0 {
+                self.facts.remove(&id);
+                continue;
+            }
+            self.facts.insert(id, (level, flags.get(k).copied().unwrap_or(0), labels.get(k).cloned().unwrap_or_default()));
+        }
+        self.js_rows();
+    }
+
+    /// JS mode: the rows are the list's ids with the facts `setNodes` gave.
+    fn js_rows(&mut self) {
+        self.rows = self
+            .list
+            .ids()
+            .iter()
+            .map(|&id| {
+                let (level, flags) = self.facts.get(&id).map_or((0, 0), |f| (f.0, f.1));
+                TreeRow { id, depth: level.max(0) as u32, expandable: flags & 1 != 0, expanded: flags & 2 != 0 }
+            })
+            .collect();
+        let labels: Vec<String> = self.rows.iter().map(|r| self.facts.get(&r.id).map(|f| f.2.clone()).unwrap_or_default()).collect();
+        self.list.set_labels(labels);
+    }
+}
 
 impl Kind for TreeView {
     fn parts() -> &'static [&'static str] {
@@ -499,45 +675,26 @@ impl Kind for TreeView {
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
-        let macos = platform(cx.policy) == Platform::Macos;
-        match ev {
-            Event::Key(k) if k.state == KeyState::Pressed => {
-                let m = Mods { shift: k.modifiers.contains(skelter_base::event::Modifiers::SHIFT), ctrl: k.modifiers.primary(macos) };
-                let done = match k.key {
-                    Some(Key::ArrowRight) => Some(self.right(cx, m)),
-                    Some(Key::ArrowLeft) => Some(self.left(cx, m)),
-                    _ if k.text.as_deref() == Some("*") => Some(self.expand_siblings(cx)),
-                    _ => None,
-                };
-                match done {
-                    Some(_) => {
-                        cx.repaint = true;
-                        Handled::Yes
-                    }
-                    None => self.list.handle(cx, &SPEC, ev),
-                }
-            }
-            Event::Pointer(p) if p.phase == PointerPhase::Down && p.button == Some(MouseButton::Primary) => match self.on_disclosure(p.pos) {
-                Some(id) => {
-                    if !self.collapse(cx, id) {
-                        self.expand(cx, id);
-                    }
-                    Handled::Yes
-                }
-                None => self.list.handle(cx, &SPEC, ev),
-            },
-            Event::Timer => {
-                self.drag_timer(cx);
-                Handled::No
-            }
-            Event::A11y(r) if matches!(r.action, accesskit::Action::Expand | accesskit::Action::Collapse) => {
-                // the action addresses the cursor row (rows are not nodes of their own yet)
-                let Some(c) = self.list.sel.cursor else { return Handled::No };
-                if r.action == accesskit::Action::Expand { self.expand(cx, c) } else { self.collapse(cx, c) };
-                Handled::Yes
-            }
-            _ => self.list.handle(cx, &SPEC, ev),
+        let h = self.tree_event(cx, ev);
+        if self.list.reveal_pending() {
+            cx.refresh_virtual = true;
         }
+        h
+    }
+    fn layout_style(&self, cx: &crate::shim::core::StyleCx) -> taffy::Style {
+        super::virtual_list::scrolling_layout(cx)
+    }
+    fn methods() -> &'static [skelter_core::MethodSpec] {
+        TREE_METHODS
+    }
+    fn call(&mut self, cx: &mut EventCx, method: usize, args: &[skelter_core::Value]) -> Handled {
+        TREE_METHODS.get(method).map_or(Handled::No, |m| self.call_tree(cx, m.name, args))
+    }
+    fn virtual_children(&mut self) -> Option<&mut dyn skelter_core::VirtualChildren> {
+        Some(self)
+    }
+    fn self_scroll(&self) -> Option<skelter_core::SelfScroll> {
+        Some(self.list.self_scroll_extent())
     }
 
     fn a11y(&self, cx: &mut A11yCx) {

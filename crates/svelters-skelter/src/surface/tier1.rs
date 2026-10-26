@@ -338,5 +338,56 @@ pub static ACTION: KindSpec = KindSpec {
     native_state: &["checked"],
 };
 
+static VIRTUALLIST_PROPS: &[PropSpec] = &[
+    PropSpec { name: "current", ty: ValueType::I64, default: DefaultValue::I64(-1), nullable: false, change: ChangeClass::Paint, native: true, doc: "OW5a1b: the cursor's item id (`bind:current`), -1 for none. Setting it moves the cursor without selecting." },
+    PropSpec { name: "internal-move", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "OW5a1b: rows reorder by drag within the list (Qt `InternalMove`): a drop raises `move(from, to)`." },
+    PropSpec { name: "layout", ty: ValueType::Enum(&["list", "grid"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "`list` (egui draws `grid` as a list for now)." },
+    PropSpec { name: "row-drag-type", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "OW5a1b: non-empty: rows drag, as a payload of this type (the dragged item ids, a line each) plus `text/plain` (their labels)." },
+    PropSpec { name: "row-drop-types", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "OW5a1b: non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`." },
+    PropSpec { name: "row-height", ty: ValueType::I64, default: DefaultValue::I64(32), nullable: false, change: ChangeClass::Layout, native: false, doc: "The height a row is assumed to have before it is measured, and its minimum, in points." },
+    PropSpec { name: "selected", ty: ValueType::I64, default: DefaultValue::I64(-1), nullable: false, change: ChangeClass::Paint, native: true, doc: "The selected position, -1 for none. Setting it never raises `select`." },
+    PropSpec { name: "selected-ids", ty: ValueType::IdList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: true, doc: "The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters." },
+    PropSpec { name: "selection", ty: ValueType::Enum(&["none", "single", "multi", "toggle", "range"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Layout, native: false, doc: "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `toggle`: a click toggles its row, no modifier (checklists); `range`: one contiguous run, Shift extends; `none`: rows are not selectable." },
+    PropSpec { name: "uniform-rows", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`)." },
+];
+static VIRTUALLIST_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "activate", args: &[("pos", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user activated the item at `pos` (double click)." },
+    SignalSpec { name: "bind", args: &[("row", ValueType::I64), ("pos", ValueType::I64), ("id", ValueType::I64), ("gen", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot." },
+    SignalSpec { name: "copy", args: &[("ids", ValueType::IdList)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a1b: Ctrl+C on the focused list: copy the selected items (their ids)." },
+    SignalSpec { name: "drop-row", args: &[("id", ValueType::I64), ("where", ValueType::Str), ("type", ValueType::Str), ("data", ValueType::Str)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a1b: a drag was dropped `before`, `after` or `into` item `id` (-1: below the last row), as the entry of `type` it took." },
+    SignalSpec { name: "move", args: &[("from", ValueType::I64), ("to", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a1b (`internal-move`): the row at `from` was dragged to the gap before position `to` (`count()`: the end); move it." },
+    SignalSpec { name: "row-clicked", args: &[("pos", ValueType::I64), ("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a: a click on the row at `pos` (item `id`), after the selection moved." },
+    SignalSpec { name: "row-context", args: &[("pos", ValueType::I64), ("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy)." },
+    SignalSpec { name: "row-hovered", args: &[("pos", ValueType::I64), ("id", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`)." },
+    SignalSpec { name: "select", args: &[("pos", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user selected the item at `pos`." },
+    SignalSpec { name: "selectionchange", args: &[("ids", ValueType::IdList)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user changed the selection; carries the selected ids." },
+    SignalSpec { name: "setup", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Row slot `row` was created: give it content with `setRow`." },
+    SignalSpec { name: "teardown", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` is gone: release its widget." },
+    SignalSpec { name: "unbind", args: &[("row", ValueType::I64), ("gen", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` no longer shows binding `gen`." },
+];
+static VIRTUALLIST_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "count", params: &[], ret: None, doc: "The number of items." },
+    MethodSpec { name: "rowAt", params: &[], ret: None, doc: "`rowAt(pos)`: the slot bound to `pos`, or -1." },
+    MethodSpec { name: "scrollTo", params: &[], ret: None, doc: "`scrollTo(pos, hint?)`: scrolls the item into view; `hint` (Qt `ScrollHint`): `nearest` (the default, the least scroll), `top`, `bottom` or `center`." },
+    MethodSpec { name: "setRow", params: &[], ret: None, doc: "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it." },
+    MethodSpec { name: "splice", params: &[], ret: None, doc: "`splice(pos, removed, ids, labels?)`: replaces `removed` ids at `pos` with `ids` (unique integers); `labels` (strings, one per id) are what type-ahead matches." },
+];
+static VIRTUALLIST_SLOTS: &[SlotSpec] = &[
+];
+pub static VIRTUALLIST: KindSpec = KindSpec {
+    name: "VirtualList",
+    tag: Some("virtual-list"),
+    extends: Some(&WIDGET),
+    doc: "A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows.",
+    props: VIRTUALLIST_PROPS,
+    signals: VIRTUALLIST_SIGNALS,
+    methods: VIRTUALLIST_METHODS,
+    slots: VIRTUALLIST_SLOTS,
+    a11y: A11ySpec { role: "List", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["current", "selected", "selected-ids"],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX, &MENUENTRY, &CONTEXTMENU, &ACTION];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX, &MENUENTRY, &CONTEXTMENU, &ACTION, &VIRTUALLIST];

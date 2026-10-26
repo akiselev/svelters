@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "c85909b778f8145c"
+    "spec_hash": "e52362005dd4dec9"
   },
   "inline_text": {
     "kind": "span",
@@ -36,6 +36,7 @@
         "role": "Button"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -249,6 +250,7 @@
         "role": "Link"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Anchor",
@@ -337,6 +339,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Bold",
@@ -388,6 +391,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Box",
@@ -651,6 +655,7 @@
         "role": "Button"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Button",
@@ -943,6 +948,7 @@
         "role": "CheckBox"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -1153,6 +1159,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Code",
@@ -1207,6 +1214,7 @@
         "role": "DisclosureTriangle"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "open": {
           "compare_before_set": true,
@@ -1380,7 +1388,7 @@
         "end": 108223080
       },
       "text_content": "text",
-      "widget": "placeholder"
+      "widget": "skelter-widgets"
     },
     "ComboBox": {
       "a11y": {
@@ -1392,6 +1400,7 @@
         "role": "ComboBox"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "open": {
           "commit": {
@@ -1681,6 +1690,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": "Widget",
       "bindings": {},
       "chain": [
         "ContextMenu",
@@ -1755,6 +1765,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -1936,6 +1947,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Grid",
@@ -2140,6 +2152,7 @@
         "role": "Link"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Hyperlink",
@@ -2267,6 +2280,7 @@
         "role": "Image"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Icon",
@@ -2528,6 +2542,7 @@
         "role": "Image"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Image",
@@ -2623,6 +2638,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Italic",
@@ -2677,6 +2693,7 @@
         "role": "Label"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "selection-end": {
           "compare_before_set": true,
@@ -2980,6 +2997,7 @@
         "role": null
       },
       "abstract": true,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "MenuEntry"
@@ -3155,6 +3173,7 @@
         "role": "ProgressIndicator"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "ProgressBar",
@@ -3415,6 +3434,7 @@
         "role": "RadioButton"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -3629,6 +3649,7 @@
         "role": null
       },
       "abstract": true,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Run"
@@ -3742,6 +3763,7 @@
         "role": "ScrollView"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "scroll-x": {
           "compare_before_set": true,
@@ -3923,6 +3945,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Separator",
@@ -3979,6 +4002,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Sides",
@@ -4098,6 +4122,7 @@
         "role": "Slider"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "value": {
           "commit": {
@@ -4630,6 +4655,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Span",
@@ -4684,6 +4710,7 @@
         "role": "ProgressIndicator"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Spinner",
@@ -4756,6 +4783,7 @@
         "role": null
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Stack",
@@ -4888,6 +4916,7 @@
         "role": "Switch"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "active": {
           "compare_before_set": true,
@@ -5020,6 +5049,7 @@
         "role": "Table"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "current": {
           "compare_before_set": true,
@@ -5934,6 +5964,7 @@
         "role": "ColumnHeader"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "TableColumn",
@@ -6276,6 +6307,7 @@
         "role": "TextInput"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "text": {
           "commit": {
@@ -6542,6 +6574,7 @@
         "role": "Button"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "checked": {
           "compare_before_set": true,
@@ -6754,6 +6787,7 @@
         "role": "Tree"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {
         "current": {
           "compare_before_set": true,
@@ -7381,6 +7415,681 @@
       "text_content": null,
       "widget": "skelter-widgets"
     },
+    "VirtualList": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "List"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-skelter: <virtual-list> writes current into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-skelter: <virtual-list> writes selected into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selected-ids": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected-ids",
+          "provenance": "svelters-skelter: <virtual-list> writes selected-ids into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "VirtualList",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows.",
+      "fingerprint": "0f620bff",
+      "id": 258083839,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "count": {
+          "dispatch": "generated",
+          "doc": "The number of items.",
+          "fingerprint": "0ac74633",
+          "id": 180831795,
+          "native": "count",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "rowAt": {
+          "dispatch": "generated",
+          "doc": "`rowAt(pos)`: the slot bound to `pos`, or -1.",
+          "fingerprint": "0c21c04d",
+          "id": 203538509,
+          "native": "rowAt",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scrollTo": {
+          "dispatch": "generated",
+          "doc": "`scrollTo(pos, hint?)`: scrolls the item into view; `hint` (Qt `ScrollHint`): `nearest` (the default, the least scroll), `top`, `bottom` or `center`.",
+          "fingerprint": "0240a41c",
+          "id": 37790748,
+          "native": "scrollTo",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setRow": {
+          "dispatch": "generated",
+          "doc": "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it.",
+          "fingerprint": "01eb8050",
+          "id": 32211024,
+          "native": "setRow",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "splice": {
+          "dispatch": "generated",
+          "doc": "`splice(pos, removed, ids, labels?)`: replaces `removed` ids at `pos` with `ids` (unique integers); `labels` (strings, one per id) are what type-ahead matches.",
+          "fingerprint": "01850074",
+          "id": 25493620,
+          "native": "splice",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter VirtualList",
+      "native_state": [
+        "current",
+        "selected",
+        "selected-ids"
+      ],
+      "present": null,
+      "props": {
+        "current": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "OW5a1b: the cursor's item id (`bind:current`), -1 for none. Setting it moves the cursor without selecting.",
+          "fingerprint": "05edce1c",
+          "id": 99470876,
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:VirtualList:current",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "internal-move": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: rows reorder by drag within the list (Qt `InternalMove`): a drop raises `move(from, to)`.",
+          "fingerprint": "085da5c7",
+          "id": 140355015,
+          "js": "internal-move",
+          "native": "internal-move",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:internal-move",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "layout": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "list",
+          "doc": "`list` (egui draws `grid` as a list for now).",
+          "fingerprint": "072f3b33",
+          "id": 120535859,
+          "js": "layout",
+          "native": "layout",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:layout",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "list",
+            "grid"
+          ],
+          "writable": true
+        },
+        "row-drag-type": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "OW5a1b: non-empty: rows drag, as a payload of this type (the dragged item ids, a line each) plus `text/plain` (their labels).",
+          "fingerprint": "0a312845",
+          "id": 170993733,
+          "js": "row-drag-type",
+          "native": "row-drag-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:row-drag-type",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-drop-types": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "OW5a1b: non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`.",
+          "fingerprint": "0212aa7b",
+          "id": 34777723,
+          "js": "row-drop-types",
+          "native": "row-drop-types",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:row-drop-types",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 32,
+          "doc": "The height a row is assumed to have before it is measured, and its minimum, in points.",
+          "fingerprint": "0b270a7b",
+          "id": 187107963,
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:row-height",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selected": {
+          "change": "paint",
+          "construct_only": false,
+          "default": -1,
+          "doc": "The selected position, -1 for none. Setting it never raises `select`.",
+          "fingerprint": "09383db0",
+          "id": 154680752,
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:VirtualList:selected",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selected-ids": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters.",
+          "fingerprint": "01144ac0",
+          "id": 18107072,
+          "js": "selected-ids",
+          "native": "selected-ids",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:VirtualList:selected-ids",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "i64",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "selection": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `toggle`: a click toggles its row, no modifier (checklists); `range`: one contiguous run, Shift extends; `none`: rows are not selectable.",
+          "fingerprint": "00a4b713",
+          "id": 10794771,
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:selection",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single",
+            "multi",
+            "toggle",
+            "range"
+          ],
+          "writable": true
+        },
+        "uniform-rows": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`).",
+          "fingerprint": "0c6972d0",
+          "id": 208237264,
+          "js": "uniform-rows",
+          "native": "uniform-rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:uniform-rows",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user activated the item at `pos` (double click).",
+          "fingerprint": "02d6e42f",
+          "handler_result": "none",
+          "id": 47637551,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot.",
+          "fingerprint": "046034cb",
+          "handler_result": "bool_stop",
+          "id": 73413835,
+          "js_event": "bind",
+          "name": "bind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: Ctrl+C on the focused list: copy the selected items (their ids).",
+          "fingerprint": "0d5d072a",
+          "handler_result": "none",
+          "id": 224200490,
+          "js_event": "copy",
+          "name": "copy",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drop-row": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "where",
+              "type": "string"
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: a drag was dropped `before`, `after` or `into` item `id` (-1: below the last row), as the entry of `type` it took.",
+          "fingerprint": "0a4d6be4",
+          "handler_result": "none",
+          "id": 172846052,
+          "js_event": "drop-row",
+          "name": "drop-row",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "move": {
+          "args": [
+            {
+              "name": "from",
+              "type": "i64"
+            },
+            {
+              "name": "to",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b (`internal-move`): the row at `from` was dragged to the gap before position `to` (`count()`: the end); move it.",
+          "fingerprint": "03e8f881",
+          "handler_result": "none",
+          "id": 65599617,
+          "js_event": "move",
+          "name": "move",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "fingerprint": "05a850c6",
+          "handler_result": "none",
+          "id": 94916806,
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy).",
+          "fingerprint": "0f5d8d10",
+          "handler_result": "none",
+          "id": 257789200,
+          "js_event": "row-context",
+          "name": "row-context",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-hovered": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`).",
+          "fingerprint": "075c39d8",
+          "handler_result": "none",
+          "id": 123484632,
+          "js_event": "row-hovered",
+          "name": "row-hovered",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "select": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user selected the item at `pos`.",
+          "fingerprint": "0fbd48dc",
+          "handler_result": "none",
+          "id": 264063196,
+          "js_event": "select",
+          "name": "select",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selectionchange": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection; carries the selected ids.",
+          "fingerprint": "0ab93063",
+          "handler_result": "none",
+          "id": 179908707,
+          "js_event": "selectionchange",
+          "name": "selectionchange",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "setup": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Row slot `row` was created: give it content with `setRow`.",
+          "fingerprint": "06f18445",
+          "handler_result": "bool_stop",
+          "id": 116491333,
+          "js_event": "setup",
+          "name": "setup",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "teardown": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` is gone: release its widget.",
+          "fingerprint": "04cc7a48",
+          "handler_result": "bool_stop",
+          "id": 80509512,
+          "js_event": "teardown",
+          "name": "teardown",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "unbind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` no longer shows binding `gen`.",
+          "fingerprint": "0d22215c",
+          "handler_result": "bool_stop",
+          "id": 220340572,
+          "js_event": "unbind",
+          "name": "unbind",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "Widget": {
       "a11y": {
         "name_from": [
@@ -7390,6 +8099,7 @@
         "role": null
       },
       "abstract": true,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Widget"
@@ -8725,6 +9435,7 @@
         "role": "Window"
       },
       "abstract": false,
+      "attaches_to": null,
       "bindings": {},
       "chain": [
         "Window"
@@ -9569,7 +10280,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "enum",
         "values": [
@@ -9797,7 +10509,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -9921,7 +10634,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "enum",
         "values": [
@@ -9981,7 +10695,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10043,7 +10758,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "number",
         "via": "setter"
@@ -10083,7 +10799,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "number",
         "via": "setter"
@@ -10217,7 +10934,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10297,7 +11015,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10372,7 +11091,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10412,7 +11132,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10452,7 +11173,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10492,7 +11214,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10647,7 +11370,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "enum",
         "values": [
@@ -10689,7 +11413,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10764,7 +11489,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "enum",
         "values": [
@@ -10850,7 +11576,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -10934,7 +11661,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "bool",
         "via": "setter"
@@ -10987,7 +11715,8 @@
           "table-column",
           "text-edit",
           "toggle-button",
-          "tree-view"
+          "tree-view",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -11148,6 +11877,7 @@
     "text-edit": "TextEdit",
     "toggle-button": "ToggleButton",
     "tree-view": "TreeView",
+    "virtual-list": "VirtualList",
     "window": "Window"
   }
 }

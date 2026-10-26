@@ -94,6 +94,11 @@ impl Document {
             if let Some(d) = v.prop_str(crate::common::ARIA_DESCRIPTION).filter(|d| !d.is_empty()) {
                 out.set_description(d);
             }
+            // ARIA's precedence: `aria-label` names the node over its text content, whatever the
+            // kind set from its content (a button labelled "Toggle problems" that shows "3", A30)
+            if let Some(l) = v.prop_str(crate::common::ARIA_LABEL).filter(|l| !l.trim().is_empty()) {
+                out.set_label(l);
+            }
         }
         let l = &self.layout[i].layout;
         out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: l.size.width as f64, y1: l.size.height as f64 });

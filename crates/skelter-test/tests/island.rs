@@ -236,3 +236,121 @@ fn a_ctrl_click_is_seen_with_ctrl_held_and_f2_then_typing_edits() {
     h.run();
     assert_eq!(h.state().text, "ab");
 }
+
+/// A5c: an effect drawn above the button that causes it shows only in the pass after the click;
+/// egui asks for that pass (repaint delay 0, at the next frame's time), and `run` waits for it.
+/// `run` counts the steps the passes took.
+#[test]
+fn run_waits_for_the_pass_a_click_asks_for() {
+    fn panel_above(ui: &mut egui::Ui, s: &mut S) {
+        if s.on {
+            ui.label("Problems: 3");
+        }
+        if ui.button("Show problems").clicked() {
+            s.on = true;
+        }
+    }
+    let mut h = EguiHarness::builder().with_size(egui::vec2(400.0, 300.0)).build_ui_state(panel_above, S::default());
+    let p = h.doc().passes();
+    h.get_by_label("Show problems").click();
+    let n = h.run();
+    assert!(h.state().on);
+    assert!(h.query_by_label("Problems: 3").is_some(), "the click's effect is drawn when run returns");
+    let passes = h.doc().passes() - p;
+    assert!(passes >= 2, "the click's pass and the one it asked for: {passes}");
+    assert_eq!(n, passes, "run counts a step per pass");
+}
+
+/// A5e: `type_text` in an island types as kittest does (egui `Event::Text`), not as an IME commit.
+#[test]
+fn type_text_reaches_egui_as_text_events() {
+    #[derive(Default)]
+    struct T {
+        text: String,
+        ime_commits: usize,
+        texts: Vec<String>,
+    }
+    let mut h = EguiHarness::builder().with_size(egui::vec2(300.0, 100.0)).build_ui_state(
+        |ui, s: &mut T| {
+            ui.input(|i| {
+                for e in &i.events {
+                    match e {
+                        egui::Event::Text(t) => s.texts.push(t.clone()),
+                        egui::Event::Ime(egui::ImeEvent::Commit(_)) => s.ime_commits += 1,
+                        _ => {}
+                    }
+                }
+            });
+            ui.add(egui::TextEdit::singleline(&mut s.text).hint_text("Name"));
+        },
+        T::default(),
+    );
+    h.get_by_role(Role::TextInput).click();
+    h.run();
+    h.get_by_role(Role::TextInput).type_text("ab");
+    h.run();
+    assert_eq!(h.state().text, "ab");
+    assert_eq!(h.state().texts, ["ab"]);
+    assert_eq!(h.state().ime_commits, 0);
+}
+
+/// A5f: text egui copied stays in the island output until taken, though a pass runs every step.
+#[test]
+fn copied_text_waits_until_taken() {
+    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 80.0)).build_ui(|ui| {
+        if ui.button("Copy").clicked() {
+            ui.ctx().copy_text("hello".into());
+        }
+    });
+    h.get_by_label("Copy").click();
+    h.run();
+    h.step();
+    h.step();
+    assert_eq!(h.island_output().copied, ["hello"], "still there steps later");
+    let out = h.take_island_output();
+    assert_eq!(out.copied, ["hello"]);
+    h.step();
+    assert!(h.island_output().copied.is_empty(), "taken");
+}
+
+/// A5g: `build_ui`/`build_ui_state` run the closure in kittest's central-panel frame (an 8-point
+/// outer margin); `build`/`build_state` (context closures) run bare.
+#[test]
+fn ui_closures_get_kittests_central_panel_margin() {
+    let h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build_ui(|ui| {
+        let _ = ui.button("Corner");
+    });
+    let r = h.get_by_label("Corner").rect();
+    assert_eq!((r.min.x, r.min.y), (8.0, 8.0), "inside the 8-point margin: {r:?}");
+    let h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build(|ctx| {
+        egui::Area::new(egui::Id::new("bare")).fixed_pos(egui::pos2(0.0, 0.0)).show(ctx, |ui| {
+            let _ = ui.button("Bare");
+        });
+    });
+    let r = h.get_by_label("Bare").rect();
+    assert_eq!((r.min.x, r.min.y), (0.0, 0.0), "a context closure has no frame: {r:?}");
+}
+
+/// A5h: kittest's context defaults: the `Nix` OS, no caret blink, no scroll animation, no
+/// animation time (and its missing-glyph policy).
+#[test]
+fn the_context_has_kittests_defaults() {
+    let h = EguiHarness::builder().build_ui(|ui| {
+        ui.label("x");
+    });
+    let ctx = &h.ctx;
+    assert_eq!(ctx.os(), egui::os::OperatingSystem::Nix);
+    assert_eq!(ctx.missing_glyph_policy(), egui::MissingGlyphPolicy::Panic);
+    for theme in [egui::Theme::Dark, egui::Theme::Light] {
+        let st = ctx.style_of(theme);
+        assert!(!st.visuals.text_cursor.blink);
+        assert_eq!(st.animation_time, 0.0);
+        assert_eq!(st.scroll_animation, egui::style::ScrollAnimation::none());
+    }
+    // a setup runs first; the defaults apply over it, as kittest
+    let h = EguiHarness::builder().with_os(egui::os::OperatingSystem::Mac).with_context_setup(|c| c.all_styles_mut(|s| s.animation_time = 1.0)).build_ui(|ui| {
+        ui.label("x");
+    });
+    assert_eq!(h.ctx.os(), egui::os::OperatingSystem::Mac);
+    assert_eq!(h.ctx.style_of(egui::Theme::Dark).animation_time, 0.0);
+}

@@ -139,6 +139,7 @@ impl HarnessBuilder {
             before_step: None,
             settled: None,
             one_event_per_step: false,
+            text_as_keys: false,
             clipboard: None,
             textures: Some(Box::new(|d: &mut CoreIslands<U>, g: &mut GpuRender| {
                 let regs = Registrations::default();

@@ -550,6 +550,13 @@ pub trait Kind: 'static {
         None
     }
 
+    /// The least size a container's own chrome needs (a header row's caption and twistie), which
+    /// core makes its min size where CSS sets none: a content-sized container never squeezes its
+    /// chrome away. It may measure text. `None`: no minimum.
+    fn chrome_min_size(&self, cx: &mut MeasureCx) -> Option<skelter_base::geom::Size> {
+        None
+    }
+
     /// For a kind with [`KindSpec::places_children`]: adjusts child `cx.index`'s taffy style (after
     /// the child's own cascade and kind) and returns whether the child is shown. A child that is not
     /// shown keeps its layout (it still sizes the container) but is not painted, hit or in the
