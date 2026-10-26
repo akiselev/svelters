@@ -719,3 +719,16 @@ fn a_zoom_rescales_the_document_and_its_hit_testing_without_an_os_resize() {
     h.run();
     assert_eq!(h.state().size, Some((Size::new(200.0, 100.0), Scale(1.0))));
 }
+
+#[test]
+fn calls_can_be_taken_and_capped() {
+    let mut h = harness();
+    assert!(!h.take_calls().is_empty(), "the window's opening calls");
+    assert!(h.calls().is_empty(), "taken");
+    let mut capped = Harness::<Doc>::builder().with_calls_cap(3).build(Doc { dirty: true, ..Doc::default() });
+    for _ in 0..10 {
+        capped.key_press(Key::Tab);
+        capped.run();
+    }
+    assert!(capped.calls().len() <= 3, "{} calls kept", capped.calls().len());
+}

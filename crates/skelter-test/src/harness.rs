@@ -97,6 +97,7 @@ pub struct HarnessBuilder {
     pub(crate) check_accessibility: bool,
     pub(crate) snapshot: SnapshotOptions,
     pub(crate) native_menu_bar: bool,
+    pub(crate) calls_cap: Option<usize>,
 }
 
 impl Default for HarnessBuilder {
@@ -106,6 +107,7 @@ impl Default for HarnessBuilder {
             scale: 1.0,
             interval: Span::from_micros(16_667),
             max_steps: 64,
+            calls_cap: None,
             start: Time(1_000_000_000),
             config: AppConfig::default(),
             glyphs: None,
@@ -182,6 +184,12 @@ impl HarnessBuilder {
             !on,
             "skelter-test renders the committed tree; the OS cursor is not part of it"
         );
+        self
+    }
+    /// Keep only the last `n` platform calls ([`Harness::calls`]); a long run (a tour of thousands of
+    /// frames, each sending an AccessKit tree) otherwise grows without bound. Default: all.
+    pub fn with_calls_cap(mut self, n: usize) -> Self {
+        self.calls_cap = Some(n);
         self
     }
     /// kittest's check that every input widget has an accessible name, after each `run` (default on).
@@ -272,6 +280,7 @@ impl HarnessBuilder {
             egui: RefCell::new(EguiAdapter::default()),
             a11y: A11yTree::default(),
             calls: Vec::new(),
+            calls_cap: self.calls_cap,
             steps: 0,
             glyphs: self.glyphs,
             clear: self.clear,
@@ -323,6 +332,7 @@ pub struct Harness<D: DocumentApi + 'static> {
     a11y: A11yTree,
     /// Every platform call the app made, in order.
     calls: Vec<PlatformCall>,
+    calls_cap: Option<usize>,
     steps: u64,
     glyphs: Option<Arc<dyn GlyphRasterizer>>,
     clear: Color,
@@ -384,6 +394,10 @@ impl<D: DocumentApi + 'static> Harness<D> {
     /// Every platform call the app made so far (windows, cursors, IME, a11y updates, exit).
     pub fn calls(&self) -> &[PlatformCall] {
         &self.calls
+    }
+    /// The platform calls made since the last take, removed from the harness.
+    pub fn take_calls(&mut self) -> Vec<PlatformCall> {
+        std::mem::take(&mut self.calls)
     }
     pub fn exited(&self) -> bool {
         self.platform.exited()
@@ -466,6 +480,12 @@ impl<D: DocumentApi + 'static> Harness<D> {
                 self.a11y.apply(u);
             }
             self.calls.push(c);
+        }
+        if let Some(cap) = self.calls_cap
+            && self.calls.len() > cap
+        {
+            let over = self.calls.len() - cap;
+            self.calls.drain(..over);
         }
     }
 
