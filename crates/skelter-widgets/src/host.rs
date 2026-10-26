@@ -183,6 +183,15 @@ impl crate::shim::text::TextGeometry for SkelterGeometry {
     }
 }
 
+/// The node has a JS listener for a click or a press (the DOM-style events, or its kind's own
+/// `clicked`): its whole box takes the pointer.
+fn takes_clicks(node: skelter_core::NodeView<'_>) -> bool {
+    use skelter_core::common::{CLICK, CONTEXTMENU, DBLCLICK, POINTERDOWN, POINTERUP};
+    let spec = node.kind().spec;
+    let own = spec.signals.iter().position(|s| s.name == "clicked").map(|i| spec.signal_id(i));
+    node.listeners().iter().any(|l| [CLICK, DBLCLICK, POINTERDOWN, POINTERUP, CONTEXTMENU].contains(&l.signal) || Some(l.signal) == own)
+}
+
 // ---- specs ----
 
 /// skelter-core's spec for a widget, and the maps between the two prop index spaces.
@@ -930,6 +939,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
         match self.widget.hit_test(&w::HitCx { size: cx.size() }, p) {
             w::HitResult::Hit => cx.box_hit(p),
+            // a widget whose hit area is smaller than its box (a label's text) that JS listens to
+            // for clicks or presses takes them on its whole box, as a button does
+            w::HitResult::Miss if takes_clicks(cx.node) => cx.box_hit(p),
             w::HitResult::Miss => HitResult::Miss,
         }
     }

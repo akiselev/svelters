@@ -4,6 +4,7 @@
 //! - FQ-66: a `table` exposes its header, realised rows and cells, with actions.
 //! - SV59: `setLabels` renames a list's realised options;
 //! - SV60: `aria-activedescendant` / `aria-controls` resolve when their target appears later;
+//! - a label stretched past its text that JS listens to for clicks takes them on its whole box.
 
 use skelter::CoreDocument;
 use skelter_base::accesskit::{Action, Role};
@@ -210,4 +211,32 @@ fn references_resolve_when_their_target_appears() {
     h.state_mut().doc.remove(list, opt).unwrap();
     settle(&mut h);
     assert_eq!(refs(&h), (None, vec![AxId(list.0)]));
+}
+
+/// A `label` stretched by layout (here `width`) with a `click` listener takes a click beyond its
+/// text, as a button does; one nobody listens to still lets it through to its parent.
+#[test]
+fn a_stretched_label_with_a_click_listener_takes_clicks_on_its_whole_box() {
+    use skelter_core::{ListenFlags, common::CLICK};
+    let mut h = harness();
+    let w = h.window();
+    let (parent, label) = {
+        let d = &mut h.state_mut().doc;
+        let root = d.window_root(w).unwrap();
+        let parent = add(d, root, BOX, "width: 300px; height: 24px");
+        let label = add(d, parent, KindId::of("label"), "width: 300px; height: 24px");
+        prop(d, label, KindId::of("label"), "text", Value::from("Hi"));
+        d.listen(parent, CLICK, ListenFlags::EMPTY);
+        (parent, label)
+    };
+    settle(&mut h);
+    h.state_mut().take_js_events();
+    let click_target = |h: &mut Harness<CoreDocument>| {
+        h.click_at(skelter_base::geom::Point::new(280.0, 12.0));
+        h.run();
+        h.state_mut().take_js_events().into_iter().find(|e| e.signal == CLICK).map(|e| e.target)
+    };
+    assert_eq!(click_target(&mut h), Some(parent), "unlistened: the click past the text is the parent's");
+    h.state_mut().doc.listen(label, CLICK, ListenFlags::EMPTY);
+    assert_eq!(click_target(&mut h), Some(label), "listened: the whole box is the label's");
 }

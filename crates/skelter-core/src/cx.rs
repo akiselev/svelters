@@ -95,6 +95,10 @@ impl<'a> NodeView<'a> {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    /// The JS listeners registered on the node ([`Document::listen`](crate::Document::listen)).
+    pub fn listeners(&self) -> &'a [crate::tree::Listener] {
+        self.doc.listeners(self.id)
+    }
     pub fn kind(&self) -> &'a KindEntry {
         self.entry
     }

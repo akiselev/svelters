@@ -401,6 +401,11 @@ impl Kind for Label {
     }
 
     fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
+        // a label that takes clicks (`clickable`, `for`) takes them on its whole box, as a button
+        // does, also when layout made it wider than its text; else only its text is hit
+        if self.props.clickable || !self.props.for_anchor.is_empty() {
+            return cx.box_hit(p);
+        }
         match &self.placed {
             Some(pl) if pl.rect.contains(p) => HitResult::Hit,
             Some(_) => HitResult::Miss,
@@ -694,6 +699,18 @@ mod tests {
         let hc = HitCx { size };
         assert_eq!(l.hit_test(&hc, Point::new(1.0, 15.0)), HitResult::Hit);
         assert_eq!(l.hit_test(&hc, Point::new(90.0, 15.0)), HitResult::Miss);
+    }
+
+    /// A label that takes clicks is hit on its whole box (layout may make it wider than its text).
+    #[test]
+    fn a_clickable_label_is_hit_on_its_whole_box() {
+        let size = Size::new(100.0, 30.0);
+        let mut l = label("Hi");
+        l.props.clickable = true;
+        rt::prepare(&mut l, size, StateBits::NONE);
+        let hc = HitCx { size };
+        assert_eq!(l.hit_test(&hc, Point::new(90.0, 15.0)), HitResult::Hit);
+        assert_eq!(l.hit_test(&hc, Point::new(110.0, 15.0)), HitResult::Miss, "not outside it");
     }
 
     #[test]
