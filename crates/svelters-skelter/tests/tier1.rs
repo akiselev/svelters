@@ -29,3 +29,25 @@ fn scroll_area_is_skelter_widgets_with_eguis_surface() {
     r.backend.pump();
     assert_eq!(r.take().events, [(s, r.signal_id(s, "changed"), vec![Value::F64(0.0), Value::F64(40.0)])]);
 }
+
+#[test]
+fn collapsing_header_has_eguis_surface() {
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    let m = kinds.by_tag("collapsing-header").expect("collapsing-header");
+    // skelter-widgets has no collapsing header yet: a placeholder holds egui's members
+    assert!(!m.hosted);
+    let h = r.create("collapsing-header");
+    r.insert(h, r.create("label"));
+    let end = r.br().resolve(NameKind::Slot, r.kind(h), "end");
+    assert_ne!(end, 0, "egui's `end` slot");
+    r.br().insert(h, r.create("button"), None, end).unwrap();
+    r.set(h, "text", Value::Str("Details".into()));
+    assert_eq!(r.get(h, "text"), Value::Str("Details".into()));
+    r.set(h, "open", Value::Bool(true));
+    assert_eq!(r.get(h, "open"), Value::Bool(true));
+    r.listen(h, "changed");
+    r.emit(h, "changed", vec![PValue::Bool(false)]);
+    r.backend.pump();
+    assert_eq!(r.take().events, [(h, r.signal_id(h, "changed"), vec![Value::Bool(false)])]);
+}

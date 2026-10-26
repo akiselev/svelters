@@ -14,6 +14,7 @@ pub fn from_abi(v: &Abi, ty: ValueType, nullable: bool) -> Result<Value, String>
     let bad = || format!("expected {}{}, got {}", ty.name(), if nullable { " or null" } else { "" }, abi_kind(v));
     Ok(match (v, ty) {
         (Abi::Null, _) if nullable => Value::Null,
+        (v, ValueType::Any) => from_abi_any(v)?,
         (Abi::Bool(b), ValueType::Bool) => Value::Bool(*b),
         (Abi::I64(i), ValueType::I64) => Value::I64(*i),
         (Abi::F64(f), ValueType::I64) if f.fract() == 0.0 && f.abs() < 9.007_199_254_740_992e15 => Value::I64(*f as i64),
@@ -147,6 +148,7 @@ pub fn tag_of(ty: ValueType) -> u16 {
         ValueType::Str | ValueType::Enum(_) | ValueType::Color => SVL_STR,
         ValueType::StrList | ValueType::NumList | ValueType::IdList => SVL_LIST,
         ValueType::Record => SVL_RECORD,
+        ValueType::Any => svelters_abi::SVL_NULL,
     }
 }
 

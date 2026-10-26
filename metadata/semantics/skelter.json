@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "7d58b1d15c98c7c0"
+    "spec_hash": "6db86aecedd3750a"
   },
   "inline_text": {
     "kind": "span",
@@ -983,6 +983,191 @@
       },
       "text_content": "text",
       "widget": "skelter-widgets"
+    },
+    "CollapsingHeader": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "text"
+        ],
+        "name_required": false,
+        "role": "DisclosureTriangle"
+      },
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <collapsing-header> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "CollapsingHeader",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          },
+          "end": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`.",
+      "fingerprint": "88cbd337",
+      "id": 2295059255,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter CollapsingHeader",
+      "native_state": [
+        "open"
+      ],
+      "present": null,
+      "props": {
+        "accordion": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The group of sibling headers of which one is open at a time (QToolBox); empty: none.",
+          "fingerprint": "572230fd",
+          "id": 1461858557,
+          "js": "accordion",
+          "native": "accordion",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:CollapsingHeader:accordion",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "icon": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "An icon before the caption (a key, or `family:name`).",
+          "fingerprint": "d180bae2",
+          "id": 3514874594,
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:CollapsingHeader:icon",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows the children; a click on the header (or Enter/Space on it) toggles it.",
+          "fingerprint": "506af6cc",
+          "id": 1349187276,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:CollapsingHeader:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The header's caption (also its accessible name).",
+          "fingerprint": "119488fc",
+          "id": 294947068,
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:CollapsingHeader:text",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user opened or closed it; carries the new state.",
+          "fingerprint": "837c06e5",
+          "handler_result": "none",
+          "id": 2205943525,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 2966986928,
+        "end": 3866319464
+      },
+      "text_content": "text",
+      "widget": "placeholder"
     },
     "Frame": {
       "a11y": {
@@ -6694,6 +6879,7 @@
         "prop": "align-items",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area",
@@ -6720,6 +6906,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -6943,6 +7130,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -6987,6 +7175,7 @@
         },
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area"
@@ -7053,6 +7242,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7108,6 +7298,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7138,6 +7329,7 @@
         "prop": "flex-direction",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "scroll-area"
         ],
@@ -7164,6 +7356,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7199,6 +7392,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7229,6 +7423,7 @@
         "prop": "flex-wrap",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "scroll-area"
         ],
@@ -7283,6 +7478,7 @@
         },
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area",
@@ -7326,6 +7522,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7356,6 +7553,7 @@
         "prop": "justify-content",
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "scroll-area"
         ],
@@ -7400,6 +7598,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7470,6 +7669,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7505,6 +7705,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7540,6 +7741,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7575,6 +7777,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7725,6 +7928,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7762,6 +7966,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7796,6 +8001,7 @@
         },
         "tags": [
           "box",
+          "collapsing-header",
           "frame",
           "grid",
           "scroll-area"
@@ -7831,6 +8037,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7912,6 +8119,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -7988,6 +8196,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -8036,6 +8245,7 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
           "frame",
           "grid",
           "hyperlink",
@@ -8187,6 +8397,7 @@
     "button": "Button",
     "checkbox": "Checkbox",
     "code": "Code",
+    "collapsing-header": "CollapsingHeader",
     "frame": "Frame",
     "grid": "Grid",
     "hyperlink": "Hyperlink",

@@ -148,7 +148,8 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
 /// Whether surface type `t` can live in core prop `c`: the same core type and, for an enum, every
 /// surface name among core's values (the index is remapped by name, [`enum_to_core`]).
 fn fits(t: ValueType, c: &core::PropSpec) -> bool {
-    c.ty == core_type(t)
+    t != ValueType::Any
+        && c.ty == core_type(t)
         && match t {
             ValueType::Enum(names) => names.iter().all(|n| c.enum_values.contains(n)),
             _ => true,
@@ -184,7 +185,8 @@ pub fn core_type(t: ValueType) -> core::ValueType {
         ValueType::Enum(_) => core::ValueType::Enum,
         ValueType::Color => core::ValueType::Color,
         ValueType::StrList | ValueType::NumList | ValueType::IdList => core::ValueType::List,
-        ValueType::Record => core::ValueType::Record,
+        // stored by the backend ([`PropTarget::Side`]): never a core prop
+        ValueType::Record | ValueType::Any => core::ValueType::Record,
     }
 }
 
@@ -281,7 +283,7 @@ fn synthesize(k: &'static KindSpec) -> &'static core::KindSpec {
     let mut props: Vec<core::PropSpec> = Vec::new();
     for decl in k.chain() {
         for p in decl.props {
-            if common_alias(decl, p).is_some() || props.iter().any(|q| q.name == p.name) {
+            if common_alias(decl, p).is_some() || p.ty == ValueType::Any || props.iter().any(|q| q.name == p.name) {
                 continue;
             }
             let mut c = core::PropSpec::new(p.name, core_type(p.ty), p.change).default(core_default(p));

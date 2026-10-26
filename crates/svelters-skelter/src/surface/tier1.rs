@@ -36,5 +36,35 @@ pub static SCROLLAREA: KindSpec = KindSpec {
     native_state: &["scroll-x", "scroll-y"],
 };
 
+static COLLAPSINGHEADER_PROPS: &[PropSpec] = &[
+    PropSpec { name: "accordion", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The group of sibling headers of which one is open at a time (QToolBox); empty: none." },
+    PropSpec { name: "icon", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "An icon before the caption (a key, or `family:name`)." },
+    PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "Shows the children; a click on the header (or Enter/Space on it) toggles it." },
+    PropSpec { name: "text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The header's caption (also its accessible name)." },
+];
+static COLLAPSINGHEADER_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("open", ValueType::Bool)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user opened or closed it; carries the new state." },
+];
+static COLLAPSINGHEADER_METHODS: &[MethodSpec] = &[
+];
+static COLLAPSINGHEADER_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+    SlotSpec { name: "end", accepts: &["Widget"], many: true },
+];
+pub static COLLAPSINGHEADER: KindSpec = KindSpec {
+    name: "CollapsingHeader",
+    tag: Some("collapsing-header"),
+    extends: Some(&BOX),
+    doc: "A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`.",
+    props: COLLAPSINGHEADER_PROPS,
+    signals: COLLAPSINGHEADER_SIGNALS,
+    methods: COLLAPSINGHEADER_METHODS,
+    slots: COLLAPSINGHEADER_SLOTS,
+    a11y: A11ySpec { role: "DisclosureTriangle", name_from: &["accessible-name", "text"], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &["open"],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER];
