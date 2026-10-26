@@ -1011,6 +1011,14 @@ impl ContextMenu {
     }
 }
 
+/// `open-at(x, y)`: opens the menu at a point of its own (node-local points), as a context click
+/// there does; svelters-skelter's `popup(point?)` calls it with the owner's point converted.
+static CONTEXT_MENU_METHODS: &[skelter_core::MethodSpec] = &[skelter_core::MethodSpec::new(
+    "open-at",
+    &[skelter_core::ArgSpec::new("x", skelter_core::ValueType::F64), skelter_core::ArgSpec::new("y", skelter_core::ValueType::F64)],
+    None,
+)];
+
 impl Kind for ContextMenu {
     fn parts() -> &'static [&'static str] {
         &["menu", "title", "item", "separator", "group-label"]
@@ -1021,6 +1029,19 @@ impl Kind for ContextMenu {
     }
     fn spec() -> &'static KindSpec {
         &CONTEXT_MENU_SPEC
+    }
+    fn methods() -> &'static [skelter_core::MethodSpec] {
+        CONTEXT_MENU_METHODS
+    }
+    fn call(&mut self, cx: &mut EventCx, method: usize, args: &[skelter_core::Value]) -> Handled {
+        match (method, args) {
+            (0, [x, y]) if self.menus.enabled => {
+                let (Some(x), Some(y)) = (x.as_f64(), y.as_f64()) else { return Handled::No };
+                self.context_click(cx, Point::new(x as f32, y as f32));
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
     }
 
     fn prop_state(&self) -> StateBits {

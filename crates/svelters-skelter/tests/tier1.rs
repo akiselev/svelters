@@ -411,3 +411,63 @@ fn scroll_area_takes_the_box_props() {
     assert_eq!((a.min.x, a.min.y), (4.0, 4.0), "inside the padding");
     assert_eq!(b.min.x, a.max.x + 6.0, "in a row, the gap apart: {a:?} {b:?}");
 }
+
+/// The context menu's open level's rect in its owner's points.
+fn level_in_owner(r: &Rig, menu: svl_handle) -> skelter_base::geom::Rect {
+    let n = r.backend.node(menu).unwrap();
+    r.backend
+        .with_doc(|d| {
+            let own = d.layout_rect(n).unwrap();
+            d.with_kind(n, |k| {
+                let c = k.as_any().and_then(|a| a.downcast_ref::<skelter_widgets::views::menu::ContextMenu>()).expect("skelter-widgets' context menu");
+                let l = c.menus.levels().first().expect("an open level").rect;
+                skelter_base::geom::Rect::new(l.min.x + own.min.x, l.min.y + own.min.y, l.max.x + own.min.x, l.max.y + own.min.y)
+            })
+        })
+        .unwrap()
+}
+
+/// A9b: `popup()` opens below the owner (svelters-egui's `owner.left_bottom()`, tests/menus.rs
+/// "popup() opens it below its owner"); `popup(x, y)` and `popup({x, y})` open at that point of the
+/// owner, in the owner's points.
+#[test]
+fn context_menu_popup_opens_below_the_owner_or_at_the_point() {
+    use skelter_base::geom::{Scale, Size};
+    use skelter_base::ids::WindowId;
+    use skelter_base::time::Time;
+    let r = Rig::new();
+    let root = r.create("box");
+    r.backend.attach_presented(root, WindowId(1), Size::new(400.0, 300.0), Scale(1.0)).unwrap();
+    let owner = r.create("box");
+    r.set(owner, "padding", Value::F64(20.0));
+    r.insert(root, owner);
+    let menu = r.create("context-menu");
+    r.insert(owner, menu);
+    let items = r.br().resolve(NameKind::Slot, r.kind(menu), "items");
+    let a = r.create("action");
+    r.br().insert(menu, a, None, items).unwrap();
+    r.set(a, "label", Value::Str("Paste".into()));
+    let frame = || r.backend.with_doc(|d| d.frame(WindowId(1), Time(0)));
+    frame();
+    let owner_h = r.backend.with_doc(|d| d.layout_rect(r.backend.node(owner).unwrap())).unwrap().height();
+    assert!(owner_h >= 40.0, "{owner_h}");
+    let popup = |args: &[Value]| {
+        let m = r.br().resolve(NameKind::Method, r.kind(menu), "popup");
+        r.br().call(menu, m, args).unwrap();
+        frame();
+        let l = level_in_owner(&r, menu);
+        r.call(menu, "popdown");
+        frame();
+        l
+    };
+    let l = popup(&[]);
+    assert_eq!((l.min.x, l.min.y), (0.0, owner_h + 2.0), "below the owner, at its left");
+    let open = skelter_core::PropId::of("context-menu", "open", "bool");
+    assert_eq!(r.backend.with_doc(|d| d.get_prop(r.backend.node(menu).unwrap(), open)), Some(skelter_core::Value::Bool(false)), "popdown closed it");
+    let l = popup(&[Value::F64(50.0), Value::F64(10.0)]);
+    assert_eq!((l.min.x, l.min.y), (50.0, 12.0), "at the point, in the owner's points");
+    let l = popup(&[Value::Map(vec![("x".into(), Value::I64(30)), ("y".into(), Value::I64(5))])]);
+    assert_eq!((l.min.x, l.min.y), (30.0, 7.0));
+    let m = r.br().resolve(NameKind::Method, r.kind(menu), "popup");
+    assert!(r.br().call(menu, m, &[Value::Str("here".into())]).is_err(), "not a point");
+}

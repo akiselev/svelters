@@ -770,6 +770,25 @@ impl Backend for SkelterBackend {
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
+        /// `popup`'s point: none (`None` inside: below the owner), `(x, y)`, or one `{x, y}` map
+        /// or `[x, y]` list; `None` for anything else.
+        fn popup_point(args: &[Value]) -> Option<Option<(f64, f64)>> {
+            let num = |v: &Value| match v {
+                Value::I64(i) => Some(*i as f64),
+                Value::F64(f) => Some(*f),
+                _ => None,
+            };
+            match args {
+                [] | [Value::Null] => Some(None),
+                [x, y] => Some(Some((num(x)?, num(y)?))),
+                [Value::List(l)] if l.len() == 2 => Some(Some((num(&l[0])?, num(&l[1])?))),
+                [Value::Map(m)] => {
+                    let f = |k: &str| m.iter().find(|(n, _)| n == k).and_then(|(_, v)| num(v));
+                    Some(Some((f("x")?, f("y")?)))
+                }
+                _ => None,
+            }
+        }
         let (_, km) = self.live(h)?;
         let m = km.method(method).ok_or_else(|| format!("unknown method id {method} on <{}>", km.tag()))?;
         // the core kind's own method: its params type the args where the surface lists none (egui's
@@ -790,12 +809,28 @@ impl Backend for SkelterBackend {
                 }
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
-            // egui's `popup()` / `popdown()` (A9): skelter-widgets' context menu opens on its `open`
-            // prop, at its owner's last context click (a point argument is not taken yet)
-            ("ContextMenu", "popup" | "popdown") => {
+            // egui's `popup()` (A9b): opens below its owner (the owner's bottom left, as svelters-egui
+            // does); `popup(x, y)` (or a `{x, y}` point) at that point of the owner, in the owner's
+            // points. The menu's own space is its node's: the point moves by the menu's offset in
+            // its owner (its parent).
+            ("ContextMenu", "popup") => {
+                let (n, _) = self.live(h)?;
+                let at = popup_point(args).ok_or("<context-menu>.popup(): the point is `(x, y)` or `{x, y}`")?;
+                let mid = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.method_named("open-at")).ok_or("<context-menu>.popup(): no open-at")?;
+                let (ret, events) = {
+                    let mut doc = self.doc_mut();
+                    let owner = doc.parent(n).and_then(|p| doc.layout_rect(p)).unwrap_or_default();
+                    let own = doc.layout_rect(n).unwrap_or_default();
+                    let (x, y) = at.unwrap_or((0.0, owner.height() as f64));
+                    doc.call(n, mid, &[skelter_core::Value::F64(x - own.min.x as f64), skelter_core::Value::F64(y - own.min.y as f64)]).map_err(|e| format!("<context-menu>.popup(): {e}"))?
+                };
+                let _ = ret;
+                self.queue(Output { events, ..Output::default() });
+            }
+            ("ContextMenu", "popdown") => {
                 let (n, _) = self.live(h)?;
                 let open = skelter_core::PropId::of("context-menu", "open", "bool");
-                self.doc_mut().set_prop(n, open, skelter_core::Value::Bool(m.spec.name == "popup")).map_err(|e| format!("<context-menu>.{}(): {e}", m.spec.name))?;
+                self.doc_mut().set_prop(n, open, skelter_core::Value::Bool(false)).map_err(|e| format!("<context-menu>.popdown(): {e}"))?;
             }
             (_, "request-focus") => {
                 let (n, _) = self.live(h)?;
