@@ -9,7 +9,7 @@ use skelter_base::event::{InputEnvelope, WindowEvent};
 use skelter_base::geom::Vec2;
 use skelter_base::ids::WindowId;
 use skelter_base::time::Time;
-use skelter_platform::{A11yEvent, AppHandler, PlatformCx, PlatformError};
+use skelter_platform::{A11yEvent, AppHandler, DragId, DragOutcome, PlatformCx, PlatformError};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 
@@ -134,6 +134,9 @@ impl AppHandler for Forward {
     }
     fn menu_activated(&mut self, cx: &mut dyn PlatformCx, id: &str) {
         self.0.handler.borrow_mut().menu_activated(cx, id);
+    }
+    fn drag_ended(&mut self, cx: &mut dyn PlatformCx, drag: DragId, outcome: DragOutcome) {
+        self.0.handler.borrow_mut().drag_ended(cx, drag, outcome);
     }
     fn exiting(&mut self, cx: &mut dyn PlatformCx) {
         self.0.handler.borrow_mut().exiting(cx);

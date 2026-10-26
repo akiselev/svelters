@@ -133,6 +133,8 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("border-width", "length", &[]),
     // CS5g: painted around boxes and stock widgets (`style/shadow.rs`)
     ("box-shadow", "shadow", &[]),
+    // the entry's caret; `auto` (initial) = the theme's caret role (`widgets::entry`)
+    ("caret-color", "color", &["auto"]),
     ("color", "color", &[]),
     ("display", "enum", &["flex", "grid", "none"]),
     // CS5f: computed and inherited; leaves measure and paint with them (`leaf_style`)

@@ -308,6 +308,8 @@ pub struct PrepareCx<'a> {
     pub(crate) images: &'a mut ImageSink,
     pub(crate) request: Dirty,
     pub(crate) services: &'a mut Services,
+    /// Signals emitted while preparing ([`PrepareCx::emit`]), queued after the prepare.
+    pub(crate) emitted: &'a mut Vec<Emitted>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -378,6 +380,12 @@ impl PrepareCx<'_> {
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
     }
+    /// Emits `signal` with `arg` from this node: queued as a JS event once the prepare returns
+    /// ([`Document::take_events`]), not cancelable (a data window a virtual table needs, a restored
+    /// state's report).
+    pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
+        self.emitted.push(Emitted { node: self.node.id, signal, arg });
+    }
 }
 
 /// Glyph runs recorded this frame; the commit sends the new ones.
@@ -391,6 +399,10 @@ pub(crate) struct RunSink {
 pub struct RecordCx<'a> {
     pub node: NodeView<'a>,
     pub(crate) list: &'a mut DisplayList,
+    /// The part outside the node's scroll layer ([`RecordCx::fixed`]); swapped with `list` while
+    /// it records.
+    pub(crate) fixed: &'a mut DisplayList,
+    pub(crate) in_fixed: bool,
     pub(crate) runs: &'a mut RunSink,
     /// The runs this node's list references (replaced runs are dropped when the list is).
     pub(crate) node_runs: &'a mut Vec<RunId>,
@@ -409,6 +421,21 @@ impl RecordCx<'_> {
     /// Adds a primitive with its ink rect.
     pub fn push(&mut self, p: Prim, ink: Rect) {
         self.list.push(p, ink);
+    }
+    /// Records what `f` draws as the node's fixed part, in its border-box space: for a kind with
+    /// [`Kind::self_scroll`](crate::Kind::self_scroll) it stays outside the scroll layer (its box:
+    /// background, border), so a scroll moves only the rest and re-records nothing. The fixed part
+    /// paints below the rest of the list; for any other kind it simply goes first in the one list.
+    pub fn fixed<R>(&mut self, f: impl FnOnce(&mut Self) -> R) -> R {
+        if self.in_fixed {
+            return f(self);
+        }
+        std::mem::swap(&mut self.list, &mut self.fixed);
+        self.in_fixed = true;
+        let r = f(self);
+        self.in_fixed = false;
+        std::mem::swap(&mut self.list, &mut self.fixed);
+        r
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
@@ -580,6 +607,25 @@ impl EventCx<'_> {
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node, signal, arg });
     }
+    /// Emits `signal` with `arg` from `node`, the node itself or one of its descendants (a
+    /// `tab-view`'s `close-requested` on the `tab` whose close button was clicked), delivered after
+    /// the event as [`EventCx::emit`]'s are. False (nothing emitted) for any other node.
+    pub fn emit_on(&mut self, node: NodeId, signal: SignalId, arg: Option<Value>) -> bool {
+        if !self.doc.contains(node) || !self.doc.is_ancestor_or_self(self.node, node) {
+            return false;
+        }
+        self.emitted.push(Emitted { node, signal, arg });
+        true
+    }
+    /// Writes a prop of `node`, the node itself or one of its descendants, as native-owned state
+    /// ([`EventCx::set_native`]): a table writes back the width of the `table-column` the user
+    /// resized. An error for any other node.
+    pub fn set_native_on(&mut self, node: NodeId, prop: PropId, v: Value) -> Result<(), crate::PropError> {
+        if !self.doc.contains(node) || !self.doc.is_ancestor_or_self(self.node, node) {
+            return Err(crate::PropError::Stale(node));
+        }
+        self.doc.set_prop_native(node, prop, v).map(|_| ())
+    }
     /// Emits `signal` and, when JS listens and the document has a sync deliverer
     /// ([`Document::set_sync_delivery`]), delivers it now and reports what the listeners did, so a
     /// default action can honour `preventDefault` (a checkbox keeps its state when its cancelable
@@ -601,12 +647,12 @@ impl EventCx<'_> {
         self.doc.scroll_fast(n, offset);
     }
     /// Shows the caret at `rect` (local coordinates; `None` hides it) through a fast commit: the
-    /// compositor draws and blinks it, so a caret move costs no frame.
+    /// compositor draws and blinks it, so a caret move costs no frame. It goes out in the space of
+    /// the node's transform node, in its `caret-color` (`color` when `auto`); while the node isn't rendered the caret is
+    /// hidden and comes back once it is (`crate::caret`).
     pub fn set_caret(&mut self, rect: Option<Rect>) {
-        let Some(window) = self.doc.window_of(self.node) else { return };
-        let rect = rect.map(|r| self.doc.view(self.node).map_or(r, |v| v.window_transform().apply_rect(&r)));
-        let revision = self.doc.revision;
-        self.doc.fast.push(skelter_base::commit::FastCommit::Caret { window, rect, revision });
+        let n = self.node;
+        self.doc.set_caret(n, rect);
     }
     /// The node now has a non-empty text selection: with single selection on (GTK), the previous
     /// owner's [`Kind::selection_lost`](crate::Kind::selection_lost) collapses its own.

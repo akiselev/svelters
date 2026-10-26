@@ -16,7 +16,7 @@
 //!   [`crate::shadow`] field, `WM_IME_REQUEST`), file drops ([`crate::drag`]) and UI Automation
 //!   (AccessKit's subclassing adapter).
 
-use crate::app::{App, WM_SKELTER_A11Y, WM_SKELTER_TIMER, WM_SKELTER_WAKE, current, os_err};
+use crate::app::{App, WM_SKELTER_A11Y, WM_SKELTER_DRAG, WM_SKELTER_TIMER, WM_SKELTER_WAKE, current, os_err};
 use crate::cursor;
 use crate::dcomp::WindowTree;
 use crate::dmanip::{DirectManipulation, os_modifiers};
@@ -24,7 +24,7 @@ use crate::drag::DropTarget;
 use crate::frame::Win32Frames;
 use crate::hit_test;
 use crate::imm;
-use crate::monitor::{BASE_DPI, dpi_to_scale};
+use crate::monitor::{BASE_DPI, dpi_to_scale, monitor_handle};
 use crate::pointer::{self, ClientMap, PointerMsg};
 use crate::shadow::Field;
 use skelter_base::input::TextInputClient;
@@ -35,7 +35,7 @@ use skelter_base::cursor::CursorIcon;
 use skelter_base::event::{ImeEvent, InputEvent, MouseButton, PointerEvent, PointerPhase, PointerType, Theme, WindowEvent};
 use skelter_base::geom::{DeviceSize, Point, Rect, Scale, Size, Vec2};
 use skelter_base::ids::WindowId;
-use skelter_platform::{A11yEvent, HitKind, HitRegion, ImeState, PlatformError, SurfaceTarget, WindowDesc};
+use skelter_platform::{A11yEvent, HitKind, HitRegion, ImeState, PlatformError, PopupDesc, SurfaceTarget, WindowDesc, WindowStateRequest};
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle, Win32WindowHandle, WindowsDisplayHandle};
 use smallvec::SmallVec;
 use std::cell::RefCell;
@@ -99,6 +99,8 @@ pub(crate) struct Window {
     pub mouse_captured: bool,
     pub drop_target: Option<windows::Win32::System::Ole::IDropTarget>,
     pub a11y: Option<accesskit_windows::SubclassingAdapter>,
+    /// The `HMONITOR` the window was last seen on, to report `WindowEvent::MonitorChanged`.
+    pub monitor: isize,
 }
 
 /// Window and extended styles: an OS frame (also kept, minus the caption, for `custom_title_bar`),
@@ -267,6 +269,11 @@ impl ActionHandler for A11ySink {
 }
 
 pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, PlatformError> {
+    create_owned(app, desc, None)
+}
+
+/// A window owned by `owner` (it stays above it and minimises with it): dialogs and popups.
+pub(crate) fn create_owned(app: &Rc<App>, desc: WindowDesc, owner: Option<HWND>) -> Result<WindowId, PlatformError> {
     let id = app.alloc_window_id();
     let (style, ex) = styles(&desc);
     let class = wide(CLASS_NAME);
@@ -282,7 +289,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, Platfo
             y,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            None,
+            owner,
             None,
             Some(app.hinstance),
             None,
@@ -340,6 +347,7 @@ pub(crate) fn create(app: &Rc<App>, desc: WindowDesc) -> Result<WindowId, Platfo
                 mouse_captured: false,
                 drop_target,
                 a11y,
+                monitor: monitor_handle(hwnd).0 as isize,
             },
         );
     }
@@ -519,6 +527,49 @@ pub(crate) fn set_visible(app: &App, id: WindowId, visible: bool) {
 
 /// Starts the OS move loop from the current press. It is posted, so the loop (a modal loop) runs
 /// after the handler returns, with the handler free to keep receiving events.
+/// A popup placed against its parent (`PopupDesc::origin`; Windows does not flip it): a bare `WS_POPUP`
+/// window owned by the parent. `PopupDesc::grab` is not honoured (no click-outside dismissal).
+pub(crate) fn create_popup(app: &Rc<App>, mut desc: WindowDesc, popup: &PopupDesc) -> Result<WindowId, PlatformError> {
+    let (parent, scale) = {
+        let inner = app.inner.borrow();
+        let w = inner.windows.get(&popup.parent).ok_or_else(|| PlatformError::Os("popup parent is gone".into()))?;
+        (w.hwnd, w.scale)
+    };
+    let o = popup.origin(desc.size);
+    let mut p = POINT { x: (o.x * scale.0).round() as i32, y: (o.y * scale.0).round() as i32 };
+    let _ = unsafe { ClientToScreen(parent, &mut p) };
+    desc.position = Some((p.x, p.y));
+    desc.decorations = false;
+    desc.custom_title_bar = false;
+    create_owned(app, desc, Some(parent))
+}
+
+/// Maximise, restore, minimise or activate; fullscreen is not offered (`false`).
+pub(crate) fn set_window_state(app: &App, id: WindowId, req: WindowStateRequest) -> bool {
+    let Some(hwnd) = app.hwnd(id) else { return false };
+    let cmd = match req {
+        WindowStateRequest::Maximize => SW_MAXIMIZE,
+        WindowStateRequest::Unmaximize => SW_RESTORE,
+        WindowStateRequest::Minimize => SW_MINIMIZE,
+        WindowStateRequest::Activate => {
+            return unsafe { SetForegroundWindow(hwnd) }.as_bool();
+        }
+        _ => return false,
+    };
+    let _ = unsafe { ShowWindow(hwnd, cmd) };
+    true
+}
+
+/// Reports `MonitorChanged` when the monitor holding the window is another than last seen (`force`: the
+/// monitor set or a mode changed, so report it either way).
+fn check_monitor(app: &App, id: WindowId, hwnd: HWND, force: bool) {
+    let now = monitor_handle(hwnd).0 as isize;
+    let changed = with_window(app, id, |w| std::mem::replace(&mut w.monitor, now) != now).unwrap_or(false);
+    if changed || force {
+        app.window_event(id, WindowEvent::MonitorChanged);
+    }
+}
+
 pub(crate) fn drag_window(app: &App, id: WindowId) {
     let Some(hwnd) = app.hwnd(id) else { return };
     let mut p = POINT::default();
@@ -626,6 +677,7 @@ unsafe extern "system" fn wndproc(hwnd: HWND, msg: u32, wparam: WPARAM, lparam: 
             WM_SKELTER_WAKE => app.on_wake(),
             WM_SKELTER_TIMER => app.on_timer(),
             WM_SKELTER_A11Y => app.on_a11y(),
+            WM_SKELTER_DRAG => app.on_drag(),
             WM_SETTINGCHANGE => on_setting_change(&app, lparam),
             _ => return unsafe { DefWindowProcW(hwnd, msg, wparam, lparam) },
         }
@@ -900,7 +952,13 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             let (x, y) = lparam_point(lparam.0);
             let s = st.scale.0;
             app.window_event(id, WindowEvent::Moved { x: (x as f32 / s).round() as i32, y: (y as f32 / s).round() as i32 });
+            check_monitor(app, id, hwnd, false);
             Some(0)
+        }
+        WM_DISPLAYCHANGE => {
+            // Monitors were added, removed or changed mode (sent to every top-level window).
+            check_monitor(app, id, hwnd, true);
+            None
         }
         WM_GETDPISCALEDSIZE => {
             let new_dpi = wparam.0 as u32;
@@ -936,6 +994,7 @@ fn handle(app: &Rc<App>, id: WindowId, hwnd: HWND, msg: u32, wparam: WPARAM, lpa
             let _ = unsafe {
                 SetWindowPos(hwnd, None, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_NOZORDER | SWP_NOACTIVATE)
             };
+            check_monitor(app, id, hwnd, false);
             Some(0)
         }
         WM_GETMINMAXINFO => {

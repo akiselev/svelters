@@ -60,7 +60,7 @@ fn headless_frame_renders_and_reports_gpu_completion() {
     let red = Color::rgba(1.0, 0.0, 0.0, 1.0);
     let white = Color::WHITE;
     let mut engine = Engine::new(
-        EngineConfig { refresh: Span::from_micros(16_667), clear: Some(white), caret_color: Color::BLACK, caret_blink: None, ppi: 96.0 },
+        EngineConfig { refresh: Span::from_micros(16_667), clear: Some(white), caret_blink: None, ppi: 96.0 },
         Box::new(seams::frame_clock),
         Box::new(move |m: ToUi| s.lock().unwrap().push(m)),
         Box::new(|| {}),
@@ -188,7 +188,6 @@ fn caret_only_frames_keep_the_content_on_every_swapchain_image() {
         EngineConfig {
             refresh: Span::from_micros(16_667),
             clear: Some(Color::WHITE),
-            caret_color: Color::BLACK,
             caret_blink: None,
             ppi: 96.0,
         },
@@ -242,6 +241,8 @@ fn caret_only_frames_keep_the_content_on_every_swapchain_image() {
         let caret = skelter_base::commit::FastCommit::Caret {
             window: w,
             rect: Some(Rect::new(x, 8.0, x + 1.0, 24.0)),
+            color: Color::BLACK,
+            transform: Default::default(),
             revision: Revision(revision),
         };
         engine.handle(Msg::Fast(caret), clock.now(), &mut gpu);

@@ -40,6 +40,8 @@ struct Drawn {
     items: usize,
     /// The tints of the icons drawn.
     icons: Vec<Color>,
+    /// The topmost item's transform and its first quad's solid colour (the caret, when shown).
+    top: Option<(Affine, Option<Color>)>,
 }
 
 #[derive(Default)]
@@ -55,7 +57,14 @@ impl Backend for FakeGpu {
     fn unregister_texture(&mut self, _: TextureId) {}
     fn draw(&mut self, _: WindowId, _: SurfaceKey, frame: Option<FrameId>, scene: &FrameScene<'_>) -> DrawOutcome {
         let icons = scene.items.iter().flat_map(|i| i.list.items.iter()).filter_map(|p| if let Prim::Icon(i) = p { i.color } else { None }).collect();
-        self.draws.push(Drawn { frame, damage: scene.damage.to_vec(), items: scene.items.len(), icons });
+        let top = scene.items.last().map(|it| {
+            let color = it.list.items.iter().find_map(|p| match p {
+                Prim::Quad(Quad { fill: Fill::Solid(c), .. }) => Some(*c),
+                _ => None,
+            });
+            (it.transform, color)
+        });
+        self.draws.push(Drawn { frame, damage: scene.damage.to_vec(), items: scene.items.len(), icons, top });
         DrawOutcome::Presented { submitted: Time(0) }
     }
     fn forget(&mut self, _: &[skelter_base::ids::ImageId], _: &[skelter_base::ids::PathId]) {}
@@ -70,7 +79,7 @@ fn engine() -> (Engine, Sent) {
     let sent: Sent = Arc::default();
     let s = sent.clone();
     let e = Engine::new(
-        EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_color: Color::BLACK, caret_blink: None, ppi: PPI },
+        EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_blink: None, ppi: PPI },
         Box::new(seams::frame_clock),
         Box::new(move |m| s.lock().unwrap().push(m)),
         Box::new(|| {}),
@@ -658,7 +667,13 @@ fn caret_blinks_and_every_caret_commit_restarts_it() {
     let blink = skelter_compositor::CaretBlink { cycle: std::time::Duration::from_millis(1000), timeout: None };
     e.handle(Msg::SetCaretBlink { window: W, blink: Some(blink) }, t0, &mut gpu);
     let caret = |rev: u64| {
-        Msg::Fast(FastCommit::Caret { window: W, rect: Some(Rect::new(50.0, 50.0, 51.0, 66.0)), revision: Revision(rev) })
+        Msg::Fast(FastCommit::Caret {
+            window: W,
+            rect: Some(Rect::new(50.0, 50.0, 51.0, 66.0)),
+            color: Color::BLACK,
+            transform: T_ROOT,
+            revision: Revision(rev),
+        })
     };
     let at = t0 + Span::from_millis(2);
     e.handle(caret(2), at, &mut gpu);
@@ -685,6 +700,40 @@ fn caret_blinks_and_every_caret_commit_restarts_it() {
     let off = toggles.iter().find(|t| **t >= moved + Span::from_millis(500)).copied().expect("a blink-off frame");
     assert!(off - moved < Span::from_millis(500) + Span(INTERVAL.0 * 2), "off at {:?}", off - moved);
     assert!(off - moved >= Span::from_millis(500));
+}
+
+#[test]
+fn caret_draws_in_its_colour_and_follows_its_transform_node() {
+    let (mut e, _) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::Commit(Box::new(base_commit(1))), t0, &mut gpu);
+    complete(&mut e, &mut gpu, t0 + Span::from_millis(1));
+    let red = Color::rgba(1.0, 0.0, 0.0, 1.0);
+    let caret = FastCommit::Caret {
+        window: W,
+        rect: Some(Rect::new(50.0, 50.0, 51.0, 66.0)),
+        color: red,
+        transform: T_CONTENT,
+        revision: Revision(2),
+    };
+    e.handle(Msg::Fast(caret), t0 + Span::from_millis(2), &mut gpu);
+    let mut drawn = gpu.draws.len();
+    while gpu.draws.len() == drawn {
+        step(&mut e, &mut gpu).expect("a caret frame");
+    }
+    assert_eq!(gpu.draws.last().unwrap().items, 3, "the caret is drawn above the two nodes");
+    assert_eq!(gpu.draws.last().unwrap().top, Some((Affine::IDENTITY, Some(red))));
+    // The scroll container moves on the compositor: the caret moves with its content space.
+    drawn = gpu.draws.len();
+    let now = e.next_wakeup().unwrap();
+    let scroll = FastCommit::ScrollOffset { window: W, node: SCROLL, offset: Vec2::new(0.0, 100.0), revision: Revision(3), input_seq: InputSeq(3) };
+    e.handle(Msg::Fast(scroll), now, &mut gpu);
+    while gpu.draws.len() == drawn {
+        step(&mut e, &mut gpu).expect("a scroll frame");
+    }
+    assert_eq!(gpu.draws.last().unwrap().top, Some((Affine::translate(0.0, -100.0), Some(red))));
 }
 
 fn begin_frames(sent: &Sent) -> Vec<FrameId> {

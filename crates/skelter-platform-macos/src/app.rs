@@ -18,7 +18,8 @@ use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{ClassType, MainThreadMarker, MainThreadOnly, define_class, msg_send};
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate,
-    NSApplicationTerminateReply, NSEvent, NSEventModifierFlags, NSEventType,
+    NSApplicationTerminateReply, NSEvent, NSEventModifierFlags, NSEventType, NSWindowOrderingMode,
+    NSWindowStyleMask,
 };
 use objc2_foundation::{
     NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRunLoop, NSRunLoopCommonModes, NSTimer,
@@ -31,7 +32,7 @@ use skelter_base::ids::{InputSeq, SurfaceId, WindowId};
 use skelter_base::time::{Clock, Time};
 use skelter_platform::{
     A11yEvent, AppHandler, Clipboard, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc,
-    PlatformCx, PlatformError, SurfaceTarget, Waker, WindowDesc,
+    PlatformCx, PlatformError, PopupDesc, SurfaceTarget, Waker, WindowDesc, WindowStateRequest,
 };
 use std::cell::{Cell, RefCell};
 use std::collections::{HashMap, VecDeque};
@@ -164,6 +165,14 @@ impl AppHandler for Plain {
     }
     fn menu_activated(&mut self, cx: &mut dyn PlatformCx, id: &str) {
         self.0.menu_activated(cx, id)
+    }
+    fn drag_ended(
+        &mut self,
+        cx: &mut dyn PlatformCx,
+        drag: skelter_platform::DragId,
+        outcome: skelter_platform::DragOutcome,
+    ) {
+        self.0.drag_ended(cx, drag, outcome)
     }
 }
 
@@ -557,6 +566,79 @@ impl PlatformCx for MacCx {
         monitor::monitors(self.mtm)
     }
 
+    fn monitor_of(&self, id: WindowId) -> Option<Monitor> {
+        let screen = with_window(id, |w| w.ns_window.screen())??;
+        Some(monitor::monitor_of_screen(
+            &screen,
+            monitor::primary_height(self.mtm),
+        ))
+    }
+
+    /// A borderless child window of the parent, placed by `PopupDesc::origin` (AppKit does not flip
+    /// it). `PopupDesc::grab` is not honoured (no click-outside dismissal).
+    fn create_popup(
+        &mut self,
+        mut desc: WindowDesc,
+        popup: PopupDesc,
+    ) -> Result<WindowId, PlatformError> {
+        let parent = with_window(popup.parent, |w| w.ns_window.clone())
+            .ok_or_else(|| PlatformError::Os("popup parent is gone".into()))?;
+        desc.decorations = false;
+        desc.custom_title_bar = false;
+        desc.position = None;
+        let origin = popup.origin(desc.size);
+        let id = self.try_create_window(desc)?;
+        if let Some(child) = with_window(id, |w| w.ns_window.clone()) {
+            let content = parent.contentRectForFrameRect(parent.frame());
+            let top_left = NSPoint::new(
+                content.origin.x + origin.x as f64,
+                content.origin.y + content.size.height - origin.y as f64,
+            );
+            child.setFrameTopLeftPoint(top_left);
+            // SAFETY: both windows are alive; the child is removed from the parent when either closes.
+            unsafe { parent.addChildWindow_ordered(&child, NSWindowOrderingMode::Above) };
+        }
+        Ok(id)
+    }
+
+    fn create_child_window(
+        &mut self,
+        desc: WindowDesc,
+        parent: WindowId,
+    ) -> Result<WindowId, PlatformError> {
+        let parent = with_window(parent, |w| w.ns_window.clone())
+            .ok_or_else(|| PlatformError::Os("parent window is gone".into()))?;
+        let id = self.try_create_window(desc)?;
+        if let Some(child) = with_window(id, |w| w.ns_window.clone()) {
+            // SAFETY: as in `create_popup`.
+            unsafe { parent.addChildWindow_ordered(&child, NSWindowOrderingMode::Above) };
+        }
+        Ok(id)
+    }
+
+    fn set_window_state(&mut self, id: WindowId, req: WindowStateRequest) -> bool {
+        let Some(w) = with_window(id, |w| w.ns_window.clone()) else {
+            return false;
+        };
+        let fullscreen = w.styleMask().contains(NSWindowStyleMask::FullScreen);
+        match req {
+            WindowStateRequest::Maximize if !w.isZoomed() => w.zoom(None),
+            WindowStateRequest::Unmaximize if w.isZoomed() => w.zoom(None),
+            WindowStateRequest::Maximize | WindowStateRequest::Unmaximize => {}
+            WindowStateRequest::Minimize => w.miniaturize(None),
+            WindowStateRequest::Fullscreen if !fullscreen => w.toggleFullScreen(None),
+            WindowStateRequest::Unfullscreen if fullscreen => w.toggleFullScreen(None),
+            WindowStateRequest::Fullscreen | WindowStateRequest::Unfullscreen => {}
+            WindowStateRequest::Activate => {
+                #[allow(deprecated)]
+                NSApplication::sharedApplication(self.mtm).activateIgnoringOtherApps(true);
+                w.makeKeyAndOrderFront(None);
+            }
+            _ => return false,
+        }
+        true
+    }
+
     fn set_hit_test_regions(&mut self, id: WindowId, regions: &[HitRegion]) {
         with_window(id, |w| w.hit_regions = regions.to_vec());
     }
@@ -726,6 +808,17 @@ define_class!(
         fn should_handle_reopen(&self, _sender: &NSApplication, has_visible_windows: bool) -> bool {
             post(Pending::Reopen(has_visible_windows));
             true
+        }
+
+        /// Screens were added, removed or rearranged, or one changed mode: every window may see
+        /// another monitor.
+        #[unsafe(method(applicationDidChangeScreenParameters:))]
+        fn did_change_screen_parameters(&self, _note: &NSNotification) {
+            let ids: Vec<WindowId> =
+                with_app(|st| st.windows.keys().copied().collect()).unwrap_or_default();
+            for id in ids {
+                post(Pending::Window(id, WindowEvent::MonitorChanged));
+            }
         }
 
         #[unsafe(method(applicationShouldTerminateAfterLastWindowClosed:))]

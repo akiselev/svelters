@@ -1,5 +1,5 @@
 //! Shorthand properties (OW-CSS): `outline`, `border`, `border-{top,right,bottom,left}`,
-//! `border-{width,style,color}`, `border-radius` and (U2 E5) `transition` expand to longhands at
+//! `border-{width,style,color}`, `border-radius`, `overflow` and (U2 E5) `transition` expand to longhands at
 //! computed-value time, after `var()` substitution, so a later shorthand overrides an earlier
 //! longhand and the other way round (CSS Cascade 5 §1.2).
 //!
@@ -27,6 +27,7 @@ const BORDER_RADIUS: [&str; 4] =["border-top-left-radius", "border-top-right-rad
 pub(crate) fn longhands(name: &str) -> Option<Vec<&'static str>> {
     Some(match name {
         "outline" => vec!["outline-width", "outline-style", "outline-color"],
+        "overflow" => vec!["overflow-x", "overflow-y"],
         // the uniform property itself too (egui's table has it; `expand` sets it)
         "border-width" => [&BORDER_WIDTH[..], &["border-width"]].concat(),
         "border-style" => BORDER_STYLE.to_vec(),
@@ -77,6 +78,12 @@ pub(crate) fn expand(name: &str, value: &str) -> Result<Vec<(&'static str, Strin
     }
     let parts = split_top(v);
     match name {
+        // `<x> [<y>]`: one value sets both axes (CSS Overflow 3 §3)
+        "overflow" => match parts.as_slice() {
+            [a] => Ok(vec![("overflow-x", a.clone()), ("overflow-y", a.clone())]),
+            [a, b] => Ok(vec![("overflow-x", a.clone()), ("overflow-y", b.clone())]),
+            _ => Err("overflow: expected 1 or 2 values".into()),
+        },
         "border-width" | "border-style" | "border-color" | "border-radius" => {
             if v.contains('/') {
                 return Err(format!("{name}: elliptical radii (`/`) are not supported"));
@@ -216,5 +223,13 @@ mod tests {
         assert!(expand("border-style", "solid wavy").is_err());
         assert!(expand("border-radius", "4px / 2px").is_err());
         assert_eq!(expand("border", "inherit").unwrap().len(), 14);
+    }
+
+    #[test]
+    fn overflow_one_or_two_axes() {
+        assert_eq!(expand("overflow", "hidden").unwrap(), vec![("overflow-x", "hidden".into()), ("overflow-y", "hidden".into())]);
+        assert_eq!(expand("overflow", "hidden auto").unwrap(), vec![("overflow-x", "hidden".into()), ("overflow-y", "auto".into())]);
+        assert!(expand("overflow", "hidden auto scroll").is_err());
+        assert_eq!(expand("overflow", "inherit").unwrap().len(), 2);
     }
 }

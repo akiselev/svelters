@@ -116,6 +116,7 @@ Tailwind palette and no 4px spacing multiplier: `p-7` is `--sv-space-7` (32px).
 | `border-b-*` | `border-bottom-color` | a colour token (see Colours); `[value]` |
 | `border-l-*` | `border-left-color` | a colour token (see Colours); `[value]` |
 | `outline-*` | `outline-color` | a colour token (see Colours); `[value]` |
+| `caret-*` | `caret-color` | a colour token (see Colours); `[value]`; `transparent` |
 
 ## Typography
 
@@ -603,7 +604,6 @@ Tailwind v4 names svelters doesn't render. The compiler reports them (`utility_u
 | `translate` | no transforms on egui | – |
 | `accent` | no accent-color; the theme's accent role styles the controls | – |
 | `appearance` | own widgets draw from CSS; no native appearance | – |
-| `caret` | the caret colour is the theme's caret role (later: a caret part) | – |
 | `scheme` | the colour scheme is the theme's (set_theme) | – |
 | `field-sizing` | no field-sizing | – |
 | `pointer-events` | hit-testing is a prop, not CSS | – |

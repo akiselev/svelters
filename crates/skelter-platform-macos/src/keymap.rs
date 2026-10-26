@@ -195,7 +195,8 @@ pub fn qwerty_key(code: u16) -> Option<Key> {
     })
 }
 
-/// The physical key as a USB HID usage (`page << 16 | id`, page 7), 0 when the key has none.
+/// The physical key as a USB HID usage (`page << 16 | id`, page 7); `0xFFFF_0000 | code` (the `kVK_*`
+/// code) when the key has none, as skelter-platform's key docs fix for every backend.
 pub fn physical_code(code: u16) -> u32 {
     let id: u32 = match code {
         0x00 => 0x04, // A
@@ -318,7 +319,7 @@ pub fn physical_code(code: u16) -> u32 {
         0x7C => 0x4F, // Right
         0x7D => 0x51, // Down
         0x7E => 0x52, // Up
-        _ => return 0,
+        _ => return 0xFFFF_0000 | code as u32,
     };
     HID_KEYBOARD_PAGE | id
 }
@@ -586,11 +587,15 @@ mod tests {
         assert_eq!(physical_code(0x24), 0x0007_0028);
         assert_eq!(physical_code(0x37), 0x0007_00E3);
         assert_eq!(physical_code(0x36), 0x0007_00E7);
-        assert_eq!(physical_code(0x3F), 0, "Fn has no keyboard-page usage");
+        assert_eq!(
+            physical_code(0x3F),
+            0xFFFF_003F,
+            "Fn has no keyboard-page usage: its kVK code"
+        );
         // Every key code with a name has a usage.
         for code in 0u16..0x80 {
             if named_key(code).is_some_and(|k| k != Key::Fn) || qwerty_key(code).is_some() {
-                assert_ne!(physical_code(code), 0, "code {code:#x}");
+                assert_eq!(physical_code(code) >> 16, 0x07, "code {code:#x}");
             }
         }
     }

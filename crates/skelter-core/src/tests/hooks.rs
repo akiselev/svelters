@@ -744,12 +744,189 @@ fn a_kind_that_scrolls_itself_scrolls_on_the_compositor() {
     let fast = d.take_fast_commits();
     assert!(fast.iter().any(|f| matches!(f, skelter_base::commit::FastCommit::ScrollOffset { offset, .. } if offset.y == 10.0)));
     let caret = fast.iter().find_map(|f| match f {
-        skelter_base::commit::FastCommit::Caret { rect, .. } => *rect,
+        skelter_base::commit::FastCommit::Caret { rect, transform, .. } => Some((*rect, *transform)),
         _ => None,
     });
-    assert_eq!(caret.map(|r| r.min.x), Some(11.0), "the caret is in window points");
+    let (rect, space) = caret.expect("a caret");
+    assert_eq!(rect.map(|r| r.min.x), Some(1.0), "the caret is in the node's own space");
+    assert_eq!(Some(space), d.record[d.ix(page)].transform, "the node's transform node, which places it 10 points in");
     let c = frame(&mut d).unwrap();
     assert!(c.lists.is_empty(), "a scroll is no re-record");
+}
+
+const FIXED_PAGE: KindId = KindId::of("fixed-page");
+static FIXED_PAGE_SPEC: KindSpec = KindSpec { focusable: true, ..KindSpec::new("fixed-page") };
+
+/// [`Page`] with its box as the fixed part and a line as its scrolled content.
+#[derive(Default)]
+struct FixedPage;
+
+impl Kind for FixedPage {
+    fn spec() -> &'static KindSpec {
+        &FIXED_PAGE_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.fixed(|cx| cx.draw_box());
+        cx.draw_line(Point::new(0.0, 500.0), Point::new(50.0, 500.0), 1.0);
+    }
+    fn self_scroll(&self, _node: &crate::NodeView) -> Option<crate::SelfScroll> {
+        Some(crate::SelfScroll { content: Size::new(50.0, 1000.0), x: false, y: true })
+    }
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        match ev {
+            Event::Key(k) if k.key == Some(Key::ArrowDown) => {
+                let off = cx.document().scroll_offset(cx.node());
+                cx.scroll_fast(skelter_base::geom::Vec2::new(0.0, off.y + 10.0));
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
+    }
+}
+
+#[test]
+fn a_self_scrolling_kinds_fixed_part_stays_out_of_its_scroll_layer() {
+    use skelter_base::display::Prim;
+    use skelter_base::layer::{LayerDelta, LayerKind};
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<FixedPage>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let page = child(&mut d, root, FIXED_PAGE, "width: 50px; height: 80px; background-color: #ffffff");
+    let c = frame(&mut d).unwrap();
+    let fixed_key = crate::record::fixed_key(page);
+    let list = |n: NodeId| c.lists.iter().find(|(k, _)| *k == n).map(|(_, l)| l.clone()).expect("a list");
+    assert!(matches!(list(fixed_key).items[..], [Prim::Quad(_)]), "the box is the fixed part");
+    assert!(matches!(list(page).items[..], [Prim::Line(_)]), "the line is the scrolled content");
+    let scroll_layer = c.layers.iter().find_map(|l| match l {
+        LayerDelta::Add(desc) if matches!(desc.kind, LayerKind::Scroll { .. }) => Some(desc.id),
+        _ => None,
+    });
+    let items_of = |layer| {
+        c.layers.iter().find_map(|l| match l {
+            LayerDelta::Items { layer: id, items } if *id == layer => Some(items.clone()),
+            _ => None,
+        })
+    };
+    let p = d.record[d.ix(page)].clone();
+    let root_layer = d.window(W).unwrap().root_layer.unwrap();
+    let root_items = items_of(root_layer).expect("root items");
+    let fixed = root_items.iter().find(|it| it.node == fixed_key).expect("the fixed part in the parent's layer");
+    assert_eq!(Some(fixed.transform), p.transform, "in the node's own space");
+    let content = items_of(scroll_layer.expect("a scroll layer")).expect("scroll layer items");
+    assert!(content.iter().any(|it| it.node == page && Some(it.transform) == p.content), "the rest scrolls");
+    // a scroll moves the content on the compositor: nothing is re-recorded
+    d.focus(page, crate::FocusReason::Keyboard);
+    frame(&mut d);
+    d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+    assert!(d.take_fast_commits().iter().any(|f| matches!(f, skelter_base::commit::FastCommit::ScrollOffset { .. })));
+    let c = frame(&mut d).unwrap();
+    assert!(c.lists.is_empty(), "a scroll is no re-record");
+    // removing the node removes both lists
+    d.remove(root, page).unwrap();
+    let c = frame(&mut d).unwrap();
+    assert!(c.removed.contains(&page) && c.removed.contains(&fixed_key));
+}
+
+const FIXED_FIRST: KindId = KindId::of("fixed-first");
+static FIXED_FIRST_SPEC: KindSpec = KindSpec::new("fixed-first");
+
+/// Records a line, then its fixed part (box, and a nested fixed line); it does not scroll itself.
+#[derive(Default)]
+struct FixedFirst;
+
+impl Kind for FixedFirst {
+    fn spec() -> &'static KindSpec {
+        &FIXED_FIRST_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_line(Point::new(0.0, 0.0), Point::new(1.0, 0.0), 1.0);
+        let n = cx.fixed(|cx| {
+            cx.draw_box();
+            cx.fixed(|cx| cx.draw_line(Point::new(0.0, 2.0), Point::new(1.0, 2.0), 1.0));
+            7
+        });
+        assert_eq!(n, 7);
+    }
+}
+
+#[test]
+fn a_fixed_part_of_a_kind_that_does_not_scroll_itself_goes_first() {
+    use skelter_base::display::Prim;
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<FixedFirst>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let a = child(&mut d, root, FIXED_FIRST, "width: 50px; height: 50px; background-color: #ffffff");
+    let c = frame(&mut d).unwrap();
+    assert!(!c.lists.iter().any(|(k, _)| *k == crate::record::fixed_key(a)), "no separate fixed list");
+    let list = c.lists.iter().find(|(k, _)| *k == a).map(|(_, l)| l.clone()).expect("a list");
+    assert!(matches!(list.items[..], [Prim::Quad(_), Prim::Line(_), Prim::Line(_)]), "{:?}", list.items);
+}
+
+fn carets(d: &mut Document) -> Vec<Option<skelter_base::geom::Rect>> {
+    d.take_fast_commits()
+        .into_iter()
+        .filter_map(|f| match f {
+            skelter_base::commit::FastCommit::Caret { rect, .. } => Some(rect),
+            _ => None,
+        })
+        .collect()
+}
+
+#[test]
+fn no_caret_for_an_editor_that_isnt_rendered() {
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<Page>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let css = "width: 50px; height: 80px; color: #ff0000";
+    let page = child(&mut d, root, PAGE, css);
+    frame(&mut d);
+    d.focus(page, crate::FocusReason::Keyboard);
+    d.take_fast_commits();
+    d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+    let fast = d.take_fast_commits();
+    let color = fast.iter().find_map(|f| match f {
+        skelter_base::commit::FastCommit::Caret { color, rect: Some(_), .. } => Some(*color),
+        _ => None,
+    });
+    assert_eq!(color, Some(skelter_base::color::Color::rgba(1.0, 0.0, 0.0, 1.0)), "the caret takes the node's colour");
+    let restyle = |d: &mut Document, extra: &str| {
+        d.set_style(page, crate::StyleInput { inline: Some(format!("{css}{extra}").into()), ..Default::default() });
+    };
+    // display: none hides the caret once, then the editor sends none while it stays hidden
+    restyle(&mut d, "; display: none");
+    frame(&mut d);
+    assert_eq!(carets(&mut d), vec![None]);
+    d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+    frame(&mut d);
+    assert_eq!(carets(&mut d), Vec::<Option<skelter_base::geom::Rect>>::new(), "no caret while hidden");
+    // rendered again: the last placed caret comes back
+    restyle(&mut d, "");
+    frame(&mut d);
+    assert_eq!(carets(&mut d), vec![Some(skelter_base::geom::Rect::new(1.0, 2.0, 2.0, 12.0))]);
+    // visibility: hidden counts too
+    restyle(&mut d, "; visibility: hidden");
+    frame(&mut d);
+    assert_eq!(carets(&mut d), vec![None]);
+    // caret-color wins over color; `auto` falls back to color
+    let caret_color = |d: &mut Document, extra: &str| {
+        restyle(d, extra);
+        frame(d);
+        d.take_fast_commits();
+        d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+        d.take_fast_commits().iter().find_map(|f| match f {
+            skelter_base::commit::FastCommit::Caret { color, rect: Some(_), .. } => Some(*color),
+            _ => None,
+        })
+    };
+    let blue = skelter_base::color::Color::rgba(0.0, 0.0, 1.0, 1.0);
+    assert_eq!(caret_color(&mut d, "; caret-color: #0000ff"), Some(blue), "caret-color over color");
+    assert_eq!(caret_color(&mut d, "; caret-color: auto"), color, "auto = color");
 }
 
 #[test]

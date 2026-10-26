@@ -316,6 +316,12 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
     if let Some(ComputedValue::Color(k)) = c.get("color") {
         b.color = color(*k);
     }
+    // inherited by the engine too; `auto` (a keyword) or initial = `color`
+    b.caret_color = match c.get("caret-color") {
+        Some(ComputedValue::Color(k)) => Some(color(*k)),
+        Some(_) => None,
+        None => b.caret_color,
+    };
     if let Some(f) = text(c.get("font-family")) {
         b.font_family = Arc::from(f);
     }
@@ -661,6 +667,7 @@ fn box_diff(a: &ComputedBox, b: &ComputedBox) -> (bool, bool, bool) {
         || a.wrap != b.wrap;
     let paint = text
         || a.color != b.color
+        || a.caret_color != b.caret_color
         || a.background != b.background
         || a.border_widths != b.border_widths
         || a.border_color != b.border_color
@@ -686,6 +693,7 @@ fn box_diff(a: &ComputedBox, b: &ComputedBox) -> (bool, bool, bool) {
 
 fn inherited_differs(a: &ComputedBox, b: &ComputedBox) -> bool {
     a.color != b.color
+        || a.caret_color != b.caret_color
         || a.font_family != b.font_family
         || a.font_size != b.font_size
         || a.font_weight != b.font_weight

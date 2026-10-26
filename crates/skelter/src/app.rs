@@ -93,6 +93,14 @@ fn refresh_of(m: &Monitor) -> Option<Span> {
         .map(|r| Span(1_000_000_000_000 / r as i64))
 }
 
+/// A monitor's pixels per inch for fling physics: the OS's physical density when it reports one,
+/// else its logical DPI convention times the scale (96 × scale, 72 × scale on macOS).
+pub fn monitor_ppi(m: &Monitor) -> f32 {
+    m.ppi
+        .filter(|p| *p > 0.0)
+        .unwrap_or_else(|| crate::backends::logical_ppi(m.scale))
+}
+
 /// The monitor holding the desktop point `at` (device pixels), else the first one.
 fn monitor_at(monitors: &[Monitor], at: Option<(i32, i32)>) -> Option<&Monitor> {
     at.and_then(|(x, y)| {
@@ -113,6 +121,8 @@ struct WindowState {
     visible: bool,
     /// The refresh interval last sent to the compositor (the window's monitor's).
     refresh: Option<Span>,
+    /// The pixel density last sent to the compositor (the window's monitor's).
+    ppi: Option<f32>,
     /// The window's last known desktop position (device pixels).
     position: Option<(i32, i32)>,
     /// The IME state last sent to the platform.
@@ -229,6 +239,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
                 frame: UiFrame::new(),
                 ime: None,
                 refresh: None,
+                ppi: None,
                 position: None,
                 size,
                 scale,
@@ -242,28 +253,42 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             c.set_caret_blink(id, blink);
         }
         let position = self.windows.get(&id).and_then(|w| w.position).or(position);
-        self.sync_refresh(cx, id, position);
+        self.sync_monitor(cx, id, position);
         self.request_frame(id);
         Ok(id)
     }
 
-    /// Tells the compositor the refresh interval of the monitor the window is on (at `position`, else
-    /// its last known one, else the first monitor), when it changed.
-    fn sync_refresh(&mut self, cx: &mut dyn PlatformCx, w: WindowId, position: Option<(i32, i32)>) {
-        let monitors = cx.monitors();
+    /// Tells the compositor the refresh interval and pixel density of the monitor the window is on, when
+    /// they changed: the platform's answer ([`PlatformCx::monitor_of`]), else the monitor at `position`
+    /// (else the window's last known one, else the first monitor).
+    fn sync_monitor(&mut self, cx: &mut dyn PlatformCx, w: WindowId, position: Option<(i32, i32)>) {
+        let held = cx.monitor_of(w);
+        let monitors = if held.is_some() {
+            Vec::new()
+        } else {
+            cx.monitors()
+        };
         let Some(ws) = self.windows.get_mut(&w) else {
             return;
         };
         if position.is_some() {
             ws.position = position;
         }
-        let Some(interval) = monitor_at(&monitors, ws.position).and_then(refresh_of) else {
+        let Some(m) = held.as_ref().or_else(|| monitor_at(&monitors, ws.position)) else {
             return;
         };
-        if ws.refresh != Some(interval) {
+        let interval = refresh_of(m);
+        let ppi = monitor_ppi(m);
+        if let Some(interval) = interval.filter(|i| ws.refresh != Some(*i)) {
             ws.refresh = Some(interval);
             if let Some(c) = &self.compositor {
                 c.set_refresh(w, interval);
+            }
+        }
+        if ws.ppi != Some(ppi) {
+            ws.ppi = Some(ppi);
+            if let Some(c) = &self.compositor {
+                c.set_ppi(w, ppi);
             }
         }
     }
@@ -456,6 +481,10 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         }
         if let Some(u) = &c.a11y {
             cx.update_a11y(w, u.clone());
+        }
+        // Grafted subtrees (egui islands) after the host tree that carries their graft nodes.
+        for u in std::mem::take(&mut c.a11y_subtrees) {
+            cx.update_a11y(w, u);
         }
         let report = self
             .windows
@@ -793,7 +822,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             WindowEvent::Resized { size, scale } => self.resize(cx, window, size, scale),
             WindowEvent::ScaleChanged { scale } => {
                 // A scale change usually means another monitor.
-                self.sync_refresh(cx, window, None);
+                self.sync_monitor(cx, window, None);
                 if let Some(size) = self.windows.get(&window).map(|s| s.size) {
                     self.resize(cx, window, size, scale);
                 }
@@ -807,10 +836,11 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             WindowEvent::CloseRequested => self.close_window(cx, window),
             WindowEvent::Moved { x, y } => {
                 // A move can take the window to another monitor with another refresh rate.
-                self.sync_refresh(cx, window, Some((x, y)));
+                self.sync_monitor(cx, window, Some((x, y)));
                 self.doc.window_event(window, &ev);
                 self.request_if_dirty(window);
             }
+            WindowEvent::MonitorChanged => self.sync_monitor(cx, window, None),
             WindowEvent::Focused(_) | WindowEvent::ThemeChanged(_) => {
                 self.doc.window_event(window, &ev);
                 self.request_if_dirty(window);

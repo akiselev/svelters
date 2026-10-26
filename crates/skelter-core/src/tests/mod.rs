@@ -6,6 +6,7 @@ mod absolute;
 mod change;
 mod commit;
 mod dispatch;
+mod emits;
 mod focus;
 mod folds;
 mod hooks;

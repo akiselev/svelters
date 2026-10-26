@@ -34,7 +34,8 @@ pub trait TextInputClient {
     /// Window-space bounds of `range` (per-character candidate placement).
     fn bounds_for_range(&self, range: Utf16Range) -> Option<Rect>;
     fn character_index_for_point(&self, p: Point) -> Option<usize>;
-    /// Text around the caret, at most `max_bytes` UTF-8 bytes, and the selection inside it (bytes).
+    /// Text around the caret, at most `max_bytes` UTF-8 bytes, and the selection inside it as UTF-16
+    /// offsets into that text (like every other range here).
     fn surrounding_text(&self, max_bytes: usize) -> Option<(String, Range<usize>)>;
     fn purpose(&self) -> InputPurpose {
         InputPurpose::Text

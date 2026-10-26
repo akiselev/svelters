@@ -1,110 +1,29 @@
-//! The skelter-platform API this backend implements: lane PLATFORM's traits and data, re-exported, plus
-//! the additions this backend needs, marked "Addition" and listed in `plans/milestones/SKELTER-wayland.md`.
-//! Additions to `PlatformCx` live in the [`WaylandCx`] extension trait, which [`crate::cx::Cx`] implements.
+//! The skelter-platform API this backend implements, re-exported, plus the helpers this backend adds. The
+//! popup, child-window, window-state, IME-hint, drag and layer-frame-source calls that started here as a
+//! `WaylandCx` extension trait are `PlatformCx` methods now (with `AppHandler::drag_ended`), so apps need
+//! no downcast.
 
 pub use skelter_platform::{
-    A11yEvent, AppHandler, Clipboard, ClipboardKind, HitKind, HitRegion, ImeState, Monitor, OsLayerCommitter, OsLayerDesc,
-    FrameSource, FrameWait, PlatformCx, PlatformError, Presented, SurfaceTarget, Waker, WindowDesc, hit_test,
+    A11yEvent, AppHandler, Clipboard, ClipboardKind, DragData, DragId, DragOutcome, FrameSource, FrameWait, HitKind,
+    HitRegion, ImeHints, ImeState, Monitor, OsLayerCommitter, OsLayerDesc, PlatformCx, PlatformError, PopupDesc,
+    PopupGravity, Presented, SurfaceTarget, Waker, WindowDesc, WindowStateRequest, hit_test,
 };
 
-use skelter_base::geom::{Rect, Vec2};
-use skelter_base::ids::{SurfaceId, WindowId};
+use skelter_base::geom::Rect;
 use skelter_base::input::TextInputClient;
-use std::sync::Arc;
 
 /// text-input-v3 caps surrounding text at 4000 bytes.
 pub const SURROUNDING_MAX: usize = 4000;
 
-/// Addition: what this backend offers beyond `PlatformCx`.
-pub trait WaylandCx: PlatformCx {
-    /// A popup (menu, tooltip, combo list) positioned against its parent; configured on return.
-    fn create_popup(&mut self, desc: WindowDesc, popup: PopupDesc) -> Result<WindowId, PlatformError>;
-    /// A toplevel that is a transient child (dialog) of `parent`.
-    fn create_child_window(&mut self, desc: WindowDesc, parent: WindowId) -> Result<WindowId, PlatformError>;
-    /// An OS layer's frame source (a desync subsurface gets its own frame callbacks), for the compositor thread.
-    fn layer_frame_source(&mut self, id: WindowId, layer: SurfaceId) -> Option<Arc<dyn FrameSource>>;
-    /// Whether the app must draw the window's title bar and frame (no server-side decorations). The platform
-    /// then resizes from a border along the window's edges by itself.
-    fn client_side_decorations(&self, id: WindowId) -> bool;
-    fn set_window_state(&mut self, id: WindowId, req: WindowStateRequest);
-    /// Input hints for the window's text input (with `set_ime`).
-    fn set_ime_hints(&mut self, id: WindowId, hints: ImeHints);
-    /// Start dragging `data` from `window` (the pointer button must be held).
-    fn start_drag(&mut self, window: WindowId, data: DragData) -> Result<DragId, PlatformError>;
-    /// Tab tear-off: attach `window` to the running `drag`, with the pointer at `offset` inside it (window
-    /// points); the OS then moves the window with the pointer until the drag ends.
-    fn attach_window_to_drag(&mut self, drag: DragId, window: WindowId, offset: Vec2) -> Result<(), PlatformError>;
-    /// Drags that ended since the last call. The platform calls `AppHandler::wake` when one ends.
-    fn take_finished_drags(&mut self) -> Vec<(DragId, DragOutcome)>;
-}
-
-/// Addition: the IME state for `client` with the caret or clause at `area`, its surrounding text converted
-/// from the client's UTF-8 offsets to the UTF-16 offsets `ImeState` holds.
+/// The IME state for `client` with the caret or clause at `area`. The client's surrounding text and
+/// selection are UTF-16 offsets, as `ImeState` holds them; offsets past the text are clamped to its end.
 pub fn ime_state_from_client(client: &dyn TextInputClient, area: Rect) -> ImeState {
     let surrounding = client.surrounding_text(SURROUNDING_MAX).map(|(text, sel)| {
-        let u16_at = |b: usize| text.get(..b.min(text.len())).map_or(0, |s| s.encode_utf16().count());
-        let range = u16_at(sel.start)..u16_at(sel.end);
+        let units = text.encode_utf16().count();
+        let range = sel.start.min(units)..sel.end.min(units);
         (text, range)
     });
     ImeState { area, purpose: client.purpose(), surrounding, ..Default::default() }
-}
-
-/// Addition: a popup's placement: `anchor` is a rect in the parent's window points; the popup opens on
-/// `gravity`'s side of it and the OS may flip or slide it to stay on screen.
-#[derive(Clone, Debug, PartialEq)]
-pub struct PopupDesc {
-    pub parent: WindowId,
-    pub anchor: Rect,
-    pub gravity: PopupGravity,
-    /// Take an explicit grab (menus): the popup closes when the user clicks outside it.
-    pub grab: bool,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
-pub enum PopupGravity {
-    #[default]
-    Below,
-    Above,
-    Right,
-    Left,
-}
-
-/// Addition.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum WindowStateRequest {
-    Maximize,
-    Unmaximize,
-    Minimize,
-    Fullscreen,
-    Unfullscreen,
-    /// Ask the OS to raise and focus the window (Wayland: `xdg_activation_v1`).
-    Activate,
-}
-
-/// Addition: text-input hints beyond the purpose.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
-pub struct ImeHints {
-    pub multiline: bool,
-    /// Turn off completion, spell checking and auto-capitalisation (code, identifiers).
-    pub no_assist: bool,
-    pub sensitive: bool,
-}
-
-/// Addition: a drag's payload: MIME type → bytes. Within the app the payload is usually one id under
-/// skelter's own MIME type.
-#[derive(Clone, Debug, PartialEq, Default)]
-pub struct DragData {
-    pub items: Vec<(String, Vec<u8>)>,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct DragId(pub u64);
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum DragOutcome {
-    /// Dropped on a target that accepted it.
-    Dropped,
-    Cancelled,
 }
 
 #[cfg(test)]
@@ -143,11 +62,13 @@ mod tests {
     }
 
     #[test]
-    fn from_client_converts_byte_offsets_to_utf16() {
-        // "é😀x": é is 2 bytes / 1 unit, 😀 4 bytes / 2 units.
-        let s = ime_state_from_client(&Field("é😀x", 2..6), Rect::default());
+    fn from_client_keeps_utf16_offsets() {
+        // "é😀x": é is 1 unit, 😀 2 units; 4 units in all.
+        let s = ime_state_from_client(&Field("é😀x", 1..3), Rect::default());
         assert_eq!(s.surrounding, Some(("é😀x".to_owned(), 1..3)));
         assert_eq!(s.purpose, InputPurpose::Code);
+        let past = ime_state_from_client(&Field("é😀x", 3..9), Rect::default());
+        assert_eq!(past.surrounding, Some(("é😀x".to_owned(), 3..4)));
     }
 
     #[test]

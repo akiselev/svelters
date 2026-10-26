@@ -209,6 +209,8 @@ fn colours_are_theme_roles() {
     let res = Resolver::new(&tables::EGUI, &builtin);
     let Resolved::Utility(u) = res.resolve("bg-surface") else { panic!() };
     assert_eq!(u.decls, [(Atom::new("background-color"), "var(--sv-surface)".to_string())]);
+    let Resolved::Utility(u) = res.resolve("caret-accent") else { panic!() };
+    assert_eq!(u.decls, [(Atom::new("caret-color"), "var(--sv-accent)".to_string())]);
     assert_eq!(res.resolve("bg-editor"), Resolved::NotUtility);
     assert!(matches!(res.resolve("bg-surfce"), Resolved::Invalid(UtilityIssue { kind: IssueKind::UnknownValue, .. })));
     // an app's own tokens are values with no regeneration (`--sv-cad-panel`)

@@ -46,6 +46,10 @@ pub enum Writer {
 /// The deliverer of JS events at event time ([`Document::set_sync_delivery`]).
 pub type SyncDelivery = Box<dyn FnMut(&mut Document, &crate::input::JsEvent) -> crate::kind::Outcome>;
 
+/// The app's drag previews ([`Document::set_drag_preview_provider`]): the source node and the
+/// press in its space, to the drag image.
+pub type DragPreviewProvider = Box<dyn FnMut(&mut Document, NodeId, skelter_base::geom::Point) -> Option<crate::kind::DragPreview>>;
+
 /// The retained tree of one app.
 pub struct Document {
     pub(crate) registry: Arc<KindRegistry>,
@@ -92,6 +96,8 @@ pub struct Document {
     pub(crate) peer_running: bool,
     /// Delivers a JS event at event time and answers what its listeners did.
     pub(crate) sync_delivery: Option<SyncDelivery>,
+    /// Makes the drag image of drags whose source kind supplies none.
+    pub(crate) drag_preview_provider: Option<DragPreviewProvider>,
     /// Prop writes made while their node's kind was out (JS run during the kind's own handler):
     /// the kind gets `prop_changed` for them when it is back.
     pub(crate) missed_props: Vec<(NodeId, PropId)>,
@@ -117,6 +123,8 @@ pub struct Document {
     pub(crate) light_dismiss: std::collections::HashSet<NodeId>,
     /// Fast commits queued for the compositor ([`Document::take_fast_commits`]).
     pub(crate) fast: Vec<skelter_base::commit::FastCommit>,
+    /// The last caret a kind placed (`crate::caret`).
+    pub(crate) caret: Option<crate::caret::CaretSlot>,
 }
 
 impl Document {
@@ -156,6 +164,7 @@ impl Document {
             peer_queue: Default::default(),
             peer_running: false,
             sync_delivery: None,
+            drag_preview_provider: None,
             missed_props: Vec::new(),
             delivering: 0,
             nested: Vec::new(),
@@ -169,6 +178,7 @@ impl Document {
             selection_owner: None,
             single_selection: false,
             fast: Vec::new(),
+            caret: None,
         }
     }
 
@@ -454,7 +464,7 @@ impl Document {
         if let Some(old) = self.window_root(window).filter(|&r| r != root)
             && let Some(oi) = self.idx(old)
         {
-            self.forget_in_window(window, oi);
+            self.forget_in_window(window, oi, false);
             self.core[oi].flags.remove(NodeFlags::ROOT);
             self.set_window(oi, None);
         }
@@ -545,7 +555,11 @@ impl Document {
         }
         let rev = self.stamp();
         if let Some(old) = self.core[ci].parent {
-            self.detach(old, child);
+            // a move within one window keeps pointer capture, focus and hover (decided,
+            // coordinator 2026-10-26: berth's reconcile re-inserts a dragged tab)
+            let window = self.core[ci].window;
+            let keep_input = window.is_some() && window == self.core[pi].window;
+            self.detach_as(old, child, keep_input);
         }
         let list = &mut self.children[pi];
         let at = match before {
@@ -586,13 +600,19 @@ impl Document {
 
     /// Unlinks `child` from `parent` and detaches its subtree from its window.
     fn detach(&mut self, parent: NodeId, child: NodeId) {
+        self.detach_as(parent, child, false);
+    }
+
+    /// [`detach`](Self::detach); `keep_input` (a move inside the same window) keeps the subtree's
+    /// pointer capture, press, focus and hover.
+    fn detach_as(&mut self, parent: NodeId, child: NodeId, keep_input: bool) {
         let pi = self.ix(parent);
         let ci = self.ix(child);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
         self.core[ci].slot = None;
         if let Some(w) = self.core[ci].window {
-            self.forget_in_window(w, ci);
+            self.forget_in_window(w, ci, keep_input);
         }
         self.set_window(ci, None);
         self.structure_changed(pi);
@@ -609,7 +629,7 @@ impl Document {
         if let Some(p) = self.core[i].parent {
             self.detach(p, node);
         } else if let Some(w) = self.core[i].window {
-            self.forget_in_window(w, i);
+            self.forget_in_window(w, i, false);
         }
         let mut stack = vec![node];
         while let Some(n) = stack.pop() {
@@ -657,8 +677,9 @@ impl Document {
     }
 
     /// `i` (and its subtree) leaves window `w`: its lists, property nodes and layers go in the next
-    /// commit's removals; focus, hover and capture inside it are dropped.
-    fn forget_in_window(&mut self, w: WindowId, i: usize) {
+    /// commit's removals; focus, hover and capture inside it are dropped unless `keep_input` (the
+    /// subtree is moving inside `w`).
+    fn forget_in_window(&mut self, w: WindowId, i: usize, keep_input: bool) {
         let mut gone = Vec::new();
         let mut stack = vec![i];
         while let Some(n) = stack.pop() {
@@ -670,18 +691,22 @@ impl Document {
             }
         }
         // a closing dialog scope gives focus back while its nodes are still in the window
-        crate::input::focus::scopes_closed(self, w, &gone);
+        if !keep_input {
+            crate::input::focus::scopes_closed(self, w, &gone);
+        }
         for &id in &gone {
             let n = self.ix(id);
             let paint = std::mem::take(&mut self.record[n]);
             if let Some(ws) = self.window_mut(w) {
-                ws.retire(id, paint);
+                ws.retire(id, paint, keep_input);
             }
             self.core[n].flags.remove(NodeFlags::IN_RELAYOUT | NodeFlags::IN_REMEASURE);
             self.core[n].dirty.insert(Dirty::RECORD | Dirty::LAYOUT);
             self.layout[n].cache.clear();
         }
-        self.input.leave_subtree(&gone);
+        if !keep_input {
+            self.input.leave_subtree(&gone);
+        }
         if let Some(ws) = self.window_mut(w) {
             for id in &gone {
                 ws.a11y_sent.remove(id);
@@ -856,6 +881,9 @@ impl Document {
         if let Some(k) = self.kinds[i].take() {
             self.refresh_light_dismiss(node, &*k);
             self.kinds[i] = Some(k);
+        }
+        if prop == common::ARIA_LIVE || prop == common::ARIA_BUSY {
+            self.mark(node, Dirty::A11Y);
         }
         // ancestors named by their descendants' text re-project
         if is_text || prop == common::ARIA_LABEL {

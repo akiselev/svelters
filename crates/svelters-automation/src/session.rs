@@ -12,7 +12,7 @@ use crate::journal::{Cursor, Journal, Matcher};
 use crate::engine::{Roots, resolve};
 use crate::role::{has_state, role_of, states_of};
 use crate::selector::{Selector, TextMatch, parse};
-use crate::snapshot::{value_of, yaml};
+use crate::snapshot::{value_of, yaml_in};
 use crate::{Error, PROTOCOL, is_enabled};
 use egui::accesskit::{Action, ActionData, ActionRequest};
 use serde_json::{Value, json};
@@ -598,9 +598,7 @@ impl<D: Driver> Session<D> {
             match &sel {
                 Some(sel) => {
                     for id in resolve(s, sel, roots)? {
-                        if let Some(n) = s.get(id) {
-                            yaml(n, 0, &mut out);
-                        }
+                        yaml_in(&s, id, 0, &mut out);
                     }
                 }
                 None => {
@@ -612,7 +610,7 @@ impl<D: Driver> Session<D> {
                             continue;
                         }
                         if let Some(top) = s.root_top(r) {
-                            yaml(top, 0, &mut out);
+                            yaml_in(&s, top.id(), 0, &mut out);
                         }
                     }
                 }

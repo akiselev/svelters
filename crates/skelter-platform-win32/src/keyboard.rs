@@ -221,6 +221,15 @@ pub fn logical_key(vk: VIRTUAL_KEY, layout_char: Option<char>) -> Option<Key> {
     }
 }
 
+/// The `KeyEvent.physical` code of a set-1 scancode: its HID usage, else `0xFFFF_0000 | scancode` (the
+/// encoding skelter-platform's key docs fix for every backend).
+pub fn physical_code(scancode: u16) -> u32 {
+    match hid_for_scancode(scancode) {
+        0 => 0xFFFF_0000 | scancode as u32,
+        hid => hid,
+    }
+}
+
 /// The USB HID usage (page 7, encoded `0x0007_00XX`) of a set-1 scancode (`0xE0xx` for extended
 /// keys), or 0 when the key has none on page 7 (media keys are on the consumer page).
 ///
@@ -438,7 +447,7 @@ impl KeyTranslator {
         let layout_char = layout_char(raw_vk, lp.scancode);
         Some(KeyEvent {
             key: logical_key(vk, layout_char),
-            physical: hid_for_scancode(lp.scancode),
+            physical: physical_code(lp.scancode),
             text,
             state: if down { KeyState::Pressed } else { KeyState::Released },
             repeat: down && lp.repeat,
@@ -580,6 +589,9 @@ mod tests {
         assert_eq!(hid_for_scancode(0xE038), 0x0007_00E6, "right Alt");
         assert_eq!(hid_for_scancode(0x56), 0x0007_0064, "ISO backslash");
         assert_eq!(hid_for_scancode(0xE022), 0, "media play has no page-7 usage");
+        assert_eq!(physical_code(0x1E), 0x0007_0004, "A");
+        assert_eq!(physical_code(0xE048), 0x0007_0052, "Up");
+        assert_eq!(physical_code(0xE022), 0xFFFF_E022, "media play: its scancode");
     }
 
     #[test]

@@ -35,6 +35,10 @@ all three, failing only in skelter-compositor, skelter-core and skelter-widgets 
 
 - **Drag source, popup/tooltip windows, fullscreen, pointer capture for tab tear-off**: not in the contract;
   consolidation 2 decides (coordinator, 2026-10-25). The OLE drag source in `drag` is ready for it.
+  *Update (lane skelter-fixes, 2026-10-26):* the contract has them now. `start_drag` runs the OLE drag source
+  (text and `file:` URIs only) after the handler returns and reports `AppHandler::drag_ended`; `create_popup`
+  and `create_child_window` make owned windows; `set_window_state` does maximise/restore/minimise/activate.
+  Still absent: fullscreen, popup grabs, `attach_window_to_drag`.
 - **The DXGI frame-latency waitable**: it lives in wgpu's swap chain on the compositor side; `FrameSource`
   stays as it is (coordinator, 2026-10-25), so `Win32Frames` paces by the compositor clock or `DwmFlush` and
   only uses a waitable passed to `set_waitable`.

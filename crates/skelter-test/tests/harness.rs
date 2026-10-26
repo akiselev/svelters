@@ -642,3 +642,42 @@ fn new_windows_get_the_policy_caret_blink() {
         vec![(h.window(), Some(skelter::compositor_crate::CaretBlink::GTK))]
     );
 }
+
+fn monitor(x: i32, refresh_hz: u32, scale: f32, ppi: Option<f32>) -> skelter::platform::Monitor {
+    skelter::platform::Monitor {
+        name: None,
+        position: (x, 0),
+        size: skelter_base::geom::DeviceSize { w: 2000, h: 1000 },
+        work_area: None,
+        scale: Scale(scale),
+        refresh_millihertz: Some(refresh_hz * 1000),
+        ppi,
+    }
+}
+
+#[test]
+fn monitor_changes_send_refresh_and_ppi() {
+    let mut h = harness();
+    let w = h.window();
+    // The headless monitor reports no physical size: the logical convention (96 × scale; 72 on macOS).
+    let logical = if cfg!(target_os = "macos") { 72.0 } else { 96.0 };
+    assert_eq!(h.compositor().ppis(), vec![(w, logical)]);
+    assert_eq!(h.compositor().refreshes(), vec![(w, Span(1_000_000_000_000 / 60_000))]);
+
+    h.platform_mut().set_monitors(vec![monitor(0, 60, 1.0, None), monitor(2000, 120, 2.0, Some(218.0))]);
+    h.platform_mut().set_window_monitor(w, 1);
+    h.window_event(WindowEvent::MonitorChanged);
+    h.step();
+    assert_eq!(h.compositor().ppis().last(), Some(&(w, 218.0)), "the OS's physical ppi wins");
+    assert_eq!(h.compositor().refreshes().last(), Some(&(w, Span(1_000_000_000_000 / 120_000))));
+
+    // Back on the first monitor: no physical size, so the logical convention again; nothing is re-sent
+    // when nothing changed.
+    h.platform_mut().set_window_monitor(w, 0);
+    h.window_event(WindowEvent::MonitorChanged);
+    h.step();
+    h.window_event(WindowEvent::MonitorChanged);
+    h.step();
+    assert_eq!(h.compositor().ppis(), vec![(w, logical), (w, 218.0), (w, logical)]);
+    assert_eq!(h.compositor().refreshes().len(), 3);
+}

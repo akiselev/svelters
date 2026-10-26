@@ -18,6 +18,8 @@
 //!   (foreground blocks settle, background never does), actionability checks named at the timeout,
 //!   clock domains (a busy wall-clock source holds the virtual clock), [`replay`] of external
 //!   sources, and one [`WaitReport`] on every wait timeout.
+//! - [`SceneSource`] ([`source`]): the scene the engine and the snapshot read, behind a trait
+//!   (svelters-egui's scene implements it; skelter-test's `SkelterScene` reads skelter-native UI).
 //! - [`Driver`]: what runs the frames; kittest's harnesses implement it (feature `kittest`).
 //! - [`Session::call`]: the same methods as JSON (`scene.query {selector}` …), the schema AU2's
 //!   IPC transport and cadatomic's socket server carry unchanged.
@@ -46,6 +48,7 @@ pub mod selector;
 pub mod server;
 mod session;
 mod snapshot;
+pub mod source;
 
 pub use driver::{A11yNode, Driver};
 /// AU1b: `#[svelters_automation::test]`, one body in process or out of process (see [`e2e`]).
@@ -54,6 +57,7 @@ pub use svelters_macros::test;
 pub use busy::{BusyKind, BusyRegistry, BusyReport, BusySource, BusyStatus};
 pub use journal::{ClockDomain, Cursor, Event, EventKind, FieldType, Journal, Matcher};
 pub use selector::{Selector, TextMatch};
+pub use source::{SceneSource, SourceRoot};
 pub use session::{
     ActOptions, ActResult, Actionability, At, Budget, ComputedInfo, Condition, Drag, DragTo, Expect, Grants, NeverId,
     NodeInfo, Ref, RootInfo, SeenId, Session, SourceInfo, Target, Tier, Unmet, WaitReport, WaitState, Wheel, rule_json,

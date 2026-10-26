@@ -6,43 +6,45 @@
 //! document order: roots in scene order, then pre-order. `root=` yields the root's top node, and
 //! the next part searches the top and its subtree. Roots the session skips (tooling roots, §1.2)
 //! are left out.
+//!
+//! The engine runs on any [`SceneSource`] ([`crate::source::resolve_source`]); [`resolve`] is it on
+//! svelters-egui's scene.
 
 use crate::Error;
-use crate::role::{has_state, role_of};
 use crate::selector::{Part, Selector};
-use svelters_egui::accessible_name;
-use svelters_egui::scene::{NodeId, NodeRef, SceneRef};
-use svelters_style::{MatchCaches, parse_selector_list};
+use crate::source::SceneSource;
+use svelters_egui::scene::{NodeId, SceneRef};
 
 /// Which roots a resolution sees: `skip(key)` is `true` for a root key to leave out.
 pub struct Roots<'f> {
     pub skip: &'f dyn Fn(&str) -> bool,
 }
 
-enum Scope<'a> {
+enum Scope<N> {
     All,
     /// These nodes and their subtrees (after `root=`).
-    Inclusive(Vec<NodeRef<'a>>),
+    Inclusive(Vec<N>),
     /// The subtrees below these nodes.
-    Below(Vec<NodeRef<'a>>),
+    Below(Vec<N>),
     /// Exactly these nodes (after `nth=`; the next filtering part searches below them).
-    Exact(Vec<NodeRef<'a>>),
+    Exact(Vec<N>),
 }
 
 /// The nodes `sel` matches, in document order, without duplicates.
 pub fn resolve(s: SceneRef<'_>, sel: &Selector, roots: &Roots<'_>) -> Result<Vec<NodeId>, Error> {
+    resolve_in(&s, sel, roots.skip)
+}
+
+/// [`resolve`] over any [`SceneSource`] (the egui scene is one).
+pub(crate) fn resolve_in<S: SceneSource>(s: &S, sel: &Selector, skip: &dyn Fn(&str) -> bool) -> Result<Vec<S::Node>, Error> {
     let mut scope = Scope::All;
-    let mut caches = MatchCaches::default();
     for part in &sel.parts {
         scope = match part {
             Part::Root(key) => {
                 if !matches!(scope, Scope::All) {
                     return Err(Error::new("selector.invalid", "root= must come first"));
                 }
-                let top = s
-                    .root_by_key(key)
-                    .filter(|_| !(roots.skip)(key))
-                    .and_then(|r| s.root_top(r));
+                let top = s.root_top(key).filter(|_| !skip(key));
                 Scope::Inclusive(top.into_iter().collect())
             }
             Part::Nth(k) => {
@@ -65,90 +67,73 @@ pub fn resolve(s: SceneRef<'_>, sel: &Selector, roots: &Roots<'_>) -> Result<Vec
                 ));
             }
             Part::Pos(p) => {
-                let hit = s.hit_node(egui::ViewportId::ROOT, *p);
-                let inside = |n: NodeRef<'_>| {
-                    candidates(s, &scope, roots)
-                        .iter()
-                        .any(|c| c.id() == n.id())
-                };
+                let hit = s.hit(*p);
+                let inside = |n: S::Node| candidates(s, &scope, skip).contains(&n);
                 Scope::Below(
                     hit.filter(|&n| matches!(scope, Scope::All) || inside(n))
                         .into_iter()
                         .collect(),
                 )
             }
-            Part::Css(css) => {
-                let list = parse_selector_list(css, Some(&svelters_egui::style::ProviderStates))
-                    .map_err(|e| Error::new("selector.invalid", format!("css `{css}`: {e}")))?;
-                let v = candidates(s, &scope, roots)
-                    .into_iter()
-                    .filter(|&n| svelters_style::matches(&list, n, &mut caches))
-                    .collect();
-                Scope::Below(v)
-            }
+            Part::Css(css) => Scope::Below(s.select_css(css, &candidates(s, &scope, skip))?),
             Part::Key(k) => {
                 // the item's top nodes (their own `anchor-scope` ends with the key): the next part
                 // searches them and their subtrees
-                let v = candidates(s, &scope, roots)
+                let v = candidates(s, &scope, skip)
                     .into_iter()
-                    .filter(|n| n.anchor_scope().is_some() && n.item_key() == Some(k.as_str()))
+                    .filter(|&n| s.item_key(n).as_deref() == Some(k.as_str()))
                     .collect();
                 Scope::Inclusive(v)
             }
             Part::Source { file, offset } => {
-                let v = candidates(s, &scope, roots)
+                let v = candidates(s, &scope, skip)
                     .into_iter()
-                    .filter(|n| {
-                        n.source_loc().is_some_and(|l| {
-                            let e = l.element();
-                            crate::selector::path_matches(e.file, file) && offset.is_none_or(|o| o == e.offset)
-                        })
-                    })
+                    .filter(|&n| s.declared_in(n, file, *offset))
                     .collect();
                 Scope::Below(v)
             }
             Part::Anchor(a) => {
-                let v = candidates(s, &scope, roots)
+                let v = candidates(s, &scope, skip)
                     .into_iter()
-                    .filter(|n| n.anchor() == Some(a.as_str()))
+                    .filter(|&n| s.anchor(n).as_deref() == Some(a.as_str()))
                     .collect();
                 Scope::Below(v)
             }
             Part::Text(t) => {
-                let v = candidates(s, &scope, roots)
-                    .into_iter()
-                    .filter(|n| !n.text().is_empty() && t.matches(n.text()))
-                    .collect();
-                Scope::Below(v)
-            }
-            Part::Label(t) => {
-                let v = candidates(s, &scope, roots)
+                let v = candidates(s, &scope, skip)
                     .into_iter()
                     .filter(|&n| {
-                        !matches!(role_of(n), "label" | "generic" | "group")
-                            && t.matches(&accessible_name(n))
+                        let text = s.text(n);
+                        !text.is_empty() && t.matches(&text)
                     })
                     .collect();
                 Scope::Below(v)
             }
+            Part::Label(t) => {
+                let v = candidates(s, &scope, skip)
+                    .into_iter()
+                    .filter(|&n| !matches!(s.role(n), "label" | "generic" | "group") && t.matches(&s.name(n)))
+                    .collect();
+                Scope::Below(v)
+            }
             Part::Role { role, name, states } => {
-                let v = candidates(s, &scope, roots)
+                let v = candidates(s, &scope, skip)
                     .into_iter()
                     .filter(|&n| {
-                        role_of(n) == role
-                            && name.as_ref().is_none_or(|t| t.matches(&accessible_name(n)))
-                            && states.iter().all(|st| has_state(n, st))
+                        s.role(n) == role
+                            && name.as_ref().is_none_or(|t| t.matches(&s.name(n)))
+                            && states.iter().all(|st| s.has_state(n, st))
                     })
                     .collect();
                 Scope::Below(v)
             }
         };
     }
-    Ok(matched(&scope).into_iter().map(|n| n.id()).collect())
+    Ok(matched(&scope))
 }
 
 /// The nodes the last part produced.
-fn matched<'a>(scope: &Scope<'a>) -> Vec<NodeRef<'a>> {
+fn matched<N: Copy>(scope: &Scope<N>) -> Vec<N> {
     match scope {
         Scope::All => Vec::new(),
         Scope::Inclusive(v) | Scope::Below(v) | Scope::Exact(v) => v.clone(),
@@ -156,39 +141,37 @@ fn matched<'a>(scope: &Scope<'a>) -> Vec<NodeRef<'a>> {
 }
 
 /// The nodes the next part filters, in document order, without duplicates.
-fn candidates<'a>(s: SceneRef<'a>, scope: &Scope<'a>, roots: &Roots<'_>) -> Vec<NodeRef<'a>> {
+fn candidates<S: SceneSource>(s: &S, scope: &Scope<S::Node>, skip: &dyn Fn(&str) -> bool) -> Vec<S::Node> {
     let mut out = Vec::new();
     let mut seen = std::collections::HashSet::new();
-    let mut push = |n: NodeRef<'a>, out: &mut Vec<NodeRef<'a>>| {
-        if seen.insert(n.id()) {
+    let mut push = |n: S::Node, out: &mut Vec<S::Node>| {
+        if seen.insert(n) {
             out.push(n);
         }
     };
     match scope {
         Scope::All => {
-            for (r, _) in s.roots() {
-                if r.is_detached() || s.root_key(r).is_some_and(|k| (roots.skip)(k)) {
+            for r in s.roots() {
+                if r.key.as_deref().is_some_and(skip) {
                     continue;
                 }
-                if let Some(top) = s.root_top(r) {
-                    push(top, &mut out);
-                    for d in top.descendants() {
-                        push(d, &mut out);
-                    }
+                push(r.top, &mut out);
+                for d in s.descendants(r.top) {
+                    push(d, &mut out);
                 }
             }
         }
         Scope::Inclusive(v) => {
             for &t in v {
                 push(t, &mut out);
-                for d in t.descendants() {
+                for d in s.descendants(t) {
                     push(d, &mut out);
                 }
             }
         }
         Scope::Below(v) | Scope::Exact(v) => {
             for &t in v {
-                for d in t.descendants() {
+                for d in s.descendants(t) {
                     push(d, &mut out);
                 }
             }

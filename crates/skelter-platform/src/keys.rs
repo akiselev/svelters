@@ -1,6 +1,13 @@
 //! winit keys → skelter keys. The logical key gets egui's name ([`skelter_base::key::Key`]); the
-//! physical key becomes its USB HID usage, `page << 16 | usage` (keyboard page 0x07, consumer page
-//! 0x0C, generic desktop 0x01), 0 when it has none.
+//! physical key becomes its code ([`physical_code`]).
+//!
+//! **Physical key codes** (`KeyEvent.physical`), the same in every backend (winit here, and
+//! skelter-platform-win32, -macos and -wayland):
+//! - a key with a USB HID usage: `page << 16 | usage` (HID Usage Tables 1.4; keyboard page 0x07, so A
+//!   is `0x0007_0004`, consumer page 0x0C, generic desktop 0x01), Chromium's form;
+//! - a key without one: `0xFFFF_0000 | native`, the OS's own code in the low 16 bits (Windows set-1
+//!   scancode with `0xE0xx` for extended keys, macOS `kVK_*`, Linux evdev, winit's native code);
+//! - 0 only when the OS named no key at all.
 //!
 //! `key_from_named` and `key_from_code` follow egui-winit 0.37.0 `src/lib.rs` (`key_from_named_key`,
 //! `key_from_key_code`; MIT OR Apache-2.0, Copyright (c) 2018-2021 Emil Ernerfeldt), so keys reach
@@ -273,6 +280,20 @@ const KEYBOARD: u32 = 0x07 << 16;
 const CONSUMER: u32 = 0x0C << 16;
 const DESKTOP: u32 = 0x01 << 16;
 
+/// `KeyEvent.physical` for a winit key (see the module docs): its HID usage, else `0xFFFF_0000 |`
+/// the native code winit reports for an unidentified key, else 0.
+pub fn physical_code(physical: PhysicalKey) -> u32 {
+    use winit::keyboard::NativeKeyCode as N;
+    match (hid_usage(physical), physical) {
+        (0, PhysicalKey::Unidentified(native)) => match native {
+            N::Windows(c) | N::MacOS(c) => 0xFFFF_0000 | c as u32,
+            N::Xkb(c) | N::Android(c) => 0xFFFF_0000 | (c & 0xFFFF),
+            N::Unidentified => 0,
+        },
+        (hid, _) => hid,
+    }
+}
+
 /// The USB HID usage of a physical key (HID Usage Tables 1.4: §10 Keyboard/Keypad, §15 Consumer,
 /// §4 Generic Desktop), `page << 16 | usage`; 0 when the key has none.
 pub fn hid_usage(physical: PhysicalKey) -> u32 {
@@ -491,6 +512,16 @@ mod tests {
         let k = key_from_winit(&WKey::Named(NamedKey::Enter), PhysicalKey::Code(KeyCode::NumpadEnter));
         assert_eq!(k, Some(Key::Enter));
         assert_eq!(key_from_winit(&WKey::Dead(Some('´')), PhysicalKey::Code(KeyCode::Equal)), Some(Key::Equals));
+    }
+
+    #[test]
+    fn physical_codes_fall_back_to_the_native_code() {
+        use winit::keyboard::NativeKeyCode;
+        assert_eq!(physical_code(PhysicalKey::Code(KeyCode::KeyA)), 0x0007_0004);
+        assert_eq!(physical_code(PhysicalKey::Unidentified(NativeKeyCode::Windows(0xE022))), 0xFFFF_E022);
+        assert_eq!(physical_code(PhysicalKey::Unidentified(NativeKeyCode::Xkb(464))), 0xFFFF_0000 | 464);
+        assert_eq!(physical_code(PhysicalKey::Unidentified(NativeKeyCode::MacOS(0x3F))), 0xFFFF_003F);
+        assert_eq!(physical_code(PhysicalKey::Unidentified(NativeKeyCode::Unidentified)), 0);
     }
 
     #[test]

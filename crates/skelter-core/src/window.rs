@@ -131,9 +131,12 @@ impl WindowState {
     }
 
     /// A node left the window: its list, property nodes and layer go in the next commit's removals.
-    pub fn retire(&mut self, node: NodeId, paint: NodePaint) {
+    pub fn retire(&mut self, node: NodeId, paint: NodePaint, keep_focus: bool) {
         if paint.list.is_some() {
             self.pending.removed_lists.push(node);
+        }
+        if paint.fixed.is_some() {
+            self.pending.removed_lists.push(crate::record::fixed_key(node));
         }
         if let Some(s) = paint.scroll {
             self.scroll_nodes.remove(&s);
@@ -149,10 +152,13 @@ impl WindowState {
             self.items.remove(&l);
             self.layer_ids.free(l.0);
         }
-        if self.focus == Some(node) {
-            self.focus = None;
+        // moving inside this window (`keep_focus`): focus and the focus-restore pairs stay
+        if !keep_focus {
+            if self.focus == Some(node) {
+                self.focus = None;
+            }
+            self.restore.retain(|&(s, n)| s != node && n != node);
         }
-        self.restore.retain(|&(s, n)| s != node && n != node);
         self.rebuild = true;
     }
 
