@@ -127,6 +127,50 @@ impl LayoutRich for skelter_text::TextSystem {
     }
 }
 
+/// This crate's text style as skelter-text's (what [`LayoutRich`] maps a rich text's base to).
+fn system_style(s: &crate::shim::text::TextStyle) -> skelter_text::TextStyle {
+    skelter_text::TextStyle {
+        family: s.family.to_string(),
+        size: s.size,
+        weight: s.weight,
+        italic: s.italic,
+        line_height: s.line_height.filter(|_| s.size > 0.0).map(|l| l / s.size),
+        letter_spacing: s.letter_spacing,
+        ..skelter_text::TextStyle::default()
+    }
+}
+
+/// The document's text system shared, for one call into a widget, by its shaper and its layout
+/// lender ([`w::LayoutLender`]): each use borrows it for that use only.
+struct SharedText<'t>(std::cell::RefCell<&'t mut skelter_text::TextSystem>);
+
+impl TextShaper for &SharedText<'_> {
+    fn layout(&mut self, t: &RichText, max_width: Option<f32>) -> Arc<TextLayout> {
+        self.0.borrow_mut().layout_rich(t, max_width)
+    }
+}
+
+impl w::LayoutLender for &SharedText<'_> {
+    fn layout(&mut self, text: &str, style: &crate::shim::text::TextStyle, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry> {
+        let mut ts = self.0.borrow_mut();
+        crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: &mut ts, style: system_style(style) }, text, max_width)
+    }
+}
+
+/// The layout lender of an event: the document's text system, through the event context (which
+/// the widget's synchronous signals use too), borrowed per layout.
+struct EventLender<'c, 'e, 'd>(&'c std::cell::RefCell<&'e mut EventCx<'d>>);
+
+impl w::LayoutLender for EventLender<'_, '_, '_> {
+    fn layout(&mut self, text: &str, style: &crate::shim::text::TextStyle, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry> {
+        let mut cx = self.0.borrow_mut();
+        match cx.service::<skelter_text::TextSystem>() {
+            Some(ts) => crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: ts, style: system_style(style) }, text, max_width),
+            None => crate::text::shim::Layouter::layout(&mut *w::layouter(None, style.clone()), text, max_width),
+        }
+    }
+}
+
 /// skelter-text's layout as caret and selection geometry.
 struct SkelterGeometry(Arc<skelter_text::TextLayout>);
 
@@ -360,6 +404,14 @@ pub fn install(doc: &mut skelter_core::Document, text: skelter_text::TextSystem,
     doc.set_service(theme);
 }
 
+/// Replaces the document's theme (High Contrast, density, the app's accent, `--sv-*` overrides):
+/// the stock kinds' UA tokens resolve in it, so every node restyles, re-measures and re-records
+/// ([`skelter_core::Document::repaint_all`]).
+pub fn set_theme(doc: &mut skelter_core::Document, theme: crate::theme::Theme) {
+    doc.set_service(theme);
+    doc.repaint_all();
+}
+
 /// A folding node's run children as `runs` records; empty for other kinds.
 fn folded_of(node: NodeView<'_>, folds: bool, elements: bool) -> Vec<w::Value> {
     if !folds {
@@ -452,8 +504,10 @@ pub fn register_tier0(registry: &mut KindRegistry) -> Result<(), RegistryError> 
     Ok(())
 }
 
-fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, parts: &'a [(&'static str, &'a svelters_style::ComputedStyle)], children: &'a [w::Value], state: StateMask, dark: bool) -> w::Styles<'a> {
-    w::Styles { computed: css, parts, children, state: StateBits(state.0), dark }
+/// The widget's styles; `theme` is the document's `Theme` service (its scheme, its tokens), else
+/// the built-in dark theme.
+fn styles<'a>(css: Option<&'a svelters_style::ComputedStyle>, parts: &'a [(&'static str, &'a svelters_style::ComputedStyle)], children: &'a [w::Value], state: StateMask, theme: Option<&'a crate::theme::Theme>) -> w::Styles<'a> {
+    w::Styles { computed: css, parts, children, state: StateBits(state.0), dark: theme.is_none_or(|t| t.is_dark()), theme }
 }
 
 /// A computed colour of `css`.
@@ -487,9 +541,6 @@ fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId
         .collect()
 }
 
-fn is_dark(theme: Option<&mut crate::theme::Theme>) -> bool {
-    theme.is_none_or(|t| t.is_dark())
-}
 
 /// Resources for the prepare pass: new images are rasterised and kept for upload after the pass;
 /// runs are not kept.
@@ -585,6 +636,7 @@ impl<W: w::Kind + Default> Hosted<W> {
             Event::FocusOut => w::Event::Focus { gained: false, reason: WFocus::Program },
             Event::Timer => w::Event::Timer,
             Event::A11y(r) => w::Event::A11y((*r).clone()),
+            Event::A11yChild(r, index) => w::Event::A11yChild { index: *index, req: (*r).clone() },
             // clicks are the tracker's; IME is the text kinds'; raw motion is for viewport kinds
             Event::Click(_) | Event::Ime(_) | Event::RawMotion(_) => return None,
         })
@@ -604,15 +656,22 @@ impl<W: w::Kind + Default> Hosted<W> {
         let mut state = StateBits(mask.0);
         let before = state;
         let time = cx.time();
+        let has_text = cx.service::<skelter_text::TextSystem>().is_some();
         let (handled, out) = {
+            // the widget's synchronous signals and its text layouts share the context, one use at a time
+            let shared = std::cell::RefCell::new(&mut *cx);
             let mut sync = |sig: w::SignalId, args: &[w::Value]| -> bool {
                 let i = sig.0 as usize;
                 let Some(spec) = ws.signals.get(i) else { return false };
-                cx.emit_sync(s.core.signal_id(i), signal_arg(spec, args)).prevented
+                shared.borrow_mut().emit_sync(s.core.signal_id(i), signal_arg(spec, args)).prevented
             };
+            let mut lender = EventLender(&shared);
             let mut wcx = w::EventCx::new(time, size, &mut state, &policy);
             wcx.focused = mask.contains(StateMask::FOCUSED);
             wcx.sync = Some(&mut sync);
+            if has_text {
+                wcx.layouts = Some(&mut lender);
+            }
             let handled = f(&mut self.widget, &mut wcx);
             let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, .. } = wcx;
             (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on))
@@ -719,36 +778,42 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         let base = cx.default_layout();
-        self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark: true, base: Some(base) })
+        let dark = cx.service::<crate::theme::Theme>().is_none_or(|t| t.is_dark());
+        self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark, base: Some(base) })
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let node = cx.node;
-        let dark = is_dark(cx.service::<crate::theme::Theme>());
-        let mut text = shaper(cx.service::<skelter_text::TextSystem>());
+        let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+        let mut text = shaper(ts);
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
-        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, scale: node.scale() }, known, avail)
+        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), theme), text: &mut *text, scale: node.scale() }, known, avail)
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
-        let dark = is_dark(cx.service::<crate::theme::Theme>());
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let emitted: Vec<w::Emitted>;
         let (new, used) = {
-            let mut text = shaper(cx.service::<skelter_text::TextSystem>());
+            let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+            let ts = ts.map(|ts| SharedText(std::cell::RefCell::new(ts)));
+            let (mut shared_text, mut lender) = (ts.as_ref(), ts.as_ref());
+            let mut text: Box<dyn TextShaper + '_> = match shared_text.take() {
+                Some(t) => Box::new(t),
+                None => Box::new(NoText),
+            };
             // the widget's own prepare (layout of what it places or draws itself) runs before the dry recording
-            let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, emitted: Vec::new() };
+            let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), text: &mut *text, emitted: Vec::new(), layouts: lender.as_mut().map(|l| l as &mut dyn w::LayoutLender) };
             self.widget.prepare(&mut pcx);
             emitted = pcx.emitted;
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
             let mut list = DisplayList::new();
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             let mut overlay = DisplayList::new();
-            self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
+            self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
             (res.new, res.used)
         };
         for (key, data) in new {
@@ -777,18 +842,18 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 
     fn record(&self, cx: &mut RecordCx) {
         let node = cx.node;
-        let dark = is_dark(cx.service::<crate::theme::Theme>());
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let mut list = DisplayList::new();
         let mut overlay = DisplayList::new();
         let (runs, part, overlay_runs) = {
-            let mut text = shaper(cx.service::<skelter_text::TextSystem>());
+            let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+            let mut text = shaper(ts);
             let mut res = RecordRes { runs: Vec::new(), images: &self.images };
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             // the open floating surface, for the window's overlay stack
             let mut ores = RecordRes { runs: Vec::new(), images: &self.images };
-            let part = self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut overlay, text: &mut *text, res: &mut ores, scale: node.scale() });
+            let part = self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut overlay, text: &mut *text, res: &mut ores, scale: node.scale() });
             (res.runs, part, ores.runs)
         };
         push_recorded(cx, list, runs);
@@ -873,10 +938,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 
     fn chrome_padding(&self, cx: &mut MeasureCx) -> Option<Insets> {
         let node = cx.node;
-        let dark = is_dark(cx.service::<crate::theme::Theme>());
         let parts = part_styles(node, Self::spec_ref().core.parts);
-        let mut text = shaper(cx.service::<skelter_text::TextSystem>());
-        let [left, right, top, bottom] = self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), dark), text: &mut *text, scale: node.scale() })?;
+        let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+        let mut text = shaper(ts);
+        let [left, right, top, bottom] = self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() })?;
         Some(Insets { top, right, bottom, left })
     }
 
@@ -896,7 +961,11 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn a11y(&self, cx: &mut A11yCx) {
         cx.default_a11y();
         let (state, size) = (StateBits(cx.state().0), cx.size());
-        self.widget.a11y(&mut w::A11yCx { node: cx.out, state, size });
+        let mut wcx = w::A11yCx { node: cx.out, state, size, children: Vec::new() };
+        self.widget.a11y(&mut wcx);
+        for c in std::mem::take(&mut wcx.children) {
+            cx.add_virtual_child(c);
+        }
     }
 }
 
@@ -904,6 +973,42 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 mod tests {
     use super::*;
     use crate::controls::Button;
+
+    #[test]
+    fn the_documents_theme_reaches_a_stock_buttons_tokens() {
+        use crate::testdoc::{child, doc, frame};
+        use crate::theme::Theme;
+        use skelter_base::color::{Color, Fill};
+        let (mut d, root) = doc(skelter_base::geom::Size::new(200.0, 100.0), |r| {
+            register::<Button>(r).unwrap();
+        });
+        install(&mut d, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())), os_policy(), Theme::dark_modern());
+        let b = child(&mut d, root, skelter_core::KindId::of("button"), "");
+        // the button's face: its first quad's fill and border colour
+        let face = |c: &skelter_base::commit::Commit| -> Option<(Fill, Color)> {
+            let (_, l) = c.lists.iter().find(|(k, _)| *k == b)?;
+            l.items.iter().find_map(|p| match p {
+                Prim::Quad(q) => Some((q.fill.clone(), q.border_color)),
+                _ => None,
+            })
+        };
+        let dark = face(&frame(&mut d).unwrap()).expect("the button records");
+        let want = |t: &Theme| (Fill::Solid(t.color("button-bg").unwrap()), t.color("button-border-color").unwrap());
+        assert_eq!(dark, want(&Theme::dark_modern()));
+        // High Contrast: the document's service, not the built-in Dark Modern
+        let hc = Theme::hc_dark();
+        set_theme(&mut d, hc.clone());
+        let got = face(&frame(&mut d).unwrap()).expect("re-recorded");
+        assert_eq!(got, want(&hc));
+        assert_ne!(got, dark);
+        // the app's override of a `--sv-*` token
+        let accent = Theme::dark_modern().with([("button-bg", "#ff0000")]);
+        set_theme(&mut d, accent);
+        assert_eq!(face(&frame(&mut d).unwrap()).unwrap().0, Fill::Solid(Color::rgba(1.0, 0.0, 0.0, 1.0)));
+        // the scheme follows the theme in layout too: a light theme is not dark
+        set_theme(&mut d, Theme::light_modern());
+        assert_eq!(face(&frame(&mut d).unwrap()).unwrap(), want(&Theme::light_modern()));
+    }
 
     #[test]
     fn button_spec_maps_to_core() {

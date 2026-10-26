@@ -252,6 +252,9 @@ pub mod core {
         Focus { gained: bool, reason: FocusReason },
         /// An assistive-technology action addressed to this node.
         A11y(accesskit::ActionRequest),
+        /// An assistive-technology action addressed to the node's virtual child `index` (one of the
+        /// [`A11yCx::children`] its `a11y` added).
+        A11yChild { index: u32, req: accesskit::ActionRequest },
         /// The time the kind asked for with [`EventCx::wake_at`] came (press repeat, a press held long
         /// enough to become a drag).
         Timer,
@@ -288,6 +291,9 @@ pub mod core {
         pub children: &'a [Value],
         pub state: StateBits,
         pub dark: bool,
+        /// The document's theme (its `Theme` service) UA tokens resolve in; `None`: the built-in
+        /// theme of `dark`'s scheme.
+        pub theme: Option<&'a crate::theme::Theme>,
     }
 
     impl<'a> Styles<'a> {
@@ -316,6 +322,34 @@ pub mod core {
         pub scale: f32,
     }
 
+    /// Lends text layouts with caret and selection geometry (the text-edit field's
+    /// [`Layouter`](crate::text::shim::Layouter)) over the document's text system: what a hosted kind
+    /// that edits text through [`crate::text::TextField`] lays out with (the colour editor's hex box).
+    /// The host implements it over `skelter_text::TextSystem` (a document service
+    /// [`crate::host::install`] provides); without one the contexts lend nothing and
+    /// [`layouter`] falls back to fixed-advance text.
+    pub trait LayoutLender {
+        fn layout(&mut self, text: &str, style: &crate::shim::text::TextStyle, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry>;
+    }
+
+    /// A [`Layouter`](crate::text::shim::Layouter) in `style` over `lender`, else
+    /// [`MonoLayouter`](crate::text::shim::MonoLayouter) at the style's size (no text system: no glyphs).
+    pub fn layouter<'b>(lender: Option<&'b mut (dyn LayoutLender + 'b)>, style: crate::shim::text::TextStyle) -> Box<dyn crate::text::shim::Layouter + 'b> {
+        struct Lent<'b> {
+            lender: &'b mut (dyn LayoutLender + 'b),
+            style: crate::shim::text::TextStyle,
+        }
+        impl crate::text::shim::Layouter for Lent<'_> {
+            fn layout(&mut self, text: &str, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry> {
+                self.lender.layout(text, &self.style, max_width)
+            }
+        }
+        match lender {
+            Some(lender) => Box::new(Lent { lender, style }),
+            None => Box::new(crate::text::shim::MonoLayouter { advance: style.size * 0.6, line_height: style.line_height.unwrap_or(style.size * 1.3) }),
+        }
+    }
+
     /// Stands in for `skelter_core::PrepareCx`: after layout, before recording.
     pub struct PrepareCx<'a> {
         pub size: Size,
@@ -324,11 +358,18 @@ pub mod core {
         /// Signals emitted while preparing ([`PrepareCx::emit`]); the host queues them after the
         /// prepare (`skelter_core::PrepareCx::emit`).
         pub emitted: Vec<Emitted>,
+        /// Text layouts with caret geometry over the document's text system ([`LayoutLender`]);
+        /// `None`: no text system.
+        pub layouts: Option<&'a mut dyn LayoutLender>,
     }
 
     impl PrepareCx<'_> {
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
+        }
+        /// A text-edit [`Layouter`](crate::text::shim::Layouter) in `style` ([`layouter`]).
+        pub fn layouter(&mut self, style: crate::shim::text::TextStyle) -> Box<dyn crate::text::shim::Layouter + '_> {
+            layouter(self.layouts.as_mut().map(|l| &mut **l as &mut dyn LayoutLender), style)
         }
     }
 
@@ -421,15 +462,22 @@ pub mod core {
         /// child's kind declares them): the host emits them on the child
         /// (`skelter_core::EventCx::emit_on`).
         pub emitted_on: Vec<(usize, skelter_core::SignalId, Option<skelter_core::Value>)>,
+        /// Text layouts with caret geometry over the document's text system ([`LayoutLender`]);
+        /// `None`: no text system (or a test without one).
+        pub layouts: Option<&'a mut dyn LayoutLender>,
     }
 
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new() }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new(), layouts: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
+        }
+        /// A text-edit [`Layouter`](crate::text::shim::Layouter) in `style` ([`layouter`]).
+        pub fn layouter(&mut self, style: crate::shim::text::TextStyle) -> Box<dyn crate::text::shim::Layouter + '_> {
+            layouter(self.layouts.as_mut().map(|l| &mut **l as &mut dyn LayoutLender), style)
         }
         /// Emits `signal` (a signal of the child's kind) on the node's `child`-th child.
         pub fn emit_on(&mut self, child: usize, signal: skelter_core::SignalId, arg: Option<skelter_core::Value>) {
@@ -515,6 +563,10 @@ pub mod core {
         pub node: &'a mut accesskit::Node,
         pub state: StateBits,
         pub size: Size,
+        /// Virtual children: AccessKit nodes for parts the kind draws without nodes of their own (a
+        /// select's options), bounds in the node's space. Core sends them after the node's real
+        /// children; an action on child `i` comes back as [`Event::A11yChild`] with `index: i`.
+        pub children: Vec<accesskit::Node>,
     }
 
     /// Stands in for `skelter_core::Kind` (architecture §4.2). Prop storage is the kind's own: core calls

@@ -55,6 +55,15 @@ impl Services {
     pub fn remove<T: 'static>(&mut self) -> Option<T> {
         self.map.remove(&std::any::TypeId::of::<T>()).and_then(|b| b.downcast().ok().map(|b| *b))
     }
+    /// Two services at once: `A` to read and `B` to write (a kind that paints from the theme while
+    /// it shapes with the text system). `A` and `B` are different types.
+    pub fn pair<A: 'static, B: 'static>(&mut self) -> (Option<&A>, Option<&mut B>) {
+        let (ta, tb) = (std::any::TypeId::of::<A>(), std::any::TypeId::of::<B>());
+        assert_ne!(ta, tb, "Services::pair: two different services");
+        match self.map.get_disjoint_mut([&ta, &tb]) {
+            [a, b] => (a.and_then(|a| a.downcast_ref()), b.and_then(|b| b.downcast_mut())),
+        }
+    }
 }
 
 fn common_defaults() -> &'static [Option<Value>] {
@@ -246,10 +255,14 @@ impl<'a> std::ops::Deref for StyleCx<'a> {
     }
 }
 
-impl StyleCx<'_> {
+impl<'a> StyleCx<'a> {
     /// The taffy style the cascade computed for the node (CSS over the kind's defaults).
     pub fn default_layout(&self) -> taffy::Style {
         self.cascaded.clone()
+    }
+    /// A document service, read only (the theme a kind's layout follows).
+    pub fn service<T: 'static>(&self) -> Option<&'a T> {
+        self.node.doc.services.get()
     }
 }
 
@@ -284,6 +297,10 @@ impl MeasureCx<'_> {
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
     }
+    /// All the services ([`Services::pair`] borrows two at once).
+    pub fn services(&mut self) -> &mut Services {
+        self.services
+    }
 }
 
 /// Images and paths a kind uploads; the commit carries them to the compositor's resource store.
@@ -309,6 +326,10 @@ pub struct PrepareCx<'a> {
     pub(crate) services: &'a mut Services,
     /// Signals emitted while preparing ([`PrepareCx::emit`]), queued after the prepare.
     pub(crate) emitted: &'a mut Vec<Emitted>,
+    /// The scroll offset asked for ([`PrepareCx::scroll_to`]), applied after the prepare.
+    pub(crate) scroll: Option<skelter_base::geom::Vec2>,
+    /// The caret asked for ([`PrepareCx::set_caret`]), sent after the prepare.
+    pub(crate) caret: Option<Option<Rect>>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -356,11 +377,32 @@ impl PrepareCx<'_> {
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
     }
+    /// All the services ([`Services::pair`] borrows two at once).
+    pub fn services(&mut self) -> &mut Services {
+        self.services
+    }
     /// Emits `signal` with `arg` from this node: queued as a JS event once the prepare returns
     /// ([`Document::take_events`]), not cancelable (a data window a virtual table needs, a restored
     /// state's report).
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node.id, signal, arg });
+    }
+    /// The node's scroll offset (zero unless it is a scroll container or scrolls itself).
+    pub fn scroll_offset(&self) -> skelter_base::geom::Vec2 {
+        self.node.doc.scroll_offset(self.node.id)
+    }
+    /// Scrolls the node (a scroll container, or a kind with [`Kind::self_scroll`](crate::Kind::self_scroll))
+    /// to `offset` as [`EventCx::scroll_fast`] does, once the prepare returns (after the kind's
+    /// [`SelfScroll`](crate::SelfScroll) is taken, so the offset clamps to its new content): the
+    /// offset goes to the compositor at once and the content moves without a re-record. What a kind
+    /// whose layout scrolls its caret into view uses (text-edit).
+    pub fn scroll_to(&mut self, offset: skelter_base::geom::Vec2) {
+        self.scroll = Some(offset);
+    }
+    /// Shows the caret at `rect` (local coordinates; `None` hides it) as [`EventCx::set_caret`]
+    /// does, once the prepare returns: a caret a layout or a scroll in the prepare moved.
+    pub fn set_caret(&mut self, rect: Option<Rect>) {
+        self.caret = Some(rect);
     }
 }
 
@@ -453,6 +495,10 @@ impl RecordCx<'_> {
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
+    }
+    /// All the services ([`Services::pair`] borrows two at once).
+    pub fn services(&mut self) -> &mut Services {
+        self.services
     }
     /// Hands a shaped run to the compositor; the id is valid for this node's list.
     pub fn add_run(&mut self, run: Arc<GlyphRun>) -> RunId {
@@ -799,6 +845,8 @@ fn descendant_text(v: &NodeView) -> String {
 pub struct A11yCx<'a> {
     pub node: NodeView<'a>,
     pub out: &'a mut accesskit::Node,
+    /// The virtual children added so far ([`A11yCx::add_virtual_child`]).
+    pub(crate) virtual_children: &'a mut Vec<accesskit::Node>,
 }
 
 impl<'a> std::ops::Deref for A11yCx<'a> {
@@ -809,6 +857,20 @@ impl<'a> std::ops::Deref for A11yCx<'a> {
 }
 
 impl A11yCx<'_> {
+    /// Adds a virtual child: an AccessKit node for a part the kind draws without a node of its own
+    /// (a select's option), placed after the real children, its bounds in the node's own space. It
+    /// is sent with the node every time the node is, under [`crate::a11y::virtual_id`]; an action
+    /// on it reaches the kind as [`Event::A11yChild`](crate::Event::A11yChild) with the returned
+    /// index (the order of the calls). A node has at most [`crate::a11y::MAX_VIRTUAL_CHILDREN`];
+    /// further ones are dropped (`None`).
+    pub fn add_virtual_child(&mut self, node: accesskit::Node) -> Option<u32> {
+        if self.virtual_children.len() >= crate::a11y::MAX_VIRTUAL_CHILDREN {
+            return None;
+        }
+        self.virtual_children.push(node);
+        Some(self.virtual_children.len() as u32 - 1)
+    }
+
     /// The defaults: the label from `aria-label` or the text content, disabled, focusable.
     pub fn default_a11y(&mut self) {
         let v = self.node;

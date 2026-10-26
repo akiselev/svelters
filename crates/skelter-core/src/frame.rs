@@ -480,10 +480,10 @@ impl Document {
         let mut shaper = self.shaper.take();
         let mut services = std::mem::take(&mut self.services);
         let mut emitted = Vec::new();
-        let request = {
-            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted };
+        let (request, scroll, caret) = {
+            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None };
             k.prepare(&mut cx);
-            cx.request
+            (cx.request, cx.scroll, cx.caret)
         };
         // a kind that scrolls itself may have grown or shrunk its content
         let own = k.self_scroll(&self.view_at(i));
@@ -496,6 +496,13 @@ impl Document {
             if let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w)) {
                 w.rebuild = true;
             }
+        }
+        // the prepare's scroll and caret, as an event's: fast commits, clamped to the content just taken
+        if let Some(v) = scroll {
+            self.scroll_fast(node, v);
+        }
+        if let Some(c) = caret {
+            self.set_caret(node, c);
         }
         let mut list = DisplayList::new();
         let mut fixed = DisplayList::new();

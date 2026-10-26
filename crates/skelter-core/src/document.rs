@@ -1159,6 +1159,17 @@ impl Document {
         n
     }
 
+    /// Restyles, re-measures and re-records every node of every window: a service the kinds paint or
+    /// measure from changed (the widgets' theme: scheme, contrast, density, accent, token overrides).
+    pub fn repaint_all(&mut self) {
+        self.restyle_all();
+        for i in 0..self.core.len() {
+            let Some(node) = self.slots.id_at(i) else { continue };
+            self.mark_measure(i);
+            self.mark(node, Dirty::PAINT | Dirty::A11Y);
+        }
+    }
+
     pub(crate) fn restyle_all(&mut self) {
         let roots: Vec<NodeId> = self.windows.iter().map(|w| w.root).collect();
         for r in roots {
@@ -1353,8 +1364,11 @@ impl Document {
 
     /// An assistive technology's action request: the target's kind handles it first; unhandled
     /// `Focus`, `Blur` and `ScrollIntoView` get their defaults.
+    /// An action on a virtual child ([`crate::a11y::virtual_id`]) reaches its owner's kind as
+    /// [`Event::A11yChild`](crate::Event::A11yChild); unhandled, `Focus` focuses the owner.
     pub fn a11y_action(&mut self, window: WindowId, req: &accesskit::ActionRequest) -> crate::input::Dispatched {
-        let node = NodeId(req.target_node.0);
+        let child = crate::a11y::virtual_child(req.target_node);
+        let node = child.map_or(NodeId(req.target_node.0), |(owner, _)| owner);
         let mut out = crate::input::Dispatched { window, revision: self.revision, ..Default::default() };
         if self.window_of(node) != Some(window) {
             return out;
@@ -1363,8 +1377,11 @@ impl Document {
         let mut emitted = Vec::new();
         let before = self.revision;
         self.transaction(|doc| {
-            let handled = !doc.state(node).contains(StateMask::DISABLED)
-                && crate::input::dispatch::call_kind(doc, node, &crate::kind::Event::A11y(req), &mut emitted, None) == crate::kind::Handled::Yes;
+            let ev = match child {
+                Some((_, index)) => crate::kind::Event::A11yChild(req, index),
+                None => crate::kind::Event::A11y(req),
+            };
+            let handled = !doc.state(node).contains(StateMask::DISABLED) && crate::input::dispatch::call_kind(doc, node, &ev, &mut emitted, None) == crate::kind::Handled::Yes;
             out.handled = handled;
             if !handled {
                 match req.action {

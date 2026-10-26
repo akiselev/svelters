@@ -829,6 +829,58 @@ fn a_self_scrolling_kinds_fixed_part_stays_out_of_its_scroll_layer() {
     assert!(c.removed.contains(&page) && c.removed.contains(&fixed_key));
 }
 
+const PREP_PAGE: KindId = KindId::of("prep-page");
+static PREP_PAGE_SPEC: KindSpec = KindSpec { props: &[PropSpec::new("to", ValueType::F64, ChangeClass::Paint).default(PropDefault::F64(0.0))], ..KindSpec::new("prep-page") };
+const PREP_TO: PropId = PropId::of("prep-page", "to", "number");
+
+/// [`FixedPage`] that scrolls in its prepare (a layout that scrolls its caret into view): to `to`.
+#[derive(Default)]
+struct PrepPage;
+
+impl Kind for PrepPage {
+    fn spec() -> &'static KindSpec {
+        &PREP_PAGE_SPEC
+    }
+    fn prepare(&mut self, cx: &mut crate::PrepareCx) {
+        let to = cx.prop(PREP_TO).and_then(Value::as_f64).unwrap_or(0.0) as f32;
+        if cx.scroll_offset().y != to {
+            cx.scroll_to(skelter_base::geom::Vec2::new(0.0, to));
+            cx.set_caret(Some(skelter_base::geom::Rect::new(1.0, 2.0, 2.0, 12.0)));
+        }
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.fixed(|cx| cx.draw_box());
+        cx.draw_line(Point::new(0.0, 500.0), Point::new(50.0, 500.0), 1.0);
+    }
+    fn self_scroll(&self, _node: &crate::NodeView) -> Option<crate::SelfScroll> {
+        Some(crate::SelfScroll { content: Size::new(50.0, 1000.0), x: false, y: true })
+    }
+}
+
+#[test]
+fn a_prepare_scrolls_through_the_fast_path_clamped_to_the_content() {
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<PrepPage>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let page = child(&mut d, root, PREP_PAGE, "width: 50px; height: 80px; background-color: #ffffff");
+    frame(&mut d);
+    d.take_fast_commits();
+    d.set_prop(page, PREP_TO, Value::F64(30.0)).unwrap();
+    frame(&mut d).unwrap();
+    let fast = d.take_fast_commits();
+    assert!(fast.iter().any(|f| matches!(f, skelter_base::commit::FastCommit::ScrollOffset { offset, .. } if offset.y == 30.0)), "{fast:?}");
+    assert!(fast.iter().any(|f| matches!(f, skelter_base::commit::FastCommit::Caret { rect: Some(_), .. })), "the prepare's caret");
+    assert_eq!(d.scroll_offset(page).y, 30.0);
+    let c = frame(&mut d);
+    assert!(c.is_none_or(|c| c.lists.is_empty()), "the scroll is no re-record");
+    // past the end: clamped to the content the kind gave (1000 - 80)
+    d.set_prop(page, PREP_TO, Value::F64(5000.0)).unwrap();
+    frame(&mut d);
+    assert_eq!(d.scroll_offset(page).y, 920.0);
+}
+
 const FIXED_FIRST: KindId = KindId::of("fixed-first");
 static FIXED_FIRST_SPEC: KindSpec = KindSpec::new("fixed-first");
 
