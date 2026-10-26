@@ -202,7 +202,13 @@ fn kind_json(km: &kinds::KindMap) -> J {
         (Some(_), true, false) => json!("skelter-widgets"),
         (Some(_), false, false) => json!("placeholder"),
     };
-    let provenance = if km.app { "the app's core kind (svelters_skelter::Kinds::with_app)" } else { "crates/svelters-skelter/src/surface/tier0.rs" };
+    let provenance = if km.app {
+        "the app's core kind (svelters_skelter::Kinds::with_app)"
+    } else if crate::surface::tier1::ALL.iter().any(|t| std::ptr::eq(*t, k)) {
+        "crates/svelters-skelter/src/surface/tier1.rs"
+    } else {
+        "crates/svelters-skelter/src/surface/tier0.rs"
+    };
     json!({
         "a11y": {"name_from": k.a11y.name_from, "name_required": k.a11y.name_required, "role": if k.a11y.role.is_empty() { J::Null } else { json!(k.a11y.role) }},
         "abstract": k.tag.is_none(),

@@ -12,6 +12,12 @@
 //!   the TR1 visual channels); the backend keeps them.
 
 pub mod tier0;
+pub mod tier1;
+
+/// The built-in surface: [`tier0`] then [`tier1`] (bases first).
+pub fn builtin() -> Vec<&'static KindSpec> {
+    tier0::ALL.iter().chain(tier1::ALL).copied().collect()
+}
 
 use skelter_base::change::ChangeClass;
 use skelter_base::color::Color;

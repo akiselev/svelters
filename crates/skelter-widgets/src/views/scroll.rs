@@ -729,6 +729,8 @@ kind_props! {
 /// The signals, in spec order.
 pub const SIGNALS: &[SignalSpec] = &[
     SignalSpec::new("scrollend", &[("x", ValueType::F64), ("y", ValueType::F64)], "A scroll gesture or animation stopped."),
+    // svelters-egui's `changed` (A9), so a scroll area written for egui runs unchanged on skelter
+    SignalSpec::new("changed", &[("scroll-x", ValueType::F64), ("scroll-y", ValueType::F64)], "The offset moved natively; carries the new offsets."),
 ];
 
 pub static SPEC: KindSpec = KindSpec {
@@ -841,6 +843,7 @@ impl ScrollArea {
             self.props.scroll_y = o.y as f64;
             cx.prop_changed(P::scroll_y.id());
         }
+        common::emit(cx, &SPEC, "changed", vec![Value::F64(o.x as f64), Value::F64(o.y as f64)]);
         cx.scroll_to = Some(o);
     }
 
@@ -1613,6 +1616,8 @@ mod tests {
         assert_eq!(a.scroller.offset().y, 200.0);
         assert!(!a.animating());
         assert_eq!(t.count("scrollend"), 1);
+        // egui's `changed` (A9): once per native move, with the offsets
+        assert!(t.count("changed") >= 2);
     }
 
     #[test]

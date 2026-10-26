@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "ab06894d63584c44"
+    "spec_hash": "7d58b1d15c98c7c0"
   },
   "inline_text": {
     "kind": "span",
@@ -2795,6 +2795,189 @@
       },
       "text_content": "text",
       "widget": null
+    },
+    "ScrollArea": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "ScrollView"
+      },
+      "abstract": false,
+      "bindings": {
+        "scroll-x": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "scroll-x",
+          "provenance": "svelters-skelter: <scroll-area> writes scroll-x into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "scroll-y": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "scroll-y",
+          "provenance": "svelters-skelter: <scroll-area> writes scroll-y into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 1); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 1
+          }
+        }
+      },
+      "chain": [
+        "ScrollArea",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it.",
+      "fingerprint": "93986d42",
+      "id": 2476240194,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter ScrollArea",
+      "native_state": [
+        "scroll-x",
+        "scroll-y"
+      ],
+      "present": null,
+      "props": {
+        "direction": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "vertical",
+          "doc": "The axes that scroll (taffy `overflow: scroll` on them).",
+          "fingerprint": "da60b181",
+          "id": 3663769985,
+          "js": "direction",
+          "native": "direction",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ScrollArea:direction",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal",
+            "both"
+          ],
+          "writable": true
+        },
+        "scroll-x": {
+          "change": "property",
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Horizontal offset in points; scrolling changes it, and a write scrolls (clamped to the content).",
+          "fingerprint": "49236272",
+          "id": 1227055730,
+          "js": "scroll-x",
+          "native": "scroll-x",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ScrollArea:scroll-x",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scroll-y": {
+          "change": "property",
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Vertical offset in points; scrolling changes it, and a write scrolls (clamped to the content).",
+          "fingerprint": "02017459",
+          "id": 33649753,
+          "js": "scroll-y",
+          "native": "scroll-y",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ScrollArea:scroll-y",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "scroll-x",
+              "type": "f64"
+            },
+            {
+              "name": "scroll-y",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user scrolled (or a write was clamped); carries the new offsets.",
+          "fingerprint": "8f01e005",
+          "handler_result": "none",
+          "id": 2399264773,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 1623974857
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
     },
     "Separator": {
       "a11y": {
@@ -6513,6 +6696,7 @@
           "box",
           "frame",
           "grid",
+          "scroll-area",
           "sides"
         ],
         "type": "enum",
@@ -6544,6 +6728,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -6766,6 +6951,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -6802,7 +6988,8 @@
         "tags": [
           "box",
           "frame",
-          "grid"
+          "grid",
+          "scroll-area"
         ],
         "type": "length",
         "via": "setter"
@@ -6874,6 +7061,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -6928,6 +7116,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -6949,7 +7138,8 @@
         "prop": "flex-direction",
         "tags": [
           "box",
-          "frame"
+          "frame",
+          "scroll-area"
         ],
         "type": "enum",
         "values": [
@@ -6982,6 +7172,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7016,6 +7207,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7037,7 +7229,8 @@
         "prop": "flex-wrap",
         "tags": [
           "box",
-          "frame"
+          "frame",
+          "scroll-area"
         ],
         "type": "enum",
         "values": [
@@ -7092,6 +7285,7 @@
           "box",
           "frame",
           "grid",
+          "scroll-area",
           "sides",
           "window"
         ],
@@ -7140,6 +7334,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7161,7 +7356,8 @@
         "prop": "justify-content",
         "tags": [
           "box",
-          "frame"
+          "frame",
+          "scroll-area"
         ],
         "type": "enum",
         "values": [
@@ -7212,6 +7408,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7281,6 +7478,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7315,6 +7513,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7349,6 +7548,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7383,6 +7583,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7532,6 +7733,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7568,6 +7770,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7594,7 +7797,8 @@
         "tags": [
           "box",
           "frame",
-          "grid"
+          "grid",
+          "scroll-area"
         ],
         "type": "length",
         "via": "setter"
@@ -7635,6 +7839,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7715,6 +7920,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7790,6 +7996,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7837,6 +8044,7 @@
           "label",
           "progress-bar",
           "radio-button",
+          "scroll-area",
           "separator",
           "sides",
           "slider",
@@ -7988,6 +8196,7 @@
     "label": "Label",
     "progress-bar": "ProgressBar",
     "radio-button": "RadioButton",
+    "scroll-area": "ScrollArea",
     "separator": "Separator",
     "sides": "Sides",
     "slider": "Slider",

@@ -140,6 +140,8 @@ pub const COMMON_ALIASES: &[(&str, &str, bool)] = &[
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
     let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
     skelter_widgets::host::register_tier0(reg)?;
+    // the tier-1 views whose surface is egui's (A9, `surface::tier1`)
+    skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
@@ -502,7 +504,7 @@ pub struct Kinds {
 impl Kinds {
     /// The Tier 0 kinds: skelter-widgets' where it has them, synthesized otherwise.
     pub fn builtin() -> Result<Kinds, RegistryError> {
-        Kinds::new(surface::tier0::ALL)
+        Kinds::new(&surface::builtin())
     }
 
     /// The kinds of `surface` (bases included).
