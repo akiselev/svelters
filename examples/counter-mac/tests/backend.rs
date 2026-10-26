@@ -355,7 +355,13 @@ mod mac {
         let h = Harness::shared();
         let before = h.checkpoints();
         h.backend_trait().schedule_wake(20);
-        h.pump(120);
+        // Wait for the checkpoint up to 1 s, not a fixed 120 ms: a loaded CI runner fired the
+        // 20 ms timer later than that once (F22, a9503acb: 2 vs 3), then pump on for a second one.
+        let t = std::time::Instant::now();
+        while h.checkpoints() < before + 1 && t.elapsed() < std::time::Duration::from_secs(1) {
+            h.pump(5);
+        }
+        h.pump(60);
         assert_eq!(h.checkpoints(), before + 1, "exactly one checkpoint");
         h.backend_trait().schedule_wake(20);
         h.backend_trait().schedule_wake(-1);
@@ -394,6 +400,10 @@ mod mac {
         h.call(w, "make-key-and-order-front", vec![]).unwrap();
         let before = h.frames();
         let (link0, _) = h.backend.frame_sources();
+        // A CI VM's resumed link sometimes ticks later than the 64 ms watchdog, which then delivers
+        // the frame (F22: "both frames came from CADisplayLink", 1 vs 2). Give the link 800 ms, so
+        // only a link that never ticks fails here; `pump_frames` waits up to 1 s.
+        h.backend.set_frame_watchdog_ms(800);
         h.backend_trait().request_frame();
         h.backend_trait().request_frame(); // idempotent while pending
         assert_eq!(pump_frames(h, before + 1), before + 1);
@@ -402,6 +412,7 @@ mod mac {
         // A visible window's display link really ticks (it was added to the run loop with a
         // look-alike mode string once, and never fired).
         assert_eq!(h.backend.frame_sources().0, link0 + 2, "both frames came from CADisplayLink");
+        h.backend.set_frame_watchdog_ms(64);
         // Off screen the link does not tick: the watchdog timer still delivers exactly one.
         h.call(w, "order-out", vec![V::Null]).unwrap();
         h.backend_trait().request_frame();

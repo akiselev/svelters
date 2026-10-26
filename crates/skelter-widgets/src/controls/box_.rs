@@ -9,7 +9,7 @@
 //! The other containers (`frame`, `sides`, `grid`, `stack`) use the same rule through [`Layout`].
 
 use crate::controls::common::Units;
-use crate::interact::{Hoverable, Intents, Sense, StateBits, Unit};
+use crate::interact::{Hoverable, Intents, Sense, Unit};
 use crate::kind_props;
 use crate::paint::{self, PaintCx, Ua};
 use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, StyleCx, Value};
@@ -236,6 +236,7 @@ impl Kind for FlexBox {
 mod tests {
     use super::*;
     use crate::controls::testkit::{self, Driver};
+    use crate::interact::StateBits;
     use skelter_base::change::ChangeClass;
     use skelter_base::display::Prim;
     use skelter_base::geom::Size;
