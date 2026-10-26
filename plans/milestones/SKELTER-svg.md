@@ -146,3 +146,16 @@ fine; the memory is the cost to watch if toolbars span 4K windows.
   conformance. GitHub CI is the gate.
 - Screenshots: a scratch test with a temporary skelter-widgets dev-dependency of skelter-render,
   removed before committing (Cargo.lock unchanged).
+
+## CI and merge
+
+- 895cc841: five of six workflows green. skelter failed on all three OSes in skelter-core's
+  spec-hash test, which builds the test-kind registry in another order and lacked the new `icon`
+  test kind. Fixed in 17a3bd19.
+- 9baddbdf (with `IconColors`): all six green.
+- Merged master e98d2a64 (7b81bfef), then 4bf37234 (1b6447c1). Conflicts were in skelter-widgets
+  `host.rs` (prepare's emitted signals and the overlay recording, now also given the shared paths)
+  and skelter-compositor `tests/engine.rs` (`Drawn` keeps both fields).
+- 1b6447c1: all six green (js 40259199533, linux-gtk 40259199528, linux-qt 40259199516,
+  macos-appkit 40259199564, skelter 40259199531, windows-winui 40259199567). The coordinator merged
+  it as master 992fffb2.
