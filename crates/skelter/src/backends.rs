@@ -288,6 +288,9 @@ impl<H: DocHandle> DocumentApi for CoreDocument<H> {
     fn device_reset(&mut self) {
         self.doc.lend_mut().device_reset();
     }
+    fn commit_applied(&mut self, window: WindowId, revision: Revision) {
+        self.doc.lend_mut().commit_applied(window, revision);
+    }
 }
 
 impl CompositorApi for CompositorHandle {

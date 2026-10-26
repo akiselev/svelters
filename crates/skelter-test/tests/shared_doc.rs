@@ -38,3 +38,18 @@ fn the_runner_and_the_script_host_share_one_document() {
     assert!(h.query_by_label("Shared").is_some(), "the runner framed the script host's node");
     assert!(held.try_borrow_mut().is_ok(), "no borrow is left held after a run");
 }
+
+#[test]
+fn an_applied_commit_clears_the_documents_commit_in_flight() {
+    let mut reg = KindRegistry::new();
+    skelter_widgets::host::register_tier0(&mut reg).unwrap();
+    let doc = Document::new(Arc::new(reg), Box::new(text()));
+    let mut h = Harness::<CoreDocument>::builder().with_size(Size::new(100.0, 50.0)).with_accessibility_check(false).build(CoreDocument::new(doc, KindId::of("box")));
+    h.key_press(skelter_base::key::Key::F24);
+    h.run();
+    assert!(
+        !h.state().doc.busy().contains(skelter_core::Busy::COMMIT_IN_FLIGHT),
+        "the runner forwards CommitApplied (A12): {:?}",
+        h.state().doc.busy()
+    );
+}

@@ -563,6 +563,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             }
             ToUi::CommitApplied { window, revision } => {
                 self.latency.commit_applied(window, revision, now);
+                self.doc.commit_applied(window, revision);
                 let again = self
                     .windows
                     .get_mut(&window)
