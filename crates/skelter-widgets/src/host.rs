@@ -849,6 +849,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        // FQ-67: the widget's `disabled` mirror follows the node's state before it paints (a
+        // `disabled` write reaches `prop_changed` before core updates the state; inertness never does)
+        self.sync_disabled(cx.node.disabled());
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
@@ -1058,7 +1061,16 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let (state, size) = (StateBits(cx.state().0), cx.size());
         let mut wcx = w::A11yCx { node: cx.out, state, size, children: Vec::new() };
         self.widget.a11y(&mut wcx);
-        for c in std::mem::take(&mut wcx.children) {
+        // FQ-67: `disabled` is the node's state (its `disabled` prop or an inert ancestor), not the
+        // widget's mirror, which may lag it (a button re-enabled by a prop write stayed disabled).
+        // A widget disabled by a prop of its own (not the mirror) keeps what it said.
+        let children = std::mem::take(&mut wcx.children);
+        if cx.node.disabled() {
+            cx.out.set_disabled();
+        } else if Self::spec_ref().disabled.is_some() {
+            cx.out.clear_disabled();
+        }
+        for c in children {
             cx.add_virtual_child(c);
         }
     }

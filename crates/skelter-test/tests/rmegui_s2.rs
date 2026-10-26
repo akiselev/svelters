@@ -5,6 +5,7 @@
 //! - SV59: `setLabels` renames a list's realised options;
 //! - SV60: `aria-activedescendant` / `aria-controls` resolve when their target appears later;
 //! - a label stretched past its text that JS listens to for clicks takes them on its whole box.
+//! - FQ-67: a widget re-enabled by its `disabled` prop is enabled for AccessKit too.
 
 use skelter::CoreDocument;
 use skelter_base::accesskit::{Action, Role};
@@ -239,4 +240,35 @@ fn a_stretched_label_with_a_click_listener_takes_clicks_on_its_whole_box() {
     assert_eq!(click_target(&mut h), Some(parent), "unlistened: the click past the text is the parent's");
     h.state_mut().doc.listen(label, CLICK, ListenFlags::EMPTY);
     assert_eq!(click_target(&mut h), Some(label), "listened: the whole box is the label's");
+}
+
+/// FQ-67: a button (and a checkbox) disabled and then re-enabled through the common `disabled` prop:
+/// the AccessKit node follows both ways. The widget's own mirror of `disabled` was synced from the
+/// node's state before core updated it, so a re-enabled button stayed disabled.
+#[test]
+fn a_reenabled_widget_is_enabled_for_accesskit() {
+    let mut h = harness();
+    let w = h.window();
+    let (button, check) = {
+        let d = &mut h.state_mut().doc;
+        let root = d.window_root(w).unwrap();
+        let button = add(d, root, KindId::of("button"), "width: 80px; height: 24px");
+        prop(d, button, KindId::of("button"), "text", Value::from("Place"));
+        let check = add(d, root, KindId::of("checkbox"), "width: 80px; height: 24px");
+        prop(d, check, KindId::of("checkbox"), "text", Value::from("Snap"));
+        (button, check)
+    };
+    settle(&mut h);
+    let disabled = |h: &Harness<CoreDocument>| (h.get_by_label("Place").is_disabled(), h.get_by_label("Snap").is_disabled());
+    assert_eq!(disabled(&h), (false, false));
+    for n in [button, check] {
+        h.state_mut().doc.set_prop(n, common::DISABLED, Value::Bool(true)).unwrap();
+    }
+    settle(&mut h);
+    assert_eq!(disabled(&h), (true, true));
+    for n in [button, check] {
+        h.state_mut().doc.set_prop(n, common::DISABLED, Value::Bool(false)).unwrap();
+    }
+    settle(&mut h);
+    assert_eq!(disabled(&h), (false, false), "re-enabled");
 }
