@@ -306,6 +306,8 @@ pub struct PrepareCx<'a> {
     pub(crate) images: &'a mut ImageSink,
     pub(crate) request: Dirty,
     pub(crate) services: &'a mut Services,
+    /// Signals emitted while preparing ([`PrepareCx::emit`]), queued after the prepare.
+    pub(crate) emitted: &'a mut Vec<Emitted>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -352,6 +354,12 @@ impl PrepareCx<'_> {
     }
     pub fn service<T: 'static>(&mut self) -> Option<&mut T> {
         self.services.get_mut()
+    }
+    /// Emits `signal` with `arg` from this node: queued as a JS event once the prepare returns
+    /// ([`Document::take_events`]), not cancelable (a data window a virtual table needs, a restored
+    /// state's report).
+    pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
+        self.emitted.push(Emitted { node: self.node.id, signal, arg });
     }
 }
 
@@ -554,6 +562,25 @@ impl EventCx<'_> {
     /// Emits `signal` with `arg` from this node (delivered after the event).
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node, signal, arg });
+    }
+    /// Emits `signal` with `arg` from `node`, the node itself or one of its descendants (a
+    /// `tab-view`'s `close-requested` on the `tab` whose close button was clicked), delivered after
+    /// the event as [`EventCx::emit`]'s are. False (nothing emitted) for any other node.
+    pub fn emit_on(&mut self, node: NodeId, signal: SignalId, arg: Option<Value>) -> bool {
+        if !self.doc.contains(node) || !self.doc.is_ancestor_or_self(self.node, node) {
+            return false;
+        }
+        self.emitted.push(Emitted { node, signal, arg });
+        true
+    }
+    /// Writes a prop of `node`, the node itself or one of its descendants, as native-owned state
+    /// ([`EventCx::set_native`]): a table writes back the width of the `table-column` the user
+    /// resized. An error for any other node.
+    pub fn set_native_on(&mut self, node: NodeId, prop: PropId, v: Value) -> Result<(), crate::PropError> {
+        if !self.doc.contains(node) || !self.doc.is_ancestor_or_self(self.node, node) {
+            return Err(crate::PropError::Stale(node));
+        }
+        self.doc.set_prop_native(node, prop, v).map(|_| ())
     }
     /// Emits `signal` and, when JS listens and the document has a sync deliverer
     /// ([`Document::set_sync_delivery`]), delivers it now and reports what the listeners did, so a
