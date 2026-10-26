@@ -292,4 +292,27 @@ mod external_layer {
         assert_eq!(a.layers.len(), 1);
         assert_eq!(a.order(), [n(below), n(above)]);
     }
+
+    /// A26: a will-change layer gets the same continuation: later siblings paint above it.
+    #[test]
+    fn a_will_change_layer_keeps_later_siblings_above_it() {
+        let (mut d, root) = vdoc();
+        let red = "background-color: #ff0000; width: 80px; height: 20px";
+        let below = child(&mut d, root, BOX, red);
+        let lifted = child(&mut d, root, BOX, "will-change: transform; background-color: #00ff00; width: 80px; height: 40px");
+        let inside = child(&mut d, lifted, BOX, red);
+        let above = child(&mut d, root, BOX, red);
+        let mut a = Applied::default();
+        a.apply(&frame(&mut d).unwrap());
+        let n = |id: NodeId| format!("node {}", id.0);
+        assert_eq!(a.order(), [n(below), n(lifted), n(inside), n(above)]);
+        assert_eq!(a.layers.len(), 3, "root, the node's layer and the continuation: {:?}", a.layers);
+        // dropping will-change drops both layers; everything is back in the root layer
+        d.set_style(lifted, crate::StyleInput { inline: Some("background-color: #00ff00; width: 80px; height: 40px".into()), ..Default::default() });
+        while let Some(c) = frame(&mut d) {
+            a.apply(&c);
+        }
+        assert_eq!(a.layers.len(), 1, "{:?}", a.layers);
+        assert_eq!(a.order(), [n(below), n(lifted), n(inside), n(above)]);
+    }
 }
