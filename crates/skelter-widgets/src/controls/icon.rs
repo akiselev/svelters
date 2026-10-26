@@ -29,7 +29,7 @@ use crate::shim::core::{A11yCx, Event, EventCx, Handled, HitCx, HitResult, Kind,
 use crate::shim::text::{RichText, TextLayout, TextShaper};
 use skelter_base::accesskit;
 use skelter_base::color::Color;
-use skelter_base::display::{Icon as IconPrim, Prim};
+use skelter_base::display::{Icon as IconPrim, PaletteSlot, Prim};
 use skelter_base::geom::{Point, Rect, Size, Vec2};
 use skelter_base::key::Key;
 use std::sync::Arc;
@@ -229,9 +229,11 @@ impl Kind for Icon {
                 if let Ok(l) = images::load(src) {
                     let dest = paint::fit_rect("contain", l.size, r);
                     let px = device(dest.size(), pc.scale);
-                    if self.props.tint {
+                    if l.record_vector(&mut pc, &host, dest, r, self.props.tint.then_some(color)) {
+                        drawn = true;
+                    } else if self.props.tint {
                         if let Some((id, _)) = l.image(pc.res, src, px, true) {
-                            pc.push(Prim::Icon(IconPrim { image: id, rect: dest, color: Some(color) }), dest);
+                            pc.push(Prim::Icon(IconPrim { image: id, rect: dest, color: Some(color), slot: Some(PaletteSlot::new(0, 1.0)) }), dest);
                             drawn = true;
                         }
                     } else if let Some((id, pixels)) = l.image(pc.res, src, px, false) {

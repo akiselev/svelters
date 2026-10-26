@@ -36,6 +36,8 @@
 //! the font into skelter-text under that family is the caller's.
 
 use super::super::{PaintCx, StyleView};
+use super::vector::{IconSlot, MaskChannel, NotVector, PaintSource, VectorArt, is_vector_size, mask_channels, slot_masks};
+use skelter_base::display::PaletteSlot;
 use crate::shim::text::{RichText, TextShaper, TextStyle};
 use skelter_base::color::Color;
 use skelter_base::commit::{ImageData, ImageFormat};
@@ -120,6 +122,10 @@ pub enum IconError {
     /// Drawing: the SVG did not load or rasterise, or a glyph's font is not registered (reported
     /// once per key and reason).
     Load { key: String, why: String },
+    /// Drawing: an SVG icon above the vector threshold uses what the vector path cannot draw yet (a
+    /// filter, a mask, a gradient…) and is drawn from its raster instead (reported once per key and
+    /// reason; [`vector`](super::vector)).
+    Fallback { key: String, why: String },
 }
 
 impl fmt::Display for IconError {
@@ -130,6 +136,7 @@ impl fmt::Display for IconError {
             IconError::BadIcon { key, why } => write!(f, "icon {key:?}: {why}"),
             IconError::Missing { key } => write!(f, "no icon is registered under {key:?}"),
             IconError::Load { key, why } => write!(f, "icon {key:?} did not load: {why}"),
+            IconError::Fallback { key, why } => write!(f, "icon {key:?} draws as a raster, not vectors: {why}"),
         }
     }
 }
@@ -149,6 +156,7 @@ fn report(e: IconError) {
     let once = match &e {
         IconError::Missing { key } => Some(format!("missing:{key}")),
         IconError::Load { key, why } => Some(format!("load:{key}:{why}")),
+        IconError::Fallback { key, why } => Some(format!("fallback:{key}:{why}")),
         _ => None,
     };
     if let Some(k) = once
@@ -484,6 +492,15 @@ pub struct Slots {
 }
 
 impl Slots {
+    /// The colour of `slot`, when set.
+    pub fn get(&self, slot: IconSlot) -> Option<Color> {
+        match slot {
+            IconSlot::Subject => self.subject,
+            IconSlot::Accent => self.accent,
+            IconSlot::Badge => self.badge,
+        }
+    }
+
     pub fn is_empty(&self) -> bool {
         self.subject.is_none() && self.accent.is_none() && self.badge.is_none()
     }
@@ -712,6 +729,8 @@ pub struct Painted {
     pub choice: Option<Choice>,
     /// The tint the raster or glyph was painted with (`None`: the raster's own colours, slots set).
     pub tint: Option<Color>,
+    /// Drawn as vectors (`Prim::Path`s), not from a raster.
+    pub vector: bool,
 }
 
 fn glyph_style(family: &str, size: f32) -> TextStyle {
@@ -751,7 +770,7 @@ pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, s
             let pos = cx.snap_point(Point::new(center.x - l.size().w / 2.0, center.y - l.size().h / 2.0));
             let color = style.color;
             super::super::paint_runs(cx, &l, pos, &|_| color);
-            Some(Painted { rect: Rect::from_origin_size(pos, l.size()), choice: None, tint: Some(color) })
+            Some(Painted { rect: Rect::from_origin_size(pos, l.size()), choice: None, tint: Some(color), vector: false })
         }
         Icon::Svg { masters, hc } => {
             // Z1: the box on whole device pixels, centred in `rect`
@@ -762,6 +781,57 @@ pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, s
             let choice = choose_master(&sizes, p)?;
             let use_hc = style.high_contrast && hc.contains_key(&choice.master);
             let data = if use_hc { &hc[&choice.master] } else { &masters[&choice.master] };
+            let side = choice.px as f32 / scale;
+            let min = Point::new((origin.x + choice.offset as f32) / scale, (origin.y + choice.offset as f32) / scale);
+            let r = Rect::from_origin_size(min, Size::new(side, side));
+            let tint = style.slots.is_empty().then_some(style.color);
+            let art = match VectorArt::parse(data.bytes()) {
+                Ok(a) => Some(a),
+                Err(NotVector::Unsupported(why)) => {
+                    if is_vector_size(choice.px) {
+                        report(IconError::Fallback { key: key.to_string(), why });
+                    }
+                    None
+                }
+                Err(_) => None,
+            };
+            // above the threshold: the layers as paths, in live palette colours
+            if let Some(art) = &art
+                && is_vector_size(choice.px)
+                && art.record(cx, art.fit(r), &|src, op| layer_paint(style, src, op))
+            {
+                return Some(Painted { rect: r, choice: Some(choice), tint, vector: true });
+            }
+            // slots on a vectorisable icon: one coverage mask per colour, tinted at draw time
+            if let Some(art) = art.as_ref().filter(|_| !style.slots.is_empty()) {
+                let mono = IconStyle { slots: Slots::default(), ..*style };
+                let base = raster_key(key, generation, &choice, use_hc, &mono);
+                let channel = |src: PaintSource| mask_channel(style, src);
+                let mut masks: Option<Vec<(MaskChannel, ImageData)>> = None;
+                let mut drawn = Vec::new();
+                for ch in mask_channels(art, &channel) {
+                    let name = match ch {
+                        MaskChannel::Literal => "lit".to_string(),
+                        MaskChannel::Slot(s) => format!("s{s}"),
+                    };
+                    let image = cx.res.image(&format!("{base};{name}"), &mut || {
+                        let all = masks.get_or_insert_with(|| slot_masks(art, choice.px, &channel));
+                        all.iter().find(|(c, _)| *c == ch).map(|(_, i)| i.clone())
+                    });
+                    let Some(image) = image else { break };
+                    drawn.push((ch, image));
+                }
+                if !drawn.is_empty() {
+                    for (ch, image) in drawn {
+                        let (color, slot) = match ch {
+                            MaskChannel::Literal => (None, None),
+                            MaskChannel::Slot(s) => (Some(slot_color(style, s)), Some(PaletteSlot::new(s, 1.0))),
+                        };
+                        cx.push(Prim::Icon(IconPrim { image, rect: r, color, slot }), r);
+                    }
+                    return Some(Painted { rect: r, choice: Some(choice), tint, vector: false });
+                }
+            }
             let ck = raster_key(key, generation, &choice, use_hc, style);
             let mut failed = None;
             let image = cx.res.image(&ck, &mut || match rasterize(data.bytes(), choice.px, style.color, &style.slots) {
@@ -775,19 +845,58 @@ pub fn paint(cx: &mut PaintCx, registry: &IconRegistry, key: &str, rect: Rect, s
                 report(IconError::Load { key: key.to_string(), why: failed.unwrap_or_else(|| "the raster was not registered".into()) });
                 return None;
             };
-            let side = choice.px as f32 / scale;
-            let min = Point::new((origin.x + choice.offset as f32) / scale, (origin.y + choice.offset as f32) / scale);
-            let r = Rect::from_origin_size(min, Size::new(side, side));
-            let tint = style.slots.is_empty().then_some(style.color);
-            cx.push(Prim::Icon(IconPrim { image, rect: r, color: tint }), r);
-            Some(Painted { rect: r, choice: Some(choice), tint })
+            // a tinted mask's colour is palette slot 0; slots baked into an RGBA raster are not live
+            let slot = tint.map(|_| PaletteSlot::new(0, 1.0));
+            cx.push(Prim::Icon(IconPrim { image, rect: r, color: tint, slot }), r);
+            Some(Painted { rect: r, choice: Some(choice), tint, vector: false })
         }
+    }
+}
+
+/// The colour of palette slot `index` under `style`: 0 is `color`, 1–3 the set slots (an unset slot
+/// is `color`).
+fn slot_color(style: &IconStyle, index: u8) -> Color {
+    IconSlot::ALL.iter().find(|s| s.index() == index).and_then(|s| style.slots.get(*s)).unwrap_or(style.color)
+}
+
+/// The palette slot a layer of `src` draws from under `style`: its slot when the style sets it, else
+/// `currentColor` (0); a literal colour is a slot-0 coverage when no slot is set (a monochrome icon,
+/// as the `A8` raster draws it), else its own colour.
+fn layer_slot(style: &IconStyle, src: PaintSource) -> Option<u8> {
+    match src {
+        PaintSource::Slot(s) if style.slots.get(s).is_some() => Some(s.index()),
+        PaintSource::Color(_) if !style.slots.is_empty() => None,
+        _ => Some(0),
+    }
+}
+
+/// A vector layer's colour and palette slot under `style`.
+fn layer_paint(style: &IconStyle, src: PaintSource, opacity: f32) -> (Color, Option<PaletteSlot>) {
+    let lit = match src {
+        PaintSource::Color(c) => c,
+        _ => Color::WHITE,
+    };
+    match layer_slot(style, src) {
+        Some(i) => {
+            let slot = PaletteSlot::new(i, opacity * lit.a);
+            (slot.resolve(slot_color(style, i)), Some(slot))
+        }
+        None => (lit.with_alpha(lit.a * opacity), None),
+    }
+}
+
+/// Where a layer of `src` goes in the per-slot masks under `style`.
+fn mask_channel(style: &IconStyle, src: PaintSource) -> MaskChannel {
+    match layer_slot(style, src) {
+        Some(i) => MaskChannel::Slot(i),
+        None => MaskChannel::Literal,
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::super::vector::{LayerKind, VECTOR_THRESHOLD_PX};
     use crate::shim::testing::{MemResources, MonoShaper};
     use skelter_base::display::DisplayList;
 
@@ -971,24 +1080,140 @@ mod tests {
     }
 
     #[test]
-    fn paints_slots_untinted_one_raster_per_colour_set() {
+    fn slots_are_one_live_mask_per_colour() {
         let reg = IconRegistry::new();
         reg.register(Owner::Host, "debug.warn", Icon::svg(16, SLOTTED)).unwrap();
         let mut list = DisplayList::new();
         let mut res = MemResources::default();
         let mut text = MonoShaper;
         let mut style = IconStyle::new(16.0, Color::WHITE);
-        style.slots.subject = Some(Color::from_rgba8(0xCC, 0xA7, 0, 255));
+        let yellow = Color::from_rgba8(0xCC, 0xA7, 0, 255);
+        style.slots.subject = Some(yellow);
         let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
         let p = paint(&mut cx, &reg, "debug.warn", Rect::new(0.0, 0.0, 16.0, 16.0), &style).unwrap();
-        assert_eq!(p.tint, None);
-        let Prim::Icon(i) = &list.items[0] else { panic!() };
-        assert_eq!(i.color, None);
-        assert_eq!(res.images.values().next().unwrap().1.format, ImageFormat::Rgba8Premul);
+        assert_eq!((p.tint, p.vector), (None, false));
+        // `currentColor`'s mask, then the subject's: each tinted from its palette slot
+        let tints: Vec<_> = list.items.iter().map(|i| if let Prim::Icon(i) = i { (i.color, i.slot.map(|s| s.index)) } else { panic!() }).collect();
+        assert_eq!(tints, [(Some(Color::WHITE), Some(0)), (Some(yellow), Some(1))]);
+        assert!(res.images.values().all(|(_, d)| d.format == ImageFormat::A8));
+        let mask = |n: &str| res.images.iter().find(|(k, _)| k.ends_with(n)).map(|(_, (_, d))| d.pixels.clone()).unwrap();
+        let (s0, s1) = (mask(";s0"), mask(";s1"));
+        assert_eq!((s1[8 * 16 + 2], s1[8 * 16 + 12]), (255, 0), "the subject rect is the left half");
+        assert_eq!((s0[8 * 16 + 2], s0[8 * 16 + 12]), (0, 255));
+        // another colour set draws from the same masks
         style.slots.subject = Some(Color::from_rgba8(255, 0, 0, 255));
+        style.color = Color::BLACK;
         let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
         paint(&mut cx, &reg, "debug.warn", Rect::new(0.0, 0.0, 16.0, 16.0), &style).unwrap();
-        assert_eq!(res.images.len(), 2);
+        assert_eq!(res.images.len(), 2, "no new raster for new colours");
+    }
+
+    /// A stroked icon (24-unit art) with a classed accent ring.
+    const STROKED: &[u8] = br#"<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><circle class="accent" cx="12" cy="12" r="8" stroke-opacity="0.5"/></svg>"#;
+    /// An icon the vector path cannot draw (a filter).
+    const FILTERED: &[u8] = br#"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><filter id="b"><feGaussianBlur stdDeviation="1"/></filter><rect x="2" y="2" width="12" height="12" fill="currentColor" filter="url(#b)"/></svg>"#;
+
+    #[test]
+    fn vector_art_outlines_strokes_and_keeps_slots() {
+        let art = VectorArt::parse(STROKED).unwrap();
+        assert_eq!(art.size, Size::new(24.0, 24.0));
+        let l: Vec<_> = art.layers.iter().map(|l| (l.kind, l.source, l.opacity)).collect();
+        assert_eq!(l, [(LayerKind::Stroke, PaintSource::CurrentColor, 1.0), (LayerKind::Stroke, PaintSource::Slot(IconSlot::Accent), 0.5)]);
+        // the line's outline: round caps reach a unit past both ends
+        let b = art.layers[0].bounds;
+        assert!((b.min.x - 4.0).abs() < 0.05 && (b.max.x - 20.0).abs() < 0.05 && (b.height() - 2.0).abs() < 0.05, "{b:?}");
+        assert_eq!(VectorArt::parse(FILTERED).unwrap_err(), NotVector::Unsupported("filter".into()));
+        assert!(matches!(VectorArt::parse(b"<svg").unwrap_err(), NotVector::Invalid(_)));
+    }
+
+    /// The prims an icon painted: `true` for a path, `false` for a raster.
+    fn kinds(list: &DisplayList) -> Vec<bool> {
+        list.items.iter().map(|p| matches!(p, Prim::Path(_))).collect()
+    }
+
+    #[test]
+    fn vector_above_the_threshold_raster_below() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "reg-test.sizes", Icon::svg(16, STROKED).master(24, STROKED)).unwrap();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        // (points, scale) → physical pixels 16, 24, 48, 96, 200, and fractional scales
+        for (pt, scale) in [(16.0, 1.0), (24.0, 1.0), (48.0, 1.0), (96.0, 1.0), (200.0, 1.0), (16.0, 1.25), (16.0, 1.5), (20.0, 1.25), (16.0, 2.0), (32.0, 1.5), (100.0, 1.25)] {
+            let mut list = DisplayList::new();
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, scale);
+            let side = pt as f32;
+            let p = paint(&mut cx, &reg, "reg-test.sizes", Rect::new(0.0, 0.0, side, side), &IconStyle::new(side, Color::WHITE)).unwrap();
+            let px = p.choice.unwrap().px;
+            assert_eq!(p.vector, px > VECTOR_THRESHOLD_PX, "{pt}pt at {scale}x is {px} px");
+            assert_eq!(kinds(&list), if p.vector { vec![true, true] } else { vec![false] }, "{pt}pt at {scale}x");
+            if p.vector {
+                // the paths fill the box drawn: the art's 24 units over `px` device pixels
+                let Prim::Path(pp) = &list.items[0] else { panic!() };
+                assert!((pp.transform.a * scale - px as f32 / 24.0).abs() < 1e-4, "{:?}", pp.transform);
+                assert_eq!(pp.slot.map(|s| s.index), Some(0));
+            }
+        }
+        // the vector sizes all draw the same two paths
+        assert_eq!(res.paths.len(), 2);
+    }
+
+    #[test]
+    fn zoom_and_scale_changes_never_rasterise_a_vector_icon() {
+        let reg = IconRegistry::new();
+        reg.register(Owner::Host, "reg-test.zoom", Icon::svg(24, STROKED)).unwrap();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        // 20 frames of a zoom the UI re-records (a zoom kind), then a scale change
+        let frames = (0..20).map(|f| (32.0 + f as f32 * 8.0, 1.0)).chain([(32.0, 1.25), (32.0, 1.5), (32.0, 2.0)]);
+        for (side, scale) in frames {
+            let mut list = DisplayList::new();
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, scale);
+            assert!(paint(&mut cx, &reg, "reg-test.zoom", Rect::new(0.0, 0.0, side, side), &IconStyle::new(side, Color::WHITE)).unwrap().vector);
+        }
+        assert_eq!(res.images.len(), 0, "no raster");
+        assert_eq!(res.paths.len(), 2, "the same two paths every frame");
+    }
+
+    #[test]
+    fn a_theme_switch_over_100_slotted_icons_rasterises_nothing() {
+        let reg = IconRegistry::new();
+        for i in 0..100 {
+            let svg = if i % 2 == 0 { SLOTTED } else { STROKED };
+            reg.register(Owner::Host, &format!("reg-test.bar-{i}"), Icon::svg(16, svg).master(24, svg)).unwrap();
+        }
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let theme = |color: Color, subject: Color, accent: Color| {
+            let mut s = IconStyle::new(16.0, color);
+            s.slots = Slots { subject: Some(subject), accent: Some(accent), badge: None };
+            s
+        };
+        let dark = theme(Color::WHITE, Color::from_rgba8(0xCC, 0xA7, 0, 255), Color::from_rgba8(0x37, 0x94, 0xFF, 255));
+        let light = theme(Color::BLACK, Color::from_rgba8(0xBF, 0x88, 0x03, 255), Color::from_rgba8(0x00, 0x5F, 0xB8, 255));
+        // the toolbar at 1x (16 px: rasters) and at 2x (32 px: vectors)
+        let mut draw = |res: &mut MemResources, style: &IconStyle, scale: f32| {
+            let mut list = DisplayList::new();
+            let mut cx = PaintCx::new(&mut list, res, &mut text, scale);
+            for i in 0..100 {
+                paint(&mut cx, &reg, &format!("reg-test.bar-{i}"), Rect::new(i as f32 * 20.0, 0.0, i as f32 * 20.0 + 16.0, 16.0), style).unwrap();
+            }
+            list.items
+                .iter()
+                .map(|p| match p {
+                    Prim::Icon(i) => i.color,
+                    Prim::Path(p) => Some(p.paint.color()),
+                    _ => None,
+                })
+                .collect::<Vec<_>>()
+        };
+        let (d1, d2) = (draw(&mut res, &dark, 1.0), draw(&mut res, &dark, 2.0));
+        let (images, paths) = (res.images.len(), res.paths.len());
+        let (l1, l2) = (draw(&mut res, &light, 1.0), draw(&mut res, &light, 2.0));
+        assert_eq!((res.images.len(), res.paths.len()), (images, paths), "a theme switch rasterises and uploads nothing");
+        assert_eq!((d1.len(), d2.len()), (l1.len(), l2.len()));
+        assert!(d1.iter().zip(&l1).all(|(a, b)| a != b) && d2.iter().zip(&l2).all(|(a, b)| a != b), "every colour changed");
+        assert!(l1.contains(&Some(Color::BLACK)) && l2.contains(&Some(light.slots.accent.unwrap().with_alpha(0.5))));
+        eprintln!("SKELTER-svg theme switch: 100 icons, {images} rasters and {paths} paths before and after");
     }
 
     #[test]
@@ -1028,12 +1253,21 @@ mod tests {
             assert!(paint(&mut cx, &reg, "reg-test.broken", r, &st).is_none());
         }
         assert!(list.items.is_empty());
+        // an icon with a filter draws from its raster above the threshold, reported once
+        reg.register(Owner::Host, "reg-test.filtered", Icon::svg(16, FILTERED)).unwrap();
+        let big = Rect::new(0.0, 0.0, 48.0, 48.0);
+        for _ in 0..2 {
+            let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
+            let p = paint(&mut cx, &reg, "reg-test.filtered", big, &IconStyle::new(48.0, Color::WHITE)).unwrap();
+            assert!(!p.vector && matches!(list.items.last(), Some(Prim::Icon(_))));
+        }
         let d = take_diagnostics();
         assert!(d.iter().any(|e| matches!(e, IconError::BadKey { key, .. } if key == "Bad")));
         assert!(d.iter().any(|e| matches!(e, IconError::Namespace { key, .. } if key == "ext.acme.gear")));
         assert!(d.iter().any(|e| matches!(e, IconError::BadIcon { key, .. } if key == "reg-test.zero")));
         assert_eq!(d.iter().filter(|e| matches!(e, IconError::Missing { key } if key == "reg-test.nothing")).count(), 1, "once");
         assert_eq!(d.iter().filter(|e| matches!(e, IconError::Load { key, .. } if key == "reg-test.broken")).count(), 1, "once");
+        assert_eq!(d.iter().filter(|e| matches!(e, IconError::Fallback { key, why } if key == "reg-test.filtered" && why == "filter")).count(), 1, "once, with why");
     }
 
     #[test]

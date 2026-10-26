@@ -297,6 +297,8 @@ pub(crate) struct ImageSink {
     /// Every image and path uploaded and not released (re-sent after a device reset).
     pub live_images: std::collections::HashMap<ImageId, Arc<ImageData>>,
     pub live_paths: std::collections::HashMap<skelter_base::ids::PathId, Arc<skelter_base::commit::PathData>>,
+    /// Paths shared by key ([`PrepareCx::share_path`]), with their user counts.
+    pub shared_paths: std::collections::HashMap<String, (skelter_base::ids::PathId, usize)>,
 }
 
 /// [`Kind::prepare`](crate::Kind::prepare).
@@ -345,6 +347,29 @@ impl PrepareCx<'_> {
     pub fn release_path(&mut self, id: skelter_base::ids::PathId) {
         self.images.live_paths.remove(&id);
         self.images.removed_paths.push(id);
+    }
+    /// A path shared by `key` across the document (an icon's layer that many nodes draw): uploaded
+    /// by `make` for its first user, so every user draws the same `PathId` (one tessellation per
+    /// scale step in the renderer). Each call adds a user; [`PrepareCx::unshare_path`] removes one
+    /// and releases the path with the last. `None` when `make` gives nothing.
+    pub fn share_path(&mut self, key: &str, make: &mut dyn FnMut() -> Option<Arc<skelter_base::commit::PathData>>) -> Option<skelter_base::ids::PathId> {
+        if let Some((id, n)) = self.images.shared_paths.get_mut(key) {
+            *n += 1;
+            return Some(*id);
+        }
+        let id = self.upload_path(make()?);
+        self.images.shared_paths.insert(key.to_owned(), (id, 1));
+        Some(id)
+    }
+    /// Removes one user of the shared path `key`; the last releases it.
+    pub fn unshare_path(&mut self, key: &str) {
+        let Some((id, n)) = self.images.shared_paths.get_mut(key) else { return };
+        *n -= 1;
+        if *n == 0 {
+            let id = *id;
+            self.images.shared_paths.remove(key);
+            self.release_path(id);
+        }
     }
     /// Re-record after this prepare even if the node was not content-dirty.
     pub fn request_paint(&mut self) {

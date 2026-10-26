@@ -3,7 +3,7 @@
 
 use super::*;
 use crate::testkinds::BOX_TINT;
-use crate::Value;
+use crate::{KindId, Value};
 use skelter_base::color::Color;
 use skelter_base::layer::{LayerDelta, LayerKind};
 use skelter_base::props::PropOp;
@@ -142,6 +142,50 @@ fn a_transition_starts_a_compositor_animation() {
     assert!(d.busy().contains(crate::Busy::ANIMATING));
     d.animation_event(skelter_base::anim::AnimationEvent::Finished { id: start.id, at: Time(1) });
     assert!(!d.busy().contains(crate::Busy::ANIMATING));
+}
+
+#[test]
+fn an_icon_colour_transition_runs_on_the_compositor() {
+    use skelter_base::anim::{AnimProperty, AnimValue, AnimationCmd, Generator};
+    let (mut d, root) = doc();
+    let css = "width: 16px; height: 16px; transition: color 200ms";
+    let a = child(&mut d, root, KindId::of("icon"), &format!("{css}; color: #ff0000"));
+    let b = child(&mut d, root, BOX, &format!("{css}; color: #ff0000"));
+    frame(&mut d);
+    // hover: the colour changes on both
+    d.set_style(a, crate::StyleInput { inline: Some(format!("{css}; color: #0000ff").into()), ..Default::default() });
+    d.set_style(b, crate::StyleInput { inline: Some(format!("{css}; color: #0000ff").into()), ..Default::default() });
+    let c = frame(&mut d).unwrap();
+    let starts: Vec<_> = c.animations.iter().filter_map(|x| if let AnimationCmd::Start(s) = x { Some(s) } else { None }).collect();
+    assert_eq!(starts.len(), 1, "only the icon's colour goes to the compositor: {starts:?}");
+    let s = starts[0];
+    assert_eq!((s.node, s.property), (a, AnimProperty::Palette(0)));
+    let effect = s.target.expect("it drives the icon's effect node");
+    assert!(c.props.ops.iter().any(|op| matches!(op, PropOp::Effect(id, _) if *id == effect)), "the effect node is made in the same commit");
+    let Generator::Keyframes { keyframes, .. } = &s.generator else { panic!() };
+    assert_eq!(keyframes[0].value, AnimValue::Color(Color::from_rgba8(255, 0, 0, 255)));
+    assert_eq!(keyframes[1].value, AnimValue::Color(Color::from_rgba8(0, 0, 255, 255)));
+    // the icon's list is recorded once, at the end colour
+    let list = c.lists.iter().find(|(n, _)| *n == a).expect("the icon re-records once").1.clone();
+    let skelter_base::display::Prim::Icon(i) = &list.items[0] else { panic!() };
+    assert_eq!(i.color, Some(Color::from_rgba8(0, 0, 255, 255)));
+    // during the transition: the box's colour is the UI thread's per frame, the icon's is not
+    let mut icon_commits = 0;
+    for t in 1..20u64 {
+        if let Some(c) = d.frame(W, Time(t * 10_000_000)) {
+            icon_commits += c.lists.iter().filter(|(n, _)| *n == a).count();
+        }
+    }
+    assert_eq!(icon_commits, 0, "no UI commit for the icon during its transition");
+    // the box's UI transition ends with its last frame, the icon's with the compositor's event
+    frame_at(&mut d, 300);
+    assert!(d.busy().contains(crate::Busy::ANIMATING));
+    d.animation_event(skelter_base::anim::AnimationEvent::Finished { id: s.id, at: Time(1) });
+    assert!(!d.busy().contains(crate::Busy::ANIMATING));
+}
+
+fn frame_at(d: &mut Document, ms: u64) {
+    d.frame(W, Time(ms * 1_000_000));
 }
 
 #[test]

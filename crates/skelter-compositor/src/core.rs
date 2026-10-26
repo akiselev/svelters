@@ -1030,6 +1030,9 @@ fn apply_value(
         (AnimProperty::Clip, AnimValue::Rect(r)) => {
             tree.props.anim_clip.insert(node, *r);
         }
+        (AnimProperty::Palette(slot), AnimValue::Color(c)) => {
+            tree.props.anim_palette.entry(node).or_default().set(slot, Some(*c));
+        }
         (AnimProperty::ScrollOffset, AnimValue::Vec2(o)) => {
             if let Some(offset) = tree.set_scroll_offset(node, *o) {
                 out.push(ToUi::ScrollMoved { window, node, offset });
@@ -1050,6 +1053,14 @@ fn clear_override(tree: &mut WindowTree, spec: &AnimationSpec) {
         }
         AnimProperty::Clip => {
             tree.props.anim_clip.remove(&node);
+        }
+        AnimProperty::Palette(slot) => {
+            if let Some(p) = tree.props.anim_palette.get_mut(&node) {
+                p.set(slot, None);
+                if p.is_empty() {
+                    tree.props.anim_palette.remove(&node);
+                }
+            }
         }
         _ => {}
     }

@@ -30,7 +30,7 @@ pub use timing::{Phase, Sample, retarget, sample};
 /// else with style and layout per frame.
 pub fn placement(p: AnimProperty) -> Placement {
     match p {
-        AnimProperty::Opacity | AnimProperty::Transform | AnimProperty::Clip | AnimProperty::ScrollOffset => Placement::Compositor,
+        AnimProperty::Opacity | AnimProperty::Transform | AnimProperty::Clip | AnimProperty::ScrollOffset | AnimProperty::Palette(_) => Placement::Compositor,
         AnimProperty::Color
         | AnimProperty::BackgroundColor
         | AnimProperty::BorderColor

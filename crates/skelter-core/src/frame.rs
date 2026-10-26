@@ -194,6 +194,7 @@ impl Document {
                 finished_prop = match p {
                     AnimProperty::Opacity => Some("opacity"),
                     AnimProperty::Transform => Some("transform"),
+                    AnimProperty::Palette(0) => Some("color"),
                     _ => None,
                 };
                 owner = Some(*n);
@@ -260,7 +261,7 @@ impl Document {
             {
                 let p = &self.record[i];
                 spec.target = match spec.property {
-                    AnimProperty::Opacity => p.effect,
+                    AnimProperty::Opacity | AnimProperty::Palette(_) => p.effect,
                     AnimProperty::Transform => p.transform,
                     AnimProperty::Clip => p.clip,
                     AnimProperty::ScrollOffset => p.scroll,
@@ -280,8 +281,13 @@ impl Document {
     }
 
     /// Node `i` animates a compositor property now.
-    fn animates(&self, node: NodeId, prop: AnimProperty) -> bool {
+    pub(crate) fn animates(&self, node: NodeId, prop: AnimProperty) -> bool {
         self.anim.running.get(&node).is_some_and(|v| v.iter().any(|&(_, p)| p == prop))
+    }
+
+    /// Node `i` animates a palette slot on the compositor now (its effect node carries the palette).
+    fn animates_palette(&self, node: NodeId) -> bool {
+        self.anim.running.get(&node).is_some_and(|v| v.iter().any(|&(_, p)| matches!(p, AnimProperty::Palette(_))))
     }
 
     /// The local transform of node `i` relative to its transform parent: layout offset, then the CSS
@@ -371,7 +377,7 @@ impl Document {
         let offset = self.scroll_offset(node);
         let axes = self.scroll_axes(i);
         let wants_clip = s.overflow_x.clips() || s.overflow_y.clips() || axes != (false, false);
-        let wants_effect = s.opacity < 1.0 || s.will_change || self.animates(node, AnimProperty::Opacity);
+        let wants_effect = s.opacity < 1.0 || s.will_change || self.animates(node, AnimProperty::Opacity) || self.animates_palette(node);
         // a non-passive listener on the path or inside the container may cancel the scroll
         let passive = !self.nonpassive_scroll_path(i) && !self.core[i].flags.contains(crate::tree::NodeFlags::DESC_NONPASSIVE);
         let mut ids = std::mem::take(&mut self.window_mut(window).expect("window").props);

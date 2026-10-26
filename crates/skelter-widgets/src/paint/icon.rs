@@ -167,3 +167,4 @@ pub fn paint_missing(cx: &mut PaintCx, color: Color, side: f32, center: Point) {
 }
 
 pub mod registry;
+pub mod vector;

@@ -23,8 +23,8 @@ pub mod core {
     use skelter_base::display::DisplayList;
     use skelter_base::event::{KeyEvent, PointerEvent, WheelEvent};
     use skelter_base::geom::{Point, Rect, Size};
-    use skelter_base::ids::{ImageId, RunId};
-    use skelter_base::commit::ImageData;
+    use skelter_base::ids::{ImageId, PathId, RunId};
+    use skelter_base::commit::{ImageData, PathData};
     use skelter_base::text::GlyphRun;
     use skelter_base::time::Time;
     use std::sync::Arc;
@@ -331,6 +331,14 @@ pub mod core {
         /// The id of the image under `key` (a content hash or an icon key with its size and colour);
         /// `make` rasterises it when the key is new. `None` when `make` fails.
         fn image(&mut self, key: &str, make: &mut dyn FnMut() -> Option<ImageData>) -> Option<ImageId>;
+        /// The id of the path under `key` (a vector icon's layer: its registry key, registration,
+        /// master and layer), shared by every node that draws it; `make` builds it when the key is
+        /// new. `None` when `make` fails, or where paths are not supported (then a vector icon falls
+        /// back to its raster).
+        fn path(&mut self, key: &str, make: &mut dyn FnMut() -> Option<Arc<PathData>>) -> Option<PathId> {
+            let _ = (key, make);
+            None
+        }
     }
 
     /// Stands in for `skelter_core::RecordCx`: writes the node's display list in node-local coordinates.
@@ -779,9 +787,9 @@ pub mod testing {
 
     use super::core::Resources;
     use super::text::{Geometry, PlacedRun, RichText, TextGeometry, TextLayout, TextShaper};
-    use skelter_base::commit::ImageData;
+    use skelter_base::commit::{ImageData, PathData};
     use skelter_base::geom::{Point, Rect, Size};
-    use skelter_base::ids::{FontId, ImageId, RunId};
+    use skelter_base::ids::{FontId, ImageId, PathId, RunId};
     use skelter_base::text::{AaMode, Glyph, GlyphRun, HintMode};
     use std::collections::HashMap;
     use std::sync::Arc;
@@ -881,6 +889,7 @@ pub mod testing {
     pub struct MemResources {
         pub runs: Vec<Arc<GlyphRun>>,
         pub images: HashMap<String, (ImageId, ImageData)>,
+        pub paths: HashMap<String, (PathId, Arc<PathData>)>,
     }
 
     impl Resources for MemResources {
@@ -898,6 +907,15 @@ pub mod testing {
             let data = make()?;
             let id = ImageId(self.images.len() as u64 + 1);
             self.images.insert(key.to_owned(), (id, data));
+            Some(id)
+        }
+        fn path(&mut self, key: &str, make: &mut dyn FnMut() -> Option<Arc<PathData>>) -> Option<PathId> {
+            if let Some((id, _)) = self.paths.get(key) {
+                return Some(*id);
+            }
+            let data = make()?;
+            let id = PathId(self.paths.len() as u64 + 1);
+            self.paths.insert(key.to_owned(), (id, data));
             Some(id)
         }
     }
