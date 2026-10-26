@@ -83,4 +83,6 @@ full suites, the rest of the workspace, clippy, conformance (no compiler change)
 
 `cdfe9ff5`: the skelter workflow (run 40377622751) failed on all three OSes in one test, svelters-skelter
 `host_document` `a_palette_list_places_its_rows_in_its_own_box` (the `anchor` clash above, fixed in `75a6f580`).
-Final runs on `75ecaf3c` (the last code commit): pending.
+Runs on `75ecaf3c` (js 40384636778, linux-gtk 40384637286, linux-qt 40384637107, macos-appkit 40384636957, skelter
+40384637082, windows-winui 40384636803) were cancelled by the next push. Runs on `c122e95c` (same code plus this record)
+were in progress when the coordinator stopped the lane (quota): **not confirmed green**.
