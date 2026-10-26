@@ -51,7 +51,7 @@ fn a_click_by_selector_changes_state_and_waits_resolve() {
     assert!(agree.rect.is_some_and(|r| r.is_positive()), "{agree:?}");
 
     // A synthetic click at the node goes through skelter's input; the reply says what changed.
-    s.journal_subscribe(svelters_egui::scene::ChangeFilter::all()).unwrap();
+    s.journal_subscribe(()).unwrap();
     let r = s.click(r#"role=checkbox[name="Agree"]"#, ActOptions::default()).unwrap();
     assert_eq!(r.tier, Tier::Synthetic);
     assert!(r.changed.iter().any(|(n, what)| *n == agree.r#ref.id && what.contains("states")), "{:?}", r.changed);

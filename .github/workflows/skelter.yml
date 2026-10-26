@@ -58,6 +58,16 @@ jobs:
       - name: cargo check (all targets)
         shell: bash
         run: cargo check ${{ steps.crates.outputs.list }} --all-targets
+      - name: egui-free crates (rmegui)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: tools/dev/check-egui-free
+      - name: cargo check (egui-free default features)
+        shell: bash
+        run: |
+          cargo check -p skelter-test
+          cargo check -p skelter-test --features automation
+          cargo check -p svelters-automation
       - name: cargo check (optional features)
         shell: bash
         run: |

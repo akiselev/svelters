@@ -7,12 +7,13 @@
 //! the next part searches the top and its subtree. Roots the session skips (tooling roots, §1.2)
 //! are left out.
 //!
-//! The engine runs on any [`SceneSource`] ([`crate::source::resolve_source`]); [`resolve`] is it on
-//! svelters-egui's scene.
+//! The engine runs on any [`SceneSource`] ([`crate::source::resolve_source`]); `resolve` (feature
+//! `egui`) is it on svelters-egui's scene.
 
 use crate::Error;
 use crate::selector::{Part, Selector};
 use crate::source::SceneSource;
+#[cfg(feature = "egui")]
 use svelters_egui::scene::{NodeId, SceneRef};
 
 /// Which roots a resolution sees: `skip(key)` is `true` for a root key to leave out.
@@ -30,12 +31,13 @@ enum Scope<N> {
     Exact(Vec<N>),
 }
 
-/// The nodes `sel` matches, in document order, without duplicates.
+/// The nodes `sel` matches on svelters-egui's scene, in document order, without duplicates.
+#[cfg(feature = "egui")]
 pub fn resolve(s: SceneRef<'_>, sel: &Selector, roots: &Roots<'_>) -> Result<Vec<NodeId>, Error> {
     resolve_in(&s, sel, roots.skip)
 }
 
-/// [`resolve`] over any [`SceneSource`] (the egui scene is one).
+/// `resolve` over any [`SceneSource`] (the egui scene is one).
 pub(crate) fn resolve_in<S: SceneSource>(s: &S, sel: &Selector, skip: &dyn Fn(&str) -> bool) -> Result<Vec<S::Node>, Error> {
     let mut scope = Scope::All;
     for part in &sel.parts {

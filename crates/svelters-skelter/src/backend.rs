@@ -103,6 +103,11 @@ impl Handles {
         self.handles.get(&n).copied()
     }
 
+    /// Every bound node with its handle.
+    pub(crate) fn pairs(&self) -> impl Iterator<Item = (NodeId, svl_handle)> + '_ {
+        self.handles.iter().map(|(&n, &h)| (n, h))
+    }
+
     pub(crate) fn set_kind(&mut self, h: svl_handle, kind: svl_id) {
         self.kinds.insert(h, kind);
     }
@@ -185,6 +190,9 @@ pub struct Inner {
     pub(crate) taps: RefCell<Vec<crate::behavior::EventTap>>,
     /// The events of the running dispatch delivered at event time (`sync.rs`), for the taps.
     pub(crate) tapped: RefCell<Vec<skelter_core::JsEvent>>,
+    /// DZ0 (SV30): props a tool overrides (`designer.rs`), with the value the runtime last wrote under
+    /// each (held back until the override clears).
+    pub(crate) overrides: RefCell<HashMap<(svl_handle, svl_id), Value>>,
 }
 
 /// The svelters backend on skelter. Cheap to clone (shared state).
@@ -264,6 +272,7 @@ impl SkelterBackend {
             behaviors: RefCell::new(Default::default()),
             taps: RefCell::new(Vec::new()),
             tapped: RefCell::new(Vec::new()),
+            overrides: RefCell::new(HashMap::new()),
         }));
         b.install_sync_delivery();
         b
@@ -499,6 +508,16 @@ impl SkelterBackend {
 
     /// The prop write behind `set_prop`, shared with templates.
     pub(crate) fn write_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
+        // DZ0 (SV30): while a tool overrides the prop, the runtime's write is held back
+        if let Some(under) = self.0.overrides.borrow_mut().get_mut(&(h, prop)) {
+            *under = v.clone();
+            return Ok(());
+        }
+        self.write_prop_now(h, prop, v)
+    }
+
+    /// [`SkelterBackend::write_prop`] without the override check.
+    pub(crate) fn write_prop_now(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
         let (n, m) = self.live(h)?;
         let pm = m.prop(prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", m.tag()))?;
         let v = value::from_abi(v, pm.spec.ty, pm.spec.nullable).map_err(|e| format!("<{}> {}: {e}", m.tag(), pm.spec.name))?;
@@ -693,6 +712,8 @@ impl SkelterBackend {
     /// the ABI leaves them to the host (skelter-core's `destroy` takes the subtree).
     pub(crate) fn free(&self, h: svl_handle) {
         let Some(n) = self.0.handles.borrow_mut().unbind(h) else { return };
+        // DZ0: a freed node's overrides go with it
+        self.0.overrides.borrow_mut().retain(|(x, _), _| *x != h);
         // A2: the `use:` behaviours on the node leave it with it
         let attached = self.0.behaviors.borrow().attached_to(n);
         for b in attached {

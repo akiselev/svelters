@@ -8,24 +8,30 @@ publish.workspace = true
 
 [features]
 default = []
-# The automation bridge (`crate::automation`): a `svelters_automation::Session` on a harness, over
-# skelter-native UI (`SkelterNativeDriver`) or svelters-egui roots in egui islands (`SkelterDriver`).
-automation = ["dep:svelters-automation", "dep:svelters-egui"]
+# egui: `EguiHarness` (egui closures in an island), `CoreIslands` (islands mounted through
+# `IslandHost`), and the egui vocabulary of the verbs (`egui::Event`, `egui::Key`, `egui::Pos2`, …).
+# Off by default: a skelter-only consumer (cadatomic after rmegui) links no egui-family crate.
+egui = ["dep:egui", "dep:egui-wgpu", "dep:skelter-egui-island"]
+# The automation bridge (`crate::automation`): a `svelters_automation::Session` on a harness over
+# skelter-native UI (`SkelterNativeDriver`, `SkelterScene`); no egui.
+automation = ["dep:svelters-automation"]
+# `SkelterDriver`: svelters-egui roots in egui islands, through the egui `Driver`.
+automation-egui = ["automation", "egui", "dep:svelters-egui", "svelters-automation/egui"]
 
 [dependencies]
 skelter-base = { workspace = true }
 skelter = { workspace = true }
 skelter-render = { workspace = true }
 skelter-text = { workspace = true }
-skelter-egui-island = { workspace = true }
+skelter-egui-island = { workspace = true, optional = true }
 skelter-platform = { workspace = true }
 skelter-core = { workspace = true }
 wgpu = { workspace = true }
 pollster = "0.4"
-# The `egui::Event`-shaped injection adapter (architecture §16.1) and the egui island harness; same
-# pin as svelters-egui.
-egui = { version = "=0.37.0", default-features = false }
-egui-wgpu = { version = "=0.37.0", default-features = false }
+# (feature `egui`) The `egui::Event`-shaped injection adapter (architecture §16.1) and the egui
+# island harness; same pin as svelters-egui.
+egui = { version = "=0.37.0", default-features = false, optional = true }
+egui-wgpu = { version = "=0.37.0", default-features = false, optional = true }
 # The pixel tier: egui_kittest's comparison (dify) and PNG goldens, at egui_kittest 0.37's versions.
 dify = { version = "0.8.0", default-features = false }
 image = { version = "0.25.10", default-features = false, features = ["png"] }
@@ -41,7 +47,7 @@ accesskit_atspi_common = "0.21.0"
 atspi-common = { version = "0.13", default-features = false }
 
 [dev-dependencies]
-skelter-test = { path = ".", features = ["automation"] }
+skelter-test = { path = ".", features = ["egui", "automation", "automation-egui"] }
 # The automation test loads an app from source (fixtures/counter-egui) into an island.
 svelters-egui = { path = "../svelters-egui", default-features = false, features = ["source"] }
 svelters-host = { workspace = true }

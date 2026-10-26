@@ -495,7 +495,7 @@ impl Kind for Slider {
             self.thumb_hover = thumb_hover;
             cx.repaint = true;
         }
-        if pass.resp.hovered || pass.resp.down_on || !fs.is_empty() || !ft.is_empty() || self.stepper.took_wheel() || page_dir.is_some() { Handled::Yes } else { Handled::No }
+        if (ev.is_pointer() && (pass.resp.hovered || pass.resp.down_on)) || !fs.is_empty() || !ft.is_empty() || self.stepper.took_wheel() || page_dir.is_some() { Handled::Yes } else { Handled::No }
     }
 
     fn a11y(&self, cx: &mut A11yCx) {

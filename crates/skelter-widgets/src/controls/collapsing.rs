@@ -284,7 +284,7 @@ impl Kind for CollapsingHeader {
             changed = true;
         }
         self.mirror(cx.state);
-        if pass.resp.down_on || changed { Handled::Yes } else { Handled::No }
+        if (ev.is_pointer() && pass.resp.down_on) || changed { Handled::Yes } else { Handled::No }
     }
 
     fn a11y(&self, cx: &mut A11yCx) {

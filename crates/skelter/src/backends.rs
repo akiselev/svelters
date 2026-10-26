@@ -364,6 +364,9 @@ impl CompositorApi for CompositorHandle {
     fn frame_args(&self, window: WindowId) -> Option<skelter_frame::FrameArgs> {
         CompositorHandle::frame_args(self, window)
     }
+    fn read_window(&self, window: WindowId) -> Option<skelter_compositor::WindowImage> {
+        CompositorHandle::read_window(self, window, std::time::Duration::from_secs(10))
+    }
     fn shutdown(&self) {
         self.clone().shutdown();
     }

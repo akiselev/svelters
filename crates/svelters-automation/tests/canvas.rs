@@ -111,7 +111,7 @@ fn run(name: &str) -> (Vec<u64>, String, Vec<(EventKind, Target, Option<egui::Po
     let o = ActOptions::default();
     let mut frames = Vec::new();
     // a drag in the pad's local points, with Shift: press, 4 moves, release
-    let r = s.drag("anchor=pad", Drag::to(egui::pos2(150.0, 140.0)).from(At::Local(egui::pos2(50.0, 100.0))).steps(4).modifiers(egui::Modifiers::SHIFT), o).unwrap();
+    let r = s.drag("anchor=pad", Drag::to(egui::pos2(150.0, 140.0)).from(At::Local(svelters_automation::pos2(50.0, 100.0))).steps(4).modifiers(egui::Modifiers::SHIFT), o).unwrap();
     frames.push(r.frame);
     let log = label(&s, "Log");
     assert_eq!(log, "Log d50,100S m75,110 m100,120 m125,130 m150,140 u150,140", "press, one move per step, release");
@@ -120,7 +120,7 @@ fn run(name: &str) -> (Vec<u64>, String, Vec<(EventKind, Target, Option<egui::Po
     frames.push(r["frame"].as_u64().unwrap());
     assert_eq!(label(&s, "At"), "At 12,150");
     // two wheel notches up with Ctrl (DOM: deltaY < 0), then pixels down
-    let r = s.wheel("anchor=pad", Wheel::lines(egui::vec2(0.0, 2.0)).at(At::Local(egui::pos2(60.0, 150.0))).modifiers(egui::Modifiers::CTRL), o).unwrap();
+    let r = s.wheel("anchor=pad", Wheel::lines(egui::vec2(0.0, 2.0)).at(At::Local(svelters_automation::pos2(60.0, 150.0))).modifiers(egui::Modifiers::CTRL), o).unwrap();
     frames.push(r.frame);
     let r = s.call("input.wheel", &json!({"selector": "anchor=pad", "dy": -30, "unit": "pixel", "at": [60, 150]})).unwrap();
     frames.push(r["frame"].as_u64().unwrap());

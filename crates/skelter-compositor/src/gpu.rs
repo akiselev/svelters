@@ -380,6 +380,13 @@ impl GpuBackend {
             Some(c) => &c.images[c.last?],
             None => target,
         };
+        let out = Self::read_texture(gpu, tex, *size)?;
+        Some((*size, gpu.ctx.format, out))
+    }
+
+    /// Copies `tex` (`size`, the device's format) into a buffer and reads it back as tightly packed
+    /// rows. Blocks until the GPU is done.
+    fn read_texture(gpu: &Gpu, tex: &wgpu::Texture, size: DeviceSize) -> Option<Vec<u8>> {
         let bpp = gpu.ctx.format.block_copy_size(None)?;
         let row = size.w * bpp;
         let padded = row.div_ceil(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT) * wgpu::COPY_BYTES_PER_ROW_ALIGNMENT;
@@ -414,7 +421,7 @@ impl GpuBackend {
         }
         drop(data);
         buf.unmap();
-        Some((*size, gpu.ctx.format, out))
+        Some(out)
     }
 
     fn persistent_target(gpu: &Gpu, s: &mut Surf) -> bool {
@@ -665,6 +672,40 @@ impl Backend for GpuBackend {
                 gpu.renderer.forget_path(*id);
             }
         }
+    }
+
+    fn read_back(&mut self, _window: WindowId, scene: &FrameScene<'_>) -> Option<crate::WindowImage> {
+        let gpu = self.gpu.as_mut()?;
+        let size = scene.target;
+        let tex = gpu.ctx.device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("skelter-compositor window readback"),
+            size: wgpu::Extent3d { width: size.w, height: size.h, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: gpu.ctx.format,
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
+            view_formats: &[],
+        });
+        let view = tex.create_view(&wgpu::TextureViewDescriptor::default());
+        let mut encoder = gpu.ctx.device.create_command_encoder(&wgpu::CommandEncoderDescriptor { label: Some("skelter readback frame") });
+        gpu.renderer.render(&gpu.ctx.device, &gpu.ctx.queue, &mut encoder, &view, &FrameScene { damage: &[], ..*scene });
+        gpu.ctx.queue.submit([encoder.finish()]);
+        gpu.renderer.end_frame();
+        let mut rgba = Self::read_texture(gpu, &tex, size)?;
+        match gpu.ctx.format {
+            wgpu::TextureFormat::Bgra8Unorm | wgpu::TextureFormat::Bgra8UnormSrgb => {
+                for px in rgba.chunks_exact_mut(4) {
+                    px.swap(0, 2);
+                }
+            }
+            wgpu::TextureFormat::Rgba8Unorm | wgpu::TextureFormat::Rgba8UnormSrgb => {}
+            f => {
+                log::warn!("skelter-compositor: readback of {f:?} is not RGBA8");
+                return None;
+            }
+        }
+        Some(crate::WindowImage { size, scale: scene.scale, rgba })
     }
 
     fn recover(&mut self) -> bool {

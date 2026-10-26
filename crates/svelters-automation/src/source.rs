@@ -3,9 +3,9 @@
 //! svelters-egui's retained scene: skelter-native UI (`skelter_test::SkelterScene` reads a skelter
 //! document through its AccessKit projection), or any tree with roles, names and rects.
 //!
-//! svelters-egui's [`SceneRef`] implements it (node ids are the scene's [`NodeId`]s); the engine's
-//! [`resolve`](crate::engine::resolve) on the egui scene is [`resolve_source`] on that impl, so both
-//! give the same matches by construction.
+//! svelters-egui's `SceneRef` implements it (feature `egui`; node ids are the scene's `NodeId`s); the
+//! engine's `resolve` on the egui scene is [`resolve_source`] on that impl, so both give the same
+//! matches by construction.
 //!
 //! [`query`], [`snapshot`] and [`actionable_point`] are the source-generic reads and the synthetic
 //! act's target point. The [`Session`](crate::Session) (acts, waits, journal, JSON methods) runs on
@@ -19,17 +19,21 @@ use crate::selector::{Selector, parse};
 use crate::session::SourceInfo;
 use std::borrow::Cow;
 use std::hash::Hash;
-use svelters_egui::accessible_name;
-use svelters_egui::scene::{NodeId, SceneRef};
-use svelters_egui::style::MatchedRuleInfo;
+use crate::geom::{Pos2, Rect};
+use svelters_style::MatchedRuleInfo;
+#[cfg(feature = "egui")]
+use svelters_egui::{
+    accessible_name,
+    scene::{NodeId, SceneRef},
+};
 
 /// Where a node was drawn ([`SceneSource::drawn`]).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Drawn {
     /// Its rect on screen, as drawn.
-    pub rect: egui::Rect,
+    pub rect: Rect,
     /// The part of `rect` in view (inside its clips).
-    pub visible: egui::Rect,
+    pub visible: Rect,
 }
 
 /// A node's computed style ([`SceneSource::computed_style`]; `style.computed`).
@@ -57,7 +61,7 @@ pub struct SourceRoot<N> {
 
 /// A tree the selector engine and the snapshot can read. Roles are lower-case WAI-ARIA names
 /// (`button`, `textbox`, `generic`), states the scene's state names (`checked`, `disabled`,
-/// `focused`, …), rects window points (egui points for svelters-egui).
+/// `focused`, …), rects window points (egui points for svelters-egui) in [`crate::geom`]'s types.
 pub trait SceneSource {
     /// A node's identity, stable while the scene doesn't change.
     type Node: Copy + Eq + Hash;
@@ -109,7 +113,7 @@ pub trait SceneSource {
     fn is_shown(&self, n: Self::Node) -> bool {
         self.is_visible(n)
     }
-    fn rect(&self, n: Self::Node) -> Option<egui::Rect>;
+    fn rect(&self, n: Self::Node) -> Option<Rect>;
     /// The node's anchor (`anchor=`).
     fn anchor(&self, n: Self::Node) -> Option<Cow<'_, str>> {
         let _ = n;
@@ -126,7 +130,7 @@ pub trait SceneSource {
         false
     }
     /// The topmost node at `pos` (`pos=`).
-    fn hit(&self, pos: egui::Pos2) -> Option<Self::Node> {
+    fn hit(&self, pos: Pos2) -> Option<Self::Node> {
         let _ = pos;
         None
     }
@@ -170,7 +174,7 @@ pub trait SceneSource {
         self.rect(n).filter(|_| self.is_visible(n)).map(|rect| Drawn { rect, visible: rect })
     }
     /// The rect a screenshot of `n` crops to.
-    fn screen_rect(&self, n: Self::Node) -> Option<egui::Rect> {
+    fn screen_rect(&self, n: Self::Node) -> Option<Rect> {
         self.drawn(n).map(|d| d.rect)
     }
     /// DZ0: where a dev build declared `n`.
@@ -222,7 +226,7 @@ pub fn snapshot<S: SceneSource>(s: &S, scope: Option<&str>) -> Result<String, Er
 
 /// Where a synthetic act on `n` points (its rect's centre), after the actionability checks that need
 /// no frame: shown, enabled, and with a non-empty rect. Errors are `node.not_actionable`.
-pub fn actionable_point<S: SceneSource>(s: &S, n: S::Node) -> Result<egui::Pos2, Error> {
+pub fn actionable_point<S: SceneSource>(s: &S, n: S::Node) -> Result<Pos2, Error> {
     if !s.is_shown(n) {
         return Err(Error::new("node.not_actionable", format!("a {} that is not visible", s.role(n))));
     }
@@ -236,6 +240,7 @@ pub fn actionable_point<S: SceneSource>(s: &S, n: S::Node) -> Result<egui::Pos2,
 }
 
 /// svelters-egui's retained scene.
+#[cfg(feature = "egui")]
 impl<'a> SceneSource for SceneRef<'a> {
     type Node = NodeId;
 
@@ -282,8 +287,8 @@ impl<'a> SceneSource for SceneRef<'a> {
     fn is_shown(&self, n: NodeId) -> bool {
         self.get(n).is_some_and(|n| n.is_shown())
     }
-    fn rect(&self, n: NodeId) -> Option<egui::Rect> {
-        self.get(n).map(|n| n.rect())
+    fn rect(&self, n: NodeId) -> Option<Rect> {
+        self.get(n).map(|n| n.rect().into())
     }
     fn anchor(&self, n: NodeId) -> Option<Cow<'_, str>> {
         self.get(n)?.anchor().map(Cow::Borrowed)
@@ -299,8 +304,8 @@ impl<'a> SceneSource for SceneRef<'a> {
             crate::selector::path_matches(e.file, file) && offset.is_none_or(|o| o == e.offset)
         })
     }
-    fn hit(&self, pos: egui::Pos2) -> Option<NodeId> {
-        self.hit_node(egui::ViewportId::ROOT, pos).map(|n| n.id())
+    fn hit(&self, pos: Pos2) -> Option<NodeId> {
+        self.hit_node(egui::ViewportId::ROOT, pos.into()).map(|n| n.id())
     }
     fn select_css(&self, css: &str, among: &[NodeId]) -> Result<Vec<NodeId>, Error> {
         let list = svelters_style::parse_selector_list(css, Some(&svelters_egui::style::ProviderStates))
@@ -326,10 +331,10 @@ impl<'a> SceneSource for SceneRef<'a> {
         s.root_key(s.get(n)?.root()).map(Cow::Borrowed)
     }
     fn drawn(&self, n: NodeId) -> Option<Drawn> {
-        self.get(n)?.shown().map(|sh| Drawn { rect: sh.rect, visible: sh.visible })
+        self.get(n)?.shown().map(|sh| Drawn { rect: sh.rect.into(), visible: sh.visible.into() })
     }
-    fn screen_rect(&self, n: NodeId) -> Option<egui::Rect> {
-        self.get(n)?.screen_rect().map(|(_, r)| r)
+    fn screen_rect(&self, n: NodeId) -> Option<Rect> {
+        self.get(n)?.screen_rect().map(|(_, r)| r.into())
     }
     fn source_info(&self, n: NodeId) -> Option<SourceInfo> {
         self.get(n)?.source_loc().map(|l| SourceInfo {

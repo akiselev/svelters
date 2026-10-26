@@ -105,7 +105,7 @@ pub struct Unmet {
 /// `enabled` or `editable`, with what was seen ("still moving: …", "covered by …").
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
-pub struct Actionability<N = NodeId> {
+pub struct Actionability<N = DefaultNode> {
     pub check: &'static str,
     pub detail: String,
     /// `hit`: the node that receives the events instead.
@@ -122,7 +122,7 @@ impl<N> Actionability<N> {
 /// is the error's `data`, [`WaitReport::text`] its message after the first line.
 #[non_exhaustive]
 #[derive(Clone, Debug, PartialEq)]
-pub struct WaitReport<N = NodeId> {
+pub struct WaitReport<N = DefaultNode> {
     /// `wait.event job.finished drc`, `wait.for …`, `wait.settled`, `actionable …`.
     pub wait: String,
     /// The budget that ran out.
@@ -145,6 +145,7 @@ pub struct WaitReport<N = NodeId> {
     pub actionability: Option<Actionability<N>>,
 }
 
+#[cfg(feature = "egui")]
 impl WaitReport {
     pub fn to_json(&self) -> Value {
         self.to_json_with(&|n: NodeId| n.to_raw())
@@ -317,7 +318,7 @@ impl<D: SourceDriver> Session<D> {
     /// Bridges SG2's scene journal into the event journal: from now on, each frame's changes are
     /// `scene.changed` events (subject: the node id, `what`: the change mask), virtual clock. The
     /// `journal.subscribe`/`journal.take` pair is unchanged.
-    pub fn bridge_scene_changes(&mut self, filter: ChangeFilter) -> Result<(), Error> {
+    pub fn bridge_scene_changes(&mut self, filter: D::Filter) -> Result<(), Error> {
         self.check(false)?;
         self.events.register(EventKind::new(SCENE_CHANGED, ClockDomain::Virtual).field("what", FieldType::String))?;
         self.scene_bridge = Some(self.driver.observe(filter));

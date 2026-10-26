@@ -1,32 +1,38 @@
-//! The [`Driver`]: what a [`Session`](crate::Session) needs from whatever runs the frames.
+//! The drivers: what a [`Session`](crate::Session) needs from whatever runs the frames.
 //!
-//! svelters implements it for its kittest harnesses (feature `kittest`): [`TestApp`] and
-//! [`EmbedHarness`]. cadatomic's `KittestDrive` wraps one; its windowed app implements it over its
-//! own frame loop (AU2 adds the IPC `Driver`).
+//! `Driver` (feature `egui`) runs svelters-egui's scene; svelters implements it for its kittest
+//! harnesses (feature `kittest`): `TestApp` and `EmbedHarness`. cadatomic's `KittestDrive` wraps
+//! one; its windowed app implements it over its own frame loop (AU2 adds the IPC `Driver`).
 //!
-//! A [`Session`](crate::Session) runs on a [`SourceDriver`]: frames and input as here, over any
-//! [`SceneSource`]. Every [`Driver`] is one (its scene is svelters-egui's); skelter-test's
+//! A [`Session`](crate::Session) runs on a [`SourceDriver`]: frames and input, over any
+//! [`SceneSource`]. Every `Driver` is one (its scene is svelters-egui's); skelter-test's
 //! `SkelterNativeDriver` is one over skelter-native UI.
 
 use crate::Error;
+use crate::geom::Rect;
+use crate::image::Image;
+use crate::input::Event;
 use crate::source::SceneSource;
 use std::fmt::Debug;
 use std::hash::Hash;
+#[cfg(feature = "egui")]
 use svelters_egui::scene::{ChangeFilter, NodeId, Observer, ProviderId, SceneHandle, SceneRef};
 
 /// An AccessKit node of the last frame (the semantic tier's targets, `a11y.*` reads).
 #[derive(Clone, Debug)]
 pub struct A11yNode {
-    pub node: egui::accesskit::NodeId,
-    pub tree: egui::accesskit::TreeId,
-    pub role: egui::accesskit::Role,
+    pub node: accesskit::NodeId,
+    pub tree: accesskit::TreeId,
+    pub role: accesskit::Role,
     pub label: Option<String>,
     pub author_id: Option<String>,
-    /// In egui points.
-    pub rect: egui::Rect,
+    /// In the scene's points (egui points for svelters-egui).
+    pub rect: Rect,
 }
 
-/// Runs frames and takes input for a session. Every method runs on the UI thread, between frames.
+/// Runs frames and takes input for a session over svelters-egui's scene (feature `egui`). Every
+/// method runs on the UI thread, between frames.
+#[cfg(feature = "egui")]
 pub trait Driver {
     /// The scene the session reads.
     fn scene(&self) -> SceneHandle;
@@ -73,6 +79,7 @@ pub trait Driver {
 }
 
 /// A boxed driver (`svelters-run` picks its clock at run time).
+#[cfg(feature = "egui")]
 impl<D: Driver + ?Sized> Driver for Box<D> {
     fn scene(&self) -> SceneHandle {
         (**self).scene()
@@ -115,8 +122,8 @@ pub struct Changes<N> {
     pub overflowed: bool,
 }
 
-/// What a [`Session`](crate::Session) runs on: frames and input (as [`Driver`]) and a scene of any
-/// [`SceneSource`], with its change journal. Every [`Driver`] is one, over svelters-egui's scene;
+/// What a [`Session`](crate::Session) runs on: frames and input and a scene of any [`SceneSource`],
+/// with its change journal. Every `Driver` (feature `egui`) is one, over svelters-egui's scene;
 /// implement it directly for other UI (skelter-test's `SkelterNativeDriver`). Every method runs on
 /// the UI thread, between frames.
 pub trait SourceDriver {
@@ -126,6 +133,8 @@ pub trait SourceDriver {
     type Scene<'s>: SceneSource<Node = Self::Node>;
     /// A change subscription ([`SourceDriver::observe`]).
     type Observer;
+    /// What an observer wants (svelters-egui's `ChangeFilter`); its default is every change.
+    type Filter: Default;
 
     /// Runs `f` on the scene as it is now.
     fn read<R>(&self, f: impl for<'s> FnOnce(&Self::Scene<'s>) -> R) -> R;
@@ -134,7 +143,7 @@ pub trait SourceDriver {
     /// The node a JSON id names (`None`: no node has it).
     fn node_from_raw(&self, raw: u64) -> Option<Self::Node>;
     /// Starts collecting scene changes (`filter` may be ignored by scenes without one).
-    fn observe(&self, filter: ChangeFilter) -> Self::Observer;
+    fn observe(&self, filter: Self::Filter) -> Self::Observer;
     /// The changes since `obs`'s last take.
     fn take_changes(&self, obs: &Self::Observer) -> Changes<Self::Node>;
     /// AX1: asks the scrollables around `n` to bring it into view at the next frame (scenes that
@@ -148,39 +157,42 @@ pub trait SourceDriver {
         Err(Error::new("capability.absent", "this scene has no virtual lists"))
     }
 
-    /// [`Driver::busy`].
+    /// Why the app is not settled (`None`: settled), named.
     fn busy(&self) -> Option<String>;
-    /// [`Driver::step`].
+    /// Runs one frame, with the queued input.
     fn step(&mut self);
-    /// [`Driver::send`]: egui events in the scene's points.
-    fn send(&mut self, event: egui::Event);
-    /// [`Driver::frame_ms`].
+    /// Queues `event` (in the scene's points) for the next frame.
+    fn send(&mut self, event: Event);
+    /// Virtual milliseconds one step advances (waits and timeouts count these).
     fn frame_ms(&self) -> f64;
-    /// [`Driver::a11y_nodes`], in the scene's points.
+    /// The AccessKit nodes of the last frame, in the scene's points (empty: no AccessKit tree).
     fn a11y_nodes(&self) -> Vec<A11yNode> {
         Vec::new()
     }
-    /// [`Driver::screenshot`].
-    fn screenshot(&mut self) -> Option<egui::ColorImage> {
+    /// The last frame as an image (`None`: this driver has no renderer).
+    fn screenshot(&mut self) -> Option<Image> {
         None
     }
-    /// [`Driver::clock_ms`].
+    /// The virtual clock's milliseconds (`None`: the host keeps the wall clock).
     fn clock_ms(&self) -> Option<f64> {
         None
     }
-    /// [`Driver::seed`].
+    /// The seed of the host's scheduler and `Math.random` (`None`: unseeded).
     fn seed(&self) -> Option<u64> {
         None
     }
-    /// [`Driver::hold_clock`].
+    /// While `true`, frames do not move the virtual clock (AU7: a foreground wall-clock busy
+    /// source is busy).
     fn hold_clock(&mut self, _held: bool) {}
 }
 
 /// svelters-egui's scene: the [`Driver`]'s [`SceneHandle`].
+#[cfg(feature = "egui")]
 impl<D: Driver> SourceDriver for D {
     type Node = NodeId;
     type Scene<'s> = SceneRef<'s>;
     type Observer = Observer;
+    type Filter = ChangeFilter;
 
     fn read<R>(&self, f: impl for<'s> FnOnce(&SceneRef<'s>) -> R) -> R {
         self.scene().read(|s| f(&s))
@@ -219,8 +231,8 @@ impl<D: Driver> SourceDriver for D {
     fn step(&mut self) {
         Driver::step(self)
     }
-    fn send(&mut self, event: egui::Event) {
-        Driver::send(self, event)
+    fn send(&mut self, event: Event) {
+        Driver::send(self, event.into())
     }
     fn frame_ms(&self) -> f64 {
         Driver::frame_ms(self)
@@ -228,8 +240,8 @@ impl<D: Driver> SourceDriver for D {
     fn a11y_nodes(&self) -> Vec<A11yNode> {
         Driver::a11y_nodes(self)
     }
-    fn screenshot(&mut self) -> Option<egui::ColorImage> {
-        Driver::screenshot(self)
+    fn screenshot(&mut self) -> Option<Image> {
+        Driver::screenshot(self).map(Image::from)
     }
     fn clock_ms(&self) -> Option<f64> {
         Driver::clock_ms(self)
@@ -270,7 +282,7 @@ mod kittest_impl {
                 role: ak.role(),
                 label: ak.label(),
                 author_id: ak.author_id().map(str::to_string),
-                rect: n.rect(),
+                rect: n.rect().into(),
             });
         }
         out

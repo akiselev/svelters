@@ -2,11 +2,13 @@
 //! with the same selectors, actions, waits, journal and MCP methods as an egui backend, through one of
 //! two drivers:
 //! - [`SkelterNativeDriver`] (a `SourceDriver`): skelter-native UI, read as a [`SkelterScene`] (the
-//!   window's AccessKit projection, island subtrees included), input through the harness's egui
-//!   adapter in window points, the scene journal as a diff of the projection between takes;
-//! - [`SkelterDriver`] (a `Driver`): svelters-egui's retained scene in an egui island.
+//!   window's AccessKit projection, island subtrees included), the session's input (in window
+//!   points) translated as the platform would deliver it, the scene journal as a diff of the
+//!   projection between takes; no egui;
+//! - `SkelterDriver` (feature `automation-egui`, a `Driver`): svelters-egui's retained scene in an
+//!   egui island.
 //!
-//! For [`SkelterDriver`], the scene lives in an egui island (cadatomic's panes during the migration): the
+//! For `SkelterDriver`, the scene lives in an egui island (cadatomic's panes during the migration): the
 //! driver is given the island's
 //! [`SceneHandle`] and its AccessKit subtree, and translates between the scene's coordinates (the
 //! island's points) and the window's:
@@ -21,157 +23,167 @@ use crate::a11y::{AkNode, NodeKey};
 use crate::harness::Harness;
 use crate::scene_source::SkelterScene;
 use skelter::seams::DocumentApi;
-use skelter_base::accesskit::TreeId;
-use skelter_base::geom::{Rect, Vec2};
 use skelter_core::Document;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use svelters_automation::{A11yNode, Changes, Driver, SceneSource, SourceDriver};
-use svelters_egui::scene::{ChangeFilter, SceneHandle};
+use svelters_automation::input::Event;
+use svelters_automation::{A11yNode, Changes, Image, SceneSource, SourceDriver, pos2};
+#[cfg(feature = "automation-egui")]
+pub use egui_island::SkelterDriver;
 
-/// Extra busy reasons of the hosted app (`svelters_egui::Embed::settled`, cadatomic's idle barrier).
+/// Extra busy reasons of the hosted app (cadatomic's idle barrier, `svelters_egui::Embed::settled`).
 pub type BusyFn<D> = Box<dyn Fn(&D) -> Option<String>>;
 
-pub struct SkelterDriver<D: DocumentApi + 'static> {
-    pub harness: Harness<D>,
-    scene: SceneHandle,
-    island: TreeId,
-    busy: Option<BusyFn<D>>,
-}
+/// `SkelterDriver`: svelters-egui's scene in an egui island (feature `automation-egui`).
+#[cfg(feature = "automation-egui")]
+mod egui_island {
+    use super::*;
+    use skelter_base::accesskit::TreeId;
+    use skelter_base::geom::{Rect, Vec2};
+    use svelters_automation::Driver;
+    use svelters_egui::scene::SceneHandle;
 
-impl<D: DocumentApi + 'static> SkelterDriver<D> {
-    /// A driver for the scene rendered by the island whose AccessKit subtree is `island`.
-    pub fn new(harness: Harness<D>, scene: SceneHandle, island: TreeId) -> Self {
-        SkelterDriver {
-            harness,
-            scene,
-            island,
-            busy: None,
+    pub struct SkelterDriver<D: DocumentApi + 'static> {
+        pub harness: Harness<D>,
+        scene: SceneHandle,
+        island: TreeId,
+        busy: Option<BusyFn<D>>,
+    }
+
+    impl<D: DocumentApi + 'static> SkelterDriver<D> {
+        /// A driver for the scene rendered by the island whose AccessKit subtree is `island`.
+        pub fn new(harness: Harness<D>, scene: SceneHandle, island: TreeId) -> Self {
+            SkelterDriver {
+                harness,
+                scene,
+                island,
+                busy: None,
+            }
+        }
+
+        /// The hosted app's own busy reasons, on top of the harness's.
+        pub fn with_busy(mut self, busy: impl Fn(&D) -> Option<String> + 'static) -> Self {
+            self.busy = Some(Box::new(busy));
+            self
+        }
+
+        /// The island's window-space bounds: its subtree root's (`None`: not grafted yet).
+        pub fn island_bounds(&self) -> Option<Rect> {
+            self.harness
+                .a11y()
+                .walk()
+                .into_iter()
+                .find(|n| n.tree == self.island && n.parent.is_none_or(|p| p.0 != self.island))
+                .and_then(|n| n.bounds)
+        }
+
+        /// The island's origin in window points.
+        pub fn origin(&self) -> Option<Vec2> {
+            self.island_bounds().map(|b| Vec2::new(b.min.x, b.min.y))
+        }
+
+        fn to_window(&self, e: egui::Event) -> egui::Event {
+            let o = self.origin().unwrap_or(Vec2::ZERO);
+            let shift = |p: egui::Pos2| egui::pos2(p.x + o.x, p.y + o.y);
+            match e {
+                egui::Event::PointerMoved(p) => egui::Event::PointerMoved(shift(p)),
+                egui::Event::PointerButton {
+                    pos,
+                    button,
+                    pressed,
+                    modifiers,
+                } => egui::Event::PointerButton {
+                    pos: shift(pos),
+                    button,
+                    pressed,
+                    modifiers,
+                },
+                egui::Event::Touch {
+                    device_id,
+                    id,
+                    phase,
+                    pos,
+                    force,
+                } => egui::Event::Touch {
+                    device_id,
+                    id,
+                    phase,
+                    pos: shift(pos),
+                    force,
+                },
+                other => other,
+            }
         }
     }
 
-    /// The hosted app's own busy reasons, on top of the harness's.
-    pub fn with_busy(mut self, busy: impl Fn(&D) -> Option<String> + 'static) -> Self {
-        self.busy = Some(Box::new(busy));
-        self
-    }
-
-    /// The island's window-space bounds: its subtree root's (`None`: not grafted yet).
-    pub fn island_bounds(&self) -> Option<Rect> {
-        self.harness
-            .a11y()
-            .walk()
-            .into_iter()
-            .find(|n| n.tree == self.island && n.parent.is_none_or(|p| p.0 != self.island))
-            .and_then(|n| n.bounds)
-    }
-
-    /// The island's origin in window points.
-    pub fn origin(&self) -> Option<Vec2> {
-        self.island_bounds().map(|b| Vec2::new(b.min.x, b.min.y))
-    }
-
-    fn to_window(&self, e: egui::Event) -> egui::Event {
-        let o = self.origin().unwrap_or(Vec2::ZERO);
-        let shift = |p: egui::Pos2| egui::pos2(p.x + o.x, p.y + o.y);
-        match e {
-            egui::Event::PointerMoved(p) => egui::Event::PointerMoved(shift(p)),
-            egui::Event::PointerButton {
-                pos,
-                button,
-                pressed,
-                modifiers,
-            } => egui::Event::PointerButton {
-                pos: shift(pos),
-                button,
-                pressed,
-                modifiers,
-            },
-            egui::Event::Touch {
-                device_id,
-                id,
-                phase,
-                pos,
-                force,
-            } => egui::Event::Touch {
-                device_id,
-                id,
-                phase,
-                pos: shift(pos),
-                force,
-            },
-            other => other,
+    impl<D: DocumentApi + 'static> Driver for SkelterDriver<D> {
+        fn scene(&self) -> SceneHandle {
+            self.scene.clone()
         }
-    }
-}
 
-impl<D: DocumentApi + 'static> Driver for SkelterDriver<D> {
-    fn scene(&self) -> SceneHandle {
-        self.scene.clone()
-    }
-
-    fn busy(&self) -> Option<String> {
-        self.harness.busy().or_else(|| {
-            self.busy
-                .as_ref()
-                .and_then(|f| f(self.harness.state()))
-        })
-    }
-
-    fn step(&mut self) {
-        self.harness.step();
-    }
-
-    fn send(&mut self, event: egui::Event) {
-        let e = self.to_window(event);
-        self.harness.event(e);
-    }
-
-    fn frame_ms(&self) -> f64 {
-        self.harness.interval().0 as f64 / 1e6
-    }
-
-    fn a11y_nodes(&self) -> Vec<A11yNode> {
-        let o = self.origin().unwrap_or(Vec2::ZERO);
-        let tree = self.harness.a11y();
-        tree.walk()
-            .into_iter()
-            .filter(|n| n.tree == self.island)
-            .filter_map(|n| {
-                let b = n.bounds?;
-                Some(A11yNode {
-                    node: n.id,
-                    tree: n.tree,
-                    role: n.role(),
-                    label: AkNode { info: n, tree }.label(),
-                    author_id: n.author_id().map(str::to_owned),
-                    rect: egui::Rect::from_min_max(
-                        egui::pos2(b.min.x - o.x, b.min.y - o.y),
-                        egui::pos2(b.max.x - o.x, b.max.y - o.y),
-                    ),
-                })
+        fn busy(&self) -> Option<String> {
+            self.harness.busy().or_else(|| {
+                self.busy
+                    .as_ref()
+                    .and_then(|f| f(self.harness.state()))
             })
-            .collect()
-    }
+        }
 
-    fn screenshot(&mut self) -> Option<egui::ColorImage> {
-        let img = self.harness.render().ok()?;
-        let rgba = crate::snapshot::to_rgba_image(&img);
-        let full = egui::ColorImage::from_rgba_unmultiplied(
-            [img.width as usize, img.height as usize],
-            rgba.as_raw(),
-        );
-        Some(match self.island_bounds() {
-            Some(b) => full.region(
-                &egui::Rect::from_min_max(egui::pos2(b.min.x, b.min.y), egui::pos2(b.max.x, b.max.y)),
-                Some(self.harness.scale()),
-            ),
-            None => full,
-        })
-    }
+        fn step(&mut self) {
+            self.harness.step();
+        }
 
-    fn clock_ms(&self) -> Option<f64> {
-        Some(self.harness.now().0 as f64 / 1e6)
+        fn send(&mut self, event: egui::Event) {
+            let e = self.to_window(event);
+            self.harness.event(e);
+        }
+
+        fn frame_ms(&self) -> f64 {
+            self.harness.interval().0 as f64 / 1e6
+        }
+
+        fn a11y_nodes(&self) -> Vec<A11yNode> {
+            let o = self.origin().unwrap_or(Vec2::ZERO);
+            let tree = self.harness.a11y();
+            tree.walk()
+                .into_iter()
+                .filter(|n| n.tree == self.island)
+                .filter_map(|n| {
+                    let b = n.bounds?;
+                    Some(A11yNode {
+                        node: n.id,
+                        tree: n.tree,
+                        role: n.role(),
+                        label: AkNode { info: n, tree }.label(),
+                        author_id: n.author_id().map(str::to_owned),
+                        rect: svelters_automation::Rect::from_min_max(
+                            pos2(b.min.x - o.x, b.min.y - o.y),
+                            pos2(b.max.x - o.x, b.max.y - o.y),
+                        ),
+                    })
+                })
+                .collect()
+        }
+
+        fn screenshot(&mut self) -> Option<egui::ColorImage> {
+            let img = self.harness.render().ok()?;
+            let rgba = crate::snapshot::to_rgba_image(&img);
+            let full = egui::ColorImage::from_rgba_unmultiplied(
+                [img.width as usize, img.height as usize],
+                rgba.as_raw(),
+            );
+            Some(match self.island_bounds() {
+                Some(b) => full.region(
+                    &egui::Rect::from_min_max(egui::pos2(b.min.x, b.min.y), egui::pos2(b.max.x, b.max.y)),
+                    Some(self.harness.scale()),
+                ),
+                None => full,
+            })
+        }
+
+        fn clock_ms(&self) -> Option<f64> {
+            Some(self.harness.now().0 as f64 / 1e6)
+        }
     }
 }
 
@@ -179,8 +191,8 @@ impl<D: DocumentApi + 'static> Driver for SkelterDriver<D> {
 pub type DocFn<D> = Box<dyn for<'a> Fn(&'a D) -> &'a Document>;
 
 /// A `svelters_automation::SourceDriver` for skelter-native UI: a `Session` resolves selectors on the
-/// window's [`SkelterScene`], acts through the harness's input (the session's egui events, already in
-/// window points, go through the egui adapter: skelter's hit testing and dispatch), and counts frames
+/// window's [`SkelterScene`], acts through the harness's input (the session's events, already in
+/// window points, become the platform's input: skelter's hit testing and dispatch), and counts frames
 /// on the harness's virtual clock.
 ///
 /// Node ids in JSON are numbers this driver hands out per node key, in the order it first reports them.
@@ -234,7 +246,7 @@ impl<D: DocumentApi + 'static> SkelterNativeDriver<D> {
 
     fn sigs(&self) -> HashMap<NodeKey, Sig> {
         let s = SkelterScene::new(self.harness.a11y());
-        let bits = |r: egui::Rect| [r.min.x.to_bits(), r.min.y.to_bits(), r.max.x.to_bits(), r.max.y.to_bits()];
+        let bits = |r: svelters_automation::Rect| [r.min.x.to_bits(), r.min.y.to_bits(), r.max.x.to_bits(), r.max.y.to_bits()];
         self.harness
             .a11y()
             .walk()
@@ -251,6 +263,7 @@ impl<D: DocumentApi + 'static> SourceDriver for SkelterNativeDriver<D> {
     type Node = NodeKey;
     type Scene<'s> = SkelterScene<'s>;
     type Observer = NativeObserver;
+    type Filter = ();
 
     fn read<R>(&self, f: impl for<'s> FnOnce(&SkelterScene<'s>) -> R) -> R {
         f(&self.scene())
@@ -272,7 +285,7 @@ impl<D: DocumentApi + 'static> SourceDriver for SkelterNativeDriver<D> {
         self.ids.borrow().keys.get(i).copied()
     }
 
-    fn observe(&self, _filter: ChangeFilter) -> NativeObserver {
+    fn observe(&self, _filter: ()) -> NativeObserver {
         NativeObserver { last: RefCell::new(self.sigs()) }
     }
 
@@ -315,7 +328,7 @@ impl<D: DocumentApi + 'static> SourceDriver for SkelterNativeDriver<D> {
         self.harness.step();
     }
 
-    fn send(&mut self, event: egui::Event) {
+    fn send(&mut self, event: Event) {
         self.harness.event(event);
     }
 
@@ -335,16 +348,16 @@ impl<D: DocumentApi + 'static> SourceDriver for SkelterNativeDriver<D> {
                     role: n.role(),
                     label: AkNode { info: n, tree }.label(),
                     author_id: n.author_id().map(str::to_owned),
-                    rect: egui::Rect::from_min_max(egui::pos2(b.min.x, b.min.y), egui::pos2(b.max.x, b.max.y)),
+                    rect: svelters_automation::Rect::from_min_max(pos2(b.min.x, b.min.y), pos2(b.max.x, b.max.y)),
                 })
             })
             .collect()
     }
 
-    fn screenshot(&mut self) -> Option<egui::ColorImage> {
+    fn screenshot(&mut self) -> Option<Image> {
         let img = self.harness.render().ok()?;
         let rgba = crate::snapshot::to_rgba_image(&img);
-        Some(egui::ColorImage::from_rgba_unmultiplied([img.width as usize, img.height as usize], rgba.as_raw()))
+        Some(Image::from_rgba_unmultiplied([img.width as usize, img.height as usize], rgba.as_raw()))
     }
 
     fn clock_ms(&self) -> Option<f64> {

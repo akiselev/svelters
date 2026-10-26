@@ -15,7 +15,7 @@ use skelter_base::accesskit::{Role, Toggled, TreeId};
 use skelter_core::Document;
 use std::borrow::Cow;
 use std::collections::HashMap;
-use svelters_automation::{Error, SceneSource, SourceRoot};
+use svelters_automation::{Error, SceneSource, SourceRoot, pos2};
 
 /// A skelter window's UI, read by svelters-automation (build it per query: it snapshots the tree).
 pub struct SkelterScene<'a> {
@@ -176,14 +176,14 @@ impl<'a> SceneSource for SkelterScene<'a> {
     fn is_visible(&self, n: NodeKey) -> bool {
         self.info(n).is_some_and(|i| !i.is_hidden() && i.bounds.is_some())
     }
-    fn rect(&self, n: NodeKey) -> Option<egui::Rect> {
+    fn rect(&self, n: NodeKey) -> Option<svelters_automation::Rect> {
         let b = self.info(n)?.bounds?;
-        Some(egui::Rect::from_min_max(egui::pos2(b.min.x, b.min.y), egui::pos2(b.max.x, b.max.y)))
+        Some(svelters_automation::Rect::from_min_max(pos2(b.min.x, b.min.y), pos2(b.max.x, b.max.y)))
     }
     fn anchor(&self, n: NodeKey) -> Option<Cow<'_, str>> {
         self.info(n)?.author_id().map(Cow::Borrowed)
     }
-    fn hit(&self, pos: egui::Pos2) -> Option<NodeKey> {
+    fn hit(&self, pos: svelters_automation::Pos2) -> Option<NodeKey> {
         // The last node in tree order whose box holds `pos` is the topmost.
         self.walk
             .iter()

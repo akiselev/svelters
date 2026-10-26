@@ -83,7 +83,7 @@ pub enum Part {
     /// them and their subtrees).
     Key(String),
     Root(String),
-    Pos(egui::Pos2),
+    Pos(crate::geom::Pos2),
     Nth(i64),
     Css(String),
     /// DZ0: the nodes declared in `file` (matched as a path suffix at a `/`), at `offset` if given.
@@ -178,7 +178,7 @@ fn part(p: &str) -> Result<Part, Error> {
                     .parse::<f32>()
                     .map_err(|_| Error::new("selector.invalid", format!("pos wants numbers: {v}")))
             };
-            Part::Pos(egui::pos2(f(x)?, f(y)?))
+            Part::Pos(crate::geom::pos2(f(x)?, f(y)?))
         }
         "component" => Part::Deferred("component"),
         "source" => source(strip_quotes(v))?,
