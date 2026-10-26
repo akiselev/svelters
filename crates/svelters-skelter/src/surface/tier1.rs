@@ -218,5 +218,38 @@ pub static TREEVIEW: KindSpec = KindSpec {
     native_state: &["current"],
 };
 
+static COMBOBOX_PROPS: &[PropSpec] = &[
+    PropSpec { name: "hint-text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Shown while `selected` is out of range." },
+    PropSpec { name: "max-visible", ty: ValueType::I64, default: DefaultValue::I64(30), nullable: false, change: ChangeClass::Layout, native: false, doc: "Rows shown before the list scrolls (QComboBox `maxVisibleItems`)." },
+    PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The list is open; the user opening or closing it changes it, setting it opens or closes it\n(QComboBox `showPopup`/`hidePopup`)." },
+    PropSpec { name: "options", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: false, doc: "The choices, in order (the popup's rows)." },
+    PropSpec { name: "selected", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Paint, native: true, doc: "Index of the chosen option; picking a row changes it. Out of range shows no text." },
+    PropSpec { name: "wheel", ty: ValueType::Enum(&["off", "hover", "focused"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`." },
+];
+static COMBOBOX_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "activate", args: &[("value", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user picked an option, the same one or not (QComboBox `activated`); carries its index." },
+    SignalSpec { name: "changed", args: &[("selected", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user picked a row; carries its index." },
+    SignalSpec { name: "commit", args: &[("value", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A pick finished the edit (§2.4); carries the index." },
+    SignalSpec { name: "highlight", args: &[("value", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The current row of the open list moved (keyboard or pointer; `highlighted`)." },
+];
+static COMBOBOX_METHODS: &[MethodSpec] = &[
+];
+static COMBOBOX_SLOTS: &[SlotSpec] = &[
+];
+pub static COMBOBOX: KindSpec = KindSpec {
+    name: "ComboBox",
+    tag: Some("combo-box"),
+    extends: Some(&WIDGET),
+    doc: "A drop-down list: shows the selected option, picks one from a popup. Name it with `accessible-name` (it has no caption).",
+    props: COMBOBOX_PROPS,
+    signals: COMBOBOX_SIGNALS,
+    methods: COMBOBOX_METHODS,
+    slots: COMBOBOX_SLOTS,
+    a11y: A11ySpec { role: "ComboBox", name_from: &["accessible-name", "tooltip"], name_required: true },
+    text_content: None,
+    toplevel: false,
+    native_state: &["open", "selected"],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX];

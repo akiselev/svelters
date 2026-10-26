@@ -77,6 +77,26 @@ fn tree_view_is_skelter_widgets_with_eguis_surface() {
 }
 
 #[test]
+fn combo_box_is_skelter_widgets_select_with_eguis_surface() {
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    let m = kinds.by_tag("combo-box").unwrap();
+    assert!(m.hosted);
+    assert_eq!(m.core, Some(skelter_core::KindId::of("select")), "egui's combo-box is skelter-widgets' select");
+    assert!(kinds.by_tag("select").is_none(), "not a tag of its own");
+    let c = r.create("combo-box");
+    r.set(c, "options", Value::List(vec![Value::Str("mm".into()), Value::Str("in".into())]));
+    r.set(c, "selected", Value::I64(1));
+    assert_eq!(r.get(c, "selected"), Value::I64(1));
+    let n = r.backend.node(c).unwrap();
+    assert_eq!(r.backend.with_doc(|d| d.get_prop(n, skelter_core::PropId::of("select", "selected", "int"))), Some(skelter_core::Value::I64(1)));
+    r.listen(c, "changed");
+    r.emit(c, "changed", vec![PValue::I64(0)]);
+    r.backend.pump();
+    assert_eq!(r.take().events, [(c, r.signal_id(c, "changed"), vec![Value::I64(0)])]);
+}
+
+#[test]
 fn collapsing_header_has_eguis_surface() {
     let r = Rig::new();
     let kinds = r.backend.kinds().clone();

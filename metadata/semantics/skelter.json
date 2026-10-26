@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "90ca2bebe9e034ef"
+    "spec_hash": "ad833801ce9c8f3f"
   },
   "inline_text": {
     "kind": "span",
@@ -1168,6 +1168,298 @@
       },
       "text_content": "text",
       "widget": "placeholder"
+    },
+    "ComboBox": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "name_required": true,
+        "role": "ComboBox"
+      },
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <combo-box> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selected": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-skelter: <combo-box> writes selected into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "ComboBox",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A drop-down list: shows the selected option, picks one from a popup. Name it with `accessible-name` (it has no caption).",
+      "fingerprint": "73acce77",
+      "id": 1940704887,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter ComboBox",
+      "native_state": [
+        "open",
+        "selected"
+      ],
+      "present": null,
+      "props": {
+        "hint-text": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Shown while `selected` is out of range.",
+          "fingerprint": "d47f7c84",
+          "id": 3565124740,
+          "js": "hint-text",
+          "native": "hint-text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:hint-text",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "max-visible": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 30,
+          "doc": "Rows shown before the list scrolls (QComboBox `maxVisibleItems`).",
+          "fingerprint": "7b094896",
+          "id": 2064205974,
+          "js": "max-visible",
+          "native": "max-visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:max-visible",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The list is open; the user opening or closing it changes it, setting it opens or closes it\n(QComboBox `showPopup`/`hidePopup`).",
+          "fingerprint": "383ad4b0",
+          "id": 943379632,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ComboBox:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "options": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "The choices, in order (the popup's rows).",
+          "fingerprint": "0288431a",
+          "id": 42484506,
+          "js": "options",
+          "native": "options",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:options",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "selected": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 0,
+          "doc": "Index of the chosen option; picking a row changes it. Out of range shows no text.",
+          "fingerprint": "b99ae61a",
+          "id": 3113936410,
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ComboBox:selected",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "wheel": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "off",
+          "doc": "The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`.",
+          "fingerprint": "a883d220",
+          "id": 2827211296,
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ComboBox:wheel",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "off",
+            "hover",
+            "focused"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked an option, the same one or not (QComboBox `activated`); carries its index.",
+          "fingerprint": "75d76c2f",
+          "handler_result": "none",
+          "id": 1977052207,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked a row; carries its index.",
+          "fingerprint": "c5f8e56a",
+          "handler_result": "none",
+          "id": 3321423210,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A pick finished the edit (§2.4); carries the index.",
+          "fingerprint": "737aaf23",
+          "handler_result": "none",
+          "id": 1937420067,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "highlight": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The current row of the open list moved (keyboard or pointer; `highlighted`).",
+          "fingerprint": "112c314e",
+          "handler_result": "none",
+          "id": 288108878,
+          "js_event": "highlight",
+          "name": "highlight",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
     },
     "Frame": {
       "a11y": {
@@ -8797,6 +9089,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9024,6 +9317,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9139,6 +9433,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9198,6 +9493,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9259,6 +9555,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9298,6 +9595,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9431,6 +9729,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9510,6 +9809,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9584,6 +9884,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9623,6 +9924,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9662,6 +9964,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9701,6 +10004,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9855,6 +10159,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9896,6 +10201,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -9970,6 +10276,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -10055,6 +10362,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -10135,6 +10443,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -10187,6 +10496,7 @@
           "button",
           "checkbox",
           "collapsing-header",
+          "combo-box",
           "frame",
           "grid",
           "hyperlink",
@@ -10342,6 +10652,7 @@
     "checkbox": "Checkbox",
     "code": "Code",
     "collapsing-header": "CollapsingHeader",
+    "combo-box": "ComboBox",
     "frame": "Frame",
     "grid": "Grid",
     "hyperlink": "Hyperlink",

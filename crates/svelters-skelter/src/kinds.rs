@@ -136,6 +136,15 @@ pub const COMMON_ALIASES: &[(&str, &str, bool)] = &[
     ("autofocus", "autofocus", false),
 ];
 
+/// Surface tags whose core kind has another tag (A9): egui's `combo-box` is skelter-widgets'
+/// `select`, its `action` a `menu-item`. CSS type selectors match the core tag.
+pub const CORE_TAGS: &[(&str, &str)] = &[("combo-box", "select"), ("action", "menu-item")];
+
+/// The core kind's tag for surface tag `tag`.
+pub fn core_tag(tag: &str) -> &str {
+    CORE_TAGS.iter().find(|(s, _)| *s == tag).map_or(tag, |(_, c)| c)
+}
+
 /// The kinds skelter-widgets has written, registered through its host bridge.
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
     let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
@@ -144,6 +153,7 @@ fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, Registry
     skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
     skelter_widgets::table::kinds::register(reg)?;
     skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
+    skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
 }
 
@@ -539,7 +549,7 @@ impl Kinds {
         }
         for k in &all {
             if let Some(t) = k.tag
-                && reg.by_name(t).is_none()
+                && reg.by_name(core_tag(t)).is_none()
             {
                 reg.register_with(synthesize(k), placeholder)?;
             }
@@ -547,7 +557,7 @@ impl Kinds {
         let reg = Arc::new(reg);
         let mut list = Vec::new();
         for &k in &all {
-            let core = k.tag.and_then(|t| reg.by_name(t));
+            let core = k.tag.and_then(|t| reg.by_name(core_tag(t)));
             let mut m = Kinds::map(k, core, hosted.iter().any(|h| Some(*h) == core.map(|e| e.id)));
             m.app = m.core.is_some_and(|c| added.contains(&c));
             list.push(m);

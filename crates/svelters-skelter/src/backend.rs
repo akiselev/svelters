@@ -217,7 +217,7 @@ impl SkelterBackend {
             let reg = d.registry();
             for m in kinds.iter() {
                 if let Some(k) = m.core
-                    && reg.get(k).is_none_or(|e| Some(e.spec.name) != m.surface.tag)
+                    && reg.get(k).is_none_or(|e| Some(e.spec.name) != m.surface.tag.map(crate::kinds::core_tag))
                 {
                     return Err(format!("the host document's registry lacks <{}>: build it on svelters_skelter::builtin_kinds().registry()", m.tag()));
                 }
