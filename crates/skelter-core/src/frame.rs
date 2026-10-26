@@ -96,6 +96,18 @@ impl Document {
         let mut runs = RunSink { next: self.run_counter, added: Vec::new() };
         let mut images = std::mem::take(&mut self.images);
         let mut a11y_dirty = Vec::new();
+        // removals first: what left the window freed its property and layer ids, and this frame's
+        // walk may reuse them (a node moved to another parent); a Remove after the re-use's Add
+        // would delete the new node (it then drew in window space, at the origin)
+        {
+            let ws = self.window_mut(window).expect("window");
+            for id in std::mem::take(&mut ws.pending.removed_props) {
+                commit.props.ops.push(PropOp::Remove(id));
+            }
+            for l in std::mem::take(&mut ws.pending.removed_layers) {
+                commit.layers.push(LayerDelta::Remove(l));
+            }
+        }
         self.ensure_root_props(window, &mut commit);
         self.dirty_walk(window, root, &mut commit, &mut runs, &mut images, &mut a11y_dirty, &mut stats);
         self.run_counter = runs.next;
