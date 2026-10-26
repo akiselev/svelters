@@ -13,18 +13,25 @@
 //! registers only under `ext.<its id>.`, and nothing else registers there. That is a namespace rule
 //! with a register-time diagnostic, not a security check.
 //!
-//! Drawing ([`paint`]) follows ICON-STYLE: the box snaps to whole device pixels (Z1), the master is
-//! chosen by the physical size (Z2, [`choose_master`]), and the colours are:
+//! Drawing ([`paint`]) follows ICON-STYLE: the box snaps to whole device pixels (Z1) and the master is
+//! chosen by the physical size (Z2, [`choose_master`]). Above [`VECTOR_THRESHOLD_PX`](super::vector::VECTOR_THRESHOLD_PX) physical
+//! pixels a master that vectorises is drawn as `Prim::Path`s ([`super::vector`]); at or below it,
+//! and for an icon the vector path cannot draw (reported once, [`IconError::Fallback`]), from a raster.
+//! Colours are palette slots the compositor can change at draw time (`PaletteSlot`: 0 is `color`,
+//! 1–3 the slots):
 //! - no slot set: the SVG is rasterised to an `A8` coverage mask (`currentColor` white) and drawn as
-//!   [`Prim::Icon`] tinted by `color` (a glyph tints the same way);
-//! - a slot set (`--icon-subject`, `--icon-accent`, `--icon-badge`): it is rasterised to
-//!   premultiplied RGBA with `color` as the root colour and the slots injected as a usvg style sheet
-//!   on the classes `subject`, `accent` and `badge` (only `color` declarations), and drawn untinted
-//!   (`color: None`), so a warning yellow is not darkened by the text colour.
+//!   [`Prim::Icon`] tinted by `color` from slot 0 (a glyph tints the same way);
+//! - a slot set (`--icon-subject`, `--icon-accent`, `--icon-badge`): one `A8` mask per slot its
+//!   layers use (`vector::slot_masks`), each tinted from its slot, so new colours need no raster; an
+//!   icon that does not vectorise is rasterised to premultiplied RGBA with `color` as the root colour
+//!   and the slots injected as a usvg style sheet on the classes `subject`, `accent` and `badge` (only
+//!   `color` declarations), drawn untinted (`color: None`; those slots are not live).
 //!
 //! Rasters enter the commit through [`Resources::image`](crate::shim::core::Resources::image) under
-//! a key made of the registry key, its registration, the master, the physical size and (with slots)
-//! the colours: one raster per distinct key; the commit builder owns their lifetime.
+//! a key made of the registry key, its registration, the master, the physical size and the mask's
+//! slot (with baked slots, the colours): one raster per distinct key; the commit builder owns their
+//! lifetime. Vector paths enter through [`Resources::path`](crate::shim::core::Resources::path),
+//! keyed by the SVG's content.
 //!
 //! usvg resolves `currentColor` at the element that *declares* the paint, so a classed group whose
 //! stroke is inherited from the root would keep the root's colour. Before rasterising with slots,

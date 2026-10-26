@@ -71,6 +71,7 @@ pub struct PathCache {
     fill: FillTessellator,
     stroke: StrokeTessellator,
     frame: u64,
+    #[cfg_attr(not(test), allow(dead_code))]
     stats: PathCacheStats,
 }
 
@@ -199,14 +200,12 @@ impl PathCache {
     }
 
     /// How many meshes are cached.
+    #[cfg(test)]
     pub fn len(&self) -> usize {
         self.meshes.len()
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.meshes.is_empty()
-    }
-
+    #[cfg(test)]
     pub fn stats(&self) -> PathCacheStats {
         self.stats
     }
