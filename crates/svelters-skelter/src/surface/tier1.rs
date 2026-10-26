@@ -251,5 +251,61 @@ pub static COMBOBOX: KindSpec = KindSpec {
     native_state: &["open", "selected"],
 };
 
+static MENUENTRY_PROPS: &[PropSpec] = &[
+    PropSpec { name: "accessible-name", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "AccessKit name; the label by default." },
+    PropSpec { name: "anchor", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`)." },
+    PropSpec { name: "anchor-scope", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set." },
+    PropSpec { name: "enabled", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Can be picked when true; drawn greyed out otherwise." },
+    PropSpec { name: "source-loc", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set." },
+    PropSpec { name: "tooltip", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Hover text; empty for none." },
+    PropSpec { name: "visible", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shown in its menu when true." },
+];
+static MENUENTRY_SIGNALS: &[SignalSpec] = &[
+];
+static MENUENTRY_METHODS: &[MethodSpec] = &[
+];
+static MENUENTRY_SLOTS: &[SlotSpec] = &[
+];
+pub static MENUENTRY: KindSpec = KindSpec {
+    name: "MenuEntry",
+    tag: None,
+    extends: None,
+    doc: "Common properties of the menu entries (`menu`, `action`, `menu-separator`, `context-menu`): drawn inside a menu, never laid out by taffy.",
+    props: MENUENTRY_PROPS,
+    signals: MENUENTRY_SIGNALS,
+    methods: MENUENTRY_METHODS,
+    slots: MENUENTRY_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
+static CONTEXTMENU_PROPS: &[PropSpec] = &[
+];
+static CONTEXTMENU_SIGNALS: &[SignalSpec] = &[
+];
+static CONTEXTMENU_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "popdown", params: &[], ret: None, doc: "Closes it." },
+    MethodSpec { name: "popup", params: &[], ret: None, doc: "Opens it (a context menu below its owner)." },
+];
+static CONTEXTMENU_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "items", accepts: &["Menu", "Action", "MenuSeparator"], many: true },
+];
+pub static CONTEXTMENU: KindSpec = KindSpec {
+    name: "ContextMenu",
+    tag: Some("context-menu"),
+    extends: Some(&MENUENTRY),
+    doc: "A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn.",
+    props: CONTEXTMENU_PROPS,
+    signals: CONTEXTMENU_SIGNALS,
+    methods: CONTEXTMENU_METHODS,
+    slots: CONTEXTMENU_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &[], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX, &MENUENTRY, &CONTEXTMENU];

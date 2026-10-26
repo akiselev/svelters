@@ -97,6 +97,27 @@ fn combo_box_is_skelter_widgets_select_with_eguis_surface() {
 }
 
 #[test]
+fn context_menu_is_skelter_widgets_with_eguis_surface() {
+    let r = Rig::new();
+    let kinds = r.backend.kinds().clone();
+    let m = kinds.by_tag("context-menu").unwrap();
+    assert!(m.hosted);
+    assert_eq!(m.surface.extends.map(|b| b.name), Some("MenuEntry"));
+    let c = r.create("context-menu");
+    let n = r.backend.node(c).unwrap();
+    // MenuEntry's `enabled` is core's common `disabled`
+    r.set(c, "enabled", Value::Bool(false));
+    assert_eq!(r.get(c, "enabled"), Value::Bool(false));
+    r.set(c, "enabled", Value::Bool(true));
+    // egui's methods open and close it through the core kind's `open`
+    let open = skelter_core::PropId::of("context-menu", "open", "bool");
+    r.call(c, "popup");
+    assert_eq!(r.backend.with_doc(|d| d.get_prop(n, open)), Some(skelter_core::Value::Bool(true)));
+    r.call(c, "popdown");
+    assert_eq!(r.backend.with_doc(|d| d.get_prop(n, open)), Some(skelter_core::Value::Bool(false)));
+}
+
+#[test]
 fn collapsing_header_has_eguis_surface() {
     let r = Rig::new();
     let kinds = r.backend.kinds().clone();

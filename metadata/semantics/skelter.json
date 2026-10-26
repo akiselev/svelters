@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "ad833801ce9c8f3f"
+    "spec_hash": "0c365694cb4055df"
   },
   "inline_text": {
     "kind": "span",
@@ -1461,6 +1461,80 @@
       "text_content": null,
       "widget": "skelter-widgets"
     },
+    "ContextMenu": {
+      "a11y": {
+        "name_from": [],
+        "name_required": false,
+        "role": null
+      },
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "ContextMenu",
+        "MenuEntry"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn.",
+      "fingerprint": "f980c2fa",
+      "id": 4185965306,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it.",
+          "fingerprint": "b5cc39d8",
+          "id": 3050060248,
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (a context menu below its owner).",
+          "fingerprint": "602fa449",
+          "id": 1613734985,
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter ContextMenu",
+      "native_state": [],
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {},
+      "slot_ids": {
+        "items": 2177963758
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "Frame": {
       "a11y": {
         "name_from": [],
@@ -2683,6 +2757,179 @@
       },
       "text_content": "text",
       "widget": "skelter-widgets"
+    },
+    "MenuEntry": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": null
+      },
+      "abstract": true,
+      "bindings": {},
+      "chain": [
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "Common properties of the menu entries (`menu`, `action`, `menu-separator`, `context-menu`): drawn inside a menu, never laid out by taffy.",
+      "fingerprint": "4affd3be",
+      "id": 1258279870,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter MenuEntry",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "accessible-name": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "AccessKit name; the label by default.",
+          "fingerprint": "99ca107e",
+          "id": 2580156542,
+          "js": "accessible-name",
+          "native": "aria-label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:accessible-name",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "anchor": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`).",
+          "fingerprint": "b3bf4c3b",
+          "id": 3015658555,
+          "js": "anchor",
+          "native": "anchor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:anchor",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "anchor-scope": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime on the top nodes of a keyed `{#each}` item (its keys, U+001F-separated): scopes the egui id of an `anchor` inside it. Not for apps to set.",
+          "fingerprint": "8015f00a",
+          "id": 2148921354,
+          "js": "anchor-scope",
+          "native": "anchor-scope",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:anchor-scope",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "enabled": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Can be picked when true; drawn greyed out otherwise.",
+          "fingerprint": "896d9052",
+          "id": 2305658962,
+          "js": "enabled",
+          "native": "disabled",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:enabled",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "source-loc": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Set by the runtime in dev builds: where the node was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set.",
+          "fingerprint": "3f292cc0",
+          "id": 1059663040,
+          "js": "source-loc",
+          "native": "source-loc",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:source-loc",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "tooltip": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "Hover text; empty for none.",
+          "fingerprint": "33b3e953",
+          "id": 867428691,
+          "js": "tooltip",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:tooltip",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "visible": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown in its menu when true.",
+          "fingerprint": "8dadb311",
+          "id": 2376971025,
+          "js": "visible",
+          "native": "hidden",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuEntry:visible",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {},
+      "slot_ids": {},
+      "text_content": null,
+      "widget": null
     },
     "ProgressBar": {
       "a11y": {
@@ -10434,7 +10681,8 @@
       "visible": {
         "change": "layout",
         "kinds": [
-          "Widget"
+          "Widget",
+          "MenuEntry"
         ],
         "native": "visible",
         "prop": "visible",
@@ -10444,6 +10692,7 @@
           "checkbox",
           "collapsing-header",
           "combo-box",
+          "context-menu",
           "frame",
           "grid",
           "hyperlink",
@@ -10653,6 +10902,7 @@
     "code": "Code",
     "collapsing-header": "CollapsingHeader",
     "combo-box": "ComboBox",
+    "context-menu": "ContextMenu",
     "frame": "Frame",
     "grid": "Grid",
     "hyperlink": "Hyperlink",

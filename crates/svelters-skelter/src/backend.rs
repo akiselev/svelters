@@ -767,7 +767,8 @@ impl Backend for SkelterBackend {
         // the core kind's own method: its params type the args where the surface lists none (egui's
         // specs leave generated methods' params out, A9)
         let core_method = km.core.and_then(|k| self.0.kinds.registry().get(k)).and_then(|e| e.spec.methods.iter().find(|x| x.name == m.spec.name));
-        if !args.is_empty() && m.spec.params.is_empty() && core_method.is_none_or(|c| c.params.is_empty()) {
+        let popup = (m.decl.name, m.spec.name) == ("ContextMenu", "popup");
+        if !args.is_empty() && !popup && m.spec.params.is_empty() && core_method.is_none_or(|c| c.params.is_empty()) {
             return Err(format!("{} takes no arguments", m.spec.name));
         }
         match (m.decl.name, m.spec.name) {
@@ -781,6 +782,13 @@ impl Backend for SkelterBackend {
                 }
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
+            // egui's `popup()` / `popdown()` (A9): skelter-widgets' context menu opens on its `open`
+            // prop, at its owner's last context click (a point argument is not taken yet)
+            ("ContextMenu", "popup" | "popdown") => {
+                let (n, _) = self.live(h)?;
+                let open = skelter_core::PropId::of("context-menu", "open", "bool");
+                self.doc_mut().set_prop(n, open, skelter_core::Value::Bool(m.spec.name == "popup")).map_err(|e| format!("<context-menu>.{}(): {e}", m.spec.name))?;
+            }
             (_, "request-focus") => {
                 let (n, _) = self.live(h)?;
                 let mut doc = self.doc_mut();
