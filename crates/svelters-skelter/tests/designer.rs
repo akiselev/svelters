@@ -120,3 +120,39 @@ fn hit_stack_lists_the_nodes_under_a_point_topmost_first() {
     assert_eq!(first.get(1).copied(), root, "then the box it is in");
     assert!(u.r.backend.scene().read(|s| s.hit_stack(u.win, Point::new(-5.0, -5.0)).is_empty()));
 }
+
+/// DZ0 (SV30) on skelter: a preview override holds back the runtime's writes and gives the last one
+/// back when cleared; a layout prop's override restyles; freeing the node drops its overrides.
+#[test]
+fn overrides_preview_a_prop_and_give_the_runtimes_value_back() {
+    let u = ui();
+    let r = &u.r;
+    let label = r.create("label");
+    r.set(label, "text", Value::Str("A".into()));
+    r.backend.set_override(label, "text", &Value::Str("Preview".into())).unwrap();
+    assert_eq!(r.get(label, "text"), Value::Str("Preview".into()));
+    r.set(label, "text", Value::Str("B".into()));
+    assert_eq!(r.get(label, "text"), Value::Str("Preview".into()), "the runtime's write is held back");
+    r.backend.set_override(label, "text", &Value::Str("Again".into())).unwrap();
+    assert_eq!(r.backend.overrides(), [(label, "text")]);
+    assert!(r.backend.clear_override(label, "text").unwrap());
+    assert_eq!(r.get(label, "text"), Value::Str("B".into()), "the runtime's last write");
+    assert!(!r.backend.clear_override(label, "text").unwrap(), "not overridden any more");
+    assert!(r.backend.set_override(label, "no-such-prop", &Value::Null).is_err());
+
+    // a layout prop that is a CSS property restyles the node
+    let card = u.cards[0];
+    let n = r.backend.node(card).unwrap();
+    let width = || r.backend.document().borrow().world_rect(n).unwrap().width();
+    r.backend.set_override(card, "width", &Value::F64(70.0)).unwrap();
+    frame(r, u.win);
+    assert_eq!(width(), 70.0);
+    r.backend.clear_overrides();
+    frame(r, u.win);
+    assert_eq!(width(), 40.0, "the sheet's width again");
+    assert!(r.backend.overrides().is_empty());
+
+    r.backend.set_override(label, "text", &Value::Str("Gone".into())).unwrap();
+    r.br().destroy(label);
+    assert!(r.backend.overrides().is_empty(), "a freed node takes its overrides with it");
+}

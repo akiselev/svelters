@@ -9,6 +9,7 @@
 //! });
 //! let bits = svelters_skelter::style::pseudo_state("hover").unwrap();
 //! backend.force_state(handle, bits)?; // StateBits::NONE clears
+//! backend.set_override(handle, "gap", &Value::F64(12.0))?; // a live preview; clear_override ends it
 //! ```
 //!
 //! Nodes are named by their JS handle (`NodeRef::id`, what [`SkelterBackend::force_state`] takes);
@@ -280,6 +281,62 @@ impl<'a> NodeRef<'a> {
 }
 
 impl SkelterBackend {
+    /// DZ0 (SV30): overrides prop `prop` (by name) of node `h` with `v` until
+    /// [`SkelterBackend::clear_override`], for a designer's live preview while a gesture lasts; the
+    /// runtime's writes meanwhile are held back (the last one is kept and written on clear).
+    /// Overriding again replaces the value. A freed node takes its overrides with it. The write is a
+    /// host write: it announces nothing to `bind:`, so previewing a bound prop never changes app
+    /// state (svelters-egui's `EguiBackend::set_override`).
+    pub fn set_override(&self, h: svl_handle, prop: &str, v: &Value) -> Result<(), String> {
+        let wire = self.prop_wire_named(h, prop)?;
+        let under = match self.0.overrides.borrow_mut().remove(&(h, wire)) {
+            Some(under) => under,
+            None => Backend::get_prop(self, h, wire)?,
+        };
+        let r = self.write_prop_now(h, wire, v);
+        self.0.overrides.borrow_mut().insert((h, wire), under);
+        r?;
+        Backend::request_frame(self);
+        Ok(())
+    }
+
+    /// Ends the override of `prop` on `h`: the node takes the value the runtime last wrote (or had
+    /// before the override). `false` if it was not overridden.
+    pub fn clear_override(&self, h: svl_handle, prop: &str) -> Result<bool, String> {
+        let wire = self.prop_wire_named(h, prop)?;
+        let Some(under) = self.0.overrides.borrow_mut().remove(&(h, wire)) else { return Ok(false) };
+        self.write_prop_now(h, wire, &under)?;
+        Backend::request_frame(self);
+        Ok(true)
+    }
+
+    /// Ends every override (each live node takes its runtime value again).
+    pub fn clear_overrides(&self) {
+        let all: Vec<_> = self.0.overrides.borrow_mut().drain().collect();
+        for ((h, wire), under) in all {
+            let _ = self.write_prop_now(h, wire, &under);
+        }
+        Backend::request_frame(self);
+    }
+
+    /// The live nodes' overridden props, as (node handle, prop name), sorted.
+    pub fn overrides(&self) -> Vec<(svl_handle, &'static str)> {
+        let mut out: Vec<_> = self
+            .0
+            .overrides
+            .borrow()
+            .keys()
+            .filter_map(|&(h, wire)| Some((h, self.kind_map(h).ok()?.prop(wire)?.spec.name)))
+            .collect();
+        out.sort();
+        out
+    }
+
+    fn prop_wire_named(&self, h: svl_handle, prop: &str) -> Result<svelters_abi::svl_id, String> {
+        let (_, km) = self.live(h)?;
+        km.prop_named(prop).map(|p| p.wire).ok_or_else(|| format!("<{}> has no prop {prop}", km.tag()))
+    }
+
     /// The designer's view of the tree (see the module docs).
     pub fn scene(&self) -> Scene {
         Scene { backend: self.clone() }

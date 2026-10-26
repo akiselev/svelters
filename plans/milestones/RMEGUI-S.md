@@ -12,6 +12,8 @@ coordinator (`session_01Kt5cvt9hDGVcXNCATLsKRK`). `origin/master` merged (`029a4
 | 2 | `a9a00584` | svelters-automation: an egui-free core plus feature `egui` (`kittest` and `run` imply it). skelter-test: `automation` is egui-free; `SkelterDriver` needs the new `automation-egui`. |
 | 3 | `7e246372` | `svelters_skelter::designer`: the designer scene API (below); skelter-core `Document::{matched_rules, force_state, forced_state, hit_stack, set_sheet_info}`; `SheetSource` moves to svelters-style. |
 | 4 | `1a5f1cf4` | skelter-compositor: `CompositorHandle::read_window` / `CompositorApi::read_window` (SV58), with a lavapipe test. |
+| fix | `6ef8ce70` | (coordinator, first priority) skelter-widgets: a hovered (or pressed) control claims only pointer events (`shim::Event::is_pointer`), so Tab after a click reaches focus traversal: button, checkbox, hyperlink, icon, image, label, radio, slider, switch, toggle-button, and frame/collapsing's `down_on`. Test: skelter-test `tests/hover_keys.rs` (fails without the fix). Self-contained: cherry-pickable. |
+| preview | see CI | (coordinator) `SkelterBackend::{set_override, clear_override, clear_overrides, overrides}`: the designer's live preview, as svelters-egui's (runtime writes held back, the last one restored; freed nodes drop theirs). Test: svelters-skelter `tests/designer.rs` `overrides_preview_a_prop_and_give_the_runtimes_value_back`. |
 
 ### Step 2 in detail (svelters-automation)
 
@@ -79,35 +81,38 @@ skelter-test's `HeadlessCompositor` keeps the default `None` (tests use `Harness
 3. **Designer** (`cadatomic-ui/src/designer.rs`): use the table above. The changes: `hit_stack` takes the
    `WindowId` and a skelter `Point`; `n.id()` is already the handle; `anchor()` and `source_loc()` return owned values;
    `shown` is `(window, handle)`.
-4. **Screenshots:** `screenshot.window` and tour shots call `CompositorHandle::read_window` (or
+4. **Preview:** `backend.set_override(h, prop, &v)` / `clear_override(h, prop)` as on svelters-egui (`h` is the
+   handle `n.id()` gives).
+5. **Screenshots:** `screenshot.window` and tour shots call `CompositorHandle::read_window` (or
    `app.compositor()?.read_window(w)` through `CompositorApi`). The image is RGBA in device pixels; divide by `scale`
    for points.
 
 ## Tests
 
 Added: svelters-automation `input::tests` (key table, against egui's with `egui`), `image::tests::region_crops_in_pixels`;
-svelters-skelter `tests/designer.rs` (4: by_source and SourceLoc, matched rules with sources and winners, a forced
+svelters-skelter `tests/designer.rs` (5, overrides included: by_source and SourceLoc, matched rules with sources and winners, a forced
 hover restyles and clears, hit_stack order); skelter-compositor `tests/headless.rs`
 `a_drawn_window_reads_back_as_rgba`.
 
 Run locally, filtered, all passed: svelters-automation `--lib`, `--test canvas --test counter --test list_a11y`;
 skelter-test `--test native_session --test scene_source --test automation`; svelters-skelter `--test designer`;
-svelters-egui `--test style_source`; skelter-compositor `--test headless` on lavapipe (installed in the container
+svelters-egui `--test style_source`; skelter-test `--test hover_keys`; skelter-compositor `--test headless` on lavapipe (installed in the container
 for this; `WGPU_BACKEND=vulkan`). `cargo check --all-targets` on skelter-test, svelters-skelter, svelters-automation,
 svelters-egui, skelter-core, svelters-style, skelter, skelter-compositor.
 **Not run locally:** the full workspace, any whole crate suite, clippy, conformance. CI is the gate.
 
 ## Open questions (with a recommendation each)
 
-1. **The designer's preview** (`backend.set_override` / `clear_override`, cadatomic `DesignerSeam::preview`) has no
-   skelter counterpart. It wasn't in the brief. Recommendation: a follow-up in svelters-skelter that writes the
-   override through the same prop path as `set_prop` and restores the app's value on clear. It is small, and
-   cadatomic's panels-ui lane needs it for DZ2's live preview.
+1. ~~The designer's preview~~: done on the coordinator's request (row "preview").
 2. **`hit_stack` and `pointer-events: none`:** skelter's hit list leaves those nodes out, so a designer can't pick
    one by pointing. Recommendation: leave it until a designer needs it; the fix is to record those nodes in the
    frame's list with a "not for input" bit.
 3. **`SourceLoc` is duplicated** in svelters-egui and svelters-skelter (about 50 lines). Recommendation: leave it
    until svelters-egui is retired.
+
+Readback on real devices: only lavapipe was run (here and in CI). macOS Metal and Windows DX12/WARP use the same
+offscreen path (BGRA or RGBA, both converted); the skelter workflow's macOS and Windows jobs run the test only where
+an adapter exists, so a real-device check by cadatomic's viewport-tours lane is advised.
 
 ## CI
 
