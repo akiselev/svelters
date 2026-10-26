@@ -127,6 +127,50 @@ impl LayoutRich for skelter_text::TextSystem {
     }
 }
 
+/// This crate's text style as skelter-text's (what [`LayoutRich`] maps a rich text's base to).
+fn system_style(s: &crate::shim::text::TextStyle) -> skelter_text::TextStyle {
+    skelter_text::TextStyle {
+        family: s.family.to_string(),
+        size: s.size,
+        weight: s.weight,
+        italic: s.italic,
+        line_height: s.line_height.filter(|_| s.size > 0.0).map(|l| l / s.size),
+        letter_spacing: s.letter_spacing,
+        ..skelter_text::TextStyle::default()
+    }
+}
+
+/// The document's text system shared, for one call into a widget, by its shaper and its layout
+/// lender ([`w::LayoutLender`]): each use borrows it for that use only.
+struct SharedText<'t>(std::cell::RefCell<&'t mut skelter_text::TextSystem>);
+
+impl TextShaper for &SharedText<'_> {
+    fn layout(&mut self, t: &RichText, max_width: Option<f32>) -> Arc<TextLayout> {
+        self.0.borrow_mut().layout_rich(t, max_width)
+    }
+}
+
+impl w::LayoutLender for &SharedText<'_> {
+    fn layout(&mut self, text: &str, style: &crate::shim::text::TextStyle, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry> {
+        let mut ts = self.0.borrow_mut();
+        crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: &mut ts, style: system_style(style) }, text, max_width)
+    }
+}
+
+/// The layout lender of an event: the document's text system, through the event context (which
+/// the widget's synchronous signals use too), borrowed per layout.
+struct EventLender<'c, 'e, 'd>(&'c std::cell::RefCell<&'e mut EventCx<'d>>);
+
+impl w::LayoutLender for EventLender<'_, '_, '_> {
+    fn layout(&mut self, text: &str, style: &crate::shim::text::TextStyle, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry> {
+        let mut cx = self.0.borrow_mut();
+        match cx.service::<skelter_text::TextSystem>() {
+            Some(ts) => crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: ts, style: system_style(style) }, text, max_width),
+            None => crate::text::shim::Layouter::layout(&mut *w::layouter(None, style.clone()), text, max_width),
+        }
+    }
+}
+
 /// skelter-text's layout as caret and selection geometry.
 struct SkelterGeometry(Arc<skelter_text::TextLayout>);
 
@@ -605,15 +649,22 @@ impl<W: w::Kind + Default> Hosted<W> {
         let mut state = StateBits(mask.0);
         let before = state;
         let time = cx.time();
+        let has_text = cx.service::<skelter_text::TextSystem>().is_some();
         let (handled, out) = {
+            // the widget's synchronous signals and its text layouts share the context, one use at a time
+            let shared = std::cell::RefCell::new(&mut *cx);
             let mut sync = |sig: w::SignalId, args: &[w::Value]| -> bool {
                 let i = sig.0 as usize;
                 let Some(spec) = ws.signals.get(i) else { return false };
-                cx.emit_sync(s.core.signal_id(i), signal_arg(spec, args)).prevented
+                shared.borrow_mut().emit_sync(s.core.signal_id(i), signal_arg(spec, args)).prevented
             };
+            let mut lender = EventLender(&shared);
             let mut wcx = w::EventCx::new(time, size, &mut state, &policy);
             wcx.focused = mask.contains(StateMask::FOCUSED);
             wcx.sync = Some(&mut sync);
+            if has_text {
+                wcx.layouts = Some(&mut lender);
+            }
             let handled = f(&mut self.widget, &mut wcx);
             let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, .. } = wcx;
             (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on))
@@ -740,9 +791,14 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let emitted: Vec<w::Emitted>;
         let (new, used) = {
-            let mut text = shaper(cx.service::<skelter_text::TextSystem>());
+            let ts = cx.service::<skelter_text::TextSystem>().map(|ts| SharedText(std::cell::RefCell::new(ts)));
+            let (mut shared_text, mut lender) = (ts.as_ref(), ts.as_ref());
+            let mut text: Box<dyn TextShaper + '_> = match shared_text.take() {
+                Some(t) => Box::new(t),
+                None => Box::new(NoText),
+            };
             // the widget's own prepare (layout of what it places or draws itself) runs before the dry recording
-            let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, emitted: Vec::new() };
+            let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, emitted: Vec::new(), layouts: lender.as_mut().map(|l| l as &mut dyn w::LayoutLender) };
             self.widget.prepare(&mut pcx);
             emitted = pcx.emitted;
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };

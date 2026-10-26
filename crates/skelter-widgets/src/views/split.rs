@@ -971,7 +971,7 @@ mod tests {
         // 302 wide, two 1-point sash lines: 100 each
         let mut text = crate::shim::testing::MonoShaper;
         let style = Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true };
-        s.prepare(&mut PrepareCx { size: Size::new(302.0, 50.0), style, text: &mut text, emitted: Vec::new() });
+        s.prepare(&mut PrepareCx { size: Size::new(302.0, 50.0), style, text: &mut text, emitted: Vec::new(), layouts: None });
         assert_eq!(s.laid(), &[100.0, 100.0, 100.0]);
         assert_eq!(s.sash_rects(0).0, Rect::new(100.0, 0.0, 101.0, 50.0));
         // `sizes` become weights: they hold while the room is theirs and scale with it

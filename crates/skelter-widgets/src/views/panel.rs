@@ -390,7 +390,7 @@ mod tests {
         assert_eq!(p.chrome_padding(&mut mcx), Some([1.0, 0.0, 0.0, 0.0]), "a right panel's inner edge is its left");
         let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true };
         let mut text = crate::shim::testing::MonoShaper;
-        p.prepare(&mut PrepareCx { size: Size::new(240.0, 300.0), style, text: &mut text, emitted: Vec::new() });
+        p.prepare(&mut PrepareCx { size: Size::new(240.0, 300.0), style, text: &mut text, emitted: Vec::new(), layouts: None });
         assert_eq!(p.edge_rects().0, Rect::new(0.0, 0.0, 1.0, 300.0));
     }
 }

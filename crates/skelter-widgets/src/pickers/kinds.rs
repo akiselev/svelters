@@ -22,8 +22,9 @@
 //! The colour editor's hex box edits through the text-edit field ([`HexField`]): a press on it gives
 //! it the body's focus and the field takes the keys (hex digits and `#` only); Enter or the focus
 //! leaving applies a valid hex (`changed`, `commit`), an invalid one marks the box `:invalid`, and
-//! Escape drops the edit. Hosted kinds' events have no text system, so the field's caret geometry is
-//! monospace ([`MonoLayouter`]) and the box draws the field's text, not its caret or selection.
+//! Escape drops the edit. The field lays out over the document's text system, lent by the host
+//! ([`w::LayoutLender`]; fixed-advance text without one), and while it edits it records the box's
+//! text with its selection and a caret.
 //!
 //! The open popup is the node's overlay part (`record_overlay`): skelter-core enters it in the
 //! window's overlay stack, draws it in a layer above the content and routes presses inside it to the
@@ -41,7 +42,8 @@ use crate::text::editor::FocusReason as FieldFocus;
 use crate::text::hex::{HexField, HexSignal, color_bytes, color_hex};
 use crate::text::keys::KeyAction;
 use crate::text::policy::{Platform as TextPlatform, TextPolicy};
-use crate::text::shim::MonoLayouter;
+use crate::text::field::FieldColors;
+use crate::text::shim::RecordSink;
 use super::date::{Date, parse_date_prop};
 use super::color_picker::ColorPicker;
 use super::date_picker::{DATE_COMMIT_MODE, DatePicker};
@@ -219,6 +221,28 @@ impl PickerLook {
 
 /// The look for the node's scheme (the built-in VS Code Modern themes; author CSS on the pickers'
 /// drawing waits for skelter-core's computed style per node).
+/// The hex box's text style, as the field lays it out (the font the body draws the box's text in).
+fn hex_style(look: &PickerLook) -> w_text::TextStyle {
+    w_text::TextStyle { family: Arc::from(look.font_family.as_str()), size: look.font_size, ..w_text::TextStyle::default() }
+}
+
+/// A recording's list and resources as the text field's [`RecordSink`].
+struct ListRes<'a> {
+    list: &'a mut DisplayList,
+    res: &'a mut dyn w::Resources,
+}
+
+impl RecordSink for ListRes<'_> {
+    fn push(&mut self, p: skelter_base::display::Prim, ink: Rect) {
+        self.list.push(p, ink);
+    }
+    fn draw_run(&mut self, run: Arc<skelter_base::text::GlyphRun>, origin: Point, color: skelter_base::color::Color) {
+        let ink = Rect::new(origin.x, origin.y - run.ascent, origin.x + run.advance, origin.y + run.descent);
+        let id = self.res.run(&run);
+        self.list.push(skelter_base::display::Prim::Glyphs(skelter_base::display::Glyphs { run: id, origin, color }), ink);
+    }
+}
+
 fn look(dark: bool) -> &'static PickerLook {
     static DARK: OnceLock<PickerLook> = OnceLock::new();
     static LIGHT: OnceLock<PickerLook> = OnceLock::new();
@@ -435,6 +459,7 @@ impl ColorEditorKind {
                 // a press on the box selects the hex: typing replaces it
                 h.field.editor.select_all();
                 self.model.body.hex_text = Some(h.field.text());
+                self.model.body.hex_by_field = true;
                 self.hex = Some(h);
             }
             (Some(h), false) => {
@@ -442,6 +467,7 @@ impl ColorEditorKind {
                 self.hex_applied(cx);
                 self.hex = None;
                 self.model.body.hex_text = None;
+                self.model.body.hex_by_field = false;
             }
             _ => {}
         }
@@ -538,6 +564,27 @@ impl w::Kind for ColorEditorKind {
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
         self.model.record(list, &mut painter, look, on, fv);
+        // the editing hex box: the field's text with its selection, and the caret
+        if let Some(h) = &self.hex {
+            let fg = if on { look.control_fg } else { look.disabled_fg };
+            let colors = FieldColors { text: fg, placeholder: look.muted, selection: look.list_sel, selection_inactive: look.list_sel, preedit_underline: fg };
+            let mut sink = ListRes { list: &mut **list, res: &mut **res };
+            h.field.record(&mut sink, &colors);
+            if let Some(c) = h.field.caret_local() {
+                let c = Rect::new(c.min.x, c.min.y, c.min.x + c.width().max(1.0), c.max.y);
+                tshim::frame(list, c, fg, skelter_base::color::Color::TRANSPARENT, 0.0, 0.0);
+            }
+        }
+    }
+
+    /// Lays the editing hex field out in the box (its caret and selection geometry).
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        let look = look(cx.style.dark);
+        let (Some(h), Some(r)) = (self.hex.as_mut(), self.model.geom(look).hex) else { return };
+        let mut lay = cx.layouter(hex_style(look));
+        let row = lay.layout(" ", None).size().h;
+        let top = r.min.y + (r.height() - row) / 2.0;
+        h.field.prepare(&mut *lay, Rect::new(r.min.x + 4.0, top, r.max.x - 4.0, top + row), skelter_base::geom::Affine::IDENTITY);
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
@@ -554,8 +601,8 @@ impl w::Kind for ColorEditorKind {
         if let (Event::Key(k), Some(h)) = (ev, self.hex.as_mut())
             && on
         {
-            let mut lay = MonoLayouter { advance: look.font_size * 0.6, line_height: look.font_size * 1.3 };
-            let action = h.key(k, cx.now, &mut lay);
+            let now = cx.now;
+            let action = h.key(k, now, &mut *cx.layouter(hex_style(look)));
             self.hex_applied(cx);
             cx.repaint = true;
             return if matches!(action, KeyAction::Ignore) { Handled::No } else { Handled::Yes };
@@ -1329,5 +1376,72 @@ mod tests {
         assert_eq!(k.model.value, "#00ff00");
         k.event(&mut cx, &Event::Focus { gained: false, reason: crate::interact::FocusReason::Program });
         assert!(k.hex.is_none() && k.model.body.hex_text.is_none());
+    }
+
+    #[test]
+    fn the_editing_hex_box_records_its_selection_and_caret_through_the_lent_layouts() {
+        use crate::pickers::test_util::ptr;
+        use crate::shim::testing::{MemResources, MonoShaper};
+        use crate::text::shim::{Layouter, MonoLayouter, TextGeometry};
+        use skelter_base::display::Prim;
+        use skelter_base::event::{KeyEvent, KeyLocation};
+        /// The document's text system as the host lends it: here fixed-advance, counting the layouts.
+        struct Lender(usize);
+        impl w::LayoutLender for Lender {
+            fn layout(&mut self, text: &str, style: &w_text::TextStyle, max_width: Option<f32>) -> Arc<dyn TextGeometry> {
+                self.0 += 1;
+                MonoLayouter { advance: style.size * 0.5, line_height: style.size * 1.25 }.layout(text, max_width)
+            }
+        }
+        let mut k = ColorEditorKind::default();
+        k.set_prop(COLOR_EDITOR.prop("value").unwrap(), &w::Value::str("#ff0000")).unwrap();
+        let lk = look(true);
+        let hex = k.model.geom(lk).hex.expect("a hex box by default");
+        let policy = Policy::default();
+        let mut state = StateBits::FOCUSED;
+        let size = skelter_base::geom::Size::new(300.0, 400.0);
+        let mut lender = Lender(0);
+        let prepare = |k: &mut ColorEditorKind, lender: &mut Lender| {
+            let mut text = MonoShaper;
+            let style = w::Styles { computed: None, parts: &[], children: &[], state: StateBits::FOCUSED, dark: true };
+            w::Kind::prepare(k, &mut PrepareCx { size, style, text: &mut text, emitted: Vec::new(), layouts: Some(lender) });
+        };
+        let record = |k: &ColorEditorKind| {
+            let mut list = DisplayList::new();
+            let mut res = MemResources::default();
+            let mut text = MonoShaper;
+            let style = w::Styles { computed: None, parts: &[], children: &[], state: StateBits::FOCUSED, dark: true };
+            w::Kind::record(k, &mut RecordCx { size, style, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 });
+            list.items.iter().filter_map(|p| match p { Prim::Quad(q) => Some((q.rect, q.fill.clone())), _ => None }).collect::<Vec<_>>()
+        };
+        let solid = |c| skelter_base::color::Fill::Solid(c);
+        let (x, y) = (hex.min.x + 4.0, hex.min.y + 4.0);
+        let mut cx = EventCx::new(Time(1), size, &mut state, &policy);
+        k.event(&mut cx, &Event::Pointer(ptr(PointerPhase::Down, x, y)));
+        k.event(&mut cx, &Event::Pointer(ptr(PointerPhase::Up, x, y)));
+        assert!(k.hex.is_some());
+        prepare(&mut k, &mut lender);
+        assert!(lender.0 > 0, "the field laid out through the lent layouts");
+        // all selected: the selection spans the seven chars at the lender's advance, in the box
+        let quads = record(&k);
+        let sel: Vec<Rect> = quads.iter().filter(|(_, f)| *f == solid(lk.list_sel)).map(|(r, _)| *r).collect();
+        assert_eq!(sel.len(), 1, "one selection rect: {quads:?}");
+        assert!((sel[0].width() - 7.0 * lk.font_size * 0.5).abs() < 0.01);
+        assert_eq!(sel[0].min.x, hex.min.x + 4.0);
+        assert!(hex.contains(sel[0].min) && hex.contains(sel[0].max));
+        // typing replaces the selection: no selection, a caret after the one char
+        let mut cx = EventCx::new(Time(2), size, &mut state, &policy);
+        let mut lent = Lender(0);
+        cx.layouts = Some(&mut lent);
+        let key = Event::Key(KeyEvent { key: Some(Key::A), physical: 0, text: Some("#".into()), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Default::default() });
+        assert_eq!(k.event(&mut cx, &key), Handled::Yes);
+        drop(cx);
+        prepare(&mut k, &mut lender);
+        let quads = record(&k);
+        assert!(quads.iter().all(|(_, f)| *f != solid(lk.list_sel)), "no selection after typing");
+        let fg = solid(lk.control_fg);
+        let caret: Vec<Rect> = quads.iter().filter(|(r, f)| *f == fg && r.width() <= 1.0 && hex.contains(r.min)).map(|(r, _)| *r).collect();
+        assert_eq!(caret.len(), 1, "a caret in the box: {quads:?}");
+        assert!((caret[0].min.x - (hex.min.x + 4.0 + lk.font_size * 0.5)).abs() < 0.01, "after the one char");
     }
 }
