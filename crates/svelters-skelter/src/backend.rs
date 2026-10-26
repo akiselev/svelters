@@ -208,7 +208,9 @@ impl SkelterBackend {
     }
 
     /// [`SkelterBackend::over`] on a document the host keeps a handle to (its own `Rc`), with `kinds`.
-    /// The document's registry must have every concrete kind of `kinds`, under the same tag. The
+    /// The document's registry must have every concrete kind of `kinds`, under the same tag (a host
+    /// with kinds of its own registers the built-ins into its registry with
+    /// [`crate::kinds::register_builtin`], A10). The
     /// backend installs its sync deliverer on it (`Document::set_sync_delivery`): the cancelable
     /// events of the host's dispatches reach JS listeners.
     pub fn shared(kinds: Arc<Kinds>, doc: Rc<RefCell<Document>>) -> StrResult<SkelterBackend> {
@@ -219,7 +221,7 @@ impl SkelterBackend {
                 if let Some(k) = m.core
                     && reg.get(k).is_none_or(|e| Some(e.spec.name) != m.surface.tag.map(crate::kinds::core_tag))
                 {
-                    return Err(format!("the host document's registry lacks <{}>: build it on svelters_skelter::builtin_kinds().registry()", m.tag()));
+                    return Err(format!("the host document's registry lacks <{}>: build it on svelters_skelter::builtin_kinds().registry(), or register them into it with svelters_skelter::kinds::register_builtin", m.tag()));
                 }
             }
         }

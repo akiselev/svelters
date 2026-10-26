@@ -145,6 +145,23 @@ pub fn core_tag(tag: &str) -> &str {
     CORE_TAGS.iter().find(|(s, _)| *s == tag).map_or(tag, |(_, c)| c)
 }
 
+/// A10: registers svelters-skelter's built-in kinds ([`surface::builtin`]: skelter-widgets' where it
+/// has them, placeholders otherwise) into a host's own `reg`, so a host that builds its registry
+/// (its own kinds first) can hand its `Document` to [`crate::SkelterBackend::shared`] with
+/// [`crate::builtin_kinds`]: the kinds, member ids and tags are the same as the built-in registry's.
+/// A host kind with a built-in kind's tag is an error ([`RegistryError::DuplicateKind`]).
+pub fn register_builtin(reg: &mut KindRegistry) -> Result<(), RegistryError> {
+    register_hosted(reg)?;
+    for k in surface::builtin() {
+        if let Some(t) = k.tag
+            && reg.by_name(core_tag(t)).is_none()
+        {
+            reg.register_with(synthesize(k), placeholder)?;
+        }
+    }
+    Ok(())
+}
+
 /// The kinds skelter-widgets has written, registered through its host bridge.
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
     let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
