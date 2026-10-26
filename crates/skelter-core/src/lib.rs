@@ -55,6 +55,7 @@ mod scroll;
 pub mod settle;
 pub mod style;
 pub mod testkinds;
+pub mod tips;
 mod toplayer;
 mod tree;
 pub mod value;

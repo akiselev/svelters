@@ -10,6 +10,11 @@
 //!
 //! The surface goes above its host, centred (`top-center`), flipping below when there is no room
 //! (svelters-egui `widgets/tooltip.rs`); it is a click-through overlay entry.
+//!
+//! [`TitleTooltips`] shows it for the common `title` prop (SV61): skelter-core's
+//! [`TitleTips`](skelter_core::tips::TitleTips) seam reports the hovered host and the input, and each
+//! step runs [`Tooltip::step`] with the document's [`Policy`] as it is then (`host::set_policy`
+//! applies to the next hover), drawing the surface in the window's tooltip layer.
 
 use super::common::ms;
 use super::placement::{AnchorParams, Placed, Placement, place};
@@ -50,6 +55,10 @@ pub struct TooltipWarmth {
 }
 
 impl TooltipWarmth {
+    /// As if a tip hid at `t`.
+    pub fn hidden_at(t: Time) -> TooltipWarmth {
+        TooltipWarmth { last_hidden: Some(t) }
+    }
     /// Another tip hid within `follow_on` of `now`.
     pub fn warm(&self, now: Time, follow_on: Span) -> bool {
         self.last_hidden.is_some_and(|t| now - t <= follow_on)
@@ -127,6 +136,67 @@ impl TooltipTimer {
             }
             _ => None,
         }
+    }
+}
+
+/// One window's `title` tooltip: the hovered host, its timer and the follow-on warmth.
+#[derive(Default)]
+struct WindowTip {
+    host: Option<skelter_base::ids::NodeId>,
+    tip: Tooltip,
+    warmth: TooltipWarmth,
+    /// What the window's tip layer shows: its text and its host's window rect.
+    drawn: Option<(String, Rect)>,
+}
+
+/// The `title` tooltip provider ([`skelter_core::Document::set_title_tips`]); `host::install`
+/// installs it.
+#[derive(Default)]
+pub struct TitleTooltips {
+    windows: std::collections::HashMap<skelter_base::ids::WindowId, WindowTip>,
+}
+
+impl skelter_core::tips::TitleTips for TitleTooltips {
+    fn step(&mut self, doc: &mut skelter_core::Document, window: skelter_base::ids::WindowId, input: &skelter_core::tips::TitleInput, now: Time) -> Option<Time> {
+        // read on use: a policy set since the last step applies now (SV62)
+        let policy = crate::host::policy_of(doc);
+        let w = self.windows.entry(window).or_default();
+        let host = input.host.as_ref().map(|h| h.0);
+        if w.host != host {
+            // the pointer left the old host: its tip hides (and warms the next one)
+            if w.tip.step(TipInput::default(), now, &policy, &mut w.warmth) == Some(Tip::Hide) || w.drawn.is_some() {
+                w.drawn = None;
+                doc.set_window_tip(window, None);
+            }
+            w.tip = Tooltip::default();
+            w.host = host;
+        }
+        let Some((node, text)) = &input.host else { return None };
+        w.tip.props.text = text.to_string();
+        let tin = TipInput { over: true, pressed: input.pressed, scrolled: input.scrolled, escape: input.escape };
+        match w.tip.step(tin, now, &policy, &mut w.warmth) {
+            Some(Tip::Hide) => {
+                w.drawn = None;
+                doc.set_window_tip(window, None);
+            }
+            _ if w.tip.timer.shown() => {
+                let anchor = doc.world_rect(*node).unwrap_or(Rect::ZERO);
+                let key = (w.tip.props.text.clone(), anchor);
+                if w.drawn.as_ref() != Some(&key) {
+                    w.drawn = Some(key);
+                    let root = doc.window_root(window);
+                    let bounds = root.and_then(|r| doc.world_rect(r)).unwrap_or(anchor);
+                    let scale = root.and_then(|r| doc.view(r)).map_or(1.0, |v| v.scale());
+                    let tip = w.tip.clone();
+                    let (size, mut list, runs) = crate::host::record_tooltip(doc, &tip, scale);
+                    let rect = tip.place(anchor, bounds, size).rect;
+                    list.translate(skelter_base::geom::Vec2::new(rect.min.x, rect.min.y));
+                    doc.set_window_tip(window, Some((list, runs)));
+                }
+            }
+            _ => {}
+        }
+        self.windows.get(&window).and_then(|w| w.tip.timer.wake())
     }
 }
 
@@ -323,6 +393,41 @@ mod tests {
         let mut e = Tooltip::default();
         e.step(OVER, ms(0), &pol, &mut warm);
         assert_eq!(e.step(OVER, ms(5000), &pol, &mut warm), None);
+    }
+
+    #[test]
+    fn a_title_shows_its_tooltip_after_the_live_policy_delay() {
+        // SV61 with SV62: hover, then the policy's delay, then the tooltip layer; a new policy
+        // applies to the next hover
+        use crate::testdoc::{W, child, doc, frame, pointer};
+        use skelter_base::event::PointerPhase;
+        let (mut d, root) = doc(Size::new(300.0, 200.0), |_| {});
+        let mut pol = *Native::Gtk.policy();
+        crate::host::install(&mut d, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())), pol, crate::theme::Theme::dark_modern());
+        let host = child(&mut d, root, skelter_core::KindId::of("box"), "position: absolute; left: 100px; top: 100px; width: 40px; height: 20px; background-color: #ff0000");
+        d.set_prop(host, skelter_core::common::TITLE, skelter_core::Value::from("Save all")).unwrap();
+        frame(&mut d);
+        d.dispatch(&pointer(PointerPhase::Move, 110.0, 110.0, ms(0).0, false));
+        assert_eq!(d.next_timer(), Some(ms(500)), "GTK's delay");
+        assert!(frame(&mut d).is_none_or(|c| c.layers.is_empty()) && d.window_tip_layer(W).is_none());
+        d.run_timers(ms(500));
+        frame(&mut d).expect("the tip");
+        assert!(d.window_tip_layer(W).is_some(), "shown after the delay");
+        // away: it hides; past the follow-on window a new policy's delay applies
+        d.dispatch(&pointer(PointerPhase::Move, 10.0, 10.0, ms(600).0, false));
+        frame(&mut d);
+        assert!(d.window_tip_layer(W).is_none());
+        pol.tooltip_delay_ms = 1200;
+        crate::host::set_policy(&mut d, pol);
+        d.dispatch(&pointer(PointerPhase::Move, 110.0, 110.0, ms(5000).0, false));
+        assert_eq!(d.next_timer(), Some(ms(6200)), "the new delay");
+        d.run_timers(ms(6200));
+        frame(&mut d);
+        assert!(d.window_tip_layer(W).is_some());
+        // a press hides it
+        d.dispatch(&pointer(PointerPhase::Down, 110.0, 110.0, ms(6300).0, false));
+        frame(&mut d);
+        assert!(d.window_tip_layer(W).is_none());
     }
 
     #[test]

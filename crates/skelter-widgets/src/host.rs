@@ -423,10 +423,12 @@ fn part_styles<'a>(node: NodeView<'a>, parts: &[&'static str]) -> Vec<(&'static 
 }
 
 /// Installs what the built-in kinds read from `doc`'s services: the text system, the platform policy
-/// (with the document flags it decides, [`set_policy`]) and the theme; and the drag ghost as the
-/// default drag image ([`crate::dnd::ghost::install`]).
+/// (with the document flags it decides, [`set_policy`]) and the theme; the drag ghost as the
+/// default drag image ([`crate::dnd::ghost::install`]); and the `title` tooltip
+/// ([`crate::views::tooltip::TitleTooltips`]).
 pub fn install(doc: &mut skelter_core::Document, text: skelter_text::TextSystem, policy: Policy, theme: crate::theme::Theme) {
     crate::dnd::ghost::install(doc, crate::dnd::ghost::GhostLook::default());
+    doc.set_title_tips(Some(Box::new(crate::views::tooltip::TitleTooltips::default())));
     doc.set_service(text);
     apply_policy(doc, policy);
     doc.set_service(theme);
@@ -459,6 +461,22 @@ fn apply_policy(doc: &mut skelter_core::Document, policy: Policy) {
 pub fn set_theme(doc: &mut skelter_core::Document, theme: crate::theme::Theme) {
     doc.set_service(theme);
     doc.repaint_all();
+}
+
+/// Records `tip` on its own, without a node: its size under the document's theme and text system,
+/// and its display list from the origin with the glyph runs it draws (a run's `Prim::Glyphs` names
+/// it by position plus one).
+pub(crate) fn record_tooltip(doc: &mut skelter_core::Document, tip: &crate::views::tooltip::Tooltip, scale: f32) -> (Size, DisplayList, Vec<Arc<GlyphRun>>) {
+    use crate::shim::core::Kind as _;
+    let theme = doc.service::<crate::theme::Theme>().cloned();
+    let mut text = shaper(doc.service::<skelter_text::TextSystem>());
+    let style = styles(None, &[], &[], StateMask::default(), theme.as_ref());
+    let size = tip.size(&mut *text, &crate::controls::common::host_view(&style, crate::views::tooltip::UA));
+    let (images, paths) = (HashMap::new(), HashMap::new());
+    let mut res = RecordRes { runs: Vec::new(), images: &images, paths: &paths };
+    let mut list = DisplayList::new();
+    tip.record(&mut w::RecordCx { size, style, list: &mut list, text: &mut *text, res: &mut res, scale });
+    (size, list, res.runs)
 }
 
 /// A folding node's run children as `runs` records; empty for other kinds.

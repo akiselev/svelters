@@ -61,7 +61,11 @@ impl Document {
             crate::input::dispatch::queue_emitted(self, e);
         }
         self.input_events.append(&mut out.events);
-        self.input.hover.get(&0).is_some_and(|now| *now != before)
+        let changed = self.input.hover.get(&0).is_some_and(|now| *now != before);
+        if changed {
+            self.step_tip(window, false, false, false);
+        }
+        changed
     }
 
     /// An assistive technology's action: true when the target's kind or a default (focus, blur,

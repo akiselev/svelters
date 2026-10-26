@@ -86,6 +86,9 @@ pub struct Document {
     pub(crate) run_counter: u64,
     pub(crate) images: crate::cx::ImageSink,
     pub(crate) key_hook: Option<crate::input::KeyHook>,
+    /// The `title` tooltip provider, and when each window's tip steps next ([`crate::tips`]).
+    pub(crate) title_tips: Option<Box<dyn crate::tips::TitleTips>>,
+    pub(crate) tip_wakes: HashMap<WindowId, skelter_base::time::Time>,
     pub(crate) services: crate::cx::Services,
     /// Kinds' deadlines (`EventCx::wake_at`).
     pub(crate) timers: HashMap<NodeId, skelter_base::time::Time>,
@@ -163,6 +166,8 @@ impl Document {
             run_counter: 0,
             images: Default::default(),
             key_hook: None,
+            title_tips: None,
+            tip_wakes: HashMap::new(),
             services: Default::default(),
             timers: HashMap::new(),
             virt: HashMap::new(),
@@ -1425,14 +1430,15 @@ impl Document {
         }
     }
 
-    /// The earliest kind deadline (the platform's `set_timer`).
+    /// The earliest kind deadline or tooltip wake-up (the platform's `set_timer`).
     pub fn next_timer(&self) -> Option<skelter_base::time::Time> {
-        self.timers.values().min().copied()
+        self.timers.values().min().copied().into_iter().chain(self.next_tip_wake()).min()
     }
 
     /// Delivers [`Event::Timer`](crate::Event::Timer) to every node whose deadline is at or before
     /// `now`, as one transaction; returns the JS events their kinds emitted.
     pub fn run_timers(&mut self, now: skelter_base::time::Time) -> Vec<crate::input::JsEvent> {
+        self.run_tip_wakes(now);
         let mut due: Vec<(skelter_base::time::Time, NodeId)> = self.timers.iter().filter(|&(_, &t)| t <= now).map(|(&n, &t)| (t, n)).collect();
         if due.is_empty() {
             return Vec::new();

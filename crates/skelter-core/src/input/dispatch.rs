@@ -251,6 +251,16 @@ impl Document {
         for e in emitted {
             queue_emitted(self, e);
         }
+        // the `title` tooltip follows hover, presses, scrolls and Escape (SV61)
+        let tip = match &ev.event {
+            InputEvent::Pointer(p) => Some((p.phase == PointerPhase::Down, false, false)),
+            InputEvent::Wheel(_) => Some((false, true, false)),
+            InputEvent::Key(k) => (k.state == KeyState::Pressed && k.key == Some(Key::Escape)).then_some((false, false, true)),
+            _ => None,
+        };
+        if let Some((pressed, scrolled, escape)) = tip {
+            self.step_tip(ev.window, pressed, scrolled, escape);
+        }
         let mut events = std::mem::take(&mut self.input_events);
         events.append(&mut out.events);
         out.events = events;

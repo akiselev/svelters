@@ -7,7 +7,7 @@ use crate::cx::Emitted;
 use crate::document::Document;
 use crate::kind::{DragPreview, FocusReason};
 use crate::overlay::{Closed, DismissReason, Hit, OverlayId, OverlayPart, OverlaySpec, OverlayStack};
-use crate::record::{app_overlay_key, drag_key, overlay_key};
+use crate::record::{app_overlay_key, drag_key, overlay_key, tip_key};
 use crate::window::{DragLayer, OverlayNode};
 use skelter_base::commit::Commit;
 use skelter_base::display::Prim;
@@ -25,6 +25,22 @@ pub(crate) const OVERLAY_Z: i32 = 1 << 20;
 pub(crate) const APP_OVERLAY_Z: i32 = OVERLAY_Z - 1;
 /// The drag layer's z: above every overlay.
 pub(crate) const DRAG_Z: i32 = i32::MAX;
+/// The `title` tooltip's z: above the overlay stack, below the drag image.
+pub(crate) const TIP_Z: i32 = DRAG_Z - 1;
+
+/// A document-owned list layer of a window: the app's overlay or the `title` tooltip.
+#[derive(Clone, Copy)]
+pub(crate) enum ListLayer {
+    App,
+    Tip,
+}
+
+fn slot(ws: &mut crate::window::WindowState, which: ListLayer) -> &mut crate::window::AppOverlay {
+    match which {
+        ListLayer::App => &mut ws.app_overlay,
+        ListLayer::Tip => &mut ws.tip,
+    }
+}
 
 /// An overlay part the rebuild walk found drawn: its node, the node's window transform and transform
 /// node, and the part.
@@ -260,16 +276,19 @@ impl Document {
         self.window(window)?.app_overlay.layer
     }
 
-    /// Sends `window`'s app overlay list when it changed.
-    pub(crate) fn sync_app_overlay(&mut self, window: WindowId, commit: &mut Commit) {
+    /// Sends `window`'s app overlay or tooltip list when it changed.
+    pub(crate) fn sync_list_layer(&mut self, window: WindowId, which: ListLayer, commit: &mut Commit) {
         let Some(ws) = self.window(window) else { return };
         let (Some(root_t), Some(root_layer)) = (ws.root_transform, ws.root_layer) else { return };
-        let Some(pending) = self.window_mut(window).and_then(|w| w.app_overlay.pending.take()) else { return };
-        let key = app_overlay_key(window);
+        let (key, z) = match which {
+            ListLayer::App => (app_overlay_key(window), APP_OVERLAY_Z),
+            ListLayer::Tip => (tip_key(window), TIP_Z),
+        };
+        let Some(pending) = self.window_mut(window).and_then(|w| slot(w, which).pending.take()) else { return };
         let ws = self.window_mut(window).expect("window");
-        commit.dropped_runs.extend(std::mem::take(&mut ws.app_overlay.runs));
+        commit.dropped_runs.extend(std::mem::take(&mut slot(ws, which).runs));
         let Some((mut list, runs)) = pending else {
-            if let Some(l) = ws.app_overlay.layer.take() {
+            if let Some(l) = slot(ws, which).layer.take() {
                 commit.layers.push(LayerDelta::Remove(l));
                 commit.removed.push(key);
                 ws.layer_ids.free(l.0);
@@ -293,15 +312,15 @@ impl Document {
             }
         }
         let ws = self.window_mut(window).expect("window");
-        ws.app_overlay.runs = ids;
+        slot(ws, which).runs = ids;
         let bounds = list.bounds;
         commit.lists.push((key, Arc::new(list)));
-        let (layer, new) = match ws.app_overlay.layer {
+        let (layer, new) = match slot(ws, which).layer {
             Some(l) => (l, false),
             None => (LayerId(ws.layer_ids.alloc()), true),
         };
-        ws.app_overlay.layer = Some(layer);
-        let desc = LayerDesc { id: layer, parent: Some(root_layer), kind: LayerKind::Overlay, transform: root_t, clip: None, effect: None, z: APP_OVERLAY_Z, bounds, opaque: false };
+        slot(ws, which).layer = Some(layer);
+        let desc = LayerDesc { id: layer, parent: Some(root_layer), kind: LayerKind::Overlay, transform: root_t, clip: None, effect: None, z, bounds, opaque: false };
         commit.layers.push(if new { LayerDelta::Add(desc) } else { LayerDelta::Update(desc) });
         if new {
             commit.layers.push(LayerDelta::Items { layer, items: vec![ItemRef { node: key, transform: root_t, clip: None, effect: None }] });
