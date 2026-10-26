@@ -144,6 +144,11 @@ impl<S> IslandDoc<S> {
         self.repaint.due.store(true, Ordering::Release);
     }
 
+    /// kittest's settle rule: the last pass requested no immediate repaint and nothing is due.
+    fn settled(&self, now: Time) -> bool {
+        !self.due() && !self.host_dirty && !self.island.needs_pass(now)
+    }
+
     fn due(&self) -> bool {
         self.repaint.due.load(Ordering::Acquire)
     }
@@ -392,34 +397,6 @@ impl<S: 'static> DerefMut for EguiHarness<S> {
 }
 
 impl<S: 'static> EguiHarness<S> {
-    /// One step with at least one egui pass (kittest's `step`).
-    #[track_caller]
-    pub fn step(&mut self) {
-        self.inner.state().request_pass();
-        self.inner.step();
-    }
-    /// kittest's `run`: at least one pass, then until settled.
-    #[track_caller]
-    pub fn run(&mut self) -> u64 {
-        self.inner.state().request_pass();
-        self.inner.run()
-    }
-    #[track_caller]
-    pub fn run_ok(&mut self) -> Option<u64> {
-        self.inner.state().request_pass();
-        self.inner.run_ok()
-    }
-    #[track_caller]
-    pub fn try_run(&mut self) -> Result<u64, crate::harness::NotSettled> {
-        self.inner.state().request_pass();
-        self.inner.try_run()
-    }
-    #[track_caller]
-    pub fn run_steps(&mut self, n: usize) {
-        for _ in 0..n {
-            self.step();
-        }
-    }
     #[track_caller]
     pub fn new_ui_state(app: impl FnMut(&mut egui::Ui, &mut S) + 'static, state: S) -> Self {
         EguiHarnessBuilder::default().build_ui_state(app, state)
@@ -487,6 +464,7 @@ pub struct EguiHarnessBuilder {
     context_setup: Option<Box<dyn FnOnce(&egui::Context)>>,
     renderer_setup: Option<RendererSetup>,
     renderer: egui_wgpu::RendererOptions,
+    pass_every_step: bool,
 }
 
 impl Default for EguiHarnessBuilder {
@@ -498,6 +476,7 @@ impl Default for EguiHarnessBuilder {
             renderer_setup: None,
             // kittest's: no dithering, so snapshots are stable
             renderer: egui_wgpu::RendererOptions::PREDICTABLE,
+            pass_every_step: true,
         }
     }
 }
@@ -559,6 +538,13 @@ impl EguiHarnessBuilder {
         self.renderer_setup = Some(Box::new(setup));
         self
     }
+    /// kittest parity (default on): every step runs one island pass whether or not the island is due,
+    /// and `run` settles when the last pass requested no repaint and no input is queued. Off: the
+    /// island passes only when due and `run` settles when nothing needs a frame (skelter's own rule).
+    pub fn with_pass_every_step(mut self, on: bool) -> Self {
+        self.pass_every_step = on;
+        self
+    }
     /// The island's egui-wgpu renderer options (default `PREDICTABLE`, as kittest).
     pub fn with_renderer_options(mut self, options: egui_wgpu::RendererOptions) -> Self {
         self.renderer = options;
@@ -606,6 +592,7 @@ impl EguiHarnessBuilder {
             context_setup,
             renderer_setup,
             renderer,
+            pass_every_step,
         } = self;
         let gpu = renderer_setup.is_some().then(|| {
             GpuRender::new(base.default_glyphs())
@@ -635,6 +622,8 @@ impl EguiHarnessBuilder {
                 d.clipboard.set_text(ClipboardKind::Clipboard, text);
             })),
             textures: Some(Box::new(|d: &mut IslandDoc<S>, g: &mut GpuRender| render_island(d, g))),
+            before_step: pass_every_step.then(|| Box::new(|d: &mut IslandDoc<S>| d.request_pass()) as Box<dyn FnMut(&mut IslandDoc<S>)>),
+            settled: pass_every_step.then(|| Box::new(|d: &IslandDoc<S>, now: Time| d.settled(now)) as Box<dyn Fn(&IslandDoc<S>, Time) -> bool>),
         };
         let mut inner = base.build_with(make_doc, hooks, gpu);
         let waker = inner.platform_mut().cx().waker();

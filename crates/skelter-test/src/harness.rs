@@ -62,6 +62,11 @@ pub(crate) struct Hooks<D> {
     pub clipboard: Option<Box<dyn FnMut(&mut D, &str)>>,
     /// Before `render`: draw the document's own textures (an island's) on the harness's device.
     pub textures: Option<Box<dyn FnMut(&mut D, &mut GpuRender)>>,
+    /// At the start of each step (an egui island's parity mode: one pass per step, as kittest).
+    pub before_step: Option<Box<dyn FnMut(&mut D)>>,
+    /// Replaces the settle rule after queued input (kittest's: the last pass requested no repaint);
+    /// commits in flight then don't count, and `render` applies them first.
+    pub settled: Option<Box<dyn Fn(&D, Time) -> bool>>,
 }
 
 impl<D> Default for Hooks<D> {
@@ -69,6 +74,8 @@ impl<D> Default for Hooks<D> {
         Hooks {
             clipboard: None,
             textures: None,
+            before_step: None,
+            settled: None,
         }
     }
 }
@@ -406,6 +413,9 @@ impl<D: DocumentApi + 'static> Harness<D> {
     /// One vsync on the virtual clock.
     #[track_caller]
     pub fn step(&mut self) {
+        if let Some(f) = &mut self.hooks.before_step {
+            f(self.app.doc_mut());
+        }
         self.deliver();
         // The test may have changed the document's state between steps (`state_mut`): it gets its frame.
         self.app.request_dirty_frames();
@@ -488,6 +498,13 @@ impl<D: DocumentApi + 'static> Harness<D> {
             };
             self.gpu = Some(GpuRender::new(glyphs)?);
         }
+        if self.hooks.settled.is_some() {
+            // the last step's commit is still in flight under the parity rule: apply it
+            let now = self.now();
+            self.compositor.vsync(now, self.interval);
+            self.platform.run_until(&mut self.app, Some(now));
+            self.collect_calls();
+        }
         let gpu = self.gpu.as_mut().expect("opened above");
         if let Some(f) = &mut self.hooks.textures {
             f(self.app.doc_mut(), gpu);
@@ -507,6 +524,9 @@ impl<D: DocumentApi + 'static> Harness<D> {
         }
         if !self.queue.borrow().is_empty() {
             return Some("queued input".into());
+        }
+        if let Some(settled) = &self.hooks.settled {
+            return (!settled(self.app.doc(), self.now())).then(|| "the last pass requested a repaint".into());
         }
         if !self.app.is_idle() {
             return Some("the app has a frame to run".into());

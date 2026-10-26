@@ -1,7 +1,7 @@
 //! `EguiHarness`: egui closures in a skelter egui island, driven with kittest's verbs through skelter's
 //! input path. No GPU: passes, input and AccessKit work without a device.
 
-use skelter_test::{EguiHarness, Harness, Role};
+use skelter_test::{EguiHarness, Role};
 use skelter_base::accesskit::TreeId;
 
 #[derive(Default)]
@@ -93,13 +93,15 @@ fn modifier_clicks_and_hover_take_egui_types() {
 
 #[test]
 fn an_idle_island_runs_no_passes() {
-    let mut h = harness();
+    // skelter's own rule (`with_pass_every_step(false)`): an idle island is not due
+    let mut h = EguiHarness::builder().with_size(egui::vec2(400.0, 300.0)).with_pass_every_step(false).build_ui_state(ui, S::default());
     assert_eq!(h.busy(), None);
     let before = h.doc().passes();
-    // skelter's own steps: an idle island is not due
-    Harness::run_steps(&mut h, 5);
+    h.run_steps(5);
     assert_eq!(h.doc().passes(), before);
-    // kittest's steps run one pass each (A5)
+    // kittest parity (the default): one pass per step
+    let mut h = harness();
+    let before = h.doc().passes();
     h.run_steps(5);
     assert_eq!(h.doc().passes(), before + 5);
 }
@@ -137,7 +139,8 @@ fn a_repaint_requested_from_another_thread_shows_after_one_run() {
     use std::sync::{Arc, Mutex};
     let inbox: Arc<Mutex<Option<String>>> = Arc::default();
     let shown = inbox.clone();
-    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build_ui(move |ui| {
+    // skelter's own rule, so only the repaint callback can make the island due
+    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).with_pass_every_step(false).build_ui(move |ui| {
         let text = shown.lock().unwrap().clone().unwrap_or_else(|| "waiting".into());
         ui.label(text);
     });
@@ -150,9 +153,8 @@ fn a_repaint_requested_from_another_thread_shows_after_one_run() {
     })
     .join()
     .unwrap();
-    // the plain skelter run (no forced pass): the repaint callback made the island due
     let before = h.doc().passes();
-    Harness::run(&mut h);
+    h.run();
     assert!(h.doc().passes() > before, "the out-of-pass repaint ran a pass");
     assert!(h.query_by_label("job done").is_some());
 }
@@ -180,4 +182,22 @@ fn the_build_skips_the_check_when_told() {
     EguiHarness::builder().with_accessibility_check(false).build_ui(|ui| {
         ui.add(egui::TextEdit::singleline(&mut String::new()));
     });
+}
+
+#[test]
+fn state_changed_through_a_shared_handle_shows_after_run() {
+    use std::cell::Cell;
+    use std::rc::Rc;
+    let count = Rc::new(Cell::new(0));
+    let read = count.clone();
+    let mut h = EguiHarness::builder().with_size(egui::vec2(200.0, 100.0)).build_ui(move |ui| {
+        ui.label(format!("Count: {}", read.get()));
+    });
+    assert!(h.query_by_label("Count: 0").is_some());
+    // no input, no repaint request: kittest's parity pass still reads the new state
+    count.set(7);
+    h.run();
+    assert!(h.query_by_label("Count: 7").is_some());
+    // settled although the island requested nothing: run returns after its step
+    assert_eq!(h.busy(), None);
 }
