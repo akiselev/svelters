@@ -337,4 +337,24 @@ fn in_flow_nodes_created_after_the_first_frame_draw_where_they_are_laid_out() {
     let new = three_boxes(&mut d, root, Some(below[0]));
     settle(&mut d, &mut seen);
     assert_each_in_place(&d, &seen, &[new, below].concat(), "block swapped in one frame");
+    // 6. a dock that fills the window (percent and flex sizes) through resizes, with a pane built
+    // after the first frame
+    let (mut d, root) = doc();
+    d.set_style(root, StyleInput { inline: Some("flex-direction: column".into()), ..Default::default() });
+    let _bar = three_boxes(&mut d, root, None);
+    let dock = child(&mut d, root, BOX, "flex-direction: row; flex-grow: 1; background-color: #111111");
+    let side = child(&mut d, dock, BOX, "width: 30%; background-color: #333333");
+    let group = child(&mut d, dock, BOX, "position: relative; flex-grow: 1; padding: 4px; background-color: #222222");
+    let mut seen = Painted::default();
+    settle(&mut d, &mut seen);
+    let pane = three_boxes(&mut d, group, None);
+    let floating = child(&mut d, group, BOX, "position: absolute; right: 5px; bottom: 5px; width: 20px; height: 20px; background-color: #00ffff");
+    let nodes = [&[dock, side, group, floating][..], &pane].concat();
+    settle(&mut d, &mut seen);
+    assert_each_in_place(&d, &seen, &nodes, "dock before a resize");
+    for (w, h) in [(400.0, 300.0), (150.0, 80.0), (640.0, 480.0)] {
+        d.resize_window(W, skelter_base::geom::Size::new(w, h), skelter_base::geom::Scale(1.0));
+        settle(&mut d, &mut seen);
+        assert_each_in_place(&d, &seen, &nodes, &format!("dock after a resize to {w}x{h}"));
+    }
 }

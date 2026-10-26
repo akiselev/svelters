@@ -359,4 +359,34 @@ mod external_layer {
         assert_eq!(a.layers.len(), 1, "{:?}", a.layers);
         assert_eq!(a.order(), [n(below), n(lifted), n(inside), n(above)]);
     }
+
+    /// A28: a window overlay made of nodes: an absolute child of the root with the highest z-index
+    /// paints above every content layer (an external layer, a will-change layer, content added
+    /// later), wherever it sits in tree order, and keeps its anchor for queries and AccessKit.
+    #[test]
+    fn a_top_z_index_root_child_is_a_window_overlay_that_keeps_its_anchor() {
+        let (mut d, root) = vdoc();
+        let red = "background-color: #ff0000; width: 80px; height: 20px";
+        let grip = child(&mut d, root, BOX, "position: absolute; z-index: 1000; left: 10px; top: 10px; width: 6px; height: 6px; background-color: #0000ff");
+        d.set_prop(grip, crate::common::ANCHOR, Value::from("designer.grip")).unwrap();
+        let below = child(&mut d, root, BOX, red);
+        let view = child(&mut d, root, VIEWPORT, "background-color: #00ff00; width: 80px; height: 40px");
+        let lifted = child(&mut d, root, BOX, "will-change: transform; background-color: #00ff00; width: 80px; height: 20px");
+        let mut a = Applied::default();
+        let c = frame(&mut d).unwrap();
+        a.apply(&c);
+        let n = |id: NodeId| format!("node {}", id.0);
+        assert_eq!(a.order(), [n(below), n(view), "texture 7".into(), n(lifted), n(grip)]);
+        assert_eq!(d.find_anchor(W, "designer.grip"), Some(grip));
+        let ax = c.a11y.expect("the first frame's tree");
+        let node = ax.nodes.iter().find(|(id, _)| id.0 == grip.0).map(|(_, n)| n).expect("the grip's AccessKit node");
+        assert_eq!(node.author_id(), Some("designer.grip"));
+        assert_eq!(d.hit_test(W, Point::new(12.0, 12.0)), Some(grip), "it takes input above the content it covers");
+        // content added later still paints below it
+        let late = child(&mut d, root, BOX, red);
+        while let Some(c) = frame(&mut d) {
+            a.apply(&c);
+        }
+        assert_eq!(a.order().last(), Some(&n(grip)), "{:?} (late: {})", a.order(), n(late));
+    }
 }
