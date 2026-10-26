@@ -16,9 +16,14 @@
 //!   IME and presses in the cell, and Enter, Tab/Shift+Tab (moving to the next or previous editable
 //!   cell) or focus leaving commit (`commit(row, column, value)`; the window shows the value until
 //!   JS answers) while Escape reverts. The caret goes out through core's fast channel.
-//! - Scrolling: until the views lane's scroll layer hosts the table, the kind keeps the body's offset
-//!   itself (the wheel scrolls it, clamped; keyboard moves and `scroll-to-row` reveal rows), with no
-//!   scroll bars or fling.
+//! - Scrolling: the body's offset is a views [`Scroller`]'s: its bars (`::part(thumb-x)`,
+//!   `::part(thumb-y)`, and for classic bars `::part(scrollbar-x)`, `::part(scrollbar-y)`,
+//!   `::part(corner)`, the scroll-area's parts and UA tables) sit over the body's right and bottom
+//!   edges, with thumb drags, track pages (held: repeated) and overlay fading per the platform
+//!   policy; the wheel, keyboard moves and `scroll-to-row` move the same offset, and each move emits
+//!   the common `scroll` event. The offset stays the kind's and a scroll re-records the table: the
+//!   frozen header and sticky columns would move with a `self_scroll` list (core's scroll-offset
+//!   fast path wants a fixed list beside the scrolled one first).
 //!
 //! - The model's `range` (and a restored `header-state`'s events) come out of `prepare` and are
 //!   emitted from there (`PrepareCx::emit`); a user resize writes the `table-column`'s `width` back
@@ -36,7 +41,13 @@ use crate::theme::Theme;
 use skelter_base::accesskit::Role;
 use skelter_base::change::ChangeClass;
 use skelter_base::event::{KeyState, Modifiers, PointerEvent, PointerPhase, PointerType, ScrollDelta};
+use crate::interact::{Policy, Scrollbars, StateBits};
+use crate::paint::PaintCx;
+use crate::shim::core::Styles;
+use crate::table::text_painter::{CollectRes, NoShaper};
 use crate::text::cell::CellEditor;
+use crate::views::scroll::Scroller;
+use skelter_base::display::DisplayList;
 use crate::text::field::{FieldColors, FieldPointer};
 use crate::text::geometry::SystemLayouter;
 use crate::text::kind::text_style;
@@ -103,6 +114,12 @@ static TABLE_METHODS: &[MethodSpec] = &[
     MethodSpec::new("fit-columns", &[ArgSpec { name: "column", ty: ValueType::I64, nullable: true }], None).doc("Fits one column (child index) or every one to its contents."),
 ];
 
+/// The scroll bars' paint parts (the scroll-area's).
+const BAR_PARTS: &[&str] = &["thumb-x", "thumb-y", "scrollbar-x", "scrollbar-y", "corner"];
+/// The bars' thickness and their shortest thumb (points).
+const BAR_WIDTH: f32 = 10.0;
+const MIN_THUMB: f32 = 20.0;
+
 /// `table`: a virtual table over its `table-column` children.
 pub static TABLE: KindSpec = KindSpec {
     props: TABLE_PROPS,
@@ -112,6 +129,7 @@ pub static TABLE: KindSpec = KindSpec {
     focusable: true,
     container: true,
     folds_children: true,
+    parts: BAR_PARTS,
     doc: "A virtual table: rows are a JS data window (`range` → `set-rows`), columns its `table-column` children.",
     ..KindSpec::new("table")
 };
@@ -255,6 +273,12 @@ pub struct TableKind {
     now: Time,
     /// The cell being edited.
     edit: Option<Edit>,
+    /// The body's scroll offset, geometry and bars.
+    scroller: Scroller,
+    /// The platform policy (bars, track clicks), from the document's service.
+    policy: Policy,
+    /// The theme is dark (the bars' UA colours).
+    dark: bool,
 }
 
 /// A cell edit: the cell (row position, data column), its rect (from the last prepare) and the
@@ -325,11 +349,80 @@ impl TableKind {
             self.clamp_off();
             self.table.set_viewport(self.size, self.off);
         }
-        if let Some(t) = self.table.next_wakeup(self.now) {
+        // the soonest of the model's timers, a held track press and the overlay bars' fade
+        let wake = [self.table.next_wakeup(self.now), self.scroller.hold_wake(), self.scroller.bar_wake(self.now, &self.policy)].into_iter().flatten().min();
+        if let Some(t) = wake {
             cx.wake_at(t);
         }
         cx.set_cursor(self.table.cursor_icon());
         cx.request_paint();
+    }
+
+    /// The offset moved (the bars or the wheel): the model follows, the bars show, and the common
+    /// `scroll` event goes out.
+    fn scrolled(&mut self, cx: &mut EventCx) {
+        self.off = self.scroller.offset();
+        self.clamp_off();
+        self.table.set_viewport(self.size, self.off);
+        self.scroller.touch(self.now);
+        let rec: Vec<(Arc<str>, Value)> = vec![("scrollLeft".into(), Value::F64(self.off.x as f64)), ("scrollTop".into(), Value::F64(self.off.y as f64))];
+        cx.emit(skelter_core::common::SCROLL, Some(Value::Record(rec.into())));
+        cx.request_paint();
+    }
+
+    /// Pointer events over the bars (a thumb drag, a track press and its hold): `Some` when they
+    /// took the event.
+    fn bar_event(&mut self, cx: &mut EventCx, ev: &Event) -> Option<Handled> {
+        let (phase, p) = match ev {
+            Event::PointerDown(p) => (PointerPhase::Down, Some(p)),
+            Event::PointerMove(p) => (PointerPhase::Move, Some(p)),
+            Event::PointerUp(p) => (PointerPhase::Up, Some(p)),
+            Event::PointerCancel => (PointerPhase::Cancel, None),
+            Event::HoverLeave => (PointerPhase::Leave, None),
+            _ => return None,
+        };
+        let pos = p.map_or(Point::new(-1.0, -1.0), |p| p.local);
+        let primary = p.is_some_and(|p| p.button == Some(skelter_base::event::MouseButton::Primary) || (phase != PointerPhase::Down && p.buttons & 1 != 0));
+        let shift = p.is_some_and(|p| p.modifiers.contains(Modifiers::SHIFT));
+        let hovered = self.scroller.hovered();
+        let (ours, moved) = self.scroller.pointer(self.now, &self.policy, phase, primary, pos, shift);
+        if moved {
+            self.scrolled(cx);
+        }
+        if hovered != self.scroller.hovered() || ours {
+            cx.request_paint();
+        }
+        // the table sees the hover end and the cancel too
+        if !ours || matches!(phase, PointerPhase::Leave | PointerPhase::Cancel) {
+            return None;
+        }
+        match phase {
+            PointerPhase::Down => cx.capture_pointer(),
+            PointerPhase::Up => cx.release_pointer(),
+            _ => {}
+        }
+        self.deliver(cx, Vec::new());
+        Some(Handled::Yes)
+    }
+
+    /// Records the bars over the body.
+    fn record_bars(&self, cx: &mut RecordCx) {
+        let node = cx.node;
+        let parts: Vec<(&'static str, &svelters_style::ComputedStyle)> = BAR_PARTS.iter().filter_map(|n| Some((*n, node.part(n)?))).collect();
+        let styles = Styles { computed: node.css(), parts: &parts, children: &[], state: StateBits(node.state().0), dark: self.dark };
+        let classic = self.policy.scrollbars == Scrollbars::Classic;
+        let alpha = self.scroller.bar_alpha(self.now, &self.policy);
+        let mut list = DisplayList::new();
+        let mut res = CollectRes::default();
+        let mut none = NoShaper;
+        {
+            let mut pc = PaintCx::new(&mut list, &mut res, &mut none, node.scale());
+            self.scroller.record_bars(&mut pc, &styles, alpha, classic);
+        }
+        let bounds = list.bounds;
+        for item in list.items {
+            cx.push(item, bounds);
+        }
     }
 
     /// The cursor cell: its row position and data column.
@@ -496,6 +589,10 @@ impl Kind for TableKind {
         self.read_columns(node);
         if let Some(t) = cx.service::<Theme>() {
             self.look = TableLook::from_theme(t);
+            self.dark = t.is_dark();
+        }
+        if let Some(p) = cx.service::<Policy>() {
+            self.policy = *p;
         }
         self.size = node.size();
         self.table.set_viewport(self.size, self.off);
@@ -514,8 +611,13 @@ impl Kind for TableKind {
             self.clamp_off();
             self.table.set_viewport(self.size, self.off);
         }
-        // the cell editor over its cell
+        // the bars over the body, at the offset
         let g = self.table.geom();
+        self.scroller.set_geometry(self.table.content_size(), g.body.size());
+        self.scroller.set_offset(self.off);
+        let show = [self.scroller.overflows(0), self.scroller.overflows(1)];
+        self.scroller.layout_bars(g.body, BAR_WIDTH, MIN_THUMB, show);
+        // the cell editor over its cell
         let shown = self.table.shown();
         if let Some(edit) = self.edit.as_mut()
             && let Some(k) = shown.iter().position(|&d| d == edit.data)
@@ -551,11 +653,15 @@ impl Kind for TableKind {
             let colors = FieldColors { text: t, placeholder: t.with_alpha(t.a * 0.5), selection: self.look.selected, selection_inactive: self.look.selected_inactive, preedit_underline: t };
             edit.editor.field.record(cx, &colors);
         }
+        self.record_bars(cx);
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         self.now = cx.time();
         if let Some(h) = self.edit_event(cx, ev) {
+            return h;
+        }
+        if let Some(h) = self.bar_event(cx, ev) {
             return h;
         }
         let mut out = Vec::new();
@@ -579,9 +685,11 @@ impl Kind for TableKind {
                     ScrollDelta::Pages(v) => Vec2::new(v.x * self.size.w, v.y * self.size.h),
                 };
                 let before = self.off;
-                self.off = self.off - d;
-                self.clamp_off();
-                self.table.set_viewport(self.size, self.off);
+                self.scroller.set_offset(self.off);
+                self.scroller.scroll_by([true, true], Vec2::new(-d.x, -d.y));
+                if self.scroller.offset() != before {
+                    self.scrolled(cx);
+                }
                 self.off != before
             }
             Event::Key(k) => {
@@ -603,7 +711,13 @@ impl Kind for TableKind {
                 self.table.set_focus(false, false);
                 true
             }
-            Event::Timer => true,
+            Event::Timer => {
+                let (moved, _) = self.scroller.repeat(self.now);
+                if moved {
+                    self.scrolled(cx);
+                }
+                true
+            }
             _ => false,
         };
         self.deliver(cx, out);
@@ -791,5 +905,45 @@ mod tests {
         send(&mut d, &mut commits, Key::A, Some("b"));
         send(&mut d, &mut commits, Key::Enter, Some("\r"));
         assert_eq!(commits.len(), 2);
+    }
+
+    #[test]
+    fn the_body_scrolls_by_its_bars_and_emits_scroll() {
+        use crate::testdoc::{frame, pointer};
+        use skelter_base::event::PointerPhase as Ph;
+        let (mut d, t, _) = table_doc(1000);
+        assert_eq!(TABLE.parts, BAR_PARTS, "the scroll-area's bar parts");
+        let range = TABLE.signal_named("range").unwrap();
+        d.listen(t, range, skelter_core::ListenFlags::EMPTY);
+        d.listen(t, skelter_core::common::SCROLL, skelter_core::ListenFlags::EMPTY);
+        let c = frame(&mut d).expect("a commit");
+        // the vertical thumb is recorded at the body's right edge (the body is 300×200 under a 24-point header)
+        let list = c.lists.iter().find(|(n, _)| *n == t).map(|(_, l)| (**l).clone()).expect("the table's list");
+        let thumb = |l: &DisplayList| {
+            l.items.iter().find_map(|i| match i {
+                skelter_base::display::Prim::Quad(q) if q.rect.min.x >= 290.0 - 0.5 && q.rect.width() <= BAR_WIDTH + 0.5 && q.rect.height() >= MIN_THUMB - 0.5 => Some(q.rect),
+                _ => None,
+            })
+        };
+        let r = thumb(&list).expect("the thumb");
+        assert_eq!((r.min.y, r.height()), (24.0, MIN_THUMB), "at the top, the shortest thumb");
+        d.take_events();
+        // drag the thumb halfway down the track
+        let x = (r.min.x + r.max.x) / 2.0;
+        d.dispatch(&pointer(Ph::Down, x, 30.0, 10, false));
+        let mv = d.dispatch(&pointer(Ph::Move, x, 30.0 + 90.0, 20, true));
+        d.dispatch(&pointer(Ph::Up, x, 120.0, 30, false));
+        let scroll = mv.events.iter().find(|e| e.signal == skelter_core::common::SCROLL).expect("the common scroll event").arg.clone().unwrap();
+        let top = scroll.field("scrollTop").and_then(Value::as_f64).unwrap();
+        // 90 of the track's 180 free points: half of the 19 800-point range
+        assert!((top - 9900.0).abs() < 1.0, "{top}");
+        frame(&mut d);
+        let r = d.take_events().into_iter().find(|e| e.signal == range).expect("the rows now in view").arg.unwrap();
+        assert!(r.field("first").and_then(Value::as_i64).is_some_and(|f| f > 400 && f <= 495), "{r:?}");
+        // a press on the track below the thumb pages down
+        let page = d.dispatch(&pointer(Ph::Down, x, 210.0, 40, false));
+        d.dispatch(&pointer(Ph::Up, x, 210.0, 50, false));
+        let top2 = page.events.iter().find(|e| e.signal == skelter_core::common::SCROLL).and_then(|e| e.arg.as_ref()?.field("scrollTop")?.as_f64()).expect("paged");
+        assert!(top2 > top, "{top2} after {top}");
     }
 }
