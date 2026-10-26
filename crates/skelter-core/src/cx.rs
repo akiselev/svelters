@@ -596,7 +596,7 @@ impl EventCx<'_> {
     }
     /// Shows the caret at `rect` (local coordinates; `None` hides it) through a fast commit: the
     /// compositor draws and blinks it, so a caret move costs no frame. It goes out in the space of
-    /// the node's transform node, in the node's `color`; while the node isn't rendered the caret is
+    /// the node's transform node, in its `caret-color` (`color` when `auto`); while the node isn't rendered the caret is
     /// hidden and comes back once it is (`crate::caret`).
     pub fn set_caret(&mut self, rect: Option<Rect>) {
         let n = self.node;

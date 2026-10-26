@@ -1,6 +1,6 @@
 //! The caret's fast commits (architecture §7.3): a kind places the caret with
 //! [`EventCx::set_caret`](crate::EventCx::set_caret) in its local space; the document sends it in
-//! the space of the node's own transform node, with the node's colour, so the compositor moves it
+//! the space of the node's own transform node, in its `caret-color` (`color` when `auto`), so the compositor moves it
 //! with scrolls and transform animations of that chain.
 //!
 //! An editor that is not rendered (detached, `display: none` on it or an ancestor, concealed,
@@ -97,7 +97,7 @@ impl Document {
     }
 
     fn push_caret(&mut self, i: usize, window: WindowId, rect: Option<Rect>) {
-        let color = self.style.computed(i).color;
+        let color = self.style.computed(i).caret();
         let transform = self.record[i].transform.unwrap_or_default();
         self.fast.push(FastCommit::Caret { window, rect, color, transform, revision: self.revision });
     }

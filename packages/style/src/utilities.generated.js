@@ -1814,9 +1814,31 @@ export const UTILITIES = {
    ]
   },
   {
+   "name": "caret",
+   "family": "color",
+   "rank": 71,
+   "props": [
+    "caret-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "transparent": [
+     "transparent"
+    ]
+   }
+  },
+  {
    "name": "text",
    "family": "typography",
-   "rank": 71,
+   "rank": 72,
    "props": [
     "font-size"
    ],
@@ -1833,7 +1855,7 @@ export const UTILITIES = {
   {
    "name": "text",
    "family": "typography",
-   "rank": 72,
+   "rank": 73,
    "props": [
     "text-align"
    ],
@@ -1861,7 +1883,7 @@ export const UTILITIES = {
   {
    "name": "text",
    "family": "typography",
-   "rank": 73,
+   "rank": 74,
    "props": [
     "text-overflow"
    ],
@@ -1877,7 +1899,7 @@ export const UTILITIES = {
   {
    "name": "truncate",
    "family": "typography",
-   "rank": 74,
+   "rank": 75,
    "decls": {
     "overflow-x": "hidden",
     "text-overflow": "ellipsis",
@@ -1887,7 +1909,7 @@ export const UTILITIES = {
   {
    "name": "font",
    "family": "typography",
-   "rank": 75,
+   "rank": 76,
    "props": [
     "font-family"
    ],
@@ -1904,7 +1926,7 @@ export const UTILITIES = {
   {
    "name": "font",
    "family": "typography",
-   "rank": 76,
+   "rank": 77,
    "props": [
     "font-weight"
    ],
@@ -1925,7 +1947,7 @@ export const UTILITIES = {
   {
    "name": "italic",
    "family": "typography",
-   "rank": 77,
+   "rank": 78,
    "decls": {
     "font-style": "italic"
    }
@@ -1933,7 +1955,7 @@ export const UTILITIES = {
   {
    "name": "not-italic",
    "family": "typography",
-   "rank": 78,
+   "rank": 79,
    "decls": {
     "font-style": "normal"
    }
@@ -1941,7 +1963,7 @@ export const UTILITIES = {
   {
    "name": "uppercase",
    "family": "typography",
-   "rank": 79,
+   "rank": 80,
    "decls": {
     "text-transform": "uppercase"
    }
@@ -1949,7 +1971,7 @@ export const UTILITIES = {
   {
    "name": "lowercase",
    "family": "typography",
-   "rank": 80,
+   "rank": 81,
    "decls": {
     "text-transform": "lowercase"
    }
@@ -1957,7 +1979,7 @@ export const UTILITIES = {
   {
    "name": "capitalize",
    "family": "typography",
-   "rank": 81,
+   "rank": 82,
    "decls": {
     "text-transform": "capitalize"
    }
@@ -1965,7 +1987,7 @@ export const UTILITIES = {
   {
    "name": "normal-case",
    "family": "typography",
-   "rank": 82,
+   "rank": 83,
    "decls": {
     "text-transform": "none"
    }
@@ -1973,7 +1995,7 @@ export const UTILITIES = {
   {
    "name": "underline",
    "family": "typography",
-   "rank": 83,
+   "rank": 84,
    "decls": {
     "text-decoration-line": "underline"
    }
@@ -1981,7 +2003,7 @@ export const UTILITIES = {
   {
    "name": "overline",
    "family": "typography",
-   "rank": 84,
+   "rank": 85,
    "decls": {
     "text-decoration-line": "overline"
    }
@@ -1989,7 +2011,7 @@ export const UTILITIES = {
   {
    "name": "line-through",
    "family": "typography",
-   "rank": 85,
+   "rank": 86,
    "decls": {
     "text-decoration-line": "line-through"
    }
@@ -1997,7 +2019,7 @@ export const UTILITIES = {
   {
    "name": "no-underline",
    "family": "typography",
-   "rank": 86,
+   "rank": 87,
    "decls": {
     "text-decoration-line": "none"
    }
@@ -2005,7 +2027,7 @@ export const UTILITIES = {
   {
    "name": "leading",
    "family": "typography",
-   "rank": 87,
+   "rank": 88,
    "props": [
     "line-height"
    ],
@@ -2030,7 +2052,7 @@ export const UTILITIES = {
   {
    "name": "tracking",
    "family": "typography",
-   "rank": 88,
+   "rank": 89,
    "props": [
     "letter-spacing"
    ],
@@ -2048,7 +2070,7 @@ export const UTILITIES = {
   {
    "name": "whitespace",
    "family": "typography",
-   "rank": 89,
+   "rank": 90,
    "props": [
     "white-space"
    ],
@@ -2076,7 +2098,7 @@ export const UTILITIES = {
   {
    "name": "rounded",
    "family": "borders",
-   "rank": 90,
+   "rank": 91,
    "props": [
     "border-radius"
    ],
@@ -2101,7 +2123,7 @@ export const UTILITIES = {
   {
    "name": "rounded-t",
    "family": "borders",
-   "rank": 91,
+   "rank": 92,
    "props": [
     "border-top-left-radius",
     "border-top-right-radius"
@@ -2129,7 +2151,7 @@ export const UTILITIES = {
   {
    "name": "rounded-r",
    "family": "borders",
-   "rank": 92,
+   "rank": 93,
    "props": [
     "border-top-right-radius",
     "border-bottom-right-radius"
@@ -2157,7 +2179,7 @@ export const UTILITIES = {
   {
    "name": "rounded-b",
    "family": "borders",
-   "rank": 93,
+   "rank": 94,
    "props": [
     "border-bottom-right-radius",
     "border-bottom-left-radius"
@@ -2185,7 +2207,7 @@ export const UTILITIES = {
   {
    "name": "rounded-l",
    "family": "borders",
-   "rank": 94,
+   "rank": 95,
    "props": [
     "border-top-left-radius",
     "border-bottom-left-radius"
@@ -2213,7 +2235,7 @@ export const UTILITIES = {
   {
    "name": "rounded-tl",
    "family": "borders",
-   "rank": 95,
+   "rank": 96,
    "props": [
     "border-top-left-radius"
    ],
@@ -2238,7 +2260,7 @@ export const UTILITIES = {
   {
    "name": "rounded-tr",
    "family": "borders",
-   "rank": 96,
+   "rank": 97,
    "props": [
     "border-top-right-radius"
    ],
@@ -2263,7 +2285,7 @@ export const UTILITIES = {
   {
    "name": "rounded-br",
    "family": "borders",
-   "rank": 97,
+   "rank": 98,
    "props": [
     "border-bottom-right-radius"
    ],
@@ -2288,7 +2310,7 @@ export const UTILITIES = {
   {
    "name": "rounded-bl",
    "family": "borders",
-   "rank": 98,
+   "rank": 99,
    "props": [
     "border-bottom-left-radius"
    ],
@@ -2313,7 +2335,7 @@ export const UTILITIES = {
   {
    "name": "border",
    "family": "borders",
-   "rank": 99,
+   "rank": 100,
    "props": [
     "border-width"
    ],
@@ -2333,7 +2355,7 @@ export const UTILITIES = {
   {
    "name": "border-x",
    "family": "borders",
-   "rank": 100,
+   "rank": 101,
    "props": [
     "border-left-width",
     "border-right-width"
@@ -2354,7 +2376,7 @@ export const UTILITIES = {
   {
    "name": "border-y",
    "family": "borders",
-   "rank": 101,
+   "rank": 102,
    "props": [
     "border-top-width",
     "border-bottom-width"
@@ -2375,7 +2397,7 @@ export const UTILITIES = {
   {
    "name": "border-t",
    "family": "borders",
-   "rank": 102,
+   "rank": 103,
    "props": [
     "border-top-width"
    ],
@@ -2395,7 +2417,7 @@ export const UTILITIES = {
   {
    "name": "border-r",
    "family": "borders",
-   "rank": 103,
+   "rank": 104,
    "props": [
     "border-right-width"
    ],
@@ -2415,7 +2437,7 @@ export const UTILITIES = {
   {
    "name": "border-b",
    "family": "borders",
-   "rank": 104,
+   "rank": 105,
    "props": [
     "border-bottom-width"
    ],
@@ -2435,7 +2457,7 @@ export const UTILITIES = {
   {
    "name": "border-l",
    "family": "borders",
-   "rank": 105,
+   "rank": 106,
    "props": [
     "border-left-width"
    ],
@@ -2455,7 +2477,7 @@ export const UTILITIES = {
   {
    "name": "border",
    "family": "borders",
-   "rank": 106,
+   "rank": 107,
    "props": [
     "border-top-style",
     "border-right-style",
@@ -2504,7 +2526,7 @@ export const UTILITIES = {
   {
    "name": "outline",
    "family": "borders",
-   "rank": 107,
+   "rank": 108,
    "decls": {
     "outline-style": "solid",
     "outline-width": "var(--sv-stroke)"
@@ -2513,7 +2535,7 @@ export const UTILITIES = {
   {
    "name": "outline",
    "family": "borders",
-   "rank": 108,
+   "rank": 109,
    "props": [
     "outline-width"
    ],
@@ -2529,7 +2551,7 @@ export const UTILITIES = {
   {
    "name": "outline",
    "family": "borders",
-   "rank": 109,
+   "rank": 110,
    "props": [
     "outline-style"
    ],
@@ -2554,7 +2576,7 @@ export const UTILITIES = {
   {
    "name": "outline-offset",
    "family": "borders",
-   "rank": 110,
+   "rank": 111,
    "props": [
     "outline-offset"
    ],
@@ -2571,7 +2593,7 @@ export const UTILITIES = {
   {
    "name": "shadow",
    "family": "effects",
-   "rank": 111,
+   "rank": 112,
    "props": [
     "box-shadow"
    ],
@@ -2593,7 +2615,7 @@ export const UTILITIES = {
   {
    "name": "opacity",
    "family": "effects",
-   "rank": 112,
+   "rank": 113,
    "props": [
     "opacity"
    ],
@@ -2609,7 +2631,7 @@ export const UTILITIES = {
   {
    "name": "cursor",
    "family": "interactivity",
-   "rank": 113,
+   "rank": 114,
    "props": [
     "cursor"
    ],
@@ -2727,7 +2749,7 @@ export const UTILITIES = {
   {
    "name": "transition",
    "family": "transitions",
-   "rank": 114,
+   "rank": 115,
    "decls": {
     "transition": "color var(--sv-motion) var(--sv-ease-out), background-color var(--sv-motion) var(--sv-ease-out), border-color var(--sv-motion) var(--sv-ease-out), outline-color var(--sv-motion) var(--sv-ease-out), opacity var(--sv-motion) var(--sv-ease-out), box-shadow var(--sv-motion) var(--sv-ease-out)"
    }
@@ -2735,7 +2757,7 @@ export const UTILITIES = {
   {
    "name": "transition-colors",
    "family": "transitions",
-   "rank": 115,
+   "rank": 116,
    "decls": {
     "transition": "color var(--sv-motion) var(--sv-ease-out), background-color var(--sv-motion) var(--sv-ease-out), border-color var(--sv-motion) var(--sv-ease-out), outline-color var(--sv-motion) var(--sv-ease-out)"
    }
@@ -2743,7 +2765,7 @@ export const UTILITIES = {
   {
    "name": "transition-opacity",
    "family": "transitions",
-   "rank": 116,
+   "rank": 117,
    "decls": {
     "transition": "opacity var(--sv-motion) var(--sv-ease-out)"
    }
@@ -2751,7 +2773,7 @@ export const UTILITIES = {
   {
    "name": "transition-shadow",
    "family": "transitions",
-   "rank": 117,
+   "rank": 118,
    "decls": {
     "transition": "box-shadow var(--sv-motion) var(--sv-ease-out)"
    }
@@ -2759,7 +2781,7 @@ export const UTILITIES = {
   {
    "name": "transition-none",
    "family": "transitions",
-   "rank": 118,
+   "rank": 119,
    "decls": {
     "transition": "none"
    }
@@ -2767,7 +2789,7 @@ export const UTILITIES = {
   {
    "name": "duration",
    "family": "transitions",
-   "rank": 119,
+   "rank": 120,
    "props": [
     "transition-duration"
    ],
@@ -2789,7 +2811,7 @@ export const UTILITIES = {
   {
    "name": "delay",
    "family": "transitions",
-   "rank": 120,
+   "rank": 121,
    "props": [
     "transition-delay"
    ],
@@ -2811,7 +2833,7 @@ export const UTILITIES = {
   {
    "name": "ease",
    "family": "transitions",
-   "rank": 121,
+   "rank": 122,
    "props": [
     "transition-timing-function"
    ],
@@ -5102,12 +5124,6 @@ export const UTILITIES = {
    {
     "name": "appearance",
     "reason": "own widgets draw from CSS; no native appearance",
-    "use": null,
-    "allow": []
-   },
-   {
-    "name": "caret",
-    "reason": "the caret colour is the theme's caret role (later: a caret part)",
     "use": null,
     "allow": []
    },

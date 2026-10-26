@@ -145,6 +145,7 @@ utilities:
   - { ns: border-b, family: color, props: [border-bottom-color], values: [colors, arbitrary] }
   - { ns: border-l, family: color, props: [border-left-color],   values: [colors, arbitrary] }
   - { ns: outline,  family: color, props: [outline-color],    values: [colors, arbitrary] }
+  - { ns: caret,    family: color, props: [caret-color],      values: [colors, arbitrary], keywords: { transparent: transparent } }
 
   # ---- typography ----
   - { ns: text, family: typography, props: [font-size],     values: [font-size, arbitrary] }

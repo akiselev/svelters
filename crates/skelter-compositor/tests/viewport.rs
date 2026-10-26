@@ -74,7 +74,7 @@ fn engine() -> (Engine, Sent) {
     let sent: Sent = Arc::default();
     let s = sent.clone();
     let e = Engine::new(
-        EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_color: Color::BLACK, caret_blink: None, ppi: 96.0 },
+        EngineConfig { refresh: INTERVAL, clear: Some(Color::WHITE), caret_blink: None, ppi: 96.0 },
         Box::new(seams::frame_clock),
         Box::new(move |m| s.lock().unwrap().push(m)),
         Box::new(|| {}),
