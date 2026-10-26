@@ -105,6 +105,8 @@ struct Head {
     indent: f32,
     /// The host's gap between the row and the body.
     gap: f32,
+    /// The row's natural width: the twistie and the whole caption, with the header's padding.
+    w: f32,
 }
 
 /// A header that shows or hides its children.
@@ -136,8 +138,8 @@ impl CollapsingHeader {
         let t = if self.props.text.is_empty() { Size::ZERO } else { paint::measure_text(text, &label, &self.props.text, None) };
         let twistie = tw.px("width").unwrap_or(16.0);
         let gap = head.px("gap").unwrap_or(4.0);
-        let [pl, _, pt, pb] = head.sides("padding");
-        Head { h: head.px("height").unwrap_or(0.0).max(t.h + pt + pb), indent: pl + twistie + gap, gap: host.px("gap").unwrap_or(0.0) }
+        let [pl, pr, pt, pb] = head.sides("padding");
+        Head { h: head.px("height").unwrap_or(0.0).max(t.h + pt + pb), indent: pl + twistie + gap, gap: host.px("gap").unwrap_or(0.0), w: pl + twistie + gap + t.w + pr }
     }
 
     /// The node's state with the prop mirrors (`:expanded`, `:disabled`).
@@ -196,6 +198,12 @@ impl Kind for CollapsingHeader {
     fn chrome_padding(&self, cx: &mut MeasureCx) -> Option<[f32; 4]> {
         let h = self.head(&cx.style, cx.text);
         Some([if self.props.open { h.indent } else { 0.0 }, 0.0, if self.props.open { h.h + h.gap } else { h.h }, 0.0])
+    }
+
+    /// The header row: the twistie and the whole caption (egui's header sizes the widget).
+    fn chrome_min_size(&self, cx: &mut MeasureCx) -> Option<[f32; 2]> {
+        let h = self.head(&cx.style, cx.text);
+        Some([h.w.ceil(), h.h])
     }
 
     fn child_layout(&self, cx: &ChildCx, style: &mut Style) -> bool {
@@ -418,6 +426,29 @@ mod tests {
         assert_eq!(t, row + 2.0, "below the header row and the host's gap");
     }
 
+    /// A9c: a content-sized header (in a row, as the Properties panel and TourPlayer lay it out)
+    /// keeps its header row: the chevron and the whole caption, not "> …".
+    #[test]
+    fn a_content_sized_header_keeps_its_chevron_and_caption() {
+        use crate::testdoc::{child, doc, frame};
+        let (mut d, root) = doc(Size::new(300.0, 200.0), |r| {
+            crate::host::register::<CollapsingHeader>(r).unwrap();
+        });
+        crate::host::install(&mut d, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())), crate::host::os_policy(), crate::theme::Theme::dark_modern());
+        d.set_style(root, skelter_core::StyleInput { inline: Some("flex-direction: row; align-items: flex-start".into()), ..Default::default() });
+        let h = child(&mut d, root, skelter_core::KindId::of("collapsing-header"), "");
+        let text = d.registry().get(skelter_core::KindId::of("collapsing-header")).unwrap().spec.prop_named("text").unwrap();
+        d.set_prop(h, text, skelter_core::Value::from("Placement")).unwrap();
+        let c = frame(&mut d).unwrap();
+        let r = d.layout_rect(h).unwrap();
+        assert!(r.width() > 16.0 + 4.0 + 40.0 && r.height() >= 16.0, "the header row's size: {r:?}");
+        let (_, list) = c.lists.iter().find(|(k, _)| *k == h).expect("it records");
+        let lines = list.items.iter().filter(|p| matches!(p, Prim::Line(_))).count();
+        assert_eq!(lines, 2, "the chevron");
+        let glyphs = list.items.iter().find_map(|p| if let Prim::Glyphs(g) = p { c.runs.iter().find(|(id, _)| *id == g.run).map(|(_, run)| run.glyphs.len()) } else { None });
+        assert_eq!(glyphs, Some("Placement".len()), "the whole caption, not elided");
+    }
+
     #[test]
     fn records_header_chevron_and_caption() {
         let k = header("Placement");
@@ -425,3 +456,4 @@ mod tests {
         assert_eq!(crate::controls::testkit::kinds(&list), ["quad", "line", "line", "glyphs"]);
     }
 }
+

@@ -1205,9 +1205,11 @@ mod tests {
         let mut text = MonoShaper;
         let mut cx = PaintCx::new(&mut list, &mut res, &mut text, 1.0);
         let p = paint(&mut cx, &reg, "reg-test.halo", Rect::new(0.0, 0.0, 96.0, 96.0), &IconStyle::new(96.0, Color::WHITE)).unwrap();
+        // vector paths (a fallback draws one raster and is reported; the diagnostics are drained by
+        // `refusals_missing_and_broken_icons_are_reported` alone, which tests running in parallel
+        // would race)
         assert!(p.vector);
         assert_eq!(kinds(&list), [true, true, true]);
-        assert!(!take_diagnostics().iter().any(|e| matches!(e, IconError::Fallback { key, .. } if key == "reg-test.halo")));
         // the kit's own masked icon (a front block knocked out of the body) at 96 pixels
         let kit: &[u8] = include_bytes!("../../../../svelters-egui/tests/icons/build/24/mcad.extrude+remove.svg");
         let art = VectorArt::parse(kit).expect("the kit icon is vector art");

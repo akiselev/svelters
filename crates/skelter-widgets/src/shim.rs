@@ -616,6 +616,11 @@ pub mod core {
         fn chrome_padding(&self, _cx: &mut MeasureCx) -> Option<[f32; 4]> {
             None
         }
+        /// Stands in for skelter-core's `Kind::chrome_min_size`: the least `[width, height]` the
+        /// kind's own chrome needs, made the min size where CSS sets none. `None`: no minimum.
+        fn chrome_min_size(&self, _cx: &mut MeasureCx) -> Option<[f32; 2]> {
+            None
+        }
         /// Stands in for skelter-core's per-child layout hook: a container that places or hides its
         /// children itself (`stack`) adjusts child `cx.index`'s taffy style, after core mapped the
         /// child's computed style. Returns whether the child is shown (painted, hit and in the

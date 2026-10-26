@@ -32,7 +32,7 @@ use crate::shim::text::{PlacedRun, RichText, TextLayout, TextShaper};
 use skelter_base::commit::{ImageData, PathData};
 use skelter_base::display::{DisplayList, Prim};
 use skelter_base::event::{PointerEvent, PointerPhase, WheelEvent};
-use skelter_base::geom::{Insets, Point, Vec2};
+use skelter_base::geom::{Insets, Point, Size, Vec2};
 use skelter_base::ids::{ImageId, NodeId, PathId, RunId};
 use skelter_base::text::GlyphRun;
 use skelter_core::{
@@ -1016,6 +1016,15 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let mut text = shaper(ts);
         let [left, right, top, bottom] = self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() })?;
         Some(Insets { top, right, bottom, left })
+    }
+
+    fn chrome_min_size(&self, cx: &mut MeasureCx) -> Option<Size> {
+        let node = cx.node;
+        let parts = part_styles(node, Self::spec_ref().core.parts);
+        let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+        let mut text = shaper(ts);
+        let [w, h] = self.widget.chrome_min_size(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() })?;
+        Some(Size::new(w, h))
     }
 
     fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
