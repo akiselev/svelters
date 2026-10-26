@@ -321,6 +321,15 @@ pub mod core {
         pub size: Size,
         pub style: Styles<'a>,
         pub text: &'a mut dyn TextShaper,
+        /// Signals emitted while preparing ([`PrepareCx::emit`]); the host queues them after the
+        /// prepare (`skelter_core::PrepareCx::emit`).
+        pub emitted: Vec<Emitted>,
+    }
+
+    impl PrepareCx<'_> {
+        pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
+            self.emitted.push(Emitted { signal, args });
+        }
     }
 
     /// The resources a recording registers (runs and images), the stand-in for skelter-core's commit
@@ -408,15 +417,23 @@ pub mod core {
         /// Delivers a signal to JS now and reports whether a listener prevented its default
         /// ([`EventCx::emit_sync`]); `None`: signals are queued and nothing is prevented.
         pub sync: Option<&'a mut SyncEmit<'a>>,
+        /// Signals for the node's children, by child index, with skelter-core's signal ids (the
+        /// child's kind declares them): the host emits them on the child
+        /// (`skelter_core::EventCx::emit_on`).
+        pub emitted_on: Vec<(usize, skelter_core::SignalId, Option<skelter_core::Value>)>,
     }
 
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None }
+            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new() }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
+        }
+        /// Emits `signal` (a signal of the child's kind) on the node's `child`-th child.
+        pub fn emit_on(&mut self, child: usize, signal: skelter_core::SignalId, arg: Option<skelter_core::Value>) {
+            self.emitted_on.push((child, signal, arg));
         }
         /// Emits `signal` at event time when the host can deliver it now (a cancelable signal whose
         /// default action follows); returns whether a listener prevented that default.

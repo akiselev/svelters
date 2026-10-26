@@ -285,7 +285,7 @@ pub(crate) mod testing {
     /// Runs the kind's `prepare` at `size` (what skelter-core does after layout).
     pub fn prepare(k: &mut dyn Kind, size: Size, state: StateBits) {
         let mut text = SpanShaper;
-        let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, text: &mut text };
+        let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true }, text: &mut text, emitted: Vec::new() };
         k.prepare(&mut cx);
     }
 }

@@ -593,10 +593,10 @@ impl<W: w::Kind + Default> Hosted<W> {
             wcx.focused = mask.contains(StateMask::FOCUSED);
             wcx.sync = Some(&mut sync);
             let handled = f(&mut self.widget, &mut wcx);
-            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, .. } = wcx;
-            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to))
+            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, .. } = wcx;
+            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on))
         };
-        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to) = out;
+        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on) = out;
         let diff = StateBits((state.0 ^ before.0) & !CORE_BITS.0);
         for (_, bit) in StateBits::BUILTIN {
             if diff.contains(*bit) {
@@ -619,6 +619,14 @@ impl<W: w::Kind + Default> Hosted<W> {
             let i = e.signal.0 as usize;
             let Some(sig) = ws.signals.get(i) else { continue };
             cx.emit(s.core.signal_id(i), signal_arg(sig, &e.args));
+        }
+        if !emitted_on.is_empty() {
+            let children: Vec<NodeId> = cx.view(node).map(|v| v.children().to_vec()).unwrap_or_default();
+            for (k, sig, arg) in emitted_on {
+                if let Some(&c) = children.get(k) {
+                    cx.emit_on(c, sig, arg);
+                }
+            }
         }
         for r in peers {
             let to = match r.to {
@@ -708,10 +716,13 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let dark = is_dark(cx.service::<crate::theme::Theme>());
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
+        let emitted: Vec<w::Emitted>;
         let (new, used) = {
             let mut text = shaper(cx.service::<skelter_text::TextSystem>());
             // the widget's own prepare (layout of what it places or draws itself) runs before the dry recording
-            self.widget.prepare(&mut w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text });
+            let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), text: &mut *text, emitted: Vec::new() };
+            self.widget.prepare(&mut pcx);
+            emitted = pcx.emitted;
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new() };
             let mut list = DisplayList::new();
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), dark), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
@@ -731,6 +742,13 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         });
         for id in released {
             cx.release_image(id);
+        }
+        let s = Self::spec_ref();
+        let ws = W::spec();
+        for e in emitted {
+            let i = e.signal.0 as usize;
+            let Some(sig) = ws.signals.get(i) else { continue };
+            cx.emit(s.core.signal_id(i), signal_arg(sig, &e.args));
         }
     }
 

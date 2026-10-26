@@ -14,12 +14,12 @@
 //!   itself (the wheel scrolls it, clamped; keyboard moves and `scroll-to-row` reveal rows), with no
 //!   scroll bars or fling.
 //!
-//! skelter-core gaps this kind works around (listed in `plans/milestones/SKELTER-widgets-tier1.md`):
-//! - `prepare` cannot emit, so the model's `range` (and a restored `header-state`'s events) are held
-//!   and delivered with the table's next event or method call;
-//! - an event can write only its own node's props, so a user resize stays in the table and is not
-//!   written back to the column's `width` (`column-resized` reports it; JS writes it if it binds it);
-//! - `record` has no clock, so the resize edges' hover delay uses the last event's time.
+//! - The model's `range` (and a restored `header-state`'s events) come out of `prepare` and are
+//!   emitted from there (`PrepareCx::emit`); a user resize writes the `table-column`'s `width` back
+//!   as native state (`EventCx::set_native_on`) and reports it (`column-resized`).
+//!
+//! skelter-core gap this kind works around (listed in `plans/milestones/SKELTER-widgets-tier1.md`):
+//! `record` has no clock, so the resize edges' hover delay uses the last event's time.
 
 use super::column::{ALIGNS, ColumnState, ELIDES, HEADER_ALIGNS, SORTS};
 use super::selection::Mode;
@@ -31,6 +31,7 @@ use skelter_base::accesskit::Role;
 use skelter_base::change::ChangeClass;
 use skelter_base::event::{KeyState, Modifiers, PointerEvent, PointerPhase, PointerType, ScrollDelta};
 use skelter_base::geom::{Point, Size, Vec2};
+use skelter_base::ids::NodeId;
 use skelter_base::time::Time;
 use skelter_core::{
     A11yCx, ArgSpec, Event, EventCx, FocusReason, Handled, Kind, KindRegistry, KindSpec, MeasureCx, MethodId, MethodSpec, NodeView, PrepareCx, PropCx, PropDefault, PropError, PropId,
@@ -116,6 +117,11 @@ static COLUMN_PROPS: &[PropSpec] = &[
     PropSpec::new("elide", ValueType::Enum, ChangeClass::Paint).enum_values(ELIDES).default(PropDefault::Enum(0)),
     PropSpec::new("tooltip", ValueType::Str, ChangeClass::Property).default(PropDefault::Str("")),
 ];
+
+/// `table-column`'s `width`, which a user resize writes back.
+fn column_width() -> PropId {
+    TABLE_COLUMN.prop_id(1)
+}
 
 /// `table-column`: one column of a `table` (data: never laid out or drawn as a node).
 pub static TABLE_COLUMN: KindSpec = KindSpec { props: COLUMN_PROPS, role: Role::ColumnHeader, doc: "A column of a table (its header title, width and behaviour).", ..KindSpec::new("table-column") };
@@ -213,15 +219,20 @@ fn columns_of(node: NodeView<'_>) -> Vec<ColumnState> {
     (0..node.children().len()).filter_map(|k| node.child(k)).filter(|c| c.kind().spec.name == TABLE_COLUMN.name).map(column_of).collect()
 }
 
+/// The ids of [`columns_of`]'s nodes.
+fn column_nodes_of(node: NodeView<'_>) -> Vec<NodeId> {
+    (0..node.children().len()).filter_map(|k| node.child(k)).filter(|c| c.kind().spec.name == TABLE_COLUMN.name).map(|c| c.id()).collect()
+}
+
 /// The `table` kind.
 #[derive(Default)]
 pub struct TableKind {
     pub table: Table,
     look: TableLook,
-    /// Events the model raised in `prepare`, delivered with the next event or method call.
-    pending: Vec<Emit>,
     /// Each column's `width` prop as last read (a user resize stays until it changes).
     read_widths: Vec<Option<f32>>,
+    /// The `table-column` nodes, by data column.
+    column_nodes: Vec<NodeId>,
     off: Vec2,
     /// The laid-out size (as of the last prepare).
     size: Size,
@@ -233,6 +244,7 @@ impl TableKind {
     /// Re-reads the columns, keeping a width the user dragged while the column's prop is unchanged.
     fn read_columns(&mut self, node: NodeView<'_>) {
         let cols = columns_of(node);
+        self.column_nodes = column_nodes_of(node);
         let mut next = Vec::with_capacity(cols.len());
         for (k, mut c) in cols.into_iter().enumerate() {
             let prop = c.width;
@@ -256,20 +268,25 @@ impl TableKind {
         self.off.y = self.off.y.clamp(0.0, (content.h - view_h).max(0.0));
     }
 
-    /// Delivers `out` and the held events, writes back what the model changed itself, and applies
-    /// its focus and scroll requests.
-    fn deliver(&mut self, cx: &mut EventCx, mut out: Vec<Emit>) {
-        let mut all = std::mem::take(&mut self.pending);
-        all.append(&mut out);
+    /// Delivers `out`, writes back what the model changed itself (its props, and the widths of the
+    /// columns the user resized), and applies its focus and scroll requests.
+    fn deliver(&mut self, cx: &mut EventCx, out: Vec<Emit>) {
         for name in self.table.take_changed() {
             let Some(i) = TABLE_PROPS.iter().position(|p| p.name == name) else { continue };
             if let Some(v) = self.table.state.get_prop(name) {
                 let _ = cx.set_native(TABLE.prop_id(i), to_core(&v, Some(&TABLE_PROPS[i])));
             }
         }
-        // a user resize stays in the table (see the module doc)
-        self.table.take_changed_columns();
-        for e in &all {
+        for k in self.table.take_changed_columns() {
+            let (Some(&c), Some(w)) = (self.column_nodes.get(k), self.table.columns.get(k).and_then(|c| c.width)) else { continue };
+            // the column's prop now holds the user's width (read back as unchanged)
+            if cx.set_native_on(c, column_width(), Value::F64(w as f64)).is_ok()
+                && let Some(r) = self.read_widths.get_mut(k)
+            {
+                *r = Some(w);
+            }
+        }
+        for e in &out {
             if let Some(i) = TABLE_SIGNALS.iter().position(|s| s.name == e.signal) {
                 cx.emit(TABLE.signal_id(i), emit_arg(&TABLE_SIGNALS[i], &e.args));
             }
@@ -343,8 +360,14 @@ impl Kind for TableKind {
         self.table.set_viewport(self.size, self.off);
         self.clamp_off();
         self.table.set_viewport(self.size, self.off);
-        let (table, look, pending) = (&mut self.table, &self.look, &mut self.pending);
-        with_text(cx.service::<skelter_text::TextSystem>(), |p| table.prepare(look, p, pending));
+        let mut out = Vec::new();
+        let (table, look) = (&mut self.table, &self.look);
+        with_text(cx.service::<skelter_text::TextSystem>(), |p| table.prepare(look, p, &mut out));
+        for e in &out {
+            if let Some(i) = TABLE_SIGNALS.iter().position(|s| s.name == e.signal) {
+                cx.emit(TABLE.signal_id(i), emit_arg(&TABLE_SIGNALS[i], &e.args));
+            }
+        }
         if let Some(off) = self.table.take_scroll_request() {
             self.off = off;
             self.clamp_off();
@@ -488,5 +511,60 @@ mod tests {
         let arg = emit_arg(range, &[tshim::Value::I64(3), tshim::Value::I64(40)]);
         assert_eq!(arg, Some(Value::Record(vec![(Arc::from("first"), Value::I64(3)), (Arc::from("last"), Value::I64(40))].into())));
         assert_eq!(emit_arg(&TABLE_SIGNALS[3], &[tshim::Value::I64(7)]), Some(Value::I64(7)));
+    }
+
+    /// A table with two columns (`width` 100 and 80) and `rows` rows in a document.
+    fn table_doc(rows: i64) -> (skelter_core::Document, skelter_base::ids::NodeId, Vec<skelter_base::ids::NodeId>) {
+        use crate::testdoc::{child, doc};
+        let (mut d, root) = doc(Size::new(400.0, 300.0), |r| register(r).unwrap());
+        let t = child(&mut d, root, TABLE.id(), "width: 300px; height: 224px");
+        d.set_prop(t, TABLE.prop_named("row-count").unwrap(), Value::I64(rows)).unwrap();
+        d.set_prop(t, TABLE.prop_named("stretch-last").unwrap(), Value::Bool(false)).unwrap();
+        let cols = [100.0, 80.0]
+            .iter()
+            .map(|w| {
+                let c = child(&mut d, t, TABLE_COLUMN.id(), "");
+                d.set_prop(c, column_width(), Value::F64(*w)).unwrap();
+                c
+            })
+            .collect();
+        (d, t, cols)
+    }
+
+    #[test]
+    fn range_is_emitted_from_prepare_without_an_event() {
+        let (mut d, t, _) = table_doc(1000);
+        let range = TABLE.signal_named("range").unwrap();
+        d.listen(t, range, skelter_core::ListenFlags::EMPTY);
+        crate::testdoc::frame(&mut d);
+        let ev = d.take_events();
+        let r = ev.iter().find(|e| e.signal == range && e.target == t).expect("range after the frame, no event needed");
+        let arg = r.arg.as_ref().unwrap();
+        assert_eq!(arg.field("first"), Some(&Value::I64(0)));
+        assert!(arg.field("last").and_then(Value::as_i64).is_some_and(|l| l >= 9), "the visible rows at least: {arg:?}");
+    }
+
+    #[test]
+    fn a_user_resize_writes_the_column_width_back() {
+        use crate::testdoc::{frame, pointer};
+        use skelter_base::event::PointerPhase as Ph;
+        let (mut d, t, cols) = table_doc(10);
+        let resized = TABLE.signal_named("column-resized").unwrap();
+        d.listen(t, resized, skelter_core::ListenFlags::EMPTY);
+        frame(&mut d);
+        d.take_events();
+        // the first column's right edge, in the header
+        d.dispatch(&pointer(Ph::Move, 100.0, 10.0, 0, false));
+        d.dispatch(&pointer(Ph::Down, 100.0, 10.0, 10, false));
+        d.dispatch(&pointer(Ph::Move, 130.0, 10.0, 20, true));
+        let up = d.dispatch(&pointer(Ph::Up, 130.0, 10.0, 30, false));
+        let mut ev: Vec<_> = up.events.into_iter().filter(|e| e.signal == resized).collect();
+        ev.extend(d.take_events().into_iter().filter(|e| e.signal == resized));
+        assert_eq!(ev.len(), 1, "column-resized reports it");
+        assert_eq!(d.view(cols[0]).unwrap().prop_f64(column_width()), Some(130.0), "written to the column");
+        assert_eq!(d.view(cols[1]).unwrap().prop_f64(column_width()), Some(80.0));
+        // read back next frame as the column's own width: the resize stays
+        frame(&mut d);
+        assert_eq!(d.view(cols[0]).unwrap().prop_f64(column_width()), Some(130.0));
     }
 }
