@@ -14,6 +14,7 @@
 //! `InputEvent` or an `egui::Event` (translated by [`EguiAdapter`]).
 
 use crate::a11y::{A11yTree, AkNode, By, NodeInfo, NodeKey};
+use crate::consumer::Consumer;
 use crate::convert::{IntoButton, IntoKey, IntoModifiers, IntoPoint, IntoSize, TestEvent};
 use crate::egui_event::{EguiAdapter, Injected};
 use crate::headless::HeadlessCompositor;
@@ -103,6 +104,7 @@ pub struct HarnessBuilder {
     pub(crate) snapshot: SnapshotOptions,
     pub(crate) native_menu_bar: bool,
     pub(crate) calls_cap: Option<usize>,
+    pub(crate) consumer: bool,
 }
 
 impl Default for HarnessBuilder {
@@ -121,6 +123,7 @@ impl Default for HarnessBuilder {
             check_accessibility: true,
             snapshot: SnapshotOptions::default(),
             native_menu_bar: false,
+            consumer: false,
         }
     }
 }
@@ -195,6 +198,13 @@ impl HarnessBuilder {
     /// frames, each sending an AccessKit tree) otherwise grows without bound. Default: all.
     pub fn with_calls_cap(mut self, n: usize) -> Self {
         self.calls_cap = Some(n);
+        self
+    }
+    /// Also fold the app's AccessKit updates into AccessKit's own consumers ([`crate::consumer`]: an
+    /// `accesskit_consumer::Tree`, and on Linux an AT-SPI adapter), read with [`Harness::consumer`].
+    /// Default off: the consumers panic on trees a platform adapter would reject.
+    pub fn with_consumer(mut self, on: bool) -> Self {
+        self.consumer = on;
         self
     }
     /// kittest's check that every input widget has an accessible name, after each `run` (default on).
@@ -284,6 +294,13 @@ impl HarnessBuilder {
             modifiers: Modifiers::default(),
             egui: RefCell::new(EguiAdapter::default()),
             a11y: A11yTree::default(),
+            consumer: self.consumer.then(|| {
+                let mut c = Consumer::new();
+                let (w, h) = (f64::from(self.size.w * self.scale), f64::from(self.size.h * self.scale));
+                let r = skelter_base::accesskit::Rect { x0: 0.0, y0: 0.0, x1: w, y1: h };
+                c.set_window_bounds(r, r);
+                c
+            }),
             calls: Vec::new(),
             calls_cap: self.calls_cap,
             steps: 0,
@@ -335,6 +352,8 @@ pub struct Harness<D: DocumentApi + 'static> {
     modifiers: Modifiers,
     egui: RefCell<EguiAdapter>,
     a11y: A11yTree,
+    /// AccessKit's own consumers on the same updates ([`HarnessBuilder::with_consumer`]).
+    consumer: Option<Consumer>,
     /// Every platform call the app made, in order.
     calls: Vec<PlatformCall>,
     calls_cap: Option<usize>,
@@ -437,6 +456,16 @@ impl<D: DocumentApi + 'static> Harness<D> {
     pub fn a11y(&self) -> &A11yTree {
         &self.a11y
     }
+    /// AccessKit's consumer tree (and on Linux the AT-SPI adapter) on the app's updates, when built
+    /// [`with_consumer`](HarnessBuilder::with_consumer).
+    #[track_caller]
+    pub fn consumer(&self) -> &Consumer {
+        self.consumer.as_ref().expect("build the harness with_consumer(true)")
+    }
+    #[track_caller]
+    pub fn consumer_mut(&mut self) -> &mut Consumer {
+        self.consumer.as_mut().expect("build the harness with_consumer(true)")
+    }
     /// The image of the last step when built `with_render_every_step(true)`.
     pub fn last_render(&self) -> Option<&Image> {
         self.last_render.as_ref()
@@ -494,6 +523,9 @@ impl<D: DocumentApi + 'static> Harness<D> {
                 && *w == self.window
             {
                 self.a11y.apply(u);
+                if let Some(c) = &mut self.consumer {
+                    c.apply(u);
+                }
             }
             self.calls.push(c);
         }

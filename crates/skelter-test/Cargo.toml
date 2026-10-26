@@ -32,6 +32,13 @@ image = { version = "0.25.10", default-features = false, features = ["png"] }
 svelters-automation = { workspace = true, optional = true }
 # No default features: no eframe, no native dialogs (the skelter workflow installs no GTK).
 svelters-egui = { path = "../svelters-egui", default-features = false, optional = true }
+# `crate::consumer`: AccessKit's own tree on the app's updates (same versions as the platform adapters).
+accesskit_consumer = "0.39.1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# `crate::consumer::Atspi`: AT-SPI's translation layer without D-Bus (accesskit_unix's versions).
+accesskit_atspi_common = "0.21.0"
+atspi-common = { version = "0.13", default-features = false }
 
 [dev-dependencies]
 skelter-test = { path = ".", features = ["automation"] }
