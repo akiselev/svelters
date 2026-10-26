@@ -177,4 +177,5 @@ conformance; CI is the gate. CI: see the end of this record.
 
 ## CI
 
-(filled in below after the last push)
+All workflows green on `fb9ee0d0` (the last code commit): js 40328125133, linux-gtk 40328125106, linux-qt 40328125141,
+macos-appkit 40328125102, skelter 40328125125, windows-winui 40328125099. The commit that adds these ids is docs-only.
