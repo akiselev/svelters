@@ -23,6 +23,7 @@
 //! | [`frame`] | the UI phases and the commit builder |
 //! | [`input`] | hit testing, dispatch, hover, capture, focus |
 //! | [`hit`] | hit lists |
+//! | [`overlay`] | each window's overlay stack (its top layer: popups, menus, modals) and the drag layer |
 //! | [`journal`] | the change journal |
 //! | [`query`] | kind sets, anchors, [`Query`](query::Query), CSS selector queries |
 //! | [`a11y`] | the AccessKit projection and its validating builder |
@@ -45,6 +46,7 @@ pub mod input;
 pub mod journal;
 pub mod kind;
 pub mod layout;
+pub mod overlay;
 pub mod query;
 mod record;
 pub mod registry;
@@ -53,6 +55,7 @@ mod scroll;
 pub mod settle;
 pub mod style;
 pub mod testkinds;
+mod toplayer;
 mod tree;
 pub mod value;
 pub mod virt;

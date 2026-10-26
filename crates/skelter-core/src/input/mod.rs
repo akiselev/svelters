@@ -99,6 +99,8 @@ pub(crate) struct InputState {
     /// A press on a drag source that may become a drag, and the drag in progress.
     pub drag_press: Option<dnd::DragPress>,
     pub drag: Option<dnd::Drag>,
+    /// Counts drag previews set (a drag's [`dnd::Drag::generation`]: the drag layer re-records on a new one).
+    pub drag_generation: u64,
 }
 
 impl InputState {

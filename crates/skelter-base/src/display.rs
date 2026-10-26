@@ -157,4 +157,31 @@ impl DisplayList {
     pub fn is_empty(&self) -> bool {
         self.items.is_empty()
     }
+    /// Moves every primitive (and the bounds) by `v`: a list recorded in a part's own space placed
+    /// in its node's space.
+    pub fn translate(&mut self, v: crate::geom::Vec2) {
+        if v == crate::geom::Vec2::ZERO {
+            return;
+        }
+        let pt = |p: &mut Point| *p = Point::new(p.x + v.x, p.y + v.y);
+        self.bounds = self.bounds.translate(v);
+        for p in self.items.iter_mut() {
+            match p {
+                Prim::Quad(q) => q.rect = q.rect.translate(v),
+                Prim::Shadow(s) => s.rect = s.rect.translate(v),
+                Prim::Line(l) => {
+                    pt(&mut l.from);
+                    pt(&mut l.to);
+                }
+                Prim::Glyphs(g) => pt(&mut g.origin),
+                Prim::Icon(i) => i.rect = i.rect.translate(v),
+                Prim::Image(i) => i.rect = i.rect.translate(v),
+                Prim::Path(p) => p.transform = Affine::translate(v.x, v.y).then(&p.transform),
+                Prim::Surface(s) => s.rect = s.rect.translate(v),
+                Prim::Canvas(c) => c.rect = c.rect.translate(v),
+                Prim::PushClip(r) => r.rect = r.rect.translate(v),
+                Prim::PopClip => {}
+            }
+        }
+    }
 }

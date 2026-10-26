@@ -594,6 +594,19 @@ pub mod core {
         fn light_dismiss(&self) -> bool {
             false
         }
+        /// Records the kind's open floating surface (a picker's popup, a select's list) into
+        /// `cx.list`, in the node's local points, and returns what it is: skelter-core puts it in a
+        /// layer of the window's overlay stack (above the content) and routes pointer input inside
+        /// `part.rect` to this node first (`skelter_core::RecordCx::overlay`). `None`: no surface
+        /// is open (the default).
+        fn record_overlay(&self, _cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
+            None
+        }
+        /// The window's overlay stack closed the surface of [`Kind::record_overlay`] (a press
+        /// outside, Escape, its parent closing).
+        fn overlay_closed(&mut self, _cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
+            Handled::No
+        }
         /// The state bits the kind derives from its props alone (`:checked`, `:busy`); skelter-core sets
         /// them after every prop write (bits outside [`Kind::prop_states`] are ignored).
         fn prop_state(&self) -> StateBits {
