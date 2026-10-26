@@ -239,27 +239,32 @@ pub fn decl_key(k: &KindSpec) -> String {
     }
 }
 
+/// Wire ids live in the host's id space: the host splits the top bits of a signal id off as listen
+/// flags (`SVL_SIGNAL_FLAGS_SHIFT`), so every wire id is skelter-core's fingerprint masked to
+/// `SVL_SIGNAL_ID_MASK` (A18; the spec test fails on a collision after masking).
+pub const WIRE_MASK: svl_id = svelters_abi::SVL_SIGNAL_ID_MASK;
+
 pub fn kind_wire(k: &KindSpec) -> svl_id {
     match k.tag {
-        Some(t) => core::KindId::of(t).0,
-        None => core::KindId::of(&decl_key(k)).0,
+        Some(t) => core::KindId::of(t).0 & WIRE_MASK,
+        None => core::KindId::of(&decl_key(k)).0 & WIRE_MASK,
     }
 }
 
 pub fn prop_wire(decl: &KindSpec, p: &PropSpec) -> svl_id {
-    core::PropId::of(&decl_key(decl), p.name, core_type(p.ty).name()).0
+    core::PropId::of(&decl_key(decl), p.name, core_type(p.ty).name()).0 & WIRE_MASK
 }
 
 pub fn signal_wire(decl: &KindSpec, s: &SignalSpec) -> svl_id {
-    core::SignalId::of(&decl_key(decl), s.name, signal_arg_type(s.args).map_or("void", core::ValueType::name)).0
+    core::SignalId::of(&decl_key(decl), s.name, signal_arg_type(s.args).map_or("void", core::ValueType::name)).0 & WIRE_MASK
 }
 
 pub fn method_wire(decl: &KindSpec, m: &MethodSpec) -> svl_id {
-    core::MethodId::of(&decl_key(decl), m.name, m.ret.map_or("void", |t| core_type(t).name())).0
+    core::MethodId::of(&decl_key(decl), m.name, m.ret.map_or("void", |t| core_type(t).name())).0 & WIRE_MASK
 }
 
 pub fn slot_wire(decl: &KindSpec, s: &SlotSpec) -> svl_id {
-    core::SlotId::of(&decl_key(decl), s.name, "slot").0
+    core::SlotId::of(&decl_key(decl), s.name, "slot").0 & WIRE_MASK
 }
 
 /// The surface kind that owns `k`'s slots (the nearest in its chain with any).
@@ -670,14 +675,14 @@ mod tests {
         let k = Kinds::builtin().unwrap();
         let button = k.by_tag("button").unwrap();
         assert!(button.hosted, "button is skelter-widgets'");
-        assert_eq!(button.wire, core::KindId::of("button").0);
+        assert_eq!(button.wire, core::KindId::of("button").0 & WIRE_MASK);
         // Q2: egui's names onto core's common props
         assert_eq!(button.prop_named("enabled").unwrap().target, PropTarget::Inverted(core::common::DISABLED));
         assert_eq!(button.prop_named("accessible-name").unwrap().target, PropTarget::Native(core::common::ARIA_LABEL));
         // Q1: a kind's own native member has its core id on the wire
         let text = button.prop_named("text").unwrap();
         assert_eq!(text.target, PropTarget::Native(core::PropId::of("button", "text", "string")));
-        assert_eq!(text.wire, core::PropId::of("button", "text", "string").0);
+        assert_eq!(text.wire, core::PropId::of("button", "text", "string").0 & WIRE_MASK);
         assert_eq!(button.signal_named("keydown").unwrap().native, Some(core::common::KEYDOWN));
         // inherited members have one id on every kind
         let label = k.by_tag("label").unwrap();

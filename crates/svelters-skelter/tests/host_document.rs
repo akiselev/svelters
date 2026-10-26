@@ -137,3 +137,46 @@ fn a_svelte_root_mounts_into_a_node_of_the_host_document() {
     assert!(doc.borrow().contains(pane));
     assert!(doc.borrow().children(pane).is_empty());
 }
+
+const COUNTER: &str = r#"<script>
+  let count = $state(0);
+</script>
+<box>
+  <button text="Go" onclicked={() => count++} />
+  <label text={`n=${count}`} />
+</box>
+"#;
+
+/// A18: compiled Svelte through the real svelters-host: a skelter `clicked` runs the `onclicked`
+/// handler (the host masks signal ids to `SVL_SIGNAL_ID_MASK`, so wire ids must fit in it).
+#[test]
+fn a_skelter_click_runs_the_svelte_onclicked_handler() {
+    let (doc, pane) = host_doc();
+    let backend = SkelterBackend::over(doc).unwrap();
+    let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..svelters_host::HostConfig::default() };
+    let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, ..EmbedConfig::default() }).unwrap();
+    let dir = scratch("counter", &[("Counter.svelte", COUNTER)]);
+    let mut cfg = svelters_host::modules::SourceConfig::for_path(&dir).unwrap();
+    cfg.backend = "skelter".into();
+    let entry = embed.load_from(Rc::new(svelters_host::modules::SourceProvider::new(cfg).unwrap())).unwrap();
+    let slot = embed.adopt_slot("panel.counter", pane).unwrap();
+    embed.mount(MountSpec::new(entry, "Counter", slot, "panel.counter")).unwrap();
+    embed.logic();
+    let doc = backend.document();
+    let bx = doc.borrow().children(pane)[0];
+    let (button, label) = {
+        let d = doc.borrow();
+        (d.children(bx)[0], d.children(bx)[1])
+    };
+    let text = |n| {
+        let h = backend.handle(n).unwrap();
+        let p = backend.resolve(NameKind::Prop, backend.handle_info(h).unwrap().kind, "text");
+        backend.get_prop(h, p).unwrap()
+    };
+    assert_eq!(text(label), Value::Str("n=0".into()));
+    let ev = backend.target_event(button, "clicked", vec![]).expect("the handler listens on the button");
+    backend.queue(svelters_skelter::Output { events: vec![ev], ..Default::default() });
+    backend.pump();
+    embed.logic();
+    assert_eq!(text(label), Value::Str("n=1".into()), "the onclicked handler ran");
+}

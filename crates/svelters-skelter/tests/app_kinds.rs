@@ -112,7 +112,7 @@ fn app_kinds_map_from_their_core_specs() {
     assert!(q.app && q.hosted);
     assert_eq!(q.surface.name, "QuantityField");
     assert_eq!(q.prop_named("value").unwrap().target, PropTarget::Native(QTY_VALUE));
-    assert_eq!(q.prop_named("value").unwrap().wire, QTY_VALUE.0, "own members keep their core ids");
+    assert_eq!(q.prop_named("value").unwrap().wire, QTY_VALUE.0 & svelters_skelter::kinds::WIRE_MASK, "own members keep their core ids, in the host's id space");
     assert_eq!(q.signal_named("changed").unwrap().native, Some(QTY_CHANGED));
     assert!(q.prop_named("unit").unwrap().spec.nullable, "an unset default reads as null");
     // inherited `Widget` props reach core's common props
@@ -159,8 +159,8 @@ fn app_kinds_appear_in_the_spec_and_merge_into_the_compiler() {
     let q = &full["kinds"]["QuantityField"];
     assert_eq!(full["tags"]["quantity-field"], "QuantityField");
     assert_eq!(q["widget"], "app");
-    assert_eq!(q["props"]["value"]["id"].as_u64(), Some(QTY_VALUE.0 as u64));
-    assert_eq!(q["methods"]["step"]["id"].as_u64(), Some(QTY_STEP.0 as u64));
+    assert_eq!(q["props"]["value"]["id"].as_u64(), Some((QTY_VALUE.0 & svelters_skelter::kinds::WIRE_MASK) as u64));
+    assert_eq!(q["methods"]["step"]["id"].as_u64(), Some((QTY_STEP.0 & svelters_skelter::kinds::WIRE_MASK) as u64));
     assert_eq!(q["bindings"]["value"]["event"], "changed");
     assert_eq!(q["a11y"]["role"], "SpinButton");
     // the fragment holds the app's kinds alone

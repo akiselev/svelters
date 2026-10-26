@@ -78,7 +78,7 @@ impl Behaviors {
     /// The id of param or event `name` of behaviour kind `kind`: skelter-core's hash, untyped.
     pub(crate) fn member(&mut self, kind: svl_id, name: &str) -> svl_id {
         let Some((tag, _)) = self.kinds.get(&kind) else { return 0 };
-        let id = skelter_core::PropId::of(tag, name, "any").0;
+        let id = skelter_core::PropId::of(tag, name, "any").0 & crate::kinds::WIRE_MASK;
         self.names.insert(id, name.to_string());
         id
     }
@@ -114,7 +114,7 @@ impl SkelterBackend {
     /// instance with `factory` and gets its attach, update and detach ([`crate::behavior`]).
     pub fn register_behavior(&self, ns: &str, name: &str, factory: impl Fn() -> Box<dyn Behavior> + 'static) {
         let tag = format!("{ns}.{name}");
-        let kind = skelter_core::KindId::of(&tag).0;
+        let kind = skelter_core::KindId::of(&tag).0 & crate::kinds::WIRE_MASK;
         self.0.behaviors.borrow_mut().kinds.insert(kind, (tag, Rc::new(factory)));
     }
 
