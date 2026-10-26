@@ -152,6 +152,12 @@ pub struct TextField {
     edited: bool,
     /// Content needs recording (text, selection, preedit or scroll changed).
     repaint: bool,
+    /// A scroll change needs a re-record (false: the host moves recorded content, as a
+    /// self-scrolling kind's compositor offset does; [`TextField::record_content`]).
+    scroll_repaints: bool,
+    /// A non-empty selection was last recorded: a caret move needs no re-record unless one was or is
+    /// (the caret itself goes out through the fast channel).
+    selection_painted: bool,
 }
 
 impl TextField {
@@ -174,6 +180,8 @@ impl TextField {
             signals: Vec::new(),
             edited: false,
             repaint: true,
+            scroll_repaints: true,
+            selection_painted: false,
         }
     }
 
@@ -235,6 +243,26 @@ impl TextField {
         self.scroll
     }
 
+    /// Takes the scroll offset the host holds (a compositor offset a wheel or fling moved); the next
+    /// prepare clamps it.
+    pub fn set_scroll_offset(&mut self, v: Vec2) {
+        self.scroll = v;
+    }
+
+    /// The largest scroll offset on each axis (the text, one point past it for the caret at its end,
+    /// beyond the content box).
+    pub fn scroll_max(&self) -> Vec2 {
+        let Some(g) = &self.geom else { return Vec2::ZERO };
+        let s = g.size();
+        Vec2::new((s.w + 1.0 - self.content.width()).max(0.0), (s.h - self.content.height()).max(0.0))
+    }
+
+    /// Whether a scroll needs a re-record (default `true`); a host that records with
+    /// [`TextField::record_content`] and moves the content itself turns it off.
+    pub fn set_scroll_repaints(&mut self, on: bool) {
+        self.scroll_repaints = on;
+    }
+
     pub fn take_signals(&mut self) -> Vec<FieldSignal> {
         std::mem::take(&mut self.signals)
     }
@@ -262,7 +290,12 @@ impl TextField {
         }
         if c.text || c.external || c.selection || c.preedit {
             self.caret.restart();
-            self.repaint = true;
+            // a collapsed caret moving is the fast channel's: no re-record
+            let selected = !self.editor.selection().range().is_empty();
+            if c.text || c.external || c.preedit || selected || self.selection_painted {
+                self.repaint = true;
+            }
+            self.selection_painted = selected;
         }
         if let Some(r) = self.editor.take_rejected() {
             self.signals.push(FieldSignal::Rejected(r));
@@ -330,7 +363,7 @@ impl TextField {
         } else if r.max.y > self.scroll.y + h {
             self.scroll.y = r.max.y - h;
         }
-        self.repaint |= before != self.scroll;
+        self.repaint |= self.scroll_repaints && before != self.scroll;
     }
 
     fn clamp_scroll(&mut self) {
@@ -339,7 +372,7 @@ impl TextField {
         // one point past the text for the caret at its end
         let max = Vec2::new((s.w + 1.0 - self.content.width()).max(0.0), (s.h - self.content.height()).max(0.0));
         let c = Vec2::new(self.scroll.x.clamp(0.0, max.x), self.scroll.y.clamp(0.0, max.y));
-        self.repaint |= c != self.scroll;
+        self.repaint |= self.scroll_repaints && c != self.scroll;
         self.scroll = c;
     }
 
@@ -410,10 +443,21 @@ impl TextField {
     /// Records the field's content (node coordinates): the selection behind the text, the glyphs or
     /// the placeholder, and the preedit underline, clipped to the content box.
     pub fn record(&self, list: &mut dyn RecordSink, colors: &FieldColors) {
+        self.record_at(list, colors, self.to_node(), Some(self.content));
+    }
+
+    /// Records the content as [`TextField::record`] does, unscrolled and unclipped: for a host that
+    /// places it in a scrolled space (a self-scrolling kind's content space, where the scroll is a
+    /// compositor offset of [`TextField::scroll_offset`] and the scroll layer clips).
+    pub fn record_content(&self, list: &mut dyn RecordSink, colors: &FieldColors) {
+        self.record_at(list, colors, self.content.min.to_vec(), None);
+    }
+
+    fn record_at(&self, list: &mut dyn RecordSink, colors: &FieldColors, o: Vec2, clip: Option<Rect>) {
         let Some(g) = &self.geom else { return };
-        let o = self.to_node();
-        let clip = self.content;
-        list.push(Prim::PushClip(RoundedRect { rect: clip, radii: Corners::default() }), clip);
+        if let Some(clip) = clip {
+            list.push(Prim::PushClip(RoundedRect { rect: clip, radii: Corners::default() }), clip);
+        }
         let s = self.editor.selection();
         let focused = self.editor.focused();
         if !s.range().is_empty() && !self.editor.composing() && (focused || self.editor.policy().keep_selection_unfocused) {
@@ -463,7 +507,9 @@ impl TextField {
                 }
             }
         }
-        list.push(Prim::PopClip, clip);
+        if let Some(clip) = clip {
+            list.push(Prim::PopClip, clip);
+        }
     }
 
     // ---- events ----

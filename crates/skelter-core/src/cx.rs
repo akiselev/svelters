@@ -308,6 +308,10 @@ pub struct PrepareCx<'a> {
     pub(crate) services: &'a mut Services,
     /// Signals emitted while preparing ([`PrepareCx::emit`]), queued after the prepare.
     pub(crate) emitted: &'a mut Vec<Emitted>,
+    /// The scroll offset asked for ([`PrepareCx::scroll_to`]), applied after the prepare.
+    pub(crate) scroll: Option<skelter_base::geom::Vec2>,
+    /// The caret asked for ([`PrepareCx::set_caret`]), sent after the prepare.
+    pub(crate) caret: Option<Option<Rect>>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -360,6 +364,23 @@ impl PrepareCx<'_> {
     /// state's report).
     pub fn emit(&mut self, signal: SignalId, arg: Option<Value>) {
         self.emitted.push(Emitted { node: self.node.id, signal, arg });
+    }
+    /// The node's scroll offset (zero unless it is a scroll container or scrolls itself).
+    pub fn scroll_offset(&self) -> skelter_base::geom::Vec2 {
+        self.node.doc.scroll_offset(self.node.id)
+    }
+    /// Scrolls the node (a scroll container, or a kind with [`Kind::self_scroll`](crate::Kind::self_scroll))
+    /// to `offset` as [`EventCx::scroll_fast`] does, once the prepare returns (after the kind's
+    /// [`SelfScroll`](crate::SelfScroll) is taken, so the offset clamps to its new content): the
+    /// offset goes to the compositor at once and the content moves without a re-record. What a kind
+    /// whose layout scrolls its caret into view uses (text-edit).
+    pub fn scroll_to(&mut self, offset: skelter_base::geom::Vec2) {
+        self.scroll = Some(offset);
+    }
+    /// Shows the caret at `rect` (local coordinates; `None` hides it) as [`EventCx::set_caret`]
+    /// does, once the prepare returns: a caret a layout or a scroll in the prepare moved.
+    pub fn set_caret(&mut self, rect: Option<Rect>) {
+        self.caret = Some(rect);
     }
 }
 
