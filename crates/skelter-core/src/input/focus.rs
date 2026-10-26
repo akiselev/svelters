@@ -14,7 +14,9 @@
 //! from svelters-egui EV3):
 //! - a `dialog` scope that becomes available (shown, not inert) takes focus: its `autofocus` node,
 //!   else its first tab stop, remembering the opener; when it stops being available (hidden, inert,
-//!   removed) focus inside it goes back to the opener;
+//!   removed) focus inside it goes back to the opener. Scopes that become available in the same pass
+//!   open outermost first, then in tree order, each taking focus from the one before: the innermost
+//!   wins over the scope around it and, among siblings, the last in tree order (the one on top);
 //! - with `initial-focus` on the window's root, an `autofocus` node outside a dialog takes focus once
 //!   when it appears (the window's first frame included) if nothing in the window has focus;
 //! - the focus fixup rule: a focused node that can no longer take focus (hidden, `display: none`,
@@ -383,10 +385,12 @@ pub(crate) fn after_style(doc: &mut Document, window: WindowId) {
     // 2. scopes and autofocus nodes: what is available now against the last pass
     let live: HashSet<NodeId> = doc.focus_watch.iter().copied().filter(|&n| doc.contains(n)).collect();
     doc.focus_watch = live;
-    let mut watch: Vec<(usize, NodeId)> =
-        doc.focus_watch.iter().copied().filter(|&n| doc.window_of(n) == Some(window)).map(|n| (depth(doc, n), n)).collect();
-    // outer scopes first, then a stable order
-    watch.sort_unstable_by_key(|&(d, n)| (d, n.0));
+    // outer scopes first, then tree order (never ids, whose generation bits say nothing of the tree):
+    // of scopes that open in one pass, each takes focus from the one before, so an inner scope wins
+    // over its outer one and, among siblings, the last in tree order (the one painted on top)
+    let mut watch: Vec<(SmallVec<[usize; 16]>, NodeId)> =
+        doc.focus_watch.iter().copied().filter(|&n| doc.window_of(n) == Some(window)).map(|n| (tree_path(doc, n), n)).collect();
+    watch.sort_unstable_by(|(a, _), (b, _)| a.len().cmp(&b.len()).then_with(|| a.cmp(b)));
     let seen_before = doc.window_mut(window).map(|w| std::mem::take(&mut w.focus_seen)).unwrap_or_default();
     let mut seen = HashSet::new();
     let mut opened = Vec::new();
@@ -438,13 +442,16 @@ pub(crate) fn after_style(doc: &mut Document, window: WindowId) {
     }
 }
 
-fn depth(doc: &Document, mut n: NodeId) -> usize {
-    let mut d = 0;
+/// The child indices from the root down to `n`: its depth is the length, and paths of one length
+/// compare in tree order.
+fn tree_path(doc: &Document, mut n: NodeId) -> SmallVec<[usize; 16]> {
+    let mut path = SmallVec::new();
     while let Some(p) = doc.parent(n) {
-        d += 1;
+        path.push(doc.children(p).iter().position(|&c| c == n).unwrap_or(0));
         n = p;
     }
-    d
+    path.reverse();
+    path
 }
 
 /// A `dialog` scope stopped being available (hidden, inert, no longer a scope): its restore entries
