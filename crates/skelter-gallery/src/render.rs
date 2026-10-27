@@ -451,7 +451,7 @@ impl Renderer {
         }
         self.providers.insert(file.to_path_buf(), provider.clone());
         self.embed().load_from(provider.clone()).map_err(|e| {
-            // the engine shortens module-load messages: the compiler's own errors read in full
+            // the compiler's diagnostics name every error with its line and column
             let c = provider.check(file);
             let errors: Vec<String> = c
                 .diagnostics

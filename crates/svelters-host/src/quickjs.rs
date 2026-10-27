@@ -247,12 +247,32 @@ pub(crate) struct QjsEngine {
     /// H1: the module versions the resolver hands out (`<id>?v=<n>`), the provider of the last
     /// load and the swaps applied since.
     versions: Versions,
+    load_failure: LoadFailure,
     provider: Option<Rc<dyn ModuleProvider>>,
     swaps: u32,
 }
 
 /// The latest `?v=<n>` of each module that was swapped in place.
 type Versions = Rc<RefCell<HashMap<String, u32>>>;
+
+/// The last module the loader or resolver failed on, with its whole message: QuickJS formats a
+/// loader error into a fixed buffer (`Error loading module '<name>': <message>`, 256 bytes), so a
+/// long path cuts the message short (GAL1 R3). [`full_load_message`] puts it back.
+type LoadFailure = Rc<RefCell<Option<(String, String)>>>;
+
+/// `e` with the message the loader gave, when the engine's copy of it was cut short.
+fn full_load_message(mut e: JsError, failure: &LoadFailure) -> JsError {
+    if let Some((name, message)) = failure.borrow_mut().take() {
+        for what in ["loading", "resolving"] {
+            let head = format!("Error {what} module '{name}'");
+            if e.message.starts_with(&head) || (e.message.starts_with(&format!("Error {what} module")) && head.starts_with(e.message.as_str())) {
+                e.message = format!("{head}: {message}");
+                break;
+            }
+        }
+    }
+    e
+}
 
 /// A plain object from `(key, value)` pairs (EM1 props and info patches).
 fn plain_object<'js>(ctx: &Ctx<'js>, core: &Rc<Core>, pairs: &[(String, AV)]) -> Res<Object<'js>> {
@@ -359,6 +379,7 @@ impl QjsEngine {
             callbacks,
             entries: Vec::new(),
             versions: Versions::default(),
+            load_failure: LoadFailure::default(),
             provider: None,
             swaps: 0,
         })
@@ -440,8 +461,8 @@ impl QjsEngine {
         self.swaps = 0;
         self.provider = Some(provider.clone());
         self.rt.set_loader(
-            ProviderResolver { provider: provider.clone(), versions: self.versions.clone() },
-            ProviderLoader { provider, core: core.clone(), hot },
+            ProviderResolver { provider: provider.clone(), versions: self.versions.clone(), failure: self.load_failure.clone() },
+            ProviderLoader { provider, core: core.clone(), hot, failure: self.load_failure.clone() },
         );
         let res = self.call_guarded(|ctx| {
             if hot {
@@ -460,7 +481,7 @@ impl QjsEngine {
             if e.kind == ErrorKind::Exception {
                 e.kind = ErrorKind::Load;
             }
-            e
+            full_load_message(e, &self.load_failure)
         })
     }
 
@@ -584,7 +605,7 @@ impl JsEngine for QjsEngine {
                 if e.kind == ErrorKind::Exception {
                     e.kind = ErrorKind::Load;
                 }
-                Err(e)
+                Err(full_load_message(e, &self.load_failure))
             }
         }
     }
@@ -1681,6 +1702,7 @@ fn install_templates<'js>(ctx: &Ctx<'js>, host: &Object<'js>, core: &Weak<Core>,
 
 /// The QuickJS side of a [`ModuleProvider`]: resolution.
 struct ProviderResolver {
+    failure: LoadFailure,
     provider: Rc<dyn ModuleProvider>,
     versions: Versions,
 }
@@ -1707,7 +1729,10 @@ impl Resolver for ProviderResolver {
             // (`svelters:entry`, a component's `svelters-style:` sheet), so it is not asked.
             return Ok(name.to_string());
         }
-        let id = self.provider.resolve(unversioned(base), name).map_err(|m| rquickjs::Error::new_resolving_message(base, name, m))?;
+        let id = self.provider.resolve(unversioned(base), name).map_err(|m| {
+            *self.failure.borrow_mut() = Some((name.to_string(), m.clone()));
+            rquickjs::Error::new_resolving_message(base, name, m)
+        })?;
         Ok(versioned(&id, &self.versions))
     }
 }
@@ -1718,11 +1743,15 @@ struct ProviderLoader {
     core: Weak<Core>,
     /// Modules get `import.meta.hot` (the provider compiles for HMR).
     hot: bool,
+    failure: LoadFailure,
 }
 
 impl Loader for ProviderLoader {
     fn load<'js>(&mut self, ctx: &Ctx<'js>, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<Module<'js, Declared>> {
-        let code = self.provider.load(unversioned(name)).map_err(|m| rquickjs::Error::new_loading_message(name, m))?;
+        let code = self.provider.load(unversioned(name)).map_err(|m| {
+            *self.failure.borrow_mut() = Some((name.to_string(), m.clone()));
+            rquickjs::Error::new_loading_message(name, m)
+        })?;
         declare(ctx, name, code, &self.core, self.hot)
     }
 }

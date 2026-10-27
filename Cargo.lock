@@ -4272,21 +4272,10 @@ version = "0.1.0"
 source = "git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f#ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f"
 dependencies = [
  "fancy-regex",
- "quire-text 0.1.0 (git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f)",
+ "quire-text",
  "regex-automata",
  "serde",
  "smallvec",
-]
-
-[[package]]
-name = "quire-text"
-version = "0.1.0"
-source = "git+https://github.com/akiselev/quire?rev=35b5063ab149ca8682241324aff8efb28696f491#35b5063ab149ca8682241324aff8efb28696f491"
-dependencies = [
- "ropey",
- "smallvec",
- "unicode-general-category",
- "unicode-segmentation",
 ]
 
 [[package]]
@@ -5152,7 +5141,7 @@ name = "skelter-widgets"
 version = "0.0.0"
 dependencies = [
  "i_overlay",
- "quire-text 0.1.0 (git+https://github.com/akiselev/quire?rev=35b5063ab149ca8682241324aff8efb28696f491)",
+ "quire-text",
  "resvg",
  "rfd",
  "roxmltree 0.20.0",
@@ -5175,7 +5164,7 @@ version = "0.1.0"
 source = "git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f#ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f"
 dependencies = [
  "quire-core",
- "quire-text 0.1.0 (git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f)",
+ "quire-text",
  "serde",
  "serde_json",
  "skelter-base",
