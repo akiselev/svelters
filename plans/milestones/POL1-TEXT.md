@@ -62,7 +62,10 @@ Looked at beyond the list (label, password, text-edit hover/focus sheets, and ag
 
 ## CI
 
-(filled in below as runs finish)
+On `67e43c9` (the last code sha: the fixes, the gallery merge `cd478f3`, the RTL fix), all six workflows green: js
+40586582170, linux-gtk 40586582001, linux-qt 40586582112, macos-appkit 40586581971, skelter 40586582056,
+windows-winui 40586582379. Earlier shas (`fb57258`, `225dc1b`) were superseded before their runs were read. This
+record's last edit is docs only (CI not rerun for it). No snapshot test was moved or re-blessed.
 
 ## Questions (for the coordinator)
 
