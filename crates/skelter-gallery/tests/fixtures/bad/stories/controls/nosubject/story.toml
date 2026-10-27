@@ -1,0 +1,10 @@
+id = "nosubject"
+title = "No subject"
+family = "controls"
+kinds = ["button"]
+size = [100, 40]
+
+[[variant]]
+id = "bare"
+title = "States declared, no subject anchor"
+file = "bare.svelte"

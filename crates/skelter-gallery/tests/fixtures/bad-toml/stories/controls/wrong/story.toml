@@ -1,0 +1,13 @@
+id = "Wrong"
+title = "Wrong"
+family = "gizmos"
+kinds = []
+size = [100]
+states = ["normal", "glowing"]
+colour = "red"
+
+[[variant]]
+id = "a"
+title = "A"
+file = "missing.svelte"
+args = { disabled = [true] }

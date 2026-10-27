@@ -1,0 +1,24 @@
+[package]
+name = "skelter-gallery"
+description = "GAL1: skelter's component gallery: the story format, discovery, the cell matrix, the headless renderer (shots, contact sheets, inspect) and the `skelter-gallery` CLI, with an extension API for hosts."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+skelter-base = { workspace = true }
+skelter-core = { workspace = true }
+skelter-text = { workspace = true }
+skelter-widgets = { workspace = true }
+skelter-test = { workspace = true }
+svelters-skelter = { workspace = true }
+svelters-abi = { workspace = true }
+svelters-host = { workspace = true }
+svelters-style = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+# story.toml
+toml = "1"
+# PNG output and the contact sheet's canvas (skelter-test's version)
+image = { version = "0.25.10", default-features = false, features = ["png"] }
