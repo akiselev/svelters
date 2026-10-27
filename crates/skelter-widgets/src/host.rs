@@ -939,6 +939,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
                 None => return Ok(()),
             },
         };
+        // the document refused a JS write older than the kind's native changes before this point
+        self.widget.write_checked();
         self.widget.set_prop(w::PropId(wi as u32), &v).map_err(|e| PropError::Rejected(format!("{}: {e:?}", wp.name)))
     }
 
@@ -991,6 +993,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         self.add_reads(reads);
         if let Some(v) = self.widget.take_scroll_request() {
             cx.scroll_to(v);
+        }
+        if let Some((x, y)) = self.widget.take_scroll_pin() {
+            cx.pin_scroll_end(x, y);
         }
         // SV79: descendants the widget draws itself, placed for assistive technology
         for (path, rect) in self.widget.a11y_placements() {

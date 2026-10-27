@@ -703,6 +703,17 @@ pub mod core {
         fn take_scroll_request(&mut self) -> Option<skelter_base::geom::Vec2> {
             None
         }
+        /// SV86: axes (x, y) the kind's scroll request pins to the end of the content, asked after
+        /// [`Kind::take_scroll_request`]: core keeps the offset at the end as the content changes
+        /// until a scroll moves it away (skelter-core's `PrepareCx::pin_scroll_end`). `None`: no pin.
+        fn take_scroll_pin(&mut self) -> Option<(bool, bool)> {
+            None
+        }
+        /// Core checked a write it is about to hand the kind against the kind's native changes
+        /// (architecture §4.5: a write JS made before it saw one is refused there), so the write is
+        /// current. A kind that refuses stale writes itself (its own revisions, for hosts that do not
+        /// check) takes it as seen.
+        fn write_checked(&mut self) {}
         /// Stands in for skelter-core's `PrepareCx::place_a11y`: descendants the kind draws itself
         /// where they are never laid out, by the path of child indices from the node, with their
         /// bounds in the node's local space (`None`: hidden). Asked after each prepare.

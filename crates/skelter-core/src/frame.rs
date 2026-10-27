@@ -99,6 +99,8 @@ impl Document {
             stats.layout.full |= again.full;
             stats.layout.leaf_layouts += again.leaf_layouts;
         }
+        // SV86: scroll containers pinned to the end follow the content just laid out
+        self.follow_scroll_pins(window);
         let mut commit = Commit { window, revision: self.revision, input_seq: self.input_seq, ..Default::default() };
         let mut runs = RunSink { next: self.run_counter, added: Vec::new() };
         let mut images = std::mem::take(&mut self.images);
@@ -495,10 +497,10 @@ impl Document {
         let mut shaper = self.shaper.take();
         let mut services = std::mem::take(&mut self.services);
         let mut emitted = Vec::new();
-        let (request, scroll, caret, native, placed) = {
-            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None, native: Vec::new(), placed: Vec::new() };
+        let (request, scroll, pin, caret, native, placed) = {
+            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, pin: None, caret: None, native: Vec::new(), placed: Vec::new() };
             k.prepare(&mut cx);
-            (cx.request, cx.scroll, cx.caret, cx.native, cx.placed)
+            (cx.request, cx.scroll, cx.pin, cx.caret, cx.native, cx.placed)
         };
         // a kind that scrolls itself may have grown or shrunk its content
         let own = k.self_scroll(&self.view_at(i));
@@ -523,6 +525,9 @@ impl Document {
         // the prepare's scroll and caret, as an event's: fast commits, clamped to the content just taken
         if let Some(v) = scroll {
             self.scroll_fast(node, v);
+        }
+        if let Some((x, y)) = pin {
+            self.pin_scroll_end(node, x, y);
         }
         if let Some(c) = caret {
             self.set_caret(node, c);

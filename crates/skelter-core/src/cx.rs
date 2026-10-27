@@ -356,6 +356,8 @@ pub struct PrepareCx<'a> {
     pub(crate) emitted: &'a mut Vec<Emitted>,
     /// The scroll offset asked for ([`PrepareCx::scroll_to`]), applied after the prepare.
     pub(crate) scroll: Option<skelter_base::geom::Vec2>,
+    /// SV86: the axes to pin to the end ([`PrepareCx::pin_scroll_end`]), applied after the scroll.
+    pub(crate) pin: Option<(bool, bool)>,
     /// The caret asked for ([`PrepareCx::set_caret`]), sent after the prepare.
     pub(crate) caret: Option<Option<Rect>>,
     /// Native prop writes ([`PrepareCx::set_native`]), applied after the prepare.
@@ -453,6 +455,12 @@ impl PrepareCx<'_> {
     /// whose layout scrolls its caret into view uses (text-edit).
     pub fn scroll_to(&mut self, offset: skelter_base::geom::Vec2) {
         self.scroll = Some(offset);
+    }
+    /// SV86: pins the node (a scroll container) to the end of its content on the axes set, after
+    /// the prepare (and after [`PrepareCx::scroll_to`]): [`Document::pin_scroll_end`]. What a
+    /// scroll container whose offset JS wrote past the end uses (a chat log kept at its newest line).
+    pub fn pin_scroll_end(&mut self, x: bool, y: bool) {
+        self.pin = Some((x, y));
     }
     /// Shows the caret at `rect` (local coordinates; `None` hides it) as [`EventCx::set_caret`]
     /// does, once the prepare returns: a caret a layout or a scroll in the prepare moved.

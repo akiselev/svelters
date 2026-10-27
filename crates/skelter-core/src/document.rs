@@ -96,6 +96,9 @@ pub struct Document {
     pub(crate) anim: crate::anim::AnimState,
     /// Native-owned scroll offsets of scroll containers.
     pub(crate) scroll: HashMap<NodeId, skelter_base::geom::Vec2>,
+    /// SV86: scroll containers kept at the end of their content on these axes (x, y) until a scroll
+    /// moves them away ([`Document::pin_scroll_end`]).
+    pub(crate) scroll_pins: HashMap<NodeId, (bool, bool)>,
     /// The revision of the last edit that changed something.
     pub(crate) last_change: Revision,
     /// Run and image ids are unique per document (the compositor holds them per window).
@@ -185,6 +188,7 @@ impl Document {
             input_events: Vec::new(),
             anim: Default::default(),
             scroll: HashMap::new(),
+            scroll_pins: HashMap::new(),
             last_change: Revision(0),
             run_counter: 0,
             images: Default::default(),
@@ -723,6 +727,7 @@ impl Document {
         self.style.reset(i);
         self.anim.forget(id);
         self.scroll.remove(&id);
+        self.scroll_pins.remove(&id);
         self.timers.remove(&id);
         self.virt.remove(&id);
         self.anchors.remove(&id);
