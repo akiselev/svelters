@@ -3,6 +3,7 @@
 //! agents use (`docs/skelter/gallery.md`). Exit codes: 0 ok, 1 a story failed, 2 bad arguments.
 
 use crate::catalog::{Catalog, discover_with};
+use crate::check::{CheckReport, Problem, ProblemKind};
 use crate::ext::Extensions;
 use crate::matrix::{Axes, Matrix};
 use crate::model::{Cell, State, Story, density_named, parse_arg_value};
@@ -163,6 +164,7 @@ pub fn run(mut ext: Extensions, argv: &[String]) -> u8 {
         "shot" => cmd_shot(&ext, &rest),
         "sheet" => cmd_sheet(&ext, &rest),
         "inspect" => cmd_inspect(&ext, &rest),
+        "check" => cmd_check(&ext, &rest),
         _ => Err(Fail::Usage(format!("unknown command {cmd:?}"))),
     };
     match r {
@@ -523,4 +525,39 @@ fn cmd_inspect(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
     // JSON either way: it is the readable form too
     print_json(&v);
     Ok(OK)
+}
+
+// ---- check ----
+
+fn cmd_check(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
+    a.only("check", &["--json"])?;
+    if !a.positional.is_empty() {
+        return Err(Fail::Usage("check takes no arguments".into()));
+    }
+    let rep = match discover_with(&ext.story_roots, &ext.families) {
+        Err(errs) => CheckReport {
+            problems: errs
+                .into_iter()
+                .map(|e| Problem { kind: ProblemKind::Story, story: None, variant: None, file: Some(e.file.clone()), message: e.to_string() })
+                .collect(),
+            ..CheckReport::default()
+        },
+        Ok(_) => renderer(ext, a)?.check(),
+    };
+    if a.switch("--json") {
+        print_json(&json!({ "ok": rep.ok(), "stories": rep.stories, "variants": rep.variants, "problems": rep.problems, "warnings": rep.warnings }));
+    } else {
+        for p in &rep.problems {
+            let at = match (&p.story, &p.variant) {
+                (Some(s), Some(v)) => format!("{s}/{v}: "),
+                _ => String::new(),
+            };
+            println!("{:?}: {at}{}", p.kind, p.message);
+        }
+        for w in &rep.warnings {
+            println!("warning: {w}");
+        }
+        println!("{} stories, {} variants, {} problems", rep.stories, rep.variants, rep.problems.len());
+    }
+    Ok(if rep.ok() { OK } else { FAILED })
 }

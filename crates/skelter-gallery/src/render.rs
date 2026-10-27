@@ -63,6 +63,7 @@ impl fmt::Display for Error {
                 Ok(())
             }
             Error::Request(m) | Error::Setup(m) | Error::Render(m) => f.write_str(m),
+            Error::Load { file, message } if message.starts_with(&*file.to_string_lossy()) => write!(f, "does not load: {message}"),
             Error::Load { file, message } => write!(f, "{}: does not load: {message}", file.display()),
             Error::Runtime { file, message } => write!(f, "{}: {message}", file.display()),
         }
@@ -302,10 +303,18 @@ impl Renderer {
         cfg.entry = Entry::Embed(vec![(EXPORT.into(), file.to_path_buf())]);
         cfg.backend = "skelter".into();
         cfg.dev = true;
-        let provider = SourceProvider::new(cfg)?;
-        let id = self.embed.load_from(Rc::new(provider)).map_err(|e| e.message)?;
-        // what the load logged (compiler warnings)
-        Ok(id)
+        let provider = Rc::new(SourceProvider::new(cfg)?);
+        self.embed.load_from(provider.clone()).map_err(|e| {
+            // the engine shortens module-load messages: the compiler's own errors read in full
+            let c = provider.check(file);
+            let errors: Vec<String> = c
+                .diagnostics
+                .iter()
+                .filter(|d| d.severity == svelters_host::modules::Severity::Error)
+                .map(|d| format!("{}:{}:{}: {} [{}]", file.display(), d.line, d.column, d.message, d.code))
+                .collect();
+            if errors.is_empty() { c.error.unwrap_or(e.message) } else { errors.join("\n") }
+        })
     }
 
     /// Mounts `cell` (its variant with its args, theme, density and zoom), forces its state and

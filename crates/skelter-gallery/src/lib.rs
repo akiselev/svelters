@@ -9,6 +9,7 @@
 //! | [`render`] | [`Renderer`]: the headless renderer (one engine and window for every cell), [`Shot`] |
 //! | [`sheet`] | contact sheets: [`Sheet`], [`SheetLayout`], the cell index |
 //! | [`inspect`] | one node of a cell as JSON: box, computed style, matched rules, forced state, AccessKit |
+//! | [`check`] | every variant compiles and renders one cell: [`check::CheckReport`] |
 //! | [`cli`] | [`cli_main`]: the `skelter-gallery` CLI |
 //! | [`ext`] | [`Extensions`]: what a host adds (story roots, kinds, setup hooks, token sets) |
 //!
@@ -16,6 +17,7 @@
 //! `docs/skelter/gallery.md`.
 
 pub mod catalog;
+pub mod check;
 pub mod cli;
 pub mod ext;
 pub mod matrix;
