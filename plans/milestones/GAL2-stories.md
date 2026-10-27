@@ -1,6 +1,6 @@
 # GAL2: the gallery's stories (batch gallery-b1, lane stories)
 
-Branch `ci/gb1-stories`. Brief: `plans/cloud/gallery-b1/BRIEF.md` and `LANE-stories.md`. Status: done (pending CI on the last sha).
+Branch `ci/gb1-stories`. Brief: `plans/cloud/gallery-b1/BRIEF.md` and `LANE-stories.md`. Status: done.
 
 ## Scope
 
@@ -177,6 +177,14 @@ looks right. Rows are ordered by impact; the first three affect every interactiv
 - `svelters-compile --backend skelter --check` on every story file: no diagnostics.
 - Sheets: 7 families, 2,892 cells across all states and the four themes, no errors or warnings.
 - No tests of this lane's own (it ships no code); the rest is GitHub CI.
+
+CI on `47adaec` (the last code sha: stories plus `ci/gb1-core` `8350d0b` merged), all six workflows green: js
+40579883283, linux-gtk 40579883341, linux-qt 40579883216, macos-appkit 40579883273, skelter 40579883278,
+windows-winui 40579883355. Earlier: `29ebdbf` (stories only) green; `c163a06` red in skelter (windows) on
+core's `skelter-gallery` tests (Windows `\\?\` root paths), fixed by core's `8350d0b`, merged in `47adaec`.
+This record's last edit is docs only (CI not rerun for it).
+
+Not run locally: the workspace tests, core's own tests, conformance (CLAUDE.md: CI is the gate).
 
 ## Handoff
 
