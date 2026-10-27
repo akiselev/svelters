@@ -1,13 +1,23 @@
 //! [`Stylist`]: the registered sheets of one backend, the rule index, matching and the cascade
 //! (CSS.md §2.4).
 //!
-//! Cascade order, lowest first (CSS Cascade 5 §6, with the theme as the user origin):
+//! Cascade order, lowest first (CSS Cascade 5 §6, with the theme in the user-agent's place):
 //!
-//! 1. origin and importance: theme < author rules < inline, then author `!important` < inline
-//!    `!important` < theme `!important`;
+//! 1. origin and importance: theme < author rules < user rules < inline, then author `!important`
+//!    < inline `!important` < theme `!important` < user `!important`;
 //! 2. `@layer`: for normal declarations earlier layers lose and unlayered rules win; for
 //!    `!important` the order reverses;
 //! 3. specificity; 4. source order (sheets in registration order).
+//!
+//! The user origin departs from CSS, where user rules lose to the page's: here the "author" is the
+//! application itself, and the person customising it wins (as a desktop toolkit's user style
+//! provider does). Inline declarations still beat user rules, because what code writes inline is
+//! geometry it computed; a user `!important` beats everything.
+//!
+//! `revert` rolls a property back to the cascade without the declaration's origin (an author or
+//! inline `revert` falls to the theme, a user `revert` to the author and inline rules, a theme
+//! `revert` to `unset`); `revert-layer` rolls back to the cascade without the declaration's layer
+//! (in its origin and importance), and from the lowest layer on to the origin below.
 
 use crate::atom::Atom;
 use crate::computed::{ComputeContext, ComputedStyle, compute};
@@ -30,6 +40,37 @@ pub enum Origin {
     Theme,
     /// Component sheets.
     Author,
+    /// The user's sheets: above author rules, below inline declarations; their `!important` is
+    /// top (see the module docs).
+    User,
+}
+
+impl Origin {
+    /// The cascade rank of a declaration of this origin: normal theme 0, author 1, user 2 (inline
+    /// 3); `!important` author 4 (inline 5), theme 6, user 7.
+    pub(crate) fn rank(self, important: bool) -> u8 {
+        match (important, self) {
+            (false, Origin::Theme) => 0,
+            (false, Origin::Author) => 1,
+            (false, Origin::User) => 2,
+            (true, Origin::Author) => 4,
+            (true, Origin::Theme) => 6,
+            (true, Origin::User) => 7,
+        }
+    }
+}
+
+/// The ranks of inline declarations (normal, `!important`); see [`Origin::rank`].
+const INLINE_RANK: (u8, u8) = (3, 5);
+
+/// One applicable declaration with what `revert` and `revert-layer` need: its origin (inline is
+/// author origin) and its cascade level (rank, layer).
+#[derive(Clone, Copy)]
+pub(crate) struct Cascaded<'s> {
+    pub decl: &'s Declaration,
+    pub origin: Origin,
+    pub rank: u8,
+    pub layer: u32,
 }
 
 /// A registered sheet.
@@ -64,6 +105,64 @@ pub(crate) struct Entry {
     pub(crate) dead: bool,
     pub(crate) layer_rank: u32,
     pub(crate) media_ok: bool,
+    /// The custom properties the rule's declarations reference through `var()`, sorted, and
+    /// whether it declares any (SV69: [`CustomDeps`]).
+    pub(crate) refs: Box<[Atom]>,
+    pub(crate) declares: bool,
+}
+
+/// The custom properties `block` references through `var()` (sorted, deduplicated) and whether it
+/// declares any.
+pub(crate) fn block_deps(block: &DeclBlock) -> (Box<[Atom]>, bool) {
+    let mut refs: Vec<Atom> = Vec::new();
+    let mut declares = false;
+    for d in &block.decls {
+        declares |= d.is_custom();
+        if d.has_var {
+            refs.extend(crate::var::references(&d.value).iter().map(|r| Atom::new(r)));
+        }
+    }
+    refs.sort_unstable();
+    refs.dedup();
+    (refs.into_boxed_slice(), declares)
+}
+
+/// What a computed style depends on among custom properties (SV69): the names its declarations
+/// (matched rules and inline) reference through `var()`, and whether it declares any. A change of
+/// an inherited custom property that it neither references nor redeclares leaves its other values
+/// as they are: only its inherited custom map changes ([`ComputedStyle::inherit_customs_from`]).
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct CustomDeps {
+    /// Sorted, deduplicated.
+    pub refs: Vec<Atom>,
+    pub declares: bool,
+}
+
+impl CustomDeps {
+    /// Whether any of `names` is referenced, or the style declares custom properties of its own
+    /// (whose values may substitute any inherited one).
+    pub fn reached_by(&self, names: &[Atom]) -> bool {
+        self.declares || names.iter().any(|n| self.refs.binary_search(n).is_ok())
+    }
+
+    /// Adds another style's dependencies (a part's to its host's).
+    pub fn merge(&mut self, other: &CustomDeps) {
+        self.declares |= other.declares;
+        if !other.refs.is_empty() {
+            self.refs.extend_from_slice(&other.refs);
+            self.refs.sort_unstable();
+            self.refs.dedup();
+        }
+    }
+
+    fn add(&mut self, refs: &[Atom], declares: bool) {
+        self.declares |= declares;
+        for r in refs {
+            if let Err(at) = self.refs.binary_search(r) {
+                self.refs.insert(at, r.clone());
+            }
+        }
+    }
 }
 
 impl Entry {
@@ -203,7 +302,8 @@ impl Stylist {
             }
             let order = self.next_order as u64;
             self.next_order += 1;
-            self.entries.push(Entry { sheet: id, origin, rule: rule.clone(), order, utility: None, dead: false, layer_rank: 0, media_ok: true });
+            let (refs, declares) = block_deps(&rule.block);
+            self.entries.push(Entry { sheet: id, origin, rule: rule.clone(), order, utility: None, dead: false, layer_rank: 0, media_ok: true, refs, declares });
         }
         self.rebuild();
         (id, diags)
@@ -213,6 +313,66 @@ impl Stylist {
     pub fn remove_sheet(&mut self, id: SheetId) {
         self.entries.retain(|e| e.sheet != id);
         self.rebuild();
+    }
+
+    /// Sets custom properties in sheet `id` in place (SV69): no rule-index rebuild, no new sheet.
+    /// Each `(name, Some(value))` replaces the value of every declaration of `name` in the sheet,
+    /// or, when the sheet declares none, is added to its last rule that declares a custom property;
+    /// `(name, None)` removes the sheet's declarations of `name`. Returns the rules that changed:
+    /// the nodes they match need a restyle. Fails, changing nothing, on a name that isn't a custom
+    /// property or a new name in a sheet with no rule declaring one.
+    pub fn set_custom_values(&mut self, id: SheetId, values: &[(&str, Option<&str>)]) -> Result<Vec<RuleId>, String> {
+        let mine: Vec<usize> = (0..self.entries.len()).filter(|&i| self.entries[i].sheet == id).collect();
+        if mine.is_empty() {
+            return Err("no such sheet".into());
+        }
+        let home = mine.iter().rev().copied().find(|&i| self.entries[i].declares);
+        for (name, v) in values {
+            if !name.starts_with("--") {
+                return Err(format!("`{name}` is not a custom property"));
+            }
+            let declared = mine.iter().any(|&i| self.entries[i].rule.block.decls.iter().any(|d| &*d.name == *name));
+            if v.is_some() && !declared && home.is_none() {
+                return Err(format!("`{name}`: the sheet has no rule that declares custom properties"));
+            }
+        }
+        let mut touched: Vec<usize> = Vec::new();
+        for (name, v) in values {
+            let mut found = false;
+            for &i in &mine {
+                let block = &self.entries[i].rule.block;
+                if !block.decls.iter().any(|d| &*d.name == *name) {
+                    continue;
+                }
+                found = true;
+                let block = std::sync::Arc::make_mut(&mut self.entries[i].rule.block);
+                match v {
+                    Some(v) => {
+                        for d in block.decls.iter_mut().filter(|d| &*d.name == *name) {
+                            d.value = v.trim().into();
+                            d.has_var = crate::var::has_var(&d.value);
+                        }
+                    }
+                    None => block.decls.retain(|d| &*d.name != *name),
+                }
+                touched.push(i);
+            }
+            if let (false, Some(v), Some(h)) = (found, v, home) {
+                let block = std::sync::Arc::make_mut(&mut self.entries[h].rule.block);
+                let value: Box<str> = v.trim().into();
+                let has_var = crate::var::has_var(&value);
+                block.decls.push(Declaration { name: Atom::new(name), value, important: false, has_var, line: 0, column: 0 });
+                touched.push(h);
+            }
+        }
+        touched.sort_unstable();
+        touched.dedup();
+        for &i in &touched {
+            let (refs, declares) = block_deps(&self.entries[i].rule.block);
+            self.entries[i].refs = refs;
+            self.entries[i].declares = declares;
+        }
+        Ok(touched.into_iter().map(|i| RuleId(i as u32)).collect())
     }
 
     /// Checks an inline block against the table, as `add_sheet` does for rules.
@@ -367,7 +527,7 @@ impl Stylist {
     /// declaration of a property wins.
     pub fn cascaded<'s, E: Element>(&'s self, el: E, inline: Option<&'s DeclBlock>, caches: &mut MatchCaches) -> Vec<&'s Declaration> {
         let matched = self.matched_rules(el, caches);
-        self.order_decls(&matched, inline)
+        self.order_decls(&matched, inline).into_iter().map(|c| c.decl).collect()
     }
 
     /// DZ0b2: the declaration that wins each property `el` declares (rules and `inline`), keyed by
@@ -422,33 +582,29 @@ impl Stylist {
         compute(self.table, &decls, Some(host), cx)
     }
 
-    fn order_decls<'s>(&'s self, matched: &[MatchedRule], inline: Option<&'s DeclBlock>) -> Vec<&'s Declaration> {
+    fn order_decls<'s>(&'s self, matched: &[MatchedRule], inline: Option<&'s DeclBlock>) -> Vec<Cascaded<'s>> {
         // (origin and importance, layer, specificity, source order)
         type Key<'k> = (u8, u32, u32, (u64, &'k str));
-        let mut keyed: Vec<(Key<'s>, &Declaration)> = Vec::new();
+        let mut keyed: Vec<(Key<'s>, Cascaded<'s>)> = Vec::new();
         for m in matched {
             let e = &self.entries[m.rule.0 as usize];
             for d in &e.rule.block.decls {
                 if self.table.get(&d.name).is_some_and(|p| p.inline_only) {
                     continue;
                 }
-                let rank = match (d.important, e.origin) {
-                    (false, Origin::Theme) => 0,
-                    (false, Origin::Author) => 1,
-                    (true, Origin::Author) => 3,
-                    (true, Origin::Theme) => 5,
-                };
+                let rank = e.origin.rank(d.important);
                 let layer = if d.important { u32::MAX - e.layer_rank } else { e.layer_rank };
-                keyed.push(((rank, layer, m.specificity, e.order_key()), d));
+                keyed.push(((rank, layer, m.specificity, e.order_key()), Cascaded { decl: d, origin: e.origin, rank, layer }));
             }
         }
         if let Some(block) = inline {
             for (i, d) in block.decls.iter().enumerate() {
-                keyed.push(((if d.important { 4 } else { 2 }, 0, 0, (i as u64, "")), d));
+                let rank = if d.important { INLINE_RANK.1 } else { INLINE_RANK.0 };
+                keyed.push(((rank, 0, 0, (i as u64, "")), Cascaded { decl: d, origin: Origin::Author, rank, layer: 0 }));
             }
         }
         keyed.sort_by_key(|(k, _)| *k);
-        keyed.into_iter().map(|(_, d)| d).collect()
+        keyed.into_iter().map(|(_, c)| c).collect()
     }
 
     /// Computes `el`'s style from the matched rules, its inline block and its parent's style.
@@ -460,8 +616,37 @@ impl Stylist {
         cx: &ComputeContext,
         caches: &mut MatchCaches,
     ) -> ComputedStyle {
-        let decls = self.cascaded(el, inline, caches);
+        let matched = self.matched_rules(el, caches);
+        let decls = self.order_decls(&matched, inline);
         compute(self.table, &decls, parent, cx)
+    }
+
+    /// [`Stylist::compute`], adding to `deps` the custom properties the matched rules and `inline`
+    /// reference and whether they declare any (SV69).
+    pub fn compute_with_deps<E: Element>(&self, el: E, parent: Option<&ComputedStyle>, inline: Option<&DeclBlock>, cx: &ComputeContext, caches: &mut MatchCaches, deps: &mut CustomDeps) -> ComputedStyle {
+        let matched = self.matched_rules(el, caches);
+        self.add_deps(&matched, inline, deps);
+        let decls = self.order_decls(&matched, inline);
+        compute(self.table, &decls, parent, cx)
+    }
+
+    /// [`Stylist::compute_pseudo`], adding the rules' custom-property dependencies to `deps`.
+    pub fn compute_pseudo_with_deps<E: Element>(&self, el: E, pseudo: &PseudoElement, host: &ComputedStyle, cx: &ComputeContext, caches: &mut MatchCaches, deps: &mut CustomDeps) -> ComputedStyle {
+        let matched = self.matched_pseudo_rules_at(el, pseudo, None, caches);
+        self.add_deps(&matched, None, deps);
+        let decls = self.order_decls(&matched, None);
+        compute(self.table, &decls, Some(host), cx)
+    }
+
+    fn add_deps(&self, matched: &[MatchedRule], inline: Option<&DeclBlock>, deps: &mut CustomDeps) {
+        for m in matched {
+            let e = &self.entries[m.rule.0 as usize];
+            deps.add(&e.refs, e.declares);
+        }
+        if let Some(b) = inline {
+            let (refs, declares) = block_deps(b);
+            deps.add(&refs, declares);
+        }
     }
 }
 

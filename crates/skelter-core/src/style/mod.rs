@@ -37,6 +37,10 @@ pub(crate) struct NodeStyle {
     pub parts: Vec<(&'static str, Arc<svelters_style::ComputedStyle>)>,
     /// State bits a tool forces for matching ([`crate::Document::force_state`]), ORed over the node's.
     pub forced: svelters_style::StateMask,
+    /// The custom properties the node's and its parts' declarations reference, and whether they
+    /// declare any (SV69): a change of an inherited custom property restyles the node only when
+    /// these say it can change its values.
+    pub deps: svelters_style::CustomDeps,
 }
 
 /// What an inspector shows about a sheet ([`crate::Document::set_sheet_info`]).
@@ -94,13 +98,13 @@ impl DocStyle {
         n.input = Some(Box::new(input));
         true
     }
-    pub fn add_sheet(&mut self, css: &str) -> SheetId {
+    pub fn add_sheet(&mut self, css: &str, origin: svelters_style::Origin) -> SheetId {
         let opts = svelters_style::ParseOptions { states: self.state_names.as_deref() };
         let sheet = svelters_style::Stylesheet::parse(css, &opts);
-        self.add_parsed(&sheet)
+        self.add_parsed(&sheet, origin)
     }
-    pub fn add_parsed(&mut self, sheet: &svelters_style::Stylesheet) -> SheetId {
-        let (id, _diags) = self.stylist.add_sheet(sheet, svelters_style::Origin::Author);
+    pub fn add_parsed(&mut self, sheet: &svelters_style::Stylesheet, origin: svelters_style::Origin) -> SheetId {
+        let (id, _diags) = self.stylist.add_sheet(sheet, origin);
         self.caches.clear();
         id
     }

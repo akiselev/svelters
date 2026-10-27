@@ -34,6 +34,9 @@ pub struct FrameStats {
     pub layout: crate::layout::LayoutRun,
     /// Nodes whose display list was re-recorded.
     pub recorded: u64,
+    /// Nodes whose style was computed again (SV69: a custom-property change restyles only the nodes
+    /// that read it).
+    pub restyled: u64,
     /// Nodes whose property-tree entries were refreshed.
     pub props: u64,
     /// The rebuild walk ran (layers, items, hit list).
@@ -73,22 +76,22 @@ impl Document {
         if !self.contains(root) {
             return (None, stats);
         }
-        self.restyle(window);
+        stats.restyled += self.restyle(window);
         // focus that follows style: deferred requests, dialog scopes, autofocus, the fixup rule (the
         // focus states it moves restyle again)
         crate::input::focus::after_style(self, window);
-        self.restyle(window);
+        stats.restyled += self.restyle(window);
         self.sample_ui_transitions(window, target);
         // virtualising nodes realise their rows before layout, and again when layout moved their
         // viewport (new rows are styled before they are laid out)
         if self.drive_virtual(window) {
-            self.restyle(window);
+            stats.restyled += self.restyle(window);
             self.drive_virtual(window);
         }
         self.keep_rows_parked(window);
         stats.layout = self.run_layout(window);
         if self.drive_virtual(window) {
-            self.restyle(window);
+            stats.restyled += self.restyle(window);
             self.drive_virtual(window);
             self.keep_rows_parked(window);
             let again = self.run_layout(window);

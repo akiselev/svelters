@@ -42,7 +42,7 @@ mod var;
 mod view;
 
 pub use atom::Atom;
-pub use cascade::{MatchCaches, MatchedRule, Origin, RuleId, SheetId, Stylist, matches, select};
+pub use cascade::{CustomDeps, MatchCaches, MatchedRule, Origin, RuleId, SheetId, Stylist, matches, select};
 pub use computed::{ComputeContext, ComputedStyle};
 pub use diag::{Diagnostic, Severity};
 pub use element::Element;

@@ -350,3 +350,71 @@ fn shadows_compute_and_check() {
     assert_eq!((diags[0].severity, diags[0].line, diags[0].column), (Severity::Error, 2, 3), "{diags:?}");
     assert!(diags[0].message.contains("negative"), "{diags:?}");
 }
+
+/// SV70: the user origin ranks above author rules and below inline declarations; its
+/// `!important` is top.
+#[test]
+fn user_origin_ranks() {
+    // user normal beats author normal, whatever the specificity
+    let s = setup(&[(Origin::Author, "#ok { gap: 1px }"), (Origin::User, "button { gap: 2px }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(2.0)));
+    // user rules registered before the author's still win
+    let s = setup(&[(Origin::User, "button { gap: 2px }"), (Origin::Author, "#ok { gap: 1px }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(2.0)));
+    // inline normal beats user normal
+    let (inline, _) = DeclBlock::parse_inline("gap: 9px");
+    assert_eq!(s.style_with("ok", Some(("ok", &inline))).get("gap"), Some(&len(9.0)));
+    // author !important beats user normal
+    let s = setup(&[(Origin::Author, "button { gap: 1px !important }"), (Origin::User, "#ok { gap: 2px }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(1.0)));
+    // user !important beats theme, author and inline !important
+    let s = setup(&[(Origin::Theme, "#ok { gap: 3px !important }"), (Origin::User, "button { gap: 4px !important }"), (Origin::Author, "#ok { gap: 5px !important }")]);
+    let (inline, _) = DeclBlock::parse_inline("gap: 6px !important");
+    assert_eq!(s.style_with("ok", Some(("ok", &inline))).get("gap"), Some(&len(4.0)));
+    // matched rules list user rules after author rules
+    let s = setup(&[(Origin::User, "button { gap: 2px }"), (Origin::Author, "#ok { gap: 1px }")]);
+    let el = s.tree.by_id("ok");
+    let m = s.stylist.matched_rules(el, &mut MatchCaches::new());
+    assert_eq!(m.len(), 2);
+    assert_eq!(s.stylist.rule(m[1].rule).block.decls[0].value.as_ref(), "2px");
+}
+
+/// SV70: `revert` rolls back to the origin below; `revert-layer` to the layer below.
+#[test]
+fn revert_and_revert_layer() {
+    let theme = (Origin::Theme, "button { gap: 1px; color: red }");
+    // an author revert falls to the theme
+    let s = setup(&[theme, (Origin::Author, "button { gap: 2px } #ok { gap: revert }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(1.0)));
+    // a user revert falls to the author rules (not to the theme)
+    let s = setup(&[theme, (Origin::Author, "button { gap: 2px }"), (Origin::User, "#ok { gap: revert }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(2.0)));
+    // a user revert of a shorthand-free property with no author rule falls to the theme
+    let s = setup(&[theme, (Origin::User, "#ok { color: revert }")]);
+    assert_eq!(rgb(&s.style("ok"), "color"), [255, 0, 0, 255]);
+    // an inline revert is author origin: it skips the author rules
+    let s = setup(&[theme, (Origin::Author, "#ok { gap: 2px }")]);
+    let (inline, _) = DeclBlock::parse_inline("gap: revert");
+    assert_eq!(s.style_with("ok", Some(("ok", &inline))).get("gap"), Some(&len(1.0)));
+    // a theme revert is `unset`: gap isn't inherited, so it is gone
+    let s = setup(&[(Origin::Theme, "button { gap: 1px } #ok { gap: revert }")]);
+    assert_eq!(s.style("ok").get("gap"), None);
+    // revert-layer: to the earlier layer of the same origin
+    let s = setup(&[(Origin::Author, "@layer a, b; @layer a { button { gap: 2px } } @layer b { #ok { gap: 3px } } #ok { gap: revert-layer }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(3.0)));
+    let s = setup(&[(Origin::Author, "@layer a, b; @layer a { button { gap: 2px } } @layer b { #ok { gap: revert-layer } }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(2.0)));
+    // from the lowest layer on to the origin below
+    let s = setup(&[theme, (Origin::Author, "@layer a { #ok { gap: revert-layer } }")]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(1.0)));
+    // a user revert of padding and of a custom property falls to the author's values
+    let base = [(Origin::Theme, "button { padding: 1px; --x: 4px }"), (Origin::Author, "button { padding: 2px; --x: 5px }")];
+    let author = setup(&base).style("ok");
+    let s = setup(&[base[0], base[1], (Origin::User, "#ok { padding: revert; --x: revert }")]);
+    let ok = s.style("ok");
+    assert!(ok.get("padding").is_some());
+    assert_eq!(ok.get("padding"), author.get("padding"));
+    assert_eq!(ok.custom("--x"), Some("5px"));
+    let s = setup(&[(Origin::Theme, "button { --x: 4px }"), (Origin::Author, "#ok { --x: revert }")]);
+    assert_eq!(s.style("ok").custom("--x"), Some("4px"));
+}

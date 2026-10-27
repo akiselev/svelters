@@ -24,7 +24,7 @@
 
 use skelter_base::color::Color;
 use std::collections::BTreeMap;
-use std::sync::OnceLock;
+use std::sync::{Arc, OnceLock};
 pub use svelters_style::ColorScheme;
 
 /// The base sheet for the stock-painted kinds (`@layer sv.base`, theme origin; DESIGN.md §4.3).
@@ -176,15 +176,18 @@ fn full_name(name: &str) -> std::borrow::Cow<'_, str> {
 macro_rules! color_set {
     (@src) => { None };
     (@src $s:literal) => { Some($s) };
-    ($(#[$m:meta])* $ty:ident, $table:ident, $tdoc:literal, { $( $(#[$fm:meta])* $field:ident = $name:literal $(<- $src:literal)?, )* }) => {
+    ($(#[$m:meta])* $ty:ident, $table:ident, $tdoc:literal, { $( $(#[doc = $fd:literal])* $field:ident = $name:literal $(<- $src:literal)?, )* }) => {
         $(#[$m])*
         #[derive(Clone, Copy, Debug, PartialEq)]
-        pub struct $ty { $( $(#[$fm])* pub $field: Color, )* }
+        pub struct $ty { $( $(#[doc = $fd])* pub $field: Color, )* }
 
         #[doc = $tdoc]
         pub const $table: &[(&str, Option<&str>)] = &[ $( ($name, color_set!(@src $($src)?)) ),* ];
 
         impl $ty {
+            /// Each token's doc comment (SV71), by bare name; empty where it has none.
+            const DOCS: &'static [(&'static str, &'static str)] = &[ $( ($name, concat!($($fd, "\n",)* "")) ),* ];
+
             fn from_tokens(t: &TokenMap, problems: &mut Vec<String>) -> $ty {
                 $ty { $( $field: color_of(t, concat!("--sv-", $name), problems), )* }
             }
@@ -295,15 +298,18 @@ color_set! {
 }
 
 macro_rules! metric_set {
-    ($(#[$m:meta])* $ty:ident, $table:ident, { $( $(#[$fm:meta])* $field:ident = $name:literal $(<- $src:literal)?, )* }) => {
+    ($(#[$m:meta])* $ty:ident, $table:ident, { $( $(#[doc = $fd:literal])* $field:ident = $name:literal $(<- $src:literal)?, )* }) => {
         $(#[$m])*
         #[derive(Clone, Copy, Debug, PartialEq)]
-        pub struct $ty { $( $(#[$fm])* pub $field: f32, )* }
+        pub struct $ty { $( $(#[doc = $fd])* pub $field: f32, )* }
 
         /// The component metrics (L3) and the token they default to.
         pub const $table: &[(&str, &str)] = &[ $( $( ($name, $src), )? )* ];
 
         impl $ty {
+            /// Each token's doc comment (SV71), by bare name; empty where it has none.
+            const DOCS: &'static [(&'static str, &'static str)] = &[ $( ($name, concat!($($fd, "\n",)* "")) ),* ];
+
             fn from_tokens(t: &TokenMap, problems: &mut Vec<String>) -> $ty {
                 $ty { $( $field: px_of(t, concat!("--sv-", $name), problems), )* }
             }
@@ -460,6 +466,40 @@ fn shadow_of(t: &TokenMap, name: &str, problems: &mut Vec<String>) -> Shadow {
     }
 }
 
+/// Where a token's value comes from ([`Theme::explain`]).
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum TokenOrigin {
+    /// An override ([`Theme::with`]), with the host's source tag when it gave one
+    /// ([`Theme::with_source`]).
+    Override { source: Option<Arc<str>> },
+    /// It follows another token (by full name): a role its `--vscode-*` key, a component token
+    /// its role.
+    Follows(String),
+    /// The built-in data: the colour set, or the shape, density or affordance tables.
+    Builtin,
+}
+
+/// A token's doc comment (SV71), by bare name, from the role, component and metric tables; empty
+/// for the set's own tokens without one.
+pub fn token_doc(name: &str) -> String {
+    let name = name.strip_prefix("--sv-").unwrap_or(name);
+    let raw = Colors::DOCS.iter().chain(Components::DOCS).chain(Metrics::DOCS).find(|(n, _)| *n == name).map(|(_, d)| *d).unwrap_or("");
+    let doc = raw.lines().map(str::trim).filter(|l| !l.is_empty()).collect::<Vec<_>>().join(" ");
+    if !doc.is_empty() {
+        return doc;
+    }
+    let level = name.strip_prefix("elev-").and_then(|l| l.parse::<u8>().ok());
+    match (name, level) {
+        (_, Some(l)) => format!("Elevation level {l}: the shadow of surfaces at that height (0: rows and text, 4: dialogs and windows)."),
+        ("popup-shadow", _) => "The shadow of menus, tooltips and popovers.".into(),
+        ("window-shadow", _) => "The shadow of dialogs and floating windows.".into(),
+        ("font-family", _) => "The body font family (a CSS list).".into(),
+        ("font-mono", _) => "The monospace font family (a CSS list).".into(),
+        _ => String::new(),
+    }
+}
+
 // ---- the built-in data ----
 
 struct Set {
@@ -524,8 +564,15 @@ pub struct Theme {
     density: Density,
     affordances: bool,
     overrides: TokenMap,
+    /// The host's source tag of each override that has one (SV71), by full name.
+    sources: BTreeMap<String, Arc<str>>,
+    /// The token each derived token follows ([`Theme::explain`]), by full name.
+    follows: BTreeMap<String, String>,
     name: String,
     tokens: TokenMap,
+    /// What the token sheet declares: `tokens`, with each component token that follows its source
+    /// as `var()` of it (SV68).
+    sheet: TokenMap,
     colors: Colors,
     components: Components,
     metrics: Metrics,
@@ -546,7 +593,7 @@ impl Theme {
     /// A built-in VS Code theme: Dark Modern, Light Modern, or High Contrast dark or light;
     /// default density, affordances on, no overrides.
     pub fn vscode(scheme: ColorScheme, contrast: Contrast) -> Theme {
-        Theme::resolve(scheme, contrast, Density::Default, true, TokenMap::new())
+        Theme::resolve(scheme, contrast, Density::Default, true, TokenMap::new(), BTreeMap::new())
     }
 
     pub fn dark_modern() -> Theme {
@@ -567,35 +614,73 @@ impl Theme {
 
     /// The same recipe in the other scheme (overrides kept).
     pub fn with_scheme(&self, scheme: ColorScheme) -> Theme {
-        Theme::resolve(scheme, self.contrast, self.density, self.affordances, self.overrides.clone())
+        Theme::resolve(scheme, self.contrast, self.density, self.affordances, self.overrides.clone(), self.sources.clone())
     }
 
     pub fn with_contrast(&self, contrast: Contrast) -> Theme {
-        Theme::resolve(self.scheme, contrast, self.density, self.affordances, self.overrides.clone())
+        Theme::resolve(self.scheme, contrast, self.density, self.affordances, self.overrides.clone(), self.sources.clone())
     }
 
     pub fn with_density(&self, density: Density) -> Theme {
-        Theme::resolve(self.scheme, self.contrast, density, self.affordances, self.overrides.clone())
+        Theme::resolve(self.scheme, self.contrast, density, self.affordances, self.overrides.clone(), self.sources.clone())
     }
 
     /// The affordance overlay's token values (DESIGN.md §2; on by default). Off gives VS Code's
     /// exact colours (VIS1's base). DS3's affordance sheet follows the same switch.
     pub fn with_affordances(&self, on: bool) -> Theme {
-        Theme::resolve(self.scheme, self.contrast, self.density, on, self.overrides.clone())
+        Theme::resolve(self.scheme, self.contrast, self.density, on, self.overrides.clone(), self.sources.clone())
     }
 
     /// Overrides on top of the recipe's (later wins): `--vscode-<key>` (L1; the roles follow),
     /// `--sv-<role>` (L2; the components follow), `--sv-<kind>-<part>` (L3), and any other custom
     /// property (`--cad-*`), passed through. A bare name is `--sv-<name>`.
     pub fn with<K: AsRef<str>, V: Into<String>>(&self, overrides: impl IntoIterator<Item = (K, V)>) -> Theme {
-        let mut o = self.overrides.clone();
-        for (k, v) in overrides {
-            o.insert(full_name(k.as_ref()).into_owned(), v);
-        }
-        Theme::resolve(self.scheme, self.contrast, self.density, self.affordances, o)
+        self.with_tagged(None, overrides)
     }
 
-    fn resolve(scheme: ColorScheme, contrast: Contrast, density: Density, affordances: bool, overrides: TokenMap) -> Theme {
+    /// [`Theme::with`], tagging each override with `source`, a name the host chooses (a settings
+    /// layer, a theme file, a preview): [`Theme::override_source`] and [`Theme::explain`] report
+    /// it (SV71). A later override of the same token replaces the tag (an untagged one clears it).
+    pub fn with_source<K: AsRef<str>, V: Into<String>>(&self, source: &str, overrides: impl IntoIterator<Item = (K, V)>) -> Theme {
+        self.with_tagged(Some(Arc::from(source)), overrides)
+    }
+
+    fn with_tagged<K: AsRef<str>, V: Into<String>>(&self, source: Option<Arc<str>>, overrides: impl IntoIterator<Item = (K, V)>) -> Theme {
+        let mut o = self.overrides.clone();
+        let mut sources = self.sources.clone();
+        for (k, v) in overrides {
+            let name = full_name(k.as_ref()).into_owned();
+            match &source {
+                Some(s) => sources.insert(name.clone(), s.clone()),
+                None => sources.remove(&name),
+            };
+            o.insert(name, v);
+        }
+        Theme::resolve(self.scheme, self.contrast, self.density, self.affordances, o, sources)
+    }
+
+    /// The source tag of the override of token `name` ([`Theme::with_source`]); `None` when it has
+    /// no override or an untagged one.
+    pub fn override_source(&self, name: &str) -> Option<&str> {
+        self.sources.get(&*full_name(name)).map(|s| &**s)
+    }
+
+    /// Where token `name`'s value comes from (SV71), one step: an override (with its source tag),
+    /// another token it follows (a role its `--vscode-*` key, a component its role), or the built-in
+    /// data (the set, shape, density or affordance tables). `None` for a token the theme lacks.
+    /// Follow [`TokenOrigin::Follows`] for the chain.
+    pub fn explain(&self, name: &str) -> Option<TokenOrigin> {
+        let full = full_name(name);
+        if self.overrides.get(&full).is_some() {
+            return Some(TokenOrigin::Override { source: self.sources.get(&*full).cloned() });
+        }
+        if let Some(f) = self.follows.get(&*full) {
+            return Some(TokenOrigin::Follows(f.clone()));
+        }
+        self.tokens.get(&full).map(|_| TokenOrigin::Builtin)
+    }
+
+    fn resolve(scheme: ColorScheme, contrast: Contrast, density: Density, affordances: bool, overrides: TokenMap, sources: BTreeMap<String, Arc<str>>) -> Theme {
         let d = data();
         let k = set_index(scheme, contrast);
         let set = &d.sets[k];
@@ -608,18 +693,23 @@ impl Theme {
         }
         // L2
         let mut sv: BTreeMap<String, String> = BTreeMap::new();
+        // what a token follows (SV71's `explain`): a role its VS Code key, a component its source
+        let mut follows: BTreeMap<String, String> = BTreeMap::new();
         for &(role, key) in ROLES {
-            if let Some(v) = key.and_then(|key| vs.get(key)) {
+            if let Some((key, v)) = key.and_then(|key| Some((key, vs.get(key)?))) {
                 sv.insert(role.to_string(), v.clone());
+                follows.insert(format!("--sv-{role}"), vscode_var(key));
             }
         }
         let layers = [&d.shape, &d.density[density as usize], &set.tokens];
         for (name, v) in layers.into_iter().flatten() {
             sv.insert(name.clone(), v.clone());
+            follows.remove(&format!("--sv-{name}"));
         }
         if affordances {
             for (name, v) in &d.affordance[k] {
                 sv.insert(name.clone(), v.clone());
+                follows.remove(&format!("--sv-{name}"));
             }
         }
         let is_component = |n: &str| components().any(|(c, _)| c == n);
@@ -628,16 +718,21 @@ impl Theme {
             match name.strip_prefix("--sv-") {
                 Some(n) if !is_component(n) => {
                     sv.insert(n.to_string(), v.to_string());
+                    follows.remove(name);
                 }
                 Some(_) => {}
                 None if name.starts_with("--vscode-") => {}
                 None => extra.insert(name, v),
             }
         }
-        // L3
+        // L3: resolved here for the typed views; the sheet keeps each one that follows its source
+        // as `var()` of it (SV68), so an override of the source in the cascade reaches it
+        let mut aliases: BTreeMap<String, String> = BTreeMap::new();
         for (c, src) in components() {
             if let Some(v) = sv.get(src).cloned() {
                 sv.insert(c.to_string(), v);
+                aliases.insert(format!("--sv-{c}"), format!("var(--sv-{src})"));
+                follows.insert(format!("--sv-{c}"), format!("--sv-{src}"));
             }
         }
         for (name, v) in overrides.iter() {
@@ -645,6 +740,8 @@ impl Theme {
                 && is_component(n)
             {
                 sv.insert(n.to_string(), v.to_string());
+                aliases.remove(name);
+                follows.remove(name);
             }
         }
         let mut tokens = extra;
@@ -664,7 +761,11 @@ impl Theme {
         let fonts = Fonts { family: text("--sv-font-family"), mono: text("--sv-font-mono") };
         let secs = |n: &str| tokens.get(n).and_then(parse_duration).unwrap_or(0.0);
         let motion = Motion { fast: secs("--sv-motion-fast"), normal: secs("--sv-motion"), ease_out: text("--sv-ease-out") };
-        Theme { scheme, contrast, density, affordances, overrides, name: set.name.clone(), tokens, colors, components, metrics, elevation, fonts, motion, problems }
+        let mut sheet = tokens.clone();
+        for (name, v) in aliases {
+            sheet.insert(name, v);
+        }
+        Theme { scheme, contrast, density, affordances, overrides, sources, follows, name: set.name.clone(), tokens, sheet, colors, components, metrics, elevation, fonts, motion, problems }
     }
 
     pub fn scheme(&self) -> ColorScheme {
@@ -700,6 +801,32 @@ impl Theme {
     /// Every resolved token (L1, L2, L3 and passed-through overrides).
     pub fn tokens(&self) -> &TokenMap {
         &self.tokens
+    }
+
+    /// Every token as the token sheet declares it ([`Theme::css`]): [`Theme::tokens`], except that
+    /// each L3 component token that follows its source is `var(--sv-<source>)` (SV68), so an
+    /// override of the source in the cascade reaches the component too. The typed views and
+    /// [`Theme::tokens`] keep the resolved values.
+    pub fn sheet_tokens(&self) -> &TokenMap {
+        &self.sheet
+    }
+
+    /// The edits that turn `old`'s token sheet into this one's, for
+    /// `Document::set_root_tokens` on the sheet [`Theme::css`] made: changed and new tokens with
+    /// their value, removed ones with `None`.
+    pub fn sheet_changes(&self, old: &Theme) -> Vec<(String, Option<String>)> {
+        let mut out: Vec<(String, Option<String>)> = Vec::new();
+        for (k, v) in self.sheet.iter() {
+            if old.sheet.get(k) != Some(v) {
+                out.push((k.to_string(), Some(v.to_string())));
+            }
+        }
+        for (k, _) in old.sheet.iter() {
+            if self.sheet.get(k).is_none() {
+                out.push((k.to_string(), None));
+            }
+        }
+        out
     }
 
     /// One token's CSS text (`bg`, `--sv-bg`, `--vscode-foreground`).
@@ -760,9 +887,10 @@ impl Theme {
         self.tokens.iter().filter_map(|(k, v)| k.strip_prefix("--sv-").map(|n| (n, token_type(n, v)))).collect()
     }
 
-    /// The `:root` sheet of every token, theme origin in `@layer sv.tokens`.
+    /// The `:root` sheet of every token, theme origin in `@layer sv.tokens`; component tokens that
+    /// follow their source are `var()` of it ([`Theme::sheet_tokens`]).
     pub fn css(&self) -> String {
-        format!("{LAYERS}\n@layer sv.tokens {{\n{}}}\n", self.tokens.root_rule())
+        format!("{LAYERS}\n@layer sv.tokens {{\n{}}}\n", self.sheet.root_rule())
     }
 }
 
@@ -773,7 +901,7 @@ pub fn default_tokens_css() -> &'static str {
     CSS.get_or_init(|| {
         let mut s = format!("{LAYERS}\n@layer sv.tokens {{\n");
         for (t, q) in [(Theme::dark_modern(), "dark"), (Theme::light_modern(), "light")] {
-            s.push_str(&format!("@media (prefers-color-scheme: {q}) {{\n{}}}\n", t.tokens.root_rule()));
+            s.push_str(&format!("@media (prefers-color-scheme: {q}) {{\n{}}}\n", t.sheet.root_rule()));
         }
         s.push_str("}\n");
         s
@@ -818,6 +946,8 @@ pub struct TokenInfo {
     pub values: [(&'static str, String); 4],
     /// A density token's value per density (`compact`, `default`, `comfortable`); empty otherwise.
     pub density: Vec<(&'static str, String)>,
+    /// What the token is for (SV71, [`token_doc`]); empty where the tables give no doc.
+    pub doc: String,
 }
 
 /// The built-in sets by name, in [`set_index`] order.
@@ -864,7 +994,7 @@ pub fn token_manifest() -> Vec<TokenInfo> {
             } else {
                 Vec::new()
             };
-            TokenInfo { layer, ty, vscode: role.and_then(|r| r.1), from: component.map(|c| c.1).filter(|s| !s.is_empty()), values, density, name }
+            TokenInfo { layer, ty, vscode: role.and_then(|r| r.1), from: component.map(|c| c.1).filter(|s| !s.is_empty()), values, density, doc: token_doc(&name), name }
         })
         .collect()
 }
@@ -1008,6 +1138,46 @@ mod tests {
         assert_eq!(d.metrics().control_h, 26.0);
         assert_eq!(d.with_density(Density::Compact).metrics().row_h, 20.0);
         assert_eq!(d.motion().normal, 0.15);
+    }
+
+    /// SV68: the sheet keeps a component token that follows its role as `var()` of it; the typed
+    /// views and `tokens()` keep the resolved value; an override of the component is a literal.
+    #[test]
+    fn component_tokens_stay_aliases_in_the_sheet() {
+        let t = Theme::dark_modern();
+        assert!(t.css().contains("--sv-button-bg: var(--sv-button2-bg);"));
+        assert_eq!(t.token("button-bg"), t.token("button2-bg"));
+        assert_eq!(t.components().button_bg, t.colors().button2_bg);
+        let o = t.with([("button-bg", "#ff0000")]);
+        assert!(o.css().contains("--sv-button-bg: #ff0000;"));
+        assert_eq!(o.sheet_tokens().get("--sv-checkbox-bg"), Some("var(--sv-control-bg)"));
+        // the edits between two themes' sheets
+        let edits = o.sheet_changes(&t);
+        assert_eq!(edits, vec![("--sv-button-bg".to_string(), Some("#ff0000".to_string()))]);
+    }
+
+    /// SV71: overrides carry the host's source tag; `explain` follows the chain; the manifest has
+    /// docs.
+    #[test]
+    fn overrides_carry_their_source() {
+        let t = Theme::dark_modern().with_source("user", [("accent", "#ff0000")]).with([("bg", "#000000")]).with_source("preview", [("--vscode-textLink-foreground", "#00ff00")]);
+        assert_eq!(t.override_source("accent"), Some("user"));
+        assert_eq!(t.override_source("bg"), None);
+        assert_eq!(t.explain("accent"), Some(TokenOrigin::Override { source: Some(Arc::from("user")) }));
+        assert_eq!(t.explain("bg"), Some(TokenOrigin::Override { source: None }));
+        assert_eq!(t.explain("link"), Some(TokenOrigin::Follows("--vscode-textLink-foreground".into())));
+        assert_eq!(t.token("link"), Some("#00ff00"));
+        assert_eq!(t.explain("--vscode-textLink-foreground"), Some(TokenOrigin::Override { source: Some(Arc::from("preview")) }));
+        assert_eq!(t.explain("button-bg"), Some(TokenOrigin::Follows("--sv-button2-bg".into())));
+        assert_eq!(t.explain("radius"), Some(TokenOrigin::Builtin));
+        assert_eq!(t.explain("no-such-token"), None);
+        // a later untagged override clears the tag; the tag survives a scheme change
+        assert_eq!(t.with([("accent", "#0000ff")]).override_source("accent"), None);
+        assert_eq!(t.with_scheme(ColorScheme::Light).override_source("accent"), Some("user"));
+        let m = token_manifest();
+        let bg = m.iter().find(|i| i.name == "bg").unwrap();
+        assert_eq!(bg.doc, "Chrome: side bar, panel, title, status, activity bar.");
+        assert!(m.iter().find(|i| i.name == "elev-1").is_some_and(|i| !i.doc.is_empty()));
     }
 
     #[test]
