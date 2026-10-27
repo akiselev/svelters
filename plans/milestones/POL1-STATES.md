@@ -114,7 +114,10 @@ the "before" binary is `ci/pb1-gallery` itself (no fix of this lane) with its ow
 
 ## CI
 
-(filled in below)
+All six workflows green on `d0afd95` (the merged head: master `dca6740`, `ci/pb1-gallery` `37ce91a`; its last code
+commit is the merge `9c5a19d`, `d0afd95` adds only this record): js 40592518228, linux-gtk 40592518159, linux-qt
+40592518134, macos-appkit 40592518149, skelter 40592518195, windows-winui 40592518148. Earlier runs on `726027f` and
+`51a1743` were superseded (cancelled by the next push). This record's last edit is docs only (CI not rerun for it).
 
 ## Handoff
 
