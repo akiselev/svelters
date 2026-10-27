@@ -482,6 +482,12 @@ impl VectorArt {
         parsed
     }
 
+    /// Drops `svg`'s cached parse (an icon source's answer was invalidated); the next
+    /// [`VectorArt::parse`] of the same content parses again.
+    pub(crate) fn forget(svg: &[u8]) {
+        PARSED.lock().unwrap_or_else(|p| p.into_inner()).remove(&(content_hash(svg), svg.len()));
+    }
+
     fn parse_uncached(svg: &[u8], content: u64) -> Result<VectorArt, NotVector> {
         // classed elements resolve `currentColor` against their own (slot) colour
         let svg = slot_svg(svg).map_err(NotVector::Invalid)?;
