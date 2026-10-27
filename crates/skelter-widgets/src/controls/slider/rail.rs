@@ -33,7 +33,7 @@ pub const TRACK_UA: Ua = Ua(&[
 ]);
 
 pub const FILL_UA: Ua = Ua(&[
-    UaRule::base(&[("background-color", Token("accent")), ("border-radius", Px(2.0))]),
+    UaRule::base(&[("background-color", Token("progress")), ("border-radius", Px(2.0))]),
     UaRule::when(StateBits::DISABLED, &[("background-color", Token("disabled-fg"))]),
 ]);
 

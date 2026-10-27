@@ -5,7 +5,7 @@
 
 use crate::kind_props;
 use crate::paint::{PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, Value};
+use crate::shim::core::{A11yCx, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, StyleCx, Value};
 use skelter_base::accesskit;
 use skelter_base::color::{Color, Fill};
 use skelter_base::display::{BorderStyle, Prim, Quad};
@@ -71,6 +71,17 @@ impl Kind for Separator {
         self.props.get(prop)
     }
 
+    /// It stretches across its parent's cross axis unless CSS sets `align-self`: it measures no
+    /// length of its own, so a vertical rule in a row that centres its items (a toolbar) would
+    /// otherwise be zero tall.
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        if s.align_self.is_none() {
+            s.align_self = Some(taffy::AlignSelf::STRETCH);
+        }
+        s
+    }
+
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let s = measure(&crate::controls::common::host_view(&cx.style, UA), self.vertical());
         taffy::Size { width: s.x, height: s.y }
@@ -119,6 +130,17 @@ mod tests {
         assert_eq!(testkit::measure(&s, StateBits::NONE), Size::new(0.0, 6.0 + stroke()), "3px padding each side");
         s.props.orientation = "vertical".into();
         assert_eq!(testkit::measure(&s, StateBits::NONE), Size::new(6.0 + stroke(), 0.0));
+    }
+
+    #[test]
+    fn stretches_across_its_row_unless_css_aligns_it() {
+        let mut s = Separator::default();
+        s.props.orientation = "vertical".into();
+        let st = s.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None });
+        assert_eq!(st.align_self, Some(taffy::AlignSelf::STRETCH), "a toolbar row that centres its items still gives it a length");
+        let base = taffy::Style { align_self: Some(taffy::AlignSelf::CENTER), ..Default::default() };
+        let st = s.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: Some(base) });
+        assert_eq!(st.align_self, Some(taffy::AlignSelf::CENTER), "CSS align-self wins");
     }
 
     #[test]
