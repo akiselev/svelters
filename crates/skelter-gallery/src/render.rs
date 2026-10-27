@@ -25,6 +25,11 @@ use svelters_skelter::SkelterBackend;
 use svelters_skelter::app::{SkelterDocument, install_widget_services};
 use svelters_skelter::embed::{Budgets, Embed, EmbedConfig, EmbedEvent, EntryId, MountSpec, Props, RootId, RootState, SlotId, SlotOptions};
 
+thread_local! {
+    /// Numbers the spec fragments of the renderers on this thread.
+    static FRAGMENTS: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
+}
+
 /// The export name each variant's entry gives its component.
 const EXPORT: &str = "Variant";
 /// The slot's own style: it fills the window, on the theme's background.
@@ -63,6 +68,7 @@ impl fmt::Display for Error {
                 Ok(())
             }
             Error::Request(m) | Error::Setup(m) | Error::Render(m) => f.write_str(m),
+            Error::Load { file, message } if message.starts_with(&*file.to_string_lossy()) => write!(f, "does not load: {message}"),
             Error::Load { file, message } => write!(f, "{}: does not load: {message}", file.display()),
             Error::Runtime { file, message } => write!(f, "{}: {message}", file.display()),
         }
@@ -99,10 +105,20 @@ pub struct Mounted {
     pub settled: bool,
 }
 
+impl Drop for Renderer {
+    fn drop(&mut self) {
+        if let Some(f) = &self.fragment {
+            let _ = std::fs::remove_file(f);
+        }
+    }
+}
+
 /// The renderer (see the module docs). `!Send`: one per thread.
 pub struct Renderer {
     catalog: Catalog,
     fonts: Arc<skelter_text::FontStore>,
+    /// The host's kinds as a compiler spec fragment (a temporary file), when it has any.
+    fragment: Option<PathBuf>,
     families: Vec<String>,
     roots: Vec<PathBuf>,
     setup: Vec<Rc<dyn Fn(&mut SetupCx<'_>)>>,
@@ -143,7 +159,17 @@ impl Renderer {
         if let Some(e) = failed.into_inner() {
             return Err(Error::Setup(format!("a host's kinds don't register: {e}")));
         }
-        let backend = SkelterBackend::with_text(Arc::new(kinds), Box::new(skelter_text::TextSystem::new(fonts.clone())));
+        let kinds = Arc::new(kinds);
+        // a host's kinds reach the compiler as a spec fragment (svelters_skelter::spec::fragment)
+        let fragment = if ext.register_kinds.is_empty() {
+            None
+        } else {
+            let dir = std::env::temp_dir().join(format!("skelter-gallery-{}", std::process::id()));
+            let f = dir.join(format!("kinds-{}.json", FRAGMENTS.with(|n| n.replace(n.get() + 1))));
+            std::fs::create_dir_all(&dir).and_then(|_| std::fs::write(&f, svelters_skelter::spec::fragment_text(&kinds))).map_err(|e| Error::Setup(format!("{}: {e}", f.display())))?;
+            Some(f)
+        };
+        let backend = SkelterBackend::with_text(kinds, Box::new(skelter_text::TextSystem::new(fonts.clone())));
         install_widget_services(&backend, skelter_text::TextSystem::new(fonts.clone()));
         let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, locale: Some("en-US".into()), ..svelters_host::HostConfig::default() };
         let budgets = Budgets { warn: Duration::from_secs(1), interrupt: Duration::from_secs(5), mount: Duration::from_secs(10) };
@@ -172,6 +198,7 @@ impl Renderer {
         let mut r = Renderer {
             catalog,
             fonts: fonts.clone(),
+            fragment,
             families: ext.families.clone(),
             roots: ext.story_roots.clone(),
             setup: ext.setup.clone(),
@@ -270,6 +297,7 @@ impl Renderer {
                 d.remove_sheet(s);
             }
             let s = d.add_sheet_with_origin(&css, Origin::Theme);
+            d.set_sheet_info(s, Some(format!("gallery theme {} + base.css", t.name())), None);
             // reduced motion: transitions jump, so a cell settles at its end state
             d.set_media_preferences(MediaPreferences::new(true, t.contrast().media()));
             skelter_widgets::host::set_theme(d, t.clone());
@@ -301,10 +329,19 @@ impl Renderer {
         cfg.entry = Entry::Embed(vec![(EXPORT.into(), file.to_path_buf())]);
         cfg.backend = "skelter".into();
         cfg.dev = true;
-        let provider = SourceProvider::new(cfg)?;
-        let id = self.embed.load_from(Rc::new(provider)).map_err(|e| e.message)?;
-        // what the load logged (compiler warnings)
-        Ok(id)
+        cfg.spec_fragments.extend(self.fragment.clone());
+        let provider = Rc::new(SourceProvider::new(cfg)?);
+        self.embed.load_from(provider.clone()).map_err(|e| {
+            // the engine shortens module-load messages: the compiler's own errors read in full
+            let c = provider.check(file);
+            let errors: Vec<String> = c
+                .diagnostics
+                .iter()
+                .filter(|d| d.severity == svelters_host::modules::Severity::Error)
+                .map(|d| format!("{}:{}:{}: {} [{}]", file.display(), d.line, d.column, d.message, d.code))
+                .collect();
+            if errors.is_empty() { c.error.unwrap_or(e.message) } else { errors.join("\n") }
+        })
     }
 
     /// Mounts `cell` (its variant with its args, theme, density and zoom), forces its state and
@@ -442,6 +479,11 @@ impl Renderer {
         }
         out
     }
+}
+
+/// The state bits pseudo-class `name` tests (`hover`, `focus-visible`, ...).
+pub fn pseudo_bits(name: &str) -> Option<svelters_style::StateMask> {
+    svelters_skelter::style::pseudo_state(name)
 }
 
 /// `image` as PNG bytes (straight alpha).
