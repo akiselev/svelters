@@ -32,7 +32,7 @@ pub const UA: Ua = Ua(&[
         ("align-items", Keyword("center")),
         ("outline-style", Keyword("none")),
         ("outline-color", Token("focus")),
-        ("outline-width", Px(1.0)),
+        ("outline-width", Px(2.0)),
         ("outline-offset", Px(1.0)),
     ]),
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
@@ -49,7 +49,8 @@ pub const INDICATOR: Ua = Ua(&[
         ("border-width", Token("stroke")),
         ("border-radius", Px(3.0)),
     ]),
-    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
+    // R3: hover steps the fill and the edge (the fill step alone is faint in Dark Modern)
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover")), ("border-color", Token("muted"))]),
     UaRule::when(StateBits::CHECKED, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border"))]),
     UaRule::when(StateBits::INDETERMINATE, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border"))]),
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
@@ -195,13 +196,14 @@ pub(crate) fn paint_indicator(pc: &mut PaintCx, host: &StyleView<'_>, parts: &[(
             }
             _ => {
                 paint::paint_box(pc, item.style, r);
-                ir = Some(r);
+                ir = Some((r, item.style.px("border-radius").unwrap_or(0.0)));
             }
         }
     }
-    if let Some(ir) = ir {
+    if let Some((ir, radius)) = ir {
         mark(pc, host, ir);
-        paint::paint_outline(pc, host, ir);
+        // the ring follows the indicator's corners (round for a radio or a switch's track)
+        paint::paint_outline_radius(pc, host, ir, radius);
     }
 }
 
@@ -238,7 +240,7 @@ pub(crate) fn paint_dot(pc: &mut PaintCx, at: Point, radius: f32, fill: Color) {
 
 /// The host's view of an indicator kind in `state` (the node's state with the kind's prop mirrors).
 pub(crate) fn host_in<'a>(style: &crate::shim::core::Styles<'a>, ua: Ua, state: StateBits) -> StyleView<'a> {
-    StyleView::new(style.computed, ua, state, style.dark).with_theme(style.theme)
+    StyleView::new(style.computed, ua, state, style.dark).with_theme(style.theme).with_inherited(style.inherited)
 }
 
 // ---- the kind ----
@@ -468,7 +470,7 @@ mod tests {
         let (list, _) = testkit::record(&c, SIZE, StateBits::FOCUSED | StateBits::FOCUS_VISIBLE);
         assert_eq!(testkit::kinds(&list), ["quad", "glyphs", "quad"], "the ring last");
         let Prim::Quad(ring) = list.items.last().unwrap() else { unreachable!() };
-        assert_eq!(ring.rect, Rect::new(-2.0, -2.0, 20.0, 20.0), "around the indicator, 1px at +1");
+        assert_eq!(ring.rect, Rect::new(-3.0, -3.0, 21.0, 21.0), "around the indicator, 2px at +1 (R8)");
         assert_eq!(ring.border_color, ua_token(true, "focus").unwrap());
         assert_eq!(testkit::kinds(&testkit::record(&c, SIZE, StateBits::FOCUSED).0), ["quad", "glyphs"], "no ring for pointer focus");
 

@@ -414,7 +414,7 @@ mod tests {
     }
 
     fn styles(state: StateBits) -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None }
+        Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None, inherited: None }
     }
 
     fn chrome(k: &Frame) -> [f32; 4] {

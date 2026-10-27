@@ -149,6 +149,12 @@ pub fn paint_inset_shadows(cx: &mut PaintCx, s: &StyleView, border_box: Rect) ->
 /// `outline-offset`): outside the border box by the offset, never affecting layout or hit-testing.
 /// The focus ring is a `:focus-visible` outline (DESIGN R8).
 pub fn paint_outline(cx: &mut PaintCx, s: &StyleView, border_box: Rect) {
+    paint_outline_radius(cx, s, border_box, s.px("border-radius").unwrap_or(0.0));
+}
+
+/// [`paint_outline`] around a box whose corner radius is `radius` rather than the style's own: a
+/// ring the host draws around one of its parts (a check box's indicator, a switch's track).
+pub fn paint_outline_radius(cx: &mut PaintCx, s: &StyleView, border_box: Rect, radius: f32) {
     let style = match s.keyword("outline-style") {
         None | Some("none" | "hidden") => return,
         Some("dashed") => BorderStyle::Dashed,
@@ -163,7 +169,7 @@ pub fn paint_outline(cx: &mut PaintCx, s: &StyleView, border_box: Rect) {
     let off = s.px("outline-offset").unwrap_or(0.0);
     // the stroke lies outside the offset rect: a quad grown by the width, its border inside
     let r = cx.snap_rect(border_box.inflate(off + w));
-    let base = (s.px("border-radius").unwrap_or(0.0) + off.max(0.0)).max(0.0);
+    let base = (radius + off.max(0.0)).max(0.0);
     let radii = Corners::all(if base > 0.0 { base + w } else { 0.0 });
     cx.push(Prim::Quad(Quad { rect: r, radii, fill: Fill::Solid(Color::TRANSPARENT), border_widths: Insets::all(w), border_color: col, border_style: style }), r);
 }

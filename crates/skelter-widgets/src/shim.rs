@@ -303,6 +303,10 @@ pub mod core {
         /// The document's theme (its `Theme` service) UA tokens resolve in; `None`: the built-in
         /// theme of `dark`'s scheme.
         pub theme: Option<&'a crate::theme::Theme>,
+        /// The parent node's computed style (`None` for a root or a foreign painter): what the node
+        /// inherits from, so a kind's own UA declaration beats a value it only inherited
+        /// ([`crate::paint::StyleView::with_inherited`]).
+        pub inherited: Option<&'a ComputedStyle>,
     }
 
     impl<'a> Styles<'a> {

@@ -330,7 +330,7 @@ impl Label {
         if self.props.disabled {
             state |= StateBits::DISABLED;
         }
-        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_font_weight(Some(self.props.font_weight))
+        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_inherited(s.inherited).with_font_weight(Some(self.props.font_weight))
     }
 }
 
@@ -516,7 +516,7 @@ mod tests {
 
     fn measure_at(l: &Label, w: f32) -> Size {
         let mut text = MonoShaper;
-        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }, text: &mut text, scale: 1.0 };
+        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }, text: &mut text, scale: 1.0 };
         let avail = taffy::Size { width: taffy::AvailableSpace::Definite(w), height: taffy::AvailableSpace::MaxContent };
         let s = l.measure(&mut cx, taffy::Size { width: None, height: None }, avail);
         Size::new(s.width, s.height)

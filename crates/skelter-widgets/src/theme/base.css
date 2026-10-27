@@ -124,6 +124,12 @@
   }
   checkbox:hover {
     background-color: var(--sv-button-bg-hover);
+    border-color: var(--sv-muted);
+  }
+  checkbox:checked:hover,
+  checkbox:indeterminate:hover {
+    background-color: var(--sv-toggle-on-bg);
+    border-color: var(--sv-toggle-on-border);
   }
   checkbox:active {
     background-color: var(--sv-button-bg-active);
@@ -142,35 +148,15 @@
     }
   }
 
-  /* POL1-CONTROLS: the colours these kinds' UA tables set. A node's computed `color` is always
-     present (inherited from the root) and beats a UA table, so a UA `color` never reaches the
-     paint; the kinds' looks restate it here, as `button` does. */
-  hyperlink {
-    color: var(--sv-link);
-  }
-  hyperlink:disabled {
-    color: var(--sv-disabled-fg);
-  }
-  spinner {
-    color: var(--sv-progress);
-  }
-  /* the placeholder of an image that has not loaded: a quiet frame (the controls' 3:1 boundary), not
-     the text colour */
-  image {
-    color: var(--sv-control-border);
-  }
-  /* the thumb's core takes the fill's colour (`progress`, which High Contrast Dark keeps visible) */
+  /* POL1-CONTROLS: the slider thumb's core takes the fill's colour (`progress`, which High Contrast
+     Dark keeps visible), not its UA `accent`. (The hyperlink, spinner, image, mark-label and frame
+     caption colours that were restated here are their UA tables' own: a kind's UA declaration beats
+     an inherited colour since POL1-STATES.) */
   slider::part(thumb) {
     color: var(--sv-progress);
   }
   slider:disabled::part(thumb) {
     color: var(--sv-disabled-fg);
-  }
-  slider::part(mark-label) {
-    color: var(--sv-muted);
-  }
-  frame::part(caption) {
-    color: var(--sv-fg-strong);
   }
 
   /* Pointer feedback is immediate on enter, leave and press. Applications can opt into
@@ -208,4 +194,118 @@
       border-style: dashed;
     }
   }
+
+  /* Pointer feedback is immediate on enter, leave and press. Applications can opt into
+     colour transitions explicitly; the base theme must not make hover feel delayed. */
+
+  /* POL1-STATES: the state looks every interactive kind shares (DESIGN R2, R3, R8, R9, R17).
+     Focus rings are each kind's UA outline (`outline-color: focus`, keyboard-only); these rules
+     give the rest. They sit after each kind's own rules so a state beats a look. */
+
+  /* R1/VS Code: the scope's default button is the primary (accent) button */
+  button:default {
+    background-color: var(--sv-accent);
+    border-color: var(--sv-button-border);
+    color: var(--sv-accent-fg);
+  }
+  button:default:hover {
+    background-color: var(--sv-accent-hover);
+  }
+  /* R17: a selected button is an on toggle (as `toggle-button:checked`) */
+  button:selected {
+    background-color: var(--sv-toggle-on-bg);
+    border-color: var(--sv-toggle-on-border);
+  }
+  button:selected:hover {
+    background-color: var(--sv-toggle-on-bg);
+  }
+
+  /* A dialog's destructive button (`dialog-role="destructive"`, GNOME's destructive-action, AppKit's
+     hasDestructiveAction): the error colour on its caption and edge, never the accent, so the safe
+     default stays the emphasised one; a destructive button that is the default fills with it. */
+  button[dialog-role=destructive] {
+    color: var(--sv-error);
+    border-color: var(--sv-error);
+  }
+  button[dialog-role=destructive]:default {
+    background-color: var(--sv-error);
+    border-color: var(--sv-error);
+    color: var(--sv-accent-fg);
+  }
+
+  /* R4: a field's border is its focus cue (VS Code `focusBorder` on `:focus`, pointer focus too; a
+     select's on keyboard focus and while open, as its UA); hovering a field or a select steps its
+     border towards the text colour */
+  text-edit:hover,
+  select:hover {
+    border-color: var(--sv-muted);
+  }
+  text-edit:focus,
+  text-edit:focus-visible,
+  text-edit:focus-within,
+  select:focus-visible,
+  select:open {
+    border-color: var(--sv-input-border-color-focus);
+  }
+  /* the states above keep POL1-TEXT's field looks: an invalid field stays red when hovered or
+     focused (VS Code keeps `inputValidation.errorBorder`), a read-only one keeps its hairline */
+  text-edit:invalid:hover,
+  text-edit:invalid:focus,
+  text-edit:invalid:focus-visible,
+  text-edit:invalid:focus-within {
+    border-color: var(--sv-invalid-border);
+  }
+  text-edit[read-only=true]:hover {
+    border-color: var(--sv-border);
+  }
+  @media (prefers-contrast: more) {
+    text-edit:invalid:hover,
+    text-edit:invalid:focus,
+    text-edit:invalid:focus-visible,
+    text-edit:invalid:focus-within {
+      border-color: var(--sv-danger);
+    }
+  }
+
+  /* R9: disabled controls keep their shape at .4 and show `not-allowed`. Only the interactive kinds
+     and the leaf indicators (progress-bar, spinner) dim: a disabled container's state reaches its
+     descendants, so dimming it too would compound. Text that only labels dims its colour to VS
+     Code's `disabledForeground`. */
+  button:disabled,
+  toggle-button:disabled,
+  checkbox:disabled,
+  radio-button:disabled,
+  switch:disabled,
+  slider:disabled,
+  select:disabled,
+  text-edit:disabled,
+  progress-bar:disabled,
+  spinner:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  /* a collapsing header holds its body: its colour dims (the body's own controls dim themselves) */
+  label:disabled,
+  collapsing-header:disabled {
+    color: var(--sv-disabled-fg);
+  }
+
+  /* High Contrast (VS Code): hover is a dashed `contrastActiveBorder` outline, not a fill step */
+  @media (prefers-contrast: more) {
+    button:hover,
+    toggle-button:hover {
+      outline-style: dashed;
+      outline-width: 1px;
+      outline-offset: -1px;
+      outline-color: var(--vscode-contrastActiveBorder);
+    }
+    button:focus-visible,
+    toggle-button:focus-visible {
+      outline-style: solid;
+      outline-width: 2px;
+      outline-offset: 1px;
+      outline-color: var(--sv-focus);
+    }
+  }
+
 }

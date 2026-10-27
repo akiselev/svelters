@@ -337,7 +337,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }
     }
 
     fn header(text: &str) -> CollapsingHeader {

@@ -149,7 +149,7 @@ impl ProgressBar {
     fn view<'a>(&self, s: &Styles<'a>) -> StyleView<'a> {
         let mut state = s.state;
         self.mirror(&mut state);
-        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme)
+        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_inherited(s.inherited)
     }
 }
 

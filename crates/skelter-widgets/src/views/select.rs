@@ -418,7 +418,7 @@ impl Select {
             let g = paint::paint_box(&mut pc, &ov, row);
             paint::paint_outline(&mut pc, &ov, row);
             let content = Rect::new(g.content.min.x, row.min.y, g.content.max.x - CHECK_W, row.max.y);
-            let fg = super::common::part_fg(&ov, &list_v, OPTION_UA);
+            let fg = ov.color("color").unwrap_or(Color::BLACK);
             label(&mut pc, &ov, &self.options[i], content, fg);
             if self.selected == Some(i) {
                 check_mark(&mut pc, Point::new(g.content.max.x - CHECK_W / 2.0, (row.min.y + row.max.y) / 2.0), fg);
@@ -672,7 +672,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }
     }
 
     fn set(s: &mut Select, name: &str, v: Value) -> Result<(), PropError> {

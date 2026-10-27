@@ -35,23 +35,6 @@ pub fn emit(cx: &mut EventCx, spec: &KindSpec, name: &str, args: Vec<Value>) {
     }
 }
 
-/// The text colour of part view `s` (a menu or popup row in its state): its UA table's colour when the
-/// part's CSS colour is only the one it inherited from `parent`, else the CSS colour. In CSS a UA
-/// `::part` rule beats inheritance, but the paint layer reads CSS first, so an inherited `fg` would
-/// hide a row's `:selected` colour (`menu-sel-fg`: white on the light themes' blue highlight).
-pub fn part_fg(s: &crate::paint::StyleView, parent: &crate::paint::StyleView, ua: crate::paint::Ua) -> skelter_base::color::Color {
-    use crate::paint::{StyleView, Ua};
-    let css = |v: &StyleView| StyleView::new(v.computed(), Ua::NONE, v.state(), v.is_dark()).color("color");
-    let own = css(s);
-    if own.is_none() || own == css(parent) {
-        let ua_view: StyleView<'_> = StyleView::ua_only(ua, s.state(), s.is_dark());
-        if let Some(c) = ua_view.with_theme(Some(s.theme())).color("color") {
-            return c;
-        }
-    }
-    s.color("color").unwrap_or(skelter_base::color::Color::BLACK)
-}
-
 /// [`paint::paint_text`](crate::paint::paint_text) in `color` instead of `s`'s colour.
 pub fn paint_text_in(pc: &mut crate::paint::PaintCx, layout: &crate::shim::text::TextLayout, content: skelter_base::geom::Rect, align: crate::paint::Align, color: skelter_base::color::Color) -> skelter_base::geom::Rect {
     use crate::paint::Align;

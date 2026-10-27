@@ -629,7 +629,7 @@ impl Menus {
         let iv = v.item.in_state(st);
         let g = paint::paint_box(pc, &iv, rr);
         paint::paint_outline(pc, &iv, rr);
-        let fg = super::common::part_fg(&iv, v.surface, ITEM_UA);
+        let fg = iv.color("color").unwrap_or(skelter_base::color::Color::BLACK);
         let mut x = g.content.min.x;
         let cy = (rr.min.y + rr.max.y) / 2.0;
         if l.checks {
@@ -998,7 +998,7 @@ impl Kind for MenuBar {
         self.menus.prepare(cx.text, &cx.style);
     }
     fn record(&self, cx: &mut RecordCx) {
-        let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme };
+        let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme, inherited: cx.style.inherited };
         self.menus.record_bar(&mut PaintCx::of(cx), &style);
     }
     /// SV79: the titles and open rows are where assistive technology finds the entries (the
@@ -1435,7 +1435,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }
     }
 
     fn bar() -> MenuBar {

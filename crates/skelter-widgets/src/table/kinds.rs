@@ -434,7 +434,7 @@ impl TableKind {
     fn record_bars(&self, cx: &mut RecordCx) {
         let node = cx.node;
         let parts: Vec<(&'static str, &svelters_style::ComputedStyle)> = BAR_PARTS.iter().filter_map(|n| Some((*n, node.part(n)?))).collect();
-        let styles = Styles { computed: node.css(), parts: &parts, children: &[], state: StateBits(node.state().0), dark: self.dark, theme: None };
+        let styles = Styles { computed: node.css(), parts: &parts, children: &[], state: StateBits(node.state().0), dark: self.dark, theme: None, inherited: None };
         let classic = self.policy.scrollbars == Scrollbars::Classic;
         let alpha = self.scroller.bar_alpha(self.now, &self.policy);
         let mut list = DisplayList::new();

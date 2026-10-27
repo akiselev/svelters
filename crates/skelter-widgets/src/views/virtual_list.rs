@@ -999,7 +999,7 @@ impl VirtualList {
 
     /// The list's own style view (its computed style over [`UA`]).
     pub(crate) fn host_view<'a>(cx: &RecordCx<'a>) -> StyleView<'a> {
-        StyleView::new(cx.style.computed, UA, cx.style.state, cx.style.dark).with_theme(cx.style.theme)
+        StyleView::new(cx.style.computed, UA, cx.style.state, cx.style.dark).with_theme(cx.style.theme).with_inherited(cx.style.inherited)
     }
 
     /// The state of the row at `pos`: `:hover`, `:selected`, `:focus` (the cursor of a focused list)
