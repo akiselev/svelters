@@ -29,7 +29,7 @@ pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint
 pub use icon::{IconKey, content_icon, icon_size, icon_size_sized, is_registered, paint_icon, paint_icon_sized, paint_missing};
 pub use image::{fit_rect, paint_image, paint_image_pixels};
 pub use parts::{PartItem, layout_parts, measure_parts};
-pub use text::{Align, Elide, elide, elide_with, measure_text, paint_runs, paint_text, text_layout, text_style};
+pub use text::{Align, Elide, elide, elide_with, fit_layout, measure_text, paint_runs, paint_text, text_layout, text_style};
 
 use crate::interact::StateBits;
 use crate::shim::core::{RecordCx, Resources};
@@ -298,6 +298,8 @@ pub struct StyleView<'a> {
     theme: Option<&'a crate::theme::Theme>,
     weight: Option<u16>,
     parent: Option<&'a StyleView<'a>>,
+    /// The parent node's computed style, for a host view (a part compares with `parent`).
+    inherited: Option<&'a ComputedStyle>,
 }
 
 impl std::fmt::Debug for StyleView<'_> {
@@ -310,7 +312,7 @@ impl<'a> StyleView<'a> {
     /// `css` (the cascade's computed style, `None` when no sheet reaches the node) over `ua`, in
     /// `state`; `dark` picks the scheme UA tokens resolve in.
     pub fn new(css: Option<&'a ComputedStyle>, ua: Ua, state: StateBits, dark: bool) -> StyleView<'a> {
-        StyleView { css, over: &[], ua, state, dark, theme: None, weight: None, parent: None }
+        StyleView { css, over: &[], ua, state, dark, theme: None, weight: None, parent: None, inherited: None }
     }
 
     /// With the document's theme (its `Theme` service) for UA tokens and the scheme; `None` keeps
@@ -330,13 +332,13 @@ impl<'a> StyleView<'a> {
 
     /// The UA table alone (no cascade): a foreign painter's styled control.
     pub fn ua_only(ua: Ua, state: StateBits, dark: bool) -> StyleView<'static> {
-        StyleView { css: None, over: &[], ua, state, dark, theme: None, weight: None, parent: None }
+        StyleView { css: None, over: &[], ua, state, dark, theme: None, weight: None, parent: None, inherited: None }
     }
 
     /// A part's view: its own computed style (`::part(name)`, `None` until a rule reaches it) and
     /// UA table, inheriting from this view (its host). The part shares the host's state.
     pub fn part(&'a self, css: Option<&'a ComputedStyle>, ua: Ua) -> StyleView<'a> {
-        StyleView { css, over: &[], ua, state: self.state, dark: self.dark, theme: self.theme, weight: None, parent: Some(self) }
+        StyleView { css, over: &[], ua, state: self.state, dark: self.dark, theme: self.theme, weight: None, parent: Some(self), inherited: None }
     }
 
     /// With running transitions' values over the computed style (the node's or part's sample this
@@ -355,6 +357,14 @@ impl<'a> StyleView<'a> {
     /// Whether a running transition overrides any value.
     pub fn is_animated(&self) -> bool {
         !self.over.is_empty()
+    }
+
+    /// With the parent node's computed style (`Styles::inherited`): an inherited property whose
+    /// value equals the parent's was only inherited, so the view's UA declaration beats it (CSS: a
+    /// declaration on the element, the UA's included, beats inheritance).
+    pub fn with_inherited(mut self, parent: Option<&'a ComputedStyle>) -> StyleView<'a> {
+        self.inherited = parent;
+        self
     }
 
     /// With `parent` to inherit from.
@@ -399,11 +409,17 @@ impl<'a> StyleView<'a> {
 
     fn get(&self, name: &str) -> Option<Got<'a>> {
         if let Some(v) = self.css(name) {
-            // skelter-core computes every part, inheriting from its host: an inherited property a
-            // part only took from its host (the same value) yields to the part's own UA table (a
-            // switch knob's `:checked` colour, an icon's 16px); a `::part()` rule that sets another
-            // value wins as usual
-            let inherited_only = INHERITED.contains(&name) && self.parent.is_some_and(|p| p.css(name) == Some(v));
+            // a computed style always holds the inherited properties (skelter-core computes every
+            // part from its host, every node from its parent): one the view only inherited (the
+            // same value as its parent's) yields to the view's own UA declaration, as in CSS (a
+            // switch knob's `:checked` colour, an icon's 16px, a hyperlink's link colour); a rule
+            // that sets another value wins as usual
+            let inherited_only = INHERITED.contains(&name)
+                && match (self.parent, self.inherited) {
+                    (Some(p), _) => p.css(name) == Some(v),
+                    (None, Some(c)) => svelters_style::overlay_get(c, &[], name) == Some(v),
+                    (None, None) => false,
+                };
             if !inherited_only {
                 return Some(Got::Css(v));
             }
@@ -592,5 +608,40 @@ impl<'a> StyleView<'a> {
             };
         }
         out
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::controls::testkit::css;
+
+    /// A kind's (or part's) own UA declaration beats a value it only inherited; a declared value
+    /// still beats the UA table (POL1-STATES).
+    #[test]
+    fn a_ua_declaration_beats_an_inherited_value() {
+        const LINKED: Ua = Ua(&[UaRule::base(&[("color", UaValue::Token("link")), ("font-size", UaValue::Px(16.0))])]);
+        let link = ua_token(true, "link").unwrap();
+        let parent = css("color: #102030; font-size: 13px");
+        let inherited = css("color: #102030; font-size: 13px");
+        let declared = css("color: #405060; font-size: 13px");
+        let parent_color = StyleView::new(Some(&parent), Ua::NONE, StateBits::NONE, true).color("color").unwrap();
+
+        // a host view: only inherited, so the UA wins; without the parent, CSS wins (as before)
+        let host = StyleView::new(Some(&inherited), LINKED, StateBits::NONE, true).with_inherited(Some(&parent));
+        assert_eq!(host.color("color"), Some(link));
+        assert_eq!(host.px("font-size"), Some(16.0));
+        assert_eq!(StyleView::new(Some(&inherited), LINKED, StateBits::NONE, true).color("color"), Some(parent_color));
+        // declared on the node: CSS wins
+        let own = StyleView::new(Some(&declared), LINKED, StateBits::NONE, true).with_inherited(Some(&parent));
+        assert_ne!(own.color("color"), Some(link));
+        assert_ne!(own.color("color"), Some(parent_color));
+        // a property the UA table doesn't declare keeps the inherited value
+        assert_eq!(StyleView::new(Some(&inherited), Ua::NONE, StateBits::NONE, true).with_inherited(Some(&parent)).color("color"), Some(parent_color));
+
+        // a part: compared with its host view
+        let host = StyleView::new(Some(&parent), Ua::NONE, StateBits::NONE, true);
+        assert_eq!(host.part(Some(&inherited), LINKED).color("color"), Some(link));
+        assert_ne!(host.part(Some(&declared), LINKED).color("color"), Some(link));
     }
 }

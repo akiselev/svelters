@@ -52,6 +52,10 @@ pub trait TextGeometry {
     fn line(&self, i: usize) -> LineInfo;
     /// Records the glyph runs at `origin` in `color`.
     fn record_glyphs(&self, sink: &mut dyn RecordSink, origin: Point, color: Color);
+    /// Whether the paragraph's base direction (its first strong character's) is right-to-left.
+    fn is_rtl(&self) -> bool {
+        false
+    }
 }
 
 /// Where a field records: display-list primitives and shaped runs.

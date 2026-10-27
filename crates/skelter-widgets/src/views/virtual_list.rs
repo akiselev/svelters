@@ -999,7 +999,7 @@ impl VirtualList {
 
     /// The list's own style view (its computed style over [`UA`]).
     pub(crate) fn host_view<'a>(cx: &RecordCx<'a>) -> StyleView<'a> {
-        StyleView::new(cx.style.computed, UA, cx.style.state, cx.style.dark).with_theme(cx.style.theme)
+        StyleView::new(cx.style.computed, UA, cx.style.state, cx.style.dark).with_theme(cx.style.theme).with_inherited(cx.style.inherited)
     }
 
     /// The state of the row at `pos`: `:hover`, `:selected`, `:focus` (the cursor of a focused list)
@@ -1325,9 +1325,14 @@ pub const ROW_UA: Ua = Ua(&[
         ("outline-offset", Px(-1.0)),
     ]),
     UaRule::when(StateBits::HOVERED, &[("background-color", Token("list-hover"))]),
-    UaRule::when(StateBits::SELECTED, &[("background-color", Token("list-sel")), ("color", Token("list-sel-fg"))]),
+    // the high-contrast themes have no selection fill: a selected row is outlined dotted in
+    // `contrastActiveBorder` (VS Code's `listSelectionOutline`); the other themes have no such colour
+    UaRule::when(
+        StateBits::SELECTED,
+        &[("background-color", Token("list-sel")), ("color", Token("list-sel-fg")), ("outline-style", Keyword("dotted")), ("outline-color", Token("--vscode-contrastActiveBorder"))],
+    ),
     UaRule::when_not(StateBits::SELECTED, StateBits::FOCUS_WITHIN, &[("background-color", Token("list-sel-inactive"))]),
-    UaRule::when(StateBits::FOCUSED, &[("outline-style", Keyword("solid"))]),
+    UaRule::when(StateBits::FOCUSED, &[("outline-style", Keyword("solid")), ("outline-color", Token("list-focus-outline"))]),
 ]);
 
 kind_props! {

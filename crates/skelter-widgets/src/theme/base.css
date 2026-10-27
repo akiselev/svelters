@@ -77,9 +77,12 @@
   i {
     font-style: italic;
   }
+  /* POL1-TEXT: inline code is a translucent grey field behind the run (VS Code's
+     `textPreformat.background`), which reads on every surface; the label folds the run's
+     `background-color` into its paragraph and fills behind its glyphs */
   code {
     font-family: var(--sv-font-mono);
-    background-color: var(--sv-control-bg);
+    background-color: var(--sv-toolbar-hover);
   }
   a {
     color: var(--sv-link);
@@ -132,13 +135,64 @@
     background-color: var(--sv-button-bg-active);
   }
 
-  /* egui fills a text edit with Visuals::text_edit_bg_color (`--sv-input-bg`, from the Style);
-     its border and text come from the widget state. */
+  /* POL1-CONTROLS: a progress bar's label takes `accent-fg` where it lies over the fill (`progress`);
+     the rest of it keeps the host's colour (`controls/progress.rs`) */
+  progress-bar::part(fill) {
+    color: var(--sv-accent-fg);
+  }
+  /* High Contrast: `progress` is a light cyan on black (dark) or a dark blue on white (light); the label
+     over it takes the window background colour, which contrasts with both */
+  @media (prefers-contrast: more) {
+    progress-bar::part(fill) {
+      color: var(--sv-bg);
+    }
+  }
+
+  /* POL1-CONTROLS: the slider thumb's core takes the fill's colour (`progress`, which High Contrast
+     Dark keeps visible), not its UA `accent`. (The hyperlink, spinner, image, mark-label and frame
+     caption colours that were restated here are their UA tables' own: a kind's UA declaration beats
+     an inherited colour since POL1-STATES.) */
+  slider::part(thumb) {
+    color: var(--sv-progress);
+  }
+  slider:disabled::part(thumb) {
+    color: var(--sv-disabled-fg);
+  }
+
+  /* Pointer feedback is immediate on enter, leave and press. Applications can opt into
+     colour transitions explicitly; the base theme must not make hover feel delayed. */
+
+  /* POL1-TEXT: a text field is VS Code's input box (`input.background`, `input.border`,
+     `input.foreground`; `.monaco-inputbox .input { padding: 4px 6px }` at `control-h`). The
+     text sits in the padding box, so the padding is the inset from the border. */
   text-edit {
+    background-color: var(--sv-input-bg);
     border-color: var(--sv-input-border-color);
     border-width: var(--sv-stroke);
     border-radius: var(--sv-input-radius);
     color: var(--sv-input-fg);
+    padding: 3px 6px;
+  }
+  /* VS Code's `inputValidation.errorBorder` on a field whose value the app marked invalid */
+  text-edit:invalid {
+    border-color: var(--sv-invalid-border);
+  }
+  /* read-only: no field fill (the text sits on its surface, as VS Code's read-only editors and
+     settings values do), a hairline border */
+  text-edit[read-only=true] {
+    background-color: transparent;
+    border-color: var(--sv-border);
+  }
+  /* High contrast: the HC sets give `inputValidation.errorBorder` and `sideBar.border` the same
+     `contrastBorder` as `input.border`, so the states need cues of their own there: the error
+     colour on an invalid field, a dashed border on a read-only one */
+  @media (prefers-contrast: more) {
+    text-edit:invalid {
+      border-color: var(--sv-danger);
+    }
+    text-edit[read-only=true] {
+      border-style: dashed;
+    }
   }
 
   /* Pointer feedback is immediate on enter, leave and press. Applications can opt into
@@ -193,10 +247,30 @@
   select:open {
     border-color: var(--sv-input-border-color-focus);
   }
+  /* the states above keep POL1-TEXT's field looks: an invalid field stays red when hovered or
+     focused (VS Code keeps `inputValidation.errorBorder`), a read-only one keeps its hairline */
+  text-edit:invalid:hover,
+  text-edit:invalid:focus,
+  text-edit:invalid:focus-visible,
+  text-edit:invalid:focus-within {
+    border-color: var(--sv-invalid-border);
+  }
+  text-edit[read-only=true]:hover {
+    border-color: var(--sv-border);
+  }
+  @media (prefers-contrast: more) {
+    text-edit:invalid:hover,
+    text-edit:invalid:focus,
+    text-edit:invalid:focus-visible,
+    text-edit:invalid:focus-within {
+      border-color: var(--sv-danger);
+    }
+  }
 
   /* R9: disabled controls keep their shape at .4 and show `not-allowed`. Only the interactive kinds
-     dim (a disabled container's state reaches its descendants, so dimming it too would compound);
-     text that only labels dims its colour to VS Code's `disabledForeground`. */
+     and the leaf indicators (progress-bar, spinner) dim: a disabled container's state reaches its
+     descendants, so dimming it too would compound. Text that only labels dims its colour to VS
+     Code's `disabledForeground`. */
   button:disabled,
   toggle-button:disabled,
   checkbox:disabled,
@@ -204,7 +278,9 @@
   switch:disabled,
   slider:disabled,
   select:disabled,
-  text-edit:disabled {
+  text-edit:disabled,
+  progress-bar:disabled,
+  spinner:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }

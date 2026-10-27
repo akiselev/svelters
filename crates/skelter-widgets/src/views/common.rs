@@ -34,3 +34,19 @@ pub fn emit(cx: &mut EventCx, spec: &KindSpec, name: &str, args: Vec<Value>) {
         None => debug_assert!(false, "{} has no signal {name}", spec.tag),
     }
 }
+
+/// [`paint::paint_text`](crate::paint::paint_text) in `color` instead of `s`'s colour.
+pub fn paint_text_in(pc: &mut crate::paint::PaintCx, layout: &crate::shim::text::TextLayout, content: skelter_base::geom::Rect, align: crate::paint::Align, color: skelter_base::color::Color) -> skelter_base::geom::Rect {
+    use crate::paint::Align;
+    use skelter_base::geom::{Point, Rect};
+    let size = layout.size();
+    let x = match align {
+        Align::Start => content.min.x,
+        Align::Center => (content.min.x + content.max.x) / 2.0 - size.w / 2.0,
+        Align::End => content.max.x - size.w,
+    };
+    let y = (content.min.y + content.max.y) / 2.0 - size.h / 2.0;
+    let pos = pc.snap_point(Point::new(x, y));
+    crate::paint::paint_runs(pc, layout, pos, &|_| color);
+    Rect::from_origin_size(pos, size)
+}

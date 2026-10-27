@@ -8,7 +8,7 @@ use skelter_base::time::Span;
 
 /// The node's style view: its computed style over `ua`, in its state and scheme.
 pub fn host_view<'a>(s: &Styles<'a>, ua: Ua) -> StyleView<'a> {
-    StyleView::new(s.computed, ua, s.state, s.dark).with_theme(s.theme)
+    StyleView::new(s.computed, ua, s.state, s.dark).with_theme(s.theme).with_inherited(s.inherited)
 }
 
 /// A kind's interaction substrate: one [`Tracker`] for the node.
@@ -67,5 +67,14 @@ pub fn cursor(cx: &mut EventCx<'_>, ua: &Ua) {
         && let Some(c) = StyleView::ua_only(*ua, *cx.state, true).cursor()
     {
         cx.cursor = Some(c);
+    }
+}
+
+/// A measured width capped by a definite available width (CSS fit-content: `min(max-content,
+/// available)`), for kinds whose caption elides in the narrower box; other available spaces keep it.
+pub fn fit_width(natural: f32, avail: skelter_core::taffy::AvailableSpace) -> f32 {
+    match avail {
+        skelter_core::taffy::AvailableSpace::Definite(w) => natural.min(w.max(0.0)),
+        _ => natural,
     }
 }

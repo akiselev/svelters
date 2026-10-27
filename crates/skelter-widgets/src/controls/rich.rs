@@ -3,8 +3,8 @@
 //! and painted with a colour per style index (so a hover or colour change never reshapes).
 //!
 //! The runs are the label's `runs` prop: a list of strings and records
-//! `{text, b?, i?, code?, href?, color?}` (svelters-egui's plain run list, `rich::from_value`, plus
-//! `color`, which stands in for a run node's computed `color`). Each record's flags give the tag
+//! `{text, b?, i?, code?, href?, color?, bg?}` (svelters-egui's plain run list, `rich::from_value`,
+//! plus `color` and `bg`, which stand in for a run node's computed `color` and `background-color`). Each record's flags give the tag
 //! defaults: `b` 700, `i` italic, `code` the theme's monospace family; a run with an `href` field is
 //! a link (the `link` colour, underlined while the pointer is on it: DESIGN R18). No markup is
 //! parsed; unknown or mistyped fields are errors.
@@ -31,6 +31,9 @@ pub struct RunFmt {
     pub mono: bool,
     /// `None`: the label's text colour (or the link colour on a link).
     pub color: Option<Color>,
+    /// `bg`: a fill behind the run's glyphs (`code`'s field fill, from its computed
+    /// `background-color`).
+    pub bg: Option<Color>,
 }
 
 /// One section of the paragraph: `plain[start..end]` drawn with `fmt`.
@@ -90,12 +93,13 @@ pub fn from_value(lead: &str, items: &[Value]) -> Result<Rich, String> {
                         ("code", Value::Bool(on)) => f.mono = *on,
                         ("href", Value::Str(s)) => href = Some(s.to_string()),
                         ("color", Value::Color(c)) => f.color = Some(*c),
-                        (other, _) => return Err(format!("run {k}: unknown or mistyped field `{other}` (text, href: string; b, i, code: bool; color: colour)")),
+                        ("bg", Value::Color(c)) => f.bg = Some(*c),
+                        (other, _) => return Err(format!("run {k}: unknown or mistyped field `{other}` (text, href: string; b, i, code: bool; color, bg: colour)")),
                     }
                 }
                 push(&text, f, Some(k), href);
             }
-            other => return Err(format!("run {k}: a string or {{text, b, i, code, href, color}}, not {other:?}")),
+            other => return Err(format!("run {k}: a string or {{text, b, i, code, href, color, bg}}, not {other:?}")),
         }
     }
     Ok(rich)
@@ -153,6 +157,24 @@ pub fn link_at(rich: &Rich, layout: &TextLayout, pos: Point, p: Point) -> Option
         let hit = run_rect(pos, pr.origin, pr.run.ascent, pr.run.descent, pr.run.advance).contains(p);
         (hit && rich.runs.get(i)?.is_link()).then_some(i)
     })
+}
+
+/// The fills behind runs with a `bg` (a `code` run's field), under the glyphs: each placed run's
+/// rect (from ascent to descent) widened by a point on each side, with small rounded corners
+/// (VS Code's inline code).
+pub fn paint_backgrounds(cx: &mut PaintCx, rich: &Rich, layout: &TextLayout, pos: Point) {
+    use skelter_base::color::Fill;
+    use skelter_base::display::Quad;
+    use skelter_base::geom::{Corners, Insets};
+    for pr in layout.runs() {
+        let Some(bg) = pr.style.checked_sub(1).and_then(|i| rich.runs.get(i as usize)).and_then(|r| r.fmt.bg) else { continue };
+        if pr.run.glyphs.is_empty() || pr.run.advance <= 0.0 || bg.a <= 0.0 {
+            continue;
+        }
+        let r = run_rect(pos, pr.origin, pr.run.ascent, pr.run.descent, pr.run.advance);
+        let r = cx.snap_rect(Rect::new(r.min.x - 1.0, r.min.y, r.max.x + 1.0, r.max.y));
+        cx.push(Prim::Quad(Quad { rect: r, radii: Corners::all(3.0), fill: Fill::Solid(bg), border_widths: Insets::ZERO, border_color: Color::TRANSPARENT, border_style: Default::default() }), r);
+    }
 }
 
 /// `y` on the pixel grid for a horizontal stroke `w` points wide (an odd number of device pixels
@@ -277,7 +299,7 @@ pub(crate) mod testing {
         let mut list = DisplayList::new();
         let mut res = MemResources::default();
         let mut text = SpanShaper;
-        let mut cx = RecordCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
+        let mut cx = RecordCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None, inherited: None }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
         k.record(&mut cx);
         (list, res)
     }
@@ -285,7 +307,7 @@ pub(crate) mod testing {
     /// Runs the kind's `prepare` at `size` (what skelter-core does after layout).
     pub fn prepare(k: &mut dyn Kind, size: Size, state: StateBits) {
         let mut text = SpanShaper;
-        let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None }, text: &mut text, emitted: Vec::new(), layouts: None };
+        let mut cx = PrepareCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None, inherited: None }, text: &mut text, emitted: Vec::new(), layouts: None };
         k.prepare(&mut cx);
     }
 }
@@ -309,6 +331,8 @@ mod tests {
         assert!(from_value("", &[rec(&[("color", Value::str("red"))])]).is_err(), "unknown or mistyped fields are errors, not markup");
         assert!(from_value("", &[rec(&[("u", Value::Bool(true))])]).is_err());
         assert!(from_value("", &[Value::I64(3)]).is_err());
+        let g = Color::rgba(0.5, 0.5, 0.5, 1.0);
+        assert_eq!(from_value("", &[rec(&[("text", Value::str("c")), ("bg", Value::Color(g))])]).unwrap().runs[0].fmt.bg, Some(g), "a run's fill");
     }
 
     #[test]

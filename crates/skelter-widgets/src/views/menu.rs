@@ -32,7 +32,7 @@ use super::menu_model::{Check, Entry, EntryIx, EntryKind, KeyIn, MenuModel, Menu
 use super::placement::{AnchorParams, Placement, place};
 use crate::controls::common::host_view;
 use crate::interact::{Platform, StateBits};
-use crate::paint::{self, Align, Elide, PaintCx, StyleView, Ua, UaRule, UaValue::{Px, Token}};
+use crate::paint::{self, Align, Elide, PaintCx, StyleView, Ua, UaRule, UaValue::{Keyword, Px, Token}};
 use crate::shim::core::{
     A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, Resources,
     SignalSpec, StyleCx, Styles, Value, ValueType,
@@ -72,7 +72,11 @@ pub const SURFACE_UA: Ua = Ua(&[UaRule::base(&[
 /// is only tinted (R9).
 pub const ITEM_UA: Ua = Ua(&[
     UaRule::base(&[("height", Px(26.0)), ("padding-left", Px(8.0)), ("padding-right", Px(8.0)), ("border-radius", Token("radius")), ("color", Token("fg"))]),
-    UaRule::when(StateBits::SELECTED, &[("background-color", Token("menu-sel")), ("color", Token("menu-sel-fg"))]),
+    // the high-contrast themes have no `menu-sel` fill: the row is outlined (VS Code's `menu.selectionBorder`)
+    UaRule::when(
+        StateBits::SELECTED,
+        &[("background-color", Token("menu-sel")), ("color", Token("menu-sel-fg")), ("outline-style", Keyword("solid")), ("outline-color", Token("--vscode-contrastActiveBorder")), ("outline-width", Px(1.0)), ("outline-offset", Px(-1.0))],
+    ),
     UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
     UaRule::when(StateBits(StateBits::SELECTED.0 | StateBits::DISABLED.0), &[("background-color", Token("list-hover")), ("color", Token("disabled-fg"))]),
 ]);
@@ -572,7 +576,7 @@ impl Menus {
                 let layout = paint::text_layout(pc.text, &tv, &e.label, None);
                 let at = paint::paint_text(pc, &tv, &layout, g.content, Align::Start);
                 if mnemonics {
-                    underline(pc, &tv, &e.label, e.mnemonic_at, at);
+                    underline(pc, &tv, &e.label, e.mnemonic_at, at, tv.color("color").unwrap_or(Color::BLACK));
                 }
             }
         });
@@ -624,7 +628,8 @@ impl Menus {
         st.set(StateBits::CHECKED, e.checked);
         let iv = v.item.in_state(st);
         let g = paint::paint_box(pc, &iv, rr);
-        let fg = iv.color("color").unwrap_or(Color::BLACK);
+        paint::paint_outline(pc, &iv, rr);
+        let fg = iv.color("color").unwrap_or(skelter_base::color::Color::BLACK);
         let mut x = g.content.min.x;
         let cy = (rr.min.y + rr.max.y) / 2.0;
         if l.checks {
@@ -640,9 +645,9 @@ impl Menus {
         let right = g.content.max.x - if e.kind == EntryKind::Menu { CHEVRON_W } else { 0.0 };
         let shown = paint::elide(pc.text, &iv, &e.label, Elide::End, (right - x).max(0.0));
         let layout = paint::text_layout(pc.text, &iv, &shown, None);
-        let at = paint::paint_text(pc, &iv, &layout, Rect::new(x, rr.min.y, right, rr.max.y), Align::Start);
+        let at = super::common::paint_text_in(pc, &layout, Rect::new(x, rr.min.y, right, rr.max.y), Align::Start, fg);
         if self.nav.keyboard && shown == e.label {
-            underline(pc, &iv, &e.label, e.mnemonic_at, at);
+            underline(pc, &iv, &e.label, e.mnemonic_at, at, fg);
         }
         let s = shortcut_text(&e.shortcut, self.macos);
         if !s.is_empty() {
@@ -818,13 +823,12 @@ pub(crate) fn check_mark(pc: &mut PaintCx, c: Point, color: Color) {
 }
 
 /// Underlines the mnemonic letter of `label` (at byte `at`) painted in `text_rect` under `s`.
-fn underline(pc: &mut PaintCx, s: &StyleView, label: &str, at: Option<usize>, text_rect: Rect) {
+fn underline(pc: &mut PaintCx, s: &StyleView, label: &str, at: Option<usize>, text_rect: Rect, color: Color) {
     let Some(at) = at else { return };
     let Some(ch) = label[at..].chars().next() else { return };
     let x0 = text_rect.min.x + paint::measure_text(pc.text, s, &label[..at], None).w;
     let x1 = text_rect.min.x + paint::measure_text(pc.text, s, &label[..at + ch.len_utf8()], None).w;
     let y = text_rect.max.y - 1.0;
-    let color = s.color("color").unwrap_or(Color::BLACK);
     stroke(pc, Point::new(x0, y), Point::new(x1, y), 1.0, color);
 }
 
@@ -994,7 +998,7 @@ impl Kind for MenuBar {
         self.menus.prepare(cx.text, &cx.style);
     }
     fn record(&self, cx: &mut RecordCx) {
-        let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme };
+        let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme, inherited: cx.style.inherited };
         self.menus.record_bar(&mut PaintCx::of(cx), &style);
     }
     /// SV79: the titles and open rows are where assistive technology finds the entries (the
@@ -1431,7 +1435,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }
     }
 
     fn bar() -> MenuBar {

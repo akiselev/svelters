@@ -170,7 +170,7 @@ impl Kind for StatusBar {
     fn record(&self, cx: &mut RecordCx) {
         let mut style = cx.style.state;
         style.set(StateBits::OPEN, self.showing());
-        let host = crate::paint::StyleView::new(cx.style.computed, UA, style, cx.style.dark).with_theme(cx.style.theme);
+        let host = crate::paint::StyleView::new(cx.style.computed, UA, style, cx.style.dark).with_theme(cx.style.theme).with_inherited(cx.style.inherited);
         let msg_v = host.part(cx.style.part_css("message"), MESSAGE_UA);
         let rect = cx.rect();
         let mut pc = PaintCx::of(cx);

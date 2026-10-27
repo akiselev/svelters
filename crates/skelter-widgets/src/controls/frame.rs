@@ -49,12 +49,17 @@ pub const GROUP: Ua = Ua(&[
     ]),
     FOCUS,
 ]);
-/// `canvas`: the field look (sunken content, R4's fill without the inset).
+/// `canvas`: the field look (sunken content, R4's fill without the inset), with the group's
+/// inner margin.
 pub const CANVAS: Ua = Ua(&[UaRule::base(&[
     ("background-color", Token("control-bg")),
     ("border-color", Token("control-border")),
     ("border-width", Token("stroke")),
     ("border-radius", Token("radius-xs")),
+    ("padding-left", Px(6.0)),
+    ("padding-right", Px(6.0)),
+    ("padding-top", Px(6.0)),
+    ("padding-bottom", Px(6.0)),
     ("gap", Px(6.0)),
 ])]);
 /// `window`, `menu`, `popup`: floating surfaces (R7).
@@ -409,7 +414,7 @@ mod tests {
     }
 
     fn styles(state: StateBits) -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None }
+        Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None, inherited: None }
     }
 
     fn chrome(k: &Frame) -> [f32; 4] {

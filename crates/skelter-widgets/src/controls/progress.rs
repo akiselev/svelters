@@ -6,8 +6,8 @@
 //! text (`text`, `format` or `show-percentage`), when it takes the node's height and the label is
 //! centred on it. Busy (`animate`, `indeterminate`, or a `value` with `min == max`) is `:busy` and
 //! `:indeterminate` and a sweep: a 30 % segment crossing the track every 1.5 s ([`sweep`]). The
-//! recording is the sweep's frame at t = 0 (the source's reduced-motion frame, the segment not yet
-//! on the track); running it is a compositor animation (lane MOTION-CSS).
+//! recording is the sweep's middle frame ([`BUSY_STILL`]: the segment centred on the track, the
+//! reduced-motion look); running it is a compositor animation (lane MOTION-CSS).
 
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
@@ -15,18 +15,30 @@ use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, Measure
 use skelter_base::accesskit;
 use skelter_base::color::{Color, Fill};
 use skelter_base::display::{BorderStyle, Prim, Quad};
-use skelter_base::geom::{Corners, Insets, Rect, Vec2};
+use skelter_base::geom::{Corners, Insets, Rect, RoundedRect, Vec2};
 
 pub const UA: Ua = Ua(&[UaRule::base(&[("text-align", Keyword("center")), ("width", Px(100.0))])]);
 
-/// `::part(track)`.
-pub const TRACK: Ua = Ua(&[UaRule::base(&[("background-color", Token("control-bg")), ("border-radius", Px(2.0)), ("height", Px(4.0))])]);
+/// `::part(track)`: the field look (`control-bg` inside a `control-border` hairline), so an empty
+/// bar shows on every surface (Light Modern's field fill is the panel's near-white; High Contrast's
+/// is the window's black or white).
+pub const TRACK: Ua = Ua(&[UaRule::base(&[
+    ("background-color", Token("control-bg")),
+    ("border-color", Token("control-border")),
+    ("border-width", Token("stroke")),
+    ("border-radius", Px(2.0)),
+    ("height", Px(4.0)),
+])]);
 
 /// `::part(fill)`.
-pub const FILL: Ua = Ua(&[UaRule::base(&[("background-color", Token("progress"))])]);
+pub const FILL: Ua = Ua(&[UaRule::base(&[("background-color", Token("progress")), ("color", Token("accent-fg"))])]);
 
 /// The sweep's period in seconds (`--sv-busy-period`).
 pub const BUSY_PERIOD: f64 = 1.5;
+
+/// The time in the sweep the recording shows: half a period, the segment centred on the track
+/// (35 %–65 %), so a busy bar that is not animated (reduced motion, a still) still reads as busy.
+pub const BUSY_STILL: f64 = BUSY_PERIOD / 2.0;
 
 kind_props! {
     /// The progress bar's props.
@@ -137,7 +149,40 @@ impl ProgressBar {
     fn view<'a>(&self, s: &Styles<'a>) -> StyleView<'a> {
         let mut state = s.state;
         self.mirror(&mut state);
-        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme)
+        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_inherited(s.inherited)
+    }
+}
+
+/// The label's inset from the bar's ends, each side.
+pub const LABEL_PAD: f32 = 4.0;
+
+/// The label on the bar `tr`: elided to fit inside it and clipped to it; the part over the fill
+/// `fr` in the fill part's `color` (`accent-fg`, legible on `progress`), the rest in the host's.
+fn paint_label(pc: &mut PaintCx, host: &StyleView, fill: &StyleView, text: &str, tr: Rect, fr: Option<Rect>, vertical: bool) {
+    let text = paint::elide(pc.text, host, text, paint::Elide::End, (tr.width() - 2.0 * LABEL_PAD).max(0.0));
+    if text.is_empty() {
+        return;
+    }
+    let l = paint::text_layout(pc.text, host, &text, None);
+    let align = Align::of(host, Align::Center);
+    let inner = Rect::new(tr.min.x + LABEL_PAD, tr.min.y, tr.max.x - LABEL_PAD, tr.max.y);
+    let on_fill = fill.color("color").filter(|c| c.a > 0.0);
+    // the regions off the fill: before and after it along the bar (all of it without a fill)
+    let rest: Vec<Rect> = match (fr, on_fill) {
+        (Some(f), Some(_)) if vertical => vec![Rect::new(tr.min.x, tr.min.y, tr.max.x, f.min.y), Rect::new(tr.min.x, f.max.y, tr.max.x, tr.max.y)],
+        (Some(f), Some(_)) => vec![Rect::new(tr.min.x, tr.min.y, f.min.x, tr.max.y), Rect::new(f.max.x, tr.min.y, tr.max.x, tr.max.y)],
+        _ => vec![tr],
+    };
+    let clipped = |pc: &mut PaintCx, clip: Rect, s: &StyleView| {
+        pc.push(Prim::PushClip(RoundedRect { rect: clip, radii: Corners::ZERO }), Rect::ZERO);
+        paint::paint_text(pc, s, &l, inner, align);
+        pc.push(Prim::PopClip, Rect::ZERO);
+    };
+    for r in rest.into_iter().filter(|r| r.width() > 0.0 && r.height() > 0.0) {
+        clipped(pc, r, host);
+    }
+    if let (Some(f), Some(_)) = (fr, on_fill) {
+        clipped(pc, f, fill);
     }
 }
 
@@ -174,10 +219,11 @@ impl Kind for ProgressBar {
         let track = s.part(cx.style.part_css("track"), TRACK);
         let w = s.px("width").unwrap_or(100.0);
         let th = track.px("height").unwrap_or(4.0);
+        // a label never widens the bar: it is elided to the bar instead (`record`)
         let along = match self.label() {
             Some(t) => {
                 let t = paint::measure_text(cx.text, &s, &t, None);
-                Vec2::new(w.max(t.w + 8.0), (t.h + 4.0).max(th))
+                Vec2::new(w, (t.h + 4.0).max(th))
             }
             None => Vec2::new(w, th),
         };
@@ -201,15 +247,14 @@ impl Kind for ProgressBar {
         let color = fill.color("background-color").unwrap_or(Color::TRANSPARENT);
         let radius = track.px("border-radius").unwrap_or(0.0);
         // the fill's span along the bar, 0..1 from where it starts (left, or bottom when vertical)
-        let (a, b) = if self.busy() { sweep(0.0) } else { (0.0, self.fraction()) };
+        let (a, b) = if self.busy() { sweep(BUSY_STILL) } else { (0.0, self.fraction()) };
         let (a, b) = if inverted { (1.0 - b, 1.0 - a) } else { (a, b) };
         let fr = if vertical { Rect::new(tr.min.x, tr.max.y - b * tr.height(), tr.max.x, tr.max.y - a * tr.height()) } else { Rect::new(tr.min.x + a * tr.width(), tr.min.y, tr.min.x + b * tr.width(), tr.max.y) };
         if !fr.is_empty() && color.a > 0.0 {
             pc.push(fill_quad(fr, radius, color), fr);
         }
         if let Some(t) = &label {
-            let l = paint::text_layout(pc.text, &host, t, None);
-            paint::paint_text(&mut pc, &host, &l, r, Align::of(&host, Align::Center));
+            paint_label(&mut pc, &host, &fill, t, tr, if fr.is_empty() || color.a <= 0.0 { None } else { Some(fr) }, vertical);
         }
     }
 
@@ -336,11 +381,30 @@ mod tests {
         let mut b = bar(0.5);
         b.props.format = "%p%".into();
         let (list, res) = testkit::record(&b, Size::new(100.0, 20.0), StateBits::NONE);
-        assert_eq!(testkit::kinds(&list), ["quad", "quad", "glyphs"]);
+        // the label twice, each clipped: off the fill in the host's colour, over it in `accent-fg`
+        assert_eq!(testkit::kinds(&list), ["quad", "quad", "push-clip", "glyphs", "pop-clip", "push-clip", "glyphs", "pop-clip"]);
         let Prim::Quad(track) = &list.items[0] else { unreachable!() };
         assert_eq!(track.rect, Rect::new(0.0, 0.0, 100.0, 20.0));
+        let (Prim::PushClip(off), Prim::PushClip(on)) = (&list.items[2], &list.items[5]) else { unreachable!() };
+        assert_eq!((off.rect, on.rect), (Rect::new(50.0, 0.0, 100.0, 20.0), Rect::new(0.0, 0.0, 50.0, 20.0)));
+        let (Prim::Glyphs(g_off), Prim::Glyphs(g_on)) = (&list.items[3], &list.items[6]) else { unreachable!() };
+        assert_eq!(g_on.color, paint::ua_token(true, "accent-fg").unwrap());
+        assert_ne!(g_off.color, g_on.color);
         let ids: String = res.runs[0].glyphs.iter().map(|g| char::from_u32(g.id).unwrap()).collect();
         assert_eq!(ids, "50%");
+    }
+
+    #[test]
+    fn a_long_label_is_elided_to_the_bar_and_never_widens_it() {
+        let mut b = bar(0.0);
+        b.props.text = "Building the netlist for the main board and every sub-board".into();
+        assert_eq!(testkit::measure(&b, StateBits::NONE).w, 100.0, "the bar keeps its width");
+        let (list, res) = testkit::record(&b, Size::new(100.0, 20.0), StateBits::NONE);
+        assert_eq!(testkit::kinds(&list), ["quad", "push-clip", "glyphs", "pop-clip"], "an empty bar: one clipped label");
+        let Prim::PushClip(c) = &list.items[1] else { unreachable!() };
+        assert_eq!(c.rect, Rect::new(0.0, 0.0, 100.0, 20.0));
+        let ids: String = res.runs[0].glyphs.iter().map(|g| char::from_u32(g.id).unwrap()).collect();
+        assert!(ids.ends_with('…') && ids.len() < b.props.text.len(), "{ids}");
     }
 
     #[test]
@@ -348,7 +412,9 @@ mod tests {
         let mut b = bar(0.5);
         b.props.indeterminate = true;
         let (list, _) = testkit::record(&b, Size::new(100.0, 10.0), StateBits::NONE);
-        assert_eq!(testkit::kinds(&list), ["quad"], "the track; the sweep is not on it at t = 0");
+        assert_eq!(testkit::kinds(&list), ["quad", "quad"], "the track and the still segment");
+        let Prim::Quad(seg) = &list.items[1] else { unreachable!() };
+        assert!((seg.rect.min.x - 35.0).abs() < 1e-3 && (seg.rect.max.x - 65.0).abs() < 1e-3, "centred: {:?}", seg.rect);
         let mut d = Driver::new(b, Size::new(100.0, 10.0));
         assert_eq!(d.send(Event::Hover(true)), Handled::No);
         assert!(d.state.contains(StateBits::BUSY | StateBits::INDETERMINATE));

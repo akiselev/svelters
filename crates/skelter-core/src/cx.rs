@@ -169,6 +169,10 @@ impl<'a> NodeView<'a> {
         self.doc.view(node)
     }
     /// The `k`-th child's view.
+    /// The parent node's view (`None` for a root).
+    pub fn parent(&self) -> Option<NodeView<'a>> {
+        self.doc.parent(self.id).and_then(|p| self.doc.view(p))
+    }
     pub fn child(&self, k: usize) -> Option<NodeView<'a>> {
         self.children.get(k).and_then(|&c| self.doc.view(c))
     }

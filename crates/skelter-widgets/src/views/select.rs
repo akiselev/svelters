@@ -79,7 +79,11 @@ pub const LIST_UA: Ua = Ua(&[UaRule::base(&[
 /// `::part(option)`: a row; `:selected` is the highlighted one.
 pub const OPTION_UA: Ua = Ua(&[
     UaRule::base(&[("height", Token("row-h")), ("padding-left", Px(8.0)), ("padding-right", Px(8.0)), ("border-radius", Token("radius")), ("color", Token("fg"))]),
-    UaRule::when(StateBits::SELECTED, &[("background-color", Token("menu-sel")), ("color", Token("menu-sel-fg"))]),
+    // the high-contrast themes have no `menu-sel` fill: the row is outlined (VS Code's `menu.selectionBorder`)
+    UaRule::when(
+        StateBits::SELECTED,
+        &[("background-color", Token("menu-sel")), ("color", Token("menu-sel-fg")), ("outline-style", Keyword("solid")), ("outline-color", Token("--vscode-contrastActiveBorder")), ("outline-width", Px(1.0)), ("outline-offset", Px(-1.0))],
+    ),
 ]);
 
 /// Room the button keeps for its chevron.
@@ -412,10 +416,11 @@ impl Select {
             st.set(StateBits::CHECKED, self.selected == Some(i));
             let ov = option.in_state(st);
             let g = paint::paint_box(&mut pc, &ov, row);
+            paint::paint_outline(&mut pc, &ov, row);
             let content = Rect::new(g.content.min.x, row.min.y, g.content.max.x - CHECK_W, row.max.y);
-            label(&mut pc, &ov, &self.options[i], content);
+            let fg = ov.color("color").unwrap_or(Color::BLACK);
+            label(&mut pc, &ov, &self.options[i], content, fg);
             if self.selected == Some(i) {
-                let fg = ov.color("color").unwrap_or(Color::BLACK);
                 check_mark(&mut pc, Point::new(g.content.max.x - CHECK_W / 2.0, (row.min.y + row.max.y) / 2.0), fg);
             }
         }
@@ -423,11 +428,11 @@ impl Select {
     }
 }
 
-/// `text` elided to `content` and painted at its start, centred vertically.
-fn label(pc: &mut PaintCx, s: &StyleView, text: &str, content: Rect) {
+/// `text` elided to `content` and painted at its start in `color`, centred vertically.
+fn label(pc: &mut PaintCx, s: &StyleView, text: &str, content: Rect, color: Color) {
     let shown = paint::elide(pc.text, s, text, Elide::End, content.width().max(0.0));
     let layout = paint::text_layout(pc.text, s, &shown, None);
-    paint::paint_text(pc, s, &layout, content, Align::Start);
+    super::common::paint_text_in(pc, &layout, content, Align::Start, color);
 }
 
 impl Kind for Select {
@@ -504,7 +509,8 @@ impl Kind for Select {
         let mut pc = PaintCx::of(cx);
         let g = paint::paint_box(&mut pc, &host, rect);
         let content = Rect::new(g.content.min.x, g.content.min.y, (g.content.max.x - CHEVRON_W).max(g.content.min.x), g.content.max.y);
-        label(&mut pc, &host, self.shown(), content);
+        let fg = host.color("color").unwrap_or(Color::BLACK);
+        label(&mut pc, &host, self.shown(), content, fg);
         let color = host.color("color").unwrap_or(Color::BLACK);
         let c = Point::new(g.content.max.x - CHEVRON_W / 2.0, (rect.min.y + rect.max.y) / 2.0);
         stroke(&mut pc, Point::new(c.x - 4.0, c.y - 2.0), Point::new(c.x, c.y + 2.0), 1.25, color);
@@ -666,7 +672,7 @@ mod tests {
     }
 
     fn styles() -> Styles<'static> {
-        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }
+        Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }
     }
 
     fn set(s: &mut Select, name: &str, v: Value) -> Result<(), PropError> {

@@ -58,7 +58,7 @@ use skelter_base::ids::NodeId;
 use skelter_base::time::{Span, Time};
 use skelter_core::{
     A11yCx, ArgSpec, Event, EventCx, FocusReason, Handled, Kind, KindRegistry, KindSpec, MeasureCx, MethodId, MethodSpec, NodeView, PrepareCx, PropCx, PropDefault, PropError, PropId,
-    PropSpec, RecordCx, RegistryError, SignalFlags, SignalSpec, Value, ValueType,
+    PropSpec, RecordCx, RegistryError, SignalFlags, SignalSpec, StyleCx, Value, ValueType,
 };
 use std::sync::Arc;
 
@@ -190,6 +190,7 @@ impl TableLook {
             selected: c("list-sel", d.selected),
             selected_text: c("list-sel-fg", d.selected_text),
             selected_inactive: c("list-sel-inactive", d.selected_inactive),
+            selected_outline: c("--vscode-contrastActiveBorder", d.selected_outline),
             focus_ring: c("focus", d.focus_ring),
             line: c("border", d.line),
             resize_hover: c("focus", d.resize_hover),
@@ -433,7 +434,7 @@ impl TableKind {
     fn record_bars(&self, cx: &mut RecordCx) {
         let node = cx.node;
         let parts: Vec<(&'static str, &svelters_style::ComputedStyle)> = BAR_PARTS.iter().filter_map(|n| Some((*n, node.part(n)?))).collect();
-        let styles = Styles { computed: node.css(), parts: &parts, children: &[], state: StateBits(node.state().0), dark: self.dark, theme: None };
+        let styles = Styles { computed: node.css(), parts: &parts, children: &[], state: StateBits(node.state().0), dark: self.dark, theme: None, inherited: None };
         let classic = self.policy.scrollbars == Scrollbars::Classic;
         let alpha = self.scroller.bar_alpha(self.now, &self.policy);
         let mut list = DisplayList::new();
@@ -605,6 +606,24 @@ impl Kind for TableKind {
             cx.request_paint();
         }
         Ok(())
+    }
+
+    /// The cascade's layout, clipping on both axes unless CSS says otherwise: the table scrolls its
+    /// own body, and a scroll container's automatic minimum size is zero, so its measured size
+    /// (header and ten rows) is a preference a smaller parent shrinks, not a minimum that pushes the
+    /// bottom rows and the horizontal bar out of the parent.
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        let visible = taffy::Point { x: taffy::Overflow::Visible, y: taffy::Overflow::Visible };
+        if s.overflow == visible {
+            s.overflow = taffy::Point { x: taffy::Overflow::Hidden, y: taffy::Overflow::Hidden };
+        }
+        // a growing table takes the room its siblings leave, as a list does
+        // (`views::virtual_list::scrolling_layout`), not its ten rows' height
+        if s.flex_grow > 0.0 && s.flex_basis == taffy::Dimension::auto() {
+            s.flex_basis = taffy::Dimension::length(0.0);
+        }
+        s
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {

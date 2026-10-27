@@ -196,10 +196,11 @@ impl Kind for RadioButton {
         self.props.get(prop)
     }
 
-    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let host = checkbox::host_in(&cx.style, checkbox::UA, self.mirror(cx.style.state));
         let s = checkbox::measure_indicator(cx.text, &host, cx.style.parts, IND, &self.props.text, &self.props.icon);
-        taffy::Size { width: s.x, height: s.y }
+        // a definite width caps the caption (CSS fit-content; it elides past it)
+        taffy::Size { width: common::fit_width(s.x, avail.width), height: s.y }
     }
 
     fn record(&self, cx: &mut RecordCx) {

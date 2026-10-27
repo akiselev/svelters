@@ -44,7 +44,7 @@ use skelter_base::key::Key;
 use skelter_base::time::{Span, Time};
 use resize::{ColumnResize, ResizeIntent};
 use selection::{Mods, next_by};
-use shim::{Emit, TextPainter, TextStyle, Value};
+use shim::{Emit, HAlign, TextPainter, TextStyle, Value};
 use state::TableState;
 
 /// The signals a table raises (its spec's list, in order).
@@ -102,6 +102,9 @@ pub struct TableLook {
     pub selected_text: Color,
     /// Selected rows without focus (`list-sel-inactive`).
     pub selected_inactive: Color,
+    /// Selected rows' 1 pt outline: the high-contrast themes' `contrastActiveBorder` (they have no
+    /// selection fill; VS Code's `listSelectionOutline`), transparent elsewhere.
+    pub selected_outline: Color,
     /// The cursor cell's ring with keyboard focus (`focus`).
     pub focus_ring: Color,
     /// The header edges' 1 pt line and the header's bottom border (`border`).
@@ -133,6 +136,7 @@ impl Default for TableLook {
             selected: rgb(0xE8E8E8),
             selected_text: rgb(0x000000),
             selected_inactive: rgb(0xE4E6F1),
+            selected_outline: Color::TRANSPARENT,
             focus_ring: rgb(0x005FB8),
             line: rgb(0xE5E5E5),
             resize_hover: rgb(0x005FB8),
@@ -698,7 +702,7 @@ impl Table {
                     if let Some(t) = self.state.cell(pos, d).filter(|t| !t.is_empty()) {
                         let content = Rect::new(cr.min.x + look.cell_padding, cr.min.y, cr.max.x - look.cell_padding, cr.max.y);
                         if content.width() > 0.0 {
-                            text.draw(list, t, &style, content, c.cell_align(), c.elide == "end");
+                            draw_elided(text, list, t, &style, content, c.cell_align(), c.elide);
                         }
                     }
                     if self.focused && self.kbd && current && self.state.cur_col == k {
@@ -707,6 +711,13 @@ impl Table {
                 }
             }
             list.push(Prim::PopClip, area);
+        }
+        if look.selected_outline.a > 0.0 && self.state.sel.mode != selection::Mode::None {
+            for pos in first..end {
+                if self.state.sel.is_selected(self.state.key_of(pos)) {
+                    shim::frame(list, g.row_rect(pos), Color::TRANSPARENT, look.selected_outline, 1.0, 0.0);
+                }
+            }
         }
         list.push(Prim::PopClip, g.body);
         // ---- the header ----
@@ -732,7 +743,7 @@ impl Table {
                     content.max.x = sr.min.x;
                 }
                 if content.width() > 0.0 && !c.title.is_empty() {
-                    text.draw(list, &c.title, &look.header_text, content, c.head_align(), c.elide == "end");
+                    draw_elided(text, list, &c.title, &look.header_text, content, c.head_align(), c.elide);
                 }
                 list.push(Prim::PopClip, cclip);
             }
@@ -754,6 +765,23 @@ impl Table {
             list.push(Prim::PopClip, g.head);
         }
         list.push(Prim::PopClip, bounds);
+    }
+}
+
+/// `text` in `rect` cut by the column's `elide`: `end` by the shaper, `middle` and `start` by
+/// measured cuts (`paint::text::elide_with`), `none` clipped.
+fn draw_elided(text: &mut dyn TextPainter, list: &mut DisplayList, s: &str, style: &TextStyle, rect: Rect, align: HAlign, elide: &str) {
+    use crate::paint::{Elide, elide_with};
+    match Elide::parse(elide) {
+        Some(Elide::End) => text.draw(list, s, style, rect, align, true),
+        Some(mode) => {
+            let cut = {
+                let painter = std::cell::RefCell::new(&mut *text);
+                elide_with(s, mode, rect.width(), |t| painter.borrow_mut().measure(t, style).w)
+            };
+            text.draw(list, &cut, style, rect, align, false);
+        }
+        None => text.draw(list, s, style, rect, align, false),
     }
 }
 

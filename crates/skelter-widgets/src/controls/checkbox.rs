@@ -190,7 +190,8 @@ pub(crate) fn paint_indicator(pc: &mut PaintCx, host: &StyleView<'_>, parts: &[(
             }
             "label" => {
                 if let Some(l) = &label {
-                    paint::paint_text(pc, item.style, l, r, Align::Start);
+                    let l = paint::fit_layout(pc.text, item.style, text, l, r.width());
+                    paint::paint_text(pc, item.style, &l, r, Align::Start);
                 }
             }
             _ => {
@@ -239,7 +240,7 @@ pub(crate) fn paint_dot(pc: &mut PaintCx, at: Point, radius: f32, fill: Color) {
 
 /// The host's view of an indicator kind in `state` (the node's state with the kind's prop mirrors).
 pub(crate) fn host_in<'a>(style: &crate::shim::core::Styles<'a>, ua: Ua, state: StateBits) -> StyleView<'a> {
-    StyleView::new(style.computed, ua, state, style.dark).with_theme(style.theme)
+    StyleView::new(style.computed, ua, state, style.dark).with_theme(style.theme).with_inherited(style.inherited)
 }
 
 // ---- the kind ----
@@ -308,10 +309,11 @@ impl Kind for Checkbox {
         self.props.get(prop)
     }
 
-    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let host = host_in(&cx.style, UA, self.mirror(cx.style.state));
         let s = measure_indicator(cx.text, &host, cx.style.parts, Self::IND, &self.props.text, &self.props.icon);
-        taffy::Size { width: s.x, height: s.y }
+        // a definite width caps the caption (CSS fit-content; it elides past it)
+        taffy::Size { width: common::fit_width(s.x, avail.width), height: s.y }
     }
 
     fn record(&self, cx: &mut RecordCx) {

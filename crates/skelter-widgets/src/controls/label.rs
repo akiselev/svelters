@@ -162,11 +162,14 @@ pub fn place(shaper: &mut dyn TextShaper, s: &StyleView, look: &Look, r: Rect, s
     Placed { text, layout, rect: Rect::from_origin_size(min, size) }
 }
 
-/// Paints `p` (from [`place`]) under `s`: each run in its colour (`color`, link runs in the theme's
+/// Paints `p` (from [`place`]) under `s`: the runs' fills (`code`), each run in its colour (`color`, link runs in the theme's
 /// `link`), then the decorations (the lit link's underline).
 pub fn paint(pc: &mut PaintCx, s: &StyleView, look: &Look, p: &Placed) {
     let colors = rich::Colors { text: s.color("color").unwrap_or(Color::BLACK), link: paint::ua_token(s.is_dark(), "link").unwrap_or(Color::BLACK) };
     let color = |style: u32| rich::color(look.rich, colors, style);
+    if let Some(r) = look.rich {
+        rich::paint_backgrounds(pc, r, &p.layout, p.rect.min);
+    }
     paint::paint_runs(pc, &p.layout, p.rect.min, &color);
     let lit = |style: u32| look.lit.is_some_and(|i| style == i as u32 + 1);
     rich::paint_decorations(pc, &p.text, &p.layout, p.rect.min, &color, &lit);
@@ -327,7 +330,7 @@ impl Label {
         if self.props.disabled {
             state |= StateBits::DISABLED;
         }
-        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_font_weight(Some(self.props.font_weight))
+        StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_inherited(s.inherited).with_font_weight(Some(self.props.font_weight))
     }
 }
 
@@ -513,7 +516,7 @@ mod tests {
 
     fn measure_at(l: &Label, w: f32) -> Size {
         let mut text = MonoShaper;
-        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None }, text: &mut text, scale: 1.0 };
+        let mut cx = MeasureCx { style: Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }, text: &mut text, scale: 1.0 };
         let avail = taffy::Size { width: taffy::AvailableSpace::Definite(w), height: taffy::AvailableSpace::MaxContent };
         let s = l.measure(&mut cx, taffy::Size { width: None, height: None }, avail);
         Size::new(s.width, s.height)

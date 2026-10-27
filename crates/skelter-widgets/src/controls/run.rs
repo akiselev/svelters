@@ -12,9 +12,9 @@
 //!   `href`) and `open-url`.
 //!
 //! **Styled by CSS.** skelter-core restyles the runs, so `label span.warn` and `label a:hover` match
-//! them; their computed colour (where it differs from the label's), weight (600 or more is bold) and
-//! `font-style: italic` fold into the records. Per-run size and background are not folded (the
-//! records have no field for them).
+//! them; their computed colour (where it differs from the label's), weight (600 or more is bold),
+//! `font-style: italic` and `background-color` (a fill behind the run's glyphs: `code`'s, from the
+//! base sheet) fold into the records. Per-run size is not folded (the records have no field for it).
 
 use crate::interact::StateBits;
 use crate::kind_props;
@@ -127,6 +127,8 @@ pub struct RunNode {
     pub italic: bool,
     /// Its computed colour, when it differs from the label's.
     pub color: Option<skelter_base::color::Color>,
+    /// Its computed `background-color`, when not transparent (`code`'s fill).
+    pub bg: Option<skelter_base::color::Color>,
     pub children: Vec<RunNode>,
 }
 
@@ -137,6 +139,7 @@ struct Fmt<'a> {
     mono: bool,
     href: Option<&'a str>,
     color: Option<skelter_base::color::Color>,
+    bg: Option<skelter_base::color::Color>,
 }
 
 /// The label's `runs` records for `nodes` (its run children, in order): each run's own text, then its
@@ -160,6 +163,7 @@ fn fold_one<'a>(n: &'a RunNode, up: Fmt<'a>, out: &mut Vec<Value>) {
         mono: up.mono || n.tag == "code",
         href: if n.tag == "a" { Some(n.href.as_str()) } else { up.href },
         color: n.color.or(up.color),
+        bg: n.bg.or(up.bg),
     };
     if !n.text.is_empty() {
         let mut fields: Vec<(Arc<str>, Value)> = vec![(Arc::from("text"), Value::str(&n.text))];
@@ -173,6 +177,9 @@ fn fold_one<'a>(n: &'a RunNode, up: Fmt<'a>, out: &mut Vec<Value>) {
         }
         if let Some(c) = f.color {
             fields.push((Arc::from("color"), Value::Color(c)));
+        }
+        if let Some(c) = f.bg {
+            fields.push((Arc::from("bg"), Value::Color(c)));
         }
         out.push(Value::Record(fields));
     }
@@ -190,6 +197,16 @@ mod tests {
 
     fn node(tag: &str, text: &str, children: Vec<RunNode>) -> RunNode {
         RunNode { tag: tag.into(), text: text.into(), children, ..RunNode::default() }
+    }
+
+    #[test]
+    fn a_background_folds_and_inherits() {
+        let grey = skelter_base::color::Color::rgba(0.5, 0.5, 0.5, 0.3);
+        let code = RunNode { bg: Some(grey), ..node("code", "make ", vec![node("b", "check", vec![])]) };
+        let r = rich::from_value("", &fold(&[node("span", "run ", vec![]), code])).unwrap();
+        assert_eq!(r.runs[0].fmt.bg, None);
+        assert!(r.runs[1].fmt.mono && r.runs[1].fmt.bg == Some(grey), "code's fill");
+        assert!(r.runs[2].fmt.bold && r.runs[2].fmt.bg == Some(grey), "inherited by a run inside it");
     }
 
     #[test]
@@ -248,7 +265,7 @@ mod tests {
         let runs = fold(&[node("span", "a ", vec![]), node("b", "b", vec![])]);
         let mut l = Label::default();
         let mut text = crate::shim::testing::MonoShaper;
-        let mut cx = crate::shim::core::PrepareCx { size: Size::new(200.0, 20.0), style: crate::shim::core::Styles { computed: None, parts: &[], children: &runs, state: StateBits::NONE, dark: true, theme: None }, text: &mut text, emitted: Vec::new(), layouts: None };
+        let mut cx = crate::shim::core::PrepareCx { size: Size::new(200.0, 20.0), style: crate::shim::core::Styles { computed: None, parts: &[], children: &runs, state: StateBits::NONE, dark: true, theme: None, inherited: None }, text: &mut text, emitted: Vec::new(), layouts: None };
         l.prepare(&mut cx);
         let r = l.rich().expect("the children make it rich");
         assert_eq!(r.plain, "a b");

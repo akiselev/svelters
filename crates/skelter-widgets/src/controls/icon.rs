@@ -454,7 +454,7 @@ mod tests {
         let (list, _) = testkit::record(&i, Size::new(10.0, 10.0), StateBits::NONE);
         assert_eq!(testkit::kinds(&list), ["quad"]);
         let Prim::Quad(q) = &list.items[0] else { unreachable!() };
-        assert_eq!(Some(q.border_color), paint::ua_token(true, "border-widget"));
+        assert_eq!(Some(q.border_color), paint::ua_token(true, "control-border"));
     }
 
     #[test]
@@ -462,7 +462,7 @@ mod tests {
         register("icon-kind-test.hit");
         let mut i = icon("icon-kind-test.hit");
         let mut text = MonoShaper;
-        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None };
+        let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None };
         i.prepare(&mut PrepareCx { size: Size::new(40.0, 20.0), style, text: &mut text, emitted: Vec::new(), layouts: None });
         let hit = HitCx { size: Size::new(40.0, 20.0) };
         assert_eq!(i.hit_test(&hit, Point::new(8.0, 10.0)), HitResult::Hit);
