@@ -64,7 +64,16 @@ pub fn layout_parts(host: &StyleView, content: Rect, parts: &[PartItem]) -> Vec<
         order.reverse();
     }
     let need = measure_parts(host, parts);
-    let (avail, need_main) = if row { (content.width(), need.x) } else { (content.height(), need.y) };
+    let (avail, mut need_main) = if row { (content.width(), need.x) } else { (content.height(), need.y) };
+    // a row narrower than its parts: the label gives up the overflow (the kind elides it in its
+    // narrower rect, [`super::fit_layout`]), as a caption is the one part that can shrink
+    let mut label_cut = 0.0;
+    if row && need_main > avail
+        && let Some(l) = parts.iter().find(|p| p.name == "label" && !p.style.is_hidden())
+    {
+        label_cut = (need_main - avail).min(l.style.px("width").unwrap_or(l.content.x));
+        need_main -= label_cut;
+    }
     let start = match host.keyword("justify-content") {
         Some("center") => (avail - need_main) / 2.0,
         Some("end" | "flex-end") => avail - need_main,
@@ -73,7 +82,10 @@ pub fn layout_parts(host: &StyleView, content: Rect, parts: &[PartItem]) -> Vec<
     let mut out = vec![None; parts.len()];
     let mut at = start;
     for i in order {
-        let Some((size, m)) = outer(&parts[i]) else { continue };
+        let Some((mut size, m)) = outer(&parts[i]) else { continue };
+        if parts[i].name == "label" {
+            size.x -= label_cut;
+        }
         let inner = vec2(size.x - m[0] - m[1], size.y - m[2] - m[3]);
         let inner = Size::new(inner.x, inner.y);
         let r = if row {
@@ -87,4 +99,23 @@ pub fn layout_parts(host: &StyleView, content: Rect, parts: &[PartItem]) -> Vec<
         at += if row { size.x } else { size.y } + gap;
     }
     out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::interact::StateBits;
+    use crate::paint::Ua;
+
+    #[test]
+    fn the_label_gives_up_a_rows_overflow() {
+        let v = StyleView::ua_only(Ua::NONE, StateBits::NONE, true);
+        let parts = [PartItem { name: "icon", style: &v, content: vec2(16.0, 16.0) }, PartItem { name: "label", style: &v, content: vec2(200.0, 18.0) }];
+        let wide = layout_parts(&v, Rect::new(0.0, 0.0, 300.0, 20.0), &parts);
+        assert_eq!(wide[1].unwrap().width(), 200.0, "room: the label's own width");
+        let narrow = layout_parts(&v, Rect::new(0.0, 0.0, 100.0, 20.0), &parts);
+        assert_eq!(narrow[0].unwrap().width(), 16.0, "the icon keeps its size");
+        assert_eq!(narrow[1].unwrap().min.x, 16.0);
+        assert_eq!(narrow[1].unwrap().max.x, 100.0, "the label ends at the content box");
+    }
 }

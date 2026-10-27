@@ -95,6 +95,29 @@ pub struct FieldColors {
     pub preedit_underline: Color,
 }
 
+/// WCAG 2 relative luminance of `c` (alpha ignored).
+fn luminance(c: Color) -> f32 {
+    let lin = |v: f32| if v <= 0.040_45 { v / 12.92 } else { ((v + 0.055) / 1.055).powf(2.4) };
+    0.2126 * lin(c.r) + 0.7152 * lin(c.g) + 0.0722 * lin(c.b)
+}
+
+/// WCAG 2 contrast ratio of `a` and `b` (1 to 21).
+fn contrast(a: Color, b: Color) -> f32 {
+    let (la, lb) = (luminance(a), luminance(b));
+    (la.max(lb) + 0.05) / (la.min(lb) + 0.05)
+}
+
+/// The colour of selected text on `fill`: `None` (keep `text`) when `text` reads on it (4.5:1, or a
+/// translucent fill), else black or white, whichever contrasts more. VS Code's high-contrast sets
+/// pair their light or dark selection with `editor.selectionForeground` the same way.
+pub(crate) fn selection_text(text: Color, fill: Color) -> Option<Color> {
+    if fill.a < 1.0 || contrast(text, fill) >= 4.5 {
+        return None;
+    }
+    let (black, white) = (Color::rgba(0.0, 0.0, 0.0, 1.0), Color::rgba(1.0, 1.0, 1.0, 1.0));
+    Some(if contrast(black, fill) >= contrast(white, fill) { black } else { white })
+}
+
 /// Pointer input as the field takes it.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct FieldPointer {
@@ -489,10 +512,14 @@ impl TextField {
         }
         let s = self.editor.selection();
         let focused = self.editor.focused();
+        let mut selected = Vec::new();
+        let mut selected_text = None;
         if !s.range().is_empty() && !self.editor.composing() && (focused || self.editor.policy().keep_selection_unfocused) {
             let fill = if focused { colors.selection } else { colors.selection_inactive };
+            selected_text = selection_text(colors.text, fill);
             for r in g.selection_rects(self.shown.range_to_shown(s.range())) {
                 let r = r.translate(o);
+                selected.push(r);
                 list.push(
                     Prim::Quad(Quad {
                         rect: r,
@@ -512,6 +539,15 @@ impl TextField {
             }
         } else {
             g.record_glyphs(&mut *list, Point::ZERO + o, colors.text);
+            // text the selection fill would hide (a light fill under light text): the selected
+            // glyphs again, clipped to the selection, in a colour that reads on the fill
+            if let Some(c) = selected_text {
+                for &r in &selected {
+                    list.push(Prim::PushClip(RoundedRect { rect: r, radii: Corners::default() }), r);
+                    g.record_glyphs(&mut *list, Point::ZERO + o, c);
+                    list.push(Prim::PopClip, r);
+                }
+            }
         }
         if let (Some(p), Some(pre)) = (self.shown.preedit_range(), self.editor.preedit()) {
             let mask = self.editor.config().password.then(|| self.editor.policy().mask.len_utf8());
@@ -974,6 +1010,16 @@ mod tests {
         f.focus_in(FocusReason::Pointer);
         press(&mut f, &mut lay, Key::Q, Modifiers::default(), Some("q"));
         assert!(f.take_signals().contains(&FieldSignal::Rejected(Rejected::ReadOnly)));
+    }
+
+    #[test]
+    fn selected_text_reads_on_the_selection_fill() {
+        let hex = |v: &str| crate::theme::parse_color(v).unwrap();
+        assert_eq!(selection_text(hex("#CCCCCC"), hex("#264F78")), None, "Dark Modern keeps its text colour");
+        assert_eq!(selection_text(hex("#3B3B3B"), hex("#ADD6FF")), None, "Light Modern too");
+        assert_eq!(selection_text(hex("#FFFFFF"), hex("#F3F518")), Some(Color::rgba(0.0, 0.0, 0.0, 1.0)), "HC Dark's yellow: black text");
+        assert_eq!(selection_text(hex("#292929"), hex("#0F4A85")), Some(Color::rgba(1.0, 1.0, 1.0, 1.0)), "HC Light's navy: white text");
+        assert_eq!(selection_text(hex("#FFFFFF"), hex("#F3F51880")), None, "a translucent fill keeps the text");
     }
 
     #[test]

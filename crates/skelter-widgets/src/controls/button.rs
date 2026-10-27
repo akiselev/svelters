@@ -170,7 +170,8 @@ pub fn paint(pc: &mut PaintCx, host: &StyleView, icon_v: &StyleView, label_v: &S
         match (item.name, &icon, &label) {
             ("icon", Some((k, _)), _) => paint::paint_icon(pc, item.style, k, r),
             ("label", _, Some(l)) => {
-                paint::paint_text(pc, item.style, l, r, Align::Center);
+                let l = paint::fit_layout(pc.text, item.style, look.text, l, r.width());
+                paint::paint_text(pc, item.style, &l, r, Align::Center);
             }
             _ => {}
         }
@@ -228,12 +229,13 @@ impl Kind for Button {
         self.props.get(prop)
     }
 
-    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let host = common::host_view(&cx.style, UA).with_font_weight(Some(self.props.font_weight));
         let icon_v = host.part(cx.style.part_css("icon"), ICON_UA);
         let label_v = host.part(cx.style.part_css("label"), Ua::NONE);
         let s = measure(cx.text, &host, &icon_v, &label_v, &self.look());
-        taffy::Size { width: s.x, height: s.y }
+        // a definite width caps the caption (CSS fit-content; it elides past it)
+        taffy::Size { width: common::fit_width(s.x, avail.width), height: s.y }
     }
 
     fn record(&self, cx: &mut RecordCx) {

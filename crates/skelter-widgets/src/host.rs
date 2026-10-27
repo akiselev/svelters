@@ -654,7 +654,7 @@ fn css_color(css: Option<&svelters_style::ComputedStyle>, name: &str) -> Option<
 }
 
 /// The run children under `ids` (`controls::run`), read through `view_of`, with what their computed
-/// style sets: a colour other than `parent`'s, a weight, italic.
+/// style sets: a colour other than `parent`'s, a weight, italic, a background.
 fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId], parent: Option<skelter_base::color::Color>) -> Vec<RunNode> {
     ids.iter()
         .filter_map(|&id| {
@@ -670,8 +670,9 @@ fn run_nodes<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId
             let italic = matches!(css.and_then(|c| c.get("font-style")), Some(svelters_style::ComputedValue::Keyword("italic" | "oblique")));
             let own = css_color(css, "color");
             let color = own.filter(|c| Some(*c) != parent);
+            let bg = css_color(css, "background-color").filter(|c| c.a > 0.0);
             let children = run_nodes(view_of, v.children(), own.or(parent));
-            Some(RunNode { tag: spec.name.to_owned(), text: v.text().to_owned(), href, weight: prop_weight.max(css_weight), italic, color, children })
+            Some(RunNode { tag: spec.name.to_owned(), text: v.text().to_owned(), href, weight: prop_weight.max(css_weight), italic, color, bg, children })
         })
         .collect()
 }

@@ -128,6 +128,16 @@ impl Elide {
     }
 }
 
+/// `layout` (of `text` under `s`) as it fits `width`: itself when it does, else `text` laid out cut
+/// at its end with `…` ([`elide`]); a caption in a rect narrower than its text.
+pub fn fit_layout(shaper: &mut dyn TextShaper, s: &StyleView, text: &str, layout: &Arc<TextLayout>, width: f32) -> Arc<TextLayout> {
+    if layout.size().w <= width + 0.5 {
+        return layout.clone();
+    }
+    let cut = elide(shaper, s, text, Elide::End, width);
+    text_layout(shaper, s, &cut, None)
+}
+
 /// `text` cut with `…` to fit `width` on one line under `s` (the longest cut that fits, found by
 /// a binary search over measured cuts); `text` itself when it fits.
 pub fn elide(shaper: &mut dyn TextShaper, s: &StyleView, text: &str, mode: Elide, width: f32) -> String {
