@@ -1,0 +1,15 @@
+id = "media"
+title = "Media"
+family = "controls"
+kinds = ["image", "icon"]
+size = [96, 48]
+
+[[variant]]
+id = "svg"
+title = "An imported SVG"
+file = "svg.svelte"
+
+[[variant]]
+id = "icon"
+title = "A registry icon"
+file = "icon.svelte"

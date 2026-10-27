@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const USAGE: &str = "\
-usage: skelter-gallery [--root <gallery dir>].. [--base-css <file>] <command>
+usage: skelter-gallery [--root <gallery dir>].. [--base-css <file>] [--system-fonts] <command>
 
 commands:
   list [--json]                              stories, variants, kinds and coverage gaps
@@ -36,7 +36,8 @@ axis flags:  --variants a,b  --args k=v,..  --states s,..  --themes t,..  --dens
 states: normal hover active focus focus-visible checked disabled
 themes: dark-modern light-modern hc-dark hc-light (and a host's)
 densities: compact default comfortable
-Output goes where -o says; the default is target/gallery/.";
+Output goes where -o says; the default is target/gallery/.
+--system-fonts adds the OS's fonts behind the bundled set (for a script it lacks; not the same on every machine).";
 
 /// Exit codes.
 const OK: u8 = 0;
@@ -62,7 +63,7 @@ pub(crate) struct Args {
 const VALUED: &[&str] = &[
     "--root", "--base-css", "--args", "--state", "--theme", "--density", "--zoom", "-o", "--out", "--index", "--family", "--variants", "--states", "--themes", "--densities", "--zooms",
 ];
-const SWITCHES: &[&str] = &["--json", "--all", "-h", "--help"];
+const SWITCHES: &[&str] = &["--json", "--all", "-h", "--help", "--system-fonts"];
 
 fn parse(argv: &[String]) -> Result<(Vec<PathBuf>, Args), Usage> {
     let mut roots = Vec::new();
@@ -102,7 +103,7 @@ impl Args {
     /// Fails on a flag the command doesn't take.
     fn only(&self, cmd: &str, allowed: &[&str]) -> Result<(), Usage> {
         for k in self.flags.keys().chain(self.switches.iter()) {
-            if !allowed.contains(&k.as_str()) && k != "--base-css" {
+            if !allowed.contains(&k.as_str()) && k != "--base-css" && k != "--system-fonts" {
                 return Err(Usage(format!("{cmd} takes no {k}")));
             }
         }
@@ -148,6 +149,9 @@ pub fn run(mut ext: Extensions, argv: &[String]) -> u8 {
         return if args.positional.is_empty() && !(args.switch("-h") || args.switch("--help")) { BAD_ARGS } else { OK };
     }
     ext.story_roots.extend(roots);
+    if args.switch("--system-fonts") {
+        ext.fonts = crate::fonts::FontSet::System;
+    }
     if ext.story_roots.is_empty() {
         match default_root() {
             Some(r) => ext.story_roots.push(r),
