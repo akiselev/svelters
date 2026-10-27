@@ -8,6 +8,7 @@
 //! | [`matrix`] | [`Matrix`]: a story × [`Axes`], in a stable order |
 //! | [`render`] | [`Renderer`]: the headless renderer (one engine and window for every cell), [`Shot`] |
 //! | [`sheet`] | contact sheets: [`Sheet`], [`SheetLayout`], the cell index |
+//! | [`inspect`] | one node of a cell as JSON: box, computed style, matched rules, forced state, AccessKit |
 //! | [`cli`] | [`cli_main`]: the `skelter-gallery` CLI |
 //! | [`ext`] | [`Extensions`]: what a host adds (story roots, kinds, setup hooks, token sets) |
 //!
@@ -18,6 +19,7 @@ pub mod catalog;
 pub mod cli;
 pub mod ext;
 pub mod matrix;
+pub mod inspect;
 pub mod model;
 pub mod render;
 pub mod sheet;

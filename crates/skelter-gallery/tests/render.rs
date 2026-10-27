@@ -135,3 +135,34 @@ fn a_sheet_places_every_cell_and_indexes_it() {
         skelter_gallery::save_png(&sheet.image, &Path::new(&dir).join("sheet.png")).unwrap();
     }
 }
+
+#[test]
+fn inspect_shows_a_forced_hover_in_the_matched_rules() {
+    if !gpu() {
+        return;
+    }
+    let mut r = renderer();
+    let mut c = cell(&r, "button", "primary");
+    let normal = r.inspect(&c, "#subject").unwrap();
+    c.state = State::Hover;
+    let hover = r.inspect(&c, "#subject").unwrap();
+    let n = &hover["nodes"][0];
+    assert_eq!(n["kind"], "button");
+    assert_eq!(n["anchor"], "subject");
+    assert_eq!(n["state"]["forced"], serde_json::json!(["hover"]));
+    assert_eq!(n["box"]["h"].as_f64().map(|h| h > 0.0), Some(true), "{n}");
+    assert_eq!(n["accesskit"]["role"], "Button", "{n}");
+    assert_eq!(n["accesskit"]["name"], "Run small");
+    let selectors = |v: &serde_json::Value| -> Vec<String> { v["nodes"][0]["matched_rules"].as_array().unwrap().iter().map(|r| r["selector"].as_str().unwrap().to_string()).collect() };
+    let (before, after) = (selectors(&normal), selectors(&hover));
+    let hover_rule = after.iter().find(|s| s.starts_with(".b.") && s.ends_with(":hover")).unwrap_or_else(|| panic!("no :hover rule matched: {after:?}"));
+    assert!(!before.contains(hover_rule), "the hover rule matched only under the forced state: {before:?}");
+    // the component's rule points at its <style> in the variant file
+    let rule = hover["nodes"][0]["matched_rules"].as_array().unwrap().iter().find(|r| r["selector"].as_str() == Some(hover_rule)).unwrap();
+    assert!(rule["source"]["file"].as_str().is_some_and(|f| f.ends_with("primary.svelte")), "{rule}");
+    assert_eq!(rule["source"]["line"], 11, "{rule}");
+    assert_eq!(n["computed"]["background"], "#ff0000", "{n}");
+    // a kind name picks too
+    assert_eq!(r.inspect(&c, "button").unwrap()["nodes"].as_array().unwrap().len(), 1);
+    assert!(r.inspect(&c, "#nope").is_err());
+}

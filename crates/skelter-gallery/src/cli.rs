@@ -162,6 +162,7 @@ pub fn run(mut ext: Extensions, argv: &[String]) -> u8 {
         "list" => cmd_list(&ext, &rest),
         "shot" => cmd_shot(&ext, &rest),
         "sheet" => cmd_sheet(&ext, &rest),
+        "inspect" => cmd_inspect(&ext, &rest),
         _ => Err(Fail::Usage(format!("unknown command {cmd:?}"))),
     };
     match r {
@@ -505,4 +506,21 @@ fn write_json(path: &Path, v: &serde_json::Value) -> Result<(), Fail> {
         std::fs::create_dir_all(d).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", d.display()))))?;
     }
     std::fs::write(path, serde_json::to_string_pretty(v).expect("JSON")).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", path.display()))))
+}
+
+// ---- inspect ----
+
+fn cmd_inspect(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
+    let mut allowed = CELL_FLAGS.to_vec();
+    allowed.push("--json");
+    a.only("inspect", &allowed)?;
+    let [target, selector] = &a.positional[..] else {
+        return Err(Fail::Usage("inspect takes <story>/<variant> <selector>".into()));
+    };
+    let mut r = renderer(ext, a)?;
+    let cell = cell_of(&r, ext, target, a)?;
+    let v = r.inspect(&cell, selector)?;
+    // JSON either way: it is the readable form too
+    print_json(&v);
+    Ok(OK)
 }

@@ -270,6 +270,7 @@ impl Renderer {
                 d.remove_sheet(s);
             }
             let s = d.add_sheet_with_origin(&css, Origin::Theme);
+            d.set_sheet_info(s, Some(format!("gallery theme {} + base.css", t.name())), None);
             // reduced motion: transitions jump, so a cell settles at its end state
             d.set_media_preferences(MediaPreferences::new(true, t.contrast().media()));
             skelter_widgets::host::set_theme(d, t.clone());
@@ -442,6 +443,11 @@ impl Renderer {
         }
         out
     }
+}
+
+/// The state bits pseudo-class `name` tests (`hover`, `focus-visible`, ...).
+pub fn pseudo_bits(name: &str) -> Option<svelters_style::StateMask> {
+    svelters_skelter::style::pseudo_state(name)
 }
 
 /// `image` as PNG bytes (straight alpha).
