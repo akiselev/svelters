@@ -46,7 +46,8 @@ args = { look = ["plain", "default", "frameless"] }   # optional matrix: each co
 `kinds` names the kinds as the registry names them, which is the tag except for two:
 `<combo-box>` is the kind `select` and `<action>` is `menu-item`. A story may cover several kinds
 (`rich-text` covers the five inline runs) and several stories may cover one (`text-edit`, `password` and
-`multiline`). `kinds = []` is a story about a common prop rather than a kind (`tooltip`).
+`multiline`). `kinds` is never empty: a story about a common prop names the kind it shows it on
+(`tooltip` names `button`).
 
 ## Variants
 

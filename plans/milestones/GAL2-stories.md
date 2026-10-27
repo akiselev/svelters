@@ -29,8 +29,8 @@ the core and app lanes').
   so the gallery's `disabled` state renders the kind's real disabled state. Layout-only stories (`box`,
   `grid`, `sides`, `stack`, `separator`, `image`) declare neither and list no `disabled` state.
 - **Inline runs take no `anchor`** (it is a Widget prop; runs are `Run`s), so `rich-text` marks its label.
-- **`kinds = []`** for the `tooltip` story: it shows the common `tooltip` prop, not a kind. If core's format
-  requires a non-empty list, this becomes `kinds = ["button"]`; see Questions.
+- **The `tooltip` story names `kinds = ["button"]`**: it shows the common `tooltip` prop on a button, and
+  core's format requires a non-empty `kinds` (GAL1 item 1).
 - **Data views use `@svelters/lists`** (`<ListView>`, `<TreeView>`), as apps do; `table` uses its own
   `range`/`set-rows` protocol directly.
 - Every story file passes `svelters-compile --backend skelter --check` (no diagnostics; the check rejects an
@@ -121,8 +121,7 @@ kind for them. No story; each is a request (below).
 
 ## Questions
 
-- `kinds = []` (the `tooltip` story): allowed by core's format? Recommendation: allow it for stories about a
-  common prop, and have `coverage` ignore them.
+- None open. (`kinds = []` was answered by core's format: not allowed.)
 
 ## Polish findings
 
