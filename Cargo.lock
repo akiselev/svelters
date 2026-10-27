@@ -4875,6 +4875,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "skelter-gallery"
+version = "0.0.0"
+dependencies = [
+ "image",
+ "serde",
+ "serde_json",
+ "skelter-base",
+ "skelter-core",
+ "skelter-test",
+ "skelter-text",
+ "skelter-widgets",
+ "svelters-abi",
+ "svelters-host",
+ "svelters-skelter",
+ "svelters-style",
+ "toml",
+]
+
+[[package]]
 name = "skelter-motion"
 version = "0.0.0"
 dependencies = [

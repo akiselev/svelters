@@ -1,0 +1,11 @@
+id = "broken"
+title = "Broken"
+family = "controls"
+kinds = ["button"]
+size = [100, 40]
+states = ["normal"]
+
+[[variant]]
+id = "syntax"
+title = "Does not compile"
+file = "syntax.svelte"

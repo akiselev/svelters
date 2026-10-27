@@ -1,0 +1,11 @@
+id = "stack"
+title = "Stack"
+family = "layout"
+kinds = ["box", "label", "combo-box"]
+size = [200, 80]
+states = ["normal"]
+
+[[variant]]
+id = "two"
+title = "Two labels"
+file = "two.svelte"
