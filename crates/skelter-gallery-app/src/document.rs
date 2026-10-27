@@ -110,7 +110,7 @@ impl DocumentApi for GalleryDocument {
             b.pump();
         }
         self.gallery.handle(&timed);
-        self.gallery.before_frame();
+        self.gallery.before_frame(target);
         let c = self.gallery.document().borrow_mut().frame(window, target);
         if let Some(b) = self.gallery.backend().cloned() {
             b.pump();

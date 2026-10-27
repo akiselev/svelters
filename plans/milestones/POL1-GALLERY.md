@@ -28,6 +28,22 @@ No `base.css` rule and no kind's look was touched.
 | 7 | R3 | `5d837dd` | the full module-load message: QuickJS formats a loader error into a 256-byte buffer, so a long path cut it (`…[js_parse_error]: Un`). The loader and resolver keep the last failure's message; the engine's load error gets it back when it names that module |
 | 7 | Q1 | `6176723` | skelter-widgets' `quire-text` at `ed0665b` (was `35b5063a`): one quire-text in the lockfile |
 
+## cadatomic's requests (G1–G6, coordinator 2026-10-27)
+
+From cadatomic `claude/gal1-gallery`, `docs/notes/gal1-requests/gallery.md`, in the coordinator's order. All API
+additive except one rename (below).
+
+| Request | What | Files | Test |
+|---|---|---|---|
+| G3 | fragment files numbered by a process-wide `AtomicU32` (was thread-local: two renderers on two threads both wrote `kinds-0.json`, and the first drop deleted the other's) | `render.rs` | `tests/host.rs` `g3_renderers_on_two_threads_keep_their_own_fragment` |
+| G2 | **not fixable in svelters alone:** quire's `CodeEditorKind` looks its props up through its static `SPEC` named `code-editor`, so registering it under another name breaks its own prop ids. The app now detects a host's `code-editor` and puts a notice in the source pane (`gallery::SHADOWED`) instead of an empty pane. **Request to quire:** let the kind's spec name be chosen at registration (props looked up by index or through the registered spec), then the gallery registers it as `gallery-source` | `skelter-gallery-app` `gallery.rs` | app `tests/hooks.rs` `g2_…` |
+| G1 | `Extensions::on_frame(Fn(&mut FrameCx))` (`backend`, `frame`, `now_ms`, `with_doc`), run in `Renderer::settle` before each harness step and in the app's `before_frame`; `Extensions::busy(Fn(&Document) -> Option<String>)`, counted by `settle` and reported as `not settled … host busy: …` | `ext.rs`, `render.rs`, app `gallery.rs`, `document.rs` | `g1_frame_hooks_run_each_step_and_busy_probes_hold_settle`; app `g1_g6_…` |
+| G5 | `Extensions::theme_with(name, scheme, contrast, tokens)`, `theme_base`, `resolve_theme` (the renderer's theme service, `prefers-contrast` and `dark` follow the base; the app's cells take the base's tokens) | `ext.rs`, `render.rs`, app `theme.rs` | `g5_a_host_theme_has_its_own_scheme_and_contrast`; app `g5_…` |
+| G4 | `Extensions::fonts(files)` added to the bundled set (`fonts::store_with`, `config_with`); the app too. **Rename:** this lane's own `Extensions::fonts(FontSet)` / field `fonts` (from `cd478f3`, a few hours old, unused outside svelters) became `font_set` | `ext.rs`, `fonts.rs`, `cli.rs`, app `app.rs` | `g4_host_fonts_join_the_hermetic_set` (fixture `tests/fixtures/fonts/probe.ttf`, OFL) |
+| G6 | `Extensions::on_backend(Fn(&SkelterBackend))`, run once in `Renderer::new` after the backend exists and before any variant loads, and once per story the app opens (`LiveStory::load` takes the hook) | `ext.rs`, `render.rs`, app `live.rs`, `gallery.rs` | `g6_the_backend_hook_runs_once_before_any_variant_loads`; app `g1_g6_…` |
+
+`Extensions` is now `Clone` (the renderer keeps a copy for its hooks and themes).
+
 ## Findings (rows of GAL2's "Polish findings" and GAL1/GAL3 notes in this lane's scope)
 
 | Finding | Cause | Fix (file) | Before/after looked at | Snapshot tests moved |
@@ -76,6 +92,8 @@ unrelated crates), the other workflows (GitHub CI is the gate).
 
 ## Questions and requests (each with a recommendation)
 
+- **To quire (G2): a registrable name for `CodeEditorKind`.** See the G2 row. Recommendation: a
+  `CodeEditorKind::register_as(reg, name)` that leaks a spec copy and resolves props by index.
 - **To the coordinator (svelters-skelter, a later lane): the window's `padding` and `gap`.** The `window` surface lists
   them, but they don't reach the node's style. Recommendation: map them as `box` does; the `window/content` story then
   shows four distinct rows.

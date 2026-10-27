@@ -49,14 +49,25 @@ pub enum FontSet {
 
 /// The configuration for `set`.
 pub fn config(set: FontSet) -> FontConfig {
+    config_with(set, &[])
+}
+
+/// The configuration for `set` plus a host's font files (registered after the bundled ones).
+pub fn config_with(set: FontSet, extra: &[Vec<u8>]) -> FontConfig {
     let mut bundled: Vec<Vec<u8>> = BUNDLED.iter().map(|f| f.to_vec()).collect();
     bundled.extend(skelter_text::test_fonts::ALL.iter().map(|f| f.to_vec()));
+    bundled.extend(extra.iter().cloned());
     FontConfig { system_fonts: set == FontSet::System, bundled, default_family: DEFAULT_FAMILY.into() }
 }
 
 /// A font store for `set`, with the gallery's symbol chain (then the OS's, for [`FontSet::System`]).
 pub fn store(set: FontSet) -> Arc<FontStore> {
-    let fonts = FontStore::new(config(set));
+    store_with(set, &[])
+}
+
+/// [`store`] plus a host's font files ([`crate::Extensions::fonts`]).
+pub fn store_with(set: FontSet, extra: &[Vec<u8>]) -> Arc<FontStore> {
+    let fonts = FontStore::new(config_with(set, extra));
     let mut chain: Vec<String> = SYMBOL_CHAIN.iter().map(|s| s.to_string()).collect();
     if set == FontSet::System {
         for f in fonts.symbol_chain() {

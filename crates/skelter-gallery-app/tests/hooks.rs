@@ -1,0 +1,99 @@
+//! cadatomic's requests in the app (POL1-GALLERY): G1 frame hooks and G6 the backend hook run in
+//! the app's loop, G2 a host's `code-editor` turns the source pane off with a notice instead of an
+//! empty pane, G5 a host theme's tokens come from its own base.
+
+use skelter_base::accesskit::Role;
+use skelter_core::{Kind, KindRegistry, Value};
+use skelter_gallery::Extensions;
+use skelter_gallery_app::GalleryDocument;
+use skelter_test::Harness;
+use skelter_widgets::theme::{ColorScheme, Contrast, Density, TokenMap};
+use std::cell::Cell;
+use std::path::{Path, PathBuf};
+use std::rc::Rc;
+
+fn fixture() -> PathBuf {
+    let src = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/gallery");
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/gallery-app-tests/hooks");
+    let _ = std::fs::remove_dir_all(&dir);
+    copy(&src, &dir);
+    skelter_gallery::canonicalize(&dir).unwrap()
+}
+
+fn copy(from: &Path, to: &Path) {
+    std::fs::create_dir_all(to).unwrap();
+    for e in std::fs::read_dir(from).unwrap() {
+        let p = e.unwrap().path();
+        let dest = to.join(p.file_name().unwrap());
+        if p.is_dir() { copy(&p, &dest) } else { std::fs::copy(&p, dest).map(|_| ()).unwrap() }
+    }
+}
+
+fn gallery(ext: Extensions) -> Harness<GalleryDocument> {
+    let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::testing());
+    let doc = skelter_gallery_app::app::document(ext, fonts).unwrap();
+    let mut h = Harness::<GalleryDocument>::builder().with_size(skelter_base::geom::Size::new(1500.0, 950.0)).build(doc);
+    h.run();
+    h
+}
+
+/// A host kind that takes the `code-editor` tag (cadatomic's has `doc`/`value` props).
+static HOST_EDITOR: skelter_core::KindSpec = skelter_core::KindSpec { role: Role::GenericContainer, doc: "A host's own code editor.", ..skelter_core::KindSpec::new("code-editor") };
+
+#[derive(Default)]
+struct HostEditor;
+
+impl Kind for HostEditor {
+    fn spec() -> &'static skelter_core::KindSpec {
+        &HOST_EDITOR
+    }
+    fn record(&self, cx: &mut skelter_core::RecordCx) {
+        cx.draw_box();
+    }
+}
+
+fn host_editor(reg: &mut KindRegistry) -> Result<(), String> {
+    reg.register::<HostEditor>().map(|_| ()).map_err(|e| e.to_string())
+}
+
+fn source_notice(h: &Harness<GalleryDocument>) -> Option<String> {
+    let g = &h.state().gallery;
+    let d = g.document().borrow();
+    let n = d.query().anchor("source-errors").first()?;
+    match d.get_prop(n, skelter_core::PropId::of("label", "text", "string")) {
+        Some(Value::Str(s)) => Some(s.to_string()),
+        _ => None,
+    }
+}
+
+#[test]
+fn g2_a_hosts_code_editor_turns_the_source_pane_off_with_a_notice() {
+    let quiet = gallery(Extensions::new().story_root(fixture()));
+    assert_eq!(source_notice(&quiet).as_deref(), Some(""), "quire's editor: no notice");
+    let h = gallery(Extensions::new().story_root(fixture()).kinds(host_editor));
+    assert_eq!(source_notice(&h).as_deref(), Some(skelter_gallery_app::gallery::SHADOWED));
+}
+
+#[test]
+fn g1_g6_the_apps_loop_runs_the_frame_and_backend_hooks() {
+    let (frames, backends) = (Rc::new(Cell::new(0u64)), Rc::new(Cell::new(0u32)));
+    let (f, b) = (frames.clone(), backends.clone());
+    let ext = Extensions::new().story_root(fixture()).on_frame(move |cx| f.set(cx.frame)).on_backend(move |_| b.set(b.get() + 1));
+    let mut h = gallery(ext);
+    h.get_by_author_id("story:button").click();
+    h.run();
+    assert_eq!(backends.get(), 1, "one backend for the opened story, hooked before it loaded");
+    assert!(frames.get() > 0, "frame hooks ran with the story open");
+}
+
+#[test]
+fn g5_a_host_themes_tokens_come_from_its_base() {
+    let themes = skelter_gallery_app::theme::Themes {
+        extra: vec![("cad-light".into(), TokenMap::new()), ("cad-dark".into(), TokenMap::new())],
+        bases: vec![("cad-light".into(), ColorScheme::Light, Contrast::Normal)],
+    };
+    let light = themes.get("cad-light", Density::Default).unwrap();
+    assert!(!light.is_dark());
+    assert_eq!(light.token("bg"), themes.get("light-modern", Density::Default).unwrap().token("bg"));
+    assert!(themes.get("cad-dark", Density::Default).unwrap().is_dark());
+}

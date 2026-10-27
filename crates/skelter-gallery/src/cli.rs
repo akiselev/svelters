@@ -151,7 +151,7 @@ pub fn run(mut ext: Extensions, argv: &[String]) -> u8 {
     }
     ext.story_roots.extend(roots);
     if args.switch("--system-fonts") {
-        ext.fonts = crate::fonts::FontSet::System;
+        ext.font_set = crate::fonts::FontSet::System;
     }
     if ext.story_roots.is_empty() {
         match default_root() {

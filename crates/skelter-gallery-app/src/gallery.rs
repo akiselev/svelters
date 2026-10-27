@@ -122,6 +122,8 @@ pub struct Gallery {
     doc: Rc<RefCell<Document>>,
     kinds: Arc<Kinds>,
     ext: Extensions,
+    /// Frames run (G1's frame number).
+    frames: u64,
     catalog: Catalog,
     load_errors: Vec<String>,
     coverage_missing: Vec<String>,
@@ -274,7 +276,7 @@ impl Gallery {
         let (catalog, load_errors) = discover(&roots, &ext.families);
         let mut coverage_missing = catalog.coverage(doc.borrow().registry()).missing;
         coverage_missing.retain(|k| !CHROME_KINDS.contains(&k.as_str()));
-        let themes = Themes { extra: ext.themes.clone() };
+        let themes = Themes { extra: ext.themes.clone(), bases: ext.theme_bases.clone() };
         let base_path = base_css_source(&roots);
         let nodes = {
             let mut d = doc.borrow_mut();
@@ -289,6 +291,7 @@ impl Gallery {
             doc,
             kinds,
             ext,
+            frames: 0,
             catalog,
             load_errors,
             coverage_missing,
@@ -696,7 +699,8 @@ impl Gallery {
         self.generation += 1;
         let variants: Vec<LiveVariant> = story.variants.iter().enumerate().map(|(i, v)| LiveVariant { export: format!("V{i}"), file: story.path(&v.file) }).collect();
         let fragments: Vec<PathBuf> = self.fragment.iter().cloned().collect();
-        match LiveStory::load(self.doc.clone(), self.kinds.clone(), &fragments, variants, self.generation) {
+        let ext = self.ext.clone();
+        match LiveStory::load(self.doc.clone(), self.kinds.clone(), &fragments, variants, self.generation, &move |b| ext.run_backend(b)) {
             Ok(l) => {
                 let tapped = self.tapped.clone();
                 l.backend().add_event_tap(move |_doc, _input, events| tapped.borrow_mut().extend_from_slice(events));
@@ -1161,7 +1165,9 @@ impl Gallery {
 
     /// Once per frame, before the document's frame: the editor's events and edits, the live
     /// story's JS, reload reports.
-    pub fn before_frame(&mut self) {
+    /// Before each frame at `target`: the base.css poll, the editor's events, the live story's
+    /// logic, then the host's frame hooks (G1).
+    pub fn before_frame(&mut self, target: skelter_base::time::Time) {
         self.poll_base_css();
         let events: Vec<_> = self.doc.borrow_mut().service::<QuireHost>().map(|h| std::mem::take(&mut h.events)).unwrap_or_default();
         for (_, e) in events {
@@ -1184,6 +1190,8 @@ impl Gallery {
             if r.applied {
                 self.dirty = true;
             }
+            self.frames += 1;
+            self.ext.run_frame(l.backend(), self.frames, target.0 as f64 / 1e6);
         }
         let after = self.live.as_ref().map(|l| l.errors().to_vec());
         if before != after {
@@ -1230,7 +1238,10 @@ fn build(ui: &mut Ui<'_>) -> Nodes {
     ui.anchor(save, "save");
     let revert = ui.button(head, "Revert");
     ui.anchor(revert, "revert");
-    let errors = ui.label(right, "", &["gal-error"]);
+    // G2: a host's own `code-editor` replaces quire's (one registry, one tag): say so rather
+    // than show an empty pane
+    let shadowed = ui.doc.registry().by_name("code-editor").is_some_and(|k| !std::ptr::eq(k.spec, &skelter_quire::kind::SPEC));
+    let errors = ui.label(right, if shadowed { SHADOWED } else { "" }, &["gal-error"]);
     ui.anchor(errors, "source-errors");
     let editor = ui.node(Some(right), w::CODE_EDITOR, &[], "flex-grow: 3; flex-shrink: 1; flex-basis: 0; min-height: 120px");
     ui.aria_label(editor, "Source");
@@ -1242,6 +1253,9 @@ fn build(ui: &mut Ui<'_>) -> Nodes {
     let _ = (save, revert, filter);
     Nodes { root, bar, side, filter, list, cells, title, file, errors, editor, inspect }
 }
+
+/// The source pane's notice when a host's kind took the `code-editor` tag.
+pub const SHADOWED: &str = "The source pane is off: this host registers its own <code-editor>, which replaces the gallery's. Edit the variant file on disk; the file watcher reloads it.";
 
 /// `node` is `frame` or under it.
 fn is_within(d: &Document, node: NodeId, frame: NodeId) -> bool {

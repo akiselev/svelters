@@ -2,7 +2,7 @@
 
 use crate::model::{Cell, Story, Theme};
 use skelter_core::{Document, KindRegistry};
-use skelter_widgets::theme::TokenMap;
+use skelter_widgets::theme::{ColorScheme, Contrast, Density, TokenMap};
 use std::path::PathBuf;
 use std::rc::Rc;
 use svelters_skelter::SkelterBackend;
@@ -13,9 +13,18 @@ pub type RegisterKinds = fn(&mut KindRegistry) -> Result<(), String>;
 /// A host's per-mount setup ([`Extensions::setup`]).
 pub type SetupHook = Rc<dyn Fn(&mut SetupCx<'_>)>;
 
+/// A host's per-frame sync ([`Extensions::on_frame`]).
+pub type FrameHook = Rc<dyn Fn(&mut FrameCx<'_>)>;
+
+/// A host's busy probe ([`Extensions::busy`]): why the document is not settled, or `None`.
+pub type BusyHook = Rc<dyn Fn(&Document) -> Option<String>>;
+
+/// A host's once-per-backend setup ([`Extensions::on_backend`]).
+pub type BackendHook = Rc<dyn Fn(&SkelterBackend)>;
+
 /// A host's additions. `Extensions::default()` is svelters' own gallery: the `gallery/` root of this
 /// repository (when the CLI finds it), the built-in kinds and the four VS Code themes.
-#[derive(Default)]
+#[derive(Clone, Default)]
 #[non_exhaustive]
 pub struct Extensions {
     /// Gallery roots (each holds `stories/<family>/<id>/story.toml`).
@@ -32,7 +41,21 @@ pub struct Extensions {
     /// Families a host's stories may use on top of [`crate::FAMILIES`].
     pub families: Vec<String>,
     /// The fonts cells draw with ([`crate::fonts::FontSet::Bundled`] unless `--system-fonts`).
-    pub fonts: crate::fonts::FontSet,
+    pub font_set: crate::fonts::FontSet,
+    /// G4: the host's font files (TTF/OTF/TTC), added to the gallery's set: an icon font, the
+    /// app's own families. Shots stay hermetic.
+    pub font_files: Vec<Vec<u8>>,
+    /// G1: runs before each frame (each harness step in the renderer, each frame in the app):
+    /// the host's per-frame sync (highlighting, pick marks, behaviours).
+    pub frame: Vec<FrameHook>,
+    /// G1: why the host's part of the document is not settled; counted by the renderer's settle
+    /// and reported in its "not settled" warning.
+    pub busy: Vec<BusyHook>,
+    /// G6: runs once per backend (a renderer, an app story) before the first variant loads.
+    pub backend: Vec<BackendHook>,
+    /// G5: the scheme and contrast of a host theme made with [`Extensions::theme_with`]; a theme
+    /// not listed here is Dark Modern's.
+    pub theme_bases: Vec<(String, ColorScheme, Contrast)>,
 }
 
 impl Extensions {
@@ -65,10 +88,88 @@ impl Extensions {
         self
     }
 
-    /// The fonts cells draw with.
-    pub fn fonts(mut self, set: crate::fonts::FontSet) -> Extensions {
-        self.fonts = set;
+    /// The fonts cells draw with (`--system-fonts` sets [`crate::fonts::FontSet::System`]).
+    pub fn font_set(mut self, set: crate::fonts::FontSet) -> Extensions {
+        self.font_set = set;
         self
+    }
+
+    /// G4: font files (TTF/OTF/TTC bytes) added to the gallery's bundled set.
+    pub fn fonts(mut self, files: impl IntoIterator<Item = Vec<u8>>) -> Extensions {
+        self.font_files.extend(files);
+        self
+    }
+
+    /// G1: `f` runs before each frame with the frame's number and time.
+    pub fn on_frame(mut self, f: impl Fn(&mut FrameCx<'_>) + 'static) -> Extensions {
+        self.frame.push(Rc::new(f));
+        self
+    }
+
+    /// G1: a busy probe: `Some(why)` while the host's state is still changing.
+    pub fn busy(mut self, f: impl Fn(&Document) -> Option<String> + 'static) -> Extensions {
+        self.busy.push(Rc::new(f));
+        self
+    }
+
+    /// G6: `f` runs once per backend before the first variant loads (behaviours, `:state()`
+    /// names, services, sheets).
+    pub fn on_backend(mut self, f: impl Fn(&SkelterBackend) + 'static) -> Extensions {
+        self.backend.push(Rc::new(f));
+        self
+    }
+
+    /// G5: a host theme on its own base: `scheme` and `contrast` pick the VS Code theme its
+    /// `tokens` override, and the theme service, `prefers-contrast` and `dark` follow them.
+    pub fn theme_with(mut self, name: impl Into<String>, scheme: ColorScheme, contrast: Contrast, tokens: TokenMap) -> Extensions {
+        let name = name.into();
+        self.theme_bases.retain(|(n, _, _)| *n != name);
+        self.theme_bases.push((name.clone(), scheme, contrast));
+        self.themes.push((name, tokens));
+        self
+    }
+
+    /// The scheme and contrast a host theme is built on (Dark Modern's unless
+    /// [`Extensions::theme_with`] said otherwise).
+    pub fn theme_base(&self, name: &str) -> (ColorScheme, Contrast) {
+        self.theme_bases.iter().find(|(n, _, _)| n == name).map_or((ColorScheme::Dark, Contrast::Normal), |(_, s, c)| (*s, *c))
+    }
+
+    /// A theme by name at `density` (a built-in, or a host's on its base); `None` when unknown.
+    pub fn resolve_theme(&self, theme: &Theme, density: Density) -> Option<skelter_widgets::theme::Theme> {
+        use skelter_widgets::theme::Theme as T;
+        let base = match theme.recipe() {
+            Some((scheme, contrast)) => T::vscode(scheme, contrast),
+            None => {
+                let (_, tokens) = self.themes.iter().find(|(n, _)| n == theme.name())?;
+                let (scheme, contrast) = self.theme_base(theme.name());
+                T::vscode(scheme, contrast).with(tokens.iter())
+            }
+        };
+        Some(base.with_density(density))
+    }
+
+    /// Runs every frame hook (what the renderer does before each harness step).
+    pub fn run_frame(&self, backend: &SkelterBackend, frame: u64, now_ms: f64) {
+        for f in &self.frame {
+            f(&mut FrameCx { backend, frame, now_ms });
+        }
+    }
+
+    /// The busy probes' reasons, joined; `None` when every probe is settled.
+    pub fn busy_reason(&self, backend: &SkelterBackend) -> Option<String> {
+        if self.busy.is_empty() {
+            return None;
+        }
+        let why: Vec<String> = backend.with_doc(|d| self.busy.iter().filter_map(|f| f(d)).collect());
+        (!why.is_empty()).then(|| why.join("; "))
+    }
+
+    /// Runs every backend hook (what the renderer does once, before the first variant loads).
+    pub fn run_backend(&self, backend: &SkelterBackend) {
+        for f in &self.backend {
+            f(backend);
+        }
     }
 
     /// A theme by name: one of the four, or a host's.
@@ -86,6 +187,22 @@ impl Extensions {
     /// Every theme name, the four first.
     pub fn theme_names(&self) -> Vec<String> {
         Theme::BUILTIN.iter().map(|t| t.name().to_string()).chain(self.themes.iter().map(|(n, _)| n.clone())).collect()
+    }
+}
+
+/// What a frame hook gets: the backend, the frame's number (from 1 per renderer or app) and its
+/// time in milliseconds on the renderer's virtual clock (the app's frame time).
+#[non_exhaustive]
+pub struct FrameCx<'a> {
+    pub backend: &'a SkelterBackend,
+    pub frame: u64,
+    pub now_ms: f64,
+}
+
+impl FrameCx<'_> {
+    /// Runs `f` on the gallery's document.
+    pub fn with_doc<R>(&self, f: impl FnOnce(&mut Document) -> R) -> R {
+        self.backend.with_doc(f)
     }
 }
 

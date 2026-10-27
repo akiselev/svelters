@@ -33,7 +33,7 @@ pub mod render;
 pub mod sheet;
 
 pub use catalog::{Catalog, Coverage, StoryError, discover, discover_with};
-pub use ext::{Extensions, RegisterKinds, SetupCx, SetupHook};
+pub use ext::{BackendHook, BusyHook, Extensions, FrameCx, FrameHook, RegisterKinds, SetupCx, SetupHook};
 pub use matrix::{Axes, Matrix};
 pub use model::{canonicalize, Cell, FAMILIES, State, Story, StoryId, Theme, Variant, VariantId};
 pub use render::{Error, Reload, Renderer, Shot, png, save_png};
