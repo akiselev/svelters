@@ -3,7 +3,7 @@
 Lane `S-D seams` of cadatomic's MAL3 batch, branch `ci/mal3-seams`, base master `b6f0ee86`.
 Coordinator: cadatomic's batch coordinator session. Every seam is generic: no host names or types.
 
-**Status:** done; see "CI" below for the sha and runs.
+**Status:** done; CI green on `953c48e3`, waiting for the coordinator's merge.
 
 ## What landed
 
@@ -107,4 +107,6 @@ Not run: the full workspace tests, conformance, clippy.
 
 ## CI
 
-Pending.
+All workflows green on `953c48e3` (code; the commit after it only records this): js 40546957597,
+linux-gtk 40546957907, linux-qt 40546957675, macos-appkit 40546957807, skelter 40546957827,
+windows-winui 40546957696. The earlier push `5eb90e2` (before SV79) was not waited on.
