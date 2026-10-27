@@ -166,6 +166,41 @@ pub fn registry(ext: &Extensions) -> Result<KindRegistry, String> {
     Ok(reg)
 }
 
+/// Every story that parses under `roots`, and the errors of the rest: one bad `story.toml` hides
+/// only itself (`skelter_gallery::discover` refuses the whole catalog, as the CLI's `check` wants).
+pub fn discover(roots: &[PathBuf], families: &[String]) -> (Catalog, Vec<String>) {
+    match skelter_gallery::discover_with(roots, families) {
+        Ok(c) => (c, Vec::new()),
+        Err(errs) => {
+            let mut stories = Vec::new();
+            for root in roots.iter().filter_map(|r| r.canonicalize().ok()) {
+                let mut manifests: Vec<PathBuf> = std::fs::read_dir(root.join("stories"))
+                    .into_iter()
+                    .flatten()
+                    .flatten()
+                    .flat_map(|fam| std::fs::read_dir(fam.path()).into_iter().flatten().flatten())
+                    .map(|id| id.path().join("story.toml"))
+                    .filter(|m| m.is_file())
+                    .collect();
+                manifests.sort();
+                for m in manifests {
+                    if let Ok(s) = skelter_gallery::catalog::parse_story(&root, &m, families) {
+                        stories.push(s);
+                    }
+                }
+            }
+            let shown = |e: &skelter_gallery::StoryError| {
+                let mut t = e.to_string();
+                for r in roots.iter().filter_map(|r| r.canonicalize().ok()) {
+                    t = t.replace(&format!("{}/", r.display()), "");
+                }
+                t
+            };
+            (Catalog::from_stories(stories), errs.iter().map(shown).collect())
+        }
+    }
+}
+
 /// The gallery roots: the host's, else this repository's `gallery/` (from the working directory
 /// up, then next to this crate).
 pub fn story_roots(ext: &Extensions) -> Vec<PathBuf> {
@@ -186,10 +221,7 @@ impl Gallery {
     /// The gallery over `doc` (built on [`registry`]), its window's root built and the stories found.
     pub fn new(doc: Rc<RefCell<Document>>, fonts: Arc<skelter_text::FontStore>, ext: Extensions) -> Gallery {
         let roots = story_roots(&ext);
-        let (catalog, load_errors) = match skelter_gallery::discover_with(&roots, &ext.families) {
-            Ok(c) => (c, Vec::new()),
-            Err(errs) => (Catalog::from_stories(Vec::new()), errs.iter().map(|e| e.to_string()).collect()),
-        };
+        let (catalog, load_errors) = discover(&roots, &ext.families);
         let coverage_missing = catalog.coverage(doc.borrow().registry()).missing;
         let themes = Themes { extra: ext.themes.clone() };
         let nodes = {
@@ -245,6 +277,11 @@ impl Gallery {
 
     pub fn document(&self) -> &Rc<RefCell<Document>> {
         &self.doc
+    }
+
+    /// Why stories did not load (each names its file).
+    pub fn load_errors(&self) -> &[String] {
+        &self.load_errors
     }
 
     pub fn catalog(&self) -> &Catalog {
@@ -425,16 +462,19 @@ impl Gallery {
                 if stories.is_empty() {
                     continue;
                 }
-                ui.label(list, fam, &["gal-family"]);
+                let h = ui.boxed(list, &["gal-family"], "");
+                ui.label(h, fam, &[]);
                 for s in stories {
                     let on = self.story.as_deref() == Some(s.id.as_str());
-                    let n = ui.selectable(list, &s.title, on && self.variant.is_none(), "padding-left: 12px");
+                    let row = ui.boxed(list, if on && self.variant.is_none() { &["gal-item", "gal-item-on"] } else { &["gal-item"] }, "padding-left: 16px");
+                    let n = ui.link(row, &s.title, &[], "");
                     ui.anchor(n, &format!("story:{}", s.id));
                     made.push((n, Action::Story(s.id.0.clone())));
                     if on {
                         for v in &s.variants {
                             let von = self.variant.as_deref() == Some(v.id.as_str());
-                            let n = ui.selectable(list, &v.title, von, "padding-left: 28px");
+                            let row = ui.boxed(list, if von { &["gal-item", "gal-item-on"] } else { &["gal-item"] }, "padding-left: 32px");
+                            let n = ui.link(row, &v.title, &[], "");
                             ui.anchor(n, &format!("variant:{}/{}", s.id, v.id));
                             made.push((n, Action::Variant(s.id.0.clone(), v.id.0.clone())));
                         }
@@ -443,10 +483,11 @@ impl Gallery {
             }
             let missing: Vec<&String> = self.coverage_missing.iter().filter(|k| filter.is_empty() || k.contains(&filter)).collect();
             if !missing.is_empty() {
-                ui.label(list, &format!("No story yet ({})", missing.len()), &["gal-family"]);
+                let h = ui.boxed(list, &["gal-family"], "");
+                ui.label(h, &format!("No story yet ({})", missing.len()), &[]);
                 for k in missing {
-                    let n = ui.label(list, k, &["gal-gap"]);
-                    ui.style(n, &["gal-gap"], "padding-left: 12px");
+                    let row = ui.boxed(list, &["gal-item"], "padding-left: 16px");
+                    ui.label(row, k, &["gal-gap"]);
                 }
             }
         }

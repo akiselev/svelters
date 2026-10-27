@@ -108,14 +108,52 @@ impl<C: CompositorApi + 'static> AppHandler for GalleryApp<C> {
     }
 }
 
+const USAGE: &str = "usage: skelter-gallery-app [<story>[/<variant>]] [--shot <out.png> [--size <w>x<h>] [--pick <cell>]]";
+
+/// The command line: what to open, and the headless shot.
+#[derive(Debug, Default)]
+struct Args {
+    select: Option<String>,
+    shot: Option<std::path::PathBuf>,
+    size: Option<(f32, f32)>,
+    pick: Option<usize>,
+}
+
+fn parse_args(args: &[String]) -> Result<Args, String> {
+    let mut a = Args::default();
+    let mut it = args.iter();
+    while let Some(x) = it.next() {
+        match x.as_str() {
+            "--shot" => a.shot = Some(it.next().ok_or("--shot needs a path")?.into()),
+            "--size" => {
+                let v = it.next().ok_or("--size needs <w>x<h>")?;
+                let (w, h) = v.split_once('x').ok_or("--size needs <w>x<h>")?;
+                a.size = Some((w.parse().map_err(|_| "bad --size")?, h.parse().map_err(|_| "bad --size")?));
+            }
+            "--pick" => a.pick = Some(it.next().ok_or("--pick needs a cell index")?.parse().map_err(|_| "bad --pick")?),
+            s if s.starts_with('-') => return Err(format!("unknown flag {s}")),
+            s => a.select = Some(s.to_string()),
+        }
+    }
+    Ok(a)
+}
+
 /// Runs the gallery with a host's [`Extensions`] (`Extensions::default()`: svelters' own `gallery/`).
-/// `skelter-gallery-app [<story>[/<variant>]]` opens on that story.
+/// `skelter-gallery-app [<story>[/<variant>]]` opens on that story; `--shot out.png` renders the
+/// window headlessly (lavapipe in a container) instead of opening it.
 pub fn run(ext: Extensions) -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     if args.iter().any(|a| a == "-h" || a == "--help") {
-        eprintln!("usage: skelter-gallery-app [<story>[/<variant>]]");
+        eprintln!("{USAGE}");
         return ExitCode::SUCCESS;
     }
+    let args = match parse_args(&args) {
+        Ok(a) => a,
+        Err(e) => {
+            eprintln!("skelter-gallery-app: {e}\n{USAGE}");
+            return ExitCode::from(2);
+        }
+    };
     let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::default());
     let mut doc = match document(ext, fonts.clone()) {
         Ok(d) => d,
@@ -124,15 +162,32 @@ pub fn run(ext: Extensions) -> ExitCode {
             return ExitCode::from(1);
         }
     };
-    doc.gallery.watch = true;
-    let first = args.first().cloned().or_else(|| doc.gallery.catalog().stories().first().map(|s| s.id.0.clone()));
+    let first = args.select.clone().or_else(|| doc.gallery.catalog().stories().first().map(|s| s.id.0.clone()));
     if let Some(sel) = first {
         let (s, v) = sel.split_once('/').map_or((sel.as_str(), None), |(s, v)| (s, Some(v)));
         if doc.gallery.catalog().get(s).is_none() {
             eprintln!("skelter-gallery-app: no story {s}");
+            for e in doc.gallery.load_errors() {
+                eprintln!("  {e}");
+            }
             return ExitCode::from(2);
         }
         doc.gallery.select(s, v);
+    }
+    if let Some(out) = &args.shot {
+        return match shot(doc, fonts, args.size.unwrap_or((1500.0, 950.0)), args.pick, out) {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(e) => {
+                eprintln!("skelter-gallery-app: {e}");
+                ExitCode::from(1)
+            }
+        };
+    }
+    doc.gallery.watch = true;
+    if let Some(l) = doc.gallery.live()
+        && let Err(e) = l.watch()
+    {
+        eprintln!("skelter-gallery-app: watch: {e}");
     }
     let glyphs: Arc<dyn skelter_base::text::GlyphRasterizer> = Arc::new(skelter_text::FontRasterizer::new(fonts));
     let spawn = skelter::compositor(|clock| skelter_compositor::CompositorConfig::new(clock, Span::from_micros(16_667)), glyphs);
@@ -143,4 +198,35 @@ pub fn run(ext: Extensions) -> ExitCode {
             ExitCode::from(1)
         }
     }
+}
+
+/// Renders the gallery's window headlessly (skelter-test's harness, the environment's GPU adapter)
+/// to `out` as a PNG, `size` in points, with cell `pick` picked.
+pub fn shot(doc: GalleryDocument, fonts: Arc<skelter_text::FontStore>, size: (f32, f32), pick: Option<usize>, out: &std::path::Path) -> Result<(), String> {
+    let glyphs: Arc<dyn skelter_base::text::GlyphRasterizer> = Arc::new(skelter_text::FontRasterizer::new(fonts));
+    let mut h = skelter_test::Harness::<GalleryDocument>::builder().with_size(Size::new(size.0, size.1)).with_glyphs(glyphs).build(doc);
+    h.run();
+    if let Some(i) = pick {
+        h.state_mut().gallery.pick_cell(i);
+        h.run();
+    }
+    let img = h.render().map_err(|e| e.0)?;
+    write_png(&img, out)
+}
+
+/// A rendered frame as a PNG (un-premultiplied).
+pub fn write_png(img: &skelter_test::Image, out: &std::path::Path) -> Result<(), String> {
+    let mut rgba = img.rgba.clone();
+    for p in rgba.chunks_exact_mut(4) {
+        let a = p[3] as u32;
+        if a > 0 && a < 255 {
+            for c in &mut p[..3] {
+                *c = ((*c as u32 * 255 + a / 2) / a).min(255) as u8;
+            }
+        }
+    }
+    if let Some(d) = out.parent() {
+        std::fs::create_dir_all(d).map_err(|e| format!("{}: {e}", d.display()))?;
+    }
+    image::save_buffer(out, &rgba, img.width, img.height, image::ExtendedColorType::Rgba8).map_err(|e| format!("{}: {e}", out.display()))
 }

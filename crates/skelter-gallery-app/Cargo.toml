@@ -22,6 +22,7 @@ svelters-skelter = { workspace = true }
 svelters-style = { workspace = true }
 serde_json = { workspace = true }
 skelter-gallery = { workspace = true }
-
-[dev-dependencies]
+# `--shot`: the window rendered headlessly (lavapipe), as skelter-gallery renders its cells
 skelter-test = { workspace = true }
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+

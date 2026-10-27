@@ -99,10 +99,13 @@ pub const CHROME_CSS: &str = r#"
   .gal-caption { font-size: 11px; color: var(--vscode-descriptionForeground); }
   .gal-frame { display: flex; flex-direction: column; overflow: hidden; padding: 8px; border: 1px solid var(--vscode-panel-border); background-color: var(--vscode-editor-background); color: var(--vscode-foreground); }
   .gal-frame-picked { border-color: var(--vscode-focusBorder); }
-  .gal-error { color: var(--vscode-errorForeground); font-size: 12px; }
-  .gal-family { font-weight: 700; padding: 6px 8px 2px 8px; }
+  .gal-error { color: var(--vscode-errorForeground); font-size: 12px; margin: 0 8px; }
+  .gal-family { font-weight: 700; padding: 8px 8px 2px 8px; }
   .gal-gap { color: var(--vscode-errorForeground); }
   .gal-heading { font-weight: 700; padding: 4px 8px; }
+  .gal-item { display: flex; flex-direction: row; padding: 2px 8px; }
+  .gal-item:hover { background-color: var(--vscode-list-hoverBackground); }
+  .gal-item-on { background-color: var(--vscode-list-activeSelectionBackground); color: var(--vscode-list-activeSelectionForeground); }
   .gal-pane { display: flex; flex-direction: column; flex-grow: 1; min-height: 0; }
 }
 "#;
