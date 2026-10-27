@@ -3,7 +3,7 @@
 Lane `app` of svelters batch gallery-b1 (`plans/cloud/gallery-b1/LANE-app.md`), branch `ci/gb1-app`, base master
 `01e8f677` plus the batch brief `34ed54b9`. Merges `origin/ci/gb1-core` (GAL1) as its API landed; never edits its files.
 
-**Status:** items 1–5 done; core's R1 and R2 landed and are used. CI: see "CI".
+**Status:** done. Items 1–5 landed; core's R1 and R2 landed and are used; CI green on `b4256a78`.
 
 ## Scope
 
@@ -146,7 +146,15 @@ and the source pane showed the edit within 4 s (the host's watcher). Not run loc
 
 ## CI
 
-(filled at the end: sha and run ids)
+All six workflows green on `b4256a78` (the last code change; this record's later commit is docs only):
+js `40579894054`, linux-gtk `40579894200`, linux-qt `40579894030`, macos-appkit `40579894045`, skelter `40579894037`
+(ubuntu, windows, macos), windows-winui `40579894081`.
+
+Earlier: `f50c64c6`'s skelter windows `cargo test` failed (core's and this crate's tests: gallery roots carried the
+`\\?\` verbatim prefix from `std::fs::canonicalize` into module specifiers, so no story loaded). Fixed by routing every
+path through `skelter_gallery::canonicalize` (core `8350d0b`, merged) in `b4256a78`.
+
+Not run locally: anything outside `skelter-gallery-app` (its 10 tests and clippy were run after the last code change).
 
 ## Requests
 
