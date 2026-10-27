@@ -86,13 +86,9 @@ impl Codegen<'_, '_> {
                 self.w.write(", ");
             }
             match th {
-                Thunk::Value(Dynamic::Expr(e)) => {
-                    self.w.write("() => ");
-                    self.thunk_body(e);
-                }
                 Thunk::Value(d) => {
                     self.w.write("() => ");
-                    self.dynamic(d);
+                    self.thunk_dynamic(d);
                 }
                 Thunk::Hole(item) => {
                     self.w.write("($$c) => {");
