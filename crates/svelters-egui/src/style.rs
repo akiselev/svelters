@@ -1969,6 +1969,7 @@ impl Scene {
                 MatchedRuleInfo {
                     sheet: sheet_id.and_then(|i| st.sheets.iter().find(|(_, x)| *x == i)).map(|(n, _)| n.clone()),
                     selectors: rule.selector_text(),
+                    layer: rule.layer_name(),
                     specificity: m.specificity,
                     line: rule.line,
                     column: rule.column,

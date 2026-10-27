@@ -90,6 +90,20 @@ pub struct Shot {
     pub applied: Option<String>,
 }
 
+/// What [`Renderer::reload`] did.
+#[derive(Clone, Debug, Default, PartialEq)]
+#[non_exhaustive]
+pub struct Reload {
+    /// A `story.toml` changed and the stories were read again.
+    pub stories: bool,
+    /// The `asset://` refs registered again.
+    pub assets: Vec<String>,
+    /// The variant files whose module graph had a changed file: they load again at their next mount.
+    pub variants: Vec<PathBuf>,
+    /// The JS runtime was replaced (a loaded variant was affected).
+    pub restarted: bool,
+}
+
 /// What [`Renderer::mount`] left in the window.
 #[derive(Clone, Debug)]
 pub struct Mounted {
@@ -124,10 +138,15 @@ pub struct Renderer {
     setup: Vec<crate::ext::SetupHook>,
     themes: Vec<(String, TokenMap)>,
     backend: SkelterBackend,
-    embed: Embed,
+    /// `None` only while [`Renderer::reload`] swaps it.
+    embed: Option<Embed>,
     harness: Harness<SkelterDocument>,
     slot: SlotId,
+    /// The `window` node the slot sits in.
+    window_node: svl_handle,
     entries: HashMap<PathBuf, Result<EntryId, String>>,
+    /// Each variant file's provider (its module graph and assets), loaded or not.
+    providers: HashMap<PathBuf, Rc<SourceProvider>>,
     root: Option<RootId>,
     mounts: u64,
     /// The theme, density and sheet installed now.
@@ -137,13 +156,16 @@ pub struct Renderer {
     window: (Size, f32),
     /// The cell mounted now.
     current: Option<Cell>,
+    /// A window story's own `<window>`, attached as the harness window's root for its cell.
+    presented: Option<svl_handle>,
 }
 
 impl Renderer {
     /// A renderer over `ext`'s story roots, kinds, setup hooks and token sets.
     pub fn new(ext: &Extensions) -> Result<Renderer, Error> {
         let catalog = discover_with(&ext.story_roots, &ext.families).map_err(Error::Stories)?;
-        let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::testing());
+        let fonts = crate::fonts::store(ext.fonts);
+        crate::icons::register_demo();
         // the host's kinds after the built-ins (`Kinds::with_app`); their errors are strings
         let failed: RefCell<Option<String>> = RefCell::new(None);
         let kinds = svelters_skelter::Kinds::with_app(&svelters_skelter::surface::builtin(), |reg| {
@@ -171,18 +193,9 @@ impl Renderer {
         };
         let backend = SkelterBackend::with_text(kinds, Box::new(skelter_text::TextSystem::new(fonts.clone())));
         install_widget_services(&backend, skelter_text::TextSystem::new(fonts.clone()));
-        let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, locale: Some("en-US".into()), ..svelters_host::HostConfig::default() };
-        let budgets = Budgets { warn: Duration::from_secs(1), interrupt: Duration::from_secs(5), mount: Duration::from_secs(10) };
-        let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, budgets, ..EmbedConfig::default() }).map_err(|e| Error::Setup(e.to_string()))?;
-
         // the window: a `window` node the harness's window attaches, the cell's slot in it
         let window = backend.create_borrowed("window").map_err(Error::Setup)?;
-        let slot = embed.create_slot("gallery.cell", SlotOptions::default().label("cell"));
-        backend.insert(window, slot.handle(), None, 0).map_err(|e| Error::Setup(format!("{e:?}")))?;
-        // the cell fills the window on the theme's background (the window kind paints none headless)
-        if let Some(n) = embed.slot_node(slot) {
-            backend.with_doc(|d| d.set_style(n, skelter_core::StyleInput { inline: Some(SLOT_STYLE.into()), ..Default::default() }));
-        }
+        let (embed, slot) = attach_embed(&backend, window)?;
         let mut doc = SkelterDocument::new(backend.clone());
         doc.opening(window);
         let size = Size::new(320.0, 96.0);
@@ -190,6 +203,8 @@ impl Renderer {
             .with_size(size)
             .with_glyphs(Arc::new(skelter_text::FontRasterizer::new(fonts.clone())))
             .with_accessibility_check(false)
+            // the slot paints the theme's background; a window story's window is laid over it in `shot`
+            .with_clear(skelter_base::color::Color::TRANSPARENT)
             .with_max_steps(u64::from(MAX_STEPS))
             .build_unsettled(doc);
         if backend.window_id(window).is_none() {
@@ -204,16 +219,19 @@ impl Renderer {
             setup: ext.setup.clone(),
             themes: ext.themes.clone(),
             backend,
-            embed,
+            embed: Some(embed),
             harness,
             slot,
+            window_node: window,
             entries: HashMap::new(),
+            providers: HashMap::new(),
             root: None,
             mounts: 0,
             theme: None,
             base_css: skelter_widgets::theme::BASE_CSS.to_string(),
             window: (size, 1.0),
             current: None,
+            presented: None,
         };
         r.apply_theme(&Theme::DarkModern, Density::Default)?;
         let _ = r.settle();
@@ -231,6 +249,97 @@ impl Renderer {
         Ok(())
     }
 
+    /// Takes edits on disk into account without a new renderer (the app's live loop, or an agent's
+    /// long-running renderer): `paths` are the files that changed.
+    ///
+    /// - a `story.toml` re-reads the stories ([`Renderer::rediscover`]);
+    /// - an image file is registered again under its `asset://` ref;
+    /// - a variant file that failed to load is retried at its next mount;
+    /// - a file in the module graph of a loaded variant (the variant, a component or module it
+    ///   imports, a manifest) replaces the JS runtime: a fresh engine on the same document, window
+    ///   and GPU device, and every variant loads again at its next mount. JS state is not kept
+    ///   (each cell mounts fresh anyway).
+    ///
+    /// The mounted cell is unmounted when the runtime is replaced; the next `shot`, `sheet` or
+    /// `mount` renders from the new files. A path the renderer never loaded changes nothing.
+    pub fn reload(&mut self, paths: &[PathBuf]) -> Result<Reload, Error> {
+        let paths: Vec<PathBuf> = paths.iter().map(|p| crate::model::canonicalize(p).unwrap_or_else(|_| p.clone())).collect();
+        let mut out = Reload::default();
+        if paths.iter().any(|p| p.file_name().is_some_and(|n| n == "story.toml")) {
+            self.rediscover().map_err(Error::Stories)?;
+            out.stories = true;
+        }
+        // images: registered again for every provider that serves them (an asset's importers don't re-run)
+        let mut code: Vec<&PathBuf> = paths.iter().collect();
+        for p in &paths {
+            let image = p.extension().and_then(|e| e.to_str()).is_some_and(|e| matches!(e.to_ascii_lowercase().as_str(), "svg" | "png"));
+            if !image {
+                continue;
+            }
+            if let Some(provider) = self.providers.values().find(|pr| pr.assets().serves(p))
+                && let Some(dir) = p.parent()
+            {
+                code.retain(|c| *c != p);
+                let (ok, _) = crate::icons::register_assets(provider.assets(), dir);
+                for r in ok {
+                    if !out.assets.contains(&r) {
+                        out.assets.push(r);
+                    }
+                }
+            }
+        }
+        // entries: a failed one is retried; a loaded one whose graph has a changed file restarts JS
+        let mut restart = false;
+        for (file, provider) in &self.providers {
+            let in_graph = code.contains(&file) || {
+                let watched = svelters_host::ModuleProvider::watch_files(provider.as_ref());
+                code.iter().any(|p| watched.contains(p))
+            };
+            if !in_graph {
+                continue;
+            }
+            out.variants.push(file.clone());
+            if matches!(self.entries.get(file), Some(Ok(_))) {
+                restart = true;
+            }
+        }
+        out.variants.sort();
+        if restart {
+            self.restart()?;
+            out.restarted = true;
+        } else {
+            for f in &out.variants {
+                self.entries.remove(f);
+                self.providers.remove(f);
+            }
+        }
+        Ok(out)
+    }
+
+    /// Replaces the JS runtime (see [`Renderer::reload`]).
+    fn restart(&mut self) -> Result<(), Error> {
+        self.drain();
+        self.unpresent();
+        if let Some(r) = self.root.take() {
+            self.embed().unmount(r);
+        }
+        self.embed().destroy_slot(self.slot);
+        self.embed().logic();
+        let _ = self.settle();
+        self.current = None;
+        // the old host detaches from the backend when dropped: drop it before attaching the new one
+        self.embed = None;
+        self.entries.clear();
+        self.providers.clear();
+        let (embed, slot) = attach_embed(&self.backend, self.window_node)?;
+        self.embed = Some(embed);
+        self.slot = slot;
+        // the window's size and scale are the harness's; the new slot takes them at the next mount
+        self.window = (Size::new(0.0, 0.0), 0.0);
+        let _ = self.settle();
+        Ok(())
+    }
+
     /// The base sheet the kinds' default look comes from (skelter-widgets' `base.css` as built, by
     /// default; the CLI reads the source file when it finds it, so an edit shows without a rebuild).
     pub fn set_base_css(&mut self, css: impl Into<String>) -> Result<(), Error> {
@@ -241,7 +350,7 @@ impl Renderer {
         Ok(())
     }
 
-    /// The fonts every cell draws with (skelter-text's bundled test fonts: hermetic).
+    /// The fonts every cell draws with ([`crate::fonts`]; hermetic unless `--system-fonts`).
     pub fn fonts(&self) -> &Arc<skelter_text::FontStore> {
         &self.fonts
     }
@@ -251,7 +360,7 @@ impl Renderer {
     }
 
     pub fn embed(&self) -> &Embed {
-        &self.embed
+        self.embed.as_ref().expect("the embed is swapped only inside Renderer::reload")
     }
 
     pub fn harness(&mut self) -> &mut Harness<SkelterDocument> {
@@ -263,9 +372,14 @@ impl Renderer {
         self.current.as_ref()
     }
 
+    /// Where the mounted cell's nodes are: a window story's window, else the slot.
+    pub fn cell_root(&self) -> Option<skelter_base::ids::NodeId> {
+        self.presented.and_then(|h| self.backend.node(h)).or_else(|| self.slot_node())
+    }
+
     /// The slot's node (the mounted root's parent).
     pub fn slot_node(&self) -> Option<skelter_base::ids::NodeId> {
-        self.embed.slot_node(self.slot)
+        self.embed().slot_node(self.slot)
     }
 
     /// The theme a cell's theme name resolves to.
@@ -324,14 +438,19 @@ impl Renderer {
         r.map_err(|message| Error::Load { file, message })
     }
 
-    fn load_entry(&self, story: &Story, file: &Path) -> Result<EntryId, String> {
+    fn load_entry(&mut self, story: &Story, file: &Path) -> Result<EntryId, String> {
         let mut cfg = SourceConfig::for_path(&story.root)?;
         cfg.entry = Entry::Embed(vec![(EXPORT.into(), file.to_path_buf())]);
         cfg.backend = "skelter".into();
         cfg.dev = true;
         cfg.spec_fragments.extend(self.fragment.clone());
         let provider = Rc::new(SourceProvider::new(cfg)?);
-        self.embed.load_from(provider.clone()).map_err(|e| {
+        // the story's images under the `asset://` refs its imports evaluate to
+        if let Some(dir) = file.parent() {
+            crate::icons::register_assets(provider.assets(), dir);
+        }
+        self.providers.insert(file.to_path_buf(), provider.clone());
+        self.embed().load_from(provider.clone()).map_err(|e| {
             // the engine shortens module-load messages: the compiler's own errors read in full
             let c = provider.check(file);
             let errors: Vec<String> = c
@@ -356,9 +475,10 @@ impl Renderer {
         }
         let entry = self.entry(&story, &variant)?;
         self.drain();
+        self.unpresent();
         if let Some(r) = self.root.take() {
-            self.embed.unmount(r);
-            self.embed.logic();
+            self.embed().unmount(r);
+            self.embed().logic();
         }
         self.current = None;
         self.apply_theme(&cell.theme, cell.density)?;
@@ -370,7 +490,7 @@ impl Renderer {
             self.window = (size, cell.zoom);
         }
         let wid = self.harness.window();
-        self.embed.set_slot_layout(self.slot, wid, [size.w, size.h], cell.zoom);
+        self.embed().set_slot_layout(self.slot, wid, [size.w, size.h], cell.zoom);
         for f in self.setup.clone() {
             f(&mut SetupCx { cell, story: &story, backend: &self.backend });
         }
@@ -387,16 +507,23 @@ impl Renderer {
         }
         self.mounts += 1;
         let key = format!("gallery.{}", self.mounts);
-        let root = self.embed.mount(MountSpec::new(entry, EXPORT, self.slot, key).props(props)).map_err(|e| Error::Setup(e.to_string()))?;
+        let root = self.embed().mount(MountSpec::new(entry, EXPORT, self.slot, key).props(props)).map_err(|e| Error::Setup(e.to_string()))?;
         self.root = Some(root);
         let (mut steps, mut settled) = self.settle();
         let mut warnings = self.drain();
-        if let Some(info) = self.embed.root_info(root)
+        if let Some(info) = self.embed().root_info(root)
             && let RootState::Faulted(e) = info.state
         {
             return Err(Error::Runtime { file, message: e.error.message });
         }
-        let top: Vec<svl_handle> = self.top_level();
+        let mut top: Vec<svl_handle> = self.top_level();
+        if let Some(w) = self.present()? {
+            top = vec![w];
+            let (s2, ok) = self.settle();
+            steps += s2;
+            settled = ok;
+            warnings.extend(self.drain());
+        }
         let anchored: Vec<svl_handle> = self.backend.scene().read(|s| s.nodes().filter(|n| n.anchor().as_deref() == Some("subject")).map(|n| n.id()).collect());
         let has_subject = !anchored.is_empty();
         let subjects = if has_subject { anchored } else { top.clone() };
@@ -423,9 +550,37 @@ impl Renderer {
         Ok(Mounted { warnings, applied, subjects, has_subject, top, steps, settled })
     }
 
+    /// A window story: a root that creates a `<window>` (a toplevel: the runtime keeps it out of
+    /// the slot) gets that window as the harness window's root for its cell, so the cell shows the
+    /// window as the app's viewport would. Returns its handle.
+    fn present(&mut self) -> Result<Option<svl_handle>, Error> {
+        let (size, zoom) = self.window;
+        let own = self.window_node;
+        let candidates: Vec<svl_handle> = self.backend.scene().read(|s| s.nodes().filter(|n| n.tag() == "window" && n.id() != own).map(|n| n.id()).collect());
+        let Some(h) = candidates.into_iter().find(|&h| self.backend.node(h).is_some_and(|n| self.backend.with_doc(|d| d.parent(n).is_none()))) else {
+            return Ok(None);
+        };
+        let wid = self.harness.window();
+        self.backend.attach_presented(h, wid, size, Scale(zoom)).map_err(Error::Setup)?;
+        self.presented = Some(h);
+        Ok(Some(h))
+    }
+
+    /// Puts the gallery's own window back as the harness window's root.
+    fn unpresent(&mut self) {
+        if self.presented.take().is_none() {
+            return;
+        }
+        let wid = self.harness.window();
+        let (size, zoom) = self.window;
+        if let Err(e) = self.backend.attach_presented(self.window_node, wid, size, Scale(zoom)) {
+            eprintln!("skelter-gallery: cannot restore the gallery window: {e}");
+        }
+    }
+
     /// The handles of the nodes the root mounted under the slot.
     pub fn top_level(&self) -> Vec<svl_handle> {
-        let Some(slot) = self.embed.slot_node(self.slot) else { return Vec::new() };
+        let Some(slot) = self.embed().slot_node(self.slot) else { return Vec::new() };
         let kids = self.backend.with_doc(|d| d.children(slot).to_vec());
         kids.into_iter().filter_map(|n| self.backend.handle(n)).collect()
     }
@@ -433,13 +588,19 @@ impl Renderer {
     /// Mounts `cell` and draws it.
     pub fn shot(&mut self, cell: &Cell) -> Result<Shot, Error> {
         let m = self.mount(cell)?;
-        let image = self.harness.render().map_err(|e| Error::Render(e.to_string()))?;
+        let mut image = self.harness.render().map_err(|e| Error::Render(e.to_string()))?;
+        if self.presented.is_some()
+            && let Some((t, d, _)) = self.theme.clone()
+            && let Some(bg) = self.resolve_theme(&t, d)?.color("bg")
+        {
+            over(&mut image, bg);
+        }
         Ok(Shot { image, warnings: m.warnings, applied: m.applied })
     }
 
     /// Why the embed or the harness is not settled.
     fn busy(&self) -> Option<String> {
-        let s = self.embed.settled();
+        let s = self.embed().settled();
         if !s.is_settled() {
             return Some(format!("embed busy: {:?}", s.busy));
         }
@@ -449,7 +610,7 @@ impl Renderer {
     /// Steps until the embed and the harness are settled, at most [`MAX_STEPS`]: (steps, settled).
     fn settle(&mut self) -> (u32, bool) {
         for i in 1..=MAX_STEPS {
-            self.embed.logic();
+            self.embed().logic();
             self.harness.step();
             if self.busy().is_none() {
                 return (i, true);
@@ -461,7 +622,7 @@ impl Renderer {
     /// What JS reported since the last call: errors, handler exceptions, console warnings.
     fn drain(&mut self) -> Vec<String> {
         let mut out = Vec::new();
-        for ev in self.embed.take_events() {
+        for ev in self.embed().take_events() {
             match ev {
                 EmbedEvent::Error { error, .. } => out.push(format!("error: {}", error.message)),
                 EmbedEvent::Faulted { error, .. } => out.push(format!("faulted: {}", error.error.message)),
@@ -469,16 +630,42 @@ impl Renderer {
                 _ => {}
             }
         }
-        for e in self.embed.host().take_errors() {
+        for e in self.embed().host().take_errors() {
             out.push(format!("error: {}", e.message));
         }
-        for l in self.embed.host().take_console() {
+        for l in self.embed().host().take_console() {
             if l.level == "warn" || l.level == "error" {
                 out.push(format!("console.{}: {}", l.level, l.text));
             }
         }
         out
     }
+}
+
+/// Lays premultiplied `image` over the opaque colour `bg` (what a platform clears a window to).
+fn over(image: &mut Image, bg: skelter_base::color::Color) {
+    let bg = [bg.r, bg.g, bg.b].map(|c| (c.clamp(0.0, 1.0) * 255.0).round() as u32);
+    for px in image.rgba.chunks_exact_mut(4) {
+        let rest = 255 - u32::from(px[3]);
+        for (c, b) in px[..3].iter_mut().zip(bg) {
+            *c = (u32::from(*c) + (b * rest + 127) / 255).min(255) as u8;
+        }
+        px[3] = 255;
+    }
+}
+
+/// A JS runtime for `backend` and the cell's slot in `window`, filling it on the theme's background.
+fn attach_embed(backend: &SkelterBackend, window: svl_handle) -> Result<(Embed, SlotId), Error> {
+    let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, locale: Some("en-US".into()), ..svelters_host::HostConfig::default() };
+    let budgets = Budgets { warn: Duration::from_secs(1), interrupt: Duration::from_secs(5), mount: Duration::from_secs(10) };
+    let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, budgets, ..EmbedConfig::default() }).map_err(|e| Error::Setup(e.to_string()))?;
+    let slot = embed.create_slot("gallery.cell", SlotOptions::default().label("cell"));
+    backend.insert(window, slot.handle(), None, 0).map_err(|e| Error::Setup(format!("{e:?}")))?;
+    // the cell fills the window on the theme's background (the window kind paints none headless)
+    if let Some(n) = embed.slot_node(slot) {
+        backend.with_doc(|d| d.set_style(n, skelter_core::StyleInput { inline: Some(SLOT_STYLE.into()), ..Default::default() }));
+    }
+    Ok((embed, slot))
 }
 
 /// The state bits pseudo-class `name` tests (`hover`, `focus-visible`, ...).
@@ -488,15 +675,7 @@ pub fn pseudo_bits(name: &str) -> Option<svelters_style::StateMask> {
 
 /// `image` as PNG bytes (straight alpha).
 pub fn png(image: &Image) -> Vec<u8> {
-    let mut rgba = image.rgba.clone();
-    for px in rgba.chunks_exact_mut(4) {
-        let a = px[3];
-        if a != 0 && a != 255 {
-            for c in &mut px[..3] {
-                *c = ((u32::from(*c) * 255 + u32::from(a) / 2) / u32::from(a)).min(255) as u8;
-            }
-        }
-    }
+    let rgba = crate::diff::straight(image).rgba;
     let mut out = Vec::new();
     let enc = image::codecs::png::PngEncoder::new(&mut out);
     image::ImageEncoder::write_image(enc, &rgba, image.width, image.height, image::ExtendedColorType::Rgba8).expect("encoding to memory");

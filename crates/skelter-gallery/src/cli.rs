@@ -17,13 +17,13 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 const USAGE: &str = "\
-usage: skelter-gallery [--root <gallery dir>].. [--base-css <file>] <command>
+usage: skelter-gallery [--root <gallery dir>].. [--base-css <file>] [--system-fonts] <command>
 
 commands:
   list [--json]                              stories, variants, kinds and coverage gaps
-  shot <story>[/<variant>] [cell flags] [-o out.png] [--json]
+  shot <story>[/<variant>] [cell flags] [-o out.png] [--diff before.png] [--json]
                                              one cell as a PNG
-  sheet (<story> | --family <f> | --all) [axis flags] [-o out.png|dir] [--index out.json] [--json]
+  sheet (<story> | --family <f> | --all) [axis flags] [-o out.png|dir] [--index out.json] [--diff before.png] [--json]
                                              a contact sheet: rows variant × args × state, columns theme × zoom × density
   inspect <story>/<variant> <selector> [cell flags] [--json]
                                              one node of a cell: kind, anchor, box, computed style, matched rules, forced
@@ -36,7 +36,9 @@ axis flags:  --variants a,b  --args k=v,..  --states s,..  --themes t,..  --dens
 states: normal hover active focus focus-visible checked disabled
 themes: dark-modern light-modern hc-dark hc-light (and a host's)
 densities: compact default comfortable
-Output goes where -o says; the default is target/gallery/.";
+Output goes where -o says; the default is target/gallery/.
+--diff before.png (shot, or a one-story sheet) also writes <out>.diff.png: before | after | changes in magenta.
+--system-fonts adds the OS's fonts behind the bundled set (for a script it lacks; not the same on every machine).";
 
 /// Exit codes.
 const OK: u8 = 0;
@@ -60,9 +62,9 @@ pub(crate) struct Args {
 }
 
 const VALUED: &[&str] = &[
-    "--root", "--base-css", "--args", "--state", "--theme", "--density", "--zoom", "-o", "--out", "--index", "--family", "--variants", "--states", "--themes", "--densities", "--zooms",
+    "--root", "--base-css", "--args", "--state", "--theme", "--density", "--zoom", "-o", "--out", "--index", "--family", "--variants", "--states", "--themes", "--densities", "--zooms", "--diff",
 ];
-const SWITCHES: &[&str] = &["--json", "--all", "-h", "--help"];
+const SWITCHES: &[&str] = &["--json", "--all", "-h", "--help", "--system-fonts"];
 
 fn parse(argv: &[String]) -> Result<(Vec<PathBuf>, Args), Usage> {
     let mut roots = Vec::new();
@@ -102,7 +104,7 @@ impl Args {
     /// Fails on a flag the command doesn't take.
     fn only(&self, cmd: &str, allowed: &[&str]) -> Result<(), Usage> {
         for k in self.flags.keys().chain(self.switches.iter()) {
-            if !allowed.contains(&k.as_str()) && k != "--base-css" {
+            if !allowed.contains(&k.as_str()) && k != "--base-css" && k != "--system-fonts" {
                 return Err(Usage(format!("{cmd} takes no {k}")));
             }
         }
@@ -148,6 +150,9 @@ pub fn run(mut ext: Extensions, argv: &[String]) -> u8 {
         return if args.positional.is_empty() && !(args.switch("-h") || args.switch("--help")) { BAD_ARGS } else { OK };
     }
     ext.story_roots.extend(roots);
+    if args.switch("--system-fonts") {
+        ext.fonts = crate::fonts::FontSet::System;
+    }
     if ext.story_roots.is_empty() {
         match default_root() {
             Some(r) => ext.story_roots.push(r),
@@ -363,8 +368,9 @@ pub(crate) fn cell_file(c: &Cell) -> String {
 
 fn cmd_shot(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
     let mut allowed = CELL_FLAGS.to_vec();
-    allowed.extend(["-o", "--json"]);
+    allowed.extend(["-o", "--json", "--diff"]);
     a.only("shot", &allowed)?;
+    let before = before_image(a)?;
     let [target] = &a.positional[..] else {
         return Err(Fail::Usage("shot takes one <story>[/<variant>]".into()));
     };
@@ -373,6 +379,7 @@ fn cmd_shot(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
     let out = a.flag("-o").map(PathBuf::from).unwrap_or_else(|| out_dir(ext).join(cell_file(&cell)));
     let shot = r.shot(&cell)?;
     save_png(&shot.image, &out).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", out.display()))))?;
+    let diff = write_diff(before.as_ref(), &shot.image, &out)?;
     if a.switch("--json") {
         print_json(&json!({
             "file": out,
@@ -381,6 +388,7 @@ fn cmd_shot(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
             "size": [shot.image.width, shot.image.height],
             "applied": shot.applied,
             "warnings": shot.warnings,
+            "diff": diff,
         }));
     } else {
         println!("{}", out.display());
@@ -392,6 +400,21 @@ fn cmd_shot(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
         }
     }
     Ok(OK)
+}
+
+/// The `--diff` image, read before rendering (so a wrong path fails fast).
+fn before_image(a: &Args) -> Result<Option<skelter_test::Image>, Fail> {
+    a.flag("--diff").map(|f| crate::diff::load_png(Path::new(f)).map_err(|e| Fail::Usage(format!("--diff {e}")))).transpose()
+}
+
+/// Writes `<out>.diff.png` when `--diff` was given; its JSON for the output.
+fn write_diff(before: Option<&skelter_test::Image>, after: &skelter_test::Image, out: &Path) -> Result<Option<serde_json::Value>, Fail> {
+    let Some(before) = before else { return Ok(None) };
+    let d = crate::diff::diff(before, &crate::diff::straight(after));
+    let file = crate::diff::diff_path(out);
+    save_png(&d.image, &file).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", file.display()))))?;
+    eprintln!("diff: {} → {}", d.summary(), file.display());
+    Ok(Some(d.json(&file)))
 }
 
 /// A story's matrix from the axis flags.
@@ -423,13 +446,17 @@ pub(crate) fn matrix_of(ext: &Extensions, story: &Story, a: &Args, many: bool) -
 // ---- sheet ----
 
 fn cmd_sheet(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
-    a.only("sheet", &["--family", "--all", "--variants", "--args", "--states", "--themes", "--densities", "--zooms", "-o", "--index", "--json"])?;
+    a.only("sheet", &["--family", "--all", "--variants", "--args", "--states", "--themes", "--densities", "--zooms", "-o", "--index", "--json", "--diff"])?;
     let family = a.flag("--family");
     let all = a.switch("--all");
     let modes = usize::from(family.is_some()) + usize::from(all) + usize::from(!a.positional.is_empty());
     if modes != 1 || a.positional.len() > 1 {
         return Err(Fail::Usage("sheet takes one of <story>, --family <f>, --all".into()));
     }
+    if a.flag("--diff").is_some() && a.positional.is_empty() {
+        return Err(Fail::Usage("--diff takes a one-story sheet (sheet <story>)".into()));
+    }
+    let before = before_image(a)?;
     let mut r = renderer(ext, a)?;
     let layout = SheetLayout::default();
     if let [story] = &a.positional[..] {
@@ -438,7 +465,11 @@ fn cmd_sheet(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
         let out = a.flag("-o").map(PathBuf::from).unwrap_or_else(|| out_dir(ext).join(format!("{}.png", s.id)));
         let sheet = r.sheet(&m, layout)?;
         save_png(&sheet.image, &out).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", out.display()))))?;
-        let index = sheet.index(&m, Some(&out));
+        let diff = write_diff(before.as_ref(), &sheet.image, &out)?;
+        let mut index = sheet.index(&m, Some(&out));
+        if let (Some(d), Some(o)) = (diff, index.as_object_mut()) {
+            o.insert("diff".into(), d);
+        }
         if let Some(f) = a.flag("--index") {
             write_json(Path::new(f), &index)?;
         }

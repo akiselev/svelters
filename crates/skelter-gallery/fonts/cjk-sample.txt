@@ -1,0 +1,7 @@
+# Han, kana and Hangul the CJK subsets keep (with all of kana, CJK punctuation, fullwidth forms and
+# Hangul compatibility jamo). Common UI words; add a line to cover a new sample, then rerun subset.py.
+文件 编辑 视图 帮助 打开 保存 另存为 关闭 新建 删除 复制 粘贴 剪切 撤销 重做 查找 替换 设置 选项 确定 取消 应用 名称 值 大小 类型 日期 时间 窗口 工具 运行 调试 构建 项目 错误 警告 信息 成功 失败 加载 中 请 输入 搜索 全部 选择 显示 隐藏 上 下 左 右 前 后 开始 结束 是 否 你好 世界 中文 简体 繁體 語言 图层 网络 元件 原理图 电路板 仿真 模型 草图 约束 尺寸 零件 装配 
+# fontique's script samples (a font is a script's fallback only when it covers that sample): 今 (Hani), 가 (Hang).
+今 가
+ファイル 編集 表示 ヘルプ 開く 保存 閉じる 新規 削除 設定 日本語 こんにちは 世界 検索 実行 取り消し 部品 回路 図面
+파일 편집 보기 도움말 열기 저장 닫기 새로 삭제 설정 한국어 안녕하세요 세계 검색 실행 취소 확인 이름 값 크기

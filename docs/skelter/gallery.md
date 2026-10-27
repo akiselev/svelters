@@ -26,7 +26,7 @@ the svelters checkout, it reads `base.css` from its source file, so an edit to `
 
 The global flags come first: `--root <dir>` adds a gallery root, and may be given more than once. With no
 `--root`, the gallery uses `gallery/` in the current directory or the nearest directory above it that has one.
-`--base-css <file>` is described above.
+`--base-css <file>` is described above. `--system-fonts` is described under "How a cell is rendered".
 
 Exit codes: `0` ok, `1` a story failed (a compile, load or runtime error, or a check problem), `2` bad arguments
 (an unknown story, variant, state, theme or flag). Outputs go where `-o` says. The default is `target/gallery/` in
@@ -105,7 +105,8 @@ skelter-gallery sheet --all -o /tmp/all/
 ```
 
 On a sheet, each row is a variant × args combination × state, in the matrix's order. Columns are grouped by theme,
-then zoom, then density. Each cell has a two-line header: `variant args` and `state theme [density] [xZ]`. A disabled
+then zoom, then density. Each cell has a two-line header: `variant args` and `state theme [density] [xZ]`. An arg value's newlines, tabs and
+other control characters are written as escapes (`First line\nSecond line`), so a header stays on its lines. A disabled
 cell whose bit was forced says `(forced bit)`. A cell that fails is drawn as its error and listed with it; the other
 cells still render.
 
@@ -127,6 +128,20 @@ The index of one sheet, also printed with `--json` and written with `--index`:
 
 `rect` is where the cell's image sits in the sheet, in pixels. `header` is the label band above it. A directory's
 `index.json` is `{ "sheets": [<index>, …], "cells": N, "seconds": S }`.
+
+### `--diff <before.png>` (on `shot`, and `sheet <story>`)
+
+```sh
+skelter-gallery shot button/look -o /tmp/before.png
+# … edit base.css …
+skelter-gallery shot button/look -o /tmp/after.png --diff /tmp/before.png
+# diff: 54 of 25920 pixels changed, in 12,12 100x29 → /tmp/after.diff.png
+```
+
+Writes `<out>.diff.png` beside the output: **before**, **after**, and the **changes** (the after image faded to grey,
+each changed pixel magenta, the changed region framed in red), side by side. With `--json` the output gains
+`"diff": { "file", "changed", "total", "bounds": [x, y, w, h] | null, "before_size", "after_size" }`. Images of
+different sizes are compared over the larger size. It is for looking: a difference never fails the command.
 
 ### `inspect <story>/<variant> <selector> [cell flags] [--json]`
 
@@ -153,7 +168,8 @@ text. The command prints JSON, with or without `--json`:
 - `computed` holds every property that differs from CSS's initial value.
 - `matched_rules` lists rules in cascade order. Theme rules come from the sheet named `gallery theme <name> + base.css`
   (`sheet_line` is the line in that sheet). Component rules carry the `.svelte` file and line of their `<style>` rule.
-  `layer` is `null` until skelter-core reports it.
+  `layer` is the rule's `@layer` (`sv.base` for base.css's kind looks, `<anonymous>` for an anonymous layer), `null`
+  for an unlayered rule.
 - `state.forced` lists the bits the gallery forced. `state.own` lists the node's real state (`disabled` through the prop).
 - `accesskit` is the node skelter published, or `null` for a node it prunes (a plain box).
 
@@ -196,9 +212,24 @@ only its own cells. When the cell changes, the variant is remounted in the windo
 5. Steps the embed's logic and the harness until both are settled (at most 120 frames).
 6. Forces the state's bits on the `subject` anchors (`SkelterBackend::force_state`), settles again, and draws.
 
-Text uses skelter-text's bundled test fonts (hermetic: a shot is the same on every machine). These fonts have no
-glyphs for scripts like Arabic and Hebrew, so RTL samples draw as boxes. The same cell rendered twice in one run gives
-the same bytes.
+A **window story** (`stories/layout/window`): when a variant's root creates a `<window>` (a toplevel, which the runtime
+keeps out of the slot), that window becomes the headless window's root for the cell, laid over the theme's `bg` (what
+a platform clears a window to), and `inspect` searches it. The gallery's own window is put back before the next cell.
+The interactive app does not show window stories yet: its cells are slots in one window.
+
+**Fonts** are bundled and system fonts are off (hermetic: a shot is the same on every machine). The set
+(`crates/skelter-gallery/fonts/README.md`, OFL subsets) is the theme's own families, Inter (300, 400, 600, 700) and
+JetBrains Mono, plus Noto fallbacks: Arabic, Hebrew, a CJK sample (common UI words in Chinese, Japanese and Korean,
+`fonts/cjk-sample.txt`), symbols (★ ⚙ ◀ ✂ ⌘ ⋯) and three emoji. A character outside the set draws as a box;
+`--system-fonts` adds the OS's fonts behind the bundled ones (for looking only: not the same on every machine). The
+same cell rendered twice in one run gives the same bytes.
+
+**Icons and assets.** The gallery registers a demo icon set on the process's registry (`skelter_gallery::icons::DEMO`:
+`file.new`, `file.open`, `file.save`, `edit.copy`, `edit.cut`, `edit.paste`, `edit.undo`, `edit.redo`, `search`,
+`settings`, `close`, `add`, `remove`, `check`, `run.start`, `run.stop`, `refresh`, `folder`, `warning`, `info`), so
+`<icon name="file.save">` and `<button icon="file.save">` draw. A key a host registered first is kept. A story's
+image files (`.svg`, `.png` next to its variants) are registered as image sources under the `asset://app/…` refs their
+imports evaluate to, so `import gear from './gear.svg'` works as an `image` or `icon` `source`.
 
 ## Adding a host (cadatomic-gallery)
 
@@ -226,7 +257,10 @@ fn main() -> std::process::ExitCode {
 - **Setup hooks** run before every mount. They get the cell, its story and the backend.
 - **Themes:** a host theme is named on the command line like the four built-ins. It is Dark Modern with the host's
   tokens as overrides.
-- **Library use:** `Renderer::new(&ext)`, then `shot`, `sheet`, `inspect`, `check` and `mount` on it. `Renderer::catalog`
+- **Library use:** `Renderer::new(&ext)`, then `shot`, `sheet`, `inspect`, `check` and `mount` on it.
+  `Renderer::reload(&changed_paths)` takes edits on disk into account without a new renderer: a `story.toml` re-reads
+  the stories, an image is registered again, a variant that failed to load is retried, and a change in a loaded
+  variant's module graph replaces the JS runtime (same document, window and GPU device; it takes well under a second). `Renderer::catalog`
   lists the stories, and `discover`/`Matrix::new` work without a renderer.
 
 A host kind's inline `style="width: …"` is refused by the compiler: its style table lists only the built-in kinds. Use

@@ -161,6 +161,10 @@ fn inspect_shows_a_forced_hover_in_the_matched_rules() {
     let rule = hover["nodes"][0]["matched_rules"].as_array().unwrap().iter().find(|r| r["selector"].as_str() == Some(hover_rule)).unwrap();
     assert!(rule["source"]["file"].as_str().is_some_and(|f| f.ends_with("primary.svelte")), "{rule}");
     assert_eq!(rule["source"]["line"], 11, "{rule}");
+    assert!(rule["layer"].is_null(), "an unlayered component rule: {rule}");
+    // base.css's kind rules carry their @layer (R1)
+    let rules = hover["nodes"][0]["matched_rules"].as_array().unwrap();
+    assert!(rules.iter().any(|r| r["layer"] == "sv.base" && r["selector"] == "button"), "{rules:?}");
     assert_eq!(n["computed"]["background"], "#ff0000", "{n}");
     // a kind name picks too
     assert_eq!(r.inspect(&c, "button").unwrap()["nodes"].as_array().unwrap().len(), 1);

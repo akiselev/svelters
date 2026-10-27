@@ -107,3 +107,12 @@ fn props_are_read_from_the_destructuring() {
     assert!(declared_props("let p = $props();").is_empty());
     assert!(declared_props("<button />").is_empty());
 }
+
+#[test]
+fn arg_labels_stay_on_one_line() {
+    use skelter_gallery::model::{escape_label, value_label};
+    assert_eq!(value_label(&serde_json::json!("First line\nSecond line")), "First line\\nSecond line");
+    assert_eq!(escape_label("a\tb\r\u{1b}c\u{2028}"), "a\\tb\\r\\u{1b}c\\u{2028}");
+    assert_eq!(value_label(&serde_json::json!("مرحبا ★")), "مرحبا ★", "printable text is kept");
+    assert_eq!(value_label(&serde_json::json!(3)), "3");
+}
