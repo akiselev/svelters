@@ -112,4 +112,15 @@ Nothing open in the lane. Other lanes merge `origin/ci/pb1-gallery` (a merge, ne
 
 ## CI
 
-(filled in below)
+- Earlier pushes (`cd478f3` … `81fd1c4`) were cancelled by the next push (`cancel-in-progress`), not failed.
+- **`37ce91a`** (items 1–7 with `origin/master` `dca6740` merged): **all six green**: js 40591242975,
+  linux-gtk 40591242799, linux-qt 40591242734, macos-appkit 40591242888, skelter 40591242721, windows-winui
+  40591242761. Reported to the coordinator for merging.
+- `543c89e` (G1–G6): skelter red on Windows in `skelter-gallery-app --test hooks` (my three tests shared one fixture
+  directory and deleted it under each other; fixed in `87dcc9f`). linux-gtk red in
+  `svelters-egui::wg4b dialog_exports_resolve_from_the_backend_and_abort` (run 40593964279): an extra "blocked the JS
+  thread for 20 ms" timing warning in an egui dialog test. Not this lane's: `543c89e` changes only the gallery
+  crates, and the test passed on `37ce91a`. This session cannot re-run jobs (403), so the record commit after
+  `87dcc9f` runs every workflow again on the final head. js, linux-qt, macos-appkit, windows-winui green.
+- `87dcc9f` (the hooks test fix; a skelter-only change, so only skelter.yml runs): skelter green, run 40596649693.
+- The record commit after it: all six workflows (see the coordinator message for its run ids).
