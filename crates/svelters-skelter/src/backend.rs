@@ -62,7 +62,7 @@ impl WakeState {
         *self.notify.lock().unwrap_or_else(|e| e.into_inner()) = f;
     }
 
-    fn wake(&self) {
+    pub(crate) fn wake(&self) {
         self.pending.store(true, Ordering::Release);
         if let Some(f) = self.notify.lock().unwrap_or_else(|e| e.into_inner()).as_ref() {
             f();
@@ -231,6 +231,8 @@ pub struct Inner {
     /// DZ0 (SV30): props a tool overrides (`designer.rs`), with the value the runtime last wrote under
     /// each (held back until the override clears).
     pub(crate) overrides: RefCell<HashMap<(svl_handle, svl_id), Value>>,
+    /// SV82: the backends over the same document, which share its events by owner (`route.rs`).
+    pub(crate) router: Rc<crate::route::Router>,
 }
 
 /// The svelters backend on skelter. Cheap to clone (shared state).
@@ -312,8 +314,10 @@ impl SkelterBackend {
     /// The document's registry must have every concrete kind of `kinds`, under the same tag (a host
     /// with kinds of its own registers the built-ins into its registry with
     /// [`crate::kinds::register_builtin`], A10). The
-    /// backend installs its sync deliverer on it (`Document::set_sync_delivery`): the cancelable
-    /// events of the host's dispatches reach JS listeners.
+    /// document's router installs its sync deliverer on it (`Document::set_sync_delivery`): the
+    /// cancelable events of the host's dispatches reach JS listeners. Several backends (one host
+    /// each) may share one document: events and native changes go to the backend that holds the
+    /// node, whichever backend dispatches or pumps (SV82, `route.rs`).
     pub fn shared(kinds: Arc<Kinds>, doc: Rc<RefCell<Document>>) -> StrResult<SkelterBackend> {
         {
             let d = doc.borrow();
@@ -330,6 +334,7 @@ impl SkelterBackend {
     }
 
     fn build(kinds: Arc<Kinds>, doc: Rc<RefCell<Document>>) -> SkelterBackend {
+        let router = crate::route::Router::of(&doc);
         let b = SkelterBackend(Rc::new(Inner {
             traffic: Cell::new(Traffic::default()),
             doc,
@@ -363,8 +368,9 @@ impl SkelterBackend {
             taps: RefCell::new(Vec::new()),
             tapped: RefCell::new(Vec::new()),
             overrides: RefCell::new(HashMap::new()),
+            router,
         }));
-        b.install_sync_delivery();
+        b.0.router.clone().join(&b);
         b
     }
 

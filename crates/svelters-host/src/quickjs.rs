@@ -34,6 +34,16 @@ pub(crate) fn leaked_runtimes() -> u64 {
     buffers::LEAKED_RUNTIMES.with(std::cell::Cell::get)
 }
 
+/// SV81: QuickJS runtimes freed on this thread (`JS_FreeRuntime` ran and released the host's
+/// callbacks), for tests that check a dropped host frees its runtime.
+pub(crate) fn freed_runtimes() -> u64 {
+    FREED_RUNTIMES.with(std::cell::Cell::get)
+}
+
+thread_local! {
+    static FREED_RUNTIMES: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
 /// W-J1: `SveltersNode` wrappers alive on this thread.
 pub(crate) fn live_node_wrappers() -> usize {
     fast::LIVE_WRAPPERS.with(std::cell::Cell::get)
@@ -95,8 +105,13 @@ impl Drop for RunningCtx {
 }
 
 /// The JS functions behind `CALLBACK` values, and how to call them.
+///
+/// SV81: the JS closures the runtime owns hold this struct strongly, so its context reference must
+/// not outlive the engine: [`QjsCallbacks::teardown`] (the engine's drop) releases it, and every JS
+/// reference held here, before the runtime is freed. Otherwise the closures keep the context, the
+/// context keeps the runtime, and the runtime keeps the closures.
 pub(crate) struct QjsCallbacks {
-    ctx: Context,
+    ctx: RefCell<Option<Context>>,
     core: Weak<Core>,
     pub(crate) funcs: RefCell<std::collections::HashMap<u64, rquickjs::Persistent<Function<'static>>>>,
     /// E2: this runtime's transfer tokens.
@@ -105,10 +120,33 @@ pub(crate) struct QjsCallbacks {
     pub(crate) wrappers: fast::Wrappers,
 }
 
+impl QjsCallbacks {
+    /// The context, while the engine lives.
+    fn context(&self) -> Option<Context> {
+        self.ctx.borrow().clone()
+    }
+
+    /// Lets go of the runtime: frees the wrappers and the saved functions, then drops the context
+    /// reference. After this, `invoke` fails and the other calls do nothing. Idempotent.
+    fn teardown(&self) {
+        let Some(ctx) = self.ctx.borrow_mut().take() else { return };
+        let rt = ctx.with(|c| unsafe { rquickjs::qjs::JS_GetRuntime(c.as_raw().as_ptr()) });
+        self.wrappers.free_all(rt);
+        let funcs = std::mem::take(&mut *self.funcs.borrow_mut());
+        drop(funcs);
+        drop(ctx);
+    }
+}
+
 impl Drop for QjsCallbacks {
     fn drop(&mut self) {
-        let rt = self.ctx.with(|c| unsafe { rquickjs::qjs::JS_GetRuntime(c.as_raw().as_ptr()) });
-        self.wrappers.free_all(rt);
+        // The engine's drop normally did this already; then the runtime is freeing its closures,
+        // which drop the last references to this struct, and nothing here touches JS.
+        if self.ctx.get_mut().is_some() {
+            self.teardown();
+        } else {
+            FREED_RUNTIMES.with(|n| n.set(n.get() + 1));
+        }
     }
 }
 
@@ -152,10 +190,13 @@ impl crate::core::CallbackEngine for QjsCallbacks {
                 let ctx = unsafe { Ctx::from_raw(raw) };
                 run(&ctx).map_err(|e| js_err(&ctx, e))
             }
-            None => self.ctx.with(|ctx| {
-                let _running = RunningCtx::enter(&ctx);
-                run(&ctx).map_err(|e| js_err(&ctx, e))
-            }),
+            None => {
+                let ctx = self.context().ok_or_else(|| JsError::new(ErrorKind::Host, "host has shut down"))?;
+                ctx.with(|ctx| {
+                    let _running = RunningCtx::enter(&ctx);
+                    run(&ctx).map_err(|e| js_err(&ctx, e))
+                })
+            }
         }
     }
 
@@ -172,7 +213,10 @@ impl crate::core::CallbackEngine for QjsCallbacks {
         // Not re-entrant into the context: frees through the runtime, outside any JS.
         let rt = match CURRENT_CTX.with(|c| c.get()) {
             Some(raw) => unsafe { rquickjs::qjs::JS_GetRuntime(raw.as_ptr()) },
-            None => self.ctx.with(|c| unsafe { rquickjs::qjs::JS_GetRuntime(c.as_raw().as_ptr()) }),
+            None => match self.context() {
+                Some(ctx) => ctx.with(|c| unsafe { rquickjs::qjs::JS_GetRuntime(c.as_raw().as_ptr()) }),
+                None => return,
+            },
         };
         self.wrappers.free_gone(rt);
     }
@@ -279,7 +323,7 @@ impl QjsEngine {
         let ctx = Context::full(&rt).map_err(host_err)?;
         let weak = Rc::downgrade(core);
         let callbacks = Rc::new(QjsCallbacks {
-            ctx: ctx.clone(),
+            ctx: RefCell::new(Some(ctx.clone())),
             core: Rc::downgrade(core),
             funcs: RefCell::default(),
             home: buffers::QjsHome::new(core.ops.queue.clone()),
@@ -789,6 +833,17 @@ impl Drop for QjsEngine {
     #[allow(clippy::disallowed_methods)]
     fn drop(&mut self) {
         self.ctx.with(|c| fast::uninstall(&c));
+        self.wait_for_transfers();
+        // SV81: JS references held from Rust go while the runtime is alive, and the callbacks let go
+        // of their context, so dropping `ctx` and `rt` (the fields, after this) frees the runtime.
+        self.entries.clear();
+        self.callbacks.teardown();
+    }
+}
+
+impl QjsEngine {
+    #[allow(clippy::disallowed_methods)]
+    fn wait_for_transfers(&mut self) {
         // E2: a worker may still use a transferred buffer of this runtime (its call was cancelled, but
         // it has not looked yet). Wait a little; past that, leak the runtime rather than free memory
         // under the worker (`docs/notes/egui-rust-exports.md` §8, shutdown order).
