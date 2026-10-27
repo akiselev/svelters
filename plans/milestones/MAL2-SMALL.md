@@ -3,7 +3,7 @@
 Lane `S-C small` of cadatomic's MAL2 batch, branch `ci/mal2-small`, base master `af787afe`.
 Coordinator: cadatomic's batch coordinator session. Every seam is generic.
 
-**Status:** done; CI: see the end.
+**Status:** done; CI green on `9164d47b`, waiting for the coordinator's merge.
 
 ## What landed
 
@@ -103,3 +103,7 @@ Coordinator: cadatomic's batch coordinator session. Every seam is generic.
 - FQ-108: `svelters_skelter::dump_with(dir, &kinds, Some(&backend), &bind_sources)` from the app's dump.
 
 ## CI
+
+Green on `9164d47b` (all workflows): js 40472426273, linux-gtk 40472426314, linux-qt 40472426198,
+macos-appkit 40472426224, skelter 40472426356, windows-winui 40472426228. The commit after it only
+fills in this section.
