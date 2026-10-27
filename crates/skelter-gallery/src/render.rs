@@ -143,7 +143,8 @@ impl Renderer {
     /// A renderer over `ext`'s story roots, kinds, setup hooks and token sets.
     pub fn new(ext: &Extensions) -> Result<Renderer, Error> {
         let catalog = discover_with(&ext.story_roots, &ext.families).map_err(Error::Stories)?;
-        let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::testing());
+        let fonts = crate::fonts::store(ext.fonts);
+        crate::icons::register_demo();
         // the host's kinds after the built-ins (`Kinds::with_app`); their errors are strings
         let failed: RefCell<Option<String>> = RefCell::new(None);
         let kinds = svelters_skelter::Kinds::with_app(&svelters_skelter::surface::builtin(), |reg| {
@@ -241,7 +242,7 @@ impl Renderer {
         Ok(())
     }
 
-    /// The fonts every cell draws with (skelter-text's bundled test fonts: hermetic).
+    /// The fonts every cell draws with ([`crate::fonts`]; hermetic unless `--system-fonts`).
     pub fn fonts(&self) -> &Arc<skelter_text::FontStore> {
         &self.fonts
     }
@@ -331,6 +332,10 @@ impl Renderer {
         cfg.dev = true;
         cfg.spec_fragments.extend(self.fragment.clone());
         let provider = Rc::new(SourceProvider::new(cfg)?);
+        // the story's images under the `asset://` refs its imports evaluate to
+        if let Some(dir) = file.parent() {
+            crate::icons::register_assets(provider.assets(), dir);
+        }
         self.embed.load_from(provider.clone()).map_err(|e| {
             // the engine shortens module-load messages: the compiler's own errors read in full
             let c = provider.check(file);

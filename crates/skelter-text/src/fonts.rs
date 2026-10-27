@@ -56,6 +56,14 @@ impl FontConfig {
     }
 }
 
+/// The default symbol chain ([`FontStore::symbol_chain`]).
+#[cfg(target_os = "windows")]
+const SYMBOL_CHAIN: &[&str] = &["Segoe UI Symbol", "Segoe UI Emoji", "Cambria Math"];
+#[cfg(target_os = "macos")]
+const SYMBOL_CHAIN: &[&str] = &["Apple Symbols", "Apple Color Emoji", "STIX Two Math"];
+#[cfg(not(any(target_os = "windows", target_os = "macos")))]
+const SYMBOL_CHAIN: &[&str] = &["Noto Sans Symbols 2", "Noto Color Emoji", "Noto Sans Math"];
+
 #[derive(Default)]
 struct Faces {
     by_key: HashMap<(u64, u32), FontId>,
@@ -70,6 +78,7 @@ pub struct FontStore {
     coords: RwLock<HashMap<u64, Arc<[i16]>>>,
     default_family: String,
     system_fonts: bool,
+    symbol_chain: RwLock<Vec<Arc<str>>>,
 }
 
 impl std::fmt::Debug for FontStore {
@@ -92,6 +101,7 @@ impl FontStore {
             coords: RwLock::default(),
             default_family: cfg.default_family,
             system_fonts: cfg.system_fonts,
+            symbol_chain: RwLock::new(SYMBOL_CHAIN.iter().map(|f| Arc::from(*f)).collect()),
         };
         for bytes in cfg.bundled {
             store.register_font_inner(bytes, !cfg.system_fonts);
@@ -199,6 +209,20 @@ impl FontStore {
             return Arc::from(&[][..]);
         }
         self.coords.read().unwrap().get(&key).cloned().unwrap_or_else(|| Arc::from(&[][..]))
+    }
+
+    /// The families tried, in order, for a Common-script symbol (arrows, technical, shapes,
+    /// dingbats) that the text's own font stack lacks. The default is the OS's
+    /// (`Segoe UI Symbol`…, `Apple Symbols`…, `Noto Sans Symbols 2`…).
+    pub fn symbol_chain(&self) -> Vec<Arc<str>> {
+        self.symbol_chain.read().unwrap().clone()
+    }
+
+    /// Replaces the symbol chain ([`FontStore::symbol_chain`]), for a font set that must draw the
+    /// same on every OS (the gallery's bundled fonts). Bumps the generation.
+    pub fn set_symbol_chain<S: AsRef<str>>(&self, families: impl IntoIterator<Item = S>) {
+        *self.symbol_chain.write().unwrap() = families.into_iter().map(|f| Arc::from(f.as_ref())).collect();
+        self.generation.fetch_add(1, Ordering::Relaxed);
     }
 
     /// Whether some face of `family` maps `ch` (for the symbol fallback chain).
