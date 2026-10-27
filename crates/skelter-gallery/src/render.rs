@@ -121,7 +121,7 @@ pub struct Renderer {
     fragment: Option<PathBuf>,
     families: Vec<String>,
     roots: Vec<PathBuf>,
-    setup: Vec<Rc<dyn Fn(&mut SetupCx<'_>)>>,
+    setup: Vec<crate::ext::SetupHook>,
     themes: Vec<(String, TokenMap)>,
     backend: SkelterBackend,
     embed: Embed,

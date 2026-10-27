@@ -7,6 +7,12 @@ use std::path::PathBuf;
 use std::rc::Rc;
 use svelters_skelter::SkelterBackend;
 
+/// Registers a host's kinds on the gallery's registry.
+pub type RegisterKinds = fn(&mut KindRegistry) -> Result<(), String>;
+
+/// A host's per-mount setup ([`Extensions::setup`]).
+pub type SetupHook = Rc<dyn Fn(&mut SetupCx<'_>)>;
+
 /// A host's additions. `Extensions::default()` is svelters' own gallery: the `gallery/` root of this
 /// repository (when the CLI finds it), the built-in kinds and the four VS Code themes.
 #[derive(Default)]
@@ -15,11 +21,11 @@ pub struct Extensions {
     /// Gallery roots (each holds `stories/<family>/<id>/story.toml`).
     pub story_roots: Vec<PathBuf>,
     /// Registers the host's kinds on the gallery's registry, after the built-in ones.
-    pub register_kinds: Vec<fn(&mut KindRegistry) -> Result<(), String>>,
+    pub register_kinds: Vec<RegisterKinds>,
     /// Runs before each mount (a cell's story and variant): host state a story reads (cadatomic's
     /// grid sources, its pick board).
     /// (`Rc`, not the brief's `Box`: the renderer keeps them.)
-    pub setup: Vec<Rc<dyn Fn(&mut SetupCx<'_>)>>,
+    pub setup: Vec<SetupHook>,
     /// Extra token sets, by theme name, selectable as `--theme <name>`: each is Dark Modern with
     /// these tokens as overrides (`--sv-*`, `--vscode-*`, or the host's own custom properties).
     pub themes: Vec<(String, TokenMap)>,

@@ -27,7 +27,7 @@ pub mod render;
 pub mod sheet;
 
 pub use catalog::{Catalog, Coverage, StoryError, discover, discover_with};
-pub use ext::{Extensions, SetupCx};
+pub use ext::{Extensions, RegisterKinds, SetupCx, SetupHook};
 pub use matrix::{Axes, Matrix};
 pub use model::{Cell, FAMILIES, State, Story, StoryId, Theme, Variant, VariantId};
 pub use render::{Error, Renderer, Shot, png, save_png};
