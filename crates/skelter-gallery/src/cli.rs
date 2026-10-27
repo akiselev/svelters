@@ -210,14 +210,14 @@ fn default_root() -> Option<PathBuf> {
 /// current directory.
 fn out_dir(ext: &Extensions) -> PathBuf {
     let workspace = |d: &Path| std::fs::read_to_string(d.join("Cargo.toml")).is_ok_and(|t| t.contains("[workspace]"));
-    let base = ext.story_roots.first().and_then(|r| r.canonicalize().ok()).and_then(|r| r.ancestors().find(|d| workspace(d)).map(Path::to_path_buf));
+    let base = ext.story_roots.first().and_then(|r| crate::model::canonicalize(r).ok()).and_then(|r| r.ancestors().find(|d| workspace(d)).map(Path::to_path_buf));
     base.unwrap_or_else(|| PathBuf::from(".")).join("target/gallery")
 }
 
 /// skelter-widgets' `base.css` source, when the gallery runs inside the svelters checkout: edits to
 /// it show without a rebuild.
 fn base_css_source(ext: &Extensions) -> Option<PathBuf> {
-    ext.story_roots.iter().filter_map(|r| r.canonicalize().ok()).find_map(|r| r.ancestors().map(|d| d.join("crates/skelter-widgets/src/theme/base.css")).find(|p| p.is_file()))
+    ext.story_roots.iter().filter_map(|r| crate::model::canonicalize(r).ok()).find_map(|r| r.ancestors().map(|d| d.join("crates/skelter-widgets/src/theme/base.css")).find(|p| p.is_file()))
 }
 
 fn catalog(ext: &Extensions) -> Result<Catalog, Fail> {

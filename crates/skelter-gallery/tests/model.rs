@@ -29,7 +29,7 @@ fn discovery_finds_every_story_in_family_order() {
 #[test]
 fn errors_name_the_file_and_each_field() {
     let errs = discover(&[fixture("bad-toml")]).unwrap_err();
-    let file = fixture("bad-toml").canonicalize().unwrap().join("stories/controls/wrong/story.toml");
+    let file = skelter_gallery::canonicalize(&fixture("bad-toml")).unwrap().join("stories/controls/wrong/story.toml");
     assert!(errs.iter().all(|e| e.file == file), "{errs:?}");
     let fields: Vec<&str> = errs.iter().filter_map(|e| e.field.as_deref()).collect();
     for f in ["colour", "id", "family", "kinds", "size", "states[1]", "variant[0].file", "variant[0].args.disabled"] {

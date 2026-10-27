@@ -62,7 +62,7 @@ pub fn discover_with(roots: &[PathBuf], families: &[String]) -> Result<Catalog, 
     let mut stories: Vec<Story> = Vec::new();
     let mut errors = Vec::new();
     for root in roots {
-        let root = match root.canonicalize() {
+        let root = match crate::model::canonicalize(root) {
             Ok(r) => r,
             Err(e) => {
                 errors.push(StoryError::new(root, None, format!("gallery root: {e}")));

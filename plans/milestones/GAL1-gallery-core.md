@@ -104,6 +104,12 @@ from a checkout with `gallery/`:
 - **R3 (svelters-host): module-load messages are cut short** (`…error[js_parse_error]: Un`). The gallery works around
   it with `SourceProvider::check`. The message passed through QuickJS's load error seems to be truncated.
 
+- **R4 (svelters-modules): make its `canonicalize` public.** On Windows `std::fs::canonicalize` returns a verbatim path
+  (`\\?\D:\…`), which the module loader cannot import. svelters-modules strips that prefix in a private helper. The
+  gallery has a copy of it, `skelter_gallery::canonicalize` (the same rule: a `VerbatimDisk` prefix becomes the plain
+  `D:\…`), and uses it for every gallery root. **The app lane should use `skelter_gallery::canonicalize` too.**
+  Smallest change: `pub use` the svelters-modules helper, then drop the copy.
+
 ## Questions (each with a recommendation)
 
 - **Q1 (app lane): reloading an edited variant.** A renderer keeps the modules it has loaded, so an edited `.svelte`
@@ -125,4 +131,7 @@ from a checkout with `gallery/`:
 
 ## CI
 
-(filled in after the push)
+- `5d69749`: five workflows green; skelter (windows-latest) red in `cargo test` (run 40576634441, job 122444992663).
+  All 7 skelter-gallery tests that load a story failed with `cannot import "\\?\D:\…primary.svelte"`: the verbatim
+  root path from `canonicalize`. Fixed in the next commit with `skelter_gallery::canonicalize` (R4).
+- Final sha: see the commit after this record's update (runs listed by the coordinator at the merge).
