@@ -694,6 +694,11 @@ pub mod core {
         /// last layout: given before each event and each prepare, while the node is one. A kind that
         /// draws its own bars or scrolls by its own rules (`scroll-area`) keeps it.
         fn scroll_geometry(&mut self, _g: &skelter_core::ScrollGeometry) {}
+        /// An offset the kind wants core's scroll node to take, asked after each prepare (a scroll
+        /// container's offset JS wrote: skelter-core's `PrepareCx::scroll_to`). `None`: none.
+        fn take_scroll_request(&mut self) -> Option<skelter_base::geom::Vec2> {
+            None
+        }
         /// Stands in for skelter-core's `PrepareCx::place_a11y`: descendants the kind draws itself
         /// where they are never laid out, by the path of child indices from the node, with their
         /// bounds in the node's local space (`None`: hidden). Asked after each prepare.

@@ -988,6 +988,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             (res.new, res.used, res.new_paths, res.used_paths, emitted)
         });
         self.add_reads(reads);
+        if let Some(v) = self.widget.take_scroll_request() {
+            cx.scroll_to(v);
+        }
         // SV79: descendants the widget draws itself, placed for assistive technology
         for (path, rect) in self.widget.a11y_placements() {
             let mut at = Some(node.id());

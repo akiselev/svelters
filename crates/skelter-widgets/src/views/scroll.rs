@@ -737,8 +737,9 @@ kind_props! {
     direction "direction": String = Enum("vertical") ; Enum(&["vertical", "horizontal", "both"]), Layout;
     /// The offset (native-owned: `bind:scroll-x` observes it; a write JS made before it saw the
     /// latest native scroll is refused).
-    scroll_x "scroll-x": f64 = F64(0.0) ; F64, Property, bindable;
-    scroll_y "scroll-y": f64 = F64(0.0) ; F64, Property, bindable;
+    /// A write re-records the area (its bars move) and hands the offset to core in the prepare.
+    scroll_x "scroll-x": f64 = F64(0.0) ; F64, Paint, bindable;
+    scroll_y "scroll-y": f64 = F64(0.0) ; F64, Paint, bindable;
     /// At an edge, a new gesture goes on to the scroll area around (`auto`) or stays (`contain`, `none`).
     overscroll_behavior "overscroll-behavior": String = Enum("auto") ; Enum(&["auto", "contain", "none"]), Property;
     /// The box props of the content (svelters-egui's scroll-area is a `box`, A9b); each applies
@@ -800,6 +801,9 @@ pub struct ScrollArea {
     /// A scroll gesture or animation is running (`scrollend` when it stops).
     scrolling: bool,
     focused: bool,
+    /// JS wrote `scroll-x`/`scroll-y`: the next prepare hands the offset to core's scroll node
+    /// (without it the thumb moved and the content did not).
+    js_offset: bool,
     /// Focus is inside the area (PageUp/PageDown/Home/End are the area's when no child claimed them).
     focus_within: bool,
     /// The last event's time and policy (recording has neither: the bars' fade reads them).
@@ -824,6 +828,7 @@ impl Default for ScrollArea {
             js_rev: 0,
             scrolling: false,
             focused: false,
+            js_offset: false,
             focus_within: false,
             now: Time::ZERO,
             policy: None,
@@ -1086,6 +1091,7 @@ impl Kind for ScrollArea {
             self.scroller.set_offset(o);
             let o = self.scroller.offset();
             (self.props.scroll_x, self.props.scroll_y) = (o.x as f64, o.y as f64);
+            self.js_offset = true;
         }
         self.sync();
         Ok(())
@@ -1125,6 +1131,12 @@ impl Kind for ScrollArea {
             l.justify_content(&mut s, P::justify_content.id(), &p.justify_content);
         }
         s
+    }
+
+    /// A JS offset reaches core in the prepare, after layout, so core clamps it to the content
+    /// just laid out.
+    fn take_scroll_request(&mut self) -> Option<Vec2> {
+        std::mem::take(&mut self.js_offset).then(|| self.scroller.offset())
     }
 
     fn record(&self, cx: &mut RecordCx) {

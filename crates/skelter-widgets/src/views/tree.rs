@@ -352,8 +352,16 @@ impl TreeView {
     pub fn disclosure_rect(&self, pos: usize) -> Option<Rect> {
         let r = self.rows.get(pos).filter(|r| r.expandable)?;
         let row = self.list.row_rect(pos)?;
-        let x0 = r.depth as f32 * self.indent;
+        // `root-decorated={false}`: level 0 has no disclosure column, every level moves one indent left
+        let level = r.depth.checked_sub(self.undecorated_levels())?;
+        let x0 = level as f32 * self.indent;
         Some(Rect::new(x0, row.min.y, x0 + self.indent, row.max.y))
+    }
+
+    /// The levels without a disclosure column: 1 when `root-decorated` is off (Qt's
+    /// `rootIsDecorated`), else 0.
+    fn undecorated_levels(&self) -> u32 {
+        u32::from(!self.props.root_decorated)
     }
 
     /// The pointer position's row, if it is on that row's disclosure triangle.
@@ -417,7 +425,7 @@ impl skelter_core::VirtualChildren for TreeView {
     /// same for leaves, so labels line up), not under it.
     fn row_rect(&self, i: usize) -> Rect {
         let r = skelter_core::VirtualChildren::row_rect(&self.list, i);
-        let x = self.rows.get(i).map_or(0.0, |row| (row.depth as f32 + 1.0) * self.indent);
+        let x = self.rows.get(i).map_or(0.0, |row| (row.depth + 1).saturating_sub(self.undecorated_levels()) as f32 * self.indent);
         Rect::new((r.min.x + x).min(r.max.x), r.min.y, r.max.x, r.max.y)
     }
     fn content_extent(&self) -> Vec2 {
@@ -450,6 +458,9 @@ kind_props! {
     pool_limit "pool-limit": i64 = I64(8) ; I64, Property;
     /// Points per level; the disclosure triangle sits in the last.
     indent "indent": f64 = F64(16.0) ; F64, Paint;
+    /// Level-0 rows show their twistie (Qt's `rootIsDecorated`); off, they start at the left edge
+    /// and keys, AccessKit and a double click still expand them.
+    root_decorated "root-decorated": bool = Bool(true) ; Bool, Layout;
     /// The expanded node ids (native-owned: keys, presses and drags change it).
     expanded_ids "expanded-ids": Vec<Value> = None ; List, Structure, bindable;
 }
@@ -641,6 +652,8 @@ impl Kind for TreeView {
             }
             self.props.set(prop, v)?;
             self.indent = self.props.indent as f32;
+        } else if prop == P::root_decorated.id() {
+            self.props.set(prop, v)?;
         } else if prop == P::expanded_ids.id() {
             let ids = id_list(v).ok_or(bad)?;
             self.props.set(prop, v)?;
@@ -853,6 +866,22 @@ mod tests {
         let star = Event::Key(KeyEvent { key: None, physical: 0, text: Some("*".into()), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::SHIFT });
         assert_eq!(send(&mut t, &pol, Time::ZERO, &star).handled, Handled::Yes);
         assert!(t.is_expanded(1) && t.is_expanded(2) && !t.is_expanded(3));
+    }
+
+    #[test]
+    fn root_decorated_off_drops_the_level_0_twisties_and_their_column() {
+        let mut t = tree();
+        assert!(t.disclosure_rect(0).is_some());
+        assert!(t.set_prop(P::root_decorated.id(), &Value::Bool(false)).is_ok());
+        assert_eq!(t.get_prop(P::root_decorated.id()), Some(Value::Bool(false)));
+        expand(&mut t, 1);
+        // row 0 (node 1, level 0): no twistie, its content at the left edge
+        assert_eq!(t.disclosure_rect(0), None);
+        assert_eq!(skelter_core::VirtualChildren::row_rect(&t, 0).min.x, 0.0);
+        // row 1 (node 11, level 1): its twistie in the first column, its content one indent in
+        let r = t.disclosure_rect(1).unwrap();
+        assert_eq!((r.min.x, r.max.x), (0.0, 16.0));
+        assert_eq!(skelter_core::VirtualChildren::row_rect(&t, 1).min.x, 16.0);
     }
 
     #[test]
