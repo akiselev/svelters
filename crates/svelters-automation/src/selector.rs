@@ -11,6 +11,8 @@
 //!           | "source=" FILE ("#" OFFSET)?       DZ0: nodes a dev build declared in FILE (a path or
 //!                                                a suffix of one at a `/`), at that byte offset
 //!           | "component=" … | "a11y=" …          parsed; answered `capability.absent` (AU3)
+//!           | "obj=" TEXT                        a host engine: TEXT, verbatim to the end of the
+//!                                                part, goes to `SceneSource::host_select`
 //!           | "css=" CSS | CSS                   the svelters-style matcher (the default engine)
 //! attr     := "name" ("=" | "*=") text | STATE   STATE: a state pseudo-class name (`checked`,
 //!                                                `disabled`, `focus`, `selected`, …)
@@ -88,6 +90,9 @@ pub enum Part {
     Css(String),
     /// DZ0: the nodes declared in `file` (matched as a path suffix at a `/`), at `offset` if given.
     Source { file: String, offset: Option<u32> },
+    /// SV-OBJ3: a part the host answers (`obj=`): `text` is everything after `engine=`, verbatim,
+    /// to the end of the part (a `>>` inside brackets or quotes stays in it).
+    Host { engine: String, text: String },
     /// Engines whose data lands later (`component=` in AU3, `a11y=` with AU2's tree).
     Deferred(&'static str),
 }
@@ -97,6 +102,13 @@ pub enum Part {
 pub struct Selector {
     pub source: String,
     pub parts: Vec<Part>,
+}
+
+impl Selector {
+    /// Parses `s` (see the module docs); [`Selector::source`] keeps `s` verbatim.
+    pub fn parse(s: &str) -> Result<Selector, Error> {
+        parse(s)
+    }
 }
 
 impl std::str::FromStr for Selector {
@@ -183,6 +195,10 @@ fn part(p: &str) -> Result<Part, Error> {
         "component" => Part::Deferred("component"),
         "source" => source(strip_quotes(v))?,
         "a11y" => Part::Deferred("a11y"),
+        "obj" => Part::Host {
+            engine: engine.to_string(),
+            text: v.to_string(),
+        },
         // `[value=3]` and other CSS that contains `=` reach here only with an engine-like prefix
         _ => return Ok(Part::Css(p.to_string())),
     })
@@ -314,6 +330,15 @@ mod tests {
         assert!(path_matches("/w/ui/panels/Jobs.svelte", "/w/ui/panels/Jobs.svelte"));
         assert!(!path_matches("/w/ui/panels/Jobs.svelte", "obs.svelte"));
         assert!(parse("text=/x/i").is_err());
+        let s = Selector::parse(r#"obj=a[b="c >> d"] >> nth=0"#).unwrap();
+        assert_eq!(s.parts.len(), 2);
+        assert!(
+            matches!(&s.parts[0], Part::Host { engine, text } if engine == "obj" && text == r#"a[b="c >> d"]"#),
+            "{:?}",
+            s.parts[0]
+        );
+        assert!(matches!(s.parts[1], Part::Nth(0)));
+        assert_eq!(s.source, r#"obj=a[b="c >> d"] >> nth=0"#);
         assert!(parse("role=button[name=\"x\"").is_err());
         assert!(TextMatch::Contains("COUNT".into()).matches("Count: 1"));
         assert!(!TextMatch::Exact("Count".into()).matches("Count: 1"));

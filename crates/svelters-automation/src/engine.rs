@@ -77,6 +77,19 @@ pub(crate) fn resolve_in<S: SceneSource>(s: &S, sel: &Selector, skip: &dyn Fn(&s
                         .collect(),
                 )
             }
+            Part::Host { engine, text } => {
+                // SV-OBJ3: the previous part's matches, or every (unskipped) root's top
+                let among = match &scope {
+                    Scope::All => s
+                        .roots()
+                        .into_iter()
+                        .filter(|r| !r.key.as_deref().is_some_and(skip))
+                        .map(|r| r.top)
+                        .collect(),
+                    _ => matched(&scope),
+                };
+                Scope::Below(dedup(s.host_select(engine, text, &among)?))
+            }
             Part::Css(css) => Scope::Below(s.select_css(css, &candidates(s, &scope, skip))?),
             Part::Key(k) => {
                 // the item's top nodes (their own `anchor-scope` ends with the key): the next part
@@ -140,6 +153,12 @@ fn matched<N: Copy>(scope: &Scope<N>) -> Vec<N> {
         Scope::All => Vec::new(),
         Scope::Inclusive(v) | Scope::Below(v) | Scope::Exact(v) => v.clone(),
     }
+}
+
+/// `v` without repeats, first occurrence kept.
+fn dedup<N: Copy + Eq + std::hash::Hash>(v: Vec<N>) -> Vec<N> {
+    let mut seen = std::collections::HashSet::new();
+    v.into_iter().filter(|n| seen.insert(*n)).collect()
 }
 
 /// The nodes the next part filters, in document order, without duplicates.
