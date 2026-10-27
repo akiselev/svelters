@@ -572,6 +572,12 @@ impl<'a> Host<'a> {
         self.engine.borrow_mut().collect_garbage();
     }
 
+    /// SV81: QuickJS runtimes freed on this thread so far (a dropped host, or the old runtime of a
+    /// full reload). A runtime leaked on purpose (E2, `BufferStats::leaked_runtimes`) is not counted.
+    pub fn freed_runtimes() -> u64 {
+        quickjs::freed_runtimes()
+    }
+
     /// W-J1: `host.wrap` node wrappers alive on this thread (not yet finalized by the GC).
     pub fn live_node_wrappers(&self) -> usize {
         quickjs::live_node_wrappers()
