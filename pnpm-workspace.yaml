@@ -3,6 +3,7 @@ packages:
   - "fixtures/*"
   - "bench/*"
   - "tests/*"
+  - "gallery"
   - "examples/exports/app"
   - "examples/egui-kinds/app"
   - "docs/site"

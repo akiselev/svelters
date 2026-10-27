@@ -1,0 +1,43 @@
+id = "slider"
+title = "Slider"
+family = "controls"
+kinds = ["slider"]
+size = [360, 72]
+notes = "Rail, fill, thumb, ticks and marks, the value box."
+
+[[variant]]
+id = "value"
+title = "Value"
+file = "value.svelte"
+args = { value = [0, 35, 100] }
+
+[[variant]]
+id = "no-value-box"
+title = "Without the value box"
+file = "no-value-box.svelte"
+
+[[variant]]
+id = "ticks"
+title = "Ticks"
+file = "ticks.svelte"
+args = { ticks = ["before", "after", "both"] }
+
+[[variant]]
+id = "marks"
+title = "Labelled marks"
+file = "marks.svelte"
+
+[[variant]]
+id = "caption"
+title = "With a caption"
+file = "caption.svelte"
+
+[[variant]]
+id = "vertical"
+title = "Vertical"
+file = "vertical.svelte"
+
+[[variant]]
+id = "inverted"
+title = "Inverted"
+file = "inverted.svelte"

@@ -1,0 +1,33 @@
+id = "multiline"
+title = "Multi-line text field"
+family = "text"
+kinds = ["text-edit"]
+size = [320, 128]
+states = ["normal", "hover", "focus-visible", "disabled"]
+notes = "`multiline`: several lines, wrapping, overflow past the field's height."
+
+[[variant]]
+id = "value"
+title = "Text and placeholder"
+file = "value.svelte"
+args = { text = ["", "First line\nSecond line"] }
+
+[[variant]]
+id = "wrapping"
+title = "A long paragraph"
+file = "wrapping.svelte"
+
+[[variant]]
+id = "overflow"
+title = "More lines than fit"
+file = "overflow.svelte"
+
+[[variant]]
+id = "read-only"
+title = "Read only"
+file = "read-only.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left text"
+file = "rtl.svelte"

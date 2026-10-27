@@ -1,0 +1,33 @@
+id = "table"
+title = "Table"
+family = "data"
+kinds = ["table", "table-column"]
+size = [420, 200]
+states = ["normal", "focus-visible", "disabled"]
+notes = "A virtual table: the frozen header, sort arrows, stripes, the selected rows, cell alignment and eliding. Rows come from a JS array through `range` and `set-rows`."
+
+[[variant]]
+id = "basic"
+title = "Basic"
+file = "basic.svelte"
+args = { striped = [true, false] }
+
+[[variant]]
+id = "sorted-selected"
+title = "Sorted, with a multi-selection"
+file = "sorted-selected.svelte"
+
+[[variant]]
+id = "overflow"
+title = "Columns wider than the table"
+file = "overflow.svelte"
+
+[[variant]]
+id = "empty"
+title = "No rows"
+file = "empty.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left cell text"
+file = "rtl.svelte"

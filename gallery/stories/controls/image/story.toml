@@ -1,0 +1,23 @@
+id = "image"
+title = "Image"
+family = "controls"
+kinds = ["image"]
+size = [240, 120]
+states = ["normal"]
+notes = "A picture fitted to its rect by `fit`. The imported file is an `asset://` ref; a source that does not load draws the placeholder box."
+
+[[variant]]
+id = "fit"
+title = "Fit"
+file = "fit.svelte"
+args = { fit = ["contain", "cover", "fill", "none", "scale-down"] }
+
+[[variant]]
+id = "natural"
+title = "Natural size"
+file = "natural.svelte"
+
+[[variant]]
+id = "missing"
+title = "Source that does not load"
+file = "missing.svelte"

@@ -1,0 +1,28 @@
+id = "spinner"
+title = "Spinner"
+family = "controls"
+kinds = ["spinner"]
+size = [200, 64]
+states = ["normal", "disabled"]
+notes = "A busy indicator; it animates, so it renders at a fixed virtual time."
+
+[[variant]]
+id = "size"
+title = "Size"
+file = "size.svelte"
+args = { size = [12, 20, 32] }
+
+[[variant]]
+id = "row-height"
+title = "Row height (no size)"
+file = "row-height.svelte"
+
+[[variant]]
+id = "stopped"
+title = "Not spinning"
+file = "stopped.svelte"
+
+[[variant]]
+id = "with-label"
+title = "Beside a label"
+file = "with-label.svelte"

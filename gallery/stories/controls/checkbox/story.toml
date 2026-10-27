@@ -1,0 +1,34 @@
+id = "checkbox"
+title = "Checkbox"
+family = "controls"
+kinds = ["checkbox"]
+size = [360, 104]
+states = ["normal", "hover", "active", "focus-visible", "disabled"]
+notes = "The box, the check and dash marks, the caption's alignment with the box."
+
+[[variant]]
+id = "value"
+title = "Value"
+file = "value.svelte"
+args = { value = ["unchecked", "checked", "indeterminate"] }
+
+[[variant]]
+id = "no-caption"
+title = "No caption"
+file = "no-caption.svelte"
+args = { checked = [false, true] }
+
+[[variant]]
+id = "long-text"
+title = "Long caption"
+file = "long-text.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left caption"
+file = "rtl.svelte"
+
+[[variant]]
+id = "dense"
+title = "A dense list of options"
+file = "dense.svelte"

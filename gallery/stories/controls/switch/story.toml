@@ -1,0 +1,28 @@
+id = "switch"
+title = "Switch"
+family = "controls"
+kinds = ["switch"]
+size = [360, 64]
+notes = "The track, the knob's position and colour in both values, the caption after it."
+
+[[variant]]
+id = "value"
+title = "Value"
+file = "value.svelte"
+args = { active = [false, true] }
+
+[[variant]]
+id = "no-caption"
+title = "No caption"
+file = "no-caption.svelte"
+args = { active = [false, true] }
+
+[[variant]]
+id = "long-text"
+title = "Long caption"
+file = "long-text.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left caption"
+file = "rtl.svelte"

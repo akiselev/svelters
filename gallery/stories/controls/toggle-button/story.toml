@@ -1,0 +1,28 @@
+id = "toggle-button"
+title = "Toggle button"
+family = "controls"
+kinds = ["toggle-button"]
+size = [360, 72]
+states = ["normal", "hover", "active", "focus-visible", "checked", "disabled"]
+notes = "A button that stays pressed; with `radio` a row of them is a segmented control."
+
+[[variant]]
+id = "single"
+title = "Single"
+file = "single.svelte"
+args = { checked = [false, true], frame = [true, false] }
+
+[[variant]]
+id = "segmented"
+title = "Segmented (radio)"
+file = "segmented.svelte"
+
+[[variant]]
+id = "long-text"
+title = "Long caption"
+file = "long-text.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left caption"
+file = "rtl.svelte"

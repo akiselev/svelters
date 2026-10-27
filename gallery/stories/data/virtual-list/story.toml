@@ -1,0 +1,27 @@
+id = "virtual-list"
+title = "Virtual list"
+family = "data"
+kinds = ["virtual-list"]
+size = [320, 200]
+states = ["normal", "focus-visible", "disabled"]
+notes = "A virtualized list through `<ListView>` (@svelters/lists): row height, the selected row, rows with several parts."
+
+[[variant]]
+id = "plain"
+title = "Plain rows with a selection"
+file = "plain.svelte"
+
+[[variant]]
+id = "rich-rows"
+title = "Rows with a caption and detail"
+file = "rich-rows.svelte"
+
+[[variant]]
+id = "empty"
+title = "No items"
+file = "empty.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left rows"
+file = "rtl.svelte"

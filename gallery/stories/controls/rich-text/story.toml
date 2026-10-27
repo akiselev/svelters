@@ -1,0 +1,27 @@
+id = "rich-text"
+title = "Rich text"
+family = "controls"
+kinds = ["span", "b", "i", "code", "a"]
+size = [360, 88]
+states = ["normal", "hover", "focus-visible"]
+notes = "A label with inline runs: `<b>`, `<i>`, `<code>`, `<a>` and `<span>`. States go to the label (runs take no `anchor`)."
+
+[[variant]]
+id = "runs"
+title = "Every run kind"
+file = "runs.svelte"
+
+[[variant]]
+id = "nested"
+title = "Nested runs"
+file = "nested.svelte"
+
+[[variant]]
+id = "wrapped"
+title = "Wrapped paragraph"
+file = "wrapped.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left runs"
+file = "rtl.svelte"

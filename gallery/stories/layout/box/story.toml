@@ -1,0 +1,36 @@
+id = "box"
+title = "Box"
+family = "layout"
+kinds = ["box"]
+size = [320, 120]
+states = ["normal"]
+notes = "The flex container: direction, main- and cross-axis alignment, wrapping, gaps. The children are outlined frames so the boxes show."
+
+[[variant]]
+id = "direction"
+title = "Direction"
+file = "direction.svelte"
+args = { direction = ["row", "column", "row-reverse", "column-reverse"] }
+
+[[variant]]
+id = "justify"
+title = "Main-axis distribution"
+file = "justify.svelte"
+args = { justify = ["start", "center", "end", "space-between", "space-around", "space-evenly"] }
+
+[[variant]]
+id = "align"
+title = "Cross-axis alignment"
+file = "align.svelte"
+args = { align = ["start", "center", "end", "stretch", "baseline"] }
+
+[[variant]]
+id = "wrap"
+title = "Wrapping"
+file = "wrap.svelte"
+args = { wrap = ["nowrap", "wrap"] }
+
+[[variant]]
+id = "grow"
+title = "Flex grow"
+file = "grow.svelte"

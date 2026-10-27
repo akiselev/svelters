@@ -1,0 +1,44 @@
+id = "progress-bar"
+title = "Progress bar"
+family = "controls"
+kinds = ["progress-bar"]
+size = [360, 64]
+states = ["normal", "disabled"]
+notes = "Trough, fill, the text inside the bar. Indeterminate bars animate; they render at a fixed virtual time."
+
+[[variant]]
+id = "fraction"
+title = "Fraction"
+file = "fraction.svelte"
+args = { fraction = [0.0, 0.4, 1.0] }
+
+[[variant]]
+id = "percentage"
+title = "With the percentage"
+file = "percentage.svelte"
+
+[[variant]]
+id = "text"
+title = "With text"
+file = "text.svelte"
+args = { text = ["Indexing 1,204 of 3,000 files", "Building the netlist for the main board and every sub-board"] }
+
+[[variant]]
+id = "format"
+title = "Value and format"
+file = "format.svelte"
+
+[[variant]]
+id = "indeterminate"
+title = "Indeterminate"
+file = "indeterminate.svelte"
+
+[[variant]]
+id = "vertical"
+title = "Vertical"
+file = "vertical.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left text"
+file = "rtl.svelte"

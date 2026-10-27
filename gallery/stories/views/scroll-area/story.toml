@@ -1,0 +1,28 @@
+id = "scroll-area"
+title = "Scroll area"
+family = "views"
+kinds = ["scroll-area"]
+size = [280, 140]
+states = ["normal", "hover"]
+notes = "Content that overflows: the scroll bars (shown on hover or always, per theme), their track and thumb, the clip at the edges."
+
+[[variant]]
+id = "direction"
+title = "Direction"
+file = "direction.svelte"
+args = { direction = ["vertical", "horizontal", "both"] }
+
+[[variant]]
+id = "scrolled"
+title = "Scrolled to the middle"
+file = "scrolled.svelte"
+
+[[variant]]
+id = "fits"
+title = "Content that fits"
+file = "fits.svelte"
+
+[[variant]]
+id = "empty"
+title = "Empty"
+file = "empty.svelte"

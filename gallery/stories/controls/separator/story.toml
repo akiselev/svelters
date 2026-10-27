@@ -1,0 +1,17 @@
+id = "separator"
+title = "Separator"
+family = "controls"
+kinds = ["separator"]
+size = [240, 72]
+states = ["normal"]
+notes = "A thin line; its colour and thickness against each theme's background."
+
+[[variant]]
+id = "horizontal"
+title = "Horizontal, in a column"
+file = "horizontal.svelte"
+
+[[variant]]
+id = "vertical"
+title = "Vertical, in a row"
+file = "vertical.svelte"

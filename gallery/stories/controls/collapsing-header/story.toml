@@ -1,0 +1,32 @@
+id = "collapsing-header"
+title = "Collapsing header"
+family = "controls"
+kinds = ["collapsing-header"]
+size = [320, 120]
+notes = "A clickable header with a caret; its children are shown while `open`."
+
+[[variant]]
+id = "open"
+title = "Open and closed"
+file = "open.svelte"
+args = { open = [false, true] }
+
+[[variant]]
+id = "end-slot"
+title = "With a trailing control"
+file = "end-slot.svelte"
+
+[[variant]]
+id = "accordion"
+title = "Accordion"
+file = "accordion.svelte"
+
+[[variant]]
+id = "long-text"
+title = "Long caption"
+file = "long-text.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left caption"
+file = "rtl.svelte"

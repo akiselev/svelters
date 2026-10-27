@@ -1,0 +1,27 @@
+id = "radio-button"
+title = "Radio button"
+family = "controls"
+kinds = ["radio-button"]
+size = [360, 104]
+notes = "One choice of several; siblings are exclusive. The dot, the ring and the caption."
+
+[[variant]]
+id = "group"
+title = "Group"
+file = "group.svelte"
+
+[[variant]]
+id = "single"
+title = "Single"
+file = "single.svelte"
+args = { checked = [false, true] }
+
+[[variant]]
+id = "row"
+title = "In a row"
+file = "row.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left captions"
+file = "rtl.svelte"

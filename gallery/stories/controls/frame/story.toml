@@ -1,0 +1,28 @@
+id = "frame"
+title = "Frame"
+family = "controls"
+kinds = ["frame"]
+size = [320, 120]
+notes = "A box drawn inside a frame (background, border, rounding, margin), with an optional caption; `checkable` adds a check before it."
+
+[[variant]]
+id = "style"
+title = "Frame style"
+file = "style.svelte"
+args = { style = ["group", "canvas", "window", "menu", "popup", "panel", "none"] }
+
+[[variant]]
+id = "caption"
+title = "With a caption"
+file = "caption.svelte"
+
+[[variant]]
+id = "checkable"
+title = "Checkable"
+file = "checkable.svelte"
+args = { checked = [true, false] }
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left caption"
+file = "rtl.svelte"

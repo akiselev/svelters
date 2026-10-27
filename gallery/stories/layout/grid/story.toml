@@ -1,0 +1,24 @@
+id = "grid"
+title = "Grid"
+family = "layout"
+kinds = ["grid"]
+size = [320, 120]
+states = ["normal"]
+notes = "A CSS grid: column templates, gaps, cell alignment."
+
+[[variant]]
+id = "template"
+title = "Column templates"
+file = "template.svelte"
+args = { columns = ["auto 1fr", "1fr 1fr 1fr", "80px auto 1fr"] }
+
+[[variant]]
+id = "justify"
+title = "Cell alignment"
+file = "justify.svelte"
+args = { justify = ["start", "center", "end", "stretch"] }
+
+[[variant]]
+id = "form"
+title = "A property form"
+file = "form.svelte"
