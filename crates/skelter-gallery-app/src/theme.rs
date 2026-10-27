@@ -42,8 +42,8 @@ pub fn class(name: &str) -> String {
     format!("gal-theme-{safe}")
 }
 
-/// Every theme the gallery offers: the four built-ins, then a host's extra token sets (each on top
-/// of Dark Modern, or Light Modern when its name says `light`).
+/// Every theme the gallery offers: the four built-ins, then a host's extra token sets (each Dark
+/// Modern with its tokens as overrides, as `skelter_gallery::Extensions::themes` says).
 #[derive(Clone, Debug, Default)]
 pub struct Themes {
     pub extra: Vec<(String, TokenMap)>,
@@ -59,9 +59,8 @@ impl Themes {
         if let Some(t) = builtin(name, density) {
             return Some(t);
         }
-        let (n, map) = self.extra.iter().find(|(n, _)| n == name)?;
-        let base = if n.contains("light") { builtin("light-modern", density)? } else { builtin("dark-modern", density)? };
-        Some(base.with(map.iter()))
+        let (_, map) = self.extra.iter().find(|(n, _)| n == name)?;
+        Some(builtin("dark-modern", density)?.with(map.iter()))
     }
 
     /// The sheet with one class rule per theme at `density` (the cells' themes).

@@ -1,0 +1,6 @@
+{
+  "name": "@svelters-fixtures/gallery-app",
+  "private": true,
+  "type": "module",
+  "svelters": { "toolkit": "skelter" }
+}

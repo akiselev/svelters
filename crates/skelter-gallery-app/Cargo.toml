@@ -21,6 +21,7 @@ svelters-host = { workspace = true }
 svelters-skelter = { workspace = true }
 svelters-style = { workspace = true }
 serde_json = { workspace = true }
+skelter-gallery = { workspace = true }
 
 [dev-dependencies]
 skelter-test = { workspace = true }

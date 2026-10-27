@@ -4984,6 +4984,7 @@ dependencies = [
  "skelter-base",
  "skelter-compositor",
  "skelter-core",
+ "skelter-gallery",
  "skelter-platform",
  "skelter-test",
  "skelter-text",
