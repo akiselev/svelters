@@ -25,7 +25,7 @@ mod image;
 mod parts;
 mod text;
 
-pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint_inset_shadows, paint_outline};
+pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint_inset_shadows, paint_outline, paint_outline_radius};
 pub use icon::{IconKey, content_icon, icon_size, icon_size_sized, is_registered, paint_icon, paint_icon_sized, paint_missing};
 pub use image::{fit_rect, paint_image, paint_image_pixels};
 pub use parts::{PartItem, layout_parts, measure_parts};
@@ -399,6 +399,17 @@ impl<'a> StyleView<'a> {
 
     fn get(&self, name: &str) -> Option<Got<'a>> {
         if let Some(v) = self.css(name) {
+            // skelter-core computes every part, inheriting from its host: an inherited property a
+            // part only took from its host (the same value) yields to the part's own UA table (a
+            // switch knob's `:checked` colour, an icon's 16px); a `::part()` rule that sets another
+            // value wins as usual
+            let inherited_only = INHERITED.contains(&name) && self.parent.is_some_and(|p| p.css(name) == Some(v));
+            if !inherited_only {
+                return Some(Got::Css(v));
+            }
+            if let Some(u) = self.ua.find_own(name, self.state) {
+                return Some(Got::Ua(u, self.theme(), self.token_css()));
+            }
             return Some(Got::Css(v));
         }
         if let Some(v) = self.ua.find_own(name, self.state) {

@@ -78,7 +78,8 @@ impl Document {
         self.style.nodes[i].forced = bits;
         self.stamp();
         self.restyle_state(i, StateMask(own.0 | old.0), StateMask(own.0 | bits.0));
-        self.core[i].dirty.insert(Dirty::PAINT);
+        // through `mark`, so the ancestors' DESC_RECORD leads the frame's walk to the node
+        self.mark(node, Dirty::PAINT);
         true
     }
 

@@ -35,14 +35,13 @@ pub const UA: Ua = Ua(&[
         ("text-align", Keyword("center")),
         ("outline-style", Keyword("none")),
         ("outline-color", Token("focus")),
-        ("outline-width", Px(1.0)),
+        ("outline-width", Px(2.0)),
         ("outline-offset", Px(1.0)),
     ]),
     UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
     UaRule::when(StateBits::CHECKED, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border")), ("color", Token("fg"))]),
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
-    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
 ]);
 
 kind_props! {

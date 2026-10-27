@@ -81,7 +81,9 @@
     "elev-1": "none",
     "elev-2": "none",
     "elev-3": "none",
-    "elev-4": "none"
+    "elev-4": "none",
+    "toggle-on-bg": "#0F4A8533",
+    "toggle-on-border": "#006BBD"
   },
   "notes": {
     "shadow-color": "widget.shadow and scrollbar.shadow are null in hcLight: High Contrast has no shadows (DESIGN.md R7).",
@@ -89,6 +91,7 @@
     "button2-hover": "button.secondaryHoverBackground, toolbar.*Background, list.dropBackground and menu.selectionBackground are null in hcLight; derived from list.hoverBackground (DS3 adds VS Code's contrastActiveBorder outlines).",
     "list-sel-fg": "list.activeSelectionForeground is null in hcLight: the foreground.",
     "tab-bg": "tab.inactiveBackground and tab.activeBackground are unset in hcLight: the editor background.",
-    "elev-0": "No shadows in High Contrast (DESIGN.md §2.5, R7)."
+    "elev-0": "No shadows in High Contrast (DESIGN.md §2.5, R7).",
+    "toggle-on-bg": "POL1-STATES: inputOption.activeBackground is transparent and inputOption.activeBorder equals contrastBorder in High Contrast, so an on toggle (checked toggle button, checkbox, radio; a selected button) would look off. R17: the on state is a fill (toolbar-active's tint) with contrastActiveBorder's edge."
   }
 }

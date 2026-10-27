@@ -135,6 +135,12 @@ impl<'a> NodeView<'a> {
     pub fn state(&self) -> StateMask {
         self.state
     }
+    /// The state the node is styled and painted in: its own bits with a designer's forced bits
+    /// ([`Document::force_state`](crate::Document::force_state)) ORed over them, as selector
+    /// matching sees it. Kinds paint from this; events and accessibility read [`NodeView::state`].
+    pub fn style_state(&self) -> StateMask {
+        StateMask(self.state.0 | self.doc.forced_state(self.id).0)
+    }
     pub fn disabled(&self) -> bool {
         self.state.contains(StateMask::DISABLED)
     }

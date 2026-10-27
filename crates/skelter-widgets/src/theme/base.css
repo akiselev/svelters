@@ -126,9 +126,6 @@
     background-color: var(--sv-button-bg-active);
   }
 
-  /* Pointer feedback is immediate on enter, leave and press. Applications can opt into
-     colour transitions explicitly; the base theme must not make hover feel delayed. */
-
   /* egui fills a text edit with Visuals::text_edit_bg_color (`--sv-input-bg`, from the Style);
      its border and text come from the widget state. */
   text-edit {
@@ -137,4 +134,78 @@
     border-radius: var(--sv-input-radius);
     color: var(--sv-input-fg);
   }
+
+  /* Pointer feedback is immediate on enter, leave and press. Applications can opt into
+     colour transitions explicitly; the base theme must not make hover feel delayed. */
+
+  /* POL1-STATES: the state looks every interactive kind shares (DESIGN R2, R3, R8, R9, R17).
+     Focus rings are each kind's UA outline (`outline-color: focus`, keyboard-only); these rules
+     give the rest. They sit after each kind's own rules so a state beats a look. */
+
+  /* R1/VS Code: the scope's default button is the primary (accent) button */
+  button:default {
+    background-color: var(--sv-accent);
+    border-color: var(--sv-button-border);
+    color: var(--sv-accent-fg);
+  }
+  button:default:hover {
+    background-color: var(--sv-accent-hover);
+  }
+  /* R17: a selected button is an on toggle (as `toggle-button:checked`) */
+  button:selected {
+    background-color: var(--sv-toggle-on-bg);
+    border-color: var(--sv-toggle-on-border);
+  }
+  button:selected:hover {
+    background-color: var(--sv-toggle-on-bg);
+  }
+
+  /* R4: a field's border is its focus cue (VS Code `inputOption`/`focusBorder` on `:focus`, pointer
+     focus too); hovering an editable field steps its border towards the text colour */
+  text-edit:hover {
+    border-color: var(--sv-muted);
+  }
+  text-edit:focus,
+  text-edit:focus-visible,
+  text-edit:focus-within {
+    border-color: var(--sv-input-border-color-focus);
+  }
+
+  /* R9: disabled controls keep their shape at .4 and show `not-allowed`. Only the interactive kinds
+     dim (a disabled container's state reaches its descendants, so dimming it too would compound);
+     text that only labels dims its colour to VS Code's `disabledForeground`. */
+  button:disabled,
+  toggle-button:disabled,
+  checkbox:disabled,
+  radio-button:disabled,
+  switch:disabled,
+  slider:disabled,
+  select:disabled,
+  text-edit:disabled,
+  collapsing-header:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  label:disabled {
+    color: var(--sv-disabled-fg);
+  }
+
+  /* High Contrast (VS Code): hover is a dashed `contrastActiveBorder` outline, not a fill step */
+  @media (prefers-contrast: more) {
+    button:hover,
+    toggle-button:hover {
+      outline-style: dashed;
+      outline-width: 1px;
+      outline-offset: -1px;
+      outline-color: var(--vscode-contrastActiveBorder);
+    }
+    button:focus-visible,
+    toggle-button:focus-visible {
+      outline-style: solid;
+      outline-width: 2px;
+      outline-offset: 1px;
+      outline-color: var(--sv-focus);
+    }
+  }
+
 }

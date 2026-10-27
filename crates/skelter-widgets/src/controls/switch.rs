@@ -22,13 +22,13 @@ use skelter_base::geom::{Point, Rect};
 use skelter_base::key::Key;
 use svelters_style::ComputedStyle;
 
-/// The host: caption, gap, focus ring (around the track, R8: standalone controls 1 px at +1).
+/// The host: caption, gap, focus ring (around the track, R8: standalone controls 2 px at +1).
 pub const UA: Ua = Ua(&[
     UaRule::base(&[
         ("gap", Px(8.0)),
         ("outline-style", Keyword("none")),
         ("outline-color", Token("focus")),
-        ("outline-width", Px(1.0)),
+        ("outline-width", Px(2.0)),
         ("outline-offset", Px(1.0)),
     ]),
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
@@ -45,8 +45,10 @@ pub const TRACK: Ua = Ua(&[
         ("border-radius", Px(10.0)),
     ]),
     UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
-    UaRule::when(StateBits::CHECKED, &[("background-color", Token("accent")), ("border-color", Token("accent"))]),
-    UaRule::when(StateBits(StateBits::CHECKED.0 | StateBits::HOVERED.0), &[("background-color", Token("accent-hover")), ("border-color", Token("accent-hover"))]),
+    // R17: the on fill is the accent; its edge is the on-toggle border, which High Contrast gives
+    // `contrastActiveBorder` (its accent is the black background)
+    UaRule::when(StateBits::CHECKED, &[("background-color", Token("accent")), ("border-color", Token("toggle-on-border"))]),
+    UaRule::when(StateBits(StateBits::CHECKED.0 | StateBits::HOVERED.0), &[("background-color", Token("accent-hover")), ("border-color", Token("toggle-on-border"))]),
 ]);
 
 /// `::part(knob)`: its colour and size.

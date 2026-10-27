@@ -82,7 +82,9 @@
     "elev-1": "none",
     "elev-2": "none",
     "elev-3": "none",
-    "elev-4": "none"
+    "elev-4": "none",
+    "toggle-on-bg": "#FFFFFF33",
+    "toggle-on-border": "#F38518"
   },
   "notes": {
     "shadow-color": "widget.shadow and scrollbar.shadow are null in hcDark: High Contrast has no shadows (DESIGN.md R7).",
@@ -93,6 +95,7 @@
     "selection": "hc_black.json sets editor.selectionBackground #FFFFFF with selectionForeground #000000; egui cannot recolour selected text by background, so the role keeps the registry's #F3F518.",
     "tab-bg": "tab.inactiveBackground and tab.activeBackground are unset in hcDark: the editor background.",
     "tab-active-marker": "tab.activeBorderTop is null in hcDark; contrastActiveBorder.",
-    "elev-0": "No shadows in High Contrast (DESIGN.md §2.5, R7)."
+    "elev-0": "No shadows in High Contrast (DESIGN.md §2.5, R7).",
+    "toggle-on-bg": "POL1-STATES: inputOption.activeBackground is transparent and inputOption.activeBorder equals contrastBorder in High Contrast, so an on toggle (checked toggle button, checkbox, radio; a selected button) would look off. R17: the on state is a fill (toolbar-active's tint) with contrastActiveBorder's edge."
   }
 }

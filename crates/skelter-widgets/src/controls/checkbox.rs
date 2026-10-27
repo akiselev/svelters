@@ -32,7 +32,7 @@ pub const UA: Ua = Ua(&[
         ("align-items", Keyword("center")),
         ("outline-style", Keyword("none")),
         ("outline-color", Token("focus")),
-        ("outline-width", Px(1.0)),
+        ("outline-width", Px(2.0)),
         ("outline-offset", Px(1.0)),
     ]),
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
@@ -194,13 +194,14 @@ pub(crate) fn paint_indicator(pc: &mut PaintCx, host: &StyleView<'_>, parts: &[(
             }
             _ => {
                 paint::paint_box(pc, item.style, r);
-                ir = Some(r);
+                ir = Some((r, item.style.px("border-radius").unwrap_or(0.0)));
             }
         }
     }
-    if let Some(ir) = ir {
+    if let Some((ir, radius)) = ir {
         mark(pc, host, ir);
-        paint::paint_outline(pc, host, ir);
+        // the ring follows the indicator's corners (round for a radio or a switch's track)
+        paint::paint_outline_radius(pc, host, ir, radius);
     }
 }
 

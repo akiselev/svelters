@@ -953,7 +953,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let mut text = shaper(ts);
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
-        self.reading(|| self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), theme), text: &mut *text, scale: node.scale() }, known, avail))
+        self.reading(|| self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.style_state(), theme), text: &mut *text, scale: node.scale() }, known, avail))
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
@@ -977,14 +977,14 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
                 None => Box::new(NoText),
             };
             // the widget's own prepare (layout of what it places or draws itself) runs before the dry recording
-            let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), text: &mut *text, emitted: Vec::new(), layouts: lender.as_mut().map(|l| l as &mut dyn w::LayoutLender) };
+            let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.style_state(), theme), text: &mut *text, emitted: Vec::new(), layouts: lender.as_mut().map(|l| l as &mut dyn w::LayoutLender) };
             self.widget.prepare(&mut pcx);
             let emitted = pcx.emitted;
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new(), paths: &self.paths, new_paths: Vec::new(), used_paths: Vec::new() };
             let mut list = DisplayList::new();
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.style_state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             let mut overlay = DisplayList::new();
-            self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
+            self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.style_state(), theme), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
             (res.new, res.used, res.new_paths, res.used_paths, emitted)
         });
         self.add_reads(reads);
@@ -1049,10 +1049,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
             let mut text = shaper(ts);
             let mut res = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
-            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
+            self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.style_state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             // the open floating surface, for the window's overlay stack
             let mut ores = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
-            let part = self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut overlay, text: &mut *text, res: &mut ores, scale: node.scale() });
+            let part = self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.style_state(), theme), list: &mut overlay, text: &mut *text, res: &mut ores, scale: node.scale() });
             (res.runs, part, ores.runs)
         });
         push_recorded(cx, list, runs);
@@ -1159,7 +1159,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
         let mut text = shaper(ts);
-        let [left, right, top, bottom] = self.reading(|| self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() }))?;
+        let [left, right, top, bottom] = self.reading(|| self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.style_state(), theme), text: &mut *text, scale: node.scale() }))?;
         Some(Insets { top, right, bottom, left })
     }
 
@@ -1168,7 +1168,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
         let mut text = shaper(ts);
-        let [w, h] = self.reading(|| self.widget.chrome_min_size(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() }))?;
+        let [w, h] = self.reading(|| self.widget.chrome_min_size(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.style_state(), theme), text: &mut *text, scale: node.scale() }))?;
         Some(Size::new(w, h))
     }
 
