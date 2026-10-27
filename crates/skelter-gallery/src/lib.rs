@@ -11,6 +11,7 @@
 //! | [`inspect`] | one node of a cell as JSON: box, computed style, matched rules, forced state, AccessKit |
 //! | [`check`] | every variant compiles and renders one cell: [`check::CheckReport`] |
 //! | [`cli`] | [`cli_main`]: the `skelter-gallery` CLI |
+//! | [`diff`] | `--diff`: a before / after / changes picture of two images |
 //! | [`fonts`] | the bundled font set (Inter, JetBrains Mono, Arabic, CJK and symbol fallbacks) |
 //! | [`icons`] | the demo icon set and the story assets (`asset://` imports) |
 //! | [`ext`] | [`Extensions`]: what a host adds (story roots, kinds, setup hooks, token sets) |
@@ -21,6 +22,7 @@
 pub mod catalog;
 pub mod check;
 pub mod cli;
+pub mod diff;
 pub mod ext;
 pub mod fonts;
 pub mod icons;
@@ -34,6 +36,6 @@ pub use catalog::{Catalog, Coverage, StoryError, discover, discover_with};
 pub use ext::{Extensions, RegisterKinds, SetupCx, SetupHook};
 pub use matrix::{Axes, Matrix};
 pub use model::{canonicalize, Cell, FAMILIES, State, Story, StoryId, Theme, Variant, VariantId};
-pub use render::{Error, Renderer, Shot, png, save_png};
+pub use render::{Error, Reload, Renderer, Shot, png, save_png};
 pub use cli::cli_main;
 pub use sheet::{Sheet, SheetCell, SheetLayout};

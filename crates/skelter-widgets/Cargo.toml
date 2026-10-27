@@ -24,8 +24,9 @@ resvg = { version = "=0.45.1", default-features = false }
 roxmltree = "=0.20.0"
 # Icon masks of solid shapes drawn as path booleans (A32: the kit's knockout gaps stay vectors).
 i_overlay = "=9.1.0"
-# The text-editing core of the `text` kinds (lane TEXT-INPUT), at QUIRE's `claude/presto-quire` 35b5063a (R1, R2).
-quire-text = { git = "https://github.com/akiselev/quire", rev = "35b5063ab149ca8682241324aff8efb28696f491" }
+# The text-editing core of the `text` kinds (lane TEXT-INPUT), at quire `ed0665b`: the rev skelter_quire
+# (the gallery app) and cadatomic pin, so the graph has one quire-text (POL1-GALLERY Q1).
+quire-text = { git = "https://github.com/akiselev/quire", rev = "ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f" }
 # Grapheme clusters: the characters of the text fields' accessibility runs (`text::runs`).
 unicode-segmentation = "=1.13.3"
 # Native file and message dialogs (`dialogs::native`) through rfd; without it they fail as unsupported.

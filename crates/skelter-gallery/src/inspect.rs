@@ -94,8 +94,7 @@ fn rule_json(r: &MatchedRuleInfo) -> Value {
     json!({
         "selector": r.selectors,
         "sheet": r.sheet,
-        // skelter-core's MatchedRuleInfo carries no layer yet (a request in GAL1's record)
-        "layer": Value::Null,
+        "layer": r.layer,
         "specificity": r.specificity,
         "sheet_line": r.line,
         "source": r.source.as_ref().map(source_json),
@@ -178,9 +177,10 @@ pub fn node_json(backend: &SkelterBackend, window: Option<WindowId>, h: svl_hand
 }
 
 impl Renderer {
-    /// The nodes of the mounted cell `selector` picks ([`select_in`] under the cell's slot).
+    /// The nodes of the mounted cell `selector` picks ([`select_in`] under the cell's slot, or
+    /// under a window story's window).
     pub fn select(&self, selector: &str) -> Vec<svl_handle> {
-        match self.slot_node() {
+        match self.cell_root() {
             Some(slot) => select_in(self.backend(), slot, selector),
             None => Vec::new(),
         }

@@ -43,6 +43,7 @@ impl Document {
                 MatchedRuleInfo {
                     sheet: info.and_then(|x| x.name.clone()),
                     selectors: rule.selector_text(),
+                    layer: rule.layer_name(),
                     specificity: m.specificity,
                     line: rule.line,
                     column: rule.column,

@@ -91,3 +91,97 @@ fn an_imported_svg_and_a_registry_icon_draw() {
     let drawn = icon.image.rgba.chunks_exact(4).filter(|p| *p != bg).count();
     assert!(drawn > 40, "file.save draws ({drawn} pixels)");
 }
+
+fn count(img: &skelter_test::Image, f: impl Fn(&[u8]) -> bool) -> usize {
+    img.rgba.chunks_exact(4).filter(|p| f(p)).count()
+}
+
+fn red(p: &[u8]) -> bool {
+    p[0] > 230 && p[1] < 30 && p[2] < 30
+}
+
+fn blue(p: &[u8]) -> bool {
+    p[2] > 230 && p[0] < 30 && p[1] < 30
+}
+
+#[test]
+fn reload_picks_up_edited_images_variants_and_fixed_errors() {
+    if std::env::var("SKELTER_GPU_TESTS").as_deref() != Ok("1") {
+        eprintln!("skipped: set SKELTER_GPU_TESTS=1 to run GPU tests");
+        return;
+    }
+    // a copy inside target/, so `svelte` resolves from the workspace's node_modules
+    let root = Path::new(env!("CARGO_TARGET_TMPDIR")).join(format!("gallery-reload-{}", std::process::id()));
+    let dir = root.join("stories/controls/media");
+    std::fs::create_dir_all(&dir).unwrap();
+    std::fs::copy(fixture("media/package.json"), root.join("package.json")).unwrap();
+    for f in ["story.toml", "svg.svelte", "icon.svelte"] {
+        std::fs::copy(fixture("media/stories/controls/media").join(f), dir.join(f)).unwrap();
+    }
+    // image sources are the process's, keyed by asset ref: the copy's image gets its own name, so
+    // the other tests (which register the fixture's red.svg) can't replace it while this one runs
+    std::fs::copy(fixture("media/stories/controls/media/red.svg"), dir.join("reload.svg")).unwrap();
+    let svelte = dir.join("svg.svelte");
+    std::fs::write(&svelte, std::fs::read_to_string(&svelte).unwrap().replace("./red.svg", "./reload.svg")).unwrap();
+    let mut r = Renderer::new(&Extensions::new().story_root(&root)).unwrap();
+    let story = r.catalog().get("media").unwrap().clone();
+    let svg_cell = Cell::new(&story, story.variant("svg").unwrap());
+    let a = r.shot(&svg_cell).unwrap().image;
+    assert!(count(&a, red) >= 30 * 30);
+
+    // an image: registered again, no restart
+    let svg = dir.join("reload.svg");
+    std::fs::write(&svg, std::fs::read_to_string(&svg).unwrap().replace("#ff0000", "#0000ff")).unwrap();
+    let rl = r.reload(&[svg.clone()]).unwrap();
+    assert!(!rl.restarted, "{rl:?}");
+    assert_eq!(rl.assets.len(), 1, "{rl:?}");
+    let b = r.shot(&svg_cell).unwrap().image;
+    assert_eq!(count(&b, red), 0);
+    assert!(count(&b, blue) >= 30 * 30, "the edited SVG draws");
+
+    // the variant: the runtime restarts and the new markup renders
+    let file = dir.join("svg.svelte");
+    std::fs::write(&file, std::fs::read_to_string(&file).unwrap().replace("width={32} height={32}", "width={16} height={16}")).unwrap();
+    let rl = r.reload(&[file.clone()]).unwrap();
+    assert!(rl.restarted && rl.variants.len() == 1, "{rl:?}");
+    let c = r.shot(&svg_cell).unwrap().image;
+    let n = count(&c, blue);
+    assert!((14 * 14..30 * 30).contains(&n), "the 16-point image draws ({n} blue pixels)");
+
+    // a broken edit fails its cell; fixing it is picked up without a restart
+    let good = std::fs::read_to_string(&file).unwrap();
+    std::fs::write(&file, good.replace("<box", "<box {")).unwrap();
+    r.reload(&[file.clone()]).unwrap();
+    assert!(matches!(r.shot(&svg_cell), Err(skelter_gallery::Error::Load { .. })), "the broken file fails to load");
+    std::fs::write(&file, &good).unwrap();
+    let rl = r.reload(&[file.clone()]).unwrap();
+    assert!(!rl.restarted, "a failed entry is only retried: {rl:?}");
+    assert_eq!(count(&r.shot(&svg_cell).unwrap().image, blue), n);
+    // an unrelated path changes nothing
+    assert_eq!(r.reload(&[root.join("elsewhere.txt")]).unwrap(), skelter_gallery::Reload::default());
+    std::fs::remove_dir_all(&root).ok();
+}
+
+#[test]
+fn a_window_story_draws_its_window_and_the_next_cell_is_ordinary() {
+    if std::env::var("SKELTER_GPU_TESTS").as_deref() != Ok("1") {
+        eprintln!("skipped: set SKELTER_GPU_TESTS=1 to run GPU tests");
+        return;
+    }
+    let mut r = Renderer::new(&Extensions::new().story_root(fixture("media"))).unwrap();
+    let win = r.catalog().get("win").unwrap().clone();
+    let media = r.catalog().get("media").unwrap().clone();
+    let wc = Cell::new(&win, win.variant("red").unwrap());
+    let a = r.shot(&wc).unwrap();
+    assert!(a.warnings.is_empty(), "{:?}", a.warnings);
+    let n = count(&a.image, red);
+    assert!((38 * 18..=42 * 22).contains(&n), "the window's 40×20 red box draws ({n} pixels)");
+    assert!(a.image.rgba.chunks_exact(4).all(|p| p[3] == 255), "laid over the theme's background: opaque");
+    assert_eq!(r.inspect(&wc, "window").unwrap()["nodes"].as_array().unwrap().len(), 1, "inspect finds the story's window");
+    // an ordinary cell after it: the gallery's own window is back
+    let b = r.shot(&Cell::new(&media, media.variant("svg").unwrap())).unwrap();
+    assert!(count(&b.image, red) >= 30 * 30);
+    assert!(b.image.rgba.chunks_exact(4).all(|p| p[3] == 255));
+    // and the window again: the same pixels
+    assert!(r.shot(&wc).unwrap().image == a.image);
+}
