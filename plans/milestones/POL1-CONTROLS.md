@@ -70,7 +70,10 @@ collapsing end slot.
 
 ## CI
 
-On `3b841eb`: pending (filled in below when green).
+All six workflows green on `d87b914` (the record on top of the last code commit `3b841eb`; same code): js
+40586567266, linux-gtk 40586567289, linux-qt 40586567296, macos-appkit 40586567146, skelter 40586567469,
+windows-winui 40586567218. The runs on `3b841eb` itself were cancelled when `d87b914` was pushed. This record's
+last edit (these lines) is docs only; CI not rerun for it.
 
 ## Requests to other lanes and the coordinator
 
