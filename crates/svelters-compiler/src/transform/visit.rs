@@ -302,7 +302,7 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 let mut parts = vec![format!("{tmp} = {value}")];
                 let kind = if matches!(pattern, Pattern::ArrayPattern(_)) { "iterable" } else { "object" };
                 for ins in inserts {
-                    let call = format!("$.derived(() => {})", ins.value);
+                    let call = format!("$.derived(() => {})", crate::codegen::arrow_body(&ins.value));
                     parts.push(format!("{} = {}", ins.id, if self.cx.dev { format!("$.tag({call}, {})", js_str(&format!("[$state {kind}]"))) } else { call }));
                 }
                 for p in paths {
@@ -391,12 +391,12 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 let (inserts, paths) = self.extract_paths(pattern, rhs, scope, true);
                 let kind = if matches!(pattern, Pattern::ArrayPattern(_)) { "iterable" } else { "object" };
                 for ins in inserts {
-                    let call = format!("$.derived(() => {})", ins.value);
+                    let call = format!("$.derived(() => {})", crate::codegen::arrow_body(&ins.value));
                     parts.push(format!("{} = {}", ins.id, if self.cx.dev { format!("$.tag({call}, {})", js_str(&format!("[$derived {kind}]"))) } else { call }));
                 }
                 for p in paths {
                     let super::paths::Target::Id(id) = p.node else { continue };
-                    let call = format!("$.derived(() => {})", p.expression);
+                    let call = format!("$.derived(() => {})", crate::codegen::arrow_body(&p.expression));
                     parts.push(format!("{} = {}", id.name, if self.cx.dev { format!("$.tag({call}, {})", self.label(&id.name)) } else { call }));
                 }
                 self.edits.overwrite(decl.start, decl.end, parts.join(", "));

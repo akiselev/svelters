@@ -309,7 +309,7 @@ impl Codegen<'_, '_> {
 
     /// `(expr)`, parenthesised unless it already is.
     fn paren_expr(&mut self, e: &Expression, mode: Mode) {
-        let wrap = !matches!(e, Expression::ParenthesizedExpression(_) | Expression::Identifier(_) | Expression::Literal(_) | Expression::MemberExpression(_) | Expression::CallExpression(_));
+        let wrap = super::arrow_body_needs_parens(e) || !matches!(e, Expression::ParenthesizedExpression(_) | Expression::Identifier(_) | Expression::Literal(_) | Expression::MemberExpression(_) | Expression::CallExpression(_));
         if wrap {
             self.w.write("(");
         }
@@ -319,15 +319,24 @@ impl Codegen<'_, '_> {
         }
     }
 
-    /// The body of an arrow `() => e`: an object literal is parenthesized (`{#each { length: 5 }}`),
-    /// else it would be read as a block.
+    /// The body of an arrow `() => e`: an expression starting with `{` is parenthesized
+    /// (`{#each { length: 5 }}`, `props={{ a: x }}`), else it would be read as a block; so is a
+    /// sequence, whose commas would end the arrow.
     fn thunk_body(&mut self, e: &Expression) {
-        if matches!(e, Expression::ObjectExpression(_)) {
+        if super::arrow_body_needs_parens(e) {
             self.w.write("(");
             self.expr_text(e, Mode::Read);
             self.w.write(")");
         } else {
             self.expr_text(e, Mode::Read);
+        }
+    }
+
+    /// `dynamic(d)` as the body of an arrow (see `thunk_body`).
+    fn thunk_dynamic(&mut self, d: &Dynamic) {
+        match d {
+            Dynamic::Expr(e) if self.memoized(e).is_none() => self.thunk_body(e),
+            d => self.dynamic(d),
         }
     }
 
@@ -347,7 +356,7 @@ impl Codegen<'_, '_> {
             self.paren_expr(set, Mode::Read);
         } else {
             self.w.write("() => ");
-            self.expr_text(target, Mode::Read);
+            self.thunk_body(target);
             let set = self.rw.assign(target, "$$value");
             self.w.write(&format!(", ($$value) => {{ {set}; }}"));
         }
@@ -1288,7 +1297,7 @@ impl Codegen<'_, '_> {
                     self.w.write(");");
                 } else {
                     self.w.write("() => ");
-                    self.expr_text(target, Mode::Read);
+                    self.thunk_body(target);
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!(", ($$value) => {{ {set}; }});"));
                 }
@@ -1323,7 +1332,7 @@ impl Codegen<'_, '_> {
             Op::BindLink { prop, obj, field, fallback, span } => {
                 self.w.map(span.start);
                 self.w.write(&format!("$n.bind_link({n}, {}, () => ", js_str(prop)));
-                self.expr_text(obj, Mode::Read);
+                self.thunk_body(obj);
                 self.w.write(&format!(", {}, () => {{", js_str(field)));
                 self.w.indent();
                 self.op(n, fallback);
@@ -1342,7 +1351,7 @@ impl Codegen<'_, '_> {
                 } else {
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!("$.bind_this({n}, ($$value) => {{ {set}; }}, () => "));
-                    self.expr_text(target, Mode::Read);
+                    self.thunk_body(target);
                     self.w.write(");");
                 }
             }
@@ -1699,7 +1708,7 @@ impl Codegen<'_, '_> {
         let d = self.rw.destructure(pattern, initial, true);
         for (id, value) in &d.arrays {
             self.line();
-            self.w.write(&format!("const {id} = $.derived(() => {value});"));
+            self.w.write(&format!("const {id} = $.derived(() => {});", super::arrow_body(value)));
         }
         for (name, expr, has_default) in &d.leaves {
             self.line();
@@ -1707,12 +1716,12 @@ impl Codegen<'_, '_> {
                 Leaf::Thunk if *has_default => {
                     self.tmp += 1;
                     let d = format!("$$d{}", self.tmp);
-                    self.w.write(&format!("const {d} = $.derived_safe_equal(() => {expr});"));
+                    self.w.write(&format!("const {d} = $.derived_safe_equal(() => {});", super::arrow_body(expr)));
                     self.line();
                     self.w.write(&format!("const {name} = () => $.get({d});"));
                 }
-                Leaf::Thunk => self.w.write(&format!("const {name} = () => {expr};")),
-                Leaf::Source => self.w.write(&format!("const {name} = $.derived_safe_equal(() => {expr});")),
+                Leaf::Thunk => self.w.write(&format!("const {name} = () => {};", super::arrow_body(expr))),
+                Leaf::Source => self.w.write(&format!("const {name} = $.derived_safe_equal(() => {});", super::arrow_body(expr))),
             }
         }
     }
@@ -1849,7 +1858,7 @@ impl Codegen<'_, '_> {
                     let id = format!("$$prop{}", self.tmp);
                     self.line();
                     self.w.write(&format!("const {id} = $.derived(() => "));
-                    self.dynamic(value);
+                    self.thunk_dynamic(value);
                     self.w.write(");");
                     Some(id)
                 }
@@ -2028,7 +2037,7 @@ impl Codegen<'_, '_> {
                 None => {
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!(", ($$value) => {{ {set}; }}, () => "));
-                    self.expr_text(target, Mode::Read);
+                    self.thunk_body(target);
                 }
             }
             // closes `$.bind_this(`, and for a dynamic component also `$n.component(`
