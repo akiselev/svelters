@@ -29,7 +29,7 @@ pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint
 pub use icon::{IconKey, content_icon, icon_size, icon_size_sized, is_registered, paint_icon, paint_icon_sized, paint_missing};
 pub use image::{fit_rect, paint_image, paint_image_pixels};
 pub use parts::{PartItem, layout_parts, measure_parts};
-pub use text::{Align, Elide, elide, elide_with, measure_text, paint_runs, paint_text, text_layout, text_style};
+pub use text::{Align, Elide, elide, elide_with, fit_layout, measure_text, paint_runs, paint_text, text_layout, text_style};
 
 use crate::interact::StateBits;
 use crate::shim::core::{RecordCx, Resources};

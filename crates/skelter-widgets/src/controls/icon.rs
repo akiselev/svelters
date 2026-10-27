@@ -454,7 +454,7 @@ mod tests {
         let (list, _) = testkit::record(&i, Size::new(10.0, 10.0), StateBits::NONE);
         assert_eq!(testkit::kinds(&list), ["quad"]);
         let Prim::Quad(q) = &list.items[0] else { unreachable!() };
-        assert_eq!(Some(q.border_color), paint::ua_token(true, "border-widget"));
+        assert_eq!(Some(q.border_color), paint::ua_token(true, "control-border"));
     }
 
     #[test]

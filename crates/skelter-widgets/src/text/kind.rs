@@ -78,9 +78,13 @@ pub static SPEC: KindSpec = KindSpec {
     ..KindSpec::new("text-edit")
 };
 
-/// The selection colour until theme tokens reach kinds (svelters-egui's fallback, VS Code's dark
+/// The selection colour without a token sheet (svelters-egui's fallback, VS Code's dark
 /// `editor.selectionBackground`).
 const SELECTION: Color = Color { r: 38.0 / 255.0, g: 79.0 / 255.0, b: 120.0 / 255.0, a: 1.0 };
+
+/// The token the selection is filled with (VS Code's `editor.selectionBackground`): read through
+/// the cascade, so each theme (and an override on any ancestor) gives its own.
+const SELECTION_TOKEN: &str = "--sv-selection";
 
 /// The node's text style for skelter-text.
 pub fn text_style(s: &ComputedBox) -> TextStyle {
@@ -96,12 +100,15 @@ pub fn text_style(s: &ComputedBox) -> TextStyle {
     }
 }
 
-fn colors(s: &ComputedBox) -> FieldColors {
+/// The field's colours: its computed `color`, and the theme's selection (`css`: the node's computed
+/// style, whose `--sv-selection` wins over [`SELECTION`]).
+fn colors(s: &ComputedBox, css: Option<&svelters_style::ComputedStyle>) -> FieldColors {
+    let selection = css.and_then(|c| c.custom(SELECTION_TOKEN)).and_then(crate::theme::parse_color).unwrap_or(SELECTION);
     FieldColors {
         text: s.color,
         placeholder: s.color.with_alpha(s.color.a * 0.5),
-        selection: SELECTION,
-        selection_inactive: SELECTION.with_alpha(0.5),
+        selection,
+        selection_inactive: selection.with_alpha(selection.a * 0.5),
         preedit_underline: s.color,
     }
 }
@@ -303,7 +310,7 @@ impl Kind for TextEdit {
 
     fn record(&self, cx: &mut RecordCx) {
         cx.fixed(|cx| cx.draw_box());
-        let c = colors(cx.style());
+        let c = colors(cx.style(), cx.css());
         self.field.record_content(cx, &c);
     }
 

@@ -2,7 +2,7 @@ id = "text-edit"
 title = "Text field"
 family = "text"
 kinds = ["text-edit"]
-size = [320, 72]
+size = [320, 88]
 states = ["normal", "hover", "focus", "focus-visible", "disabled"]
 notes = "A single-line field: the frame, the placeholder, the text's baseline, the invalid border. Selection and the caret are not props of the kind, so focus shows the caret only where the kind draws it without input."
 
