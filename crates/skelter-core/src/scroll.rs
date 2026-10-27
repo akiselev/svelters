@@ -5,8 +5,23 @@
 
 use crate::document::Document;
 use crate::tree::Dirty;
-use skelter_base::geom::{Size, Vec2};
+use skelter_base::geom::{Rect, Size, Vec2};
 use skelter_base::ids::{NodeId, PropNodeId, WindowId};
+
+/// A scroll container's geometry from the last layout ([`NodeView::scroll_geometry`](crate::NodeView::scroll_geometry)):
+/// what a kind that draws its own scroll bars (or scrolls by its own rules) needs.
+#[derive(Clone, Copy, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct ScrollGeometry {
+    /// The viewport: the padding box, in the node's local coordinates.
+    pub viewport: Rect,
+    /// The scrollable content's size, at least the viewport's.
+    pub content: Size,
+    /// The current offset (content scrolled out at the top left).
+    pub offset: Vec2,
+    /// The axes it scrolls on (x, y).
+    pub axes: (bool, bool),
+}
 
 impl Document {
     /// The axes node `i` scrolls on: its CSS `overflow`, or its kind's [`SelfScroll`](crate::SelfScroll).
@@ -43,6 +58,19 @@ impl Document {
             None => (w, h),
         };
         Size::new(w.max(v.w), h.max(v.h))
+    }
+
+    /// Node `node`'s [`ScrollGeometry`] when it is a scroll container.
+    pub fn scroll_geometry(&self, node: NodeId) -> Option<ScrollGeometry> {
+        let i = self.idx(node)?;
+        let view = self.scroll_viewport(i)?;
+        let b = self.style.computed(i).border_widths;
+        Some(ScrollGeometry {
+            viewport: Rect::new(b.left, b.top, b.left + view.w, b.top + view.h),
+            content: self.scroll_content(i),
+            offset: self.scroll_offset(node),
+            axes: self.scroll_axes(i),
+        })
     }
 
     /// `v` clamped to node `i`'s scroll range, on the axes it scrolls.

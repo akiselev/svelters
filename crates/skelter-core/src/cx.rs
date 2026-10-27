@@ -142,6 +142,11 @@ impl<'a> NodeView<'a> {
     pub fn size(&self) -> Size {
         self.size
     }
+    /// Its scroll geometry when it is a scroll container (`overflow` scrolls on an axis, or the kind
+    /// scrolls itself).
+    pub fn scroll_geometry(&self) -> Option<crate::scroll::ScrollGeometry> {
+        self.doc.scroll_geometry(self.id)
+    }
     /// The border box in local coordinates.
     pub fn bounds(&self) -> Rect {
         Rect::from_origin_size(Point::ZERO, self.size)
@@ -345,6 +350,8 @@ pub struct PrepareCx<'a> {
     pub(crate) caret: Option<Option<Rect>>,
     /// Native prop writes ([`PrepareCx::set_native`]), applied after the prepare.
     pub(crate) native: Vec<(PropId, Value)>,
+    /// AccessKit placements of descendants ([`PrepareCx::place_a11y`]), applied after the prepare.
+    pub(crate) placed: Vec<(NodeId, Option<Rect>)>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -446,6 +453,13 @@ impl PrepareCx<'_> {
     /// (FQ-73): a value the kind works out while preparing (at mount, a bound prop's value
     /// normalised by the kind), journalled as the kind's own so `bind:` reads it back. Checked now:
     /// an unknown prop or a value of the wrong type is refused.
+    /// Places descendant `node` for assistive technology (SV79): its AccessKit bounds are `rect`, in
+    /// this node's local space, instead of its layout box; `None` hides it. For a kind that draws
+    /// its descendants itself where they are never laid out (a menu's entries in its open levels).
+    /// Once placed, a node keeps the placement until it is placed again or freed.
+    pub fn place_a11y(&mut self, node: NodeId, rect: Option<Rect>) {
+        self.placed.push((node, rect));
+    }
     pub fn set_native(&mut self, prop: PropId, v: Value) -> Result<(), crate::PropError> {
         let spec = self.node.entry.prop(prop).or_else(|| crate::common::prop(prop)).ok_or(crate::PropError::Unknown(prop))?;
         let got = v.ty();

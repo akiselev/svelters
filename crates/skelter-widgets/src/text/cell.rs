@@ -103,18 +103,18 @@ mod tests {
     fn enter_escape_tab_and_blur_end_the_edit() {
         let mut lay = MonoLayouter { advance: 8.0, line_height: 16.0 };
         let p = TextPolicy::of(Platform::Qt);
-        let mut c = CellEditor::begin("old", "", p);
+        let mut c = CellEditor::begin("old", "", p.clone());
         c.key(&ev(Key::N, Modifiers::default(), Some("n")), Time(0), &mut lay);
         assert_eq!(c.field.text(), "n", "F2 selects the value: typing replaces it");
         c.key(&ev(Key::Enter, Modifiers::default(), Some("\r")), Time(0), &mut lay);
         assert_eq!(c.take_end(), Some(CellEnd { commit: true, step: 0, text: "n".into() }));
 
-        let mut c = CellEditor::begin("old", "x", p);
+        let mut c = CellEditor::begin("old", "x", p.clone());
         assert_eq!((c.field.text().as_str(), c.field.editor.caret()), ("x", 1));
         c.key(&ev(Key::Escape, Modifiers::default(), None), Time(0), &mut lay);
         assert_eq!(c.take_end(), Some(CellEnd { commit: false, step: 0, text: "old".into() }));
 
-        let mut c = CellEditor::begin("v", "", p);
+        let mut c = CellEditor::begin("v", "", p.clone());
         c.key(&ev(Key::Tab, Modifiers::SHIFT, None), Time(0), &mut lay);
         assert_eq!(c.take_end().map(|e| (e.commit, e.step)), Some((true, -1)));
 

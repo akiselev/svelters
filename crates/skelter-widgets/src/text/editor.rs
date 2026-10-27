@@ -420,7 +420,11 @@ impl TextEditor {
         if self.composing() && !self.hex_active() {
             return KeyAction::Consumed;
         }
-        let action = keys::map_key(self.key_cx(), ev);
+        // the host's layer first (S2); a key left to the input method is not the field's
+        let action = match self.policy.keys.as_deref().map_or_else(|| keys::map_key(self.key_cx(), ev).into(), |k| k.resolve(self.key_cx(), ev)) {
+            keys::TextAction::Key(a) => a,
+            keys::TextAction::PassToIme => KeyAction::Ignore,
+        };
         if let KeyAction::Edit(cmd) = &action {
             self.drag = None;
             self.execute(cmd.clone(), layout);
@@ -430,7 +434,11 @@ impl TextEditor {
 
     /// The route of a key for this field (architecture §11.2).
     pub fn route(&self, ev: &KeyEvent) -> keys::KeyRoute {
-        keys::route(ev, self.composing() && !self.hex_active(), self.ime_enabled)
+        let left_to_ime = || self.policy.keys.as_deref().is_some_and(|k| k.resolve(self.key_cx(), ev) == keys::TextAction::PassToIme);
+        match keys::route(ev, self.composing() && !self.hex_active(), self.ime_enabled) {
+            keys::KeyRoute::Keymap if left_to_ime() => keys::KeyRoute::Ime,
+            r => r,
+        }
     }
 
     /// A platform IME event (winit-style; the own backends speak [`TextInputClient`] instead).
@@ -719,6 +727,31 @@ mod tests {
         assert_eq!(e.text(), "x");
         key(&mut e, Key::Z, Modifiers::CTRL, Some("z"));
         assert_eq!(e.text(), "world");
+    }
+
+    #[test]
+    fn a_host_keymap_layer_rebinds_unbinds_and_leaves_keys_to_the_ime() {
+        use crate::text::keys::{KeyChord, KeyRoute, TextAction, TextKeymap};
+        let mut layer = TextKeymap::new();
+        layer.unbind(KeyChord::new(Key::Backspace, Modifiers::CTRL));
+        layer.bind(KeyChord::new(Key::K, Modifiers::CTRL), KeyAction::Edit(EditCommand::SelectAll));
+        layer.bind(KeyChord::new(Key::Space, Modifiers::SHIFT), TextAction::PassToIme);
+        let mut p = TextPolicy::of(Platform::Gtk);
+        p.keys = Some(std::sync::Arc::new(layer));
+        let mut e = TextEditor::new("hello world", EditorConfig::default(), p);
+        e.focus_in(FocusReason::Pointer);
+        key(&mut e, Key::End, Modifiers::default(), None);
+        assert_eq!(key(&mut e, Key::Backspace, Modifiers::CTRL, None), KeyAction::Ignore, "unbound: it bubbles");
+        assert_eq!(e.text(), "hello world");
+        key(&mut e, Key::K, Modifiers::CTRL, Some("k"));
+        assert_eq!(sel(&e), (0, 11), "rebound to select all");
+        let shift_space = KeyEvent { key: Some(Key::Space), physical: 0, text: Some(" ".into()), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::SHIFT };
+        assert_eq!(e.route(&shift_space), KeyRoute::Ime);
+        assert_eq!(e.key(&shift_space, &NoWrap::default()), KeyAction::Ignore);
+        assert_eq!(e.text(), "hello world", "the field took no action");
+        // the platform's keys are untouched elsewhere
+        key(&mut e, Key::Backspace, Modifiers::default(), None);
+        assert_eq!(e.text(), "");
     }
 
     #[test]

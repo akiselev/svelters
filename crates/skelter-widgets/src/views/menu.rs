@@ -251,11 +251,56 @@ impl Menus {
         let m = MenuModel::from_elements(els);
         let same_shape = m.entries.len() == self.model.entries.len()
             && m.entries.iter().zip(&self.model.entries).all(|(a, b)| a.kind == b.kind && a.children == b.children);
+        let old = std::mem::replace(&mut self.model, m);
         if !same_shape {
+            self.follow_entries(&old);
+        }
+        true
+    }
+
+    /// After a rebuild that changed the model's shape, the open levels, their current rows and the
+    /// bar's title follow their entries by id (the element's anchor, else its position): an open menu stays open while its items
+    /// change (a context menu whose items arrive after the click). A level whose container is gone
+    /// closes, with the levels below it.
+    fn follow_entries(&mut self, old: &MenuModel) {
+        let new = &self.model;
+        let map = |ix: EntryIx| -> Option<EntryIx> {
+            if ix == MenuModel::ROOT {
+                return Some(MenuModel::ROOT);
+            }
+            let e = old.entries.get(ix).filter(|e| !e.path.is_empty())?;
+            new.entries.iter().position(|n| n.id == e.id && n.kind == e.kind)
+        };
+        let mut keep = 0;
+        for l in &mut self.nav.levels {
+            let Some(c) = map(l.container) else { break };
+            l.container = c;
+            l.current = l.current.and_then(map).filter(|r| new.rows(c).contains(r));
+            keep += 1;
+        }
+        let bar_current = self.nav.bar_current.and_then(map);
+        let hover = self.hover.and_then(|(k, ix, t)| map(ix).filter(|_| k < keep).map(|ix| (k, ix, t)));
+        let hover_title = self.hover_title.and_then(map);
+        self.nav.levels.truncate(keep);
+        self.nav.bar_current = bar_current;
+        self.hover = hover;
+        self.hover_title = hover_title;
+        if keep == 0 {
             self.close(&mut Vec::new());
         }
-        self.model = m;
-        true
+    }
+
+    /// Where each entry is drawn, for assistive technology (SV79): the element path of every entry
+    /// with its row (or bar title) rect while it shows, `None` while it does not. Root-local points.
+    pub fn a11y_placements(&self) -> Vec<(Vec<usize>, Option<Rect>)> {
+        let shown = self.titles.iter().chain(self.levels.iter().flat_map(|l| l.rows.iter()));
+        self.model
+            .entries
+            .iter()
+            .enumerate()
+            .filter(|(_, e)| !e.path.is_empty())
+            .map(|(ix, e)| (e.path.clone(), shown.clone().find(|(x, _)| *x == ix).map(|(_, r)| *r)))
+            .collect()
     }
 
     /// Lays out the bar's titles and the open levels (after input, before recording).
@@ -952,6 +997,11 @@ impl Kind for MenuBar {
         let style = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme };
         self.menus.record_bar(&mut PaintCx::of(cx), &style);
     }
+    /// SV79: the titles and open rows are where assistive technology finds the entries (the
+    /// platform's menu bar shows them instead with `native-bar`).
+    fn a11y_placements(&self) -> Vec<(Vec<usize>, Option<Rect>)> {
+        if self.props.native_bar { Vec::new() } else { self.menus.a11y_placements() }
+    }
     /// The open menus, into the overlay stack ([`Menus::record_overlay`]).
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
         if self.props.native_bar { None } else { self.menus.record_overlay(cx) }
@@ -1075,6 +1125,10 @@ impl Kind for ContextMenu {
     }
     /// Out of flow: its levels are recorded into the overlay stack ([`Menus::record_overlay`]).
     fn record(&self, _cx: &mut RecordCx) {}
+    /// SV79: the open rows are where assistive technology finds the entries; closed, they are hidden.
+    fn a11y_placements(&self) -> Vec<(Vec<usize>, Option<Rect>)> {
+        self.menus.a11y_placements()
+    }
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
         self.menus.record_overlay(cx)
     }
@@ -1797,6 +1851,73 @@ mod tests {
         let edit = b.menus.model.find("edit").unwrap();
         assert!(b.menus.model.get(edit).enabled);
         assert_eq!(b.menus.model.find("new"), new_ix, "ids and places survive a rebuild");
+    }
+
+    /// SV79: an open menu stays open while its items change shape (a context menu whose items
+    /// arrive after the click), and its open submenu follows its entry.
+    #[test]
+    fn an_open_menu_stays_open_while_its_items_change() {
+        let mut c = ContextMenu::default();
+        assert!(!c.menus.sync_elements(&[]));
+        c.menus.open_at(Point::new(10.0, 10.0), false, &mut Vec::new());
+        assert_eq!(c.menus.nav.levels.len(), 1);
+        // the items arrive
+        let item = |a: &str| el("menu-item", a, &[("label", Value::str(a))], vec![]);
+        let sub = |items| el("menu", "more", &[("label", Value::str("More"))], items);
+        assert!(c.menus.sync_elements(&[item("cut"), sub(vec![item("x")])]));
+        assert_eq!(c.menus.nav.levels.len(), 1, "still open");
+        assert_eq!(c.menus.model.rows(MenuModel::ROOT).len(), 2);
+        let more = c.menus.model.find("more").unwrap();
+        c.menus.nav.open_sub(&c.menus.model, 0, more, true, &mut Vec::new());
+        assert_eq!(c.menus.nav.levels.len(), 2);
+        // a new first item moves the submenu's place: it stays open on its entry
+        assert!(c.menus.sync_elements(&[item("paste"), item("cut"), el("menu", "more", &[("label", Value::str("More"))], vec![item("x"), item("y")])]));
+        let more = c.menus.model.find("more");
+        assert_eq!(c.menus.nav.levels.iter().map(|l| l.container).collect::<Vec<_>>(), [MenuModel::ROOT, more.unwrap()]);
+        assert_eq!(c.menus.nav.levels[0].current, more, "the current row followed");
+        // the submenu goes away: its level closes, the menu stays open
+        assert!(c.menus.sync_elements(&[item("paste")]));
+        assert_eq!(c.menus.nav.levels.len(), 1);
+    }
+
+    /// SV79: an open menu's entries are on screen for assistive technology at their rows; closed,
+    /// they are hidden.
+    #[test]
+    fn open_menu_entries_have_their_rows_as_accesskit_bounds() {
+        use crate::testdoc::{child, doc, frame};
+        let (mut d, root) = doc(Size::new(400.0, 300.0), |r| crate::views::register_all(r).unwrap());
+        let owner = child(&mut d, root, skelter_core::KindId::of("box"), "width: 200px; height: 100px");
+        let menu = child(&mut d, owner, skelter_core::KindId::of("context-menu"), "");
+        let label = d.registry().get(skelter_core::KindId::of("menu-item")).unwrap().spec.prop_named("label").unwrap();
+        let items: Vec<_> = ["Cut", "Copy"]
+            .iter()
+            .map(|l| {
+                let it = d.create(skelter_core::KindId::of("menu-item"));
+                d.set_prop(it, label, skelter_core::Value::from(*l)).unwrap();
+                d.insert(menu, it, None, None).unwrap();
+                it
+            })
+            .collect();
+        let ak = |c: &skelter_base::commit::Commit, n: skelter_base::ids::NodeId| c.a11y.as_ref().and_then(|u| u.nodes.iter().find(|(id, _)| id.0 == n.0).map(|(_, x)| x.clone()));
+        let c = frame(&mut d).unwrap();
+        for &it in &items {
+            let n = ak(&c, it).expect("sent");
+            assert!(n.is_hidden(), "closed: hidden");
+        }
+        let open = d.registry().get(skelter_core::KindId::of("context-menu")).unwrap().spec.prop_named("open").unwrap();
+        d.set_prop(menu, open, skelter_core::Value::Bool(true)).unwrap();
+        let c = frame(&mut d).unwrap();
+        let rows: Vec<_> = items.iter().map(|&it| ak(&c, it).expect("re-sent when placed")).collect();
+        for n in &rows {
+            assert!(!n.is_hidden());
+            let b = n.bounds().expect("bounds");
+            assert!(b.x1 - b.x0 > 100.0 && (b.y1 - b.y0 - 26.0).abs() < 0.5, "a row: {b:?}");
+        }
+        let (a, b) = (rows[0].bounds().unwrap(), rows[1].bounds().unwrap());
+        assert_eq!(a.y1, b.y0, "Copy's row is below Cut's");
+        d.set_prop(menu, open, skelter_core::Value::Bool(false)).unwrap();
+        let c = frame(&mut d).unwrap();
+        assert!(items.iter().all(|&it| ak(&c, it).expect("re-sent").is_hidden()), "closed again: hidden");
     }
 
     #[cfg(feature = "native-menu")]

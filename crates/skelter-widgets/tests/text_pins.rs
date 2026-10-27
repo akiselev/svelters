@@ -254,7 +254,8 @@ impl Skelter {
 impl Driver for Skelter {
     fn setup(&mut self, pin: &Pin) -> Result<(), String> {
         let cfg = EditorConfig::default();
-        self.fields = FIELDS.iter().map(|a| TextField::new(&pin.setup.field(a).text, cfg, self.policy)).collect();
+        let policy = self.policy.clone();
+        self.fields = FIELDS.iter().map(|a| TextField::new(&pin.setup.field(a).text, cfg, policy.clone())).collect();
         for (h, a) in FIELDS.iter().enumerate() {
             self.trace.create("text-edit", h as u64 + 1);
             self.trace.set_str(h as u64 + 1, "text", &pin.setup.field(a).text);

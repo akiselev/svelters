@@ -324,8 +324,15 @@ impl Kind for TextEdit {
         }
         let Some(style) = cx.view(cx.node()).map(|v| text_style(v.style())) else { return Handled::No };
         // read on use: a policy set while the field is focused applies to its next event (SV62)
-        if let Some(p) = cx.service::<crate::interact::Policy>().copied() {
-            let tp = TextPolicy::from_policy(Platform::current(), &p);
+        // and the host's text keymap (S2, `host::set_text_keymap`)
+        let policy = cx.service::<crate::interact::Policy>().copied();
+        let keys = cx.service::<Arc<super::keys::TextKeymap>>().cloned();
+        if policy.is_some() || keys != self.field.editor.policy().keys {
+            let mut tp = match policy {
+                Some(p) => TextPolicy::from_policy(Platform::current(), &p),
+                None => self.field.editor.policy().clone(),
+            };
+            tp.keys = keys;
             if tp != *self.field.editor.policy() {
                 self.field.editor.set_policy(tp);
             }

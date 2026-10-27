@@ -285,6 +285,8 @@ impl Document {
         let mut out = Dispatched { seq: ev.seq, window: ev.window, revision: self.revision, ..Default::default() };
         let mut emitted = Vec::new();
         self.transaction(|doc| match &ev.event {
+            // S1: the input filters see pointer and wheel events after hit testing, before the rest
+            InputEvent::Pointer(_) | InputEvent::Wheel(_) if doc.filter_input(ev, &mut out) => {}
             InputEvent::Pointer(p) => doc.dispatch_pointer(ev.window, ev.os_time, p, &mut out, &mut emitted),
             InputEvent::Wheel(w) => doc.dispatch_wheel(ev.window, w, &mut out, &mut emitted),
             InputEvent::Key(k) => doc.dispatch_key(ev.window, k, &mut out, &mut emitted),

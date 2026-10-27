@@ -35,12 +35,25 @@ pub struct CoreDocument<H: DocHandle = Document> {
     /// The windows opened in the document, in order.
     windows: Vec<WindowId>,
     taps: Vec<EventTap>,
+    pre_taps: Vec<PreDispatchTap>,
 }
 
 /// Sees every dispatched input and the JS-facing events its dispatch produced, before the script host
 /// does ([`CoreDocument::add_event_tap`]): document services that react to core's events outside the
 /// kinds, e.g. `skelter_egui_island::IslandHost::bridge_events` (in-app drags into egui islands).
 pub type EventTap = Box<dyn FnMut(&mut Document, &InputEnvelope, &[JsEvent])>;
+
+/// What a pre-dispatch tap ([`CoreDocument::add_pre_dispatch_tap`]) sees. Fields are added over time
+/// (as `skelter_core::KeyHookCx`'s), so it is built only here.
+#[non_exhaustive]
+pub struct PreDispatchCx<'a> {
+    /// The document, before the input reaches it.
+    pub doc: &'a mut Document,
+    pub input: &'a InputEnvelope,
+}
+
+/// Sees every input before skelter-core dispatches it; returning true consumes it (no dispatch).
+pub type PreDispatchTap = Box<dyn FnMut(&mut PreDispatchCx<'_>) -> bool>;
 
 /// skelter-widgets' `menu-bar` kind.
 const MENU_BAR: KindId = KindId::of("menu-bar");
@@ -129,6 +142,7 @@ impl<H: DocHandle> CoreDocument<H> {
             menu_sent: None,
             windows: Vec::new(),
             taps: Vec::new(),
+            pre_taps: Vec::new(),
         }
     }
     /// Calls `tap` after every dispatch with the input and its JS-facing events (in the order added).
@@ -136,6 +150,14 @@ impl<H: DocHandle> CoreDocument<H> {
     /// the islands.
     pub fn add_event_tap(&mut self, tap: impl FnMut(&mut Document, &InputEnvelope, &[JsEvent]) + 'static) {
         self.taps.push(Box::new(tap));
+    }
+    /// Calls `tap` before every dispatch, in the order added, until one returns true: that tap
+    /// consumed the input, so skelter-core never dispatches it (no hit test, native default or JS
+    /// event, and the [`add_event_tap`](Self::add_event_tap) taps do not run). The twin of
+    /// [`add_event_tap`](Self::add_event_tap), for host services that must see an input first.
+    /// Pointer and wheel events after hit testing have `skelter_core::Document::add_input_filter`.
+    pub fn add_pre_dispatch_tap(&mut self, tap: impl FnMut(&mut PreDispatchCx<'_>) -> bool + 'static) {
+        self.pre_taps.push(Box::new(tap));
     }
     /// The `menu-bar` nodes of every window, in tree order.
     fn menu_bars(&self) -> Vec<skelter_core::skelter_base::ids::NodeId> {
@@ -166,6 +188,16 @@ impl<H: DocHandle> CoreDocument<H> {
 
 impl<H: DocHandle> DocumentApi for CoreDocument<H> {
     fn dispatch(&mut self, ev: &InputEnvelope) -> Dispatched {
+        if !self.pre_taps.is_empty() {
+            let mut doc = self.doc.lend_mut();
+            let before = doc.revision();
+            let mut cx = PreDispatchCx { doc: &mut doc, input: ev };
+            if self.pre_taps.iter_mut().any(|tap| tap(&mut cx)) {
+                let dirty = doc.revision() != before;
+                let fast = doc.take_fast_commits();
+                return Dispatched { dirty, js_events: 0, fast };
+            }
+        }
         let d = self.doc.lend_mut().dispatch(ev);
         let js_events = d.events.len();
         let mut doc = self.doc.lend_mut();
@@ -473,5 +505,63 @@ impl UiFrame {
         self.in_flight = None;
         let again = self.state.commit_applied(ui);
         again || (std::mem::take(&mut self.retry) && self.state.is_dirty())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use skelter_base::event::{InputEvent, Modifiers, MouseButton, PointerEvent, PointerPhase, PointerType};
+    use skelter_base::ids::InputSeq;
+    use skelter_core::testkinds::{BoxKind, FixedText};
+    use skelter_core::{KindRegistry, StyleInput};
+
+    const W: WindowId = WindowId(1);
+    const BOX: KindId = KindId::of("box");
+
+    fn press(seq: u64) -> InputEnvelope {
+        let p = PointerEvent {
+            phase: PointerPhase::Down,
+            pointer: 0,
+            kind: PointerType::Mouse,
+            button: Some(MouseButton::Primary),
+            buttons: 1,
+            pos: Point::new(5.0, 5.0),
+            modifiers: Modifiers::default(),
+            pressure: 0.5,
+            tilt: Vec2::ZERO,
+            history: Default::default(),
+        };
+        InputEnvelope { seq: InputSeq(seq), window: W, os_time: Time(seq), recv_time: Time(seq), event: InputEvent::Pointer(p) }
+    }
+
+    #[test]
+    fn a_pre_dispatch_tap_sees_the_input_first_and_may_consume_it() {
+        let mut r = KindRegistry::new();
+        r.register::<BoxKind>().unwrap();
+        let mut doc = Document::new(Arc::new(r), Box::new(FixedText));
+        let root = doc.create_window(W, BOX, Size::new(100.0, 100.0), Scale(1.0));
+        let a = doc.create(BOX);
+        doc.set_style(a, StyleInput { inline: Some("width: 20px; height: 20px".into()), ..Default::default() });
+        doc.insert(root, a, None, None).unwrap();
+        doc.frame(W, Time(0));
+        doc.listen(a, skelter_core::common::POINTERDOWN, skelter_core::ListenFlags::EMPTY);
+        let mut core = CoreDocument::new(doc, BOX);
+        let seen = Rc::new(RefCell::new(Vec::new()));
+        let (s, t) = (seen.clone(), seen.clone());
+        // consumes the first input only; it sees the document before dispatch (no press yet)
+        core.add_pre_dispatch_tap(move |cx: &mut PreDispatchCx<'_>| {
+            s.borrow_mut().push(("pre", cx.input.seq.0, cx.doc.state(a).contains(skelter_core::StateMask::PRESSED)));
+            cx.input.seq.0 == 1
+        });
+        core.add_event_tap(move |_: &mut Document, ev: &InputEnvelope, events: &[JsEvent]| t.borrow_mut().push(("post", ev.seq.0, !events.is_empty())));
+        let d = core.dispatch(&press(1));
+        assert_eq!((d.dirty, d.js_events), (false, 0), "consumed: nothing dispatched");
+        assert!(core.take_js_events().is_empty());
+        assert!(!core.doc.state(a).contains(skelter_core::StateMask::PRESSED));
+        let d = core.dispatch(&press(2));
+        assert_eq!(d.js_events, 1, "the pointerdown listener's event");
+        assert!(core.doc.state(a).contains(skelter_core::StateMask::PRESSED));
+        assert_eq!(*seen.borrow(), [("pre", 1, false), ("pre", 2, false), ("post", 2, true)], "the post-dispatch taps skip a consumed input");
     }
 }

@@ -9,14 +9,17 @@
 //! | `scope.rs` | Enter/Escape to a scope's default and cancel buttons, `:default` |
 //! | `peers.rs` | peer groups: one Tab stop, peer requests, roving focus |
 //! | [`dnd`] | in-app drag and drop (`drag-type`, `drop-types`) |
+//! | `filter.rs` | pointer and wheel filters before JS and the kinds (S1) |
 
 pub(crate) mod dispatch;
 pub mod dnd;
+pub(crate) mod filter;
 pub(crate) mod focus;
 pub(crate) mod peers;
 pub(crate) mod scope;
 
 pub use dispatch::{KeyHook, KeyHookCx};
+pub use filter::{FilterCx, Filtered, InputFilter};
 
 use crate::ids::SignalId;
 use crate::tree::ListenFlags;
@@ -76,6 +79,9 @@ pub struct Dispatched {
     pub changed: bool,
     /// Printable keys went to the IME first (§11.2): keybindings must not match this key.
     pub to_ime: bool,
+    /// The owner of the input filter that consumed the event ([`Document::add_input_filter`](crate::Document::add_input_filter)),
+    /// for a recorder to note; nothing else saw it.
+    pub filtered_by: Option<std::sync::Arc<str>>,
 }
 
 /// Pointer and hover state across events.

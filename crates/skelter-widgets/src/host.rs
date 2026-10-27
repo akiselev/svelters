@@ -443,6 +443,12 @@ pub fn set_policy(doc: &mut skelter_core::Document, policy: Policy) {
     doc.rerecord_all();
 }
 
+/// Sets the host's layer over the platform's text keys (S2) for every text field of `doc`: each
+/// field reads it on its next key, as it reads the policy. An empty keymap restores the platform's keys.
+pub fn set_text_keymap(doc: &mut skelter_core::Document, keymap: crate::text::TextKeymap) {
+    doc.set_service(std::sync::Arc::new(keymap));
+}
+
 /// The document's policy, else the OS's.
 pub fn policy_of(doc: &mut skelter_core::Document) -> Policy {
     doc.service::<Policy>().copied().unwrap_or_else(os_policy)
@@ -797,6 +803,10 @@ impl<W: w::Kind + Default> Hosted<W> {
         let node = cx.node();
         let Some(view) = cx.view(node) else { return Handled::No };
         let (size, mask) = (view.size(), view.state());
+        // SV78: the layout's scroll geometry, fresh for each event
+        if let Some(g) = view.scroll_geometry() {
+            self.widget.scroll_geometry(&g);
+        }
         self.sync_disabled(view.disabled());
         let policy = cx.service::<Policy>().copied().unwrap_or_else(os_policy);
         let s = Self::spec_ref();
@@ -950,6 +960,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         // FQ-67: the widget's `disabled` mirror follows the node's state before it paints (a
         // `disabled` write reaches `prop_changed` before core updates the state; inertness never does)
         self.sync_disabled(cx.node.disabled());
+        // SV78: the bars are laid out over the layout's scroll geometry
+        if let Some(g) = cx.node.scroll_geometry() {
+            self.widget.scroll_geometry(&g);
+        }
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
@@ -974,6 +988,16 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             (res.new, res.used, res.new_paths, res.used_paths, emitted)
         });
         self.add_reads(reads);
+        // SV79: descendants the widget draws itself, placed for assistive technology
+        for (path, rect) in self.widget.a11y_placements() {
+            let mut at = Some(node.id());
+            for k in path {
+                at = at.and_then(|n| node.view(n)).and_then(|v| v.children().get(k).copied());
+            }
+            if let Some(n) = at.filter(|n| *n != node.id()) {
+                cx.place_a11y(n, rect);
+            }
+        }
         for (key, data) in new_paths {
             let mut data = Some(data);
             if let Some(id) = cx.share_path(&key, &mut || data.take()) {

@@ -102,6 +102,13 @@ pub struct Document {
     pub(crate) run_counter: u64,
     pub(crate) images: crate::cx::ImageSink,
     pub(crate) key_hook: Option<crate::input::KeyHook>,
+    /// Pointer and wheel filters (S1, `input/filter.rs`).
+    pub(crate) input_filters: crate::input::filter::Filters,
+    /// AccessKit placements an ancestor's kind gave its descendants ([`PrepareCx::place_a11y`](crate::PrepareCx::place_a11y)):
+    /// per node, the placing node and the bounds in its space, or `None` (hidden).
+    pub(crate) a11y_placed: HashMap<NodeId, (NodeId, Option<skelter_base::geom::Rect>)>,
+    /// Nodes whose placement changed since the last frame's AccessKit update.
+    pub(crate) a11y_placed_dirty: Vec<NodeId>,
     /// The `title` tooltip provider, and when each window's tip steps next ([`crate::tips`]).
     pub(crate) title_tips: Option<Box<dyn crate::tips::TitleTips>>,
     pub(crate) tip_wakes: HashMap<WindowId, skelter_base::time::Time>,
@@ -182,6 +189,9 @@ impl Document {
             run_counter: 0,
             images: Default::default(),
             key_hook: None,
+            input_filters: Default::default(),
+            a11y_placed: HashMap::new(),
+            a11y_placed_dirty: Vec::new(),
             title_tips: None,
             tip_wakes: HashMap::new(),
             services: Default::default(),
@@ -720,6 +730,7 @@ impl Document {
         self.peer_queue.retain(|(n, ..)| *n != id);
         self.missed_props.retain(|(n, _)| *n != id);
         self.self_scroll.remove(&id);
+        self.a11y_placed.remove(&id);
         self.light_dismiss.remove(&id);
         if self.selection_owner == Some(id) {
             self.selection_owner = None;

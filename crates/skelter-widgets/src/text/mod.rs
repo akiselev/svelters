@@ -41,7 +41,7 @@ pub use editor::{Changes, EditorConfig, FocusReason, TextEditor, TextRequest};
 pub use field::{FieldColors, FieldSignal, TEXT_EDIT_PROPS, TEXT_EDIT_SIGNALS, TextField};
 pub use hex::{HexField, HexSignal};
 pub use kind::TextEdit;
-pub use keys::{KeyAction, KeyRoute};
+pub use keys::{KeyAction, KeyChord, KeyRoute, TextAction, TextKeymap};
 pub use number::{NumFormat, NumberField, NumberSignal, Steps};
 pub use policy::{Platform, TextPolicy};
 pub use runs::{TextRanges, TextRun};
