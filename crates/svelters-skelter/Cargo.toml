@@ -6,6 +6,13 @@ version.workspace = true
 license.workspace = true
 publish.workspace = true
 
+[features]
+default = ["system-clipboard"]
+# SV75: the desktop platform (`svelters_host::platform::Platform::system()`: the arboard system
+# clipboard with the Linux primary selection, and the system shell) without svelters-egui.
+# skelter-platform links arboard already.
+system-clipboard = ["svelters-host/system-clipboard"]
+
 [dependencies]
 skelter-base = { workspace = true }
 skelter-core = { workspace = true }

@@ -5354,6 +5354,7 @@ dependencies = [
 name = "svelters-host"
 version = "0.0.0"
 dependencies = [
+ "arboard",
  "backtrace",
  "directories",
  "inventory",

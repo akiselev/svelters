@@ -8,7 +8,8 @@
 //!   ([`MimeData::single`]), so a Rust panel that copies, drags or pastes handles both the same way.
 //! - [`ClipboardBackend`]: read, write and list formats of the clipboard or the primary selection.
 //!   [`MemoryClipboard`] keeps everything in process (the default: headless hosts and tests never
-//!   touch the system clipboard); svelters-egui's `SystemClipboard` (arboard) is the desktop one.
+//!   touch the system clipboard); `SystemClipboard` (arboard, feature `system-clipboard`) is the
+//!   desktop one, with the Linux primary selection (`system_primary`).
 //! - [`ShellBackend`]: open a URL, open a file with the system handler, reveal a file.
 //!   [`NoShell`] (the default) fails every call, [`RecordingShell`] records them (tests),
 //!   [`SystemShell`] does them.
@@ -21,11 +22,26 @@
 //! Type patterns (`read`'s `accept`) follow WG4b's `drop-types`: an exact type, `*` (any type), or
 //! `prefix/*` (any type starting with `prefix/`).
 //!
-//! Writer lane: DX2 (plans/milestones/DX2-clipboard-files.md).
+//! `Platform::system` (feature `system-clipboard`; also `platform::system()`) is what a desktop app
+//! installs: `SystemClipboard` and [`SystemShell`]. svelters-egui's runners install it; an embedder
+//! (cadatomic, a svelters-skelter app) sets it on its own `HostConfig`:
+//!
+//! ```ignore
+//! let mut host = HostConfig::default();
+//! host.platform = svelters_host::platform::Platform::system();
+//! ```
+//!
+//! Writer lane: DX2 (plans/milestones/DX2-clipboard-files.md); SV75 moved the system clipboard
+//! here from svelters-egui.
 
 use std::fmt;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, MutexGuard};
+
+#[cfg(feature = "system-clipboard")]
+mod system_clipboard;
+#[cfg(feature = "system-clipboard")]
+pub use system_clipboard::{system_primary, SystemClipboard, PRIMARY_SUPPORTED};
 
 /// The plain-text type, the fallback every clipboard understands.
 pub const TEXT_PLAIN: &str = "text/plain";
@@ -287,7 +303,7 @@ pub trait ShellBackend: Send + Sync + 'static {
 }
 
 /// The default shell: every call fails with [`ShellError::Unsupported`]. A desktop runner installs
-/// [`SystemShell`] (svelters-egui's `platform::system()`).
+/// [`SystemShell`] (`Platform::system`, feature `system-clipboard`).
 #[derive(Clone, Copy, Debug, Default)]
 pub struct NoShell;
 
@@ -480,6 +496,12 @@ impl Platform {
         Platform { clipboard: Arc::new(MemoryClipboard::new()), shell: Arc::new(NoShell), headless: true }
     }
 
+    /// The desktop platform: [`SystemClipboard`] (arboard) and [`SystemShell`].
+    #[cfg(feature = "system-clipboard")]
+    pub fn system() -> Platform {
+        Platform::new(Arc::new(SystemClipboard::new()), Arc::new(SystemShell))
+    }
+
     /// Whether this is an unchanged [`Platform::headless`] (a desktop runner then installs the
     /// system platform).
     pub fn is_headless(&self) -> bool {
@@ -497,6 +519,12 @@ impl Platform {
         self.headless = false;
         self
     }
+}
+
+/// The desktop platform ([`Platform::system`]).
+#[cfg(feature = "system-clipboard")]
+pub fn system() -> Platform {
+    Platform::system()
 }
 
 impl Default for Platform {

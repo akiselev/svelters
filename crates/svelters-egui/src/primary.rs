@@ -6,7 +6,7 @@
 //! The selection itself is a [`PrimarySelection`] provider. FX3s folded it onto DX2's clipboard: any
 //! [`ClipboardBackend`] is one ([`install_backend`], its [`ClipboardKind::Primary`]), and the eframe
 //! runner installs the system one ([`use_system`]: [`crate::platform::SystemClipboard`], the
-//! backend `Host::platform()` uses on the desktop). An embedder that owns its window calls
+//! backend `Host::platform()` uses on the desktop; svelters-host's `platform::system_primary` since SV75). An embedder that owns its window calls
 //! [`use_system`] or installs its own; tests install a fake. Without a provider the text kinds
 //! behave as plain egui.
 //!
@@ -88,10 +88,7 @@ pub fn use_system() -> bool {
     if p.is_some() {
         return true;
     }
-    let system = crate::platform::SystemClipboard::new();
-    if system.formats(ClipboardKind::Primary).is_err() {
-        return false;
-    }
+    let Some(system) = svelters_host::platform::system_primary() else { return false };
     *p = Some(Arc::new(Backend(Arc::new(system))));
     true
 }
