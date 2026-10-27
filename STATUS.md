@@ -303,6 +303,11 @@ cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomi
 | SV66 host-set media preferences (reduced motion, contrast) on the document, plus an OS probe | document half done on `ci/mal1-feel`; OS probe → MAL2 | MAL1-FEEL.md |
 | SV76 a bubbled pointer event gets each ancestor's own local point (`bubble_native`; a press on a row's content selected the wrong row) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
 | SV77 a `<context-menu>` opens on its owner's secondary click (`Kind::owner_context_click`) | done on `ci/mal1-feel`, awaiting merge | MAL1-FEEL.md |
+| SV67 UA `Token(name)` reads the node's computed `--sv-<name>` first (parse cached per value), the typed `Theme` only without a token sheet | done on `ci/mal2-look`, awaiting merge | MAL2-LOOK.md |
+| SV68 component tokens stay `var()` of their role in the token sheet; the typed views keep resolved values | done on `ci/mal2-look`, awaiting merge | MAL2-LOOK.md |
+| SV69 dependency-tracked restyle for custom properties (`Kind::reads_custom_property`, `FrameStats::restyled`) plus `Document::set_root_tokens` without a sheet swap (`host::set_theme_tokens`) | done on `ci/mal2-look`, awaiting merge | MAL2-LOOK.md |
+| SV70 `Origin::User` (theme < author < user < inline; user `!important` top), `revert`, `revert-layer`, `Document::add_sheet_with_origin` | done on `ci/mal2-look`, awaiting merge | MAL2-LOOK.md |
+| SV71 token listing with docs (`token_manifest`, `token_doc`), override source tags (`Theme::with_source`, `override_source`, `explain`) | done on `ci/mal2-look`, awaiting merge | MAL2-LOOK.md |
 | Tours (cadatomic TU1–TU10): the generic half, `svelters-tour` (`.tour.md` → JS define phase → IR), `@svelters/tour` overlay components, the gate and placement on SV6/SV7, `capture.frames` and `clock.advance_to`, `svelters-tts` (Kokoro and the narration manifest), `svelters-tour-video` | proposed; the user wants the svelters and cadatomic halves developed in tandem (2026-10-23); not yet placed on TRACKS.md | cadatomic `docs/research/2026-10-23-tours-tests-tutorials-videos.md` §8–§9 |
 
 ## Handoff (2026-10-19, superseded)
