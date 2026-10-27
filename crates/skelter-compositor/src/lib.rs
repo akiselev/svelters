@@ -333,6 +333,12 @@ impl CompositorHandle {
         self.post(Msg::SetCaretBlink { window, blink });
     }
 
+    /// The window's document asks for reduced motion (`prefers-reduced-motion`): finite
+    /// animations and smooth scrolls jump to their end; flings and infinite animations still run.
+    pub fn set_reduced_motion(&self, window: WindowId, on: bool) {
+        self.post(Msg::SetReducedMotion { window, on });
+    }
+
     /// The display refresh interval of the window's monitor.
     pub fn set_refresh(&self, window: WindowId, interval: Span) {
         self.post(Msg::SetRefresh { window, interval });

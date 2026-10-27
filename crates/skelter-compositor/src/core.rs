@@ -84,6 +84,8 @@ pub enum Msg {
     /// The pixel density of the window's monitor (fling physics); replaces `EngineConfig::ppi` for it.
     SetPpi { window: WindowId, ppi: f32 },
     SetCaretBlink { window: WindowId, blink: Option<CaretBlink> },
+    /// The document's `prefers-reduced-motion`: finite animations and smooth scrolls jump to their end.
+    SetReducedMotion { window: WindowId, on: bool },
     RegisterTexture { id: TextureId, texture: wgpu::Texture },
     UnregisterTexture(TextureId),
     /// The texture's producer drew a new image into it (a viewport frame): damage what shows it.
@@ -170,6 +172,9 @@ struct Win {
     anims: Vec<Anim>,
     motions: HashMap<PropNodeId, Motion>,
     animating: bool,
+    /// Reduced motion ([`Msg::SetReducedMotion`]): finite animations and smooth scrolls sample at
+    /// their end (flings, which follow the user's hand, still run; so do infinite animations).
+    reduced_motion: bool,
     caret: Caret,
     vsync_on: bool,
     /// The platform frame source; without one, a timer on the refresh interval.
@@ -289,6 +294,7 @@ impl Engine {
             anims: Vec::new(),
             motions: HashMap::new(),
             animating: false,
+            reduced_motion: false,
             caret: Caret {
                 rect: None,
                 // hidden until the window's first `FastCommit::Caret`, which brings its colour
@@ -403,6 +409,17 @@ impl Engine {
                         }
                     }
                     self.signal(window, now, Signal::Visible(visible), gpu);
+                }
+            }
+            Msg::SetReducedMotion { window, on } => {
+                if let Some(w) = self.windows.get_mut(&window)
+                    && w.reduced_motion != on
+                {
+                    w.reduced_motion = on;
+                    if on && (!w.anims.is_empty() || !w.motions.is_empty()) {
+                        // what runs now jumps on the next frame
+                        self.signal(window, now, Signal::CompositorDamage, gpu);
+                    }
                 }
             }
             Msg::SetCaretBlink { window, blink } => {
@@ -976,6 +993,10 @@ impl Engine {
                 out.push(ToUi::Animation { window, event: AnimationEvent::Started { id: a.spec.id, at: start } });
             }
             let t = a.paused_at.unwrap_or(target);
+            let t = match (w.reduced_motion, jump_end(&a.spec.generator)) {
+                (true, Some(end)) => start.max(t) + end,
+                _ => t,
+            };
             let s = skelter_anim::sample(&a.spec.generator, start, t);
             match &s.value {
                 Some(v) => {
@@ -999,10 +1020,12 @@ impl Engine {
         }
         let mut done = Vec::new();
         for (node, m) in &w.motions {
-            if let Some(offset) = w.tree.set_scroll_offset(*node, m.offset_at(target)) {
+            // with reduced motion a smooth scroll is at its target at once
+            let at = if w.reduced_motion && matches!(m.anim, MotionKind::Smooth(_)) { m.start.max(target) + Span::from_secs_f64(3600.0) } else { target };
+            if let Some(offset) = w.tree.set_scroll_offset(*node, m.offset_at(at)) {
                 out.push(ToUi::ScrollMoved { window, node: *node, offset });
             }
-            if m.done_at(target) {
+            if m.done_at(at) {
                 done.push(*node);
             }
         }
@@ -1175,6 +1198,19 @@ fn retarget(a: &mut Anim, to: AnimValue, now: Time) {
 }
 
 /// A compositor-owned scroll motion on one scroll node.
+/// How far past its start a finite animation samples with reduced motion (its end, and any end
+/// delay); `None`: it never ends (infinite iterations), so it runs as usual.
+fn jump_end(g: &Generator) -> Option<Span> {
+    match g {
+        Generator::Keyframes { timing, .. } => {
+            let end = skelter_anim::timing::end_time(timing);
+            end.is_finite().then(|| Span::from_secs_f64(end))
+        }
+        // a spring settles well within an hour
+        Generator::Spring { .. } => Some(Span::from_secs_f64(3600.0)),
+    }
+}
+
 struct Motion {
     anim: MotionKind,
     /// Added to the curve's offset: a fling's offsets are distances from where it started; a smooth

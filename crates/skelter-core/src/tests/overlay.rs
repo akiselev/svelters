@@ -278,3 +278,23 @@ fn the_title_host_reaches_the_tip_provider_and_its_layer_tops_the_overlays() {
     assert!(c.layers.contains(&LayerDelta::Remove(adds[0].id)));
     let _ = inner;
 }
+
+/// R2: a hover at event time (a coalesced move) steps the tip at the move's time, not at the time
+/// of the input before it, so the tip's delay starts when the pointer came to rest.
+#[test]
+fn a_timed_hover_starts_the_tip_at_its_own_time() {
+    let (mut d, root) = odoc();
+    let host = child(&mut d, root, BOX, "position: absolute; left: 0px; top: 0px; width: 50px; height: 40px; background-color: red");
+    d.set_prop(host, common::TITLE, Value::from("Save")).unwrap();
+    let log = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
+    d.set_title_tips(Some(Box::new(LogTips(log.clone()))));
+    frame(&mut d);
+    // the last input, long ago and off the host
+    d.dispatch(&pointer(PointerPhase::Move, 150.0, 90.0, 1_000));
+    assert!(d.hover_at(W, Point::new(5.0, 5.0), Time(9_000)));
+    assert_eq!(log.borrow().last().unwrap(), &(crate::tips::TitleInput { host: Some((host, Arc::from("Save"))), ..Default::default() }, Time(9_000)));
+    assert_eq!(d.next_timer(), Some(Time(9_500)), "the delay runs from the hover");
+    // an older time never moves the clock back
+    assert!(d.hover_at(W, Point::new(150.0, 90.0), Time(5_000)));
+    assert_eq!(log.borrow().last().unwrap().1, Time(9_000));
+}

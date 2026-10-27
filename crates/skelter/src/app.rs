@@ -151,6 +151,8 @@ pub struct App<D: DocumentApi, C: CompositorApi> {
     timer: Option<Time>,
     /// The caret blink last sent to every window (`DocumentApi::caret_blink`).
     caret_blink: Option<Option<skelter_compositor::CaretBlink>>,
+    /// The reduced motion last sent to every window (`DocumentApi::reduced_motion`).
+    reduced_motion: Option<bool>,
 }
 
 impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
@@ -173,6 +175,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             resize_seq: 0,
             timer: None,
             caret_blink: None,
+            reduced_motion: None,
         }
     }
 
@@ -259,6 +262,12 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
         {
             c.set_caret_blink(id, blink);
             self.caret_blink = Some(blink);
+        }
+        if let Some(on) = self.doc.reduced_motion()
+            && let Some(c) = &self.compositor
+        {
+            c.set_reduced_motion(id, on);
+            self.reduced_motion = Some(on);
         }
         let position = self.windows.get(&id).and_then(|w| w.position).or(position);
         self.sync_monitor(cx, id, position);
@@ -512,6 +521,16 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             self.caret_blink = Some(blink);
             for &id in self.windows.keys() {
                 comp.set_caret_blink(id, blink);
+            }
+        }
+        // A media-preference change since the last commit: every window's animations follow it.
+        if let Some(on) = self.doc.reduced_motion()
+            && self.reduced_motion != Some(on)
+            && let Some(comp) = &self.compositor
+        {
+            self.reduced_motion = Some(on);
+            for &id in self.windows.keys() {
+                comp.set_reduced_motion(id, on);
             }
         }
         if let Some(comp) = &self.compositor {
@@ -841,7 +860,7 @@ impl<D: DocumentApi + 'static, C: CompositorApi + 'static> App<D, C> {
             // Hover changes at event time; the move itself reaches JS with the frame (§11.1).
             if let InputEvent::Pointer(p) = &ev.event
                 && p.phase == PointerPhase::Move
-                && self.doc.hover(w, p.pos)
+                && self.doc.hover_at(w, p.pos, ev.os_time)
             {
                 self.request_frame(w);
             }

@@ -830,3 +830,63 @@ fn frame_timings_follow_each_present_and_frame_args_are_published() {
     assert!(args.visible);
     assert!(args.next_target > t0);
 }
+
+/// R1: with reduced motion a finite compositor animation finishes on its first frame at its end
+/// value, and a smooth scroll lands on its target in one frame.
+#[test]
+fn reduced_motion_jumps_animations_and_smooth_scrolls() {
+    let (mut e, sent) = engine();
+    let mut gpu = FakeGpu::default();
+    let t0 = T0;
+    new_window(&mut e);
+    e.handle(Msg::SetReducedMotion { window: W, on: true }, t0, &mut gpu);
+    let mut c = base_commit(1);
+    c.animations = vec![AnimationCmd::Start(AnimationSpec {
+        id: AnimationId(9),
+        node: A,
+        target: Some(EFFECT),
+        property: AnimProperty::Opacity,
+        generator: Generator::Keyframes {
+            keyframes: vec![
+                Keyframe { offset: 0.0, value: AnimValue::Number(0.0), easing: None },
+                Keyframe { offset: 1.0, value: AnimValue::Number(1.0), easing: None },
+            ],
+            timing: Timing {
+                delay: Span::ZERO,
+                end_delay: Span::ZERO,
+                duration: Span::from_millis(100),
+                iterations: 1.0,
+                iteration_start: 0.0,
+                direction: PlaybackDirection::Normal,
+                fill: FillMode::Forwards,
+                easing: Easing::Linear,
+            },
+        },
+        start: StartTime::NextFrame,
+    })];
+    e.handle(Msg::Commit(Box::new(c)), t0, &mut gpu);
+    complete(&mut e, &mut gpu, t0);
+    let events = |sent: &Sent| -> Vec<AnimationEvent> {
+        sent.lock().unwrap().iter().filter_map(|m| match m {
+            ToUi::Animation { event, .. } => Some(*event),
+            _ => None,
+        }).collect()
+    };
+    let ev = events(&sent);
+    assert!(matches!(ev[..], [AnimationEvent::Started { .. }, AnimationEvent::Finished { .. }]), "{ev:?}");
+    assert_eq!(e.tree(W).unwrap().props.anim_opacity[&EFFECT], 1.0, "the end value at once");
+    e.handle(
+        Msg::SmoothScroll { window: W, node: SCROLL, to: Vec2::new(0.0, 100.0), behavior: DurationBehavior::InverseDelta, at: t0 + Span::from_millis(2) },
+        t0 + Span::from_millis(2),
+        &mut gpu,
+    );
+    step(&mut e, &mut gpu);
+    assert_eq!(e.tree(W).unwrap().props.scrolls[&SCROLL].offset.y, 100.0, "one frame");
+    for _ in 0..10 {
+        if step(&mut e, &mut gpu).is_none() {
+            break;
+        }
+    }
+    assert_eq!(scroll_moves(&sent), [100.0], "no frames in between");
+    assert!(e.next_wakeup().is_none());
+}

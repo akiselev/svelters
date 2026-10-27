@@ -456,6 +456,10 @@ pub mod core {
         /// The node has keyboard focus.
         pub focused: bool,
         pub policy: &'a Policy,
+        /// The document's media preferences ask for reduced motion (`prefers-reduced-motion`,
+        /// skelter-core's `Document::media_preferences`): animations the kind runs itself (smooth
+        /// scrolling, fades) jump to their end. Read on use, like the policy.
+        pub reduced_motion: bool,
         /// Signals to deliver, in order.
         pub emitted: Vec<Emitted>,
         /// Props the kind changed natively (`checked` after a click): core journals them with their
@@ -498,7 +502,7 @@ pub mod core {
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new(), ret: None, refresh_virtual: false, layouts: None }
+            EventCx { now, size, state, enabled, focused: false, policy, reduced_motion: false, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new(), ret: None, refresh_virtual: false, layouts: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });

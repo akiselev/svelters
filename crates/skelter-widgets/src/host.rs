@@ -805,6 +805,7 @@ impl<W: w::Kind + Default> Hosted<W> {
             let mut lender = EventLender(&shared);
             let mut wcx = w::EventCx::new(time, size, &mut state, &policy);
             wcx.focused = mask.contains(StateMask::FOCUSED);
+        let reduced_motion = cx.document().media_preferences().reduced_motion;
             wcx.sync = Some(&mut sync);
             if has_text {
                 wcx.layouts = Some(&mut lender);
@@ -816,6 +817,7 @@ impl<W: w::Kind + Default> Hosted<W> {
         let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual) = out;
         self.ret = ret;
         if refresh_virtual {
+            wcx.reduced_motion = reduced_motion;
             cx.refresh_virtual();
         }
         let diff = StateBits((state.0 ^ before.0) & !CORE_BITS.0);
