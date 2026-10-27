@@ -138,6 +138,7 @@ impl Document {
         if rebuild {
             a11y_dirty.extend(std::mem::take(&mut self.window_mut(window).expect("window").a11y_moved));
         }
+        a11y_dirty.extend(std::mem::take(&mut self.a11y_placed_dirty));
         commit.a11y = self.a11y_update(window, root, &a11y_dirty);
         // what left the window since the last frame
         let orphaned = std::mem::take(&mut self.anim.orphaned);
@@ -494,10 +495,10 @@ impl Document {
         let mut shaper = self.shaper.take();
         let mut services = std::mem::take(&mut self.services);
         let mut emitted = Vec::new();
-        let (request, scroll, caret, native) = {
-            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None, native: Vec::new() };
+        let (request, scroll, caret, native, placed) = {
+            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None, native: Vec::new(), placed: Vec::new() };
             k.prepare(&mut cx);
-            (cx.request, cx.scroll, cx.caret, cx.native)
+            (cx.request, cx.scroll, cx.caret, cx.native, cx.placed)
         };
         // a kind that scrolls itself may have grown or shrunk its content
         let own = k.self_scroll(&self.view_at(i));
@@ -510,6 +511,14 @@ impl Document {
             if let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w)) {
                 w.rebuild = true;
             }
+        }
+        // SV79: descendants the kind placed for assistive technology re-send when that changed
+        for (n, rect) in placed {
+            if self.idx(n).is_none() || self.a11y_placed.get(&n) == Some(&(node, rect)) {
+                continue;
+            }
+            self.a11y_placed.insert(n, (node, rect));
+            self.a11y_placed_dirty.push(n);
         }
         // the prepare's scroll and caret, as an event's: fast commits, clamped to the content just taken
         if let Some(v) = scroll {

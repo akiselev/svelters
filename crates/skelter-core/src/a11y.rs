@@ -154,11 +154,19 @@ impl Document {
                 w.a11y_subtrees_sent.remove(&node);
             }
         }
-        let l = &self.layout[i].layout;
-        out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: l.size.width as f64, y1: l.size.height as f64 });
-        let world = self.record[i].world_tf;
+        // SV79: a node an ancestor's kind placed takes those bounds, in the placing node's space
+        let placed = self.a11y_placed.get(&node).copied().filter(|(by, _)| self.idx(*by).is_some());
+        match placed {
+            Some((_, Some(r))) => out.set_bounds(accesskit::Rect { x0: r.min.x as f64, y0: r.min.y as f64, x1: r.max.x as f64, y1: r.max.y as f64 }),
+            Some((_, None)) => out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: 0.0, y1: 0.0 }),
+            None => {
+                let l = &self.layout[i].layout;
+                out.set_bounds(accesskit::Rect { x0: 0.0, y0: 0.0, x1: l.size.width as f64, y1: l.size.height as f64 });
+            }
+        }
+        let world = self.a11y_world(i);
         let rel = match self.core[i].parent {
-            Some(p) => self.record[self.ix(p)].world_tf.inverse().map_or(skelter_base::geom::Affine::IDENTITY, |pi| pi.then(&world)),
+            Some(p) => self.a11y_world(self.ix(p)).inverse().map_or(skelter_base::geom::Affine::IDENTITY, |pi| pi.then(&world)),
             // the root scales document points to physical window pixels
             None => {
                 let s = window.and_then(|w| self.window(w)).map_or(1.0, |w| w.scale.0);
@@ -169,7 +177,7 @@ impl Document {
             out.set_transform(accesskit::Affine::new([rel.a as f64, rel.b as f64, rel.c as f64, rel.d as f64, rel.e as f64, rel.f as f64]));
         }
         self.record[i].a11y_tf = Some(rel);
-        let hidden = self.layout[i].style.display == taffy::Display::None || self.style.computed(i).visibility_hidden;
+        let hidden = self.layout[i].style.display == taffy::Display::None || self.style.computed(i).visibility_hidden || matches!(placed, Some((_, None)));
         if hidden {
             out.set_hidden();
         }
@@ -241,6 +249,16 @@ impl Document {
     }
 
     /// The children in the accessibility tree: all but those their container conceals.
+    /// The transform AccessKit composes for node `i`: its placing node's ([`PrepareCx::place_a11y`](crate::PrepareCx::place_a11y))
+    /// while it is placed and shown, else its own world transform.
+    fn a11y_world(&self, i: usize) -> skelter_base::geom::Affine {
+        let placed = self.slots.id_at(i).and_then(|n| self.a11y_placed.get(&n));
+        match placed.and_then(|(by, r)| r.and(self.idx(*by))) {
+            Some(b) => self.record[b].world_tf,
+            None => self.record[i].world_tf,
+        }
+    }
+
     fn a11y_children(&self, i: usize) -> impl Iterator<Item = NodeId> + '_ {
         let kids: &[NodeId] = if self.view_at(i).kind().spec.conceals_children { &[] } else { &self.children[i] };
         kids.iter().copied().filter(|&c| !self.core[self.ix(c)].flags.contains(crate::tree::NodeFlags::CONCEALED))

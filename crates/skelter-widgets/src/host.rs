@@ -988,6 +988,16 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             (res.new, res.used, res.new_paths, res.used_paths, emitted)
         });
         self.add_reads(reads);
+        // SV79: descendants the widget draws itself, placed for assistive technology
+        for (path, rect) in self.widget.a11y_placements() {
+            let mut at = Some(node.id());
+            for k in path {
+                at = at.and_then(|n| node.view(n)).and_then(|v| v.children().get(k).copied());
+            }
+            if let Some(n) = at.filter(|n| *n != node.id()) {
+                cx.place_a11y(n, rect);
+            }
+        }
         for (key, data) in new_paths {
             let mut data = Some(data);
             if let Some(id) = cx.share_path(&key, &mut || data.take()) {

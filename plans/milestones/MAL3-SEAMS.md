@@ -1,4 +1,4 @@
-# MAL3-SEAMS: svelters input and widget seams (SV73, S1, S2, SV78)
+# MAL3-SEAMS: svelters input and widget seams (SV73, S1, S2, SV78, SV79)
 
 Lane `S-D seams` of cadatomic's MAL3 batch, branch `ci/mal3-seams`, base master `b6f0ee86`.
 Coordinator: cadatomic's batch coordinator session. Every seam is generic: no host names or types.
@@ -67,6 +67,23 @@ Coordinator: cadatomic's batch coordinator session. Every seam is generic: no ho
   `Handled::No` for the wheel, so the container around it scrolls.
 - Test: skelter-widgets `views::scroll::tests::a_wheel_scrolls_a_laid_out_area_and_passes_when_it_fits`.
 
+### SV79: menu entries on screen for assistive technology (`skelter-core/src/a11y.rs`, `views/menu.rs`)
+
+- Cause: core set every node's AccessKit bounds from its layout box; menu entries are drawn by
+  their root's levels and never laid out, so every entry was 0×0.
+- skelter-core: `PrepareCx::place_a11y(descendant, Option<Rect>)`. A placed node's AccessKit
+  bounds are the rect in the placing node's local space (its transform composes from the placing
+  node's); `None` hides it. Placements apply after the prepare; a changed one re-sends the node in
+  the same frame. Freed nodes drop theirs.
+- The widget shim's `Kind::a11y_placements()` (paths of child indices, like `emit_at`); the host
+  turns them into `place_a11y` after each prepare. `menu-bar` and `context-menu` place each entry
+  at its open row or bar title, and hide it otherwise (`native-bar` places nothing).
+- `Menus::sync_elements` no longer closes an open menu when its items change shape: the open
+  levels, current rows, hover and bar title follow their entries by id (anchor, else position); a
+  level whose container is gone closes with the levels below it.
+- Tests: skelter-widgets `views::menu::tests::open_menu_entries_have_their_rows_as_accesskit_bounds`,
+  `views::menu::tests::an_open_menu_stays_open_while_its_items_change`.
+
 ## Carry-overs
 
 - `ScrollArea`'s bars follow content growth on the next event or prepare; a child that grows
@@ -74,12 +91,16 @@ Coordinator: cadatomic's batch coordinator session. Every seam is generic: no ho
 - Bar width and minimum thumb are constants; the theme's `scrollbar-w` token is not read yet.
 - `PassToIme` is honoured by `TextEditor::route`; core's dispatch decides `to_ime` itself and does
   not consult the field's layer.
+- An AccessKit action on a menu entry (click, focus) still reaches the entry node, whose kind does
+  nothing with it; picking through AccessKit is the root's to add.
 - The number, hex and cell editors built by the table and pickers take `TextPolicy::from_policy`
   without the document's text keymap (their shim contexts have no services).
 
 ## Tests run locally
 
 Only the tests above, filtered (`cargo test -p <crate> --lib <name>`), plus
+`cargo test -p skelter-widgets --lib views::menu` (28), `cargo test -p skelter-core --lib a11y` (13),
+`cargo test -p skelter-test --test menu` (3),
 `cargo test -p skelter-widgets --lib views::scroll` (17) and `cargo check -p skelter -p skelter-core
 -p svelters-skelter -p skelter-test --all-targets`, `cargo check -p skelter-widgets --all-targets`.
 Not run: the full workspace tests, conformance, clippy.

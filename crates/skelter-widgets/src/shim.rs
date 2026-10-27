@@ -694,6 +694,12 @@ pub mod core {
         /// last layout: given before each event and each prepare, while the node is one. A kind that
         /// draws its own bars or scrolls by its own rules (`scroll-area`) keeps it.
         fn scroll_geometry(&mut self, _g: &skelter_core::ScrollGeometry) {}
+        /// Stands in for skelter-core's `PrepareCx::place_a11y`: descendants the kind draws itself
+        /// where they are never laid out, by the path of child indices from the node, with their
+        /// bounds in the node's local space (`None`: hidden). Asked after each prepare.
+        fn a11y_placements(&self) -> Vec<(Vec<usize>, Option<Rect>)> {
+            Vec::new()
+        }
         /// Stands in for core telling the kind that JS now listens to `signal` (`listened`) or no
         /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:
         /// an `icon` or `image` takes clicks only while one of its click signals is listened.
