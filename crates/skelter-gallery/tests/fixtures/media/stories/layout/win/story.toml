@@ -1,0 +1,11 @@
+id = "win"
+title = "Window"
+family = "layout"
+kinds = ["window"]
+size = [96, 48]
+states = ["normal"]
+
+[[variant]]
+id = "red"
+title = "A window with a red box"
+file = "red.svelte"

@@ -156,6 +156,8 @@ pub struct Renderer {
     window: (Size, f32),
     /// The cell mounted now.
     current: Option<Cell>,
+    /// A window story's own `<window>`, attached as the harness window's root for its cell.
+    presented: Option<svl_handle>,
 }
 
 impl Renderer {
@@ -201,6 +203,8 @@ impl Renderer {
             .with_size(size)
             .with_glyphs(Arc::new(skelter_text::FontRasterizer::new(fonts.clone())))
             .with_accessibility_check(false)
+            // the slot paints the theme's background; a window story's window is laid over it in `shot`
+            .with_clear(skelter_base::color::Color::TRANSPARENT)
             .with_max_steps(u64::from(MAX_STEPS))
             .build_unsettled(doc);
         if backend.window_id(window).is_none() {
@@ -227,6 +231,7 @@ impl Renderer {
             base_css: skelter_widgets::theme::BASE_CSS.to_string(),
             window: (size, 1.0),
             current: None,
+            presented: None,
         };
         r.apply_theme(&Theme::DarkModern, Density::Default)?;
         let _ = r.settle();
@@ -314,6 +319,7 @@ impl Renderer {
     /// Replaces the JS runtime (see [`Renderer::reload`]).
     fn restart(&mut self) -> Result<(), Error> {
         self.drain();
+        self.unpresent();
         if let Some(r) = self.root.take() {
             self.embed().unmount(r);
         }
@@ -364,6 +370,11 @@ impl Renderer {
     /// The cell mounted now.
     pub fn current(&self) -> Option<&Cell> {
         self.current.as_ref()
+    }
+
+    /// Where the mounted cell's nodes are: a window story's window, else the slot.
+    pub fn cell_root(&self) -> Option<skelter_base::ids::NodeId> {
+        self.presented.and_then(|h| self.backend.node(h)).or_else(|| self.slot_node())
     }
 
     /// The slot's node (the mounted root's parent).
@@ -464,6 +475,7 @@ impl Renderer {
         }
         let entry = self.entry(&story, &variant)?;
         self.drain();
+        self.unpresent();
         if let Some(r) = self.root.take() {
             self.embed().unmount(r);
             self.embed().logic();
@@ -504,7 +516,14 @@ impl Renderer {
         {
             return Err(Error::Runtime { file, message: e.error.message });
         }
-        let top: Vec<svl_handle> = self.top_level();
+        let mut top: Vec<svl_handle> = self.top_level();
+        if let Some(w) = self.present()? {
+            top = vec![w];
+            let (s2, ok) = self.settle();
+            steps += s2;
+            settled = ok;
+            warnings.extend(self.drain());
+        }
         let anchored: Vec<svl_handle> = self.backend.scene().read(|s| s.nodes().filter(|n| n.anchor().as_deref() == Some("subject")).map(|n| n.id()).collect());
         let has_subject = !anchored.is_empty();
         let subjects = if has_subject { anchored } else { top.clone() };
@@ -531,6 +550,34 @@ impl Renderer {
         Ok(Mounted { warnings, applied, subjects, has_subject, top, steps, settled })
     }
 
+    /// A window story: a root that creates a `<window>` (a toplevel: the runtime keeps it out of
+    /// the slot) gets that window as the harness window's root for its cell, so the cell shows the
+    /// window as the app's viewport would. Returns its handle.
+    fn present(&mut self) -> Result<Option<svl_handle>, Error> {
+        let (size, zoom) = self.window;
+        let own = self.window_node;
+        let candidates: Vec<svl_handle> = self.backend.scene().read(|s| s.nodes().filter(|n| n.tag() == "window" && n.id() != own).map(|n| n.id()).collect());
+        let Some(h) = candidates.into_iter().find(|&h| self.backend.node(h).is_some_and(|n| self.backend.with_doc(|d| d.parent(n).is_none()))) else {
+            return Ok(None);
+        };
+        let wid = self.harness.window();
+        self.backend.attach_presented(h, wid, size, Scale(zoom)).map_err(Error::Setup)?;
+        self.presented = Some(h);
+        Ok(Some(h))
+    }
+
+    /// Puts the gallery's own window back as the harness window's root.
+    fn unpresent(&mut self) {
+        if self.presented.take().is_none() {
+            return;
+        }
+        let wid = self.harness.window();
+        let (size, zoom) = self.window;
+        if let Err(e) = self.backend.attach_presented(self.window_node, wid, size, Scale(zoom)) {
+            eprintln!("skelter-gallery: cannot restore the gallery window: {e}");
+        }
+    }
+
     /// The handles of the nodes the root mounted under the slot.
     pub fn top_level(&self) -> Vec<svl_handle> {
         let Some(slot) = self.embed().slot_node(self.slot) else { return Vec::new() };
@@ -541,7 +588,13 @@ impl Renderer {
     /// Mounts `cell` and draws it.
     pub fn shot(&mut self, cell: &Cell) -> Result<Shot, Error> {
         let m = self.mount(cell)?;
-        let image = self.harness.render().map_err(|e| Error::Render(e.to_string()))?;
+        let mut image = self.harness.render().map_err(|e| Error::Render(e.to_string()))?;
+        if self.presented.is_some()
+            && let Some((t, d, _)) = self.theme.clone()
+            && let Some(bg) = self.resolve_theme(&t, d)?.color("bg")
+        {
+            over(&mut image, bg);
+        }
         Ok(Shot { image, warnings: m.warnings, applied: m.applied })
     }
 
@@ -586,6 +639,18 @@ impl Renderer {
             }
         }
         out
+    }
+}
+
+/// Lays premultiplied `image` over the opaque colour `bg` (what a platform clears a window to).
+fn over(image: &mut Image, bg: skelter_base::color::Color) {
+    let bg = [bg.r, bg.g, bg.b].map(|c| (c.clamp(0.0, 1.0) * 255.0).round() as u32);
+    for px in image.rgba.chunks_exact_mut(4) {
+        let rest = 255 - u32::from(px[3]);
+        for (c, b) in px[..3].iter_mut().zip(bg) {
+            *c = (u32::from(*c) + (b * rest + 127) / 255).min(255) as u8;
+        }
+        px[3] = 255;
     }
 }
 

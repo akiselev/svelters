@@ -178,9 +178,10 @@ pub fn node_json(backend: &SkelterBackend, window: Option<WindowId>, h: svl_hand
 }
 
 impl Renderer {
-    /// The nodes of the mounted cell `selector` picks ([`select_in`] under the cell's slot).
+    /// The nodes of the mounted cell `selector` picks ([`select_in`] under the cell's slot, or
+    /// under a window story's window).
     pub fn select(&self, selector: &str) -> Vec<svl_handle> {
-        match self.slot_node() {
+        match self.cell_root() {
             Some(slot) => select_in(self.backend(), slot, selector),
             None => Vec::new(),
         }

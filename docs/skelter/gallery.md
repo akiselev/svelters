@@ -211,6 +211,11 @@ only its own cells. When the cell changes, the variant is remounted in the windo
 5. Steps the embed's logic and the harness until both are settled (at most 120 frames).
 6. Forces the state's bits on the `subject` anchors (`SkelterBackend::force_state`), settles again, and draws.
 
+A **window story** (`stories/layout/window`): when a variant's root creates a `<window>` (a toplevel, which the runtime
+keeps out of the slot), that window becomes the headless window's root for the cell, laid over the theme's `bg` (what
+a platform clears a window to), and `inspect` searches it. The gallery's own window is put back before the next cell.
+The interactive app does not show window stories yet: its cells are slots in one window.
+
 **Fonts** are bundled and system fonts are off (hermetic: a shot is the same on every machine). The set
 (`crates/skelter-gallery/fonts/README.md`, OFL subsets) is the theme's own families, Inter (300, 400, 600, 700) and
 JetBrains Mono, plus Noto fallbacks: Arabic, Hebrew, a CJK sample (common UI words in Chinese, Japanese and Korean,

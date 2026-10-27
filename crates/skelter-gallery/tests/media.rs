@@ -156,3 +156,27 @@ fn reload_picks_up_edited_images_variants_and_fixed_errors() {
     assert_eq!(r.reload(&[root.join("elsewhere.txt")]).unwrap(), skelter_gallery::Reload::default());
     std::fs::remove_dir_all(&root).ok();
 }
+
+#[test]
+fn a_window_story_draws_its_window_and_the_next_cell_is_ordinary() {
+    if std::env::var("SKELTER_GPU_TESTS").as_deref() != Ok("1") {
+        eprintln!("skipped: set SKELTER_GPU_TESTS=1 to run GPU tests");
+        return;
+    }
+    let mut r = Renderer::new(&Extensions::new().story_root(fixture("media"))).unwrap();
+    let win = r.catalog().get("win").unwrap().clone();
+    let media = r.catalog().get("media").unwrap().clone();
+    let wc = Cell::new(&win, win.variant("red").unwrap());
+    let a = r.shot(&wc).unwrap();
+    assert!(a.warnings.is_empty(), "{:?}", a.warnings);
+    let n = count(&a.image, red);
+    assert!((38 * 18..=42 * 22).contains(&n), "the window's 40×20 red box draws ({n} pixels)");
+    assert!(a.image.rgba.chunks_exact(4).all(|p| p[3] == 255), "laid over the theme's background: opaque");
+    assert_eq!(r.inspect(&wc, "window").unwrap()["nodes"].as_array().unwrap().len(), 1, "inspect finds the story's window");
+    // an ordinary cell after it: the gallery's own window is back
+    let b = r.shot(&Cell::new(&media, media.variant("svg").unwrap())).unwrap();
+    assert!(count(&b.image, red) >= 30 * 30);
+    assert!(b.image.rgba.chunks_exact(4).all(|p| p[3] == 255));
+    // and the window again: the same pixels
+    assert!(r.shot(&wc).unwrap().image == a.image);
+}
