@@ -52,7 +52,7 @@ pub struct SourceError {
 impl SourceError {
     /// `file:line:col: message` (the file relative to `root` when inside it).
     pub fn display(&self, root: &Path) -> String {
-        let f = self.file.strip_prefix(root).unwrap_or(&self.file).display();
+        let f = rel(&self.file, root);
         if self.line > 0 { format!("{f}:{}:{}: {}", self.line, self.column, self.message) } else { format!("{f}: {}", self.message) }
     }
 
@@ -245,7 +245,7 @@ impl LiveStory {
         if r.ok {
             // what compiled now replaces what failed before, for the files it swapped
             let swapped: Vec<PathBuf> = r.hot.iter().flatten().map(PathBuf::from).collect();
-            self.errors.retain(|e| !swapped.iter().any(|s| *s == e.file));
+            self.errors.retain(|e| !swapped.contains(&e.file));
             self.applied = true;
         } else if let Some(e) = &r.error {
             let e = SourceError::parse(&e.message, &self.root);
@@ -350,4 +350,10 @@ pub fn subjects(doc: &Document, frame: NodeId) -> Vec<NodeId> {
         return doc.children(frame).first().copied().into_iter().collect();
     }
     out
+}
+
+/// `file` relative to `root` when inside it, with `/` separators on every OS.
+pub fn rel(file: &Path, root: &Path) -> String {
+    let r = file.strip_prefix(root).unwrap_or(file);
+    r.components().map(|c| c.as_os_str().to_string_lossy().into_owned()).collect::<Vec<_>>().join("/")
 }

@@ -152,6 +152,29 @@ pub struct Gallery {
     pub watch: bool,
     /// The events each story's backend delivered at event time (its tap), for the chrome.
     tapped: Rc<RefCell<Vec<JsEvent>>>,
+    /// skelter-widgets' `base.css`, read from its source file when there is one (edits show live).
+    base: BaseCss,
+}
+
+/// The stock kinds' sheet: its source file, the text in use, and the theme sheet carrying it.
+#[derive(Default)]
+struct BaseCss {
+    path: Option<PathBuf>,
+    /// The file's (modified time, length) when last read.
+    seen: Option<(std::time::SystemTime, u64)>,
+    text: String,
+    sheet: Option<svelters_style::SheetId>,
+}
+
+/// skelter-widgets' `base.css` source when the gallery runs inside the svelters checkout (as
+/// `skelter-gallery` finds it): edits to it show without a rebuild.
+pub fn base_css_source(roots: &[PathBuf]) -> Option<PathBuf> {
+    roots.iter().filter_map(|r| r.canonicalize().ok()).find_map(|r| r.ancestors().map(|d| d.join("crates/skelter-widgets/src/theme/base.css")).find(|p| p.is_file()))
+}
+
+fn stamp(p: &Path) -> Option<(std::time::SystemTime, u64)> {
+    let m = std::fs::metadata(p).ok()?;
+    Some((m.modified().ok()?, m.len()))
 }
 
 /// The kinds the gallery's document registers and JS sees: svelters' built-ins (what the app runner
@@ -240,12 +263,10 @@ impl Gallery {
         let mut coverage_missing = catalog.coverage(doc.borrow().registry()).missing;
         coverage_missing.retain(|k| !CHROME_KINDS.contains(&k.as_str()));
         let themes = Themes { extra: ext.themes.clone() };
+        let base_path = base_css_source(&roots);
         let nodes = {
             let mut d = doc.borrow_mut();
-            let chrome = theme::builtin(theme::CHROME, Density::Default).expect("the chrome theme");
-            // the theme's tokens and base.css at the theme origin, as skelter_gallery's renderer
-            // installs them (a story's own rules win over them); the chrome's classes as author rules
-            d.add_sheet_with_origin(&format!("{}\n{}", chrome.css(), skelter_widgets::theme::BASE_CSS), svelters_style::Origin::Theme);
+            // the chrome's classes as author rules (the theme sheet is installed below)
             d.add_sheet(theme::CHROME_CSS);
             let mut q = QuireHost::new(fonts);
             q.theme = skelter_quire::EditorTheme::default();
@@ -281,7 +302,9 @@ impl Gallery {
             wake: None,
             watch: false,
             tapped: Rc::default(),
+            base: BaseCss { path: base_path, ..BaseCss::default() },
         };
+        g.load_base_css();
         g.wire();
         g.install_cell_sheet();
         g.rebuild_bar();
@@ -339,9 +362,26 @@ impl Gallery {
         self.clipboard = Some(c);
     }
 
+    /// The loop's waker: the story's file watcher and the `base.css` watch wake it.
     pub fn set_wake(&mut self, wake: Arc<dyn Fn() + Send + Sync>) {
         if let Some(l) = &self.live {
             l.backend().wake_state().set_notify(Some(wake.clone()));
+        }
+        if let Some(p) = self.base.path.clone() {
+            // base.css is not a module of any story, so the host's watcher does not see it: a
+            // small thread stats it and wakes the loop, which reinstalls it (`poll_base_css`)
+            let w = wake.clone();
+            let _ = std::thread::Builder::new().name("gallery-base-css".into()).spawn(move || {
+                let mut seen = stamp(&p);
+                loop {
+                    std::thread::sleep(std::time::Duration::from_millis(250));
+                    let now = stamp(&p);
+                    if now != seen {
+                        seen = now;
+                        w();
+                    }
+                }
+            });
         }
         self.wake = Some(wake);
     }
@@ -357,6 +397,59 @@ impl Gallery {
     }
 
     // ---- the chrome ----
+
+    /// The file `base.css` is read from (`None`: the copy built into skelter-widgets).
+    pub fn base_css_path(&self) -> Option<&Path> {
+        self.base.path.as_deref()
+    }
+
+    /// Reads `base.css` from `path` from now on (`None`: the built-in copy).
+    pub fn set_base_css_path(&mut self, path: Option<PathBuf>) {
+        self.base.path = path;
+        self.base.seen = None;
+        self.load_base_css();
+    }
+
+    /// Reads `base.css` (its file, else the built-in copy) and installs the theme sheet: the
+    /// chrome's tokens and base.css at the theme origin, as skelter_gallery's renderer installs
+    /// them (a story's own rules win over them).
+    fn load_base_css(&mut self) {
+        let text = match &self.base.path {
+            Some(p) => match std::fs::read_to_string(p) {
+                Ok(t) => t,
+                Err(e) => {
+                    self.load_errors.push(format!("{}: {e}", p.display()));
+                    skelter_widgets::theme::BASE_CSS.to_string()
+                }
+            },
+            None => skelter_widgets::theme::BASE_CSS.to_string(),
+        };
+        self.base.seen = self.base.path.as_deref().and_then(stamp);
+        if self.base.sheet.is_some() && text == self.base.text {
+            return;
+        }
+        self.base.text = text;
+        let chrome = theme::builtin(theme::CHROME, Density::Default).expect("the chrome theme");
+        let css = format!("{}\n{}", chrome.css(), self.base.text);
+        let mut d = self.doc.borrow_mut();
+        if let Some(old) = self.base.sheet.take() {
+            d.remove_sheet(old);
+        }
+        self.base.sheet = Some(d.add_sheet_with_origin(&css, svelters_style::Origin::Theme));
+        drop(d);
+        self.dirty = true;
+    }
+
+    /// `base.css` changed on disk: install it again. Returns whether it did.
+    pub fn poll_base_css(&mut self) -> bool {
+        let Some(p) = &self.base.path else { return false };
+        if stamp(p) == self.base.seen {
+            return false;
+        }
+        let before = self.base.sheet;
+        self.load_base_css();
+        self.base.sheet != before
+    }
 
     fn install_cell_sheet(&mut self) {
         let css = self.themes.cell_sheet(self.settings.density);
@@ -741,7 +834,7 @@ impl Gallery {
         let root = self.current_story().map(|s| s.root.clone()).unwrap_or_default();
         let mut d = self.doc.borrow_mut();
         let _ = d.set_prop(self.nodes.editor, w::EDITOR_BUFFER, Value::Str(name.into()));
-        let rel = file.strip_prefix(&root).unwrap_or(file).display().to_string();
+        let rel = crate::live::rel(file, &root);
         let _ = d.set_prop(self.nodes.file, w::LABEL_TEXT, Value::Str(rel.into()));
         drop(d);
         self.dirty = true;
@@ -1017,6 +1110,7 @@ impl Gallery {
     /// Once per frame, before the document's frame: the editor's events and edits, the live
     /// story's JS, reload reports.
     pub fn before_frame(&mut self) {
+        self.poll_base_css();
         let events: Vec<_> = self.doc.borrow_mut().service::<QuireHost>().map(|h| std::mem::take(&mut h.events)).unwrap_or_default();
         for (_, e) in events {
             match e {

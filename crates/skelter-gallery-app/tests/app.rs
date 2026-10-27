@@ -7,15 +7,13 @@ use skelter_gallery_app::GalleryDocument;
 use skelter_test::Harness;
 use std::path::{Path, PathBuf};
 
-/// A copy of `tests/fixtures/gallery` under `target/`, with the workspace's node_modules.
+/// A copy of `tests/fixtures/gallery` under `target/` (the tests edit and save its files). Svelte
+/// resolves through `@svelters/native-runtime` (the workspace's, after `pnpm install`).
 fn fixture(name: &str) -> PathBuf {
     let src = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/gallery");
-    let modules = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/embed-egui/node_modules").canonicalize().expect("run `pnpm install` first");
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/gallery-app-tests").join(name);
     let _ = std::fs::remove_dir_all(&dir);
     copy(&src, &dir);
-    #[cfg(unix)]
-    std::os::unix::fs::symlink(modules, dir.join("node_modules")).unwrap();
     dir.canonicalize().unwrap()
 }
 
@@ -31,6 +29,9 @@ fn copy(from: &Path, to: &Path) {
         }
     }
 }
+
+/// The platform's command modifier (VS Code's keys: Cmd on macOS).
+const CMD: skelter_base::event::Modifiers = if cfg!(target_os = "macos") { skelter_base::event::Modifiers::SUPER } else { skelter_base::event::Modifiers::CTRL };
 
 fn gallery(name: &str) -> (Harness<GalleryDocument>, PathBuf) {
     let dir = fixture(name);
@@ -105,7 +106,7 @@ fn a_preview_edit_changes_the_cell_without_touching_disk() {
     // type into the source pane: select all, then the new text
     h.get_by_author_id("source").click();
     h.run();
-    h.key_press_modifiers(skelter_base::event::Modifiers::CTRL, skelter_base::key::Key::A);
+    h.key_press_modifiers(CMD, skelter_base::key::Key::A);
     h.type_text("<label anchor=\"subject\" text=\"Beta\" />\n");
     h.run();
     let frame = h.state().gallery.cells().next().unwrap().1;
@@ -113,7 +114,7 @@ fn a_preview_edit_changes_the_cell_without_touching_disk() {
     assert_eq!(std::fs::read_to_string(&file).unwrap(), on_disk, "nothing was saved");
     assert!(h.state().gallery.unsaved());
     // Ctrl+S saves
-    h.key_press_modifiers(skelter_base::event::Modifiers::CTRL, skelter_base::key::Key::S);
+    h.key_press_modifiers(CMD, skelter_base::key::Key::S);
     h.run();
     assert_eq!(std::fs::read_to_string(&file).unwrap(), "<label anchor=\"subject\" text=\"Beta\" />\n");
     assert!(!h.state().gallery.unsaved());
@@ -127,7 +128,7 @@ fn a_compile_error_keeps_the_last_good_render_and_shows_where() {
     h.run();
     h.get_by_author_id("source").click();
     h.run();
-    h.key_press_modifiers(skelter_base::event::Modifiers::CTRL, skelter_base::key::Key::A);
+    h.key_press_modifiers(CMD, skelter_base::key::Key::A);
     h.type_text("<label anchor=\"subject\" text=\"Gamma\" \n");
     h.run();
     let g = &h.state().gallery;
@@ -140,7 +141,7 @@ fn a_compile_error_keeps_the_last_good_render_and_shows_where() {
     let shown = h.get_by_author_id("source-errors").label().unwrap_or_default();
     assert!(shown.contains("stories/text/note/plain.svelte:1:"), "{shown}");
     // fixing it applies again
-    h.key_press_modifiers(skelter_base::event::Modifiers::CTRL, skelter_base::key::Key::A);
+    h.key_press_modifiers(CMD, skelter_base::key::Key::A);
     h.type_text("<label anchor=\"subject\" text=\"Delta\" />\n");
     h.run();
     let frame = h.state().gallery.cells().next().unwrap().1;
@@ -235,4 +236,27 @@ fn the_controls_narrow_the_matrix() {
     h.run();
     assert!(h.query_by_author_id("story:button").is_none());
     h.get_by_author_id("story:note");
+}
+
+#[test]
+fn an_edit_to_base_css_restyles_the_cells() {
+    let (mut h, dir) = gallery("base-css");
+    let css = dir.join("base.css");
+    std::fs::write(&css, format!("{}\n", skelter_widgets::theme::BASE_CSS)).unwrap();
+    h.state_mut().gallery.set_base_css_path(Some(css.clone()));
+    h.get_by_author_id("story:note").click();
+    h.run();
+    let probe = |h: &Harness<GalleryDocument>| {
+        let g = &h.state().gallery;
+        let frame = g.cells().next().unwrap().1;
+        let d = g.document().borrow();
+        let n = d.query().within(frame).kind(KindId::of("label")).first().unwrap();
+        d.view(n).and_then(|v| v.css()?.custom("--gallery-probe").map(str::to_string))
+    };
+    assert_eq!(probe(&h), None);
+    std::fs::write(&css, format!("{}\n@layer sv.base {{ label {{ --gallery-probe: 7; }} }}\n", skelter_widgets::theme::BASE_CSS)).unwrap();
+    // the app's watch thread wakes the loop; a frame polls the file
+    assert!(h.state_mut().gallery.poll_base_css());
+    h.run();
+    assert_eq!(probe(&h).as_deref(), Some("7"));
 }
