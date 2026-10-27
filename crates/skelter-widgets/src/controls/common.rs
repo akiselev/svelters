@@ -69,3 +69,12 @@ pub fn cursor(cx: &mut EventCx<'_>, ua: &Ua) {
         cx.cursor = Some(c);
     }
 }
+
+/// A measured width capped by a definite available width (CSS fit-content: `min(max-content,
+/// available)`), for kinds whose caption elides in the narrower box; other available spaces keep it.
+pub fn fit_width(natural: f32, avail: skelter_core::taffy::AvailableSpace) -> f32 {
+    match avail {
+        skelter_core::taffy::AvailableSpace::Definite(w) => natural.min(w.max(0.0)),
+        _ => natural,
+    }
+}

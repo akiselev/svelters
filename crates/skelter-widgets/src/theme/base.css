@@ -77,9 +77,12 @@
   i {
     font-style: italic;
   }
+  /* POL1-TEXT: inline code is a translucent grey field behind the run (VS Code's
+     `textPreformat.background`), which reads on every surface; the label folds the run's
+     `background-color` into its paragraph and fills behind its glyphs */
   code {
     font-family: var(--sv-font-mono);
-    background-color: var(--sv-control-bg);
+    background-color: var(--sv-toolbar-hover);
   }
   a {
     color: var(--sv-link);
@@ -129,12 +132,36 @@
   /* Pointer feedback is immediate on enter, leave and press. Applications can opt into
      colour transitions explicitly; the base theme must not make hover feel delayed. */
 
-  /* egui fills a text edit with Visuals::text_edit_bg_color (`--sv-input-bg`, from the Style);
-     its border and text come from the widget state. */
+  /* POL1-TEXT: a text field is VS Code's input box (`input.background`, `input.border`,
+     `input.foreground`; `.monaco-inputbox .input { padding: 4px 6px }` at `control-h`). The
+     text sits in the padding box, so the padding is the inset from the border. */
   text-edit {
+    background-color: var(--sv-input-bg);
     border-color: var(--sv-input-border-color);
     border-width: var(--sv-stroke);
     border-radius: var(--sv-input-radius);
     color: var(--sv-input-fg);
+    padding: 3px 6px;
+  }
+  /* VS Code's `inputValidation.errorBorder` on a field whose value the app marked invalid */
+  text-edit:invalid {
+    border-color: var(--sv-invalid-border);
+  }
+  /* read-only: no field fill (the text sits on its surface, as VS Code's read-only editors and
+     settings values do), a hairline border */
+  text-edit[read-only=true] {
+    background-color: transparent;
+    border-color: var(--sv-border);
+  }
+  /* High contrast: the HC sets give `inputValidation.errorBorder` and `sideBar.border` the same
+     `contrastBorder` as `input.border`, so the states need cues of their own there: the error
+     colour on an invalid field, a dashed border on a read-only one */
+  @media (prefers-contrast: more) {
+    text-edit:invalid {
+      border-color: var(--sv-danger);
+    }
+    text-edit[read-only=true] {
+      border-style: dashed;
+    }
   }
 }
