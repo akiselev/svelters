@@ -49,7 +49,8 @@ pub const INDICATOR: Ua = Ua(&[
         ("border-width", Token("stroke")),
         ("border-radius", Px(3.0)),
     ]),
-    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
+    // R3: hover steps the fill and the edge (the fill step alone is faint in Dark Modern)
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover")), ("border-color", Token("muted"))]),
     UaRule::when(StateBits::CHECKED, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border"))]),
     UaRule::when(StateBits::INDETERMINATE, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border"))]),
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
@@ -467,7 +468,7 @@ mod tests {
         let (list, _) = testkit::record(&c, SIZE, StateBits::FOCUSED | StateBits::FOCUS_VISIBLE);
         assert_eq!(testkit::kinds(&list), ["quad", "glyphs", "quad"], "the ring last");
         let Prim::Quad(ring) = list.items.last().unwrap() else { unreachable!() };
-        assert_eq!(ring.rect, Rect::new(-2.0, -2.0, 20.0, 20.0), "around the indicator, 1px at +1");
+        assert_eq!(ring.rect, Rect::new(-3.0, -3.0, 21.0, 21.0), "around the indicator, 2px at +1 (R8)");
         assert_eq!(ring.border_color, ua_token(true, "focus").unwrap());
         assert_eq!(testkit::kinds(&testkit::record(&c, SIZE, StateBits::FOCUSED).0), ["quad", "glyphs"], "no ring for pointer focus");
 

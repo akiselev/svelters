@@ -44,7 +44,7 @@ pub const TRACK: Ua = Ua(&[
         ("border-width", Token("stroke")),
         ("border-radius", Px(10.0)),
     ]),
-    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover")), ("border-color", Token("muted"))]),
     // R17: the on fill is the accent; its edge is the on-toggle border, which High Contrast gives
     // `contrastActiveBorder` (its accent is the black background)
     UaRule::when(StateBits::CHECKED, &[("background-color", Token("accent")), ("border-color", Token("toggle-on-border"))]),
@@ -279,7 +279,7 @@ mod tests {
 
         let (list, _) = testkit::record(&s, SIZE, StateBits::FOCUSED | StateBits::FOCUS_VISIBLE);
         assert_eq!(testkit::kinds(&list), ["quad", "glyphs", "quad", "quad"], "the ring last");
-        assert_eq!(quad(list.items.last().unwrap()).rect, Rect::new(-2.0, -2.0, 42.0, 22.0), "around the track");
+        assert_eq!(quad(list.items.last().unwrap()).rect, Rect::new(-3.0, -3.0, 43.0, 23.0), "around the track, 2px at +1");
 
         s.props.disabled = true;
         s.props.active = true;

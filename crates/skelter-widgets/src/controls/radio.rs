@@ -38,7 +38,8 @@ pub const INDICATOR: Ua = Ua(&[
         ("border-width", Token("stroke")),
         ("border-radius", Px(9.0)),
     ]),
-    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
+    // R3: hover steps the fill and the edge (the fill step alone is faint in Dark Modern)
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover")), ("border-color", Token("muted"))]),
     UaRule::when(StateBits::CHECKED, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border"))]),
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
 ]);
@@ -345,7 +346,7 @@ mod tests {
         let (list, _) = testkit::record(&r, SIZE, StateBits::FOCUSED | StateBits::FOCUS_VISIBLE);
         assert_eq!(testkit::kinds(&list), ["quad", "glyphs", "quad"]);
         let Some(Prim::Quad(Quad { rect, .. })) = list.items.last() else { unreachable!() };
-        assert_eq!(*rect, Rect::new(-2.0, -2.0, 20.0, 20.0), "the ring around the indicator");
+        assert_eq!(*rect, Rect::new(-3.0, -3.0, 21.0, 21.0), "the ring around the indicator, 2px at +1");
 
         r.props.checked = true;
         r.props.disabled = true;

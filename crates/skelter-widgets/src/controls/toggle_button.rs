@@ -42,6 +42,7 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::CHECKED, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border")), ("color", Token("fg"))]),
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
+    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
 ]);
 
 kind_props! {
@@ -316,7 +317,7 @@ mod tests {
 
         let (list, _) = testkit::record(&t, SIZE, StateBits::FOCUSED | StateBits::FOCUS_VISIBLE);
         assert_eq!(testkit::kinds(&list), ["quad", "glyphs", "quad"], "the ring last");
-        assert_eq!(quad(list.items.last().unwrap()).rect, Rect::new(-2.0, -2.0, 62.0, 28.0));
+        assert_eq!(quad(list.items.last().unwrap()).rect, Rect::new(-3.0, -3.0, 63.0, 29.0), "2px at +1 (R8)");
 
         t.props.frame = false;
         assert_eq!(testkit::kinds(&testkit::record(&t, SIZE, StateBits::NONE).0), ["glyphs"], "frameless at rest");

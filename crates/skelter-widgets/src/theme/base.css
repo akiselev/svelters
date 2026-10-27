@@ -121,6 +121,12 @@
   }
   checkbox:hover {
     background-color: var(--sv-button-bg-hover);
+    border-color: var(--sv-muted);
+  }
+  checkbox:checked:hover,
+  checkbox:indeterminate:hover {
+    background-color: var(--sv-toggle-on-bg);
+    border-color: var(--sv-toggle-on-border);
   }
   checkbox:active {
     background-color: var(--sv-button-bg-active);
@@ -160,14 +166,31 @@
     background-color: var(--sv-toggle-on-bg);
   }
 
-  /* R4: a field's border is its focus cue (VS Code `inputOption`/`focusBorder` on `:focus`, pointer
-     focus too); hovering an editable field steps its border towards the text colour */
-  text-edit:hover {
+  /* A dialog's destructive button (`dialog-role="destructive"`, GNOME's destructive-action, AppKit's
+     hasDestructiveAction): the error colour on its caption and edge, never the accent, so the safe
+     default stays the emphasised one; a destructive button that is the default fills with it. */
+  button[dialog-role=destructive] {
+    color: var(--sv-error);
+    border-color: var(--sv-error);
+  }
+  button[dialog-role=destructive]:default {
+    background-color: var(--sv-error);
+    border-color: var(--sv-error);
+    color: var(--sv-accent-fg);
+  }
+
+  /* R4: a field's border is its focus cue (VS Code `focusBorder` on `:focus`, pointer focus too; a
+     select's on keyboard focus and while open, as its UA); hovering a field or a select steps its
+     border towards the text colour */
+  text-edit:hover,
+  select:hover {
     border-color: var(--sv-muted);
   }
   text-edit:focus,
   text-edit:focus-visible,
-  text-edit:focus-within {
+  text-edit:focus-within,
+  select:focus-visible,
+  select:open {
     border-color: var(--sv-input-border-color-focus);
   }
 
@@ -181,12 +204,13 @@
   switch:disabled,
   slider:disabled,
   select:disabled,
-  text-edit:disabled,
-  collapsing-header:disabled {
+  text-edit:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
-  label:disabled {
+  /* a collapsing header holds its body: its colour dims (the body's own controls dim themselves) */
+  label:disabled,
+  collapsing-header:disabled {
     color: var(--sv-disabled-fg);
   }
 
