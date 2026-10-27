@@ -38,7 +38,22 @@ impl Document {
     /// coalesced to the frame (§11.1): `:hover`, the kinds' hover enter/leave and the JS
     /// `pointerenter`/`pointerleave` (queued; [`Document::take_events`]). True when the hovered path
     /// changed.
+    ///
+    /// The `title` tip steps at the last input's time; a caller that knows when the pointer came
+    /// to rest (the move's own time, or the frame's) calls [`Document::hover_at`] instead, so the
+    /// tip's delay starts then.
     pub fn hover(&mut self, window: WindowId, pos: Point) -> bool {
+        let now = self.input.now;
+        self.hover_at(window, pos, now)
+    }
+
+    /// [`Document::hover`] at `now`: the document's input clock moves to `now` (never back), so a
+    /// `title` tip the new hover starts waits its whole delay from `now` rather than from the
+    /// previous input's time.
+    pub fn hover_at(&mut self, window: WindowId, pos: Point, now: skelter_base::time::Time) -> bool {
+        if now > self.input.now {
+            self.input.now = now;
+        }
         let p = PointerEvent {
             phase: PointerPhase::Move,
             pointer: 0,

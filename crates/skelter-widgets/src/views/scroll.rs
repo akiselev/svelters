@@ -657,6 +657,15 @@ fn anim_os(p: Platform) -> anim::Os {
 }
 
 /// The scroll defaults of the policy's platform.
+/// The policy the overlay bars use: with reduced motion they hide at the end of their hold
+/// instead of fading.
+fn bar_policy(mut p: Policy, reduced_motion: bool) -> Policy {
+    if reduced_motion {
+        p.scroll.bar_fade = 0.0;
+    }
+    p
+}
+
 fn defaults(policy: &Policy) -> anim::ScrollDefaults {
     anim::defaults(anim_os(platform(policy)), LINES_PER_DETENT)
 }
@@ -766,9 +775,12 @@ pub struct ScrollArea {
     pub props: ScrollAreaProps,
     /// The box props the runtime set ([`Kind::layout_style`] applies only those).
     explicit: crate::controls::box_::Explicit,
-    /// `prefers-reduced-motion`: wheel and key steps jump instead of animating (the host sets it;
-    /// the platform policy has no such field yet).
+    /// Reduced motion forced on for this area: wheel and key steps jump instead of animating and
+    /// overlay bars hide without fading. The document's `prefers-reduced-motion`
+    /// ([`EventCx::reduced_motion`], read on each event) does the same; either one is enough.
     pub reduced_motion: bool,
+    /// The document asked for reduced motion at the last event (recording has no context).
+    doc_reduced: bool,
     /// The axes that scroll.
     pub axes: [bool; 2],
     pub overscroll: OverscrollBehavior,
@@ -798,6 +810,7 @@ impl Default for ScrollArea {
             props: ScrollAreaProps::default(),
             explicit: Default::default(),
             reduced_motion: false,
+            doc_reduced: false,
             axes: [false, true],
             overscroll: OverscrollBehavior::None,
             chains: true,
@@ -887,7 +900,7 @@ impl ScrollArea {
     /// a running animation with its velocity.
     fn animate_to(&mut self, cx: &mut EventCx<'_>, to: Vec2, behavior: DurationBehavior) {
         let to = vmin(vmax(to, Vec2::ZERO), self.scroller.max_offset());
-        if self.reduced_motion {
+        if self.reduced_motion || cx.reduced_motion {
             self.anim = None;
             if !self.jump(cx, to) {
                 self.end(cx);
@@ -1108,7 +1121,7 @@ impl Kind for ScrollArea {
 
     fn record(&self, cx: &mut RecordCx) {
         // the content moves with the scroll property node; the area draws only its bars
-        let policy = self.policy.unwrap_or_else(crate::host::os_policy);
+        let policy = bar_policy(self.policy.unwrap_or_else(crate::host::os_policy), self.reduced_motion || self.doc_reduced);
         let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme };
         let alpha = self.scroller.bar_alpha(self.now, &policy);
         self.scroller.record_bars(&mut PaintCx::of(cx), &styles, alpha, policy.scrollbars == Scrollbars::Classic);
@@ -1117,6 +1130,8 @@ impl Kind for ScrollArea {
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         self.now = cx.now;
         self.policy = Some(*cx.policy);
+        self.doc_reduced = cx.reduced_motion;
+        let bars = bar_policy(*cx.policy, self.reduced_motion || cx.reduced_motion);
         self.focused = cx.focused;
         self.focus_within = cx.focused || cx.state.contains(StateBits::FOCUS_WITHIN);
         // the pointer leaving or the capture ending reach the bars as a leave or a cancel
@@ -1159,7 +1174,7 @@ impl Kind for ScrollArea {
                 if let Some(t) = self.scroller.hold.map(|h| h.next) {
                     cx.wake_at(t);
                 }
-                if let Some(t) = self.scroller.bar_wake(cx.now, cx.policy) {
+                if let Some(t) = self.scroller.bar_wake(cx.now, &bars) {
                     cx.wake_at(t);
                 }
                 if ours { Handled::Yes } else { Handled::No }
@@ -1213,7 +1228,7 @@ impl Kind for ScrollArea {
                 if let Some(t) = next {
                     cx.wake_at(t);
                 }
-                if let Some(t) = self.scroller.bar_wake(cx.now, cx.policy) {
+                if let Some(t) = self.scroller.bar_wake(cx.now, &bars) {
                     cx.wake_at(t);
                 }
                 // the bars fade between events
@@ -1670,6 +1685,25 @@ mod tests {
         assert_eq!(t.count("scrollend"), 1);
         // egui's `changed` (A9): once per native move, with the offsets
         assert!(t.count("changed") >= 2);
+    }
+
+    /// R1: the document's reduced motion (the host reads its media preferences into the context on
+    /// each event) jumps a wheel detent with nothing set on the area, and the overlay bars hide at the
+    /// end of their hold without a fade.
+    #[test]
+    fn the_documents_reduced_motion_jumps() {
+        let mut a = area(2000.0, 100.0);
+        let detent = WheelEvent { pos: Point::ZERO, delta: ScrollDelta::Lines(Vec2::new(0.0, -1.0)), phase: None, momentum: None, modifiers: Modifiers::default() };
+        let mut t = probe(pol(Platform::Windows), 0);
+        t.reduced_motion = true;
+        t.send(&mut a, Event::Wheel(detent));
+        assert!(!a.animating());
+        assert_eq!(a.scroller.offset().y, 100.0);
+        assert!(!a.reduced_motion, "the area's own switch stays off");
+        let p = bar_policy(pol(Platform::Macos), true);
+        a.scroller.touch(ms(10_000));
+        let hold = p.scroll.bar_hold;
+        assert_eq!(a.scroller.bar_alpha(ms(10_000) + secs(hold) + Span::from_millis(1), &p), 0.0, "no fade");
     }
 
     #[test]

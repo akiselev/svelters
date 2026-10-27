@@ -27,11 +27,18 @@ inventory = "0.3"
 rayon = "1.12"
 # DX2: `svelters:shell` opens URLs and files with the system handler (SystemShell).
 open = "5.3"
+# DX2/SV75: the system clipboard (`platform::SystemClipboard`, feature `system-clipboard`); Linux adds
+# the Wayland primary selection below.
+arboard = { version = "3.7", optional = true, default-features = false }
 # E1: `#[js(tokio)] async fn` exports (feature `tokio`).
 tokio = { version = "1.47", optional = true, default-features = false, features = ["rt", "rt-multi-thread"] }
 
 # IN1: `Intl` over ICU4X (feature `intl`).
 svelters-intl = { workspace = true, optional = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# W5: the Wayland primary selection (`platform::system_primary`), with `system-clipboard`.
+arboard = { version = "3.7", optional = true, default-features = false, features = ["wayland-data-control"] }
 
 [target.'cfg(unix)'.dependencies]
 # ZU3: the hang watchdog samples the UI thread's stack (a signal plus `trace_unsynchronized`).
@@ -50,6 +57,10 @@ tokio = ["dep:tokio"]
 # Svelte code and libraries call `toLocaleString`, and cadatomic needs it; the size cost is in
 # plans/milestones/IN1-intl.md.
 intl = ["dep:svelters-intl"]
+# DX2/SV75: the desktop clipboard (`platform::SystemClipboard`, arboard: the system clipboard and the
+# Linux primary selection) and `Platform::system`. Off by default, so headless, wasm and mobile hosts
+# never link arboard; svelters-egui turns it on, and svelters-skelter has it as a feature.
+system-clipboard = ["dep:arboard"]
 
 [lints.clippy]
 # ZU3: allowed for tests, examples and bins; lib.rs denies it for the library (see clippy.toml).

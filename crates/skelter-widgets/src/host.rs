@@ -465,6 +465,17 @@ pub fn set_theme(doc: &mut skelter_core::Document, theme: crate::theme::Theme) {
     doc.repaint_all();
 }
 
+/// Repaints `doc` after the icon registry changed: icons registered, unregistered or invalidated
+/// ([`IconRegistry::invalidate`](crate::paint::icon::registry::IconRegistry::invalidate), a new
+/// [`IconSource`](crate::paint::icon::registry::IconSource)). The registry is the process's, not the
+/// document's, so it cannot mark nodes itself; every node restyles, re-measures and re-records
+/// ([`skelter_core::Document::repaint_all`], as [`set_theme`] does: a key that appears or disappears
+/// changes an icon's size), and the next draw asks the source again for what was invalidated. Not
+/// needed after [`set_theme`] or [`set_theme_tokens`] with a scheme change, which repaint anyway.
+pub fn icons_changed(doc: &mut skelter_core::Document) {
+    doc.repaint_all();
+}
+
 /// Replaces the document's theme where `sheet` is its token sheet ([`Theme::css`](crate::theme::Theme::css)
 /// of the theme in service): the sheet is edited in place with the tokens that differ
 /// ([`Theme::sheet_changes`](crate::theme::Theme::sheet_changes),
@@ -794,6 +805,7 @@ impl<W: w::Kind + Default> Hosted<W> {
         let before = state;
         let time = cx.time();
         let has_text = cx.service::<skelter_text::TextSystem>().is_some();
+        let reduced_motion = cx.document().media_preferences().reduced_motion;
         let (handled, out) = {
             // the widget's synchronous signals and its text layouts share the context, one use at a time
             let shared = std::cell::RefCell::new(&mut *cx);
@@ -805,6 +817,7 @@ impl<W: w::Kind + Default> Hosted<W> {
             let mut lender = EventLender(&shared);
             let mut wcx = w::EventCx::new(time, size, &mut state, &policy);
             wcx.focused = mask.contains(StateMask::FOCUSED);
+            wcx.reduced_motion = reduced_motion;
             wcx.sync = Some(&mut sync);
             if has_text {
                 wcx.layouts = Some(&mut lender);

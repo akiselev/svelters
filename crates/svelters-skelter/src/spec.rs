@@ -129,7 +129,7 @@ fn signal_json(k: &KindSpec, s: &SignalSpec) -> J {
 
 /// Two-way bindings for the native-owned props: the kind's `changed` signal carries the new value
 /// (else its first signal with an argument named like the prop), as on egui.
-fn bindings_json(k: &'static KindSpec) -> J {
+pub(crate) fn bindings_json(k: &'static KindSpec) -> J {
     let all_signals: Vec<&SignalSpec> = k.chain().flat_map(|c| c.signals.iter()).collect();
     let bind_signal = |p: &PropSpec| all_signals.iter().find(|s| s.name == "changed").or_else(|| all_signals.iter().find(|s| s.args.iter().any(|(n, _)| *n == p.name))).copied();
     let commit = all_signals.iter().find(|s| s.name == "commit").copied();
@@ -420,6 +420,57 @@ pub fn builtin_text() -> String {
 /// the built-in `skelter.json` (`svelters-compile --spec-fragment kinds.json`, or
 /// `SourceConfig::spec_fragments` for live compiles); a tag or kind already there is an error.
 pub fn fragment(all: &Kinds) -> J {
+    fragment_with(all, &[], &[])
+}
+
+/// CX3: a draft bind source an app declares, as svelters-egui's `provider::BindSourceDef`: the
+/// compiler lowers `bind:prop={export(...args)}` (with `export` imported from `module`) to a binding
+/// whose value is `get(...args)` and whose changes (or commits, `|commit`) call `set(...args, value)`.
+#[derive(Clone, Copy, Debug)]
+pub struct BindSource {
+    pub module: &'static str,
+    pub export: &'static str,
+    pub get: &'static str,
+    pub set: &'static str,
+    pub doc: &'static str,
+}
+
+impl BindSource {
+    pub const fn draft(module: &'static str, export: &'static str, get: &'static str, set: &'static str) -> BindSource {
+        BindSource { module, export, get, set, doc: "" }
+    }
+
+    pub const fn doc(self, doc: &'static str) -> BindSource {
+        BindSource { doc, ..self }
+    }
+}
+
+/// [`fragment`] plus, when there are any (so a fragment of kinds alone is unchanged), the app's
+/// behaviours under `behaviors` (`<ns>.<name>` tags; for tools, the compiler ignores the key: each
+/// with its `module` `svelters:behaviors/<ns>`, `export` and `tag`, as egui's fragment lists them)
+/// and its draft `bind_sources` (sorted by module and export; the built-in `skelter.json` already
+/// declares the `link` source of Rust stores).
+pub fn fragment_with(all: &Kinds, behaviors: &[String], bind_sources: &[BindSource]) -> J {
+    let mut f = fragment_kinds(all);
+    if !behaviors.is_empty() {
+        let b: Map<String, J> = behaviors
+            .iter()
+            .filter_map(|tag| {
+                let (ns, name) = tag.split_once('.')?;
+                Some((tag.clone(), json!({"export": name, "module": format!("svelters:behaviors/{ns}"), "params": "any", "tag": tag})))
+            })
+            .collect();
+        f["behaviors"] = J::Object(b);
+    }
+    if !bind_sources.is_empty() {
+        let mut sources = bind_sources.to_vec();
+        sources.sort_by_key(|b| (b.module, b.export));
+        f["bind_sources"] = sources.iter().map(|b| json!({"doc": b.doc, "export": b.export, "get": b.get, "lowering": "draft", "module": b.module, "set": b.set})).collect();
+    }
+    f
+}
+
+fn fragment_kinds(all: &Kinds) -> J {
     let mut kinds = Map::new();
     let mut tags = Map::new();
     for km in all.iter().filter(|m| m.app) {

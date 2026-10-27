@@ -38,6 +38,18 @@
 //! [`slot_svg`] gives each classed element an explicit `fill`/`stroke="currentColor"` where it
 //! inherits one, which makes its own (slot) `color` apply (ICON-STYLE §6's open question).
 //!
+//! A lazy source ([`IconSource`], [`IconRegistry::set_source`]) supplies icons on demand instead of
+//! registering them all up front: the first lookup of a key the registry does not have (a measure,
+//! a paint, [`IconRegistry::get`]) asks the source once and caches its answer, a miss included.
+//! [`IconRegistry::invalidate`] and [`IconRegistry::invalidate_all`] drop cached answers (and the
+//! parsed vector art of their masters) so the next lookup asks again; the dropped entries' rasters
+//! are released once nothing records them, because raster keys carry the entry's generation. Neither
+//! repaints by itself: the registry is the process's, not a document's, so after invalidating the
+//! host calls [`crate::host::icons_changed`] on each document (or changes the theme, which repaints
+//! anyway). **Precedence:** an icon registered with [`IconRegistry::register`] always wins; the
+//! source is asked only for keys nothing registered, and unregistering a key lets the source answer
+//! for it again. The source answers for host keys only (a valid key outside `ext.`).
+//!
 //! Icon fonts: skelter-text owns fonts. This module keeps the families registered as icon fonts
 //! ([`register_icon_font`], with an optional name → glyph table, [`register_icon_names`]); loading
 //! the font into skelter-text under that family is the caller's.
@@ -353,11 +365,37 @@ struct Entry {
     generation: u64,
 }
 
+/// Supplies icons on demand: what a key the registry has no registration for draws
+/// ([`IconRegistry::set_source`]). Asked once per key until [`IconRegistry::invalidate`] (or
+/// [`IconRegistry::invalidate_all`]) drops its answer; `None` leaves the key missing (and that answer
+/// is cached too). It is called without the registry's locks held, from whichever thread looks the
+/// key up first, so it may itself use the registry.
+///
+/// A closure `Fn(&str) -> Option<Icon>` is a source. An SVG text becomes an icon with
+/// `Icon::svg(16, text.into_bytes())` ([`Icon::multicolour`] for literal colours, [`Icon::master`]
+/// for more optical sizes).
+pub trait IconSource: Send + Sync {
+    /// The icon for `key` (a valid host key: dotted kebab-case, not under `ext.`), or `None`.
+    fn icon(&self, key: &str) -> Option<Icon>;
+}
+
+impl<F: Fn(&str) -> Option<Icon> + Send + Sync> IconSource for F {
+    fn icon(&self, key: &str) -> Option<Icon> {
+        self(key)
+    }
+}
+
+/// A source's cached answer: the icon and its generation, or `None` for a miss.
+type Fetched = Option<(Icon, u64)>;
+
 /// Keys to icons. One is the process's ([`IconRegistry::global`], swapped by [`set_global`]).
 #[derive(Default)]
 pub struct IconRegistry {
     entries: RwLock<HashMap<String, Entry>>,
     generation: AtomicU64,
+    /// The lazy source, if any, and its cached answers by key.
+    source: RwLock<Option<Arc<dyn IconSource>>>,
+    fetched: RwLock<HashMap<String, Fetched>>,
 }
 
 impl fmt::Debug for IconRegistry {
@@ -408,6 +446,80 @@ impl IconRegistry {
         Ok(())
     }
 
+    /// Installs `source` as the registry's lazy source (`None` removes it), returning the one it
+    /// replaces. Every cached answer of the old source is dropped ([`IconRegistry::invalidate_all`]).
+    pub fn set_source(&self, source: Option<Arc<dyn IconSource>>) -> Option<Arc<dyn IconSource>> {
+        let old = std::mem::replace(&mut *self.source.write().unwrap_or_else(|p| p.into_inner()), source);
+        self.invalidate_all();
+        old
+    }
+
+    /// Whether a lazy source is installed.
+    pub fn has_source(&self) -> bool {
+        self.source.read().unwrap_or_else(|p| p.into_inner()).is_some()
+    }
+
+    /// Drops the source's cached answers for `keys` (and the parsed vector art of their masters), so
+    /// the next lookup of each asks the source again. Registered icons are not affected. Returns how
+    /// many cached answers were dropped (misses included). The host repaints with
+    /// [`crate::host::icons_changed`].
+    pub fn invalidate<K: AsRef<str>>(&self, keys: impl IntoIterator<Item = K>) -> usize {
+        let dropped: Vec<Fetched> = {
+            let mut f = self.fetched.write().unwrap_or_else(|p| p.into_inner());
+            keys.into_iter().filter_map(|k| f.remove(k.as_ref())).collect()
+        };
+        self.dropped(dropped)
+    }
+
+    /// Drops every cached answer of the source ([`IconRegistry::invalidate`] for all keys); returns
+    /// how many.
+    pub fn invalidate_all(&self) -> usize {
+        let dropped: Vec<Fetched> = std::mem::take(&mut *self.fetched.write().unwrap_or_else(|p| p.into_inner())).into_values().collect();
+        self.dropped(dropped)
+    }
+
+    fn dropped(&self, dropped: Vec<Fetched>) -> usize {
+        for (icon, _) in dropped.iter().flatten() {
+            if let Icon::Svg { masters, hc, .. } = icon {
+                for d in masters.values().chain(hc.values()) {
+                    VectorArt::forget(d.bytes());
+                }
+            }
+        }
+        if !dropped.is_empty() {
+            self.generation.fetch_add(1, Ordering::Relaxed);
+        }
+        dropped.len()
+    }
+
+    /// A counter that grows with every registration, removal and invalidation: a host that polls it
+    /// knows when to repaint ([`crate::host::icons_changed`]).
+    pub fn revision(&self) -> u64 {
+        self.generation.load(Ordering::Relaxed)
+    }
+
+    /// The source's answer for `key` (not registered): cached, else asked once and cached.
+    fn fetch(&self, key: &str) -> Fetched {
+        if let Some(f) = self.fetched.read().unwrap_or_else(|p| p.into_inner()).get(key) {
+            return f.clone();
+        }
+        let source = self.source.read().unwrap_or_else(|p| p.into_inner()).clone()?;
+        if validate_key(key).is_err() || Owner::Host.check(key).is_err() {
+            return None;
+        }
+        // asked without the locks held: the source may use the registry
+        let icon = source.icon(key).filter(|icon| match icon {
+            Icon::Svg { masters, .. } if masters.is_empty() || masters.contains_key(&0) => {
+                report(IconError::BadIcon { key: key.to_string(), why: "the icon source gave an SVG icon without a master of a nonzero size".into() });
+                false
+            }
+            _ => true,
+        });
+        let answer = icon.map(|i| (i, self.generation.fetch_add(1, Ordering::Relaxed) + 1));
+        // a concurrent fetch of the same key keeps the first answer
+        self.fetched.write().unwrap_or_else(|p| p.into_inner()).entry(key.to_string()).or_insert(answer).clone()
+    }
+
     /// Removes `key` if `owner` registered it.
     pub fn unregister(&self, owner: &Owner, key: &str) -> bool {
         let mut e = self.entries.write().unwrap_or_else(|p| p.into_inner());
@@ -428,15 +540,17 @@ impl IconRegistry {
         before - e.len()
     }
 
+    /// Whether `key` draws: registered, or (asking it on first use) supplied by the source.
     pub fn contains(&self, key: &str) -> bool {
-        self.entries.read().unwrap_or_else(|p| p.into_inner()).contains_key(key)
+        self.entry(key).is_some()
     }
 
+    /// The icon `key` draws: the registered one, else (asking it on first use) the source's.
     pub fn get(&self, key: &str) -> Option<Icon> {
-        self.entries.read().unwrap_or_else(|p| p.into_inner()).get(key).map(|e| e.icon.clone())
+        self.entry(key).map(|(i, _)| i)
     }
 
-    /// Every key, sorted.
+    /// Every registered key, sorted (the source's keys are not enumerable and not listed).
     pub fn keys(&self) -> Vec<String> {
         let mut k: Vec<_> = self.entries.read().unwrap_or_else(|p| p.into_inner()).keys().cloned().collect();
         k.sort();
@@ -444,7 +558,10 @@ impl IconRegistry {
     }
 
     fn entry(&self, key: &str) -> Option<(Icon, u64)> {
-        self.entries.read().unwrap_or_else(|p| p.into_inner()).get(key).map(|e| (e.icon.clone(), e.generation))
+        if let Some(e) = self.entries.read().unwrap_or_else(|p| p.into_inner()).get(key) {
+            return Some((e.icon.clone(), e.generation));
+        }
+        self.fetch(key)
     }
 
     /// The master that draws `key` in a box of `box_pt` points at `scale` device pixels per point
@@ -1368,6 +1485,132 @@ mod tests {
         reg.register(Owner::Host, "file.new", Icon::svg(16, SLOTTED)).unwrap();
         paint(&mut PaintCx::new(&mut list, &mut res, &mut text, 1.0), &reg, "file.new", r, &IconStyle::new(16.0, Color::WHITE)).unwrap();
         assert_eq!(res.images.len(), 2);
+    }
+
+    /// A source that serves `SQUARE` for keys under `lazy.` (none for `lazy.none`) and counts how
+    /// often each key is asked.
+    fn counting_source() -> (Arc<Mutex<HashMap<String, usize>>>, Arc<dyn IconSource>) {
+        let asked: Arc<Mutex<HashMap<String, usize>>> = Arc::default();
+        let a = asked.clone();
+        let source = move |key: &str| {
+            *lock(&a).entry(key.to_string()).or_default() += 1;
+            (key.starts_with("lazy.") && key != "lazy.none").then(|| Icon::svg(16, String::from_utf8(SQUARE.to_vec()).unwrap().into_bytes()))
+        };
+        (asked, Arc::new(source))
+    }
+
+    fn asked(a: &Mutex<HashMap<String, usize>>, key: &str) -> usize {
+        lock(a).get(key).copied().unwrap_or(0)
+    }
+
+    #[test]
+    fn source_fetches_an_unknown_key_once_and_caches_it() {
+        let reg = IconRegistry::new();
+        let (a, source) = counting_source();
+        assert!(reg.set_source(Some(source)).is_none() && reg.has_source());
+        for _ in 0..3 {
+            assert!(reg.contains("lazy.save"));
+            assert_eq!(reg.get("lazy.save").unwrap().sizes(), [16]);
+            assert!(reg.resolve("lazy.save", 16.0, 1.0).is_some());
+        }
+        assert_eq!(asked(&a, "lazy.save"), 1);
+        // drawn from the cache: one raster, the source not asked again
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let r = Rect::new(0.0, 0.0, 16.0, 16.0);
+        for _ in 0..2 {
+            paint(&mut PaintCx::new(&mut list, &mut res, &mut text, 1.0), &reg, "lazy.save", r, &IconStyle::new(16.0, Color::WHITE)).unwrap();
+        }
+        assert_eq!((asked(&a, "lazy.save"), res.images.len()), (1, 1));
+        // registered icons win and are never asked for; the source's keys are not listed
+        reg.register(Owner::Host, "lazy.open", Icon::svg(24, SQUARE)).unwrap();
+        assert_eq!(reg.get("lazy.open").unwrap().sizes(), [24]);
+        assert_eq!(asked(&a, "lazy.open"), 0);
+        assert_eq!(reg.keys(), ["lazy.open"]);
+        // unregistering lets the source answer
+        assert!(reg.unregister(&Owner::Host, "lazy.open"));
+        assert_eq!(reg.get("lazy.open").unwrap().sizes(), [16]);
+        assert_eq!(asked(&a, "lazy.open"), 1);
+        // invalid and extension keys are never asked
+        assert!(!reg.contains("Lazy.Bad") && !reg.contains("ext.acme.gear"));
+        assert_eq!((asked(&a, "Lazy.Bad"), asked(&a, "ext.acme.gear")), (0, 0));
+    }
+
+    #[test]
+    fn source_invalidate_refetches_exactly_that_key() {
+        let reg = IconRegistry::new();
+        let (a, source) = counting_source();
+        reg.set_source(Some(source));
+        let keys = ["lazy.a", "lazy.b", "lazy.c"];
+        for k in keys {
+            assert!(reg.contains(k));
+        }
+        let rev = reg.revision();
+        assert_eq!(reg.invalidate(["lazy.b", "lazy.unknown"]), 1);
+        assert!(reg.revision() > rev);
+        for k in keys {
+            assert!(reg.contains(k));
+        }
+        assert_eq!(keys.map(|k| asked(&a, k)), [1, 2, 1]);
+        // a new generation: the next draw makes a new raster
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let r = Rect::new(0.0, 0.0, 16.0, 16.0);
+        paint(&mut PaintCx::new(&mut list, &mut res, &mut text, 1.0), &reg, "lazy.b", r, &IconStyle::new(16.0, Color::WHITE)).unwrap();
+        reg.invalidate(["lazy.b"]);
+        paint(&mut PaintCx::new(&mut list, &mut res, &mut text, 1.0), &reg, "lazy.b", r, &IconStyle::new(16.0, Color::WHITE)).unwrap();
+        assert_eq!((asked(&a, "lazy.b"), res.images.len()), (3, 2));
+        // invalidating a registered key changes nothing
+        reg.register(Owner::Host, "lazy.d", Icon::svg(16, SQUARE)).unwrap();
+        assert_eq!(reg.invalidate(["lazy.d"]), 0);
+        assert!(reg.contains("lazy.d"));
+    }
+
+    #[test]
+    fn source_invalidate_all_refetches_every_key() {
+        let reg = IconRegistry::new();
+        let (a, source) = counting_source();
+        reg.set_source(Some(source));
+        let keys = ["lazy.a", "lazy.b", "lazy.none"];
+        for k in keys {
+            reg.contains(k);
+        }
+        assert_eq!(reg.invalidate_all(), 3);
+        for k in keys {
+            reg.contains(k);
+        }
+        assert_eq!(keys.map(|k| asked(&a, k)), [2, 2, 2]);
+        // a new source drops the old one's answers
+        let (b, other) = counting_source();
+        assert!(reg.set_source(Some(other)).is_some());
+        assert!(reg.contains("lazy.a"));
+        assert_eq!((asked(&a, "lazy.a"), asked(&b, "lazy.a")), (2, 1));
+        reg.set_source(None);
+        assert!(!reg.has_source() && !reg.contains("lazy.a"));
+    }
+
+    #[test]
+    fn source_none_leaves_the_icon_missing() {
+        let reg = IconRegistry::new();
+        let (a, source) = counting_source();
+        reg.set_source(Some(source));
+        let mut list = DisplayList::new();
+        let mut res = MemResources::default();
+        let mut text = MonoShaper;
+        let r = Rect::new(0.0, 0.0, 16.0, 16.0);
+        for _ in 0..2 {
+            assert!(!reg.contains("lazy.none") && reg.get("lazy.none").is_none());
+            assert!(reg.resolve("lazy.none", 16.0, 1.0).is_none());
+            assert!(paint(&mut PaintCx::new(&mut list, &mut res, &mut text, 1.0), &reg, "lazy.none", r, &IconStyle::new(16.0, Color::WHITE)).is_none());
+        }
+        assert!(list.items.is_empty() && res.images.is_empty());
+        // the miss is cached too, until invalidated
+        assert_eq!(asked(&a, "lazy.none"), 1);
+        assert_eq!(reg.invalidate(["lazy.none"]), 1);
+        assert!(!reg.contains("lazy.none"));
+        assert_eq!(asked(&a, "lazy.none"), 2);
     }
 
     /// One test takes the diagnostics: the queue is the process's, and a second taker running in

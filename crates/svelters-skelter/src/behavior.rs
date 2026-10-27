@@ -118,6 +118,13 @@ impl SkelterBackend {
         self.0.behaviors.borrow_mut().kinds.insert(kind, (tag, Rc::new(factory)));
     }
 
+    /// The registered behaviours' tags (`<ns>.<name>`), sorted.
+    pub fn behavior_tags(&self) -> Vec<String> {
+        let mut tags: Vec<String> = self.0.behaviors.borrow().kinds.values().map(|(t, _)| t.clone()).collect();
+        tags.sort_unstable();
+        tags
+    }
+
     /// The `svelters:behaviors/<ns>` modules of the registered behaviours, `(ns, source)` sorted by
     /// namespace: one `nativeBehavior` action per behaviour, as egui's `behavior_modules` writes them
     /// (`<root>/.svelters/app/behaviors/<ns>.js`, where live compiles and vite resolve the import).

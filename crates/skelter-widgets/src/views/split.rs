@@ -1126,6 +1126,8 @@ pub(crate) struct Probe {
     pub now: Time,
     pub state: StateBits,
     pub focused: bool,
+    /// The document's reduced motion (`EventCx::reduced_motion`).
+    pub reduced_motion: bool,
     pub signals: Vec<(&'static str, Vec<Value>)>,
     pub changed: Vec<&'static str>,
     pub capture: Option<bool>,
@@ -1139,7 +1141,7 @@ pub(crate) struct Probe {
 #[cfg(test)]
 impl Probe {
     pub fn new(policy: Policy, size: Size) -> Probe {
-        Probe { policy, size, now: Time(1_000_000_000), state: StateBits::NONE, focused: false, signals: Vec::new(), changed: Vec::new(), capture: None, wake: None, cursor: None, repaint: false, scroll_to: Vec::new() }
+        Probe { policy, size, now: Time(1_000_000_000), state: StateBits::NONE, focused: false, reduced_motion: false, signals: Vec::new(), changed: Vec::new(), capture: None, wake: None, cursor: None, repaint: false, scroll_to: Vec::new() }
     }
     /// Sends `ev` to `k`; capture, wake, cursor and repaint are this event's.
     pub fn send<K: Kind>(&mut self, k: &mut K, ev: Event) -> Handled {
@@ -1147,6 +1149,7 @@ impl Probe {
         let policy = self.policy;
         let mut cx = EventCx::new(self.now, self.size, &mut self.state, &policy);
         cx.focused = self.focused;
+        cx.reduced_motion = self.reduced_motion;
         let h = k.event(&mut cx, &ev);
         let (emitted, changed) = (std::mem::take(&mut cx.emitted), std::mem::take(&mut cx.changed));
         let (capture, wake, cursor, repaint) = (cx.capture, cx.wake, cx.cursor, cx.repaint);

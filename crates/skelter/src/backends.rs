@@ -190,11 +190,17 @@ impl<H: DocHandle> DocumentApi for CoreDocument<H> {
     fn hover(&mut self, window: WindowId, pos: Point) -> bool {
         self.doc.lend_mut().hover(window, pos)
     }
+    fn hover_at(&mut self, window: WindowId, pos: Point, now: Time) -> bool {
+        self.doc.lend_mut().hover_at(window, pos, now)
+    }
     fn ime_state(&mut self, window: WindowId) -> Option<(Rect, InputPurpose)> {
         self.doc.lend_mut().ime_state(window)
     }
     fn take_fast_commits(&mut self) -> Vec<FastCommit> {
         self.doc.lend_mut().take_fast_commits()
+    }
+    fn reduced_motion(&self) -> Option<bool> {
+        Some(self.doc.lend().media_preferences().reduced_motion)
     }
     fn caret_blink(&self) -> Option<Option<skelter_compositor::CaretBlink>> {
         // read on use: `skelter_widgets::host::set_policy` reaches open windows (SV62)
@@ -360,6 +366,9 @@ impl CompositorApi for CompositorHandle {
     }
     fn set_ppi(&self, window: WindowId, ppi: f32) {
         CompositorHandle::set_ppi(self, window, ppi);
+    }
+    fn set_reduced_motion(&self, window: WindowId, on: bool) {
+        CompositorHandle::set_reduced_motion(self, window, on);
     }
     fn set_caret_blink(&self, window: WindowId, blink: Option<skelter_compositor::CaretBlink>) {
         CompositorHandle::set_caret_blink(self, window, blink);

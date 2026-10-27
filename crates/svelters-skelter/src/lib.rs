@@ -6,6 +6,7 @@
 //! | [`backend`] | [`SkelterBackend`]: the backend ABI (`impl svelters_abi::Backend`) on skelter's tree, and the [`Driver`] seam to whoever runs the loop |
 //! | [`behavior`] | `use:` behaviours routed to the app's Rust factories, and the event tap (A2) |
 //! | [`designer`] | DZ0–DZ2b: a visual designer's reads (`scene().read`: `by_source`, `hit_stack`, matched rules) and forced states, in svelters-egui's shapes |
+//! | [`dump`] | the app's `.svelters/app` dump: exports, `kinds.json`, `kinds.d.ts`, behaviour modules and typings |
 //! | [`deliver`] | event-time delivery of what an input produced in the tree (architecture §11.1) |
 //! | [`template`] | native templates: `instantiate` and `destroy_range` (compiler-and-js §3.2) |
 //! | [`style`] | the `style` op: CSS engine inputs and the TR1 visual channels |
@@ -23,6 +24,7 @@ pub mod behavior;
 pub mod css;
 pub mod deliver;
 pub mod designer;
+pub mod dump;
 pub mod embed;
 pub mod kinds;
 pub mod motion;
@@ -35,6 +37,7 @@ pub mod value;
 
 pub use backend::{Driver, SkelterBackend, SVL_LISTEN_PASSIVE, Traffic, WakeState};
 pub use deliver::{Delivered, Output};
+pub use dump::{dump, dump_with};
 pub use kinds::Kinds;
 pub use template::{Template, TemplateNode};
 

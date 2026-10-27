@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "ff5014dfb790f4e6"
+    "spec_hash": "1ad74b354c8e04cb"
   },
   "inline_text": {
     "kind": "span",
@@ -4174,7 +4174,7 @@
         "Widget"
       ],
       "children": null,
-      "doc": "A horizontal slider with an optional value box.",
+      "doc": "A horizontal slider with an optional value box. Like every widget it takes the common `enabled` (false: greyed out, no input); the native kind's `disabled` is not a surface name (the surface maps `enabled` onto it, inverted).",
       "fingerprint": "0a89508a",
       "id": 176771210,
       "interface": false,
@@ -6464,6 +6464,26 @@
           "type": "bool",
           "writable": true
         },
+        "read-only": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The text can be focused, selected and copied but not edited (`enabled={false}` takes no focus at all).",
+          "fingerprint": "02ac6e59",
+          "id": 44854873,
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TextEdit:read-only",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "text": {
           "change": "layout",
           "construct_only": false,
@@ -6489,6 +6509,21 @@
         "kind": "crates/svelters-skelter/src/surface/tier0.rs"
       },
       "signals": {
+        "cancel": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Escape in the field: the field took the key (revert an edit here before anything around it handles Escape).",
+          "fingerprint": "009cbfd3",
+          "handler_result": "none",
+          "id": 10272723,
+          "js_event": "cancel",
+          "name": "cancel",
+          "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "changed": {
           "args": [
             {
@@ -9474,6 +9509,110 @@
             "capture"
           ],
           "sync": true,
+          "sync_required": false
+        },
+        "pointerenter": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The pointer came over this node or a descendant (DOM `pointerenter`: no bubbling, one per node that the hovered path gained, outermost first); at event time, before the frame's `pointermove`.",
+          "fingerprint": "0982f6b5",
+          "handler_result": "none",
+          "id": 159577781,
+          "js_event": "pointerenter",
+          "name": "pointerenter",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "pointerleave": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            },
+            {
+              "name": "ox",
+              "type": "f64"
+            },
+            {
+              "name": "oy",
+              "type": "f64"
+            },
+            {
+              "name": "buttons",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The pointer left this node and all its descendants (DOM `pointerleave`: no bubbling, one per node the hovered path lost, innermost first), or the pointer left the window.",
+          "fingerprint": "0eac1250",
+          "handler_result": "none",
+          "id": 246157904,
+          "js_event": "pointerleave",
+          "name": "pointerleave",
+          "passive": true,
+          "phases": [],
+          "sync": false,
           "sync_required": false
         },
         "pointermove": {

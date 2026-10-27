@@ -84,7 +84,7 @@ pub struct HostConfig {
     pub hmr_memory_fraction: f32,
     /// DX2: the clipboard and shell behind `svelters:clipboard` and `svelters:shell`. The default
     /// ([`crate::platform::Platform::headless`]) touches nothing of the system; a desktop runner
-    /// installs the system ones (svelters-egui's `platform::system()`).
+    /// installs the system ones (`Platform::system`, feature `system-clipboard`).
     pub platform: crate::platform::Platform,
     /// SCHED1: where offloaded jobs run, what time it is, and who else hears the host's wakes
     /// ([`crate::HostSched`]; empty: rayon, the wall clock, the backend). A clock excludes `scripted`

@@ -37,6 +37,11 @@ pub trait DocumentApi {
     fn hover(&mut self, _window: WindowId, _pos: Point) -> bool {
         false
     }
+    /// [`DocumentApi::hover`] for a move that happened at `now` (its OS time): a `title` tip the
+    /// hover starts waits its delay from `now`. Defaults to [`DocumentApi::hover`].
+    fn hover_at(&mut self, window: WindowId, pos: Point, _now: Time) -> bool {
+        self.hover(window, pos)
+    }
     /// The focused editable node's IME candidate area and purpose; `None` = the IME is off.
     fn ime_state(&mut self, _window: WindowId) -> Option<(Rect, InputPurpose)> {
         None
@@ -49,6 +54,12 @@ pub trait DocumentApi {
     /// The caret blink windows get (the text policy's), read when a window opens and after each
     /// commit (a change reaches every open window); `None` = leave the compositor's default.
     fn caret_blink(&self) -> Option<Option<skelter_compositor::CaretBlink>> {
+        None
+    }
+    /// The document's `prefers-reduced-motion` (its media preferences), read when a window opens
+    /// and after each commit, so the compositor's animations jump too; `None` = leave the
+    /// compositor's default (motion).
+    fn reduced_motion(&self) -> Option<bool> {
         None
     }
     /// A native menu item was chosen (`AppHandler::menu_activated`); true when something handled it.
@@ -132,6 +143,8 @@ pub trait CompositorApi {
     fn set_ppi(&self, _window: WindowId, _ppi: f32) {}
     /// The window's caret blink; `None` = a steady caret.
     fn set_caret_blink(&self, _window: WindowId, _blink: Option<skelter_compositor::CaretBlink>) {}
+    /// The window's document asks for reduced motion: finite animations and smooth scrolls jump.
+    fn set_reduced_motion(&self, _window: WindowId, _on: bool) {}
     /// The window's frame-clock snapshot for the urgent-frame rule; `None` = not known (the frame
     /// state then runs urgent frames for `now`).
     fn frame_args(&self, _window: WindowId) -> Option<skelter_frame::FrameArgs> {
