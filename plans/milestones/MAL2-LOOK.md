@@ -5,7 +5,7 @@ Lane `S-B look` of cadatomic's MAL2 batch, branch `ci/mal2-look`, base master `4
 generic: no app names, token families or concepts. User-facing docs:
 `docs/skelter/tokens-and-origins.md`.
 
-**Status:** done on the branch, waiting for the coordinator's merge (see "CI").
+**Status:** done; CI green on `e2ba4592`, waiting for the coordinator's merge.
 
 Order followed: SV70 and SV67 first, then SV68, SV71, SV69 (the brief's order). The request numbers
 are the brief's; an earlier draft of the batch's design numbered the same requests one lower.
@@ -115,6 +115,11 @@ are the brief's; an earlier draft of the batch's design numbered the same reques
   sheet themselves). This is the intended single reader path; a host that swaps the sheet and the
   service together, as before, keeps working.
 
+## Carry-over
+
+- One border colour and style per core-painted box (`ComputedBox`): different colours on different
+  sides need a per-side border in the display list.
+
 ## Not done
 
 - Revert through `var()` substitution acts as `unset` (rare; CSS allows it).
@@ -136,4 +141,6 @@ are the brief's; an earlier draft of the batch's design numbered the same reques
 - `9ddc1a1f` (SV67–SV71 with master `3096ff6f` merged): all green — js 40462895886, linux-gtk
   40462895915, linux-qt 40462895807, macos-appkit 40462895801, skelter 40462895861, windows-winui
   40462895937.
-- The border fix: see the next line once its run finishes.
+- `e2ba4592` (+ the one-side border fix): all green — js 40465010323, linux-gtk 40465010256,
+  linux-qt 40465010325, macos-appkit 40465010371, skelter 40465010374, windows-winui 40465010397.
+- Not run locally: the full workspace tests and conformance (CI ran them); no timing run.
