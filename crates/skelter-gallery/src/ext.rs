@@ -4,6 +4,7 @@ use crate::model::{Cell, Story, Theme};
 use skelter_core::{Document, KindRegistry};
 use skelter_widgets::theme::TokenMap;
 use std::path::PathBuf;
+use std::rc::Rc;
 use svelters_skelter::SkelterBackend;
 
 /// A host's additions. `Extensions::default()` is svelters' own gallery: the `gallery/` root of this
@@ -17,7 +18,8 @@ pub struct Extensions {
     pub register_kinds: Vec<fn(&mut KindRegistry) -> Result<(), String>>,
     /// Runs before each mount (a cell's story and variant): host state a story reads (cadatomic's
     /// grid sources, its pick board).
-    pub setup: Vec<Box<dyn Fn(&mut SetupCx<'_>)>>,
+    /// (`Rc`, not the brief's `Box`: the renderer keeps them.)
+    pub setup: Vec<Rc<dyn Fn(&mut SetupCx<'_>)>>,
     /// Extra token sets, by theme name, selectable as `--theme <name>`: each is Dark Modern with
     /// these tokens as overrides (`--sv-*`, `--vscode-*`, or the host's own custom properties).
     pub themes: Vec<(String, TokenMap)>,
@@ -41,7 +43,7 @@ impl Extensions {
     }
 
     pub fn on_setup(mut self, f: impl Fn(&mut SetupCx<'_>) + 'static) -> Extensions {
-        self.setup.push(Box::new(f));
+        self.setup.push(Rc::new(f));
         self
     }
 
