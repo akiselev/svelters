@@ -260,8 +260,10 @@ pub fn story_roots(ext: &Extensions) -> Vec<PathBuf> {
 
 impl Gallery {
     /// The gallery over `doc` (built on [`registry`]), its window's root built and the stories found.
-    pub fn new(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, fonts: Arc<skelter_text::FontStore>, ext: Extensions) -> Gallery {
+    pub fn new(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, fonts: Arc<skelter_text::FontStore>, mut ext: Extensions) -> Gallery {
         let roots = story_roots(&ext);
+        // the inspect renderer reads the same roots
+        ext.story_roots = roots.clone();
         let (catalog, load_errors) = discover(&roots, &ext.families);
         let mut coverage_missing = catalog.coverage(doc.borrow().registry()).missing;
         coverage_missing.retain(|k| !CHROME_KINDS.contains(&k.as_str()));
@@ -1040,6 +1042,16 @@ impl Gallery {
         true
     }
 
+    /// Inspects cell `i` with `selector` (as a click on the node it names would).
+    pub fn inspect_cell(&mut self, i: usize, selector: &str) -> Result<(), String> {
+        let cell = self.cells.get(i).map(|c| c.cell.clone()).ok_or_else(|| format!("no cell {i} (there are {})", self.cells.len()))?;
+        self.pick_cell(i);
+        let json = self.inspect_saved(&cell, selector);
+        self.inspected = Inspected { command: Some(inspect_command(&cell, selector)), cell: Some(cell), selector: Some(selector.to_string()), json: Some(json) };
+        self.rebuild_inspect();
+        Ok(())
+    }
+
     /// What `skelter-gallery inspect` prints for `cell` and `selector`: its own renderer mounts the
     /// cell headlessly from the saved files and describes the nodes the selector picks. An unsaved
     /// buffer is not in it (the pane says so).
@@ -1217,10 +1229,10 @@ fn build(ui: &mut Ui<'_>) -> Nodes {
     ui.anchor(revert, "revert");
     let errors = ui.label(right, "", &["gal-error"]);
     ui.anchor(errors, "source-errors");
-    let editor = ui.node(Some(right), w::CODE_EDITOR, &[], "flex-grow: 2; min-height: 120px");
+    let editor = ui.node(Some(right), w::CODE_EDITOR, &[], "flex-grow: 3; flex-shrink: 1; flex-basis: 0; min-height: 120px");
     ui.aria_label(editor, "Source");
     ui.anchor(editor, "source");
-    let (_, inspect) = ui.scroll(right, "flex-grow: 1; min-height: 120px; border-top: 1px solid var(--vscode-panel-border)");
+    let (_, inspect) = ui.scroll(right, "flex-grow: 2; flex-shrink: 1; flex-basis: 0; min-height: 120px; border-top: 1px solid var(--vscode-panel-border)");
     ui.anchor(inspect, "inspect");
     // The save/revert/filter actions are registered by the caller through `Gallery::new`'s
     // `adopt` below (their nodes are fixed).

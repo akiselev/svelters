@@ -108,7 +108,7 @@ impl<C: CompositorApi + 'static> AppHandler for GalleryApp<C> {
     }
 }
 
-const USAGE: &str = "usage: skelter-gallery-app [<story>[/<variant>]] [--shot <out.png> [--size <w>x<h>] [--pick <cell>]]";
+const USAGE: &str = "usage: skelter-gallery-app [<story>[/<variant>]] [--base-css <file>] [--shot <out.png> [--size <w>x<h>] [--pick <cell> [--inspect <selector>]]]";
 
 /// The command line: what to open, and the headless shot.
 #[derive(Debug, Default)]
@@ -117,6 +117,8 @@ struct Args {
     shot: Option<std::path::PathBuf>,
     size: Option<(f32, f32)>,
     pick: Option<usize>,
+    inspect: Option<String>,
+    base_css: Option<std::path::PathBuf>,
 }
 
 fn parse_args(args: &[String]) -> Result<Args, String> {
@@ -130,6 +132,8 @@ fn parse_args(args: &[String]) -> Result<Args, String> {
                 let (w, h) = v.split_once('x').ok_or("--size needs <w>x<h>")?;
                 a.size = Some((w.parse().map_err(|_| "bad --size")?, h.parse().map_err(|_| "bad --size")?));
             }
+            "--inspect" => a.inspect = Some(it.next().ok_or("--inspect needs a selector")?.clone()),
+            "--base-css" => a.base_css = Some(it.next().ok_or("--base-css needs a file")?.into()),
             "--pick" => a.pick = Some(it.next().ok_or("--pick needs a cell index")?.parse().map_err(|_| "bad --pick")?),
             s if s.starts_with('-') => return Err(format!("unknown flag {s}")),
             s => a.select = Some(s.to_string()),
@@ -162,6 +166,9 @@ pub fn run(ext: Extensions) -> ExitCode {
             return ExitCode::from(1);
         }
     };
+    if let Some(css) = &args.base_css {
+        doc.gallery.set_base_css_path(Some(css.clone()));
+    }
     let first = args.select.clone().or_else(|| doc.gallery.catalog().stories().first().map(|s| s.id.0.clone()));
     if let Some(sel) = first {
         let (s, v) = sel.split_once('/').map_or((sel.as_str(), None), |(s, v)| (s, Some(v)));
@@ -175,7 +182,11 @@ pub fn run(ext: Extensions) -> ExitCode {
         doc.gallery.select(s, v);
     }
     if let Some(out) = &args.shot {
-        return match shot(doc, fonts, args.size.unwrap_or((1500.0, 950.0)), args.pick, out) {
+        if args.inspect.is_some() && args.pick.is_none() {
+            eprintln!("skelter-gallery-app: --inspect needs --pick\n{USAGE}");
+            return ExitCode::from(2);
+        }
+        return match shot(doc, fonts, args.size.unwrap_or((1500.0, 950.0)), args.pick.map(|p| (p, args.inspect.clone())), out) {
             Ok(()) => ExitCode::SUCCESS,
             Err(e) => {
                 eprintln!("skelter-gallery-app: {e}");
@@ -201,13 +212,17 @@ pub fn run(ext: Extensions) -> ExitCode {
 }
 
 /// Renders the gallery's window headlessly (skelter-test's harness, the environment's GPU adapter)
-/// to `out` as a PNG, `size` in points, with cell `pick` picked.
-pub fn shot(doc: GalleryDocument, fonts: Arc<skelter_text::FontStore>, size: (f32, f32), pick: Option<usize>, out: &std::path::Path) -> Result<(), String> {
+/// to `out` as a PNG, `size` in points, with cell `pick` picked and, with a selector, inspected.
+pub fn shot(doc: GalleryDocument, fonts: Arc<skelter_text::FontStore>, size: (f32, f32), pick: Option<(usize, Option<String>)>, out: &std::path::Path) -> Result<(), String> {
     let glyphs: Arc<dyn skelter_base::text::GlyphRasterizer> = Arc::new(skelter_text::FontRasterizer::new(fonts));
     let mut h = skelter_test::Harness::<GalleryDocument>::builder().with_size(Size::new(size.0, size.1)).with_glyphs(glyphs).build(doc);
     h.run();
-    if let Some(i) = pick {
-        h.state_mut().gallery.pick_cell(i);
+    if let Some((i, selector)) = pick {
+        let g = &mut h.state_mut().gallery;
+        g.pick_cell(i);
+        if let Some(sel) = selector {
+            g.inspect_cell(i, &sel)?;
+        }
         h.run();
     }
     let img = h.render().map_err(|e| e.0)?;
