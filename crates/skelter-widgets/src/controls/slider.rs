@@ -163,12 +163,21 @@ impl Slider {
         rail::marks_of(&self.props.marks)
     }
 
+    /// Where the ticks go: `ticks`, or `after` when it is `none` and the slider has marks (marks
+    /// always draw).
+    fn ticks(&self) -> Ticks {
+        match Ticks::parse(&self.props.ticks) {
+            Ticks::None if !self.marks().is_empty() => Ticks::After,
+            t => t,
+        }
+    }
+
     /// The rail in `rect` under the props.
     fn rail(&self, rect: Rect) -> Rail {
         let p = &self.props;
         let (lo, hi) = self.bounds();
         let scale = if p.min.is_finite() && p.max.is_finite() { Scale { min: p.min, max: p.max, log: p.scale == "log" } } else { Scale { min: lo, max: hi, log: false } };
-        Rail { rect, vertical: self.vertical(), inverted: p.inverted, scale, ticks: Ticks::parse(&p.ticks), labels: self.marks().iter().any(|m| !m.label.is_empty()) }
+        Rail { rect, vertical: self.vertical(), inverted: p.inverted, scale, ticks: self.ticks(), labels: self.marks().iter().any(|m| !m.label.is_empty()) }
     }
 
     fn scrub_params(&self, r: &Rail) -> ScrubParams {
@@ -316,7 +325,7 @@ impl Kind for Slider {
         let val_v = host.part(cx.style.part_css("value"), VALUE_UA);
         let cap = self.caption_size(cx.text, &cap_v);
         let bx = if self.props.show_value { self.box_size(cx.text, &val_v) } else { Vec2::ZERO };
-        let ticks = Ticks::parse(&self.props.ticks).extra(self.marks().iter().any(|m| !m.label.is_empty()));
+        let ticks = self.ticks().extra(self.marks().iter().any(|m| !m.label.is_empty()));
         let across = rail::THUMB + 4.0 + ticks;
         let s = if self.vertical() {
             let w = across.max(bx.x).max(cap.x);

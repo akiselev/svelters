@@ -33,7 +33,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, LazyLock, Mutex, MutexGuard};
 
 /// The colour of a placeholder or a not-loaded image's frame (R9: disabled at .4).
-pub const PLACEHOLDER_UA: Ua = Ua(&[UaRule::base(&[("color", Token("border-widget")), ("border-radius", Px(2.0))]), UaRule::when(StateBits::DISABLED, &[("opacity", Number(0.4))])]);
+pub const PLACEHOLDER_UA: Ua = Ua(&[UaRule::base(&[("color", Token("control-border")), ("border-radius", Px(2.0))]), UaRule::when(StateBits::DISABLED, &[("opacity", Number(0.4))])]);
 
 /// The side of the square an `image` whose source did not load is measured at (points).
 pub const PLACEHOLDER: f32 = 16.0;
@@ -484,7 +484,7 @@ pub(crate) mod tests {
         assert_eq!(testkit::kinds(&list), ["quad", "line", "line"]);
         let Prim::Quad(q) = &list.items[0] else { unreachable!() };
         assert_eq!((q.rect, q.border_widths.top, q.fill.clone()), (Rect::new(0.0, 0.0, 16.0, 16.0), 1.0, Fill::Solid(Color::TRANSPARENT)));
-        assert_eq!(Some(q.border_color), paint::ua_token(true, "border-widget"));
+        assert_eq!(Some(q.border_color), paint::ua_token(true, "control-border"));
         let Prim::Line(l) = &list.items[1] else { unreachable!() };
         assert_eq!((l.from, l.to), (Point::new(3.0, 3.0), Point::new(13.0, 13.0)));
         assert!(res.images.is_empty());
