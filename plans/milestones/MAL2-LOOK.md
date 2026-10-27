@@ -89,6 +89,19 @@ are the brief's; an earlier draft of the batch's design numbered the same reques
   an aliased component, only readers re-record, no index rebuild, a scheme change through
   `set_theme_tokens`).
 
+### Coordinator's extra: a one-side border keeps its colour (`skelter-core/src/style/cascade.rs`)
+
+- Reported: `border-bottom: 1px solid var(--sv-border)` computed a transparent `border_color`. The
+  engine computed `border-bottom-color` right, with `var()` and with a literal; the loss was in
+  skelter-core's `ComputedBox`, which has one border colour and style and read them from
+  `border-color`/`border-top-*` only. Now the box takes the first drawn side's (top, right, bottom,
+  left) style and colour, falling back to `border-color`. A side with `none`/`hidden` style gets
+  width 0 on its own (before, a `border-top: none` zeroed every side). Widget painting
+  (`StyleView::border_sides`) was already per side.
+- Test: `tests::style::a_one_side_border_keeps_its_colour`.
+- Still one colour per box: different colours on different sides of a core-painted box need a
+  per-side border in the display list; not asked for.
+
 ## Decisions taken in the lane (recorded for the coordinator)
 
 - **User `!important` above theme `!important`.** The brief says user `!important` is top. The batch's
@@ -120,4 +133,7 @@ are the brief's; an earlier draft of the batch's design numbered the same reques
 
 ## CI
 
-(filled in when the five workflows finish)
+- `9ddc1a1f` (SV67–SV71 with master `3096ff6f` merged): all green — js 40462895886, linux-gtk
+  40462895915, linux-qt 40462895807, macos-appkit 40462895801, skelter 40462895861, windows-winui
+  40462895937.
+- The border fix: see the next line once its run finishes.

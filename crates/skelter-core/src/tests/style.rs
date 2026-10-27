@@ -311,3 +311,24 @@ fn media_preferences_match_queries_and_reduced_motion_jumps() {
     assert_eq!(d.computed(a).unwrap().background, Fill::Solid(Color::rgba(1.0, 1.0, 1.0, 1.0)), "no transition");
     assert!(!d.busy().contains(crate::Busy::ANIMATING));
 }
+
+#[test]
+fn a_one_side_border_keeps_its_colour() {
+    // a side's shorthand, with a `var()` colour or a literal: the box's colour is the drawn side's
+    let (mut d, root) = doc();
+    d.add_sheet(":root { --c: #ff0000 } .x { border-bottom: 1px solid var(--c) } .y { border-bottom: 2px solid #00ff00 } .z { border-top: none; border-left: 1px dashed var(--c) }");
+    let x = child(&mut d, root, BOX, "");
+    d.set_style(x, classes(&["x"]));
+    let y = child(&mut d, root, BOX, "");
+    d.set_style(y, classes(&["y"]));
+    let z = child(&mut d, root, BOX, "");
+    d.set_style(z, classes(&["z"]));
+    frame(&mut d);
+    let bx = d.computed(x).unwrap();
+    assert_eq!((bx.border_color, bx.border_widths.bottom, bx.border_widths.top), (Color::rgba(1.0, 0.0, 0.0, 1.0), 1.0, 0.0));
+    let by = d.computed(y).unwrap();
+    assert_eq!((by.border_color, by.border_widths.bottom), (Color::rgba(0.0, 1.0, 0.0, 1.0), 2.0));
+    // `border-top: none` no longer clears the other sides
+    let bz = d.computed(z).unwrap();
+    assert_eq!((bz.border_color, bz.border_widths.left, bz.border_style), (Color::rgba(1.0, 0.0, 0.0, 1.0), 1.0, skelter_base::display::BorderStyle::Dashed));
+}

@@ -402,17 +402,39 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
         bottom: side("border-bottom-width").unwrap_or(all.bottom),
         left: side("border-left-width").unwrap_or(all.left),
     };
-    let style = border_style(kw(c.get("border-top-style")));
-    match style {
-        Some(s) => b.border_style = s,
-        // `border-style: none` (the initial value) draws no border whatever its width
-        None if c.get("border-top-style").is_some() => b.border_widths = Insets::ZERO,
-        None => {}
-    }
-    for name in ["border-color", "border-top-color"] {
-        if let Some(ComputedValue::Color(k)) = c.get(name) {
-            b.border_color = color(*k);
+    // per side: a `none`/`hidden` style draws no border on that side whatever its width. The box
+    // has one style and one colour: the first drawn side's (top, right, bottom, left), so a border
+    // on one side only (`border-bottom: 1px solid var(--x)`) keeps its own colour
+    const SIDES: [(&str, &str); 4] = [("border-top-style", "border-top-color"), ("border-right-style", "border-right-color"), ("border-bottom-style", "border-bottom-color"), ("border-left-style", "border-left-color")];
+    let mut drawn: Option<usize> = None;
+    for (k, (style_name, _)) in SIDES.iter().enumerate() {
+        let w = match k {
+            0 => &mut b.border_widths.top,
+            1 => &mut b.border_widths.right,
+            2 => &mut b.border_widths.bottom,
+            _ => &mut b.border_widths.left,
+        };
+        let declared = c.get(style_name).is_some();
+        match border_style(kw(c.get(style_name))) {
+            None if declared => *w = 0.0,
+            _ if *w > 0.0 && drawn.is_none() => drawn = Some(k),
+            _ => {}
         }
+    }
+    let k = drawn.unwrap_or(0);
+    if let Some(s) = border_style(kw(c.get(SIDES[k].0))) {
+        b.border_style = s;
+    }
+    let side_color = match c.get(SIDES[k].1) {
+        Some(ComputedValue::Color(x)) => Some(color(*x)),
+        _ => None,
+    };
+    let uniform = match c.get("border-color") {
+        Some(ComputedValue::Color(x)) => Some(color(*x)),
+        _ => None,
+    };
+    if let Some(x) = side_color.or(uniform) {
+        b.border_color = x;
     }
     let r = px(c.get("border-radius")).unwrap_or(0.0);
     b.radii = Corners {
