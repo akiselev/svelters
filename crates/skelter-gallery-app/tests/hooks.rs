@@ -12,9 +12,11 @@ use std::cell::Cell;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
-fn fixture() -> PathBuf {
+/// A copy of the fixture gallery for test `name` (each test its own: the tests run in parallel, and
+/// Windows refuses to delete files another test's watcher holds open).
+fn fixture(name: &str) -> PathBuf {
     let src = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/gallery");
-    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/gallery-app-tests/hooks");
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/gallery-app-tests").join(format!("hooks-{name}"));
     let _ = std::fs::remove_dir_all(&dir);
     copy(&src, &dir);
     skelter_gallery::canonicalize(&dir).unwrap()
@@ -68,9 +70,9 @@ fn source_notice(h: &Harness<GalleryDocument>) -> Option<String> {
 
 #[test]
 fn g2_a_hosts_code_editor_turns_the_source_pane_off_with_a_notice() {
-    let quiet = gallery(Extensions::new().story_root(fixture()));
+    let quiet = gallery(Extensions::new().story_root(fixture("g2-quire")));
     assert_eq!(source_notice(&quiet).as_deref(), Some(""), "quire's editor: no notice");
-    let h = gallery(Extensions::new().story_root(fixture()).kinds(host_editor));
+    let h = gallery(Extensions::new().story_root(fixture("g2-host")).kinds(host_editor));
     assert_eq!(source_notice(&h).as_deref(), Some(skelter_gallery_app::gallery::SHADOWED));
 }
 
@@ -78,7 +80,7 @@ fn g2_a_hosts_code_editor_turns_the_source_pane_off_with_a_notice() {
 fn g1_g6_the_apps_loop_runs_the_frame_and_backend_hooks() {
     let (frames, backends) = (Rc::new(Cell::new(0u64)), Rc::new(Cell::new(0u32)));
     let (f, b) = (frames.clone(), backends.clone());
-    let ext = Extensions::new().story_root(fixture()).on_frame(move |cx| f.set(cx.frame)).on_backend(move |_| b.set(b.get() + 1));
+    let ext = Extensions::new().story_root(fixture("g1-g6")).on_frame(move |cx| f.set(cx.frame)).on_backend(move |_| b.set(b.get() + 1));
     let mut h = gallery(ext);
     h.get_by_author_id("story:button").click();
     h.run();
