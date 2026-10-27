@@ -290,9 +290,25 @@ impl Cell {
 /// A JSON value as a label: strings bare, everything else as JSON.
 pub fn value_label(v: &serde_json::Value) -> String {
     match v {
-        serde_json::Value::String(s) => s.clone(),
+        serde_json::Value::String(s) => escape_label(s),
         v => v.to_string(),
     }
+}
+
+/// `s` on one line: a newline, tab or other control character is written as its escape (`\n`,
+/// `\t`, `\u{1b}`), so a label never breaks into the next header line.
+pub fn escape_label(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
+        match c {
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            c if c.is_control() || matches!(c, '\u{2028}' | '\u{2029}') => out.push_str(&format!("\\u{{{:x}}}", c as u32)),
+            c => out.push(c),
+        }
+    }
+    out
 }
 
 /// A `k=v` value from the command line: JSON when it parses (`3`, `true`, `"x"`), else a string.

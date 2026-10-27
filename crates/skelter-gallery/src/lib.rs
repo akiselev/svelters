@@ -11,6 +11,7 @@
 //! | [`inspect`] | one node of a cell as JSON: box, computed style, matched rules, forced state, AccessKit |
 //! | [`check`] | every variant compiles and renders one cell: [`check::CheckReport`] |
 //! | [`cli`] | [`cli_main`]: the `skelter-gallery` CLI |
+//! | [`diff`] | `--diff`: a before / after / changes picture of two images |
 //! | [`fonts`] | the bundled font set (Inter, JetBrains Mono, Arabic, CJK and symbol fallbacks) |
 //! | [`icons`] | the demo icon set and the story assets (`asset://` imports) |
 //! | [`ext`] | [`Extensions`]: what a host adds (story roots, kinds, setup hooks, token sets) |
@@ -21,6 +22,7 @@
 pub mod catalog;
 pub mod check;
 pub mod cli;
+pub mod diff;
 pub mod ext;
 pub mod fonts;
 pub mod icons;

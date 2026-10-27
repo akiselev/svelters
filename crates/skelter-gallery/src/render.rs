@@ -493,15 +493,7 @@ pub fn pseudo_bits(name: &str) -> Option<svelters_style::StateMask> {
 
 /// `image` as PNG bytes (straight alpha).
 pub fn png(image: &Image) -> Vec<u8> {
-    let mut rgba = image.rgba.clone();
-    for px in rgba.chunks_exact_mut(4) {
-        let a = px[3];
-        if a != 0 && a != 255 {
-            for c in &mut px[..3] {
-                *c = ((u32::from(*c) * 255 + u32::from(a) / 2) / u32::from(a)).min(255) as u8;
-            }
-        }
-    }
+    let rgba = crate::diff::straight(image).rgba;
     let mut out = Vec::new();
     let enc = image::codecs::png::PngEncoder::new(&mut out);
     image::ImageEncoder::write_image(enc, &rgba, image.width, image.height, image::ExtendedColorType::Rgba8).expect("encoding to memory");

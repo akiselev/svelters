@@ -105,7 +105,8 @@ skelter-gallery sheet --all -o /tmp/all/
 ```
 
 On a sheet, each row is a variant × args combination × state, in the matrix's order. Columns are grouped by theme,
-then zoom, then density. Each cell has a two-line header: `variant args` and `state theme [density] [xZ]`. A disabled
+then zoom, then density. Each cell has a two-line header: `variant args` and `state theme [density] [xZ]`. An arg value's newlines, tabs and
+other control characters are written as escapes (`First line\nSecond line`), so a header stays on its lines. A disabled
 cell whose bit was forced says `(forced bit)`. A cell that fails is drawn as its error and listed with it; the other
 cells still render.
 
@@ -127,6 +128,20 @@ The index of one sheet, also printed with `--json` and written with `--index`:
 
 `rect` is where the cell's image sits in the sheet, in pixels. `header` is the label band above it. A directory's
 `index.json` is `{ "sheets": [<index>, …], "cells": N, "seconds": S }`.
+
+### `--diff <before.png>` (on `shot`, and `sheet <story>`)
+
+```sh
+skelter-gallery shot button/look -o /tmp/before.png
+# … edit base.css …
+skelter-gallery shot button/look -o /tmp/after.png --diff /tmp/before.png
+# diff: 54 of 25920 pixels changed, in 12,12 100x29 → /tmp/after.diff.png
+```
+
+Writes `<out>.diff.png` beside the output: **before**, **after**, and the **changes** (the after image faded to grey,
+each changed pixel magenta, the changed region framed in red), side by side. With `--json` the output gains
+`"diff": { "file", "changed", "total", "bounds": [x, y, w, h] | null, "before_size", "after_size" }`. Images of
+different sizes are compared over the larger size. It is for looking: a difference never fails the command.
 
 ### `inspect <story>/<variant> <selector> [cell flags] [--json]`
 
