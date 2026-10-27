@@ -139,6 +139,10 @@ impl LiveStory {
         }
         cfg.entry = Entry::Embed(variants.iter().enumerate().filter(|(i, _)| !broken.contains(i)).map(|(_, v)| (v.export.clone(), v.file.clone())).collect());
         let provider = Rc::new(SourceProvider::new(cfg)?);
+        // the story's images under the `asset://` refs its imports evaluate to (as the CLI's renderer)
+        if let Some(dir) = variants.first().and_then(|v| v.file.parent()) {
+            skelter_gallery::icons::register_assets(provider.assets(), dir);
+        }
         let mut story = LiveStory {
             root,
             variants,

@@ -3,7 +3,7 @@ title = "Icon"
 family = "controls"
 kinds = ["icon"]
 size = [240, 64]
-notes = "A glyph or a registry icon; with `frame` an icon button. The gallery host registers no icon set or icon font, so `name` variants show the fallback."
+notes = "A glyph or a registry icon; with `frame` an icon button. The gallery registers a demo icon set (`skelter_gallery::icons::DEMO`); an unregistered key shows the fallback."
 
 [[variant]]
 id = "glyph"
