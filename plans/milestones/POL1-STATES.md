@@ -52,12 +52,17 @@ R9's "opacity .4" lives in `base.css` now. The button UA's `opacity` entry stays
 
 ## Before/after images (container paths, not committed)
 
-- `target/gallery/before/button-look.png`: button/look, all states × four themes, before: focus-visible and disabled
-  rows equal normal; default and selected equal plain.
-- `target/gallery/s3/button.png` (and `button-z2.png` at zoom 2): after: rings in every theme (orange in hc-dark),
-  accent default, toggle-filled selected, dimmed disabled, HC hover outlines.
-- `target/gallery/s3/checkbox.png`, `sw-radio.png`: after: hover edges, round 2px rings, HC on-state, dimmed disabled.
-- `target/gallery/s3/dialog.png`: after: Keep in the accent, Delete in the error colour, all four themes.
+Re-rendered after merging `origin/ci/pb1-gallery` `cd478f3` (Inter, JetBrains Mono, symbol, Arabic and CJK fonts):
+the "before" binary is `ci/pb1-gallery` itself (no fix of this lane) with its own `base.css` (`--base-css`), the
+"after" is this branch. Each pair is before (left) | after (right):
+
+- `target/gallery/after2/button-pair.png`: button/look, normal, focus-visible, disabled × four themes. Before: the
+  focus-visible and disabled rows equal normal, and default and selected equal plain. After: rings in every theme
+  (orange in hc-dark), the accent default, the toggle-filled selected, dimmed disabled.
+- `target/gallery/after2/checkbox-pair.png`: checkbox/value, hover, focus-visible, disabled. After: hover edges,
+  round 2px rings, the HC on-state, dimmed disabled.
+- `target/gallery/after2/dialog-pair.png`: dialog/destructive. After: Keep in the accent, Delete in the error colour.
+- Single "after" sheets: `target/gallery/after2/{switch,radio-button,toggle-button,text-edit,combo-box,label}.png`.
 
 ## Requests to other lanes (not built here)
 
