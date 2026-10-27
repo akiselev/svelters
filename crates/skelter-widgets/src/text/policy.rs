@@ -37,7 +37,7 @@ impl Platform {
 
 /// One platform's text-field behaviour. `#[non_exhaustive]`: built from [`TextPolicy::of`] and then
 /// changed field by field (the `styleHint` equivalent).
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub struct TextPolicy {
     pub platform: Platform,
@@ -70,6 +70,8 @@ pub struct TextPolicy {
     pub double_click_ms: u32,
     /// What a password field shows for each character.
     pub mask: char,
+    /// The host's layer over this platform's text keys (S2); `None`: the platform's keys as they are.
+    pub keys: Option<std::sync::Arc<super::keys::TextKeymap>>,
 }
 
 /// The word rules a platform uses (quire-text's `WordRules` minus the VS Code classifier, which
@@ -106,6 +108,7 @@ const GTK: TextPolicy = TextPolicy {
     double_click_ms: 400,
     // GtkText's default invisible char, U+25CF BLACK CIRCLE
     mask: '\u{25CF}',
+    keys: None,
 };
 
 const QT: TextPolicy = TextPolicy {
@@ -124,6 +127,7 @@ const QT: TextPolicy = TextPolicy {
     caret_blink_timeout_ms: None,
     double_click_ms: 400,
     mask: '\u{25CF}',
+    keys: None,
 };
 
 const WINDOWS: TextPolicy = TextPolicy {
@@ -142,6 +146,7 @@ const WINDOWS: TextPolicy = TextPolicy {
     caret_blink_timeout_ms: None,
     double_click_ms: 500,
     mask: '\u{25CF}',
+    keys: None,
 };
 
 const MAC: TextPolicy = TextPolicy {
@@ -161,6 +166,7 @@ const MAC: TextPolicy = TextPolicy {
     double_click_ms: 500,
     // NSSecureTextField's bullet
     mask: '\u{2022}',
+    keys: None,
 };
 
 impl TextPolicy {

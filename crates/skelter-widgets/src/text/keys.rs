@@ -6,6 +6,11 @@
 //! Ctrl+Shift+U hex entry on GTK), Windows' edit controls (the same, plus Ctrl+Y redo), and AppKit's
 //! standard key bindings (`StandardKeyBinding.dict`: Option word motions, Cmd line and document
 //! motions, the Emacs Ctrl keys, Home/End scroll without moving the caret).
+//!
+//! [`TextKeymap`] (S2) is the same maps as data: [`TextKeymap::defaults`] lists a platform's chords
+//! and what each does, and a host layer of entries binds a chord to another [`TextAction`], unbinds
+//! it (the key bubbles) or leaves it to the input method. A field resolves a key through its
+//! policy's layer first ([`TextPolicy::keys`](super::policy::TextPolicy::keys)), then the platform's map.
 
 use super::policy::Platform;
 use skelter_base::event::{KeyEvent, KeyState, Modifiers};
@@ -247,6 +252,115 @@ fn map_mac(cx: KeyCx, ev: &KeyEvent) -> KeyAction {
     }
 }
 
+/// A key with the modifiers that pick a binding (Shift, Ctrl, Alt, Super; AltGr is text, not a chord).
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+pub struct KeyChord {
+    pub key: Key,
+    pub mods: Modifiers,
+}
+
+impl KeyChord {
+    const MASK: u8 = Modifiers::SHIFT.0 | Modifiers::CTRL.0 | Modifiers::ALT.0 | Modifiers::SUPER.0;
+    pub const fn new(key: Key, mods: Modifiers) -> KeyChord {
+        KeyChord { key, mods: Modifiers(mods.0 & Self::MASK) }
+    }
+    /// The chord of a key event (`None` for a key with no logical key: text only).
+    pub fn of(ev: &KeyEvent) -> Option<KeyChord> {
+        ev.key.map(|k| KeyChord::new(k, ev.modifiers))
+    }
+}
+
+/// What a chord does in a text field: a [`KeyAction`], or leaving the key to the input method
+/// ([`TextEditor::route`](super::editor::TextEditor::route) sends it there; the field takes no action).
+#[derive(Clone, Debug, PartialEq)]
+pub enum TextAction {
+    Key(KeyAction),
+    PassToIme,
+}
+
+impl From<KeyAction> for TextAction {
+    fn from(a: KeyAction) -> TextAction {
+        TextAction::Key(a)
+    }
+}
+
+/// The keys the platform maps bind (every other key types its text or is not the field's).
+const MAPPED: &[Key] = &[
+    Key::ArrowLeft, Key::ArrowRight, Key::ArrowUp, Key::ArrowDown, Key::Home, Key::End, Key::PageUp, Key::PageDown,
+    Key::Backspace, Key::Delete, Key::Insert, Key::Copy, Key::Cut, Key::Paste, Key::Enter, Key::Escape, Key::Tab,
+    Key::A, Key::B, Key::C, Key::D, Key::E, Key::F, Key::H, Key::K, Key::N, Key::P, Key::U, Key::V, Key::X, Key::Y, Key::Z,
+];
+
+/// A host layer over a platform's text keys (S2): entries in the order bound, at most one per chord.
+/// Empty: the platform's keys as they are.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct TextKeymap {
+    pub entries: Vec<(KeyChord, TextAction)>,
+}
+
+impl TextKeymap {
+    pub fn new() -> TextKeymap {
+        TextKeymap::default()
+    }
+
+    /// The platform's table for a field like `cx`: every chord of the keys its map binds, with what
+    /// it does there (chords that are not the field's left out), built from the platform's map.
+    pub fn defaults(cx: KeyCx) -> Vec<(KeyChord, TextAction)> {
+        let cx = KeyCx { hex_active: false, ..cx };
+        let mut out = Vec::new();
+        for &key in MAPPED {
+            for m in 0..16u8 {
+                let ev = KeyEvent { key: Some(key), physical: 0, text: None, state: KeyState::Pressed, repeat: false, location: skelter_base::event::KeyLocation::Standard, modifiers: Modifiers(m) };
+                let a = map_key(cx, &ev);
+                if a != KeyAction::Ignore {
+                    out.push((KeyChord::new(key, Modifiers(m)), TextAction::Key(a)));
+                }
+            }
+        }
+        out
+    }
+
+    /// [`TextKeymap::defaults`] with this layer applied: what a keymap editor lists for `cx`.
+    pub fn table(&self, cx: KeyCx) -> Vec<(KeyChord, TextAction)> {
+        let mut t: Vec<_> = TextKeymap::defaults(cx).into_iter().filter(|(c, _)| self.get(*c).is_none()).collect();
+        t.extend(self.entries.iter().filter(|(_, a)| *a != TextAction::Key(KeyAction::Ignore)).cloned());
+        t
+    }
+
+    /// The layer's entry for `chord`.
+    pub fn get(&self, chord: KeyChord) -> Option<&TextAction> {
+        self.entries.iter().find(|(c, _)| *c == chord).map(|(_, a)| a)
+    }
+
+    /// Binds `chord` to `action`, replacing the layer's entry for it.
+    pub fn bind(&mut self, chord: KeyChord, action: impl Into<TextAction>) {
+        self.reset(chord);
+        self.entries.push((chord, action.into()));
+    }
+
+    /// Unbinds `chord`: the field leaves it ([`KeyAction::Ignore`]), so it bubbles to the app.
+    pub fn unbind(&mut self, chord: KeyChord) {
+        self.bind(chord, KeyAction::Ignore);
+    }
+
+    /// Drops the layer's entry for `chord`: the platform's binding again.
+    pub fn reset(&mut self, chord: KeyChord) {
+        self.entries.retain(|(c, _)| *c != chord);
+    }
+
+    /// What `ev` does in a field like `cx`: the layer's entry for its chord, else the platform's
+    /// map ([`map_key`]). Releases and GTK's hex entry in progress never reach the layer.
+    pub fn resolve(&self, cx: KeyCx, ev: &KeyEvent) -> TextAction {
+        if ev.state == KeyState::Released || cx.hex_active {
+            return TextAction::Key(map_key(cx, ev));
+        }
+        match KeyChord::of(ev).and_then(|c| self.get(c)) {
+            Some(a) => a.clone(),
+            None => TextAction::Key(map_key(cx, ev)),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -258,6 +372,35 @@ mod tests {
 
     fn cx(platform: Platform) -> KeyCx {
         KeyCx { platform, multiline: false, accepts_tab: false, hex_entry: platform == Platform::Gtk, hex_active: false }
+    }
+
+    #[test]
+    fn the_text_keymap_is_the_platform_map_as_data_with_a_host_layer() {
+        let pc = cx(Platform::Windows);
+        let ctrl_a = KeyChord::new(Key::A, Modifiers::CTRL);
+        let defaults = TextKeymap::defaults(pc);
+        // built from the platform's map: Ctrl+A selects all, a plain A is not a binding (it types)
+        assert!(defaults.contains(&(ctrl_a, TextAction::Key(KeyAction::Edit(EditCommand::SelectAll)))));
+        assert!(!defaults.iter().any(|(c, _)| *c == KeyChord::new(Key::A, Modifiers::default())));
+        assert!(TextKeymap::defaults(cx(Platform::Mac)).contains(&(KeyChord::new(Key::A, Modifiers::SUPER), TextAction::Key(KeyAction::Edit(EditCommand::SelectAll)))));
+        let mut layer = TextKeymap::new();
+        assert_eq!(layer.resolve(pc, &ev(Key::A, Modifiers::CTRL, Some("a"))), TextAction::Key(KeyAction::Edit(EditCommand::SelectAll)));
+        // unbound: the chord bubbles; AltGr does not change the chord
+        layer.unbind(ctrl_a);
+        assert_eq!(layer.resolve(pc, &ev(Key::A, Modifiers::CTRL.union(Modifiers::ALT_GR), Some("a"))), TextAction::Key(KeyAction::Ignore));
+        assert!(!layer.table(pc).iter().any(|(c, _)| *c == ctrl_a));
+        // rebound, and a chord left to the input method
+        layer.bind(ctrl_a, KeyAction::Edit(EditCommand::Undo));
+        let ctrl_space = KeyChord::new(Key::Space, Modifiers::CTRL);
+        layer.bind(ctrl_space, TextAction::PassToIme);
+        assert_eq!(layer.entries.len(), 2, "one entry per chord");
+        assert_eq!(layer.resolve(pc, &ev(Key::A, Modifiers::CTRL, Some("a"))), TextAction::Key(KeyAction::Edit(EditCommand::Undo)));
+        assert_eq!(layer.resolve(pc, &ev(Key::Space, Modifiers::CTRL, Some(" "))), TextAction::PassToIme);
+        assert!(layer.table(pc).contains(&(ctrl_space, TextAction::PassToIme)));
+        // reset: the platform's binding again; other keys keep the platform's map
+        layer.reset(ctrl_a);
+        assert_eq!(layer.resolve(pc, &ev(Key::A, Modifiers::CTRL, Some("a"))), TextAction::Key(KeyAction::Edit(EditCommand::SelectAll)));
+        assert_eq!(layer.resolve(pc, &ev(Key::B, Modifiers::default(), Some("b"))), TextAction::Key(typed("b")));
     }
 
     #[test]

@@ -363,3 +363,63 @@ mod canvas_input {
         assert_eq!(GESTURES.with(|g| g.borrow().len()), 1);
     }
 }
+
+#[test]
+fn input_filters_take_pointer_and_wheel_events_before_the_tree() {
+    use crate::{FilterCx, Filtered};
+    use skelter_base::event::{ImeEvent, InputEnvelope, InputEvent, ScrollDelta, WheelEvent};
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "width: 20px; height: 20px");
+    let s = child(&mut d, root, BOX, "width: 100px; height: 50px; overflow-y: scroll");
+    child(&mut d, s, BOX, "height: 200px; flex-shrink: 0");
+    frame(&mut d);
+    d.listen(a, common::POINTERDOWN, ListenFlags::EMPTY);
+    let log: Rc<RefCell<Vec<(&'static str, Option<NodeId>)>>> = Rc::default();
+    let l = log.clone();
+    d.add_input_filter(0, "low", move |cx: &mut FilterCx<'_>, _: &InputEnvelope| {
+        l.borrow_mut().push(("low", cx.target));
+        Filtered::Continue
+    });
+    let l = log.clone();
+    // added later at a higher priority: runs first, and takes presses and wheels
+    d.add_input_filter(10, "tool", move |cx: &mut FilterCx<'_>, ev: &InputEnvelope| {
+        l.borrow_mut().push(("tool", cx.target));
+        match &ev.event {
+            InputEvent::Pointer(p) if p.phase == PointerPhase::Down => {
+                assert_eq!(cx.local, Some(Point::new(5.0, 5.0)), "the target's local position");
+                Filtered::Consumed
+            }
+            InputEvent::Wheel(_) => Filtered::Consumed,
+            _ => Filtered::Continue,
+        }
+    });
+    assert_eq!(d.input_filter_owners(), ["tool".into(), "low".into()] as [std::sync::Arc<str>; 2]);
+    let out = click(&mut d, 5.0, 5.0);
+    assert_eq!(out[0].filtered_by.as_deref(), Some("tool"), "the press is the tool's");
+    assert!(out[0].handled && out[0].events.is_empty(), "no JS event for a consumed press");
+    assert!(!d.state(a).contains(crate::StateMask::PRESSED), "nor a native press");
+    assert_eq!(out[1].filtered_by, None, "the release goes on");
+    assert_eq!(*log.borrow(), [("tool", Some(a)), ("tool", Some(a)), ("low", Some(a))]);
+    // a consumed wheel scrolls nothing
+    let at = d.world_rect(s).expect("laid out").min;
+    let wheel = WheelEvent { pos: Point::new(at.x + 10.0, at.y + 10.0), delta: ScrollDelta::Pixels(Vec2::new(0.0, -30.0)), phase: None, momentum: None, modifiers: Default::default() };
+    let out = d.dispatch(&envelope(InputEvent::Wheel(wheel.clone()), 3_000));
+    assert_eq!(out.filtered_by.as_deref(), Some("tool"));
+    assert_eq!(d.scroll_offset(s), Vec2::ZERO);
+    // never during an IME composition
+    log.borrow_mut().clear();
+    d.dispatch(&envelope(InputEvent::Ime(ImeEvent::Preedit { text: "か".into(), cursor: None }), 4_000));
+    let out = d.dispatch(&pointer(PointerPhase::Down, 5.0, 5.0, 5_000));
+    assert_eq!(out.filtered_by, None);
+    assert!(log.borrow().is_empty());
+    d.dispatch(&envelope(InputEvent::Ime(ImeEvent::Commit("か".into())), 6_000));
+    d.dispatch(&pointer(PointerPhase::Up, 5.0, 5.0, 6_500));
+    // removed by owner: the wheel scrolls again
+    d.remove_input_filters("tool");
+    assert_eq!(d.input_filter_owners(), ["low".into()] as [std::sync::Arc<str>; 1]);
+    let out = d.dispatch(&envelope(InputEvent::Wheel(wheel), 7_000));
+    assert_eq!(out.filtered_by, None);
+    assert_eq!(d.scroll_offset(s), Vec2::new(0.0, 30.0));
+}

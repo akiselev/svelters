@@ -690,6 +690,10 @@ pub mod core {
         fn self_scroll(&self) -> Option<skelter_core::SelfScroll> {
             None
         }
+        /// Core's geometry of the node as a scroll container (viewport, content, offset), from the
+        /// last layout: given before each event and each prepare, while the node is one. A kind that
+        /// draws its own bars or scrolls by its own rules (`scroll-area`) keeps it.
+        fn scroll_geometry(&mut self, _g: &skelter_core::ScrollGeometry) {}
         /// Stands in for core telling the kind that JS now listens to `signal` (`listened`) or no
         /// longer does (`Document::listen`). A kind whose behaviour depends on a listener keeps it:
         /// an `icon` or `image` takes clicks only while one of its click signals is listened.

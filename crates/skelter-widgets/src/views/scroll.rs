@@ -53,6 +53,9 @@ pub const TRACK_REPEAT_FIRST: Span = Span::from_millis(300);
 pub const TRACK_REPEAT_EVERY: Span = Span::from_millis(50);
 /// Animation and repeat frames while the UI thread samples them (the compositor takes this over).
 const FRAME: Span = Span::from_micros(16_667);
+/// A `scroll-area`'s bar thickness and shortest thumb, in points (svelters-egui's defaults).
+pub const BAR_WIDTH: f32 = 10.0;
+pub const MIN_THUMB: f32 = 20.0;
 
 /// A thumb's UA sheet (`::part(thumb-x)`, `::part(thumb-y)`): VS Code's slider colours, by state.
 pub const THUMB_UA: Ua = Ua(&[
@@ -931,6 +934,11 @@ impl ScrollArea {
 
     /// The wheel or touchpad event the latch routed here (the whole delta is this area's).
     pub fn wheel(&mut self, cx: &mut EventCx<'_>, ev: &WheelEvent) -> Handled {
+        // content that fits on every axis it scrolls: the wheel is not this area's, so the scroll
+        // container around it moves (SV78)
+        if self.anim.is_none() && !(0..2).any(|d| self.axes[d] && self.scroller.overflows(d)) {
+            return Handled::No;
+        }
         let os = platform(cx.policy);
         let delta = wheel_delta_points(cx.policy, ev.delta, self.scroller.viewport());
         // Shift+wheel scrolls horizontally where only x scrolls or the OS did not do it already
@@ -1239,6 +1247,11 @@ impl Kind for ScrollArea {
         }
     }
 
+    /// Core's layout of the area (SV78): the scroller's content and viewport, the bars over it.
+    fn scroll_geometry(&mut self, g: &skelter_core::ScrollGeometry) {
+        self.set_geometry(g.content, g.viewport, BAR_WIDTH, MIN_THUMB, [false, false]);
+    }
+
     fn a11y(&self, cx: &mut A11yCx) {
         cx.node.set_role(accesskit::Role::ScrollView);
         cx.node.set_clips_children();
@@ -1459,6 +1472,42 @@ impl Kind for Scrollbar {
 
 #[cfg(test)]
 mod tests {
+
+    /// A wheel over a `scroll-area` in a core document (SV78): the area gets core's layout, so it
+    /// scrolls its content; an area whose content fits lets the container around it scroll.
+    #[test]
+    fn a_wheel_scrolls_a_laid_out_area_and_passes_when_it_fits() {
+        use crate::testdoc::{W, child, doc, frame};
+        use skelter_base::event::{InputEnvelope, InputEvent};
+        use skelter_base::ids::InputSeq;
+        let area_kind = skelter_core::KindId::of("scroll-area");
+        let (mut d, root) = doc(Size::new(300.0, 400.0), |r| {
+            crate::host::register::<ScrollArea>(r).unwrap();
+        });
+        let outer = child(&mut d, root, crate::testdoc::BOX, "width: 300px; height: 300px; overflow-y: scroll");
+        // the theme's base sheet makes an area a scroll container on its axes
+        let tall = child(&mut d, outer, area_kind, "width: 100px; height: 100px; flex-shrink: 0; overflow-y: auto");
+        child(&mut d, tall, crate::testdoc::BOX, "height: 1000px; flex-shrink: 0");
+        let fits = child(&mut d, outer, area_kind, "width: 100px; height: 100px; flex-shrink: 0; overflow-y: auto");
+        child(&mut d, fits, crate::testdoc::BOX, "height: 50px; flex-shrink: 0");
+        child(&mut d, outer, crate::testdoc::BOX, "height: 1000px; flex-shrink: 0");
+        frame(&mut d);
+        assert!(d.scroll_geometry(tall).is_some_and(|g| g.content.h == 1000.0));
+        let wheel = |d: &mut skelter_core::Document, node, seq| {
+            let r = d.world_rect(node).expect("laid out");
+            let w = WheelEvent { pos: Point::new(r.min.x + 50.0, r.min.y + 50.0), delta: ScrollDelta::Pixels(Vec2::new(0.0, -30.0)), phase: None, momentum: None, modifiers: Default::default() };
+            d.dispatch(&InputEnvelope { seq: InputSeq(seq), window: W, os_time: Time(seq), recv_time: Time(seq), event: InputEvent::Wheel(w) })
+        };
+        let out = wheel(&mut d, tall, 1);
+        assert!(out.handled);
+        assert_eq!(d.scroll_offset(tall), Vec2::new(0.0, 30.0), "the area scrolled its content");
+        assert_eq!(d.scroll_offset(outer), Vec2::ZERO, "and kept the wheel");
+        let out = wheel(&mut d, fits, 2);
+        assert!(out.handled);
+        assert_eq!(d.scroll_offset(fits), Vec2::ZERO);
+        assert_eq!(d.scroll_offset(outer), Vec2::new(0.0, 30.0), "the container around it scrolled");
+    }
+
     use super::*;
     use super::super::split::Probe;
     use crate::interact::Native;

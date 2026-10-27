@@ -142,6 +142,11 @@ impl<'a> NodeView<'a> {
     pub fn size(&self) -> Size {
         self.size
     }
+    /// Its scroll geometry when it is a scroll container (`overflow` scrolls on an axis, or the kind
+    /// scrolls itself).
+    pub fn scroll_geometry(&self) -> Option<crate::scroll::ScrollGeometry> {
+        self.doc.scroll_geometry(self.id)
+    }
     /// The border box in local coordinates.
     pub fn bounds(&self) -> Rect {
         Rect::from_origin_size(Point::ZERO, self.size)

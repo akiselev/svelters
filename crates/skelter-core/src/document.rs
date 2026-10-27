@@ -102,6 +102,8 @@ pub struct Document {
     pub(crate) run_counter: u64,
     pub(crate) images: crate::cx::ImageSink,
     pub(crate) key_hook: Option<crate::input::KeyHook>,
+    /// Pointer and wheel filters (S1, `input/filter.rs`).
+    pub(crate) input_filters: crate::input::filter::Filters,
     /// The `title` tooltip provider, and when each window's tip steps next ([`crate::tips`]).
     pub(crate) title_tips: Option<Box<dyn crate::tips::TitleTips>>,
     pub(crate) tip_wakes: HashMap<WindowId, skelter_base::time::Time>,
@@ -182,6 +184,7 @@ impl Document {
             run_counter: 0,
             images: Default::default(),
             key_hook: None,
+            input_filters: Default::default(),
             title_tips: None,
             tip_wakes: HashMap::new(),
             services: Default::default(),

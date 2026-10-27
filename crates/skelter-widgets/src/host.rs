@@ -443,6 +443,12 @@ pub fn set_policy(doc: &mut skelter_core::Document, policy: Policy) {
     doc.rerecord_all();
 }
 
+/// Sets the host's layer over the platform's text keys (S2) for every text field of `doc`: each
+/// field reads it on its next key, as it reads the policy. An empty keymap restores the platform's keys.
+pub fn set_text_keymap(doc: &mut skelter_core::Document, keymap: crate::text::TextKeymap) {
+    doc.set_service(std::sync::Arc::new(keymap));
+}
+
 /// The document's policy, else the OS's.
 pub fn policy_of(doc: &mut skelter_core::Document) -> Policy {
     doc.service::<Policy>().copied().unwrap_or_else(os_policy)
@@ -797,6 +803,10 @@ impl<W: w::Kind + Default> Hosted<W> {
         let node = cx.node();
         let Some(view) = cx.view(node) else { return Handled::No };
         let (size, mask) = (view.size(), view.state());
+        // SV78: the layout's scroll geometry, fresh for each event
+        if let Some(g) = view.scroll_geometry() {
+            self.widget.scroll_geometry(&g);
+        }
         self.sync_disabled(view.disabled());
         let policy = cx.service::<Policy>().copied().unwrap_or_else(os_policy);
         let s = Self::spec_ref();
@@ -950,6 +960,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         // FQ-67: the widget's `disabled` mirror follows the node's state before it paints (a
         // `disabled` write reaches `prop_changed` before core updates the state; inertness never does)
         self.sync_disabled(cx.node.disabled());
+        // SV78: the bars are laid out over the layout's scroll geometry
+        if let Some(g) = cx.node.scroll_geometry() {
+            self.widget.scroll_geometry(&g);
+        }
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let node = cx.node;
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
