@@ -96,3 +96,24 @@ sends its CSS `transition: color` (hover, press, disabled, a theme switch) to th
 skelter-anim's keyframe sampling and clears the override when the transition ends. There is no UI
 phase, no re-raster and no atlas upload during the transition. A node that draws anything else,
 text for example, keeps its UI-thread colour transition.
+
+## A lazy icon source
+
+An app with thousands of icons, recoloured on a theme change, need not register them all up front.
+`IconRegistry::set_source` installs an `IconSource` (a trait object, or any
+`Fn(&str) -> Option<Icon> + Send + Sync`), asked for a key the first time a lookup misses
+(`contains`, `get`, `resolve`, and so measure and paint). The answer is cached, a `None` too, so a
+missing key is asked once, not every frame. The source runs without the registry's locks held.
+
+- A registered icon always wins: its key never reaches the source. Keys under `ext.` and malformed
+  keys never do either.
+- `invalidate(keys)` and `invalidate_all()` drop cached answers, their parsed vector art and, through
+  the generation in raster keys, their rasters; the next draw asks the source again. Invalidating a
+  registered key does nothing.
+- The registry is the process's, so it marks no document: after a change, call
+  `skelter_widgets::host::icons_changed(doc)` for each document (a full repaint, since a key that
+  appears or disappears changes an icon's size), or watch `IconRegistry::revision()`.
+- `keys()` lists registered keys only.
+
+A theme switch then invalidates the keys whose colours changed and repaints, instead of
+re-registering every master.

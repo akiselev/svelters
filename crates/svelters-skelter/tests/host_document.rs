@@ -335,3 +335,48 @@ fn a_palette_list_places_its_rows_in_its_own_box() {
     }
 }
 
+
+const HOVER: &str = r#"<script>
+  let log = $state('');
+</script>
+<box>
+  <label text={log} onpointerenter={() => (log += 'in ')} onpointerleave={() => (log += 'out ')} />
+  <text-edit text="fixed" read-only oncancel={() => (log += 'cancel ')} />
+</box>
+"#;
+
+/// SV-B2-1..3: the surface takes `onpointerenter`/`onpointerleave` on any widget, and `read-only`
+/// and `oncancel` on `text-edit`; the compiled handlers run and the prop reaches the field.
+#[test]
+fn hover_events_and_text_edit_read_only_and_cancel_reach_svelte() {
+    let (doc, pane) = host_doc();
+    let backend = SkelterBackend::over(doc).unwrap();
+    let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..svelters_host::HostConfig::default() };
+    let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, ..EmbedConfig::default() }).unwrap();
+    let dir = scratch("hover", &[("Hover.svelte", HOVER)]);
+    let mut cfg = svelters_host::modules::SourceConfig::for_path(&dir).unwrap();
+    cfg.backend = "skelter".into();
+    let entry = embed.load_from(Rc::new(svelters_host::modules::SourceProvider::new(cfg).unwrap())).unwrap();
+    let slot = embed.adopt_slot("panel.hover", pane).unwrap();
+    embed.mount(MountSpec::new(entry, "Hover", slot, "panel.hover")).unwrap();
+    embed.logic();
+    let doc = backend.document();
+    let bx = doc.borrow().children(pane)[0];
+    let (label, field) = {
+        let d = doc.borrow();
+        (d.children(bx)[0], d.children(bx)[1])
+    };
+    let prop = |n, name: &str| {
+        let h = backend.handle(n).unwrap();
+        let p = backend.resolve(NameKind::Prop, backend.handle_info(h).unwrap().kind, name);
+        backend.get_prop(h, p).unwrap()
+    };
+    assert_eq!(prop(field, "read-only"), Value::Bool(true));
+    for (n, signal) in [(label, "pointerenter"), (label, "pointerleave"), (field, "cancel")] {
+        let ev = backend.target_event(n, signal, vec![]).unwrap_or_else(|| panic!("a handler listens to {signal}"));
+        backend.queue(svelters_skelter::Output { events: vec![ev], ..Default::default() });
+        backend.pump();
+        embed.logic();
+    }
+    assert_eq!(prop(label, "text"), Value::Str("in out cancel ".into()));
+}
