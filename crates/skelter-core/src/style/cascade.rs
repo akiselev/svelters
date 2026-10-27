@@ -25,8 +25,9 @@ use skelter_base::ids::{NodeId, WindowId};
 use skelter_base::time::Span;
 use std::borrow::Cow;
 use std::num::NonZeroU64;
+use std::rc::Rc;
 use std::sync::Arc;
-use svelters_style::{ComputeContext, ComputedStyle, ComputedValue, Element, Length, StateMask};
+use svelters_style::{Atom, ComputeContext, ComputedStyle, ComputedValue, Element, Length, StateMask};
 
 /// A node seen by the selector engine.
 #[derive(Clone, Copy)]
@@ -707,15 +708,30 @@ fn inherited_differs(a: &ComputedBox, b: &ComputedBox) -> bool {
         || a.pointer_events_none != b.pointer_events_none
 }
 
+/// What restyling one node found.
+struct Restyled {
+    /// Its inherited values changed: every child restyles.
+    inherited: bool,
+    /// The custom properties whose computed value changed (sorted).
+    customs: Vec<Atom>,
+}
+
 fn transition_for<'a>(b: &'a ComputedBox, prop: &str) -> Option<&'a super::TransitionSpec> {
     b.transitions.iter().rev().find(|t| (&*t.property == prop || &*t.property == "all") && t.duration > Span::ZERO)
 }
 
 impl Document {
     /// Restyles the dirty part of `window`'s tree.
-    pub(crate) fn restyle(&mut self, window: WindowId) {
-        let Some(root) = self.window_root(window) else { return };
-        let Some(ri) = self.idx(root) else { return };
+    ///
+    /// SV69: when a node's custom properties change and nothing else it passes down does, its
+    /// descendants are not all restyled. Each one whose declarations reference a changed name or
+    /// declare custom properties of their own, or whose kind reads a changed one
+    /// ([`Kind::reads_custom_property`](crate::Kind::reads_custom_property)), is restyled; the rest
+    /// only take the new inherited custom map. Returns how many nodes it restyled.
+    pub(crate) fn restyle(&mut self, window: WindowId) -> u64 {
+        let Some(root) = self.window_root(window) else { return 0 };
+        let Some(ri) = self.idx(root) else { return 0 };
+        let mut count = 0;
         let (w, h) = self.window(window).map_or((0.0, 0.0), |w| (w.size.w, w.size.h));
         let env = svelters_style::MediaEnv { width: w, height: h, ..*self.style.stylist.media_env() };
         if env != *self.style.stylist.media_env() {
@@ -723,42 +739,75 @@ impl Document {
                 self.core[ri].dirty.insert(Dirty::STYLE | Dirty::STYLE_SUBTREE);
             }
         }
-        let mut stack: Vec<(usize, bool)> = vec![(ri, false)];
-        while let Some((i, force)) = stack.pop() {
+        // (node, restyle it whatever its flags, the custom properties its parent changed)
+        let mut stack: Vec<(usize, bool, Option<Rc<[Atom]>>)> = vec![(ri, false, None)];
+        while let Some((i, force, changed)) = stack.pop() {
             let d = self.core[i].dirty;
-            if !force && !d.intersects(Dirty::STYLE | Dirty::DESC_STYLE | Dirty::STYLE_SUBTREE) {
+            if !force && changed.is_none() && !d.intersects(Dirty::STYLE | Dirty::DESC_STYLE | Dirty::STYLE_SUBTREE) {
                 continue;
             }
             let mut force_children = force || d.contains(Dirty::STYLE_SUBTREE);
-            if force || d.intersects(Dirty::STYLE | Dirty::STYLE_SUBTREE) {
-                force_children |= self.restyle_node(i, window);
+            let mut pass: Option<Rc<[Atom]>> = None;
+            let own = force || d.intersects(Dirty::STYLE | Dirty::STYLE_SUBTREE);
+            if own || changed.as_deref().is_some_and(|c| self.custom_change_reaches(i, c)) {
+                let r = self.restyle_node(i, window);
+                count += 1;
+                force_children |= r.inherited;
+                pass = (!r.customs.is_empty()).then(|| Rc::from(r.customs));
+            } else if let Some(c) = changed {
+                self.inherit_customs(i);
+                pass = Some(c);
             }
             self.core[i].dirty.remove(Dirty::STYLE | Dirty::DESC_STYLE | Dirty::STYLE_SUBTREE);
             for &c in self.children[i].iter().rev() {
-                stack.push((self.ix(c), force_children));
+                stack.push((self.ix(c), force_children, if force_children { None } else { pass.clone() }));
             }
+        }
+        count
+    }
+
+    /// Whether a change of the inherited custom properties `changed` can change node `i`'s style
+    /// or look: its declarations reference one or declare their own, or its kind reads one.
+    fn custom_change_reaches(&self, i: usize, changed: &[Atom]) -> bool {
+        let n = &self.style.nodes[i];
+        n.css.is_none() || n.deps.reached_by(changed) || self.kinds[i].as_ref().is_some_and(|k| changed.iter().any(|c| k.reads_custom_property(c)))
+    }
+
+    /// Node `i` (and its parts) take the parent's new custom properties, nothing else changing.
+    fn inherit_customs(&mut self, i: usize) {
+        let Some(p) = self.core[i].parent.map(|p| self.ix(p)) else { return };
+        let Some(parent) = self.style.nodes[p].css.clone() else { return };
+        let n = &mut self.style.nodes[i];
+        let Some(css) = n.css.as_mut() else { return };
+        let css = Arc::make_mut(css);
+        css.inherit_customs_from(&parent);
+        for (_, part) in n.parts.iter_mut() {
+            Arc::make_mut(part).inherit_customs_from(css);
         }
     }
 
-    /// Restyles node `i`; true when its inherited values changed (children must restyle too).
-    fn restyle_node(&mut self, i: usize, window: WindowId) -> bool {
+    /// Restyles node `i`: whether its inherited values changed (children must restyle too), and
+    /// which custom properties changed.
+    fn restyle_node(&mut self, i: usize, window: WindowId) -> Restyled {
         let parent = self.core[i].parent.map(|p| self.ix(p));
         let parent_css = parent.and_then(|p| self.style.nodes[p].css.clone());
         let parent_box = parent.map(|p| self.style.nodes[p].computed.clone());
         let inline = self.style.nodes[i].inline.clone();
         let cx = ComputeContext { root_font_size: 16.0, default_font_size: 13.0 };
         let mut caches = std::mem::take(&mut self.style.caches);
-        let css = self.style.stylist.compute(El { doc: self, i }, parent_css.as_deref(), inline.as_deref(), &cx, &mut caches);
+        let mut deps = svelters_style::CustomDeps::default();
+        let css = self.style.stylist.compute_with_deps(El { doc: self, i }, parent_css.as_deref(), inline.as_deref(), &cx, &mut caches, &mut deps);
         // the kind's paint parts inherit from the node's style
         let part_names = self.registry.get(self.core[i].kind).map_or(&[][..], |e| e.spec.parts);
         let parts: Vec<(&'static str, Arc<ComputedStyle>)> = part_names
             .iter()
             .map(|&name| {
                 let pseudo = svelters_style::PseudoElement::part(name);
-                (name, Arc::new(self.style.stylist.compute_pseudo(El { doc: self, i }, &pseudo, &css, &cx, &mut caches)))
+                (name, Arc::new(self.style.stylist.compute_pseudo_with_deps(El { doc: self, i }, &pseudo, &css, &cx, &mut caches, &mut deps)))
             })
             .collect();
         self.style.caches = caches;
+        self.style.nodes[i].deps = deps;
         let parts_changed = self.style.nodes[i].parts.len() != parts.len() || self.style.nodes[i].parts.iter().zip(&parts).any(|(a, b)| a.0 != b.0 || *a.1 != *b.1);
         if parts_changed {
             self.style.nodes[i].parts = parts;
@@ -811,10 +860,16 @@ impl Document {
             let old_size = self.layout[i].style.size;
             self.start_ui_transitions(node, &old_box, &new_box, old_size, tstyle.size);
         }
-        let (text, paint, property) = box_diff(&old_box, &new_box);
-        // custom properties inherit too: a changed map restyles the descendants that read it (SV65)
-        let customs_changed = self.style.nodes[i].css.as_ref().is_some_and(|old| !old.custom_eq(&css));
-        let inherited = first || customs_changed || inherited_differs(&old_box, &new_box);
+        let (mut text, mut paint, property) = box_diff(&old_box, &new_box);
+        // custom properties inherit too: a changed map reaches the descendants that read it (SV65,
+        // SV69: `restyle` passes the changed names down)
+        let customs = self.style.nodes[i].css.as_ref().map(|old| css.changed_customs(old)).unwrap_or_default();
+        // the kind's look reads a changed one outside the cascade (a UA token): measure and record
+        if !first && !customs.is_empty() && self.kinds[i].as_ref().is_some_and(|k| customs.iter().any(|c| k.reads_custom_property(c))) {
+            text = true;
+            paint = true;
+        }
+        let inherited = first || inherited_differs(&old_box, &new_box);
         let new_box = if *old_box == new_box { old_box } else { Arc::new(new_box) };
         self.style.nodes[i].computed = new_box;
         self.style.nodes[i].css = Some(Arc::new(css));
@@ -849,7 +904,7 @@ impl Document {
         if property && self.scroll_axes(i) == (false, false) {
             self.scroll.remove(&node);
         }
-        inherited
+        Restyled { inherited, customs }
     }
 
     /// Child `i`'s parent places its children ([`KindSpec::places_children`](crate::KindSpec::places_children)):

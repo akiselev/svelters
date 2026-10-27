@@ -56,6 +56,95 @@ fn a_custom_property_change_restyles_descendants() {
 }
 
 #[test]
+fn a_custom_property_change_restyles_only_its_readers() {
+    // SV69: the root's `--accent` changes; of 20 plain boxes only the one that reads it through
+    // `var()` and the one whose own custom property derives from it restyle; the rest only take
+    // the new inherited map
+    let (mut d, root) = doc();
+    d.add_sheet(".reads { background-color: var(--accent) } .derives { --edge: var(--accent) } .edge { border-color: var(--edge) }");
+    let a = child(&mut d, root, BOX, "--accent: #00ff00; --other: 1px");
+    let plain: Vec<NodeId> = (0..20).map(|_| child(&mut d, a, BOX, "")).collect();
+    let reads = child(&mut d, a, BOX, "");
+    d.set_style(reads, classes(&["reads"]));
+    let derives = child(&mut d, a, BOX, "");
+    d.set_style(derives, classes(&["derives"]));
+    let edge = child(&mut d, derives, BOX, "border-width: 1px");
+    d.set_style(edge, StyleInput { classes: vec!["edge".into()], inline: Some("border-width: 1px".into()), ..Default::default() });
+    frame(&mut d);
+    let green = Color::rgba(0.0, 1.0, 0.0, 1.0);
+    let red = Color::rgba(1.0, 0.0, 0.0, 1.0);
+    assert_eq!(d.computed(reads).unwrap().background, Fill::Solid(green));
+    assert_eq!(d.computed(edge).unwrap().border_color, green);
+    d.set_style(a, StyleInput { inline: Some("--accent: #ff0000; --other: 1px".into()), ..Default::default() });
+    let (_, stats) = d.frame_with_stats(W, Time(0));
+    // `a`, `reads`, `derives` and `edge` (it references `--edge`, which changed under `derives`)
+    assert_eq!(stats.restyled, 4);
+    assert_eq!(d.computed(reads).unwrap().background, Fill::Solid(red));
+    assert_eq!(d.computed(edge).unwrap().border_color, red);
+    // the others still see the new value
+    let custom = |d: &Document, n: NodeId, name: &str| d.view(n).unwrap().css().and_then(|c| c.custom(name)).map(str::to_owned);
+    for &p in &plain {
+        assert_eq!(custom(&d, p, "--accent").as_deref(), Some("#ff0000"));
+    }
+    // a change nobody reads restyles `a` and `derives` (a node that declares custom properties
+    // rebuilds its map on any change), not `edge`
+    d.set_style(a, StyleInput { inline: Some("--accent: #ff0000; --other: 2px".into()), ..Default::default() });
+    let (_, stats) = d.frame_with_stats(W, Time(0));
+    assert_eq!(stats.restyled, 2);
+    assert_eq!(custom(&d, plain[3], "--other").as_deref(), Some("2px"));
+}
+
+#[test]
+fn set_root_tokens_edits_a_sheet_in_place() {
+    // SV69: no rule-index rebuild; the nodes the edited rule matches restyle, and the change reaches
+    // the readers below them
+    let (mut d, root) = doc();
+    let tokens = d.add_sheet(":root { --accent: #00ff00 } .panel { --tint: #0000ff }");
+    d.add_sheet(".reads { background-color: var(--accent) } .tinted { color: var(--tint) }");
+    let r = child(&mut d, root, BOX, "");
+    d.set_style(r, classes(&["reads"]));
+    let p = child(&mut d, root, BOX, "");
+    d.set_style(p, classes(&["panel"]));
+    let t = child(&mut d, p, TEXT, "");
+    d.set_style(t, classes(&["tinted"]));
+    frame(&mut d);
+    let rebuilds = d.style_rebuilds();
+    d.set_root_tokens(tokens, &[("--accent", Some("#ff0000")), ("--tint", Some("#ff00ff"))]).unwrap();
+    let (_, stats) = d.frame_with_stats(W, Time(0));
+    assert_eq!(d.style_rebuilds(), rebuilds);
+    assert_eq!(d.computed(r).unwrap().background, Fill::Solid(Color::rgba(1.0, 0.0, 0.0, 1.0)));
+    assert_eq!(d.computed(t).unwrap().color, Color::rgba(1.0, 0.0, 1.0, 1.0));
+    // the root, `r` (reads), `p` (matched by `.panel`) and `t` (reads `--tint`)
+    assert_eq!(stats.restyled, 4);
+    // a new token goes into the last rule that declares one; removing it unsets it
+    d.set_root_tokens(tokens, &[("--fresh", Some("3px"))]).unwrap();
+    frame(&mut d);
+    assert_eq!(d.view(t).unwrap().css().and_then(|c| c.custom("--fresh")), Some("3px"));
+    d.set_root_tokens(tokens, &[("--tint", None)]).unwrap();
+    frame(&mut d);
+    assert_eq!(d.view(t).unwrap().css().and_then(|c| c.custom("--tint")), None);
+    // refused, changing nothing
+    assert!(d.set_root_tokens(tokens, &[("--accent", Some("#000000")), ("color", Some("red"))]).is_err());
+    frame(&mut d);
+    assert_eq!(d.computed(r).unwrap().background, Fill::Solid(Color::rgba(1.0, 0.0, 0.0, 1.0)));
+}
+
+#[test]
+fn user_sheets_beat_author_rules_but_not_inline() {
+    // SV70
+    let (mut d, root) = doc();
+    d.add_sheet_with_origin("box { background-color: #00ff00 }", crate::Origin::User);
+    d.add_sheet("#a { background-color: #0000ff } #b { background-color: #0000ff }");
+    let a = child(&mut d, root, BOX, "");
+    d.set_style(a, StyleInput { id: Some("a".into()), ..Default::default() });
+    let b = child(&mut d, root, BOX, "background-color: #ff0000");
+    d.set_style(b, StyleInput { id: Some("b".into()), inline: Some("background-color: #ff0000".into()), ..Default::default() });
+    frame(&mut d);
+    assert_eq!(d.computed(a).unwrap().background, Fill::Solid(Color::rgba(0.0, 1.0, 0.0, 1.0)));
+    assert_eq!(d.computed(b).unwrap().background, Fill::Solid(Color::rgba(1.0, 0.0, 0.0, 1.0)));
+}
+
+#[test]
 fn a_state_rule_restyles_with_paint_only() {
     let (mut d, root) = doc();
     d.add_sheet("toggle:hover { background-color: #ff0000 }");

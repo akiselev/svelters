@@ -121,6 +121,10 @@ impl Kind for BoxKind {
     fn spec() -> &'static KindSpec {
         &BOX
     }
+    /// It paints from the computed box only: no custom property outside the cascade.
+    fn reads_custom_property(&self, _name: &str) -> bool {
+        false
+    }
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let e = cx.prop_f64(BOX_EXTENT).unwrap_or(0.0) as f32;
         taffy::Size { width: e, height: e }
@@ -170,6 +174,10 @@ static TEXT_SPEC: KindSpec = KindSpec {
 impl Kind for TextKind {
     fn spec() -> &'static KindSpec {
         &TEXT_SPEC
+    }
+    /// It paints from the computed box only: no custom property outside the cascade.
+    fn reads_custom_property(&self, _name: &str) -> bool {
+        false
     }
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let max = known.width.or(match avail.width {
@@ -236,6 +244,10 @@ impl NativeState for ToggleKind {
 impl Kind for ToggleKind {
     fn spec() -> &'static KindSpec {
         &TOGGLE
+    }
+    /// It paints from the computed box only: no custom property outside the cascade.
+    fn reads_custom_property(&self, _name: &str) -> bool {
+        false
     }
     fn measure(&self, _cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         taffy::Size { width: 16.0, height: 16.0 }

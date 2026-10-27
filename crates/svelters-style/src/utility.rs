@@ -1082,7 +1082,8 @@ impl Stylist {
         for (u, sheet) in fresh {
             let order = u.canonical_order();
             for rule in sheet.rules {
-                let e = Entry { sheet: UTILITY_SHEET, origin: Origin::Author, rule, order, utility: Some(u.class.clone()), dead: false, layer_rank: 0, media_ok: true };
+                let (refs, declares) = crate::cascade::block_deps(&rule.block);
+                let e = Entry { sheet: UTILITY_SHEET, origin: Origin::Author, rule, order, utility: Some(u.class.clone()), dead: false, layer_rank: 0, media_ok: true, refs, declares };
                 if need_rebuild {
                     self.entries.push(e);
                 } else {

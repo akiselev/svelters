@@ -1233,7 +1233,15 @@ impl Document {
 
     /// Adds a style sheet to every window (an `Origin::Author` sheet).
     pub fn add_sheet(&mut self, css: &str) -> svelters_style::SheetId {
-        let id = self.style.add_sheet(css);
+        self.add_sheet_with_origin(css, svelters_style::Origin::Author)
+    }
+
+    /// Adds a style sheet of `origin` to every window (SV70). `Origin::User` sheets beat author
+    /// rules and lose to inline declarations; their `!important` beats everything (see
+    /// [`svelters_style::Origin`]). `Origin::Theme` sheets lose to every author rule whatever its
+    /// layer.
+    pub fn add_sheet_with_origin(&mut self, css: &str, origin: svelters_style::Origin) -> svelters_style::SheetId {
+        let id = self.style.add_sheet(css, origin);
         self.restyle_all();
         id
     }
@@ -1254,9 +1262,57 @@ impl Document {
         self.restyle_all();
     }
 
+    /// Sets custom properties (tokens) in registered sheet `sheet` in place, without a sheet swap
+    /// (SV69): no rule-index rebuild and no whole-document restyle. Each `(name, Some(value))`
+    /// replaces every declaration of `name` in the sheet (or adds one to its last rule that
+    /// declares custom properties); `(name, None)` removes them. Only the nodes the edited rules
+    /// match (the window roots, for a `:root` token block) restyle; the change then reaches the
+    /// descendants that read the names, through `var()` or their kind
+    /// ([`Kind::reads_custom_property`](crate::Kind::reads_custom_property)). A change of almost
+    /// every token (a scheme switch) costs about one full restyle, still without the swap.
+    ///
+    /// Fails, changing nothing, on an unknown sheet, a name that isn't a custom property, or a new
+    /// name for a sheet with no rule declaring one.
+    pub fn set_root_tokens(&mut self, sheet: svelters_style::SheetId, tokens: &[(&str, Option<&str>)]) -> Result<(), String> {
+        let rules = self.style.stylist.set_custom_values(sheet, tokens)?;
+        if rules.is_empty() {
+            return Ok(());
+        }
+        let mut caches = std::mem::take(&mut self.style.caches);
+        let mut hit = Vec::new();
+        let roots: Vec<NodeId> = self.windows.iter().map(|w| w.root).collect();
+        for r in roots {
+            let Some(ri) = self.idx(r) else { continue };
+            let mut stack = vec![ri];
+            while let Some(i) = stack.pop() {
+                let el = crate::style::cascade::El { doc: self, i };
+                if rules.iter().any(|&id| svelters_style::matches(&self.style.stylist.rule(id).selectors, el, &mut caches)) {
+                    hit.push(i);
+                }
+                stack.extend(self.children[i].iter().map(|&c| self.ix(c)));
+            }
+        }
+        self.style.caches = caches;
+        for i in hit {
+            self.restyle_reach(i, svelters_style::Reach::SELF);
+        }
+        Ok(())
+    }
+
+    /// How many times the cascade's rule index has been rebuilt (each sheet added or removed makes
+    /// one; [`Document::set_root_tokens`] makes none). For tests and stats.
+    pub fn style_rebuilds(&self) -> u64 {
+        self.style.stylist.rebuild_count()
+    }
+
     /// Adds a sheet already parsed (a precompiled one, `svelters_style::binary`), as [`Document::add_sheet`].
     pub fn add_parsed_sheet(&mut self, sheet: &svelters_style::Stylesheet) -> svelters_style::SheetId {
-        let id = self.style.add_parsed(sheet);
+        self.add_parsed_sheet_with_origin(sheet, svelters_style::Origin::Author)
+    }
+
+    /// [`Document::add_parsed_sheet`] with an origin, as [`Document::add_sheet_with_origin`].
+    pub fn add_parsed_sheet_with_origin(&mut self, sheet: &svelters_style::Stylesheet, origin: svelters_style::Origin) -> svelters_style::SheetId {
+        let id = self.style.add_parsed(sheet, origin);
         self.restyle_all();
         id
     }

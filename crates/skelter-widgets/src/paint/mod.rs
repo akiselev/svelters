@@ -171,6 +171,93 @@ pub fn ua_token(dark: bool, name: &str) -> Option<Color> {
     ua_theme(dark).color(name)
 }
 
+// ---- UA tokens through the cascade (SV67) ----
+
+/// A token's computed text parsed as each type a UA table reads it as.
+#[derive(Clone, Copy)]
+struct ParsedToken {
+    color: Option<Color>,
+    px: Option<f32>,
+    shadow: Option<crate::theme::Shadow>,
+}
+
+thread_local! {
+    /// Parsed token values by the address of their shared text: every node that inherits a token
+    /// unchanged shares one `Arc`, so a document parses each distinct value once. The cache holds
+    /// a clone of each `Arc`, so an address is never reused while its entry lives.
+    static PARSED: std::cell::RefCell<std::collections::HashMap<usize, (std::sync::Arc<str>, ParsedToken)>> = std::cell::RefCell::new(std::collections::HashMap::new());
+    /// The token names read while [`record_token_reads`] runs.
+    static READS: std::cell::RefCell<Option<Vec<&'static str>>> = const { std::cell::RefCell::new(None) };
+    /// `--sv-<name>` for a bare token name, without an allocation per lookup.
+    static FULL: std::cell::RefCell<String> = const { std::cell::RefCell::new(String::new()) };
+}
+
+/// The most distinct token values the parse cache keeps before it starts over.
+const PARSED_MAX: usize = 4096;
+
+fn parsed_token(v: &std::sync::Arc<str>) -> ParsedToken {
+    let key = std::sync::Arc::as_ptr(v) as *const u8 as usize;
+    PARSED.with(|c| {
+        let mut c = c.borrow_mut();
+        if let Some((_, p)) = c.get(&key) {
+            return *p;
+        }
+        let p = ParsedToken { color: crate::theme::parse_color(v), px: crate::theme::parse_px(v), shadow: crate::theme::parse_shadow(v) };
+        if c.len() >= PARSED_MAX {
+            c.clear();
+        }
+        c.insert(key, (v.clone(), p));
+        p
+    })
+}
+
+/// The custom property a UA token reads: `--sv-<name>`, or `name` when it is one already.
+fn custom_name_of(name: &str) -> std::borrow::Cow<'_, str> {
+    if name.starts_with("--") { name.into() } else { format!("--sv-{name}").into() }
+}
+
+/// Runs `f` and returns, with its result, the UA token names the style views read during it, as
+/// custom-property names (`--sv-button-bg`), sorted and deduplicated. A kind keeps them to answer
+/// which custom-property changes reach its look (SV69). Calls nest: an inner call's reads count for
+/// the outer one too.
+pub fn record_token_reads<R>(f: impl FnOnce() -> R) -> (R, Vec<String>) {
+    let outer = READS.with(|r| r.borrow_mut().replace(Vec::new()));
+    let out = f();
+    let mine = READS.with(|r| r.borrow_mut().take()).unwrap_or_default();
+    if let Some(mut o) = outer {
+        o.extend_from_slice(&mine);
+        READS.with(|r| *r.borrow_mut() = Some(o));
+    }
+    let mut names: Vec<String> = mine.iter().map(|n| custom_name_of(n).into_owned()).collect();
+    names.sort_unstable();
+    names.dedup();
+    (out, names)
+}
+
+/// A UA token's value on a node: its computed custom property `--sv-<name>` (what the token sheet
+/// and any override in the cascade gave it), parsed once per distinct text; `None` when the node
+/// has no such property (no token sheet reaches it), and the caller falls back to the theme.
+fn css_token(css: Option<&ComputedStyle>, name: &'static str) -> Option<ParsedToken> {
+    READS.with(|r| {
+        if let Some(v) = r.borrow_mut().as_mut() {
+            v.push(name);
+        }
+    });
+    let css = css?;
+    let v = if name.starts_with("--") {
+        css.custom_shared(name)
+    } else {
+        FULL.with(|f| {
+            let mut f = f.borrow_mut();
+            f.clear();
+            f.push_str("--sv-");
+            f.push_str(name);
+            css.custom_shared(&f)
+        })
+    }?;
+    Some(parsed_token(v))
+}
+
 /// The properties a part (or child) inherits from its host when nothing sets them on it.
 const INHERITED: &[&str] = &["color", "font-size", "font-weight", "font-family", "font-style", "line-height", "letter-spacing", "text-align", "text-transform", "white-space", "cursor", "visibility"];
 
@@ -180,7 +267,9 @@ const INHERITED: &[&str] = &["color", "font-size", "font-weight", "font-family",
 #[derive(Clone, Copy)]
 enum Got<'a> {
     Css(&'a ComputedValue),
-    Ua(UaValue, &'a crate::theme::Theme),
+    /// A UA value, the theme it falls back to, and the computed style its tokens read first
+    /// (the view's whose table gave it).
+    Ua(UaValue, &'a crate::theme::Theme, Option<&'a ComputedStyle>),
 }
 
 /// What primitives read: one node's (or part's) computed style, the widget's UA table under it,
@@ -188,6 +277,11 @@ enum Got<'a> {
 ///
 /// Resolution of a property: the computed style, then the UA table, then (inherited properties
 /// only) the parent view ([`StyleView::with_parent`]: a part's host), then [`Ua::ROOT`].
+///
+/// A UA token (`Token("button-bg")`) resolves through the cascade first (SV67): the computed
+/// `--sv-button-bg` of the view's style (a part without a style of its own reads its host's), so a
+/// token sheet and any override in it reach the UA defaults too. Only where no such property is
+/// computed (a document without a token sheet, a foreign painter) does it read the typed theme.
 ///
 /// Running CSS transitions apply here: `over` holds the node's (or part's) samples for this frame,
 /// which override the computed values.
@@ -295,24 +389,32 @@ impl<'a> StyleView<'a> {
         self.css.and_then(|c| svelters_style::overlay_get(c, self.over, name))
     }
 
+    /// The computed style UA tokens read: the view's own, else the nearest parent view's.
+    fn token_css(&self) -> Option<&'a ComputedStyle> {
+        match self.css {
+            Some(c) => Some(c),
+            None => self.parent.and_then(|p| p.token_css()),
+        }
+    }
+
     fn get(&self, name: &str) -> Option<Got<'a>> {
         if let Some(v) = self.css(name) {
             return Some(Got::Css(v));
         }
         if let Some(v) = self.ua.find_own(name, self.state) {
-            return Some(Got::Ua(v, self.theme()));
+            return Some(Got::Ua(v, self.theme(), self.token_css()));
         }
         if let Some(p) = self.parent
             && INHERITED.contains(&name)
         {
             return p.get(name);
         }
-        Ua::ROOT.find_own(name, self.state).map(|v| Got::Ua(v, self.theme()))
+        Ua::ROOT.find_own(name, self.state).map(|v| Got::Ua(v, self.theme(), self.token_css()))
     }
 
-    fn ua_px_of(v: UaValue, theme: &crate::theme::Theme) -> Option<f32> {
+    fn ua_px_of(v: UaValue, theme: &crate::theme::Theme, css: Option<&ComputedStyle>) -> Option<f32> {
         match v {
-            UaValue::Token(t) => theme.px(t),
+            UaValue::Token(t) => css_token(css, t).and_then(|p| p.px).or_else(|| theme.px(t)),
             UaValue::Px(p) | UaValue::Number(p) => Some(p),
             _ => None,
         }
@@ -323,8 +425,8 @@ impl<'a> StyleView<'a> {
         match self.get(name)? {
             Got::Css(ComputedValue::Color(k)) => Some(color_of(*k)),
             Got::Css(_) => None,
-            Got::Ua(UaValue::Token(t), theme) => theme.color(t),
-            Got::Ua(UaValue::Color(c), _) => Some(c),
+            Got::Ua(UaValue::Token(t), theme, css) => css_token(css, t).and_then(|p| p.color).or_else(|| theme.color(t)),
+            Got::Ua(UaValue::Color(c), ..) => Some(c),
             Got::Ua(..) => None,
         }
     }
@@ -335,7 +437,7 @@ impl<'a> StyleView<'a> {
             Got::Css(ComputedValue::Length(l)) => Some(l.px),
             Got::Css(ComputedValue::Number(n)) => Some(*n),
             Got::Css(_) => None,
-            Got::Ua(v, theme) => Self::ua_px_of(v, theme),
+            Got::Ua(v, theme, css) => Self::ua_px_of(v, theme, css),
         }
     }
 
@@ -345,7 +447,7 @@ impl<'a> StyleView<'a> {
             Got::Css(ComputedValue::Number(n)) => Some(*n),
             Got::Css(ComputedValue::Int(n)) => Some(*n as f32),
             Got::Css(_) => None,
-            Got::Ua(v, theme) => Self::ua_px_of(v, theme),
+            Got::Ua(v, theme, css) => Self::ua_px_of(v, theme, css),
         }
     }
 
@@ -356,7 +458,7 @@ impl<'a> StyleView<'a> {
             Got::Css(ComputedValue::Raw(r)) => Some(r),
             Got::Css(ComputedValue::String(s)) => Some(s),
             Got::Css(_) => None,
-            Got::Ua(UaValue::Keyword(k), _) => Some(k),
+            Got::Ua(UaValue::Keyword(k), ..) => Some(k),
             Got::Ua(..) => None,
         }
     }
@@ -371,7 +473,7 @@ impl<'a> StyleView<'a> {
             Some(ComputedValue::Number(n)) => return *n as i64,
             _ => {}
         }
-        if let Some(v) = self.ua.find_own("font-weight", self.state).and_then(|v| Self::ua_px_of(v, self.theme())) {
+        if let Some(v) = self.ua.find_own("font-weight", self.state).and_then(|v| Self::ua_px_of(v, self.theme(), self.token_css())) {
             return v as i64;
         }
         match self.parent {
@@ -393,7 +495,7 @@ impl<'a> StyleView<'a> {
         match self.ua.find_own("box-shadow", self.state)? {
             UaValue::Shadows(l) if !l.is_empty() => Some(Cow::Borrowed(l)),
             UaValue::Token(t) => {
-                let s = self.theme().shadow(t)?;
+                let s = css_token(self.token_css(), t).and_then(|p| p.shadow).or_else(|| self.theme().shadow(t))?;
                 (s != crate::theme::Shadow::NONE).then(|| Cow::Owned(vec![css_shadow(s)]))
             }
             _ => None,
@@ -475,7 +577,7 @@ impl<'a> StyleView<'a> {
         for (k, n) in names.iter().enumerate() {
             out[k] = match self.css(n) {
                 Some(ComputedValue::Length(l)) => l.px,
-                _ => all.map(|a| a[k]).or(one).or_else(|| self.ua.find_own(n, self.state).and_then(|v| Self::ua_px_of(v, self.theme()))).unwrap_or(0.0),
+                _ => all.map(|a| a[k]).or(one).or_else(|| self.ua.find_own(n, self.state).and_then(|v| Self::ua_px_of(v, self.theme(), self.token_css()))).unwrap_or(0.0),
             };
         }
         out

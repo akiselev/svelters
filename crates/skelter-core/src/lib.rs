@@ -81,5 +81,5 @@ pub use style::{ComputedBox, StyleInput};
 pub use tree::{Dirty, ListenFlags, Listener, NodeFlags};
 pub use value::{PropDefault, Value, ValueType};
 pub use skelter_base;
-pub use svelters_style::{Contrast, StateMask};
+pub use svelters_style::{Contrast, Origin, StateMask};
 pub use taffy;

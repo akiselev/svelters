@@ -455,12 +455,34 @@ fn apply_policy(doc: &mut skelter_core::Document, policy: Policy) {
     doc.set_service(policy);
 }
 
-/// Replaces the document's theme (High Contrast, density, the app's accent, `--sv-*` overrides):
-/// the stock kinds' UA tokens resolve in it, so every node restyles, re-measures and re-records
-/// ([`skelter_core::Document::repaint_all`]).
+/// Replaces the document's theme (High Contrast, density, the app's accent, `--sv-*` overrides) for
+/// a document without a token sheet: the stock kinds' UA tokens resolve in it, so every node
+/// restyles, re-measures and re-records ([`skelter_core::Document::repaint_all`]). A document whose
+/// token sheet came from [`Theme::css`](crate::theme::Theme::css) changes theme with
+/// [`set_theme_tokens`]: UA tokens read the cascade first (SV67), so the sheet must change too.
 pub fn set_theme(doc: &mut skelter_core::Document, theme: crate::theme::Theme) {
     doc.set_service(theme);
     doc.repaint_all();
+}
+
+/// Replaces the document's theme where `sheet` is its token sheet ([`Theme::css`](crate::theme::Theme::css)
+/// of the theme in service): the sheet is edited in place with the tokens that differ
+/// ([`Theme::sheet_changes`](crate::theme::Theme::sheet_changes),
+/// [`skelter_core::Document::set_root_tokens`]), so only the nodes that read a changed token restyle
+/// or record again (SV69), and the service is replaced for the typed readers. A change of scheme,
+/// contrast or density also changes what kinds lay out and paint outside tokens, so it repaints
+/// everything, as [`set_theme`] does. Fails, changing nothing, when `sheet` isn't a registered sheet.
+pub fn set_theme_tokens(doc: &mut skelter_core::Document, sheet: svelters_style::SheetId, theme: crate::theme::Theme) -> Result<(), String> {
+    let old = doc.service_ref::<crate::theme::Theme>().cloned().unwrap_or_default();
+    let edits = theme.sheet_changes(&old);
+    let edits: Vec<(&str, Option<&str>)> = edits.iter().map(|(k, v)| (k.as_str(), v.as_deref())).collect();
+    doc.set_root_tokens(sheet, &edits)?;
+    let recipe = (old.scheme(), old.contrast(), old.density()) != (theme.scheme(), theme.contrast(), theme.density());
+    doc.set_service(theme);
+    if recipe {
+        doc.repaint_all();
+    }
+    Ok(())
 }
 
 /// Records `tip` on its own, without a node: its size under the document's theme and text system,
@@ -530,11 +552,36 @@ pub struct Hosted<W: w::Kind + Default> {
     paths: HashMap<String, PathId>,
     /// What the last method call answered ([`w::EventCx::ret`]).
     ret: Option<Value>,
+    /// The custom properties the widget's UA tables have read through the cascade (SV67), sorted:
+    /// what [`Kind::reads_custom_property`] answers from (SV69). Only grows: a token read in one
+    /// state stays a dependency.
+    token_reads: std::cell::RefCell<Vec<String>>,
 }
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new(), ret: None }
+        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new(), ret: None, token_reads: Default::default() }
+    }
+}
+
+impl<W: w::Kind + Default> Hosted<W> {
+    /// Runs `f`, adding the UA tokens it reads to the node's dependencies.
+    fn reading<R>(&self, f: impl FnOnce() -> R) -> R {
+        let (out, names) = crate::paint::record_token_reads(f);
+        self.add_reads(names);
+        out
+    }
+
+    fn add_reads(&self, names: Vec<String>) {
+        if names.is_empty() {
+            return;
+        }
+        let mut reads = self.token_reads.borrow_mut();
+        for n in names {
+            if let Err(at) = reads.binary_search(&n) {
+                reads.insert(at, n);
+            }
+        }
     }
 }
 
@@ -874,7 +921,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         let base = cx.default_layout();
         let dark = cx.service::<crate::theme::Theme>().is_none_or(|t| t.is_dark());
-        self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark, base: Some(base) })
+        self.reading(|| self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark, base: Some(base) }))
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
@@ -883,7 +930,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let mut text = shaper(ts);
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
-        self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), theme), text: &mut *text, scale: node.scale() }, known, avail)
+        self.reading(|| self.widget.measure(&mut w::MeasureCx { style: styles(node.css(), &parts, &folded, node.state(), theme), text: &mut *text, scale: node.scale() }, known, avail))
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
@@ -894,8 +941,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let node = cx.node;
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
-        let emitted: Vec<w::Emitted>;
-        let (new, used, new_paths, used_paths) = {
+        let ((new, used, new_paths, used_paths, emitted), reads) = crate::paint::record_token_reads(|| {
             let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
             let ts = ts.map(|ts| SharedText(std::cell::RefCell::new(ts)));
             let (mut shared_text, mut lender) = (ts.as_ref(), ts.as_ref());
@@ -906,14 +952,15 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             // the widget's own prepare (layout of what it places or draws itself) runs before the dry recording
             let mut pcx = w::PrepareCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), text: &mut *text, emitted: Vec::new(), layouts: lender.as_mut().map(|l| l as &mut dyn w::LayoutLender) };
             self.widget.prepare(&mut pcx);
-            emitted = pcx.emitted;
+            let emitted = pcx.emitted;
             let mut res = PrepareRes { images: &self.images, new: Vec::new(), used: Vec::new(), paths: &self.paths, new_paths: Vec::new(), used_paths: Vec::new() };
             let mut list = DisplayList::new();
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             let mut overlay = DisplayList::new();
             self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
-            (res.new, res.used, res.new_paths, res.used_paths)
-        };
+            (res.new, res.used, res.new_paths, res.used_paths, emitted)
+        });
+        self.add_reads(reads);
         for (key, data) in new_paths {
             let mut data = Some(data);
             if let Some(id) = cx.share_path(&key, &mut || data.take()) {
@@ -961,7 +1008,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let mut list = DisplayList::new();
         let mut overlay = DisplayList::new();
-        let (runs, part, overlay_runs) = {
+        let (runs, part, overlay_runs) = self.reading(|| {
             let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
             let mut text = shaper(ts);
             let mut res = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
@@ -970,7 +1017,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             let mut ores = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
             let part = self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), &parts, &folded, node.state(), theme), list: &mut overlay, text: &mut *text, res: &mut ores, scale: node.scale() });
             (res.runs, part, ores.runs)
-        };
+        });
         push_recorded(cx, list, runs);
         if let Some(part) = part {
             cx.overlay(part, |cx| push_recorded(cx, overlay, overlay_runs));
@@ -1059,6 +1106,10 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         self.run(cx, |w, wcx| w.owner_context_click(wcx, at))
     }
 
+    fn reads_custom_property(&self, name: &str) -> bool {
+        self.token_reads.borrow().binary_search_by(|n| n.as_str().cmp(name)).is_ok()
+    }
+
     fn listen_changed(&mut self, _cx: &mut PropCx, signal: SignalId, listened: bool) {
         let s = Self::spec_ref();
         if let Some(i) = (0..s.core.signals.len()).find(|&i| s.core.signal_id(i) == signal) {
@@ -1071,7 +1122,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
         let mut text = shaper(ts);
-        let [left, right, top, bottom] = self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() })?;
+        let [left, right, top, bottom] = self.reading(|| self.widget.chrome_padding(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() }))?;
         Some(Insets { top, right, bottom, left })
     }
 
@@ -1080,7 +1131,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
         let mut text = shaper(ts);
-        let [w, h] = self.widget.chrome_min_size(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() })?;
+        let [w, h] = self.reading(|| self.widget.chrome_min_size(&mut w::MeasureCx { style: styles(node.css(), &parts, &[], node.state(), theme), text: &mut *text, scale: node.scale() }))?;
         Some(Size::new(w, h))
     }
 
@@ -1177,6 +1228,65 @@ mod tests {
         // the scheme follows the theme in layout too: a light theme is not dark
         set_theme(&mut d, Theme::light_modern());
         assert_eq!(face(&frame(&mut d).unwrap()).unwrap(), want(&Theme::light_modern()));
+    }
+
+    /// SV67, SV68, SV69: with the token sheet installed, a token change in the cascade reaches the
+    /// UA defaults (the progress fill reads `--sv-progress` through its node, not the theme), an
+    /// override of a component token's source reaches the component (`--sv-button-bg` is
+    /// `var(--sv-button2-bg)` in the sheet), and only the nodes that read a changed token record
+    /// again. `set_root_tokens` edits the token sheet in place with the same reach.
+    #[test]
+    fn token_changes_reach_their_readers_through_the_cascade() {
+        use crate::controls::ProgressBar;
+        use crate::testdoc::{child, doc, frame};
+        use crate::theme::{BASE_CSS, Theme};
+        use skelter_base::color::{Color, Fill};
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 100.0), |r| {
+            register::<Button>(r).unwrap();
+            register::<ProgressBar>(r).unwrap();
+        });
+        let theme = Theme::dark_modern();
+        install(&mut d, skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())), os_policy(), theme.clone());
+        let tokens = d.add_sheet(&theme.css());
+        d.add_sheet(BASE_CSS);
+        let b = child(&mut d, root, skelter_core::KindId::of("button"), "width: 40px; height: 20px");
+        let p = child(&mut d, root, skelter_core::KindId::of("progress-bar"), "width: 100px; height: 8px");
+        let fraction = d.registry().get(skelter_core::KindId::of("progress-bar")).unwrap().spec.prop_named("fraction").unwrap();
+        d.set_prop(p, fraction, Value::F64(0.5)).unwrap();
+        frame(&mut d).unwrap();
+        let fills = |c: &skelter_base::commit::Commit, n: NodeId| -> Option<Vec<Fill>> {
+            let (_, l) = c.lists.iter().find(|(k, _)| *k == n)?;
+            Some(l.items.iter().filter_map(|p| if let Prim::Quad(q) = p { Some(q.fill.clone()) } else { None }).collect())
+        };
+        let red = Fill::Solid(Color::rgba(1.0, 0.0, 0.0, 1.0));
+        let green = Fill::Solid(Color::rgba(0.0, 1.0, 0.0, 1.0));
+        let set_root = |d: &mut skelter_core::Document, css: &str| d.set_style(root, skelter_core::StyleInput { inline: (!css.is_empty()).then(|| css.into()), ..Default::default() });
+        // a UA token: only the progress bar records again, with the cascade's value
+        set_root(&mut d, "--sv-progress: #ff0000");
+        let c = frame(&mut d).unwrap();
+        assert!(fills(&c, p).expect("the progress bar records again").contains(&red));
+        assert!(fills(&c, b).is_none(), "the button reads no `--sv-progress`");
+        // a component token's source: the button's face follows through `var()`; the bar is untouched
+        set_root(&mut d, "--sv-progress: #ff0000; --sv-button2-bg: #00ff00");
+        let c = frame(&mut d).unwrap();
+        assert_eq!(fills(&c, b).expect("the button records again").first(), Some(&green));
+        assert!(fills(&c, p).is_none(), "the progress bar reads no button token");
+        // the token sheet edited in place
+        set_root(&mut d, "");
+        frame(&mut d).unwrap();
+        let rebuilds = d.style_rebuilds();
+        d.set_root_tokens(tokens, &[("--sv-progress", Some("#00ff00"))]).unwrap();
+        let c = frame(&mut d).unwrap();
+        assert!(fills(&c, p).expect("the progress bar records again").contains(&green));
+        assert!(fills(&c, b).is_none());
+        assert_eq!(d.style_rebuilds(), rebuilds, "no sheet swap: the rule index stays");
+        // the service theme as the sheet now stands, then a new scheme through `set_theme_tokens`
+        d.set_service(Theme::dark_modern().with([("progress", "#00ff00")]));
+        let light = Theme::light_modern();
+        set_theme_tokens(&mut d, tokens, light.clone()).unwrap();
+        let c = frame(&mut d).unwrap();
+        assert_eq!(fills(&c, b).expect("the button records again").first(), Some(&Fill::Solid(light.color("button-bg").unwrap())));
+        assert!(fills(&c, p).unwrap().contains(&Fill::Solid(light.color("progress").unwrap())));
     }
 
     #[test]

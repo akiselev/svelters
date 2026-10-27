@@ -8,6 +8,7 @@
 //! CSS engine where there is one.
 
 use crate::atom::Atom;
+use crate::cascade::{Cascaded, Origin};
 use crate::sheet::Declaration;
 use crate::shorthand;
 use crate::table::{Prop, Table};
@@ -78,6 +79,12 @@ impl ComputedStyle {
         self.custom.get(name).map(|v| &**v)
     }
 
+    /// A custom property's computed value as the shared text (the same `Arc` for every element
+    /// that inherits it unchanged): for caches keyed by the value.
+    pub fn custom_shared(&self, name: &str) -> Option<&Arc<str>> {
+        self.custom.get(name)
+    }
+
     pub fn customs(&self) -> impl Iterator<Item = (&str, &str)> + '_ {
         self.custom.iter().map(|(k, v)| (&**k, &**v))
     }
@@ -86,6 +93,54 @@ impl ComputedStyle {
     /// that declares none shares its parent's map), then by value.
     pub fn custom_eq(&self, other: &ComputedStyle) -> bool {
         Arc::ptr_eq(&self.custom, &other.custom) || self.custom == other.custom
+    }
+
+    /// The custom properties whose computed value differs from `before`'s (set, changed or
+    /// removed), sorted; empty when the maps are equal (pointer-equal first).
+    pub fn changed_customs(&self, before: &ComputedStyle) -> Vec<Atom> {
+        if Arc::ptr_eq(&self.custom, &before.custom) {
+            return Vec::new();
+        }
+        let (mut a, mut b) = (self.custom.iter().peekable(), before.custom.iter().peekable());
+        let mut out = Vec::new();
+        loop {
+            match (a.peek(), b.peek()) {
+                (None, None) => break,
+                (Some((k, _)), None) => {
+                    out.push((*k).clone());
+                    a.next();
+                }
+                (None, Some((k, _))) => {
+                    out.push((*k).clone());
+                    b.next();
+                }
+                (Some((ka, va)), Some((kb, vb))) => match ka.cmp(kb) {
+                    std::cmp::Ordering::Less => {
+                        out.push((*ka).clone());
+                        a.next();
+                    }
+                    std::cmp::Ordering::Greater => {
+                        out.push((*kb).clone());
+                        b.next();
+                    }
+                    std::cmp::Ordering::Equal => {
+                        if !Arc::ptr_eq(va, vb) && va != vb {
+                            out.push((*ka).clone());
+                        }
+                        a.next();
+                        b.next();
+                    }
+                },
+            }
+        }
+        out
+    }
+
+    /// Takes `parent`'s custom properties as its own, unchanged otherwise (SV69): right only for a
+    /// style that declares no custom property and references none of those that changed
+    /// ([`crate::CustomDeps`]), whose other values the change leaves as they are.
+    pub fn inherit_customs_from(&mut self, parent: &ComputedStyle) {
+        self.custom = parent.custom.clone();
     }
 
     /// The indexes of the properties whose value differs from `before` (what a setter backend
@@ -103,13 +158,34 @@ impl ComputedStyle {
     }
 }
 
-/// The cascade's last step: `decls` are the applicable declarations, lowest precedence first.
-pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Option<&ComputedStyle>, cx: &ComputeContext) -> ComputedStyle {
-    // winners: a declaration of the property itself, or a shorthand that sets it (the longhand
-    // named second)
-    let mut winners: Vec<Option<(&Declaration, Option<&'static str>)>> = vec![None; table.props.len()];
+/// A winning declaration of one property: the declaration, and the longhand it sets when it is a
+/// shorthand.
+type Winner<'d> = Option<(&'d Declaration, Option<&'static str>)>;
+
+/// `revert` or `revert-layer` as a declaration's whole value.
+#[derive(Clone, Copy, PartialEq)]
+enum Rollback {
+    Origin,
+    Layer,
+}
+
+fn rollback(d: &Declaration) -> Option<Rollback> {
+    let v = d.value.trim();
+    if v.eq_ignore_ascii_case("revert") {
+        Some(Rollback::Origin)
+    } else if v.eq_ignore_ascii_case("revert-layer") {
+        Some(Rollback::Layer)
+    } else {
+        None
+    }
+}
+
+/// The winners when no declaration rolls back: the last declaration of each property.
+fn last_wins<'d>(table: &'static Table, decls: &[Cascaded<'d>]) -> (Vec<Winner<'d>>, BTreeMap<&'d str, &'d Declaration>) {
+    let mut winners: Vec<Winner<'d>> = vec![None; table.props.len()];
     let mut custom_decls: BTreeMap<&str, &Declaration> = BTreeMap::new();
-    for d in decls {
+    for c in decls {
+        let d = c.decl;
         if d.is_custom() {
             custom_decls.insert(&d.name, d);
             continue;
@@ -126,6 +202,70 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
             winners[i] = Some((d, None));
         }
     }
+    (winners, custom_decls)
+}
+
+/// The winners when some declaration is `revert` or `revert-layer` (CSS Cascade 5 §7.3): each
+/// property takes the highest declaration that no rollback above it excluded. `revert` excludes
+/// every declaration of its origin; `revert-layer` those of its origin, importance and layer. A
+/// rollback with nothing below leaves the property undeclared (`unset`).
+fn rollback_wins<'d>(table: &'static Table, decls: &[Cascaded<'d>]) -> (Vec<Winner<'d>>, BTreeMap<&'d str, &'d Declaration>) {
+    #[derive(Default)]
+    struct Target {
+        done: bool,
+        origins: Vec<Origin>,
+        levels: Vec<(u8, u32)>,
+    }
+    impl Target {
+        /// Whether `c` still counts; a rollback in it extends the exclusions and doesn't count.
+        fn take(&mut self, c: &Cascaded<'_>) -> bool {
+            if self.done || self.origins.contains(&c.origin) || self.levels.contains(&(c.rank, c.layer)) {
+                return false;
+            }
+            match rollback(c.decl) {
+                Some(Rollback::Origin) => self.origins.push(c.origin),
+                Some(Rollback::Layer) => self.levels.push((c.rank, c.layer)),
+                None => self.done = true,
+            }
+            self.done
+        }
+    }
+    let mut winners: Vec<Winner<'d>> = vec![None; table.props.len()];
+    let mut targets: Vec<Target> = (0..table.props.len()).map(|_| Target::default()).collect();
+    let mut custom_targets: BTreeMap<&str, Target> = BTreeMap::new();
+    let mut custom_decls: BTreeMap<&str, &Declaration> = BTreeMap::new();
+    for c in decls.iter().rev() {
+        let d = c.decl;
+        if d.is_custom() {
+            if custom_targets.entry(&d.name).or_default().take(c) {
+                custom_decls.insert(&d.name, d);
+            }
+            continue;
+        }
+        if let Some(longs) = shorthand::longhands_in(table, &d.name) {
+            for l in longs {
+                if let Some(i) = table.index_of(l)
+                    && targets[i].take(c)
+                {
+                    winners[i] = Some((d, Some(l)));
+                }
+            }
+            continue;
+        }
+        if let Some(i) = table.index_of(&d.name)
+            && targets[i].take(c)
+        {
+            winners[i] = Some((d, None));
+        }
+    }
+    (winners, custom_decls)
+}
+
+/// The cascade's last step: `decls` are the applicable declarations, lowest precedence first.
+pub(crate) fn compute(table: &'static Table, decls: &[Cascaded<'_>], parent: Option<&ComputedStyle>, cx: &ComputeContext) -> ComputedStyle {
+    // winners: a declaration of the property itself, or a shorthand that sets it (the longhand
+    // named second)
+    let (winners, custom_decls) = if decls.iter().any(|c| rollback(c.decl).is_some()) { rollback_wins(table, decls) } else { last_wins(table, decls) };
     // a shorthand's expansion, once per declaration
     let mut expanded: Vec<(*const Declaration, Option<Expansion>)> = Vec::new();
 
@@ -172,8 +312,8 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
                 match text.as_deref().map(|t| t.trim().to_ascii_lowercase()) {
                     Some(k) if k == "inherit" => parent_value(i),
                     Some(k) if k == "initial" => None,
-                    // revert and revert-layer roll back to the previous origin/layer; with no
-                    // user-agent sheet that is `unset`
+                    // a declared revert or revert-layer was rolled back before (`rollback_wins`);
+                    // one that `var()` produced acts as `unset`
                     Some(k) if k == "unset" || k == "revert" || k == "revert-layer" => prop.is_inherited().then(|| parent_value(i)).flatten(),
                     // `%` in font-size is of the parent's font size; everywhere else it stays a
                     // percentage for the layout

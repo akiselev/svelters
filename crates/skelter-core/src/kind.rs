@@ -654,6 +654,16 @@ pub trait Kind: 'static {
     /// only while its click signal is listened). [`NodeView::listened`](crate::NodeView::listened)
     /// answers the same at any time.
     fn listen_changed(&mut self, cx: &mut PropCx, signal: SignalId, listened: bool) {}
+
+    /// Whether the node's look reads custom property `name` (`--sv-button-bg`) outside the
+    /// cascade: a user-agent default resolving a token through the node's computed custom
+    /// properties. When a custom property it reads changes, the node re-runs its layout style,
+    /// measure and record (SV69); what its rules read through `var()` the cascade tracks itself.
+    /// The default, `true`, is correct for any kind and costs a re-record on every custom-property
+    /// change that reaches the node.
+    fn reads_custom_property(&self, name: &str) -> bool {
+        true
+    }
 }
 
 /// Constructs a node's kind value.
