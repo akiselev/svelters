@@ -39,6 +39,7 @@ members = [
     "crates/svelters-testkit",
     "crates/svelters-intl",
     "crates/svelters-sched",
+    "crates/skelter-gallery-app",
     "examples/counter",
     "examples/counter-qt",
     "examples/counter-mac",
@@ -104,6 +105,10 @@ raw-window-handle = "0.6"
 parley = "0.12"
 etagere = "0.3"
 lyon = "1.0"
+# GAL3 (gallery-b1 lane app): the gallery's source pane is quire on skelter, at a fixed rev. skelter_quire
+# names svelters' skelter crates by git (master); the `[patch]` below points them at this workspace.
+skelter_quire = { git = "https://github.com/akiselev/quire", rev = "ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f" }
+quire-core = { git = "https://github.com/akiselev/quire", rev = "ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f" }
 
 # QuickJS is C compiled by the cc crate; at the dev profile's opt-level 0 it runs 5-10x slower, which
 # makes JS-heavy tests (10k-row lists) hit the host's turn budget. Optimise it in every profile.
@@ -126,3 +131,10 @@ opt-level = 2
 accesskit = { git = "https://github.com/akiselev/accesskit", rev = "b22e1418f323f15c93ed0d76e16d4c097ba6cce0" }
 accesskit_atspi_common = { git = "https://github.com/akiselev/accesskit", rev = "b22e1418f323f15c93ed0d76e16d4c097ba6cce0" }
 accesskit_consumer = { git = "https://github.com/akiselev/accesskit", rev = "b22e1418f323f15c93ed0d76e16d4c097ba6cce0" }
+
+# GAL3: one svelters in the graph. skelter_quire names skelter-base/-core/-text by git (master); take them
+# from this workspace, as cadatomic's root manifest does.
+[patch."https://github.com/akiselev/svelters"]
+skelter-base = { path = "crates/skelter-base" }
+skelter-core = { path = "crates/skelter-core" }
+skelter-text = { path = "crates/skelter-text" }

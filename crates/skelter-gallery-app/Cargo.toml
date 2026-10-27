@@ -1,0 +1,11 @@
+[package]
+name = "skelter-gallery-app"
+description = "The interactive skelter component gallery: browse stories, a variant grid, a quire source pane, live reload."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+skelter_quire = { workspace = true }
+quire-core = { workspace = true }
