@@ -24,6 +24,8 @@ pub const TRACK: f32 = 4.0;
 /// Tick length and its gap from the track (WinUI `SliderOutsideTickBarThemeHeight`).
 pub const TICK: f32 = 4.0;
 pub const TICK_GAP: f32 = 4.0;
+/// Between a tick and its mark label.
+pub const LABEL_GAP: f32 = 2.0;
 /// Space between the rail, the value box and the caption.
 pub const GAP: f32 = 8.0;
 
@@ -89,7 +91,7 @@ impl Ticks {
     }
     /// The extent the ticks add across the rail.
     pub fn extra(self, labels: bool) -> f32 {
-        let one = TICK_GAP + TICK + if labels { 14.0 } else { 0.0 };
+        let one = TICK_GAP + TICK + if labels { LABEL_GAP + 14.0 } else { 0.0 };
         (self.before() as u8 as f32 + self.after() as u8 as f32) * one
     }
 }
@@ -153,7 +155,7 @@ impl Rail {
     pub fn travel(&self) -> Rect {
         let r = self.rect;
         let h = THUMB / 2.0;
-        let one = TICK_GAP + TICK + if self.labels { 14.0 } else { 0.0 };
+        let one = Ticks::Before.extra(self.labels);
         let (b, a) = (if self.ticks.before() { one } else { 0.0 }, if self.ticks.after() { one } else { 0.0 });
         if self.vertical {
             let x = (r.min.x + b + (r.width() - a - b) / 2.0).round();
@@ -289,10 +291,10 @@ impl Rail {
                     let g = paint::text_layout(pc.text, &ls, label, None);
                     let gs = g.size();
                     let at = if self.vertical {
-                        let x = if before { r.min.x - 2.0 - gs.w } else { r.max.x + 2.0 };
+                        let x = if before { r.min.x - LABEL_GAP - gs.w } else { r.max.x + LABEL_GAP };
                         Rect::new(x, c.y - gs.h / 2.0, x + gs.w, c.y + gs.h / 2.0)
                     } else {
-                        let y = if before { r.min.y - gs.h } else { r.max.y };
+                        let y = if before { r.min.y - LABEL_GAP - gs.h } else { r.max.y + LABEL_GAP };
                         Rect::new(c.x - gs.w / 2.0, y, c.x + gs.w / 2.0, y + gs.h)
                     };
                     paint::paint_text(pc, &ls, &g, at, Align::Center);
