@@ -102,6 +102,7 @@ impl Labels {
     }
 
     /// Draws `s` with its top-left at (`x`, `y`), clipped to `clip_w` pixels.
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn draw(&mut self, img: &mut Image, s: &str, x: u32, y: u32, clip_w: u32, size: f32, color: [u8; 4]) {
         let l = self.text.layout(&RichText::plain(s, TextStyle { size, wrap: false, ..TextStyle::default() }), None);
         for pr in l.runs() {
@@ -147,9 +148,9 @@ impl Labels {
 fn blend(img: &mut Image, x: u32, y: u32, c: [u8; 4], a: u8) {
     let i = ((y * img.width + x) * 4) as usize;
     let a = u32::from(a) * u32::from(c[3]) / 255;
-    for k in 0..3 {
+    for (k, &ck) in c.iter().enumerate().take(3) {
         let d = u32::from(img.rgba[i + k]);
-        img.rgba[i + k] = ((u32::from(c[k]) * a + d * (255 - a) + 127) / 255) as u8;
+        img.rgba[i + k] = ((u32::from(ck) * a + d * (255 - a) + 127) / 255) as u8;
     }
     img.rgba[i + 3] = 255;
 }

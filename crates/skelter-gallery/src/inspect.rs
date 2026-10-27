@@ -8,7 +8,10 @@ use serde_json::{Value, json};
 use skelter_base::color::{Color, Fill};
 use skelter_base::ids::NodeId;
 use skelter_core::ComputedBox;
+use skelter_base::ids::WindowId;
+use skelter_test::A11yTree;
 use svelters_abi::svl_handle;
+use svelters_skelter::SkelterBackend;
 use svelters_style::{MatchedRuleInfo, StateMask, StyleSource};
 
 fn hex(c: Color) -> String {
@@ -106,34 +109,81 @@ fn rule_json(r: &MatchedRuleInfo) -> Value {
     })
 }
 
-impl Renderer {
-    /// The nodes of the mounted cell `selector` picks: `#anchor` (the `anchor` prop) or a kind name
-    /// (the JS tag, or skelter-core's name). In tree order.
-    pub fn select(&self, selector: &str) -> Vec<svl_handle> {
-        let sel = selector.trim();
-        let slot = self.slot_node();
-        let b = self.backend();
-        let mut order = Vec::new();
-        if let Some(root) = slot {
-            b.with_doc(|d| {
-                let mut stack = vec![root];
-                while let Some(n) = stack.pop() {
-                    order.push(n);
-                    stack.extend(d.children(n).iter().rev().copied());
-                }
-            });
+/// The handles of the nodes under `frame` (a cell's slot or root, included) that `selector` picks:
+/// `#anchor` or a kind name (the JS tag, or skelter-core's name), in tree order. For a host that
+/// mounts cells into its own document (the gallery app).
+pub fn select_in(backend: &SkelterBackend, frame: NodeId, selector: &str) -> Vec<svl_handle> {
+    let sel = selector.trim();
+    let mut order = Vec::new();
+    backend.with_doc(|d| {
+        let mut stack = vec![frame];
+        while let Some(n) = stack.pop() {
+            order.push(n);
+            stack.extend(d.children(n).iter().rev().copied());
         }
-        b.scene().read(|s| {
-            order
-                .into_iter()
-                .filter_map(|n| s.get_node(n))
-                .filter(|n| match sel.strip_prefix('#') {
-                    Some(a) => n.anchor().as_deref() == Some(a),
-                    None => n.tag() == sel || svelters_skelter::kinds::core_tag(n.tag()) == sel,
-                })
-                .map(|n| n.id())
-                .collect()
-        })
+    });
+    backend.scene().read(|s| {
+        order
+            .into_iter()
+            .filter_map(|n| s.get_node(n))
+            .filter(|n| match sel.strip_prefix('#') {
+                Some(a) => n.anchor().as_deref() == Some(a),
+                None => n.tag() == sel || svelters_skelter::kinds::core_tag(n.tag()) == sel,
+            })
+            .map(|n| n.id())
+            .collect()
+    })
+}
+
+/// One node as `inspect` prints it (an element of its `nodes`): kind, anchor, boxes (`window`'s last
+/// frame), computed style, matched rules, state, and the AccessKit node from `a11y` when given.
+/// `None` for a stale handle.
+pub fn node_json(backend: &SkelterBackend, window: Option<WindowId>, h: svl_handle, a11y: Option<&A11yTree>) -> Option<Value> {
+    let (n, tag, anchor, drawn, rules, forced) = backend.scene().read(|s| {
+        let r = s.get(h)?;
+        Some((r.node(), r.tag(), r.anchor(), r.drawn(), r.matched_rules(), r.forced_state()))
+    })?;
+    let shown = window.and_then(|w| backend.scene().read(|s| s.shown(w, h)));
+    let (core_kind, layout, computed, own) = backend.with_doc(|d| {
+        let kind = d.kind_of(n).and_then(|k| d.registry().get(k)).map(|e| e.spec.name);
+        (kind, d.layout_rect(n), d.computed(n).map(computed_diff), d.state(n))
+    });
+    let rect = |r: skelter_base::geom::Rect| json!({ "x": r.min.x, "y": r.min.y, "w": r.max.x - r.min.x, "h": r.max.y - r.min.y });
+    let ak = a11y.and_then(|t| {
+        let info = t.walk().into_iter().find(|i| i.id.0 == n.0)?;
+        Some(json!({
+            "role": format!("{:?}", info.role()),
+            "name": info.label(),
+            "value": info.value(),
+            "author_id": info.author_id(),
+            "disabled": info.is_disabled(),
+            "hidden": info.is_hidden(),
+            "toggled": info.toggled().map(|t| format!("{t:?}")),
+            "bounds": info.bounds.map(rect),
+        }))
+    });
+    Some(json!({
+        "handle": h,
+        "kind": tag,
+        "core_kind": core_kind,
+        "anchor": anchor,
+        "box": drawn.map(rect),
+        "visible_box": shown.map(|s| rect(s.visible)),
+        "layout_box": layout.map(rect),
+        "computed": computed,
+        "matched_rules": rules.iter().map(rule_json).collect::<Vec<_>>(),
+        "state": { "forced": state_names(forced), "own": state_names(own) },
+        "accesskit": ak.unwrap_or(Value::Null),
+    }))
+}
+
+impl Renderer {
+    /// The nodes of the mounted cell `selector` picks ([`select_in`] under the cell's slot).
+    pub fn select(&self, selector: &str) -> Vec<svl_handle> {
+        match self.slot_node() {
+            Some(slot) => select_in(self.backend(), slot, selector),
+            None => Vec::new(),
+        }
     }
 
     /// Mounts `cell` and describes the nodes `selector` picks (see the module docs).
@@ -144,33 +194,9 @@ impl Renderer {
             return Err(Error::Request(format!("no node matches {selector:?} in {} (a selector is #anchor or a kind name)", cell.label())));
         }
         let window = self.harness().window();
-        let mut nodes = Vec::new();
-        for h in picked {
-            let b = self.backend().clone();
-            let (n, tag, anchor, drawn, rules, forced) = b.scene().read(|s| {
-                let r = s.get(h).expect("picked live");
-                (r.node(), r.tag(), r.anchor(), r.drawn(), r.matched_rules(), r.forced_state())
-            });
-            let shown = b.scene().read(|s| s.shown(window, h));
-            let (core_kind, layout, computed, own) = b.with_doc(|d| {
-                let kind = d.kind_of(n).and_then(|k| d.registry().get(k)).map(|e| e.spec.name);
-                (kind, d.layout_rect(n), d.computed(n).map(computed_diff), d.state(n))
-            });
-            let rect = |r: skelter_base::geom::Rect| json!({ "x": r.min.x, "y": r.min.y, "w": r.max.x - r.min.x, "h": r.max.y - r.min.y });
-            nodes.push(json!({
-                "handle": h,
-                "kind": tag,
-                "core_kind": core_kind,
-                "anchor": anchor,
-                "box": drawn.map(rect),
-                "visible_box": shown.map(|s| rect(s.visible)),
-                "layout_box": layout.map(rect),
-                "computed": computed,
-                "matched_rules": rules.iter().map(rule_json).collect::<Vec<_>>(),
-                "state": { "forced": state_names(forced), "own": state_names(own) },
-                "accesskit": self.accesskit(n),
-            }));
-        }
+        let backend = self.backend().clone();
+        let a11y = self.harness().a11y().clone();
+        let nodes: Vec<Value> = picked.into_iter().filter_map(|h| node_json(&backend, Some(window), h, Some(&a11y))).collect();
         Ok(json!({
             "cell": cell,
             "label": cell.label(),
@@ -179,21 +205,5 @@ impl Renderer {
             "warnings": m.warnings,
             "nodes": nodes,
         }))
-    }
-
-    /// The AccessKit node skelter published for `n` (`null` when it has none: a pruned box).
-    fn accesskit(&mut self, n: NodeId) -> Value {
-        let tree = self.harness().a11y();
-        let Some(info) = tree.walk().into_iter().find(|i| i.id.0 == n.0) else { return Value::Null };
-        json!({
-            "role": format!("{:?}", info.role()),
-            "name": info.label(),
-            "value": info.value(),
-            "author_id": info.author_id(),
-            "disabled": info.is_disabled(),
-            "hidden": info.is_hidden(),
-            "toggled": info.toggled().map(|t| format!("{t:?}")),
-            "bounds": info.bounds.map(|r| json!({ "x": r.min.x, "y": r.min.y, "w": r.max.x - r.min.x, "h": r.max.y - r.min.y })),
-        })
     }
 }
