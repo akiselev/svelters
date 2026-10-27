@@ -26,7 +26,7 @@ the svelters checkout, it reads `base.css` from its source file, so an edit to `
 
 The global flags come first: `--root <dir>` adds a gallery root, and may be given more than once. With no
 `--root`, the gallery uses `gallery/` in the current directory or the nearest directory above it that has one.
-`--base-css <file>` is described above.
+`--base-css <file>` is described above. `--system-fonts` is described under "How a cell is rendered".
 
 Exit codes: `0` ok, `1` a story failed (a compile, load or runtime error, or a check problem), `2` bad arguments
 (an unknown story, variant, state, theme or flag). Outputs go where `-o` says. The default is `target/gallery/` in
@@ -196,9 +196,19 @@ only its own cells. When the cell changes, the variant is remounted in the windo
 5. Steps the embed's logic and the harness until both are settled (at most 120 frames).
 6. Forces the state's bits on the `subject` anchors (`SkelterBackend::force_state`), settles again, and draws.
 
-Text uses skelter-text's bundled test fonts (hermetic: a shot is the same on every machine). These fonts have no
-glyphs for scripts like Arabic and Hebrew, so RTL samples draw as boxes. The same cell rendered twice in one run gives
-the same bytes.
+**Fonts** are bundled and system fonts are off (hermetic: a shot is the same on every machine). The set
+(`crates/skelter-gallery/fonts/README.md`, OFL subsets) is the theme's own families, Inter (300, 400, 600, 700) and
+JetBrains Mono, plus Noto fallbacks: Arabic, Hebrew, a CJK sample (common UI words in Chinese, Japanese and Korean,
+`fonts/cjk-sample.txt`), symbols (★ ⚙ ◀ ✂ ⌘ ⋯) and three emoji. A character outside the set draws as a box;
+`--system-fonts` adds the OS's fonts behind the bundled ones (for looking only: not the same on every machine). The
+same cell rendered twice in one run gives the same bytes.
+
+**Icons and assets.** The gallery registers a demo icon set on the process's registry (`skelter_gallery::icons::DEMO`:
+`file.new`, `file.open`, `file.save`, `edit.copy`, `edit.cut`, `edit.paste`, `edit.undo`, `edit.redo`, `search`,
+`settings`, `close`, `add`, `remove`, `check`, `run.start`, `run.stop`, `refresh`, `folder`, `warning`, `info`), so
+`<icon name="file.save">` and `<button icon="file.save">` draw. A key a host registered first is kept. A story's
+image files (`.svg`, `.png` next to its variants) are registered as image sources under the `asset://app/…` refs their
+imports evaluate to, so `import gear from './gear.svg'` works as an `image` or `icon` `source`.
 
 ## Adding a host (cadatomic-gallery)
 

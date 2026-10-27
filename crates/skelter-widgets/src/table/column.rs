@@ -15,7 +15,8 @@ pub const DEFAULT_WIDTH: f32 = 100.0;
 pub const ALIGNS: &[&str] = &["start", "center", "end"];
 pub const HEADER_ALIGNS: &[&str] = &["auto", "start", "center", "end"];
 pub const SORTS: &[&str] = &["none", "ascending", "descending"];
-pub const ELIDES: &[&str] = &["end", "none"];
+/// `middle` and `start` come last so the first two keep their indices.
+pub const ELIDES: &[&str] = &["end", "none", "middle", "start"];
 
 /// One `table-column`'s props.
 #[derive(Clone, Debug, PartialEq)]

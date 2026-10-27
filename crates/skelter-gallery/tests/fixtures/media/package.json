@@ -1,0 +1,6 @@
+{
+  "name": "@svelters/gallery-media-fixture",
+  "private": true,
+  "type": "module",
+  "svelters": { "toolkit": "skelter" }
+}

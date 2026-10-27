@@ -11,6 +11,8 @@
 //! | [`inspect`] | one node of a cell as JSON: box, computed style, matched rules, forced state, AccessKit |
 //! | [`check`] | every variant compiles and renders one cell: [`check::CheckReport`] |
 //! | [`cli`] | [`cli_main`]: the `skelter-gallery` CLI |
+//! | [`fonts`] | the bundled font set (Inter, JetBrains Mono, Arabic, CJK and symbol fallbacks) |
+//! | [`icons`] | the demo icon set and the story assets (`asset://` imports) |
 //! | [`ext`] | [`Extensions`]: what a host adds (story roots, kinds, setup hooks, token sets) |
 //!
 //! The story format is `gallery/README.md`; the agent loop and the CLI are
@@ -20,6 +22,8 @@ pub mod catalog;
 pub mod check;
 pub mod cli;
 pub mod ext;
+pub mod fonts;
+pub mod icons;
 pub mod matrix;
 pub mod inspect;
 pub mod model;
