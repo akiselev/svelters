@@ -168,7 +168,8 @@ text. The command prints JSON, with or without `--json`:
 - `computed` holds every property that differs from CSS's initial value.
 - `matched_rules` lists rules in cascade order. Theme rules come from the sheet named `gallery theme <name> + base.css`
   (`sheet_line` is the line in that sheet). Component rules carry the `.svelte` file and line of their `<style>` rule.
-  `layer` is `null` until skelter-core reports it.
+  `layer` is the rule's `@layer` (`sv.base` for base.css's kind looks, `<anonymous>` for an anonymous layer), `null`
+  for an unlayered rule.
 - `state.forced` lists the bits the gallery forced. `state.own` lists the node's real state (`disabled` through the prop).
 - `accesskit` is the node skelter published, or `null` for a node it prunes (a plain box).
 

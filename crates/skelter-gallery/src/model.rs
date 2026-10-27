@@ -317,19 +317,6 @@ pub fn parse_arg_value(s: &str) -> serde_json::Value {
 }
 
 /// `path` made absolute with symlinks resolved, without Windows' verbatim prefix (`\\?\C:\…`
-/// becomes `C:\…`): the module loader takes the plain form. The same rule as svelters-modules'
-/// own (private) `canonicalize`.
-pub fn canonicalize(path: &Path) -> std::io::Result<PathBuf> {
-    let p = path.canonicalize()?;
-    #[cfg(windows)]
-    {
-        use std::path::{Component, Prefix};
-        if let Some(Component::Prefix(prefix)) = p.components().next()
-            && let Prefix::VerbatimDisk(_) = prefix.kind()
-            && let Some(plain) = p.to_str().and_then(|s| s.strip_prefix(r"\\?\"))
-        {
-            return Ok(PathBuf::from(plain));
-        }
-    }
-    Ok(p)
-}
+/// becomes `C:\…`): the module loader's own rule (svelters-modules), re-exported for the gallery's
+/// roots and its hosts.
+pub use svelters_host::modules::canonicalize;

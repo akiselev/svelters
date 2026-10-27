@@ -116,8 +116,9 @@ pub trait ModuleProvider {
 
 /// `fs::canonicalize`, but on Windows a drive path comes back as `C:\…`, not the verbatim
 /// `\\?\C:\…` form: module ids are paths, and the `?` of a verbatim prefix reads as an import
-/// query (`./a.svg?raw`), so every loader path goes through here.
-pub(crate) fn canonicalize(path: &Path) -> std::io::Result<PathBuf> {
+/// query (`./a.svg?raw`), so every loader path goes through here. Public so embedders (the
+/// gallery) name roots the way the loader does.
+pub fn canonicalize(path: &Path) -> std::io::Result<PathBuf> {
     let p = path.canonicalize()?;
     #[cfg(windows)]
     {
@@ -159,5 +160,17 @@ mod windows_paths {
         let p = super::canonicalize(&here.join("src/../Cargo.toml")).unwrap();
         let s = p.to_str().unwrap();
         assert!(!s.contains('?') && s.ends_with(r"svelters-modules\Cargo.toml"), "{s}");
+    }
+}
+
+#[cfg(test)]
+mod canonicalize_tests {
+    #[test]
+    fn canonicalize_is_absolute_and_never_verbatim() {
+        let p = super::canonicalize(std::path::Path::new(".")).unwrap();
+        assert!(p.is_absolute(), "{}", p.display());
+        assert!(!p.to_string_lossy().starts_with(r"\\?\"), "no verbatim prefix: {}", p.display());
+        assert_eq!(p, super::canonicalize(&p).unwrap(), "idempotent");
+        assert!(super::canonicalize(std::path::Path::new("no/such/file.svelte")).is_err());
     }
 }

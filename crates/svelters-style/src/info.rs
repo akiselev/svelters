@@ -34,6 +34,8 @@ pub struct MatchedRuleInfo {
     pub sheet: Option<String>,
     /// The selectors as CSS (after nesting; the scoping class included).
     pub selectors: String,
+    /// The rule's `@layer` (`base.buttons`, `<anonymous>` for an anonymous one); `None` unlayered.
+    pub layer: Option<String>,
     /// The highest specificity among the selectors that matched.
     pub specificity: u32,
     /// The rule's position in the sheet text (1-based line, UTF-16 column).

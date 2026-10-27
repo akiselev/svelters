@@ -87,6 +87,12 @@ impl Rule {
     pub fn selector_text(&self) -> String {
         self.selectors.slice().iter().map(cssparser::ToCss::to_css_string).collect::<Vec<_>>().join(", ")
     }
+
+    /// The rule's `@layer` as an inspector shows it (`base.buttons`; an anonymous layer's part is
+    /// `<anonymous>`); `None` for an unlayered rule.
+    pub fn layer_name(&self) -> Option<String> {
+        self.layer.as_ref().map(|l| l.split('.').map(|part| if part.starts_with('\u{0}') { "<anonymous>" } else { part }).collect::<Vec<_>>().join("."))
+    }
 }
 
 /// A parsed sheet: rules in source order, the layer names in order of first appearance, and what
@@ -447,6 +453,13 @@ mod tests {
         assert_eq!((&*d[1].name, &*d[1].value), ("--X", "1px 2px"));
         assert!(d[2].important && d[2].has_var);
         assert_eq!((s.rules[0].line, s.rules[0].column), (1, 1));
+    }
+
+    #[test]
+    fn layer_names_for_inspectors() {
+        let s = Stylesheet::parse("a { x: y } @layer base { b { x: y } @layer buttons { c { x: y } } } @layer { d { x: y } }", &Default::default());
+        let names: Vec<Option<String>> = s.rules.iter().map(Rule::layer_name).collect();
+        assert_eq!(names, [None, Some("base".into()), Some("base.buttons".into()), Some("<anonymous>".into())]);
     }
 
     #[test]

@@ -94,8 +94,7 @@ fn rule_json(r: &MatchedRuleInfo) -> Value {
     json!({
         "selector": r.selectors,
         "sheet": r.sheet,
-        // skelter-core's MatchedRuleInfo carries no layer yet (a request in GAL1's record)
-        "layer": Value::Null,
+        "layer": r.layer,
         "specificity": r.specificity,
         "sheet_line": r.line,
         "source": r.source.as_ref().map(source_json),
