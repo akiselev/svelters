@@ -970,7 +970,13 @@ impl<'a> std::ops::Deref for A11yCx<'a> {
     }
 }
 
-impl A11yCx<'_> {
+impl<'a> A11yCx<'a> {
+    /// SV-OBJ4: a document service, read only: what the node describes may live there (a canvas
+    /// exposing the objects it draws). After that data changes outside the node's props, the host
+    /// calls [`Document::request_a11y`](crate::Document::request_a11y) to send the node again.
+    pub fn service<T: 'static>(&self) -> Option<&'a T> {
+        self.node.doc.services.get()
+    }
     /// Adds a virtual child: an AccessKit node for a part the kind draws without a node of its own
     /// (a select's option), placed after the real children, its bounds in the node's own space. It
     /// is sent with the node every time the node is, under [`crate::a11y::virtual_id`]; an action

@@ -1525,6 +1525,14 @@ impl Document {
         self.services.get()
     }
 
+    /// SV-OBJ4: `node`'s accessibility data changed outside its props (a service its
+    /// [`Kind::a11y`](crate::Kind::a11y) reads through [`A11yCx::service`](crate::A11yCx::service)):
+    /// it is sent again with the next frame, as [`EventCx::request_a11y`](crate::EventCx::request_a11y)
+    /// does from a handler. A removed or stale node is ignored.
+    pub fn request_a11y(&mut self, node: NodeId) {
+        self.mark(node, Dirty::A11Y);
+    }
+
     pub(crate) fn set_timer(&mut self, node: NodeId, at: Option<skelter_base::time::Time>) {
         match at {
             Some(t) => {
