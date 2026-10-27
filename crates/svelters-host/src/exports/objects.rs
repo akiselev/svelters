@@ -47,6 +47,11 @@ pub(crate) struct AppObjects {
     map: RefCell<HashMap<svl_handle, Entry>>,
     by_ptr: RefCell<HashMap<(TypeId, usize), svl_handle>>,
     generation: Cell<u64>,
+    /// SV85: disposers tied to the calling component ([`super::on_destroy`]), by id.
+    scoped: RefCell<HashMap<u64, Box<dyn FnOnce()>>>,
+    /// SV85: the ids registered during the running call, handed to the runtime after it.
+    scoped_new: RefCell<Vec<u64>>,
+    scoped_next: Cell<u64>,
 }
 
 impl AppObjects {
@@ -98,6 +103,32 @@ impl AppObjects {
             if let Some(e) = map.get_mut(h) {
                 e.generation = old;
             }
+        }
+    }
+
+    /// SV85: keeps `f` until the runtime releases its id (the calling component is destroyed).
+    pub fn add_scoped(&self, f: Box<dyn FnOnce()>) {
+        let id = self.scoped_next.get() + 1;
+        self.scoped_next.set(id);
+        self.scoped.borrow_mut().insert(id, f);
+        self.scoped_new.borrow_mut().push(id);
+    }
+
+    /// SV85: the ids registered since the last call (for the runtime to bind to its scope).
+    pub fn take_new_scoped(&self) -> Vec<u64> {
+        std::mem::take(&mut *self.scoped_new.borrow_mut())
+    }
+
+    /// SV85: runs and forgets disposer `id` (unknown ids are ignored).
+    pub fn release_scoped(&self, id: u64) -> bool {
+        let f = self.scoped.borrow_mut().remove(&id);
+        match f {
+            Some(f) => {
+                // run with no table borrow held: the disposer may call back into exports
+                f();
+                true
+            }
+            None => false,
         }
     }
 

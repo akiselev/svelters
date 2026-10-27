@@ -244,6 +244,23 @@ export function recover() {
   if (batches.is_flushing_sync) queueMicrotask(() => batches.flushSync());
 }
 /**
+ * SV85: the host hands over the disposers a native export tied to its caller (Rust's
+ * `svelters::exports::on_destroy`) right after the export returns: they are released when the
+ * effect that made the call is destroyed (a component's script: the component unmounts; an
+ * `$effect`: it re-runs or goes). Outside any effect (module top level, an event handler) false:
+ * they stay with the host.
+ */
+globalThis.__svelters_scope_bind = (ids) => {
+  if ($.active_effect === null) return false;
+  const host = globalThis.__svelters_host;
+  $.untrack(() =>
+    $.render_effect(() => () => {
+      for (const id of ids) host.releaseScoped(id);
+    }),
+  );
+  return true;
+};
+/**
  * SV84: marks `effect` to run again: an update of it that the host aborted (its own state is half
  * updated). `recover` finds it dirty in its traversal and schedules it.
  */
