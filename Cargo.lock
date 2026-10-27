@@ -4960,7 +4960,20 @@ name = "skelter-gallery-app"
 version = "0.0.0"
 dependencies = [
  "quire-core",
+ "serde_json",
+ "skelter",
+ "skelter-base",
+ "skelter-compositor",
+ "skelter-core",
+ "skelter-platform",
+ "skelter-test",
+ "skelter-text",
+ "skelter-widgets",
  "skelter_quire",
+ "svelters-abi",
+ "svelters-host",
+ "svelters-skelter",
+ "svelters-style",
 ]
 
 [[package]]
