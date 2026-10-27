@@ -110,9 +110,12 @@ impl LiveStory {
     /// Loads `variants` (files under the gallery root that holds `package.json`) into a fresh embed
     /// over `doc`, the host's kinds
     /// compiled through `fragments` (spec fragments). A variant that does not compile is left out and reported; the rest load.
-    pub fn load(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, fragments: &[PathBuf], variants: Vec<LiveVariant>, generation: u64) -> Result<LiveStory, String> {
+    /// `on_backend` runs on the new backend before anything loads (the host's
+    /// `Extensions::on_backend`, G6).
+    pub fn load(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, fragments: &[PathBuf], variants: Vec<LiveVariant>, generation: u64, on_backend: &dyn Fn(&SkelterBackend)) -> Result<LiveStory, String> {
         let first = variants.first().ok_or("the story has no variants")?.file.clone();
         let backend = SkelterBackend::shared(kinds, doc)?;
+        on_backend(&backend);
         // as skelter_gallery's renderer: the same locale, so formatted text matches the CLI's shots
         let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, locale: Some("en-US".into()), ..Default::default() };
         let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, ..EmbedConfig::default() }).map_err(|e| e.to_string())?;

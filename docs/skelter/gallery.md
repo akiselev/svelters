@@ -245,8 +245,13 @@ fn main() -> std::process::ExitCode {
             .story_root(concat!(env!("CARGO_MANIFEST_DIR"), "/gallery"))
             .family("cad")                                    // families beyond the built-in ten
             .kinds(|reg| cadatomic_ui::skelter::register(reg).map_err(|e| e.to_string()))
+            .on_backend(|b| { /* once per renderer, before any variant loads: behaviours, services, sheets */ })
             .on_setup(|cx| { /* grid sources, the pick board: cx.with_doc(|d| …), cx.cell, cx.story */ })
-            .theme("cad-dark", tokens),                       // a TokenMap of overrides on Dark Modern
+            .on_frame(|cx| { /* before each frame: cx.with_doc(|d| sync(d, cx.frame, cx.now_ms)) */ })
+            .busy(|doc| None)                                 // Some("why") while a highlight job is pending
+            .fonts(cadatomic_ui::theme::skelter::bundled_fonts()) // added to the hermetic set
+            .theme("cad-dark", dark_tokens)                   // a TokenMap of overrides on Dark Modern
+            .theme_with("cad-light", ColorScheme::Light, Contrast::Normal, light_tokens),
     )
 }
 ```
@@ -255,8 +260,19 @@ fn main() -> std::process::ExitCode {
   `svelters_skelter::Kinds::with_app`, and reach the compiler as a spec fragment
   (`svelters_skelter::spec::fragment`) that the gallery writes to a temporary file.
 - **Setup hooks** run before every mount. They get the cell, its story and the backend.
-- **Themes:** a host theme is named on the command line like the four built-ins. It is Dark Modern with the host's
-  tokens as overrides.
+- **Backend hooks** (`on_backend`) run once per renderer (and once per story the app opens), after the backend is
+  made and before the first variant loads.
+- **Frame hooks** (`on_frame`) run before each frame: in the renderer before each harness step while a cell settles,
+  in the app before each frame. `FrameCx` has the backend, the frame number and the time in ms (the renderer's virtual
+  clock). **Busy probes** (`busy`) keep a cell settling while one says why; at the 120-step limit the reason is in
+  the cell's `not settled … host busy: …` warning.
+- **Fonts:** `fonts(files)` adds the host's TTF/OTF files (an icon font, its own families) to the bundled set; shots
+  stay hermetic.
+- **Themes:** a host theme is named on the command line like the four built-ins. `theme(name, tokens)` is Dark Modern
+  with the host's tokens as overrides; `theme_with(name, scheme, contrast, tokens)` is built on that VS Code theme, so
+  the theme service, `prefers-contrast` and `dark` match (in the app, side-by-side cells take the tokens only).
+- **The app's source pane** is quire's `code-editor`. A host that registers its own `code-editor` replaces it (one
+  registry, one tag): the pane then says so, and variant files are edited on disk.
 - **Library use:** `Renderer::new(&ext)`, then `shot`, `sheet`, `inspect`, `check` and `mount` on it.
   `Renderer::reload(&changed_paths)` takes edits on disk into account without a new renderer: a `story.toml` re-reads
   the stories, an image is registered again, a variant that failed to load is retried, and a change in a loaded

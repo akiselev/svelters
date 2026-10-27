@@ -11,7 +11,7 @@ use skelter_base::event::WindowEvent;
 use skelter_base::geom::{DeviceSize, Scale, Size};
 use skelter_core::{MediaPreferences, Origin};
 use skelter_test::{Harness, Image};
-use skelter_widgets::theme::{Density, TokenMap};
+use skelter_widgets::theme::Density;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt;
@@ -25,10 +25,9 @@ use svelters_skelter::SkelterBackend;
 use svelters_skelter::app::{SkelterDocument, install_widget_services};
 use svelters_skelter::embed::{Budgets, Embed, EmbedConfig, EmbedEvent, EntryId, MountSpec, Props, RootId, RootState, SlotId, SlotOptions};
 
-thread_local! {
-    /// Numbers the spec fragments of the renderers on this thread.
-    static FRAGMENTS: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
-}
+/// Numbers the spec fragments of the renderers in this process (G3: one per renderer, whatever
+/// thread it is on, so one renderer's drop never removes another's file).
+static FRAGMENTS: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
 
 /// The export name each variant's entry gives its component.
 const EXPORT: &str = "Variant";
@@ -136,7 +135,10 @@ pub struct Renderer {
     families: Vec<String>,
     roots: Vec<PathBuf>,
     setup: Vec<crate::ext::SetupHook>,
-    themes: Vec<(String, TokenMap)>,
+    /// The host's extensions (themes, frame hooks, busy probes).
+    ext: Extensions,
+    /// Frames stepped (G1's frame number).
+    frames: u64,
     backend: SkelterBackend,
     /// `None` only while [`Renderer::reload`] swaps it.
     embed: Option<Embed>,
@@ -164,7 +166,7 @@ impl Renderer {
     /// A renderer over `ext`'s story roots, kinds, setup hooks and token sets.
     pub fn new(ext: &Extensions) -> Result<Renderer, Error> {
         let catalog = discover_with(&ext.story_roots, &ext.families).map_err(Error::Stories)?;
-        let fonts = crate::fonts::store(ext.fonts);
+        let fonts = crate::fonts::store_with(ext.font_set, &ext.font_files);
         crate::icons::register_demo();
         // the host's kinds after the built-ins (`Kinds::with_app`); their errors are strings
         let failed: RefCell<Option<String>> = RefCell::new(None);
@@ -187,12 +189,14 @@ impl Renderer {
             None
         } else {
             let dir = std::env::temp_dir().join(format!("skelter-gallery-{}", std::process::id()));
-            let f = dir.join(format!("kinds-{}.json", FRAGMENTS.with(|n| n.replace(n.get() + 1))));
+            let f = dir.join(format!("kinds-{}.json", FRAGMENTS.fetch_add(1, std::sync::atomic::Ordering::Relaxed)));
             std::fs::create_dir_all(&dir).and_then(|_| std::fs::write(&f, svelters_skelter::spec::fragment_text(&kinds))).map_err(|e| Error::Setup(format!("{}: {e}", f.display())))?;
             Some(f)
         };
         let backend = SkelterBackend::with_text(kinds, Box::new(skelter_text::TextSystem::new(fonts.clone())));
         install_widget_services(&backend, skelter_text::TextSystem::new(fonts.clone()));
+        // G6: the host's once-per-backend setup, before any variant loads
+        ext.run_backend(&backend);
         // the window: a `window` node the harness's window attaches, the cell's slot in it
         let window = backend.create_borrowed("window").map_err(Error::Setup)?;
         let (embed, slot) = attach_embed(&backend, window)?;
@@ -217,7 +221,8 @@ impl Renderer {
             families: ext.families.clone(),
             roots: ext.story_roots.clone(),
             setup: ext.setup.clone(),
-            themes: ext.themes.clone(),
+            ext: ext.clone(),
+            frames: 0,
             backend,
             embed: Some(embed),
             harness,
@@ -384,15 +389,7 @@ impl Renderer {
 
     /// The theme a cell's theme name resolves to.
     pub fn resolve_theme(&self, theme: &Theme, density: Density) -> Result<skelter_widgets::theme::Theme, Error> {
-        use skelter_widgets::theme::Theme as T;
-        let base = match theme.recipe() {
-            Some((scheme, contrast)) => T::vscode(scheme, contrast),
-            None => {
-                let (_, tokens) = self.themes.iter().find(|(n, _)| n == theme.name()).ok_or_else(|| Error::Request(format!("no theme {theme}")))?;
-                T::dark_modern().with(tokens.iter())
-            }
-        };
-        Ok(base.with_density(density))
+        self.ext.resolve_theme(theme, density).ok_or_else(|| Error::Request(format!("no theme {theme}")))
     }
 
     fn apply_theme(&mut self, theme: &Theme, density: Density) -> Result<(), Error> {
@@ -604,6 +601,9 @@ impl Renderer {
         if !s.is_settled() {
             return Some(format!("embed busy: {:?}", s.busy));
         }
+        if let Some(why) = self.ext.busy_reason(&self.backend) {
+            return Some(format!("host busy: {why}"));
+        }
         self.harness.busy()
     }
 
@@ -611,6 +611,10 @@ impl Renderer {
     fn settle(&mut self) -> (u32, bool) {
         for i in 1..=MAX_STEPS {
             self.embed().logic();
+            // G1: the host's per-frame sync, before the frame it feeds
+            self.frames += 1;
+            let now_ms = self.harness.now().0 as f64 / 1e6;
+            self.ext.run_frame(&self.backend, self.frames, now_ms);
             self.harness.step();
             if self.busy().is_none() {
                 return (i, true);

@@ -159,7 +159,7 @@ pub fn run(ext: Extensions) -> ExitCode {
         }
     };
     // the CLI's bundled fonts (Inter, JetBrains Mono, Arabic, CJK, symbols), the OS's behind them
-    let fonts = skelter_gallery::fonts::store(skelter_gallery::fonts::FontSet::System);
+    let fonts = skelter_gallery::fonts::store_with(skelter_gallery::fonts::FontSet::System, &ext.font_files);
     skelter_gallery::icons::register_demo();
     let mut doc = match document(ext, fonts.clone()) {
         Ok(d) => d,
