@@ -136,6 +136,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "aho-corasick"
+version = "1.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c982642fa9e8606056828ee9a8505737230110bb1099153c79efe865c59d12ba"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
 name = "allocator-api2"
 version = "0.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -456,12 +465,27 @@ dependencies = [
 
 [[package]]
 name = "bit-set"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
+dependencies = [
+ "bit-vec 0.8.0",
+]
+
+[[package]]
+name = "bit-set"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "09ec2f926cc3060f09db9ebc5b52823d85268d24bb917e472c0c4bea35780a7d"
 dependencies = [
- "bit-vec",
+ "bit-vec 0.9.1",
 ]
+
+[[package]]
+name = "bit-vec"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7"
 
 [[package]]
 name = "bit-vec"
@@ -1484,6 +1508,17 @@ dependencies = [
  "svelters-backend-log",
  "svelters-gtk",
  "svelters-host",
+]
+
+[[package]]
+name = "fancy-regex"
+version = "0.19.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d301f5bf187b3c295fce6468d3875037a0bccc5f6b151c63cac2f85babf21912"
+dependencies = [
+ "bit-set 0.8.0",
+ "regex-automata",
+ "regex-syntax",
 ]
 
 [[package]]
@@ -2682,6 +2717,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "edcd27d72f2f071c64249075f42e205ff93c9a4c5f6c6da53e79ed9f9832c285"
 
 [[package]]
+name = "imara-diff"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f01d462f766df78ab820dd06f5eb700233c51f0f4c2e846520eaf4ba6aa5c5c"
+dependencies = [
+ "hashbrown 0.15.5",
+ "memchr",
+]
+
+[[package]]
 name = "indexmap"
 version = "2.14.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3184,7 +3229,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a616d2fb8c89516ac2723a581f69d6c18576046bed761bd6b305e5618e6ae130"
 dependencies = [
  "arrayvec",
- "bit-set",
+ "bit-set 0.10.0",
  "bitflags 2.13.2",
  "cfg-if",
  "cfg_aliases",
@@ -4222,11 +4267,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "quire-core"
+version = "0.1.0"
+source = "git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f#ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f"
+dependencies = [
+ "fancy-regex",
+ "quire-text 0.1.0 (git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f)",
+ "regex-automata",
+ "serde",
+ "smallvec",
+]
+
+[[package]]
 name = "quire-text"
 version = "0.1.0"
 source = "git+https://github.com/akiselev/quire?rev=35b5063ab149ca8682241324aff8efb28696f491#35b5063ab149ca8682241324aff8efb28696f491"
 dependencies = [
  "ropey",
+ "smallvec",
+ "unicode-general-category",
+ "unicode-segmentation",
+]
+
+[[package]]
+name = "quire-text"
+version = "0.1.0"
+source = "git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f#ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f"
+dependencies = [
+ "imara-diff",
+ "ropey",
+ "serde",
  "smallvec",
  "unicode-general-category",
  "unicode-segmentation",
@@ -4376,6 +4446,17 @@ name = "regex-automata"
 version = "0.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
+dependencies = [
+ "aho-corasick",
+ "memchr",
+ "regex-syntax",
+]
+
+[[package]]
+name = "regex-syntax"
+version = "0.8.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 
 [[package]]
 name = "relative-path"
@@ -4894,6 +4975,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "skelter-gallery-app"
+version = "0.0.0"
+dependencies = [
+ "image",
+ "quire-core",
+ "serde_json",
+ "skelter",
+ "skelter-base",
+ "skelter-compositor",
+ "skelter-core",
+ "skelter-gallery",
+ "skelter-platform",
+ "skelter-test",
+ "skelter-text",
+ "skelter-widgets",
+ "skelter_quire",
+ "svelters-abi",
+ "svelters-host",
+ "svelters-skelter",
+ "svelters-style",
+]
+
+[[package]]
 name = "skelter-motion"
 version = "0.0.0"
 dependencies = [
@@ -5048,7 +5152,7 @@ name = "skelter-widgets"
 version = "0.0.0"
 dependencies = [
  "i_overlay",
- "quire-text",
+ "quire-text 0.1.0 (git+https://github.com/akiselev/quire?rev=35b5063ab149ca8682241324aff8efb28696f491)",
  "resvg",
  "rfd",
  "roxmltree 0.20.0",
@@ -5063,6 +5167,20 @@ dependencies = [
  "svelters-style",
  "taffy",
  "unicode-segmentation",
+]
+
+[[package]]
+name = "skelter_quire"
+version = "0.1.0"
+source = "git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f#ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f"
+dependencies = [
+ "quire-core",
+ "quire-text 0.1.0 (git+https://github.com/akiselev/quire?rev=ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f)",
+ "serde",
+ "serde_json",
+ "skelter-base",
+ "skelter-core",
+ "skelter-text",
 ]
 
 [[package]]
@@ -6239,8 +6357,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14c018fce9b6270aa203c2fdd56f3cce996713534bd757e4ea58c8560b121f14"
 dependencies = [
  "arrayvec",
- "bit-set",
- "bit-vec",
+ "bit-set 0.10.0",
+ "bit-vec 0.9.1",
  "bitflags 2.13.2",
  "bytemuck",
  "cfg_aliases",
@@ -6312,7 +6430,7 @@ dependencies = [
  "android_system_properties",
  "arrayvec",
  "ash",
- "bit-set",
+ "bit-set 0.10.0",
  "bitflags 2.13.2",
  "block2 0.6.2",
  "bytemuck",

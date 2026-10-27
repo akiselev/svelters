@@ -1,0 +1,11 @@
+id = "note"
+title = "Note"
+family = "text"
+kinds = ["label"]
+size = [200, 32]
+states = ["normal"]
+
+[[variant]]
+id = "plain"
+title = "Plain note"
+file = "plain.svelte"

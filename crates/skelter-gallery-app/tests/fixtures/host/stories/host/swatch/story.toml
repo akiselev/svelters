@@ -1,0 +1,11 @@
+id = "swatch"
+title = "Swatch (a host's kind)"
+family = "host"
+kinds = ["gallery-swatch"]
+size = [60, 40]
+states = ["normal", "hover"]
+
+[[variant]]
+id = "green"
+title = "Green"
+file = "green.svelte"

@@ -1,0 +1,17 @@
+id = "button"
+title = "Button"
+family = "controls"
+kinds = ["button"]
+size = [200, 48]
+states = ["normal", "hover", "disabled"]
+
+[[variant]]
+id = "primary"
+title = "Primary"
+file = "primary.svelte"
+args = { caption = ["Save", "Cancel"] }
+
+[[variant]]
+id = "plain"
+title = "Plain"
+file = "plain.svelte"

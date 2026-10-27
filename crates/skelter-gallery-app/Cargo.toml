@@ -1,0 +1,28 @@
+[package]
+name = "skelter-gallery-app"
+description = "The interactive skelter component gallery: browse stories, a variant grid, a quire source pane, live reload."
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+skelter_quire = { workspace = true }
+quire-core = { workspace = true }
+skelter-base = { workspace = true }
+skelter-core = { workspace = true }
+skelter = { workspace = true }
+skelter-platform = { workspace = true }
+skelter-compositor = { workspace = true }
+skelter-text = { workspace = true }
+skelter-widgets = { workspace = true }
+svelters-abi = { workspace = true }
+svelters-host = { workspace = true }
+svelters-skelter = { workspace = true }
+svelters-style = { workspace = true }
+serde_json = { workspace = true }
+skelter-gallery = { workspace = true }
+# `--shot`: the window rendered headlessly (lavapipe), as skelter-gallery renders its cells
+skelter-test = { workspace = true }
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+
