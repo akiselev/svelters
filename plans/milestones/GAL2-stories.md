@@ -1,6 +1,6 @@
 # GAL2: the gallery's stories (batch gallery-b1, lane stories)
 
-Branch `ci/gb1-stories`. Brief: `plans/cloud/gallery-b1/BRIEF.md` and `LANE-stories.md`. Status: in progress.
+Branch `ci/gb1-stories`. Brief: `plans/cloud/gallery-b1/BRIEF.md` and `LANE-stories.md`. Status: done (pending CI on the last sha).
 
 ## Scope
 
@@ -125,14 +125,62 @@ kind for them. No story; each is a request (below).
 
 ## Polish findings
 
-Pending: core's `shot` and `check` had not landed when the stories were written.
+Rendered with core's CLI on `ci/gb1-core` `559327e` (merged): one sheet per family, all states and the four
+themes (`skelter-gallery sheet --family <f> -o target/gallery/<f>`), plus normal-state sheets in dark-modern and
+light-modern for reading. No cell has an error or a warning. The layout family (box, grid, sides, stack)
+looks right. Rows are ordered by impact; the first three affect every interactive kind. None is fixed here
+(BRIEF: the polish lanes' input).
+
+| Story/variant | State | Theme | What is wrong | Command |
+|---|---|---|---|---|
+| button/look, checkbox/value, text-edit/value (every interactive kind) | focus-visible | all four | No focus ring: the subject renders exactly as `normal`, in hc-dark and hc-light too. `inspect` shows the state reached the node (`state.forced = [focus-visible]`) but the computed style has no outline and the paint has none. | `skelter-gallery shot button/look --args look=plain --state focus-visible --theme hc-dark` |
+| button/look, checkbox/value, text-edit/value | disabled | all four | `enabled={false}` changes nothing visible: no dimmed text or border. `inspect` shows `state.own = [disabled]` and AccessKit `disabled: true`, but the computed `color` and `background` equal `normal`'s. | `skelter-gallery shot checkbox/value --args value=checked --state disabled --theme light-modern` |
+| checkbox/value, text-edit/value | hover, active | all four | No hover or pressed look (button's hover changes its background only slightly: `#313131` → `#3b3b3b` in dark-modern). | `skelter-gallery shot text-edit/value --args text=R12 --state hover --theme dark-modern` |
+| button/look | normal | all four | `default` and `selected` look identical to `plain`: no accent fill for the default button and no toggle look for `selected`. | `skelter-gallery shot button/look --args look=default --theme dark-modern` |
+| dialog/destructive | normal | all four | `dialog-role="destructive"` has no styling; the `default` button (Keep) is not emphasised either. | `skelter-gallery shot dialog/destructive --theme light-modern` |
+| button/long-text, checkbox/long-text, switch/long-text, collapsing-header/long-text | normal | all four | Captions never wrap or elide: the control grows past its parent's width (box `width=336`) and is clipped by the cell. | `skelter-gallery shot checkbox/long-text --theme dark-modern` |
+| progress-bar/text | normal | all four | Text wider than the bar overflows both ends of the bar, unclipped. | `skelter-gallery shot progress-bar/text --args "text=Building the netlist for the main board and every sub-board"` |
+| progress-bar/percentage, progress-bar/text | normal | light-modern | Text over the fill is dark on accent blue: poor contrast (the part over the fill should switch colour). | `skelter-gallery shot progress-bar/percentage --theme light-modern` |
+| progress-bar/fraction | normal | light-modern | The trough is near-white on the near-white background: an empty bar is almost invisible. | `skelter-gallery shot progress-bar/fraction --args fraction=0.0 --theme light-modern` |
+| progress-bar/indeterminate | normal | all four | Nothing but the trough at the gallery's fixed virtual time: no moving segment or busy look. | `skelter-gallery shot progress-bar/indeterminate` |
+| slider/marks | normal | all four | `marks="0:Low,50:Medium,100:High"` draws no marks and no labels. | `skelter-gallery shot slider/marks` |
+| rich-text/runs, rich-text/nested | normal | all four | `<code>` runs draw as plain text: no monospace font and no field fill (the doc says both). | `skelter-gallery shot rich-text/runs` |
+| label/weight | normal | all four | `font-weight=300` draws like 400 (no light face registered, no fallback). | `skelter-gallery shot label/weight --args weight=300` |
+| text-edit/* and multiline/* | normal | all four | No inner padding: the text touches the field's left border (and the top-left corner in multi-line fields); the single-line field's height leaves no space above and below the text. | `skelter-gallery shot multiline/wrapping --theme light-modern` |
+| text-edit/invalid, password/invalid | normal | all four | `invalid` draws no error border or colour. | `skelter-gallery shot text-edit/invalid --theme dark-modern` |
+| text-edit/read-only, multiline/read-only | normal | all four | Read-only fields look identical to editable ones. | `skelter-gallery shot text-edit/read-only` |
+| multiline/overflow | normal | all four | Lines past the field's height are cut mid-glyph with no scroll bar. | `skelter-gallery shot multiline/overflow` |
+| dialog/form | normal | light-modern | The autofocused field's selection is dark text on accent blue: poor contrast. | `skelter-gallery shot dialog/form --theme light-modern` |
+| combo-box/open | normal | light-modern | The highlighted row in the popup is dark text on accent blue (poor contrast); dark-modern uses light text. | `skelter-gallery shot combo-box/open --theme light-modern` |
+| scroll-area/scrolled | normal | all four | `scroll-y={200}` moves the thumb to the middle but the content still shows Row 1 at the top: the content is not offset. | `skelter-gallery shot scroll-area/scrolled` |
+| scroll-area/direction | normal | all four | The scroll bars overlay the text with no track or gutter; with `direction=both` both thumbs sit over content. | `skelter-gallery shot scroll-area/direction --args direction=both --theme light-modern` |
+| virtual-list/plain, table/overflow | normal | all four | virtual-list shows no scroll bar for 200 rows; table `overflow` (stretch-last off, four columns) hides the fourth column with no horizontal scroll bar. | `skelter-gallery shot table/overflow` |
+| table/overflow | normal | all four | `elide="middle"` on Description elides at the end. | `skelter-gallery shot table/overflow --theme light-modern` |
+| table/sorted-selected | normal | all four | Selected rows are a faint grey (not the selection colour); the cursor row (`current={2}`) has no visible cursor. | `skelter-gallery shot table/sorted-selected --theme dark-modern` |
+| tree-view/expanded | normal | all four | `root-decorated={false}` still draws level-0 twisties. | `skelter-gallery shot tree-view/expanded --args decorated=false` |
+| tree-view/rtl | normal | all four | Right-to-left rows align right but the twistie stays at the left edge (not mirrored). | `skelter-gallery shot tree-view/rtl` |
+| frame/checkable | normal | all four | An unchecked checkable frame leaves its content looking enabled (the doc says unchecked disables it). | `skelter-gallery shot frame/checkable --args checked=false` |
+| frame/style | normal | all four | `canvas` has a smaller inner margin than the other styles: the caption almost touches the border. | `skelter-gallery shot frame/style --args style=canvas --theme light-modern` |
+| collapsing-header/end-slot | normal | all four | The `end` slot's button sits above the header row's centre line. | `skelter-gallery shot collapsing-header/end-slot` |
+| button/dense, icon/toolbar | normal | all four | A vertical `separator` in a row draws nothing (the gap is there, the line is not). | `skelter-gallery shot button/dense --theme light-modern` |
+| radio-button/single | normal | light-modern | The checked radio's dot is dark grey while the checked checkbox uses the accent: inconsistent. | `skelter-gallery shot radio-button/single --args checked=true --theme light-modern` |
+| every `rtl` variant with Arabic | normal | all four | Arabic text renders as tofu boxes: the renderer's font set has no Arabic coverage (Hebrew renders). Likely the gallery/harness font set, not the widgets. | `skelter-gallery shot label/rtl` |
+| icon/glyph, icon/button, icon/toolbar | normal | all four | Symbol glyphs (★ ⚙ ◀ ✎ ✂) render as tofu: no symbol coverage in the font set. | `skelter-gallery shot icon/glyph --args size=32` |
+| icon/registry, button/icon | normal | all four | An unregistered icon key draws as its key text (`file.save`) in `icon`, and as an empty box in `button`'s `icon`. The gallery host registers no icons (request 4). | `skelter-gallery shot icon/registry` |
+| image/*, icon/source | normal | all four | An imported SVG (`asset://` ref) does not load: the placeholder box is drawn. Confirms request 3. | `skelter-gallery shot image/fit --args fit=cover` |
+| multiline/value (core lane) | — | — | The sheet's cell header prints the arg `First line\nSecond line` with its newline, so the label's second line overlaps the next header line. A core-lane sheet issue: escape or cut arg values in headers. | `skelter-gallery sheet multiline --variants value` |
 
 ## Tests and CI
 
-Not run yet (no renderer). Compile check: `svelters-compile --backend skelter --check` on every story file,
-no diagnostics.
+- `skelter-gallery check` (core's CLI, debug build): `31 stories, 135 variants, 0 problems`.
+- `skelter-gallery list`: 34 kinds registered, 33 covered; `window` without a story (recorded above).
+- `svelters-compile --backend skelter --check` on every story file: no diagnostics.
+- Sheets: 7 families, 2,892 cells across all states and the four themes, no errors or warnings.
+- No tests of this lane's own (it ships no code); the rest is GitHub CI.
 
 ## Handoff
 
-Next: merge `origin/ci/gb1-core` once `shot` and `check` land; run `skelter-gallery check`, fix every story
-it fails; render one sheet per family; fill "Polish findings".
+Done: stories, coverage, findings. Next (a later lane): when request 1 lands, add stories for the view, tab
+and picker kinds (split, panel, popup, tooltip, toast, status bar, modal, inner window, dialog buttons, menu
+bar, tabs, colour and date pickers, calendar); when request 2 lands, show `context-menu` open. The polish
+lanes take the findings table as their list.
