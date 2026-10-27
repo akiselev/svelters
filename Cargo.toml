@@ -14,6 +14,7 @@ members = [
     "crates/skelter-motion",
     "crates/skelter-egui-island",
     "crates/skelter-test",
+    "crates/skelter-gallery",
     "crates/skelter",
     "crates/svelters-skelter",
     "crates/skelter-platform-win32",
@@ -68,6 +69,7 @@ skelter-widgets = { path = "crates/skelter-widgets" }
 skelter-motion = { path = "crates/skelter-motion" }
 skelter-egui-island = { path = "crates/skelter-egui-island" }
 skelter-test = { path = "crates/skelter-test" }
+skelter-gallery = { path = "crates/skelter-gallery" }
 skelter = { path = "crates/skelter" }
 svelters-skelter = { path = "crates/svelters-skelter" }
 svelters-abi = { path = "crates/svelters-abi" }
