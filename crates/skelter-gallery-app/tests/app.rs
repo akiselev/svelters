@@ -164,3 +164,75 @@ fn a_file_changed_on_disk_reloads_through_the_host() {
     assert_eq!(text_in(&h, frame, "label", "text").as_deref(), Some("Agent"));
     assert!(h.state().gallery.source().unwrap().1.contains("Agent"), "the source pane follows the disk");
 }
+
+#[test]
+fn picking_a_cell_readies_its_shot_command_and_inspect_picks_the_clicked_node() {
+    let (mut h, _) = gallery("inspect");
+    h.get_by_author_id("story:button").click();
+    h.run();
+    // cell 5: primary, caption=Save, hover, light-modern (args, then states, then themes fastest)
+    let (cell, frame) = h.state().gallery.cells().nth(5).map(|(c, f)| (c.clone(), f)).unwrap();
+    assert_eq!((cell.state, cell.theme.name()), (skelter_gallery::State::Hover, "light-modern"));
+    h.state_mut().gallery.pick_cell(5);
+    h.run();
+    h.get_by_author_id("copy-shot").click();
+    h.run();
+    let copied = h.state().gallery.copied.clone().unwrap();
+    assert_eq!(copied, "skelter-gallery shot button/primary --args caption=Save --state hover --theme light-modern --density default --zoom 1 -o target/gallery/button-primary.png");
+    // inspect mode: a press on the cell's button picks it and reaches nothing else
+    let seen: std::rc::Rc<std::cell::RefCell<Vec<(String, skelter_base::ids::NodeId)>>> = Default::default();
+    let s2 = seen.clone();
+    h.state_mut().gallery.set_inspector(Box::new(move |_d, _frame, node, cell, sel| {
+        s2.borrow_mut().push((sel.to_string(), node));
+        serde_json::json!({ "selector": sel, "state": cell.state })
+    }));
+    h.get_by_author_id("inspect-toggle").click();
+    h.run();
+    assert!(h.state().gallery.settings.inspect);
+    let button = {
+        let d = h.state().gallery.document().borrow();
+        d.query().within(frame).kind(KindId::of("button")).first().unwrap()
+    };
+    let r = h.state().gallery.document().borrow().world_rect(button).unwrap();
+    h.click_at(skelter_base::geom::Point::new((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0));
+    h.run();
+    assert_eq!(seen.borrow().as_slice(), [("#subject".to_string(), button)]);
+    let want = "skelter-gallery inspect button/primary '#subject' --args caption=Save --state hover --theme light-modern --density default --zoom 1 --json";
+    let i = h.state().gallery.inspected.clone();
+    assert_eq!(i.json.as_ref().unwrap()["selector"], "#subject");
+    assert_eq!(i.command.as_deref(), Some(want));
+    h.get_by_author_id("copy-inspect").click();
+    h.run();
+    assert_eq!(h.state().gallery.copied.as_deref(), Some(want));
+}
+
+#[test]
+fn the_controls_narrow_the_matrix() {
+    let (mut h, _) = gallery("controls");
+    h.get_by_author_id("story:button").click();
+    h.run();
+    assert_eq!(h.state().gallery.cells().count(), 36);
+    // two themes off
+    h.get_by_author_id("theme:hc-dark").click();
+    h.run();
+    h.get_by_author_id("theme:hc-light").click();
+    h.run();
+    assert_eq!(h.state().gallery.cells().count(), 18);
+    // one state off
+    h.get_by_author_id("state:hover").click();
+    h.run();
+    assert_eq!(h.state().gallery.cells().count(), 12);
+    assert!(h.state().gallery.cells().all(|(c, _)| c.state != skelter_gallery::State::Hover));
+    // a variant from the sidebar: only its rows
+    h.get_by_author_id("variant:button/plain").click();
+    h.run();
+    assert_eq!(h.state().gallery.selection(), (Some("button"), Some("plain")));
+    assert!(h.state().gallery.cells().all(|(c, _)| c.variant.as_str() == "plain"));
+    assert!(h.state().gallery.source().unwrap().0.ends_with("plain.svelte"));
+    // the filter hides stories that don't match
+    h.get_by_author_id("filter").click();
+    h.type_text("note");
+    h.run();
+    assert!(h.query_by_author_id("story:button").is_none());
+    h.get_by_author_id("story:note");
+}

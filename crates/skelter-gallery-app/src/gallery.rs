@@ -407,6 +407,7 @@ impl Gallery {
             ui.label(bar, "Themes", &["gal-heading"]);
             for t in &names {
                 let n = ui.checkbox(bar, t, self.settings.themes.contains(t));
+                ui.anchor(n, &format!("theme:{t}"));
                 made.push((n, Action::Theme(t.clone())));
             }
             if let Some(s) = &story {
@@ -414,16 +415,19 @@ impl Gallery {
                 for st in &s.states {
                     let on = self.settings.states.as_ref().is_none_or(|v| v.contains(st));
                     let n = ui.checkbox(bar, st.name(), on);
+                    ui.anchor(n, &format!("state:{st}"));
                     made.push((n, Action::State(*st)));
                 }
             }
             let densities: Vec<String> = Density::ALL.iter().map(|d| d.name().to_string()).collect();
             let di = Density::ALL.iter().position(|d| *d == self.settings.density).unwrap_or(1);
             let n = ui.select(bar, "Density", &densities, di);
+            ui.anchor(n, "density");
             made.push((n, Action::Density));
             let zooms: Vec<String> = ZOOMS.iter().map(|z| format!("zoom {z}")).collect();
             let zi = ZOOMS.iter().position(|z| *z == self.settings.zoom).unwrap_or(0);
             let n = ui.select(bar, "Zoom", &zooms, zi);
+            ui.anchor(n, "zoom");
             made.push((n, Action::Zoom));
             if let Some(s) = &story {
                 let mut keys: BTreeMap<String, Vec<serde_json::Value>> = BTreeMap::new();
@@ -442,14 +446,18 @@ impl Gallery {
                     opts.extend(vals.iter().map(|v| format!("{k}={}", skelter_gallery::model::value_label(v))));
                     let sel = self.settings.args.get(&k).and_then(|v| vals.iter().position(|x| x == v)).map_or(0, |i| i + 1);
                     let n = ui.select(bar, &format!("Arg {k}"), &opts, sel);
+                    ui.anchor(n, &format!("arg:{k}"));
                     made.push((n, Action::Arg(k, vals)));
                 }
             }
             let n = ui.checkbox(bar, "Inspect", self.settings.inspect);
+            ui.anchor(n, "inspect-toggle");
             made.push((n, Action::Inspect));
             let n = ui.button(bar, "Copy shot command");
+            ui.anchor(n, "copy-shot");
             made.push((n, Action::CopyShot));
             let n = ui.button(bar, "Copy inspect command");
+            ui.anchor(n, "copy-inspect");
             made.push((n, Action::CopyInspect));
         }
         for (n, a) in made {
