@@ -134,4 +134,6 @@ from a checkout with `gallery/`:
 - `5d69749`: five workflows green; skelter (windows-latest) red in `cargo test` (run 40576634441, job 122444992663).
   All 7 skelter-gallery tests that load a story failed with `cannot import "\\?\D:\…primary.svelte"`: the verbatim
   root path from `canonicalize`. Fixed in the next commit with `skelter_gallery::canonicalize` (R4).
-- Final sha: see the commit after this record's update (runs listed by the coordinator at the merge).
+- **`8350d0b`: all six workflows green**: js 40579762717, linux-gtk 40579762880, linux-qt 40579762739, macos-appkit
+  40579762878, skelter 40579762961 (Linux, Windows and macOS, GPU tests on), windows-winui 40579762692. The commit
+  after it changes only this record.
