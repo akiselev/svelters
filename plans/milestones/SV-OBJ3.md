@@ -30,7 +30,9 @@ anything else; CI is the gate.
 
 ## CI
 
-- sha: see below (filled after the run).
+- Code sha `02a104fa3f8011e984af8cf703cd55923c9e822a`: all green. Run ids: js 40457897888,
+  linux-gtk 40457897959, linux-qt 40457897884, macos-appkit 40457897892, skelter 40457897881,
+  windows-winui 40457898064. The commit after it adds only these CI lines to this record.
 
 ## Line for cadatomic's `docs/plan/04-kernel-requests.md`
 
