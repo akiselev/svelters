@@ -77,7 +77,11 @@ path and are covered by its cells, not seen on a menu. See Q4.
   advisory).
 - Not run locally: the workspace tests, other crates' tests, pixel snapshot tests, conformance (CI is the gate).
 
-CI on `37aa82e` (the last code sha): see the run ids below.
+`origin/ci/pb1-gallery` `cd478f3` (fonts, icons) merged at the coordinator's request; the sheets were rendered
+again after the merge (`target/gallery/after2/{tree-view,table,virtual-list,combo-box,scroll-area}.png`): every fix
+holds with Inter and real Arabic; the RTL rows now show Arabic and the twistie still sits left (V11).
+
+CI: the gate is the merge commit (see the last section's ids).
 
 ## Handoff
 
