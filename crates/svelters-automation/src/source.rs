@@ -139,6 +139,17 @@ pub trait SceneSource {
         let _ = among;
         Err(Error::new("capability.absent", format!("this scene source has no CSS matcher (css `{css}`)")))
     }
+    /// A part this engine does not know (`obj=`): the host answers it among `among` (the previous
+    /// part's matches, or every root's top when it is the first part). Default: refused with
+    /// `capability.absent`, so a source that has no host engine fails loudly.
+    ///
+    /// The nodes it returns are ordinary nodes of this scene (for a thing that has no node of its
+    /// own, the host returns whatever node it shows it by); the parts after it apply to them as to
+    /// any other matches.
+    fn host_select(&self, engine: &str, text: &str, among: &[Self::Node]) -> Result<Vec<Self::Node>, Error> {
+        let _ = (engine, text, among);
+        Err(Error::new("capability.absent", format!("this scene answers no `{engine}=` part")))
+    }
 
     // ---- what the session reads besides the selectors ----
 
@@ -355,5 +366,124 @@ impl<'a> SceneSource for SceneRef<'a> {
             inherited: n.inherited_from(),
             rules: n.matched_rules(),
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::cell::RefCell;
+
+    /// root `main`: 0 > {1 (anchor x) > {3, 4}, 2 (anchor y) > {5}}.
+    struct Fixture {
+        host: bool,
+        seen: RefCell<Vec<Vec<u32>>>,
+    }
+
+    impl Fixture {
+        fn new(host: bool) -> Fixture {
+            Fixture { host, seen: RefCell::new(Vec::new()) }
+        }
+    }
+
+    impl SceneSource for Fixture {
+        type Node = u32;
+        fn roots(&self) -> Vec<SourceRoot<u32>> {
+            vec![SourceRoot { key: Some("main".into()), top: 0, visible: true }]
+        }
+        fn children(&self, n: u32) -> Vec<u32> {
+            match n {
+                0 => vec![1, 2],
+                1 => vec![3, 4],
+                2 => vec![5],
+                _ => vec![],
+            }
+        }
+        fn role(&self, _: u32) -> &'static str {
+            "generic"
+        }
+        fn name(&self, _: u32) -> Cow<'_, str> {
+            Cow::Borrowed("")
+        }
+        fn text(&self, _: u32) -> Cow<'_, str> {
+            Cow::Borrowed("")
+        }
+        fn states(&self, _: u32) -> Vec<&'static str> {
+            vec![]
+        }
+        fn is_visible(&self, _: u32) -> bool {
+            true
+        }
+        fn rect(&self, _: u32) -> Option<Rect> {
+            None
+        }
+        fn anchor(&self, n: u32) -> Option<Cow<'_, str>> {
+            match n {
+                1 => Some(Cow::Borrowed("x")),
+                2 => Some(Cow::Borrowed("y")),
+                _ => None,
+            }
+        }
+        /// `obj=3,5`: those ids, kept when they lie under one of `among`.
+        fn host_select(&self, engine: &str, text: &str, among: &[u32]) -> Result<Vec<u32>, Error> {
+            if !self.host {
+                return Err(Error::new("capability.absent", format!("no `{engine}=`")));
+            }
+            assert_eq!(engine, "obj");
+            self.seen.borrow_mut().push(among.to_vec());
+            let ids: Vec<u32> = text.split(',').map(|t| t.trim().parse().unwrap()).collect();
+            Ok(ids
+                .into_iter()
+                .filter(|id| among.iter().any(|&a| a == *id || self.descendants(a).contains(id)))
+                .collect())
+        }
+    }
+
+    #[test]
+    fn host_engine_answers_among_the_previous_matches() {
+        let f = Fixture::new(true);
+        assert_eq!(query(&f, "anchor=x >> obj=3,5").unwrap(), vec![3]);
+        assert_eq!(f.seen.borrow().last().unwrap(), &vec![1]);
+        // first part: every root's top
+        assert_eq!(query(&f, "obj=3,5").unwrap(), vec![3, 5]);
+        assert_eq!(f.seen.borrow().last().unwrap(), &vec![0]);
+        // the parts after it apply to its result as to any other
+        assert_eq!(query(&f, "obj=3,5 >> nth=-1").unwrap(), vec![5]);
+        assert_eq!(query(&f, "root=main >> obj=4").unwrap(), vec![4]);
+    }
+
+    /// A source that keeps the default refuses `obj=` with `capability.absent`.
+    #[test]
+    fn host_engine_default_is_absent() {
+        struct Bare;
+        impl SceneSource for Bare {
+            type Node = u32;
+            fn roots(&self) -> Vec<SourceRoot<u32>> {
+                vec![SourceRoot { key: None, top: 0, visible: true }]
+            }
+            fn children(&self, _: u32) -> Vec<u32> {
+                vec![]
+            }
+            fn role(&self, _: u32) -> &'static str {
+                "generic"
+            }
+            fn name(&self, _: u32) -> Cow<'_, str> {
+                Cow::Borrowed("")
+            }
+            fn text(&self, _: u32) -> Cow<'_, str> {
+                Cow::Borrowed("")
+            }
+            fn states(&self, _: u32) -> Vec<&'static str> {
+                vec![]
+            }
+            fn is_visible(&self, _: u32) -> bool {
+                true
+            }
+            fn rect(&self, _: u32) -> Option<Rect> {
+                None
+            }
+        }
+        assert_eq!(query(&Bare, "obj=anything").unwrap_err().code, "capability.absent");
+        assert_eq!(query(&Fixture::new(false), "obj=3").unwrap_err().code, "capability.absent");
     }
 }
