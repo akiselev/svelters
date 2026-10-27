@@ -25,11 +25,13 @@ weights, caption wrapping and eliding (button, checkbox, switch, collapsing-head
 | multiline/overflow: lines cut with no scroll bar | the field scrolls itself (`self_scroll`, a compositor offset, no re-record on wheel scrolls) and draws no bar | **recorded, not built**: see Q2. The padding fix makes the cut fall inside the padding box | yes | — |
 
 Looked at beyond the list (label, password, text-edit hover/focus sheets, and again after the font merge):
-- **RTL single-line field** (`text-edit/rtl`, visible now that Arabic draws): the Arabic text starts at the left edge,
-  while a multi-line field aligns it right (its paragraph direction comes from the text). A browser `<input>` without
-  `dir` does the same, so left as is. Recommendation (Q3): give `text-edit` `dir=auto` semantics for both (the first
-  strong character sets the alignment and the AccessKit `TextDirection`, which `field.rs` sets to LTR today).
-Seen in passing, for other lanes: **switch** in hc-dark has an invisible track (only the knob shows) — states lane.
+- **RTL single-line field** (`text-edit/rtl`, visible once Arabic drew): the Arabic text started at the left edge
+  while a multi-line field aligned it right. Coordinator (2026-10-27, Q3): align to the start of the text's direction,
+  as multi-line does. Fixed: `TextGeometry::is_rtl` (skelter-text's paragraph direction) and `TextField::align_x`, which
+  shifts unwrapped RTL text (or placeholder) narrower than the content box to its right edge, in recording and in
+  `to_node` (hit-testing, caret, IME and AccessKit bounds follow) — `text/{shim,geometry,field}.rs`. Seen: x1, dark
+  and light, normal and focus (`target/gallery/after2/te-rtl.png`). The AccessKit runs still say `LeftToRight`
+  (their positions are visual), left for a follow-up.
 
 ## Before/after images (container paths, not committed)
 
@@ -49,7 +51,8 @@ Seen in passing, for other lanes: **switch** in hc-dark has an invisible track (
 
 ## Tests
 
-- Added: `text::field::tests::selected_text_reads_on_the_selection_fill`, `controls::run::tests::a_background_folds_and_inherits`,
+- Added: `text::field::tests::selected_text_reads_on_the_selection_fill`,
+  `text::geometry::tests::right_to_left_text_starts_at_the_right_of_a_single_line_field`, `controls::run::tests::a_background_folds_and_inherits`,
   `paint::parts::tests::the_label_gives_up_a_rows_overflow`, a `bg` case in `controls::rich::tests::a_plain_run_list`.
 - Run: `cargo test -p skelter-widgets --lib -- text:: controls::rich controls::label controls::run controls::button
   controls::checkbox controls::switch controls::radio paint:: host::` → 156 passed (before the new tests);
@@ -71,12 +74,12 @@ Seen in passing, for other lanes: **switch** in hc-dark has an invisible track (
   bars, fade, thumb drag) in `TextEdit`, with the thumb in the fixed part re-recorded when the offset changes (a
   wheel scroll is a core offset today, with no record). Recommendation: do it after the views lane's scroll-bar
   fixes merge, in a text follow-up.
-- **Q3 (RTL fields):** see above; small, inside `text/`, but it changes field behaviour, so it waits for a yes.
+- **Q3 (RTL fields):** answered by the coordinator (align to the text's start) and fixed, see above.
 - **Cross-lane files:** the caption fix touches states-lane files (`controls/{button,checkbox,radio,switch}.rs`,
   `paint/{parts,text,mod}.rs`) in small hunks: the measure's width, the label's paint, and the shared part layout;
   and `controls/common.rs` (controls lane) with one appended function. Merge: keep both sides.
 
 ## Handoff
 
-Done: every row in scope fixed and seen, or recorded with a recommendation (Q1, Q2, Q3). `origin/ci/pb1-gallery`
+Done: every row in scope fixed and seen, or recorded with a recommendation (Q1, Q2; Q3 answered and fixed). `origin/ci/pb1-gallery`
 `cd478f3` merged (no conflicts); the two font rows are fixed by it and re-checked on the new fonts.

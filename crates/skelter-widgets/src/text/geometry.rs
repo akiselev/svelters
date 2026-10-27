@@ -33,6 +33,9 @@ impl TextGeometry for LaidOut {
     fn size(&self) -> Size {
         self.layout.size()
     }
+    fn is_rtl(&self) -> bool {
+        self.layout.is_rtl()
+    }
 
     fn hit_test(&self, p: Point) -> Cursor {
         let c = self.layout.hit_test(p);
@@ -125,5 +128,23 @@ mod tests {
         let mut sink = ListSink::default();
         f.record(&mut sink, &colors);
         assert!(!sink.runs.is_empty());
+    }
+
+    #[test]
+    fn right_to_left_text_starts_at_the_right_of_a_single_line_field() {
+        let mut sys = system();
+        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default() };
+        let content = Rect::new(10.0, 0.0, 310.0, 20.0);
+        let caret_at = |text: &str, byte: usize, lay: &mut SystemLayouter| {
+            let mut f = TextField::new(text, EditorConfig::default(), TextPolicy::of(Platform::Windows));
+            f.focus_in(FocusReason::Pointer);
+            f.editor.set_selection(byte, byte);
+            f.prepare(lay, content, skelter_base::geom::Affine::IDENTITY);
+            f.caret_rect().unwrap()
+        };
+        let ltr = caret_at("Hello", 0, &mut lay);
+        assert!(ltr.min.x < 12.0, "left-to-right text starts at the left: {ltr:?}");
+        let rtl = caret_at("\u{05E9}\u{05DC}\u{05D5}\u{05DD}", 0, &mut lay);
+        assert!(rtl.max.x > 300.0, "right-to-left text starts at the right: {rtl:?}");
     }
 }

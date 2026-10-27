@@ -423,9 +423,23 @@ impl TextField {
         self.scroll = c;
     }
 
+    /// Where the layout starts in the content box: 0, or for unwrapped right-to-left text narrower
+    /// than the box, the room left of it, so the text starts at the right (the paragraph's start, as a
+    /// wrapped field aligns it; `dir=auto`). One point is kept for the caret, as on the left.
+    fn align_x(&self) -> f32 {
+        if self.wrap_width().is_some() {
+            return 0.0;
+        }
+        let g = if self.shown.text.is_empty() { self.placeholder_geom.as_ref() } else { self.geom.as_ref() };
+        match g {
+            Some(g) if g.is_rtl() => (self.content.width() - g.size().w - 1.0).max(0.0),
+            _ => 0.0,
+        }
+    }
+
     /// Layout coordinates → node coordinates.
     fn to_node(&self) -> Vec2 {
-        self.content.min.to_vec() - self.scroll
+        self.content.min.to_vec() + Vec2::new(self.align_x(), 0.0) - self.scroll
     }
 
     /// The document byte under node point `p`.
@@ -502,7 +516,7 @@ impl TextField {
     /// places it in a scrolled space (a self-scrolling kind's content space, where the scroll is a
     /// compositor offset of [`TextField::scroll_offset`] and the scroll layer clips).
     pub fn record_content(&self, list: &mut dyn RecordSink, colors: &FieldColors) {
-        self.record_at(list, colors, self.content.min.to_vec(), None);
+        self.record_at(list, colors, self.content.min.to_vec() + Vec2::new(self.align_x(), 0.0), None);
     }
 
     fn record_at(&self, list: &mut dyn RecordSink, colors: &FieldColors, o: Vec2, clip: Option<Rect>) {
