@@ -231,3 +231,42 @@ fn main() -> std::process::ExitCode {
 
 A host kind's inline `style="width: …"` is refused by the compiler: its style table lists only the built-in kinds. Use
 a class in the story's `<style>` until that changes. The kind's `record` must paint its own box (`cx.draw_box()`).
+
+## The interactive gallery (`skelter-gallery-app`)
+
+The same stories in one window, for a person: browse, compare themes side by side, edit a variant and see it live,
+click a node to inspect it, and copy the CLI line that reproduces a cell for an agent.
+
+```sh
+cargo run -p skelter-gallery-app                    # the first story of gallery/ (found from the working directory up)
+cargo run -p skelter-gallery-app -- button/look     # opens on a story or a variant
+# in a container: under Xvfb (lavapipe draws), or headless as a PNG of the whole window
+WGPU_BACKEND=vulkan xvfb-run -a -s "-screen 0 1600x1000x24" cargo run -p skelter-gallery-app -- label
+cargo run -p skelter-gallery-app -- checkbox/value --shot target/gallery/app.png --size 1500x900 --pick 5 --inspect '#subject'
+```
+
+Flags: `--base-css <file>` (as the CLI's), `--shot <png>` with `--size <w>x<h>`, `--pick <cell index>` and
+`--inspect <selector>` (needs `--pick`). Run `pnpm install` first.
+
+- **Sidebar:** a filter, families → stories → the selected story's variants, `story.toml` errors (one bad file hides
+  only itself), and the registered kinds no story covers ("No story yet").
+- **Canvas:** one row per variant × args combination, one cell per state × theme. Each cell is its own Svelte root in
+  a slot of its own, themed by a class that redeclares that theme's token sheet, so the four themes sit side by side
+  while the gallery's own chrome stays Dark Modern. What a kind reads from the theme *service* rather than its tokens
+  (scheme or density outside tokens) follows the chrome; the CLI renders each theme in its own document. A cell's
+  caption picks it.
+- **Controls:** themes, states, density, zoom (the window's scale: the whole window zooms, as `--zoom` scales a shot),
+  one select per arg key, Inspect, Copy shot command, Copy inspect command.
+- **Source pane:** the picked variant's file in quire. Typing previews at once without saving (the module loader's
+  overlay and the host's in-place update); Ctrl+S (Cmd+S on macOS) or Save writes the file; Revert drops the edits.
+  An edit on disk (an agent's, or `crates/skelter-widgets/src/theme/base.css`) reloads through the host's file
+  watcher. A compile error keeps the last good render, shows `file:line:col` in the cell and over the editor, and
+  marks the line.
+- **Inspect:** with Inspect on, a click in a cell picks the nearest `#anchor` at or above the node (else its kind
+  name) and shows what `skelter-gallery inspect` prints for its nodes (`skelter_gallery::inspect::node_json` on the
+  live cell, so unsaved edits are included; `accesskit` is `null` there), with the matching `inspect` command line.
+- **Hosts:** `skelter_gallery_app::run(Extensions)` takes the same `Extensions` as `cli_main`: the host's story roots,
+  families, kinds (compiled through the same spec fragment), setup hooks (before each cell mounts) and token sets.
+- **Anchors** for tests and automation: `story:<id>`, `variant:<story>/<id>`, `theme:<name>`, `state:<name>`,
+  `density`, `zoom`, `arg:<key>`, `inspect-toggle`, `copy-shot`, `copy-inspect`, `filter`, `source`, `save`, `revert`,
+  `source-errors`, `canvas`, `inspect`, `cell:<i>` (a cell's frame).

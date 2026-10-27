@@ -154,9 +154,16 @@ pub struct Gallery {
     tapped: Rc<RefCell<Vec<JsEvent>>>,
     /// skelter-widgets' `base.css`, read from its source file when there is one (edits show live).
     base: BaseCss,
-    /// `skelter-gallery inspect`'s renderer, made at the first inspect and dropped when a story
-    /// file changes (it caches what it loaded).
-    renderer: Option<skelter_gallery::Renderer>,
+    /// The host's kinds as a compiler spec fragment (a temporary file), when it has any.
+    fragment: Option<PathBuf>,
+}
+
+impl Drop for Gallery {
+    fn drop(&mut self) {
+        if let Some(f) = &self.fragment {
+            let _ = std::fs::remove_file(f);
+        }
+    }
 }
 
 /// The stock kinds' sheet: its source file, the text in use, and the theme sheet carrying it.
@@ -262,7 +269,7 @@ impl Gallery {
     /// The gallery over `doc` (built on [`registry`]), its window's root built and the stories found.
     pub fn new(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, fonts: Arc<skelter_text::FontStore>, mut ext: Extensions) -> Gallery {
         let roots = story_roots(&ext);
-        // the inspect renderer reads the same roots
+        // host hooks and the CLI commands it builds name the same roots
         ext.story_roots = roots.clone();
         let (catalog, load_errors) = discover(&roots, &ext.families);
         let mut coverage_missing = catalog.coverage(doc.borrow().registry()).missing;
@@ -308,8 +315,17 @@ impl Gallery {
             watch: false,
             tapped: Rc::default(),
             base: BaseCss { path: base_path, ..BaseCss::default() },
-            renderer: None,
+            fragment: None,
         };
+        if !g.ext.register_kinds.is_empty() {
+            let dir = std::env::temp_dir().join(format!("skelter-gallery-app-{}", std::process::id()));
+            static N: std::sync::atomic::AtomicUsize = std::sync::atomic::AtomicUsize::new(0);
+            let f = dir.join(format!("kinds-{}.json", N.fetch_add(1, std::sync::atomic::Ordering::Relaxed)));
+            match std::fs::create_dir_all(&dir).and_then(|_| std::fs::write(&f, svelters_skelter::spec::fragment_text(&g.kinds))) {
+                Ok(()) => g.fragment = Some(f),
+                Err(e) => g.load_errors.push(format!("{}: {e}", f.display())),
+            }
+        }
         g.load_base_css();
         g.wire();
         g.install_cell_sheet();
@@ -454,7 +470,6 @@ impl Gallery {
         }
         let before = self.base.sheet;
         self.load_base_css();
-        self.renderer = None;
         self.base.sheet != before
     }
 
@@ -680,7 +695,8 @@ impl Gallery {
         }
         self.generation += 1;
         let variants: Vec<LiveVariant> = story.variants.iter().enumerate().map(|(i, v)| LiveVariant { export: format!("V{i}"), file: story.path(&v.file) }).collect();
-        match LiveStory::load(self.doc.clone(), self.kinds.clone(), variants, self.generation) {
+        let fragments: Vec<PathBuf> = self.fragment.iter().cloned().collect();
+        match LiveStory::load(self.doc.clone(), self.kinds.clone(), &fragments, variants, self.generation) {
             Ok(l) => {
                 let tapped = self.tapped.clone();
                 l.backend().add_event_tap(move |_doc, _input, events| tapped.borrow_mut().extend_from_slice(events));
@@ -773,8 +789,10 @@ impl Gallery {
         }
         self.cells = views;
         if let Some(l) = &mut self.live {
-            // TODO(GAL3 request 1): run `ext.setup` per cell once skelter-gallery can build a SetupCx.
-            let _ = &story;
+            // the host's per-mount state (cadatomic's grid sources, its pick board), as the CLI runs it
+            for v in &self.cells {
+                self.ext.run_setup(&v.cell, &story, l.backend());
+            }
             l.mount(mounts);
             l.logic();
         }
@@ -1035,7 +1053,7 @@ impl Gallery {
         };
         let json = match &self.inspect_fn {
             Some(f) => Some(f(&self.doc.borrow(), frame, node, &cell, &selector)),
-            None => Some(self.inspect_saved(&cell, &selector)),
+            None => Some(self.inspect_live(i, &selector)),
         };
         self.inspected = Inspected { command: Some(inspect_command(&cell, &selector)), cell: Some(cell), selector: Some(selector), json };
         self.rebuild_inspect();
@@ -1046,37 +1064,24 @@ impl Gallery {
     pub fn inspect_cell(&mut self, i: usize, selector: &str) -> Result<(), String> {
         let cell = self.cells.get(i).map(|c| c.cell.clone()).ok_or_else(|| format!("no cell {i} (there are {})", self.cells.len()))?;
         self.pick_cell(i);
-        let json = self.inspect_saved(&cell, selector);
+        let json = self.inspect_live(i, selector);
         self.inspected = Inspected { command: Some(inspect_command(&cell, selector)), cell: Some(cell), selector: Some(selector.to_string()), json: Some(json) };
         self.rebuild_inspect();
         Ok(())
     }
 
-    /// What `skelter-gallery inspect` prints for `cell` and `selector`: its own renderer mounts the
-    /// cell headlessly from the saved files and describes the nodes the selector picks. An unsaved
-    /// buffer is not in it (the pane says so).
-    pub fn inspect_saved(&mut self, cell: &Cell, selector: &str) -> serde_json::Value {
-        if self.renderer.is_none() {
-            match skelter_gallery::Renderer::new(&self.ext) {
-                Ok(mut r) => {
-                    if let Err(e) = r.set_base_css(self.base.text.clone()) {
-                        return serde_json::json!({ "error": e.to_string() });
-                    }
-                    self.renderer = Some(r);
-                }
-                Err(e) => return serde_json::json!({ "error": e.to_string() }),
-            }
+    /// What `skelter-gallery inspect` prints for the nodes `selector` picks in the live cell `i`
+    /// (its `nodes` built by skelter-gallery's own `inspect::node_json`), unsaved edits included.
+    /// `accesskit` is `null`: the app publishes no AccessKit snapshot per cell (the CLI does).
+    pub fn inspect_live(&self, i: usize, selector: &str) -> serde_json::Value {
+        let (Some(c), Some(l)) = (self.cells.get(i), &self.live) else { return serde_json::json!({ "error": "no such cell" }) };
+        let b = l.backend();
+        let window = self.doc.borrow().window_of(c.frame);
+        let nodes: Vec<serde_json::Value> = skelter_gallery::inspect::select_in(b, c.frame, selector).into_iter().filter_map(|h| skelter_gallery::inspect::node_json(b, window, h, None)).collect();
+        if nodes.is_empty() {
+            return serde_json::json!({ "error": format!("no node matches {selector:?} in {} (a selector is #anchor or a kind name)", c.cell.label()) });
         }
-        let r = self.renderer.as_mut().expect("made above");
-        match r.inspect(cell, selector) {
-            Ok(mut v) => {
-                if self.unsaved() {
-                    v["note"] = serde_json::Value::String("the source pane has unsaved edits: this is the saved file".into());
-                }
-                v
-            }
-            Err(e) => serde_json::json!({ "error": e.to_string() }),
-        }
+        serde_json::json!({ "cell": c.cell, "label": c.cell.label(), "selector": selector, "source": "live", "nodes": nodes })
     }
 
     // ---- the source pane ----
@@ -1108,8 +1113,6 @@ impl Gallery {
     }
 
     fn after_change(&mut self, file: &Path) {
-        // the inspect renderer caches the files it loaded
-        self.renderer = None;
         if self.live.as_ref().is_some_and(|l| l.needs_reload(file)) {
             // a variant that did not compile at load compiles now: load the story again
             if let Some(s) = self.current_story().cloned() {

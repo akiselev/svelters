@@ -260,3 +260,18 @@ fn an_edit_to_base_css_restyles_the_cells() {
     h.run();
     assert_eq!(probe(&h).as_deref(), Some("7"));
 }
+
+#[test]
+fn a_hosts_setup_hooks_run_before_each_cell_mounts() {
+    let dir = fixture("setup");
+    let seen: std::rc::Rc<std::cell::RefCell<Vec<String>>> = Default::default();
+    let s2 = seen.clone();
+    let ext = Extensions::new().story_root(&dir).on_setup(move |cx| s2.borrow_mut().push(cx.cell.label()));
+    let fonts = skelter_text::FontStore::new(skelter_text::FontConfig::testing());
+    let doc = skelter_gallery_app::app::document(ext, fonts).unwrap();
+    let mut h = Harness::<GalleryDocument>::builder().with_size(skelter_base::geom::Size::new(1500.0, 950.0)).build(doc);
+    h.run();
+    h.get_by_author_id("story:note").click();
+    h.run();
+    assert_eq!(seen.borrow().as_slice(), ["plain normal dark-modern", "plain normal light-modern", "plain normal hc-dark", "plain normal hc-light"]);
+}

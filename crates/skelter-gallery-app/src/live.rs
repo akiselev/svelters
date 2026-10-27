@@ -108,8 +108,9 @@ pub struct LiveStory {
 
 impl LiveStory {
     /// Loads `variants` (files under the gallery root that holds `package.json`) into a fresh embed
-    /// over `doc`. A variant that does not compile is left out and reported; the rest load.
-    pub fn load(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, variants: Vec<LiveVariant>, generation: u64) -> Result<LiveStory, String> {
+    /// over `doc`, the host's kinds
+    /// compiled through `fragments` (spec fragments). A variant that does not compile is left out and reported; the rest load.
+    pub fn load(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, fragments: &[PathBuf], variants: Vec<LiveVariant>, generation: u64) -> Result<LiveStory, String> {
         let first = variants.first().ok_or("the story has no variants")?.file.clone();
         let backend = SkelterBackend::shared(kinds, doc)?;
         // as skelter_gallery's renderer: the same locale, so formatted text matches the CLI's shots
@@ -119,6 +120,8 @@ impl LiveStory {
         cfg.backend = "skelter".into();
         cfg.dev = true;
         cfg.hmr = true;
+        // a host's kinds reach the compiler as spec fragments, as skelter_gallery's renderer does
+        cfg.spec_fragments.extend(fragments.iter().cloned());
         let root = cfg.root.clone();
         // one provider for the story's lifetime: its overlay holds the unsaved buffers
         let mut errors = Vec::new();

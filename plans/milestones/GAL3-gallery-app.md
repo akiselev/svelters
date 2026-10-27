@@ -3,7 +3,7 @@
 Lane `app` of svelters batch gallery-b1 (`plans/cloud/gallery-b1/LANE-app.md`), branch `ci/gb1-app`, base master
 `01e8f677` plus the batch brief `34ed54b9`. Merges `origin/ci/gb1-core` (GAL1) as its API landed; never edits its files.
 
-**Status:** items 1–4 done, item 5 (docs) waits for core's `docs/skelter/gallery.md` (see Handoff). CI: see "CI".
+**Status:** items 1–5 done; core's R1 and R2 landed and are used. CI: see "CI".
 
 ## Scope
 
@@ -48,14 +48,18 @@ Lane `app` of svelters batch gallery-b1 (`plans/cloud/gallery-b1/LANE-app.md`), 
    loop; the frame reinstalls the sheet (`Gallery::poll_base_css`).
 8. **Zoom is the window's scale** (skelter's UI zoom: points × zoom = device pixels), chrome included, as
    `skelter-gallery --zoom` scales a shot. Per-subtree zoom does not exist in skelter.
-9. **Inspect shows `skelter-gallery inspect`'s own JSON**: a click in inspect mode hit-tests the cell, picks the nearest
-   anchor at or above the node (`#subject`), else the kind name, and runs core's `Renderer::inspect(cell, selector)` on a
-   renderer the app keeps (dropped when a story file or `base.css` changes). It reads the saved files; with unsaved
-   edits the JSON carries a `note` saying so. "Copy shot command" / "Copy inspect command" put the matching CLI line on
-   the clipboard (and show it in the inspect pane).
+9. **Inspect shows `skelter-gallery inspect`'s JSON for the live cell**: a click in inspect mode hit-tests the cell,
+   picks the nearest anchor at or above the node (`#subject`), else the kind name, and builds the JSON with core's
+   `inspect::select_in` + `inspect::node_json` on the cell's backend (unsaved edits included). `accesskit` is `null`:
+   the app keeps no AccessKit snapshot per cell (the CLI's harness does). "Copy shot command" / "Copy inspect command"
+   put the matching CLI line on the clipboard (and show it in the inspect pane).
 10. **One bad `story.toml` hides only itself in the app** (`gallery::discover`): `skelter_gallery::discover` refuses
     the whole catalog, so the app falls back to core's `parse_story` per manifest and lists the errors in the sidebar.
-    (Core's `Renderer::new` still refuses the whole catalog; inspect then reports that error. Q1c.)
+    (Core's `Renderer::new` still refuses the whole catalog; the app no longer uses a renderer.)
+11. **Host extensions**: kinds through `Kinds::with_app` and, for the compiler, the same spec fragment core writes
+    (`svelters_skelter::spec::fragment_text`, a temp file removed on drop); setup hooks through
+    `Extensions::run_setup` before each cell mounts; host token sets as extra theme checkboxes (off by default: the
+    brief's default is the four built-ins).
 
 ## What landed
 
@@ -86,7 +90,7 @@ pub struct GalleryDocument { pub gallery: Gallery }                       // ske
 impl Gallery {
     fn select(&mut self, story: &str, variant: Option<&str>); fn cells(&self) -> impl Iterator<Item = (&Cell, NodeId)>;
     fn pick_cell(&mut self, i: usize); fn inspect_cell(&mut self, i: usize, selector: &str) -> Result<(), String>;
-    fn inspect_saved(&mut self, cell: &Cell, selector: &str) -> serde_json::Value; fn set_inspector(&mut self, f: InspectFn);
+    fn inspect_live(&self, i: usize, selector: &str) -> serde_json::Value; fn set_inspector(&mut self, f: InspectFn);
     fn save(&mut self); fn revert(&mut self); fn unsaved(&self) -> bool; fn source(&self) -> Option<(PathBuf, String)>;
     fn set_base_css_path(&mut self, p: Option<PathBuf>); fn poll_base_css(&mut self) -> bool;
     fn live(&self) -> Option<&LiveStory>; fn catalog(&self) -> &Catalog; fn load_errors(&self) -> &[String];
@@ -110,7 +114,7 @@ workspace for the packages its stories import).
 
 ## Tests
 
-`cargo test -p skelter-gallery-app --test app` (8, headless `Harness`, fixture gallery `tests/fixtures/gallery` copied
+`cargo test -p skelter-gallery-app` (10: `tests/app.rs` 9, `tests/host.rs` 1; headless `Harness`, fixture gallery `tests/fixtures/gallery` copied
 to `target/gallery-app-tests/<test>/` because the tests edit and save it; no symlinks, Cmd on macOS):
 
 | Test | Checks |
@@ -120,11 +124,13 @@ to `target/gallery-app-tests/<test>/` because the tests edit and save it; no sym
 | `a_preview_edit_changes_the_cell_without_touching_disk` | Ctrl/Cmd+A and typing in quire changes the cell; the file is unchanged; Ctrl/Cmd+S writes it |
 | `a_compile_error_keeps_the_last_good_render_and_shows_where` | the cell keeps the last good text; one error at `plain.svelte:1:<col>` shown over the source pane; fixing it applies |
 | `a_file_changed_on_disk_reloads_through_the_host` | a disk edit applied through the host (`apply_changes`, what the watcher calls) updates the cell and the source pane |
-| `picking_a_cell_readies_its_shot_command_and_inspect_picks_the_clicked_node` | the copied `shot` line; inspect mode: a click on the cell's button returns core's inspect JSON (`#subject`, the cell, forced `hover`) and the `inspect` line |
+| `picking_a_cell_readies_its_shot_command_and_inspect_picks_the_clicked_node` | the copied `shot` line; inspect mode: a click on the cell's button gives core's node JSON (`#subject`, the cell, forced `hover`) and the `inspect` line |
 | `the_controls_narrow_the_matrix` | theme and state toggles, a variant from the sidebar, the filter |
 | `an_edit_to_base_css_restyles_the_cells` | a changed `base.css` file is reinstalled and reaches a cell's label |
+| `a_hosts_setup_hooks_run_before_each_cell_mounts` | `Extensions::on_setup` runs once per cell, in cell order |
+| `host::a_hosts_kind_family_and_theme_work_in_the_app` | a host kind compiles (spec fragment) and mounts in every cell, its family lists, its token set is a theme toggle that reaches the cell, inspect describes the host node |
 
-Last local run: 8 passed (after the last code change, `ecb7ce8e`). Also run by hand: the windowed app under Xvfb on the
+Last local run: 10 passed, after the last code change. Also run by hand: the windowed app under Xvfb on the
 stories lane's gallery (31 stories), and a disk edit of `stories/controls/label/plain.svelte` while it ran: every cell
 and the source pane showed the edit within 4 s (the host's watcher). Not run locally: anything outside this crate.
 
@@ -144,29 +150,20 @@ and the source pane showed the edit within 4 s (the host's watcher). Not run loc
 
 ## Requests
 
-To **core (GAL1)** (sent to the core session too):
-- **R1** `SetupCx` is `#[non_exhaustive]` with no public constructor, so the app cannot run `Extensions::setup` hooks
-  before its own mounts (`gallery.rs`, the `TODO(GAL3 request 1)` in `rebuild_canvas`). Smallest change:
-  `impl<'a> SetupCx<'a> { pub fn new(cell: &'a Cell, story: &'a Story, backend: &'a SkelterBackend) -> Self }`. Until
-  then a host story that needs setup state renders without it in the app (the CLI runs the hooks).
-- **R2** (nice to have) the inspect JSON for a node of a document the caller owns
-  (`inspect_node(doc, frame, node, cell, selector)`, which `Renderer::inspect` would call): the app could then describe
-  the live cell, unsaved edits included, instead of a headless remount of the saved file.
-- **R3** `Renderer::new` refuses the whole catalog when one story.toml is bad (`discover_with` → `Error::Stories`). A
-  `Renderer::with_catalog(ext, catalog)` (or keeping the stories that parse) would let the app inspect while one story
-  is broken.
+To **core (GAL1)**: R1 (`SetupCx::new` / `Extensions::run_setup`) and R2 (`inspect::node_json`, `select_in`) landed
+in `5d69749` and are used. Open, nice to have:
+- **R3** `Renderer::new` refuses the whole catalog when one story.toml is bad. The app no longer needs a renderer, so
+  this only matters to the CLI's own users; recommendation: leave it (`check` wants the strict answer).
 
 To **stories (GAL2)**: none. (Its first push had `views/tooltip` with empty `kinds`, which core's format refuses;
 fixed in `29ebdbf5`.)
 
 ## Questions (with a recommendation each)
 
-- **Q1** The app reads the saved file for inspect (decision 9). Recommendation: keep until R2 lands; then inspect the
-  live node.
-- **Q2** Two `quire-text` copies (skelter-widgets at `35b5063a`, skelter_quire at `ed0665b`). Recommendation: a
+- **Q1** Two `quire-text` copies (skelter-widgets at `35b5063a`, skelter_quire at `ed0665b`). Recommendation: a
   maintenance lane advances skelter-widgets' pin to `ed0665b` (cadatomic already patches it to that rev); out of this
   batch's scope ("don't edit existing crates").
-- **Q3** Theme fidelity in side-by-side cells is token-level only (decision 5). Recommendation: accept; the CLI's
+- **Q2** Theme fidelity in side-by-side cells is token-level only (decision 5). Recommendation: accept; the CLI's
   per-document render is the reference for scheme/density-dependent painting.
 
 ## Styling notes for the polish lanes (seen in the app; reproduce with the CLI)
@@ -178,7 +175,6 @@ fixed in `29ebdbf5`.)
 
 ## Handoff
 
-- Docs (item 5): core has not pushed `docs/skelter/gallery.md` yet. When it lands: merge `origin/ci/gb1-core`, add a
-  section "The interactive gallery" with "Running it" above (both commands, `--shot`, Xvfb) and the anchors list.
-- R1: when core adds `SetupCx::new`, replace the TODO in `Gallery::rebuild_canvas` with a loop over `self.ext.setup`
-  per cell before `l.mount(mounts)`.
+Nothing open in the lane. Next steps someone may take: an AccessKit snapshot per cell for inspect's `accesskit`
+(the app's window publishes one tree; per-cell subtrees would need the harness's `A11yTree` over the app's document),
+and Svelte syntax colouring in the source pane (quire-syntax has no Svelte grammar yet).
