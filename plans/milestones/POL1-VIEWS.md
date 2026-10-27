@@ -81,7 +81,10 @@ path and are covered by its cells, not seen on a menu. See Q4.
 again after the merge (`target/gallery/after2/{tree-view,table,virtual-list,combo-box,scroll-area}.png`): every fix
 holds with Inter and real Arabic; the RTL rows now show Arabic and the twistie still sits left (V11).
 
-CI: the gate is the merge commit (see the last section's ids).
+CI on `c2f4f90` (the merge `76ccf4c` plus this record; the last code sha), all six workflows green: js 40586311442,
+linux-gtk 40586311749, linux-qt 40586311464, macos-appkit 40586311642, skelter 40586311593, windows-winui
+40586311443. No pixel snapshot test moved, so none was re-blessed. Later edits to this record are docs only (CI not
+rerun for them).
 
 ## Handoff
 
