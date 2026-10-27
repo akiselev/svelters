@@ -179,7 +179,7 @@ struct BaseCss {
 /// skelter-widgets' `base.css` source when the gallery runs inside the svelters checkout (as
 /// `skelter-gallery` finds it): edits to it show without a rebuild.
 pub fn base_css_source(roots: &[PathBuf]) -> Option<PathBuf> {
-    roots.iter().filter_map(|r| r.canonicalize().ok()).find_map(|r| r.ancestors().map(|d| d.join("crates/skelter-widgets/src/theme/base.css")).find(|p| p.is_file()))
+    roots.iter().filter_map(|r| skelter_gallery::canonicalize(r).ok()).find_map(|r| r.ancestors().map(|d| d.join("crates/skelter-widgets/src/theme/base.css")).find(|p| p.is_file()))
 }
 
 fn stamp(p: &Path) -> Option<(std::time::SystemTime, u64)> {
@@ -221,7 +221,7 @@ pub fn discover(roots: &[PathBuf], families: &[String]) -> (Catalog, Vec<String>
         Ok(c) => (c, Vec::new()),
         Err(errs) => {
             let mut stories = Vec::new();
-            for root in roots.iter().filter_map(|r| r.canonicalize().ok()) {
+            for root in roots.iter().filter_map(|r| skelter_gallery::canonicalize(r).ok()) {
                 let mut manifests: Vec<PathBuf> = std::fs::read_dir(root.join("stories"))
                     .into_iter()
                     .flatten()
@@ -239,7 +239,7 @@ pub fn discover(roots: &[PathBuf], families: &[String]) -> (Catalog, Vec<String>
             }
             let shown = |e: &skelter_gallery::StoryError| {
                 let mut t = e.to_string();
-                for r in roots.iter().filter_map(|r| r.canonicalize().ok()) {
+                for r in roots.iter().filter_map(|r| skelter_gallery::canonicalize(r).ok()) {
                     t = t.replace(&format!("{}/", r.display()), "");
                 }
                 t
@@ -259,8 +259,8 @@ pub fn story_roots(ext: &Extensions) -> Vec<PathBuf> {
     let found = here.as_deref().and_then(|d| d.ancestors().map(|a| a.join("gallery")).find(|g| g.join("package.json").is_file()));
     let fallback = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../gallery");
     match found {
-        Some(g) => vec![g],
-        None if fallback.join("package.json").is_file() => vec![fallback.canonicalize().unwrap_or(fallback)],
+        Some(g) => vec![skelter_gallery::canonicalize(&g).unwrap_or(g)],
+        None if fallback.join("package.json").is_file() => vec![skelter_gallery::canonicalize(&fallback).unwrap_or(fallback)],
         None => Vec::new(),
     }
 }

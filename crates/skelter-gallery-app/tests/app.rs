@@ -14,7 +14,7 @@ fn fixture(name: &str) -> PathBuf {
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/gallery-app-tests").join(name);
     let _ = std::fs::remove_dir_all(&dir);
     copy(&src, &dir);
-    dir.canonicalize().unwrap()
+    skelter_gallery::canonicalize(&dir).unwrap()
 }
 
 fn copy(from: &Path, to: &Path) {
