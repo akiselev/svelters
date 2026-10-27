@@ -1,0 +1,17 @@
+id = "button"
+title = "Button"
+family = "controls"
+kinds = ["button"]
+size = [160, 48]
+notes = "The fixture's button: a size matrix and the default states."
+
+[[variant]]
+id = "primary"
+title = "Primary"
+file = "primary.svelte"
+args = { size = ["small", "large"], tone = ["plain", "accent"] }
+
+[[variant]]
+id = "plain"
+title = "Plain, no disabled prop"
+file = "plain.svelte"
