@@ -251,7 +251,10 @@ fn main() -> std::process::ExitCode {
 - **Setup hooks** run before every mount. They get the cell, its story and the backend.
 - **Themes:** a host theme is named on the command line like the four built-ins. It is Dark Modern with the host's
   tokens as overrides.
-- **Library use:** `Renderer::new(&ext)`, then `shot`, `sheet`, `inspect`, `check` and `mount` on it. `Renderer::catalog`
+- **Library use:** `Renderer::new(&ext)`, then `shot`, `sheet`, `inspect`, `check` and `mount` on it.
+  `Renderer::reload(&changed_paths)` takes edits on disk into account without a new renderer: a `story.toml` re-reads
+  the stories, an image is registered again, a variant that failed to load is retried, and a change in a loaded
+  variant's module graph replaces the JS runtime (same document, window and GPU device; it takes well under a second). `Renderer::catalog`
   lists the stories, and `discover`/`Matrix::new` work without a renderer.
 
 A host kind's inline `style="width: …"` is refused by the compiler: its style table lists only the built-in kinds. Use

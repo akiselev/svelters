@@ -68,7 +68,7 @@ fn flat(p: [u8; 4]) -> [u8; 4] {
 pub fn diff(before: &Image, after: &Image) -> Diff {
     let (w, h) = (before.width.max(after.width), before.height.max(after.height));
     let mut out = Image { width: GAP * 4 + w * 3, height: GAP * 2 + h, rgba: GROUND.repeat(((GAP * 4 + w * 3) * (GAP * 2 + h)) as usize) };
-    let mut put = |out: &mut Image, x: u32, y: u32, c: [u8; 4]| {
+    let put = |out: &mut Image, x: u32, y: u32, c: [u8; 4]| {
         let i = ((y * out.width + x) * 4) as usize;
         out.rgba[i..i + 4].copy_from_slice(&c);
     };
