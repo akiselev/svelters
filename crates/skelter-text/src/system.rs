@@ -56,13 +56,6 @@ const DEFAULT_TAB_SIZE: f32 = 8.0;
 /// Placed layouts kept per shaped paragraph.
 const PLACED_PER_ENTRY: usize = 3;
 
-#[cfg(target_os = "windows")]
-const SYMBOL_CHAIN: &[&str] = &["Segoe UI Symbol", "Segoe UI Emoji", "Cambria Math"];
-#[cfg(target_os = "macos")]
-const SYMBOL_CHAIN: &[&str] = &["Apple Symbols", "Apple Color Emoji", "STIX Two Math"];
-#[cfg(not(any(target_os = "windows", target_os = "macos")))]
-const SYMBOL_CHAIN: &[&str] = &["Noto Sans Symbols 2", "Noto Color Emoji", "Noto Sans Math"];
-
 #[derive(Clone, Copy, PartialEq, Debug)]
 struct PlacedKey {
     width: Option<u32>,
@@ -105,7 +98,7 @@ pub struct TextSystem {
     lcx: LayoutContext<u32>,
     shaped: HashMap<u64, Shaped>,
     aux: HashMap<u64, Arc<Aux>>,
-    symbols: HashMap<char, Option<&'static str>>,
+    symbols: HashMap<char, Option<Arc<str>>>,
     font_generation: u64,
     generation: u64,
     bytes: usize,
@@ -276,14 +269,16 @@ impl TextSystem {
     }
 
     /// Families of the symbol chain to append for the Common-script symbols in `text`.
-    fn symbol_families(&mut self, text: &str) -> Vec<&'static str> {
-        let mut out: Vec<&'static str> = Vec::new();
+    fn symbol_families(&mut self, text: &str) -> Vec<Arc<str>> {
+        let mut out: Vec<Arc<str>> = Vec::new();
+        let mut chain: Option<Vec<Arc<str>>> = None;
         for ch in text.chars().filter(|c| is_common_symbol(*c)) {
             let fonts = &self.fonts;
-            let found = *self
+            let found = self
                 .symbols
                 .entry(ch)
-                .or_insert_with(|| SYMBOL_CHAIN.iter().copied().find(|f| fonts.family_has_char(f, ch)));
+                .or_insert_with(|| chain.get_or_insert_with(|| fonts.symbol_chain()).iter().find(|f| fonts.family_has_char(f, ch)).cloned())
+                .clone();
             if let Some(f) = found
                 && !out.contains(&f) {
                     out.push(f);
@@ -351,7 +346,7 @@ fn push_style(
     brush: u32,
     range: Option<Range<usize>>,
     default_family: &str,
-    extra: &[&str],
+    extra: &[Arc<str>],
 ) {
     let base = if s.family.trim().is_empty() { default_family } else { s.family.as_str() };
     let family = if extra.is_empty() {

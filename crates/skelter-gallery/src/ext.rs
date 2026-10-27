@@ -31,6 +31,8 @@ pub struct Extensions {
     pub themes: Vec<(String, TokenMap)>,
     /// Families a host's stories may use on top of [`crate::FAMILIES`].
     pub families: Vec<String>,
+    /// The fonts cells draw with ([`crate::fonts::FontSet::Bundled`] unless `--system-fonts`).
+    pub fonts: crate::fonts::FontSet,
 }
 
 impl Extensions {
@@ -60,6 +62,12 @@ impl Extensions {
 
     pub fn family(mut self, name: impl Into<String>) -> Extensions {
         self.families.push(name.into());
+        self
+    }
+
+    /// The fonts cells draw with.
+    pub fn fonts(mut self, set: crate::fonts::FontSet) -> Extensions {
+        self.fonts = set;
         self
     }
 
