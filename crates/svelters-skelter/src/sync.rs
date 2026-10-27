@@ -16,7 +16,6 @@ use crate::value::{self, PHASE_BUBBLE, PHASE_CAPTURE, PHASE_TARGET};
 use skelter_core::{Document, JsEvent, Outcome, Phase};
 use std::cell::{Cell, Ref, RefMut};
 use std::ops::{Deref, DerefMut};
-use std::rc::Rc;
 use svelters_abi::*;
 
 /// `call_sync`'s answer bits for a propagating event (svelters-egui's `events.rs`).
@@ -116,16 +115,9 @@ impl SkelterBackend {
         DocMut::Lent(unsafe { &mut *p }, n)
     }
 
-    pub(crate) fn install_sync_delivery(&self) {
-        let weak = Rc::downgrade(&self.0);
-        self.doc_mut().set_sync_delivery(Box::new(move |doc: &mut Document, ev: &JsEvent| match weak.upgrade() {
-            Some(inner) => SkelterBackend(inner).deliver_lent(doc, ev),
-            None => Outcome::default(),
-        }));
-    }
-
-    /// What skelter-core's dispatch calls for a cancelable event: `doc` is lent for the call.
-    fn deliver_lent(&self, doc: &mut Document, ev: &JsEvent) -> Outcome {
+    /// What skelter-core's dispatch calls for a cancelable event: `doc` is lent for the call (by
+    /// the document's router, `route.rs`, which picks the backends that own the path's nodes).
+    pub(crate) fn deliver_lent(&self, doc: &mut Document, ev: &JsEvent) -> Outcome {
         if !self.0.taps.borrow().is_empty() {
             // the event taps see the events delivered at event time too (A2)
             self.0.tapped.borrow_mut().push(ev.clone());

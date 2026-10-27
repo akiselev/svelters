@@ -28,6 +28,7 @@ pub mod dump;
 pub mod embed;
 pub mod kinds;
 pub mod motion;
+mod route;
 pub mod spec;
 pub mod style;
 pub mod surface;

@@ -51,7 +51,7 @@ impl Output {
         self.events.is_empty() && self.changed.is_empty()
     }
 
-    fn append(&mut self, o: Output) {
+    pub(crate) fn append(&mut self, o: Output) {
         self.events.extend(o.events);
         self.changed.extend(o.changed);
         self.revision = self.revision.max(o.revision);
@@ -75,7 +75,8 @@ impl SkelterBackend {
     pub fn dispatch(&self, ev: &InputEnvelope) -> (Dispatched, Delivered) {
         let d = self.doc_mut().dispatch(ev);
         self.run_taps(ev, &d.events);
-        let mut out = Output { events: d.events.clone(), changed: Vec::new(), revision: Some(d.revision) };
+        // SV82: another backend's listeners on the path get their part at their next pump
+        let mut out = self.route(Output { events: d.events.clone(), changed: Vec::new(), revision: Some(d.revision) });
         out.append(self.collect());
         (d, self.deliver(out))
     }
@@ -83,20 +84,29 @@ impl SkelterBackend {
     /// Queues native output produced outside the tree (an embedder's own event, a test's) for the
     /// next [`SkelterBackend::pump`].
     pub fn queue(&self, out: Output) {
-        self.0.pending.borrow_mut().append(out);
+        let mine = self.route(out);
+        self.0.pending.borrow_mut().append(mine);
     }
 
-    /// Everything the tree and the queue hold for JS, taken.
+    /// Everything the tree and the queue hold for JS, taken. The tree's output is shared with the
+    /// other backends over the document by owner (SV82): theirs waits in their queues.
     fn collect(&self) -> Output {
-        let mut out = std::mem::take(&mut *self.0.pending.borrow_mut());
-        let mut doc = self.doc_mut();
-        out.events.extend(doc.take_events());
-        for c in doc.drain_changes() {
-            if let Change::Prop { node, prop, native: true, revision } = c {
-                out.changed.push((node, prop));
-                out.revision = out.revision.max(Some(revision));
+        let mut tree = Output::default();
+        {
+            let mut doc = self.doc_mut();
+            tree.events.extend(doc.take_events());
+            for c in doc.drain_changes() {
+                if let Change::Prop { node, prop, native: true, revision } = c {
+                    tree.changed.push((node, prop));
+                    tree.revision = tree.revision.max(Some(revision));
+                }
             }
         }
+        let tree = self.route(tree);
+        let mut out = std::mem::take(&mut *self.0.pending.borrow_mut());
+        out.events.extend(tree.events);
+        out.changed.extend(tree.changed);
+        out.revision = out.revision.max(tree.revision);
         out
     }
 
