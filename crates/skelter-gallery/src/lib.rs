@@ -29,7 +29,7 @@ pub mod sheet;
 pub use catalog::{Catalog, Coverage, StoryError, discover, discover_with};
 pub use ext::{Extensions, RegisterKinds, SetupCx, SetupHook};
 pub use matrix::{Axes, Matrix};
-pub use model::{Cell, FAMILIES, State, Story, StoryId, Theme, Variant, VariantId};
+pub use model::{canonicalize, Cell, FAMILIES, State, Story, StoryId, Theme, Variant, VariantId};
 pub use render::{Error, Renderer, Shot, png, save_png};
 pub use cli::cli_main;
 pub use sheet::{Sheet, SheetCell, SheetLayout};
