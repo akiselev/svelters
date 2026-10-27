@@ -1,7 +1,7 @@
 //! The platform handler and [`run`]: one window with the gallery, on skelter's app runner.
 
 use crate::document::GalleryDocument;
-use crate::gallery::{Gallery, registry};
+use crate::gallery::{Gallery, kinds};
 use skelter::seams::{CompositorApi, DocumentApi};
 use skelter::{App, AppConfig, SpawnCompositor};
 use skelter_base::event::{InputEnvelope, WindowEvent};
@@ -18,12 +18,12 @@ use std::time::Instant;
 
 /// The gallery's document, its stories found and its chrome built, over `fonts`.
 pub fn document(ext: Extensions, fonts: Arc<skelter_text::FontStore>) -> Result<GalleryDocument, String> {
-    let reg = registry(&ext)?;
-    let mut doc = skelter_core::Document::new(Arc::new(reg), Box::new(skelter_text::TextSystem::new(fonts.clone())));
+    let kinds = kinds(&ext)?;
+    let mut doc = skelter_core::Document::new(kinds.registry().clone(), Box::new(skelter_text::TextSystem::new(fonts.clone())));
     let policy = skelter_widgets::host::os_policy();
     let chrome = crate::theme::builtin(crate::theme::CHROME, skelter_widgets::theme::Density::Default).expect("the chrome theme");
     skelter_widgets::host::install(&mut doc, skelter_text::TextSystem::new(fonts.clone()), policy, chrome);
-    let gallery = Gallery::new(Rc::new(RefCell::new(doc)), fonts, ext);
+    let gallery = Gallery::new(Rc::new(RefCell::new(doc)), kinds, fonts, ext);
     Ok(GalleryDocument::new(gallery))
 }
 

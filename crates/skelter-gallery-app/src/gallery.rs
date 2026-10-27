@@ -16,7 +16,7 @@ use crate::ui::{Ui, w};
 use quire_core::EditorConfig;
 use skelter_base::geom::Point;
 use skelter_base::ids::{NodeId, WindowId};
-use skelter_core::{Document, JsEvent, KindRegistry, StateMask, Value};
+use skelter_core::{Document, JsEvent, StateMask, Value};
 use skelter_gallery::{Axes, Catalog, Cell, Extensions, Matrix, State, Story, Theme as GTheme};
 use skelter_quire::kind::QuireHost;
 use skelter_widgets::theme::Density;
@@ -154,17 +154,32 @@ pub struct Gallery {
     tapped: Rc<RefCell<Vec<JsEvent>>>,
 }
 
-/// The kinds the gallery's document registers: svelters' built-ins (what the app runner registers),
-/// quire's `code-editor`, then the host's.
-pub fn registry(ext: &Extensions) -> Result<KindRegistry, String> {
-    let mut reg = KindRegistry::new();
-    svelters_skelter::kinds::register_builtin(&mut reg).map_err(|e| format!("{e:?}"))?;
-    reg.register::<skelter_quire::kind::CodeEditorKind>().map_err(|e| format!("{e:?}"))?;
-    for f in &ext.register_kinds {
-        f(&mut reg)?;
+/// The kinds the gallery's document registers and JS sees: svelters' built-ins (what the app runner
+/// registers), the host's (`Kinds::with_app`, as `skelter_gallery::Renderer` builds them), and
+/// quire's `code-editor` for the source pane.
+pub fn kinds(ext: &Extensions) -> Result<Arc<Kinds>, String> {
+    let failed: RefCell<Option<String>> = RefCell::new(None);
+    let kinds = Kinds::with_app(&svelters_skelter::surface::builtin(), |reg| {
+        for f in &ext.register_kinds {
+            if let Err(e) = f(reg) {
+                *failed.borrow_mut() = Some(e);
+                break;
+            }
+        }
+        if reg.by_name("code-editor").is_none() {
+            reg.register::<skelter_quire::kind::CodeEditorKind>()?;
+        }
+        Ok(())
+    })
+    .map_err(|e| format!("the kinds don't register: {e:?}"))?;
+    if let Some(e) = failed.into_inner() {
+        return Err(format!("a host's kinds don't register: {e}"));
     }
-    Ok(reg)
+    Ok(Arc::new(kinds))
 }
+
+/// The gallery's own kind: the source pane's editor, which no story needs to cover.
+const CHROME_KINDS: &[&str] = &["code-editor"];
 
 /// Every story that parses under `roots`, and the errors of the rest: one bad `story.toml` hides
 /// only itself (`skelter_gallery::discover` refuses the whole catalog, as the CLI's `check` wants).
@@ -219,15 +234,19 @@ pub fn story_roots(ext: &Extensions) -> Vec<PathBuf> {
 
 impl Gallery {
     /// The gallery over `doc` (built on [`registry`]), its window's root built and the stories found.
-    pub fn new(doc: Rc<RefCell<Document>>, fonts: Arc<skelter_text::FontStore>, ext: Extensions) -> Gallery {
+    pub fn new(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, fonts: Arc<skelter_text::FontStore>, ext: Extensions) -> Gallery {
         let roots = story_roots(&ext);
         let (catalog, load_errors) = discover(&roots, &ext.families);
-        let coverage_missing = catalog.coverage(doc.borrow().registry()).missing;
+        let mut coverage_missing = catalog.coverage(doc.borrow().registry()).missing;
+        coverage_missing.retain(|k| !CHROME_KINDS.contains(&k.as_str()));
         let themes = Themes { extra: ext.themes.clone() };
         let nodes = {
             let mut d = doc.borrow_mut();
             let chrome = theme::builtin(theme::CHROME, Density::Default).expect("the chrome theme");
-            d.add_sheet(&theme::chrome_sheet(&chrome));
+            // the theme's tokens and base.css at the theme origin, as skelter_gallery's renderer
+            // installs them (a story's own rules win over them); the chrome's classes as author rules
+            d.add_sheet_with_origin(&format!("{}\n{}", chrome.css(), skelter_widgets::theme::BASE_CSS), svelters_style::Origin::Theme);
+            d.add_sheet(theme::CHROME_CSS);
             let mut q = QuireHost::new(fonts);
             q.theme = skelter_quire::EditorTheme::default();
             d.set_service(q);
@@ -235,7 +254,7 @@ impl Gallery {
         };
         let mut g = Gallery {
             doc,
-            kinds: svelters_skelter::builtin_kinds(),
+            kinds,
             ext,
             catalog,
             load_errors,
@@ -345,7 +364,7 @@ impl Gallery {
         if let Some(old) = self.cell_sheet.take() {
             d.remove_sheet(old);
         }
-        self.cell_sheet = Some(d.add_sheet(&css));
+        self.cell_sheet = Some(d.add_sheet_with_origin(&css, svelters_style::Origin::Theme));
     }
 
     fn act(&mut self, n: NodeId, a: Action) -> NodeId {

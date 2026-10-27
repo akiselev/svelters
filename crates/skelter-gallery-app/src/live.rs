@@ -112,7 +112,8 @@ impl LiveStory {
     pub fn load(doc: Rc<RefCell<Document>>, kinds: Arc<Kinds>, variants: Vec<LiveVariant>, generation: u64) -> Result<LiveStory, String> {
         let first = variants.first().ok_or("the story has no variants")?.file.clone();
         let backend = SkelterBackend::shared(kinds, doc)?;
-        let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..Default::default() };
+        // as skelter_gallery's renderer: the same locale, so formatted text matches the CLI's shots
+        let host = svelters_host::HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, locale: Some("en-US".into()), ..Default::default() };
         let embed = Embed::with_backend(backend.clone(), EmbedConfig { host, ..EmbedConfig::default() }).map_err(|e| e.to_string())?;
         let mut cfg = SourceConfig::for_path(&first)?;
         cfg.backend = "skelter".into();

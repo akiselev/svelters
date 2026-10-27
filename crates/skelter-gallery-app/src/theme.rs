@@ -10,7 +10,7 @@
 //! `Theme` service) follows the chrome's theme, not the cell's; the CLI renders each theme in a
 //! document of its own and is the reference for those.
 
-use skelter_widgets::theme::{BASE_CSS, Contrast, Density, LAYERS, Theme, TokenMap};
+use skelter_widgets::theme::{Contrast, Density, LAYERS, Theme, TokenMap};
 use svelters_style::ColorScheme;
 
 /// The four built-in themes, by their gallery names.
@@ -77,11 +77,6 @@ impl Themes {
         s.push_str("}\n");
         s
     }
-}
-
-/// The chrome's sheets: its theme's tokens on `:root` and the stock kinds' `base.css`.
-pub fn chrome_sheet(theme: &Theme) -> String {
-    format!("{}\n{BASE_CSS}\n{CHROME_CSS}", theme.css())
 }
 
 /// The gallery's own classes (the chrome's look; cells take none of it).
