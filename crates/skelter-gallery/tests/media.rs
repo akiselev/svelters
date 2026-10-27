@@ -115,9 +115,14 @@ fn reload_picks_up_edited_images_variants_and_fixed_errors() {
     let dir = root.join("stories/controls/media");
     std::fs::create_dir_all(&dir).unwrap();
     std::fs::copy(fixture("media/package.json"), root.join("package.json")).unwrap();
-    for f in ["story.toml", "red.svg", "svg.svelte", "icon.svelte"] {
+    for f in ["story.toml", "svg.svelte", "icon.svelte"] {
         std::fs::copy(fixture("media/stories/controls/media").join(f), dir.join(f)).unwrap();
     }
+    // image sources are the process's, keyed by asset ref: the copy's image gets its own name, so
+    // the other tests (which register the fixture's red.svg) can't replace it while this one runs
+    std::fs::copy(fixture("media/stories/controls/media/red.svg"), dir.join("reload.svg")).unwrap();
+    let svelte = dir.join("svg.svelte");
+    std::fs::write(&svelte, std::fs::read_to_string(&svelte).unwrap().replace("./red.svg", "./reload.svg")).unwrap();
     let mut r = Renderer::new(&Extensions::new().story_root(&root)).unwrap();
     let story = r.catalog().get("media").unwrap().clone();
     let svg_cell = Cell::new(&story, story.variant("svg").unwrap());
@@ -125,7 +130,7 @@ fn reload_picks_up_edited_images_variants_and_fixed_errors() {
     assert!(count(&a, red) >= 30 * 30);
 
     // an image: registered again, no restart
-    let svg = dir.join("red.svg");
+    let svg = dir.join("reload.svg");
     std::fs::write(&svg, std::fs::read_to_string(&svg).unwrap().replace("#ff0000", "#0000ff")).unwrap();
     let rl = r.reload(&[svg.clone()]).unwrap();
     assert!(!rl.restarted, "{rl:?}");
