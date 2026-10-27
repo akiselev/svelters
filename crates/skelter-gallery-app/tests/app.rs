@@ -181,12 +181,6 @@ fn picking_a_cell_readies_its_shot_command_and_inspect_picks_the_clicked_node() 
     let copied = h.state().gallery.copied.clone().unwrap();
     assert_eq!(copied, "skelter-gallery shot button/primary --args caption=Save --state hover --theme light-modern --density default --zoom 1 -o target/gallery/button-primary.png");
     // inspect mode: a press on the cell's button picks it and reaches nothing else
-    let seen: std::rc::Rc<std::cell::RefCell<Vec<(String, skelter_base::ids::NodeId)>>> = Default::default();
-    let s2 = seen.clone();
-    h.state_mut().gallery.set_inspector(Box::new(move |_d, _frame, node, cell, sel| {
-        s2.borrow_mut().push((sel.to_string(), node));
-        serde_json::json!({ "selector": sel, "state": cell.state })
-    }));
     h.get_by_author_id("inspect-toggle").click();
     h.run();
     assert!(h.state().gallery.settings.inspect);
@@ -197,10 +191,16 @@ fn picking_a_cell_readies_its_shot_command_and_inspect_picks_the_clicked_node() 
     let r = h.state().gallery.document().borrow().world_rect(button).unwrap();
     h.click_at(skelter_base::geom::Point::new((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0));
     h.run();
-    assert_eq!(seen.borrow().as_slice(), [("#subject".to_string(), button)]);
     let want = "skelter-gallery inspect button/primary '#subject' --args caption=Save --state hover --theme light-modern --density default --zoom 1 --json";
     let i = h.state().gallery.inspected.clone();
-    assert_eq!(i.json.as_ref().unwrap()["selector"], "#subject");
+    // what `skelter-gallery inspect` prints for that cell and selector
+    let j = i.json.clone().unwrap();
+    assert_eq!(j["selector"], "#subject", "{j:#}");
+    assert_eq!(j["cell"]["state"], "hover");
+    assert_eq!(j["cell"]["theme"], "light-modern");
+    assert_eq!(j["nodes"][0]["anchor"], "subject");
+    assert_eq!(j["nodes"][0]["kind"], "button");
+    assert!(j["nodes"][0]["state"]["forced"].as_array().unwrap().iter().any(|s| s == "hover"), "{j:#}");
     assert_eq!(i.command.as_deref(), Some(want));
     h.get_by_author_id("copy-inspect").click();
     h.run();

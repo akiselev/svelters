@@ -154,6 +154,9 @@ pub struct Gallery {
     tapped: Rc<RefCell<Vec<JsEvent>>>,
     /// skelter-widgets' `base.css`, read from its source file when there is one (edits show live).
     base: BaseCss,
+    /// `skelter-gallery inspect`'s renderer, made at the first inspect and dropped when a story
+    /// file changes (it caches what it loaded).
+    renderer: Option<skelter_gallery::Renderer>,
 }
 
 /// The stock kinds' sheet: its source file, the text in use, and the theme sheet carrying it.
@@ -303,6 +306,7 @@ impl Gallery {
             watch: false,
             tapped: Rc::default(),
             base: BaseCss { path: base_path, ..BaseCss::default() },
+            renderer: None,
         };
         g.load_base_css();
         g.wire();
@@ -448,6 +452,7 @@ impl Gallery {
         }
         let before = self.base.sheet;
         self.load_base_css();
+        self.renderer = None;
         self.base.sheet != before
     }
 
@@ -1026,10 +1031,40 @@ impl Gallery {
             let d = self.doc.borrow();
             selector_for(&d, target, frame)
         };
-        let json = self.inspect_fn.as_ref().map(|f| f(&self.doc.borrow(), frame, node, &cell, &selector));
+        let json = match &self.inspect_fn {
+            Some(f) => Some(f(&self.doc.borrow(), frame, node, &cell, &selector)),
+            None => Some(self.inspect_saved(&cell, &selector)),
+        };
         self.inspected = Inspected { command: Some(inspect_command(&cell, &selector)), cell: Some(cell), selector: Some(selector), json };
         self.rebuild_inspect();
         true
+    }
+
+    /// What `skelter-gallery inspect` prints for `cell` and `selector`: its own renderer mounts the
+    /// cell headlessly from the saved files and describes the nodes the selector picks. An unsaved
+    /// buffer is not in it (the pane says so).
+    pub fn inspect_saved(&mut self, cell: &Cell, selector: &str) -> serde_json::Value {
+        if self.renderer.is_none() {
+            match skelter_gallery::Renderer::new(&self.ext) {
+                Ok(mut r) => {
+                    if let Err(e) = r.set_base_css(self.base.text.clone()) {
+                        return serde_json::json!({ "error": e.to_string() });
+                    }
+                    self.renderer = Some(r);
+                }
+                Err(e) => return serde_json::json!({ "error": e.to_string() }),
+            }
+        }
+        let r = self.renderer.as_mut().expect("made above");
+        match r.inspect(cell, selector) {
+            Ok(mut v) => {
+                if self.unsaved() {
+                    v["note"] = serde_json::Value::String("the source pane has unsaved edits: this is the saved file".into());
+                }
+                v
+            }
+            Err(e) => serde_json::json!({ "error": e.to_string() }),
+        }
     }
 
     // ---- the source pane ----
@@ -1061,6 +1096,8 @@ impl Gallery {
     }
 
     fn after_change(&mut self, file: &Path) {
+        // the inspect renderer caches the files it loaded
+        self.renderer = None;
         if self.live.as_ref().is_some_and(|l| l.needs_reload(file)) {
             // a variant that did not compile at load compiles now: load the story again
             if let Some(s) = self.current_story().cloned() {
