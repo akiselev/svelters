@@ -25,9 +25,12 @@ pub(crate) struct Router {
     members: RefCell<Vec<Weak<Inner>>>,
 }
 
+/// A document and its router, both weak.
+type Entry = (Weak<RefCell<Document>>, Weak<Router>);
+
 thread_local! {
     /// Each shared document's router.
-    static ROUTERS: RefCell<Vec<(Weak<RefCell<Document>>, Weak<Router>)>> = const { RefCell::new(Vec::new()) };
+    static ROUTERS: RefCell<Vec<Entry>> = const { RefCell::new(Vec::new()) };
 }
 
 impl Router {
