@@ -102,6 +102,7 @@ pub struct Mounted {
 /// The renderer (see the module docs). `!Send`: one per thread.
 pub struct Renderer {
     catalog: Catalog,
+    fonts: Arc<skelter_text::FontStore>,
     families: Vec<String>,
     roots: Vec<PathBuf>,
     setup: Vec<Rc<dyn Fn(&mut SetupCx<'_>)>>,
@@ -161,7 +162,7 @@ impl Renderer {
         let size = Size::new(320.0, 96.0);
         let harness = Harness::<SkelterDocument>::builder()
             .with_size(size)
-            .with_glyphs(Arc::new(skelter_text::FontRasterizer::new(fonts)))
+            .with_glyphs(Arc::new(skelter_text::FontRasterizer::new(fonts.clone())))
             .with_accessibility_check(false)
             .with_max_steps(u64::from(MAX_STEPS))
             .build_unsettled(doc);
@@ -170,6 +171,7 @@ impl Renderer {
         }
         let mut r = Renderer {
             catalog,
+            fonts: fonts.clone(),
             families: ext.families.clone(),
             roots: ext.story_roots.clone(),
             setup: ext.setup.clone(),
@@ -210,6 +212,11 @@ impl Renderer {
             self.theme_force(&t, d)?;
         }
         Ok(())
+    }
+
+    /// The fonts every cell draws with (skelter-text's bundled test fonts: hermetic).
+    pub fn fonts(&self) -> &Arc<skelter_text::FontStore> {
+        &self.fonts
     }
 
     pub fn backend(&self) -> &SkelterBackend {

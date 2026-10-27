@@ -7,6 +7,7 @@ use crate::ext::Extensions;
 use crate::matrix::{Axes, Matrix};
 use crate::model::{Cell, State, Story, density_named, parse_arg_value};
 use crate::render::{Error, Renderer, save_png};
+use crate::sheet::{Sheet, SheetLayout};
 use serde_json::json;
 use skelter_core::KindRegistry;
 use skelter_widgets::theme::Density;
@@ -160,6 +161,7 @@ pub fn run(mut ext: Extensions, argv: &[String]) -> u8 {
     let r = match cmd.as_str() {
         "list" => cmd_list(&ext, &rest),
         "shot" => cmd_shot(&ext, &rest),
+        "sheet" => cmd_sheet(&ext, &rest),
         _ => Err(Fail::Usage(format!("unknown command {cmd:?}"))),
     };
     match r {
@@ -390,7 +392,7 @@ fn cmd_shot(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
 }
 
 /// A story's matrix from the axis flags.
-pub(crate) fn matrix_of(ext: &Extensions, story: &Story, a: &Args) -> Result<Matrix, Fail> {
+pub(crate) fn matrix_of(ext: &Extensions, story: &Story, a: &Args, many: bool) -> Result<Matrix, Fail> {
     let mut axes = Axes::default();
     if let Some(x) = a.flag("--variants") {
         axes.variants = Some(x.split(',').filter(|p| !p.is_empty()).map(|p| p.trim().into()).collect());
@@ -401,7 +403,7 @@ pub(crate) fn matrix_of(ext: &Extensions, story: &Story, a: &Args) -> Result<Mat
     if let Some(x) = a.flag("--states") {
         let want = list_of(x, "state", State::parse)?;
         // a family or --all sheet shows each story's states among those asked
-        axes.states = Some(want);
+        axes.states = Some(if many { want.into_iter().filter(|s| story.states.contains(s)).collect() } else { want });
     }
     if let Some(x) = a.flag("--themes") {
         axes.themes = list_of(x, "theme", |t| ext.theme_named(t))?;
@@ -413,4 +415,94 @@ pub(crate) fn matrix_of(ext: &Extensions, story: &Story, a: &Args) -> Result<Mat
         axes.zooms = list_of(x, "zoom from 0.25 to 8", zoom)?;
     }
     Matrix::new(story, &axes).map_err(Fail::Usage)
+}
+
+// ---- sheet ----
+
+fn cmd_sheet(ext: &Extensions, a: &Args) -> Result<u8, Fail> {
+    a.only("sheet", &["--family", "--all", "--variants", "--args", "--states", "--themes", "--densities", "--zooms", "-o", "--index", "--json"])?;
+    let family = a.flag("--family");
+    let all = a.switch("--all");
+    let modes = usize::from(family.is_some()) + usize::from(all) + usize::from(!a.positional.is_empty());
+    if modes != 1 || a.positional.len() > 1 {
+        return Err(Fail::Usage("sheet takes one of <story>, --family <f>, --all".into()));
+    }
+    let mut r = renderer(ext, a)?;
+    let layout = SheetLayout::default();
+    if let [story] = &a.positional[..] {
+        let s = r.catalog().get(story).cloned().ok_or_else(|| Fail::Usage(format!("no story {story:?}")))?;
+        let m = matrix_of(ext, &s, a, false)?;
+        let out = a.flag("-o").map(PathBuf::from).unwrap_or_else(|| out_dir(ext).join(format!("{}.png", s.id)));
+        let sheet = r.sheet(&m, layout)?;
+        save_png(&sheet.image, &out).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", out.display()))))?;
+        let index = sheet.index(&m, Some(&out));
+        if let Some(f) = a.flag("--index") {
+            write_json(Path::new(f), &index)?;
+        }
+        report(&sheet, &out);
+        if a.switch("--json") {
+            print_json(&index);
+        } else {
+            println!("{}", out.display());
+        }
+        return Ok(if sheet.errors().next().is_some() { FAILED } else { OK });
+    }
+    let stories: Vec<Story> = match family {
+        Some(f) => {
+            let v: Vec<Story> = r.catalog().family(f).cloned().collect();
+            if v.is_empty() {
+                return Err(Fail::Usage(format!("no stories in family {f:?}")));
+            }
+            v
+        }
+        None => r.catalog().stories().to_vec(),
+    };
+    let dir = a.flag("-o").map(PathBuf::from).unwrap_or_else(|| out_dir(ext).join("sheets").join(family.unwrap_or("all")));
+    let mut sheets = Vec::new();
+    let mut failed = false;
+    let (mut cells, mut secs) = (0usize, 0f64);
+    for s in &stories {
+        let m = matrix_of(ext, s, a, true)?;
+        if m.is_empty() {
+            continue;
+        }
+        let out = dir.join(format!("{}.png", s.id));
+        let sheet = r.sheet(&m, layout.clone())?;
+        save_png(&sheet.image, &out).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", out.display()))))?;
+        report(&sheet, &out);
+        failed |= sheet.errors().next().is_some();
+        cells += sheet.cells.len();
+        secs += sheet.seconds;
+        sheets.push(sheet.index(&m, Some(&out)));
+        if !a.switch("--json") {
+            println!("{}", out.display());
+        }
+    }
+    let index = json!({ "sheets": sheets, "cells": cells, "seconds": secs });
+    write_json(&dir.join("index.json"), &index)?;
+    if let Some(f) = a.flag("--index") {
+        write_json(Path::new(f), &index)?;
+    }
+    if a.switch("--json") {
+        print_json(&index);
+    } else {
+        println!("{}", dir.join("index.json").display());
+    }
+    Ok(if failed { FAILED } else { OK })
+}
+
+/// A sheet's errors and speed on stderr.
+fn report(sheet: &Sheet, out: &Path) {
+    for c in sheet.errors() {
+        eprintln!("{}: {}: {}", out.display(), c.cell.label(), c.error.as_deref().unwrap_or_default());
+    }
+    let n = sheet.cells.len();
+    eprintln!("{}: {n} cells in {:.2} s ({:.1} cells/s)", out.display(), sheet.seconds, n as f64 / sheet.seconds.max(1e-9));
+}
+
+fn write_json(path: &Path, v: &serde_json::Value) -> Result<(), Fail> {
+    if let Some(d) = path.parent() {
+        std::fs::create_dir_all(d).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", d.display()))))?;
+    }
+    std::fs::write(path, serde_json::to_string_pretty(v).expect("JSON")).map_err(|e| Fail::Error(Error::Render(format!("{}: {e}", path.display()))))
 }

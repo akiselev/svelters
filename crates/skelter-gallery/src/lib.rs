@@ -7,6 +7,7 @@
 //! | [`catalog`] | `story.toml` parsing, [`discover`], [`Catalog`] and its kind [`Coverage`] |
 //! | [`matrix`] | [`Matrix`]: a story × [`Axes`], in a stable order |
 //! | [`render`] | [`Renderer`]: the headless renderer (one engine and window for every cell), [`Shot`] |
+//! | [`sheet`] | contact sheets: [`Sheet`], [`SheetLayout`], the cell index |
 //! | [`cli`] | [`cli_main`]: the `skelter-gallery` CLI |
 //! | [`ext`] | [`Extensions`]: what a host adds (story roots, kinds, setup hooks, token sets) |
 //!
@@ -19,6 +20,7 @@ pub mod ext;
 pub mod matrix;
 pub mod model;
 pub mod render;
+pub mod sheet;
 
 pub use catalog::{Catalog, Coverage, StoryError, discover, discover_with};
 pub use ext::{Extensions, SetupCx};
@@ -26,3 +28,4 @@ pub use matrix::{Axes, Matrix};
 pub use model::{Cell, FAMILIES, State, Story, StoryId, Theme, Variant, VariantId};
 pub use render::{Error, Renderer, Shot, png, save_png};
 pub use cli::cli_main;
+pub use sheet::{Sheet, SheetCell, SheetLayout};

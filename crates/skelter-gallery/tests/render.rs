@@ -104,3 +104,34 @@ fn forced_hover_lands_on_the_subject() {
     let m = r.mount(&c).unwrap();
     assert!(r.backend().forced_state(m.subjects[0]).is_empty());
 }
+
+#[test]
+fn a_sheet_places_every_cell_and_indexes_it() {
+    if !gpu() {
+        return;
+    }
+    let mut r = renderer();
+    let story = r.catalog().get("button").unwrap().clone();
+    let axes = skelter_gallery::Axes { variants: Some(vec!["plain".into()]), states: Some(vec![State::Normal, State::Hover]), themes: vec![Theme::DarkModern, Theme::LightModern], ..Default::default() };
+    let m = skelter_gallery::Matrix::new(&story, &axes).unwrap();
+    let sheet = r.sheet(&m, skelter_gallery::SheetLayout::default()).unwrap();
+    assert_eq!(sheet.cells.len(), 4);
+    assert_eq!(sheet.errors().count(), 0);
+    for c in &sheet.cells {
+        assert_eq!((c.rect.w, c.rect.h), (160, 48));
+        assert!(c.rect.x + c.rect.w <= sheet.image.width && c.rect.y + c.rect.h <= sheet.image.height);
+        assert!(c.header.y + c.header.h == c.rect.y, "the header sits on its image");
+    }
+    // rows are states, columns themes
+    assert_eq!(sheet.cells[0].rect.y, sheet.cells[1].rect.y);
+    assert!(sheet.cells[2].rect.y > sheet.cells[0].rect.y);
+    assert!(sheet.cells[1].rect.x > sheet.cells[0].rect.x);
+    let index = sheet.index(&m, None);
+    assert_eq!(index["cells"][3]["cell"]["state"], "hover");
+    assert_eq!(index["cells"][3]["cell"]["theme"], "light-modern");
+    let again = r.sheet(&m, skelter_gallery::SheetLayout::default()).unwrap();
+    assert!(again.image == sheet.image, "deterministic within a run");
+    if let Some(dir) = std::env::var_os("GALLERY_SHOTS") {
+        skelter_gallery::save_png(&sheet.image, &Path::new(&dir).join("sheet.png")).unwrap();
+    }
+}
