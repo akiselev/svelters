@@ -22,11 +22,24 @@ below.
    (`skelter-core/src/style/inspect.rs`); new `NodeView::style_state()` = own | forced bits
    (`skelter-core/src/cx.rs`), which `skelter-widgets/src/host.rs` uses for every `Styles` it builds for measure,
    prepare and record. Events and accessibility still read `state()` (forced bits never reach them, as documented).
-2. **A part's inherited value beat its UA table.** skelter-core computes a style for every paint part, inheriting
-   from the host, so `color`, `font-size`, … always arrived as CSS values and won over the part's UA rules (the
-   switch knob's `:checked` white, the icon part's 16px). Fix (`paint/mod.rs`, `StyleView::get`): for a part view, an
-   inherited property whose value equals the host's (only inherited, not set by a `::part()` rule) yields to the
-   part's own UA table. Edge: a `::part()` rule that sets exactly the host's value now loses to the UA value.
+2. **An inherited value beat the kind's own UA declaration.** A computed style always holds the inherited
+   properties (skelter-core computes every part from its host and every node from its parent), so `color`,
+   `font-size`, … arrived as CSS values and won over the UA tables: the switch knob's `:checked` white, the icon part's
+   16px, a hyperlink's link colour, a select option's and menu item's `:selected` colour (views and controls hit it
+   too and worked around it). In CSS, a declaration on the element (the UA's included) beats inheritance. Fix
+   (`paint/mod.rs`, `StyleView::get`): an inherited property whose value equals the parent's (so only inherited) yields
+   to the view's own UA declaration. A part compares with its host view; a host compares with its parent node's
+   computed style, which `Styles::inherited` now carries (`host.rs`, from the new `NodeView::parent`) and
+   `StyleView::with_inherited` takes (`controls/common::host_view`, `checkbox::host_in` and the kinds that build their
+   host view themselves). Test: `paint::tests::a_ua_declaration_beats_an_inherited_value`. Edge: a rule that sets
+   exactly the parent's value now loses to the UA value.
+   Removed as redundant, each sheet pixel-identical with and without, in every state and theme:
+   `views::common::part_fg` (select options, menu items read `color` directly), and base.css's restated
+   `hyperlink`, `hyperlink:disabled`, `spinner`, `image`, `slider::part(mark-label)` and `frame::part(caption)` colours.
+   Kept: `slider::part(thumb)` (`progress`, not its UA `accent`: controls' High Contrast fix). Across every family's
+   normal sheets in Dark and Light Modern, the only changes from master are the intended ones (the default and
+   selected buttons, dialogs, the switch knob, a select's placeholder colour, an unchecked checkable frame's
+   dimmed content).
 
 Plus: **`opacity` in a kind's UA table is never painted** (skelter-core applies opacity from the computed box only), so
 R9's "opacity .4" lives in `base.css` now. The button UA's `opacity` entry stays for foreign painters' reference.
@@ -48,6 +61,9 @@ R9's "opacity .4" lives in `base.css` now. The button UA's `opacity` entry stays
 | hc-dark: a checked switch's track vanished | `accent` is HC's `#000000` button background | the checked track's edge is `toggle-on-border` (accent in Modern, `contrastActiveBorder` in HC) (`controls/switch.rs`) | yes | none |
 | Switch's checked knob drew `fg`, not `accent-fg` | cause 2 | as above | yes | none |
 | High Contrast hover is a fill step, VS Code's is a `contrastActiveBorder` outline | — | `@media (prefers-contrast: more)`: `button:hover`, `toggle-button:hover` outline 1px `--vscode-contrastActiveBorder` at −1, focus ring kept over it | yes (draws solid, see Q2) | none |
+| frame/checkable: an unchecked frame's content looked enabled (controls' finding, waiting on this lane) | the disabled look | the content's own `:disabled` opacity (R9 above) | yes, all four themes | none |
+| progress-bar, spinner: `disabled` looked like normal | — | both in the R9 opacity list (leaf kinds: nothing compounds) | yes, all four themes | none |
+| After the merge with POL1-TEXT: hover and focus would replace an invalid field's red border, hover a read-only field's hairline | my state rules come after the field looks | `text-edit:invalid:{hover,focus,focus-visible,focus-within}` keep `invalid-border` (`danger` in HC), `text-edit[read-only=true]:hover` keeps `border` | yes, all four themes | none |
 | GAL2: radio's dot dark grey while the checkbox uses the accent (light-modern) | not reproduced: both draw the `fg` mark on the `toggle-on` fill with the accent edge | no change | yes, both at zoom 2 | none |
 
 ## Before/after images (container paths, not committed)
@@ -66,12 +82,13 @@ the "before" binary is `ci/pb1-gallery` itself (no fix of this lane) with its ow
 
 ## Requests to other lanes (not built here)
 
-- **controls (hyperlink):** a `hyperlink` draws in `fg`, not `--sv-link`: on a host view the inherited `color` beats
-  the kind's UA (cause 2 at the host level; a host view has no parent view to compare with). Recommendation: a
-  `hyperlink { color: var(--sv-link) }` rule in its base.css block (as `button` has), or the kind passing its parent's
-  colour to `StyleView`. `hyperlink:disabled` then needs `color: var(--sv-disabled-fg)` (mine; add it with theirs).
-- **controls (slider):** in hc-dark the filled part of the slider track is the accent `#000000` on black, invisible.
-  Recommendation: the fill from `--sv-progress` or `--sv-toggle-on-border` (the switch's fix).
+- Done by controls (merged in `dca6740`): the hyperlink's link colour and the hc-dark slider fill; my two requests for
+  them are dropped (the hyperlink rules are now redundant and removed, see cause 2).
+- **controls / skelter-core:** a disabled frame (`frame/checkable`, `disabled` row) leaves its content enabled; only an
+  unchecked checkable frame disables it. Recommendation: the frame's `disabled` reaches its content as the unchecked
+  state does; the content then dims through R9.
+- **gallery:** the `window` story's toolbar draws over the window title (`cadatomic` under the toolbar buttons), Dark
+  and Light Modern (`skelter-gallery sheet window --states normal`).
 
 ## Questions (with recommendations)
 
@@ -84,10 +101,15 @@ the "before" binary is `ci/pb1-gallery` itself (no fix of this lane) with its ow
 
 ## Tests
 
-- `cargo test -p skelter-widgets --lib`: 554 passed (4 ring-rect assertions updated); `--tests`: `text_pins` 1 passed.
-- `SKELTER_GPU_TESTS=1 WGPU_BACKEND=vulkan cargo test -p skelter-core -p skelter-test -p skelter-gallery`: 303 passed,
-  no pixel snapshot moved (none re-blessed).
-- `skelter-gallery check`: 31 stories, 135 variants, 0 problems.
+- On the merged head (master `dca6740` and `ci/pb1-gallery` `37ce91a`): `SKELTER_GPU_TESTS=1 WGPU_BACKEND=vulkan
+  cargo test --no-fail-fast -p skelter-widgets -p skelter-gallery`: 588 passed (skelter-widgets 562 with the new
+  test; 4 ring-rect assertions updated earlier). Before the gallery merge, the same with `-p skelter-core
+  -p skelter-test`: 875 passed except skelter-gallery's `media` reload test, intermittent there (0 blue pixels after a
+  restart), which the gallery lane's `81fd1c4` fixed; after merging it, `media` passed 3 runs of 3.
+- No pixel snapshot moved; none re-blessed.
+- `cargo check --all-targets` of every crate that depends on skelter-widgets (skelter, skelter-test, skelter-gallery,
+  skelter-gallery-app, svelters-skelter): clean.
+- `skelter-gallery check`: 32 stories, 137 variants, 0 problems (after the gallery merge).
 - Not run locally: the workspace tests, svelters-skelter, svelters-egui (it has its own theme and base.css), conformance.
 
 ## CI
