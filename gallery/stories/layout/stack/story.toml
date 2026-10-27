@@ -1,0 +1,24 @@
+id = "stack"
+title = "Stack"
+family = "layout"
+kinds = ["stack"]
+size = [280, 100]
+states = ["normal"]
+notes = "Shows one child: by `visible-child-name` (a child's anchor) or `visible-index`; `homogeneous` sizes it to the largest child."
+
+[[variant]]
+id = "index"
+title = "By index"
+file = "index.svelte"
+args = { index = [0, 1, 2] }
+
+[[variant]]
+id = "by-name"
+title = "By name"
+file = "by-name.svelte"
+
+[[variant]]
+id = "homogeneous"
+title = "Homogeneous and not"
+file = "homogeneous.svelte"
+args = { homogeneous = [true, false] }

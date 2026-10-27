@@ -1,0 +1,32 @@
+id = "combo-box"
+title = "Combo box"
+family = "menus"
+kinds = ["select"]
+size = [320, 200]
+notes = "A drop-down list (the `select` kind): the closed field, its arrow, the hint while nothing is picked. `open` shows the popup."
+
+[[variant]]
+id = "selected"
+title = "Selected and hint"
+file = "selected.svelte"
+args = { selected = [0, -1] }
+
+[[variant]]
+id = "long-option"
+title = "Long option text"
+file = "long-option.svelte"
+
+[[variant]]
+id = "open"
+title = "Open"
+file = "open.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left options"
+file = "rtl.svelte"
+
+[[variant]]
+id = "dense"
+title = "In a dense form row"
+file = "dense.svelte"

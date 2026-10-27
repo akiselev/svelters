@@ -1,0 +1,48 @@
+id = "text-edit"
+title = "Text field"
+family = "text"
+kinds = ["text-edit"]
+size = [320, 72]
+states = ["normal", "hover", "focus", "focus-visible", "disabled"]
+notes = "A single-line field: the frame, the placeholder, the text's baseline, the invalid border. Selection and the caret are not props of the kind, so focus shows the caret only where the kind draws it without input."
+
+[[variant]]
+id = "value"
+title = "Text and placeholder"
+file = "value.svelte"
+args = { text = ["", "R12"] }
+
+[[variant]]
+id = "read-only"
+title = "Read only"
+file = "read-only.svelte"
+
+[[variant]]
+id = "invalid"
+title = "Invalid (error)"
+file = "invalid.svelte"
+
+[[variant]]
+id = "char-limit"
+title = "Character limit"
+file = "char-limit.svelte"
+
+[[variant]]
+id = "long-text"
+title = "Text longer than the field"
+file = "long-text.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left text"
+file = "rtl.svelte"
+
+[[variant]]
+id = "number"
+title = "A number in a narrow field"
+file = "number.svelte"
+
+[[variant]]
+id = "dense"
+title = "In a dense property form"
+file = "dense.svelte"

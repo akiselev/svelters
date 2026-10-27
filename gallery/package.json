@@ -1,0 +1,15 @@
+{
+  "name": "@svelters/gallery-stories",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The skelter component gallery's stories: one directory per story, one Svelte component per variant (see README.md)",
+  "dependencies": {
+    "@svelters/lists": "workspace:*",
+    "@svelters/native-runtime": "workspace:*",
+    "svelte": "5.57.2"
+  },
+  "svelters": {
+    "toolkit": "skelter"
+  }
+}

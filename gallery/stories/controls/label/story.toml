@@ -1,0 +1,50 @@
+id = "label"
+title = "Label"
+family = "controls"
+kinds = ["label"]
+size = [320, 80]
+states = ["normal", "disabled"]
+notes = "Static text: wrapping, eliding, weight, a selection, bidi text."
+
+[[variant]]
+id = "plain"
+title = "Plain"
+file = "plain.svelte"
+
+[[variant]]
+id = "weight"
+title = "Font weight"
+file = "weight.svelte"
+args = { weight = [300, 400, 600, 700] }
+
+[[variant]]
+id = "wrap"
+title = "Long text by wrap mode"
+file = "wrap.svelte"
+args = { mode = ["wrap", "truncate", "extend"] }
+
+[[variant]]
+id = "elide"
+title = "Elided"
+file = "elide.svelte"
+args = { elide = ["start", "middle", "end"] }
+
+[[variant]]
+id = "selection"
+title = "Selected text"
+file = "selection.svelte"
+
+[[variant]]
+id = "empty"
+title = "Empty"
+file = "empty.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left and mixed text"
+file = "rtl.svelte"
+
+[[variant]]
+id = "form"
+title = "Labels naming fields in a dense form"
+file = "form.svelte"

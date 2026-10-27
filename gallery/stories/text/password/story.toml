@@ -1,0 +1,18 @@
+id = "password"
+title = "Password field"
+family = "text"
+kinds = ["text-edit"]
+size = [320, 64]
+states = ["normal", "hover", "focus-visible", "disabled"]
+notes = "`password` hides the characters; the placeholder shows while it is empty."
+
+[[variant]]
+id = "value"
+title = "Empty and filled"
+file = "value.svelte"
+args = { text = ["", "correct horse battery"] }
+
+[[variant]]
+id = "invalid"
+title = "Invalid"
+file = "invalid.svelte"

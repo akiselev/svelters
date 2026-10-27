@@ -1,0 +1,23 @@
+id = "sides"
+title = "Sides"
+family = "layout"
+kinds = ["sides"]
+size = [320, 64]
+states = ["normal"]
+notes = "A row with its first child at the start and its second at the end."
+
+[[variant]]
+id = "two"
+title = "Two sides"
+file = "two.svelte"
+args = { align = ["start", "center", "stretch"] }
+
+[[variant]]
+id = "groups"
+title = "Groups on each side"
+file = "groups.svelte"
+
+[[variant]]
+id = "crowded"
+title = "Sides that collide"
+file = "crowded.svelte"

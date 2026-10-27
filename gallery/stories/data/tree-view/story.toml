@@ -1,0 +1,28 @@
+id = "tree-view"
+title = "Tree view"
+family = "data"
+kinds = ["tree-view"]
+size = [320, 200]
+states = ["normal", "focus-visible", "disabled"]
+notes = "A virtualized tree through `<TreeView>` (@svelters/lists): twisties, indent guides, the selected row, the cursor."
+
+[[variant]]
+id = "expanded"
+title = "Expanded, with a selection"
+file = "expanded.svelte"
+args = { decorated = [true, false] }
+
+[[variant]]
+id = "collapsed"
+title = "Collapsed"
+file = "collapsed.svelte"
+
+[[variant]]
+id = "long-labels"
+title = "Long labels"
+file = "long-labels.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left labels"
+file = "rtl.svelte"

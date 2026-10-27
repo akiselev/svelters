@@ -1,0 +1,44 @@
+id = "button"
+title = "Button"
+family = "controls"
+kinds = ["button"]
+size = [360, 72]
+notes = "Push button: the frame, its padding, the caption's baseline and the focus ring. `look` walks the emphasis props (`default`, `frame`, `selected`, `small`)."
+
+[[variant]]
+id = "look"
+title = "Emphasis"
+file = "look.svelte"
+args = { look = ["plain", "default", "frameless", "selected", "small"] }
+
+[[variant]]
+id = "weight"
+title = "Font weight"
+file = "weight.svelte"
+args = { weight = [400, 600, 700] }
+
+[[variant]]
+id = "icon"
+title = "Icon and text"
+file = "icon.svelte"
+args = { caption = ["Save", ""] }
+
+[[variant]]
+id = "long-text"
+title = "Long caption"
+file = "long-text.svelte"
+
+[[variant]]
+id = "empty"
+title = "Empty caption"
+file = "empty.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left caption"
+file = "rtl.svelte"
+
+[[variant]]
+id = "dense"
+title = "In a dense toolbar row"
+file = "dense.svelte"

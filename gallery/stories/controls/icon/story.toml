@@ -1,0 +1,34 @@
+id = "icon"
+title = "Icon"
+family = "controls"
+kinds = ["icon"]
+size = [240, 64]
+notes = "A glyph or a registry icon; with `frame` an icon button. The gallery host registers no icon set or icon font, so `name` variants show the fallback."
+
+[[variant]]
+id = "glyph"
+title = "Glyph"
+file = "glyph.svelte"
+args = { size = [12, 16, 24, 32] }
+
+[[variant]]
+id = "button"
+title = "Icon button"
+file = "button.svelte"
+args = { selected = [false, true] }
+
+[[variant]]
+id = "registry"
+title = "Registry key"
+file = "registry.svelte"
+
+[[variant]]
+id = "source"
+title = "Imported SVG"
+file = "source.svelte"
+args = { tint = [true, false] }
+
+[[variant]]
+id = "toolbar"
+title = "A dense toolbar"
+file = "toolbar.svelte"

@@ -1,0 +1,27 @@
+id = "dialog"
+title = "Dialog content"
+family = "dialogs"
+kinds = ["box", "frame", "button"]
+size = [380, 180]
+states = ["normal", "focus-visible"]
+notes = "A dialog's content as Svelte builds it today: a `box` with `focus-scope=\"dialog\"`, its default and cancel buttons and their `dialog-role`. skelter-widgets' `modal`, `inner-window` and `dialog-buttons` kinds are not registered for Svelte (see the coverage list), so the buttons keep their source order."
+
+[[variant]]
+id = "confirm"
+title = "Confirm"
+file = "confirm.svelte"
+
+[[variant]]
+id = "destructive"
+title = "Destructive"
+file = "destructive.svelte"
+
+[[variant]]
+id = "form"
+title = "A small form"
+file = "form.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

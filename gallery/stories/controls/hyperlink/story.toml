@@ -1,0 +1,31 @@
+id = "hyperlink"
+title = "Hyperlink"
+family = "controls"
+kinds = ["hyperlink"]
+size = [360, 56]
+notes = "Link colour, the underline on hover, the focus ring around the text."
+
+[[variant]]
+id = "text"
+title = "With text"
+file = "text.svelte"
+
+[[variant]]
+id = "url-only"
+title = "The url as text"
+file = "url-only.svelte"
+
+[[variant]]
+id = "long-text"
+title = "Long text"
+file = "long-text.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left text"
+file = "rtl.svelte"
+
+[[variant]]
+id = "in-row"
+title = "Inside a row of text"
+file = "in-row.svelte"
