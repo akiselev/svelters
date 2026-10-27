@@ -34,6 +34,11 @@ This lane edited no existing crate, `gallery/`, or `crates/skelter-gallery-app`.
   **Deviation:** `setup` is `Vec<Rc<dyn Fn(&mut SetupCx)>>` (the `SetupHook` alias), not `Box`: the renderer keeps the
   hooks, and `Renderer::new` takes `&Extensions`. Added `families` (a host's stories may use families beyond the ten).
 
+- For hosts that mount cells themselves (the app lane's request, 2026-10-27): `SetupCx::new(cell, story, backend)`,
+  `Extensions::run_setup(cell, story, backend)`, `inspect::select_in(backend, frame, selector)` and
+  `inspect::node_json(backend, window, handle, a11y)` (one element of `inspect`'s `nodes`; `Renderer::inspect` uses
+  them). They take the backend rather than a bare `Document`, because tags, anchors and handles live in the backend.
+
 ## Decisions (inside the agreed design)
 
 - **One entry per variant file**, loaded once per renderer. A file that doesn't compile fails only its own cells, and

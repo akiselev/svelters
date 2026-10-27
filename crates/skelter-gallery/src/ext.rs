@@ -68,6 +68,13 @@ impl Extensions {
         Theme::builtin(name).or_else(|| self.themes.iter().any(|(n, _)| n == name).then(|| Theme::Extra(name.to_string())))
     }
 
+    /// Runs every setup hook for `cell` (what [`crate::Renderer`] does before each mount).
+    pub fn run_setup(&self, cell: &Cell, story: &Story, backend: &SkelterBackend) {
+        for f in &self.setup {
+            f(&mut SetupCx::new(cell, story, backend));
+        }
+    }
+
     /// Every theme name, the four first.
     pub fn theme_names(&self) -> Vec<String> {
         Theme::BUILTIN.iter().map(|t| t.name().to_string()).chain(self.themes.iter().map(|(n, _)| n.clone())).collect()
@@ -82,7 +89,12 @@ pub struct SetupCx<'a> {
     pub backend: &'a SkelterBackend,
 }
 
-impl SetupCx<'_> {
+impl<'a> SetupCx<'a> {
+    /// The context for a host that mounts cells itself (the gallery app).
+    pub fn new(cell: &'a Cell, story: &'a Story, backend: &'a SkelterBackend) -> SetupCx<'a> {
+        SetupCx { cell, story, backend }
+    }
+
     /// Runs `f` on the gallery's document (services, sheets, host nodes).
     pub fn with_doc<R>(&self, f: impl FnOnce(&mut Document) -> R) -> R {
         self.backend.with_doc(f)
