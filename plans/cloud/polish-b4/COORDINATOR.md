@@ -1,6 +1,6 @@
 # polish-b4 coordinator handoff (replace, don't append)
 
-Written 2026-10-28 ~15:35 UTC by the gallery/polish coordinator (cloud session `session_01HBbGRgGENFKUjsqyGryCSr`),
+Written 2026-10-28 ~15:35 UTC, updated ~16:10 by the gallery/polish coordinator (cloud session `session_01HBbGRgGENFKUjsqyGryCSr`),
 because the account may hit its usage limit. A fresh coordinator resumes from this file, the lane records and git.
 
 ## The work so far (user, 2026-10-27/28: polish every component in svelters and cadatomic)
@@ -22,8 +22,8 @@ because the account may hit its usage limit. A fresh coordinator resumes from th
 | Lane | Branch | Session | State at writing |
 |---|---|---|---|
 | dir-core | `ci/pb4-dir-core` | `session_01HBbGRd4ExpTviuYhWdHb7a` | merged to master `728647b` |
-| dir-widgets | `ci/pb4-dir-widgets` | `session_01HBbGRfqwNB8mNYQfNagHSt` | running: kinds mirror, rtl stories, paragraph base; record `POL4-DIR-WIDGETS.md` |
-| small | `ci/pb4-small` | `session_01HBbGRc73MtF1Nmx6rcznv1` | running: popup anchor-to, disabled progress parts, table rows follow row-h, 24 px trial (density.json, DESIGN.md §2.6, snapshot re-bless), gallery host fonts registered before its bundled mono (gal4 S-L1); record `POL4-SMALL.md` |
+| dir-widgets | `ci/pb4-dir-widgets` | `session_01HBbGRfqwNB8mNYQfNagHSt` | merged to master `f8eb805` |
+| small | `ci/pb4-small` | `session_01HBbGRc73MtF1Nmx6rcznv1` | running: popup anchor-to, disabled progress parts, table rows follow row-h, 24 px trial (density.json, DESIGN.md §2.6, snapshot re-bless), gallery host fonts registered before its bundled mono (gal4 S-L1), popup -start/-end logical in rtl and an rtl context menu opened without a pointer at the owner's top-right (dir-widgets follow-ups); record `POL4-SMALL.md` |
 | cadatomic gal4 | `claude/gal4-editor` | `session_01HBbGRccX98XHVfWfkofZTf` | done `eb8d0998`, merged into nx3 by MAL |
 
 ## How to finish the round
