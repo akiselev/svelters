@@ -332,12 +332,20 @@ impl Document {
     /// `scroll`: skip targets that let scrolling through (`HitResult::HitExceptScroll`).
     pub(crate) fn hit_test_ex(&self, window: WindowId, p: Point, scroll: bool) -> Option<NodeId> {
         // the window's open overlay surfaces first, topmost first
-        if let Some(on) = self.overlay_hit(window, p) {
+        if let Some(on) = self.overlay_hit(window, p, scroll) {
             return on;
         }
+        self.hit_in(window, p, scroll, None)
+    }
+
+    /// The hit list's topmost node at `p`, only among `within`'s subtree when given.
+    pub(crate) fn hit_in(&self, window: WindowId, p: Point, scroll: bool, within: Option<NodeId>) -> Option<NodeId> {
         let w = self.window(window)?;
         for e in w.hits.entries.iter().rev() {
             if !e.world.contains(p) || e.clip.is_some_and(|c| !c.contains(p)) {
+                continue;
+            }
+            if within.is_some_and(|t| !self.is_ancestor_or_self(t, e.node)) {
                 continue;
             }
             let Some(i) = self.idx(e.node) else { continue };

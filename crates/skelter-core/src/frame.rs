@@ -319,6 +319,12 @@ impl Document {
     /// The local transform of node `i` relative to its transform parent: layout offset, then the CSS
     /// transform about its origin.
     fn local_transform(&self, i: usize) -> Affine {
+        // a top-layer node goes where its kind put it, in the window root's space
+        if let Some(at) = self.record[i].top_at
+            && crate::layout::in_top_layer(self, i)
+        {
+            return Affine::translate(at.x, at.y);
+        }
         let l = &self.layout[i].layout;
         let s = self.style.computed(i);
         let offset = Affine::translate(l.location.x, l.location.y);
@@ -385,6 +391,8 @@ impl Document {
                 // absolute boxes are placed in their containing block's space and clipped as its
                 // children are (a clip between the two does not clip them, as in CSS)
                 let cctx = match crate::layout::positional_parent(self, ci) {
+                    // a top-layer node: in the window root's own space, under no clip or effect
+                    Some(pp) if crate::layout::in_top_layer(self, ci) => Ctx { space: self.record[pp].transform, clip: None, effect: None },
                     Some(pp) if pp != i => {
                         let q = &self.record[pp];
                         Ctx { space: q.content.or(q.transform), clip: q.child_clip, ..child }
@@ -812,9 +820,28 @@ impl Document {
         };
         let mut moved = Vec::new();
         let mut overlays = Vec::new();
+        // the top layer: nodes met in the walk, walked after everything met before them; the layers
+        // their entries in the overlay stack own (sent by the stack, before their items)
+        let mut deferred: std::collections::VecDeque<usize> = Default::default();
+        let mut tops: Vec<NodeId> = Vec::new();
+        let mut top_ids: std::collections::HashSet<LayerId> = Default::default();
+        let root_frame_t = self.record[ri].transform;
         // what each visited node passes its children: absolute boxes take their containing block's
         let mut cb_frames: std::collections::HashMap<usize, Frame> = Default::default();
-        while let Some(mut f) = stack.pop() {
+        loop {
+            let mut f = match stack.pop() {
+                Some(f) => f,
+                None => {
+                    let Some(ti) = deferred.pop_front() else { break };
+                    let Some((base, tl)) = self.enter_top(window, ti, root_t, root_layer, root_frame_t, commit) else { continue };
+                    tops.push(self.slots.id_at(ti).expect("live"));
+                    top_ids.insert(tl);
+                    // for the layers inside it that look up their host; the stack sends the real one
+                    layers.push(LayerDesc { id: tl, parent: Some(root_layer), kind: LayerKind::Overlay, transform: root_t, clip: None, effect: None, z: 0, bounds: Rect::from_origin_size(Point::ZERO, size), opaque: false });
+                    items.entry(tl).or_default();
+                    Frame { i: ti, parent_world: base, clip_world: None, layer: tl, clip: None, effect: None }
+                }
+            };
             f.layer = resolve(&split, f.layer);
             let i = f.i;
             let node = self.slots.id_at(i).expect("live");
@@ -822,6 +849,10 @@ impl Document {
             let hidden = self.layout[i].style.display == taffy::Display::None || self.core[i].flags.contains(crate::tree::NodeFlags::CONCEALED);
             if hidden {
                 continue;
+            }
+            if self.record[i].top_at.is_some() && !crate::layout::in_top_layer(self, i) {
+                // it left the top layer
+                self.record[i].top_at = None;
             }
             let local = self.local_transform(i);
             let world = f.parent_world.then(&local);
@@ -1003,8 +1034,13 @@ impl Document {
                 effect: own_effect,
             };
             cb_frames.insert(i, child);
+            let mut top_kids = Vec::new();
             for c in self.paint_order(i).into_iter().rev() {
                 let ci = self.ix(c);
+                if crate::layout::in_top_layer(self, ci) {
+                    top_kids.push(ci);
+                    continue;
+                }
                 // an absolute box is placed in its containing block's space and clipped as its
                 // children are (as in the dirty walk); effects and layers follow the tree
                 let frame = match crate::layout::positional_parent(self, ci) {
@@ -1016,8 +1052,11 @@ impl Document {
                 };
                 stack.push(frame);
             }
+            // top-layer children: after everything met so far, in paint order among themselves
+            deferred.extend(top_kids.into_iter().rev());
         }
-        // diff the layers and items against what was sent
+        // diff the layers and items against what was sent (the overlay stack sends the top layer's)
+        layers.retain(|d| !top_ids.contains(&d.id));
         let ws = self.window_mut(window).expect("window");
         for desc in &layers {
             match ws.layers.get(&desc.id) {
@@ -1035,15 +1074,88 @@ impl Document {
         for desc in layers {
             ws.layers.insert(desc.id, desc);
         }
+        let mut top_items = Vec::new();
         for (l, list) in items {
-            if ws.items.get(&l) != Some(&list) {
+            if top_ids.contains(&l) {
+                top_items.push((l, list));
+            } else if ws.items.get(&l) != Some(&list) {
                 commit.layers.push(LayerDelta::Items { layer: l, items: list.clone() });
                 ws.items.insert(l, list);
             }
         }
         ws.hits = Arc::new(HitList { entries: hits });
         ws.a11y_moved = moved;
-        self.sync_overlays(window, root_t, root_layer, overlays, commit);
+        self.sync_overlays(window, root_t, root_layer, overlays, &tops, commit);
+        // the top layer's items, once the stack has sent its layers
+        let ws = self.window_mut(window).expect("window");
+        for (l, list) in top_items {
+            if ws.items.get(&l) != Some(&list) {
+                commit.layers.push(LayerDelta::Items { layer: l, items: list.clone() });
+                ws.items.insert(l, list);
+            }
+        }
+    }
+
+    /// Enters top-layer node `i` in `window`'s overlay stack for this rebuild: asks its kind what it
+    /// is ([`crate::Kind::top_layer`]), moves its transform node to where the kind puts it (in the
+    /// window root's space, `root_frame_t`) and opens or updates its stack entry. Returns the world
+    /// transform its box is placed in and the entry's layer.
+    fn enter_top(&mut self, window: WindowId, i: usize, root_t: PropNodeId, root_layer: LayerId, root_frame_t: Option<PropNodeId>, commit: &mut Commit) -> Option<(Affine, LayerId)> {
+        let node = self.slots.id_at(i)?;
+        let size = self.window(window)?.size;
+        let l = self.layout[i].layout;
+        let tl = {
+            let k = self.kinds[i].as_deref()?;
+            let cx = crate::cx::TopLayerCx { node: self.view_at(i), window_size: size };
+            k.top_layer(&cx)
+        };
+        let at = tl.at.unwrap_or(Point::new(l.location.x, l.location.y));
+        if self.record[i].top_at != Some(at) {
+            self.record[i].top_at = Some(at);
+            if let Some(t) = self.record[i].transform {
+                commit.props.ops.push(PropOp::Transform(t, TransformNode { parent: root_frame_t, local: self.local_transform(i), scroll: None }));
+            }
+        }
+        // the root's own space (its scroll does not move the top layer)
+        let root = self.window(window)?.root;
+        let base = self.idx(root).map_or(Affine::IDENTITY, |ri| self.record[ri].world_tf);
+        let rect = base.then(&self.local_transform(i)).apply_rect(&Rect::new(0.0, 0.0, l.size.width, l.size.height));
+        // the entry it opens from: the nearest ancestor with one
+        let mut parent_node = None;
+        let mut a = self.parent(node);
+        let ws = self.window(window)?;
+        while let Some(n) = a {
+            if ws.overlays.as_ref().is_some_and(|st| st.find_node(n).is_some()) {
+                parent_node = Some(n);
+                break;
+            }
+            a = self.parent(n);
+        }
+        let mut inside = vec![rect];
+        inside.extend(tl.inside.iter().copied());
+        let ws = self.window_mut(window)?;
+        let stack = ws.overlays.get_or_insert_with(|| crate::overlay::OverlayStack::with_z_base(root_layer, crate::toplayer::OVERLAY_Z));
+        let layer = match stack.find_node(node) {
+            Some(id) => {
+                stack.set_rect(id, rect);
+                stack.set_inside(id, inside);
+                stack.get(id).map(|e| e.spec.layer)?
+            }
+            None => {
+                let layer = LayerId(ws.layer_ids.alloc());
+                let stack = ws.overlays.as_mut().expect("just made");
+                let mut spec = crate::overlay::OverlaySpec::new(tl.class, node, layer, root_t, rect);
+                spec.parent = parent_node.and_then(|p| stack.find_node(p));
+                spec.opener = tl.opener.or(Some(node));
+                spec.inside = inside;
+                spec.takes_input = tl.takes_input;
+                spec.modal = tl.modal;
+                spec.dismiss = tl.dismiss;
+                stack.push(spec);
+                layer
+            }
+        };
+        Some((base, layer))
     }
 
     /// The last frame's hit list of `window` (for the compositor's scroll hit tests and tests).

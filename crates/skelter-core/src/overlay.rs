@@ -174,6 +174,54 @@ impl OverlayPart {
     }
 }
 
+/// What a node in its window's top layer is ([`Kind::top_layer`](crate::Kind::top_layer)): a node
+/// whose layout style is `position: fixed` is laid out against the window, drawn after the whole
+/// content in a layer of the window's overlay stack and hit before it, with its subtree.
+#[derive(Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct TopLayer {
+    pub class: OverlayClass,
+    /// Where its border box goes, window points (`None`: where layout put it, against the window).
+    pub at: Option<Point>,
+    /// More rects (window points) that count as inside for light dismiss (its anchor); the node's own
+    /// box always does.
+    pub inside: Vec<Rect>,
+    /// Where keyboard focus goes back when it closes (`None`: the node).
+    pub opener: Option<NodeId>,
+    pub takes_input: bool,
+    pub modal: bool,
+    pub dismiss: Dismiss,
+}
+
+impl TopLayer {
+    /// The defaults of `class` ([`OverlaySpec::new`]'s), at its layout position.
+    pub fn new(class: OverlayClass) -> Self {
+        let s = OverlaySpec::new(class, NodeId(0), LayerId(0), PropNodeId(0), Rect::ZERO);
+        TopLayer { class, at: None, inside: Vec::new(), opener: None, takes_input: s.takes_input, modal: s.modal, dismiss: s.dismiss }
+    }
+    /// At `at` (window points).
+    pub fn at(mut self, at: Point) -> Self {
+        self.at = Some(at);
+        self
+    }
+    pub fn with_dismiss(mut self, dismiss: Dismiss) -> Self {
+        self.dismiss = dismiss;
+        self
+    }
+    pub fn with_inside(mut self, inside: Vec<Rect>) -> Self {
+        self.inside = inside;
+        self
+    }
+    pub fn with_input(mut self, takes_input: bool) -> Self {
+        self.takes_input = takes_input;
+        self
+    }
+    pub fn with_modal(mut self, modal: bool) -> Self {
+        self.modal = modal;
+        self
+    }
+}
+
 /// One open surface.
 #[derive(Clone, Debug, PartialEq)]
 pub struct OverlayEntry {

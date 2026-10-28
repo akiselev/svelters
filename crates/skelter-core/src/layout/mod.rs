@@ -343,10 +343,17 @@ impl taffy::RoundTree for Tree<'_> {
     }
 }
 
-/// An out-of-flow box (`position: absolute`, shown).
+/// An out-of-flow box (`position: absolute`, or a top-layer node's `fixed`; shown).
 pub(crate) fn out_of_flow(doc: &Document, i: usize) -> bool {
     let st = &doc.layout[i].style;
-    st.position == taffy::Position::Absolute && st.display != Display::None
+    matches!(st.position, taffy::Position::Absolute | taffy::Position::Fixed) && st.display != Display::None
+}
+
+/// A node in its window's top layer: a kind set `position: fixed` on it (`Kind::layout_style`), shown.
+/// Its containing block is the window root.
+pub(crate) fn in_top_layer(doc: &Document, i: usize) -> bool {
+    let st = &doc.layout[i].style;
+    st.position == taffy::Position::Fixed && st.display != Display::None
 }
 
 /// What node `i`'s layout location is relative to: its parent, or for an absolute box its containing
@@ -357,6 +364,13 @@ pub(crate) fn positional_parent(doc: &Document, i: usize) -> Option<usize> {
         return Some(p);
     }
     let mut a = p;
+    if in_top_layer(doc, i) {
+        // a top-layer node's containing block is the window root, whatever is positioned above it
+        while let Some(x) = doc.core[a].parent {
+            a = x.index() as usize;
+        }
+        return Some(a);
+    }
     loop {
         // taffy's containing block: the nearest positioned box (`relative` or `absolute`; boxes are
         // `static` unless CSS says otherwise), else the window root, which claims the rest
