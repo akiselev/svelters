@@ -136,10 +136,10 @@ mod tests {
     fn stretches_across_its_row_unless_css_aligns_it() {
         let mut s = Separator::default();
         s.props.orientation = "vertical".into();
-        let st = s.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None });
+        let st = s.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None, font_size: None, theme: None });
         assert_eq!(st.align_self, Some(taffy::AlignSelf::STRETCH), "a toolbar row that centres its items still gives it a length");
         let base = taffy::Style { align_self: Some(taffy::AlignSelf::CENTER), ..Default::default() };
-        let st = s.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: Some(base) });
+        let st = s.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: Some(base), font_size: None, theme: None });
         assert_eq!(st.align_self, Some(taffy::AlignSelf::CENTER), "CSS align-self wins");
     }
 

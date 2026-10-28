@@ -947,7 +947,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         let base = cx.default_layout();
         let dark = cx.service::<crate::theme::Theme>().is_none_or(|t| t.is_dark());
-        self.reading(|| self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark, base: Some(base) }))
+        self.reading(|| self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark, base: Some(base), font_size: Some(cx.style().font_size), theme: cx.service::<crate::theme::Theme>() }))
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {

@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "1ad74b354c8e04cb"
+    "spec_hash": "a9b803b45b8f2b14"
   },
   "inline_text": {
     "kind": "span",
@@ -7632,6 +7632,26 @@
       ],
       "present": null,
       "props": {
+        "auto-row-height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": false,
+          "doc": "SV83: rows are as tall as the theme's type scale makes them (the density's `row-h`, grown with the list's `font-size`); a written `row-height` is then the least row height. Off: `row-height` alone.",
+          "fingerprint": "06bb56a8",
+          "id": 112940712,
+          "js": "auto-row-height",
+          "native": "auto-row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:auto-row-height",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "current": {
           "change": "paint",
           "construct_only": false,

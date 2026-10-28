@@ -281,6 +281,10 @@ pub mod core {
         pub dark: bool,
         /// The taffy style skelter-core's cascade computed (`None` in tests: taffy's default).
         pub base: Option<taffy::Style>,
+        /// SV83: the node's computed `font-size` in points (`None` in tests).
+        pub font_size: Option<f32>,
+        /// SV83: the document's theme (`None` without one).
+        pub theme: Option<&'a crate::theme::Theme>,
     }
 
     impl StyleCx<'_> {

@@ -1748,7 +1748,7 @@ mod tests {
         let mut b = bar();
         prepare(&mut b.menus);
         let policy = policy(Platform::Macos);
-        let sc = StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None };
+        let sc = StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None, font_size: None, theme: None };
         assert_eq!(b.layout_style(&sc).display, taffy::Display::Flex, "shown while no native bar has the menus");
         b.set_prop(bar_props::P::native_bar.id(), &Value::Bool(true)).unwrap();
         assert_eq!(b.layout_style(&sc).display, taffy::Display::None);
