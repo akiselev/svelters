@@ -231,6 +231,11 @@ pub struct TabView {
     /// The page last scrolled into view: a new selection (a JS write before the strip was laid
     /// out, too) is revealed at the next relayout; a wheel scroll away from it stays.
     revealed: Option<usize>,
+    /// The strip's direction is `rtl`: the geometry is laid out left to right and mirrored in the
+    /// strip where it meets the pointer, the paint and AccessKit ([`TabView::flip`]); captions run
+    /// from the right, the scroll and overflow buttons sit at the left (swapped), the overflow
+    /// menu opens under them, and the arrow keys swap.
+    pub rtl: bool,
 }
 
 impl TabView {
@@ -397,8 +402,27 @@ impl TabView {
         self.clamp_scroll();
     }
 
+    /// `r` mirrored in the strip in `rtl` (the logical, left-to-right geometry → tab-view
+    /// coordinates, and back).
+    pub fn flip(&self, r: Rect) -> Rect {
+        if self.rtl { Rect::new(self.width - r.max.x, r.min.y, self.width - r.min.x, r.max.y) } else { r }
+    }
+
+    fn flip_pt(&self, p: Point) -> Point {
+        if self.rtl { Point::new(self.width - p.x, p.y) } else { p }
+    }
+
+    fn flip_align(&self, a: HAlign) -> HAlign {
+        match (a, self.rtl) {
+            (HAlign::Start, true) => HAlign::End,
+            (HAlign::End, true) => HAlign::Start,
+            (a, _) => a,
+        }
+    }
+
     /// What is under `p` (tab-view coordinates).
     pub fn hit(&self, p: Point) -> Option<TabHit> {
+        let p = self.flip_pt(p);
         if self.menu_rect().is_some_and(|m| m.contains(p)) {
             return (0..self.strip.tabs.len()).find(|&k| self.menu_row(k).is_some_and(|r| r.contains(p))).map(TabHit::Item);
         }
@@ -524,6 +548,11 @@ impl TabView {
             ScrollDelta::Pages(v) => (if v.x != 0.0 { v.x } else { v.y }) * self.width,
         };
         let before = self.scroll;
+        let horizontal = match ev.delta {
+            ScrollDelta::Lines(v) | ScrollDelta::Pixels(v) | ScrollDelta::Pages(v) => v.x != 0.0,
+        };
+        // `rtl`: the content runs leftward, so a horizontal wheel moves it the other way
+        let d = if self.rtl && horizontal { -d } else { d };
         self.scroll -= d;
         self.clamp_scroll();
         self.scroll != before
@@ -565,8 +594,8 @@ impl TabView {
             Some(Key::Tab) if ctrl => Some(cycle(if shift { -1 } else { 1 })),
             Some(Key::PageDown) if ctrl => Some(cycle(1)),
             Some(Key::PageUp) if ctrl => Some(cycle(-1)),
-            Some(Key::ArrowRight) if self.focused => Some((cur + 1).min(n - 1)),
-            Some(Key::ArrowLeft) if self.focused => Some(cur.saturating_sub(1)),
+            Some(Key::ArrowRight) if self.focused => Some(if self.rtl { cur.saturating_sub(1) } else { (cur + 1).min(n - 1) }),
+            Some(Key::ArrowLeft) if self.focused => Some(if self.rtl { (cur + 1).min(n - 1) } else { cur.saturating_sub(1) }),
             Some(Key::Home) if self.focused => Some(0),
             Some(Key::End) if self.focused => Some(n - 1),
             _ => None,
@@ -589,7 +618,7 @@ impl TabView {
         shim::fill(list, full, look.bar_bg, 0.0);
         shim::line(list, Point::new(0.0, h - 0.5), Point::new(self.width, h - 0.5), 1.0, look.separator);
         self.record_ctls(look, list);
-        let bar = Rect::new(0.0, 0.0, self.viewport(), h);
+        let bar = self.flip(Rect::new(0.0, 0.0, self.viewport(), h));
         list.push(Prim::PushClip(RoundedRect { rect: bar, radii: Corners::ZERO }), bar);
         let shown = self.shown(captions.len());
         for (k, (c, g)) in captions.iter().zip(&self.strip.tabs).enumerate() {
@@ -601,6 +630,7 @@ impl TabView {
             let on = shown == Some(k);
             let hovered = self.hover.and_then(TabHit::tab) == Some(k);
             let pressed = self.pressed.is_some_and(|(h, b)| h == TabHit::Tab(k) && b == MouseButton::Primary);
+            let r = self.flip(r);
             let body = Rect::new(r.min.x, r.min.y, r.max.x, r.max.y - look.indicator_width);
             let bg = if pressed {
                 look.pressed_bg
@@ -619,9 +649,9 @@ impl TabView {
             } else {
                 look.text.color
             };
-            text.draw(list, &c.title, &look.text.with_color(fg), g.label.translate(dx), HAlign::Start, true);
+            text.draw(list, &c.title, &look.text.with_color(fg), self.flip(g.label.translate(dx)), self.flip_align(HAlign::Start), true);
             if let Some(cr) = g.close {
-                let cr = cr.translate(dx);
+                let cr = self.flip(cr.translate(dx));
                 if self.hover == Some(TabHit::Close(k)) && self.enabled {
                     shim::fill(list, cr, look.close_hover_bg, look.radius);
                 }
@@ -650,6 +680,7 @@ impl TabView {
     fn record_ctls(&self, look: &TabLook, list: &mut DisplayList) {
         for c in [Ctl::Left, Ctl::Right, Ctl::Menu] {
             let Some(r) = self.ctl_rect(c) else { continue };
+            let r = self.flip(r);
             let body = Rect::new(r.min.x + 1.0, r.min.y + 2.0, r.max.x - 1.0, r.max.y - look.indicator_width - 2.0);
             let live = self.enabled
                 && match c {
@@ -665,7 +696,13 @@ impl TabView {
             let fg = if live { look.text.color } else { look.disabled_fg };
             let (cx, cy) = ((body.min.x + body.max.x) / 2.0, (body.min.y + body.max.y) / 2.0);
             let s = 3.5;
-            let pts = match c {
+            // `rtl` swaps the scroll buttons' chevrons with their places (back points right)
+            let c_shape = match (c, self.rtl) {
+                (Ctl::Left, true) => Ctl::Right,
+                (Ctl::Right, true) => Ctl::Left,
+                (c, _) => c,
+            };
+            let pts = match c_shape {
                 Ctl::Left => [Point::new(cx + s * 0.5, cy - s), Point::new(cx - s * 0.5, cy), Point::new(cx + s * 0.5, cy + s)],
                 Ctl::Right => [Point::new(cx - s * 0.5, cy - s), Point::new(cx + s * 0.5, cy), Point::new(cx - s * 0.5, cy + s)],
                 Ctl::Menu => [Point::new(cx - s, cy - s * 0.5), Point::new(cx, cy + s * 0.5), Point::new(cx + s, cy - s * 0.5)],
@@ -679,10 +716,12 @@ impl TabView {
     /// current row filled, the shown tab checked). Nothing while it is closed.
     pub fn record_menu(&self, captions: &[TabCaption], look: &TabLook, text: &mut dyn TextPainter, list: &mut DisplayList) {
         let Some(m) = self.menu_rect() else { return };
+        let m = self.flip(m);
         shim::frame(list, m, look.menu_bg, look.menu_border, 1.0, look.radius);
         let shown = self.shown(captions.len());
         for (k, c) in captions.iter().enumerate() {
-            let Some(r) = self.menu_row(k) else { continue };
+            let Some(lr) = self.menu_row(k) else { continue };
+            let r = self.flip(lr);
             let cur = self.menu_cur == Some(k);
             if cur {
                 match look.menu_sel_border {
@@ -693,12 +732,14 @@ impl TabView {
             let fg = if cur { look.menu_sel_fg } else { look.text.color };
             if shown == Some(k) {
                 // a check mark in the row's first column
-                let (x, y) = (r.min.x + self.menu.pad_x * 0.6, (r.min.y + r.max.y) / 2.0);
+                // the mark's place mirrors, its shape does not (10 pt wide)
+                let x = self.flip(Rect::new(lr.min.x + self.menu.pad_x * 0.6, 0.0, lr.min.x + self.menu.pad_x * 0.6 + 10.0, 0.0)).min.x;
+                let y = (r.min.y + r.max.y) / 2.0;
                 shim::line(list, Point::new(x, y), Point::new(x + 3.5, y + 3.5), 1.3, fg);
                 shim::line(list, Point::new(x + 3.5, y + 3.5), Point::new(x + 10.0, y - 4.0), 1.3, fg);
             }
-            let label = Rect::new(r.min.x + self.menu.pad_x * 0.6 + MENU_CHECK, r.min.y, r.max.x - self.menu.pad_x, r.max.y);
-            text.draw(list, &c.title, &look.text.with_color(fg), label, HAlign::Start, true);
+            let label = self.flip(Rect::new(lr.min.x + self.menu.pad_x * 0.6 + MENU_CHECK, lr.min.y, lr.max.x - self.menu.pad_x, lr.max.y));
+            text.draw(list, &c.title, &look.text.with_color(fg), label, self.flip_align(HAlign::Start), true);
         }
     }
 
@@ -716,8 +757,8 @@ impl TabView {
                 n.set_selected(shown == Some(k));
                 n.set_position_in_set(k + 1);
                 n.set_size_of_set(captions.len());
-                let r = g.rect;
-                n.set_bounds(accesskit::Rect { x0: (r.min.x - self.scroll) as f64, y0: r.min.y as f64, x1: (r.max.x - self.scroll) as f64, y1: r.max.y as f64 });
+                let r = self.flip(g.rect.translate(skelter_base::geom::Vec2::new(-self.scroll, 0.0)));
+                n.set_bounds(accesskit::Rect { x0: r.min.x as f64, y0: r.min.y as f64, x1: r.max.x as f64, y1: r.max.y as f64 });
                 n.add_action(accesskit::Action::Click);
                 if !self.enabled {
                     n.set_disabled();
