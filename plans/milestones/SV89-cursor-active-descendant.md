@@ -46,4 +46,5 @@ changed lines.
 
 ## CI
 
-(filled in below after the push)
+`0aa8f3f` (master `830d7b5` merged: already up to date), all green: js 40681594590, linux-gtk 40681594773,
+linux-qt 40681594775, macos-appkit 40681594673, skelter 40681594537, windows-winui 40681594668.
