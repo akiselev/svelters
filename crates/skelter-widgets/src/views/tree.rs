@@ -442,6 +442,10 @@ impl skelter_core::VirtualChildren for TreeView {
             self.item_a11y(row, node);
         }
     }
+    /// The cursor's row: assistive technology reports it as focused (SV89).
+    fn cursor_row(&self) -> Option<usize> {
+        skelter_core::VirtualChildren::cursor_row(&self.list)
+    }
 }
 
 /// `::part(twisty)`: the disclosure chevron, in the theme's icon colour.
@@ -783,6 +787,19 @@ mod tests {
 
     fn key(k: Key) -> Event {
         Event::Key(KeyEvent { key: Some(k), physical: 0, text: None, state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::default() })
+    }
+
+    /// SV89: the tree's cursor row is the one its realised row nodes name as active descendant.
+    #[test]
+    fn the_cursor_row_follows_the_cursor() {
+        use skelter_core::VirtualChildren;
+        let mut t = tree();
+        assert_eq!(t.cursor_row(), None);
+        assert!(expand(&mut t, 1));
+        t.list.sel.cursor = Some(12);
+        assert_eq!(t.cursor_row(), Some(2), "1, 11, 12");
+        assert!(collapse(&mut t, 1));
+        assert_eq!(t.cursor_row(), Some(0), "collapsing moves the cursor to the parent");
     }
 
     #[test]

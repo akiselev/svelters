@@ -1221,6 +1221,10 @@ impl skelter_core::VirtualChildren for VirtualList {
             node.set_role(self.member_role());
         }
     }
+    /// The cursor's row: assistive technology reports it as focused (SV89).
+    fn cursor_row(&self) -> Option<usize> {
+        pos_of(&self.ids, self.sel.cursor)
+    }
 }
 
 /// The JS row protocol on a document (`@svelters/lists`, svelters-egui's `virtual-list`), shared
@@ -2055,6 +2059,54 @@ mod tests {
         let root = testkit::a11y(&l, StateBits::NONE, Size::new(200.0, 100.0));
         assert_eq!(root.role(), accesskit::Role::ListBox);
         assert!(root.is_multiselectable());
+    }
+
+    /// SV89: while the list has focus, the node bound to its cursor row is its active descendant,
+    /// following the arrow keys, so assistive technology announces the row the cursor lands on.
+    #[test]
+    fn the_cursor_rows_node_is_the_lists_active_descendant() {
+        use crate::testdoc::{child, doc, frame, key, pointer};
+        use skelter_base::event::PointerPhase;
+        use skelter_core::Value as V;
+        let (mut d, root) = doc(Size::new(300.0, 200.0), |r| {
+            crate::host::register::<VirtualList>(r).unwrap();
+        });
+        let spec = d.registry().get(skelter_core::KindId::of("virtual-list")).unwrap().spec;
+        let (splice, set_row) = (spec.method_named("splice").unwrap(), spec.method_named("setRow").unwrap());
+        let list = child(&mut d, root, skelter_core::KindId::of("virtual-list"), "width: 200px; height: 150px");
+        d.call(list, splice, &[V::I64(0), V::I64(0), V::List(vec![V::I64(10), V::I64(11), V::I64(12)].into())]).unwrap();
+        for name in ["setup", "bind", "unbind", "teardown"] {
+            d.listen(list, spec.signal_named(name).unwrap(), skelter_core::ListenFlags::EMPTY);
+        }
+        let (setup, bind) = (spec.signal_named("setup").unwrap(), spec.signal_named("bind").unwrap());
+        let field = |e: &skelter_core::JsEvent, f: &str| e.arg.as_ref().and_then(|a| a.field(f).and_then(V::as_i64).or_else(|| a.as_i64()));
+        frame(&mut d);
+        let mut node_of_slot = std::collections::HashMap::new();
+        for e in d.take_events().iter().filter(|e| e.signal == setup) {
+            let slot = field(e, "row").unwrap();
+            let row = d.create(skelter_core::KindId::of("box"));
+            d.insert(list, row, None, None).unwrap();
+            d.call(list, set_row, &[V::I64(slot), V::I64(row.0 as i64)]).unwrap();
+            node_of_slot.insert(slot, row);
+        }
+        frame(&mut d);
+        let node_of: std::collections::HashMap<i64, NodeId> =
+            d.take_events().iter().filter(|e| e.signal == bind).map(|e| (field(e, "pos").unwrap(), node_of_slot[&field(e, "row").unwrap()])).collect();
+        frame(&mut d);
+        let ad = |c: &skelter_base::commit::Commit| c.a11y.as_ref()?.nodes.iter().find(|(id, _)| id.0 == list.0)?.1.active_descendant();
+        // a press on row 0 focuses the list and puts the cursor there
+        let r = d.world_rect(node_of[&0]).unwrap();
+        let (x, y) = ((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0);
+        d.dispatch(&pointer(PointerPhase::Down, x, y, 1_000, false));
+        d.dispatch(&pointer(PointerPhase::Up, x, y, 2_000, false));
+        assert_eq!(d.focused(crate::testdoc::W), Some(list));
+        let c = frame(&mut d).expect("a commit");
+        assert_eq!(ad(&c), Some(accesskit::NodeId(node_of[&0].0)));
+        for (k, pos) in [(Key::ArrowDown, 1), (Key::ArrowDown, 2), (Key::Home, 0)] {
+            d.dispatch(&key(k, None));
+            let c = frame(&mut d).expect("a commit");
+            assert_eq!(ad(&c), Some(accesskit::NodeId(node_of[&pos].0)), "after {k:?}");
+        }
     }
 
     /// SV76: a press on a nested node inside row 1 reaches the list at the list's own local point

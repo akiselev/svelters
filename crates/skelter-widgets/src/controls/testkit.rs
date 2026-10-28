@@ -59,7 +59,7 @@ pub fn a11y(k: &dyn Kind, state: StateBits, size: Size) -> accesskit::Node {
 /// The kind's AccessKit node and its virtual children.
 pub fn a11y_with_children(k: &dyn Kind, state: StateBits, size: Size) -> (accesskit::Node, Vec<accesskit::Node>) {
     let mut node = accesskit::Node::new(accesskit::Role::Unknown);
-    let mut cx = A11yCx { node: &mut node, state, size, children: Vec::new() };
+    let mut cx = A11yCx { node: &mut node, state, size, children: Vec::new(), active_child: None };
     k.a11y(&mut cx);
     let children = cx.children;
     (node, children)
