@@ -155,4 +155,11 @@ transparent there), as VS Code's disabled text is everywhere.
 
 - `1986caf` (items 1–3, 24 px rows): green in all six (js 40711800613, linux-gtk 40711800598, linux-qt
   40711800674, macos-appkit 40711800681, skelter 40711800616, windows-winui 40711800617).
-- `deb5ac6`, `b66f6e3`: cancelled by later pushes.
+- **Last code commit `038bb16`** (master `cdacc80` merged: dir-core and dir-widgets; R1; the rtl context menu):
+  green in all six (js 40722180315, linux-gtk 40722180146, linux-qt 40722180032, macos-appkit 40722180160, skelter
+  40722180270, windows-winui 40722180104). Master's later `fc1504d` is docs only (COORDINATOR.md), not merged.
+- `383bfd2` (S-L1 + record): green in all six (js 40716989843, linux-gtk 40716989935, linux-qt 40716989850,
+  macos-appkit 40716989882, skelter 40716989950, windows-winui 40716989806).
+- `deb5ac6`, `b66f6e3`, `b592347` (gtk), `3aeaefd` (four): cancelled by later pushes.
+- No snapshot moved in any run; none re-blessed.
+- Not run locally: the workspace, conformance, pixel snapshots, `skelter-gallery check`.
