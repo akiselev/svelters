@@ -334,7 +334,7 @@ impl FooterState {
         for (f, r) in buttons {
             let hover = self.hovered == Some(*f);
             let (bg, fg, border) = match f {
-                Footer::Save => (if hover { look.accent_hover } else { look.accent }, look.accent_fg, Color::TRANSPARENT),
+                Footer::Save => (if hover { look.accent_hover } else { look.accent }, look.accent_fg, look.button_border),
                 Footer::Cancel => (if hover { look.button_bg_hover } else { look.button_bg }, look.button_fg, look.control_border),
             };
             shim::frame(list, *r, bg, border, if border.a > 0.0 { look.stroke } else { 0.0 }, look.radius);

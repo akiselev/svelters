@@ -214,6 +214,7 @@ impl PickerLook {
             button_bg: c("button-bg", d.button_bg),
             button_bg_hover: c("button-bg-hover", d.button_bg_hover),
             button_fg: c("button-fg", d.button_fg),
+            button_border: c("button-border", d.button_border),
             row_h: px("row-h", d.row_h),
             control_h: px("control-h", d.control_h),
             radius: px("radius", d.radius),
@@ -246,6 +247,15 @@ impl RecordSink for ListRes<'_> {
         let ink = Rect::new(origin.x, origin.y - run.ascent, origin.x + run.advance, origin.y + run.descent);
         let id = self.res.run(&run);
         self.list.push(skelter_base::display::Prim::Glyphs(skelter_base::display::Glyphs { run: id, origin, color }), ink);
+    }
+}
+
+/// The look from the document's theme (the high-contrast themes too), else the built-in Modern
+/// theme of the node's scheme.
+fn look_of(theme: Option<&Theme>, dark: bool) -> PickerLook {
+    match theme {
+        Some(t) => PickerLook::from_theme(t),
+        None => look(dark).clone(),
     }
 }
 
@@ -383,14 +393,14 @@ impl w::Kind for CalendarKind {
     }
 
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
-        let s = self.model.size(look(cx.style.dark));
+        let s = self.model.size(&look_of(cx.style.theme, cx.style.dark));
         taffy::Size { width: s.w, height: s.h }
     }
 
     fn record(&self, cx: &mut RecordCx) {
         let state = cx.style.state;
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
         self.model.record(list, &mut painter, look, self.today.unwrap_or_else(Date::today_utc), on, fv);
@@ -569,14 +579,14 @@ impl w::Kind for ColorEditorKind {
     }
 
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
-        let s = self.model.size(look(cx.style.dark));
+        let s = self.model.size(&look_of(cx.style.theme, cx.style.dark));
         taffy::Size { width: s.w, height: s.h }
     }
 
     fn record(&self, cx: &mut RecordCx) {
         let state = cx.style.state;
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
         self.model.record(list, &mut painter, look, on, fv);
@@ -595,7 +605,7 @@ impl w::Kind for ColorEditorKind {
 
     /// Lays the editing hex field out in the box (its caret and selection geometry).
     fn prepare(&mut self, cx: &mut PrepareCx) {
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let (Some(h), Some(r)) = (self.hex.as_mut(), self.model.geom(look).hex) else { return };
         let mut lay = cx.layouter(hex_style(look));
         let row = lay.layout(" ", None).size().h;
@@ -904,7 +914,7 @@ impl w::Kind for DatePickerKind {
     }
 
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let mut p = ShaperPainter { text: &mut *cx.text, res: None };
         let s = self.model.size(&mut p, look, self.today_date());
         taffy::Size { width: s.w, height: s.h }
@@ -918,7 +928,7 @@ impl w::Kind for DatePickerKind {
         self.today = Some(today);
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let size = self.model.popup_size(look);
         self.popup.prepare(cx, self.model.drop.is_open(), size, look);
     }
@@ -927,7 +937,7 @@ impl w::Kind for DatePickerKind {
     fn record(&self, cx: &mut RecordCx) {
         let state = cx.style.state;
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let size = cx.size;
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
@@ -936,7 +946,7 @@ impl w::Kind for DatePickerKind {
 
     /// The open popup, in a layer of the window's overlay stack.
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), self.today_date()))
     }
 
@@ -1127,7 +1137,7 @@ impl w::Kind for ColorPickerKind {
     }
 
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
-        let s = self.model.size(look(cx.style.dark));
+        let s = self.model.size(&look_of(cx.style.theme, cx.style.dark));
         taffy::Size { width: s.w, height: s.h }
     }
 
@@ -1136,7 +1146,7 @@ impl w::Kind for ColorPickerKind {
         self.popup.bounds = room;
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let size = self.model.popup_size(look);
         self.popup.prepare(cx, self.model.drop.is_open(), size, look);
     }
@@ -1145,13 +1155,13 @@ impl w::Kind for ColorPickerKind {
     fn record(&self, cx: &mut RecordCx) {
         let state = cx.style.state;
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         self.model.record_button(cx.list, look, cx.size, fv, on);
     }
 
     /// The open popup, in a layer of the window's overlay stack.
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
-        let look = look(cx.style.dark);
+        let look = &look_of(cx.style.theme, cx.style.dark);
         let fv = cx.style.state.contains(StateBits::FOCUS_VISIBLE);
         self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), fv))
     }
