@@ -630,6 +630,7 @@ impl Document {
         self.set_window(ci, window);
         self.structure_changed(pi);
         self.mark_subtree_style(ci);
+        self.refresh_dir_auto(pi);
         self.mark_subtree(ci, Dirty::RECORD);
         if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
             self.refresh_desc_nonpassive(pi);
@@ -673,6 +674,7 @@ impl Document {
         }
         self.set_window(ci, None);
         self.structure_changed(pi);
+        self.refresh_dir_auto(pi);
         if self.core[ci].flags.intersects(NodeFlags::NONPASSIVE.union(NodeFlags::DESC_NONPASSIVE)) {
             self.refresh_desc_nonpassive(pi);
         }
@@ -934,6 +936,8 @@ impl Document {
                 let ci = self.ix(c);
                 self.refresh_inert(ci);
             }
+        } else if prop == common::DIR {
+            self.dir_changed(i);
         } else if prop == common::INVALID {
             let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
             self.set_state(node, StateMask::INVALID, on);
@@ -1006,6 +1010,10 @@ impl Document {
         .contains(&prop)
         {
             self.mark(node, Dirty::A11Y);
+        }
+        // a `dir=auto` at or above it may read this text
+        if is_text {
+            self.refresh_dir_auto(i);
         }
         // ancestors named by their descendants' text re-project
         if is_text || prop == common::ARIA_LABEL {
@@ -1479,7 +1487,7 @@ impl Document {
         self.mark_up(i, Dirty::DESC_RECORD);
     }
 
-    fn mark_subtree_style(&mut self, i: usize) {
+    pub(crate) fn mark_subtree_style(&mut self, i: usize) {
         self.core[i].dirty.insert(Dirty::STYLE | Dirty::STYLE_SUBTREE);
         self.mark_up(i, Dirty::DESC_STYLE);
     }

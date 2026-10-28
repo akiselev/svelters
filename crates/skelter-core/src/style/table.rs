@@ -1,7 +1,7 @@
 //! skelter's style property table: egui's (`svelters_style::tables::EGUI`, the properties the Svelte
 //! sources already use) plus the ones skelter renders that egui does not: `transform`,
 //! `transform-origin`, `z-index`, `visibility`, `pointer-events` and `will-change` (SKELTER-core Q1,
-//! decided by the coordinator 2026-10-25).
+//! decided by the coordinator 2026-10-25), and `direction` (POL4-DIR-CORE).
 //!
 //! Built once from the generated egui table, so it follows that table's changes. When the generated
 //! `svelters_style::tables::SKELTER` (lane SVELTERS-SKELTER's row in `gen_props.py`, from skelter.json's
@@ -22,6 +22,8 @@ pub const EXTRA: &[Prop] = &[
     css("visibility", ValueType::Enum, &["visible", "hidden", "collapse"]),
     css("pointer-events", ValueType::Enum, &["auto", "none"]),
     css("will-change", ValueType::Raw, &[]),
+    // POL4-DIR-CORE: inherited (CSS 2), set by the `dir` prop below author rules
+    css("direction", ValueType::Enum, &["ltr", "rtl"]),
 ];
 
 /// The table skelter-core cascades with (sorted by name, as [`Table::props`] requires).

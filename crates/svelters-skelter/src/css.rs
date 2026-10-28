@@ -37,6 +37,8 @@ pub const ENGINE_PROPS: &[(&str, &str, &[&str], ChangeClass)] = &[
     ("color", "color", &[], Paint),
     ("content", "content", &[], Layout),
     ("cursor", "enum", CURSORS, Paint),
+    // inherited; the `dir` prop sets it below author rules (POL4-DIR-CORE)
+    ("direction", "enum", &["ltr", "rtl"], Layout),
     ("display", "enum", &["flex", "grid", "none"], Layout),
     ("font-family", "raw", &[], Layout),
     ("font-size", "length", &[], Layout),

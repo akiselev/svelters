@@ -22,6 +22,7 @@ use skelter_base::cursor::CursorIcon;
 use skelter_base::display::BorderStyle;
 use skelter_base::geom::{Affine, Corners, Insets, Vec2};
 use skelter_base::ids::{NodeId, WindowId};
+use skelter_base::text::Direction;
 use skelter_base::time::Span;
 use std::borrow::Cow;
 use std::num::NonZeroU64;
@@ -110,6 +111,9 @@ impl<'a> Element for El<'a> {
     }
     fn is_focus_visible(&self) -> bool {
         self.state().contains(StateMask::FOCUS_VISIBLE)
+    }
+    fn is_rtl(&self) -> bool {
+        self.doc.style.nodes[self.i].dir.is_rtl()
     }
 }
 
@@ -380,6 +384,8 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
     if let Some(k) = kw(c.get("pointer-events")) {
         b.pointer_events_none = k == "none";
     }
+    // inherited by the engine (a `dir` or a root sets it on the parent style the node inherits)
+    b.direction = if kw(c.get("direction")) == Some("rtl") { Direction::Rtl } else { Direction::Ltr };
     // box
     if let Some(ComputedValue::Color(k)) = c.get("background-color") {
         b.background = Fill::Solid(color(*k));
@@ -671,6 +677,8 @@ pub(crate) fn layout_style(c: &ComputedStyle, b: &ComputedBox, hidden: bool) -> 
         bottom: taffy::LengthPercentage::length(b.border_widths.bottom),
         left: taffy::LengthPercentage::length(b.border_widths.left),
     };
+    // flex rows, `start`/`end`, grid columns and a scroller's gutter follow it (taffy's RTL)
+    st.direction = if b.direction.is_rtl() { taffy::Direction::Rtl } else { taffy::Direction::Ltr };
     if hidden {
         st.display = taffy::Display::None;
     }
@@ -687,7 +695,8 @@ fn box_diff(a: &ComputedBox, b: &ComputedBox) -> (bool, bool, bool) {
         || a.italic != b.italic
         || a.line_height != b.line_height
         || a.letter_spacing != b.letter_spacing
-        || a.wrap != b.wrap;
+        || a.wrap != b.wrap
+        || a.direction != b.direction;
     let paint = text
         || a.color != b.color
         || a.caret_color != b.caret_color
@@ -728,6 +737,7 @@ fn inherited_differs(a: &ComputedBox, b: &ComputedBox) -> bool {
         || a.cursor != b.cursor
         || a.visibility_hidden != b.visibility_hidden
         || a.pointer_events_none != b.pointer_events_none
+        || a.direction != b.direction
 }
 
 /// What restyling one node found.
@@ -812,7 +822,17 @@ impl Document {
     /// which custom properties changed.
     fn restyle_node(&mut self, i: usize, window: WindowId) -> Restyled {
         let parent = self.core[i].parent.map(|p| self.ix(p));
-        let parent_css = parent.and_then(|p| self.style.nodes[p].css.clone());
+        let mut parent_css = parent.and_then(|p| self.style.nodes[p].css.clone());
+        // its directionality first (`:dir()` reads it); a `dir` (or a root) is what it inherits as
+        // `direction`, below its own rules
+        let (dir, hint) = self.directionality(i);
+        self.style.nodes[i].dir = dir;
+        let inherited_dir = parent_css.as_deref().and_then(|p| kw(p.get("direction"))).unwrap_or("ltr");
+        if hint && inherited_dir != dir.name() {
+            let mut p = parent_css.as_deref().cloned().unwrap_or_else(|| ComputedStyle::initial(self.style.stylist.table()));
+            p.set("direction", Some(ComputedValue::Keyword(dir.name())));
+            parent_css = Some(Arc::new(p));
+        }
         let parent_box = parent.map(|p| self.style.nodes[p].computed.clone());
         let inline = self.style.nodes[i].inline.clone();
         let cx = ComputeContext { root_font_size: 16.0, default_font_size: 13.0 };
@@ -837,6 +857,7 @@ impl Document {
         let new_box = computed_box(&css, parent_box.as_deref(), cx.default_font_size);
         let hidden = self.view_at(i).prop_bool(crate::common::HIDDEN);
         let cascaded = layout_style(&css, &new_box, hidden);
+        let cascaded_dir = cascaded.direction;
         // the kind's own layout participation over the cascaded style
         let mut tstyle = match self.kinds[i].take() {
             Some(k) => {
@@ -851,6 +872,8 @@ impl Document {
             }
             None => cascaded,
         };
+        // a kind's own style keeps the node's direction
+        tstyle.direction = cascaded_dir;
         // chrome the kind paints around its children
         let container = self.registry.get(self.core[i].kind).is_some_and(|e| e.spec.container);
         if container

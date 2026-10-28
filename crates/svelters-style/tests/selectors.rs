@@ -94,6 +94,35 @@ fn corpus() {
 }
 
 #[test]
+fn dir_matches_the_nearest_dir() {
+    let tree = Tree::parse(
+        "
+window#root
+  box#a[dir=rtl]
+    label#a1
+    box#b[dir=ltr]
+      label#b1
+    label#a2[dir=rtl]
+  label#c
+",
+    );
+    let pick = |sel: &str| -> Vec<String> {
+        let list = parse_selector_list(sel, None).unwrap_or_else(|e| panic!("{sel}: {e}"));
+        select(&list, tree.el(0), &mut MatchCaches::new()).iter().map(|e| e.tree.nodes[e.ix].id.clone().unwrap()).collect()
+    };
+    assert_eq!(pick(":dir(rtl)"), ["a", "a1", "a2"]);
+    assert_eq!(pick("label:dir(ltr)"), ["b1", "c"]);
+    assert_eq!(pick(":dir(rtl) > box"), ["b"]);
+    assert_eq!(pick(":DIR(RTL) label:not(:dir(rtl))"), ["b1"]);
+    let l = parse_selector_list("a:dir(rtl)", None).unwrap();
+    assert_eq!(cssparser::ToCss::to_css_string(&l.slice()[0]), "a:dir(rtl)");
+    assert_eq!(l.slice()[0].specificity(), (1 << 10) | 1, "a pseudo-class: (0,1,1)");
+    for bad in [":dir(auto)", ":dir()", ":dir(rtl ltr)"] {
+        assert!(parse_selector_list(bad, None).is_err(), "{bad} parsed");
+    }
+}
+
+#[test]
 fn rejects() {
     for bad in ["a::before", ":nope", ":state(cad.missing)", "a >", "[x=", ":nth-child(x)", "a,,b"] {
         assert!(parse_selector_list(bad, None).is_err(), "{bad} parsed");

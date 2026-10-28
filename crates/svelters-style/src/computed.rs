@@ -64,6 +64,19 @@ impl ComputedStyle {
         self.table.index_of(name).and_then(|i| self.values[i].as_ref())
     }
 
+    /// Sets a property's computed value (`None`: unset); false when the table has no such property.
+    /// For a tree's presentational hints: skelter's `dir` attribute is the value a child of the
+    /// element would inherit, set on a copy of the parent's style before the element is computed.
+    pub fn set(&mut self, name: &str, value: Option<ComputedValue>) -> bool {
+        match self.table.index_of(name) {
+            Some(i) => {
+                self.values[i] = value;
+                true
+            }
+            None => false,
+        }
+    }
+
     /// By the property's index in [`Table::props`].
     pub fn get_index(&self, index: usize) -> Option<&ComputedValue> {
         self.values.get(index).and_then(Option::as_ref)
