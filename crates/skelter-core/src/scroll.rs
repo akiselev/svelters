@@ -7,6 +7,7 @@ use crate::document::Document;
 use crate::tree::Dirty;
 use skelter_base::geom::{Rect, Size, Vec2};
 use skelter_base::ids::{NodeId, PropNodeId, WindowId};
+use svelters_style::StateMask;
 
 /// A scroll container's geometry from the last layout ([`NodeView::scroll_geometry`](crate::NodeView::scroll_geometry)):
 /// what a kind that draws its own scroll bars (or scrolls by its own rules) needs.
@@ -23,7 +24,78 @@ pub struct ScrollGeometry {
     pub axes: (bool, bool),
 }
 
+impl ScrollGeometry {
+    /// A geometry (for tests and hosts that drive a kind without a document).
+    pub fn new(viewport: Rect, content: Size, offset: Vec2, axes: (bool, bool)) -> Self {
+        ScrollGeometry { viewport, content, offset, axes }
+    }
+}
+
+/// `:state(sv.overflow-top)`: a scroll container scrolled away from its top (content lies beyond
+/// that edge). svelters' own provider states (R15's edge shadows in base.css); skelter-core keeps
+/// the top four provider bits for them, so a host allocates its own from bit 32 up to bit 59.
+pub const OVERFLOW_TOP: StateMask = StateMask(1 << 60);
+/// `:state(sv.overflow-bottom)`: content lies beyond the bottom edge.
+pub const OVERFLOW_BOTTOM: StateMask = StateMask(1 << 61);
+/// `:state(sv.overflow-left)`: scrolled away from the left edge.
+pub const OVERFLOW_LEFT: StateMask = StateMask(1 << 62);
+/// `:state(sv.overflow-right)`: content lies beyond the right edge.
+pub const OVERFLOW_RIGHT: StateMask = StateMask(1 << 63);
+/// The four overflow states.
+pub const OVERFLOW: StateMask = StateMask(OVERFLOW_TOP.0 | OVERFLOW_BOTTOM.0 | OVERFLOW_LEFT.0 | OVERFLOW_RIGHT.0);
+
+/// The overflow state named `name` inside `:state()` (`sv.overflow-top`).
+pub fn overflow_state(name: &str) -> Option<StateMask> {
+    Some(match name {
+        "sv.overflow-top" => OVERFLOW_TOP,
+        "sv.overflow-bottom" => OVERFLOW_BOTTOM,
+        "sv.overflow-left" => OVERFLOW_LEFT,
+        "sv.overflow-right" => OVERFLOW_RIGHT,
+        _ => return None,
+    })
+}
+
+/// The overflow states of a scroll container at `offset` over `content` in `viewport` on `axes`
+/// (half a point of slack, as the widgets' `Scroller::away_from_start`).
+pub fn overflow_states(offset: Vec2, content: Size, viewport: Size, axes: (bool, bool)) -> StateMask {
+    let mut m = 0;
+    if axes.1 {
+        if offset.y > 0.5 {
+            m |= OVERFLOW_TOP.0;
+        }
+        if offset.y < content.h - viewport.h - 0.5 {
+            m |= OVERFLOW_BOTTOM.0;
+        }
+    }
+    if axes.0 {
+        if offset.x > 0.5 {
+            m |= OVERFLOW_LEFT.0;
+        }
+        if offset.x < content.w - viewport.w - 0.5 {
+            m |= OVERFLOW_RIGHT.0;
+        }
+    }
+    StateMask(m)
+}
+
 impl Document {
+    /// Sets node `i`'s `:state(sv.overflow-*)` bits from its scroll geometry while it is a scroll
+    /// container, and clears them when it stops being one (`was`: it was one). Other nodes' bits are
+    /// left alone: a kind that scrolls by its own offset without core (`table`) sets them itself.
+    pub(crate) fn refresh_overflow_states(&mut self, i: usize, was: bool) {
+        let Some(node) = self.slots.id_at(i) else { return };
+        let bits = match self.scroll_viewport(i) {
+            Some(view) => overflow_states(self.scroll_offset(node), self.scroll_content(i), view, self.scroll_axes(i)),
+            None if was => StateMask::NONE,
+            None => return,
+        };
+        if StateMask(self.state[i].0 & OVERFLOW.0) != bits {
+            self.set_state(node, StateMask(OVERFLOW.0 & !bits.0), false);
+            self.set_state(node, bits, true);
+
+        }
+    }
+
     /// The axes node `i` scrolls on: its CSS `overflow`, or its kind's [`SelfScroll`](crate::SelfScroll).
     pub(crate) fn scroll_axes(&self, i: usize) -> (bool, bool) {
         let s = self.style.computed(i);
@@ -110,6 +182,10 @@ impl Document {
         // a kind that scrolls itself places its accessibility parts (text runs) by the offset: they
         // re-send with it (a scroll container's children re-send as they move)
         let own = if self.self_scroll.contains_key(&node) { Dirty::A11Y } else { Dirty::EMPTY };
+        // its foreground (bars, edge shadows) follows the offset: recorded alone, not the content
+        if self.record[i].fore.is_some() {
+            self.fore_dirty.insert(node);
+        }
         self.mark(node, Dirty::PROPERTY.union(own));
         if let Some(w) = self.core[i].window
             && let Some(ws) = self.window_mut(w)

@@ -12,6 +12,13 @@ pub(crate) struct NodePaint {
     pub list: Option<Arc<DisplayList>>,
     /// A self-scrolling kind's fixed part ([`crate::RecordCx::fixed`]), sent under [`fixed_key`].
     pub fixed: Option<Arc<DisplayList>>,
+    /// The node's foreground ([`crate::Kind::record_foreground`]), sent under [`fore_key`]: above its
+    /// content and its children, outside a scroll container's scroll transform (scroll bars, edge
+    /// shadows), with the glyph runs it references.
+    pub fore: Option<Arc<DisplayList>>,
+    pub fore_runs: Vec<RunId>,
+    /// The layer a scroll container's foreground paints in, above its scroll layer.
+    pub fore_layer: Option<LayerId>,
     /// The node's overlay surface ([`crate::RecordCx::overlay`]), sent under [`overlay_key`] and
     /// placed in a layer of its window's overlay stack.
     pub overlay: Option<(Arc<DisplayList>, crate::overlay::OverlayPart)>,
@@ -51,6 +58,9 @@ impl Default for NodePaint {
         NodePaint {
             list: None,
             fixed: None,
+            fore: None,
+            fore_runs: Vec::new(),
+            fore_layer: None,
             overlay: None,
             runs: Vec::new(),
             transform: None,
@@ -76,6 +86,11 @@ impl Default for NodePaint {
 /// there).
 pub(crate) const fn fixed_key(node: NodeId) -> NodeId {
     NodeId(node.0 | 1 << 63)
+}
+
+/// The list key of a node's foreground: the node id with bits 62 and 63 set.
+pub(crate) const fn fore_key(node: NodeId) -> NodeId {
+    NodeId(node.0 | 3 << 62)
 }
 
 /// The list key of a node's overlay part: the node id with bit 62 set.

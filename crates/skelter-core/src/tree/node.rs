@@ -184,6 +184,9 @@ pub(crate) struct LayoutBox {
     pub layout: taffy::Layout,
     /// A leaf's last measured max-content size (the measure guard compares against it).
     pub intrinsic: Option<Size>,
+    /// A container's chrome widths ([`crate::Kind::chrome_widths`]): what its own caption adds to
+    /// its min-content and max-content widths.
+    pub chrome_w: Option<(f32, f32)>,
     /// The out-of-flow boxes this node is the containing block of (taffy's hoisted children).
     pub hoisted: Vec<NodeId>,
 }

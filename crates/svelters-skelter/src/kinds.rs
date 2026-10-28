@@ -158,7 +158,7 @@ pub fn register_builtin(reg: &mut KindRegistry) -> Result<(), RegistryError> {
         if let Some(t) = k.tag
             && reg.by_name(core_tag(t)).is_none()
         {
-            reg.register_with(synthesize(k), placeholder)?;
+            reg.register_with(synthesize(k), crate::window::factory(t).unwrap_or(placeholder))?;
         }
     }
     Ok(())
@@ -610,7 +610,7 @@ impl Kinds {
             if let Some(t) = k.tag
                 && reg.by_name(core_tag(t)).is_none()
             {
-                reg.register_with(synthesize(k), placeholder)?;
+                reg.register_with(synthesize(k), crate::window::factory(t).unwrap_or(placeholder))?;
             }
         }
         let reg = Arc::new(reg);

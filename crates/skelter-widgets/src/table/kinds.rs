@@ -442,6 +442,9 @@ impl TableKind {
         let mut none = NoShaper;
         {
             let mut pc = PaintCx::new(&mut list, &mut res, &mut none, node.scale());
+            // R15's edge shadows over the body (under the frozen header), below the bars
+            let host = crate::paint::StyleView::new(styles.computed, crate::paint::Ua::NONE, styles.state, styles.dark);
+            crate::paint::paint_inset_shadows(&mut pc, &host, self.table.geom().body);
             self.scroller.record_bars(&mut pc, &styles, alpha, classic);
         }
         let bounds = list.bounds;
@@ -668,6 +671,11 @@ impl Kind for TableKind {
         self.scroller.set_offset(self.off);
         let show = [self.scroller.overflows(0), self.scroller.overflows(1)];
         self.scroller.layout_bars(g.body, BAR_WIDTH, MIN_THUMB, show);
+        // `:state(sv.overflow-*)` from the body's offset: core sees no scroll container here (R15's
+        // edge shadows, base.css)
+        let edges = skelter_core::overflow_states(self.off, self.table.content_size(), g.body.size(), (true, true));
+        cx.set_state(svelters_style::StateMask(skelter_core::OVERFLOW.0 & !edges.0), false);
+        cx.set_state(edges, true);
         // the cell editor over its cell
         let shown = self.table.shown();
         if let Some(edit) = self.edit.as_mut()
@@ -959,6 +967,20 @@ mod tests {
             })
             .collect();
         (d, t, cols)
+    }
+
+    #[test]
+    fn the_body_offset_sets_the_overflow_states() {
+        // POL2-LAYOUT 2: the table scrolls without core, so it sets `:state(sv.overflow-*)` itself
+        let (mut d, t, _) = table_doc(1000);
+        crate::testdoc::frame(&mut d);
+        let edges = |d: &skelter_core::Document| svelters_style::StateMask(d.state(t).0 & skelter_core::OVERFLOW.0);
+        assert_eq!(edges(&d), skelter_core::OVERFLOW_BOTTOM, "rows below, none above");
+        let to_row = TABLE.method_named("scroll-to-row").unwrap();
+        d.call(t, to_row, &[Value::I64(500)]).unwrap();
+        crate::testdoc::frame(&mut d);
+        crate::testdoc::frame(&mut d);
+        assert_eq!(edges(&d), svelters_style::StateMask(skelter_core::OVERFLOW_TOP.0 | skelter_core::OVERFLOW_BOTTOM.0));
     }
 
     #[test]

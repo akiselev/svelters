@@ -332,3 +332,33 @@ fn a_one_side_border_keeps_its_colour() {
     let bz = d.computed(z).unwrap();
     assert_eq!((bz.border_color, bz.border_widths.left, bz.border_style), (Color::rgba(1.0, 0.0, 0.0, 1.0), 1.0, skelter_base::display::BorderStyle::Dashed));
 }
+
+/// POL2-LAYOUT 2: core sets `:state(sv.overflow-*)` on scroll containers, and the names resolve
+/// beside a host's provider states.
+#[test]
+fn a_scroll_container_has_the_overflow_states_of_its_offset() {
+    let (mut d, root) = doc();
+    d.set_state_names(Box::new([("cad.pending", StateMask(1 << 40))]));
+    d.add_sheet(".s:state(sv.overflow-top) { opacity: 0.5 } .s:state(cad.pending) { width: 33px }");
+    let s = child(&mut d, root, BOX, "width: 50px; height: 40px; overflow-y: auto");
+    d.set_style(s, StyleInput { classes: vec!["s".into()], inline: Some("width: 50px; height: 40px; overflow-y: auto".into()), ..Default::default() });
+    let _tall = child(&mut d, s, BOX, "width: 50px; height: 100px; flex-shrink: 0");
+    let plain = child(&mut d, root, BOX, "width: 10px; height: 10px");
+    frame(&mut d);
+    let st = |d: &Document, n| StateMask(d.state(n).0 & crate::OVERFLOW.0);
+    assert_eq!(st(&d, s), crate::OVERFLOW_BOTTOM, "content below, none above");
+    assert_eq!(st(&d, plain), StateMask::NONE, "no scroll container, no states");
+    d.set_scroll_offset(s, skelter_base::geom::Vec2::new(0.0, 60.0));
+    frame(&mut d);
+    assert_eq!(st(&d, s), crate::OVERFLOW_TOP, "at the end: content above only");
+    frame(&mut d);
+    assert_eq!(d.computed(s).unwrap().opacity, 0.5, "the rule matches");
+    d.set_scroll_offset(s, skelter_base::geom::Vec2::new(0.0, 20.0));
+    frame(&mut d);
+    assert_eq!(st(&d, s), StateMask(crate::OVERFLOW_TOP.0 | crate::OVERFLOW_BOTTOM.0));
+    // no longer a scroll container: the states go
+    d.set_style(s, StyleInput { classes: vec!["s".into()], inline: Some("width: 50px; height: 40px".into()), ..Default::default() });
+    frame(&mut d);
+    frame(&mut d);
+    assert_eq!(st(&d, s), StateMask::NONE);
+}

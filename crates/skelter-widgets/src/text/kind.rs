@@ -116,6 +116,8 @@ fn colors(s: &ComputedBox, css: Option<&svelters_style::ComputedStyle>) -> Field
 /// The `text-edit` kind. See the module docs.
 pub struct TextEdit {
     pub field: TextField,
+    /// A multi-line field's overlay scroll bars, in its foreground (POL2-LAYOUT 1).
+    bars: crate::views::scroll::CoreBars,
 }
 
 impl Default for TextEdit {
@@ -124,7 +126,7 @@ impl Default for TextEdit {
         let mut field = TextField::new("", EditorConfig::default(), policy);
         // a scroll is the compositor's offset of the content space
         field.set_scroll_repaints(false);
-        TextEdit { field }
+        TextEdit { field, bars: Default::default() }
     }
 }
 
@@ -180,6 +182,10 @@ impl Clipboard for PlatformClipboard<'_> {
 }
 
 impl TextEdit {
+    fn multiline(&self) -> bool {
+        self.field.editor.config().multiline
+    }
+
     fn prop_name(cx: &PropCx, prop: PropId) -> Option<&'static str> {
         cx.node.kind().prop_index(prop).map(|i| PROPS[i].name)
     }
@@ -314,6 +320,24 @@ impl Kind for TextEdit {
         self.field.record_content(cx, &c);
     }
 
+    /// A multi-line field's overlay bars at core's offset, over the text (a single-line field shows
+    /// none, as VS Code's input box).
+    fn record_foreground(&self, cx: &mut RecordCx) {
+        if !self.multiline() {
+            return;
+        }
+        let node = cx.node;
+        let theme = cx.service::<crate::theme::Theme>().map(|t| t.clone());
+        let dark = theme.as_ref().is_none_or(|t| t.is_dark());
+        let parent = node.parent().and_then(|p| p.css());
+        let styles = crate::shim::core::Styles { computed: node.css(), parts: &[], children: &[], state: crate::interact::StateBits(node.style_state().0), dark, theme: theme.as_ref(), inherited: parent };
+        let list = self.bars.record_list(&styles, node.size(), node.scale(), node.scroll_geometry().as_ref());
+        let ink = list.bounds;
+        for p in list.items {
+            cx.push(p, ink);
+        }
+    }
+
     /// The text scrolls in the padding box by the field's range ([`TextField::scroll_max`]).
     fn self_scroll(&self, node: &skelter_core::NodeView) -> Option<skelter_core::SelfScroll> {
         let b = node.style().border_widths;
@@ -347,7 +371,18 @@ impl Kind for TextEdit {
         let now = cx.time();
         // the offset a wheel or fling may have moved
         let offset = cx.document().scroll_offset(cx.node());
+        let moved = offset != self.field.scroll_offset();
         self.field.set_scroll_offset(offset);
+        // a multi-line field's bars: shown by a scroll, faded by their timer
+        if self.multiline() {
+            self.bars.note(now, policy, cx.document().media_preferences().reduced_motion, moved || matches!(ev, Event::Wheel(_)));
+            if matches!(ev, Event::Timer) {
+                cx.request_foreground();
+            }
+            if let Some(t) = self.bars.wake() {
+                cx.wake_at(t);
+            }
+        }
         // what the input asks of the document, applied once the text system is given back
         let (mut focus, mut capture, mut cursor) = (false, None::<bool>, None);
         let handled = {
@@ -466,6 +501,33 @@ mod tests {
         crate::host::set_policy(&mut d, next);
         d.dispatch(&line_edge(false));
         assert_eq!(ms(&d), next.double_click_ms);
+    }
+
+    #[test]
+    fn a_multi_line_field_draws_its_bar_over_the_text_and_moves_it_alone() {
+        // POL2-LAYOUT 1: the bar is the foreground (above the scroll layer); a scroll records only it
+        use crate::testdoc::{child, doc, frame};
+        use skelter_base::display::Prim;
+        use skelter_base::ids::NodeId;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 100.0), |r| {
+            r.register::<TextEdit>().unwrap();
+        });
+        d.set_service(skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())));
+        let f = child(&mut d, root, skelter_core::KindId::of("text-edit"), "width: 120px; height: 40px; padding: 2px; border-width: 1px; background-color: #ffffff");
+        d.set_prop(f, SPEC.prop_named("multiline").unwrap(), Value::Bool(true)).unwrap();
+        let text: Vec<String> = (1..=30).map(|i| format!("line {i}")).collect();
+        d.set_prop(f, SPEC.prop_named("text").unwrap(), Value::from(text.join("\n").as_str())).unwrap();
+        let fore_key = NodeId(f.0 | 3 << 62);
+        let fore = |c: &skelter_base::commit::Commit| c.lists.iter().find(|(k, _)| *k == fore_key).map(|(_, l)| l.clone());
+        let c = frame(&mut d).expect("a frame");
+        let thumb = fore(&c).expect("a foreground");
+        let Prim::Quad(q) = &thumb.items[0] else { panic!("a thumb: {:?}", thumb.items) };
+        assert!(q.rect.min.y < 10.0, "at the top: {:?}", q.rect);
+        d.set_scroll_offset(f, skelter_base::geom::Vec2::new(0.0, 200.0));
+        let c = frame(&mut d).expect("a frame");
+        assert_eq!(c.lists.iter().map(|(k, _)| *k).collect::<Vec<_>>(), [fore_key], "only the bar re-records");
+        let Prim::Quad(q2) = &fore(&c).unwrap().items[0] else { unreachable!() };
+        assert!(q2.rect.min.y > q.rect.min.y, "the thumb moved down: {:?}", q2.rect);
     }
 
     #[test]

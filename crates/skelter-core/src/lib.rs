@@ -71,7 +71,7 @@ pub use document::{Document, DragPreviewProvider, MediaPreferences, SyncDelivery
 pub use error::{PropError, TreeError};
 pub use frame::FrameStats;
 pub use layout::LayoutRun;
-pub use scroll::ScrollGeometry;
+pub use scroll::{OVERFLOW, OVERFLOW_BOTTOM, OVERFLOW_LEFT, OVERFLOW_RIGHT, OVERFLOW_TOP, ScrollGeometry, overflow_states};
 pub use settle::Busy;
 pub use ids::{KindId, MethodId, PropId, SignalId, SlotId, fingerprint};
 pub use input::{Delivery, Dispatched, FilterCx, Filtered, InputFilter, JsEvent, KeyHook, KeyHookCx, Phase};
