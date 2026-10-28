@@ -94,13 +94,15 @@ impl TabLook {
         let d = TabLook::default();
         let c = |name: &str, fallback| theme.color(name).unwrap_or(fallback);
         let mut text = d.text.clone();
-        text.color = c("fg", text.color);
+        // VS Code's tab colours: inactive captions dimmer than the active one
+        text.color = c("tab-fg", c("fg", text.color));
         text.size = theme.px("font-size").unwrap_or(text.size);
         if let Some(f) = theme.token("font-family") {
             text.family = f.to_owned();
         }
         TabLook {
-            selected_fg: c("fg", d.selected_fg),
+            selected_fg: c("tab-active-fg", c("fg", d.selected_fg)),
+            min_height: theme.px("tab-h").unwrap_or(d.min_height),
             hover_bg: c("list-hover", d.hover_bg),
             pressed_bg: c("toolbar-active", d.pressed_bg),
             // the theme's active-tab marker (`tab.activeBorderTop`; HC Dark's contrast border):
@@ -376,8 +378,12 @@ mod tests {
     fn the_look_follows_the_theme() {
         let t = Theme::dark_modern();
         let look = TabLook::from_theme(&t);
-        if let Some(fg) = t.color("fg") {
-            assert_eq!(look.text.color, fg);
+        // VS Code's tab colours: the inactive caption `tab-fg`, the active one `tab-active-fg`
+        if let (Some(fg), Some(active)) = (t.color("tab-fg"), t.color("tab-active-fg")) {
+            assert_eq!((look.text.color, look.selected_fg), (fg, active));
+        }
+        if let Some(h) = t.px("tab-h") {
+            assert_eq!(look.min_height, h);
         }
     }
 

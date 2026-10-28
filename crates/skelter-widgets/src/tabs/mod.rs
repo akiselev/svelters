@@ -73,6 +73,8 @@ pub struct TabLook {
     pub radius: f32,
     pub min_tab_width: f32,
     pub max_tab_width: f32,
+    /// The strip's least height (`tab-h`, VS Code's 35 pt tabs), the indicator included.
+    pub min_height: f32,
     /// The overflow menu's surface and its current row.
     pub menu_bg: Color,
     pub menu_border: Color,
@@ -106,6 +108,7 @@ impl Default for TabLook {
             radius: 4.0,
             min_tab_width: 40.0,
             max_tab_width: 240.0,
+            min_height: 0.0,
             menu_bg: rgb(255, 255, 255),
             menu_border: rgb(204, 204, 204),
             menu_sel: rgb(0, 96, 192),
@@ -139,7 +142,7 @@ impl TabStrip {
     /// within `min_tab_width..=max_tab_width` (a longer title is elided).
     pub fn layout(captions: &[TabCaption], look: &TabLook, text: &mut dyn TextPainter) -> TabStrip {
         let line = text.measure("Ag", &look.text).h;
-        let height = (line + 2.0 * look.pad_y).max(look.close_size + 2.0 * look.pad_y) + look.indicator_width;
+        let height = ((line + 2.0 * look.pad_y).max(look.close_size + 2.0 * look.pad_y) + look.indicator_width).max(look.min_height);
         let mut x = 0.0;
         let mut tabs = Vec::with_capacity(captions.len());
         for c in captions {
@@ -630,7 +633,9 @@ impl TabView {
             }
             if on {
                 let y = r.max.y - look.indicator_width / 2.0;
-                shim::line(list, Point::new(r.min.x, y), Point::new(r.max.x, y), look.indicator_width, look.indicator);
+                // a disabled strip's marker dims with its captions
+                let marker = if self.enabled { look.indicator } else { look.disabled_fg };
+                shim::line(list, Point::new(r.min.x, y), Point::new(r.max.x, y), look.indicator_width, marker);
                 if self.focused && self.focus_visible {
                     let ring = body.inflate(-1.0);
                     shim::frame(list, ring, Color::TRANSPARENT, look.focus, 1.0, look.radius);
