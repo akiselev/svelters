@@ -155,9 +155,36 @@ impl Document {
         Vec2::new(x, y)
     }
 
-    /// The scroll offset of a scroll container (zero for other nodes).
+    /// The scroll offset of a scroll container (zero for other nodes): the content scrolled out at
+    /// the left and top. An `rtl` container starts at its inline start, the right end of its
+    /// content (offset x = its range), and keeps that end in view as its content grows.
     pub fn scroll_offset(&self, node: NodeId) -> Vec2 {
-        self.scroll.get(&node).copied().unwrap_or(Vec2::ZERO)
+        let raw = self.scroll.get(&node).copied().unwrap_or(Vec2::ZERO);
+        match self.idx(node).and_then(|i| self.rtl_scroll_range(i)) {
+            Some(range) => Vec2::new((range - raw.x).max(0.0), raw.y),
+            None => raw,
+        }
+    }
+
+    /// The horizontal range of node `i` when it scrolls horizontally in an `rtl` box: its offset
+    /// is kept as the distance from the inline start (the right end), so it starts there.
+    pub(crate) fn rtl_scroll_range(&self, i: usize) -> Option<f32> {
+        if !self.style.computed(i).direction.is_rtl() || !self.scroll_axes(i).0 {
+            return None;
+        }
+        let view = self.scroll_viewport(i)?;
+        Some((self.scroll_content(i).w - view.w).max(0.0))
+    }
+
+    /// How far node `i`'s scrolled content space is moved right: an `rtl` box's layout overflows
+    /// to the left of its padding box (taffy places the inline start at the right), so its content
+    /// space is shifted by the range and the offset stays left-based (0 = content's left edge).
+    /// A kind that scrolls itself draws its own content: no shift.
+    pub(crate) fn scroll_shift(&self, i: usize) -> f32 {
+        if self.slots.id_at(i).is_some_and(|n| self.self_scroll.contains_key(&n)) {
+            return 0.0;
+        }
+        self.rtl_scroll_range(i).unwrap_or(0.0)
     }
 
     /// Sets a scroll container's offset (clamped), as native state. An axis pinned to the end
@@ -178,7 +205,11 @@ impl Document {
             return;
         }
         self.stamp();
-        self.scroll.insert(node, v);
+        let raw = match self.rtl_scroll_range(i) {
+            Some(range) => Vec2::new(range - v.x, v.y),
+            None => v,
+        };
+        self.scroll.insert(node, raw);
         // a kind that scrolls itself places its accessibility parts (text runs) by the offset: they
         // re-send with it (a scroll container's children re-send as they move)
         let own = if self.self_scroll.contains_key(&node) { Dirty::A11Y } else { Dirty::EMPTY };

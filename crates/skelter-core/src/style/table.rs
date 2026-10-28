@@ -24,7 +24,23 @@ pub const EXTRA: &[Prop] = &[
     css("will-change", ValueType::Raw, &[]),
     // POL4-DIR-CORE: inherited (CSS 2), set by the `dir` prop below author rules
     css("direction", ValueType::Enum, &["ltr", "rtl"]),
+    // logical sides, resolved against the box's direction (`margin-inline`, `padding-inline`,
+    // `inset-inline` and `border-inline{,-start,-end}` are shorthands of these)
+    css("margin-inline-start", ValueType::Length, &[]),
+    css("margin-inline-end", ValueType::Length, &[]),
+    css("padding-inline-start", ValueType::Length, &[]),
+    css("padding-inline-end", ValueType::Length, &[]),
+    css("inset-inline-start", ValueType::Length, &[]),
+    css("inset-inline-end", ValueType::Length, &[]),
+    css("border-inline-start-width", ValueType::Length, &[]),
+    css("border-inline-end-width", ValueType::Length, &[]),
+    css("border-inline-start-color", ValueType::Color, &[]),
+    css("border-inline-end-color", ValueType::Color, &[]),
+    css("border-inline-start-style", ValueType::Enum, LINE_STYLES),
+    css("border-inline-end-style", ValueType::Enum, LINE_STYLES),
 ];
+
+const LINE_STYLES: &[&str] = &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"];
 
 /// The table skelter-core cascades with (sorted by name, as [`Table::props`] requires).
 pub fn table() -> &'static Table {

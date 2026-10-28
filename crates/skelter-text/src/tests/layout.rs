@@ -53,6 +53,7 @@ fn text_measure_matches_layout() {
         line_height: None,
         letter_spacing: 0.0,
         wrap: true,
+        direction: None,
     };
     let s = TextMeasure::measure(&mut ts, &spec, None);
     assert_eq!(s, lay(&mut ts, "measure me", 13.0, None).size());
@@ -242,6 +243,7 @@ fn skelter_core_shaper_matches_layout() {
         line_height: None,
         letter_spacing: 0.0,
         wrap: true,
+        direction: None,
     };
     let shaped = TextShaper::shape(&mut ts, &spec, None);
     let l = lay(&mut ts, "Tab title", 13.0, None);

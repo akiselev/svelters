@@ -421,6 +421,7 @@ impl Document {
         let content = self.scroll_content(i);
         let offset = self.scroll_offset(node);
         let axes = self.scroll_axes(i);
+        let shift = self.scroll_shift(i);
         let wants_clip = s.overflow_x.clips() || s.overflow_y.clips() || axes != (false, false);
         let wants_effect = s.opacity < 1.0 || s.will_change || self.animates(node, AnimProperty::Opacity) || self.animates_palette(node);
         // a non-passive listener on the path or inside the container may cancel the scroll
@@ -474,7 +475,9 @@ impl Document {
             ));
             // children are laid out from the border box origin: the content space is the node's
             // own, translated by the scroll offset
-            ops.push(PropOp::Transform(ct, TransformNode { parent: Some(t), local: Affine::IDENTITY, scroll: Some(sc) }));
+            // (an `rtl` box's content overflows to the left: shifted so the offset stays left-based)
+            let local = if shift != 0.0 { Affine::translate(shift, 0.0) } else { Affine::IDENTITY };
+            ops.push(PropOp::Transform(ct, TransformNode { parent: Some(t), local, scroll: Some(sc) }));
             scroll_nodes = Some((sc, had_scroll));
         } else if let Some(old) = had_scroll {
             scroll_nodes = Some((old, None));
@@ -1016,7 +1019,7 @@ impl Document {
             let mut child_world = world;
             if let Some(_sc) = p.scroll {
                 let off = self.scroll_offset(node);
-                child_world = world.then(&Affine::translate(-off.x, -off.y));
+                child_world = world.then(&Affine::translate(self.scroll_shift(i) - off.x, -off.y));
             }
             let child_clip_world = if p.clip.is_some() {
                 let b = s.border_widths;

@@ -110,6 +110,9 @@ pub struct TextSpec<'a> {
     pub line_height: Option<f32>,
     pub letter_spacing: f32,
     pub wrap: bool,
+    /// The paragraph's base direction (the box's `direction`); `None`: from its first strong
+    /// character.
+    pub direction: Option<Direction>,
 }
 
 pub trait TextMeasure {

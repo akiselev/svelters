@@ -243,6 +243,11 @@ impl TextSystem {
         let mut layout = parley::Layout::new();
         let default_family = self.fonts.default_family().to_string();
         let mut b = self.lcx.ranged_builder(&mut self.fcx, &text.text, 1.0, false);
+        b.set_base_direction(match text.direction {
+            None => parley::BaseDirection::Auto,
+            Some(skelter_base::text::Direction::Ltr) => parley::BaseDirection::Ltr,
+            Some(skelter_base::text::Direction::Rtl) => parley::BaseDirection::Rtl,
+        });
         push_style(&mut b, &text.base, 0, None, &default_family, &extra);
         for (i, span) in text.spans.iter().enumerate() {
             let range = span.range.start.min(text.text.len())..span.range.end.min(text.text.len());
@@ -639,7 +644,7 @@ fn place(
 }
 
 fn rich_from_spec(spec: &TextSpec<'_>) -> RichText {
-    RichText::plain(
+    let mut rt = RichText::plain(
         spec.text,
         TextStyle {
             family: spec.family.to_string(),
@@ -651,7 +656,9 @@ fn rich_from_spec(spec: &TextSpec<'_>) -> RichText {
             wrap: spec.wrap,
             ..TextStyle::default()
         },
-    )
+    );
+    rt.direction = spec.direction;
+    rt
 }
 
 impl TextMeasure for TextSystem {

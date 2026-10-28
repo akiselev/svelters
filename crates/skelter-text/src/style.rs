@@ -103,6 +103,9 @@ pub struct RichText {
     /// Tab stop interval as a multiple of the width of a space in the base style (CSS `tab-size`);
     /// `None` = 8.
     pub tab_size: Option<f32>,
+    /// The paragraph's base direction (the box's CSS `direction`): where `Align::Start` is and how
+    /// mixed runs are ordered. `None`: from the first strong character (parley's `Auto`).
+    pub direction: Option<skelter_base::text::Direction>,
 }
 
 impl RichText {
@@ -129,6 +132,7 @@ impl RichText {
             s.style.hash_shaping(&mut h);
         }
         self.tab_size.map(f32::to_bits).hash(&mut h);
+        self.direction.hash(&mut h);
         h.finish()
     }
 
