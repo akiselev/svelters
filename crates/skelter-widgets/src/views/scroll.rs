@@ -556,6 +556,21 @@ pub fn record_overlay_bars(cx: &mut RecordCx, scroller: &Scroller, now: Time, po
     scroller.record_bars(&mut pc, &styles, alpha, policy.scrollbars == Scrollbars::Classic);
 }
 
+/// What [`CoreBars::pointer`] did with a pointer event.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct BarPointer {
+    /// The bars took the event: the kind's own handling skips it.
+    pub ours: bool,
+    /// Capture the pointer (`Some(true)`: a drag or track hold started) or release it.
+    pub capture: Option<bool>,
+    /// The new scroll offset, for core.
+    pub scroll: Option<Vec2>,
+    /// The foreground looks different (hover, the pressed thumb, a moved thumb).
+    pub repaint: bool,
+    /// When to wake next (a track press's repeat, the fade).
+    pub wake: Option<Time>,
+}
+
 /// The bars of a kind core scrolls by its own offset (a list, a tree, a multi-line field: core's
 /// [`skelter_core::Kind::self_scroll`]): a [`Scroller`] following core's geometry, drawn in the
 /// node's foreground with the scroll area's look, fade and thumb drag (POL2-LAYOUT 1).
@@ -597,6 +612,34 @@ impl CoreBars {
         if scrolled {
             self.scroller.touch(now);
         }
+    }
+
+    /// A pointer event for a kind that implements skelter-core's `Kind` itself (the multi-line text
+    /// field), after [`CoreBars::note`]: `pos` in the node's local space, `g` core's geometry now.
+    /// The bars take a press on a thumb (a drag) or a track (a page or jump, repeating while held)
+    /// and what follows it until the release.
+    pub fn pointer(&mut self, g: &skelter_core::ScrollGeometry, phase: PointerPhase, primary: bool, pos: Point, shift: bool) -> BarPointer {
+        self.place(g);
+        let policy = self.policy();
+        let hovered = self.scroller.hovered();
+        let was = self.scroller.dragging(0) || self.scroller.dragging(1) || self.scroller.hold.is_some();
+        let (ours, moved) = self.scroller.pointer(self.now, &policy, phase, primary, pos, shift);
+        let now_held = self.scroller.dragging(0) || self.scroller.dragging(1) || self.scroller.hold.is_some();
+        BarPointer {
+            ours,
+            capture: (now_held != was).then_some(now_held),
+            scroll: moved.then(|| self.scroller.offset()),
+            repaint: ours || moved || hovered != self.scroller.hovered(),
+            wake: self.scroller.hold_wake().or_else(|| self.scroller.bar_wake(self.now, &policy)),
+        }
+    }
+
+    /// A held track press repeating (the kind's timer, after [`CoreBars::note`]): the new offset,
+    /// if it moved, and when to repeat next.
+    pub fn repeat(&mut self, g: &skelter_core::ScrollGeometry) -> (Option<Vec2>, Option<Time>) {
+        self.place(g);
+        let (moved, next) = self.scroller.repeat(self.now);
+        (moved.then(|| self.scroller.offset()), next)
     }
 
     /// When the overlay bars' look next changes without input (their fade).
