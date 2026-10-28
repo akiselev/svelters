@@ -2,12 +2,11 @@
 
 **Branch:** `ci/pb4-small` (base `8bcc50d`: master `9f0272b` plus the batch's brief commit).
 **Brief:** `plans/cloud/polish-b4/BRIEF.md`, `LANE-small.md`.
-**Status (2026-10-28 16:05 UTC):** done. Items 1–3, the coordinator's additions (WCAG 24 px default-density rows,
-S-L1) and dir-widgets' R1 are built and tested; `origin/master` `e4bf38e` (dir-core) merged (`skelter.json`
-regenerated, no other conflict). Last code commit and its CI: see "CI". Next: report to the coordinator
-(`session_01HBbGRgGENFKUjsqyGryCSr`). At dir-widgets' merge keep its rtl line in `controls/progress.rs` and
-reconcile its `views/tooltip.rs` rtl alignment with popup's (the same rule). Open questions: none (`menu-bar` titles
-stay 22 under 2.5.8's spacing exception unless the coordinator wants 24).
+**Status (2026-10-28 16:30 UTC):** done. Items 1–3, the coordinator's additions (WCAG 24 px default-density rows,
+S-L1, the rtl context menu) and dir-widgets' R1 are built and tested; `origin/master` merged twice (dir-core
+`e4bf38e`, then dir-widgets `cdacc80`; dir-widgets' rtl line in `controls/progress.rs` kept). Last code commit and its
+CI: see "CI". Open questions: none (`menu-bar` titles stay 22 under 2.5.8's spacing exception unless the coordinator
+wants 24).
 
 ## Design note: `anchor-to` and closing a top-layer entry from its kind (core, small)
 
@@ -100,6 +99,17 @@ direction is rtl (`left`/`right` sides stay physical); the shim `TopLayerCx` car
 Test `views::popup::tests::start_and_end_are_logical_in_rtl`. `cargo test -p skelter-widgets --lib` 586 pass,
 `skelter-core --lib toplayer` 4, `svelters-skelter --test spec --test widgets_all` 6 + 5.
 
+## Addition: a context menu with no point opens at its inline start in rtl (coordinator)
+
+`views/menu.rs` (dir-widgets', taken for this fix): `open = true` and Shift+F10/Menu opened at the menu node's top
+left (`Point::ZERO`, fixed before the first prepare knew the direction). Now `Menus::open_default` keeps no point and
+the root level is placed at the node's inline-start top corner when the levels are laid out (top right in rtl,
+opening toward the left as `bottom-end`). svelters-skelter `backend.rs` (`<context-menu>.popup()` with no point):
+the owner's bottom right in rtl (bottom left in ltr, as before). Tests: `views::menu::tests::
+a_context_menu_without_a_point_opens_at_its_inline_start`, `svelters-skelter --test tier1`
+`context_menu_popup_opens_below_the_owner_or_at_the_point` (an rtl case added). `cargo test -p skelter-widgets --lib`
+593 pass, `svelters-skelter --test tier1` 14.
+
 ## Seen (before: a gallery built at `8bcc50d`; images in this container, not committed)
 
 Under `/tmp/claude-0/-home-user-svelters/42a42938-7530-5bf5-b46d-e3d509f1fc39/scratchpad/img/`:
@@ -129,7 +139,9 @@ No snapshot test was re-blessed (none ran locally; CI runs them).
 ## Cross-lane edits (for the coordinator)
 
 - `crates/skelter-core/` (dir-core's): the design note's additive lines.
-- `crates/skelter-widgets/src/{shim.rs,host.rs}` (dir-widgets'): the `find_anchor` field and its forwarding (3 lines).
+- `crates/skelter-widgets/src/{shim.rs,host.rs}` (dir-widgets'): the `find_anchor` and `rtl` fields and their forwarding.
+- `crates/skelter-widgets/src/views/menu.rs` (dir-widgets'): the context menu's no-point open (above).
+- `crates/svelters-skelter/src/backend.rs`, `tests/tier1.rs`: `popup()` with no point in rtl.
 - `crates/svelters-skelter/src/surface/tier1.rs`, `metadata/semantics/skelter.json` (dir-core's for `dir`): one
   `popup` row; at a merge keep both sides' rows and rerun the generator.
 - `base.css`: only the progress-bar lines of the R9 block and one new rule.

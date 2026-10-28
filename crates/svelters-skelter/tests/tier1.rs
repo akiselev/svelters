@@ -470,6 +470,12 @@ fn context_menu_popup_opens_below_the_owner_or_at_the_point() {
     assert_eq!((l.min.x, l.min.y), (30.0, 7.0));
     let m = r.br().resolve(NameKind::Method, r.kind(menu), "popup");
     assert!(r.br().call(menu, m, &[Value::Str("here".into())]).is_err(), "not a point");
+    // POL4-SMALL: in rtl, below the owner at its right (the inline start), opening toward the left
+    r.set(owner, "dir", Value::Str("rtl".into()));
+    frame();
+    let owner_w = r.backend.with_doc(|d| d.layout_rect(r.backend.node(owner).unwrap())).unwrap().width();
+    let l = popup(&[]);
+    assert_eq!((l.max.x, l.min.y), (owner_w, owner_h + 2.0), "rtl: below the owner, at its right");
 }
 
 /// A9b: cadatomic's Problems panel shape: a `<context-menu>` inside a `<box>` (and a scroll area)

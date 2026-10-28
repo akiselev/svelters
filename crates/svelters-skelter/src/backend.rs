@@ -980,7 +980,7 @@ impl Backend for SkelterBackend {
             }
             ("Window", "close") => self.0.closes.borrow_mut().push(h),
             // egui's `popup()` (A9b): opens below its owner (the owner's bottom left, as svelters-egui
-            // does); `popup(x, y)` (or a `{x, y}` point) at that point of the owner, in the owner's
+            // does; its bottom right in rtl); `popup(x, y)` (or a `{x, y}` point) at that point of the owner, in the owner's
             // points. The menu's own space is its node's: the point moves by the menu's offset in
             // its owner (its parent).
             ("ContextMenu", "popup") => {
@@ -991,7 +991,9 @@ impl Backend for SkelterBackend {
                     let mut doc = self.doc_mut();
                     let owner = doc.parent(n).and_then(|p| doc.layout_rect(p)).unwrap_or_default();
                     let own = doc.layout_rect(n).unwrap_or_default();
-                    let (x, y) = at.unwrap_or((0.0, owner.height() as f64));
+                    // no point: the owner's bottom inline-start corner (its bottom right in rtl)
+                    let rtl = doc.parent(n).and_then(|p| doc.view(p)).is_some_and(|v| v.is_rtl());
+                    let (x, y) = at.unwrap_or((if rtl { owner.width() as f64 } else { 0.0 }, owner.height() as f64));
                     doc.call(n, mid, &[skelter_core::Value::F64(x - own.min.x as f64), skelter_core::Value::F64(y - own.min.y as f64)]).map_err(|e| format!("<context-menu>.popup(): {e}"))?
                 };
                 let _ = ret;
