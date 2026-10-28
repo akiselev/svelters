@@ -868,6 +868,12 @@ impl Document {
                 tstyle.min_size.height = taffy::LengthPercentageAuto::length(min.h);
             }
         }
+        // the caption a container's chrome adds to its intrinsic widths (a header that elides)
+        let chrome_w = if container { crate::layout::with_measure_cx(self, i, Some(&new_box), |k, cx| k.chrome_widths(cx)).flatten() } else { None };
+        if self.layout[i].chrome_w != chrome_w {
+            self.layout[i].chrome_w = chrome_w;
+            self.invalidate_style(i);
+        }
         // a parent that places its children has the last word
         self.place_child(i, &mut tstyle);
         // a window root's size is the window's (set by layout)

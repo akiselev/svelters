@@ -638,6 +638,12 @@ pub mod core {
         fn chrome_min_size(&self, _cx: &mut MeasureCx) -> Option<[f32; 2]> {
             None
         }
+        /// Stands in for skelter-core's `Kind::chrome_widths`: `[min-content, max-content]` widths
+        /// the chrome adds to the kind's intrinsic widths (a caption that elides when the parent is
+        /// narrower), without setting a minimum. `None`: none.
+        fn chrome_widths(&self, _cx: &mut MeasureCx) -> Option<[f32; 2]> {
+            None
+        }
         /// Stands in for skelter-core's per-child layout hook: a container that places or hides its
         /// children itself (`stack`) adjusts child `cx.index`'s taffy style, after core mapped the
         /// child's computed style. Returns whether the child is shown (painted, hit and in the

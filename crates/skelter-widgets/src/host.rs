@@ -1195,6 +1195,15 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         Some(Size::new(w, h))
     }
 
+    fn chrome_widths(&self, cx: &mut MeasureCx) -> Option<(f32, f32)> {
+        let node = cx.node;
+        let parts = part_styles(node, Self::spec_ref().core.parts);
+        let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+        let mut text = shaper(ts);
+        let [min, max] = self.reading(|| self.widget.chrome_widths(&mut w::MeasureCx { style: styles(node.css(), node.parent().and_then(|p| p.css()), &parts, &[], node.style_state(), theme), text: &mut *text, scale: node.scale() }))?;
+        Some((min, max))
+    }
+
     fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
         let anchors: Vec<&str> = (0..cx.count).map(|k| cx.anchor_of(k)).collect();
         let slots: Vec<&str> = (0..cx.count).map(|k| cx.parent.child(k).map_or("", |c| c.slot_name())).collect();

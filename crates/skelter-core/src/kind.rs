@@ -577,6 +577,15 @@ pub trait Kind: 'static {
         None
     }
 
+    /// The widths a container's own chrome (a header row's twistie and caption) adds to its
+    /// intrinsic widths, `(min-content, max-content)`: core lays the node out at least as wide as
+    /// the max-content width when there is room (a content-sized parent, a row's flex basis) and lets
+    /// it shrink to the min-content width when there is not, where the kind elides its caption.
+    /// Unlike [`Kind::chrome_min_size`] it sets no CSS minimum. It may measure text; `None`: none.
+    fn chrome_widths(&self, cx: &mut MeasureCx) -> Option<(f32, f32)> {
+        None
+    }
+
     /// For a kind with [`KindSpec::places_children`]: adjusts child `cx.index`'s taffy style (after
     /// the child's own cascade and kind) and returns whether the child is shown. A child that is not
     /// shown keeps its layout (it still sizes the container) but is not painted, hit or in the

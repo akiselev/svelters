@@ -1243,3 +1243,48 @@ fn a_drag_started_from_outside_the_tree_drops_like_any_other() {
     assert_eq!(drop.field("type"), Some(&Value::from("cad/part")));
     assert_eq!(drop.field("data"), Some(&Value::from("7")));
 }
+
+static CAPTIONED_SPEC: KindSpec = KindSpec { container: true, ..KindSpec::new("captioned") };
+
+/// A container whose chrome is a caption 200 pt wide that can elide down to 20 pt.
+#[derive(Default)]
+struct Captioned;
+
+impl Kind for Captioned {
+    fn spec() -> &'static KindSpec {
+        &CAPTIONED_SPEC
+    }
+    fn record(&self, _cx: &mut RecordCx) {}
+    fn chrome_widths(&self, _cx: &mut MeasureCx) -> Option<(f32, f32)> {
+        Some((20.0, 200.0))
+    }
+}
+
+#[test]
+fn a_containers_chrome_widens_it_where_there_is_room_and_lets_it_shrink() {
+    // POL2-LAYOUT 3: a collapsing header's caption is caption-wide when there is room and elides
+    // when its parent is narrower (it was a CSS min-width: the header overflowed its parent)
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<Captioned>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(400.0, 100.0), Scale(1.0));
+    let width_in = |d: &mut Document, parent_w: &str| {
+        let p = child(d, root, BOX, &format!("width: {parent_w}; height: 30px"));
+        let c = child(d, p, KindId::of("captioned"), "height: 20px; align-self: start");
+        let _kid = child(d, c, BOX, "width: 5px; height: 5px");
+        frame(d);
+        let w = d.layout_rect(c).unwrap().width();
+        d.remove(root, p).unwrap();
+        w
+    };
+    assert_eq!(width_in(&mut d, "300px"), 200.0, "caption-wide with room");
+    assert_eq!(width_in(&mut d, "100px"), 100.0, "the parent's width when narrower");
+    assert_eq!(width_in(&mut d, "10px"), 20.0, "never below its min-content");
+    // in a row, its flex basis is the caption, and it shrinks with its siblings
+    let p = child(&mut d, root, BOX, "width: 150px; height: 30px; display: flex; flex-direction: row");
+    let c = child(&mut d, p, KindId::of("captioned"), "height: 20px");
+    let _sib = child(&mut d, p, BOX, "width: 50px; height: 20px; flex-shrink: 0");
+    frame(&mut d);
+    assert_eq!(d.layout_rect(c).unwrap().width(), 100.0);
+}
