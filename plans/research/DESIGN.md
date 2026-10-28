@@ -372,13 +372,17 @@ tune. The light values are VS Code's.
 | Mode | `row-h` | `control-h` | `tab-h` | `header-h` | `icon-size` | padding (button) | Use |
 |---|---|---|---|---|---|---|---|
 | `compact` | 20 | 22 | 28 | 22 | 16 | 2×6 | data-heavy tables (BOM, constraint manager), per panel |
-| `default` (VS Code) | 22 | 26 | 35 | 22 | 16 | 4×8 | the app |
+| `default` (VS Code, rows at WCAG 2.5.8) | 24 | 26 | 35 | 24 | 16 | 4×8 | the app |
 | `comfortable` | 28 | 32 | 40 | 28 | 20 | 6×12 | pen and touch, presentations |
 
-VS Code's `default` is already denser than most toolkits, and it is what cadatomic's framework calls "compact as the
-CAD default". So `default` is the app default, and `compact` is a per-panel opt-in. Density is a token set (Rust
-selects it, §4.2), not CSS math. `compact` rows (20px) fall below WCAG 2.5.8's 24px target in places. That is
-accepted for opt-in tables and noted in VIS1's report.
+`default` is VS Code's metrics with the row-like targets raised to WCAG 2.5.8's 24px minimum: `row-h` and `header-h`
+22 → 24 (a trial decided by the user, 2026-10-28, "lets try the WCAG target"; POL4-SMALL). Every row-like target at
+`default` is then at least 24: list, tree and table rows, sortable table headers and collapsing headers (`header-h`),
+select and combo-box options (`row-h`), menu and context-menu entries (26), the tab strip (35) and its overflow menu
+(text plus padding, 26). `default` is still denser than most toolkits, and close to what cadatomic's framework calls
+"compact as the CAD default", so it is the app default. `compact` is the per-panel opt-in below the target (20px rows)
+for data-heavy tables, accepted there and noted in VIS1's report. Density is a token set (Rust selects it, §4.2), not
+CSS math.
 
 ## 3. Prior state: what CS5e, CS5f and CS5g give, and what's missing
 

@@ -9777,7 +9777,7 @@
           "change": "layout",
           "construct_only": false,
           "default": 20.0,
-          "doc": "Height of every row (and of the header row), in points.",
+          "doc": "Height of every row, in points. Unset: the theme's density row (`row-h`, grown with a larger `font-size`), and the header the theme's `header-h`; without a theme, 20 and a header 4 taller.",
           "fingerprint": "0d682589",
           "id": 224929161,
           "js": "row-height",

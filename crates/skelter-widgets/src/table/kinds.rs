@@ -1013,7 +1013,7 @@ mod tests {
         (d, t, cols)
     }
 
-    /// FQ-146: an unset `row-height` follows the density's `row-h` (20 compact, 22 default, 28
+    /// FQ-146: an unset `row-height` follows the density's `row-h` (20 compact, 24 default, 28
     /// comfortable) and the header its `header-h`, both grown with a larger text size; a written
     /// `row-height` still wins.
     #[test]
@@ -1053,10 +1053,10 @@ mod tests {
         };
         let base = "width: 300px; font-size: 13px";
         assert_eq!(measured(Density::Compact, base, None), (20.0, 22.0));
-        assert_eq!(measured(Density::Default, base, None), (22.0, 22.0));
+        assert_eq!(measured(Density::Default, base, None), (24.0, 24.0));
         assert_eq!(measured(Density::Comfortable, base, None), (28.0, 28.0));
         // SV83's growth: twice the text, twice the rows
-        assert_eq!(measured(Density::Default, "width: 300px; font-size: 26px", None), (44.0, 44.0));
+        assert_eq!(measured(Density::Default, "width: 300px; font-size: 26px", None), (48.0, 48.0));
         assert_eq!(measured(Density::Comfortable, base, Some(24.0)), (24.0, 28.0), "written: its own rows, the density's header");
     }
 
