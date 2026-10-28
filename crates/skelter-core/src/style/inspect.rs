@@ -12,7 +12,7 @@ use crate::tree::Dirty;
 use skelter_base::geom::Point;
 use skelter_base::ids::{NodeId, WindowId};
 use std::sync::Arc;
-use svelters_style::{DeclInfo, MatchCaches, MatchedRuleInfo, SheetId, SheetSource, StateMask};
+use svelters_style::{ComputedStyle, DeclBlock, DeclInfo, Explanation, MatchCaches, MatchedRuleInfo, SheetId, SheetSource, StateMask, StyleLookup};
 
 impl Document {
     /// Names sheet `id` (`MatchedRuleInfo::sheet`) and gives it its `<style>` source (dev builds:
@@ -65,6 +65,27 @@ impl Document {
             .collect()
     }
 
+    /// SV88: why `node`'s `property` (a longhand such as `background-color`, or a custom property
+    /// `--name`) has its value: the winning declaration with its origin (theme, author, user or
+    /// inline), rule, sheet name and (dev builds) `<style>` source; the declarations it beat, highest
+    /// first, each with the cascade step it lost on; the value after `var()` substitution; the
+    /// ancestor it inherits from when the node declares nothing; and each custom property it uses,
+    /// down to the declaration that sets it. Forced states count. `None` for a node that is gone.
+    /// Matches on each call and keeps nothing: for tools, not per frame.
+    pub fn explain_style(&self, node: NodeId, property: &str) -> Option<Explanation<NodeId>> {
+        let i = self.idx(node)?;
+        let st = &self.style;
+        let mut out = st.stylist.explain(El { doc: self, i }, property, &Lookup(self)).map(&mut |e: El<'_>| e.id());
+        out.annotate(&mut |d| {
+            let Some(info) = d.sheet.and_then(|id| st.sheet_info.get(&id)) else { return };
+            d.sheet_name = info.name.clone();
+            if let Some(src) = &info.source {
+                d.source = src.source_at(d.line, d.column);
+            }
+        });
+        Some(out)
+    }
+
     /// Forces state bits on `node` for selector matching and painting until replaced;
     /// `StateMask::NONE` clears. A designer forces `:hover` or `:focus` to show and edit that state's
     /// rules. The bits are ORed over the node's own ([`Document::state`] doesn't show them) and never
@@ -102,5 +123,17 @@ impl Document {
             }
         }
         out
+    }
+}
+
+/// The document's per-node inputs for [`svelters_style::Stylist::explain`].
+struct Lookup<'a>(&'a Document);
+
+impl<'a> StyleLookup<El<'a>> for Lookup<'a> {
+    fn inline(&self, el: El<'a>) -> Option<&DeclBlock> {
+        self.0.style.nodes[el.i].inline.as_deref()
+    }
+    fn computed(&self, el: El<'a>) -> Option<&ComputedStyle> {
+        self.0.style.nodes[el.i].css.as_deref()
     }
 }

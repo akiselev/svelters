@@ -18,6 +18,7 @@ mod cascade;
 mod computed;
 mod diag;
 mod element;
+mod explain;
 mod info;
 mod invalidation;
 mod media;
@@ -46,6 +47,7 @@ pub use cascade::{CustomDeps, MatchCaches, MatchedRule, Origin, RuleId, SheetId,
 pub use computed::{ComputeContext, ComputedStyle};
 pub use diag::{Diagnostic, Severity};
 pub use element::Element;
+pub use explain::{Beaten, CascadeDecl, DeclOrigin, Explanation, LossReason, StyleLookup, VarResolution};
 pub use info::{DeclInfo, MatchedRuleInfo, SheetSource, StyleSource};
 pub use invalidation::{Invalidation, Reach, for_each_reached};
 pub use media::{ColorScheme, Contrast, MEDIA_FEATURES, MediaEnv, MediaList, Platform};

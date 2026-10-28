@@ -43,7 +43,7 @@ impl std::fmt::Debug for El<'_> {
 }
 
 impl<'a> El<'a> {
-    fn id(&self) -> NodeId {
+    pub(crate) fn id(&self) -> NodeId {
         self.doc.slots.id_at(self.i).expect("live")
     }
     fn at(&self, id: NodeId) -> Option<El<'a>> {

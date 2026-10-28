@@ -61,7 +61,7 @@ impl Origin {
 }
 
 /// The ranks of inline declarations (normal, `!important`); see [`Origin::rank`].
-const INLINE_RANK: (u8, u8) = (3, 5);
+pub(crate) const INLINE_RANK: (u8, u8) = (3, 5);
 
 /// One applicable declaration with what `revert` and `revert-layer` need: its origin (inline is
 /// author origin) and its cascade level (rank, layer).
