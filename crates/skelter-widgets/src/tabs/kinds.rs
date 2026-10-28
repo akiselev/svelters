@@ -95,7 +95,9 @@ impl TabLook {
             selected_fg: c("fg", d.selected_fg),
             hover_bg: c("list-hover", d.hover_bg),
             pressed_bg: c("toolbar-active", d.pressed_bg),
-            indicator: c("accent", d.indicator),
+            // the theme's active-tab marker (`tab.activeBorderTop`; HC Dark's contrast border):
+            // `accent` is the button fill, black in HC Dark
+            indicator: c("tab-marker", c("accent", d.indicator)),
             separator: c("border", d.separator),
             close_hover_bg: c("toolbar-hover", d.close_hover_bg),
             focus: c("focus", d.focus),
