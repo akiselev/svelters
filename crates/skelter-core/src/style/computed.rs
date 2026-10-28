@@ -148,6 +148,15 @@ impl ComputedBox {
     pub fn is_rtl(&self) -> bool {
         self.direction.is_rtl()
     }
+    /// `text-align` with `start`/`end` resolved against `direction` (`start`, the default, is the
+    /// right in `rtl`): `Left`, `Right`, `Center` or `Justify`.
+    pub fn physical_text_align(&self) -> TextAlign {
+        match (self.text_align, self.direction.is_rtl()) {
+            (TextAlign::Start, false) | (TextAlign::End, true) => TextAlign::Left,
+            (TextAlign::Start, true) | (TextAlign::End, false) => TextAlign::Right,
+            (a, _) => a,
+        }
+    }
     /// The caret's colour: `caret-color`, or `color` when it is `auto`.
     pub fn caret(&self) -> Color {
         self.caret_color.unwrap_or(self.color)
@@ -173,6 +182,9 @@ impl ComputedBox {
             line_height: self.line_height,
             letter_spacing: self.letter_spacing,
             wrap: self.wrap,
+            // an `rtl` box sets its paragraphs' base; an `ltr` one leaves it to the text (as before
+            // direction existed: Arabic in an `ltr` box still reads from the right)
+            direction: self.direction.is_rtl().then_some(self.direction),
         }
     }
     /// The inherited properties of `self` over the defaults (what a child starts from).

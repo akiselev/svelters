@@ -119,6 +119,8 @@ impl LayoutRich for skelter_text::TextSystem {
             ellipsis: t.ellipsis,
             max_lines: t.max_lines,
             tab_size: None,
+            // dir-widgets: the node's `NodeView::direction()` (POL4-DIR-CORE)
+            direction: None,
         };
         let l = skelter_text::TextSystem::layout(self, &rich, max_width);
         let runs = l.runs().iter().map(|r| PlacedRun { run: r.run.clone(), origin: r.origin, style: r.style }).collect();

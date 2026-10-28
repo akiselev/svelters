@@ -403,3 +403,25 @@ fn sv_obj4_a_kind_reads_a_service_and_the_host_resends_its_node() {
     d.request_a11y(c);
     assert!(frame(&mut d).and_then(|c| c.a11y).is_none(), "request_a11y on a removed node is a no-op");
 }
+
+#[test]
+fn nodes_carry_their_text_direction() {
+    // POL4-DIR-CORE: an `rtl` node says so; an `ltr` one only under an `rtl` parent
+    let (mut d, root) = doc();
+    let a = child(&mut d, root, BOX, "");
+    let t = child(&mut d, a, TEXT, "");
+    let back = child(&mut d, a, TEXT, "");
+    d.set_prop(a, common::DIR, Value::from("rtl")).unwrap();
+    d.set_prop(back, common::DIR, Value::from("ltr")).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let node = |id: NodeId| u.nodes.iter().find(|(k, _)| *k == ax(id)).unwrap().1.clone();
+    assert_eq!(node(root).text_direction(), None);
+    assert_eq!(node(a).text_direction(), Some(accesskit::TextDirection::RightToLeft));
+    assert_eq!(node(t).text_direction(), Some(accesskit::TextDirection::RightToLeft));
+    assert_eq!(node(back).text_direction(), Some(accesskit::TextDirection::LeftToRight));
+    // a change re-sends the subtree
+    d.set_prop(a, common::DIR, Value::from("")).unwrap();
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let node = |id: NodeId| u.nodes.iter().find(|(k, _)| *k == ax(id)).map(|(_, n)| n.clone());
+    assert_eq!(node(t).expect("re-sent").text_direction(), None);
+}
