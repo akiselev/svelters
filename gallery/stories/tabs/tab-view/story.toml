@@ -2,9 +2,9 @@ id = "tab-view"
 title = "Tab view"
 family = "tabs"
 kinds = ["tab-view", "tab"]
-size = [440, 160]
+size = [440, 300]
 states = ["normal", "hover", "focus-visible", "disabled"]
-notes = "A strip of captions over the selected page; each `tab` names its caption with `title` and shows a close button with `closable`. Look at the selected caption's indicator, hover, close glyphs, long titles and many tabs in a narrow strip."
+notes = "A strip of captions over the selected page; each `tab` names its caption with `title` and shows a close button with `closable`. Look at the selected caption's indicator, hover, close glyphs, long titles and many tabs in a narrow strip: the captions scroll (wheel, the scroll buttons at the strip's end) and the overflow button opens a menu of every tab, the shown one checked."
 
 [[variant]]
 id = "basic"
@@ -21,3 +21,9 @@ file = "closable.svelte"
 id = "rtl"
 title = "Right-to-left titles"
 file = "rtl.svelte"
+
+[[variant]]
+id = "overflow"
+title = "Overflow: scroll buttons and the menu of every tab"
+file = "overflow.svelte"
+args = { menu = [false, true] }

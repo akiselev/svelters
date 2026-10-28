@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "091631efe8e51fe8"
+    "spec_hash": "faab2a65256f9bb7"
   },
   "inline_text": {
     "kind": "span",
@@ -8828,6 +8828,25 @@
       "abstract": false,
       "attaches_to": null,
       "bindings": {
+        "menu-open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "menu-open",
+          "provenance": "svelters-skelter: <tab-view> writes menu-open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -8875,10 +8894,31 @@
       "methods": {},
       "native": "skelter TabView",
       "native_state": [
+        "menu-open",
         "selected"
       ],
       "present": null,
       "props": {
+        "menu-open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The overflow menu (every tab, shown while the captions overflow the strip) is open; the user opening or closing it sets it (`bind:menu-open`).",
+          "fingerprint": "0af94fbd",
+          "id": 184111037,
+          "js": "menu-open",
+          "native": "menu-open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:TabView:menu-open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "selected": {
           "change": "layout",
           "construct_only": false,

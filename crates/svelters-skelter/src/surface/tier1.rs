@@ -815,6 +815,7 @@ pub static SCROLLBAR: KindSpec = KindSpec {
 };
 
 static TABVIEW_PROPS: &[PropSpec] = &[
+    PropSpec { name: "menu-open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The overflow menu (every tab, shown while the captions overflow the strip) is open; the user opening or closing it sets it (`bind:menu-open`)." },
     PropSpec { name: "selected", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Layout, native: true, doc: "Index of the shown page; a click on a caption changes it." },
 ];
 static TABVIEW_SIGNALS: &[SignalSpec] = &[
@@ -839,7 +840,7 @@ pub static TABVIEW: KindSpec = KindSpec {
     a11y: A11ySpec { role: "TabList", name_from: &["accessible-name"], name_required: false },
     text_content: None,
     toplevel: false,
-    native_state: &["selected"],
+    native_state: &["menu-open", "selected"],
 };
 
 static TAB_PROPS: &[PropSpec] = &[

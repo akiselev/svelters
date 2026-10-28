@@ -13,6 +13,10 @@
 //! - **`close-requested`** is raised on the `tab` whose close button was clicked (core's
 //!   `EventCx::emit_on`), and on the tab-view with the page index (any page, a `tab` or not).
 //!
+//! - **Overflow:** scroll buttons and an overflow button at the strip's end ([`TabView::overflows`]);
+//!   the overflow menu is the node's overlay part (the window's overlay stack: drawn above the
+//!   content, light-dismissed), `menu-open` mirrors it (`bind:menu-open`).
+//!
 //! Left out: AccessKit nodes for the captions (core builds one node per tree node; the captions are
 //! not nodes), and a strip refresh when only a `tab`'s `title` changes (core tells the parent of a
 //! child's prop change only for folding kinds; the strip catches up at the tab-view's next layout).
@@ -24,15 +28,19 @@ use skelter_base::accesskit::Role;
 use skelter_base::change::ChangeClass;
 use skelter_base::event::{PointerEvent, PointerPhase, PointerType, WheelEvent};
 use skelter_base::geom::{Insets, Point, Vec2};
+use skelter_core::overlay::{OverlayClass, OverlayPart};
 use skelter_core::{
     A11yCx, ArgSpec, ChildLayoutCx, Event, EventCx, FocusReason, Handled, Kind, KindRegistry, KindSpec, MeasureCx, NodeView, PrepareCx, PropCx, PropDefault, PropError, PropId,
     PropSpec, RecordCx, RegistryError, SignalFlags, SignalSpec, Value, ValueType, common,
 };
 
-static TAB_VIEW_PROPS: &[PropSpec] = &[PropSpec::new("selected", ValueType::I64, ChangeClass::Layout)
-    .default(PropDefault::I64(0))
-    .native()
-    .doc("Index of the shown page; a click on a caption changes it.")];
+static TAB_VIEW_PROPS: &[PropSpec] = &[
+    PropSpec::new("selected", ValueType::I64, ChangeClass::Layout).default(PropDefault::I64(0)).native().doc("Index of the shown page; a click on a caption changes it."),
+    PropSpec::new("menu-open", ValueType::Bool, ChangeClass::Paint)
+        .default(PropDefault::Bool(false))
+        .native()
+        .doc("The overflow menu (every tab, shown while the captions overflow the strip) is open; the user opening or closing it sets it."),
+];
 
 static TAB_VIEW_SIGNALS: &[SignalSpec] = &[
     SignalSpec::new("changed", Some(ValueType::I64), SignalFlags::PASSIVE)
@@ -103,6 +111,11 @@ impl TabLook {
             focus: c("focus", d.focus),
             disabled_fg: c("disabled-fg", d.disabled_fg),
             radius: theme.px("radius").unwrap_or(d.radius),
+            menu_bg: c("menu-bg", d.menu_bg),
+            menu_border: c("menu-border-color", c("border", d.menu_border)),
+            menu_sel: c("menu-sel", d.menu_sel),
+            menu_sel_fg: c("menu-sel-fg", d.menu_sel_fg),
+            menu_sel_border: (theme.contrast() == crate::theme::Contrast::High).then(|| c("focus", d.focus)),
             text,
             ..d
         }
@@ -130,11 +143,25 @@ pub struct TabViewKind {
     pub view: TabView,
     captions: Vec<TabCaption>,
     look: TabLook,
+    /// `menu-open` as written: the menu opens once the strip overflows.
+    menu_wanted: bool,
 }
 
 impl TabViewKind {
     fn selected_id() -> PropId {
         TAB_VIEW.prop_id(0)
+    }
+    fn menu_id() -> PropId {
+        TAB_VIEW.prop_id(1)
+    }
+
+    /// `menu-open` follows the model after an input.
+    fn sync_menu(&mut self, cx: &mut EventCx) {
+        let open = self.view.menu_open();
+        self.menu_wanted = open;
+        if cx.view(cx.node()).is_some_and(|v| v.prop_bool(Self::menu_id()) != open) {
+            let _ = cx.set_native(Self::menu_id(), Value::Bool(open));
+        }
     }
 
     /// Re-reads the captions and the look and lays the strip out at the node's width.
@@ -147,6 +174,9 @@ impl TabViewKind {
         let (caps, look, width) = (&self.captions, &self.look, node.size().w);
         let view = &mut self.view;
         with_text(ts, |p| view.relayout(caps, look, p, width));
+        if self.menu_wanted && !self.view.menu_open() {
+            self.view.set_menu(true);
+        }
     }
 
     fn pointer_event(phase: PointerPhase, p: &skelter_core::PointerInput) -> PointerEvent {
@@ -177,6 +207,7 @@ impl TabViewKind {
         if o.take_focus {
             cx.focus(FocusReason::Pointer);
         }
+        self.sync_menu(cx);
         if o.repaint || o.handled {
             cx.request_paint();
         }
@@ -194,6 +225,11 @@ impl Kind for TabViewKind {
             let v = value.and_then(Value::as_i64).unwrap_or(0);
             self.view.set_selected(v);
             cx.request_layout();
+        }
+        if prop == Self::menu_id() {
+            // applied at the next prepare, once the strip knows whether it overflows
+            self.menu_wanted = value.and_then(Value::as_bool).unwrap_or(false);
+            self.view.set_menu(self.menu_wanted);
         }
         Ok(())
     }
@@ -222,6 +258,21 @@ impl Kind for TabViewKind {
 
     fn record(&self, cx: &mut RecordCx) {
         record_core(cx, |p, list| self.view.record(&self.captions, &self.look, p, list));
+        // the overflow menu, in a layer of the window's overlay stack (its button counts as inside)
+        if let Some(m) = self.view.menu_rect() {
+            let mut part = OverlayPart::new(OverlayClass::Menu, m);
+            part.inside = self.view.ctl_rect(super::Ctl::Menu).into_iter().collect();
+            cx.overlay(part, |cx| record_core(cx, |p, list| self.view.record_menu(&self.captions, &self.look, p, list)));
+        }
+    }
+
+    /// The stack closed the menu (a press outside it, Escape).
+    fn overlay_closed(&mut self, cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
+        self.view.set_menu(false);
+        self.menu_wanted = false;
+        self.sync_menu(cx);
+        cx.request_paint();
+        Handled::Yes
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
