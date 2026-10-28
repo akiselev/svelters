@@ -7,7 +7,7 @@ additive and defaults are unchanged (the one exception, SV86's write past the en
 | Item | Commit | What | Test |
 | --- | --- | --- | --- |
 | SV84 (P1) | `9c3b0ea` | An each block the host interrupted mid-update rebuilds its items | `crates/svelters-skelter/tests/keyed_each.rs` (6 tests) |
-| SV84 follow-up | see the log | `{#if}`, `{#key}`, `{#await}` (and snippet/component) blocks: the same repair (coordinator, 2026-10-27) | `crates/svelters-skelter/tests/interrupted_blocks.rs` (one test per kind) |
+| SV84 follow-up | `ac247f7` | `{#if}`, `{#key}`, `{#await}` (and snippet/component) blocks: the same repair (coordinator, 2026-10-27) | `crates/svelters-skelter/tests/interrupted_blocks.rs` (one test per kind) |
 | SV86 | `34eeb33` | A scroll-area write past the end stays at the end as content grows | `skelter-widgets` `views::scroll::tests::sv86_*` |
 | SV-OBJ4 | `2c22709` | `A11yCx::service<T>()`, `Document::request_a11y(node)` | `skelter-core` `tests::a11y::sv_obj4_*` |
 | SV85 | `0028cfa` | `svelters::exports::on_destroy(f)`: a native export ties a disposer to its calling component | `crates/svelters-skelter/tests/scoped.rs` |
@@ -138,12 +138,9 @@ path, so rows are never measured. The change:
   (`SVELTERS_UPDATE=1`).
 - Callers write `auto-row-height` and drop their numbers, or keep them as minimums.
 
-**Question for the coordinator:** should `auto-row-height` become the default for `virtual-list` (and
-`tree-view`)?
-- **Recommendation:** yes, in a later pin. Lists without `row-height` would go from 32 px to the density
-  row (22 px), which is a visible default change, so it is not made here.
-- `tree-view` does not have the prop yet: it forwards only the list's first six props. Adding it there is
-  the same few lines.
+**Decided (coordinator, 2026-10-28):** `auto-row-height` stays off in this lane. A later lane makes it
+the default for `virtual-list` and `tree-view` (which gets the prop then), together with cadatomic's
+snapshot re-bless: lists without `row-height` go from 32 px to the density row (22 px).
 
 ## Built and run
 
