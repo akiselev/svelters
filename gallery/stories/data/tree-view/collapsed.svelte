@@ -9,7 +9,7 @@
 </script>
 
 <box padding={8} flex-grow={1}>
-  <TreeView anchor="subject" accessible-name="Project" {roots} children={(n) => n.kids ?? []} hasChildren={(n) => !!n.kids} row-height={22} flex-grow={1} enabled={!disabled}>
+  <TreeView anchor="subject" accessible-name="Project" {roots} children={(n) => n.kids ?? []} hasChildren={(n) => !!n.kids} flex-grow={1} enabled={!disabled}>
     {#snippet row(node)}
       <label>{node.label}</label>
     {/snippet}

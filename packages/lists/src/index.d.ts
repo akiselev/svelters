@@ -54,6 +54,7 @@ export interface ListViewProps<T = any> {
   selection?: 'none' | 'single';
   /** The selected position, -1 for none (`bind:selected`). */
   selected?: number;
+  /** Row height in points. Unset: the backend's own (skelter: the theme's density row). */
   'row-height'?: number;
   onactivate?: (item: T, position: number) => void;
   [prop: string]: unknown;
@@ -113,6 +114,7 @@ export interface TreeViewProps<T = any> {
   selected?: unknown[];
   /** `bind:expanded`: the expanded keys. */
   expanded?: unknown[];
+  /** Row height in points. Unset: the backend's own (skelter: the theme's density row). */
   'row-height'?: number;
   /** Points per level. */
   indent?: number;

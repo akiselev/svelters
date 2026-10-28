@@ -5,7 +5,7 @@
 </script>
 
 <box dir="rtl" padding={8} flex-grow={1}>
-  <ListView anchor="subject" accessible-name="الشبكات" {items} key={(it) => it.id} row-height={24} flex-grow={1} enabled={!disabled}>
+  <ListView anchor="subject" accessible-name="الشبكات" {items} key={(it) => it.id} flex-grow={1} enabled={!disabled}>
     {#snippet row(item)}
       <label>{item.text}</label>
     {/snippet}

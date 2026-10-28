@@ -4,7 +4,7 @@ family = "data"
 kinds = ["tree-view"]
 size = [320, 200]
 states = ["normal", "focus-visible", "disabled"]
-notes = "A virtualized tree through `<TreeView>` (@svelters/lists): twisties, indent guides, the selected row, the cursor."
+notes = "A virtualized tree through `<TreeView>` (@svelters/lists): twisties, indent guides, the selected row, the cursor. Rows take the theme's density row (`row-h`): no variant sets `row-height`."
 
 [[variant]]
 id = "expanded"

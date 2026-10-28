@@ -35,7 +35,8 @@ use skelter_base::time::{Span, Time};
 use std::ops::Range;
 use std::collections::{HashMap, HashSet};
 
-/// The default row height of a tree, in points.
+/// A tree's row height without a theme, in points (with one, an unset `row-height` is the
+/// theme's `row-h`: POL4-ROWS).
 pub const TREE_ROW_HEIGHT: f32 = 24.0;
 
 /// One node of the model.
@@ -741,6 +742,7 @@ impl Kind for TreeView {
         h
     }
     fn layout_style(&self, cx: &crate::shim::core::StyleCx) -> taffy::Style {
+        self.list.note_type_scale(cx.theme, cx.font_size);
         self.rtl.set(cx.is_rtl());
         self.list.bars.rtl.set(cx.is_rtl());
         super::virtual_list::scrolling_layout(cx)
@@ -752,6 +754,8 @@ impl Kind for TreeView {
         TREE_METHODS.get(method).map_or(Handled::No, |m| self.call_tree(cx, m.name, args))
     }
     fn virtual_children(&mut self) -> Option<&mut dyn skelter_core::VirtualChildren> {
+        // POL4-ROWS: an unset `row-height` takes the theme's row from the restyle before this realise
+        self.list.apply_row_height();
         Some(self)
     }
     fn self_scroll(&self) -> Option<skelter_core::SelfScroll> {

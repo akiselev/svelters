@@ -424,6 +424,21 @@ export class ListController {
   }
 }
 
+/**
+ * Writes `row-height` only when the app gives one (POL4-ROWS): unset, the native list keeps its own
+ * default (skelter: the theme's density row; other backends: 32 for a list, 24 for a tree, as the
+ * component's old default). Removing it after a write unsets it.
+ */
+function rowHeightEffect(view, $$props) {
+  let written = false;
+  $.template_effect(() => {
+    const h = $$props['row-height'];
+    if (h === undefined && !written) return;
+    set(view, 'row-height', h ?? null);
+    written = h !== undefined;
+  });
+}
+
 const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 'item', 'itemClass', 'key', 'label', 'rowAnchor', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
 
 /**
@@ -449,7 +464,6 @@ export function ListView($$anchor, $$props) {
   const layout = $.prop($$props, 'layout', 3, 'list');
   const selection = $.prop($$props, 'selection', 3, 'single');
   const selected = $.prop($$props, 'selected', 31, () => -1);
-  const rowHeight = $.prop($$props, 'row-height', 3, 32);
   const rest = $.rest_props($$props, OWN_PROPS);
 
   const contexts = getAllContexts();
@@ -479,7 +493,7 @@ export function ListView($$anchor, $$props) {
   const view = element('virtual-list');
   $.template_effect(() => set(view, 'layout', layout()));
   $.template_effect(() => set(view, 'selection', selection()));
-  $.template_effect(() => set(view, 'row-height', rowHeight()));
+  rowHeightEffect(view, $$props);
   let restKeys = [];
   $.template_effect(() => {
     const keys = Object.keys(rest).filter((k) => !(k.startsWith('on') && typeof rest[k] === 'function'));
@@ -654,7 +668,6 @@ export function TreeView($$anchor, $$props) {
   const selection = $.prop($$props, 'selection', 3, 'single');
   const selected = $.prop($$props, 'selected', 31, () => []);
   const expanded = $.prop($$props, 'expanded', 31, () => []);
-  const rowHeight = $.prop($$props, 'row-height', 3, 24);
   const indent = $.prop($$props, 'indent', 3, 16);
   const rest = $.rest_props($$props, TREE_PROPS);
 
@@ -729,7 +742,7 @@ export function TreeView($$anchor, $$props) {
 
   const view = element('tree-view');
   $.template_effect(() => set(view, 'selection', selection()));
-  $.template_effect(() => set(view, 'row-height', rowHeight()));
+  rowHeightEffect(view, $$props);
   $.template_effect(() => set(view, 'indent', indent()));
   $.template_effect(() => set(view, 'row-drag-type', $$props.rowDragType ?? ''));
   $.template_effect(() => set(view, 'row-drop-types', $$props.rowDropTypes ?? ''));

@@ -22,7 +22,6 @@
     bind:selected
     bind:expanded
     root-decorated={decorated}
-    row-height={22}
     flex-grow={1}
     enabled={!disabled}
   >

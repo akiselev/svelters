@@ -10,7 +10,7 @@
 </script>
 
 <box padding={8} flex-grow={1}>
-  <TreeView anchor="subject" accessible-name="Files" {roots} children={(n) => n.kids ?? []} hasChildren={(n) => !!n.kids} bind:expanded row-height={22} flex-grow={1} enabled={!disabled}>
+  <TreeView anchor="subject" accessible-name="Files" {roots} children={(n) => n.kids ?? []} hasChildren={(n) => !!n.kids} bind:expanded flex-grow={1} enabled={!disabled}>
     {#snippet row(node)}
       <label elide="end">{node.label}</label>
     {/snippet}
