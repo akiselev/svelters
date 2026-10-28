@@ -445,7 +445,7 @@ mod tests {
         k.child_layout(&ChildCx { index: 1, anchors: &["", ""], slots: &["", "end"], children: &[] }, &mut fixed);
         assert_eq!(fixed.inset.top, LengthPercentageAuto::length(3.0));
         // the header is the end slot's containing block
-        assert_eq!(k.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: Some(Style { position: Position::Static, ..Style::default() }) }).position, Position::Relative);
+        assert_eq!(k.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: Some(Style { position: Position::Static, ..Style::default() }), font_size: None, theme: None }).position, Position::Relative);
         set(&mut k, "open", Value::Bool(true));
         let mut s = Style::default();
         assert!(k.child_layout(&ChildCx { index: 0, anchors: &["", ""], slots: &["", "end"], children: &[] }, &mut s));

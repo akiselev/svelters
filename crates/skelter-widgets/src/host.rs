@@ -957,13 +957,15 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
                 None => return Ok(()),
             },
         };
+        // the document refused a JS write older than the kind's native changes before this point
+        self.widget.write_checked();
         self.widget.set_prop(w::PropId(wi as u32), &v).map_err(|e| PropError::Rejected(format!("{}: {e:?}", wp.name)))
     }
 
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         let base = cx.default_layout();
         let dark = cx.service::<crate::theme::Theme>().is_none_or(|t| t.is_dark());
-        self.reading(|| self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark, base: Some(base) }))
+        self.reading(|| self.widget.layout_style(&w::StyleCx { computed: cx.css(), state: StateBits(cx.state().0), dark, base: Some(base), font_size: Some(cx.style().font_size), theme: cx.service::<crate::theme::Theme>() }))
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
@@ -1019,6 +1021,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         self.add_reads(reads);
         if let Some(v) = self.widget.take_scroll_request() {
             cx.scroll_to(v);
+        }
+        if let Some((x, y)) = self.widget.take_scroll_pin() {
+            cx.pin_scroll_end(x, y);
         }
         // SV79: descendants the widget draws itself, placed for assistive technology
         for (path, rect) in self.widget.a11y_placements() {

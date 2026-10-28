@@ -88,10 +88,20 @@ impl Document {
         self.scroll.get(&node).copied().unwrap_or(Vec2::ZERO)
     }
 
-    /// Sets a scroll container's offset (clamped), as native state.
+    /// Sets a scroll container's offset (clamped), as native state. An axis pinned to the end
+    /// ([`Document::pin_scroll_end`]) that this moves away from the end is unpinned.
     pub fn set_scroll_offset(&mut self, node: NodeId, v: Vec2) {
         let Some(i) = self.idx(node) else { return };
         let v = self.clamp_scroll(i, v);
+        if let Some(&(px, py)) = self.scroll_pins.get(&node) {
+            let end = self.scroll_end(i);
+            let pins = (px && v.x >= end.x - 0.5, py && v.y >= end.y - 0.5);
+            if pins == (false, false) {
+                self.scroll_pins.remove(&node);
+            } else {
+                self.scroll_pins.insert(node, pins);
+            }
+        }
         if self.scroll_offset(node) == v {
             return;
         }
@@ -105,6 +115,52 @@ impl Document {
             && let Some(ws) = self.window_mut(w)
         {
             ws.rebuild = true;
+        }
+    }
+
+    /// The largest offset of node `i` on each axis it scrolls (its content's end).
+    fn scroll_end(&self, i: usize) -> Vec2 {
+        self.clamp_scroll(i, Vec2::new(f32::MAX, f32::MAX))
+    }
+
+    /// SV86: keeps scroll container `node` at the end of its content on the axes set (x, y), as a
+    /// terminal or a chat log does: it scrolls there now and, after every layout, follows the
+    /// content as it grows or shrinks, until a scroll moves it away from the end on that axis (the
+    /// user's wheel or drag, a fling, a `scrollTo` short of the end), which unpins that axis.
+    /// `(false, false)` unpins. Not pinned by default.
+    pub fn pin_scroll_end(&mut self, node: NodeId, x: bool, y: bool) {
+        let Some(i) = self.idx(node) else { return };
+        if !x && !y {
+            self.scroll_pins.remove(&node);
+            return;
+        }
+        self.scroll_pins.insert(node, (x, y));
+        let cur = self.scroll_offset(node);
+        let end = self.scroll_end(i);
+        self.scroll_fast(node, Vec2::new(if x { end.x } else { cur.x }, if y { end.y } else { cur.y }));
+    }
+
+    /// The axes (x, y) `node` is pinned to the end on ([`Document::pin_scroll_end`]).
+    pub fn scroll_pinned(&self, node: NodeId) -> (bool, bool) {
+        self.scroll_pins.get(&node).copied().unwrap_or((false, false))
+    }
+
+    /// After layout: the pinned scroll containers of `window` follow the end of their content.
+    pub(crate) fn follow_scroll_pins(&mut self, window: WindowId) {
+        let pins: Vec<(NodeId, (bool, bool))> = self.scroll_pins.iter().map(|(&n, &p)| (n, p)).collect();
+        for (node, (x, y)) in pins {
+            let Some(i) = self.idx(node) else { continue };
+            if self.core[i].window != Some(window) {
+                continue;
+            }
+            let cur = self.scroll_offset(node);
+            let end = self.scroll_end(i);
+            let to = Vec2::new(if x { end.x } else { cur.x }, if y { end.y } else { cur.y });
+            if to != cur {
+                self.set_scroll_offset(node, to);
+                // its bars (a kind that draws them reads the offset in its prepare) move with it
+                self.mark(node, Dirty::PAINT);
+            }
         }
     }
 

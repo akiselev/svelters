@@ -382,7 +382,7 @@ mod tests {
     #[test]
     fn layout_hooks_fix_the_size_and_clear_the_separator() {
         let mut p = Panel { side: PanelSide::Right, size: Some(240.0), ..Panel::default() };
-        let st = p.layout_style(&StyleCx { computed: None, state: crate::interact::StateBits::NONE, dark: true, base: None });
+        let st = p.layout_style(&StyleCx { computed: None, state: crate::interact::StateBits::NONE, dark: true, base: None, font_size: None, theme: None });
         assert_eq!((st.size.width, st.flex_shrink), (taffy::Dimension::length(240.0), 0.0));
         let mut text = crate::shim::testing::MonoShaper;
         let style = crate::shim::core::Styles { computed: None, parts: &[], children: &[], state: crate::interact::StateBits::NONE, dark: true, theme: None, inherited: None };
