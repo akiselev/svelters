@@ -95,6 +95,16 @@ caption in the gallery (the forced state does not reach a core kind's own focus 
 invisible in HC Dark (`--sv-surface` is black there; story only); the colour picker's drop shows `#2e86c1` for
 `#2e86c180` (alpha `opaque` by default: by design).
 
+## Coordinator request: Q-E2 (a window that never went idle)
+
+From cadatomic gal3 (on `674d7de`): with the pointer over a `<label>` in a property-grid virtual row,
+`Document::needs_frame` stayed true for ever. Cause: `LAYOUT`/`DESC_LAYOUT` were cleared only by the record walk,
+which skips nodes with no record work, so a relayout that moved nothing left them on the window root. Fix (own
+commit): the layout pass clears them on each node it lays out (`Tree::set_final_layout`, `layout/mod.rs`). Test:
+`skelter-core` `tests::runner::a_relayout_that_records_nothing_leaves_the_window_idle` (a hover restyle that relays
+out with no geometry change; failed before the fix). `cargo test -p skelter-core --lib` 191, `-p skelter-widgets
+--lib` 575 pass.
+
 ## Cross-lane edits (small, additive; for the coordinator)
 
 - `crates/svelters-skelter/src/surface/tier1.rs` (finish lane's): three surface rows, `date-picker` `open`,
@@ -110,7 +120,7 @@ invisible in HC Dark (`--sv-surface` is black there; story only); the colour pic
 ## Tests and CI
 
 Added or changed (filtered runs on the last code commit, all pass):
-- `cargo test -p skelter-core --lib` 190 (3 new, `tests::toplayer`: a menu-like node in a clipped box draws whole
+- `cargo test -p skelter-core --lib` 191 (Q-E2's test, and 3 new `tests::toplayer`: a menu-like node in a clipped box draws whole
   above a later sibling and takes the click; Escape one level and outside presses children first; the a11y parent
   is the owner and removing the owner takes the entry and its layer).
 - `cargo test -p skelter-widgets --lib -- pickers:: tabs:: views::` 193 (new: popup top layer, picker `open` and
