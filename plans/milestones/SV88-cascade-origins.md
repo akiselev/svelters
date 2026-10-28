@@ -53,4 +53,5 @@ new code). Not run: anything else; CI is the gate.
 
 ## CI
 
-(filled in below after the push)
+Code sha `ff3ded32` green on every workflow: js 40664677122, linux-gtk 40664677142, linux-qt 40664677081,
+macos-appkit 40664677084, skelter 40664677082, windows-winui 40664677097. The commit after it only adds this section.
