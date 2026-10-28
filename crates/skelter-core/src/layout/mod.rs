@@ -317,6 +317,10 @@ impl taffy::RoundTree for Tree<'_> {
     }
     fn set_final_layout(&mut self, id: NodeId, layout: &taffy::Layout) {
         let i = ix(id);
+        // laid out: the layout work invalidation asked for is served (the record walk visits only
+        // nodes with record work, so a relayout that moves nothing would leave these set and the
+        // window would never go idle: Q-E2)
+        self.doc.core[i].dirty.remove(Dirty::LAYOUT | Dirty::DESC_LAYOUT);
         let old = self.doc.layout[i].layout;
         if old.location != layout.location {
             self.doc.core[i].dirty.insert(Dirty::PROPERTY);
