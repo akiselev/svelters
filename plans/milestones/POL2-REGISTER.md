@@ -140,7 +140,9 @@ Added or changed (all pass locally, filtered runs on the code of the last commit
 - `skelter-gallery check`: ok, 47 stories, 170 variants, no problems, no warnings. `gen_props.py --check` ok.
 - Not run locally: the workspace tests, other crates, pixel snapshot tests, conformance.
 
-CI: see below.
+CI on `deec09a` (the last code sha; master `f8e2669` merged), all six workflows green: js 40617494256, linux-gtk
+40617494189, linux-qt 40617494197, macos-appkit 40617494230, skelter 40617494206, windows-winui 40617494298. No pixel
+snapshot test moved, so none was re-blessed. Edits to this record after that sha are docs only (CI not rerun for them).
 
 ## Handoff
 
