@@ -130,15 +130,15 @@ Before/after (this container, not committed), under
 ## CI
 
 Earlier pushes' runs were cancelled by later pushes (the workflows cancel in progress). The code was last changed in
-`6c52fe4` (the paragraph base decision); this record's commit carries the same code. Runs: pending (see Handoff).
+`6c52fe4` (the paragraph base decision); `8e8ac6d` carries the same code. **All six workflows green on `8e8ac6d`:**
+js 40717551920, linux-gtk 40717551796, linux-qt 40717551883, macos-appkit 40717551800, skelter 40717551888,
+windows-winui 40717551987. No pixel snapshot test moved, so none was re-blessed. Commits after `8e8ac6d` change this
+record only (CI not rerun for them).
 
 ## Handoff
 
 - **Done:** every item of the lane (mirroring, stories, review), dir-core merged (`8ddfa09`, `c508a53`), `origin/master`
   `728647b` merged, the coordinator's paragraph-base decision implemented and documented.
-- **In progress:** CI on this branch's head. Wait with `CI_WAIT_EXPECT=6 tools/dev/ci-wait <head sha> --jobs`; fix what
-  fails (filtered tests, `CARGO_PROFILE_DEV_DEBUG=0`), push, wait again.
-- **Next:** when all six workflows are green, write the sha and run ids above and send them to the coordinator
-  (`session_01HBbGRgGENFKUjsqyGryCSr`).
+- **Done:** CI green on `8e8ac6d` (above); reported to the coordinator. The lane is ready to merge.
 - **Open (not this lane's to do unless asked):** R1 (small: popup `-start`/`-end` logical, accepted by small); a
   context menu opened without a pointer point opens at the owner's top-left in rtl (recommend top-right).
