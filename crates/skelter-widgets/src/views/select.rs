@@ -78,7 +78,8 @@ pub const LIST_UA: Ua = Ua(&[UaRule::base(&[
 
 /// `::part(option)`: a row; `:selected` is the highlighted one.
 pub const OPTION_UA: Ua = Ua(&[
-    UaRule::base(&[("height", Token("row-h")), ("padding-left", Px(8.0)), ("padding-right", Px(8.0)), ("border-radius", Token("radius")), ("color", Token("fg"))]),
+    // the option text lines up with the field's: list padding 2 + 5 = border 1 + field padding 6
+    UaRule::base(&[("height", Token("row-h")), ("padding-left", Px(5.0)), ("padding-right", Px(8.0)), ("border-radius", Token("radius")), ("color", Token("fg"))]),
     // the high-contrast themes have no `menu-sel` fill: the row is outlined (VS Code's `menu.selectionBorder`)
     UaRule::when(
         StateBits::SELECTED,
