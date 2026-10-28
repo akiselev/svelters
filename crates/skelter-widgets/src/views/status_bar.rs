@@ -16,7 +16,7 @@ use super::common;
 use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, ChildInfo, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::geom::Rect;
 use skelter_base::time::{Span, Time};
@@ -166,6 +166,14 @@ impl Kind for StatusBar {
     /// ([`Kind::child_layout`]); the row itself is `base.css`'s.
     fn places_children() -> bool {
         true
+    }
+    /// The message area: from the last start section's right edge (plus the row's 8 pt gap) to the
+    /// first end section's left edge.
+    fn children_laid(&mut self, children: &[(ChildInfo<'_>, Rect)]) {
+        let of = |s: Section| children.iter().filter(move |(c, r)| Section::parse(c.status_section) == s && r.width() > 0.0).map(|(_, r)| *r);
+        let left = of(Section::Start).map(|r| r.max.x + 8.0).fold(0.0, f32::max);
+        let right = of(Section::End).map(|r| r.min.x - 8.0).fold(f32::INFINITY, f32::min);
+        self.set_message_area(left, right);
     }
     /// The sections in source order (taffy has no `order`: write start, temporary, end), temporary
     /// ones hidden while a message or tip shows, the first end section with `margin-left: auto`.

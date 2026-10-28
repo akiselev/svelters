@@ -529,15 +529,40 @@ fn folded_of(node: NodeView<'_>, folds: bool, elements: bool) -> Vec<w::Value> {
     run::fold(&run_nodes(&|id| node.view(id), node.children(), css_color(node.css(), "color")))
 }
 
-/// The window's content area (its root's box) in `node`'s local points.
+/// What a row reads about one child ([`w::ChildInfo`]): its kind, `dialog-role`, a button's
+/// `default`/`cancel`, its `status-section`.
+fn child_info<'a>(c: NodeView<'a>) -> w::ChildInfo<'a> {
+    let enum_name = |p: skelter_core::PropId| match c.prop(p) {
+        Some(Value::Enum(i)) => skelter_core::common::prop(p).and_then(|s| s.enum_values.get(*i as usize).copied()),
+        _ => None,
+    };
+    let spec = c.kind().spec;
+    let own = |name: &str| spec.prop_named(name).is_some_and(|p| c.prop_bool(p));
+    w::ChildInfo {
+        kind: spec.name,
+        dialog_role: enum_name(skelter_core::common::DIALOG_ROLE).unwrap_or("auto"),
+        default_button: own("default"),
+        cancel_button: own("cancel"),
+        status_section: enum_name(skelter_core::common::STATUS_SECTION).unwrap_or("temporary"),
+    }
+}
+
+/// The window's content area (its root's box) in `node`'s local points: through the window
+/// transforms of the last rebuild, or, before the node has one (its first prepare), through the
+/// layout boxes up to the root (R3; scroll offsets are not in those, and are zero then).
 fn window_room(node: NodeView<'_>) -> Rect {
     let mut root = node;
+    let mut at = Vec2::ZERO;
     while let Some(p) = root.parent() {
+        at = at + root.layout_rect().unwrap_or_default().min.to_vec();
         root = p;
     }
+    let size = Point::new(root.size().w, root.size().h);
+    if node.window_transform() == skelter_base::geom::Affine::IDENTITY && at != Vec2::ZERO {
+        return Rect::new(-at.x, -at.y, size.x - at.x, size.y - at.y);
+    }
     let tf = root.window_transform();
-    let (a, b) = (tf.apply(Point::ZERO), tf.apply(Point::new(root.size().w, root.size().h)));
-    let (a, b) = (node.from_window(a), node.from_window(b));
+    let (a, b) = (node.from_window(tf.apply(Point::ZERO)), node.from_window(tf.apply(size)));
     Rect::new(a.x.min(b.x), a.y.min(b.y), a.x.max(b.x), a.y.max(b.y))
 }
 
@@ -987,12 +1012,13 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         }
         // the window's room, for the popups the widget places itself
         let node = cx.node;
+        // where the children were laid out (R3), for what the widget draws around or between them
+        let laid: Vec<(w::ChildInfo<'_>, Rect)> = node.children().iter().filter_map(|&c| node.view(c)).map(|c| (child_info(c), c.layout_rect().unwrap_or_default())).collect();
+        if !laid.is_empty() {
+            self.widget.children_laid(&laid);
+        }
         let room = window_room(node);
         if self.room != Some(room) {
-            // the first prepare runs before the node has a window transform, and a move changes it:
-            // look again next frame (settles when the room stays; skelter-core drops a prepare's
-            // request today, POL2-REGISTER R1, so the room catches up at the next repaint)
-            cx.request_paint();
             self.room = Some(room);
             self.widget.room(room);
         }
@@ -1212,24 +1238,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
         let anchors: Vec<&str> = (0..cx.count).map(|k| cx.anchor_of(k)).collect();
         let slots: Vec<&str> = (0..cx.count).map(|k| cx.parent.child(k).map_or("", |c| c.slot_name())).collect();
-        let enum_name = |c: &NodeView<'_>, p: skelter_core::PropId| match c.prop(p) {
-            Some(Value::Enum(i)) => skelter_core::common::prop(p).and_then(|s| s.enum_values.get(*i as usize).copied()),
-            _ => None,
-        };
-        let children: Vec<w::ChildInfo<'_>> = (0..cx.count)
-            .map(|k| {
-                let Some(c) = cx.parent.child(k) else { return w::ChildInfo::default() };
-                let spec = c.kind().spec;
-                let own = |name: &str| spec.prop_named(name).is_some_and(|p| c.prop_bool(p));
-                w::ChildInfo {
-                    kind: spec.name,
-                    dialog_role: enum_name(&c, skelter_core::common::DIALOG_ROLE).unwrap_or("auto"),
-                    default_button: own("default"),
-                    cancel_button: own("cancel"),
-                    status_section: enum_name(&c, skelter_core::common::STATUS_SECTION).unwrap_or("temporary"),
-                }
-            })
-            .collect();
+        let children: Vec<w::ChildInfo<'_>> = (0..cx.count).map(|k| cx.parent.child(k).map_or_else(w::ChildInfo::default, child_info)).collect();
         self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors, slots: &slots, children: &children }, style)
     }
 
@@ -1499,8 +1508,11 @@ mod tests {
         use crate::views::menu::ContextMenu;
         let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 200.0), |r| crate::views::register_all(r).unwrap());
         let menu = child(&mut d, root, skelter_core::KindId::of("context-menu"), "position: absolute; left: 40px; top: 30px; width: 10px; height: 10px");
+        // the first prepare, before the node has a window transform: through the layout boxes
         frame(&mut d);
-        // the first prepare runs before the node has a transform; a repaint takes the real one
+        let room = d.with_kind(menu, |k| k.as_any().and_then(|a| a.downcast_ref::<ContextMenu>()).unwrap().menus.bounds).unwrap();
+        assert_eq!(room, Rect::new(-40.0, -30.0, 260.0, 170.0));
+        // later prepares, through the transforms
         let open = skelter_core::PropId::of("context-menu", "open", "bool");
         d.set_prop(menu, open, Value::Bool(true)).unwrap();
         frame(&mut d);

@@ -675,6 +675,11 @@ pub mod core {
         /// each [`Kind::prepare`]: the room a kind that places popups of its own keeps them in (menus,
         /// the pickers' drops).
         fn room(&mut self, _room: Rect) {}
+        /// Each child's common props and its border box from the last layout (in the node's local
+        /// points; a hidden child's is empty), given before each [`Kind::prepare`]: what a container
+        /// draws around or between its children reads (the status bar's message area, the modal's
+        /// dialog box).
+        fn children_laid(&mut self, _children: &[(ChildInfo<'_>, Rect)]) {}
         fn prepare(&mut self, _cx: &mut PrepareCx) {}
         fn record(&self, cx: &mut RecordCx);
         fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {

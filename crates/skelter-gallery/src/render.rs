@@ -562,19 +562,14 @@ impl Renderer {
                 self.frames += 1;
                 let now_ms = self.harness.now().0 as f64 / 1e6;
                 self.ext.run_frame(&self.backend, self.frames, now_ms);
-                // the kinds' timers (the tooltip's delay): no svelters runner runs them yet, nor
-                // frames a window for what they changed (POL2-REGISTER R2), so the renderer does, as
-                // skelter-gallery-app's document does; an empty transaction makes the frame due
-                let (now, wid) = (self.harness.now(), self.harness.window());
+                // the kinds' timers (the tooltip's delay): no svelters runner runs them yet
+                // (POL2-REGISTER R2), so the renderer does, as skelter-gallery-app's document does
+                let now = self.harness.now();
                 let timed = self.backend.with_doc(|d| d.run_timers(now));
                 if !timed.is_empty() {
                     self.backend.queue(svelters_skelter::Output { events: timed, changed: Vec::new(), revision: None });
                 }
-                self.backend.with_doc(|d| {
-                    if d.needs_frame(wid) {
-                        d.transaction(|_| ());
-                    }
-                });
+                self.frame_due();
                 self.harness.step();
                 steps += 1;
             }
@@ -660,11 +655,24 @@ impl Renderer {
             let now_ms = self.harness.now().0 as f64 / 1e6;
             self.ext.run_frame(&self.backend, self.frames, now_ms);
             self.harness.step();
+            self.frame_due();
             if self.busy().is_none() {
                 return (i, true);
             }
         }
         (MAX_STEPS, false)
+    }
+
+    /// Work the document has for the next frame (a kind's timer, a prepare's request) that the
+    /// app's document does not see yet (POL2-REGISTER R2: `SkelterDocument::needs_frame` reads only
+    /// the backend's revision): an empty transaction makes the frame due.
+    fn frame_due(&self) {
+        let wid = self.harness.window();
+        self.backend.with_doc(|d| {
+            if d.needs_frame(wid) {
+                d.transaction(|_| ());
+            }
+        });
     }
 
     /// What JS reported since the last call: errors, handler exceptions, console warnings.

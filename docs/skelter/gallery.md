@@ -89,6 +89,7 @@ The image is the story's `size` × zoom, in device pixels. `applied` says how th
 | `applied` | Meaning |
 |---|---|
 | `forced :hover on 1 subject` | The state's bits were forced on the subject anchors. |
+| `forced :hover on 1 subject, pointer over it for 500 ms` | `hover` also rests the pointer on the (first) subject past the platform's tooltip delay, so a widget's `tooltip` shows. |
 | `forced :hover on the root (no subject anchor)` | The variant has no `subject` anchor, so the bits were forced on its top-level nodes. |
 | `disabled prop` | The variant takes a `disabled` prop, so it rendered with `disabled = true`: its real disabled state and accessibility state. |
 | `forced :disabled on … (the variant has no disabled prop)` | The variant takes no `disabled` prop, so only the style bit was forced. |
@@ -211,6 +212,9 @@ only its own cells. When the cell changes, the variant is remounted in the windo
    that prop).
 5. Steps the embed's logic and the harness until both are settled (at most 120 frames).
 6. Forces the state's bits on the `subject` anchors (`SkelterBackend::force_state`), settles again, and draws.
+   For `hover`, the pointer also moves onto the first subject and the virtual clock runs past the platform's
+   tooltip delay (the renderer runs the kinds' timers itself until the svelters runner does, POL2-REGISTER R2),
+   so a `tooltip` shows; the next cell's mount takes the pointer out of the window first.
 
 A **window story** (`stories/layout/window`): when a variant's root creates a `<window>` (a toplevel, which the runtime
 keeps out of the slot), that window becomes the headless window's root for the cell, laid over the theme's `bg` (what
