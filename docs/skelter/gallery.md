@@ -274,8 +274,8 @@ fn main() -> std::process::ExitCode {
 - **Themes:** a host theme is named on the command line like the four built-ins. `theme(name, tokens)` is Dark Modern
   with the host's tokens as overrides; `theme_with(name, scheme, contrast, tokens)` is built on that VS Code theme, so
   the theme service, `prefers-contrast` and `dark` match (in the app, side-by-side cells take the tokens only).
-- **The app's source pane** is quire's `code-editor`. A host that registers its own `code-editor` replaces it (one
-  registry, one tag): the pane then says so, and variant files are edited on disk.
+- **The app's source pane** is quire's `code-editor` registered under its own tag, `gallery-source`
+  (`CodeEditorKind::register_as`), so a host that registers its own `code-editor` keeps it and the pane still works.
 - **Library use:** `Renderer::new(&ext)`, then `shot`, `sheet`, `inspect`, `check` and `mount` on it.
   `Renderer::reload(&changed_paths)` takes edits on disk into account without a new renderer: a `story.toml` re-reads
   the stories, an image is registered again, a variant that failed to load is retried, and a change in a loaded
