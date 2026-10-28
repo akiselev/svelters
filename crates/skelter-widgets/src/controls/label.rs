@@ -151,10 +151,17 @@ pub fn place(shaper: &mut dyn TextShaper, s: &StyleView, look: &Look, r: Rect, s
     let (text, wrap) = look.paragraph(shaper, s, w);
     let layout = shaper.layout(&text, wrap.map(|w| w.max(0.0)));
     let size = layout.size();
-    let x = match Align::of(s, Align::Start) {
-        Align::Start => r.min.x,
-        Align::Center => (r.min.x + r.max.x) / 2.0 - size.w / 2.0,
-        Align::End => r.max.x - size.w,
+    let rtl = s.is_rtl();
+    // the runs' extent: a right-to-left paragraph laid out at a width sits at that width's right
+    // edge (skelter-text aligns it to its own start), so in `rtl` the ink, not the box, is placed
+    let (x0, x1) = layout.runs().iter().filter(|pr| !pr.run.glyphs.is_empty()).fold((f32::INFINITY, f32::NEG_INFINITY), |(a, b), pr| (a.min(pr.origin.x), b.max(pr.origin.x + pr.run.advance)));
+    let (x0, x1) = if x0.is_finite() { (x0, x1) } else { (0.0, size.w) };
+    let x = match (Align::of(s, Align::Start), rtl) {
+        (Align::Start, false) => r.min.x,
+        (Align::Start, true) => r.max.x - x1,
+        (Align::Center, _) => (r.min.x + r.max.x) / 2.0 - size.w / 2.0,
+        (Align::End, false) => r.max.x - size.w,
+        (Align::End, true) => r.min.x - x0,
     };
     let y = (r.min.y + r.max.y) / 2.0 - size.h / 2.0;
     let scale = if scale > 0.0 { scale } else { 1.0 };
