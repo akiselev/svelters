@@ -2,7 +2,16 @@
 
 **Branch:** `ci/pb4-small` (base `8bcc50d`: master `9f0272b` plus the batch's brief commit).
 **Brief:** `plans/cloud/polish-b4/BRIEF.md`, `LANE-small.md`.
-**Status:** done; all three items built, tested and seen in the gallery. CI: see "Tests and CI".
+**Status (2026-10-28 15:35 UTC):**
+- **Done:** items 1–3 (popup `anchor-to`, disabled progress bar, table rows by density FQ-146); the coordinator's
+  additions: the WCAG 24 px default-density rows (trial; no snapshot moved, none re-blessed) and S-L1 (host fonts
+  win over the gallery's bundled ones). `1986caf` (items 1–3 + 24 px rows) green in all six workflows.
+- **In progress:** CI on the latest head (S-L1 `b592347` plus this record).
+- **Next:** dir-widgets' R1 (popup `-start`/`-end` logical in rtl) once dir-core's `is_rtl()` is on master: merge
+  `origin/master`, build it in `views/popup.rs` (`top_rect`/`placement()`), a unit test, push, CI. Keep
+  dir-widgets' rtl line in `controls/progress.rs` at that merge. Then report sha and run ids to the coordinator
+  (`session_01HBbGRgGENFKUjsqyGryCSr`).
+- **Open questions:** none (`menu-bar` titles stay 22 under 2.5.8's spacing exception unless the coordinator wants 24).
 
 ## Design note: `anchor-to` and closing a top-layer entry from its kind (core, small)
 
@@ -135,4 +144,6 @@ transparent there), as VS Code's disabled text is everywhere.
 
 ## CI
 
-(filled in below)
+- `1986caf` (items 1–3, 24 px rows): green in all six (js 40711800613, linux-gtk 40711800598, linux-qt
+  40711800674, macos-appkit 40711800681, skelter 40711800616, windows-winui 40711800617).
+- `deb5ac6`, `b66f6e3`: cancelled by later pushes.
