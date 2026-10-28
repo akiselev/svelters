@@ -165,8 +165,8 @@ R-16 (pickers' clock), R-19 (popup placement), R-20 (picker `open`) are the over
 
 ## CI
 
-All six workflows green on `140ad0b` (the last code sha; `origin/master` `242d688` is its base, nothing newer to
-merge): js 40632409604, linux-gtk 40632409611, linux-qt 40632409557, macos-appkit 40632409550, skelter 40632409637,
+All six workflows green on `140ad0b` (the last code sha; based on the batch briefs `242d688` over `origin/master` `674d7de`,
+which has not moved): js 40632409604, linux-gtk 40632409611, linux-qt 40632409557, macos-appkit 40632409550, skelter 40632409637,
 windows-winui 40632409527. No pixel snapshot test moved, so none was re-blessed. Earlier pushes' runs were cancelled
 by later pushes (the workflows cancel in progress). Commits after `140ad0b` change this record only (CI not rerun for
 them).
