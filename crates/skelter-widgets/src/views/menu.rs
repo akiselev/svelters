@@ -51,9 +51,39 @@ pub const BAR_UA: Ua = Ua(&[UaRule::base(&[("padding", Px(4.0))])]);
 
 /// `::part(title)`: a bar title (VS Code's menubar: 22 pt, 8 pt sides, the toolbar hover fill).
 pub const TITLE_UA: Ua = Ua(&[
-    UaRule::base(&[("height", Px(22.0)), ("padding-left", Px(8.0)), ("padding-right", Px(8.0)), ("border-radius", Token("radius"))]),
+    UaRule::base(&[
+        ("height", Px(22.0)),
+        ("padding-left", Px(8.0)),
+        ("padding-right", Px(8.0)),
+        ("border-radius", Token("radius")),
+        ("outline-style", Keyword("none")),
+        ("outline-color", Token("focus")),
+        ("outline-width", Px(1.0)),
+        ("outline-offset", Px(-1.0)),
+    ]),
     UaRule::when(StateBits::HOVERED, &[("background-color", Token("toolbar-hover"))]),
     UaRule::when(StateBits::OPEN, &[("background-color", Token("toolbar-hover"))]),
+    // the keyboard's current title while the bar has focus (VS Code's `focusBorder` ring)
+    UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
+    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
+]);
+
+/// [`TITLE_UA`] in the high-contrast themes: hover and the open title are a dashed outline in the
+/// active border colour, not a fill (VS Code's `menubar.selectionBorder`).
+pub const TITLE_HC_UA: Ua = Ua(&[
+    UaRule::base(&[
+        ("height", Px(22.0)),
+        ("padding-left", Px(8.0)),
+        ("padding-right", Px(8.0)),
+        ("border-radius", Token("radius")),
+        ("outline-style", Keyword("none")),
+        ("outline-color", Token("focus")),
+        ("outline-width", Px(1.0)),
+        ("outline-offset", Px(-1.0)),
+    ]),
+    UaRule::when(StateBits::HOVERED, &[("outline-style", Keyword("dashed"))]),
+    UaRule::when(StateBits::OPEN, &[("outline-style", Keyword("solid"))]),
+    UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
     UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
 ]);
 
@@ -127,8 +157,9 @@ struct Views<'a> {
 fn with_views<R>(style: &Styles, ua: Ua, f: impl FnOnce(&Views) -> R) -> R {
     let host = host_view(style, ua);
     let surface = host.part(style.part_css("menu"), SURFACE_UA);
+    let hc = style.theme.is_some_and(|t| t.contrast() == crate::theme::Contrast::High);
     let v = Views {
-        title: host.part(style.part_css("title"), TITLE_UA),
+        title: host.part(style.part_css("title"), if hc { TITLE_HC_UA } else { TITLE_UA }),
         item: surface.part(style.part_css("item"), ITEM_UA),
         separator: surface.part(style.part_css("separator"), SEPARATOR_UA),
         group: surface.part(style.part_css("group-label"), GROUP_LABEL_UA),
@@ -565,12 +596,16 @@ impl Menus {
         with_views(style, self.ua(), |v| {
             let open = self.nav.levels.first().map(|l| l.container);
             let mnemonics = self.nav.bar_keys || self.nav.keyboard;
+            // keyboard focus on the bar rings its current title (the first while none is current)
+            let ring = style.state.contains(StateBits::FOCUS_VISIBLE).then(|| self.nav.bar_current.or(open).or_else(|| self.titles.first().map(|t| t.0))).flatten();
+            let host_off = style.state.contains(StateBits::DISABLED);
             for &(t, r) in &self.titles {
                 let e = self.model.get(t);
                 let mut st = StateBits::NONE;
                 st.set(StateBits::HOVERED, self.hover_title == Some(t) || (self.nav.bar_keys && self.nav.bar_current == Some(t)));
                 st.set(StateBits::OPEN, open == Some(t));
-                st.set(StateBits::DISABLED, !self.enabled || !e.enabled);
+                st.set(StateBits::FOCUS_VISIBLE, ring == Some(t) && !host_off);
+                st.set(StateBits::DISABLED, host_off || !self.enabled || !e.enabled);
                 let tv = v.title.in_state(st);
                 let g = paint::paint_box(pc, &tv, r);
                 let layout = paint::text_layout(pc.text, &tv, &e.label, None);
@@ -578,6 +613,7 @@ impl Menus {
                 if mnemonics {
                     underline(pc, &tv, &e.label, e.mnemonic_at, at, tv.color("color").unwrap_or(Color::BLACK));
                 }
+                paint::paint_outline(pc, &tv, r);
             }
         });
     }
