@@ -482,9 +482,17 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
         },
         ValueType::Enum => {
             let k = ident(input)?;
+            // CSS's flex keywords are the box alignment ones in a flexbox that does not reverse:
+            // a table that lists only `start`/`end` takes them too
+            let alias = match k.to_ascii_lowercase().as_str() {
+                "flex-start" if name.starts_with("align-") || name.starts_with("justify-") => "start",
+                "flex-end" if name.starts_with("align-") || name.starts_with("justify-") => "end",
+                _ => "",
+            };
             prop.values
                 .iter()
                 .find(|v| v.eq_ignore_ascii_case(&k))
+                .or_else(|| prop.values.iter().find(|v| !alias.is_empty() && **v == alias))
                 .map(|v| ComputedValue::Keyword(v))
                 .ok_or_else(|| format!("{name}: '{k}' is not one of {}", prop.values.join(", ")))
         }
