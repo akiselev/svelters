@@ -16,3 +16,8 @@ args = { order = ["windows", "macos", "gnome", "kde", "none"] }
 id = "dense"
 title = "Under a form"
 file = "dense.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

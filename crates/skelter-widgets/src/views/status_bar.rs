@@ -97,6 +97,9 @@ pub struct StatusBar {
     tip: Option<Arc<str>>,
     /// The message area (local x range) between the last start and the first end section.
     area: (f32, f32),
+    /// The bar's direction is `rtl` (at the last restyle): its row runs from the right (core), so
+    /// the start sections are at the right, the end ones at the left, the message between them.
+    rtl: std::cell::Cell<bool>,
 }
 
 impl StatusBar {
@@ -171,6 +174,12 @@ impl Kind for StatusBar {
     /// first end section's left edge.
     fn children_laid(&mut self, children: &[(ChildInfo<'_>, Rect)]) {
         let of = |s: Section| children.iter().filter(move |(c, r)| Section::parse(c.status_section) == s && r.width() > 0.0).map(|(_, r)| *r);
+        if self.rtl.get() {
+            let left = of(Section::End).map(|r| r.max.x + 8.0).fold(0.0, f32::max);
+            let right = of(Section::Start).map(|r| r.min.x - 8.0).fold(f32::INFINITY, f32::min);
+            self.set_message_area(left, right);
+            return;
+        }
         let left = of(Section::Start).map(|r| r.max.x + 8.0).fold(0.0, f32::max);
         let right = of(Section::End).map(|r| r.min.x - 8.0).fold(f32::INFINITY, f32::min);
         self.set_message_area(left, right);
@@ -187,12 +196,21 @@ impl Kind for StatusBar {
             Section::End => {
                 let first_end = cx.children.iter().position(|c| Section::parse(c.status_section) == Section::End);
                 if first_end == Some(cx.index) {
-                    style.margin.left = taffy::LengthPercentageAuto::auto();
+                    // its inline-start margin: the right one in `rtl`
+                    if self.rtl.get() {
+                        style.margin.right = taffy::LengthPercentageAuto::auto();
+                    } else {
+                        style.margin.left = taffy::LengthPercentageAuto::auto();
+                    }
                 }
                 true
             }
             _ => true,
         }
+    }
+    fn layout_style(&self, cx: &crate::shim::core::StyleCx) -> taffy::Style {
+        self.rtl.set(cx.is_rtl());
+        cx.default_layout()
     }
     fn methods() -> &'static [skelter_core::MethodSpec] {
         METHODS

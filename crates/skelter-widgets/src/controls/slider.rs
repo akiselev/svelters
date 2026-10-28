@@ -140,6 +140,10 @@ pub struct Slider {
     thumb_hover: bool,
     /// The geometry `prepare` computed for the events.
     geom: Option<Geom>,
+    /// The slider's direction is `rtl` (at the last prepare): a horizontal slider runs from the
+    /// right (its value grows leftward, the fill starts at the right), the value box and the
+    /// caption sit at its left, and Left/Right swap.
+    rtl: bool,
 }
 
 impl Slider {
@@ -177,7 +181,9 @@ impl Slider {
         let p = &self.props;
         let (lo, hi) = self.bounds();
         let scale = if p.min.is_finite() && p.max.is_finite() { Scale { min: p.min, max: p.max, log: p.scale == "log" } } else { Scale { min: lo, max: hi, log: false } };
-        Rail { rect, vertical: self.vertical(), inverted: p.inverted, scale, ticks: self.ticks(), labels: self.marks().iter().any(|m| !m.label.is_empty()) }
+        // `rtl` mirrors a horizontal rail: the minimum at the right
+        let inverted = p.inverted != (self.rtl && !self.vertical());
+        Rail { rect, vertical: self.vertical(), inverted, scale, ticks: self.ticks(), labels: self.marks().iter().any(|m| !m.label.is_empty()) }
     }
 
     fn scrub_params(&self, r: &Rail) -> ScrubParams {
@@ -277,7 +283,9 @@ impl Slider {
             bx.y = bx.y.min(rect.height());
             let b = sized(rail_r.max.x + GAP, cy - bx.y / 2.0, bx);
             let c = sized(rect.max.x - cap.x, cy - cap.y / 2.0, cap);
-            Geom { rail: rail_r, value: if bx.x > 0.0 { b } else { Rect::ZERO }, caption: if cap.x > 0.0 { c } else { Rect::ZERO } }
+            // `rtl`: the same row mirrored (caption, value, then the rail at the right)
+            let m = |r: Rect| if styles.is_rtl() { Rect::new(rect.max.x - r.max.x, r.min.y, rect.max.x - r.min.x, r.max.y) } else { r };
+            Geom { rail: m(rail_r), value: if bx.x > 0.0 { m(b) } else { Rect::ZERO }, caption: if cap.x > 0.0 { m(c) } else { Rect::ZERO } }
         }
     }
 
@@ -349,6 +357,7 @@ impl Kind for Slider {
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.rtl = cx.style.is_rtl();
         self.geom = Some(self.layout(cx.text, &cx.style, cx.size));
     }
 
@@ -393,6 +402,17 @@ impl Kind for Slider {
         let geom = self.geom.unwrap_or_else(|| Geom::bare(cx.size));
         let r = self.rail(geom.rail);
         let vertical = r.vertical;
+        // `rtl` (horizontal): Left steps up, Right down, as the value grows leftward
+        let swapped;
+        let ev = match ev {
+            Event::Key(k) if self.rtl && !vertical && matches!(k.key, Some(Key::ArrowLeft | Key::ArrowRight)) => {
+                let mut k = k.clone();
+                k.key = if k.key == Some(Key::ArrowLeft) { Some(Key::ArrowRight) } else { Some(Key::ArrowLeft) };
+                swapped = Event::Key(k);
+                &swapped
+            }
+            e => e,
+        };
         // `track-click="page"`: a press on the track off the thumb pages toward the pointer
         let mut page_dir = None;
         if let Event::Pointer(pe) = ev
@@ -402,7 +422,7 @@ impl Kind for Slider {
             if cx.enabled && !self.off_rail && pe.button == Some(MouseButton::Primary) && self.props.track_click == "page" && !self.paging && !contains(&r.thumb(self.current()), pe.pos) {
                 let c = r.at(self.current());
                 let after = if vertical { pe.pos.y < c.y } else { pe.pos.x > c.x };
-                page_dir = Some(if after != self.props.inverted { 1 } else { -1 });
+                page_dir = Some(if after != r.inverted { 1 } else { -1 });
             }
         }
         if page_dir.is_some() {

@@ -119,8 +119,9 @@ impl LayoutRich for skelter_text::TextSystem {
             ellipsis: t.ellipsis,
             max_lines: t.max_lines,
             tab_size: None,
-            // dir-widgets: the node's `NodeView::direction()` (POL4-DIR-CORE)
-            direction: None,
+            // the box's resolved direction is the paragraph base (`dir="auto"` resolves it from the
+            // content; coordinator, 2026-10-28)
+            direction: Some(if t.rtl { skelter_base::text::Direction::Rtl } else { skelter_base::text::Direction::Ltr }),
         };
         let l = skelter_text::TextSystem::layout(self, &rich, max_width);
         let runs = l.runs().iter().map(|r| PlacedRun { run: r.run.clone(), origin: r.origin, style: r.style }).collect();
@@ -155,7 +156,7 @@ impl TextShaper for &SharedText<'_> {
 impl w::LayoutLender for &SharedText<'_> {
     fn layout(&mut self, text: &str, style: &crate::shim::text::TextStyle, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry> {
         let mut ts = self.0.borrow_mut();
-        crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: &mut ts, style: system_style(style) }, text, max_width)
+        crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: &mut ts, style: system_style(style), rtl: false }, text, max_width)
     }
 }
 
@@ -167,7 +168,7 @@ impl w::LayoutLender for EventLender<'_, '_, '_> {
     fn layout(&mut self, text: &str, style: &crate::shim::text::TextStyle, max_width: Option<f32>) -> Arc<dyn crate::text::shim::TextGeometry> {
         let mut cx = self.0.borrow_mut();
         match cx.service::<skelter_text::TextSystem>() {
-            Some(ts) => crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: ts, style: system_style(style) }, text, max_width),
+            Some(ts) => crate::text::shim::Layouter::layout(&mut crate::text::geometry::SystemLayouter { system: ts, style: system_style(style), rtl: false }, text, max_width),
             None => crate::text::shim::Layouter::layout(&mut *w::layouter(None, style.clone()), text, max_width),
         }
     }

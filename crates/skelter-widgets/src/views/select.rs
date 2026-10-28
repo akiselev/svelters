@@ -218,7 +218,8 @@ impl Select {
             anchor: Rect::from_origin_size(Point::ZERO, size),
             size: Size::new(w, self.options.len() as f32 * row_h + pad * 2.0),
             bounds: self.bounds,
-            placement: Placement::BOTTOM_START,
+            // `rtl`: aligned to the button's right edge
+            placement: if host.is_rtl() { Placement { side: super::placement::Side::Bottom, align: super::placement::Align::End } } else { Placement::BOTTOM_START },
             gap: 2.0,
             fit: true,
             match_anchor_width: true,
@@ -420,11 +421,14 @@ impl Select {
             let ov = option.in_state(st);
             let g = paint::paint_box(&mut pc, &ov, row);
             paint::paint_outline(&mut pc, &ov, row);
-            let content = Rect::new(g.content.min.x, row.min.y, g.content.max.x - CHECK_W, row.max.y);
+            // `rtl`: the check column at the left
+            let rtl = ov.is_rtl();
+            let content = if rtl { Rect::new(g.content.min.x + CHECK_W, row.min.y, g.content.max.x, row.max.y) } else { Rect::new(g.content.min.x, row.min.y, g.content.max.x - CHECK_W, row.max.y) };
             let fg = ov.color("color").unwrap_or(Color::BLACK);
             label(&mut pc, &ov, &self.options[i], content, fg);
             if self.selected == Some(i) {
-                check_mark(&mut pc, Point::new(g.content.max.x - CHECK_W / 2.0, (row.min.y + row.max.y) / 2.0), fg);
+                let x = if rtl { g.content.min.x + CHECK_W / 2.0 } else { g.content.max.x - CHECK_W / 2.0 };
+                check_mark(&mut pc, Point::new(x, (row.min.y + row.max.y) / 2.0), fg);
             }
         }
         Some(list)
@@ -435,7 +439,7 @@ impl Select {
 fn label(pc: &mut PaintCx, s: &StyleView, text: &str, content: Rect, color: Color) {
     let shown = paint::elide(pc.text, s, text, Elide::End, content.width().max(0.0));
     let layout = paint::text_layout(pc.text, s, &shown, None);
-    super::common::paint_text_in(pc, &layout, content, Align::Start, color);
+    super::common::paint_text_in(pc, &layout, content, Align::Start.physical(s.is_rtl()), color);
 }
 
 impl Kind for Select {
@@ -511,11 +515,18 @@ impl Kind for Select {
         let rect = cx.rect();
         let mut pc = PaintCx::of(cx);
         let g = paint::paint_box(&mut pc, &host, rect);
-        let content = Rect::new(g.content.min.x, g.content.min.y, (g.content.max.x - CHEVRON_W).max(g.content.min.x), g.content.max.y);
+        // `rtl`: the drop chevron at the left, the value at the right
+        let rtl = host.is_rtl();
+        let content = if rtl {
+            Rect::new((g.content.min.x + CHEVRON_W).min(g.content.max.x), g.content.min.y, g.content.max.x, g.content.max.y)
+        } else {
+            Rect::new(g.content.min.x, g.content.min.y, (g.content.max.x - CHEVRON_W).max(g.content.min.x), g.content.max.y)
+        };
         let fg = host.color("color").unwrap_or(Color::BLACK);
         label(&mut pc, &host, self.shown(), content, fg);
         let color = host.color("color").unwrap_or(Color::BLACK);
-        let c = Point::new(g.content.max.x - CHEVRON_W / 2.0, (rect.min.y + rect.max.y) / 2.0);
+        let cx0 = if rtl { g.content.min.x + CHEVRON_W / 2.0 } else { g.content.max.x - CHEVRON_W / 2.0 };
+        let c = Point::new(cx0, (rect.min.y + rect.max.y) / 2.0);
         stroke(&mut pc, Point::new(c.x - 4.0, c.y - 2.0), Point::new(c.x, c.y + 2.0), 1.25, color);
         stroke(&mut pc, Point::new(c.x, c.y + 2.0), Point::new(c.x + 4.0, c.y - 2.0), 1.25, color);
         paint::paint_outline(&mut pc, &host, rect);

@@ -243,6 +243,8 @@ pub const ACTION_UA: Ua = Ua(&[
 kind_props! {
     /// The toast host's props.
     pub struct ToastHostProps;
+    /// The corner the toasts stack from, named left to right: in `rtl` it is mirrored
+    /// (`bottom-right` stacks at the bottom left, the inline end).
     corner "corner": String = Enum("bottom-right") ; Enum(CORNERS), Layout;
     /// Seconds a toast stays when it has no duration of its own (zero: until closed).
     duration "duration": f64 = F64(4.0) ; F64, Property;
@@ -284,6 +286,10 @@ pub struct ToastHost {
     next: i64,
     queue: ToastQueue,
     laid: Vec<Laid>,
+    /// The host's direction is `rtl` (at the last layout): the stack and each toast are mirrored
+    /// (the `corner` names the left-to-right corner: `bottom-right` stacks at the bottom left),
+    /// the accent bar and the text start at the right, the close button at the left.
+    rtl: bool,
     /// The part the primary button went down on (a click needs release on the same part).
     down: Option<(i64, Part)>,
     /// The part under the pointer (`:hover` on it).
@@ -413,6 +419,7 @@ impl ToastHost {
         let toast = host.part(style.part_css("toast"), TOAST_UA);
         let action = toast.part(style.part_css("action"), ACTION_UA);
         self.laid.clear();
+        self.rtl = style.is_rtl();
         let corner = self.corner();
         let max_w = MAX_WIDTH.min(size.w - 2.0 * MARGIN).max(120.0);
         let mut edge = if corner.bottom() { size.h - MARGIN } else { MARGIN };
@@ -442,7 +449,15 @@ impl ToastHost {
                     r
                 })
                 .collect();
-            self.laid.push(Laid { id: t.id, rect, close, actions, text_origin: Point::new(x + lead, y + PAD), text_size: Size::new(text_w, ts.h) });
+            let mut l = Laid { id: t.id, rect, close, actions, text_origin: Point::new(x + lead, y + PAD), text_size: Size::new(text_w, ts.h) };
+            if self.rtl {
+                let m = |r: Rect| crate::dir::flip_rect(r, size.w);
+                l.rect = m(l.rect);
+                l.close = m(l.close);
+                l.actions = l.actions.iter().map(|r| m(*r)).collect();
+                l.text_origin.x = size.w - l.text_origin.x - text_w;
+            }
+            self.laid.push(l);
         }
     }
 
@@ -458,7 +473,11 @@ impl ToastHost {
     fn paint_toast(&self, pc: &mut PaintCx, v: &Views, l: &Laid, t: &Toast) {
         let base = v.toast.state();
         paint::paint_box(pc, &v.toast, l.rect);
-        let bar = Rect::new(l.rect.min.x + PAD, l.rect.min.y + PAD, l.rect.min.x + PAD + ACCENT_W, l.rect.max.y - PAD);
+        let bar = if self.rtl {
+            Rect::new(l.rect.max.x - PAD - ACCENT_W, l.rect.min.y + PAD, l.rect.max.x - PAD, l.rect.max.y - PAD)
+        } else {
+            Rect::new(l.rect.min.x + PAD, l.rect.min.y + PAD, l.rect.min.x + PAD + ACCENT_W, l.rect.max.y - PAD)
+        };
         let accent = v.toast.part(None, t.level.accent_ua());
         paint::paint_box(pc, &accent, bar);
         let layout = paint::text_layout(pc.text, &v.toast, &t.text, Some(l.text_size.w));

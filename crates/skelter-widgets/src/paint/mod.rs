@@ -29,7 +29,7 @@ pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint
 pub use icon::{IconKey, content_icon, icon_size, icon_size_sized, is_registered, paint_icon, paint_icon_sized, paint_missing};
 pub use image::{fit_rect, paint_image, paint_image_pixels};
 pub use parts::{PartItem, layout_parts, measure_parts};
-pub use text::{Align, Elide, elide, elide_with, fit_layout, measure_text, paint_runs, paint_text, text_layout, text_style};
+pub use text::{Align, Elide, elide, elide_with, fit_layout, ink_x, measure_text, paint_runs, paint_text, text_layout, text_style};
 
 use crate::interact::StateBits;
 use crate::shim::core::{RecordCx, Resources};
@@ -259,7 +259,7 @@ fn css_token(css: Option<&ComputedStyle>, name: &'static str) -> Option<ParsedTo
 }
 
 /// The properties a part (or child) inherits from its host when nothing sets them on it.
-const INHERITED: &[&str] = &["color", "font-size", "font-weight", "font-family", "font-style", "line-height", "letter-spacing", "text-align", "text-transform", "white-space", "cursor", "visibility"];
+const INHERITED: &[&str] = &["color", "font-size", "font-weight", "font-family", "font-style", "line-height", "letter-spacing", "text-align", "text-transform", "white-space", "cursor", "visibility", "direction"];
 
 // ---- the style view ----
 
@@ -556,6 +556,12 @@ impl<'a> StyleView<'a> {
     /// `opacity` (1 when unset).
     pub fn opacity(&self) -> f32 {
         self.number("opacity").unwrap_or(1.0).clamp(0.0, 1.0)
+    }
+
+    /// The inline direction is right to left: the computed `direction` (inherited; a `dir`
+    /// attribute sets it) is `rtl`. A kind mirrors its own parts by this (POL4-DIR-WIDGETS).
+    pub fn is_rtl(&self) -> bool {
+        self.keyword("direction") == Some("rtl")
     }
 
     /// `display: none`.

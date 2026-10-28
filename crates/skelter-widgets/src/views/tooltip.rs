@@ -254,6 +254,8 @@ pub struct Tooltip {
     /// The width it may take (the window's): its text wraps short of [`MAX_WIDTH`] to stay
     /// [`EDGE`] inside it. `None`: [`MAX_WIDTH`].
     pub room: Option<f32>,
+    /// Its direction is `rtl` (at the last restyle): `placement`'s `-start`/`-end` are logical.
+    pub rtl: std::cell::Cell<bool>,
 }
 
 impl Tooltip {
@@ -292,7 +294,17 @@ impl Tooltip {
 
     /// Where it goes for a host at `host` (window points) inside `bounds`.
     pub fn place(&self, host: Rect, bounds: Rect, size: Size) -> Placed {
-        place(&AnchorParams { anchor: host, size, bounds, placement: self.placement(), gap: GAP, flip: true, shift: true, ..AnchorParams::default() })
+        // `rtl`: `-start` and `-end` are logical (start is the host's right edge)
+        let mut placement = self.placement();
+        if self.rtl.get() && placement.side.vertical() {
+            use super::placement::Align as A;
+            placement.align = match placement.align {
+                A::Start => A::End,
+                A::End => A::Start,
+                a => a,
+            };
+        }
+        place(&AnchorParams { anchor: host, size, bounds, placement, gap: GAP, flip: true, shift: true, ..AnchorParams::default() })
     }
 }
 
@@ -312,6 +324,7 @@ impl Kind for Tooltip {
 
     /// In the window's top layer, out of its owner's flow and clip.
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        self.rtl.set(cx.is_rtl());
         let mut s = cx.default_layout();
         s.position = taffy::Position::Fixed;
         s

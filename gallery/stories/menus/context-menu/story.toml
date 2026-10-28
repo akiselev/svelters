@@ -15,3 +15,8 @@ file = "items.svelte"
 id = "open"
 title = "Open (every item type)"
 file = "open.svelte"
+
+[[variant]]
+id = "rtl-open"
+title = "Right-to-left, open"
+file = "rtl-open.svelte"

@@ -21,12 +21,14 @@ use std::sync::Arc;
 pub struct ShaperPainter<'a> {
     pub text: &'a mut dyn TextShaper,
     pub res: Option<&'a mut dyn Resources>,
+    /// The box is right to left: the text's base direction (else `ltr`).
+    pub rtl: bool,
 }
 
 impl ShaperPainter<'_> {
     fn layout(&mut self, s: &str, style: &TextStyle, elide_width: Option<f32>) -> Arc<TextLayout> {
         let base = text::TextStyle { family: Arc::from(style.family.as_str()), size: style.size, weight: style.weight, italic: style.italic, ..text::TextStyle::default() };
-        let rich = RichText { text: s.to_owned(), base, ellipsis: elide_width.is_some(), max_lines: Some(1), ..RichText::default() };
+        let rich = RichText { text: s.to_owned(), base, ellipsis: elide_width.is_some(), max_lines: Some(1), rtl: self.rtl, ..RichText::default() };
         self.text.layout(&rich, elide_width)
     }
 }
@@ -40,11 +42,16 @@ impl TextPainter for ShaperPainter<'_> {
         let l = self.layout(text, style, elide.then_some(rect.width().max(0.0)));
         let Some(res) = self.res.as_deref_mut() else { return };
         let size = l.size();
+        // the line's own extent: a right-to-left line laid out at the elide width sits at that
+        // width's right edge (skelter-text aligns it to its base direction's start), so place the
+        // runs by where they are, not by the layout's origin
+        let (x0, x1) = l.runs().iter().filter(|pr| !pr.run.glyphs.is_empty()).fold((f32::INFINITY, f32::NEG_INFINITY), |(a, b), pr| (a.min(pr.origin.x), b.max(pr.origin.x + pr.run.advance)));
+        let (x0, w) = if x0.is_finite() { (x0, x1 - x0) } else { (0.0, size.w) };
         let x = match align {
             HAlign::Start => rect.min.x,
-            HAlign::Center => rect.min.x + (rect.width() - size.w) / 2.0,
-            HAlign::End => rect.max.x - size.w,
-        };
+            HAlign::Center => rect.min.x + (rect.width() - w) / 2.0,
+            HAlign::End => rect.max.x - w,
+        } - x0;
         let top = Point::new(x, rect.min.y + (rect.height() - size.h) / 2.0);
         for pr in l.runs() {
             if pr.run.glyphs.is_empty() || style.color.a <= 0.0 {
@@ -91,7 +98,7 @@ pub fn with_text<R>(ts: Option<&mut skelter_text::TextSystem>, f: impl FnOnce(&m
         Some(t) => t,
         None => &mut none,
     };
-    f(&mut ShaperPainter { text, res: None })
+    f(&mut ShaperPainter { text, res: None, rtl: false })
 }
 
 /// Runs `f` (record code) with a painter over the document's text system and moves what it recorded
@@ -99,13 +106,14 @@ pub fn with_text<R>(ts: Option<&mut skelter_text::TextSystem>, f: impl FnOnce(&m
 pub fn record_core(cx: &mut skelter_core::RecordCx<'_>, f: impl FnOnce(&mut dyn TextPainter, &mut DisplayList)) {
     let mut list = DisplayList::new();
     let mut res = CollectRes::default();
+    let rtl = cx.node.is_rtl();
     {
         let mut none = NoShaper;
         let text: &mut dyn TextShaper = match cx.service::<skelter_text::TextSystem>() {
             Some(t) => t,
             None => &mut none,
         };
-        let mut p = ShaperPainter { text, res: Some(&mut res) };
+        let mut p = ShaperPainter { text, res: Some(&mut res), rtl };
         f(&mut p, &mut list);
     }
     let ids: Vec<RunId> = res.runs.into_iter().map(|r| cx.add_run(r)).collect();
@@ -131,7 +139,7 @@ mod tests {
         let mut shaper = MonoShaper;
         let mut res = crate::shim::testing::MemResources::default();
         let style = TextStyle { color: Color::WHITE, ..TextStyle::default() };
-        let mut p = ShaperPainter { text: &mut shaper, res: Some(&mut res) };
+        let mut p = ShaperPainter { text: &mut shaper, res: Some(&mut res), rtl: false };
         let size = p.measure("Mon", &style);
         assert!(size.w > 0.0 && size.h > 0.0);
         let mut list = DisplayList::new();

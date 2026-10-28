@@ -11,3 +11,8 @@ id = "levels"
 title = "The four levels"
 file = "levels.svelte"
 args = { corner = ["bottom-right", "top-left"] }
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

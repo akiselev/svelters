@@ -249,7 +249,8 @@ impl Kind for ProgressBar {
         let fill = host.part(cx.style.part_css("fill"), FILL);
         let r = cx.rect();
         let label = self.label();
-        let (vertical, inverted) = (self.vertical(), self.props.inverted);
+        // `rtl` (POL4-DIR-WIDGETS): a horizontal bar fills from the right
+        let (vertical, inverted) = (self.vertical(), self.props.inverted != (!self.vertical() && cx.style.is_rtl()));
         let cross = if vertical { r.width() } else { r.height() };
         let th = if label.is_some() { cross } else { track.px("height").unwrap_or(4.0).min(cross) };
         let (mx, my) = ((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0);

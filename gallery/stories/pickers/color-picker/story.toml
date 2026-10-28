@@ -17,3 +17,8 @@ id = "open"
 title = "Open"
 file = "open.svelte"
 args = { value = ["#c0392b", "#2e86c180"] }
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

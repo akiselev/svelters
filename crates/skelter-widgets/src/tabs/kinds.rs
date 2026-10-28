@@ -173,6 +173,7 @@ impl TabViewKind {
             self.look = TabLook::from_theme(t);
         }
         self.view.enabled = !node.disabled();
+        self.view.rtl = crate::shim::core::node_rtl(&node);
         let (caps, look, width) = (&self.captions, &self.look, node.size().w);
         let view = &mut self.view;
         with_text(ts, |p| view.relayout(caps, look, p, width));
@@ -262,8 +263,8 @@ impl Kind for TabViewKind {
         record_core(cx, |p, list| self.view.record(&self.captions, &self.look, p, list));
         // the overflow menu, in a layer of the window's overlay stack (its button counts as inside)
         if let Some(m) = self.view.menu_rect() {
-            let mut part = OverlayPart::new(OverlayClass::Menu, m);
-            part.inside = self.view.ctl_rect(super::Ctl::Menu).into_iter().collect();
+            let mut part = OverlayPart::new(OverlayClass::Menu, self.view.flip(m));
+            part.inside = self.view.ctl_rect(super::Ctl::Menu).map(|r| self.view.flip(r)).into_iter().collect();
             cx.overlay(part, |cx| record_core(cx, |p, list| self.view.record_menu(&self.captions, &self.look, p, list)));
         }
     }

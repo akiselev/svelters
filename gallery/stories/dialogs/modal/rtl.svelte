@@ -1,4 +1,4 @@
-<box padding={8} flex-grow={1}>
+<box dir="rtl" padding={8} flex-grow={1}>
   <modal open heading="حذف البصمة؟">
     <box gap={12} width={300}>
       <label>ستتم إزالة R12 ووسادتيها من اللوحة.</label>
