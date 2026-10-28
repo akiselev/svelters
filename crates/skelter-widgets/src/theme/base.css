@@ -300,6 +300,10 @@
   collapsing-header:disabled {
     color: var(--sv-disabled-fg);
   }
+  /* POL2-LAYOUT's request: a disabled frame's own caption dims as a disabled label does */
+  frame:disabled::part(caption) {
+    color: var(--sv-disabled-fg);
+  }
 
   /* High Contrast (VS Code): hover is a dashed `contrastActiveBorder` outline, not a fill step */
   @media (prefers-contrast: more) {

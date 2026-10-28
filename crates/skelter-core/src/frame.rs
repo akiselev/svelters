@@ -663,6 +663,7 @@ impl Document {
         {
             w.rebuild = true;
         }
+        request
     }
 
     /// Sends node `i`'s new foreground list (or its removal); true when it appeared or went (the
@@ -719,7 +720,6 @@ impl Document {
         {
             w.rebuild = true;
         }
-        request
     }
 
     /// The node's own layer, when it needs one (§6.3): scroll containers (their content), and

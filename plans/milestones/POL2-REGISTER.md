@@ -1,6 +1,7 @@
 # POL2-REGISTER: every skelter-widgets kind usable from Svelte (batch polish-b2, lane register)
 
-**Branch:** `ci/pb2-register` (base `master` `e01ce9b`; `origin/master` `ff4dfad0` merged at `a7c920c`).
+**Branch:** `ci/pb2-register` (base `master` `e01ce9b`; `origin/master` merged at `a7c920c` (`ff4dfad0`) and again after
+the layout lane landed (`f8e2669`)).
 **Brief:** `plans/cloud/polish-b2/BRIEF.md`, `LANE-register.md`.
 **Status:** done. Every skelter-widgets kind mounts from Svelte and has a story; the open states render; findings
 fixed and seen fixed, or recorded below. CI: see "Tests and CI".
@@ -18,7 +19,7 @@ fixed and seen fixed, or recorded below. CI: see "Tests and CI".
 3. **Stories:** 15 new (`layout/{split-view,panel}`, `dialogs/{popup,modal,inner-window,dialog-buttons}`,
    `views/{status-bar,scrollbar}`, `menus/menu-bar`, `tabs/tab-view`, `pickers/{calendar,date-picker,color-editor,
    color-picker}`, `feedback/toast`) and new variants (`context-menu/open`, `tooltip/element`). `skelter-gallery list`:
-   `coverage.missing` is empty; `check`: 47 stories, 169 variants, no problems.
+   `coverage.missing` is empty; `check`: 47 stories, 170 variants, no problems.
 4. **Polish:** each new family in the four themes (zoom 1; HC themes also at zoom 2), below.
 
 ## The surface rows: how they were made (decisions)
@@ -54,7 +55,7 @@ hc-dark and hc-light at zoom 2) and looked at.
 | R-1 | (found) `modal` and `toast-host` mounted with "unknown Prop 'anchor'" | their kind ids (FNV of the tag) fall in the host's app-export pack (bits 27..22 all set), so the host sent every lookup to the app schema | `kinds::kind_id_wire` moves a kind wire id out of pack 63 (bit 22 cleared; behaviours too); spec test `no_kind_id_is_in_the_app_pack` (`svelters-skelter`) | yes |
 | R-2 | `context-menu/open`: `Paste` (`enabled={false}`) not greyed | Svelte's `enabled` writes the common `disabled`; the folded element records a menu reads carried only the item's own `enabled` | `host::element_records` folds the common `disabled`/`hidden` into `enabled`/`visible` (`skelter-widgets/src/host.rs`) | yes |
 | R-3 | `context-menu/open`: the menu runs off the window's right edge (shortcuts, the submenu chevron cut) | nobody gave menus (or the pickers' drops) the window's room: `Menus::bounds` was unbounded | shim `Kind::room` (the window's area in local points, before each prepare; through the layout boxes on a node's first prepare, R3) used by `context-menu`, `menu-bar`, `date-picker`, `color-picker`, `inner-window` | yes (`target/gallery/pb2/cm-open3.png`) |
-| R-4 | `tooltip/button` hover: no tooltip | the gallery forced `:hover` without a pointer; and no svelters runner runs the kinds' timers (R2) | the renderer moves the pointer onto the subject and steps the virtual clock past the policy's delay, running document timers itself (`skelter-gallery/src/render.rs`) | yes |
+| R-4 | `tooltip/button` hover: no tooltip | the gallery forced `:hover` without a pointer; and no svelters runner ran the kinds' timers (R2, layout lane, now on master) | the renderer moves the pointer onto the subject and steps the virtual clock past the policy's delay; the app runner (`SkelterDocument`, given the harness's clock) fires the timer (`skelter-gallery/src/render.rs`) | yes |
 | R-5 | `modal/*`: dialog box drawn tiny in the middle, content at the node's origin, heading over the content, backdrop only over the content's height | the hosted kind sized the box from a `content` size nothing set and placed no children | `modal` covers its parent, centres its content with taffy margins, draws the box around the content's laid-out box (`Kind::children_laid`, R3) and cuts a long heading (`views/modal.rs`) | yes (`a-modal.png`, `a-modal-long.png`) |
 | R-6 | `dialog-buttons/*`: a full-width column, no platform order | the hosted kind had no layout (the egui host did it) | a one-row grid, end-aligned, 8 pt gaps; each button in its column by the build OS's order (`ChildCx::children` gives the children's `dialog-role`, default, cancel) (`views/dialog_buttons.rs`, `host.rs`, `shim.rs`) | yes (`a-dialog-buttons.png`) |
 | R-7 | `status-bar/*`: sections stacked vertically, the message over them | as R-6 | `base.css` row at `--sv-statusbar-h`; temporary sections hide while a message shows, the first end section is pushed to the end, the message runs between the start and end sections (`views/status_bar.rs`, `theme/base.css`) | yes (`a-status-bar.png`) |
@@ -85,18 +86,21 @@ Before/after images (this container, not committed): `target/gallery/pb2/b-modal
   test). Used by `host.rs` for `Kind::children_laid` and the first-prepare window room.
 - Small edits outside the lane's listed files, all for hosting the new kinds: `skelter-widgets/src/{host.rs,shim.rs}`
   (`Kind::room`, `Kind::children_laid`, `ChildCx::children`, the folded `disabled`/`hidden`),
-  `skelter-gallery/src/render.rs` (hover pointer, document timers and frames, R2 workaround), and the `ChildCx`
+  `skelter-gallery/src/render.rs` (hover pointer, the runner's virtual clock), and the `ChildCx`
   literal in `controls/{stack,collapsing}.rs` tests.
 
 ## Requests
 
-- **R2 (layout lane, svelters-skelter `app.rs`)**, pushed by the layout lane at `2053fde` (not merged here): no
-  svelters runner runs skelter-core's document timers, `needs_frame` ignores `Document::needs_frame`, no
-  `next_wakeup`. Until it is on master the gallery renderer runs the timers and frames itself (`frame_due`,
-  the hover loop). After it lands: drop that workaround where the real path works, and add a toast-level test (a toast
-  shown with `show` times out under the app runner on the virtual clock), per the coordinator.
+- **R2 (layout lane)** landed with `ci/pb2-layout` on master: the svelters runner runs the document's timers and frames
+  what they change. The gallery-side workaround is gone; the renderer gives `SkelterDocument` the harness's virtual
+  clock (`set_clock`). Test: `skelter-gallery` `open_states::a_toast_times_out_under_the_app_runner` (a toast shown with
+  `show(..., 0.5)` closes after 0.8 s of virtual time).
 - **R4 (layout lane, `views/scroll.rs`):** the standalone `scrollbar` needs a `measure` (`BAR_WIDTH` across, stretch
   along) and a `prepare` that calls `Scrollbar::layout(cx.size, ...)`; the story `views/scrollbar` shows it once it does.
+
+From the layout lane (POL2-LAYOUT "Requests to the register lane"), done: the `window` factory in `kinds.rs` (arrived
+with the merge, both sides kept), `frame:disabled::part(caption)` dims in base.css (seen: `target/gallery/pb2/frame-dis.png`),
+and `<window>`'s `padding` surface default is 0 (the coordinator's decision: 8 moved every existing window).
 
 ## Questions (recommendations, for the coordinator)
 
@@ -123,18 +127,19 @@ Added or changed (all pass locally, filtered runs on the code of the last commit
 - `cargo test -p svelters-skelter --test widgets_all` (5: every skelter-widgets kind hosted with its members,
   `context-menu` `open`, toast `show`/`dismiss`/`clear`, `show-message`, modal/toast-host resolve) and `--test spec`
   (6, one new: `no_kind_id_is_in_the_app_pack`); `--test tier1` 14 pass.
-- `cargo test -p skelter-widgets --lib -- views:: tabs:: pickers:: host::` 201 pass (new: folded `disabled`/`hidden`,
+- `cargo test -p skelter-widgets --lib -- views:: tabs:: pickers:: host::` 202 pass (new: folded `disabled`/`hidden`,
   the window room, a value written before alpha; `inner_window` content test updated).
-- `cargo test -p skelter-core` 181 pass (new: `tests::prepare`).
-- `SKELTER_GPU_TESTS=1 cargo test -p skelter-gallery --test open_states --test render` (2 new: hover tooltip,
-  context menu open and four toasts; `render`'s hover test now expects the pointer note).
-- `skelter-gallery check`: ok, 47 stories, 169 variants, no problems, no warnings. `gen_props.py --check` ok.
+- `cargo test -p skelter-core` 187 pass (new: `tests::prepare`).
+- `SKELTER_GPU_TESTS=1 cargo test -p skelter-gallery --test open_states --test render --test check --test host` (3 new:
+  hover tooltip, context menu open and four toasts, a toast timing out under the app runner; `render`'s hover test now
+  expects the pointer note).
+- `skelter-gallery check`: ok, 47 stories, 170 variants, no problems, no warnings. `gen_props.py --check` ok.
 - Not run locally: the workspace tests, other crates, pixel snapshot tests, conformance.
 
 CI: see below.
 
 ## Handoff
 
-Open: Q1–Q5, R2's follow-up (drop the gallery workaround, the toast timeout test), R4, R-13..R-20. If a pixel
+Open: Q1–Q5, R4, R-13..R-20. If a pixel
 snapshot test moves in CI, it is from R-2 (disabled menu items), R-6/R-7/R-8 (hosted dialog buttons, status bar,
 inner window layout), R-10 (colour editor width) or R-11 (tab marker); re-bless only after looking at its diff.

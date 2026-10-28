@@ -213,8 +213,7 @@ only its own cells. When the cell changes, the variant is remounted in the windo
 5. Steps the embed's logic and the harness until both are settled (at most 120 frames).
 6. Forces the state's bits on the `subject` anchors (`SkelterBackend::force_state`), settles again, and draws.
    For `hover`, the pointer also moves onto the first subject and the virtual clock runs past the platform's
-   tooltip delay (the renderer runs the kinds' timers itself until the svelters runner does, POL2-REGISTER R2),
-   so a `tooltip` shows; the next cell's mount takes the pointer out of the window first.
+   tooltip delay (the app runner fires the kinds' timers on the virtual clock), so a `tooltip` shows; the next cell's mount takes the pointer out of the window first.
 
 A **window story** (`stories/layout/window`): when a variant's root creates a `<window>` (a toplevel, which the runtime
 keeps out of the slot), that window becomes the headless window's root for the cell, laid over the theme's `bg` (what

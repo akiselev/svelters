@@ -63,3 +63,30 @@ fn a_context_menu_opens_and_toasts_show_without_input() {
     });
     assert_eq!(shown, 4, "the four levels show");
 }
+
+/// R2 (the app runner fires the kinds' timers): a toast shown through `show` with a duration times
+/// out on the virtual clock, with no gallery-side timer code.
+#[test]
+fn a_toast_times_out_under_the_app_runner() {
+    if !gpu() {
+        return;
+    }
+    let mut r = renderer();
+    r.mount(&cell(&r, "toast", "levels")).unwrap();
+    let toasts = |r: &Renderer| {
+        r.backend().with_doc(|d| {
+            let n = d.query().kind(skelter_core::KindId::of("toast-host")).collect()[0];
+            d.with_kind(n, |k| k.as_any().and_then(|a| a.downcast_ref::<skelter_widgets::views::toast::ToastHost>()).unwrap().toasts().len()).unwrap()
+        })
+    };
+    assert_eq!(toasts(&r), 4, "the story's four, until closed");
+    let show = r.backend().with_doc(|d| {
+        let n = d.query().kind(skelter_core::KindId::of("toast-host")).collect()[0];
+        let m = d.registry().get(skelter_core::KindId::of("toast-host")).unwrap().spec.method_named("show").unwrap();
+        d.call(n, m, &[skelter_core::Value::from("Saved"), skelter_core::Value::from("info"), skelter_core::Value::F64(0.5)]).map(|(ret, _)| ret)
+    });
+    assert!(matches!(show, Ok(Some(skelter_core::Value::I64(_)))), "{show:?}");
+    assert_eq!(toasts(&r), 5);
+    r.harness().run_for(skelter_base::time::Span::from_millis(800));
+    assert_eq!(toasts(&r), 4, "the half-second toast timed out");
+}

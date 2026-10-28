@@ -14048,8 +14048,8 @@
         "padding": {
           "change": "layout",
           "construct_only": false,
-          "default": 8.0,
-          "doc": "Inner spacing of the content area, in points.",
+          "default": 0.0,
+          "doc": "Inner spacing of the content area, in points (0 unless written: egui's 8 is not applied, coordinator 2026-10-28).",
           "fingerprint": "04f37cd2",
           "id": 83066066,
           "js": "padding",
