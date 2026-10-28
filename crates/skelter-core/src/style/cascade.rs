@@ -22,6 +22,7 @@ use skelter_base::cursor::CursorIcon;
 use skelter_base::display::BorderStyle;
 use skelter_base::geom::{Affine, Corners, Insets, Vec2};
 use skelter_base::ids::{NodeId, WindowId};
+use skelter_base::text::Direction;
 use skelter_base::time::Span;
 use std::borrow::Cow;
 use std::num::NonZeroU64;
@@ -110,6 +111,9 @@ impl<'a> Element for El<'a> {
     }
     fn is_focus_visible(&self) -> bool {
         self.state().contains(StateMask::FOCUS_VISIBLE)
+    }
+    fn is_rtl(&self) -> bool {
+        self.doc.style.nodes[self.i].dir.is_rtl()
     }
 }
 
@@ -380,6 +384,8 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
     if let Some(k) = kw(c.get("pointer-events")) {
         b.pointer_events_none = k == "none";
     }
+    // inherited by the engine (a `dir` or a root sets it on the parent style the node inherits)
+    b.direction = if kw(c.get_index(indices().direction)) == Some("rtl") { Direction::Rtl } else { Direction::Ltr };
     // box
     if let Some(ComputedValue::Color(k)) = c.get("background-color") {
         b.background = Fill::Solid(color(*k));
@@ -391,16 +397,25 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
         b.background = Fill::Linear { angle_deg: l.angle, stops };
     }
     let side = |name: &str| px(c.get(name));
+    // a physical side's longhand, or the logical one that resolves to it in this box's direction
+    // (the logical one wins when both are set: a deviation, CSS takes the later declaration)
+    let rtl = b.direction.is_rtl();
+    let ix = indices();
+    let any_logical = ix.border_inline.iter().any(|&k| c.get_index(k).is_some());
+    let get = |physical: &'static str| -> Option<&ComputedValue> {
+        let logical = if any_logical { logical_border(physical, rtl) } else { None };
+        logical.and_then(|l| c.get(l)).or_else(|| c.get(physical))
+    };
     let all = match c.get("border-width") {
         Some(ComputedValue::Insets([t, r, bo, l])) => Insets { top: t.px, right: r.px, bottom: bo.px, left: l.px },
         Some(ComputedValue::Length(l)) => Insets::all(l.px),
         _ => Insets::ZERO,
     };
     b.border_widths = Insets {
-        top: side("border-top-width").unwrap_or(all.top),
-        right: side("border-right-width").unwrap_or(all.right),
-        bottom: side("border-bottom-width").unwrap_or(all.bottom),
-        left: side("border-left-width").unwrap_or(all.left),
+        top: px(get("border-top-width")).unwrap_or(all.top),
+        right: px(get("border-right-width")).unwrap_or(all.right),
+        bottom: px(get("border-bottom-width")).unwrap_or(all.bottom),
+        left: px(get("border-left-width")).unwrap_or(all.left),
     };
     // per side: a `none`/`hidden` style draws no border on that side whatever its width. The box
     // has one style and one colour: the first drawn side's (top, right, bottom, left), so a border
@@ -414,18 +429,18 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
             2 => &mut b.border_widths.bottom,
             _ => &mut b.border_widths.left,
         };
-        let declared = c.get(style_name).is_some();
-        match border_style(kw(c.get(style_name))) {
+        let declared = get(style_name).is_some();
+        match border_style(kw(get(style_name))) {
             None if declared => *w = 0.0,
             _ if *w > 0.0 && drawn.is_none() => drawn = Some(k),
             _ => {}
         }
     }
     let k = drawn.unwrap_or(0);
-    if let Some(s) = border_style(kw(c.get(SIDES[k].0))) {
+    if let Some(s) = border_style(kw(get(SIDES[k].0))) {
         b.border_style = s;
     }
-    let side_color = match c.get(SIDES[k].1) {
+    let side_color = match get(SIDES[k].1) {
         Some(ComputedValue::Color(x)) => Some(color(*x)),
         _ => None,
     };
@@ -493,6 +508,50 @@ pub(crate) fn computed_box(c: &ComputedStyle, parent: Option<&ComputedBox>, defa
     b
 }
 
+/// Indices of the direction properties in skelter's table, for lookups on every node.
+pub(crate) struct Indices {
+    pub direction: usize,
+    pub border_inline: [usize; 6],
+}
+
+pub(crate) fn indices() -> &'static Indices {
+    static I: std::sync::OnceLock<Indices> = std::sync::OnceLock::new();
+    I.get_or_init(|| {
+        let t = super::table::table();
+        let at = |n: &str| t.index_of(n).expect("in skelter's table");
+        Indices {
+            direction: at("direction"),
+            border_inline: [
+                at("border-inline-start-width"),
+                at("border-inline-end-width"),
+                at("border-inline-start-style"),
+                at("border-inline-end-style"),
+                at("border-inline-start-color"),
+                at("border-inline-end-color"),
+            ],
+        }
+    })
+}
+
+/// The logical border longhand that sets physical `border-{left,right}-*` in a box of this direction.
+fn logical_border(physical: &str, rtl: bool) -> Option<&'static str> {
+    let (side, what) = physical.strip_prefix("border-")?.split_once('-')?;
+    let start = match side {
+        "left" => !rtl,
+        "right" => rtl,
+        _ => return None,
+    };
+    Some(match (start, what) {
+        (true, "width") => "border-inline-start-width",
+        (true, "style") => "border-inline-start-style",
+        (true, "color") => "border-inline-start-color",
+        (false, "width") => "border-inline-end-width",
+        (false, "style") => "border-inline-end-style",
+        (false, "color") => "border-inline-end-color",
+        _ => return None,
+    })
+}
+
 // ---- taffy ----
 
 fn calc_lp(l: &Length) -> taffy::LengthPercentage {
@@ -542,6 +601,8 @@ pub(crate) fn base_layout() -> taffy::Style {
 /// skelter has no layout props apart from CSS).
 pub(crate) fn layout_style(c: &ComputedStyle, b: &ComputedBox, hidden: bool) -> taffy::Style {
     let mut st = base_layout();
+    // logical sides, applied after the physical ones
+    let mut logical: smallvec::SmallVec<[(&str, &ComputedValue); 2]> = smallvec::SmallVec::new();
     for (p, v) in c.iter() {
         let k = match v {
             ComputedValue::Keyword(k) => Some(*k),
@@ -643,6 +704,9 @@ pub(crate) fn layout_style(c: &ComputedStyle, b: &ComputedBox, hidden: bool) -> 
                     st.gap = taffy::Size { width: calc_lp(l), height: calc_lp(l) };
                 }
             }
+            "margin-inline-start" | "margin-inline-end" | "padding-inline-start" | "padding-inline-end" | "inset-inline-start" | "inset-inline-end" => {
+                logical.push((p.name, v));
+            }
             "row-gap" => {
                 if let ComputedValue::Length(l) = v {
                     st.gap.height = calc_lp(l)
@@ -654,6 +718,30 @@ pub(crate) fn layout_style(c: &ComputedStyle, b: &ComputedBox, hidden: bool) -> 
                 }
             }
             _ => {}
+        }
+    }
+    // logical sides resolve against the box's own direction, over the physical ones (see
+    // `logical_border`)
+    let rtl = b.direction.is_rtl();
+    for (name, v) in logical {
+        // the physical left side: the start in `ltr`, the end in `rtl`
+        let left = name.ends_with("-start") != rtl;
+        match name.split('-').next() {
+            Some("margin") => {
+                if let Some(x) = lpa(v) {
+                    if left { st.margin.left = x } else { st.margin.right = x }
+                }
+            }
+            Some("padding") => {
+                if let ComputedValue::Length(l) = v {
+                    if left { st.padding.left = calc_lp(l) } else { st.padding.right = calc_lp(l) }
+                }
+            }
+            _ => {
+                if let Some(x) = lpa(v) {
+                    if left { st.inset.left = x } else { st.inset.right = x }
+                }
+            }
         }
     }
     let ov = |o: Overflow| match o {
@@ -671,6 +759,8 @@ pub(crate) fn layout_style(c: &ComputedStyle, b: &ComputedBox, hidden: bool) -> 
         bottom: taffy::LengthPercentage::length(b.border_widths.bottom),
         left: taffy::LengthPercentage::length(b.border_widths.left),
     };
+    // flex rows, `start`/`end`, grid columns and a scroller's gutter follow it (taffy's RTL)
+    st.direction = if b.direction.is_rtl() { taffy::Direction::Rtl } else { taffy::Direction::Ltr };
     if hidden {
         st.display = taffy::Display::None;
     }
@@ -687,7 +777,8 @@ fn box_diff(a: &ComputedBox, b: &ComputedBox) -> (bool, bool, bool) {
         || a.italic != b.italic
         || a.line_height != b.line_height
         || a.letter_spacing != b.letter_spacing
-        || a.wrap != b.wrap;
+        || a.wrap != b.wrap
+        || a.direction != b.direction;
     let paint = text
         || a.color != b.color
         || a.caret_color != b.caret_color
@@ -710,7 +801,9 @@ fn box_diff(a: &ComputedBox, b: &ComputedBox) -> (bool, bool, bool) {
         || a.z_index != b.z_index
         || a.will_change != b.will_change
         || a.visibility_hidden != b.visibility_hidden
-        || a.pointer_events_none != b.pointer_events_none;
+        || a.pointer_events_none != b.pointer_events_none
+        // a scroll container's content shift and overflow states
+        || a.direction != b.direction;
     (text, paint, property)
 }
 
@@ -728,6 +821,7 @@ fn inherited_differs(a: &ComputedBox, b: &ComputedBox) -> bool {
         || a.cursor != b.cursor
         || a.visibility_hidden != b.visibility_hidden
         || a.pointer_events_none != b.pointer_events_none
+        || a.direction != b.direction
 }
 
 /// What restyling one node found.
@@ -812,7 +906,17 @@ impl Document {
     /// which custom properties changed.
     fn restyle_node(&mut self, i: usize, window: WindowId) -> Restyled {
         let parent = self.core[i].parent.map(|p| self.ix(p));
-        let parent_css = parent.and_then(|p| self.style.nodes[p].css.clone());
+        let mut parent_css = parent.and_then(|p| self.style.nodes[p].css.clone());
+        // its directionality first (`:dir()` reads it); a `dir` (or a root) is what it inherits as
+        // `direction`, below its own rules
+        let (dir, hint) = self.directionality(i);
+        self.style.nodes[i].dir = dir;
+        let inherited_dir = parent_css.as_deref().and_then(|p| kw(p.get_index(indices().direction))).unwrap_or("ltr");
+        if hint && inherited_dir != dir.name() {
+            let mut p = parent_css.as_deref().cloned().unwrap_or_else(|| ComputedStyle::initial(self.style.stylist.table()));
+            p.set("direction", Some(ComputedValue::Keyword(dir.name())));
+            parent_css = Some(Arc::new(p));
+        }
         let parent_box = parent.map(|p| self.style.nodes[p].computed.clone());
         let inline = self.style.nodes[i].inline.clone();
         let cx = ComputeContext { root_font_size: 16.0, default_font_size: 13.0 };
@@ -837,6 +941,7 @@ impl Document {
         let new_box = computed_box(&css, parent_box.as_deref(), cx.default_font_size);
         let hidden = self.view_at(i).prop_bool(crate::common::HIDDEN);
         let cascaded = layout_style(&css, &new_box, hidden);
+        let cascaded_dir = cascaded.direction;
         // the kind's own layout participation over the cascaded style
         let mut tstyle = match self.kinds[i].take() {
             Some(k) => {
@@ -851,6 +956,8 @@ impl Document {
             }
             None => cascaded,
         };
+        // a kind's own style keeps the node's direction
+        tstyle.direction = cascaded_dir;
         // chrome the kind paints around its children
         let container = self.registry.get(self.core[i].kind).is_some_and(|e| e.spec.container);
         if container

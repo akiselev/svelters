@@ -1,5 +1,6 @@
 //! Shorthand properties (OW-CSS): `outline`, `border`, `border-{top,right,bottom,left}`,
-//! `border-{width,style,color}`, `border-radius`, `overflow` and (U2 E5) `transition` expand to longhands at
+//! `border-{width,style,color}`, `border-radius`, `overflow`, (U2 E5) `transition` and the logical
+//! `margin-inline`, `padding-inline`, `inset-inline`, `border-inline{,-start,-end}` (POL4-DIR-CORE) expand to longhands at
 //! computed-value time, after `var()` substitution, so a later shorthand overrides an earlier
 //! longhand and the other way round (CSS Cascade 5 §1.2).
 //!
@@ -23,6 +24,9 @@ const BORDER_COLOR: [&str; 4] = ["border-top-color", "border-right-color", "bord
 pub(crate) const TRANSITION: [&str; 4] = ["transition-property", "transition-duration", "transition-timing-function", "transition-delay"];
 const BORDER_RADIUS: [&str; 4] =["border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius"];
 
+const INLINE_START: [&str; 3] = ["border-inline-start-width", "border-inline-start-style", "border-inline-start-color"];
+const INLINE_END: [&str; 3] = ["border-inline-end-width", "border-inline-end-style", "border-inline-end-color"];
+
 /// The longhands `name` sets, when it is a shorthand.
 pub(crate) fn longhands(name: &str) -> Option<Vec<&'static str>> {
     Some(match name {
@@ -35,6 +39,13 @@ pub(crate) fn longhands(name: &str) -> Option<Vec<&'static str>> {
         "border-radius" => [&BORDER_RADIUS[..], &["border-radius"]].concat(),
         // U2 E5: `transition` itself is assembled from these after the cascade (`computed.rs`)
         "transition" => TRANSITION.to_vec(),
+        // logical (POL4-DIR-CORE): `<start> [<end>]`
+        "margin-inline" => vec!["margin-inline-start", "margin-inline-end"],
+        "padding-inline" => vec!["padding-inline-start", "padding-inline-end"],
+        "inset-inline" => vec!["inset-inline-start", "inset-inline-end"],
+        "border-inline-start" => INLINE_START.to_vec(),
+        "border-inline-end" => INLINE_END.to_vec(),
+        "border-inline" => [&INLINE_START[..], &INLINE_END[..]].concat(),
         "border" => {
             let mut v = Vec::with_capacity(14);
             for i in 0..4 {
@@ -83,6 +94,11 @@ pub(crate) fn expand(name: &str, value: &str) -> Result<Vec<(&'static str, Strin
             [a] => Ok(vec![("overflow-x", a.clone()), ("overflow-y", a.clone())]),
             [a, b] => Ok(vec![("overflow-x", a.clone()), ("overflow-y", b.clone())]),
             _ => Err("overflow: expected 1 or 2 values".into()),
+        },
+        "margin-inline" | "padding-inline" | "inset-inline" => match parts.as_slice() {
+            [a] => Ok(vec![(longs[0], a.clone()), (longs[1], a.clone())]),
+            [a, b] => Ok(vec![(longs[0], a.clone()), (longs[1], b.clone())]),
+            _ => Err(format!("{name}: expected 1 or 2 values")),
         },
         "border-width" | "border-style" | "border-color" | "border-radius" => {
             if v.contains('/') {
@@ -231,5 +247,15 @@ mod tests {
         assert_eq!(expand("overflow", "hidden auto").unwrap(), vec![("overflow-x", "hidden".into()), ("overflow-y", "auto".into())]);
         assert!(expand("overflow", "hidden auto scroll").is_err());
         assert_eq!(expand("overflow", "inherit").unwrap().len(), 2);
+    }
+
+    #[test]
+    fn logical_inline_shorthands() {
+        assert_eq!(expand("margin-inline", "4px").unwrap(), vec![("margin-inline-start", "4px".into()), ("margin-inline-end", "4px".into())]);
+        assert_eq!(expand("padding-inline", "1px 2px").unwrap(), vec![("padding-inline-start", "1px".into()), ("padding-inline-end", "2px".into())]);
+        assert!(expand("inset-inline", "1px 2px 3px").is_err());
+        let e = expand("border-inline-start", "2px solid red").unwrap();
+        assert_eq!(e, vec![("border-inline-start-width", "2px".into()), ("border-inline-start-style", "solid".into()), ("border-inline-start-color", "red".into())]);
+        assert_eq!(expand("border-inline", "1px dashed").unwrap().len(), 6);
     }
 }

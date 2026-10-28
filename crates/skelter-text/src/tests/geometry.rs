@@ -142,3 +142,27 @@ fn clusters_are_visual_per_line() {
     assert_eq!(cs[3].range, 9..11);
     assert_eq!(l.clusters(1).count(), 0);
 }
+
+#[test]
+fn a_base_direction_overrides_the_first_strong_character() {
+    use skelter_base::text::Direction;
+    let mut ts = system();
+    // "abc שלום": auto reads it left to right; an rtl box's base puts the start at the right
+    let text = format!("abc {HEBREW}");
+    let auto = ts.layout(&super::plain(&text, 13.0), Some(200.0));
+    assert!(!auto.is_rtl());
+    assert!(auto.lines()[0].left < 1.0, "start-aligned at the left: {:?}", auto.lines()[0]);
+    let mut rt = super::plain(&text, 13.0);
+    rt.direction = Some(Direction::Rtl);
+    let rtl = ts.layout(&rt, Some(200.0));
+    assert!(rtl.is_rtl());
+    assert!((rtl.lines()[0].right - 200.0).abs() < 1.0, "start-aligned at the right: {:?}", rtl.lines()[0]);
+    // the first logical run ("abc") is the rightmost, the Hebrew word to its left
+    let a = rtl.caret_rect(0).min.x;
+    assert!(a > 150.0, "abc at the right end: caret 0 at {a}");
+    assert!(rtl.caret_rect(text.len()).min.x < a - 20.0, "the Hebrew word to its left");
+    // and an ltr base keeps Hebrew-only text left to right
+    let mut he = super::plain(HEBREW, 13.0);
+    he.direction = Some(Direction::Ltr);
+    assert!(!ts.layout(&he, Some(200.0)).is_rtl());
+}

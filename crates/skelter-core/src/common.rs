@@ -171,6 +171,9 @@ pub static COMMON: KindSpec = KindSpec {
             .default(PropDefault::Enum(0))
             .enum_values(STATUS_SECTIONS)
             .doc("Its place in a `status-bar`; also the `[status-section=…]` selector."),
+        PropSpec::new("dir", ValueType::Str, ChangeClass::Paint)
+            .default(PropDefault::Str(""))
+            .doc("The node's direction, as HTML's `dir`: `ltr`, `rtl`, or `auto` (from the first strong character of its text or its descendants' text); empty or another value inherits the parent's (the window root: the document's, `Document::set_direction`). Sets CSS `direction` below author rules, and `:dir()` matches it."),
         PropSpec::new("drag-data", ValueType::Str, ChangeClass::Paint).default(PropDefault::Str("")).doc("The drag payload's data (JSON for structured data); `drop` delivers it."),
         PropSpec::new("drag-type", ValueType::Str, ChangeClass::Paint)
             .default(PropDefault::Str(""))
@@ -253,6 +256,7 @@ ids!(PropId:
     DIALOG_ROLE = "dialog-role": "enum",
     STATUS_TIP = "status-tip": "string",
     STATUS_SECTION = "status-section": "enum",
+    DIR = "dir": "string",
     DRAG_DATA = "drag-data": "string",
     DRAG_TYPE = "drag-type": "string",
     DROP_TYPES = "drop-types": "string",

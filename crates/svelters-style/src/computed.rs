@@ -64,6 +64,19 @@ impl ComputedStyle {
         self.table.index_of(name).and_then(|i| self.values[i].as_ref())
     }
 
+    /// Sets a property's computed value (`None`: unset); false when the table has no such property.
+    /// For a tree's presentational hints: skelter's `dir` attribute is the value a child of the
+    /// element would inherit, set on a copy of the parent's style before the element is computed.
+    pub fn set(&mut self, name: &str, value: Option<ComputedValue>) -> bool {
+        match self.table.index_of(name) {
+            Some(i) => {
+                self.values[i] = value;
+                true
+            }
+            None => false,
+        }
+    }
+
     /// By the property's index in [`Table::props`].
     pub fn get_index(&self, index: usize) -> Option<&ComputedValue> {
         self.values.get(index).and_then(Option::as_ref)
@@ -274,6 +287,12 @@ pub(crate) fn compute(table: &'static Table, decls: &[Cascaded<'_>], parent: Opt
 
     let mut out = ComputedStyle { table, values: vec![None; table.props.len()], custom };
     let parent_value = |i: usize| parent.and_then(|p| p.values[i].clone());
+    // an undeclared property: the parent's value when CSS inherits it. The parent's slot first (most
+    // are empty), then the by-name inherited test
+    let inherit = |i: usize, prop: &Prop| match parent.and_then(|p| p.values[i].as_ref()) {
+        Some(v) if prop.is_inherited() => Some(v.clone()),
+        _ => None,
+    };
 
     let parent_font = parent.and_then(ComputedStyle::font_size).unwrap_or(cx.default_font_size);
     let parent_weight = match parent.and_then(|p| p.get("font-weight")) {
@@ -292,7 +311,7 @@ pub(crate) fn compute(table: &'static Table, decls: &[Cascaded<'_>], parent: Opt
             continue;
         }
         let v = match winners[i] {
-            None => prop.is_inherited().then(|| parent_value(i)).flatten(),
+            None => inherit(i, prop),
             Some((d, long)) => {
                 let full = if d.has_var { substitute(&d.value, &mut |n| out.custom.get(n).map(|v| v.to_string())).ok() } else { Some(d.value.to_string()) };
                 let text = match long {

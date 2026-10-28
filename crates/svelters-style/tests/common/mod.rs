@@ -82,6 +82,18 @@ impl Element for El<'_> {
     fn state(&self) -> StateMask {
         self.data().state
     }
+    // HTML's directionality, without `auto`: the nearest `dir` on the element or an ancestor
+    fn is_rtl(&self) -> bool {
+        let mut e = Some(*self);
+        while let Some(x) = e {
+            match x.attr("dir").as_deref() {
+                Some("rtl") => return true,
+                Some("ltr") => return false,
+                _ => e = x.parent(),
+            }
+        }
+        false
+    }
 }
 
 impl Tree {

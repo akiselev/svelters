@@ -52,6 +52,13 @@ pub trait Element: Copy + Debug {
         let s = self.state();
         s.contains(StateMask::FOCUS_VISIBLE) || s.contains(StateMask::FOCUSED)
     }
+
+    /// The element's directionality is right-to-left (`:dir(rtl)`): HTML's, from the `dir` attribute
+    /// on it or its nearest ancestor that has one (`auto` from its text), else the document's. A
+    /// tree without direction is left-to-right.
+    fn is_rtl(&self) -> bool {
+        false
+    }
 }
 
 /// Wraps an [`Element`] for `selectors`.
@@ -126,6 +133,7 @@ impl<E: Element> selectors::Element for Node<E> {
             PseudoClass::State { bit, negated, .. } => state.intersects(*bit) != *negated,
             PseudoClass::FocusVisible => self.0.is_focus_visible(),
             PseudoClass::Provider { bit, .. } => state.intersects(*bit),
+            PseudoClass::Dir { rtl } => self.0.is_rtl() == *rtl,
             // only after `::part()`, tested by the cascade against the part's logical position (P1)
             PseudoClass::Logical(_) => false,
         }
