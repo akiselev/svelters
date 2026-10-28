@@ -292,7 +292,13 @@ impl Kind for TextEdit {
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
         self.bars.rtl.set(cx.node.is_rtl());
-        self.field.rtl = cx.node.is_rtl();
+        // `dir="auto"` on the field: its value's first strong character, as it is typed (HTML's
+        // `dir=auto` input; core resolves `auto` from text props, and a field's value is not one)
+        let auto = cx.node.prop_str(skelter_core::common::DIR) == Some("auto");
+        self.field.rtl = match auto {
+            true => skelter_base::text::first_strong(self.field.shown_text()).map_or(cx.node.is_rtl(), |d| d.is_rtl()),
+            false => cx.node.is_rtl(),
+        };
         let style = text_style(cx.style());
         let content = cx.content_box();
         let to_window = cx.window_transform();

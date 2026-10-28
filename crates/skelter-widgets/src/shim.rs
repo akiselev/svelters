@@ -960,7 +960,8 @@ pub mod text {
         pub ellipsis: bool,
         pub max_lines: Option<u32>,
         /// The box is right to left: the paragraph's base direction is `rtl` (where `Start` is and
-        /// how mixed runs order); `false`: from its first strong character, as before direction.
+        /// how mixed runs order); `false`: `ltr`. The box's resolved direction is always the base
+        /// (coordinator, 2026-10-28, dir-core Q1); `dir="auto"` resolves it from the content.
         pub rtl: bool,
     }
 

@@ -83,7 +83,7 @@ pub fn ghost_preview(text: &str, look: &GhostLook, shaper: &mut dyn TextShaper) 
     let mut res = CollectRes::default();
     let mut list = DisplayList::new();
     {
-        let mut p = ShaperPainter { text: shaper, res: Some(&mut res) };
+        let mut p = ShaperPainter { text: shaper, res: Some(&mut res), rtl: false };
         record_ghost(text, Point::ZERO, look, &mut p, &mut list);
     }
     DragPreview::List { list, runs: res.runs, offset: Vec2::ZERO }

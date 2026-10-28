@@ -119,8 +119,9 @@ impl LayoutRich for skelter_text::TextSystem {
             ellipsis: t.ellipsis,
             max_lines: t.max_lines,
             tab_size: None,
-            // the box's direction (dir-widgets): an `ltr` box keeps its first strong character's
-            direction: t.rtl.then_some(skelter_base::text::Direction::Rtl),
+            // the box's resolved direction is the paragraph base (`dir="auto"` resolves it from the
+            // content; coordinator, 2026-10-28)
+            direction: Some(if t.rtl { skelter_base::text::Direction::Rtl } else { skelter_base::text::Direction::Ltr }),
         };
         let l = skelter_text::TextSystem::layout(self, &rich, max_width);
         let runs = l.runs().iter().map(|r| PlacedRun { run: r.run.clone(), origin: r.origin, style: r.style }).collect();

@@ -110,6 +110,15 @@ Before/after (this container, not committed), under
 
 - **R1 (small):** `views/popup.rs` placement `-start`/`-end` logical in `rtl` (as `tooltip.rs` now does). The one
   edit in small's files is `controls/progress.rs` (the `inverted` line in `record`, a direction check).
+- **Decided (coordinator, 2026-10-28), dir-core Q1: the box's direction is the paragraph base everywhere**, as the
+  web does; `dir="auto"` is the opt-in for content-derived direction. Done in its own commit: `host.rs` and the text
+  field's layouter pass `Some(Ltr)` in `ltr`, the table's and tab strip's painter (`ShaperPainter::rtl`) pass the
+  node's direction, and a `text-edit` with `dir="auto"` takes its value's first strong character at each prepare
+  (core resolves `auto` from text props, and a field's value is not one). Documented in `docs/skelter/direction.md`
+  ("The paragraph base direction"). The one ltr variant with Arabic text, `tooltip/element text=احفظ الملف`, is UI
+  text and stays: it moved by under a pixel (`q1/tt-after.diff.png`); the rtl variants did not move (`label/rtl`,
+  `multiline/rtl`, `text-edit/rtl`, `table/rtl`: no change at zoom 2). No svelters snapshot holds RTL text in an
+  ltr box (the gallery's Arabic/Hebrew tests are font coverage), so none was re-blessed.
 - **Q1, Q2 (dir-core): answered by `c508a53`** — skelter-text takes a base direction (passed now, above) and
   core's offsets stay left-based with an rtl container starting at its range (the bars adjusted, above).
 - The table's own text painter (`table/text_painter.rs`) does not pass the direction (its cells are single lines,

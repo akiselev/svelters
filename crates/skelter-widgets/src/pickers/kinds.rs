@@ -426,7 +426,7 @@ impl w::Kind for CalendarKind {
         let look = &look_of(cx.style.theme, cx.style.dark);
         let (rtl, w) = (cx.style.is_rtl(), cx.size.w);
         let RecordCx { list, text, res, .. } = cx;
-        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
+        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res), rtl: false };
         let today = self.today.unwrap_or_else(Date::today_utc);
         crate::dir::record_mirrored(list, &mut painter, rtl, w, |p, list| self.model.record(list, p, look, today, on, fv));
     }
@@ -619,7 +619,7 @@ impl w::Kind for ColorEditorKind {
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
         let look = &look_of(cx.style.theme, cx.style.dark);
         let RecordCx { list, text, res, .. } = cx;
-        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
+        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res), rtl: false };
         self.model.record(list, &mut painter, look, on, fv);
         // the editing hex box: the field's text with its selection, and the caret
         if let Some(h) = &self.hex {
@@ -714,7 +714,7 @@ struct Measured(Vec<(String, Size)>);
 
 impl Measured {
     fn fill(&mut self, text: &mut dyn w_text::TextShaper, look: &PickerLook) {
-        let mut p = ShaperPainter { text, res: None };
+        let mut p = ShaperPainter { text, res: None, rtl: false };
         let style = look.text(look.fg);
         self.0 = [popup::Footer::Save, popup::Footer::Cancel].iter().map(|f| (f.label().to_owned(), p.measure(f.label(), &style))).collect();
     }
@@ -826,7 +826,7 @@ impl PopupHost {
     fn record(&self, text: &mut dyn w_text::TextShaper, res: &mut dyn w::Resources, mirror: bool, f: impl FnOnce(&mut DisplayList, &mut dyn tshim::TextPainter)) -> Option<DisplayList> {
         let r = self.placed?;
         let mut list = DisplayList::new();
-        let mut p = ShaperPainter { text, res: Some(res) };
+        let mut p = ShaperPainter { text, res: Some(res), rtl: false };
         crate::dir::record_mirrored(&mut list, &mut p, mirror && self.rtl, r.width(), |p, list| f(list, p));
         Some(list)
     }
@@ -952,7 +952,7 @@ impl w::Kind for DatePickerKind {
 
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let look = &look_of(cx.style.theme, cx.style.dark);
-        let mut p = ShaperPainter { text: &mut *cx.text, res: None };
+        let mut p = ShaperPainter { text: &mut *cx.text, res: None, rtl: false };
         let s = self.model.size(&mut p, look, self.today_date());
         taffy::Size { width: s.w, height: s.h }
     }
@@ -977,7 +977,7 @@ impl w::Kind for DatePickerKind {
         let look = &look_of(cx.style.theme, cx.style.dark);
         let size = cx.size;
         let RecordCx { list, text, res, .. } = cx;
-        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
+        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res), rtl: false };
         let st = popup::ButtonState { open: self.model.drop.is_open(), focus_visible: fv, enabled: on, hovered: state.contains(StateBits::HOVERED) || self.model.drop.hovered(), pressed: state.contains(StateBits::PRESSED) || self.model.drop.pressed() };
         // `rtl`: the drop button mirrored (its arrow at the left)
         crate::dir::record_mirrored(list, &mut painter, self.popup.rtl, size.w, |p, list| self.model.record_button_in(list, p, look, size, self.today_date(), st));

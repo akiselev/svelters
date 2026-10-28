@@ -71,8 +71,7 @@ impl TextGeometry for LaidOut {
 pub struct SystemLayouter<'a> {
     pub system: &'a mut TextSystem,
     pub style: TextStyle,
-    /// The field is right to left: the text's base direction is `rtl` (`false`: its first strong
-    /// character's).
+    /// The field is right to left: the text's base direction is `rtl` (`false`: `ltr`).
     pub rtl: bool,
 }
 
@@ -81,7 +80,7 @@ impl Layouter for SystemLayouter<'_> {
         let mut style = self.style.clone();
         style.wrap = max_width.is_some();
         let mut rich = RichText::plain(text, style);
-        rich.direction = self.rtl.then_some(skelter_base::text::Direction::Rtl);
+        rich.direction = Some(if self.rtl { skelter_base::text::Direction::Rtl } else { skelter_base::text::Direction::Ltr });
         let layout = self.system.layout(&rich, max_width);
         Arc::new(LaidOut::new(text, layout))
     }
@@ -136,20 +135,24 @@ mod tests {
     }
 
     #[test]
-    fn right_to_left_text_starts_at_the_right_of_a_single_line_field() {
+    fn a_fields_direction_not_its_text_puts_the_line_start() {
+        // the box's direction is the paragraph base (coordinator, 2026-10-28): Hebrew in an `ltr`
+        // field starts at the left; in an `rtl` field (or `dir="auto"` resolved to `rtl`) at the right
         let mut sys = system();
-        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default(), rtl: false };
         let content = Rect::new(10.0, 0.0, 310.0, 20.0);
-        let caret_at = |text: &str, byte: usize, lay: &mut SystemLayouter| {
+        let caret_at = |text: &str, rtl: bool, sys: &mut TextSystem| {
+            let mut lay = SystemLayouter { system: sys, style: TextStyle::default(), rtl };
             let mut f = TextField::new(text, EditorConfig::default(), TextPolicy::of(Platform::Windows));
+            f.rtl = rtl;
             f.focus_in(FocusReason::Pointer);
-            f.editor.set_selection(byte, byte);
-            f.prepare(lay, content, skelter_base::geom::Affine::IDENTITY);
+            f.editor.set_selection(0, 0);
+            f.prepare(&mut lay, content, skelter_base::geom::Affine::IDENTITY);
             f.caret_rect().unwrap()
         };
-        let ltr = caret_at("Hello", 0, &mut lay);
-        assert!(ltr.min.x < 12.0, "left-to-right text starts at the left: {ltr:?}");
-        let rtl = caret_at("\u{05E9}\u{05DC}\u{05D5}\u{05DD}", 0, &mut lay);
-        assert!(rtl.max.x > 300.0, "right-to-left text starts at the right: {rtl:?}");
+        let hebrew = "\u{05E9}\u{05DC}\u{05D5}\u{05DD}";
+        assert!(caret_at("Hello", false, &mut sys).min.x < 12.0, "ltr text in an ltr field starts at the left");
+        assert!(caret_at(hebrew, false, &mut sys).min.x < 60.0, "rtl text in an ltr field: the line at the left");
+        assert!(caret_at(hebrew, true, &mut sys).max.x > 300.0, "rtl text in an rtl field starts at the right");
+        assert!(caret_at("Hello", true, &mut sys).max.x > 250.0, "ltr text in an rtl field: the line at the right");
     }
 }
