@@ -4,7 +4,7 @@ family = "dialogs"
 kinds = ["popup"]
 size = [360, 240]
 states = ["normal"]
-notes = "A popover's surface, shown while `open`, in the window's top layer: out of its owner's flow and clip, next to its owner (the element it is declared in; here a box around the button) at `placement`, flipped and shifted into the window. Look at the raised surface, `popup-shadow`, the content's padding, and `clipped`: the popup draws whole over the scroll area's edge and the panel after it."
+notes = "A popover's surface, shown while `open`, in the window's top layer: out of its owner's flow and clip, next to its owner (the element it is declared in; here a box around the button) at `placement`, flipped and shifted into the window; `anchor-to` names another element to open from instead (`anchor-to`: the toolbar at the bottom edge flips `bottom-*` above its button). Look at the raised surface, `popup-shadow`, the content's padding, and `clipped`: the popup draws whole over the scroll area's edge and the panel after it."
 
 [[variant]]
 id = "placement"
@@ -21,3 +21,9 @@ file = "form.svelte"
 id = "clipped"
 title = "Inside a clipped scroll area"
 file = "clipped.svelte"
+
+[[variant]]
+id = "anchor-to"
+title = "Anchored to another element (anchor-to)"
+file = "anchor-to.svelte"
+args = { placement = ["bottom-start", "bottom-end", "top-center"] }

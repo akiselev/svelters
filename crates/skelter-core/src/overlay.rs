@@ -191,13 +191,16 @@ pub struct TopLayer {
     pub takes_input: bool,
     pub modal: bool,
     pub dismiss: Dismiss,
+    /// The node asks its entry to close (its anchor went away): core closes it after the frame and
+    /// tells the kind ([`Kind::overlay_closed`](crate::Kind::overlay_closed)) with this reason.
+    pub close: Option<DismissReason>,
 }
 
 impl TopLayer {
     /// The defaults of `class` ([`OverlaySpec::new`]'s), at its layout position.
     pub fn new(class: OverlayClass) -> Self {
         let s = OverlaySpec::new(class, NodeId(0), LayerId(0), PropNodeId(0), Rect::ZERO);
-        TopLayer { class, at: None, inside: Vec::new(), opener: None, takes_input: s.takes_input, modal: s.modal, dismiss: s.dismiss }
+        TopLayer { class, at: None, inside: Vec::new(), opener: None, takes_input: s.takes_input, modal: s.modal, dismiss: s.dismiss, close: None }
     }
     /// At `at` (window points).
     pub fn at(mut self, at: Point) -> Self {
@@ -218,6 +221,11 @@ impl TopLayer {
     }
     pub fn with_modal(mut self, modal: bool) -> Self {
         self.modal = modal;
+        self
+    }
+    /// Asks core to close its entry with `reason` ([`TopLayer::close`]).
+    pub fn closing(mut self, reason: DismissReason) -> Self {
+        self.close = Some(reason);
         self
     }
 }

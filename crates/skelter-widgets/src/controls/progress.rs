@@ -9,6 +9,7 @@
 //! recording is the sweep's middle frame ([`BUSY_STILL`]: the segment centred on the track, the
 //! reduced-motion look); running it is a compositor animation (lane MOTION-CSS).
 
+use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
 use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, Styles, Value};
@@ -17,7 +18,13 @@ use skelter_base::color::{Color, Fill};
 use skelter_base::display::{BorderStyle, Prim, Quad};
 use skelter_base::geom::{Corners, Insets, Rect, RoundedRect, Vec2};
 
-pub const UA: Ua = Ua(&[UaRule::base(&[("text-align", Keyword("center")), ("width", Px(100.0))])]);
+/// Disabled (POL4-SMALL 2, POL3-FINISH Q2): the parts dim, not the whole leaf. The label is
+/// `disabled-fg`, the track and the fill (and the busy segment) fade to `opacity` .4 each, so the
+/// label is never faded twice.
+pub const UA: Ua = Ua(&[
+    UaRule::base(&[("text-align", Keyword("center")), ("width", Px(100.0))]),
+    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg")), ("cursor", Keyword("not-allowed"))]),
+]);
 
 /// `::part(track)`: the field look (`control-bg` inside a `control-border` hairline), so an empty
 /// bar shows on every surface (Light Modern's field fill is the panel's near-white; High Contrast's
@@ -28,10 +35,13 @@ pub const TRACK: Ua = Ua(&[UaRule::base(&[
     ("border-width", Token("stroke")),
     ("border-radius", Px(2.0)),
     ("height", Px(4.0)),
-])]);
+]), UaRule::when(StateBits::DISABLED, &[("opacity", Number(0.4))])]);
 
 /// `::part(fill)`.
-pub const FILL: Ua = Ua(&[UaRule::base(&[("background-color", Token("progress")), ("color", Token("accent-fg"))])]);
+pub const FILL: Ua = Ua(&[
+    UaRule::base(&[("background-color", Token("progress")), ("color", Token("accent-fg"))]),
+    UaRule::when(StateBits::DISABLED, &[("opacity", Number(0.4)), ("color", Token("disabled-fg"))]),
+]);
 
 /// The sweep's period in seconds (`--sv-busy-period`).
 pub const BUSY_PERIOD: f64 = 1.5;
@@ -149,6 +159,8 @@ impl ProgressBar {
     fn view<'a>(&self, s: &Styles<'a>) -> StyleView<'a> {
         let mut state = s.state;
         self.mirror(&mut state);
+        // a disabled ancestor's `:disabled` too (the host mirrors it into the prop, FQ-67)
+        state.set(StateBits::DISABLED, self.props.disabled || s.state.contains(StateBits::DISABLED));
         StyleView::new(s.computed, UA, state, s.dark).with_theme(s.theme).with_inherited(s.inherited)
     }
 }
@@ -243,8 +255,14 @@ impl Kind for ProgressBar {
         let (mx, my) = ((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0);
         let tr = if vertical { Rect::new(mx - th / 2.0, r.min.y, mx + th / 2.0, r.max.y) } else { Rect::new(r.min.x, my - th / 2.0, r.max.x, my + th / 2.0) };
         let mut pc = PaintCx::of(cx);
+        let n = pc.list.items.len();
         paint::paint_box(&mut pc, &track, tr);
+        // a part's own `opacity` (disabled: .4) fades what it paints
+        if track.opacity() < 1.0 {
+            crate::pickers::color_editor::fade(&mut pc.list.items[n..], track.opacity());
+        }
         let color = fill.color("background-color").unwrap_or(Color::TRANSPARENT);
+        let color = color.with_alpha(color.a * fill.opacity());
         let radius = track.px("border-radius").unwrap_or(0.0);
         // the fill's span along the bar, 0..1 from where it starts (left, or bottom when vertical)
         let (a, b) = if self.busy() { sweep(BUSY_STILL) } else { (0.0, self.fraction()) };
@@ -426,6 +444,41 @@ mod tests {
         q.props.value = Some(1.0);
         q.props.max = 0.0;
         assert!(q.busy());
+    }
+
+    /// POL4-SMALL 2: disabled, the track and the fill (and the busy segment) fade to .4 each and
+    /// the label is `disabled-fg`, over the fill too; the leaf itself keeps full opacity.
+    #[test]
+    fn disabled_dims_its_parts_not_the_leaf() {
+        let size = Size::new(100.0, 20.0);
+        let quads = |b: &ProgressBar, st: StateBits| {
+            let (list, _) = testkit::record(b, size, st);
+            list.items.iter().filter_map(|p| if let Prim::Quad(q) = p { Some(q.clone()) } else { None }).collect::<Vec<_>>()
+        };
+        let solid = |q: &Quad| if let Fill::Solid(c) = q.fill { c } else { unreachable!() };
+        for busy in [false, true] {
+            let mut b = bar(0.5);
+            b.props.indeterminate = busy;
+            let on = quads(&b, StateBits::NONE);
+            b.props.disabled = true;
+            let off = quads(&b, StateBits::NONE);
+            assert_eq!(off.len(), 2, "track and fill (busy: {busy})");
+            for (a, d) in on.iter().zip(&off) {
+                assert_eq!(a.rect, d.rect);
+                assert!((solid(d).a - solid(a).a * 0.4).abs() < 1e-4, "faded to .4: {:?} → {:?}", solid(a), solid(d));
+                assert!((d.border_color.a - a.border_color.a * 0.4).abs() < 1e-4);
+            }
+            // the `:disabled` state (a disabled ancestor) dims it the same way
+            b.props.disabled = false;
+            assert_eq!(quads(&b, StateBits::DISABLED), off);
+        }
+        let mut b = bar(0.5);
+        b.props.format = "%p%".into();
+        b.props.disabled = true;
+        let (list, _) = testkit::record(&b, size, StateBits::NONE);
+        let dis = paint::ua_token(true, "disabled-fg").unwrap();
+        let glyphs: Vec<Color> = list.items.iter().filter_map(|p| if let Prim::Glyphs(g) = p { Some(g.color) } else { None }).collect();
+        assert_eq!(glyphs, vec![dis, dis], "the label off and over the fill");
     }
 
     #[test]

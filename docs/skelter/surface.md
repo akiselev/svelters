@@ -37,7 +37,7 @@ types and defaults), so a few names differ from svelters-egui's for the same ele
 
 | Element | Differs from svelters-egui |
 |---|---|
-| `popup` | `light-dismiss` (egui's `autohide`), `escape-dismiss`, `gap`, `modal`, `flip`, `shift`, `fit`, `match-width`; events `open`, `close(reason)`, `toggle(open)`; no `popup`/`popdown` methods (write `open`). It is a node in its parent's flow: place it with layout props. |
+| `popup` | `light-dismiss` (egui's `autohide`), `escape-dismiss`, `gap`, `modal`, `flip`, `shift`, `fit`, `match-width`, `anchor-to` (the `anchor` of the element it positions against instead of its owner: `<button anchor="t"/><popup anchor-to="t">`; it closes with `anchor-hidden` when that element goes away); events `open`, `close(reason)`, `toggle(open)`; no `popup`/`popdown` methods (write `open`). Open, it is in the window's top layer, placed by `placement` next to its anchor and flipped when it does not fit. |
 | `modal` | `heading` (egui's `title`); events `cancel(reason)` (cancelable) and `close(reason)`; no `close()` method (write `open`). It covers its parent and centres its children in the dialog box. |
 | `inner-window` | `heading`, `x`, `y`, `width`, `height`, `min-width`, `min-height`, `collapsed` (egui's `default-*`, `open`); events `raise`, `close`, `toggle(expanded)`, `move`/`resize(x, y, width, height)`. It is laid out at `x`/`y` in its parent. |
 | `split-view` | `changed(position)`; `commit-mode` is `live` or `release`. |

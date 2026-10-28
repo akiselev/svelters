@@ -646,6 +646,8 @@ pub mod core {
         pub window: Size,
         pub owner: Option<Rect>,
         pub rect_of: &'a dyn Fn(skelter_base::ids::NodeId) -> Option<Rect>,
+        /// The node of the window whose `anchor` is the name (a popup's `anchor-to`).
+        pub find_anchor: &'a dyn Fn(&str) -> Option<skelter_base::ids::NodeId>,
     }
 
     pub trait Kind: 'static {

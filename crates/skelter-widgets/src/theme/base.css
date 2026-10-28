@@ -281,7 +281,7 @@
   }
 
   /* R9: disabled controls keep their shape at .4 and show `not-allowed`. Only the interactive kinds
-     and the leaf indicators (progress-bar, spinner) dim: a disabled container's state reaches its
+     and the leaf indicators (spinner; a progress bar dims its parts, below) dim: a disabled container's state reaches its
      descendants, so dimming it too would compound. Text that only labels dims its colour to VS
      Code's `disabledForeground`. */
   button:disabled,
@@ -292,13 +292,18 @@
   slider:disabled,
   select:disabled,
   text-edit:disabled,
-  progress-bar:disabled,
   spinner:disabled,
   icon:disabled,
   scrollbar:disabled,
   table:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+  }
+  /* POL4-SMALL 2 (POL3-FINISH Q2): a disabled progress bar dims its parts, not the whole leaf: the
+     track and fill fade to .4 and the label (over the fill too) is `disabled-fg`, its UA's
+     (`controls/progress.rs`); this rule only beats the fill's `accent-fg` label above */
+  progress-bar:disabled::part(fill) {
+    color: var(--sv-disabled-fg);
   }
   /* a collapsing header holds its body: its colour dims (the body's own controls dim themselves) */
   label:disabled,

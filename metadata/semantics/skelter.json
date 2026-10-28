@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "676b64e8baff9b20"
+    "spec_hash": "a769b7febfcb43e5"
   },
   "inline_text": {
     "kind": "span",
@@ -6155,6 +6155,26 @@
       ],
       "present": null,
       "props": {
+        "anchor-to": {
+          "change": "property",
+          "construct_only": false,
+          "default": "",
+          "doc": "The `anchor` of the element it positions against instead of its owner (`<button anchor=\"t\"/><popup anchor-to=\"t\">`); it closes (`close` with `anchor-hidden`) when no element has it.",
+          "fingerprint": "08faf37e",
+          "id": 150664062,
+          "js": "anchor-to",
+          "native": "anchor-to",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:anchor-to",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "escape-dismiss": {
           "change": "property",
           "construct_only": false,
@@ -6319,7 +6339,7 @@
           "change": "property",
           "construct_only": false,
           "default": "bottom-start",
-          "doc": "The side of its owner it opens on (egui moves it to another side when it does not fit).",
+          "doc": "The side of its anchor (`anchor-to`'s element, else its owner) it opens on, and its alignment there; it flips to the other side when it does not fit.",
           "fingerprint": "051d0cec",
           "id": 85789932,
           "js": "placement",

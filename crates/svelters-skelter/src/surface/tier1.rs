@@ -492,6 +492,7 @@ pub static PANEL: KindSpec = KindSpec {
 };
 
 static POPUP_PROPS: &[PropSpec] = &[
+    PropSpec { name: "anchor-to", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Property, native: false, doc: "The `anchor` of the element it positions against instead of its owner (`<button anchor=\"t\"/><popup anchor-to=\"t\">`); it closes (`close` with `anchor-hidden`) when no element has it." },
     PropSpec { name: "escape-dismiss", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "Escape closes it (`close` with `escape`)." },
     PropSpec { name: "fit", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Layout, native: false, doc: "It shrinks to the room left in the window rather than overflow it." },
     PropSpec { name: "flip", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "It moves to the other side of its anchor when it does not fit on `placement`'s." },
@@ -500,7 +501,7 @@ static POPUP_PROPS: &[PropSpec] = &[
     PropSpec { name: "match-width", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "It is at least as wide as its anchor (a drop-down's list)." },
     PropSpec { name: "modal", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: false, doc: "It blocks the rest of the window while open (AccessKit Dialog, modal); no light dismiss." },
     PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: true, doc: "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false." },
-    PropSpec { name: "placement", ty: ValueType::Enum(&["top", "top-start", "top-center", "top-end", "bottom", "bottom-start", "bottom-center", "bottom-end", "left", "left-start", "left-center", "left-end", "right", "right-start", "right-center", "right-end"]), default: DefaultValue::Enum(5), nullable: false, change: ChangeClass::Property, native: false, doc: "The side of its owner it opens on (egui moves it to another side when it does not fit)." },
+    PropSpec { name: "placement", ty: ValueType::Enum(&["top", "top-start", "top-center", "top-end", "bottom", "bottom-start", "bottom-center", "bottom-end", "left", "left-start", "left-center", "left-end", "right", "right-start", "right-center", "right-end"]), default: DefaultValue::Enum(5), nullable: false, change: ChangeClass::Property, native: false, doc: "The side of its anchor (`anchor-to`'s element, else its owner) it opens on, and its alignment there; it flips to the other side when it does not fit." },
     PropSpec { name: "shift", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "It slides along its side to stay in the window." },
 ];
 static POPUP_SIGNALS: &[SignalSpec] = &[

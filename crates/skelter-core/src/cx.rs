@@ -718,6 +718,10 @@ impl TopLayerCx<'_> {
     pub fn owner_rect(&self) -> Option<Rect> {
         self.node.doc.parent(self.node.id).and_then(|p| self.world_rect(p))
     }
+    /// The node of the same window whose common `anchor` is `name` (a popup's `anchor-to`).
+    pub fn find_anchor(&self, name: &str) -> Option<NodeId> {
+        self.node.window.and_then(|w| self.node.doc.find_anchor(w, name))
+    }
 }
 
 /// [`Kind::hit_test`](crate::Kind::hit_test).
