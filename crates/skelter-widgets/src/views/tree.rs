@@ -913,6 +913,22 @@ mod tests {
     }
 
     #[test]
+    fn rtl_puts_the_twisties_at_the_right_and_swaps_the_arrows() {
+        let pol = pol();
+        let mut t = tree();
+        t.rtl.set(true);
+        let row = t.list.row_rect(0).unwrap();
+        let d = t.disclosure_rect(0).unwrap();
+        assert_eq!((d.min.x, d.max.x), (row.max.x - 16.0, row.max.x), "level 0's twistie at the right edge");
+        assert_eq!(skelter_core::VirtualChildren::row_rect(&t, 0).max.x, row.max.x - 16.0, "its content ends before it");
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowDown));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowLeft));
+        assert!(t.is_expanded(1), "Left expands in rtl");
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowRight));
+        assert!(!t.is_expanded(1), "Right collapses");
+    }
+
+    #[test]
     fn root_decorated_off_drops_the_level_0_twisties_and_their_column() {
         let mut t = tree();
         assert!(t.disclosure_rect(0).is_some());

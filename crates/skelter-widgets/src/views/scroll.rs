@@ -1955,6 +1955,24 @@ mod tests {
     }
 
     #[test]
+    fn rtl_bars_mirror_and_drag_from_the_right() {
+        let pol = pol(Platform::Windows);
+        let mut s = sc(Size::new(1000.0, 1000.0), Size::new(100.0, 100.0));
+        s.rtl = true;
+        let [x, y] = s.layout_bars(Rect::new(0.0, 0.0, 100.0, 100.0), 10.0, 20.0, [true, true]);
+        let (x, y) = (x.unwrap(), y.unwrap());
+        assert_eq!((y.track.min.x, y.track.max.x), (0.0, 10.0), "the vertical bar at the left");
+        assert_eq!((x.track.min.x, x.track.max.x), (10.0, 100.0), "the horizontal track leaves the corner at the left");
+        assert_eq!(x.thumb.max.x, 100.0, "offset 0: the thumb at the inline start (the right)");
+        // dragging the horizontal thumb leftward scrolls toward the end
+        let at = Point::new(x.thumb.max.x - 5.0, 95.0);
+        assert!(s.pointer(ms(0), &pol, PointerPhase::Down, true, at, false).0);
+        let (_, moved) = s.pointer(ms(10), &pol, PointerPhase::Move, true, Point::new(at.x - 30.0, 95.0), false);
+        assert!(moved && s.offset().x > 0.0);
+        s.pointer(ms(20), &pol, PointerPhase::Up, false, Point::new(at.x - 30.0, 95.0), false);
+    }
+
+    #[test]
     fn thumb_drag_and_track_page() {
         let pol = pol(Platform::Windows);
         let mut s = sc(Size::new(100.0, 1000.0), Size::new(100.0, 100.0));

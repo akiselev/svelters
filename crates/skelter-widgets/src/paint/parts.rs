@@ -122,4 +122,20 @@ mod tests {
         assert_eq!(narrow[1].unwrap().min.x, 16.0);
         assert_eq!(narrow[1].unwrap().max.x, 100.0, "the label ends at the content box");
     }
+
+    #[test]
+    fn an_rtl_row_runs_from_the_right() {
+        use crate::testdoc::{BOX, child, doc, frame};
+        let (mut d, root) = doc(Size::new(300.0, 100.0), |_| {});
+        let n = child(&mut d, root, BOX, "direction: rtl; width: 200px; height: 20px; gap: 4px");
+        frame(&mut d);
+        let css = d.view(n).and_then(|v| v.css()).expect("computed");
+        let host = StyleView::new(Some(css), Ua::NONE, StateBits::NONE, true);
+        assert!(host.is_rtl());
+        let v = StyleView::ua_only(Ua::NONE, StateBits::NONE, true);
+        let parts = [PartItem { name: "indicator", style: &v, content: vec2(16.0, 16.0) }, PartItem { name: "label", style: &v, content: vec2(50.0, 18.0) }];
+        let r = layout_parts(&host, Rect::new(0.0, 0.0, 200.0, 20.0), &parts);
+        assert_eq!((r[0].unwrap().min.x, r[0].unwrap().max.x), (184.0, 200.0), "the first part at the right");
+        assert_eq!((r[1].unwrap().min.x, r[1].unwrap().max.x), (130.0, 180.0), "the label after the gap, to its left");
+    }
 }

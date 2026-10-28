@@ -818,6 +818,30 @@ mod tests {
     }
 
     #[test]
+    fn rtl_mirrors_the_strip_its_buttons_and_the_arrows() {
+        let c = caps(10, false);
+        let mut v = view(&c, 200.0);
+        v.rtl = true;
+        assert!(v.overflows());
+        // caption 0 is at the right: a press at the mirrored centre picks it
+        v.set_selected(1);
+        let p = centre(&v, 0);
+        let o = v.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), Point::new(200.0 - p.x, p.y)));
+        assert_eq!(v.shown(10), Some(0), "{o:?}");
+        // the buttons sit at the left edge
+        let m = v.flip(v.ctl_rect(Ctl::Menu).unwrap());
+        assert_eq!(m.min.x, 0.0);
+        let mid = Point::new((m.min.x + m.max.x) / 2.0, m.height() / 2.0);
+        assert_eq!(v.hit(mid), Some(TabHit::Ctl(Ctl::Menu)));
+        // Left moves toward the end
+        v.focused = true;
+        v.key(&key(Key::ArrowLeft, Modifiers::default()));
+        assert_eq!(v.shown(10), Some(1));
+        v.key(&key(Key::ArrowRight, Modifiers::default()));
+        assert_eq!(v.shown(10), Some(0));
+    }
+
+    #[test]
     fn a_press_selects_once_and_js_writes_do_not_report() {
         let c = caps(3, false);
         let mut v = view(&c, 600.0);
