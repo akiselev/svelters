@@ -67,7 +67,6 @@ insert #2 #22 before=end slot=default
 create virtual-list #23
 set #23 layout "list"
 set #23 selection "single"
-set #23 row-height 32
 set #23 vexpand true
 set #23 min-height 300
 listen #23 setup on

@@ -4,7 +4,7 @@ family = "data"
 kinds = ["virtual-list"]
 size = [320, 200]
 states = ["normal", "focus-visible", "disabled"]
-notes = "A virtualized list through `<ListView>` (@svelters/lists): row height, the selected row, rows with several parts."
+notes = "A virtualized list through `<ListView>` (@svelters/lists): row height, the selected row, rows with several parts. Rows take the theme's density row (`row-h`) unless `row-height` is set; `rich-rows` sets 40 because its two-line rows need it."
 
 [[variant]]
 id = "plain"

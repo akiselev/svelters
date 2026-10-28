@@ -640,13 +640,14 @@ impl VirtualList {
         }
     }
 
-    /// SV83: the row estimate from the props: `row-height`, or with `auto-row-height` the type
-    /// scale's row height (at least a written `row-height`).
-    fn apply_row_height(&mut self) {
+    /// SV83: the row estimate from the props: a written `row-height`; unset, the type scale's row
+    /// height (the theme's `row-h`, grown with the text: POL4-ROWS); with `auto-row-height` the
+    /// type scale's row height, at least a written `row-height`. Without a theme, the prop default.
+    pub(crate) fn apply_row_height(&mut self) {
         let fixed = self.props.row_height as f32;
-        let est = match (self.props.auto_row_height, self.type_row.get()) {
-            (true, Some(t)) if self.row_height_written => t.max(fixed),
-            (true, Some(t)) => t,
+        let est = match (self.props.auto_row_height, self.row_height_written, self.type_row.get()) {
+            (true, true, Some(t)) => t.max(fixed),
+            (_, false, Some(t)) => t,
             _ => fixed,
         };
         if est != self.heights.estimate() {
@@ -654,7 +655,7 @@ impl VirtualList {
         }
     }
 
-    /// SV83: the restyle's type-scale row height (`auto-row-height`): the theme's density row grown
+    /// SV83: the restyle's type-scale row height (an unset `row-height`, `auto-row-height`): the theme's density row grown
     /// with the list's font size. Taken before the next realise ([`Kind::virtual_children`]).
     pub fn note_type_scale(&self, theme: Option<&crate::theme::Theme>, font_size: Option<f32>) {
         if let (Some(t), Some(fs)) = (theme, font_size) {
@@ -1376,7 +1377,8 @@ kind_props! {
     pub struct ListProps;
     /// How clicks and keys select.
     selection "selection": String = Enum("single") ; Enum(SELECTION), Paint;
-    /// The estimated (and minimum) row height.
+    /// The estimated (and minimum) row height. Unset: the theme's density row (`row-h`, grown
+    /// with a larger `font-size`); without a theme, 32 (24 for `tree-view`).
     row_height "row-height": f64 = F64(32.0) ; F64, Layout;
     /// Every row is `row-height` tall; rows are not measured.
     uniform_rows "uniform-rows": bool = Bool(false) ; Bool, Layout;
@@ -1565,7 +1567,7 @@ impl Kind for VirtualList {
     }
     fn virtual_children(&mut self) -> Option<&mut dyn skelter_core::VirtualChildren> {
         // SV83: a new type scale (the restyle before this realise) sizes the rows
-        if self.props.auto_row_height {
+        if self.props.auto_row_height || !self.row_height_written {
             self.apply_row_height();
         }
         Some(self)
@@ -1626,8 +1628,16 @@ mod sv83 {
         let theme = crate::theme::Theme::default();
         let row_h = theme.metrics().row_h;
         let mut l = VirtualList::default();
-        // off (the default): `row-height` alone, whatever the text size
-        assert_eq!(restyle(&mut l, &theme, 24.0), DEFAULT_ROW_HEIGHT);
+        // without a theme: the prop default
+        let _ = l.virtual_children();
+        assert_eq!(l.heights().estimate(), DEFAULT_ROW_HEIGHT);
+        // off (the default), row-height unset: the theme's row, grown with the text (POL4-ROWS)
+        assert_eq!(restyle(&mut l, &theme, 13.0), row_h);
+        assert_eq!(restyle(&mut l, &theme, 24.0), (row_h * 24.0 / 13.0).round());
+        // a written row-height wins, whatever the text size
+        l.set_prop(P::row_height.id(), &Value::F64(32.0)).unwrap();
+        assert_eq!(restyle(&mut l, &theme, 24.0), 32.0);
+        let mut l = VirtualList::default();
         let auto = ListProps::SPECS.iter().position(|s| s.name == "auto-row-height").unwrap();
         l.set_prop(PropId(auto as u32), &Value::Bool(true)).unwrap();
         // the body size: the density's row; a larger text size: taller rows
@@ -1642,6 +1652,31 @@ mod sv83 {
         // off again: row-height
         l.set_prop(PropId(auto as u32), &Value::Bool(false)).unwrap();
         assert_eq!(l.heights().estimate(), 18.0);
+    }
+
+    /// POL4-ROWS: an unset `row-height` is the density's row (compact 20, default 24,
+    /// comfortable 28) for a list and a tree; a written one wins.
+    #[test]
+    fn unset_row_height_follows_the_density() {
+        use crate::theme::{Density, Theme};
+        for (density, want) in [(Density::Compact, 20.0), (Density::Default, 24.0), (Density::Comfortable, 28.0)] {
+            let theme = Theme::dark_modern().with_density(density);
+            assert_eq!(theme.metrics().row_h, want, "{density:?}");
+            let mut l = VirtualList::default();
+            assert_eq!(restyle(&mut l, &theme, 13.0), want, "list {density:?}");
+            let mut t = crate::views::tree::TreeView::default();
+            let sc = StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None, font_size: Some(13.0), theme: Some(&theme) };
+            let _ = t.layout_style(&sc);
+            let _ = t.virtual_children();
+            assert_eq!(t.list.heights().estimate(), want, "tree {density:?}");
+            // a written row-height wins over the theme
+            t.set_prop(P::row_height.id(), &Value::F64(22.0)).unwrap();
+            let _ = t.layout_style(&sc);
+            let _ = t.virtual_children();
+            assert_eq!(t.list.heights().estimate(), 22.0, "tree {density:?} written");
+            l.set_prop(P::row_height.id(), &Value::F64(40.0)).unwrap();
+            assert_eq!(restyle(&mut l, &theme, 13.0), 40.0, "list {density:?} written");
+        }
     }
 }
 

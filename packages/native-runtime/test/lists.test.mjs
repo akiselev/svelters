@@ -88,7 +88,6 @@ test('creation: the virtual-list gets its props, listens to the row lifecycle an
     'create virtual-list #2',
     'set #2 layout "list"',
     'set #2 selection "single"',
-    'set #2 row-height 32',
     'set #2 min-height 100',
     'listen #2 setup on',
     'listen #2 bind on',

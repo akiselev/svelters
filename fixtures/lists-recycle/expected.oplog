@@ -27,7 +27,6 @@ insert #2 #3 before=end slot=default
 create virtual-list #10
 set #10 layout "list"
 set #10 selection "single"
-set #10 row-height 32
 set #10 min-height 200
 listen #10 setup on
 listen #10 bind on
@@ -121,7 +120,6 @@ event #8 clicked []
 create virtual-list #19
 set #19 layout "list"
 set #19 selection "single"
-set #19 row-height 32
 set #19 min-height 200
 listen #19 setup on
 listen #19 bind on
