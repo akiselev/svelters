@@ -826,7 +826,8 @@ impl Kind for TableKind {
     /// The table, its header row of column headers and its realised rows with their cells, as
     /// virtual children (FQ-66): rows and cells named from the cell text, with their row and column
     /// index and selected state, and `Click` (a row's, a cell's: select as a click; a header's:
-    /// `header-clicked` and the sort). Only the rows and columns in view, as drawn.
+    /// `header-clicked` and the sort). Only the rows and columns in view, as drawn. The cursor row,
+    /// while drawn, is the table's active descendant (SV89).
     fn a11y(&self, cx: &mut A11yCx) {
         use skelter_base::accesskit::{Action, Node, SortDirection};
         cx.default_a11y();
@@ -864,6 +865,7 @@ impl Kind for TableKind {
             }
         }
         let (first, end) = g.visible_rows(len);
+        let mut cursor_row = None;
         'rows: for pos in first..end {
             let selected = t.state.sel.is_selected(t.state.key_of(pos));
             let texts: Vec<&str> = shown.iter().filter_map(|&d| t.state.cell(pos, d)).filter(|s| !s.is_empty()).collect();
@@ -881,6 +883,9 @@ impl Kind for TableKind {
             row.set_selected(selected);
             row.add_action(Action::Click);
             let Some(ri) = cx.add_virtual_child(row) else { break };
+            if t.state.sel.cursor.is_some_and(|c| c == t.state.key_of(pos)) {
+                cursor_row = Some(ri);
+            }
             targets.push(A11yTarget::Row(pos));
             for &k in &cols {
                 let (r, clip) = g.cell_rect(pos, k);
@@ -898,6 +903,12 @@ impl Kind for TableKind {
                 }
                 targets.push(A11yTarget::Cell(pos, k));
             }
+        }
+        // SV89: the cursor row is what assistive technology reports as focused while the table has
+        // focus (an `aria-activedescendant` prop wins); a cursor row scrolled out of the realised
+        // rows names none
+        if let Some(ri) = cursor_row {
+            cx.out.set_active_descendant(skelter_core::a11y::virtual_id(cx.node.id(), ri));
         }
         *self.a11y_targets.borrow_mut() = targets;
     }
@@ -967,6 +978,47 @@ mod tests {
             })
             .collect();
         (d, t, cols)
+    }
+
+    /// SV89: while the table has focus, the cursor row is its active descendant, so assistive
+    /// technology announces each row the arrow keys land on; a cursor row scrolled out of the drawn
+    /// rows names none.
+    #[test]
+    fn the_cursor_row_is_the_tables_active_descendant() {
+        use crate::testdoc::{click, frame, key};
+        use skelter_base::accesskit::Role;
+        use skelter_base::key::Key;
+        let (mut d, t, _) = table_doc(100);
+        let rows: Vec<Value> = (0..3).map(|k| Value::List(vec![Value::from(format!("r{k}")), Value::from("x")].into())).collect();
+        d.call(t, TABLE.method_id(0), &[Value::I64(0), Value::List(rows.into())]).unwrap();
+        frame(&mut d);
+        // the active descendant the table went out with, as the label of the row it names
+        let named = |c: &skelter_base::commit::Commit| {
+            let up = c.a11y.as_ref()?;
+            let ad = up.nodes.iter().find(|(id, _)| id.0 == t.0)?.1.active_descendant();
+            Some(ad.and_then(|ad| up.nodes.iter().find(|(id, _)| *id == ad)).map(|(_, n)| (n.role(), n.label().map(str::to_owned))))
+        };
+        // row 0 (the header is 24 high, rows 20)
+        click(&mut d, 40.0, 34.0);
+        assert_eq!(d.focused(crate::testdoc::W), Some(t));
+        let c = frame(&mut d).expect("a commit");
+        assert_eq!(named(&c), Some(Some((Role::Row, Some("r0 x".into())))));
+        for (k, want) in [(Key::ArrowDown, "r1 x"), (Key::ArrowDown, "r2 x"), (Key::Home, "r0 x")] {
+            d.dispatch(&key(k, None));
+            let c = frame(&mut d).expect("a commit");
+            assert_eq!(named(&c), Some(Some((Role::Row, Some(want.into())))), "after {k:?}");
+        }
+        // End: the last row, revealed and named
+        d.dispatch(&key(Key::End, None));
+        let c = frame(&mut d).expect("a commit");
+        let up = c.a11y.as_ref().expect("an a11y update");
+        let ad = up.nodes.iter().find(|(id, _)| id.0 == t.0).and_then(|(_, n)| n.active_descendant()).expect("an active descendant");
+        let row = up.nodes.iter().find(|(id, _)| *id == ad).map(|(_, n)| n).expect("the row goes out with the table");
+        assert_eq!(row.row_index(), Some(99));
+        // the cursor row scrolled out of view: none
+        d.call(t, TABLE.method_named("scroll-to-row").unwrap(), &[Value::I64(0)]).unwrap();
+        let c = frame(&mut d).expect("a commit");
+        assert_eq!(named(&c).flatten(), None);
     }
 
     #[test]

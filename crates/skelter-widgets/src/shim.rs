@@ -518,6 +518,9 @@ pub mod core {
         /// The kind's virtual rows are stale (`skelter_core::EventCx::refresh_virtual`): realise
         /// them again before the next layout.
         pub refresh_virtual: bool,
+        /// The kind's accessibility node changed outside its props (a highlighted option moved):
+        /// core sends it again (`skelter_core::EventCx::request_a11y`).
+        pub a11y: bool,
         /// Text layouts with caret geometry over the document's text system ([`LayoutLender`]);
         /// `None`: no text system (or a test without one).
         pub layouts: Option<&'a mut dyn LayoutLender>,
@@ -526,7 +529,7 @@ pub mod core {
     impl<'a> EventCx<'a> {
         pub fn new(now: Time, size: Size, state: &'a mut StateBits, policy: &'a Policy) -> EventCx<'a> {
             let enabled = !state.contains(StateBits::DISABLED);
-            EventCx { now, size, state, enabled, focused: false, policy, reduced_motion: false, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new(), ret: None, refresh_virtual: false, layouts: None }
+            EventCx { now, size, state, enabled, focused: false, policy, reduced_motion: false, emitted: Vec::new(), changed: Vec::new(), focus_request: None, wake: None, repaint: false, cursor: None, capture: None, peers: Vec::new(), focus_anchor: None, scroll_to: None, sync: None, emitted_on: Vec::new(), ret: None, refresh_virtual: false, a11y: false, layouts: None }
         }
         pub fn emit(&mut self, signal: SignalId, args: Vec<Value>) {
             self.emitted.push(Emitted { signal, args });
@@ -628,6 +631,10 @@ pub mod core {
         /// select's options), bounds in the node's space. Core sends them after the node's real
         /// children; an action on child `i` comes back as [`Event::A11yChild`] with `index: i`.
         pub children: Vec<accesskit::Node>,
+        /// The index in [`A11yCx::children`] of the child assistive technology reports as focused
+        /// while the node has focus (an open list's highlighted option): core names it as the
+        /// node's active descendant. `None`: none.
+        pub active_child: Option<usize>,
     }
 
     /// Stands in for `skelter_core::Kind` (architecture §4.2). Prop storage is the kind's own: core calls

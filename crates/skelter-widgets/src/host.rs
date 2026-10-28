@@ -877,10 +877,10 @@ impl<W: w::Kind + Default> Hosted<W> {
                 wcx.layouts = Some(&mut lender);
             }
             let handled = f(&mut self.widget, &mut wcx);
-            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual, .. } = wcx;
-            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual))
+            let w::EventCx { emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual, a11y, .. } = wcx;
+            (handled, (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual, a11y))
         };
-        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual) = out;
+        let (emitted, changed, focus_request, cursor, repaint, wake, peers, focus_anchor, scroll_to, emitted_on, ret, refresh_virtual, a11y) = out;
         self.ret = ret;
         if refresh_virtual {
             cx.refresh_virtual();
@@ -948,6 +948,9 @@ impl<W: w::Kind + Default> Hosted<W> {
         }
         if repaint || diff != StateBits::NONE {
             cx.request_paint();
+        }
+        if a11y {
+            cx.request_a11y();
         }
         if handled == w::Handled::Yes { Handled::Yes } else { Handled::No }
     }
@@ -1290,19 +1293,25 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn a11y(&self, cx: &mut A11yCx) {
         cx.default_a11y();
         let (state, size) = (StateBits(cx.state().0), cx.size());
-        let mut wcx = w::A11yCx { node: cx.out, state, size, children: Vec::new() };
+        let mut wcx = w::A11yCx { node: cx.out, state, size, children: Vec::new(), active_child: None };
         self.widget.a11y(&mut wcx);
         // FQ-67: `disabled` is the node's state (its `disabled` prop or an inert ancestor), not the
         // widget's mirror, which may lag it (a button re-enabled by a prop write stayed disabled).
         // A widget disabled by a prop of its own (not the mirror) keeps what it said.
         let children = std::mem::take(&mut wcx.children);
+        let active = wcx.active_child;
         if cx.node.disabled() {
             cx.out.set_disabled();
         } else if Self::spec_ref().disabled.is_some() {
             cx.out.clear_disabled();
         }
-        for c in children {
-            cx.add_virtual_child(c);
+        for (k, c) in children.into_iter().enumerate() {
+            let added = cx.add_virtual_child(c);
+            // SV89: the child the widget reports as focused is the node's active descendant
+            if let Some(v) = added.filter(|_| active == Some(k)) {
+                let id = skelter_core::a11y::virtual_id(cx.node.id(), v);
+                cx.out.set_active_descendant(id);
+            }
         }
     }
 }

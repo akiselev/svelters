@@ -478,6 +478,15 @@ pub trait VirtualChildren {
     fn row_a11y(&self, row: usize, node: &mut accesskit::Node) {
         let _ = (row, node);
     }
+    /// The row the keyboard cursor is on (a list's current item). While a node is bound to it, the
+    /// virtualising node's AccessKit `active_descendant` names that node, so assistive technology
+    /// reports the row as focused while the virtualising node has focus and follows the cursor as
+    /// it moves (an `aria-activedescendant` prop wins). Sent again with the virtualising node, so a
+    /// kind whose cursor moves marks its a11y dirty (a `Paint`-class prop change does). Default:
+    /// none.
+    fn cursor_row(&self) -> Option<usize> {
+        None
+    }
 }
 
 /// The retained behaviour of one node.

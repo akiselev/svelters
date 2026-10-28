@@ -333,6 +333,7 @@ impl Select {
                 self.highlight = to;
                 self.reveal();
                 cx.repaint = true;
+                cx.a11y = true;
             }
             return Handled::Yes;
         }
@@ -376,6 +377,7 @@ impl Select {
                 self.highlight = Some(to);
                 self.reveal();
                 cx.repaint = true;
+                cx.a11y = true;
             } else if Some(to) != self.selected {
                 self.pick(cx, to);
             }
@@ -561,6 +563,7 @@ impl Kind for Select {
                     self.highlight = Some(*index as usize);
                     self.reveal();
                     cx.repaint = true;
+                    cx.a11y = true;
                     Handled::Yes
                 }
                 _ => Handled::No,
@@ -603,6 +606,7 @@ impl Kind for Select {
                         {
                             self.highlight = Some(i);
                             cx.repaint = true;
+                            cx.a11y = true;
                         }
                         if row.is_some() || on_button { Handled::Yes } else { Handled::No }
                     }
@@ -625,6 +629,8 @@ impl Kind for Select {
         if !self.props.enabled {
             cx.node.set_disabled();
         }
+        // SV89: the open list's highlighted option is what assistive technology reports as focused
+        cx.active_child = self.highlight.filter(|&h| self.props.open && h < self.options.len());
         let shown = self.list.map(|l| (l, self.first..(self.first + l.visible).min(self.options.len())));
         for (i, text) in self.options.iter().enumerate() {
             let mut o = accesskit::Node::new(accesskit::Role::ListBoxOption);
@@ -886,6 +892,35 @@ mod tests {
         assert_eq!((s.highlight, s.selected), (Some(3), Some(2)));
         let (h, _) = send(&mut s, &policy, 0, Event::A11yChild { index: 9, req });
         assert_eq!(h, Handled::No, "out of range");
+    }
+
+    /// SV89: while the list is open, its highlighted option is the select's active descendant,
+    /// following the arrow keys; closed, none.
+    #[test]
+    fn the_highlighted_option_is_the_active_descendant() {
+        use crate::testdoc::{child, doc, frame, key};
+        use skelter_core::Value as V;
+        let (mut d, root) = doc(Size::new(400.0, 300.0), |r| {
+            crate::host::register::<Select>(r).unwrap();
+        });
+        let kind = skelter_core::KindId::of("select");
+        let spec = d.registry().get(kind).unwrap().spec;
+        let s = child(&mut d, root, kind, "width: 120px; height: 26px");
+        let options = V::List(["Apple", "Banana", "Cherry"].map(V::from).to_vec().into());
+        d.set_prop(s, spec.prop_named("options").unwrap(), options).unwrap();
+        d.set_prop(s, spec.prop_named("selected").unwrap(), V::I64(0)).unwrap();
+        d.focus(s, skelter_core::FocusReason::Keyboard);
+        frame(&mut d);
+        let ad = |c: &skelter_base::commit::Commit| c.a11y.as_ref()?.nodes.iter().find(|(id, _)| id.0 == s.0).map(|(_, n)| n.active_descendant());
+        let option = |i| Some(Some(skelter_core::a11y::virtual_id(s, i)));
+        d.dispatch(&key(Key::F4, None));
+        assert_eq!(ad(&frame(&mut d).expect("a commit")), option(0), "open: the selected option");
+        d.dispatch(&key(Key::ArrowDown, None));
+        assert_eq!(ad(&frame(&mut d).expect("a commit")), option(1));
+        d.dispatch(&key(Key::End, None));
+        assert_eq!(ad(&frame(&mut d).expect("a commit")), option(2));
+        d.dispatch(&key(Key::Escape, None));
+        assert_eq!(ad(&frame(&mut d).expect("a commit")), Some(None), "closed: none");
     }
 
     #[test]

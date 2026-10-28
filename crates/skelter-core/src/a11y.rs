@@ -68,11 +68,13 @@ impl Document {
         let role = self.view_at(i).kind().spec.role;
         let mut out = Node::new(role);
         let mut virtual_children = Vec::new();
-        if let Some(k) = self.kinds[i].take() {
+        let mut cursor_row = None;
+        if let Some(mut k) = self.kinds[i].take() {
             {
                 let mut cx = A11yCx { node: self.view_at(i), out: &mut out, virtual_children: &mut virtual_children };
                 k.a11y(&mut cx);
             }
+            cursor_row = k.virtual_children().and_then(|vc| vc.cursor_row());
             self.kinds[i] = Some(k);
         }
         // a realised row of a virtualising parent: what it is as the parent's member (a list box's
@@ -222,6 +224,13 @@ impl Document {
                 labels.sort_by_key(|l| l.0);
                 out.set_labelled_by(labels.into_iter().map(ax).collect::<Vec<_>>());
             }
+        }
+        // SV89: a virtualising node's cursor row, while realised, is its active descendant (an
+        // `aria-activedescendant` below wins)
+        if let Some(row) = cursor_row
+            && let Some(&(_, r)) = self.virt.get(&node).and_then(|st| st.rows.iter().find(|&&(p, _)| p == row))
+        {
+            out.set_active_descendant(ax(r));
         }
         // references by anchor (validated against the tree before the update leaves)
         if let Some(w) = window {
