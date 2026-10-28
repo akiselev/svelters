@@ -490,9 +490,70 @@ impl ToastHost {
     }
 }
 
+/// `show(text, level?, duration?, actions?)` (returns the id), `dismiss(id)` and `clear()`: egui's
+/// `toast-host` methods over [`ToastHost::show`], [`ToastHost::dismiss`] and [`ToastHost::clear`].
+pub static METHODS: &[skelter_core::MethodSpec] = &[
+    skelter_core::MethodSpec::new(
+        "show",
+        &[
+            skelter_core::ArgSpec::new("text", skelter_core::ValueType::Str),
+            skelter_core::ArgSpec::new("level", skelter_core::ValueType::Str).nullable(),
+            skelter_core::ArgSpec::new("duration", skelter_core::ValueType::F64).nullable(),
+            skelter_core::ArgSpec::new("actions", skelter_core::ValueType::List).nullable(),
+        ],
+        Some(skelter_core::ArgSpec::new("return", skelter_core::ValueType::I64)),
+    )
+    .doc("`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: `info`, `success`, `warning`, `error`; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id."),
+    skelter_core::MethodSpec::new("dismiss", &[skelter_core::ArgSpec::new("id", skelter_core::ValueType::I64)], None).doc("`dismiss(id)`: closes that toast (`closed(id, 'method')`)."),
+    skelter_core::MethodSpec::new("clear", &[], None).doc("Closes every toast (`closed(id, 'method')` for each)."),
+];
+
 impl Kind for ToastHost {
     fn parts() -> &'static [&'static str] {
         &["toast", "close", "action"]
+    }
+    fn methods() -> &'static [skelter_core::MethodSpec] {
+        METHODS
+    }
+    fn call(&mut self, cx: &mut EventCx, method: usize, args: &[skelter_core::Value]) -> Handled {
+        use skelter_core::Value as V;
+        match (method, args) {
+            (0, [text, rest @ ..]) => {
+                let Some(text) = text.as_str() else { return Handled::No };
+                let level = match rest.first() {
+                    None => Level::Info,
+                    Some(v) => match v.as_str().and_then(Level::of) {
+                        Some(l) => l,
+                        None => return Handled::No,
+                    },
+                };
+                let duration = match rest.get(1) {
+                    None => None,
+                    Some(v) => match v.as_f64() {
+                        Some(s) => Some(Span::from_secs_f64(s.max(0.0))),
+                        None => return Handled::No,
+                    },
+                };
+                let actions = match rest.get(2) {
+                    Some(V::List(l)) => l.iter().filter_map(|a| a.as_str().map(str::to_owned)).collect(),
+                    _ => Vec::new(),
+                };
+                let id = self.show(text.to_owned(), level, duration, actions);
+                self.tick(cx);
+                cx.ret = Some(V::I64(id));
+                Handled::Yes
+            }
+            (1, [id]) => {
+                let Some(id) = id.as_i64() else { return Handled::No };
+                self.dismiss(cx, id);
+                Handled::Yes
+            }
+            (2, []) => {
+                self.clear(cx);
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
     }
     fn spec() -> &'static KindSpec {
         &SPEC

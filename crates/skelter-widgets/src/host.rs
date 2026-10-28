@@ -32,7 +32,7 @@ use crate::shim::text::{PlacedRun, RichText, TextLayout, TextShaper};
 use skelter_base::commit::{ImageData, PathData};
 use skelter_base::display::{DisplayList, Prim};
 use skelter_base::event::{PointerEvent, PointerPhase, WheelEvent};
-use skelter_base::geom::{Insets, Point, Size, Vec2};
+use skelter_base::geom::{Insets, Point, Rect, Size, Vec2};
 use skelter_base::ids::{ImageId, NodeId, PathId, RunId};
 use skelter_base::text::GlyphRun;
 use skelter_core::{
@@ -529,6 +529,18 @@ fn folded_of(node: NodeView<'_>, folds: bool, elements: bool) -> Vec<w::Value> {
     run::fold(&run_nodes(&|id| node.view(id), node.children(), css_color(node.css(), "color")))
 }
 
+/// The window's content area (its root's box) in `node`'s local points.
+fn window_room(node: NodeView<'_>) -> Rect {
+    let mut root = node;
+    while let Some(p) = root.parent() {
+        root = p;
+    }
+    let tf = root.window_transform();
+    let (a, b) = (tf.apply(Point::ZERO), tf.apply(Point::new(root.size().w, root.size().h)));
+    let (a, b) = (node.from_window(a), node.from_window(b));
+    Rect::new(a.x.min(b.x), a.y.min(b.y), a.x.max(b.x), a.y.max(b.y))
+}
+
 /// The children as element records (`Kind::folds_elements`): `{tag, anchor, props, children}`, each prop
 /// of the child's kind by name with its value or default.
 fn element_records<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId]) -> Vec<w::Value> {
@@ -542,6 +554,10 @@ fn element_records<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[
                     let val = v.prop(spec.prop_id(i))?;
                     let wv = match val {
                         Value::Enum(e) => w::Value::Str(Arc::from(*p.enum_values.get(*e as usize)?)),
+                        // the common `disabled` and `hidden` (what Svelte's `enabled` and `visible`
+                        // write) also clear the element's own `enabled` and `visible`
+                        Value::Bool(true) if p.name == "enabled" && v.prop_bool(skelter_core::common::DISABLED) => w::Value::Bool(false),
+                        Value::Bool(true) if p.name == "visible" && v.prop_bool(skelter_core::common::HIDDEN) => w::Value::Bool(false),
                         other => plain_from_core(other)?,
                     };
                     Some((Arc::from(p.name), wv))
@@ -569,6 +585,8 @@ pub struct Hosted<W: w::Kind + Default> {
     paths: HashMap<String, PathId>,
     /// What the last method call answered ([`w::EventCx::ret`]).
     ret: Option<Value>,
+    /// The window's room last given to the widget ([`w::Kind::room`]).
+    room: Option<Rect>,
     /// The custom properties the widget's UA tables have read through the cascade (SV67), sorted:
     /// what [`Kind::reads_custom_property`] answers from (SV69). Only grows: a token read in one
     /// state stays a dependency.
@@ -577,7 +595,7 @@ pub struct Hosted<W: w::Kind + Default> {
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new(), ret: None, token_reads: Default::default() }
+        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new(), ret: None, room: None, token_reads: Default::default() }
     }
 }
 
@@ -965,8 +983,18 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         if let Some(g) = cx.node.scroll_geometry() {
             self.widget.scroll_geometry(&g);
         }
-        // a dry recording finds the images the list will reference; the new ones are uploaded
+        // the window's room, for the popups the widget places itself
         let node = cx.node;
+        let room = window_room(node);
+        if self.room != Some(room) {
+            // the first prepare runs before the node has a window transform, and a move changes it:
+            // look again next frame (settles when the room stays; skelter-core drops a prepare's
+            // request today, POL2-REGISTER R1, so the room catches up at the next repaint)
+            cx.request_paint();
+            self.room = Some(room);
+            self.widget.room(room);
+        }
+        // a dry recording finds the images the list will reference; the new ones are uploaded
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let ((new, used, new_paths, used_paths, emitted), reads) = crate::paint::record_token_reads(|| {
@@ -1415,5 +1443,45 @@ mod tests {
         d.focus(a, FocusReason::Programmatic);
         let c = frame(&mut d).expect("a frame");
         assert_eq!((ring(&c, a), ring(&c, b)), (Some(true), Some(false)));
+    }
+
+    /// POL2-REGISTER: Svelte's `enabled` and `visible` write the common `disabled` and `hidden`; a
+    /// folding kind (a menu) reads them as its element children's own `enabled` and `visible`.
+    #[test]
+    fn folded_elements_take_the_common_disabled_and_hidden() {
+        use crate::testdoc::{child, doc, frame};
+        use crate::views::menu::ContextMenu;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 200.0), |r| crate::views::register_all(r).unwrap());
+        let menu = child(&mut d, root, skelter_core::KindId::of("context-menu"), "");
+        let item = skelter_core::KindId::of("menu-item");
+        let label = d.registry().get(item).unwrap().spec.prop_named("label").unwrap();
+        let [cut, paste, hidden] = ["Cut", "Paste", "Hidden"].map(|t| {
+            let n = child(&mut d, menu, item, "");
+            d.set_prop(n, label, Value::from(t)).unwrap();
+            n
+        });
+        d.set_prop(paste, skelter_core::common::DISABLED, Value::Bool(true)).unwrap();
+        d.set_prop(hidden, skelter_core::common::HIDDEN, Value::Bool(true)).unwrap();
+        let _ = cut;
+        frame(&mut d);
+        let entries = d.with_kind(menu, |k| k.as_any().and_then(|a| a.downcast_ref::<ContextMenu>()).unwrap().menus.model.entries.iter().filter(|e| !e.path.is_empty()).map(|e| (e.label.clone(), e.enabled, e.visible)).collect::<Vec<_>>()).unwrap();
+        assert_eq!(entries, [("Cut".into(), true, true), ("Paste".into(), false, true), ("Hidden".into(), true, false)]);
+    }
+
+    /// POL2-REGISTER: a hosted kind gets the window's content area in its local points before it
+    /// prepares (menus keep their levels in it).
+    #[test]
+    fn the_window_room_is_in_the_nodes_local_points() {
+        use crate::testdoc::{child, doc, frame};
+        use crate::views::menu::ContextMenu;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 200.0), |r| crate::views::register_all(r).unwrap());
+        let menu = child(&mut d, root, skelter_core::KindId::of("context-menu"), "position: absolute; left: 40px; top: 30px; width: 10px; height: 10px");
+        frame(&mut d);
+        // the first prepare runs before the node has a transform; a repaint takes the real one
+        let open = skelter_core::PropId::of("context-menu", "open", "bool");
+        d.set_prop(menu, open, Value::Bool(true)).unwrap();
+        frame(&mut d);
+        let room = d.with_kind(menu, |k| k.as_any().and_then(|a| a.downcast_ref::<ContextMenu>()).unwrap().menus.bounds).unwrap();
+        assert_eq!(room, Rect::new(-40.0, -30.0, 260.0, 170.0));
     }
 }

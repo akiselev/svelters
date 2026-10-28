@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "1ad74b354c8e04cb"
+    "spec_hash": "54b2d6228e69fd6f"
   },
   "inline_text": {
     "kind": "span",
@@ -937,6 +937,329 @@
       "text_content": "text",
       "widget": "skelter-widgets"
     },
+    "Calendar": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Grid"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-skelter: <calendar> writes value into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Calendar",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup.",
+      "fingerprint": "02dd2daf",
+      "id": 48049583,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Calendar",
+      "native_state": [
+        "value"
+      ],
+      "present": null,
+      "props": {
+        "calendar-week": {
+          "change": "layout",
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows ISO week numbers in front of each week (`::part(week-number)`).",
+          "fingerprint": "0b946a1b",
+          "id": 194275867,
+          "js": "calendar-week",
+          "native": "calendar-week",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:calendar-week",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "day-parts": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`.",
+          "fingerprint": "047f2bdf",
+          "id": 75443167,
+          "js": "day-parts",
+          "native": "day-parts",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:day-parts",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "first-day": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "auto",
+          "doc": "The weekday the grid starts on; `auto` is the locale's (Monday until IN1).",
+          "fingerprint": "05558c4c",
+          "id": 89492556,
+          "js": "first-day",
+          "native": "first-day",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:first-day",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "writable": true
+        },
+        "max": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit.",
+          "fingerprint": "05f21c3b",
+          "id": 99753019,
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:max",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "min": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit.",
+          "fingerprint": "0c764cd1",
+          "id": 209079505,
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:min",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "navigation": {
+          "change": "layout",
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the header with the previous/next month buttons and the month and year.",
+          "fingerprint": "0a7ec744",
+          "id": 176080708,
+          "js": "navigation",
+          "native": "navigation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:navigation",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "read-only": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows and roves the calendar but never picks (Qt's `NoSelection`).",
+          "fingerprint": "0a9921f7",
+          "id": 177807863,
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:read-only",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "value": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The picked date, ISO 8601 (`2026-10-22`); `\"\"` for none.",
+          "fingerprint": "09f51a94",
+          "id": 167058068,
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Calendar:value",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "weekday-format": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "short",
+          "doc": "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row).",
+          "fingerprint": "0601845f",
+          "id": 100762719,
+          "js": "weekday-format",
+          "native": "weekday-format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Calendar:weekday-format",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "narrow",
+            "short",
+            "long",
+            "none"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked a day; carries it (ISO 8601).",
+          "fingerprint": "03c32f62",
+          "handler_result": "none",
+          "id": 63123298,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A pick is a commit (§2.4); carries the date.",
+          "fingerprint": "0a002b75",
+          "handler_result": "none",
+          "id": 167783285,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "page-changed": {
+          "args": [
+            {
+              "name": "year",
+              "type": "i64"
+            },
+            {
+              "name": "month",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user moved to another month (prev/next, PageUp/PageDown, arrows across a month).",
+          "fingerprint": "043af09a",
+          "handler_result": "none",
+          "id": 70971546,
+          "js_event": "page-changed",
+          "name": "page-changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "Checkbox": {
       "a11y": {
         "name_from": [
@@ -1390,6 +1713,496 @@
       "text_content": "text",
       "widget": "skelter-widgets"
     },
+    "ColorEditor": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Group"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "custom-colors": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "custom-colors",
+          "provenance": "svelters-skelter: <color-editor> writes custom-colors into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "value",
+          "provenance": "svelters-skelter: <color-editor> writes value into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "ColorEditor",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup.",
+      "fingerprint": "0ef14604",
+      "id": 250693124,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter ColorEditor",
+      "native_state": [
+        "custom-colors",
+        "value"
+      ],
+      "present": null,
+      "props": {
+        "alpha": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "opaque",
+          "doc": "`opaque` hides the alpha strip; `blend` and `blend-or-additive` show it.",
+          "fingerprint": "05553d14",
+          "id": 89472276,
+          "js": "alpha",
+          "native": "alpha",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ColorEditor:alpha",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "opaque",
+            "blend",
+            "blend-or-additive"
+          ],
+          "writable": true
+        },
+        "custom-colors": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`.",
+          "fingerprint": "08b64921",
+          "id": 146164001,
+          "js": "custom-colors",
+          "native": "custom-colors",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ColorEditor:custom-colors",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "fields": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "hex rgb",
+          "doc": "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100).",
+          "fingerprint": "057b0feb",
+          "id": 91951083,
+          "js": "fields",
+          "native": "fields",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ColorEditor:fields",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "swatches": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one.",
+          "fingerprint": "04d3558d",
+          "id": 80958861,
+          "js": "swatches",
+          "native": "swatches",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ColorEditor:swatches",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "value": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "#000000",
+          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted).",
+          "fingerprint": "0ac40991",
+          "id": 180619665,
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ColorEditor:value",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex).",
+          "fingerprint": "0bef564b",
+          "handler_result": "none",
+          "id": 200234571,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A commit point: a drag released, a key step, a field set, a swatch picked (§2.4).",
+          "fingerprint": "0d9e341a",
+          "handler_result": "none",
+          "id": 228471834,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "ColorPicker": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "ColorWell"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "custom-colors": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "custom-colors",
+          "provenance": "svelters-skelter: <color-picker> writes custom-colors into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "value",
+          "provenance": "svelters-skelter: <color-picker> writes value into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "ColorPicker",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup.",
+      "fingerprint": "06140bbd",
+      "id": 101977021,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter ColorPicker",
+      "native_state": [
+        "custom-colors",
+        "value"
+      ],
+      "present": null,
+      "props": {
+        "alpha": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "opaque",
+          "doc": "Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor).",
+          "fingerprint": "061994f7",
+          "id": 102339831,
+          "js": "alpha",
+          "native": "alpha",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ColorPicker:alpha",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "opaque",
+            "blend",
+            "blend-or-additive"
+          ],
+          "writable": true
+        },
+        "commit-mode": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "live",
+          "doc": "`live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog).",
+          "fingerprint": "0d9f1294",
+          "id": 228528788,
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ColorPicker:commit-mode",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "live",
+            "confirm"
+          ],
+          "writable": true
+        },
+        "custom-colors": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`.",
+          "fingerprint": "02e3d656",
+          "id": 48485974,
+          "js": "custom-colors",
+          "native": "custom-colors",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ColorPicker:custom-colors",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "fields": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "hex rgb",
+          "doc": "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100).",
+          "fingerprint": "0103c796",
+          "id": 17024918,
+          "js": "fields",
+          "native": "fields",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ColorPicker:fields",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "swatches": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one.",
+          "fingerprint": "0013dd14",
+          "id": 1301780,
+          "js": "swatches",
+          "native": "swatches",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ColorPicker:swatches",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "value": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "#000000",
+          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it.",
+          "fingerprint": "01421ac2",
+          "id": 21109442,
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ColorPicker:value",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user edited the colour; carries it (CSS hex, once per frame while dragging).",
+          "fingerprint": "0f70fa88",
+          "handler_result": "none",
+          "id": 259062408,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save.",
+          "fingerprint": "0e5beac3",
+          "handler_result": "none",
+          "id": 240904899,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "ComboBox": {
       "a11y": {
         "name_from": [
@@ -1712,7 +2525,27 @@
       },
       "abstract": false,
       "attaches_to": "Widget",
-      "bindings": {},
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <context-menu> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
       "chain": [
         "ContextMenu",
         "MenuEntry"
@@ -1766,15 +2599,521 @@
         }
       },
       "native": "skelter ContextMenu",
-      "native_state": [],
+      "native_state": [
+        "open"
+      ],
       "present": null,
-      "props": {},
+      "props": {
+        "open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The menu is open; the user opening or closing it changes it (`bind:open`). Setting it true opens it where it last opened (its own top left the first time); `popup` opens it below its owner or at a point.",
+          "fingerprint": "0d10a6af",
+          "id": 219195055,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ContextMenu:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
       "provenance": {
         "kind": "crates/svelters-skelter/src/surface/tier1.rs"
       },
       "signals": {},
       "slot_ids": {
         "items": 30480110
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "DatePicker": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "DateInput"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-skelter: <date-picker> writes value into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "DatePicker",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode=\"immediate\"`.",
+      "fingerprint": "0ea44d16",
+      "id": 245648662,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter DatePicker",
+      "native_state": [
+        "value"
+      ],
+      "present": null,
+      "props": {
+        "calendar-week": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows ISO week numbers in the calendar.",
+          "fingerprint": "0ec1c28e",
+          "id": 247579278,
+          "js": "calendar-week",
+          "native": "calendar-week",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:calendar-week",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "commit-mode": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "confirm",
+          "doc": "`confirm`: a picked day is pending until Save (Enter saves, Cancel or Escape drops it); `immediate`: a pick commits and closes the popup (Qt).",
+          "fingerprint": "0afe477b",
+          "id": 184436603,
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:commit-mode",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "confirm",
+            "immediate"
+          ],
+          "writable": true
+        },
+        "day-parts": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`.",
+          "fingerprint": "0c46de3e",
+          "id": 205971006,
+          "js": "day-parts",
+          "native": "day-parts",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:day-parts",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "first-day": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "auto",
+          "doc": "The weekday the grid starts on; `auto` is the locale's (Monday until IN1).",
+          "fingerprint": "03a9a539",
+          "id": 61449529,
+          "js": "first-day",
+          "native": "first-day",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:first-day",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "writable": true
+        },
+        "format": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "%Y-%m-%d",
+          "doc": "How the button shows the date (`strftime`, jiff's `civil::Date::strftime`).",
+          "fingerprint": "06b6f9f9",
+          "id": 112654841,
+          "js": "format",
+          "native": "format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:format",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "max": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit.",
+          "fingerprint": "0864454e",
+          "id": 140789070,
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:max",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "min": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit.",
+          "fingerprint": "0e1c0468",
+          "id": 236717160,
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:min",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "navigation": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the header with the previous/next month buttons and the month and year.",
+          "fingerprint": "0381cdbf",
+          "id": 58838463,
+          "js": "navigation",
+          "native": "navigation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:navigation",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "read-only": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows and roves the calendar but never picks (Qt's `NoSelection`).",
+          "fingerprint": "0a8b09ce",
+          "id": 176884174,
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:read-only",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "value": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day (and, with `commit-mode=\"confirm\"`, pressing Save) changes it.",
+          "fingerprint": "03b41065",
+          "id": 62132325,
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:DatePicker:value",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "weekday-format": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "short",
+          "doc": "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row).",
+          "fingerprint": "092828b8",
+          "id": 153626808,
+          "js": "weekday-format",
+          "native": "weekday-format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DatePicker:weekday-format",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "narrow",
+            "short",
+            "long",
+            "none"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user saved a date; carries it (ISO 8601).",
+          "fingerprint": "01df6dcd",
+          "handler_result": "none",
+          "id": 31419853,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A pick was applied (§2.4): Save, or the pick itself with `commit-mode=\"immediate\"`.",
+          "fingerprint": "0c3356c4",
+          "handler_result": "none",
+          "id": 204691140,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "page-changed": {
+          "args": [
+            {
+              "name": "year",
+              "type": "i64"
+            },
+            {
+              "name": "month",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user moved the calendar to another month.",
+          "fingerprint": "0b919e83",
+          "handler_result": "none",
+          "id": 194092675,
+          "js_event": "page-changed",
+          "name": "page-changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "DialogButtons": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Group"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {},
+      "chain": [
+        "DialogButtons",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A dialog's button row (QDialogButtonBox): its `button` children take their place by `dialog-role` in the platform's order, right-aligned 6 apart (a row with `justify-content: end` and `gap: 6` at creation). A click reports `clicked(role)` (`help` too for the help role). With EV3, `default` and `cancel` buttons answer Enter and Escape; in a `modal` or `inner-window`, accept and reject buttons close it with that result (`close(\"accept\")`).",
+      "fingerprint": "01eb082d",
+      "id": 32180269,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter DialogButtons",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "order": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "platform",
+          "doc": "The button order: `platform` (`Policy::button_order`: Windows and egui, KDE for Qt, GNOME for GTK, macOS), a platform by name, or `none` (tree order). Help and reset lead, then children without a role, then the platform's roles. Only layout sees it: paint and Tab order stay the tree's.",
+          "fingerprint": "06b1f8a3",
+          "id": 112326819,
+          "js": "order",
+          "native": "order",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:DialogButtons:order",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "platform",
+            "none",
+            "windows",
+            "kde",
+            "gnome",
+            "macos"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "clicked": {
+          "args": [
+            {
+              "name": "role",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "One of its buttons was clicked; carries the button's role (`auto` resolved).",
+          "fingerprint": "0d825cd1",
+          "handler_result": "none",
+          "id": 226647249,
+          "js_event": "clicked",
+          "name": "clicked",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "help": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Its `help` button was clicked (Qt `helpRequested`).",
+          "fingerprint": "018b1848",
+          "handler_result": "none",
+          "id": 25892936,
+          "js_event": "help",
+          "name": "help",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 57848286
       },
       "text_content": null,
       "widget": "skelter-widgets"
@@ -2652,6 +3991,525 @@
       "text_content": null,
       "widget": "skelter-widgets"
     },
+    "InnerWindow": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Window"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "collapsed": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "collapsed",
+          "provenance": "svelters-skelter: <inner-window> writes collapsed into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "height": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "move",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "height",
+          "provenance": "svelters-skelter: <inner-window> writes height into the tree as native-owned state (architecture §4.5) and emits `move` with it (arg 3); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 3
+          }
+        },
+        "width": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "move",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "width",
+          "provenance": "svelters-skelter: <inner-window> writes width into the tree as native-owned state (architecture §4.5) and emits `move` with it (arg 2); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 2
+          }
+        },
+        "x": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "move",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "x",
+          "provenance": "svelters-skelter: <inner-window> writes x into the tree as native-owned state (architecture §4.5) and emits `move` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "y": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "move",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "y",
+          "provenance": "svelters-skelter: <inner-window> writes y into the tree as native-owned state (architecture §4.5) and emits `move` with it (arg 1); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 1
+          }
+        }
+      },
+      "chain": [
+        "InnerWindow",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
+      "fingerprint": "0a7b9394",
+      "id": 175870868,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter InnerWindow",
+      "native_state": [
+        "collapsed",
+        "height",
+        "width",
+        "x",
+        "y"
+      ],
+      "present": null,
+      "props": {
+        "closable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows a close button in the title bar.",
+          "fingerprint": "07bfe738",
+          "id": 130017080,
+          "js": "closable",
+          "native": "closable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:InnerWindow:closable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "collapsed": {
+          "change": "layout",
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "fingerprint": "05940766",
+          "id": 93587302,
+          "js": "collapsed",
+          "native": "collapsed",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:InnerWindow:collapsed",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "collapsible": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "The title bar can collapse it to the title.",
+          "fingerprint": "091dbe13",
+          "id": 152944147,
+          "js": "collapsible",
+          "native": "collapsible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:InnerWindow:collapsible",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "heading": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "",
+          "fingerprint": "059e76fe",
+          "id": 94271230,
+          "js": "heading",
+          "native": "heading",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:InnerWindow:heading",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 240.0,
+          "doc": "",
+          "fingerprint": "0c6feced",
+          "id": 208661741,
+          "js": "height",
+          "native": "height",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:InnerWindow:height",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min-height": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 60.0,
+          "doc": "",
+          "fingerprint": "0ddd9662",
+          "id": 232625762,
+          "js": "min-height",
+          "native": "min-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:InnerWindow:min-height",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min-width": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 120.0,
+          "doc": "",
+          "fingerprint": "02132695",
+          "id": 34809493,
+          "js": "min-width",
+          "native": "min-width",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:InnerWindow:min-width",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "resizable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "The user can resize it; the content is laid out at its size. Without it the window is as big as its content.",
+          "fingerprint": "058e82f6",
+          "id": 93225718,
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:InnerWindow:resizable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "width": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 320.0,
+          "doc": "",
+          "fingerprint": "03f17c30",
+          "id": 66157616,
+          "js": "width",
+          "native": "width",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:InnerWindow:width",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "x": {
+          "change": "property",
+          "construct_only": false,
+          "default": 40.0,
+          "doc": "",
+          "fingerprint": "002a7674",
+          "id": 2782836,
+          "js": "x",
+          "native": "x",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:InnerWindow:x",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "y": {
+          "change": "property",
+          "construct_only": false,
+          "default": 40.0,
+          "doc": "",
+          "fingerprint": "09c22993",
+          "id": 163719571,
+          "js": "y",
+          "native": "y",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:InnerWindow:y",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "close": {
+          "args": [],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "041c332a",
+          "handler_result": "bool_stop",
+          "id": 68956970,
+          "js_event": "close",
+          "name": "close",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "drag-started": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0861f32c",
+          "handler_result": "none",
+          "id": 140636972,
+          "js_event": "drag-started",
+          "name": "drag-started",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-stopped": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0b8e6f8c",
+          "handler_result": "none",
+          "id": 193884044,
+          "js_event": "drag-stopped",
+          "name": "drag-stopped",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "move": {
+          "args": [
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "width",
+              "type": "f64"
+            },
+            {
+              "name": "height",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "02616e92",
+          "handler_result": "none",
+          "id": 39939730,
+          "js_event": "move",
+          "name": "move",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "raise": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "041d6a12",
+          "handler_result": "none",
+          "id": 69036562,
+          "js_event": "raise",
+          "name": "raise",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "resize": {
+          "args": [
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "width",
+              "type": "f64"
+            },
+            {
+              "name": "height",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0eefe653",
+          "handler_result": "none",
+          "id": 250603091,
+          "js_event": "resize",
+          "name": "resize",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggle": {
+          "args": [
+            {
+              "name": "expanded",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0e3f5060",
+          "handler_result": "none",
+          "id": 239030368,
+          "js_event": "toggle",
+          "name": "toggle",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 180842995
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "Italic": {
       "a11y": {
         "name_from": [],
@@ -3009,6 +4867,295 @@
       "text_content": "text",
       "widget": "skelter-widgets"
     },
+    "Menu": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "label"
+        ],
+        "name_required": true,
+        "role": "MenuItem"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {},
+      "chain": [
+        "Menu",
+        "MenuEntry"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A menu: a menu-bar button, or a submenu row inside another menu. Inside a `menu-button` its items are the button's menu (its label is unused).",
+      "fingerprint": "0ee631dc",
+      "id": 249967068,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Menu",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "label": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The title: the menu-bar button, or the submenu row.",
+          "fingerprint": "060ef16a",
+          "id": 101642602,
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Menu:label",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {},
+      "slot_ids": {
+        "items": 175004124
+      },
+      "text_content": "label",
+      "widget": "skelter-widgets"
+    },
+    "MenuBar": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "MenuBar"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {},
+      "chain": [
+        "MenuBar",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A horizontal menu bar of `menu` children (and plain `action`s). One interact row high; it takes no width of its own, so it fills a column (align-items stretch) or needs `flex-grow` in a row. The shortcuts of its actions are active while it is drawn.",
+      "fingerprint": "056fbf34",
+      "id": 91209524,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "menu-activated": {
+          "dispatch": "generated",
+          "doc": "`menu-activated(id)`: the platform menu bar picked item `id` (with `native-bar`): activates it as a click would.",
+          "fingerprint": "037fc5fa",
+          "id": 58705402,
+          "native": "menu-activated",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter MenuBar",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "enabled": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "",
+          "fingerprint": "07e588aa",
+          "id": 132483242,
+          "js": "enabled",
+          "native": "enabled",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuBar:enabled",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "native-bar": {
+          "change": "layout",
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "fingerprint": "0d50a832",
+          "id": 223389746,
+          "js": "native-bar",
+          "native": "native-bar",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:MenuBar:native-bar",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "item",
+              "type": "string"
+            },
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "01efa946",
+          "handler_result": "none",
+          "id": 32483654,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "close": {
+          "args": [
+            {
+              "name": "menu",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "014ce597",
+          "handler_result": "none",
+          "id": 21816727,
+          "js_event": "close",
+          "name": "close",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "hover": {
+          "args": [
+            {
+              "name": "item",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "063074b5",
+          "handler_result": "none",
+          "id": 103838901,
+          "js_event": "hover",
+          "name": "hover",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "open": {
+          "args": [
+            {
+              "name": "menu",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "062c83b3",
+          "handler_result": "none",
+          "id": 103580595,
+          "js_event": "open",
+          "name": "open",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggled": {
+          "args": [
+            {
+              "name": "item",
+              "type": "string"
+            },
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "04b57607",
+          "handler_result": "none",
+          "id": 79001095,
+          "js_event": "toggled",
+          "name": "toggled",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "items": 179580084
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "MenuEntry": {
       "a11y": {
         "name_from": [
@@ -3182,6 +5329,744 @@
       "slot_ids": {},
       "text_content": null,
       "widget": null
+    },
+    "MenuSeparator": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": null
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {},
+      "chain": [
+        "MenuSeparator",
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "A line between menu items (a vertical one in a menu bar).",
+      "fingerprint": "0f75701e",
+      "id": 259354654,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter MenuSeparator",
+      "native_state": [],
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {},
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "Modal": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Dialog"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <modal> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Modal",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
+      "fingerprint": "0fa8260e",
+      "id": 262678030,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Modal",
+      "native_state": [
+        "open"
+      ],
+      "present": null,
+      "props": {
+        "dismissable": {
+          "change": "property",
+          "construct_only": false,
+          "default": true,
+          "doc": "Escape or a click on the backdrop closes it; with false only the app does.",
+          "fingerprint": "0a6ad5a3",
+          "id": 174773667,
+          "js": "dismissable",
+          "native": "dismissable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Modal:dismissable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "heading": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "",
+          "fingerprint": "0a24a23a",
+          "id": 170172986,
+          "js": "heading",
+          "native": "heading",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Modal:heading",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "open": {
+          "change": "structure",
+          "construct_only": false,
+          "default": false,
+          "doc": "Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false.",
+          "fingerprint": "0924450d",
+          "id": 153371917,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Modal:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "cancel": {
+          "args": [
+            {
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0e731cdb",
+          "handler_result": "bool_stop",
+          "id": 242425051,
+          "js_event": "cancel",
+          "name": "cancel",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "close": {
+          "args": [
+            {
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "099c559d",
+          "handler_result": "none",
+          "id": 161240477,
+          "js_event": "close",
+          "name": "close",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 97181637
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "Panel": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Pane"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "size": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "size",
+          "provenance": "svelters-skelter: <panel> writes size into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Panel",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom).",
+      "fingerprint": "06eb9267",
+      "id": 116101735,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Panel",
+      "native_state": [
+        "size"
+      ],
+      "present": null,
+      "props": {
+        "resizable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The inner edge can be dragged to resize it.",
+          "fingerprint": "0739a2fd",
+          "id": 121217789,
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Panel:resizable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "separator": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "Draws a line on the inner edge.",
+          "fingerprint": "087b75db",
+          "id": 142308827,
+          "js": "separator",
+          "native": "separator",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Panel:separator",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "side": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "left",
+          "doc": "The edge of the parent it belongs to: the separator and the resize grip are on the opposite edge, and `size` is its width (left, right) or height (top, bottom).",
+          "fingerprint": "0b541fb8",
+          "id": 190062520,
+          "js": "side",
+          "native": "side",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Panel:side",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "left",
+            "right",
+            "top",
+            "bottom"
+          ],
+          "writable": true
+        },
+        "size": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "Width (left, right) or height (top, bottom) in points; null for its content's. Dragging the grip of a `resizable` panel changes it, within `min-*`/`max-*`.",
+          "fingerprint": "06f3427a",
+          "id": 116605562,
+          "js": "size",
+          "native": "size",
+          "nullable": true,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Panel:size",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "size",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user resized it; carries the new size.",
+          "fingerprint": "0c0dec7e",
+          "handler_result": "none",
+          "id": 202239102,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 240921052
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "Popup": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Dialog"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "toggle",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <popup> writes open into the tree as native-owned state (architecture §4.5) and emits `toggle` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Popup",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. Its children are a flex box sized to their content (or `width`/`height`), out of the owner's flow. GTK's `popover`.",
+      "fingerprint": "0de194f3",
+      "id": 232887539,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Popup",
+      "native_state": [
+        "open"
+      ],
+      "present": null,
+      "props": {
+        "escape-dismiss": {
+          "change": "property",
+          "construct_only": false,
+          "default": true,
+          "doc": "",
+          "fingerprint": "08e7e036",
+          "id": 149413942,
+          "js": "escape-dismiss",
+          "native": "escape-dismiss",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:escape-dismiss",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "fit": {
+          "change": "layout",
+          "construct_only": false,
+          "default": true,
+          "doc": "",
+          "fingerprint": "08d3cb1f",
+          "id": 148097823,
+          "js": "fit",
+          "native": "fit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:fit",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "flip": {
+          "change": "property",
+          "construct_only": false,
+          "default": true,
+          "doc": "",
+          "fingerprint": "03a3b7a7",
+          "id": 61061031,
+          "js": "flip",
+          "native": "flip",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:flip",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "gap": {
+          "change": "property",
+          "construct_only": false,
+          "default": 4.0,
+          "doc": "",
+          "fingerprint": "03a71b4b",
+          "id": 61283147,
+          "js": "gap",
+          "native": "gap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:gap",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "light-dismiss": {
+          "change": "property",
+          "construct_only": false,
+          "default": true,
+          "doc": "",
+          "fingerprint": "0ef5d619",
+          "id": 250992153,
+          "js": "light-dismiss",
+          "native": "light-dismiss",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:light-dismiss",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "match-width": {
+          "change": "layout",
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "fingerprint": "08939914",
+          "id": 143890708,
+          "js": "match-width",
+          "native": "match-width",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:match-width",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "modal": {
+          "change": "structure",
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "fingerprint": "08286255",
+          "id": 136864341,
+          "js": "modal",
+          "native": "modal",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:modal",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "open": {
+          "change": "structure",
+          "construct_only": false,
+          "default": false,
+          "doc": "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false.",
+          "fingerprint": "0c7e6a00",
+          "id": 209611264,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Popup:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "placement": {
+          "change": "property",
+          "construct_only": false,
+          "default": "bottom-start",
+          "doc": "The side of its owner it opens on (egui moves it to another side when it does not fit).",
+          "fingerprint": "051d0cec",
+          "id": 85789932,
+          "js": "placement",
+          "native": "placement",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:placement",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "top",
+            "top-start",
+            "top-center",
+            "top-end",
+            "bottom",
+            "bottom-start",
+            "bottom-center",
+            "bottom-end",
+            "left",
+            "left-start",
+            "left-center",
+            "left-end",
+            "right",
+            "right-start",
+            "right-center",
+            "right-end"
+          ],
+          "writable": true
+        },
+        "shift": {
+          "change": "property",
+          "construct_only": false,
+          "default": true,
+          "doc": "",
+          "fingerprint": "0e781630",
+          "id": 242751024,
+          "js": "shift",
+          "native": "shift",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Popup:shift",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "close": {
+          "args": [
+            {
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0b90f1a2",
+          "handler_result": "none",
+          "id": 194048418,
+          "js_event": "close",
+          "name": "close",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "open": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0b8bce85",
+          "handler_result": "none",
+          "id": 193711749,
+          "js_event": "open",
+          "name": "open",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggle": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "",
+          "fingerprint": "0871631b",
+          "handler_result": "none",
+          "id": 141648667,
+          "js_event": "toggle",
+          "name": "toggle",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 122820392
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
     },
     "ProgressBar": {
       "a11y": {
@@ -3956,6 +6841,208 @@
       "slot_ids": {
         "children": 13362121
       },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "Scrollbar": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "ScrollBar"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "value": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-skelter: <scrollbar> writes value into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Scrollbar",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A standalone scroll bar (Qt's `QScrollBar`) for a view that scrolls itself (a canvas, a plot, cadatomic's viewport): `value` from `min` to `max`, the thumb sized by `page`. It looks like a scroll area's bar (overlay, VS Code's `scrollbarSlider.*`), always shown.",
+      "fingerprint": "024c34a7",
+      "id": 38548647,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Scrollbar",
+      "native_state": [
+        "value"
+      ],
+      "present": null,
+      "props": {
+        "max": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 100.0,
+          "doc": "The largest value (the content's size less `page`).",
+          "fingerprint": "05e477f9",
+          "id": 98859001,
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Scrollbar:max",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "The smallest value.",
+          "fingerprint": "0895421f",
+          "id": 143999519,
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Scrollbar:min",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "orientation": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "vertical",
+          "doc": "`vertical` or `horizontal`.",
+          "fingerprint": "0cfb3359",
+          "id": 217789273,
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Scrollbar:orientation",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal"
+          ],
+          "writable": true
+        },
+        "page": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 10.0,
+          "doc": "The visible part's size: the thumb's length in proportion, and what a press on the track scrolls.",
+          "fingerprint": "04149fe0",
+          "id": 68460512,
+          "js": "page",
+          "native": "page",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Scrollbar:page",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "change": "property",
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "What AccessKit's Increment and Decrement move.",
+          "fingerprint": "0691d8c5",
+          "id": 110221509,
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Scrollbar:step",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "value": {
+          "change": "paint",
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "The position, from `min` to `max` (`bind:value`): the start of the visible part of what it scrolls.",
+          "fingerprint": "0fa1e326",
+          "id": 262267686,
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:Scrollbar:value",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user moved it (thumb, track, wheel, AccessKit); carries the new value.",
+          "fingerprint": "075e1a9a",
+          "handler_result": "none",
+          "id": 123607706,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
       "text_content": null,
       "widget": "skelter-widgets"
     },
@@ -4797,6 +7884,339 @@
       "text_content": null,
       "widget": "skelter-widgets"
     },
+    "SplitView": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Group"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "divider-position": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "divider-position",
+          "provenance": "svelters-skelter: <split-view> writes divider-position into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sizes": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sizes",
+          "provenance": "svelters-skelter: <split-view> writes sizes into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "SplitView",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "panes",
+        "policy": "ordered",
+        "slots": {
+          "panes": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.",
+      "fingerprint": "0ad1d04b",
+      "id": 181522507,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter SplitView",
+      "native_state": [
+        "divider-position",
+        "sizes"
+      ],
+      "present": null,
+      "props": {
+        "collapsible": {
+          "change": "layout",
+          "construct_only": false,
+          "default": false,
+          "doc": "OW2: dragging a sash below half a pane's minimum collapses the pane to 0 (Qt's `childrenCollapsible`); Enter on a focused sash collapses or restores.",
+          "fingerprint": "00a267b2",
+          "id": 10643378,
+          "js": "collapsible",
+          "native": "collapsible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:SplitView:collapsible",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "commit-mode": {
+          "change": "property",
+          "construct_only": false,
+          "default": "live",
+          "doc": "OW2: `live` moves the panes while dragging; `release` draws a guide line and moves them once, on release (Qt's `opaqueResize = false`).",
+          "fingerprint": "08ace12e",
+          "id": 145547566,
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:SplitView:commit-mode",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "live",
+            "release"
+          ],
+          "writable": true
+        },
+        "divider-position": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:divider-position`); it is clamped by `min-size` when laid out.",
+          "fingerprint": "07e3660e",
+          "id": 132343310,
+          "js": "divider-position",
+          "native": "divider-position",
+          "nullable": true,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:SplitView:divider-position",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min-size": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 32.0,
+          "doc": "Smallest size of either pane, in points.",
+          "fingerprint": "0045ebcf",
+          "id": 4582351,
+          "js": "min-size",
+          "native": "min-size",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:SplitView:min-size",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "orientation": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other.",
+          "fingerprint": "0710cbaf",
+          "id": 118541231,
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:SplitView:orientation",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "resizable": {
+          "change": "paint",
+          "construct_only": false,
+          "default": true,
+          "doc": "The divider can be dragged.",
+          "fingerprint": "0031368b",
+          "id": 3225227,
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:SplitView:resizable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "restore-on-double-click": {
+          "change": "property",
+          "construct_only": false,
+          "default": true,
+          "doc": "OW2: a double click on a sash restores the pane before it to its size before a collapse, or collapses it (`collapsible`).",
+          "fingerprint": "0dd3a431",
+          "id": 231973937,
+          "js": "restore-on-double-click",
+          "native": "restore-on-double-click",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:SplitView:restore-on-double-click",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "sizes": {
+          "change": "layout",
+          "construct_only": false,
+          "default": null,
+          "doc": "OW2: every pane's size in points along the split (`bind:sizes`, Qt's `sizes`); null: from `divider-position` (two panes) or equal shares. When the split view grows or shrinks, the difference goes to the panes by their `flex-grow` (Qt's stretch factors; the last pane when none has one). Each pane keeps `min-size` and its own `min-width`/`max-width` (or heights).",
+          "fingerprint": "043d2e48",
+          "id": 71118408,
+          "js": "sizes",
+          "native": "sizes",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:SplitView:sizes",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "f64",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "position",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user dragged the divider; carries the first pane's new size.",
+          "fingerprint": "067202be",
+          "handler_result": "none",
+          "id": 108135102,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "sizes",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size.",
+          "fingerprint": "0ef07c36",
+          "handler_result": "none",
+          "id": 250641462,
+          "js_event": "commit",
+          "name": "commit",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-started": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A divider drag began.",
+          "fingerprint": "0293abb3",
+          "handler_result": "none",
+          "id": 43232179,
+          "js_event": "drag-started",
+          "name": "drag-started",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-stopped": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A divider drag ended.",
+          "fingerprint": "05822fcf",
+          "handler_result": "none",
+          "id": 92417999,
+          "js_event": "drag-stopped",
+          "name": "drag-stopped",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "panes": 183296298
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "Stack": {
       "a11y": {
         "name_from": [],
@@ -4922,6 +8342,146 @@
       "signals": {},
       "slot_ids": {
         "children": 52024970
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "StatusBar": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Status"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "message": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "message",
+          "provenance": "svelters-skelter: <status-bar> writes message into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "StatusBar",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A generic status bar (QStatusBar): a flex row whose children are its sections, placed by their `status-section`: `start` sections first, then the `temporary` ones, then the `end` sections pushed to the far end; `flex-grow` stretches a section. A message (`message`, `show-message`) or a status tip (a hovered or focused node's `status-tip`) is drawn in `::part(message)`, the free space after the start sections, and hides the temporary sections meanwhile. It holds no app-specific sections: compose your own from labels, buttons and the like.",
+      "fingerprint": "0f35f31b",
+      "id": 255193883,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "clear-message": {
+          "dispatch": "generated",
+          "doc": "Clears the message (Qt `clearMessage`).",
+          "fingerprint": "045e2b1f",
+          "id": 73280287,
+          "native": "clear-message",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "show-message": {
+          "dispatch": "generated",
+          "doc": "`show-message(text, timeout = 0)`: shows `text` for `timeout` seconds (0: until changed or cleared), over the temporary sections (Qt `showMessage`).",
+          "fingerprint": "062632fb",
+          "id": 103166715,
+          "native": "show-message",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "skelter StatusBar",
+      "native_state": [
+        "message"
+      ],
+      "present": null,
+      "props": {
+        "message": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The temporary message (Qt `currentMessage`), drawn in `::part(message)` over the temporary sections; empty for none. Setting it shows it until it is changed or cleared; `show-message` sets it with a timeout, after which it is empty again (`bind:message`).",
+          "fingerprint": "0292671a",
+          "id": 43149082,
+          "js": "message",
+          "native": "message",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:StatusBar:message",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "message",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "Its message changed (Qt `messageChanged`): `show-message`, `clear-message` or a timeout; carries the new message.",
+          "fingerprint": "09646dea",
+          "handler_result": "none",
+          "id": 157576682,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 242219648
       },
       "text_content": null,
       "widget": "skelter-widgets"
@@ -5059,6 +8619,248 @@
       },
       "slot_ids": {},
       "text_content": "text",
+      "widget": "skelter-widgets"
+    },
+    "Tab": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "TabPanel"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {},
+      "chain": [
+        "Tab",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A page of a tab-view; `title` names its caption.",
+      "fingerprint": "0d538234",
+      "id": 223576628,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Tab",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "closable": {
+          "change": "layout",
+          "construct_only": false,
+          "default": false,
+          "doc": "The caption shows a close button (`close-requested`).",
+          "fingerprint": "00c6b78e",
+          "id": 13023118,
+          "js": "closable",
+          "native": "closable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Tab:closable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "title": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "The tab's caption (also its accessible name).",
+          "fingerprint": "010c1d40",
+          "id": 17571136,
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Tab:title",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "close-requested": {
+          "args": [],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The tab's close button was clicked (or a middle click on it); remove the tab to close it.",
+          "fingerprint": "0cf3e7e7",
+          "handler_result": "none",
+          "id": 217311207,
+          "js_event": "close-requested",
+          "name": "close-requested",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "children": 16036263
+      },
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
+    "TabView": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "TabList"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-skelter: <tab-view> writes selected into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "TabView",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "pages",
+        "policy": "ordered",
+        "slots": {
+          "pages": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A strip of tab captions over the selected page (its children are the pages).",
+      "fingerprint": "004ea294",
+      "id": 5153428,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter TabView",
+      "native_state": [
+        "selected"
+      ],
+      "present": null,
+      "props": {
+        "selected": {
+          "change": "layout",
+          "construct_only": false,
+          "default": 0,
+          "doc": "Index of the shown page; a click on a caption changes it.",
+          "fingerprint": "0323790d",
+          "id": 52656397,
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:TabView:selected",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The user picked a tab; carries its index.",
+          "fingerprint": "0359abf5",
+          "handler_result": "none",
+          "id": 56208373,
+          "js_event": "changed",
+          "name": "changed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "close-requested": {
+          "args": [
+            {
+              "name": "index",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A tab's close button was clicked (or a middle click on it); carries the page index. Remove the page to close it.",
+          "fingerprint": "0d44088e",
+          "handler_result": "none",
+          "id": 222562446,
+          "js_event": "close-requested",
+          "name": "close-requested",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {
+        "pages": 220385116
+      },
+      "text_content": null,
       "widget": "skelter-widgets"
     },
     "Table": {
@@ -6619,6 +10421,193 @@
       "text_content": null,
       "widget": "skelter-widgets"
     },
+    "ToastHost": {
+      "a11y": {
+        "name_from": [
+          "accessible-name"
+        ],
+        "name_required": false,
+        "role": "Group"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {},
+      "chain": [
+        "ToastHost",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts.",
+      "fingerprint": "0fa84591",
+      "id": 262686097,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "clear": {
+          "dispatch": "generated",
+          "doc": "Closes every toast (`closed(id, 'method')` for each).",
+          "fingerprint": "0c2feb03",
+          "id": 204466947,
+          "native": "clear",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "dismiss": {
+          "dispatch": "generated",
+          "doc": "`dismiss(id)`: closes that toast (`closed(id, 'method')`).",
+          "fingerprint": "06b3bc5e",
+          "id": 112442462,
+          "native": "dismiss",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "show": {
+          "dispatch": "generated",
+          "doc": "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: `info`, `success`, `warning`, `error`; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id.",
+          "fingerprint": "02db6252",
+          "id": 47931986,
+          "native": "show",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "i64"
+          }
+        }
+      },
+      "native": "skelter ToastHost",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "corner": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "bottom-right",
+          "doc": "The viewport corner the toasts stack in.",
+          "fingerprint": "0f939d32",
+          "id": 261332274,
+          "js": "corner",
+          "native": "corner",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ToastHost:corner",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "bottom-right",
+            "bottom-left",
+            "top-right",
+            "top-left"
+          ],
+          "writable": true
+        },
+        "duration": {
+          "change": "property",
+          "construct_only": false,
+          "default": 4.0,
+          "doc": "Seconds a toast stays when `show` gives none; 0 keeps it until closed.",
+          "fingerprint": "0cc5bb4f",
+          "id": 214285135,
+          "js": "duration",
+          "native": "duration",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ToastHost:duration",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "max-visible": {
+          "change": "structure",
+          "construct_only": false,
+          "default": 5,
+          "doc": "",
+          "fingerprint": "0539bd22",
+          "id": 87670050,
+          "js": "max-visible",
+          "native": "max-visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ToastHost:max-visible",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {
+        "action": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "index",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`).",
+          "fingerprint": "0e71570c",
+          "handler_result": "none",
+          "id": 242308876,
+          "js_event": "action",
+          "name": "action",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `action` (one of its actions), `method` (`dismiss`/`clear`).",
+          "fingerprint": "0c54dbea",
+          "handler_result": "none",
+          "id": 206887914,
+          "js_event": "closed",
+          "name": "closed",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "slot_ids": {},
+      "text_content": null,
+      "widget": "skelter-widgets"
+    },
     "ToggleButton": {
       "a11y": {
         "name_from": [
@@ -6830,6 +10819,140 @@
           "sync_required": false
         }
       },
+      "slot_ids": {},
+      "text_content": "text",
+      "widget": "skelter-widgets"
+    },
+    "Tooltip": {
+      "a11y": {
+        "name_from": [
+          "accessible-name",
+          "text"
+        ],
+        "name_required": false,
+        "role": "Tooltip"
+      },
+      "abstract": false,
+      "attaches_to": null,
+      "bindings": {},
+      "chain": [
+        "Tooltip",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "",
+      "fingerprint": "086bb790",
+      "id": 141277072,
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "skelter Tooltip",
+      "native_state": [],
+      "present": null,
+      "props": {
+        "delay": {
+          "change": "property",
+          "construct_only": false,
+          "default": null,
+          "doc": "",
+          "fingerprint": "0cb8d235",
+          "id": 213439029,
+          "js": "delay",
+          "native": "delay",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Tooltip:delay",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "duration": {
+          "change": "property",
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "",
+          "fingerprint": "0676d25c",
+          "id": 108450396,
+          "js": "duration",
+          "native": "duration",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Tooltip:duration",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "placement": {
+          "change": "property",
+          "construct_only": false,
+          "default": "top-center",
+          "doc": "",
+          "fingerprint": "0ab4d92d",
+          "id": 179624237,
+          "js": "placement",
+          "native": "placement",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Tooltip:placement",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "top",
+            "top-start",
+            "top-center",
+            "top-end",
+            "bottom",
+            "bottom-start",
+            "bottom-center",
+            "bottom-end",
+            "left",
+            "left-start",
+            "left-center",
+            "left-end",
+            "right",
+            "right-start",
+            "right-center",
+            "right-end"
+          ],
+          "writable": true
+        },
+        "text": {
+          "change": "layout",
+          "construct_only": false,
+          "default": "",
+          "doc": "",
+          "fingerprint": "0225d073",
+          "id": 36032627,
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Tooltip:text",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-skelter/src/surface/tier1.rs"
+      },
+      "signals": {},
       "slot_ids": {},
       "text_content": "text",
       "widget": "skelter-widgets"
@@ -10585,10 +14708,17 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
+          "inner-window",
+          "modal",
+          "panel",
+          "popup",
           "scroll-area",
-          "sides"
+          "sides",
+          "status-bar",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -10610,28 +14740,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -10839,28 +14986,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -10899,9 +15063,16 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
-          "scroll-area"
+          "inner-window",
+          "modal",
+          "panel",
+          "popup",
+          "scroll-area",
+          "status-bar",
+          "tab"
         ],
         "type": "length",
         "via": "setter"
@@ -10964,28 +15135,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11025,28 +15213,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11063,8 +15268,15 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
-          "scroll-area"
+          "inner-window",
+          "modal",
+          "panel",
+          "popup",
+          "scroll-area",
+          "status-bar",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -11088,28 +15300,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11129,28 +15358,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11167,8 +15413,15 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
-          "scroll-area"
+          "inner-window",
+          "modal",
+          "panel",
+          "popup",
+          "scroll-area",
+          "status-bar",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -11212,7 +15465,8 @@
           "Window",
           "Box",
           "Sides",
-          "Grid"
+          "Grid",
+          "Popup"
         ],
         "native": "gap",
         "prop": "gap",
@@ -11222,10 +15476,17 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
+          "inner-window",
+          "modal",
+          "panel",
+          "popup",
           "scroll-area",
           "sides",
+          "status-bar",
+          "tab",
           "window"
         ],
         "type": "length",
@@ -11254,7 +15515,8 @@
       "height": {
         "change": "layout",
         "kinds": [
-          "Widget"
+          "Widget",
+          "InnerWindow"
         ],
         "native": "height",
         "prop": "height",
@@ -11264,28 +15526,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11302,8 +15581,15 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
-          "scroll-area"
+          "inner-window",
+          "modal",
+          "panel",
+          "popup",
+          "scroll-area",
+          "status-bar",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -11345,28 +15631,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11421,28 +15724,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11462,28 +15782,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11493,7 +15830,8 @@
       "min-height": {
         "change": "layout",
         "kinds": [
-          "Widget"
+          "Widget",
+          "InnerWindow"
         ],
         "native": "min-height",
         "prop": "min-height",
@@ -11503,28 +15841,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11534,7 +15889,8 @@
       "min-width": {
         "change": "layout",
         "kinds": [
-          "Widget"
+          "Widget",
+          "InnerWindow"
         ],
         "native": "min-width",
         "prop": "min-width",
@@ -11544,28 +15900,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11700,28 +16073,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11743,28 +16133,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11785,9 +16192,16 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
-          "scroll-area"
+          "inner-window",
+          "modal",
+          "panel",
+          "popup",
+          "scroll-area",
+          "status-bar",
+          "tab"
         ],
         "type": "length",
         "via": "setter"
@@ -11819,28 +16233,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11906,28 +16337,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -11990,29 +16438,48 @@
           "action",
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
           "context-menu",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu",
+          "menu-bar",
+          "menu-separator",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -12035,7 +16502,8 @@
       "width": {
         "change": "layout",
         "kinds": [
-          "Widget"
+          "Widget",
+          "InnerWindow"
         ],
         "native": "width",
         "prop": "width",
@@ -12045,28 +16513,45 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "checkbox",
           "collapsing-header",
+          "color-editor",
+          "color-picker",
           "combo-box",
+          "date-picker",
+          "dialog-buttons",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "modal",
+          "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
+          "status-bar",
           "switch",
+          "tab",
+          "tab-view",
           "table",
           "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button",
+          "tooltip",
           "tree-view",
           "virtual-list"
         ],
@@ -12202,32 +16687,51 @@
     "b": "Bold",
     "box": "Box",
     "button": "Button",
+    "calendar": "Calendar",
     "checkbox": "Checkbox",
     "code": "Code",
     "collapsing-header": "CollapsingHeader",
+    "color-editor": "ColorEditor",
+    "color-picker": "ColorPicker",
     "combo-box": "ComboBox",
     "context-menu": "ContextMenu",
+    "date-picker": "DatePicker",
+    "dialog-buttons": "DialogButtons",
     "frame": "Frame",
     "grid": "Grid",
     "hyperlink": "Hyperlink",
     "i": "Italic",
     "icon": "Icon",
     "image": "Image",
+    "inner-window": "InnerWindow",
     "label": "Label",
+    "menu": "Menu",
+    "menu-bar": "MenuBar",
+    "menu-separator": "MenuSeparator",
+    "modal": "Modal",
+    "panel": "Panel",
+    "popup": "Popup",
     "progress-bar": "ProgressBar",
     "radio-button": "RadioButton",
     "scroll-area": "ScrollArea",
+    "scrollbar": "Scrollbar",
     "separator": "Separator",
     "sides": "Sides",
     "slider": "Slider",
     "span": "Span",
     "spinner": "Spinner",
+    "split-view": "SplitView",
     "stack": "Stack",
+    "status-bar": "StatusBar",
     "switch": "Switch",
+    "tab": "Tab",
+    "tab-view": "TabView",
     "table": "Table",
     "table-column": "TableColumn",
     "text-edit": "TextEdit",
+    "toast-host": "ToastHost",
     "toggle-button": "ToggleButton",
+    "tooltip": "Tooltip",
     "tree-view": "TreeView",
     "virtual-list": "VirtualList",
     "window": "Window"

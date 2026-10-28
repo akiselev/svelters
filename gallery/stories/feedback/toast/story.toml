@@ -1,0 +1,13 @@
+id = "toast"
+title = "Toasts"
+family = "feedback"
+kinds = ["toast-host"]
+size = [440, 300]
+states = ["normal"]
+notes = "A `toast-host` laid over its box, its toasts shown with `show(text, level, duration)` (duration 0: until closed, so a shot keeps them). Look at the four level accents, the close glyph, wrapping, and the stack from each corner."
+
+[[variant]]
+id = "levels"
+title = "The four levels"
+file = "levels.svelte"
+args = { corner = ["bottom-right", "top-left"] }

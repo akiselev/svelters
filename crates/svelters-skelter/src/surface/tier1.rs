@@ -284,6 +284,8 @@ pub static MENUENTRY: KindSpec = KindSpec {
 };
 
 static CONTEXTMENU_PROPS: &[PropSpec] = &[
+    // skelter's addition (not in egui.json; GAL2 request 2): the menu's own `open`, as `combo-box` has
+    PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The menu is open; the user opening or closing it changes it (`bind:open`). Setting it true opens it where it last opened (its own top left the first time); `popup` opens it below its owner or at a point." },
 ];
 static CONTEXTMENU_SIGNALS: &[SignalSpec] = &[
 ];
@@ -306,7 +308,7 @@ pub static CONTEXTMENU: KindSpec = KindSpec {
     a11y: A11ySpec { role: "", name_from: &[], name_required: false },
     text_content: None,
     toplevel: false,
-    native_state: &[],
+    native_state: &["open"],
 };
 
 static ACTION_PROPS: &[PropSpec] = &[
@@ -392,5 +394,622 @@ pub static VIRTUALLIST: KindSpec = KindSpec {
     native_state: &["current", "selected", "selected-ids"],
 };
 
+// polish-b2 register: the rest of skelter-widgets' kinds (views, tabs, pickers), transcribed from
+// their own core specs (members, types, defaults, change classes, native state) under svelters-egui's
+// tags, kind names, base chains and default slot names; a prop's doc is egui's where the kind's
+// own is empty and egui has the same prop. Methods' params are the core spec's (left out here).
+
+static SPLITVIEW_PROPS: &[PropSpec] = &[
+    PropSpec { name: "collapsible", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "OW2: dragging a sash below half a pane's minimum collapses the pane to 0 (Qt's `childrenCollapsible`); Enter on a focused sash collapses or restores." },
+    PropSpec { name: "commit-mode", ty: ValueType::Enum(&["live", "release"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Property, native: false, doc: "OW2: `live` moves the panes while dragging; `release` draws a guide line and moves them once, on release (Qt's `opaqueResize = false`)." },
+    PropSpec { name: "divider-position", ty: ValueType::F64, default: DefaultValue::Null, nullable: true, change: ChangeClass::Layout, native: true, doc: "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:divider-position`); it is clamped by `min-size` when laid out." },
+    PropSpec { name: "min-size", ty: ValueType::F64, default: DefaultValue::F64(32.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Smallest size of either pane, in points." },
+    PropSpec { name: "orientation", ty: ValueType::Enum(&["horizontal", "vertical"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "`horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other." },
+    PropSpec { name: "resizable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The divider can be dragged." },
+    PropSpec { name: "restore-on-double-click", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "OW2: a double click on a sash restores the pane before it to its size before a collapse, or collapses it (`collapsible`)." },
+    PropSpec { name: "sizes", ty: ValueType::NumList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: true, doc: "OW2: every pane's size in points along the split (`bind:sizes`, Qt's `sizes`); null: from `divider-position` (two panes) or equal shares. When the split view grows or shrinks, the difference goes to the panes by their `flex-grow` (Qt's stretch factors; the last pane when none has one). Each pane keeps `min-size` and its own `min-width`/`max-width` (or heights)." },
+];
+static SPLITVIEW_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("position", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user dragged the divider; carries the first pane's new size." },
+    SignalSpec { name: "commit", args: &[("sizes", ValueType::NumList)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size." },
+    SignalSpec { name: "drag-started", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A divider drag began." },
+    SignalSpec { name: "drag-stopped", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A divider drag ended." },
+];
+static SPLITVIEW_METHODS: &[MethodSpec] = &[
+
+];
+static SPLITVIEW_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "panes", accepts: &["Widget"], many: true },
+];
+pub static SPLITVIEW: KindSpec = KindSpec {
+    name: "SplitView",
+    tag: Some("split-view"),
+    extends: Some(&WIDGET),
+    doc: "Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.",
+    props: SPLITVIEW_PROPS,
+    signals: SPLITVIEW_SIGNALS,
+    methods: SPLITVIEW_METHODS,
+    slots: SPLITVIEW_SLOTS,
+    a11y: A11ySpec { role: "Group", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["divider-position", "sizes"],
+};
+
+static PANEL_PROPS: &[PropSpec] = &[
+    PropSpec { name: "resizable", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "The inner edge can be dragged to resize it." },
+    PropSpec { name: "separator", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Draws a line on the inner edge." },
+    PropSpec { name: "side", ty: ValueType::Enum(&["left", "right", "top", "bottom"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The edge of the parent it belongs to: the separator and the resize grip are on the opposite edge, and `size` is its width (left, right) or height (top, bottom)." },
+    PropSpec { name: "size", ty: ValueType::F64, default: DefaultValue::Null, nullable: true, change: ChangeClass::Layout, native: true, doc: "Width (left, right) or height (top, bottom) in points; null for its content's. Dragging the grip of a `resizable` panel changes it, within `min-*`/`max-*`." },
+];
+static PANEL_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("size", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user resized it; carries the new size." },
+];
+static PANEL_METHODS: &[MethodSpec] = &[
+
+];
+static PANEL_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+];
+pub static PANEL: KindSpec = KindSpec {
+    name: "Panel",
+    tag: Some("panel"),
+    extends: Some(&BOX),
+    doc: "A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom).",
+    props: PANEL_PROPS,
+    signals: PANEL_SIGNALS,
+    methods: PANEL_METHODS,
+    slots: PANEL_SLOTS,
+    a11y: A11ySpec { role: "Pane", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["size"],
+};
+
+static POPUP_PROPS: &[PropSpec] = &[
+    PropSpec { name: "escape-dismiss", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "fit", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "flip", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "gap", ty: ValueType::F64, default: DefaultValue::F64(4.0), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "light-dismiss", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "match-width", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "modal", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: false, doc: "" },
+    PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: true, doc: "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false." },
+    PropSpec { name: "placement", ty: ValueType::Enum(&["top", "top-start", "top-center", "top-end", "bottom", "bottom-start", "bottom-center", "bottom-end", "left", "left-start", "left-center", "left-end", "right", "right-start", "right-center", "right-end"]), default: DefaultValue::Enum(5), nullable: false, change: ChangeClass::Property, native: false, doc: "The side of its owner it opens on (egui moves it to another side when it does not fit)." },
+    PropSpec { name: "shift", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+];
+static POPUP_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "close", args: &[("reason", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "open", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "toggle", args: &[("open", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+];
+static POPUP_METHODS: &[MethodSpec] = &[
+
+];
+static POPUP_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+];
+pub static POPUP: KindSpec = KindSpec {
+    name: "Popup",
+    tag: Some("popup"),
+    extends: Some(&BOX),
+    doc: "A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. Its children are a flex box sized to their content (or `width`/`height`), out of the owner's flow. GTK's `popover`.",
+    props: POPUP_PROPS,
+    signals: POPUP_SIGNALS,
+    methods: POPUP_METHODS,
+    slots: POPUP_SLOTS,
+    a11y: A11ySpec { role: "Dialog", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["open"],
+};
+
+static TOOLTIP_PROPS: &[PropSpec] = &[
+    PropSpec { name: "delay", ty: ValueType::F64, default: DefaultValue::Null, nullable: true, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "duration", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "placement", ty: ValueType::Enum(&["top", "top-start", "top-center", "top-end", "bottom", "bottom-start", "bottom-center", "bottom-end", "left", "left-start", "left-center", "left-end", "right", "right-start", "right-center", "right-end"]), default: DefaultValue::Enum(2), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+];
+static TOOLTIP_SIGNALS: &[SignalSpec] = &[
+
+];
+static TOOLTIP_METHODS: &[MethodSpec] = &[
+
+];
+static TOOLTIP_SLOTS: &[SlotSpec] = &[
+
+];
+pub static TOOLTIP: KindSpec = KindSpec {
+    name: "Tooltip",
+    tag: Some("tooltip"),
+    extends: Some(&WIDGET),
+    doc: "",
+    props: TOOLTIP_PROPS,
+    signals: TOOLTIP_SIGNALS,
+    methods: TOOLTIP_METHODS,
+    slots: TOOLTIP_SLOTS,
+    a11y: A11ySpec { role: "Tooltip", name_from: &["accessible-name", "text"], name_required: false },
+    text_content: Some("text"),
+    toplevel: false,
+    native_state: &[],
+};
+
+static TOASTHOST_PROPS: &[PropSpec] = &[
+    PropSpec { name: "corner", ty: ValueType::Enum(&["bottom-right", "bottom-left", "top-right", "top-left"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The viewport corner the toasts stack in." },
+    PropSpec { name: "duration", ty: ValueType::F64, default: DefaultValue::F64(4.0), nullable: false, change: ChangeClass::Property, native: false, doc: "Seconds a toast stays when `show` gives none; 0 keeps it until closed." },
+    PropSpec { name: "max-visible", ty: ValueType::I64, default: DefaultValue::I64(5), nullable: false, change: ChangeClass::Structure, native: false, doc: "" },
+];
+static TOASTHOST_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "action", args: &[("id", ValueType::I64), ("index", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`)." },
+    SignalSpec { name: "closed", args: &[("id", ValueType::I64), ("reason", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `action` (one of its actions), `method` (`dismiss`/`clear`)." },
+];
+static TOASTHOST_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "show", params: &[], ret: Some(ValueType::I64), doc: "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: `info`, `success`, `warning`, `error`; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id." },
+    MethodSpec { name: "dismiss", params: &[], ret: None, doc: "`dismiss(id)`: closes that toast (`closed(id, 'method')`)." },
+    MethodSpec { name: "clear", params: &[], ret: None, doc: "Closes every toast (`closed(id, 'method')` for each)." },
+];
+static TOASTHOST_SLOTS: &[SlotSpec] = &[
+
+];
+pub static TOASTHOST: KindSpec = KindSpec {
+    name: "ToastHost",
+    tag: Some("toast-host"),
+    extends: Some(&WIDGET),
+    doc: "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts.",
+    props: TOASTHOST_PROPS,
+    signals: TOASTHOST_SIGNALS,
+    methods: TOASTHOST_METHODS,
+    slots: TOASTHOST_SLOTS,
+    a11y: A11ySpec { role: "Group", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
+static STATUSBAR_PROPS: &[PropSpec] = &[
+    PropSpec { name: "message", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: true, doc: "The temporary message (Qt `currentMessage`), drawn in `::part(message)` over the temporary sections; empty for none. Setting it shows it until it is changed or cleared; `show-message` sets it with a timeout, after which it is empty again (`bind:message`)." },
+];
+static STATUSBAR_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("message", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "Its message changed (Qt `messageChanged`): `show-message`, `clear-message` or a timeout; carries the new message." },
+];
+static STATUSBAR_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "show-message", params: &[], ret: None, doc: "`show-message(text, timeout = 0)`: shows `text` for `timeout` seconds (0: until changed or cleared), over the temporary sections (Qt `showMessage`)." },
+    MethodSpec { name: "clear-message", params: &[], ret: None, doc: "Clears the message (Qt `clearMessage`)." },
+];
+static STATUSBAR_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+];
+pub static STATUSBAR: KindSpec = KindSpec {
+    name: "StatusBar",
+    tag: Some("status-bar"),
+    extends: Some(&BOX),
+    doc: "A generic status bar (QStatusBar): a flex row whose children are its sections, placed by their `status-section`: `start` sections first, then the `temporary` ones, then the `end` sections pushed to the far end; `flex-grow` stretches a section. A message (`message`, `show-message`) or a status tip (a hovered or focused node's `status-tip`) is drawn in `::part(message)`, the free space after the start sections, and hides the temporary sections meanwhile. It holds no app-specific sections: compose your own from labels, buttons and the like.",
+    props: STATUSBAR_PROPS,
+    signals: STATUSBAR_SIGNALS,
+    methods: STATUSBAR_METHODS,
+    slots: STATUSBAR_SLOTS,
+    a11y: A11ySpec { role: "Status", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["message"],
+};
+
+static MODAL_PROPS: &[PropSpec] = &[
+    PropSpec { name: "dismissable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "Escape or a click on the backdrop closes it; with false only the app does." },
+    PropSpec { name: "heading", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: true, doc: "Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false." },
+];
+static MODAL_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "cancel", args: &[("reason", ValueType::Str)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "" },
+    SignalSpec { name: "close", args: &[("reason", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+];
+static MODAL_METHODS: &[MethodSpec] = &[
+
+];
+static MODAL_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+];
+pub static MODAL: KindSpec = KindSpec {
+    name: "Modal",
+    tag: Some("modal"),
+    extends: Some(&BOX),
+    doc: "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
+    props: MODAL_PROPS,
+    signals: MODAL_SIGNALS,
+    methods: MODAL_METHODS,
+    slots: MODAL_SLOTS,
+    a11y: A11ySpec { role: "Dialog", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["open"],
+};
+
+static INNERWINDOW_PROPS: &[PropSpec] = &[
+    PropSpec { name: "closable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows a close button in the title bar." },
+    PropSpec { name: "collapsed", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
+    PropSpec { name: "collapsible", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The title bar can collapse it to the title." },
+    PropSpec { name: "heading", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "" },
+    PropSpec { name: "height", ty: ValueType::F64, default: DefaultValue::F64(240.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
+    PropSpec { name: "min-height", ty: ValueType::F64, default: DefaultValue::F64(60.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "min-width", ty: ValueType::F64, default: DefaultValue::F64(120.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "resizable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The user can resize it; the content is laid out at its size. Without it the window is as big as its content." },
+    PropSpec { name: "width", ty: ValueType::F64, default: DefaultValue::F64(320.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
+    PropSpec { name: "x", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Property, native: true, doc: "" },
+    PropSpec { name: "y", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Property, native: true, doc: "" },
+];
+static INNERWINDOW_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "close", args: &[], passive: false, cancelable: true, sync: true, bubbles: false, doc: "" },
+    SignalSpec { name: "drag-started", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "drag-stopped", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "move", args: &[("x", ValueType::F64), ("y", ValueType::F64), ("width", ValueType::F64), ("height", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "raise", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "resize", args: &[("x", ValueType::F64), ("y", ValueType::F64), ("width", ValueType::F64), ("height", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "toggle", args: &[("expanded", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+];
+static INNERWINDOW_METHODS: &[MethodSpec] = &[
+
+];
+static INNERWINDOW_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+];
+pub static INNERWINDOW: KindSpec = KindSpec {
+    name: "InnerWindow",
+    tag: Some("inner-window"),
+    extends: Some(&BOX),
+    doc: "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
+    props: INNERWINDOW_PROPS,
+    signals: INNERWINDOW_SIGNALS,
+    methods: INNERWINDOW_METHODS,
+    slots: INNERWINDOW_SLOTS,
+    a11y: A11ySpec { role: "Window", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["collapsed", "height", "width", "x", "y"],
+};
+
+static DIALOGBUTTONS_PROPS: &[PropSpec] = &[
+    PropSpec { name: "order", ty: ValueType::Enum(&["platform", "none", "windows", "kde", "gnome", "macos"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The button order: `platform` (`Policy::button_order`: Windows and egui, KDE for Qt, GNOME for GTK, macOS), a platform by name, or `none` (tree order). Help and reset lead, then children without a role, then the platform's roles. Only layout sees it: paint and Tab order stay the tree's." },
+];
+static DIALOGBUTTONS_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "clicked", args: &[("role", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "One of its buttons was clicked; carries the button's role (`auto` resolved)." },
+    SignalSpec { name: "help", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "Its `help` button was clicked (Qt `helpRequested`)." },
+];
+static DIALOGBUTTONS_METHODS: &[MethodSpec] = &[
+
+];
+static DIALOGBUTTONS_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+];
+pub static DIALOGBUTTONS: KindSpec = KindSpec {
+    name: "DialogButtons",
+    tag: Some("dialog-buttons"),
+    extends: Some(&BOX),
+    doc: "A dialog's button row (QDialogButtonBox): its `button` children take their place by `dialog-role` in the platform's order, right-aligned 6 apart (a row with `justify-content: end` and `gap: 6` at creation). A click reports `clicked(role)` (`help` too for the help role). With EV3, `default` and `cancel` buttons answer Enter and Escape; in a `modal` or `inner-window`, accept and reject buttons close it with that result (`close(\"accept\")`).",
+    props: DIALOGBUTTONS_PROPS,
+    signals: DIALOGBUTTONS_SIGNALS,
+    methods: DIALOGBUTTONS_METHODS,
+    slots: DIALOGBUTTONS_SLOTS,
+    a11y: A11ySpec { role: "Group", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
+static MENUBAR_PROPS: &[PropSpec] = &[
+    PropSpec { name: "enabled", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "" },
+    PropSpec { name: "native-bar", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+];
+static MENUBAR_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "activate", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "close", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "hover", args: &[("item", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "open", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "toggled", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+];
+static MENUBAR_METHODS: &[MethodSpec] = &[
+    MethodSpec { name: "menu-activated", params: &[], ret: None, doc: "`menu-activated(id)`: the platform menu bar picked item `id` (with `native-bar`): activates it as a click would." },
+];
+static MENUBAR_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "items", accepts: &["Menu", "Action", "MenuSeparator"], many: true },
+];
+pub static MENUBAR: KindSpec = KindSpec {
+    name: "MenuBar",
+    tag: Some("menu-bar"),
+    extends: Some(&WIDGET),
+    doc: "A horizontal menu bar of `menu` children (and plain `action`s). One interact row high; it takes no width of its own, so it fills a column (align-items stretch) or needs `flex-grow` in a row. The shortcuts of its actions are active while it is drawn.",
+    props: MENUBAR_PROPS,
+    signals: MENUBAR_SIGNALS,
+    methods: MENUBAR_METHODS,
+    slots: MENUBAR_SLOTS,
+    a11y: A11ySpec { role: "MenuBar", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
+static MENU_PROPS: &[PropSpec] = &[
+    PropSpec { name: "label", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The title: the menu-bar button, or the submenu row." },
+];
+static MENU_SIGNALS: &[SignalSpec] = &[
+
+];
+static MENU_METHODS: &[MethodSpec] = &[
+
+];
+static MENU_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "items", accepts: &["Menu", "Action", "MenuSeparator"], many: true },
+];
+pub static MENU: KindSpec = KindSpec {
+    name: "Menu",
+    tag: Some("menu"),
+    extends: Some(&MENUENTRY),
+    doc: "A menu: a menu-bar button, or a submenu row inside another menu. Inside a `menu-button` its items are the button's menu (its label is unused).",
+    props: MENU_PROPS,
+    signals: MENU_SIGNALS,
+    methods: MENU_METHODS,
+    slots: MENU_SLOTS,
+    a11y: A11ySpec { role: "MenuItem", name_from: &["accessible-name", "label"], name_required: true },
+    text_content: Some("label"),
+    toplevel: false,
+    native_state: &[],
+};
+
+static MENUSEPARATOR_PROPS: &[PropSpec] = &[
+
+];
+static MENUSEPARATOR_SIGNALS: &[SignalSpec] = &[
+
+];
+static MENUSEPARATOR_METHODS: &[MethodSpec] = &[
+
+];
+static MENUSEPARATOR_SLOTS: &[SlotSpec] = &[
+
+];
+pub static MENUSEPARATOR: KindSpec = KindSpec {
+    name: "MenuSeparator",
+    tag: Some("menu-separator"),
+    extends: Some(&MENUENTRY),
+    doc: "A line between menu items (a vertical one in a menu bar).",
+    props: MENUSEPARATOR_PROPS,
+    signals: MENUSEPARATOR_SIGNALS,
+    methods: MENUSEPARATOR_METHODS,
+    slots: MENUSEPARATOR_SLOTS,
+    a11y: A11ySpec { role: "", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
+static SCROLLBAR_PROPS: &[PropSpec] = &[
+    PropSpec { name: "max", ty: ValueType::F64, default: DefaultValue::F64(100.0), nullable: false, change: ChangeClass::Paint, native: false, doc: "The largest value (the content's size less `page`)." },
+    PropSpec { name: "min", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Paint, native: false, doc: "The smallest value." },
+    PropSpec { name: "orientation", ty: ValueType::Enum(&["vertical", "horizontal"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "`vertical` or `horizontal`." },
+    PropSpec { name: "page", ty: ValueType::F64, default: DefaultValue::F64(10.0), nullable: false, change: ChangeClass::Paint, native: false, doc: "The visible part's size: the thumb's length in proportion, and what a press on the track scrolls." },
+    PropSpec { name: "step", ty: ValueType::F64, default: DefaultValue::F64(1.0), nullable: false, change: ChangeClass::Property, native: false, doc: "What AccessKit's Increment and Decrement move." },
+    PropSpec { name: "value", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Paint, native: true, doc: "The position, from `min` to `max` (`bind:value`): the start of the visible part of what it scrolls." },
+];
+static SCROLLBAR_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("value", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user moved it (thumb, track, wheel, AccessKit); carries the new value." },
+];
+static SCROLLBAR_METHODS: &[MethodSpec] = &[
+
+];
+static SCROLLBAR_SLOTS: &[SlotSpec] = &[
+
+];
+pub static SCROLLBAR: KindSpec = KindSpec {
+    name: "Scrollbar",
+    tag: Some("scrollbar"),
+    extends: Some(&WIDGET),
+    doc: "A standalone scroll bar (Qt's `QScrollBar`) for a view that scrolls itself (a canvas, a plot, cadatomic's viewport): `value` from `min` to `max`, the thumb sized by `page`. It looks like a scroll area's bar (overlay, VS Code's `scrollbarSlider.*`), always shown.",
+    props: SCROLLBAR_PROPS,
+    signals: SCROLLBAR_SIGNALS,
+    methods: SCROLLBAR_METHODS,
+    slots: SCROLLBAR_SLOTS,
+    a11y: A11ySpec { role: "ScrollBar", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["value"],
+};
+
+static TABVIEW_PROPS: &[PropSpec] = &[
+    PropSpec { name: "selected", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Layout, native: true, doc: "Index of the shown page; a click on a caption changes it." },
+];
+static TABVIEW_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("selected", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user picked a tab; carries its index." },
+    SignalSpec { name: "close-requested", args: &[("index", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A tab's close button was clicked (or a middle click on it); carries the page index. Remove the page to close it." },
+];
+static TABVIEW_METHODS: &[MethodSpec] = &[
+
+];
+static TABVIEW_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "pages", accepts: &["Widget"], many: true },
+];
+pub static TABVIEW: KindSpec = KindSpec {
+    name: "TabView",
+    tag: Some("tab-view"),
+    extends: Some(&WIDGET),
+    doc: "A strip of tab captions over the selected page (its children are the pages).",
+    props: TABVIEW_PROPS,
+    signals: TABVIEW_SIGNALS,
+    methods: TABVIEW_METHODS,
+    slots: TABVIEW_SLOTS,
+    a11y: A11ySpec { role: "TabList", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["selected"],
+};
+
+static TAB_PROPS: &[PropSpec] = &[
+    PropSpec { name: "closable", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "The caption shows a close button (`close-requested`)." },
+    PropSpec { name: "title", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The tab's caption (also its accessible name)." },
+];
+static TAB_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "close-requested", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The tab's close button was clicked (or a middle click on it); remove the tab to close it." },
+];
+static TAB_METHODS: &[MethodSpec] = &[
+
+];
+static TAB_SLOTS: &[SlotSpec] = &[
+    SlotSpec { name: "children", accepts: &["Widget"], many: true },
+];
+pub static TAB: KindSpec = KindSpec {
+    name: "Tab",
+    tag: Some("tab"),
+    extends: Some(&BOX),
+    doc: "A page of a tab-view; `title` names its caption.",
+    props: TAB_PROPS,
+    signals: TAB_SIGNALS,
+    methods: TAB_METHODS,
+    slots: TAB_SLOTS,
+    a11y: A11ySpec { role: "TabPanel", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &[],
+};
+
+static CALENDAR_PROPS: &[PropSpec] = &[
+    PropSpec { name: "calendar-week", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Layout, native: false, doc: "Shows ISO week numbers in front of each week (`::part(week-number)`)." },
+    PropSpec { name: "day-parts", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: false, doc: "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`." },
+    PropSpec { name: "first-day", ty: ValueType::Enum(&["auto", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Paint, native: false, doc: "The weekday the grid starts on; `auto` is the locale's (Monday until IN1)." },
+    PropSpec { name: "max", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit." },
+    PropSpec { name: "min", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit." },
+    PropSpec { name: "navigation", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Layout, native: false, doc: "Shows the header with the previous/next month buttons and the month and year." },
+    PropSpec { name: "read-only", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows and roves the calendar but never picks (Qt's `NoSelection`)." },
+    PropSpec { name: "value", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: true, doc: "The picked date, ISO 8601 (`2026-10-22`); `\"\"` for none." },
+    PropSpec { name: "weekday-format", ty: ValueType::Enum(&["narrow", "short", "long", "none"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Layout, native: false, doc: "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row)." },
+];
+static CALENDAR_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user picked a day; carries it (ISO 8601)." },
+    SignalSpec { name: "commit", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A pick is a commit (§2.4); carries the date." },
+    SignalSpec { name: "page-changed", args: &[("year", ValueType::I64), ("month", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user moved to another month (prev/next, PageUp/PageDown, arrows across a month)." },
+];
+static CALENDAR_METHODS: &[MethodSpec] = &[
+
+];
+static CALENDAR_SLOTS: &[SlotSpec] = &[
+
+];
+pub static CALENDAR: KindSpec = KindSpec {
+    name: "Calendar",
+    tag: Some("calendar"),
+    extends: Some(&WIDGET),
+    doc: "An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup.",
+    props: CALENDAR_PROPS,
+    signals: CALENDAR_SIGNALS,
+    methods: CALENDAR_METHODS,
+    slots: CALENDAR_SLOTS,
+    a11y: A11ySpec { role: "Grid", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["value"],
+};
+
+static DATEPICKER_PROPS: &[PropSpec] = &[
+    PropSpec { name: "calendar-week", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows ISO week numbers in the calendar." },
+    PropSpec { name: "commit-mode", ty: ValueType::Enum(&["confirm", "immediate"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Paint, native: false, doc: "`confirm`: a picked day is pending until Save (Enter saves, Cancel or Escape drops it); `immediate`: a pick commits and closes the popup (Qt)." },
+    PropSpec { name: "day-parts", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: false, doc: "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`." },
+    PropSpec { name: "first-day", ty: ValueType::Enum(&["auto", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Paint, native: false, doc: "The weekday the grid starts on; `auto` is the locale's (Monday until IN1)." },
+    PropSpec { name: "format", ty: ValueType::Str, default: DefaultValue::Str("%Y-%m-%d"), nullable: false, change: ChangeClass::Layout, native: false, doc: "How the button shows the date (`strftime`, jiff's `civil::Date::strftime`)." },
+    PropSpec { name: "max", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit." },
+    PropSpec { name: "min", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit." },
+    PropSpec { name: "navigation", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows the header with the previous/next month buttons and the month and year." },
+    PropSpec { name: "read-only", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows and roves the calendar but never picks (Qt's `NoSelection`)." },
+    PropSpec { name: "value", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: true, doc: "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day (and, with `commit-mode=\"confirm\"`, pressing Save) changes it." },
+    PropSpec { name: "weekday-format", ty: ValueType::Enum(&["narrow", "short", "long", "none"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Paint, native: false, doc: "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row)." },
+];
+static DATEPICKER_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user saved a date; carries it (ISO 8601)." },
+    SignalSpec { name: "commit", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A pick was applied (§2.4): Save, or the pick itself with `commit-mode=\"immediate\"`." },
+    SignalSpec { name: "page-changed", args: &[("year", ValueType::I64), ("month", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user moved the calendar to another month." },
+];
+static DATEPICKER_METHODS: &[MethodSpec] = &[
+
+];
+static DATEPICKER_SLOTS: &[SlotSpec] = &[
+
+];
+pub static DATEPICKER: KindSpec = KindSpec {
+    name: "DatePicker",
+    tag: Some("date-picker"),
+    extends: Some(&WIDGET),
+    doc: "A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode=\"immediate\"`.",
+    props: DATEPICKER_PROPS,
+    signals: DATEPICKER_SIGNALS,
+    methods: DATEPICKER_METHODS,
+    slots: DATEPICKER_SLOTS,
+    a11y: A11ySpec { role: "DateInput", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["value"],
+};
+
+static COLOREDITOR_PROPS: &[PropSpec] = &[
+    PropSpec { name: "alpha", ty: ValueType::Enum(&["opaque", "blend", "blend-or-additive"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "`opaque` hides the alpha strip; `blend` and `blend-or-additive` show it." },
+    PropSpec { name: "custom-colors", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: true, doc: "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`." },
+    PropSpec { name: "fields", ty: ValueType::Str, default: DefaultValue::Str("hex rgb"), nullable: false, change: ChangeClass::Layout, native: false, doc: "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100)." },
+    PropSpec { name: "swatches", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: false, doc: "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one." },
+    PropSpec { name: "value", ty: ValueType::Str, default: DefaultValue::Str("#000000"), nullable: false, change: ChangeClass::Paint, native: true, doc: "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted)." },
+];
+static COLOREDITOR_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex)." },
+    SignalSpec { name: "commit", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A commit point: a drag released, a key step, a field set, a swatch picked (§2.4)." },
+];
+static COLOREDITOR_METHODS: &[MethodSpec] = &[
+
+];
+static COLOREDITOR_SLOTS: &[SlotSpec] = &[
+
+];
+pub static COLOREDITOR: KindSpec = KindSpec {
+    name: "ColorEditor",
+    tag: Some("color-editor"),
+    extends: Some(&WIDGET),
+    doc: "An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup.",
+    props: COLOREDITOR_PROPS,
+    signals: COLOREDITOR_SIGNALS,
+    methods: COLOREDITOR_METHODS,
+    slots: COLOREDITOR_SLOTS,
+    a11y: A11ySpec { role: "Group", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["custom-colors", "value"],
+};
+
+static COLORPICKER_PROPS: &[PropSpec] = &[
+    PropSpec { name: "alpha", ty: ValueType::Enum(&["opaque", "blend", "blend-or-additive"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Paint, native: false, doc: "Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor)." },
+    PropSpec { name: "commit-mode", ty: ValueType::Enum(&["live", "confirm"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Paint, native: false, doc: "`live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog)." },
+    PropSpec { name: "custom-colors", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: true, doc: "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`." },
+    PropSpec { name: "fields", ty: ValueType::Str, default: DefaultValue::Str("hex rgb"), nullable: false, change: ChangeClass::Layout, native: false, doc: "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100)." },
+    PropSpec { name: "swatches", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: false, doc: "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one." },
+    PropSpec { name: "value", ty: ValueType::Str, default: DefaultValue::Str("#000000"), nullable: false, change: ChangeClass::Paint, native: true, doc: "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it." },
+];
+static COLORPICKER_SIGNALS: &[SignalSpec] = &[
+    SignalSpec { name: "changed", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The user edited the colour; carries it (CSS hex, once per frame while dragging)." },
+    SignalSpec { name: "commit", args: &[("value", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save." },
+];
+static COLORPICKER_METHODS: &[MethodSpec] = &[
+
+];
+static COLORPICKER_SLOTS: &[SlotSpec] = &[
+
+];
+pub static COLORPICKER: KindSpec = KindSpec {
+    name: "ColorPicker",
+    tag: Some("color-picker"),
+    extends: Some(&WIDGET),
+    doc: "A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup.",
+    props: COLORPICKER_PROPS,
+    signals: COLORPICKER_SIGNALS,
+    methods: COLORPICKER_METHODS,
+    slots: COLORPICKER_SLOTS,
+    a11y: A11ySpec { role: "ColorWell", name_from: &["accessible-name"], name_required: false },
+    text_content: None,
+    toplevel: false,
+    native_state: &["custom-colors", "value"],
+};
+
+
 /// Every kind here, bases first.
-pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX, &MENUENTRY, &CONTEXTMENU, &ACTION, &VIRTUALLIST];
+pub static ALL: &[&KindSpec] = &[&SCROLLAREA, &COLLAPSINGHEADER, &TABLE, &TABLECOLUMN, &TREEVIEW, &COMBOBOX, &MENUENTRY, &CONTEXTMENU, &ACTION, &VIRTUALLIST, &SPLITVIEW, &PANEL, &POPUP, &TOOLTIP, &TOASTHOST, &STATUSBAR, &MODAL, &INNERWINDOW, &DIALOGBUTTONS, &MENUBAR, &MENU, &MENUSEPARATOR, &SCROLLBAR, &TABVIEW, &TAB, &CALENDAR, &DATEPICKER, &COLOREDITOR, &COLORPICKER];

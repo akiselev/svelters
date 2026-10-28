@@ -651,6 +651,10 @@ pub mod core {
         fn children_inert(&self) -> bool {
             false
         }
+        /// The window's content area in the node's local points, from the last layout, given before
+        /// each [`Kind::prepare`]: the room a kind that places popups of its own keeps them in (menus,
+        /// the pickers' drops).
+        fn room(&mut self, _room: Rect) {}
         fn prepare(&mut self, _cx: &mut PrepareCx) {}
         fn record(&self, cx: &mut RecordCx);
         fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {

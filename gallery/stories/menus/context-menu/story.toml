@@ -1,12 +1,17 @@
 id = "context-menu"
 title = "Context menu"
 family = "menus"
-kinds = ["context-menu", "menu-item"]
-size = [320, 200]
+kinds = ["context-menu", "menu-item", "menu", "menu-separator"]
+size = [480, 320]
 states = ["normal"]
-notes = "A context menu declared in its owner, with plain, check, radio and shortcut items (`action`). It opens on a secondary click and has no prop that opens it, so a shot shows the owner only (a polish finding asks for a way to show it open)."
+notes = "A context menu declared in its owner, with plain, check, radio, shortcut, disabled and submenu items (`action`, `menu`, `menu-separator`). `items` shows the owner closed; `open` sets the menu's `open` prop, so it opens at its own top left without input."
 
 [[variant]]
 id = "items"
 title = "Every item type"
 file = "items.svelte"
+
+[[variant]]
+id = "open"
+title = "Open (every item type)"
+file = "open.svelte"

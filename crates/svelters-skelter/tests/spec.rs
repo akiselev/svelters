@@ -71,6 +71,21 @@ fn no_wire_id_reaches_the_flag_bits() {
     assert!(n > 200);
 }
 
+/// The host sends a kind id in its app-export pack (bits 27..22 all set) to the app schema, so no
+/// built-in kind's id may be there (`modal` and `toast-host` hash into it and are moved out).
+#[test]
+fn no_kind_id_is_in_the_app_pack() {
+    let spec: serde_json::Value = serde_json::from_str(&builtin_text()).unwrap();
+    let pack = svelters_skelter::kinds::APP_PACK as u64;
+    for (name, k) in spec["kinds"].as_object().unwrap() {
+        let id = k["id"].as_u64().unwrap();
+        assert_ne!(id & pack, pack, "{name}: kind id {id:#x} is in the app pack");
+    }
+    let kinds = svelters_skelter::builtin_kinds();
+    let modal = kinds.by_tag("modal").unwrap();
+    assert_eq!(modal.wire, (skelter_core::KindId::of("modal").0 & svelters_skelter::kinds::WIRE_MASK) & !(1 << 22));
+}
+
 #[test]
 fn ids_are_skelter_core_hashes() {
     use skelter_core::{KindId, PropId, SignalId, common};

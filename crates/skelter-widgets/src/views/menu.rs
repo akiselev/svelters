@@ -993,6 +993,10 @@ impl Kind for MenuBar {
         let s = self.menus.bar_size(cx.text, &cx.style);
         taffy::Size { width: s.w, height: s.h }
     }
+    /// Its levels stay in the window (flipped and shifted inside the room).
+    fn room(&mut self, room: Rect) {
+        self.menus.bounds = room;
+    }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         self.menus.sync_elements(cx.style.children);
         self.menus.prepare(cx.text, &cx.style);
@@ -1122,6 +1126,10 @@ impl Kind for ContextMenu {
     }
     fn get_prop(&self, prop: PropId) -> Option<Value> {
         self.props.get(prop)
+    }
+    /// Its levels stay in the window (flipped and shifted inside the room).
+    fn room(&mut self, room: Rect) {
+        self.menus.bounds = room;
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         self.menus.sync_elements(cx.style.children);

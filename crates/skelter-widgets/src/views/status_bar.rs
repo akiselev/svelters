@@ -146,9 +146,39 @@ impl StatusBar {
     }
 }
 
+/// `show-message(text, timeout?)` and `clear-message()`: egui's `status-bar` methods (Qt
+/// `showMessage`/`clearMessage`) over [`StatusBar::show_message`] and [`StatusBar::clear_message`].
+pub static METHODS: &[skelter_core::MethodSpec] = &[
+    skelter_core::MethodSpec::new(
+        "show-message",
+        &[skelter_core::ArgSpec::new("text", skelter_core::ValueType::Str), skelter_core::ArgSpec::new("timeout", skelter_core::ValueType::F64).nullable()],
+        None,
+    )
+    .doc("`show-message(text, timeout = 0)`: shows `text` for `timeout` seconds (0: until changed or cleared), over the temporary sections (Qt `showMessage`)."),
+    skelter_core::MethodSpec::new("clear-message", &[], None).doc("Clears the message (Qt `clearMessage`)."),
+];
+
 impl Kind for StatusBar {
     fn parts() -> &'static [&'static str] {
         &["message"]
+    }
+    fn methods() -> &'static [skelter_core::MethodSpec] {
+        METHODS
+    }
+    fn call(&mut self, cx: &mut EventCx, method: usize, args: &[skelter_core::Value]) -> Handled {
+        match (method, args) {
+            (0, [text, rest @ ..]) => {
+                let Some(text) = text.as_str() else { return Handled::No };
+                let timeout = rest.first().and_then(skelter_core::Value::as_f64).map(|s| Span::from_secs_f64(s.max(0.0)));
+                self.show_message(cx, text, timeout);
+                Handled::Yes
+            }
+            (1, []) => {
+                self.clear_message(cx);
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
     }
     fn spec() -> &'static KindSpec {
         &SPEC

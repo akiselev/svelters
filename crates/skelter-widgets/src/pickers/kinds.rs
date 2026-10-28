@@ -32,8 +32,7 @@
 //! as `overlay_closed`. `overlay_spec` and `record_popup` stay for a host that keeps its own stack.
 //!
 //! Left out: Tab between the colour editor's inner stops (the focus model has no sub-node stops;
-//! focus lands on the first stop), and the popup's room (`PopupHost::bounds`, unbounded: the
-//! window's content area is not handed to `prepare` yet).
+//! focus lands on the first stop).
 
 use super::calendar::{CalBody, Calendar, CalCfg, FIRST_DAY, WEEKDAY_FORMAT, grid_days};
 use super::color::{ALPHA, Hsv, parse_hex};
@@ -877,6 +876,10 @@ impl w::Kind for DatePickerKind {
         taffy::Size { width: s.w, height: s.h }
     }
 
+    /// The drop stays in the window ([`popup::place_popup`] flips and shifts it inside the room).
+    fn room(&mut self, room: Rect) {
+        self.popup.bounds = room;
+    }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         let look = look(cx.style.dark);
         let size = self.model.popup_size(look);
@@ -1074,6 +1077,10 @@ impl w::Kind for ColorPickerKind {
         taffy::Size { width: s.w, height: s.h }
     }
 
+    /// The drop stays in the window ([`popup::place_popup`] flips and shifts it inside the room).
+    fn room(&mut self, room: Rect) {
+        self.popup.bounds = room;
+    }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         let look = look(cx.style.dark);
         let size = self.model.popup_size(look);
