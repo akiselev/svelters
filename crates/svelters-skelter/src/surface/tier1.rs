@@ -468,21 +468,21 @@ pub static PANEL: KindSpec = KindSpec {
 };
 
 static POPUP_PROPS: &[PropSpec] = &[
-    PropSpec { name: "escape-dismiss", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
-    PropSpec { name: "fit", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
-    PropSpec { name: "flip", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
-    PropSpec { name: "gap", ty: ValueType::F64, default: DefaultValue::F64(4.0), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
-    PropSpec { name: "light-dismiss", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
-    PropSpec { name: "match-width", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
-    PropSpec { name: "modal", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: false, doc: "" },
+    PropSpec { name: "escape-dismiss", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "Escape closes it (`close` with `escape`)." },
+    PropSpec { name: "fit", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Layout, native: false, doc: "It shrinks to the room left in the window rather than overflow it." },
+    PropSpec { name: "flip", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "It moves to the other side of its anchor when it does not fit on `placement`'s." },
+    PropSpec { name: "gap", ty: ValueType::F64, default: DefaultValue::F64(4.0), nullable: false, change: ChangeClass::Property, native: false, doc: "Points between it and its anchor." },
+    PropSpec { name: "light-dismiss", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "A press outside it closes it (`close` with `outside-press`); off while `modal`." },
+    PropSpec { name: "match-width", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "It is at least as wide as its anchor (a drop-down's list)." },
+    PropSpec { name: "modal", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: false, doc: "It blocks the rest of the window while open (AccessKit Dialog, modal); no light dismiss." },
     PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: true, doc: "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false." },
     PropSpec { name: "placement", ty: ValueType::Enum(&["top", "top-start", "top-center", "top-end", "bottom", "bottom-start", "bottom-center", "bottom-end", "left", "left-start", "left-center", "left-end", "right", "right-start", "right-center", "right-end"]), default: DefaultValue::Enum(5), nullable: false, change: ChangeClass::Property, native: false, doc: "The side of its owner it opens on (egui moves it to another side when it does not fit)." },
-    PropSpec { name: "shift", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
+    PropSpec { name: "shift", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "It slides along its side to stay in the window." },
 ];
 static POPUP_SIGNALS: &[SignalSpec] = &[
-    SignalSpec { name: "close", args: &[("reason", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "open", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "toggle", args: &[("open", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "close", args: &[("reason", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "It closed (`escape`, `outside-press`, `programmatic`, …)." },
+    SignalSpec { name: "open", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "It opened." },
+    SignalSpec { name: "toggle", args: &[("open", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "It opened or closed." },
 ];
 static POPUP_METHODS: &[MethodSpec] = &[
 
@@ -506,10 +506,10 @@ pub static POPUP: KindSpec = KindSpec {
 };
 
 static TOOLTIP_PROPS: &[PropSpec] = &[
-    PropSpec { name: "delay", ty: ValueType::F64, default: DefaultValue::Null, nullable: true, change: ChangeClass::Property, native: false, doc: "" },
-    PropSpec { name: "duration", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
-    PropSpec { name: "placement", ty: ValueType::Enum(&["top", "top-start", "top-center", "top-end", "bottom", "bottom-start", "bottom-center", "bottom-end", "left", "left-start", "left-center", "left-end", "right", "right-start", "right-center", "right-end"]), default: DefaultValue::Enum(2), nullable: false, change: ChangeClass::Property, native: false, doc: "" },
-    PropSpec { name: "text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "delay", ty: ValueType::F64, default: DefaultValue::Null, nullable: true, change: ChangeClass::Property, native: false, doc: "Seconds before it shows; unset: the platform's delay." },
+    PropSpec { name: "duration", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Property, native: false, doc: "Seconds it stays; zero: while hovered." },
+    PropSpec { name: "placement", ty: ValueType::Enum(&["top", "top-start", "top-center", "top-end", "bottom", "bottom-start", "bottom-center", "bottom-end", "left", "left-start", "left-center", "left-end", "right", "right-start", "right-center", "right-end"]), default: DefaultValue::Enum(2), nullable: false, change: ChangeClass::Property, native: false, doc: "The side of its host it shows on (`top-center`: above, centred), flipped when there is no room." },
+    PropSpec { name: "text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The tooltip's text (also its accessible name)." },
 ];
 static TOOLTIP_SIGNALS: &[SignalSpec] = &[
 
@@ -538,7 +538,7 @@ pub static TOOLTIP: KindSpec = KindSpec {
 static TOASTHOST_PROPS: &[PropSpec] = &[
     PropSpec { name: "corner", ty: ValueType::Enum(&["bottom-right", "bottom-left", "top-right", "top-left"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The viewport corner the toasts stack in." },
     PropSpec { name: "duration", ty: ValueType::F64, default: DefaultValue::F64(4.0), nullable: false, change: ChangeClass::Property, native: false, doc: "Seconds a toast stays when `show` gives none; 0 keeps it until closed." },
-    PropSpec { name: "max-visible", ty: ValueType::I64, default: DefaultValue::I64(5), nullable: false, change: ChangeClass::Structure, native: false, doc: "" },
+    PropSpec { name: "max-visible", ty: ValueType::I64, default: DefaultValue::I64(5), nullable: false, change: ChangeClass::Structure, native: false, doc: "At most this many show at once (at least 1); the rest wait, their clocks not started." },
 ];
 static TOASTHOST_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "action", args: &[("id", ValueType::I64), ("index", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`)." },
@@ -597,12 +597,12 @@ pub static STATUSBAR: KindSpec = KindSpec {
 
 static MODAL_PROPS: &[PropSpec] = &[
     PropSpec { name: "dismissable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Property, native: false, doc: "Escape or a click on the backdrop closes it; with false only the app does." },
-    PropSpec { name: "heading", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "heading", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The dialog's heading row (empty: none; the common `tooltip` stays the hover text)." },
     PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Structure, native: true, doc: "Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false." },
 ];
 static MODAL_SIGNALS: &[SignalSpec] = &[
-    SignalSpec { name: "cancel", args: &[("reason", ValueType::Str)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "" },
-    SignalSpec { name: "close", args: &[("reason", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "cancel", args: &[("reason", ValueType::Str)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Escape or a backdrop click asked to close it (`escape`, `backdrop`); `preventDefault` keeps it open." },
+    SignalSpec { name: "close", args: &[("reason", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "It closed; carries the reason." },
 ];
 static MODAL_METHODS: &[MethodSpec] = &[
 
@@ -627,25 +627,25 @@ pub static MODAL: KindSpec = KindSpec {
 
 static INNERWINDOW_PROPS: &[PropSpec] = &[
     PropSpec { name: "closable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows a close button in the title bar." },
-    PropSpec { name: "collapsed", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
+    PropSpec { name: "collapsed", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: true, doc: "Folded to its title bar (the collapse button and a double click on the title bar toggle it)." },
     PropSpec { name: "collapsible", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The title bar can collapse it to the title." },
-    PropSpec { name: "heading", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "" },
-    PropSpec { name: "height", ty: ValueType::F64, default: DefaultValue::F64(240.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
-    PropSpec { name: "min-height", ty: ValueType::F64, default: DefaultValue::F64(60.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
-    PropSpec { name: "min-width", ty: ValueType::F64, default: DefaultValue::F64(120.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "heading", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The title bar's text (the common `tooltip` stays the hover text)." },
+    PropSpec { name: "height", ty: ValueType::F64, default: DefaultValue::F64(240.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "The frame's height in points; native-owned while it is resized." },
+    PropSpec { name: "min-height", ty: ValueType::F64, default: DefaultValue::F64(60.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The least height a resize leaves." },
+    PropSpec { name: "min-width", ty: ValueType::F64, default: DefaultValue::F64(120.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The least width a resize leaves." },
     PropSpec { name: "resizable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The user can resize it; the content is laid out at its size. Without it the window is as big as its content." },
-    PropSpec { name: "width", ty: ValueType::F64, default: DefaultValue::F64(320.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
-    PropSpec { name: "x", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
-    PropSpec { name: "y", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
+    PropSpec { name: "width", ty: ValueType::F64, default: DefaultValue::F64(320.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "The frame's width in points; native-owned while it is resized." },
+    PropSpec { name: "x", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "The frame's left edge in its parent's points (the node is laid out there); native-owned while it is moved." },
+    PropSpec { name: "y", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "The frame's top edge in its parent's points; native-owned while it is moved." },
 ];
 static INNERWINDOW_SIGNALS: &[SignalSpec] = &[
-    SignalSpec { name: "close", args: &[], passive: false, cancelable: true, sync: true, bubbles: false, doc: "" },
-    SignalSpec { name: "drag-started", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "drag-stopped", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "move", args: &[("x", ValueType::F64), ("y", ValueType::F64), ("width", ValueType::F64), ("height", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "raise", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "resize", args: &[("x", ValueType::F64), ("y", ValueType::F64), ("width", ValueType::F64), ("height", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "toggle", args: &[("expanded", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "close", args: &[], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Its close button was clicked; `preventDefault` keeps it open." },
+    SignalSpec { name: "drag-started", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A move or resize began." },
+    SignalSpec { name: "drag-stopped", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A move or resize ended." },
+    SignalSpec { name: "move", args: &[("x", ValueType::F64), ("y", ValueType::F64), ("width", ValueType::F64), ("height", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A move ended at this frame (`x`, `y`, `width`, `height`)." },
+    SignalSpec { name: "raise", args: &[], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A press on it: bring it to the top of its band." },
+    SignalSpec { name: "resize", args: &[("x", ValueType::F64), ("y", ValueType::F64), ("width", ValueType::F64), ("height", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A resize ended at this frame (`x`, `y`, `width`, `height`)." },
+    SignalSpec { name: "toggle", args: &[("expanded", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "It collapsed or expanded; carries whether it is expanded." },
 ];
 static INNERWINDOW_METHODS: &[MethodSpec] = &[
 
@@ -697,15 +697,15 @@ pub static DIALOGBUTTONS: KindSpec = KindSpec {
 };
 
 static MENUBAR_PROPS: &[PropSpec] = &[
-    PropSpec { name: "enabled", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "" },
-    PropSpec { name: "native-bar", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
+    PropSpec { name: "enabled", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Takes input when true; its titles are drawn greyed out otherwise." },
+    PropSpec { name: "native-bar", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "A native menu bar shows these menus (the runner sets it): this one is not laid out and takes no input." },
 ];
 static MENUBAR_SIGNALS: &[SignalSpec] = &[
-    SignalSpec { name: "activate", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "close", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "hover", args: &[("item", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "open", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
-    SignalSpec { name: "toggled", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "" },
+    SignalSpec { name: "activate", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "An item was picked; carries its id and its check state after the pick." },
+    SignalSpec { name: "close", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A menu level closed; carries the menu's id." },
+    SignalSpec { name: "hover", args: &[("item", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The current row changed (pointer or keys); carries the item's id." },
+    SignalSpec { name: "open", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A menu level opened; carries the menu's id." },
+    SignalSpec { name: "toggled", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A check or radio item changed state; carries its id and new state." },
 ];
 static MENUBAR_METHODS: &[MethodSpec] = &[
     MethodSpec { name: "menu-activated", params: &[], ret: None, doc: "`menu-activated(id)`: the platform menu bar picked item `id` (with `native-bar`): activates it as a click would." },
