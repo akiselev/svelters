@@ -342,6 +342,9 @@ impl Document {
         let root_space = self.window(window).and_then(|w| w.root_transform);
         let ri = self.ix(root);
         let mut stack = vec![(ri, Ctx { space: root_space, clip: None, effect: None }, false)];
+        // the nodes whose prepare asked for another pass (`PrepareCx::request_paint`): marked after
+        // the walk, which clears the bits it visits, so the next frame records them again
+        let mut again: Vec<(NodeId, Dirty)> = Vec::new();
         while let Some((i, ctx, force)) = stack.pop() {
             let d = self.core[i].dirty;
             if !force && !d.intersects(Dirty::RECORD.union(Dirty::DESC_RECORD)) {
@@ -353,7 +356,10 @@ impl Document {
             // recording first: a kind that scrolls itself says so in `prepare`, which its property
             // nodes follow
             if new || d.contains(Dirty::PAINT) {
-                self.record_node(i, commit, runs, images);
+                let request = self.record_node(i, commit, runs, images);
+                if !request.is_empty() {
+                    again.push((node, request));
+                }
                 stats.recorded += 1;
             } else if self.fore_dirty.contains(&node) {
                 self.record_foreground_only(i, commit, runs);
@@ -387,6 +393,9 @@ impl Document {
                 };
                 stack.push((ci, cctx, force_children));
             }
+        }
+        for (node, request) in again {
+            self.mark(node, request);
         }
     }
 
@@ -495,8 +504,9 @@ impl Document {
         }
     }
 
-    fn record_node(&mut self, i: usize, commit: &mut Commit, runs: &mut RunSink, images: &mut ImageSink) {
-        let Some(mut k) = self.kinds[i].take() else { return };
+    /// Prepares and records node `i`; returns the work its prepare asked for next frame.
+    fn record_node(&mut self, i: usize, commit: &mut Commit, runs: &mut RunSink, images: &mut ImageSink) -> Dirty {
+        let Some(mut k) = self.kinds[i].take() else { return Dirty::EMPTY };
         let node = self.slots.id_at(i).expect("live");
         let mut shaper = self.shaper.take();
         let mut services = std::mem::take(&mut self.services);
@@ -594,7 +604,6 @@ impl Document {
         self.shaper = shaper;
         self.services = services;
         self.kinds[i] = Some(k);
-        let _ = request;
         // the prepare's native writes (FQ-73), as an event's: journalled for JS, a repaint next frame
         for (prop, v) in native {
             let _ = self.set_prop_native(node, prop, v);
@@ -654,6 +663,7 @@ impl Document {
         {
             w.rebuild = true;
         }
+        request
     }
 
     /// Sends node `i`'s new foreground list (or its removal); true when it appeared or went (the

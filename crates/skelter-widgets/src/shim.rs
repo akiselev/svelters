@@ -326,6 +326,22 @@ pub mod core {
         pub index: usize,
         pub anchors: &'a [&'a str],
         pub slots: &'a [&'a str],
+        /// What a row reads about every child (`dialog-buttons`, `status-bar`); may be empty.
+        pub children: &'a [ChildInfo<'a>],
+    }
+
+    /// The common props of one child a row places by ([`ChildCx::children`]).
+    #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+    pub struct ChildInfo<'a> {
+        /// Its kind's tag.
+        pub kind: &'a str,
+        /// Its `dialog-role` (`auto` by default).
+        pub dialog_role: &'a str,
+        /// A `button`'s `default` and `cancel`.
+        pub default_button: bool,
+        pub cancel_button: bool,
+        /// Its `status-section` (`temporary` by default).
+        pub status_section: &'a str,
     }
 
     impl ChildCx<'_> {
@@ -661,6 +677,15 @@ pub mod core {
         fn children_inert(&self) -> bool {
             false
         }
+        /// The window's content area in the node's local points, from the last layout, given before
+        /// each [`Kind::prepare`]: the room a kind that places popups of its own keeps them in (menus,
+        /// the pickers' drops).
+        fn room(&mut self, _room: Rect) {}
+        /// Each child's common props and its border box from the last layout (in the node's local
+        /// points; a hidden child's is empty), given before each [`Kind::prepare`]: what a container
+        /// draws around or between its children reads (the status bar's message area, the modal's
+        /// dialog box).
+        fn children_laid(&mut self, _children: &[(ChildInfo<'_>, Rect)]) {}
         fn prepare(&mut self, _cx: &mut PrepareCx) {}
         fn record(&self, cx: &mut RecordCx);
         /// Stands in for [`skelter_core::Kind::record_foreground`]: what paints above the kind's

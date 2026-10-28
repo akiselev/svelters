@@ -93,7 +93,7 @@ static WINDOW_PROPS: &[PropSpec] = &[
     PropSpec { name: "default-height", ty: ValueType::F64, default: DefaultValue::F64(360.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Initial inner height in points." },
     PropSpec { name: "default-width", ty: ValueType::F64, default: DefaultValue::F64(480.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Initial inner width in points." },
     PropSpec { name: "gap", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Space between the window's children, in points." },
-    PropSpec { name: "padding", ty: ValueType::F64, default: DefaultValue::F64(8.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Inner spacing of the content area, in points." },
+    PropSpec { name: "padding", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "Inner spacing of the content area, in points (0 unless written: egui's 8 is not applied, coordinator 2026-10-28)." },
     PropSpec { name: "source-loc", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "Set by the runtime in dev builds: where the window was declared (`file#offset`, then the component call sites around it, U+001F-separated). Not for apps to set." },
     PropSpec { name: "title", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "Window title (`ViewportCommand::Title`)." },
 ];

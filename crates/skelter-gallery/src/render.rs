@@ -160,6 +160,8 @@ pub struct Renderer {
     current: Option<Cell>,
     /// A window story's own `<window>`, attached as the harness window's root for its cell.
     presented: Option<svl_handle>,
+    /// The pointer is in the window (a `hover` cell put it over its subject).
+    pointer_in: bool,
 }
 
 impl Renderer {
@@ -211,6 +213,11 @@ impl Renderer {
             .with_clear(skelter_base::color::Color::TRANSPARENT)
             .with_max_steps(u64::from(MAX_STEPS))
             .build_unsettled(doc);
+        // the app runner's clock is the harness's virtual one: the kinds' timers (a tooltip's delay,
+        // a toast's timeout) fire as the renderer steps it
+        let clock: Arc<dyn skelter_base::time::Clock> = harness.clock().clone();
+        let mut harness = harness;
+        harness.state_mut().set_clock(clock);
         if backend.window_id(window).is_none() {
             return Err(Error::Setup("the harness window did not attach the gallery's window node".into()));
         }
@@ -237,6 +244,7 @@ impl Renderer {
             window: (size, 1.0),
             current: None,
             presented: None,
+            pointer_in: false,
         };
         r.apply_theme(&Theme::DarkModern, Density::Default)?;
         let _ = r.settle();
@@ -491,6 +499,10 @@ impl Renderer {
         for f in self.setup.clone() {
             f(&mut SetupCx { cell, story: &story, backend: &self.backend });
         }
+        // the last `hover` cell's pointer leaves before this one mounts
+        if std::mem::take(&mut self.pointer_in) {
+            self.harness.remove_cursor();
+        }
         let mut props = Props::json(serde_json::Value::Object(cell.args.clone().into_iter().collect()));
         let mut applied = None;
         let mut force_disabled = false;
@@ -539,6 +551,30 @@ impl Renderer {
             steps += s2;
             settled = ok;
             warnings.extend(self.drain());
+        }
+        // `hover`: the pointer really rests on the (first) subject past the platform's tooltip delay,
+        // so a `tooltip` (the common `title`) shows as it would for a person
+        if cell.state == State::Hover
+            && let Some(&h) = subjects.first()
+            && let Some(r) = self.backend.scene().read(|s| s.get(h).and_then(|r| r.drawn()))
+        {
+            self.harness.hover_at(skelter_base::geom::Point::new((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0));
+            self.pointer_in = true;
+            let delay = self.backend.with_doc(|d| skelter_widgets::host::policy_of(d).tooltip_delay_ms);
+            let end = self.harness.now() + skelter_base::time::Span::from_millis(i64::from(delay) + 100);
+            while self.harness.now() < end {
+                self.embed().logic();
+                self.frames += 1;
+                let now_ms = self.harness.now().0 as f64 / 1e6;
+                self.ext.run_frame(&self.backend, self.frames, now_ms);
+                self.harness.step();
+                steps += 1;
+            }
+            let (s2, ok) = self.settle();
+            steps += s2;
+            settled = ok;
+            warnings.extend(self.drain());
+            applied = applied.map(|a| format!("{a}, pointer over it for {delay} ms"));
         }
         if !settled {
             warnings.push(format!("not settled after {steps} steps: {}", self.busy().unwrap_or_default()));

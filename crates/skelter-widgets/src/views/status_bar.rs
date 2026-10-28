@@ -16,7 +16,7 @@ use super::common;
 use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, ChildInfo, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::geom::Rect;
 use skelter_base::time::{Span, Time};
@@ -146,9 +146,71 @@ impl StatusBar {
     }
 }
 
+/// `show-message(text, timeout?)` and `clear-message()`: egui's `status-bar` methods (Qt
+/// `showMessage`/`clearMessage`) over [`StatusBar::show_message`] and [`StatusBar::clear_message`].
+pub static METHODS: &[skelter_core::MethodSpec] = &[
+    skelter_core::MethodSpec::new(
+        "show-message",
+        &[skelter_core::ArgSpec::new("text", skelter_core::ValueType::Str), skelter_core::ArgSpec::new("timeout", skelter_core::ValueType::F64).nullable()],
+        None,
+    )
+    .doc("`show-message(text, timeout = 0)`: shows `text` for `timeout` seconds (0: until changed or cleared), over the temporary sections (Qt `showMessage`)."),
+    skelter_core::MethodSpec::new("clear-message", &[], None).doc("Clears the message (Qt `clearMessage`)."),
+];
+
 impl Kind for StatusBar {
     fn parts() -> &'static [&'static str] {
         &["message"]
+    }
+    /// It hides the temporary sections while a message shows and pushes the end ones to the far end
+    /// ([`Kind::child_layout`]); the row itself is `base.css`'s.
+    fn places_children() -> bool {
+        true
+    }
+    /// The message area: from the last start section's right edge (plus the row's 8 pt gap) to the
+    /// first end section's left edge.
+    fn children_laid(&mut self, children: &[(ChildInfo<'_>, Rect)]) {
+        let of = |s: Section| children.iter().filter(move |(c, r)| Section::parse(c.status_section) == s && r.width() > 0.0).map(|(_, r)| *r);
+        let left = of(Section::Start).map(|r| r.max.x + 8.0).fold(0.0, f32::max);
+        let right = of(Section::End).map(|r| r.min.x - 8.0).fold(f32::INFINITY, f32::min);
+        self.set_message_area(left, right);
+    }
+    /// The sections in source order (taffy has no `order`: write start, temporary, end), temporary
+    /// ones hidden while a message or tip shows, the first end section with `margin-left: auto`.
+    fn child_layout(&self, cx: &ChildCx, style: &mut taffy::Style) -> bool {
+        let Some(me) = cx.children.get(cx.index) else { return true };
+        match Section::parse(me.status_section) {
+            Section::Temporary if self.showing() => {
+                style.display = taffy::Display::None;
+                false
+            }
+            Section::End => {
+                let first_end = cx.children.iter().position(|c| Section::parse(c.status_section) == Section::End);
+                if first_end == Some(cx.index) {
+                    style.margin.left = taffy::LengthPercentageAuto::auto();
+                }
+                true
+            }
+            _ => true,
+        }
+    }
+    fn methods() -> &'static [skelter_core::MethodSpec] {
+        METHODS
+    }
+    fn call(&mut self, cx: &mut EventCx, method: usize, args: &[skelter_core::Value]) -> Handled {
+        match (method, args) {
+            (0, [text, rest @ ..]) => {
+                let Some(text) = text.as_str() else { return Handled::No };
+                let timeout = rest.first().and_then(skelter_core::Value::as_f64).map(|s| Span::from_secs_f64(s.max(0.0)));
+                self.show_message(cx, text, timeout);
+                Handled::Yes
+            }
+            (1, []) => {
+                self.clear_message(cx);
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
     }
     fn spec() -> &'static KindSpec {
         &SPEC

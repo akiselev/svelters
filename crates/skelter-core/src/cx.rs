@@ -157,6 +157,11 @@ impl<'a> NodeView<'a> {
     pub fn scroll_geometry(&self) -> Option<crate::scroll::ScrollGeometry> {
         self.doc.scroll_geometry(self.id)
     }
+    /// The border box from the last layout, relative to its parent's border box (where a container
+    /// placed this child; `bounds` is the same box at the origin).
+    pub fn layout_rect(&self) -> Option<Rect> {
+        self.doc.layout_rect(self.id)
+    }
     /// The border box in local coordinates.
     pub fn bounds(&self) -> Rect {
         Rect::from_origin_size(Point::ZERO, self.size)

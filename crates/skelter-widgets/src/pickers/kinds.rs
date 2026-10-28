@@ -32,8 +32,7 @@
 //! as `overlay_closed`. `overlay_spec` and `record_popup` stay for a host that keeps its own stack.
 //!
 //! Left out: Tab between the colour editor's inner stops (the focus model has no sub-node stops;
-//! focus lands on the first stop), and the popup's room (`PopupHost::bounds`, unbounded: the
-//! window's content area is not handed to `prepare` yet).
+//! focus lands on the first stop).
 
 use super::calendar::{CalBody, Calendar, CalCfg, FIRST_DAY, WEEKDAY_FORMAT, grid_days};
 use super::color::{ALPHA, Hsv, parse_hex};
@@ -497,6 +496,10 @@ impl ColorEditorKind {
         (cfg.hex, cfg.rgb, cfg.hsv) = (hex, rgb, hsv);
         cfg.swatches = strings(&p.swatches);
         cfg.custom = strings(&p.custom_colors);
+        // the value under the new alpha mode: `value` written before `alpha` keeps its alpha
+        if let Ok(rgba) = parse_hex(&self.props.value) {
+            self.model.value = ColorBody::hex_of(Hsv::from_srgba(rgba), &self.model.cfg);
+        }
     }
 
     fn deliver(&mut self, cx: &mut EventCx, emits: Vec<Emit>) {
@@ -877,6 +880,10 @@ impl w::Kind for DatePickerKind {
         taffy::Size { width: s.w, height: s.h }
     }
 
+    /// The drop stays in the window ([`popup::place_popup`] flips and shifts it inside the room).
+    fn room(&mut self, room: Rect) {
+        self.popup.bounds = room;
+    }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         let look = look(cx.style.dark);
         let size = self.model.popup_size(look);
@@ -994,6 +1001,10 @@ impl ColorPickerKind {
         cfg.swatches = strings(&p.swatches);
         cfg.custom = strings(&p.custom_colors);
         self.model.live = p.commit_mode != "confirm";
+        // the value under the new alpha mode: `value` written before `alpha` keeps its alpha
+        if let Ok(rgba) = parse_hex(&self.props.value) {
+            self.model.value = ColorBody::hex_of(Hsv::from_srgba(rgba), &self.model.cfg);
+        }
     }
 
     fn deliver(&mut self, cx: &mut EventCx, emits: Vec<Emit>) {
@@ -1074,6 +1085,10 @@ impl w::Kind for ColorPickerKind {
         taffy::Size { width: s.w, height: s.h }
     }
 
+    /// The drop stays in the window ([`popup::place_popup`] flips and shifts it inside the room).
+    fn room(&mut self, room: Rect) {
+        self.popup.bounds = room;
+    }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         let look = look(cx.style.dark);
         let size = self.model.popup_size(look);
@@ -1222,6 +1237,21 @@ mod tests {
         assert!(c.set_prop(cv, &w::Value::str("#12")).is_err());
         c.set_prop(cv, &w::Value::str("#336699")).unwrap();
         assert_eq!(c.model.value, "#336699");
+    }
+
+    /// POL2-REGISTER: Svelte writes props in attribute order; a `value` with alpha written before
+    /// `alpha="blend"` keeps its alpha (the editor's and the picker's).
+    #[test]
+    fn a_value_written_before_alpha_keeps_its_alpha() {
+        let mut c = ColorEditorKind::default();
+        c.set_prop(COLOR_EDITOR.prop("value").unwrap(), &w::Value::str("#2e86c180")).unwrap();
+        assert_eq!(c.model.value, "#2e86c1", "opaque until alpha is on");
+        c.set_prop(COLOR_EDITOR.prop("alpha").unwrap(), &w::Value::str("blend")).unwrap();
+        assert_eq!(c.model.value, "#2e86c180");
+        let mut k = ColorPickerKind::default();
+        k.set_prop(COLOR_PICKER.prop("value").unwrap(), &w::Value::str("#2e86c180")).unwrap();
+        k.set_prop(COLOR_PICKER.prop("alpha").unwrap(), &w::Value::str("blend")).unwrap();
+        assert_eq!(k.model.value, "#2e86c180");
     }
 
     #[test]

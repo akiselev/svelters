@@ -35,7 +35,7 @@ pub const MAX_CUSTOM: usize = 16;
 
 /// The parts' sizes (svelters-egui `SQUARE_UA`, `STRIP_UA`, `HANDLE_UA`, `CELL_UA`; fields are
 /// `control-h` high).
-pub const SQUARE: Size = Size::new(200.0, 140.0);
+pub const SQUARE: Size = Size::new(232.0, 140.0);
 pub const STRIP_H: f32 = 12.0;
 pub const HANDLE_W: f32 = 10.0;
 pub const HANDLE_W_DRAGGING: f32 = 12.0;

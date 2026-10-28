@@ -963,7 +963,7 @@ mod tests {
         let mut styles = Vec::new();
         for i in 0..3 {
             let mut st = taffy::Style::default();
-            assert!(s.child_layout(&ChildCx { index: i, anchors: &anchors, slots: &[] }, &mut st), "every pane shows");
+            assert!(s.child_layout(&ChildCx { index: i, anchors: &anchors, slots: &[], children: &[] }, &mut st), "every pane shows");
             styles.push(st);
         }
         assert!(styles.iter().all(|st| st.flex_grow == 1.0 && st.flex_basis == taffy::Dimension::length(0.0)), "equal shares");
@@ -984,7 +984,7 @@ mod tests {
         assert_eq!(s.weights(2), vec![Share::Fixed(80.0), Share::Grow(1.0)]);
         assert_eq!(s.shares(2, 299.0), vec![80.0, 219.0]);
         let mut st = taffy::Style::default();
-        s.child_layout(&ChildCx { index: 0, anchors: &["", ""], slots: &[] }, &mut st);
+        s.child_layout(&ChildCx { index: 0, anchors: &["", ""], slots: &[], children: &[] }, &mut st);
         assert_eq!((st.flex_basis, st.flex_grow, st.flex_shrink), (taffy::Dimension::length(80.0), 0.0, 0.0));
     }
 

@@ -3,7 +3,8 @@
 //!
 //! **Kinds.** A surface kind whose widget skelter-widgets has written (the 18 Tier 0 controls and
 //! containers, and the inline runs a `label` folds; not yet `window`) is registered through
-//! `skelter_widgets::host::register_tier0` (`text-edit` directly: it is a `Kind` of its own); every other concrete kind gets a core kind synthesized
+//! `skelter_widgets::host::register_tier0`, `views::register_all`, the table's, tabs' and pickers'
+//! `register` (`text-edit` directly: it is a `Kind` of its own); every other concrete kind gets a core kind synthesized
 //! from its surface spec ([`Placeholder`]: the props, signals and slots are real tree members, the
 //! node draws nothing) until its widget lands. Abstract bases (`Widget`, `Run`) have no core kind.
 //!
@@ -20,7 +21,8 @@
 //! hash of (declaring kind, member, type), the declaring kind being the tag (`button`), `*` for the
 //! `Widget` base (core's common pseudo-kind) and the lowercased name for other bases. So a kind's own
 //! native member has its core id on the wire, an inherited one has one id on every kind, and a type
-//! change changes the id (the spec hash then forces a recompile). Kinds are `KindId::of(tag)`.
+//! change changes the id (the spec hash then forces a recompile). Kinds are `KindId::of(tag)`, kept
+//! out of the host's app-export pack ([`kind_id_wire`]).
 
 use crate::surface::{self, DefaultValue, KindSpec, MethodSpec, PropSpec, SignalSpec, SlotSpec, ValueType};
 use skelter_base::accesskit::Role;
@@ -166,15 +168,13 @@ pub fn register_builtin(reg: &mut KindRegistry) -> Result<(), RegistryError> {
 fn register_hosted(reg: &mut KindRegistry) -> Result<Vec<core::KindId>, RegistryError> {
     let before: Vec<core::KindId> = reg.iter().map(|e| e.id).collect();
     skelter_widgets::host::register_tier0(reg)?;
-    // the tier-1 views whose surface is egui's (A9, `surface::tier1`)
-    skelter_widgets::host::register::<skelter_widgets::views::scroll::ScrollArea>(reg)?;
+    // every view (scroll area, panels, splits, lists, trees, popups, menus, select, tooltip, toasts,
+    // modal, inner window, status bar, dialog buttons; `surface::tier1`), the table, tabs and pickers
     skelter_widgets::host::register::<skelter_widgets::controls::CollapsingHeader>(reg)?;
+    skelter_widgets::views::register_all(reg)?;
     skelter_widgets::table::kinds::register(reg)?;
-    skelter_widgets::host::register::<skelter_widgets::views::tree::TreeView>(reg)?;
-    skelter_widgets::host::register::<skelter_widgets::views::virtual_list::VirtualList>(reg)?;
-    skelter_widgets::host::register::<skelter_widgets::views::select::Select>(reg)?;
-    skelter_widgets::host::register::<skelter_widgets::views::menu::ContextMenu>(reg)?;
-    skelter_widgets::host::register::<skelter_widgets::views::menu::MenuItemKind>(reg)?;
+    skelter_widgets::tabs::kinds::register(reg)?;
+    skelter_widgets::pickers::kinds::register(reg)?;
     // a `Kind` of its own (IME, the text-input client: not the host bridge)
     reg.register::<skelter_widgets::text::TextEdit>()?;
     Ok(reg.iter().map(|e| e.id).filter(|k| !before.contains(k)).collect())
@@ -266,10 +266,23 @@ pub fn decl_key(k: &KindSpec) -> String {
 /// `SVL_SIGNAL_ID_MASK` (A18; the spec test fails on a collision after masking).
 pub const WIRE_MASK: svl_id = svelters_abi::SVL_SIGNAL_ID_MASK;
 
+/// The host's id pack of app exports' kinds and types (svelters-host `exports::APP_PACK`, bits
+/// 27..22 all set, CUSTOM-WIDGETS.md §3.2): the host sends a kind id there to the app schema, so a
+/// built-in kind's wire id stays out of it.
+pub const APP_PACK: svl_id = 0x3F << 22;
+
+/// The wire id of a kind whose core id is `core` (a skelter-core [`core::KindId`] hash): masked to
+/// the host's id space ([`WIRE_MASK`]) and moved out of the app pack (bit 22 cleared; `modal` and
+/// `toast-host` hash into it).
+pub fn kind_id_wire(core: u32) -> svl_id {
+    let w = core & WIRE_MASK;
+    if w & APP_PACK == APP_PACK { w & !(1 << 22) } else { w }
+}
+
 pub fn kind_wire(k: &KindSpec) -> svl_id {
     match k.tag {
-        Some(t) => core::KindId::of(t).0 & WIRE_MASK,
-        None => core::KindId::of(&decl_key(k)).0 & WIRE_MASK,
+        Some(t) => kind_id_wire(core::KindId::of(t).0),
+        None => kind_id_wire(core::KindId::of(&decl_key(k)).0),
     }
 }
 

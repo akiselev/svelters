@@ -1,13 +1,19 @@
 id = "tooltip"
 title = "Tooltip"
 family = "views"
-kinds = ["button"]
+kinds = ["button", "tooltip"]
 size = [320, 120]
 states = ["normal", "hover"]
-notes = "The common `tooltip` prop on a widget. skelter-widgets' `tooltip` view kind is not registered for Svelte (see the coverage list); the hover state shows whether the hover text appears without the pointer delay."
+notes = "The common `tooltip` prop on a widget, and the `tooltip` kind's surface on its own. In the `hover` state the gallery rests the pointer on the subject past the platform's tooltip delay, so the hover text shows as it would for a person; `element` draws the surface where it is placed (what the tooltip layer shows), in every state."
 
 [[variant]]
 id = "button"
 title = "On a button"
 file = "button.svelte"
 args = { text = ["Save the file", "Save every open file in the workspace, including the ones in other windows"] }
+
+[[variant]]
+id = "element"
+title = "The tooltip surface"
+file = "element.svelte"
+args = { text = ["Save the file", "Save every open file in the workspace, including the ones in other windows and the scratch buffers", "احفظ الملف"] }

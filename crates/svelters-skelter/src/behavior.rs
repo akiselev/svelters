@@ -114,7 +114,7 @@ impl SkelterBackend {
     /// instance with `factory` and gets its attach, update and detach ([`crate::behavior`]).
     pub fn register_behavior(&self, ns: &str, name: &str, factory: impl Fn() -> Box<dyn Behavior> + 'static) {
         let tag = format!("{ns}.{name}");
-        let kind = skelter_core::KindId::of(&tag).0 & crate::kinds::WIRE_MASK;
+        let kind = crate::kinds::kind_id_wire(skelter_core::KindId::of(&tag).0);
         self.0.behaviors.borrow_mut().kinds.insert(kind, (tag, Rc::new(factory)));
     }
 

@@ -14,7 +14,7 @@ use crate::controls::common::host_view;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
 use crate::interact::StateBits;
-use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{ChildInfo, StyleCx, A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::event::{KeyState, MouseButton, PointerPhase};
 use skelter_base::geom::{Point, Rect, Size};
@@ -109,6 +109,8 @@ pub struct Modal {
     pub scope: FocusScope,
     /// A primary press went down on the backdrop (a cancel needs the release there too).
     backdrop_down: bool,
+    /// The content's box where skelter-core laid it out (hosted), in the node's points.
+    pub laid: Option<Rect>,
 }
 
 impl Modal {
@@ -116,8 +118,12 @@ impl Modal {
         if self.props.heading.is_empty() { 0.0 } else { TITLE_H }
     }
 
-    /// The dialog box in a window of `window` size: centred, at most the window less [`MARGIN`].
+    /// The dialog box in a window of `window` size: around the content where it was laid out
+    /// (hosted: [`Kind::children_laid`]), else centred, at most the window less [`MARGIN`].
     pub fn dialog_rect(&self, window: Size) -> Rect {
+        if let Some(c) = self.laid {
+            return Rect::new(c.min.x - PAD, c.min.y - PAD - self.heading_h(), c.max.x + PAD, c.max.y + PAD);
+        }
         let want = Size::new(self.content.w + 2.0 * PAD, self.content.h + 2.0 * PAD + self.heading_h());
         let s = Size::new(want.w.min((window.w - 2.0 * MARGIN).max(0.0)), want.h.min((window.h - 2.0 * MARGIN).max(0.0)));
         let min = Point::new(((window.w - s.w) / 2.0).round(), ((window.h - s.h) / 2.0).round());
@@ -175,12 +181,44 @@ impl Kind for Modal {
         self.props.get(prop)
     }
 
-    /// The content is not laid out, painted or hit while the modal is closed.
-    fn child_layout(&self, _cx: &ChildCx, style: &mut taffy::Style) -> bool {
+    /// The node covers its parent (the backdrop) and centres its content (the dialog's).
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        s.position = taffy::Position::Absolute;
+        s.inset = taffy::Rect { left: taffy::LengthPercentageAuto::length(0.0), right: taffy::LengthPercentageAuto::length(0.0), top: taffy::LengthPercentageAuto::length(0.0), bottom: taffy::LengthPercentageAuto::length(0.0) };
+        s.display = taffy::Display::Flex;
+        s.flex_direction = taffy::FlexDirection::Column;
+        s.justify_content = taffy::JustifyContent::CENTER;
+        s.align_items = taffy::AlignItems::CENTER;
+        s
+    }
+
+    /// The content is not laid out, painted or hit while the modal is closed; open, it keeps the
+    /// dialog's padding and heading row clear (margins taffy centres with it).
+    fn child_layout(&self, cx: &ChildCx, style: &mut taffy::Style) -> bool {
         if !self.props.open {
             style.display = taffy::Display::None;
+            return false;
         }
-        self.props.open
+        let m = |v: f32| taffy::LengthPercentageAuto::length(v);
+        style.margin.left = m(PAD);
+        style.margin.right = m(PAD);
+        if cx.index == 0 {
+            style.margin.top = m(PAD + self.heading_h());
+        }
+        if cx.index + 1 == cx.count() {
+            style.margin.bottom = m(PAD);
+        }
+        true
+    }
+
+    /// The content's laid-out box: the dialog is drawn around it.
+    fn children_laid(&mut self, children: &[(ChildInfo<'_>, Rect)]) {
+        let shown = children.iter().map(|(_, r)| *r).filter(|r| r.width() > 0.0 || r.height() > 0.0);
+        self.laid = shown.reduce(|a, b| a.union(&b));
+        if let Some(c) = self.laid {
+            self.content = c.size();
+        }
     }
 
     fn prop_state(&self) -> StateBits {
@@ -200,7 +238,9 @@ impl Kind for Modal {
         paint::paint_box(&mut pc, &dialog, d);
         if !self.props.heading.is_empty() {
             let row = Rect::new(d.min.x + PAD, d.min.y + PAD, d.max.x - PAD, d.min.y + PAD + TITLE_H);
-            let layout = paint::text_layout(pc.text, &heading, &self.props.heading, None);
+            // a heading wider than the dialog is cut at the end
+            let shown = paint::elide(pc.text, &heading, &self.props.heading, paint::Elide::End, row.width().max(0.0));
+            let layout = paint::text_layout(pc.text, &heading, &shown, None);
             paint::paint_text(&mut pc, &heading, &layout, row, Align::Start);
         }
     }
@@ -362,9 +402,9 @@ mod tests {
         let mut m = open_modal();
         assert_eq!(m.prop_state(), StateBits::OPEN);
         let mut style = taffy::Style::default();
-        assert!(m.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
+        assert!(m.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[], children: &[] }, &mut style));
         m.props.open = false;
-        assert!(!m.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
+        assert!(!m.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[], children: &[] }, &mut style));
         assert_eq!(style.display, taffy::Display::None);
         assert_eq!(m.prop_state(), StateBits::NONE);
         assert_eq!(Modal::prop_states(), StateBits::OPEN);

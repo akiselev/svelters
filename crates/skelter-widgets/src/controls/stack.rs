@@ -124,7 +124,7 @@ mod tests {
         (0..anchors.len())
             .map(|index| {
                 let mut s = Style::default();
-                let shown = k.child_layout(&ChildCx { index, anchors, slots: &[] }, &mut s);
+                let shown = k.child_layout(&ChildCx { index, anchors, slots: &[], children: &[] }, &mut s);
                 assert_eq!(s.grid_row, taffy::Line { start: line(1), end: line(2) });
                 assert_eq!(s.grid_column, taffy::Line { start: line(1), end: line(2) });
                 (shown, s.display)

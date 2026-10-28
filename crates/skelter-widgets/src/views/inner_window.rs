@@ -25,7 +25,7 @@ use crate::controls::common::host_view;
 use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, StyleCx, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::color::Color;
 use skelter_base::cursor::CursorIcon;
@@ -104,9 +104,10 @@ kind_props! {
     pub struct InnerWindowProps;
     /// The title bar's text.
     heading "heading": String = Str("") ; Str, Paint;
-    /// The frame (window points), native-owned while it is moved or resized.
-    x "x": f64 = F64(40.0) ; F64, Property, bindable;
-    y "y": f64 = F64(40.0) ; F64, Property, bindable;
+    /// The frame (in its parent's points: the node is laid out there), native-owned while it is
+    /// moved or resized.
+    x "x": f64 = F64(40.0) ; F64, Layout, bindable;
+    y "y": f64 = F64(40.0) ; F64, Layout, bindable;
     width "width": f64 = F64(320.0) ; F64, Layout, bindable;
     height "height": f64 = F64(240.0) ; F64, Layout, bindable;
     resizable "resizable": bool = Bool(true) ; Bool, Paint;
@@ -475,14 +476,34 @@ impl Kind for InnerWindow {
         self.props.get(prop)
     }
 
-    /// The content fills the body (the frame below the title bar, in the node's window-point space);
+    /// The node is the frame: laid out out of flow at `x`/`y` in its parent, at the shown frame's size.
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        let f = self.shown_frame();
+        s.position = taffy::Position::Absolute;
+        s.inset = taffy::Rect {
+            left: taffy::LengthPercentageAuto::length(f.min.x),
+            top: taffy::LengthPercentageAuto::length(f.min.y),
+            right: taffy::LengthPercentageAuto::auto(),
+            bottom: taffy::LengthPercentageAuto::auto(),
+        };
+        s.size = taffy::Size { width: taffy::Dimension::length(f.width()), height: taffy::Dimension::length(f.height()) };
+        s
+    }
+
+    /// Moves and resizes stay in the window (the room, in the parent's points as the frame is).
+    fn room(&mut self, room: Rect) {
+        self.set_bounds(room.translate(self.frame.min.to_vec()));
+    }
+
+    /// The content fills the body (the frame below the title bar, in the node's local points);
     /// while collapsed it is not laid out, painted or hit.
     fn child_layout(&self, _cx: &ChildCx, style: &mut taffy::Style) -> bool {
         if self.props.collapsed {
             style.display = taffy::Display::None;
             return false;
         }
-        let body = self.body();
+        let body = self.body().translate(Vec2::new(-self.frame.min.x, -self.frame.min.y));
         style.position = taffy::Position::Absolute;
         style.inset = taffy::Rect {
             left: taffy::LengthPercentageAuto::length(body.min.x),
@@ -726,14 +747,16 @@ mod tests {
         let mut w = InnerWindow::default();
         w.frame = Rect::new(10.0, 20.0, 310.0, 220.0);
         let mut style = taffy::Style::default();
-        assert!(w.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
+        assert!(w.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[], children: &[] }, &mut style));
+        // in the node's points: the node is the frame (laid out at `x`/`y`, `layout_style`)
         assert_eq!(style.position, taffy::Position::Absolute);
-        assert_eq!(style.inset.top, taffy::LengthPercentageAuto::length(20.0 + TITLE_H));
+        assert_eq!(style.inset.left, taffy::LengthPercentageAuto::length(0.0));
+        assert_eq!(style.inset.top, taffy::LengthPercentageAuto::length(TITLE_H));
         assert_eq!(style.size.width, taffy::Dimension::length(300.0));
         assert_eq!(style.size.height, taffy::Dimension::length(200.0 - TITLE_H));
         w.props.collapsed = true;
         let mut style = taffy::Style::default();
-        assert!(!w.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[] }, &mut style));
+        assert!(!w.child_layout(&ChildCx { index: 0, anchors: &[""], slots: &[], children: &[] }, &mut style));
         assert_eq!(style.display, taffy::Display::None);
     }
 }

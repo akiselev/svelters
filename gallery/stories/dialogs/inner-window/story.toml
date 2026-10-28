@@ -1,0 +1,18 @@
+id = "inner-window"
+title = "Inner window"
+family = "dialogs"
+kinds = ["inner-window"]
+size = [440, 300]
+states = ["normal", "hover"]
+notes = "A floating window inside the OS window: the raised surface with `window-shadow`, a title bar with collapse and close buttons, eight resize handles. Look at the title bar hairline, the buttons in each theme, a long heading, and the collapsed form."
+
+[[variant]]
+id = "plain"
+title = "Heading and content"
+file = "plain.svelte"
+args = { heading = ["Layer manager", "Properties of the selected footprint and its pads on the top copper layer"] }
+
+[[variant]]
+id = "collapsed"
+title = "Collapsed, no close button"
+file = "collapsed.svelte"

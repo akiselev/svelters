@@ -32,7 +32,7 @@ use crate::shim::text::{PlacedRun, RichText, TextLayout, TextShaper};
 use skelter_base::commit::{ImageData, PathData};
 use skelter_base::display::{DisplayList, Prim};
 use skelter_base::event::{PointerEvent, PointerPhase, WheelEvent};
-use skelter_base::geom::{Insets, Point, Size, Vec2};
+use skelter_base::geom::{Insets, Point, Rect, Size, Vec2};
 use skelter_base::ids::{ImageId, NodeId, PathId, RunId};
 use skelter_base::text::GlyphRun;
 use skelter_core::{
@@ -529,6 +529,43 @@ fn folded_of(node: NodeView<'_>, folds: bool, elements: bool) -> Vec<w::Value> {
     run::fold(&run_nodes(&|id| node.view(id), node.children(), css_color(node.css(), "color")))
 }
 
+/// What a row reads about one child ([`w::ChildInfo`]): its kind, `dialog-role`, a button's
+/// `default`/`cancel`, its `status-section`.
+fn child_info<'a>(c: NodeView<'a>) -> w::ChildInfo<'a> {
+    let enum_name = |p: skelter_core::PropId| match c.prop(p) {
+        Some(Value::Enum(i)) => skelter_core::common::prop(p).and_then(|s| s.enum_values.get(*i as usize).copied()),
+        _ => None,
+    };
+    let spec = c.kind().spec;
+    let own = |name: &str| spec.prop_named(name).is_some_and(|p| c.prop_bool(p));
+    w::ChildInfo {
+        kind: spec.name,
+        dialog_role: enum_name(skelter_core::common::DIALOG_ROLE).unwrap_or("auto"),
+        default_button: own("default"),
+        cancel_button: own("cancel"),
+        status_section: enum_name(skelter_core::common::STATUS_SECTION).unwrap_or("temporary"),
+    }
+}
+
+/// The window's content area (its root's box) in `node`'s local points: through the window
+/// transforms of the last rebuild, or, before the node has one (its first prepare), through the
+/// layout boxes up to the root (R3; scroll offsets are not in those, and are zero then).
+fn window_room(node: NodeView<'_>) -> Rect {
+    let mut root = node;
+    let mut at = Vec2::ZERO;
+    while let Some(p) = root.parent() {
+        at = at + root.layout_rect().unwrap_or_default().min.to_vec();
+        root = p;
+    }
+    let size = Point::new(root.size().w, root.size().h);
+    if node.window_transform() == skelter_base::geom::Affine::IDENTITY && at != Vec2::ZERO {
+        return Rect::new(-at.x, -at.y, size.x - at.x, size.y - at.y);
+    }
+    let tf = root.window_transform();
+    let (a, b) = (node.from_window(tf.apply(Point::ZERO)), node.from_window(tf.apply(size)));
+    Rect::new(a.x.min(b.x), a.y.min(b.y), a.x.max(b.x), a.y.max(b.y))
+}
+
 /// The children as element records (`Kind::folds_elements`): `{tag, anchor, props, children}`, each prop
 /// of the child's kind by name with its value or default.
 fn element_records<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[NodeId]) -> Vec<w::Value> {
@@ -542,6 +579,10 @@ fn element_records<'v>(view_of: &dyn Fn(NodeId) -> Option<NodeView<'v>>, ids: &[
                     let val = v.prop(spec.prop_id(i))?;
                     let wv = match val {
                         Value::Enum(e) => w::Value::Str(Arc::from(*p.enum_values.get(*e as usize)?)),
+                        // the common `disabled` and `hidden` (what Svelte's `enabled` and `visible`
+                        // write) also clear the element's own `enabled` and `visible`
+                        Value::Bool(true) if p.name == "enabled" && v.prop_bool(skelter_core::common::DISABLED) => w::Value::Bool(false),
+                        Value::Bool(true) if p.name == "visible" && v.prop_bool(skelter_core::common::HIDDEN) => w::Value::Bool(false),
                         other => plain_from_core(other)?,
                     };
                     Some((Arc::from(p.name), wv))
@@ -569,6 +610,8 @@ pub struct Hosted<W: w::Kind + Default> {
     paths: HashMap<String, PathId>,
     /// What the last method call answered ([`w::EventCx::ret`]).
     ret: Option<Value>,
+    /// The window's room last given to the widget ([`w::Kind::room`]).
+    room: Option<Rect>,
     /// The custom properties the widget's UA tables have read through the cascade (SV67), sorted:
     /// what [`Kind::reads_custom_property`] answers from (SV69). Only grows: a token read in one
     /// state stays a dependency.
@@ -577,7 +620,7 @@ pub struct Hosted<W: w::Kind + Default> {
 
 impl<W: w::Kind + Default> Default for Hosted<W> {
     fn default() -> Self {
-        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new(), ret: None, token_reads: Default::default() }
+        Hosted { widget: W::default(), images: HashMap::new(), paths: HashMap::new(), ret: None, room: None, token_reads: Default::default() }
     }
 }
 
@@ -967,8 +1010,19 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         if let Some(g) = cx.node.scroll_geometry() {
             self.widget.scroll_geometry(&g);
         }
-        // a dry recording finds the images the list will reference; the new ones are uploaded
+        // the window's room, for the popups the widget places itself
         let node = cx.node;
+        // where the children were laid out (R3), for what the widget draws around or between them
+        let laid: Vec<(w::ChildInfo<'_>, Rect)> = node.children().iter().filter_map(|&c| node.view(c)).map(|c| (child_info(c), c.layout_rect().unwrap_or_default())).collect();
+        if !laid.is_empty() {
+            self.widget.children_laid(&laid);
+        }
+        let room = window_room(node);
+        if self.room != Some(room) {
+            self.room = Some(room);
+            self.widget.room(room);
+        }
+        // a dry recording finds the images the list will reference; the new ones are uploaded
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
         let ((new, used, new_paths, used_paths, emitted), reads) = crate::paint::record_token_reads(|| {
@@ -1212,7 +1266,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
         let anchors: Vec<&str> = (0..cx.count).map(|k| cx.anchor_of(k)).collect();
         let slots: Vec<&str> = (0..cx.count).map(|k| cx.parent.child(k).map_or("", |c| c.slot_name())).collect();
-        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors, slots: &slots }, style)
+        let children: Vec<w::ChildInfo<'_>> = (0..cx.count).map(|k| cx.parent.child(k).map_or_else(w::ChildInfo::default, child_info)).collect();
+        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors, slots: &slots, children: &children }, style)
     }
 
     fn children_inert(&self) -> bool {
@@ -1448,5 +1503,48 @@ mod tests {
         d.focus(a, FocusReason::Programmatic);
         let c = frame(&mut d).expect("a frame");
         assert_eq!((ring(&c, a), ring(&c, b)), (Some(true), Some(false)));
+    }
+
+    /// POL2-REGISTER: Svelte's `enabled` and `visible` write the common `disabled` and `hidden`; a
+    /// folding kind (a menu) reads them as its element children's own `enabled` and `visible`.
+    #[test]
+    fn folded_elements_take_the_common_disabled_and_hidden() {
+        use crate::testdoc::{child, doc, frame};
+        use crate::views::menu::ContextMenu;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 200.0), |r| crate::views::register_all(r).unwrap());
+        let menu = child(&mut d, root, skelter_core::KindId::of("context-menu"), "");
+        let item = skelter_core::KindId::of("menu-item");
+        let label = d.registry().get(item).unwrap().spec.prop_named("label").unwrap();
+        let [cut, paste, hidden] = ["Cut", "Paste", "Hidden"].map(|t| {
+            let n = child(&mut d, menu, item, "");
+            d.set_prop(n, label, Value::from(t)).unwrap();
+            n
+        });
+        d.set_prop(paste, skelter_core::common::DISABLED, Value::Bool(true)).unwrap();
+        d.set_prop(hidden, skelter_core::common::HIDDEN, Value::Bool(true)).unwrap();
+        let _ = cut;
+        frame(&mut d);
+        let entries = d.with_kind(menu, |k| k.as_any().and_then(|a| a.downcast_ref::<ContextMenu>()).unwrap().menus.model.entries.iter().filter(|e| !e.path.is_empty()).map(|e| (e.label.clone(), e.enabled, e.visible)).collect::<Vec<_>>()).unwrap();
+        assert_eq!(entries, [("Cut".into(), true, true), ("Paste".into(), false, true), ("Hidden".into(), true, false)]);
+    }
+
+    /// POL2-REGISTER: a hosted kind gets the window's content area in its local points before it
+    /// prepares (menus keep their levels in it).
+    #[test]
+    fn the_window_room_is_in_the_nodes_local_points() {
+        use crate::testdoc::{child, doc, frame};
+        use crate::views::menu::ContextMenu;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 200.0), |r| crate::views::register_all(r).unwrap());
+        let menu = child(&mut d, root, skelter_core::KindId::of("context-menu"), "position: absolute; left: 40px; top: 30px; width: 10px; height: 10px");
+        // the first prepare, before the node has a window transform: through the layout boxes
+        frame(&mut d);
+        let room = d.with_kind(menu, |k| k.as_any().and_then(|a| a.downcast_ref::<ContextMenu>()).unwrap().menus.bounds).unwrap();
+        assert_eq!(room, Rect::new(-40.0, -30.0, 260.0, 170.0));
+        // later prepares, through the transforms
+        let open = skelter_core::PropId::of("context-menu", "open", "bool");
+        d.set_prop(menu, open, Value::Bool(true)).unwrap();
+        frame(&mut d);
+        let room = d.with_kind(menu, |k| k.as_any().and_then(|a| a.downcast_ref::<ContextMenu>()).unwrap().menus.bounds).unwrap();
+        assert_eq!(room, Rect::new(-40.0, -30.0, 260.0, 170.0));
     }
 }

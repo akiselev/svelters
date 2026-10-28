@@ -28,3 +28,26 @@ first), including when the pointer leaves the window. They come at event time, b
   is different: no focus and no selection.
 - `oncancel`: Escape in the field. The field took the key, so a form can revert that field's edit
   before it treats Escape as its own (closing a preview, a dialog).
+
+## The views, tabs and pickers (polish-b2)
+
+Every skelter-widgets kind is a Svelte element. The ones added in polish-b2 take egui's tag and kind
+names, base kind and default slot name, and **their own kind's members** (props, events, methods,
+types and defaults), so a few names differ from svelters-egui's for the same element:
+
+| Element | Differs from svelters-egui |
+|---|---|
+| `popup` | `light-dismiss` (egui's `autohide`), `escape-dismiss`, `gap`, `modal`, `flip`, `shift`, `fit`, `match-width`; events `open`, `close(reason)`, `toggle(open)`; no `popup`/`popdown` methods (write `open`). It is a node in its parent's flow: place it with layout props. |
+| `modal` | `heading` (egui's `title`); events `cancel(reason)` (cancelable) and `close(reason)`; no `close()` method (write `open`). It covers its parent and centres its children in the dialog box. |
+| `inner-window` | `heading`, `x`, `y`, `width`, `height`, `min-width`, `min-height`, `collapsed` (egui's `default-*`, `open`); events `raise`, `close`, `toggle(expanded)`, `move`/`resize(x, y, width, height)`. It is laid out at `x`/`y` in its parent. |
+| `split-view` | `changed(position)`; `commit-mode` is `live` or `release`. |
+| `toast-host` | No `toast` children: show toasts with `show(text, level?, duration?, actions?)` (returns the id), `dismiss(id)`, `clear()`; `max-visible`; events `closed(id, reason)`, `action(id, index)`. |
+| `status-bar` | `show-message(text, timeout?)`, `clear-message()` as egui's. Write the sections in order (start, temporary, end): the bar does not reorder them. |
+| `tooltip` | skelter's own element (egui has only the `tooltip` prop): the tooltip surface, drawn where it is placed. |
+| `menu-bar` | `native-bar`; events `activate(item, checked)`, `toggled(item, checked)`, `hover(item)`, `open(menu)`, `close(menu)`. |
+| `tab-view`, `tab` | As egui's (`selected`, `changed`; `title`, `closable`, `close-requested`), plus `close-requested(index)` on the view. |
+| `calendar`, `date-picker`, `color-editor`, `color-picker` | As egui's, with skelter's enum values (`commit-mode`: `confirm`/`immediate` on the date picker, `live`/`confirm` on the colour picker; `alpha`: `opaque`, `blend`, `blend-or-additive`). The drops have no `open` prop. |
+| `scrollbar`, `dialog-buttons`, `panel`, `menu`, `menu-separator` | As egui's. `dialog-buttons` places its buttons by `dialog-role` in the build OS's order. |
+
+`context-menu` also takes `open` (bindable): true opens it where it last opened (its own top left the first
+time), as `popup()` does without a point.

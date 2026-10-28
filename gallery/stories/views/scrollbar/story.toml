@@ -1,0 +1,13 @@
+id = "scrollbar"
+title = "Scroll bar"
+family = "views"
+kinds = ["scrollbar"]
+size = [320, 160]
+states = ["normal", "hover", "active", "disabled"]
+notes = "A standalone scroll bar (`value` in `min..max`, `page` the thumb's share). Look at the track, the thumb's rest, hover and pressed looks, and the thumb at both ends."
+
+[[variant]]
+id = "orientation"
+title = "Vertical and horizontal"
+file = "orientation.svelte"
+args = { value = [0, 45, 90] }

@@ -1,0 +1,17 @@
+id = "menu-bar"
+title = "Menu bar"
+family = "menus"
+kinds = ["menu-bar"]
+size = [480, 72]
+states = ["normal", "hover", "focus-visible", "disabled"]
+notes = "A window's menu bar: its `menu` children are the titles, their `action`s the menus' items. Look at the titles' spacing, mnemonic underlines (`&File`), hover and the bar's fill."
+
+[[variant]]
+id = "titles"
+title = "Titles"
+file = "titles.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left titles"
+file = "rtl.svelte"

@@ -96,7 +96,8 @@ fn forced_hover_lands_on_the_subject() {
     let m = r.mount(&c).unwrap();
     assert!(m.has_subject);
     assert_eq!(m.subjects.len(), 1);
-    assert_eq!(m.applied.as_deref(), Some("forced :hover on 1 subject"));
+    // POL2-REGISTER: the pointer rests on the subject too (a `tooltip` shows)
+    assert!(m.applied.as_deref().is_some_and(|a| a.starts_with("forced :hover on 1 subject, pointer over it for")), "{:?}", m.applied);
     assert!(r.backend().forced_state(m.subjects[0]).contains(svelters_style::StateMask::HOVERED));
     keep("button-primary-hover", &r.shot(&c).unwrap());
     // the next cell starts clean: a fresh mount, nothing forced

@@ -1,0 +1,18 @@
+id = "dialog-buttons"
+title = "Dialog buttons"
+family = "dialogs"
+kinds = ["dialog-buttons"]
+size = [440, 110]
+states = ["normal", "focus-visible"]
+notes = "A row of buttons placed by `dialog-role` in the platform's order (QDialogButtonBox); `order` picks one. The children are in the same source order in every variant: help, cancel, apply, OK."
+
+[[variant]]
+id = "order"
+title = "Platform orders"
+file = "order.svelte"
+args = { order = ["windows", "macos", "gnome", "kde", "none"] }
+
+[[variant]]
+id = "dense"
+title = "Under a form"
+file = "dense.svelte"

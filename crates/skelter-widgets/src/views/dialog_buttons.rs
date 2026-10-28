@@ -9,7 +9,7 @@
 use super::common;
 use crate::interact::ButtonOrder;
 use crate::kind_props;
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, StyleCx, Value, ValueType};
 use skelter_base::accesskit;
 
 /// A child of the row as the order sees it.
@@ -34,6 +34,17 @@ pub fn role_of(c: &ButtonChild<'_>) -> Option<&'static str> {
         "auto" | "" if c.cancel_button => Some("reject"),
         "auto" | "" => Some("action"),
         r => ROLES.iter().copied().find(|x| *x == r).or(Some("action")),
+    }
+}
+
+/// The OS this build runs on, as the platform rows name it.
+fn this_os() -> crate::interact::Platform {
+    if cfg!(target_os = "macos") {
+        crate::interact::Platform::Macos
+    } else if cfg!(windows) {
+        crate::interact::Platform::Windows
+    } else {
+        crate::interact::Platform::Linux
     }
 }
 
@@ -131,6 +142,10 @@ impl DialogButtons {
 }
 
 impl Kind for DialogButtons {
+    /// It puts its children in the order's columns ([`Kind::child_layout`]).
+    fn places_children() -> bool {
+        true
+    }
     fn spec() -> &'static KindSpec {
         &SPEC
     }
@@ -146,7 +161,36 @@ impl Kind for DialogButtons {
         self.props.get(prop)
     }
 
-    /// A flex row: no look of its own (the buttons draw themselves).
+    /// A row, end-aligned, 8 pt apart: a grid of one row whose columns are the order's
+    /// ([`Kind::child_layout`] puts each child in its column; taffy has no `order`).
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        s.display = taffy::Display::Grid;
+        s.grid_auto_flow = taffy::GridAutoFlow::Column;
+        s.justify_content = taffy::JustifyContent::END;
+        s.align_items = taffy::AlignItems::CENTER;
+        if s.gap.width == taffy::LengthPercentage::length(0.0) {
+            s.gap.width = taffy::LengthPercentage::length(8.0);
+        }
+        s
+    }
+
+    /// Each child goes to its column in the order (the platform's: the build's OS row, as
+    /// `Policy::button_order` gives it; a policy set at run time is not followed here).
+    fn child_layout(&self, cx: &ChildCx, style: &mut taffy::Style) -> bool {
+        if cx.children.len() == cx.count() {
+            let platform = crate::interact::Native::for_os(this_os()).policy().button_order;
+            let kids: Vec<ButtonChild<'_>> = cx.children.iter().map(|c| ButtonChild { is_button: c.kind == "button", dialog_role: c.dialog_role, default_button: c.default_button, cancel_button: c.cancel_button }).collect();
+            let order = self.order_children(platform, &kids);
+            if let Some(col) = order.iter().position(|&i| i == cx.index) {
+                style.grid_column = taffy::Line { start: <taffy::GridPlacement as taffy::style_helpers::TaffyGridLine>::from_line_index(col as i16 + 1), end: taffy::GridPlacement::Auto };
+                style.grid_row = taffy::Line { start: <taffy::GridPlacement as taffy::style_helpers::TaffyGridLine>::from_line_index(1), end: taffy::GridPlacement::Auto };
+            }
+        }
+        true
+    }
+
+    /// No look of its own (the buttons draw themselves).
     fn record(&self, _cx: &mut RecordCx) {}
 
     fn event(&mut self, _cx: &mut EventCx, _ev: &Event) -> Handled {
