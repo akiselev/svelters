@@ -28,6 +28,7 @@ import {
   flushing_sync,
   init_dev,
   recover as recoverCore,
+  invalidate,
   queue_task,
   mutable_state,
   trace_item,
@@ -1270,6 +1271,7 @@ function recover() {
   shows = [];
   hmrCtx = null;
   hmrClaims = null;
+  abortUpdates();
   recoverCore();
   for (const fn of recoverHooks) fn();
 }
@@ -1525,7 +1527,12 @@ function open(parent, owner, fn, b = newRegion(parent), ...args) {
   scope = b.scope;
   try {
     building(() => {
-      b.effect = branch(() => fn(b, ...args));
+      b.effect = branch(() => {
+        // SV84: the branch being built, for `scrap` when the host aborts the build
+        b.building = active();
+        return fn(b, ...args);
+      });
+      b.building = null;
     });
   } finally {
     scope = prev;
@@ -1620,9 +1627,30 @@ class Branches {
     this.r = r;
     this.owner = owner;
     this.on = new Map();
+    // SV84: the switch's update state; `aborted` when the host stopped a switch part-way
+    this.st = { effect: null, aborted: false };
+  }
+
+  /**
+   * SV84: after a switch the host interrupted (its branches and `on` disagree), every branch goes;
+   * true when the block must show its branch again (whatever its own guard says).
+   */
+  repair() {
+    if (!this.st.aborted) return false;
+    this.st.aborted = false;
+    for (const b of [...this.r.items]) scrap(b);
+    this.on.clear();
+    return true;
   }
 
   ensure(key, fn, ...args) {
+    this.st.effect = active();
+    updating.add(this.st);
+    this.#ensure(key, fn, ...args);
+    updating.delete(this.st);
+  }
+
+  #ensure(key, fn, ...args) {
     let cur = this.on.get(key);
     if (cur) {
       if (cur.outro) back(cur);
@@ -1651,6 +1679,7 @@ export function if_block(container, test, consequent, alternate = null, elseif =
   block(
     () => {
       const v = !!test();
+      if (branches.repair()) shown = undefined;
       if (v === shown) return;
       shown = v;
       branches.ensure(v, v ? consequent : alternate);
@@ -1671,11 +1700,24 @@ export function each_block(container, collection, key, render, fallback = null, 
   // TR1: removed items still outroing, by key (keyed) or index: a key that comes back resumes its item
   const gone = new Map();
   let fb = null;
+  // SV84: the block's update state; `aborted` when the host stopped an update part-way
+  const st = { effect: null, aborted: false };
   block(() => {
     const c = collection();
     const arr = Array.isArray(c) ? [...c] : Array.from(c ?? []);
     const self = active();
+    st.effect = self;
     $.untrack(() => {
+      if (st.aborted) {
+        // the last update stopped part-way (its items and the regions it built disagree): every
+        // item goes, and the collection is rendered again from nothing
+        st.aborted = false;
+        for (const b of [...r.items]) scrap(b);
+        items = [];
+        gone.clear();
+        fb = null;
+      }
+      updating.add(st);
       if (arr.length && fb && !fb.outro) {
         const f = fb;
         leave(f, () => {
@@ -1690,8 +1732,37 @@ export function each_block(container, collection, key, render, fallback = null, 
         if (fb?.outro) back(fb);
         else if (!fb) fb = open(r, owner, fallback);
       }
+      updating.delete(st);
     });
   });
+}
+
+/**
+ * SV84: each blocks whose update is running, and `{#if}`/`{#key}`/`{#await}`/snippet/component
+ * blocks switching branch (`Branches`). The host's abort of an entry (the turn budget's interrupt)
+ * skips every `finally`, so a block it stopped stays here: `recover` marks it to run again, and that
+ * run rebuilds it from nothing (`each_block`, `Branches.repair`).
+ */
+const updating = new Set();
+
+function abortUpdates() {
+  for (const st of updating) {
+    st.aborted = true;
+    invalidate(st.effect);
+  }
+  updating.clear();
+}
+
+/**
+ * SV84: takes a region away whatever state an aborted update left it in: its effect (or the branch
+ * being built when the abort came) destroyed, its natives removed and destroyed.
+ */
+function scrap(b) {
+  const e = b.effect ?? b.building ?? null;
+  if (e && !effectDestroyed(e)) destroy(e);
+  if (b.scope) dispose(b.scope, b);
+  else for (const n of natives(b)) detach(n);
+  unlist(b);
 }
 
 /**
@@ -1765,6 +1836,7 @@ export function key_block(container, getKey, render) {
   let key;
   block(() => {
     const k = getKey();
+    if (branches.repair()) has = false;
     if (has && sameKey(k, key)) return;
     has = true;
     key = k;
@@ -2185,6 +2257,7 @@ function swapping(container, get, render) {
   // when the enclosing block changes
   block(() => {
     const s = get() ?? null;
+    if (branches.repair()) first = true;
     if (!first && s === fn) return;
     first = false;
     fn = s;
@@ -2349,6 +2422,7 @@ export function await_block(container, getInput, pending, then, catch_) {
   };
   block(() => {
     const input = getInput();
+    if (branches.repair()) shown = -1;
     let destroyed = false;
     if (is_promise(input)) {
       const restore = capture_context();

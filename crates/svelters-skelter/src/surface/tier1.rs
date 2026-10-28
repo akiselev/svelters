@@ -341,6 +341,7 @@ pub static ACTION: KindSpec = KindSpec {
 };
 
 static VIRTUALLIST_PROPS: &[PropSpec] = &[
+    PropSpec { name: "auto-row-height", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Layout, native: false, doc: "SV83: rows are as tall as the theme's type scale makes them (the density's `row-h`, grown with the list's `font-size`); a written `row-height` is then the least row height. Off: `row-height` alone." },
     PropSpec { name: "current", ty: ValueType::I64, default: DefaultValue::I64(-1), nullable: false, change: ChangeClass::Paint, native: true, doc: "OW5a1b: the cursor's item id (`bind:current`), -1 for none. Setting it moves the cursor without selecting." },
     PropSpec { name: "internal-move", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "OW5a1b: rows reorder by drag within the list (Qt `InternalMove`): a drop raises `move(from, to)`." },
     PropSpec { name: "layout", ty: ValueType::Enum(&["list", "grid"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "`list` (egui draws `grid` as a list for now)." },

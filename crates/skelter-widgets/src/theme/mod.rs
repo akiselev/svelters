@@ -582,6 +582,9 @@ pub struct Theme {
     problems: Vec<String>,
 }
 
+/// SV83: the body text size the density tables' metrics are for (VS Code's 13 px).
+pub const BASE_FONT_SIZE: f32 = 13.0;
+
 impl Default for Theme {
     /// Dark Modern, default density, affordances on.
     fn default() -> Theme {
@@ -859,6 +862,14 @@ impl Theme {
 
     pub fn metrics(&self) -> &Metrics {
         &self.metrics
+    }
+
+    /// SV83: the height of a list or tree row holding text of `font_size` points: the density's
+    /// `row-h`, grown in proportion as the text grows past [`BASE_FONT_SIZE`] (a larger text size
+    /// setting), never shorter than `row-h`.
+    pub fn row_height_for(&self, font_size: f32) -> f32 {
+        let h = self.metrics.row_h;
+        (h * (font_size / BASE_FONT_SIZE).max(1.0)).round()
     }
 
     pub fn elevation(&self) -> &Elevation {

@@ -352,3 +352,54 @@ fn menu_roles_and_the_aria_props_of_qa11y_f4() {
     let u = frame(&mut d).unwrap().a11y.unwrap();
     assert_eq!(u.nodes.iter().find(|(k, _)| *k == ax(item)).unwrap().1.toggled(), None);
 }
+
+/// SV-OBJ4: what a `described` node exposes lives in a document service.
+struct Described(&'static str);
+
+static DESCRIBED: crate::KindSpec = crate::KindSpec { role: Role::Canvas, ..crate::KindSpec::new("described") };
+
+#[derive(Default)]
+struct DescribedKind;
+
+impl crate::Kind for DescribedKind {
+    fn spec() -> &'static crate::KindSpec {
+        &DESCRIBED
+    }
+    fn record(&self, cx: &mut crate::RecordCx) {
+        cx.draw_box();
+    }
+    fn a11y(&self, cx: &mut crate::A11yCx) {
+        cx.default_a11y();
+        if let Some(d) = cx.service::<Described>() {
+            cx.out.set_description(d.0);
+        }
+    }
+}
+
+#[test]
+fn sv_obj4_a_kind_reads_a_service_and_the_host_resends_its_node() {
+    let mut r = crate::KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<DescribedKind>().unwrap();
+    let mut d = Document::new(std::sync::Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let c = child(&mut d, root, KindId::of("described"), "width: 50px; height: 50px");
+    let other = child(&mut d, root, BOX, "width: 50px; height: 50px");
+    d.set_service(Described("two parts"));
+    let u = frame(&mut d).unwrap().a11y.unwrap();
+    let desc = |u: &accesskit::TreeUpdate, n: NodeId| u.nodes.iter().find(|(id, _)| *id == ax(n)).map(|(_, x)| x.description().map(str::to_owned));
+    assert_eq!(desc(&u, c), Some(Some("two parts".into())), "read through A11yCx::service");
+    // the service changes outside the node's props: nothing goes out until the host asks
+    d.set_service(Described("three parts"));
+    assert!(frame(&mut d).and_then(|c| c.a11y).is_none());
+    d.request_a11y(c);
+    let u = frame(&mut d).unwrap().a11y.expect("the node goes out again");
+    assert_eq!(desc(&u, c), Some(Some("three parts".into())));
+    assert_eq!(u.nodes.len(), 1, "and no other node");
+    assert!(desc(&u, other).is_none());
+    // a removed node: nothing
+    d.destroy(c);
+    let _ = frame(&mut d);
+    d.request_a11y(c);
+    assert!(frame(&mut d).and_then(|c| c.a11y).is_none(), "request_a11y on a removed node is a no-op");
+}

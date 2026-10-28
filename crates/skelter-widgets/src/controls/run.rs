@@ -223,7 +223,7 @@ mod tests {
     #[test]
     fn runs_take_no_space_and_draw_nothing() {
         let b = Bold::default();
-        let st = b.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None });
+        let st = b.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None, font_size: None, theme: None });
         assert_eq!(st.display, taffy::Display::None);
         assert!(testkit::record(&b, Size::new(10.0, 10.0), StateBits::NONE).0.is_empty());
     }

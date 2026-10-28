@@ -96,6 +96,9 @@ pub struct Document {
     pub(crate) anim: crate::anim::AnimState,
     /// Native-owned scroll offsets of scroll containers.
     pub(crate) scroll: HashMap<NodeId, skelter_base::geom::Vec2>,
+    /// SV86: scroll containers kept at the end of their content on these axes (x, y) until a scroll
+    /// moves them away ([`Document::pin_scroll_end`]).
+    pub(crate) scroll_pins: HashMap<NodeId, (bool, bool)>,
     /// The revision of the last edit that changed something.
     pub(crate) last_change: Revision,
     /// Run and image ids are unique per document (the compositor holds them per window).
@@ -188,6 +191,7 @@ impl Document {
             input_events: Vec::new(),
             anim: Default::default(),
             scroll: HashMap::new(),
+            scroll_pins: HashMap::new(),
             last_change: Revision(0),
             run_counter: 0,
             images: Default::default(),
@@ -730,6 +734,7 @@ impl Document {
         self.style.reset(i);
         self.anim.forget(id);
         self.scroll.remove(&id);
+        self.scroll_pins.remove(&id);
         self.timers.remove(&id);
         self.virt.remove(&id);
         self.anchors.remove(&id);
@@ -1537,6 +1542,14 @@ impl Document {
     /// A service by type, read-only.
     pub fn service_ref<T: 'static>(&self) -> Option<&T> {
         self.services.get()
+    }
+
+    /// SV-OBJ4: `node`'s accessibility data changed outside its props (a service its
+    /// [`Kind::a11y`](crate::Kind::a11y) reads through [`A11yCx::service`](crate::A11yCx::service)):
+    /// it is sent again with the next frame, as [`EventCx::request_a11y`](crate::EventCx::request_a11y)
+    /// does from a handler. A removed or stale node is ignored.
+    pub fn request_a11y(&mut self, node: NodeId) {
+        self.mark(node, Dirty::A11Y);
     }
 
     pub(crate) fn set_timer(&mut self, node: NodeId, at: Option<skelter_base::time::Time>) {

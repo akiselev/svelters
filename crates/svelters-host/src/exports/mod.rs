@@ -869,6 +869,25 @@ pub mod __private {
 // ---- the call context ----
 
 /// What a thunk sees of the host: the object table, the schema, the receiver.
+/// SV85: ties `f` to the lifetime of the component whose code is calling into Rust now (an export,
+/// a constructor, a method): when the call returns, the runtime registers it with the effect that
+/// made the call (a component's script, an `$effect`, a block), and `f` runs when that effect is
+/// destroyed (the component unmounts, the `$effect` re-runs or goes, the `{#if}` branch closes).
+/// What a native export uses to keep an object alive as long as its defining component.
+///
+/// Returns false outside a call from JS (nothing registered: `f` is dropped unrun). A call made
+/// outside any effect (module top level, an event handler) or on a host without the runtime keeps
+/// `f` for the host's lifetime: it is dropped unrun with the host.
+pub fn on_destroy(f: impl FnOnce() + 'static) -> bool {
+    match objects::current() {
+        Some(o) => {
+            o.add_scoped(Box::new(f));
+            true
+        }
+        None => false,
+    }
+}
+
 pub struct CallCx<'a> {
     pub(crate) objects: &'a objects::AppObjects,
     pub(crate) schema: &'static Schema,
@@ -877,6 +896,18 @@ pub struct CallCx<'a> {
 }
 
 impl CallCx<'_> {
+    /// SV85: ties `f` to the lifetime of the component whose code made this call (see
+    /// [`on_destroy`]).
+    pub fn on_destroy(&self, f: impl FnOnce() + 'static) {
+        self.objects.add_scoped(Box::new(f));
+    }
+
+    /// SV85: keeps `v` alive until the component whose code made this call is destroyed, then
+    /// drops it ([`CallCx::on_destroy`]).
+    pub fn keep_until_destroyed<T: 'static>(&self, v: T) {
+        self.on_destroy(move || drop(v));
+    }
+
     /// The `NativeError` domain of this call: `app:<module>`.
     pub fn domain(&self) -> String {
         format!("app:{}", self.module)

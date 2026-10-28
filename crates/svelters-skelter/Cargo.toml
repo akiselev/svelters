@@ -37,3 +37,5 @@ taffy = { workspace = true }
 skelter-test = { workspace = true }
 # `tests/app_kinds.rs`: the app's kinds fragment merged into the compiler's skelter.json
 svelters-compiler = { workspace = true }
+# `tests/scoped.rs`: an app export (`svelters::exports::on_destroy`) called from components
+svelters = { path = "../svelters" }

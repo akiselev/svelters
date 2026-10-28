@@ -962,6 +962,11 @@ pub struct ScrollArea {
     /// JS wrote `scroll-x`/`scroll-y`: the next prepare hands the offset to core's scroll node
     /// (without it the thumb moved and the content did not).
     js_offset: bool,
+    /// SV86: the offsets JS wrote, unclamped: the prepare clamps them to the content laid out after
+    /// the write (the write may come in the pass that adds the content); one past the end pins.
+    requested: [Option<f32>; 2],
+    /// SV86: the axes the last request pinned to the end, for the host (`take_scroll_pin`).
+    pin: Option<(bool, bool)>,
     /// Focus is inside the area (PageUp/PageDown/Home/End are the area's when no child claimed them).
     focus_within: bool,
     /// The last event's time and policy (recording has neither: the bars' fade reads them).
@@ -987,6 +992,8 @@ impl Default for ScrollArea {
             scrolling: false,
             focused: false,
             js_offset: false,
+            requested: [None, None],
+            pin: None,
             focus_within: false,
             now: Time::ZERO,
             policy: None,
@@ -1243,6 +1250,7 @@ impl Kind for ScrollArea {
         self.props.set(prop, v)?;
         self.explicit.mark(prop);
         if let Some(d) = axis {
+            self.requested[d] = Some(if d == 0 { self.props.scroll_x } else { self.props.scroll_y } as f32);
             let mut o = self.scroller.offset();
             set(&mut o, d, if d == 0 { self.props.scroll_x } else { self.props.scroll_y } as f32);
             self.anim = None;
@@ -1291,10 +1299,41 @@ impl Kind for ScrollArea {
         s
     }
 
-    /// A JS offset reaches core in the prepare, after layout, so core clamps it to the content
-    /// just laid out.
+    /// A JS offset reaches core in the prepare, after layout, so it clamps to the content just
+    /// laid out (SV86: the write's own value, not the one clamped to the content of the write's
+    /// time). A write past the end of that content pins the axis to the end ([`Self::take_scroll_pin`]):
+    /// the view follows the content as it grows until the user scrolls away, as a chat log does.
     fn take_scroll_request(&mut self) -> Option<Vec2> {
-        std::mem::take(&mut self.js_offset).then(|| self.scroller.offset())
+        if !std::mem::take(&mut self.js_offset) {
+            return None;
+        }
+        let max = self.scroller.max_offset();
+        let mut o = self.scroller.offset();
+        let mut pin = (false, false);
+        for d in 0..2 {
+            let Some(v) = self.requested[d].take() else { continue };
+            set(&mut o, d, v.min(get(max, d)).max(0.0));
+            if self.axes[d] && v > get(max, d) + 0.5 {
+                if d == 0 {
+                    pin.0 = true;
+                } else {
+                    pin.1 = true;
+                }
+            }
+        }
+        self.scroller.set_offset(o);
+        let o = self.scroller.offset();
+        (self.props.scroll_x, self.props.scroll_y) = (o.x as f64, o.y as f64);
+        self.pin = (pin != (false, false)).then_some(pin);
+        Some(o)
+    }
+
+    fn take_scroll_pin(&mut self) -> Option<(bool, bool)> {
+        self.pin.take()
+    }
+
+    fn write_checked(&mut self) {
+        self.js_saw(self.native_rev);
     }
 
     /// The content moves with the scroll property node; the area draws nothing under it.
@@ -1424,8 +1463,13 @@ impl Kind for ScrollArea {
     }
 
     /// Core's layout of the area (SV78): the scroller's content and viewport, the bars over it.
+    /// SV86: and core's offset, which moves without the area (a pinned end following its content, a
+    /// compositor fling), unless an animation of the area's own or a JS write is on its way to core.
     fn scroll_geometry(&mut self, g: &skelter_core::ScrollGeometry) {
         self.set_geometry(g.content, g.viewport, BAR_WIDTH, MIN_THUMB, [false, false]);
+        if self.anim.is_none() && !self.js_offset {
+            self.scroller.set_offset(g.offset);
+        }
     }
 
     fn a11y(&self, cx: &mut A11yCx) {
@@ -1682,6 +1726,74 @@ mod tests {
         assert!(out.handled);
         assert_eq!(d.scroll_offset(fits), Vec2::ZERO);
         assert_eq!(d.scroll_offset(outer), Vec2::new(0.0, 30.0), "the container around it scrolled");
+    }
+
+    /// SV86: a `scroll-y` write past the end, made in the pass that adds content, lands at the end of
+    /// the new content and stays there as content keeps growing, until the user scrolls away; a JS
+    /// write made after JS saw the user's scroll is taken.
+    #[test]
+    fn sv86_a_write_past_the_end_follows_the_content_until_the_user_scrolls() {
+        use crate::testdoc::{BOX, W, child, doc, frame};
+        use skelter_base::event::{InputEnvelope, InputEvent};
+        use skelter_base::ids::InputSeq;
+        let area_kind = skelter_core::KindId::of("scroll-area");
+        let (mut d, root) = doc(Size::new(300.0, 400.0), |r| {
+            crate::host::register::<ScrollArea>(r).unwrap();
+        });
+        let area = child(&mut d, root, area_kind, "width: 100px; height: 100px; flex-shrink: 0; overflow-y: auto");
+        let y = d.registry().get(area_kind).unwrap().spec.prop_named("scroll-y").unwrap();
+        let add = |d: &mut skelter_core::Document, n: usize| {
+            for _ in 0..n {
+                child(d, area, BOX, "height: 40px; flex-shrink: 0");
+            }
+        };
+        let js_write = |d: &mut skelter_core::Document, v: f64| {
+            let seen = d.revision();
+            d.js_transaction(seen, |d| d.set_prop(area, y, skelter_core::Value::F64(v)))
+        };
+        let end = |d: &skelter_core::Document| {
+            let g = d.scroll_geometry(area).unwrap();
+            g.content.h - (g.viewport.max.y - g.viewport.min.y)
+        };
+        add(&mut d, 1);
+        frame(&mut d);
+        assert_eq!(d.scroll_offset(area), Vec2::ZERO);
+        // the pass that adds the content writes past the end (before any layout of it)
+        add(&mut d, 5);
+        js_write(&mut d, 1e9).unwrap();
+        frame(&mut d);
+        assert_eq!(end(&d), 140.0);
+        assert_eq!(d.scroll_offset(area).y, 140.0, "at the end of the content laid out after the write");
+        // more content and another write: taken, at the end again
+        add(&mut d, 2);
+        js_write(&mut d, 1e9).expect("a later write is not stale");
+        frame(&mut d);
+        assert_eq!(d.scroll_offset(area).y, 220.0);
+        // content grows with no write: still at the end
+        add(&mut d, 3);
+        frame(&mut d);
+        assert_eq!(d.scroll_offset(area).y, 340.0, "pinned to the end until the user scrolls");
+        // the user scrolls up: unpinned, the view stays where the user put it
+        let r = d.world_rect(area).expect("laid out");
+        let w = WheelEvent { pos: Point::new(r.min.x + 50.0, r.min.y + 50.0), delta: ScrollDelta::Pixels(Vec2::new(0.0, 30.0)), phase: None, momentum: None, modifiers: Default::default() };
+        d.dispatch(&InputEnvelope { seq: InputSeq(1), window: W, os_time: Time(1), recv_time: Time(1), event: InputEvent::Wheel(w) });
+        assert_eq!(d.scroll_offset(area).y, 310.0);
+        add(&mut d, 2);
+        frame(&mut d);
+        assert_eq!(d.scroll_offset(area).y, 310.0, "the user's position is kept");
+        // JS saw the user's scroll: its write is taken and pins again
+        js_write(&mut d, 1e9).expect("a write made after JS saw the scroll is taken");
+        add(&mut d, 1);
+        frame(&mut d);
+        assert_eq!(d.scroll_offset(area).y, end(&d));
+        assert_eq!(d.scroll_offset(area).y, 460.0);
+        // an in-range write is an ordinary position: content growth leaves it
+        js_write(&mut d, 100.0).unwrap();
+        frame(&mut d);
+        assert_eq!(d.scroll_offset(area).y, 100.0);
+        add(&mut d, 1);
+        frame(&mut d);
+        assert_eq!(d.scroll_offset(area).y, 100.0);
     }
 
     use super::*;

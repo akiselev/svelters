@@ -287,5 +287,5 @@ pub fn record_css(k: &dyn Kind, size: Size, state: StateBits, css: &svelters_sty
 
 /// The kind's [`Kind::layout_style`] under the computed style `css` (`None`: no CSS).
 pub fn layout_style(k: &dyn Kind, css: Option<&svelters_style::ComputedStyle>, state: StateBits) -> taffy::Style {
-    k.layout_style(&crate::shim::core::StyleCx { computed: css, state, dark: true, base: None })
+    k.layout_style(&crate::shim::core::StyleCx { computed: css, state, dark: true, base: None, font_size: None, theme: None })
 }
