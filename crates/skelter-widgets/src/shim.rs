@@ -322,6 +322,22 @@ pub mod core {
         pub index: usize,
         pub anchors: &'a [&'a str],
         pub slots: &'a [&'a str],
+        /// What a row reads about every child (`dialog-buttons`, `status-bar`); may be empty.
+        pub children: &'a [ChildInfo<'a>],
+    }
+
+    /// The common props of one child a row places by ([`ChildCx::children`]).
+    #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+    pub struct ChildInfo<'a> {
+        /// Its kind's tag.
+        pub kind: &'a str,
+        /// Its `dialog-role` (`auto` by default).
+        pub dialog_role: &'a str,
+        /// A `button`'s `default` and `cancel`.
+        pub default_button: bool,
+        pub cancel_button: bool,
+        /// Its `status-section` (`temporary` by default).
+        pub status_section: &'a str,
     }
 
     impl ChildCx<'_> {

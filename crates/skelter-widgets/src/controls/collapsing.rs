@@ -432,23 +432,23 @@ mod tests {
         let row = chrome(&k)[2];
         assert!(row >= 22.0, "the header row (header-h): {row}");
         let mut s = Style::default();
-        assert!(!k.child_layout(&ChildCx { index: 0, anchors: &["", ""], slots: &["", "end"] }, &mut s));
+        assert!(!k.child_layout(&ChildCx { index: 0, anchors: &["", ""], slots: &["", "end"], children: &[] }, &mut s));
         assert_eq!(s.display, Display::None, "closed: not laid out");
         let mut e = Style::default();
-        assert!(k.child_layout(&ChildCx { index: 1, anchors: &["", ""], slots: &["", "end"] }, &mut e), "header actions show closed");
+        assert!(k.child_layout(&ChildCx { index: 1, anchors: &["", ""], slots: &["", "end"], children: &[] }, &mut e), "header actions show closed");
         assert_eq!(e.position, Position::Absolute);
         // the end slot fills the header row (as measured by the last chrome_padding), or is centred
         // in it when its height is set
         assert_eq!(e.size.height, taffy::Dimension::length(row));
         assert_eq!(e.inset.top, LengthPercentageAuto::length(0.0));
         let mut fixed = Style { size: taffy::Size { width: taffy::Dimension::auto(), height: taffy::Dimension::length(row - 6.0) }, ..Style::default() };
-        k.child_layout(&ChildCx { index: 1, anchors: &["", ""], slots: &["", "end"] }, &mut fixed);
+        k.child_layout(&ChildCx { index: 1, anchors: &["", ""], slots: &["", "end"], children: &[] }, &mut fixed);
         assert_eq!(fixed.inset.top, LengthPercentageAuto::length(3.0));
         // the header is the end slot's containing block
         assert_eq!(k.layout_style(&StyleCx { computed: None, state: StateBits::NONE, dark: true, base: Some(Style { position: Position::Static, ..Style::default() }) }).position, Position::Relative);
         set(&mut k, "open", Value::Bool(true));
         let mut s = Style::default();
-        assert!(k.child_layout(&ChildCx { index: 0, anchors: &["", ""], slots: &["", "end"] }, &mut s));
+        assert!(k.child_layout(&ChildCx { index: 0, anchors: &["", ""], slots: &["", "end"], children: &[] }, &mut s));
         assert_ne!(s.display, Display::None);
         let [l, _, t, _] = chrome(&k);
         assert_eq!(l, 16.0 + 4.0, "indented past the twistie and the gap");

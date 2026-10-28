@@ -1,0 +1,23 @@
+id = "split-view"
+title = "Split view"
+family = "layout"
+kinds = ["split-view"]
+size = [420, 220]
+states = ["normal", "hover", "focus-visible", "disabled"]
+notes = "Panes side by side or stacked with a 1 pt sash between them (the hover bar shows after a delay, at once while focused). Look at the sash line in each theme, its focus ring, and three panes with `sizes`."
+
+[[variant]]
+id = "orientation"
+title = "Two panes"
+file = "orientation.svelte"
+args = { orientation = ["horizontal", "vertical"] }
+
+[[variant]]
+id = "three"
+title = "Three panes with sizes"
+file = "three.svelte"
+
+[[variant]]
+id = "dense"
+title = "Nested, in an editor layout"
+file = "dense.svelte"

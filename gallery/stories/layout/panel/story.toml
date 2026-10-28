@@ -1,0 +1,18 @@
+id = "panel"
+title = "Panel"
+family = "layout"
+kinds = ["panel"]
+size = [420, 220]
+states = ["normal", "hover", "focus-visible"]
+notes = "A side or top/bottom panel on the chrome background, sized by `size`; the 1 pt separator is on its inner edge, and `resizable` makes that edge a sash. Look at the chrome fill against the editor, the separator in each theme, and the four sides."
+
+[[variant]]
+id = "side"
+title = "Each side"
+file = "side.svelte"
+args = { side = ["left", "right", "top", "bottom"] }
+
+[[variant]]
+id = "plain"
+title = "No separator, not resizable"
+file = "plain.svelte"

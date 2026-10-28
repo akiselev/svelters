@@ -16,7 +16,7 @@ use super::common;
 use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::geom::Rect;
 use skelter_base::time::{Span, Time};
@@ -161,6 +161,30 @@ pub static METHODS: &[skelter_core::MethodSpec] = &[
 impl Kind for StatusBar {
     fn parts() -> &'static [&'static str] {
         &["message"]
+    }
+    /// It hides the temporary sections while a message shows and pushes the end ones to the far end
+    /// ([`Kind::child_layout`]); the row itself is `base.css`'s.
+    fn places_children() -> bool {
+        true
+    }
+    /// The sections in source order (taffy has no `order`: write start, temporary, end), temporary
+    /// ones hidden while a message or tip shows, the first end section with `margin-left: auto`.
+    fn child_layout(&self, cx: &ChildCx, style: &mut taffy::Style) -> bool {
+        let Some(me) = cx.children.get(cx.index) else { return true };
+        match Section::parse(me.status_section) {
+            Section::Temporary if self.showing() => {
+                style.display = taffy::Display::None;
+                false
+            }
+            Section::End => {
+                let first_end = cx.children.iter().position(|c| Section::parse(c.status_section) == Section::End);
+                if first_end == Some(cx.index) {
+                    style.margin.left = taffy::LengthPercentageAuto::auto();
+                }
+                true
+            }
+            _ => true,
+        }
     }
     fn methods() -> &'static [skelter_core::MethodSpec] {
         METHODS

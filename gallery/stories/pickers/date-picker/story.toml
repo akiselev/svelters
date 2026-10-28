@@ -1,0 +1,18 @@
+id = "date-picker"
+title = "Date picker"
+family = "pickers"
+kinds = ["date-picker"]
+size = [320, 96]
+states = ["normal", "hover", "active", "focus-visible", "disabled"]
+notes = "The closed date button (`format`, a strftime subset). Its drop has no prop that opens it, so a shot shows the closed button only (POL2-REGISTER records the question); `calendar` shows the drop's grid."
+
+[[variant]]
+id = "format"
+title = "Formats"
+file = "format.svelte"
+args = { format = ["%Y-%m-%d", "%d %B %Y", "%A, %e %B %Y"] }
+
+[[variant]]
+id = "empty"
+title = "No value"
+file = "empty.svelte"

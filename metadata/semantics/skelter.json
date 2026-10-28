@@ -4315,7 +4315,7 @@
           "writable": true
         },
         "x": {
-          "change": "property",
+          "change": "layout",
           "construct_only": false,
           "default": 40.0,
           "doc": "",
@@ -4335,7 +4335,7 @@
           "writable": true
         },
         "y": {
-          "change": "property",
+          "change": "layout",
           "construct_only": false,
           "default": 40.0,
           "doc": "",

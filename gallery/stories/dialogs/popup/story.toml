@@ -1,0 +1,17 @@
+id = "popup"
+title = "Popup"
+family = "dialogs"
+kinds = ["popup"]
+size = [360, 240]
+states = ["normal"]
+notes = "A popover's surface, shown while `open`. Hosted on skelter-core it is a node in its parent's flow (no top layer for nodes yet, and its own `anchor` record is shadowed by the common `anchor`: POL2-REGISTER Q2), so each variant places it under its button; `placement` changes nothing yet. Look at the raised surface, `popup-shadow` and the content's padding."
+
+[[variant]]
+id = "placement"
+title = "Placements"
+file = "placement.svelte"
+
+[[variant]]
+id = "form"
+title = "A small form inside"
+file = "form.svelte"

@@ -1,0 +1,22 @@
+id = "modal"
+title = "Modal"
+family = "dialogs"
+kinds = ["modal"]
+size = [440, 280]
+states = ["normal", "focus-visible"]
+notes = "A dialog over a backdrop that covers the window, centred at its content's size, with a `heading` row. Look at the backdrop's dimming in each theme, the dialog surface and shadow, the heading, and long content."
+
+[[variant]]
+id = "confirm"
+title = "Confirm"
+file = "confirm.svelte"
+
+[[variant]]
+id = "long"
+title = "Long heading and text"
+file = "long.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

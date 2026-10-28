@@ -1,0 +1,18 @@
+id = "status-bar"
+title = "Status bar"
+family = "views"
+kinds = ["status-bar"]
+size = [480, 72]
+states = ["normal"]
+notes = "A row of sections placed by their `status-section` (start, temporary, end); a `message` hides the temporary sections. Look at the bar's fill and top border against the editor in each theme, and section spacing."
+
+[[variant]]
+id = "sections"
+title = "Sections"
+file = "sections.svelte"
+args = { message = ["", "Routing 12 of 40 nets…"] }
+
+[[variant]]
+id = "overflow"
+title = "Long text in a narrow bar"
+file = "overflow.svelte"

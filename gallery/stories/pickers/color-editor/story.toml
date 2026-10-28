@@ -1,0 +1,18 @@
+id = "color-editor"
+title = "Colour editor"
+family = "pickers"
+kinds = ["color-editor"]
+size = [340, 340]
+states = ["normal", "focus-visible", "disabled"]
+notes = "The inline colour editor: the saturation/value square, the hue strip, the alpha strip (`alpha`), the channel boxes (`fields`) and swatches. Look at the strips' handles, the checkerboard under alpha, the boxes' text and the swatch borders in each theme."
+
+[[variant]]
+id = "fields"
+title = "Fields"
+file = "fields.svelte"
+args = { fields = ["hex rgb", "hex hsv"] }
+
+[[variant]]
+id = "alpha"
+title = "With alpha and swatches"
+file = "alpha.svelte"

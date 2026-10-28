@@ -496,6 +496,10 @@ impl ColorEditorKind {
         (cfg.hex, cfg.rgb, cfg.hsv) = (hex, rgb, hsv);
         cfg.swatches = strings(&p.swatches);
         cfg.custom = strings(&p.custom_colors);
+        // the value under the new alpha mode: `value` written before `alpha` keeps its alpha
+        if let Ok(rgba) = parse_hex(&self.props.value) {
+            self.model.value = ColorBody::hex_of(Hsv::from_srgba(rgba), &self.model.cfg);
+        }
     }
 
     fn deliver(&mut self, cx: &mut EventCx, emits: Vec<Emit>) {
@@ -997,6 +1001,10 @@ impl ColorPickerKind {
         cfg.swatches = strings(&p.swatches);
         cfg.custom = strings(&p.custom_colors);
         self.model.live = p.commit_mode != "confirm";
+        // the value under the new alpha mode: `value` written before `alpha` keeps its alpha
+        if let Ok(rgba) = parse_hex(&self.props.value) {
+            self.model.value = ColorBody::hex_of(Hsv::from_srgba(rgba), &self.model.cfg);
+        }
     }
 
     fn deliver(&mut self, cx: &mut EventCx, emits: Vec<Emit>) {
@@ -1229,6 +1237,21 @@ mod tests {
         assert!(c.set_prop(cv, &w::Value::str("#12")).is_err());
         c.set_prop(cv, &w::Value::str("#336699")).unwrap();
         assert_eq!(c.model.value, "#336699");
+    }
+
+    /// POL2-REGISTER: Svelte writes props in attribute order; a `value` with alpha written before
+    /// `alpha="blend"` keeps its alpha (the editor's and the picker's).
+    #[test]
+    fn a_value_written_before_alpha_keeps_its_alpha() {
+        let mut c = ColorEditorKind::default();
+        c.set_prop(COLOR_EDITOR.prop("value").unwrap(), &w::Value::str("#2e86c180")).unwrap();
+        assert_eq!(c.model.value, "#2e86c1", "opaque until alpha is on");
+        c.set_prop(COLOR_EDITOR.prop("alpha").unwrap(), &w::Value::str("blend")).unwrap();
+        assert_eq!(c.model.value, "#2e86c180");
+        let mut k = ColorPickerKind::default();
+        k.set_prop(COLOR_PICKER.prop("value").unwrap(), &w::Value::str("#2e86c180")).unwrap();
+        k.set_prop(COLOR_PICKER.prop("alpha").unwrap(), &w::Value::str("blend")).unwrap();
+        assert_eq!(k.model.value, "#2e86c180");
     }
 
     #[test]

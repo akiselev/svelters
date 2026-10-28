@@ -1,0 +1,13 @@
+id = "color-picker"
+title = "Colour picker"
+family = "pickers"
+kinds = ["color-picker"]
+size = [320, 96]
+states = ["normal", "hover", "active", "focus-visible", "disabled"]
+notes = "The closed colour well. Its drop has no prop that opens it, so a shot shows the closed well only (POL2-REGISTER records the question); `color-editor` shows the drop's content."
+
+[[variant]]
+id = "value"
+title = "Opaque and translucent"
+file = "value.svelte"
+args = { value = ["#c0392b", "#2e86c180", "#ffffff"] }

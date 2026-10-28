@@ -634,8 +634,8 @@ static INNERWINDOW_PROPS: &[PropSpec] = &[
     PropSpec { name: "min-width", ty: ValueType::F64, default: DefaultValue::F64(120.0), nullable: false, change: ChangeClass::Layout, native: false, doc: "" },
     PropSpec { name: "resizable", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "The user can resize it; the content is laid out at its size. Without it the window is as big as its content." },
     PropSpec { name: "width", ty: ValueType::F64, default: DefaultValue::F64(320.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
-    PropSpec { name: "x", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Property, native: true, doc: "" },
-    PropSpec { name: "y", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Property, native: true, doc: "" },
+    PropSpec { name: "x", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
+    PropSpec { name: "y", ty: ValueType::F64, default: DefaultValue::F64(40.0), nullable: false, change: ChangeClass::Layout, native: true, doc: "" },
 ];
 static INNERWINDOW_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "close", args: &[], passive: false, cancelable: true, sync: true, bubbles: false, doc: "" },

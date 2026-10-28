@@ -1207,7 +1207,25 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn child_layout(&self, cx: &ChildLayoutCx, style: &mut taffy::Style) -> bool {
         let anchors: Vec<&str> = (0..cx.count).map(|k| cx.anchor_of(k)).collect();
         let slots: Vec<&str> = (0..cx.count).map(|k| cx.parent.child(k).map_or("", |c| c.slot_name())).collect();
-        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors, slots: &slots }, style)
+        let enum_name = |c: &NodeView<'_>, p: skelter_core::PropId| match c.prop(p) {
+            Some(Value::Enum(i)) => skelter_core::common::prop(p).and_then(|s| s.enum_values.get(*i as usize).copied()),
+            _ => None,
+        };
+        let children: Vec<w::ChildInfo<'_>> = (0..cx.count)
+            .map(|k| {
+                let Some(c) = cx.parent.child(k) else { return w::ChildInfo::default() };
+                let spec = c.kind().spec;
+                let own = |name: &str| spec.prop_named(name).is_some_and(|p| c.prop_bool(p));
+                w::ChildInfo {
+                    kind: spec.name,
+                    dialog_role: enum_name(&c, skelter_core::common::DIALOG_ROLE).unwrap_or("auto"),
+                    default_button: own("default"),
+                    cancel_button: own("cancel"),
+                    status_section: enum_name(&c, skelter_core::common::STATUS_SECTION).unwrap_or("temporary"),
+                }
+            })
+            .collect();
+        self.widget.child_layout(&w::ChildCx { index: cx.index, anchors: &anchors, slots: &slots, children: &children }, style)
     }
 
     fn children_inert(&self) -> bool {
