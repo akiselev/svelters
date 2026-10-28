@@ -1022,6 +1022,8 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             self.room = Some(room);
             self.widget.room(room);
         }
+        let today = cx.services().get::<crate::pickers::Today>().and_then(|t| t.0).unwrap_or_else(crate::pickers::date::Date::today_utc);
+        self.widget.today(today);
         // a dry recording finds the images the list will reference; the new ones are uploaded
         let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
         let parts = part_styles(node, Self::spec_ref().core.parts);
@@ -1219,6 +1221,13 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
 
     fn overlay_closed(&mut self, cx: &mut EventCx, reason: skelter_core::overlay::DismissReason) -> Handled {
         self.run(cx, |w, wcx| w.overlay_closed(wcx, reason))
+    }
+
+    fn top_layer(&self, cx: &skelter_core::TopLayerCx) -> skelter_core::overlay::TopLayer {
+        let rect_of = |n: NodeId| cx.world_rect(n);
+        let wcx = w::TopLayerCx { size: cx.size(), window: cx.window_size(), owner: cx.owner_rect(), rect_of: &rect_of };
+        self.reading(|| self.widget.top_layer(&wcx))
+            .unwrap_or_else(|| skelter_core::overlay::TopLayer::new(skelter_core::overlay::OverlayClass::Popup).with_dismiss(skelter_core::overlay::Dismiss::NONE))
     }
 
     fn owner_context_click(&mut self, cx: &mut EventCx, at: Point) -> Handled {

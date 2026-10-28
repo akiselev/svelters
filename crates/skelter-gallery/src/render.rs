@@ -25,6 +25,9 @@ use svelters_skelter::SkelterBackend;
 use svelters_skelter::app::{SkelterDocument, install_widget_services};
 use svelters_skelter::embed::{Budgets, Embed, EmbedConfig, EmbedEvent, EntryId, MountSpec, Props, RootId, RootState, SlotId, SlotOptions};
 
+/// The day the gallery's pickers take as today (`pickers::Today`): shots do not change with the date.
+pub const GALLERY_TODAY: &str = "2026-10-22";
+
 /// Numbers the spec fragments of the renderers in this process (G3: one per renderer, whatever
 /// thread it is on, so one renderer's drop never removes another's file).
 static FRAGMENTS: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
@@ -246,6 +249,8 @@ impl Renderer {
             presented: None,
             pointer_in: false,
         };
+        // the pickers' today: one fixed day, so a calendar shows the same month every run (R-16)
+        r.backend.with_doc(|d| skelter_widgets::pickers::set_today(d, skelter_widgets::pickers::date::Date::parse_iso(GALLERY_TODAY).ok()));
         r.apply_theme(&Theme::DarkModern, Density::Default)?;
         let _ = r.settle();
         Ok(r)

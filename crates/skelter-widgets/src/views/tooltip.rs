@@ -9,7 +9,8 @@
 //! `duration` hides it after a time.
 //!
 //! The surface goes above its host, centred (`top-center`), flipping below when there is no room
-//! (svelters-egui `widgets/tooltip.rs`); it is a click-through overlay entry.
+//! (svelters-egui `widgets/tooltip.rs`); it is a click-through overlay entry. A `tooltip` element is
+//! in the window's top layer (`position: fixed`), placed so next to its owner.
 //!
 //! [`TitleTooltips`] shows it for the common `title` prop (SV61): skelter-core's
 //! [`TitleTips`](skelter_core::tips::TitleTips) seam reports the hovered host and the input, and each
@@ -22,7 +23,7 @@ use crate::controls::common::host_view;
 use crate::interact::Policy;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, Value};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PropError, PropId, RecordCx, StyleCx, TopLayerCx, Value};
 use crate::shim::text::TextShaper;
 use skelter_base::accesskit;
 use skelter_base::geom::{Rect, Size};
@@ -187,7 +188,8 @@ impl skelter_core::tips::TitleTips for TitleTooltips {
                     let root = doc.window_root(window);
                     let bounds = root.and_then(|r| doc.world_rect(r)).unwrap_or(anchor);
                     let scale = root.and_then(|r| doc.view(r)).map_or(1.0, |v| v.scale());
-                    let tip = w.tip.clone();
+                    let mut tip = w.tip.clone();
+                    tip.room = Some(bounds.width());
                     let (size, mut list, runs) = crate::host::record_tooltip(doc, &tip, scale);
                     let rect = tip.place(anchor, bounds, size).rect;
                     list.translate(skelter_base::geom::Vec2::new(rect.min.x, rect.min.y));
@@ -239,6 +241,8 @@ pub static SPEC: KindSpec = KindSpec {
 
 /// The widest a tooltip's text runs before it wraps.
 pub const MAX_WIDTH: f32 = 360.0;
+/// What a tooltip keeps clear of the window's edges when its text wraps to fit.
+pub const EDGE: f32 = 8.0;
 /// The gap to the host.
 const GAP: f32 = 6.0;
 
@@ -247,6 +251,9 @@ const GAP: f32 = 6.0;
 pub struct Tooltip {
     pub props: TooltipProps,
     pub timer: TooltipTimer,
+    /// The width it may take (the window's): its text wraps short of [`MAX_WIDTH`] to stay
+    /// [`EDGE`] inside it. `None`: [`MAX_WIDTH`].
+    pub room: Option<f32>,
 }
 
 impl Tooltip {
@@ -276,8 +283,10 @@ impl Tooltip {
     /// The surface's size for its text under `s` (its style view): the text wrapped at [`MAX_WIDTH`]
     /// plus padding and border.
     pub fn size(&self, shaper: &mut dyn TextShaper, s: &StyleView) -> Size {
-        let t = paint::measure_text(shaper, s, &self.props.text, Some(MAX_WIDTH));
         let e = paint::box_extra(s);
+        // a narrow window wraps it sooner, so it never runs off the window's side
+        let wrap = self.room.map_or(MAX_WIDTH, |r| MAX_WIDTH.min(r - 2.0 * EDGE - e.x)).max(e.x.max(40.0));
+        let t = paint::measure_text(shaper, s, &self.props.text, Some(wrap));
         Size::new(t.w + e.x, t.h + e.y)
     }
 
@@ -301,9 +310,29 @@ impl Kind for Tooltip {
         self.props.get(prop)
     }
 
-    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+    /// In the window's top layer, out of its owner's flow and clip.
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        s.position = taffy::Position::Fixed;
+        s
+    }
+
+    /// Next to its owner (`placement`, flipped and shifted into the window), click-through.
+    fn top_layer(&self, cx: &TopLayerCx) -> Option<skelter_core::overlay::TopLayer> {
+        use skelter_core::overlay::{OverlayClass, TopLayer};
+        let bounds = Rect::from_origin_size(skelter_base::geom::Point::ZERO, cx.window);
+        let at = self.place(cx.owner.unwrap_or(bounds), bounds, cx.size).rect.min;
+        Some(TopLayer::new(OverlayClass::Tooltip).at(at))
+    }
+
+    fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let host = host_view(&cx.style, UA);
-        let s = self.size(cx.text, &host);
+        // laid out against the window: it wraps to fit it
+        let room = match avail.width {
+            taffy::AvailableSpace::Definite(w) => Some(w),
+            _ => self.room,
+        };
+        let s = Tooltip { room, ..self.clone() }.size(cx.text, &host);
         taffy::Size { width: s.w, height: s.h }
     }
 

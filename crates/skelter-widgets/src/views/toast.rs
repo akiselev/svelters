@@ -1,6 +1,7 @@
 //! Toasts: `toast-host` and the Rust API ([`ToastHost::show`], [`ToastQueue`] from any thread).
 //!
-//! A `toast-host` is a full-window, click-through overlay entry that shows its toasts stacked from a
+//! A `toast-host` is a full-window, click-through overlay entry (in the window's top layer:
+//! `position: fixed`, inset 0, wherever it is declared) that shows its toasts stacked from a
 //! corner, newest nearest the corner (svelters-egui `views/toast.rs`). It computes:
 //! - the queue: at most `max-visible` show at once; the rest wait, their clocks not started;
 //! - timeouts: a toast closes `duration` after it showed (the host's when it has none; zero: until
@@ -19,7 +20,7 @@ use crate::controls::common::host_view;
 use crate::interact::StateBits;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PrepareCx, PropError, PropId, RecordCx, SignalSpec, Styles, Value, ValueType};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, HitCx, HitResult, Kind, KindSpec, NameFrom, PrepareCx, PropError, PropId, RecordCx, SignalSpec, StyleCx, Styles, TopLayerCx, Value, ValueType};
 use crate::shim::text::TextShaper;
 use skelter_base::accesskit;
 use skelter_base::color::Color;
@@ -572,6 +573,25 @@ impl Kind for ToastHost {
     }
     fn get_prop(&self, prop: PropId) -> Option<Value> {
         self.props.get(prop)
+    }
+
+    /// It covers the window from its top layer, wherever it is declared.
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        let z = taffy::LengthPercentageAuto::length(0.0);
+        s.position = taffy::Position::Fixed;
+        s.inset = taffy::Rect { left: z, right: z, top: z, bottom: z };
+        s
+    }
+
+    /// Above the content and the popups, click-through: only its toasts take the pointer.
+    fn top_layer(&self, _cx: &TopLayerCx) -> Option<skelter_core::overlay::TopLayer> {
+        use skelter_core::overlay::{OverlayClass, TopLayer};
+        Some(TopLayer::new(OverlayClass::ToastHost).with_input(false))
+    }
+
+    fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
+        if self.hit(p).is_some() { cx.box_hit(p) } else { HitResult::Miss }
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {

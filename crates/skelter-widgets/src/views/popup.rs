@@ -1,8 +1,10 @@
-//! `popup` / `popover`: a floating surface next to an anchor, shown while `open`. The kind keeps its
-//! props, places itself with [`place`] (side, alignment, gap, flip, shift, fit) and reports opening
-//! and closing; the window's [`OverlayStack`](super::overlay::OverlayStack) owns its layer, routes
-//! presses to it and light-dismisses it (the kind turns the stack's [`Closed`] into its `close`
-//! signal through [`Popup::dismissed`]).
+//! `popup` / `popover`: a floating surface next to an anchor, shown while `open`. Open, it is in the
+//! window's top layer (`position: fixed`, `skelter_core::Kind::top_layer`) with its children: laid
+//! out against the window, out of its owner's flow, placed with [`place`] (side, alignment, gap,
+//! flip, shift) next to its anchor (unset: its owner, the element it is declared in), drawn above
+//! the content whatever clips its owner. The window's [`OverlayStack`](super::overlay::OverlayStack)
+//! owns its layer, routes presses to it and light-dismisses it (the kind turns the stack's closing
+//! into its `close` signal, [`Popup::dismissed`] and `overlay_closed`).
 //!
 //! Props: `open`, `placement` (`bottom-start` …), `anchor` (a record: `{node}`, `{x, y, width, height}`
 //! rect, or `{x, y}` for a point), `gap`, `modal`, `light-dismiss`, `escape-dismiss`, `match-width`,
@@ -16,7 +18,7 @@ use crate::controls::props::PropValue;
 use crate::kind_props;
 use crate::paint::{self, PaintCx, Ua, UaRule, UaValue::*};
 use crate::interact::StateBits;
-use crate::shim::core::{A11yCx, ChildCx, Default as Dv, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{A11yCx, ChildCx, Default as Dv, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, StyleCx, TopLayerCx, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::event::KeyState;
 use skelter_base::geom::{Point, Rect, Size};
@@ -173,6 +175,30 @@ impl Popup {
         placed
     }
 
+    /// Where it goes in the top layer: next to its anchor (`anchor`, else `owner`), inside the
+    /// window, at its laid-out `size` (window points).
+    pub fn top_rect(&self, owner: Option<Rect>, window: Size, size: Size, rect_of: &dyn Fn(NodeId) -> Option<Rect>) -> Rect {
+        let anchor = match self.props.anchor {
+            Anchor::Node(n) => rect_of(n).or(owner),
+            Anchor::None => owner,
+            _ => self.fixed_anchor(),
+        };
+        let bounds = Rect::from_origin_size(Point::ZERO, window);
+        // `fit` would shrink it, but its children are laid out at `size`: the stack draws it whole
+        let mut p = self.clone();
+        p.props.fit = false;
+        p.place_in(anchor, bounds, size).rect
+    }
+
+    /// The anchor's box for light dismiss: a press on it is the anchor's own (it toggles the popup).
+    fn anchor_rect(&self, owner: Option<Rect>, rect_of: &dyn Fn(NodeId) -> Option<Rect>) -> Option<Rect> {
+        match self.props.anchor {
+            Anchor::Node(n) => rect_of(n).or(owner),
+            Anchor::None => owner,
+            _ => self.fixed_anchor(),
+        }
+    }
+
     /// The fixed anchor rect, when it is not another node.
     pub fn fixed_anchor(&self) -> Option<Rect> {
         match self.props.anchor {
@@ -226,6 +252,26 @@ impl Kind for Popup {
         self.props.get(prop)
     }
 
+    /// Open, it is in the window's top layer.
+    fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        let mut s = cx.default_layout();
+        if self.props.open {
+            s.position = taffy::Position::Fixed;
+        }
+        s
+    }
+
+    fn top_layer(&self, cx: &TopLayerCx) -> Option<skelter_core::overlay::TopLayer> {
+        let r = self.top_rect(cx.owner, cx.window, cx.size, cx.rect_of);
+        let inside = self.anchor_rect(cx.owner, cx.rect_of).into_iter().collect();
+        Some(skelter_core::overlay::TopLayer::new(self.class()).at(r.min).with_dismiss(self.dismiss_flags()).with_modal(self.props.modal).with_inside(inside))
+    }
+
+    fn overlay_closed(&mut self, cx: &mut EventCx, reason: DismissReason) -> Handled {
+        self.set_open(cx, false, reason);
+        Handled::Yes
+    }
+
     /// The content is not laid out, painted or hit while it is closed.
     fn child_layout(&self, _cx: &ChildCx, style: &mut taffy::Style) -> bool {
         if !self.props.open {
@@ -257,7 +303,7 @@ impl Kind for Popup {
                 self.set_open(cx, false, DismissReason::Escape);
                 Handled::Yes
             }
-            Event::OutsidePress(_) if self.light_dismiss() => {
+            Event::OutsidePress(_) if self.props.open && self.dismiss_flags().outside => {
                 self.set_open(cx, false, DismissReason::OutsidePress);
                 Handled::Yes
             }
@@ -265,9 +311,10 @@ impl Kind for Popup {
         }
     }
 
-    /// Open and light-dismissable (`light-dismiss`, not `modal`): a press outside closes it.
+    /// The window's overlay stack light-dismisses it (a press on its anchor is not outside it); the
+    /// subtree rule of `light_dismiss` would close it on its anchor's press.
     fn light_dismiss(&self) -> bool {
-        self.props.open && self.dismiss_flags().outside
+        false
     }
 
     fn a11y(&self, cx: &mut A11yCx) {
@@ -390,10 +437,12 @@ mod tests {
         let pol = crate::interact::Policy::default();
         let mut st = StateBits::NONE;
         let mut p = Popup::default();
-        assert!(!p.light_dismiss(), "closed: no outside presses wanted");
+        // the window's overlay stack light-dismisses it, not the subtree rule (its anchor's press)
+        assert!(!p.light_dismiss());
         p.props.open = true;
         p.props.light_dismiss = true;
-        assert!(p.light_dismiss());
+        assert!(!p.light_dismiss());
+        assert_eq!(p.dismiss_flags(), Dismiss::LIGHT);
         let mut cx = EventCx::new(skelter_base::time::Time::ZERO, Size::new(100.0, 50.0), &mut st, &pol);
         assert_eq!(p.event(&mut cx, &Event::OutsidePress(Point::new(-5.0, -5.0))), Handled::Yes);
         assert!(!p.props.open);
@@ -403,6 +452,30 @@ mod tests {
         p.props.open = true;
         p.props.light_dismiss = true;
         p.props.modal = true;
-        assert!(!p.light_dismiss());
+        assert!(!p.dismiss_flags().outside);
+    }
+
+    #[test]
+    fn open_it_is_in_the_top_layer_next_to_its_owner() {
+        let mut p = Popup::default();
+        let cx = StyleCx { computed: None, state: StateBits::NONE, dark: true, base: None, font_size: None, theme: None };
+        assert_ne!(p.layout_style(&cx).position, taffy::Position::Fixed, "closed: in its owner's flow");
+        p.props.open = true;
+        assert_eq!(p.layout_style(&cx).position, taffy::Position::Fixed);
+        let owner = Rect::new(10.0, 10.0, 60.0, 30.0);
+        let none = |_: NodeId| None;
+        let tcx = TopLayerCx { size: Size::new(100.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &none };
+        let tl = p.top_layer(&tcx).expect("a top-layer entry");
+        assert_eq!(tl.at, Some(Point::new(10.0, 34.0)), "bottom-start, 4 pt below its owner");
+        assert_eq!(tl.inside, vec![owner], "a press on the owner is not outside it");
+        assert_eq!((tl.class, tl.dismiss), (OverlayClass::Popup, Dismiss::LIGHT));
+        // no room below: it flips above; a node anchor wins over the owner
+        p.props.placement = "bottom-end".into();
+        let tcx = TopLayerCx { owner: Some(Rect::new(200.0, 180.0, 260.0, 196.0)), ..tcx };
+        assert_eq!(p.top_layer(&tcx).unwrap().at, Some(Point::new(160.0, 136.0)));
+        let other = |n: NodeId| (n == NodeId(7)).then_some(Rect::new(0.0, 0.0, 20.0, 20.0));
+        p.props.anchor = Anchor::Node(NodeId(7));
+        let tcx = TopLayerCx { rect_of: &other, ..tcx };
+        assert_eq!(p.top_layer(&tcx).unwrap().at, Some(Point::new(0.0, 24.0)), "bottom-end shifted into the window");
     }
 }

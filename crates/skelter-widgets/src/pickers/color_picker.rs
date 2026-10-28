@@ -119,6 +119,13 @@ impl ColorPicker {
         e
     }
 
+    /// Opens or closes the editor from the `open` prop (no keyboard focus moves into it); closing
+    /// after live edits commits them.
+    pub fn set_open(&mut self, open: bool) -> Vec<Emit> {
+        let out = if open { self.drop.open(false) } else { self.drop.close(CloseReason::Done) };
+        self.after_drop(out)
+    }
+
     pub fn button_pointer(&mut self, ev: &PointerEvent, size: Size, enabled: bool) -> Vec<Emit> {
         let out = self.drop.button_pointer(ev, size, enabled);
         self.after_drop(out)

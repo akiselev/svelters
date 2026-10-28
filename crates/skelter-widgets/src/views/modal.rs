@@ -1,5 +1,7 @@
 //! `modal`: a dialog over a backdrop that covers the whole window (svelters-egui `widgets/dialog.rs`).
-//! The node is the full-window overlay entry; the dialog box sits centred in it at its content's
+//! Open, the node is in the window's top layer (`position: fixed`, inset 0: it covers the window
+//! whatever its owner is, `skelter_core::Kind::top_layer`) as a modal overlay entry; closed, it
+//! covers its parent and draws nothing. The dialog box sits centred in it at its content's
 //! size (clamped to the window less a margin), with an optional heading row (`heading`: the common
 //! `title` prop stays the tooltip every node has). Nothing below is reached
 //! while it is open (the overlay stack's modal block).
@@ -14,7 +16,7 @@ use crate::controls::common::host_view;
 use crate::kind_props;
 use crate::paint::{self, Align, PaintCx, Ua, UaRule, UaValue::*};
 use crate::interact::StateBits;
-use crate::shim::core::{ChildInfo, StyleCx, A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
+use crate::shim::core::{ChildInfo, StyleCx, TopLayerCx, A11yCx, ChildCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::event::{KeyState, MouseButton, PointerPhase};
 use skelter_base::geom::{Point, Rect, Size};
@@ -181,16 +183,25 @@ impl Kind for Modal {
         self.props.get(prop)
     }
 
-    /// The node covers its parent (the backdrop) and centres its content (the dialog's).
+    /// The node covers the window while open (the backdrop; its parent while closed) and centres its
+    /// content (the dialog's).
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         let mut s = cx.default_layout();
-        s.position = taffy::Position::Absolute;
+        s.position = if self.props.open { taffy::Position::Fixed } else { taffy::Position::Absolute };
         s.inset = taffy::Rect { left: taffy::LengthPercentageAuto::length(0.0), right: taffy::LengthPercentageAuto::length(0.0), top: taffy::LengthPercentageAuto::length(0.0), bottom: taffy::LengthPercentageAuto::length(0.0) };
         s.display = taffy::Display::Flex;
         s.flex_direction = taffy::FlexDirection::Column;
         s.justify_content = taffy::JustifyContent::CENTER;
         s.align_items = taffy::AlignItems::CENTER;
         s
+    }
+
+    /// A modal entry of the window's overlay stack: nothing below it is reached. It cancels itself
+    /// (Escape and the backdrop, when `dismissable`, through its `cancel` signal), so the stack
+    /// closes nothing.
+    fn top_layer(&self, _cx: &TopLayerCx) -> Option<skelter_core::overlay::TopLayer> {
+        use skelter_core::overlay::{Dismiss, OverlayClass, TopLayer};
+        Some(TopLayer::new(OverlayClass::Modal).with_modal(true).with_dismiss(Dismiss::NONE))
     }
 
     /// The content is not laid out, painted or hit while the modal is closed; open, it keeps the

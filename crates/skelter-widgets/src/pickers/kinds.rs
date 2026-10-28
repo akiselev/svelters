@@ -17,7 +17,10 @@
 //!   the host writes back for `bind:`.
 //! - Text goes through [`ShaperPainter`] (the thread's text system); the look is
 //!   [`PickerLook::from_theme`] of the built-in theme for the node's scheme.
-//! - "Today" is [`Date::today_utc`]: skelter has no time-zone database yet.
+//! - "Today" is the document's ([`super::Today`], handed over before each prepare through
+//!   `w::Kind::today`), else [`Date::today_utc`]: skelter has no time-zone database yet.
+//! - `open` on the drop kinds opens and closes the popup as the button does; the user opening or
+//!   closing it is written back (`bind:open`).
 //!
 //! The colour editor's hex box edits through the text-edit field ([`HexField`]): a press on it gives
 //! it the body's focus and the field takes the keys (hex digits and `#` only); Enter or the focus
@@ -116,6 +119,8 @@ pub mod date_picker_props {
         read_only "read-only": bool = Bool(false) ; Bool, Paint;
         day_parts "day-parts": Vec<Value> = None ; List, Paint;
         commit_mode "commit-mode": String = Enum("confirm") ; Enum(DATE_COMMIT_MODE), Paint;
+        /// The calendar is shown; the user opening or closing it writes it back.
+        open "open": bool = Bool(false) ; Bool, Paint, bindable;
         disabled "disabled": bool = Bool(false) ; Bool, Paint;
     }
 }
@@ -149,6 +154,8 @@ pub mod color_picker_props {
         swatches "swatches": Vec<Value> = None ; List, Layout;
         custom_colors "custom-colors": Vec<Value> = None ; List, Layout, bindable;
         commit_mode "commit-mode": String = Enum("live") ; Enum(COLOR_COMMIT_MODE), Paint;
+        /// The editor is shown; the user opening or closing it writes it back.
+        open "open": bool = Bool(false) ; Bool, Paint, bindable;
         disabled "disabled": bool = Bool(false) ; Bool, Paint;
     }
 }
@@ -295,6 +302,8 @@ fn strings(l: &[w::Value]) -> Vec<String> {
 pub struct CalendarKind {
     pub props: CalendarProps,
     pub model: Calendar,
+    /// The document's today, from the last prepare.
+    pub today: Option<Date>,
 }
 
 impl CalendarKind {
@@ -369,6 +378,10 @@ impl w::Kind for CalendarKind {
         self.props.get(prop)
     }
 
+    fn today(&mut self, today: Date) {
+        self.today = Some(today);
+    }
+
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let s = self.model.size(look(cx.style.dark));
         taffy::Size { width: s.w, height: s.h }
@@ -380,12 +393,12 @@ impl w::Kind for CalendarKind {
         let look = look(cx.style.dark);
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
-        self.model.record(list, &mut painter, look, Date::today_utc(), on, fv);
+        self.model.record(list, &mut painter, look, self.today.unwrap_or_else(Date::today_utc), on, fv);
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         let on = cx.enabled && !self.props.disabled;
-        let today = Date::today_utc();
+        let today = self.today.unwrap_or_else(Date::today_utc);
         let look = look(true);
         if let Some(p) = pointer_of(cx, ev) {
             let emits = self.model.pointer(&p, look, today, on);
@@ -411,7 +424,7 @@ impl w::Kind for CalendarKind {
 
     fn a11y(&self, cx: &mut A11yCx) {
         cx.node.set_role(Role::Grid);
-        let today = Date::today_utc();
+        let today = self.today.unwrap_or_else(Date::today_utc);
         if let Some(v) = self.model.value {
             cx.node.set_value(v.to_string());
         }
@@ -779,6 +792,8 @@ pub struct DatePickerKind {
     pub props: DatePickerProps,
     pub model: DatePicker,
     pub popup: PopupHost,
+    /// The document's today, from the last prepare.
+    pub today: Option<Date>,
 }
 
 impl DatePickerKind {
@@ -810,7 +825,15 @@ impl DatePickerKind {
         if !self.model.drop.is_open() {
             self.popup.close();
         }
+        if self.props.open != self.model.drop.is_open() {
+            self.props.open = self.model.drop.is_open();
+            cx.prop_changed(date_picker_props::P::open.id());
+        }
         cx.repaint = true;
+    }
+
+    fn today_date(&self) -> Date {
+        self.today.unwrap_or_else(Date::today_utc)
     }
 
     /// The overlay-stack entry of the open popup (`origin`: the node's top-left, window points).
@@ -821,7 +844,7 @@ impl DatePickerKind {
     /// The open popup's display list (popup-local points), for its overlay layer; `None` while closed.
     pub fn record_popup(&self, text: &mut dyn w_text::TextShaper, res: &mut dyn w::Resources, dark: bool) -> Option<DisplayList> {
         let look = look(dark);
-        self.popup.record(text, res, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), Date::today_utc()))
+        self.popup.record(text, res, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), self.today_date()))
     }
 
     /// The overlay stack closed the popup (a press outside, Escape there).
@@ -852,6 +875,13 @@ impl w::Kind for DatePickerKind {
         let before = self.props.clone();
         self.props.set(prop, v)?;
         let bad = |name: &'static str| PropError::Type { prop: name, expected: ValueType::Str };
+        if prop == date_picker_props::P::open.id() {
+            self.model.set_open(self.props.open);
+            if !self.props.open {
+                self.popup.close();
+            }
+            return Ok(());
+        }
         if prop == date_picker_props::P::value.id() {
             match parse_date_prop(&self.props.value) {
                 Ok(d) => self.model.value = d,
@@ -876,13 +906,16 @@ impl w::Kind for DatePickerKind {
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let look = look(cx.style.dark);
         let mut p = ShaperPainter { text: &mut *cx.text, res: None };
-        let s = self.model.size(&mut p, look, Date::today_utc());
+        let s = self.model.size(&mut p, look, self.today_date());
         taffy::Size { width: s.w, height: s.h }
     }
 
     /// The drop stays in the window ([`popup::place_popup`] flips and shifts it inside the room).
     fn room(&mut self, room: Rect) {
         self.popup.bounds = room;
+    }
+    fn today(&mut self, today: Date) {
+        self.today = Some(today);
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         let look = look(cx.style.dark);
@@ -898,13 +931,13 @@ impl w::Kind for DatePickerKind {
         let size = cx.size;
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
-        self.model.record_button(list, &mut painter, look, size, Date::today_utc(), fv, on);
+        self.model.record_button(list, &mut painter, look, size, self.today_date(), fv, on);
     }
 
     /// The open popup, in a layer of the window's overlay stack.
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
         let look = look(cx.style.dark);
-        self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), Date::today_utc()))
+        self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), self.today_date()))
     }
 
     fn overlay_closed(&mut self, cx: &mut EventCx, _reason: DismissReason) -> Handled {
@@ -915,7 +948,7 @@ impl w::Kind for DatePickerKind {
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
         let on = cx.enabled && !self.props.disabled;
-        let today = Date::today_utc();
+        let today = self.today_date();
         let look = look(true);
         match ev {
             Event::OutsidePress(p) => {
@@ -967,7 +1000,7 @@ impl w::Kind for DatePickerKind {
 
     fn a11y(&self, cx: &mut A11yCx) {
         cx.node.set_role(Role::DateInput);
-        cx.node.set_value(self.model.text(Date::today_utc()));
+        cx.node.set_value(self.model.text(self.today_date()));
         cx.node.set_expanded(self.model.drop.is_open());
         if self.props.disabled || cx.state.contains(StateBits::DISABLED) {
             cx.node.set_disabled();
@@ -1025,6 +1058,10 @@ impl ColorPickerKind {
         if !self.model.drop.is_open() {
             self.popup.close();
         }
+        if self.props.open != self.model.drop.is_open() {
+            self.props.open = self.model.drop.is_open();
+            cx.prop_changed(color_picker_props::P::open.id());
+        }
         cx.repaint = true;
     }
 
@@ -1064,6 +1101,15 @@ impl w::Kind for ColorPickerKind {
     }
 
     fn set_prop(&mut self, prop: PropId, v: &w::Value) -> Result<(), PropError> {
+        if prop == color_picker_props::P::open.id() {
+            self.props.set(prop, v)?;
+            // the app closing it commits nothing (no signal from a prop write)
+            let _ = self.model.set_open(self.props.open);
+            if !self.props.open {
+                self.popup.close();
+            }
+            return Ok(());
+        }
         if prop == color_picker_props::P::value.id() {
             let rgba = v.as_str().map(parse_hex).ok_or(PropError::Type { prop: "value", expected: ValueType::Str })?;
             let Ok(rgba) = rgba else { return Err(PropError::Type { prop: "value", expected: ValueType::Str }) };
@@ -1329,6 +1375,33 @@ mod tests {
         assert!(k.model.drop.is_open(), "inside the popup is not outside");
         k.event(&mut cx, &Event::OutsidePress(Point::new(370.0, 270.0)));
         assert!(!k.model.drop.is_open());
+    }
+
+    #[test]
+    fn open_opens_the_drop_and_the_user_closing_it_writes_it_back() {
+        use crate::controls::testkit;
+        let policy = Policy::default();
+        let mut k = DatePickerKind::default();
+        let open = DATE_PICKER.prop("open").unwrap();
+        k.set_prop(open, &w::Value::Bool(true)).unwrap();
+        assert!(k.model.drop.is_open());
+        let size = testkit::measure(&k, StateBits::NONE);
+        testkit::prepare(&mut k, size, StateBits::NONE);
+        assert!(k.popup.placed().is_some(), "placed at the next prepare");
+        // the user closes it (the overlay stack's light dismiss): `open` is written back
+        let mut state = StateBits::NONE;
+        let mut cx = EventCx::new(Time(1), size, &mut state, &policy);
+        w::Kind::overlay_closed(&mut k, &mut cx, DismissReason::OutsidePress);
+        assert!(!k.model.drop.is_open());
+        assert_eq!(w::Kind::get_prop(&k, open), Some(w::Value::Bool(false)));
+        assert!(cx.changed.contains(&open), "a native change, for `bind:open`");
+        // the colour picker the same
+        let mut c = ColorPickerKind::default();
+        let open = COLOR_PICKER.prop("open").unwrap();
+        c.set_prop(open, &w::Value::Bool(true)).unwrap();
+        assert!(c.model.drop.is_open());
+        c.set_prop(open, &w::Value::Bool(false)).unwrap();
+        assert!(!c.model.drop.is_open());
     }
 
     #[test]

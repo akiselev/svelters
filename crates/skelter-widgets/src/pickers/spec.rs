@@ -90,6 +90,7 @@ pub const DATE_PICKER: KindRows = KindRows {
         READ_ONLY,
         DAY_PARTS,
         p("commit-mode", Ty::Enum(DATE_COMMIT_MODE), "\"confirm\"", Paint),
+        bind("open", Ty::Bool, "false", Paint),
     ],
     signals: &[SIG_CHANGED, SIG_COMMIT, SIG_PAGE],
 };
@@ -102,7 +103,7 @@ pub const COLOR_EDITOR: KindRows = KindRows {
 
 pub const COLOR_PICKER: KindRows = KindRows {
     tag: "color-picker",
-    props: &[bind("value", Ty::Str, "\"#000000\"", Paint), p("alpha", Ty::Enum(ALPHA), "\"opaque\"", Paint), FIELDS, SWATCHES, CUSTOM, p("commit-mode", Ty::Enum(COLOR_COMMIT_MODE), "\"live\"", Paint)],
+    props: &[bind("value", Ty::Str, "\"#000000\"", Paint), p("alpha", Ty::Enum(ALPHA), "\"opaque\"", Paint), FIELDS, SWATCHES, CUSTOM, p("commit-mode", Ty::Enum(COLOR_COMMIT_MODE), "\"live\"", Paint), bind("open", Ty::Bool, "false", Paint)],
     signals: &[SIG_CHANGED, SIG_COMMIT],
 };
 
