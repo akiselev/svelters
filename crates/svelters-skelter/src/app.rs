@@ -55,11 +55,32 @@ pub struct SkelterDocument {
     /// Presented handles whose window is being opened, in order: the next new window's first size
     /// attaches the first of them.
     opening: VecDeque<svl_handle>,
+    /// The runner's clock: a document timer that is due wants a frame ([`DocumentApi::needs_frame`]).
+    clock: Option<Arc<dyn Clock>>,
 }
 
 impl SkelterDocument {
     pub fn new(backend: SkelterBackend) -> Self {
-        SkelterDocument { backend, framed: HashMap::new(), opening: VecDeque::new() }
+        SkelterDocument { backend, framed: HashMap::new(), opening: VecDeque::new(), clock: None }
+    }
+
+    /// The runner's clock (the platform's, a test harness's virtual one): skelter-core's document
+    /// timers (kinds' `wake_at`: toasts, `title` tips, status messages, bar fades) run when due.
+    pub fn with_clock(mut self, clock: Arc<dyn Clock>) -> Self {
+        self.clock = Some(clock);
+        self
+    }
+
+    /// Sets the runner's clock ([`SkelterDocument::with_clock`]).
+    pub fn set_clock(&mut self, clock: Arc<dyn Clock>) {
+        self.clock = Some(clock);
+    }
+
+    /// A document timer is due now.
+    fn timer_due(&self) -> bool {
+        let Some(clock) = &self.clock else { return false };
+        let now = clock.now();
+        self.backend.with_doc(|d| d.next_timer()).is_some_and(|t| t <= now)
     }
 
     pub fn backend(&self) -> &SkelterBackend {
@@ -81,6 +102,11 @@ impl DocumentApi for SkelterDocument {
     }
 
     fn frame(&mut self, window: WindowId, target: Time) -> Option<Commit> {
+        // the kinds' due timers (skelter-core's `wake_at`) and the JS events they emitted first
+        let timed = self.backend.with_doc(|d| d.run_timers(target));
+        if !timed.is_empty() {
+            self.backend.queue(Output { events: timed, changed: Vec::new(), revision: None });
+        }
         // `requestAnimationFrame` callbacks and native output first, then the UI phases
         self.backend.frame();
         self.backend.pump();
@@ -97,7 +123,15 @@ impl DocumentApi for SkelterDocument {
         // scroll container's `:state(sv.overflow-*)` set in the paint walk restyles there), and the
         // revision the frame stamped already covers it
         self.backend.window_handle(window).is_some()
-            && (self.backend.frame_pending() || self.framed.get(&window).is_none_or(|r| self.backend.revision() > *r) || self.backend.with_doc(|d| d.needs_frame(window)))
+            && (self.backend.frame_pending()
+                || self.framed.get(&window).is_none_or(|r| self.backend.revision() > *r)
+                || self.backend.with_doc(|d| d.needs_frame(window))
+                || self.timer_due())
+    }
+
+    /// The document's next timer: the runner arms the platform timer for it.
+    fn next_wakeup(&self, _window: WindowId) -> Option<Time> {
+        self.backend.with_doc(|d| d.next_timer())
     }
 
     fn resize(&mut self, window: WindowId, size: Size, scale: Scale) {
@@ -209,6 +243,9 @@ impl<C: CompositorApi + 'static> SveltersApp<C> {
             (Some(d), Some(clock)) => Some(clock.now() + Span::from_micros(d.saturating_duration_since(Instant::now()).as_micros() as i64)),
             _ => None,
         };
+        // and the document's own timers (the app armed them; this call replaces its timer)
+        let doc = self.backend.with_doc(|d| d.next_timer());
+        let at = [at, doc].into_iter().flatten().min();
         cx.set_timer(at);
         if self.backend.quitting() || (self.opened_any && self.backend.windows().is_empty()) {
             cx.exit();
@@ -219,6 +256,7 @@ impl<C: CompositorApi + 'static> SveltersApp<C> {
 impl<C: CompositorApi + 'static> AppHandler for SveltersApp<C> {
     fn init(&mut self, cx: &mut dyn PlatformCx) {
         self.clock = Some(cx.clock());
+        self.app.doc_mut().set_clock(cx.clock());
         let waker = cx.waker();
         self.backend.wake_state().set_notify(Some(Arc::new(move || waker.wake())));
         self.app.init(cx);
