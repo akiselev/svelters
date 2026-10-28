@@ -95,3 +95,26 @@ makes a full restyle ~30% faster than `master` (`svelters-style/src/computed.rs`
 - Not done: the `ms-`/`me-`/`ps-`/`pe-` utilities (the utility table marks them unsupported; adding them is a
   `utilities.yaml` row each against egui.json, which has no logical properties); a logical property and its physical
   side set on one element take the logical one (CSS takes the later declaration; documented).
+
+## Tests run (on the code of `c508a53`)
+
+- `cargo test -p skelter-core --lib`: 207 pass, 1 ignored (`style_pass_cost`, run separately in release).
+- `cargo test -p svelters-style` (lib and all test targets): all pass.
+- `cargo test -p skelter-text --lib`: 43 pass.
+- `cargo test -p svelters-skelter --test spec --test widgets_all --test tier1`: 6, 5, 14 pass;
+  `SVELTERS_UPDATE=1 … --test spec` regenerated skelter.json; `gen_props.py`, `gen_utilities.py`, `gen_semantics.py`,
+  `gen_observe_outputs.py` rerun, `coverage.py --check` clean; `packages/style` tests with `UPDATE=1` refreshed the
+  `setters` golden (the `direction` diagnostic now names skelter).
+- `cargo check --all-targets` for every `skelter*` crate, svelters-skelter and svelters-style: clean.
+- Not run locally: workspace tests, pixel snapshots, conformance (CI is the gate). No pixel snapshot was re-blessed.
+
+## CI
+
+All six workflows green on `c508a53` (the last code sha, `origin/master` `9f0272b` merged, no change): js 40712221674,
+linux-gtk 40712221318, linux-qt 40712221465, macos-appkit 40712221423, skelter 40712221367, windows-winui 40712221148.
+The first push `8ddfa09` failed js on the `setters` style golden (fixed in `c508a53`); its gtk and appkit runs were
+cancelled by the second push. Commits after `c508a53` change this record only.
+
+## Handoff
+
+Done. Open: Q1 (base direction for `ltr` boxes) and Q2 (the `host.rs` placeholder line for dir-widgets).
