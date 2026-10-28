@@ -43,6 +43,40 @@ this batch: these lines are in `cx.rs` (`TopLayerCx` impl), `overlay.rs` (`TopLa
    stays `header-h`). Read at each restyle (`layout_style`), used by `measure` and `prepare`. Without a theme service:
    as before (`row-height`, header row + 4). `TableKind::as_any` (for tests and apps).
 
+## Addition: default-density rows at WCAG 2.5.8's 24 px (coordinator, relaying the user's 2026-10-28 trial)
+
+`theme/data/density.json` `default`: `row-h` 22 → 24, `header-h` 22 → 24 (sortable table headers and collapsing
+headers are clickable). `compact` (20) stays the per-panel opt-in below the target; `comfortable` unchanged.
+`plans/research/DESIGN.md` §2.6 updated (table and paragraph). The table's `row-height` surface doc names the theme
+fallback (`skelter.json` regenerated). svelters-egui's own `density.json` copy is left at 22 (egui is maintenance only).
+
+Every kind that reads `row-h`/`header-h` or has its own row constant, with its default-density height:
+
+| Kind | Source | Before | Now |
+|---|---|---|---|
+| `table` rows (unset `row-height`, FQ-146) | `row-h` (`table/kinds.rs` `density_rows`) | 20 (prop default) | 24 |
+| `table` header (sortable) | `header-h` | 24 (row + 4) | 24 |
+| `virtual-list` with `auto-row-height` (SV83) | `row-h` (`Theme::row_height_for`) | 22 | 24 |
+| `virtual-list` default | `row-height` prop 32 | 32 | 32 |
+| `tree-view` rows | `row-height` prop 24 (`TREE_ROW_HEIGHT`) | 24 | 24 |
+| `select`/`combo-box` options | `row-h` (`views/select.rs` option UA) | 22 | 24 |
+| `collapsing-header` | `header-h` (`controls/collapsing.rs`) | 22 | 24 |
+| calendar navigation row (pickers) | `row-h` (`PickerLook::row_h`) | 22 | 24 |
+| `menu`/`context-menu` entries | item UA 26 (`views/menu.rs`) | 26 | 26 |
+| `tab-view` strip | `tab-h` 35 | 35 | 35 |
+| tab overflow menu rows | text line + 2 × 5 (`tabs/mod.rs`) | ≈26 | ≈26 |
+| `menu-bar` titles | title UA 22 (`views/menu.rs`, dir-widgets') | 22 | 22, left: a bar of wide targets with nothing above or below meets 2.5.8 by its spacing exception (a 24 px circle on each title meets no other target); raise to 24 if the coordinator wants the letter |
+
+No-theme fallbacks left at 22 (`select.rs` `unwrap_or(22.0)`, `PickerLook::default`, `TableState` 20): the theme
+always supplies the tokens; those files are dir-widgets' and the fallbacks never show in an app.
+
+Seen with `--diff` (dark-modern and hc-light; images under the scratchpad's `img/`): `w-table-after.diff.png` (rows
+20 → 24, header unchanged), `w-combo-box-after.diff.png` (options 22 → 24), `w-tree-view-after.diff.png` and
+`w-context-menu-after.diff.png` (no change: already 24 and 26). Row heights only.
+
+Snapshots: no checked-in golden moved locally; `cargo test -p skelter-widgets --lib` (585) and
+`cargo test -p svelters-skelter` (all targets) pass. CI decides for the rest (listed under "CI" if any moved).
+
 ## Seen (before: a gallery built at `8bcc50d`; images in this container, not committed)
 
 Under `/tmp/claude-0/-home-user-svelters/42a42938-7530-5bf5-b46d-e3d509f1fc39/scratchpad/img/`:
