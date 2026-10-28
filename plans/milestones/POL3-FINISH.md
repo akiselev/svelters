@@ -43,6 +43,16 @@ Under `/tmp/claude-0/-home-user-svelters/5665c853-7f1c-5470-9bbb-1a9a890c0530/sc
   `code-editor` keeps its tag and mounts, the pane is `gallery-source` and shows the opened variant's source);
   `docs/skelter/gallery.md` updated.
 
+- Then quire master moved to `f220847` (Q-E1: a ligature-safe ASCII fast path, `EditorTheme::font_features`,
+  ligatures off by default): the three revs moved again in their own commit (the gallery app builds its
+  `EditorTheme` with `Default::default()`, so no literal needed a change). `cargo test -p skelter-gallery-app --test
+  hooks` (3) and `cargo test -p skelter-widgets --lib -- text::` (49) pass on it.
+- **S2 and the subset.** The coordinator found S2's root cause in quire's probe (fixed in `f220847`). The subset
+  change here stays: the ligatures showed in skelter's own text too (the before/after above is a `<label>` in
+  `var(--sv-font-mono)`, shaped by skelter-text, not quire's editor), so without it any mono label or `<code>` run
+  in the gallery draws `<=` as ≤. An app that bundles the full font has the same choice to make (skelter-text has no
+  `font-feature-settings` yet; O-13 asks for it).
+
 ## The full review (item 3)
 
 `skelter-gallery sheet --all` at zoom 1 and 2, four themes, every story's states (94 sheets, 47 stories), looked at

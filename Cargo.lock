@@ -4269,7 +4269,7 @@ dependencies = [
 [[package]]
 name = "quire-core"
 version = "0.1.0"
-source = "git+https://github.com/akiselev/quire?rev=388670c3f1d0a953592c6c96c5bd0d1a12f03a46#388670c3f1d0a953592c6c96c5bd0d1a12f03a46"
+source = "git+https://github.com/akiselev/quire?rev=f2208478faa1466061af03374639ed40e9842eff#f2208478faa1466061af03374639ed40e9842eff"
 dependencies = [
  "fancy-regex",
  "quire-text",
@@ -4281,7 +4281,7 @@ dependencies = [
 [[package]]
 name = "quire-text"
 version = "0.1.0"
-source = "git+https://github.com/akiselev/quire?rev=388670c3f1d0a953592c6c96c5bd0d1a12f03a46#388670c3f1d0a953592c6c96c5bd0d1a12f03a46"
+source = "git+https://github.com/akiselev/quire?rev=f2208478faa1466061af03374639ed40e9842eff#f2208478faa1466061af03374639ed40e9842eff"
 dependencies = [
  "imara-diff",
  "ropey",
@@ -5161,7 +5161,7 @@ dependencies = [
 [[package]]
 name = "skelter_quire"
 version = "0.1.0"
-source = "git+https://github.com/akiselev/quire?rev=388670c3f1d0a953592c6c96c5bd0d1a12f03a46#388670c3f1d0a953592c6c96c5bd0d1a12f03a46"
+source = "git+https://github.com/akiselev/quire?rev=f2208478faa1466061af03374639ed40e9842eff#f2208478faa1466061af03374639ed40e9842eff"
 dependencies = [
  "quire-core",
  "quire-text",
