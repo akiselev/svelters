@@ -1,6 +1,6 @@
 # polish-b4 coordinator handoff (replace, don't append)
 
-Written 2026-10-28 ~15:35 UTC, updated ~16:35: ROUND 4 IS DONE (all lanes merged) by the gallery/polish coordinator (cloud session `session_01HBbGRgGENFKUjsqyGryCSr`),
+Written 2026-10-28 ~15:35 UTC, updated ~16:35: ROUND 4 IS DONE (all lanes merged, plus lane rows f611e13; cadatomic's single pin move is the MAL coordinator's next step) by the gallery/polish coordinator (cloud session `session_01HBbGRgGENFKUjsqyGryCSr`),
 because the account may hit its usage limit. A fresh coordinator resumes from this file, the lane records and git.
 
 ## The work so far (user, 2026-10-27/28: polish every component in svelters and cadatomic)
