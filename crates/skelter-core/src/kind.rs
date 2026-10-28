@@ -510,6 +510,15 @@ pub trait Kind: 'static {
     /// Write this node's display list (node-local coordinates). Called only when content-dirty.
     fn record(&self, cx: &mut RecordCx);
 
+    /// Write this node's foreground (node-local, border-box coordinates): what paints above its
+    /// content and its children and, on a scroll container (CSS `overflow` or [`Kind::self_scroll`]),
+    /// stays put while the content scrolls: scroll bars, edge shadows. Called after every
+    /// [`Kind::record`], and alone (no `prepare`, no `record`) when only the node's scroll offset
+    /// changed while it has a foreground: read the offset from
+    /// [`NodeView::scroll_geometry`](crate::NodeView::scroll_geometry). On a node that is not a scroll
+    /// container it paints after its own list, below its children. The default records nothing.
+    fn record_foreground(&self, cx: &mut RecordCx) {}
+
     /// Precise hit test inside the node's bounds (default: the rounded rect of the box).
     fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
         cx.box_hit(p)

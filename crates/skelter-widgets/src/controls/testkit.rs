@@ -24,6 +24,16 @@ pub fn record(k: &dyn Kind, size: Size, state: StateBits) -> (DisplayList, MemRe
     (list, res)
 }
 
+/// The kind's foreground ([`Kind::record_foreground`]) at core's geometry `g`.
+pub fn record_foreground(k: &dyn Kind, size: Size, state: StateBits, g: Option<&skelter_core::ScrollGeometry>) -> DisplayList {
+    let mut list = DisplayList::new();
+    let mut res = MemResources::default();
+    let mut text = MonoShaper;
+    let mut cx = RecordCx { size, style: Styles { computed: None, parts: &[], children: &[], state, dark: true, theme: None, inherited: None }, list: &mut list, text: &mut text, res: &mut res, scale: 1.0 };
+    k.record_foreground(&mut cx, g);
+    list
+}
+
 /// The kind's measured size with no width constraint.
 pub fn measure(k: &dyn Kind, state: StateBits) -> Size {
     let mut text = MonoShaper;

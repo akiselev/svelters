@@ -544,6 +544,134 @@ impl Scroller {
     }
 }
 
+/// A scrollable's foreground ([`Kind::record_foreground`]): its inset `box-shadow`s (R15's edge
+/// shadows) over the border box, then `scroller`'s bars at `now`'s fade.
+pub fn record_overlay_bars(cx: &mut RecordCx, scroller: &Scroller, now: Time, policy: &Policy) {
+    let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme, inherited: cx.style.inherited };
+    let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark).with_theme(styles.theme).with_inherited(styles.inherited);
+    let rect = cx.rect();
+    let mut pc = PaintCx::of(cx);
+    paint::paint_inset_shadows(&mut pc, &host, rect);
+    let alpha = scroller.bar_alpha(now, policy);
+    scroller.record_bars(&mut pc, &styles, alpha, policy.scrollbars == Scrollbars::Classic);
+}
+
+/// The bars of a kind core scrolls by its own offset (a list, a tree, a multi-line field: core's
+/// [`skelter_core::Kind::self_scroll`]): a [`Scroller`] following core's geometry, drawn in the
+/// node's foreground with the scroll area's look, fade and thumb drag (POL2-LAYOUT 1).
+#[derive(Clone, Debug, Default)]
+pub struct CoreBars {
+    scroller: Scroller,
+    /// The last event's time and policy (recording has neither).
+    now: Time,
+    policy: Option<Policy>,
+    reduced: bool,
+}
+
+impl CoreBars {
+    /// Core's geometry now (before each event and prepare); a moved offset counts as activity.
+    pub fn sync(&mut self, g: &skelter_core::ScrollGeometry) {
+        let before = self.scroller.offset();
+        self.place(g);
+        if self.scroller.offset() != before {
+            self.scroller.touch(self.now);
+        }
+    }
+
+    fn place(&mut self, g: &skelter_core::ScrollGeometry) {
+        self.scroller.set_geometry(g.content, g.viewport.size());
+        self.scroller.set_offset(g.offset);
+        let show = [g.axes.0 && self.scroller.overflows(0), g.axes.1 && self.scroller.overflows(1)];
+        self.scroller.layout_bars(g.viewport, BAR_WIDTH, MIN_THUMB, show);
+    }
+
+    /// The scroller as last synced.
+    pub fn scroller(&self) -> &Scroller {
+        &self.scroller
+    }
+
+    fn policy(&self) -> Policy {
+        bar_policy(self.policy.unwrap_or_else(crate::host::os_policy), self.reduced)
+    }
+
+    /// The foreground: edge shadows and the bars, at core's offset `g`.
+    pub fn record(&self, cx: &mut RecordCx, g: Option<&skelter_core::ScrollGeometry>) {
+        let mut s = self.scroller.clone();
+        if let Some(g) = g {
+            let mut b = self.clone();
+            b.place(g);
+            s = b.scroller;
+        }
+        record_overlay_bars(cx, &s, self.now, &self.policy());
+    }
+
+    /// The bars' part of an event, before the kind's own handling: hover, a thumb drag or track
+    /// press (`Some(Handled::Yes)`: the bars took it; the offset goes to core through
+    /// `cx.scroll_to`), a wheel's activity, the fade's timer.
+    pub fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Option<Handled> {
+        self.now = cx.now;
+        self.policy = Some(*cx.policy);
+        self.reduced = cx.reduced_motion;
+        let policy = self.policy();
+        let leave;
+        let ev = match ev {
+            Event::Hover(false) => {
+                leave = Event::Pointer(super::split::leave_event(PointerPhase::Leave));
+                &leave
+            }
+            Event::CaptureLost => {
+                leave = Event::Pointer(super::split::leave_event(PointerPhase::Cancel));
+                &leave
+            }
+            e => e,
+        };
+        let out = match ev {
+            Event::Pointer(p) => {
+                let primary = p.button == Some(MouseButton::Primary) || (p.phase != PointerPhase::Down && p.buttons & 1 != 0);
+                let shift = p.modifiers.contains(skelter_base::event::Modifiers::SHIFT);
+                let hovered = self.scroller.hovered();
+                let was = self.scroller.dragging(0) || self.scroller.dragging(1);
+                let (ours, moved) = self.scroller.pointer(cx.now, &policy, p.phase, primary, p.pos, shift);
+                let dragging = self.scroller.dragging(0) || self.scroller.dragging(1);
+                if dragging != was {
+                    cx.capture = Some(dragging);
+                }
+                if dragging != was || hovered != self.scroller.hovered() || moved {
+                    cx.repaint = true;
+                }
+                if moved {
+                    cx.scroll_to = Some(self.scroller.offset());
+                }
+                if let Some(t) = self.scroller.hold_wake() {
+                    cx.wake_at(t);
+                }
+                ours.then_some(Handled::Yes)
+            }
+            Event::Wheel(_) => {
+                self.scroller.touch(cx.now);
+                cx.repaint = true;
+                None
+            }
+            Event::Timer => {
+                let (moved, next) = self.scroller.repeat(cx.now);
+                if moved {
+                    cx.scroll_to = Some(self.scroller.offset());
+                }
+                if let Some(t) = next {
+                    cx.wake_at(t);
+                }
+                cx.repaint = true;
+                None
+            }
+            _ => None,
+        };
+        if let Some(t) = self.scroller.bar_wake(cx.now, &policy) {
+            cx.wake_at(t);
+        }
+        out
+    }
+}
+
 // ---- latching ----
 
 /// One scroller under the pointer, as the latch sees it.
@@ -1139,12 +1267,18 @@ impl Kind for ScrollArea {
         std::mem::take(&mut self.js_offset).then(|| self.scroller.offset())
     }
 
-    fn record(&self, cx: &mut RecordCx) {
-        // the content moves with the scroll property node; the area draws only its bars
+    /// The content moves with the scroll property node; the area draws nothing under it.
+    fn record(&self, _cx: &mut RecordCx) {}
+
+    /// Over the content (core's foreground layer, which the scroll does not move): R15's edge
+    /// shadows (`:state(sv.overflow-*)`'s inset `box-shadow`), then the bars at core's offset.
+    fn record_foreground(&self, cx: &mut RecordCx, g: Option<&skelter_core::ScrollGeometry>) {
         let policy = bar_policy(self.policy.unwrap_or_else(crate::host::os_policy), self.reduced_motion || self.doc_reduced);
-        let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme, inherited: cx.style.inherited };
-        let alpha = self.scroller.bar_alpha(self.now, &policy);
-        self.scroller.record_bars(&mut PaintCx::of(cx), &styles, alpha, policy.scrollbars == Scrollbars::Classic);
+        let mut scroller = self.scroller.clone();
+        if let Some(g) = g {
+            scroller.set_offset(g.offset);
+        }
+        record_overlay_bars(cx, &scroller, self.now, &policy);
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
@@ -1815,14 +1949,16 @@ mod tests {
         let mut t = probe(pol(Platform::Windows), 0);
         t.send(&mut a, Event::Wheel(wheel(None, None, -30.0)));
         let (list, _) = crate::controls::testkit::record(&a, Size::new(100.0, 100.0), StateBits::NONE);
-        assert_eq!(crate::controls::testkit::kinds(&list), ["quad"], "an overlay thumb just after a scroll");
+        assert!(list.items.is_empty(), "the bars are not under the content");
+        let list = crate::controls::testkit::record_foreground(&a, Size::new(100.0, 100.0), StateBits::NONE, None);
+        assert_eq!(crate::controls::testkit::kinds(&list), ["quad"], "an overlay thumb just after a scroll, in the foreground");
         let Prim::Quad(q) = &list.items[0] else { unreachable!() };
         assert_eq!(q.rect.min.x, 90.0);
         // seconds later the overlay bar has faded out
         t.now = ms(5000);
         t.send(&mut a, Event::Timer);
         assert!(t.repaint);
-        let (list, _) = crate::controls::testkit::record(&a, Size::new(100.0, 100.0), StateBits::NONE);
+        let list = crate::controls::testkit::record_foreground(&a, Size::new(100.0, 100.0), StateBits::NONE, None);
         assert!(list.items.is_empty());
     }
 

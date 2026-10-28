@@ -248,6 +248,10 @@ impl WindowState {
         if paint.overlay.is_some() {
             self.pending.removed_lists.push(crate::record::overlay_key(node));
         }
+        if paint.fore.is_some() {
+            self.pending.removed_lists.push(crate::record::fore_key(node));
+        }
+        self.pending.dropped_runs.extend(paint.fore_runs.iter().copied());
         if let Some(s) = paint.scroll {
             self.scroll_nodes.remove(&s);
         }
@@ -256,7 +260,7 @@ impl WindowState {
             self.props.free(p.0);
         }
         self.pending.dropped_runs.extend(paint.runs);
-        for l in [paint.layer, paint.ext_layer, paint.ext_cont, paint.layer_cont].into_iter().flatten() {
+        for l in [paint.layer, paint.ext_layer, paint.ext_cont, paint.layer_cont, paint.fore_layer].into_iter().flatten() {
             self.pending.removed_layers.push(l);
             self.layers.remove(&l);
             self.items.remove(&l);

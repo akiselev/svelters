@@ -864,6 +864,129 @@ fn a_self_scrolling_kinds_fixed_part_stays_out_of_its_scroll_layer() {
     assert!(c.removed.contains(&page) && c.removed.contains(&fixed_key));
 }
 
+const BAR_PAGE: KindId = KindId::of("bar-page");
+static BAR_PAGE_SPEC: KindSpec = KindSpec { focusable: true, ..KindSpec::new("bar-page") };
+
+/// [`FixedPage`] with a foreground: a "thumb" line placed by the scroll offset.
+#[derive(Default)]
+struct BarPage;
+
+impl Kind for BarPage {
+    fn spec() -> &'static KindSpec {
+        &BAR_PAGE_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.fixed(|cx| cx.draw_box());
+        cx.draw_line(Point::new(0.0, 500.0), Point::new(50.0, 500.0), 1.0);
+    }
+    fn record_foreground(&self, cx: &mut RecordCx) {
+        let y = cx.scroll_geometry().map_or(0.0, |g| g.offset.y / 10.0);
+        cx.draw_line(Point::new(45.0, y), Point::new(45.0, y + 8.0), 2.0);
+    }
+    fn self_scroll(&self, _node: &crate::NodeView) -> Option<crate::SelfScroll> {
+        Some(crate::SelfScroll { content: Size::new(50.0, 1000.0), x: false, y: true })
+    }
+    fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        match ev {
+            Event::Key(k) if k.key == Some(Key::ArrowDown) => {
+                let off = cx.document().scroll_offset(cx.node());
+                cx.scroll_fast(skelter_base::geom::Vec2::new(0.0, off.y + 100.0));
+                Handled::Yes
+            }
+            _ => Handled::No,
+        }
+    }
+}
+
+#[test]
+fn a_foreground_paints_above_the_scrolled_content_and_follows_the_offset_alone() {
+    // POL2-LAYOUT 1: scroll bars of a kind that scrolls itself
+    use skelter_base::display::Prim;
+    use skelter_base::layer::{LayerDelta, LayerKind};
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<BarPage>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let page = child(&mut d, root, BAR_PAGE, "width: 50px; height: 80px; background-color: #ffffff");
+    let after = child(&mut d, root, BOX, "width: 10px; height: 10px; background-color: #ff0000");
+    let c = frame(&mut d).unwrap();
+    let fore_key = crate::record::fore_key(page);
+    let line_y = |c: &skelter_base::commit::Commit| {
+        c.lists.iter().find(|(k, _)| *k == fore_key).map(|(_, l)| match l.items[..] {
+            [Prim::Line(ref l)] => l.from.y,
+            _ => panic!("one line: {:?}", l.items),
+        })
+    };
+    assert_eq!(line_y(&c), Some(0.0), "the foreground is its own list");
+    let added = |kind: fn(&LayerKind) -> bool| {
+        c.layers.iter().filter_map(|l| if let LayerDelta::Add(desc) = l { Some(*desc) } else { None }).filter(|d| kind(&d.kind)).collect::<Vec<_>>()
+    };
+    let scroll = added(|k| matches!(k, LayerKind::Scroll { .. }))[0];
+    let p = d.record[d.ix(page)].clone();
+    let fl = p.fore_layer.expect("a foreground layer");
+    let fore = added(|k| matches!(k, LayerKind::Content)).into_iter().find(|l| l.id == fl).expect("added");
+    assert_eq!(fore.parent, scroll.parent, "a sibling of the scroll layer");
+    assert!(fore.z > scroll.z, "above it");
+    let items = c.layers.iter().find_map(|l| match l {
+        LayerDelta::Items { layer, items } if *layer == fl => Some(items.clone()),
+        _ => None,
+    });
+    let items = items.expect("its items");
+    assert_eq!(items[0].node, fore_key);
+    assert_eq!(Some(items[0].transform), p.transform, "in the node's space, not the scrolled content's");
+    assert!(items.iter().any(|it| it.node == after), "what paints after the node stays above its foreground");
+    // a scroll records the foreground alone
+    d.focus(page, crate::FocusReason::Keyboard);
+    frame(&mut d);
+    d.dispatch(&key(Key::ArrowDown, Modifiers::default()));
+    let (c, stats) = d.frame_with_stats(W, Time(0));
+    let c = c.unwrap();
+    assert_eq!(c.lists.iter().map(|(k, _)| *k).collect::<Vec<_>>(), [fore_key], "only the foreground re-records");
+    assert_eq!(line_y(&c), Some(10.0));
+    assert_eq!(stats.recorded, 0, "no record");
+    // removing the node removes its foreground and its layer
+    d.remove(root, page).unwrap();
+    let c = frame(&mut d).unwrap();
+    assert!(c.removed.contains(&fore_key));
+    assert!(c.layers.iter().any(|l| matches!(l, LayerDelta::Remove(id) if *id == fl)));
+}
+
+static PLAIN_FORE_SPEC: KindSpec = KindSpec { container: true, ..KindSpec::new("plain-fore") };
+
+/// A container that is no scroll container, with a foreground.
+#[derive(Default)]
+struct PlainFore;
+
+impl Kind for PlainFore {
+    fn spec() -> &'static KindSpec {
+        &PLAIN_FORE_SPEC
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+    fn record_foreground(&self, cx: &mut RecordCx) {
+        cx.draw_line(Point::new(0.0, 0.0), Point::new(10.0, 0.0), 1.0);
+    }
+}
+
+#[test]
+fn a_foreground_off_a_scroll_container_paints_after_its_list_below_its_children() {
+    use skelter_base::layer::LayerDelta;
+    let mut r = KindRegistry::new();
+    r.register::<testkinds::BoxKind>().unwrap();
+    r.register::<PlainFore>().unwrap();
+    let mut d = Document::new(Arc::new(r), Box::new(FixedText));
+    let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(1.0));
+    let n = child(&mut d, root, KindId::of("plain-fore"), "width: 50px; height: 40px; background-color: #ffffff");
+    let kid = child(&mut d, n, BOX, "width: 10px; height: 10px; background-color: #ff0000");
+    let c = frame(&mut d).unwrap();
+    let fore_key = crate::record::fore_key(n);
+    let items: Vec<NodeId> = c.layers.iter().filter_map(|l| if let LayerDelta::Items { items, .. } = l { Some(items.clone()) } else { None }).flatten().map(|it| it.node).collect();
+    assert_eq!(items, [n, fore_key, kid]);
+    assert!(d.record[d.ix(n)].fore_layer.is_none(), "no layer of its own");
+}
+
 const PREP_PAGE: KindId = KindId::of("prep-page");
 static PREP_PAGE_SPEC: KindSpec = KindSpec { props: &[PropSpec::new("to", ValueType::F64, ChangeClass::Paint).default(PropDefault::F64(0.0))], ..KindSpec::new("prep-page") };
 const PREP_TO: PropId = PropId::of("prep-page", "to", "number");

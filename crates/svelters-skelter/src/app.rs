@@ -93,7 +93,11 @@ impl DocumentApi for SkelterDocument {
     }
 
     fn needs_frame(&self, window: WindowId) -> bool {
-        self.backend.window_handle(window).is_some() && (self.backend.frame_pending() || self.framed.get(&window).is_none_or(|r| self.backend.revision() > *r))
+        // the document's own answer too: a frame's late phases may leave work for the next one (a
+        // scroll container's `:state(sv.overflow-*)` set in the paint walk restyles there), and the
+        // revision the frame stamped already covers it
+        self.backend.window_handle(window).is_some()
+            && (self.backend.frame_pending() || self.framed.get(&window).is_none_or(|r| self.backend.revision() > *r) || self.backend.with_doc(|d| d.needs_frame(window)))
     }
 
     fn resize(&mut self, window: WindowId, size: Size, scale: Scale) {

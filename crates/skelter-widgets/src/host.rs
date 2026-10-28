@@ -986,6 +986,9 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
             self.widget.record(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.parent().and_then(|p| p.css()), &parts, &folded, node.style_state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() });
             let mut overlay = DisplayList::new();
             self.widget.record_overlay(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.parent().and_then(|p| p.css()), &parts, &folded, node.style_state(), theme), list: &mut overlay, text: &mut *text, res: &mut res, scale: node.scale() });
+            // the foreground's tokens (scroll bar colours) are the node's reads too
+            let mut fore = DisplayList::new();
+            self.widget.record_foreground(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.parent().and_then(|p| p.css()), &parts, &folded, node.style_state(), theme), list: &mut fore, text: &mut *text, res: &mut res, scale: node.scale() }, node.scroll_geometry().as_ref());
             (res.new, res.used, res.new_paths, res.used_paths, emitted)
         });
         self.add_reads(reads);
@@ -1063,6 +1066,22 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
         if let Some(part) = part {
             cx.overlay(part, |cx| push_recorded(cx, overlay, overlay_runs));
         }
+    }
+
+    fn record_foreground(&self, cx: &mut RecordCx) {
+        let node = cx.node;
+        let folded = folded_of(node, Self::spec_ref().core.folds_children, Self::traits().folds_elements);
+        let parts = part_styles(node, Self::spec_ref().core.parts);
+        let geometry = node.scroll_geometry();
+        let mut list = DisplayList::new();
+        let runs = self.reading(|| {
+            let (theme, ts) = cx.services().pair::<crate::theme::Theme, skelter_text::TextSystem>();
+            let mut text = shaper(ts);
+            let mut res = RecordRes { runs: Vec::new(), images: &self.images, paths: &self.paths };
+            self.widget.record_foreground(&mut w::RecordCx { size: node.size(), style: styles(node.css(), node.parent().and_then(|p| p.css()), &parts, &folded, node.style_state(), theme), list: &mut list, text: &mut *text, res: &mut res, scale: node.scale() }, geometry.as_ref());
+            res.runs
+        });
+        push_recorded(cx, list, runs);
     }
 
     fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {

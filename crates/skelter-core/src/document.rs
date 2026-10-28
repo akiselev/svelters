@@ -145,6 +145,9 @@ pub struct Document {
     pub(crate) kind_sets: crate::query::KindSets,
     /// Kinds that scroll their own content ([`Kind::self_scroll`]).
     pub(crate) self_scroll: HashMap<NodeId, crate::kind::SelfScroll>,
+    /// Nodes whose scroll offset moved while they have a foreground: the next frame records their
+    /// foreground alone ([`crate::Kind::record_foreground`]).
+    pub(crate) fore_dirty: std::collections::HashSet<NodeId>,
     /// The one selection's owner while single selection is on (GTK), and whether it is.
     pub(crate) selection_owner: Option<NodeId>,
     pub(crate) single_selection: bool,
@@ -211,6 +214,7 @@ impl Document {
             auto_default: false,
             kind_sets: Default::default(),
             self_scroll: HashMap::new(),
+            fore_dirty: Default::default(),
             light_dismiss: Default::default(),
             styles: Default::default(),
             selection_owner: None,
@@ -1271,13 +1275,16 @@ impl Document {
 
     /// The host's provider states (cadatomic's `cad.pending`, kinds' state bits): sheets added from now
     /// on resolve `:state(ns.name)` through `names`, and a rule matches a node whose state has that bit
-    /// ([`Document::set_state`], `EventCx::set_state`). Without it `:state()` is a parse error.
+    /// ([`Document::set_state`], `EventCx::set_state`). Without it a host name in `:state()` is a parse error;
+    /// skelter-core's own `sv.overflow-*` states ([`crate::scroll::OVERFLOW`]) resolve with or without it,
+    /// and win over the host's for those names (the host allocates from bit 32 to bit 59).
     pub fn set_state_names(&mut self, names: Box<dyn svelters_style::StateNames>) {
-        self.style.state_names = Some(names);
+        self.style.state_names.host = Some(names);
     }
-    /// The resolver [`Document::set_state_names`] set, for parsing sheets elsewhere (a precompiled one).
+    /// The document's `:state()` resolver (core's names and the host's), for parsing sheets
+    /// elsewhere (a precompiled one).
     pub fn state_names(&self) -> Option<&dyn svelters_style::StateNames> {
-        self.style.state_names.as_deref()
+        Some(&self.style.state_names)
     }
 
     pub fn remove_sheet(&mut self, id: svelters_style::SheetId) {
@@ -1396,9 +1403,9 @@ impl Document {
         }
         self.state[i] = new;
         self.stamp();
-        // pointer-only states are not in the accessibility tree: a hover over unstyled nodes costs
-        // no frame (`needs_frame`)
-        let pointer_only = StateMask(StateMask::HOVERED.0 | StateMask::PRESSED.0 | StateMask::FOCUS_WITHIN.0);
+        // pointer-only states (and the overflow states, a scroll's) are not in the accessibility tree: a
+        // hover over unstyled nodes costs no frame (`needs_frame`)
+        let pointer_only = StateMask(StateMask::HOVERED.0 | StateMask::PRESSED.0 | StateMask::FOCUS_WITHIN.0 | crate::scroll::OVERFLOW.0);
         if (old.0 ^ new.0) & !pointer_only.0 != 0 {
             self.core[i].dirty.insert(Dirty::A11Y);
             self.mark_up(i, Dirty::DESC_RECORD);

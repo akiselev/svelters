@@ -704,7 +704,16 @@ impl Kind for TreeView {
         }
     }
 
+    fn record_foreground(&self, cx: &mut RecordCx, g: Option<&skelter_core::ScrollGeometry>) {
+        self.list.bars.record(cx, g);
+    }
+    fn scroll_geometry(&mut self, g: &skelter_core::ScrollGeometry) {
+        self.list.bars.sync(g);
+    }
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        if let Some(h) = self.list.bars.event(cx, ev) {
+            return h;
+        }
         let h = self.tree_event(cx, ev);
         if self.list.reveal_pending() {
             cx.refresh_virtual = true;

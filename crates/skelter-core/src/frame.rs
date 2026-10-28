@@ -353,6 +353,8 @@ impl Document {
             if new || d.contains(Dirty::PAINT) {
                 self.record_node(i, commit, runs, images);
                 stats.recorded += 1;
+            } else if self.fore_dirty.contains(&node) {
+                self.record_foreground_only(i, commit, runs);
             }
             if new || force || self.core[i].dirty.contains(Dirty::PROPERTY) {
                 force_children |= self.refresh_props(window, i, ctx, commit);
@@ -473,6 +475,8 @@ impl Document {
         if before != after {
             ws.rebuild = true;
         }
+        // `:state(sv.overflow-*)` follows the offset and the extent just sent
+        self.refresh_overflow_states(i, before.2);
         before != after
     }
 
@@ -551,6 +555,27 @@ impl Document {
             };
             k.record(&mut cx);
         }
+        let mut fore = DisplayList::new();
+        let mut fore_runs = Vec::new();
+        if !hidden {
+            let (mut fx, mut ov, mut ovp, mut ext) = (DisplayList::new(), DisplayList::new(), None, None);
+            let mut cx = RecordCx {
+                node: self.view_at(i),
+                list: &mut fore,
+                fixed: &mut fx,
+                in_fixed: true,
+                overlay: &mut ov,
+                overlay_part: &mut ovp,
+                in_overlay: true,
+                runs,
+                node_runs: &mut fore_runs,
+                shaper: shaper.as_deref_mut(),
+                services: &mut services,
+                external: &mut ext,
+            };
+            k.record_foreground(&mut cx);
+        }
+        self.fore_dirty.remove(&node);
         // only a kind that scrolls itself keeps its fixed part apart; any other paints it first
         if !self.self_scroll.contains_key(&node) && !fixed.is_empty() {
             let rest = std::mem::take(&mut list);
@@ -584,6 +609,8 @@ impl Document {
             commit.lists.push((crate::record::fixed_key(node), fixed));
         }
         let fixed_changed = had_fixed != p.fixed.is_some();
+        let fore_changed = self.publish_fore(i, node, fore, fore_runs, commit);
+        let p = &mut self.record[i];
         // the overlay part: its layer and stack entry follow at the window's rebuild
         let had_overlay = p.overlay.is_some();
         match overlay_part {
@@ -614,7 +641,63 @@ impl Document {
         }
         // a layer's `opaque` follows its owner's list
         let owns_layer = self.record[i].layer.is_some() || self.core[i].flags.contains(crate::tree::NodeFlags::ROOT);
-        if (had != self.record[i].list.is_some() || fixed_changed || overlay_changed || external_changed || owns_layer)
+        if (had != self.record[i].list.is_some() || fixed_changed || fore_changed || overlay_changed || external_changed || owns_layer)
+            && let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w))
+        {
+            w.rebuild = true;
+        }
+    }
+
+    /// Sends node `i`'s new foreground list (or its removal); true when it appeared or went (the
+    /// window's layers change with it).
+    fn publish_fore(&mut self, i: usize, node: NodeId, fore: DisplayList, runs: Vec<skelter_base::ids::RunId>, commit: &mut Commit) -> bool {
+        let p = &mut self.record[i];
+        commit.dropped_runs.extend(std::mem::replace(&mut p.fore_runs, runs));
+        let had = p.fore.is_some();
+        if fore.is_empty() {
+            if had {
+                p.fore = None;
+                commit.removed.push(crate::record::fore_key(node));
+            }
+        } else {
+            let fore = Arc::new(fore);
+            p.fore = Some(fore.clone());
+            commit.lists.push((crate::record::fore_key(node), fore));
+        }
+        had != p.fore.is_some()
+    }
+
+    /// Records node `i`'s foreground alone (its scroll offset moved): no `prepare`, no `record`.
+    pub(crate) fn record_foreground_only(&mut self, i: usize, commit: &mut Commit, runs: &mut RunSink) {
+        let Some(k) = self.kinds[i].take() else { return };
+        let node = self.slots.id_at(i).expect("live");
+        self.fore_dirty.remove(&node);
+        let mut shaper = self.shaper.take();
+        let mut services = std::mem::take(&mut self.services);
+        let mut fore = DisplayList::new();
+        let mut fore_runs = Vec::new();
+        if !self.style.computed(i).visibility_hidden {
+            let (mut fx, mut ov, mut ovp, mut ext) = (DisplayList::new(), DisplayList::new(), None, None);
+            let mut cx = RecordCx {
+                node: self.view_at(i),
+                list: &mut fore,
+                fixed: &mut fx,
+                in_fixed: true,
+                overlay: &mut ov,
+                overlay_part: &mut ovp,
+                in_overlay: true,
+                runs,
+                node_runs: &mut fore_runs,
+                shaper: shaper.as_deref_mut(),
+                services: &mut services,
+                external: &mut ext,
+            };
+            k.record_foreground(&mut cx);
+        }
+        self.shaper = shaper;
+        self.services = services;
+        self.kinds[i] = Some(k);
+        if self.publish_fore(i, node, fore, fore_runs, commit)
             && let Some(w) = self.core[i].window.and_then(|w| self.window_mut(w))
         {
             w.rebuild = true;
@@ -796,6 +879,34 @@ impl Document {
                     _ => (layer, ItemRef { node, transform: p.transform.expect("transform"), clip: f.clip, effect: own_effect }),
                 };
                 items.entry(item.0).or_default().push(item.1);
+            }
+            // the foreground: a scroll container's in a layer of its own right above its scroll layer
+            // (in the node's space, outside the scroll transform), which then takes what paints after
+            // the node in the parent's layer, as a content layer's continuation does (A26); any other
+            // node's after its own list
+            let fore_item = ItemRef { node: crate::record::fore_key(node), transform: p.transform.expect("transform"), clip: f.clip, effect: own_effect };
+            match (drawn && p.fore.is_some(), content_layer) {
+                (true, Some(_)) => {
+                    let ws = self.window_mut(window).expect("window");
+                    let fl = p.fore_layer.unwrap_or_else(|| LayerId(ws.layer_ids.alloc()));
+                    self.record[i].fore_layer = Some(fl);
+                    let host = *layers.iter().find(|d| d.id == f.layer).expect("the parent's layer");
+                    layers.push(LayerDesc { id: fl, parent: Some(f.layer), kind: LayerKind::Content, transform: host.transform, clip: None, effect: None, z: z_next, bounds: host.bounds, opaque: false });
+                    z_next += 1;
+                    items.entry(fl).or_default().push(fore_item);
+                    used_layers.push(fl);
+                    split.insert(f.layer, fl);
+                }
+                (on, _) => {
+                    if on {
+                        items.entry(layer).or_default().push(fore_item);
+                    }
+                    if let Some(old) = p.fore_layer {
+                        self.record[i].fore_layer = None;
+                        let ws = self.window_mut(window).expect("window");
+                        ws.layer_ids.free(old.0);
+                    }
+                }
             }
             if drawn && let Some((_, part)) = &p.overlay {
                 overlays.push(crate::toplayer::DrawnPart { node, world, transform: p.transform.expect("transform"), part: part.clone() });
