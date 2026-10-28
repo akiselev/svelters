@@ -52,11 +52,13 @@ pub fn config(set: FontSet) -> FontConfig {
     config_with(set, &[])
 }
 
-/// The configuration for `set` plus a host's font files (registered after the bundled ones).
+/// The configuration for `set` plus a host's font files, registered before the bundled ones so a
+/// host's family wins over a bundled font of the same name (S-L1: a host's full JetBrains Mono, with
+/// the ligatures the bundled subset drops, over the subset).
 pub fn config_with(set: FontSet, extra: &[Vec<u8>]) -> FontConfig {
-    let mut bundled: Vec<Vec<u8>> = BUNDLED.iter().map(|f| f.to_vec()).collect();
+    let mut bundled: Vec<Vec<u8>> = extra.to_vec();
+    bundled.extend(BUNDLED.iter().map(|f| f.to_vec()));
     bundled.extend(skelter_text::test_fonts::ALL.iter().map(|f| f.to_vec()));
-    bundled.extend(extra.iter().cloned());
     FontConfig { system_fonts: set == FontSet::System, bundled, default_family: DEFAULT_FAMILY.into() }
 }
 

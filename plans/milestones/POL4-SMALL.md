@@ -77,6 +77,23 @@ Seen with `--diff` (dark-modern and hc-light; images under the scratchpad's `img
 Snapshots: no checked-in golden moved locally; `cargo test -p skelter-widgets --lib` (585) and
 `cargo test -p svelters-skelter` (all targets) pass. CI decides for the rest (listed under "CI" if any moved).
 
+## Addition: S-L1, a host's font wins over a bundled one of the same family (coordinator, from cadatomic gal4)
+
+The gallery registered a host's `Extensions::fonts` after its bundled set, so a host's full JetBrains Mono never won
+over the ligature-free subset under the same family name (cadatomic's `code-editor/ligatures` story could not show
+ligatures). `skelter-gallery/src/fonts.rs` `config_with` now registers the host's files first; skelter-gallery-app
+uses the same `store_with`. Test `skelter-gallery` `tests/host.rs`
+`a_host_font_wins_over_a_bundled_font_of_the_same_family` (failed before the fix: the bundled subset drew), with a
+new fixture `tests/fixtures/fonts/probe-mono.ttf` (the G4 probe renamed "JetBrains Mono"; README updated).
+`cargo test -p skelter-gallery --test host` 6 pass. A host font covering a script now also comes first in that
+script's fallback (its own fonts, as a host would expect).
+
+## Pending: dir-widgets' request R1 (POL4-DIR-WIDGETS.md)
+
+A popup's `placement` `-start`/`-end` become logical in rtl (swap the alignment on a vertical side for an rtl node, as
+`views/tooltip.rs` does). Needs dir-core's `is_rtl()`, not on master when this lane finished its first pass; small
+merges after both direction lanes, so it is built after merging `origin/master` once dir-core lands.
+
 ## Seen (before: a gallery built at `8bcc50d`; images in this container, not committed)
 
 Under `/tmp/claude-0/-home-user-svelters/42a42938-7530-5bf5-b46d-e3d509f1fc39/scratchpad/img/`:
