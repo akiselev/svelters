@@ -105,6 +105,20 @@ commit): the layout pass clears them on each node it lays out (`Tree::set_final_
 out with no geometry change; failed before the fix). `cargo test -p skelter-core --lib` 191, `-p skelter-widgets
 --lib` 575 pass.
 
+## The finish lane's requests (POL3-FINISH "Requests to the overlays lane")
+
+After merging `origin/master` (`0a3ab14`, the finish lane; `skelter.json` regenerated, no other conflict):
+
+| # | Request | Fix | Seen |
+|---|---|---|---|
+| O-1 | `dialog/confirm`: Cancel (first tab stop) took the default look under auto-default | core: a dialog scope's initial focus is its usable `default` button (`input/focus.rs` `initial_in`, `input/scope.rs` `default_button`); test `tests::hooks::a_dialog_opens_on_its_default_button` | yes (`a-dialog.png`: Save default) |
+| O-3 | `menu-bar/titles`: no focus ring; HC hover a fill; a host's disabled state did not reach the titles | `TITLE_UA` focus-visible ring on the current title, `TITLE_HC_UA` (dashed hover, solid open outline in `focus`), host `:disabled` dims the titles (`views/menu.rs`) | yes (`a-menubar.png`, dark-modern and hc-dark at zoom 2) |
+| O-5 | pickers in HC and every density; today vs cursor; drop buttons; disabled colour editor; white handles; empty date picker | the document's theme (density metrics with it, O-8 above); today is a bar under its number (the cursor keeps the ring); the picked day outlined in HC; drop buttons tint on hover/press (node state or the drop's own); a disabled colour editor fades whole (`color_editor::fade`); handles edged in dark; the empty picker's placeholder (O-4 above) | yes (`a-cal.png`, `a-dp-states.png`, `a-ce.png`) |
+| O-15 | tooltip wider than the window | O-7 above | yes |
+| tabs | the strip 27 pt against `tab-h` 35; a disabled strip's full-accent marker | `TabLook::min_height` from `tab-h`; inactive captions `tab-fg`, the active one `tab-active-fg`; the marker in `disabled-fg` when disabled | yes (`a-tabs4.png`, four themes) |
+
+Left from O-5: an HC hover outline (dashed) for the drop buttons (they tint, as in the Modern themes).
+
 ## Cross-lane edits (small, additive; for the coordinator)
 
 - `crates/svelters-skelter/src/surface/tier1.rs` (finish lane's): three surface rows, `date-picker` `open`,
@@ -130,7 +144,7 @@ Added or changed (filtered runs on the last code commit, all pass):
 - `skelter-gallery check`: 47 stories, 174 variants, no problems.
 - Not run locally: the full workspace, GPU gallery tests, conformance (CI runs them).
 
-CI: `4f824d1` green in all six (js 40630278355, linux-gtk 40630278372, linux-qt 40630278336, macos-appkit
+CI: `09e2f13` (top layer, pickers, tabs, Q-E2) green in all six (js 40633564142, linux-gtk 40633564088, linux-qt 40633564161, macos-appkit 40633564091, skelter 40633564100, windows-winui 40633564110). `4f824d1` green in all six (js 40630278355, linux-gtk 40630278372, linux-qt 40630278336, macos-appkit
 40630278348, skelter 40630278422, windows-winui 40630278420). Last code commit: see the end of this file.
 
 ## Questions (recommendations, for the coordinator)
