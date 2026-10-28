@@ -7,6 +7,7 @@ additive and defaults are unchanged (the one exception, SV86's write past the en
 | Item | Commit | What | Test |
 | --- | --- | --- | --- |
 | SV84 (P1) | `9c3b0ea` | An each block the host interrupted mid-update rebuilds its items | `crates/svelters-skelter/tests/keyed_each.rs` (6 tests) |
+| SV84 follow-up | see the log | `{#if}`, `{#key}`, `{#await}` (and snippet/component) blocks: the same repair (coordinator, 2026-10-27) | `crates/svelters-skelter/tests/interrupted_blocks.rs` (one test per kind) |
 | SV86 | `34eeb33` | A scroll-area write past the end stays at the end as content grows | `skelter-widgets` `views::scroll::tests::sv86_*` |
 | SV-OBJ4 | `2c22709` | `A11yCx::service<T>()`, `Document::request_a11y(node)` | `skelter-core` `tests::a11y::sv_obj4_*` |
 | SV85 | `0028cfa` | `svelters::exports::on_destroy(f)`: a native export ties a disposer to its calling component | `crates/svelters-skelter/tests/scoped.rs` |
@@ -42,12 +43,34 @@ the list missing.
   collection is rendered again from nothing.
 - After an abort, the items lose their local state. That only happens after an interrupt.
 
-**Not fixed: the same exposure in `if`/`key`/`await`/`snippet`** (`Branches`, `swapping`). An
-interrupt mid-switch can leave an extra branch behind there too. This is a follow-up, not requested.
+**`if`/`key`/`await` blocks: fixed in this lane too** (coordinator, 2026-10-27). They switch branches
+through `Branches.ensure`, which now registers its state in `updating`. On `recover`, a switch the host
+interrupted is marked dirty, and `Branches.repair()` on the block's next run scraps every branch region and
+resets the block's guard (`shown`, `has`, `first`), so the current branch is built again from nothing.
+Snippet blocks and dynamic components (`swapping`) share it.
 
-**For cadatomic:** when this happens, a loaded debug build logs `EmbedEvent::Error { root: None, error.kind
-== Interrupted }`. Raising `Budgets::interrupt` in debug builds would make it rarer. The fix makes it
-harmless either way.
+`interrupted_blocks.rs` has one test per kind. In each, a click switches to a branch whose three labels
+each take 60 ms, under a 150 ms interrupt budget. Before the fix, each test failed: the old branch stayed
+beside a half-built new one, or the block stayed stuck on the old branch.
+
+Side finding, not chased: in that harness an `{#await p}` over `p = $derived(new Promise(...))` (the
+promise read only by the block) did not re-run on its source's change unless an `$effect` also read the
+source. The test sets `p` as state from the click instead. Worth a look by whoever owns `await_block`.
+
+## The interrupt-in-flush finding (for every host)
+
+The 50 ms `Budgets::interrupt` can fire inside the flush that follows an event handler. That flush runs as
+a job, not as a call into a root, so the interrupt names no node:
+- `Embed::collect` reports `EmbedEvent::Error { root: None, error.kind == ErrorKind::Interrupted }` and
+  faults nothing;
+- the root keeps running, with whatever that flush had half done.
+
+FX6's `recover` resets Svelte's scheduler. Until this lane, though, each/if/key/await blocks stopped
+mid-update kept their half-updated bookkeeping. That is the root of a visible class of bugs: stale or
+duplicated rows, a branch that never switches. This lane's fixes repair those blocks.
+
+A host should still log these events: they mean a debug build on a loaded machine went over budget, which
+is worth seeing. A host may also raise `Budgets::interrupt` in debug builds.
 
 ## SV86: scroll-area pinned to the end
 

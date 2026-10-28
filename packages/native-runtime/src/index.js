@@ -1627,9 +1627,30 @@ class Branches {
     this.r = r;
     this.owner = owner;
     this.on = new Map();
+    // SV84: the switch's update state; `aborted` when the host stopped a switch part-way
+    this.st = { effect: null, aborted: false };
+  }
+
+  /**
+   * SV84: after a switch the host interrupted (its branches and `on` disagree), every branch goes;
+   * true when the block must show its branch again (whatever its own guard says).
+   */
+  repair() {
+    if (!this.st.aborted) return false;
+    this.st.aborted = false;
+    for (const b of [...this.r.items]) scrap(b);
+    this.on.clear();
+    return true;
   }
 
   ensure(key, fn, ...args) {
+    this.st.effect = active();
+    updating.add(this.st);
+    this.#ensure(key, fn, ...args);
+    updating.delete(this.st);
+  }
+
+  #ensure(key, fn, ...args) {
     let cur = this.on.get(key);
     if (cur) {
       if (cur.outro) back(cur);
@@ -1658,6 +1679,7 @@ export function if_block(container, test, consequent, alternate = null, elseif =
   block(
     () => {
       const v = !!test();
+      if (branches.repair()) shown = undefined;
       if (v === shown) return;
       shown = v;
       branches.ensure(v, v ? consequent : alternate);
@@ -1716,9 +1738,10 @@ export function each_block(container, collection, key, render, fallback = null, 
 }
 
 /**
- * SV84: each blocks whose update is running. The host's abort of an entry (the turn budget's
- * interrupt) skips every `finally`, so a block it stopped stays here: `recover` marks it to run
- * again, and that run rebuilds its items (`each_block`).
+ * SV84: each blocks whose update is running, and `{#if}`/`{#key}`/`{#await}`/snippet/component
+ * blocks switching branch (`Branches`). The host's abort of an entry (the turn budget's interrupt)
+ * skips every `finally`, so a block it stopped stays here: `recover` marks it to run again, and that
+ * run rebuilds it from nothing (`each_block`, `Branches.repair`).
  */
 const updating = new Set();
 
@@ -1813,6 +1836,7 @@ export function key_block(container, getKey, render) {
   let key;
   block(() => {
     const k = getKey();
+    if (branches.repair()) has = false;
     if (has && sameKey(k, key)) return;
     has = true;
     key = k;
@@ -2233,6 +2257,7 @@ function swapping(container, get, render) {
   // when the enclosing block changes
   block(() => {
     const s = get() ?? null;
+    if (branches.repair()) first = true;
     if (!first && s === fn) return;
     first = false;
     fn = s;
@@ -2397,6 +2422,7 @@ export function await_block(container, getInput, pending, then, catch_) {
   };
   block(() => {
     const input = getInput();
+    if (branches.repair()) shown = -1;
     let destroyed = false;
     if (is_promise(input)) {
       const restore = capture_context();
