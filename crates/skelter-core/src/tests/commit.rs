@@ -390,3 +390,28 @@ mod external_layer {
         assert_eq!(a.order().last(), Some(&n(grip)), "{:?} (late: {})", a.order(), n(late));
     }
 }
+
+#[test]
+fn a_new_root_removes_what_the_old_root_drew() {
+    // POL2-LAYOUT 5: the gallery puts a story's `<window>` in its window and then its own root back;
+    // the story's layers stayed on screen under the next cell
+    let (mut d, root) = doc();
+    let a = red_box(&mut d, root, "width: 50px; height: 20px; overflow: auto");
+    let first = frame(&mut d).expect("first frame");
+    let old_layers: Vec<_> = first.layers.iter().filter_map(|l| if let LayerDelta::Add(desc) = l { Some(desc.id) } else { None }).collect();
+    assert!(old_layers.len() >= 2, "the root layer and the box's scroll layer: {old_layers:?}");
+    let other = d.create(BOX);
+    let b = red_box(&mut d, other, "width: 30px; height: 10px");
+    d.attach_window(W, other, skelter_base::geom::Size::new(200.0, 100.0), skelter_base::geom::Scale(1.0)).unwrap();
+    let c = frame(&mut d).expect("the new root's frame");
+    assert!(c.removed.contains(&a), "the old box's list goes: {:?}", c.removed);
+    for l in &old_layers {
+        let removed = c.layers.iter().position(|x| matches!(x, LayerDelta::Remove(id) if id == l));
+        assert!(removed.is_some(), "old layer {l:?} goes: {:?}", c.layers);
+        // a re-used id is added after its removal
+        if let Some(added) = c.layers.iter().position(|x| matches!(x, LayerDelta::Add(desc) if desc.id == *l)) {
+            assert!(added > removed.unwrap(), "{:?}", c.layers);
+        }
+    }
+    assert!(c.lists.iter().any(|(n, _)| *n == b), "the new root's box draws");
+}

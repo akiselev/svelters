@@ -4,7 +4,7 @@ family = "layout"
 kinds = ["window"]
 size = [360, 200]
 states = ["normal"]
-notes = "The top-level viewport. A variant whose root creates a `<window>` gets that window as the cell (the gallery attaches it as the headless window's root and lays it over the theme's background, which a platform clears a window to). Its children are a flex column. Known bug (POL1-GALLERY): the window's `padding` and `gap` props do not reach its style yet, so both `content` rows look the same."
+notes = "The top-level viewport. A variant whose root creates a `<window>` gets that window as the cell (the gallery attaches it as the headless window's root and lays it over the theme's background, which a platform clears a window to). Its children are a flex column. The window lays its children out inside its `padding` (default 8), `gap` apart; an app window sets `padding={0}` so its bars reach the edges."
 
 [[variant]]
 id = "content"

@@ -203,6 +203,40 @@ impl WindowState {
         }
     }
 
+    /// The window takes a new root (`Document::attach_window` on a window that has one): what the
+    /// compositor holds of the old tree (`old`: its lists, property nodes and layers, the removals it
+    /// had not sent yet) goes in this state's first commit, ahead of the new tree's. Without this the
+    /// old tree's layers would stay on screen under the new one.
+    pub fn take_over(&mut self, old: WindowState) {
+        let mut p = old.pending;
+        let mut layers: Vec<LayerId> = old.layers.keys().copied().collect();
+        layers.extend(old.root_layer);
+        layers.extend(old.app_overlay.layer);
+        layers.extend(old.tip.layer);
+        layers.extend(old.drag_layer.as_ref().map(|d| d.layer));
+        layers.extend(old.overlay_nodes.values().map(|o| o.layer));
+        if let Some(stack) = &old.overlays {
+            layers.extend(stack.entries().iter().map(|e| e.spec.layer));
+        }
+        for l in layers {
+            if !p.removed_layers.contains(&l) {
+                p.removed_layers.push(l);
+            }
+        }
+        let mut props: Vec<PropNodeId> = old.root_transform.into_iter().collect();
+        props.extend(old.drag_layer.as_ref().map(|d| d.transform));
+        props.extend(old.overlay_nodes.values().map(|o| o.transform));
+        for id in props {
+            if !p.removed_props.contains(&id) {
+                p.removed_props.push(id);
+            }
+        }
+        p.dropped_runs.extend(old.app_overlay.runs);
+        p.dropped_runs.extend(old.tip.runs);
+        p.dropped_runs.extend(old.drag_layer.map(|d| d.runs).unwrap_or_default());
+        self.pending = p;
+    }
+
     /// A node left the window: its list, property nodes and layer go in the next commit's removals.
     pub fn retire(&mut self, node: NodeId, paint: NodePaint, keep_focus: bool) {
         if paint.list.is_some() {

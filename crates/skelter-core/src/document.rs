@@ -509,8 +509,11 @@ impl Document {
         self.stamp();
         self.core[i].flags.insert(NodeFlags::ROOT);
         self.set_window(i, Some(window));
-        self.windows.retain(|w| w.id != window);
-        self.windows.push(WindowState::new(window, root, size, scale));
+        let mut ws = WindowState::new(window, root, size, scale);
+        if let Some(k) = self.windows.iter().position(|w| w.id == window && w.root != root) {
+            ws.take_over(self.windows.remove(k));
+        }
+        self.windows.push(ws);
         self.layout[i].cache.clear();
         self.mark_subtree_style(i);
         self.mark_subtree(i, Dirty::RECORD);
