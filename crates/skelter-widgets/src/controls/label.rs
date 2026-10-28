@@ -103,8 +103,9 @@ impl Look<'_> {
     /// (`wrap` wraps, a cut truncates them at the end), else the plain text (cut by measuring).
     fn paragraph(&self, shaper: &mut dyn TextShaper, s: &StyleView, width: Option<f32>) -> (RichText, Option<f32>) {
         let base = paint::text_style(s);
+        let rtl = s.is_rtl();
         if let Some(r) = self.rich {
-            let mut t = rich::rich_text(r, &base, &s.theme().fonts().mono);
+            let mut t = rich::rich_text(r, &base, &s.theme().fonts().mono).in_dir(rtl);
             if let (Some(w), true) = (width, self.wrap_mode == "truncate" || self.elision(s).is_some()) {
                 t.ellipsis = true;
                 t.max_lines = Some(1);
@@ -113,9 +114,9 @@ impl Look<'_> {
             return (t, (self.wrap_mode == "wrap").then_some(width).flatten());
         }
         match (self.elision(s), self.wrap_mode, width) {
-            (Some(mode), _, Some(w)) => (RichText::plain(&paint::elide(shaper, s, self.text, mode, w), base), None),
-            (None, "wrap", Some(w)) => (RichText::plain(self.text, base), Some(w)),
-            _ => (RichText::plain(self.text, base), None),
+            (Some(mode), _, Some(w)) => (RichText::plain(&paint::elide(shaper, s, self.text, mode, w), base).in_dir(rtl), None),
+            (None, "wrap", Some(w)) => (RichText::plain(self.text, base).in_dir(rtl), Some(w)),
+            _ => (RichText::plain(self.text, base).in_dir(rtl), None),
         }
     }
 }

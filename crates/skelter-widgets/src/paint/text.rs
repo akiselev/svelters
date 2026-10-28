@@ -69,7 +69,7 @@ pub fn text_style(s: &StyleView) -> TextStyle {
 
 /// `text` laid out under `s`, wrapped at `wrap` points if given.
 pub fn text_layout(shaper: &mut dyn TextShaper, s: &StyleView, text: &str, wrap: Option<f32>) -> Arc<TextLayout> {
-    shaper.layout(&RichText::plain(text, text_style(s)), wrap.map(|w| w.max(0.0)))
+    shaper.layout(&RichText::plain(text, text_style(s)).in_dir(s.is_rtl()), wrap.map(|w| w.max(0.0)))
 }
 
 /// The size of `text` under `s`; `wrap` wraps it when given. A `line-height` in px sets the height of

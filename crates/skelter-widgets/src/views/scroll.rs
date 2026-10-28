@@ -129,10 +129,9 @@ pub struct Scroller {
     hovered: bool,
     drag: Option<ThumbDrag>,
     hold: Option<TrackHold>,
-    /// The bars of a right-to-left scrollable: they are laid out left to right and mirrored in the
-    /// view (the vertical bar at the left, a horizontal thumb at the right at offset 0, the inline
-    /// start), and the pointer is mirrored into that layout. The offset stays the distance scrolled
-    /// from the inline start.
+    /// A right-to-left scrollable: the vertical bar sits at the left (as Chrome's) and the corner
+    /// with it. The offset stays left-based (core's: an rtl container starts at its range), so the
+    /// horizontal thumb maps as in `ltr`.
     pub rtl: bool,
 }
 
@@ -151,23 +150,8 @@ impl Scroller {
     pub fn viewport(&self) -> Size {
         self.viewport
     }
-    /// The bars at the current offset (empty until [`Scroller::layout_bars`]), where they are drawn
-    /// (mirrored in the view in [`rtl`](Self::rtl)).
+    /// The bars at the current offset (empty until [`Scroller::layout_bars`]).
     pub fn bars(&self) -> [Option<BarGeom>; 2] {
-        let mut b = self.lbars();
-        if self.rtl
-            && let Some((view, ..)) = self.bar_cfg
-        {
-            let m = |r: Rect| Rect::new(view.min.x + view.max.x - r.max.x, r.min.y, view.min.x + view.max.x - r.min.x, r.max.y);
-            for g in b.iter_mut().flatten() {
-                *g = BarGeom { track: m(g.track), thumb: m(g.thumb) };
-            }
-        }
-        b
-    }
-
-    /// The bars as laid out, left to right.
-    fn lbars(&self) -> [Option<BarGeom>; 2] {
         match self.bar_cfg {
             Some((view, width, min_thumb, show)) => self.compute_bars(view, width, min_thumb, show),
             None => [None, None],
@@ -233,10 +217,11 @@ impl Scroller {
                 continue;
             }
             let corner = if show[1 - d] { width } else { 0.0 };
-            let track = if d == 1 {
-                Rect::new(view.max.x - width, view.min.y, view.max.x, view.max.y - corner)
-            } else {
-                Rect::new(view.min.x, view.max.y - width, view.max.x - corner, view.max.y)
+            let track = match (d, self.rtl) {
+                (1, false) => Rect::new(view.max.x - width, view.min.y, view.max.x, view.max.y - corner),
+                (1, true) => Rect::new(view.min.x, view.min.y, view.min.x + width, view.max.y - corner),
+                (_, false) => Rect::new(view.min.x, view.max.y - width, view.max.x - corner, view.max.y),
+                (_, true) => Rect::new(view.min.x + corner, view.max.y - width, view.max.x, view.max.y),
             };
             let len = rmax(&track, d) - rmin(&track, d);
             let content = if d == 0 { self.content.w } else { self.content.h }.max(1.0);
@@ -346,7 +331,7 @@ impl Scroller {
 
     /// The offset on axis `d` that puts the thumb's start at `pos`.
     fn offset_for_thumb(&self, d: usize, pos: f32) -> Option<f32> {
-        let b = self.lbars()[d]?;
+        let b = self.bars()[d]?;
         let len = rmax(&b.track, d) - rmin(&b.track, d);
         let thumb = rmax(&b.thumb, d) - rmin(&b.thumb, d);
         let room = len - thumb;
@@ -359,10 +344,6 @@ impl Scroller {
     /// The pointer over the bars: thumb drag, track press (page or jump, per policy), hold repeat.
     /// Returns whether the event was the bars' (and whether the offset moved).
     pub fn pointer(&mut self, now: Time, policy: &Policy, phase: PointerPhase, primary: bool, pos: Point, shift: bool) -> (bool, bool) {
-        let pos = match (self.rtl, self.bar_cfg) {
-            (true, Some((view, ..))) => Point::new(view.min.x + view.max.x - pos.x, pos.y),
-            _ => pos,
-        };
         let before = self.offset;
         match phase {
             PointerPhase::Move | PointerPhase::Enter => {
@@ -391,7 +372,7 @@ impl Scroller {
                 (ours, false)
             }
             PointerPhase::Down if primary => {
-                let bars = self.lbars();
+                let bars = self.bars();
                 for d in 0..2 {
                     let Some(b) = bars[d] else { continue };
                     if b.thumb.contains(pos) {
@@ -440,7 +421,7 @@ impl Scroller {
         if now < h.next {
             return (false, Some(h.next));
         }
-        let Some(b) = self.lbars()[h.axis] else {
+        let Some(b) = self.bars()[h.axis] else {
             self.hold = None;
             return (false, None);
         };
@@ -1043,14 +1024,19 @@ pub struct ScrollArea {
     /// The last event's time and policy (recording has neither: the bars' fade reads them).
     now: Time,
     policy: Option<Policy>,
-    /// The area is right to left (at the last restyle): its bars mirror ([`Scroller::rtl`]).
+    /// The area is right to left (at the last restyle): its vertical bar at the left
+    /// ([`Scroller::rtl`]).
     rtl: std::cell::Cell<bool>,
+    /// Core's offset at the last layout: a JS request for one axis keeps the other where core has
+    /// it (an rtl area starts at its horizontal range, not at 0).
+    core_offset: Option<Vec2>,
 }
 
 impl Default for ScrollArea {
     fn default() -> Self {
         ScrollArea {
             rtl: std::cell::Cell::new(false),
+            core_offset: None,
             props: ScrollAreaProps::default(),
             explicit: Default::default(),
             reduced_motion: false,
@@ -1385,6 +1371,14 @@ impl Kind for ScrollArea {
         }
         let max = self.scroller.max_offset();
         let mut o = self.scroller.offset();
+        // the axes JS did not write stay where core has them
+        if let Some(c) = self.core_offset {
+            for d in 0..2 {
+                if self.requested[d].is_none() {
+                    set(&mut o, d, get(c, d));
+                }
+            }
+        }
         let mut pin = (false, false);
         for d in 0..2 {
             let Some(v) = self.requested[d].take() else { continue };
@@ -1543,6 +1537,7 @@ impl Kind for ScrollArea {
     /// compositor fling), unless an animation of the area's own or a JS write is on its way to core.
     fn scroll_geometry(&mut self, g: &skelter_core::ScrollGeometry) {
         self.set_geometry(g.content, g.viewport, BAR_WIDTH, MIN_THUMB, [false, false]);
+        self.core_offset = Some(g.offset);
         if self.anim.is_none() && !self.js_offset {
             self.scroller.set_offset(g.offset);
         }
@@ -1713,8 +1708,6 @@ impl Kind for Scrollbar {
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
-        // `rtl`: a horizontal bar's minimum is at the right (its thumb mirrors, as a slider's)
-        self.scroller.rtl = cx.style.is_rtl();
         self.layout(cx.size, MIN_THUMB);
     }
 
@@ -1957,21 +1950,22 @@ mod tests {
     }
 
     #[test]
-    fn rtl_bars_mirror_and_drag_from_the_right() {
+    fn rtl_puts_the_vertical_bar_at_the_left() {
         let pol = pol(Platform::Windows);
         let mut s = sc(Size::new(1000.0, 1000.0), Size::new(100.0, 100.0));
         s.rtl = true;
+        // core's offsets stay left-based: an rtl container starts at its range
+        s.set_offset(Vec2::new(900.0, 0.0));
         let [x, y] = s.layout_bars(Rect::new(0.0, 0.0, 100.0, 100.0), 10.0, 20.0, [true, true]);
         let (x, y) = (x.unwrap(), y.unwrap());
         assert_eq!((y.track.min.x, y.track.max.x), (0.0, 10.0), "the vertical bar at the left");
         assert_eq!((x.track.min.x, x.track.max.x), (10.0, 100.0), "the horizontal track leaves the corner at the left");
-        assert_eq!(x.thumb.max.x, 100.0, "offset 0: the thumb at the inline start (the right)");
-        // dragging the horizontal thumb leftward scrolls toward the end
-        let at = Point::new(x.thumb.max.x - 5.0, 95.0);
-        assert!(s.pointer(ms(0), &pol, PointerPhase::Down, true, at, false).0);
-        let (_, moved) = s.pointer(ms(10), &pol, PointerPhase::Move, true, Point::new(at.x - 30.0, 95.0), false);
-        assert!(moved && s.offset().x > 0.0);
-        s.pointer(ms(20), &pol, PointerPhase::Up, false, Point::new(at.x - 30.0, 95.0), false);
+        assert_eq!(x.thumb.max.x, 100.0, "at the range: the thumb at the right");
+        // the vertical thumb drags at the left
+        assert!(s.pointer(ms(0), &pol, PointerPhase::Down, true, Point::new(5.0, 5.0), false).0);
+        let (_, moved) = s.pointer(ms(10), &pol, PointerPhase::Move, true, Point::new(5.0, 40.0), false);
+        assert!(moved && s.offset().y > 0.0);
+        s.pointer(ms(20), &pol, PointerPhase::Up, false, Point::new(5.0, 40.0), false);
     }
 
     #[test]

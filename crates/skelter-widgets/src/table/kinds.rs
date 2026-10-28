@@ -510,7 +510,7 @@ impl TableKind {
             let mut sys: SystemLayouter;
             let lay: &mut dyn Layouter = match cx.service::<skelter_text::TextSystem>() {
                 Some(ts) => {
-                    sys = SystemLayouter { system: ts, style };
+                    sys = SystemLayouter { system: ts, style, rtl: self.rtl };
                     &mut sys
                 }
                 None => &mut mono,
@@ -700,7 +700,7 @@ impl Kind for TableKind {
             let to_window = node.window_transform();
             edit.editor.field.rtl = self.rtl;
             match cx.service::<skelter_text::TextSystem>() {
-                Some(ts) => edit.editor.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window),
+                Some(ts) => edit.editor.field.prepare(&mut SystemLayouter { system: ts, style, rtl: self.rtl }, content, to_window),
                 None => edit.editor.field.prepare(&mut MonoLayouter { advance: 8.0, line_height: 16.0 }, content, to_window),
             }
             edit.editor.field.take_repaint();

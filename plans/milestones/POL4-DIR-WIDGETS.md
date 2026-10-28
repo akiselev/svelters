@@ -1,9 +1,9 @@
 # POL4-DIR-WIDGETS: every skelter-widgets kind mirrors in `rtl`
 
 Lane `dir-widgets` of batch polish-b4 (`plans/cloud/polish-b4/BRIEF.md`, `LANE-dir-widgets.md`), branch
-`ci/pb4-dir-widgets` from `master` `9f0272b` (+ the batch briefs `8bcc50d`), with dir-core's cascade part merged
-(`origin/ci/pb4-dir-core` `8ddfa09`: `dir`, the inherited CSS `direction`, `:dir()`, `NodeView::direction`, taffy's
-direction). The user decided on 2026-10-28: "lets add direction support"; the direction model is the brief's.
+`ci/pb4-dir-widgets` from `master` `9f0272b` (+ the batch briefs `8bcc50d`), with dir-core merged as it landed
+(`origin/ci/pb4-dir-core` `8ddfa09`: `dir`, the inherited CSS `direction`, `:dir()`, `NodeView::direction`;
+`c508a53`: layout, logical properties, the text base direction, the rtl scroll origin). The user decided on 2026-10-28: "lets add direction support"; the direction model is the brief's.
 
 ## Design note
 
@@ -30,6 +30,13 @@ Kinds read their resolved direction, never their text:
   elided Arabic cell past its box in rtl (the table drew no text). They now place a single line by its runs
   (`paint::ink_x`, the table's text painter, `common::paint_text_in`); `label` places its ink in `rtl`. Multi-line
   paragraphs keep their lines' alignment.
+- **Text base direction.** The shim's `RichText::rtl` (`in_dir`) carries the box's direction to skelter-text
+  (`RichText::direction`, dir-core's): `paint::text_layout`, `label` and the text field's layouter
+  (`SystemLayouter::rtl`) set it in `rtl`, so `start` and mixed runs follow the box; an `ltr` box keeps its first
+  strong character's, as before.
+- **Scroll offsets stay left-based** (dir-core: an rtl container starts at its range). `Scroller::rtl` only moves the
+  bars (the vertical bar and the corner to the left); the thumbs map as in `ltr`. A scroll area's JS write of one
+  axis (`scroll-y`) keeps the other where core has it, so an rtl area still opens at its inline start.
 - **Physical stays physical**: `panel side="left"`, `inner-window x`, `toast-host corner` are physical names; the
   toast stack is mirrored in `rtl` (its corner names the left-to-right corner; documented on the prop).
 
@@ -46,8 +53,8 @@ Kinds read their resolved direction, never their text:
 | slider | yes | horizontal: value grows leftward, fill from the right, value box and caption at the left, Left steps up (`slider.rs`) |
 | progress-bar | yes | horizontal fill from the right (`progress.rs`, one line: small's file) |
 | spinner, image, icon, separator | not applicable | non-directional |
-| scroll-area, virtual-list, tree-view, text-edit (multi-line) bars | yes | `Scroller::rtl`: vertical bar at the left, horizontal thumb at the right at offset 0, pointer mirrored (`scroll.rs`); content origin: open with Q2 |
-| scrollbar | yes | horizontal minimum at the right (`scroll.rs`) |
+| scroll-area, virtual-list, tree-view, text-edit (multi-line) bars | yes | `Scroller::rtl`: vertical bar at the left; content starts at the right (core); a one-axis JS write keeps the other axis (`scroll.rs`) |
+| scrollbar | not applicable | its value is left-based, as core's offsets |
 | tree-view | yes | twistie column at the right, `<` collapsed, levels indent leftward, Left expands (`tree.rs`) |
 | table, table-column | yes | columns from the right, sort arrow at a header's left, `align="end"` at the left, bars and cell editor mirrored, Left/Right and the horizontal wheel swapped (`table/kinds.rs`, `dir.rs`) |
 | tab-view, tab | yes | captions from the right, close buttons at their left, scroll and overflow buttons at the left (swapped), the overflow menu under them, arrows swapped (`tabs/`) |
@@ -64,7 +71,7 @@ Kinds read their resolved direction, never their text:
 | toast-host | yes | stack at the mirrored corner, accent bar and text at the right, close at the left (`toast.rs`) |
 | tooltip | yes | `-start`/`-end` placements logical (`tooltip.rs`) |
 | inner-window | yes | title-bar buttons at the left, heading at the right (`inner_window.rs`) |
-| text-edit | yes | a line starts (and an empty field's caret sits) at the right in `rtl`, AccessKit runs `RightToLeft` (`text/field.rs`); multi-line Latin text in `rtl`: open with Q1 |
+| text-edit | yes | a line starts (and an empty field's caret sits) at the right in `rtl`, the layout's base direction is the field's, AccessKit runs `RightToLeft` (`text/field.rs`, `geometry.rs`) |
 | popup | open (small's file) | `views/popup.rs` places by `placement`; a logical `-start`/`-end` there is small's to add (request R1) |
 
 ## Stories
@@ -103,12 +110,10 @@ Before/after (this container, not committed), under
 
 - **R1 (small):** `views/popup.rs` placement `-start`/`-end` logical in `rtl` (as `tooltip.rs` now does). The one
   edit in small's files is `controls/progress.rs` (the `inverted` line in `record`, a direction check).
-- **Q1 (dir-core):** skelter-text has no paragraph base direction: a multi-line Latin paragraph in an rtl field or
-  label is placed at the right as a block, but its lines stay left-aligned in it. Recommend a base direction on
-  `RichText` (`Start`/`End` against it) set from the node's direction.
-- **Q2 (dir-core, scroll origin):** widgets' `Scroller` takes core's `offset.x` in an rtl scroll container as the
-  distance scrolled from the inline start (≥ 0) and mirrors its bars from it (message sent to dir-core). Until
-  core's scroll origin lands, `scroll-area/rtl` shows its content from the left; the bars already mirror.
+- **Q1, Q2 (dir-core): answered by `c508a53`** — skelter-text takes a base direction (passed now, above) and
+  core's offsets stay left-based with an rtl container starting at its range (the bars adjusted, above).
+- The table's own text painter (`table/text_painter.rs`) does not pass the direction (its cells are single lines,
+  placed by their runs); mixed Latin/Arabic cells order by their first strong character.
 - A context menu opened without a pointer point (the `open` prop, Shift+F10) opens at the owner's top-left in rtl
   too; with a point it extends leftward from it. Recommend the owner's top-right in rtl (needs the owner's width in
   `Menus`, small).

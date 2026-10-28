@@ -959,11 +959,19 @@ pub mod text {
         /// Cut the last line with `…` when it does not fit.
         pub ellipsis: bool,
         pub max_lines: Option<u32>,
+        /// The box is right to left: the paragraph's base direction is `rtl` (where `Start` is and
+        /// how mixed runs order); `false`: from its first strong character, as before direction.
+        pub rtl: bool,
     }
 
     impl RichText {
         pub fn plain(text: &str, base: TextStyle) -> RichText {
             RichText { text: text.to_owned(), base, ..RichText::default() }
+        }
+        /// With the box's direction ([`RichText::rtl`]).
+        pub fn in_dir(mut self, rtl: bool) -> RichText {
+            self.rtl = rtl;
+            self
         }
     }
 

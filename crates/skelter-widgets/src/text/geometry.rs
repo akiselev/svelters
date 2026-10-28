@@ -71,13 +71,18 @@ impl TextGeometry for LaidOut {
 pub struct SystemLayouter<'a> {
     pub system: &'a mut TextSystem,
     pub style: TextStyle,
+    /// The field is right to left: the text's base direction is `rtl` (`false`: its first strong
+    /// character's).
+    pub rtl: bool,
 }
 
 impl Layouter for SystemLayouter<'_> {
     fn layout(&mut self, text: &str, max_width: Option<f32>) -> Arc<dyn TextGeometry> {
         let mut style = self.style.clone();
         style.wrap = max_width.is_some();
-        let layout = self.system.layout(&RichText::plain(text, style), max_width);
+        let mut rich = RichText::plain(text, style);
+        rich.direction = self.rtl.then_some(skelter_base::text::Direction::Rtl);
+        let layout = self.system.layout(&rich, max_width);
         Arc::new(LaidOut::new(text, layout))
     }
 }
@@ -98,7 +103,7 @@ mod tests {
     #[test]
     fn text_layout_lines_end_before_their_feed() {
         let mut sys = system();
-        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default() };
+        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default(), rtl: false };
         let g = lay.layout("ab\ncd", None);
         assert_eq!(g.line_count(), 2);
         assert_eq!(g.line(0).range, 0..2);
@@ -114,7 +119,7 @@ mod tests {
     #[test]
     fn a_field_on_real_fonts_records_runs_and_moves_its_caret() {
         let mut sys = system();
-        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default() };
+        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default(), rtl: false };
         let mut f = TextField::new("Hello", EditorConfig::default(), TextPolicy::of(Platform::Windows));
         f.prepare(&mut lay, Rect::new(0.0, 0.0, 300.0, 20.0), skelter_base::geom::Affine::IDENTITY);
         f.focus_in(FocusReason::Pointer);
@@ -133,7 +138,7 @@ mod tests {
     #[test]
     fn right_to_left_text_starts_at_the_right_of_a_single_line_field() {
         let mut sys = system();
-        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default() };
+        let mut lay = SystemLayouter { system: &mut sys, style: TextStyle::default(), rtl: false };
         let content = Rect::new(10.0, 0.0, 310.0, 20.0);
         let caret_at = |text: &str, byte: usize, lay: &mut SystemLayouter| {
             let mut f = TextField::new(text, EditorConfig::default(), TextPolicy::of(Platform::Windows));

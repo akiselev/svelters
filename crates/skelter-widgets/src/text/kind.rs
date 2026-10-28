@@ -299,7 +299,7 @@ impl Kind for TextEdit {
         let offset = cx.scroll_offset();
         self.field.set_scroll_offset(offset);
         if let Some(ts) = cx.service::<skelter_text::TextSystem>() {
-            self.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window);
+            self.field.prepare(&mut SystemLayouter { system: ts, style, rtl: self.field.rtl }, content, to_window);
         }
         // the layout scrolled the caret into view: a compositor offset, and the caret follows
         if self.field.scroll_offset() != offset {
@@ -432,7 +432,7 @@ impl Kind for TextEdit {
         let (mut focus, mut capture, mut cursor) = (false, None::<bool>, None);
         let handled = {
             let Some(ts) = cx.service::<skelter_text::TextSystem>() else { return Handled::No };
-            let mut lay = SystemLayouter { system: ts, style };
+            let mut lay = SystemLayouter { system: ts, style, rtl: self.field.rtl };
             match ev {
                 Event::Key(k) => !matches!(self.field.key(k, now, &mut lay), KeyAction::Ignore),
                 Event::Ime(i) => {
