@@ -9,7 +9,7 @@
   });
 </script>
 
-<box padding={8} flex-grow={1}>
+<box dir="rtl" padding={8} flex-grow={1}>
   <table
     bind:this={table}
     anchor="subject"

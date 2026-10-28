@@ -295,7 +295,7 @@ pub mod core {
     /// A live node's inline direction is right to left (kinds that read skelter-core's
     /// `NodeView` directly).
     pub fn node_rtl(v: &skelter_core::NodeView<'_>) -> bool {
-        computed_rtl(v.css())
+        v.is_rtl()
     }
 
     impl StyleCx<'_> {

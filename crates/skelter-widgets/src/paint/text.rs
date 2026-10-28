@@ -89,16 +89,26 @@ pub fn measure_text(shaper: &mut dyn TextShaper, s: &StyleView, text: &str, wrap
 /// buttons, as VS Code), on the pixel grid, in `color` of `s`. Returns the rect it covers.
 pub fn paint_text(cx: &mut PaintCx, s: &StyleView, layout: &TextLayout, content: Rect, align: Align) -> Rect {
     let size = layout.size();
+    let (x0, w) = ink_x(layout);
     let x = match align.physical(s.is_rtl()) {
         Align::Start => content.min.x,
-        Align::Center => (content.min.x + content.max.x) / 2.0 - size.w / 2.0,
-        Align::End => content.max.x - size.w,
-    };
+        Align::Center => (content.min.x + content.max.x) / 2.0 - w / 2.0,
+        Align::End => content.max.x - w,
+    } - x0;
     let y = (content.min.y + content.max.y) / 2.0 - size.h / 2.0;
     let pos = cx.snap_point(Point::new(x, y));
     let color = s.color("color").unwrap_or(Color::BLACK);
     paint_runs(cx, layout, pos, &|_| color);
     Rect::from_origin_size(pos, size)
+}
+
+/// Where `layout`'s runs start and how wide they are: `(0, width)` for most layouts, but a
+/// right-to-left line laid out at a width (an elided caption) sits at that width's right edge, so
+/// placing it by its layout box would push it past the box it is aligned in (one line only: a
+/// paragraph keeps its lines' alignment).
+pub fn ink_x(layout: &TextLayout) -> (f32, f32) {
+    let (a, b) = layout.runs().iter().filter(|pr| !pr.run.glyphs.is_empty()).fold((f32::INFINITY, f32::NEG_INFINITY), |(a, b), pr| (a.min(pr.origin.x), b.max(pr.origin.x + pr.run.advance)));
+    if layout.lines <= 1 && a.is_finite() && a > 0.0 { (a, b - a) } else { (0.0, layout.size().w) }
 }
 
 /// Pushes the runs of `layout` with its top-left at `pos`, each in `color(style index)`.

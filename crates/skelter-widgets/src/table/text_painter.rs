@@ -40,11 +40,16 @@ impl TextPainter for ShaperPainter<'_> {
         let l = self.layout(text, style, elide.then_some(rect.width().max(0.0)));
         let Some(res) = self.res.as_deref_mut() else { return };
         let size = l.size();
+        // the line's own extent: a right-to-left line laid out at the elide width sits at that
+        // width's right edge (skelter-text aligns it to its base direction's start), so place the
+        // runs by where they are, not by the layout's origin
+        let (x0, x1) = l.runs().iter().filter(|pr| !pr.run.glyphs.is_empty()).fold((f32::INFINITY, f32::NEG_INFINITY), |(a, b), pr| (a.min(pr.origin.x), b.max(pr.origin.x + pr.run.advance)));
+        let (x0, w) = if x0.is_finite() { (x0, x1 - x0) } else { (0.0, size.w) };
         let x = match align {
             HAlign::Start => rect.min.x,
-            HAlign::Center => rect.min.x + (rect.width() - size.w) / 2.0,
-            HAlign::End => rect.max.x - size.w,
-        };
+            HAlign::Center => rect.min.x + (rect.width() - w) / 2.0,
+            HAlign::End => rect.max.x - w,
+        } - x0;
         let top = Point::new(x, rect.min.y + (rect.height() - size.h) / 2.0);
         for pr in l.runs() {
             if pr.run.glyphs.is_empty() || style.color.a <= 0.0 {

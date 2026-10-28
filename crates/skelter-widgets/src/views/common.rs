@@ -40,11 +40,12 @@ pub fn paint_text_in(pc: &mut crate::paint::PaintCx, layout: &crate::shim::text:
     use crate::paint::Align;
     use skelter_base::geom::{Point, Rect};
     let size = layout.size();
+    let (x0, w) = crate::paint::ink_x(layout);
     let x = match align {
         Align::Start => content.min.x,
-        Align::Center => (content.min.x + content.max.x) / 2.0 - size.w / 2.0,
-        Align::End => content.max.x - size.w,
-    };
+        Align::Center => (content.min.x + content.max.x) / 2.0 - w / 2.0,
+        Align::End => content.max.x - w,
+    } - x0;
     let y = (content.min.y + content.max.y) / 2.0 - size.h / 2.0;
     let pos = pc.snap_point(Point::new(x, y));
     crate::paint::paint_runs(pc, layout, pos, &|_| color);
