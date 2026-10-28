@@ -1,5 +1,5 @@
 <!-- The shape of an app window: a toolbar row, a body that grows, a status line. -->
-<window title="cadatomic" padding={0}>
+<window title="cadatomic">
   <box flex-direction="row" gap={4} padding={4} class="bar">
     <button icon="file.new" tooltip="New" />
     <button icon="file.open" tooltip="Open" />

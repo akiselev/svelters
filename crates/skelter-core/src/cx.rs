@@ -105,6 +105,10 @@ impl<'a> NodeView<'a> {
     pub fn window(&self) -> Option<WindowId> {
         self.window
     }
+    /// A prop's value as written (a JS or native write), `None` while it holds its default.
+    pub fn prop_written(&self, p: PropId) -> Option<&'a Value> {
+        self.props.get(p)
+    }
     /// A prop's value, or its default.
     pub fn prop(&self, p: PropId) -> Option<&'a Value> {
         if let Some(v) = self.props.get(p) {

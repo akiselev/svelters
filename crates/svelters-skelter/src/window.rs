@@ -1,6 +1,7 @@
 //! The `<window>` node's kind: the window's content area. Its spec is the synthesized one (the
 //! surface's props, signals and methods, [`crate::kinds`]); this value lays the children out as the
-//! surface says: a flex column inside `padding`, `gap` apart (POL2-LAYOUT 5). A CSS `padding` or
+//! surface says: a flex column inside `padding`, `gap` apart, as written (POL2-LAYOUT 5; an unwritten `padding` is 0, not the
+//! surface's 8, so existing windows keep their layout). A CSS `padding` or
 //! `gap` on the window still wins, as on `box`. It draws nothing: the theme's background is the
 //! platform window's clear colour.
 
@@ -20,7 +21,9 @@ impl core::Kind for Window {
     fn layout_style(&self, cx: &core::StyleCx) -> taffy::Style {
         let mut s = cx.default_layout();
         let spec = cx.kind().spec;
-        let num = |name: &str| spec.prop_named(name).and_then(|p| cx.prop_f64(p)).map(|v| v.max(0.0) as f32);
+        // only a written prop: the surface's default `padding` (8, egui's) would move every existing
+        // window's content (an app's root, the gallery's harness window)
+        let num = |name: &str| spec.prop_named(name).and_then(|p| cx.prop_written(p)).and_then(skelter_core::Value::as_f64).map(|v| v.max(0.0) as f32);
         let css = |name: &str| cx.css().is_some_and(|c| c.get(name).is_some());
         if !["padding", "padding-top", "padding-right", "padding-bottom", "padding-left"].iter().any(|n| css(n))
             && let Some(p) = num("padding")

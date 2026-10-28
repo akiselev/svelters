@@ -36,9 +36,9 @@ fn the_window_lays_its_children_out_inside_padding_and_gap_apart() {
     let (a, b) = laid_out(Some(12.0), None);
     assert_eq!((a.min.x, a.min.y, a.max.x), (12.0, 12.0, 188.0), "{a:?}");
     assert_eq!(b.min.y, a.max.y + 6.0, "{b:?}");
-    // the surface's default padding is 8
+    // an unwritten padding is none (not the surface's 8: existing windows keep their layout)
     let (a, _) = laid_out(None, None);
-    assert_eq!((a.min.x, a.min.y), (8.0, 8.0), "{a:?}");
+    assert_eq!((a.min.x, a.min.y), (0.0, 0.0), "{a:?}");
     let (a, _) = laid_out(Some(0.0), None);
     assert_eq!((a.min.x, a.min.y), (0.0, 0.0), "{a:?}");
     // CSS wins, as on `box`

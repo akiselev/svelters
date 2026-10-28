@@ -424,6 +424,33 @@ fn inert_children_are_disabled() {
     assert!(d.state(t).contains(StateMask::DISABLED));
 }
 
+#[test]
+fn a_disabled_container_disables_its_content() {
+    // POL2-LAYOUT 4: a disabled frame (any container) takes the inert path an unchecked checkable
+    // frame takes: `:disabled`, no focus, AccessKit's disabled flag on every descendant
+    let (mut d, root) = hdoc();
+    let frame_ = child(&mut d, root, BOX, "");
+    let inner = child(&mut d, frame_, BOX, "");
+    let t = child(&mut d, inner, TOGGLE, "");
+    d.focus(t, crate::FocusReason::Keyboard);
+    d.set_prop(frame_, common::DISABLED, Value::Bool(true)).unwrap();
+    assert!(d.state(frame_).contains(StateMask::DISABLED), "the container itself");
+    assert!(d.state(inner).contains(StateMask::DISABLED) && d.state(t).contains(StateMask::DISABLED), "and every descendant");
+    assert_eq!(d.focused(W), None, "a disabled node loses focus");
+    let c = frame(&mut d).expect("a frame");
+    let a11y = c.a11y.expect("accessibility");
+    let node = a11y.nodes.iter().find(|(id, _)| id.0 == t.0).map(|(_, n)| n.clone()).expect("the toggle's node");
+    assert!(node.is_disabled(), "AccessKit's disabled flag");
+    // a late child is disabled too; enabling the container enables the content, its own prop holds
+    let late = d.create(TOGGLE);
+    d.insert(frame_, late, None, None).unwrap();
+    assert!(d.state(late).contains(StateMask::DISABLED));
+    d.set_prop(late, common::DISABLED, Value::Bool(true)).unwrap();
+    d.set_prop(frame_, common::DISABLED, Value::Bool(false)).unwrap();
+    assert!(!d.state(t).contains(StateMask::DISABLED) && !d.state(inner).contains(StateMask::DISABLED));
+    assert!(d.state(late).contains(StateMask::DISABLED));
+}
+
 // ---- (d) peer groups ----
 
 fn radios(d: &mut Document, parent: NodeId, group: &str, n: usize) -> Vec<NodeId> {

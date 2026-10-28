@@ -910,6 +910,11 @@ impl Document {
         if prop == common::DISABLED {
             let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false) || self.core[i].flags.contains(NodeFlags::INERT);
             self.set_state(node, StateMask::DISABLED, on);
+            // a disabled container disables its content (HTML's disabled fieldset, Qt and GTK)
+            for c in self.children[i].clone() {
+                let ci = self.ix(c);
+                self.refresh_inert(ci);
+            }
         } else if prop == common::INVALID {
             let on = v.as_ref().and_then(Value::as_bool).unwrap_or(false);
             self.set_state(node, StateMask::INVALID, on);
@@ -1128,13 +1133,17 @@ impl Document {
         }
     }
 
-    /// Recomputes [`NodeFlags::INERT`] (and so `:disabled`) on `i`'s subtree from its ancestors.
+    /// Recomputes [`NodeFlags::INERT`] (and so `:disabled`) on `i`'s subtree from its ancestors: a
+    /// node is inert under an inert parent, a parent whose kind makes its children inert
+    /// ([`Kind::children_inert`](crate::Kind::children_inert): an unchecked checkable frame) and a
+    /// parent whose own `disabled` prop is set (any disabled container: one path for the state, the
+    /// look and AccessKit's disabled flag).
     pub(crate) fn refresh_inert(&mut self, i: usize) {
         let mut stack = vec![i];
         while let Some(n) = stack.pop() {
             let inherited = self.core[n].parent.is_some_and(|p| {
                 let pi = self.ix(p);
-                self.core[pi].flags.intersects(NodeFlags::INERT.union(NodeFlags::INERT_CHILDREN))
+                self.core[pi].flags.intersects(NodeFlags::INERT.union(NodeFlags::INERT_CHILDREN)) || self.view_at(pi).prop_bool(common::DISABLED)
             });
             if inherited == self.core[n].flags.contains(NodeFlags::INERT) && n != i {
                 continue;
