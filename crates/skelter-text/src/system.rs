@@ -197,13 +197,17 @@ impl TextSystem {
         let aux = (text.ellipsis || text.text.contains('\t')).then(|| self.aux_for(&text.base));
         self.ensure_shaped(key, text, aux.as_deref());
         let entry = self.shaped.get_mut(&key).expect("shaped above");
-        let bk = (pk.width, text.align);
+        // one line cut with "…" (a caption, a tab title) is not wrapped first: it is cut where the
+        // width runs out, not at the last break opportunity before it (POL2-REGISTER R-14)
+        let one_line = text.ellipsis && text.max_lines == Some(1) && max_width.is_some();
+        let break_w = if one_line { None } else { max_width };
+        let bk = (break_w.map(f32::to_bits), text.align);
         if entry.broken != Some(bk) {
-            entry.layout.break_all_lines(max_width);
+            entry.layout.break_all_lines(break_w);
             entry.layout.align(alignment(text.align), AlignmentOptions::default());
             entry.broken = Some(bk);
         }
-        let placed = Arc::new(place(&entry.layout, text, &self.fonts, aux.as_deref(), max_width));
+        let placed = Arc::new(place(&entry.layout, text, &self.fonts, aux.as_deref(), max_width, one_line));
         if entry.placed.len() >= PLACED_PER_ENTRY {
             entry.placed.remove(0);
         }
@@ -303,7 +307,7 @@ impl TextSystem {
             let rt = RichText::plain("\u{2026}", base.clone());
             let mut l = self.shape_plain(&rt);
             l.break_all_lines(None);
-            let tl = place(&l, &rt, &self.fonts, None, None);
+            let tl = place(&l, &rt, &self.fonts, None, None, false);
             tl.runs.first().map(|r| (r.run.clone(), r.run.advance))
         };
         let aux = Arc::new(Aux { space, ellipsis });
@@ -429,6 +433,8 @@ fn place(
     fonts: &FontStore,
     aux: Option<&Aux>,
     max_width: Option<f32>,
+    // broken without `max_width`: its lines are aligned in `max_width` here
+    unbroken: bool,
 ) -> TextLayout {
     let rtl = layout.is_rtl();
     let tab = aux.map(|a| a.space * text.tab_size.unwrap_or(DEFAULT_TAB_SIZE)).unwrap_or(0.0);
@@ -483,7 +489,7 @@ fn place(
         if text.ellipsis && overflow {
             out.truncated = true;
         }
-        let mut realign = false;
+        let mut realign = unbroken;
         if let Some((_, ell_w)) = &ellipsis {
             let limit = max_width.unwrap_or(f32::INFINITY) - ell_w;
             let mut order: Vec<usize> = (0..raw.len()).collect();

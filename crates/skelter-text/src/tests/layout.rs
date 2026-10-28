@@ -93,6 +93,28 @@ fn ellipsis_cuts_a_nowrap_line_to_the_width() {
     assert!(l.size().w > 80.0);
 }
 
+/// POL2-REGISTER R-14: one wrapping line cut with "…" is cut where the width runs out, not at the
+/// last break opportunity (a hyphen) before it; a short text keeps its alignment in the width.
+#[test]
+fn a_one_line_ellipsis_cuts_at_the_width_not_at_a_break() {
+    let mut ts = system();
+    let mut rt = plain("usb-cpowerdeliverycontroller.kicad_sch", 13.0);
+    rt.max_lines = Some(1);
+    rt.ellipsis = true;
+    let l = ts.layout(&rt, Some(150.0));
+    assert_eq!(l.lines().len(), 1);
+    assert!(l.truncated());
+    let w = l.size().w;
+    assert!(w <= 150.0 + 0.01 && w > 150.0 - 13.0, "the cut fills the width: {w}");
+    let mut short = plain("ok", 13.0);
+    short.max_lines = Some(1);
+    short.ellipsis = true;
+    short.align = crate::Align::Center;
+    let l = ts.layout(&short, Some(100.0));
+    let r = l.runs().first().unwrap();
+    assert!(r.origin.x > 40.0, "centred in the width: {}", r.origin.x);
+}
+
 #[test]
 fn max_lines_drops_lines_and_ends_in_an_ellipsis() {
     let mut ts = system();
