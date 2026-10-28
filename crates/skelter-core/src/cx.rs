@@ -105,6 +105,10 @@ impl<'a> NodeView<'a> {
     pub fn window(&self) -> Option<WindowId> {
         self.window
     }
+    /// A prop's value as written (a JS or native write), `None` while it holds its default.
+    pub fn prop_written(&self, p: PropId) -> Option<&'a Value> {
+        self.props.get(p)
+    }
     /// A prop's value, or its default.
     pub fn prop(&self, p: PropId) -> Option<&'a Value> {
         if let Some(v) = self.props.get(p) {
@@ -364,6 +368,8 @@ pub struct PrepareCx<'a> {
     pub(crate) native: Vec<(PropId, Value)>,
     /// AccessKit placements of descendants ([`PrepareCx::place_a11y`]), applied after the prepare.
     pub(crate) placed: Vec<(NodeId, Option<Rect>)>,
+    /// State bits to set or clear on the node ([`PrepareCx::set_state`]), applied after the prepare.
+    pub(crate) states: Vec<(StateMask, bool)>,
 }
 
 impl<'a> std::ops::Deref for PrepareCx<'a> {
@@ -477,6 +483,12 @@ impl PrepareCx<'_> {
     /// Once placed, a node keeps the placement until it is placed again or freed.
     pub fn place_a11y(&mut self, node: NodeId, rect: Option<Rect>) {
         self.placed.push((node, rect));
+    }
+    /// Sets or clears state bits on the node once the prepare returns, as [`EventCx::set_state`]
+    /// does: a kind that scrolls by its own offset sets `:state(sv.overflow-*)`
+    /// ([`crate::overflow_states`]) from the extent it just laid out.
+    pub fn set_state(&mut self, bits: StateMask, on: bool) {
+        self.states.push((bits, on));
     }
     pub fn set_native(&mut self, prop: PropId, v: Value) -> Result<(), crate::PropError> {
         let spec = self.node.entry.prop(prop).or_else(|| crate::common::prop(prop)).ok_or(crate::PropError::Unknown(prop))?;
@@ -895,6 +907,12 @@ impl EventCx<'_> {
     }
     pub fn request_paint(&mut self) {
         self.doc.mark(self.node, Dirty::PAINT);
+    }
+    /// Records only the node's foreground ([`Kind::record_foreground`](crate::Kind::record_foreground))
+    /// next frame: its overlay scroll bars fading, without re-recording its content.
+    pub fn request_foreground(&mut self) {
+        self.doc.fore_dirty.insert(self.node);
+        self.doc.mark(self.node, Dirty::PROPERTY);
     }
     pub fn request_layout(&mut self) {
         self.doc.mark_layout(self.node);

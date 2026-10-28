@@ -56,8 +56,9 @@ pub(crate) struct DocStyle {
     pub nodes: Vec<NodeStyle>,
     pub default: Arc<ComputedBox>,
     pub caches: svelters_style::MatchCaches,
-    /// Resolves `:state(ns.name)` in sheets to the host's state bits ([`crate::Document::set_state_names`]).
-    pub state_names: Option<Box<dyn svelters_style::StateNames>>,
+    /// Resolves `:state(ns.name)` in sheets: svelters' own (`sv.overflow-*`), then the host's
+    /// ([`crate::Document::set_state_names`]).
+    pub state_names: StateNames,
     /// Sheet names and (dev) their `<style>` sources, for matched rules.
     pub sheet_info: std::collections::HashMap<SheetId, SheetInfo>,
 }
@@ -69,7 +70,7 @@ impl Default for DocStyle {
             nodes: Vec::new(),
             default: Arc::new(ComputedBox::default()),
             caches: svelters_style::MatchCaches::new(),
-            state_names: None,
+            state_names: StateNames::default(),
             sheet_info: std::collections::HashMap::new(),
         }
     }
@@ -99,7 +100,7 @@ impl DocStyle {
         true
     }
     pub fn add_sheet(&mut self, css: &str, origin: svelters_style::Origin) -> SheetId {
-        let opts = svelters_style::ParseOptions { states: self.state_names.as_deref() };
+        let opts = svelters_style::ParseOptions { states: Some(&self.state_names) };
         let sheet = svelters_style::Stylesheet::parse(css, &opts);
         self.add_parsed(&sheet, origin)
     }
@@ -117,5 +118,18 @@ impl DocStyle {
         self.stylist.remove_sheet(id);
         self.sheet_info.remove(&id);
         self.caches.clear();
+    }
+}
+
+/// The document's `:state()` names: skelter-core's own (`sv.overflow-*`, [`crate::scroll::OVERFLOW`])
+/// and the host's provider states.
+#[derive(Default)]
+pub struct StateNames {
+    pub host: Option<Box<dyn svelters_style::StateNames>>,
+}
+
+impl svelters_style::StateNames for StateNames {
+    fn lookup(&self, name: &str) -> Option<svelters_style::StateMask> {
+        crate::scroll::overflow_state(name).or_else(|| self.host.as_ref()?.lookup(name))
     }
 }

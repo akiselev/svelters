@@ -155,7 +155,9 @@ impl LayoutPartialTree for Tree<'_> {
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);
-            let container = !tree.doc.layout_children(i).is_empty();
+            // a node whose chrome has widths sizes as a container even without children (a header
+            // with an empty body)
+            let container = !tree.doc.layout_children(i).is_empty() || tree.doc.layout[i].chrome_w.is_some();
             // a virtualising node sizes as its kind measures it (its rows' full extent), not by its
             // realised rows (placed absolutely, they add nothing): a list in a column takes its
             // content height and shrinks to what the column leaves it (A25b)
@@ -181,11 +183,31 @@ impl LayoutPartialTree for Tree<'_> {
                 return out;
             }
             if container {
-                let mut out = match tree.doc.layout[i].style.display {
+                let run = |tree: &mut Tree, inputs: LayoutInput| match tree.doc.layout[i].style.display {
                     Display::Grid => compute_grid_layout(tree, id, inputs),
                     Display::Block => compute_block_layout(tree, id, inputs, None),
                     _ => compute_flexbox_layout(tree, id, inputs),
                 };
+                let mut out = run(tree, inputs);
+                // the chrome's caption widens an auto-width container as far as there is room
+                // (`Kind::chrome_widths`): max-content when asked for it, the available width at
+                // most otherwise, never below its min-content width
+                if let Some((min_w, max_w)) = tree.doc.layout[i].chrome_w
+                    && inputs.known_dimensions.width.is_none()
+                {
+                    let want = match inputs.available_space.width {
+                        AvailableSpace::MinContent => min_w,
+                        AvailableSpace::MaxContent => max_w,
+                        AvailableSpace::Definite(a) => max_w.min(a).max(min_w),
+                    };
+                    if out.size.width < want {
+                        out = if inputs.run_mode == RunMode::PerformLayout {
+                            run(tree, LayoutInput { known_dimensions: Size { width: Some(want), ..inputs.known_dimensions }, ..inputs })
+                        } else {
+                            LayoutOutput { size: Size { width: want, ..out.size }, ..out }
+                        };
+                    }
+                }
                 if inputs.run_mode == RunMode::PerformLayout {
                     compute_oof_layout(tree, id, &mut out);
                 }

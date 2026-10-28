@@ -26,3 +26,8 @@ file = "long-labels.svelte"
 id = "rtl"
 title = "Right-to-left labels"
 file = "rtl.svelte"
+
+[[variant]]
+id = "overflow"
+title = "More rows than fit"
+file = "overflow.svelte"

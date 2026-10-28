@@ -598,6 +598,8 @@ pub struct VirtualList {
     /// The viewport (content space) the document last asked rows for, while the list is a
     /// document node that scrolls itself ([`VirtualChildren::visible`](skelter_core::VirtualChildren::visible)).
     seen: std::cell::Cell<Option<Rect>>,
+    /// Its scroll bars over core's offset, in its foreground (POL2-LAYOUT 1).
+    pub(crate) bars: super::scroll::CoreBars,
     /// SV83: `row-height` was written (with `auto-row-height` it is the least row height).
     row_height_written: bool,
     /// SV83: the type scale's row height from the last restyle (`auto-row-height`).
@@ -632,6 +634,7 @@ impl VirtualList {
             last_click: None,
             stats: ListStats::default(),
             seen: std::cell::Cell::new(None),
+            bars: Default::default(),
             row_height_written: false,
             type_row: std::cell::Cell::new(None),
         }
@@ -1052,7 +1055,8 @@ impl VirtualList {
         let width = if self.width > 0.0 { self.width } else { cx.size.w };
         let bounds = cx.rect();
         let mut pc = PaintCx::of(cx);
-        paint::paint_box(&mut pc, &host, bounds);
+        // its inset shadows (R15's edge shadows) go over the rows, in the foreground
+        paint::paint_box_layers(&mut pc, &host, bounds, false);
         for pos in self.window() {
             let r = self.heights.rect(pos, width);
             let row = host.part(row_css, ROW_UA).in_state(self.row_state(pos, active));
@@ -1532,7 +1536,16 @@ impl Kind for VirtualList {
     fn record(&self, cx: &mut RecordCx) {
         self.record_rows(cx);
     }
+    fn record_foreground(&self, cx: &mut RecordCx, g: Option<&skelter_core::ScrollGeometry>) {
+        self.bars.record(cx, g);
+    }
+    fn scroll_geometry(&mut self, g: &skelter_core::ScrollGeometry) {
+        self.bars.sync(g);
+    }
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
+        if let Some(h) = self.bars.event(cx, ev) {
+            return h;
+        }
         let h = self.handle(cx, &SPEC, ev);
         if self.reveal.is_some() {
             cx.refresh_virtual = true;
@@ -1992,6 +2005,28 @@ mod tests {
         l.sel.cursor = Some(101);
         let (list, _) = testkit::record(&l, Size::new(200.0, 2000.0), StateBits::NONE);
         assert_eq!(testkit::kinds(&list), ["quad", "quad", "quad"]);
+    }
+
+    #[test]
+    fn draws_its_bars_in_the_foreground_and_drags_the_thumb() {
+        // POL2-LAYOUT 1: the list scrolls itself, so its bars are its foreground, at core's offset
+        use crate::shim::core::Kind as _;
+        let l = list(100, 100.0);
+        let g = skelter_core::ScrollGeometry::new(Rect::new(0.0, 0.0, 200.0, 100.0), Size::new(200.0, 2000.0), Vec2::new(0.0, 950.0), (false, true));
+        let (rows, _) = testkit::record(&l, Size::new(200.0, 100.0), StateBits::NONE);
+        assert!(rows.items.is_empty(), "no bar in the scrolled rows");
+        let fore = testkit::record_foreground(&l, Size::new(200.0, 100.0), StateBits::NONE, Some(&g));
+        assert_eq!(testkit::kinds(&fore), ["quad"], "an overlay thumb");
+        let skelter_base::display::Prim::Quad(q) = &fore.items[0] else { unreachable!() };
+        assert_eq!((q.rect.min.x, q.rect.max.x), (190.0, 200.0));
+        assert_eq!((q.rect.min.y, q.rect.max.y), (40.0, 60.0), "half way down, the shortest thumb");
+        // a press on the thumb is the bars', not a row's; dragging it moves the offset
+        let mut d = testkit::Driver::new(l, Size::new(200.0, 100.0));
+        d.kind.scroll_geometry(&g);
+        d.down(195.0, 50.0);
+        d.move_to(195.0, 70.0);
+        assert!(d.kind.bars.scroller().offset().y > 950.0, "{:?}", d.kind.bars.scroller().offset());
+        assert!(d.kind.sel.cursor.is_none(), "no row was pressed");
     }
 
     #[test]

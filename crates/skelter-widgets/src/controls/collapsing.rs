@@ -108,6 +108,8 @@ struct Head {
     gap: f32,
     /// The row's natural width: the twistie and the whole caption, with the header's padding.
     w: f32,
+    /// Its least width: the twistie and the padding (the caption elides to nothing).
+    min_w: f32,
 }
 
 /// A header that shows or hides its children.
@@ -143,7 +145,7 @@ impl CollapsingHeader {
         let twistie = tw.px("width").unwrap_or(16.0);
         let gap = head.px("gap").unwrap_or(4.0);
         let [pl, pr, pt, pb] = head.sides("padding");
-        Head { h: head.px("height").unwrap_or(0.0).max(t.h + pt + pb), indent: pl + twistie + gap, gap: host.px("gap").unwrap_or(0.0), w: pl + twistie + gap + t.w + pr }
+        Head { h: head.px("height").unwrap_or(0.0).max(t.h + pt + pb), indent: pl + twistie + gap, gap: host.px("gap").unwrap_or(0.0), w: pl + twistie + gap + t.w + pr, min_w: pl + twistie + pr }
     }
 
     /// The node's state with the prop mirrors (`:expanded`, `:disabled`).
@@ -210,10 +212,17 @@ impl Kind for CollapsingHeader {
         Some([if self.props.open { h.indent } else { 0.0 }, 0.0, if self.props.open { h.h + h.gap } else { h.h }, 0.0])
     }
 
-    /// The header row: the twistie and the whole caption (egui's header sizes the widget).
+    /// The header row's least size: its padding and the twistie (the caption elides, POL2-LAYOUT 3).
     fn chrome_min_size(&self, cx: &mut MeasureCx) -> Option<[f32; 2]> {
         let h = self.head(&cx.style, cx.text);
-        Some([h.w.ceil(), h.h])
+        Some([h.min_w.ceil(), h.h])
+    }
+
+    /// The header row's widths: the twistie alone at min-content, the whole caption at max-content
+    /// (egui's header sizes the widget when there is room).
+    fn chrome_widths(&self, cx: &mut MeasureCx) -> Option<[f32; 2]> {
+        let h = self.head(&cx.style, cx.text);
+        Some([h.min_w.ceil(), h.w.ceil()])
     }
 
     fn child_layout(&self, cx: &ChildCx, style: &mut Style) -> bool {
@@ -338,6 +347,18 @@ mod tests {
 
     fn styles() -> Styles<'static> {
         Styles { computed: None, parts: &[], children: &[], state: StateBits::NONE, dark: true, theme: None, inherited: None }
+    }
+
+    #[test]
+    fn the_caption_widens_the_header_without_setting_its_minimum() {
+        // POL2-LAYOUT 3: min is the twistie and padding, the caption only adds to max-content
+        let (short, long) = (header("A"), header("A much longer caption"));
+        let (mut a, mut b, mut c) = (MonoShaper, MonoShaper, MonoShaper);
+        let [smin, smax] = short.chrome_widths(&mut MeasureCx { style: styles(), text: &mut a, scale: 1.0 }).unwrap();
+        let [lmin, lmax] = long.chrome_widths(&mut MeasureCx { style: styles(), text: &mut b, scale: 1.0 }).unwrap();
+        assert_eq!(smin, lmin, "the caption is not in the minimum");
+        assert!(lmax > smax && smax > smin);
+        assert_eq!(long.chrome_min_size(&mut MeasureCx { style: styles(), text: &mut c, scale: 1.0 }).unwrap()[0], lmin);
     }
 
     fn header(text: &str) -> CollapsingHeader {

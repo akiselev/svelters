@@ -29,6 +29,8 @@ svelters-host = { workspace = true }
 svelters-modules = { workspace = true, features = ["source"] }
 serde_json = { workspace = true }
 svelters-style = { workspace = true }
+# the `<window>` kind's layout style (`window.rs`)
+taffy = { workspace = true }
 
 [dev-dependencies]
 # `tests/run.rs`: the app runner on the headless platform and compositor

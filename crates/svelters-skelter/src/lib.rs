@@ -35,6 +35,7 @@ pub mod surface;
 pub mod sync;
 pub mod template;
 pub mod value;
+pub mod window;
 
 pub use backend::{Driver, SkelterBackend, SVL_LISTEN_PASSIVE, Traffic, WakeState};
 pub use deliver::{Delivered, Output};

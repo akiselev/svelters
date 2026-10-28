@@ -510,6 +510,15 @@ pub trait Kind: 'static {
     /// Write this node's display list (node-local coordinates). Called only when content-dirty.
     fn record(&self, cx: &mut RecordCx);
 
+    /// Write this node's foreground (node-local, border-box coordinates): what paints above its
+    /// content and its children and, on a scroll container (CSS `overflow` or [`Kind::self_scroll`]),
+    /// stays put while the content scrolls: scroll bars, edge shadows. Called after every
+    /// [`Kind::record`], and alone (no `prepare`, no `record`) when only the node's scroll offset
+    /// changed while it has a foreground: read the offset from
+    /// [`NodeView::scroll_geometry`](crate::NodeView::scroll_geometry). On a node that is not a scroll
+    /// container it paints after its own list, below its children. The default records nothing.
+    fn record_foreground(&self, cx: &mut RecordCx) {}
+
     /// Precise hit test inside the node's bounds (default: the rounded rect of the box).
     fn hit_test(&self, cx: &HitCx, p: Point) -> HitResult {
         cx.box_hit(p)
@@ -565,6 +574,15 @@ pub trait Kind: 'static {
     /// core makes its min size where CSS sets none: a content-sized container never squeezes its
     /// chrome away. It may measure text. `None`: no minimum.
     fn chrome_min_size(&self, cx: &mut MeasureCx) -> Option<skelter_base::geom::Size> {
+        None
+    }
+
+    /// The widths a container's own chrome (a header row's twistie and caption) adds to its
+    /// intrinsic widths, `(min-content, max-content)`: core lays the node out at least as wide as
+    /// the max-content width when there is room (a content-sized parent, a row's flex basis) and lets
+    /// it shrink to the min-content width when there is not, where the kind elides its caption.
+    /// Unlike [`Kind::chrome_min_size`] it sets no CSS minimum. It may measure text; `None`: none.
+    fn chrome_widths(&self, cx: &mut MeasureCx) -> Option<(f32, f32)> {
         None
     }
 
