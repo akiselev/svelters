@@ -82,6 +82,8 @@ pub struct ComputedBox {
     pub visibility_hidden: bool,
     /// `pointer-events: none` (inherited).
     pub pointer_events_none: bool,
+    /// `direction` (inherited): the inline direction its layout, text and kind follow.
+    pub direction: skelter_base::text::Direction,
     // box (not inherited)
     pub background: Fill,
     pub border_widths: Insets,
@@ -120,6 +122,7 @@ impl Default for ComputedBox {
             cursor: None,
             visibility_hidden: false,
             pointer_events_none: false,
+            direction: skelter_base::text::Direction::Ltr,
             background: Fill::Solid(Color::TRANSPARENT),
             border_widths: Insets::ZERO,
             border_color: Color::TRANSPARENT,
@@ -142,6 +145,9 @@ impl Default for ComputedBox {
 }
 
 impl ComputedBox {
+    pub fn is_rtl(&self) -> bool {
+        self.direction.is_rtl()
+    }
     /// The caret's colour: `caret-color`, or `color` when it is `auto`.
     pub fn caret(&self) -> Color {
         self.caret_color.unwrap_or(self.color)
@@ -185,6 +191,7 @@ impl ComputedBox {
             cursor: self.cursor,
             visibility_hidden: self.visibility_hidden,
             pointer_events_none: self.pointer_events_none,
+            direction: self.direction,
             ..ComputedBox::default()
         }
     }

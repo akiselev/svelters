@@ -5,6 +5,7 @@ mod a11y;
 mod absolute;
 mod change;
 mod commit;
+mod direction;
 mod dispatch;
 mod emits;
 mod focus;

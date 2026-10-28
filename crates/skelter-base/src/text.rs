@@ -118,3 +118,77 @@ pub trait TextMeasure {
     /// (min-content, max-content) widths.
     fn content_widths(&mut self, spec: &TextSpec<'_>) -> (f32, f32);
 }
+
+/// Inline direction (CSS `direction`, HTML `dir`): where a line, a `row` and the inline start are.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Default)]
+pub enum Direction {
+    #[default]
+    Ltr,
+    Rtl,
+}
+
+impl Direction {
+    pub fn is_rtl(self) -> bool {
+        self == Direction::Rtl
+    }
+    /// `ltr` / `rtl`.
+    pub fn name(self) -> &'static str {
+        match self {
+            Direction::Ltr => "ltr",
+            Direction::Rtl => "rtl",
+        }
+    }
+    /// The other direction.
+    pub fn flipped(self) -> Direction {
+        match self {
+            Direction::Ltr => Direction::Rtl,
+            Direction::Rtl => Direction::Ltr,
+        }
+    }
+}
+
+/// The direction of `text`'s first strong character (Unicode bidi classes L, R and AL), as HTML's
+/// `dir=auto` resolves it; `None` when it has none (digits, punctuation and marks are not strong).
+/// The R/AL ranges are the right-to-left scripts' blocks without their marks and Arabic digits.
+pub fn first_strong(text: &str) -> Option<Direction> {
+    text.chars().find_map(strong)
+}
+
+/// A character's strong direction, if it has one.
+pub fn strong(c: char) -> Option<Direction> {
+    let u = c as u32;
+    if u < 0x80 {
+        return c.is_ascii_alphabetic().then_some(Direction::Ltr);
+    }
+    let rtl_block = matches!(u, 0x0590..=0x08FF | 0xFB1D..=0xFDFF | 0xFE70..=0xFEFF | 0x10800..=0x10FFF | 0x1E800..=0x1EFFF);
+    if rtl_block {
+        // not strong: Hebrew points, Arabic marks, Arabic-Indic digits and number signs
+        let weak = matches!(
+            u,
+            0x0591..=0x05BD
+                | 0x05BF
+                | 0x05C1..=0x05C2
+                | 0x05C4..=0x05C5
+                | 0x05C7
+                | 0x0600..=0x0605
+                | 0x0610..=0x061A
+                | 0x064B..=0x066C
+                | 0x0670
+                | 0x06D6..=0x06ED
+                | 0x06F0..=0x06F9
+                | 0x0711
+                | 0x0730..=0x074A
+                | 0x07A6..=0x07B0
+                | 0x07EB..=0x07F3
+                | 0x0816..=0x082D
+                | 0x0859..=0x085B
+                | 0x0890..=0x089F
+                | 0x08CA..=0x08FF
+                | 0xFB1E
+                | 0xFE00..=0xFE0F
+                | 0xFE20..=0xFE2F
+        );
+        return (!weak).then_some(Direction::Rtl);
+    }
+    c.is_alphabetic().then_some(Direction::Ltr)
+}

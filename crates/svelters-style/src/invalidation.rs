@@ -113,6 +113,8 @@ impl Invalidation {
             Component::AttributeOther(a) => *self.attrs.entry(a.local_name.clone()).or_default() |= reach,
             // P1: a logical position is set by the widget, which restyles the part itself
             Component::NonTSPseudoClass(crate::selector::PseudoClass::Logical(_)) => {}
+            // a direction change restyles the whole subtree it reaches (the tree does that)
+            Component::NonTSPseudoClass(crate::selector::PseudoClass::Dir { .. }) => {}
             Component::NonTSPseudoClass(pc) => {
                 let bits = pc.bits();
                 match self.states.iter_mut().find(|(b, _)| *b == bits) {

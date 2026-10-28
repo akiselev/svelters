@@ -3,7 +3,7 @@
 //! Supported: type, class, id and attribute selectors, all four combinators, `:is/:where/:not/:has`,
 //! `:nth-child(… of S)` and the other structural pseudo-classes (from `selectors`), the state
 //! pseudo-classes of [`STATE_PSEUDO_CLASSES`](crate::state::STATE_PSEUDO_CLASSES), `:focus-visible`,
-//! provider states as `:state(ns.name)`, `&` inside nested rules, and the pseudo-elements
+//! provider states as `:state(ns.name)`, `:dir(ltr|rtl)`, `&` inside nested rules, and the pseudo-elements
 //! `::part(name)`, `::placeholder` and `::selection` ([`PseudoElement`]).
 //!
 //! WIDGET-PARITY P1 (a documented deviation from CSS Shadow Parts): after `::part()`,
@@ -51,6 +51,9 @@ pub enum PseudoClass {
     Provider { name: Atom, bit: StateMask },
     /// A structural pseudo-class after `::part()` (P1): matches the part's logical position.
     Logical(Logical),
+    /// `:dir(ltr)` / `:dir(rtl)`: the element's directionality ([`Element::is_rtl`](crate::Element::is_rtl)).
+    /// A change of direction restyles the subtree it reaches, so it reads no state bit.
+    Dir { rtl: bool },
 }
 
 /// A logical position test (P1): `:nth-child(An+B)` (`first` = `0n+1`), `:nth-last-child(An+B)`
@@ -92,7 +95,7 @@ impl PseudoClass {
         match self {
             PseudoClass::State { bit, .. } | PseudoClass::Provider { bit, .. } => *bit,
             PseudoClass::FocusVisible => StateMask(StateMask::FOCUSED.0 | StateMask::FOCUS_VISIBLE.0),
-            PseudoClass::Logical(_) => StateMask(0),
+            PseudoClass::Logical(_) | PseudoClass::Dir { .. } => StateMask(0),
         }
     }
 }
@@ -103,6 +106,7 @@ impl ToCss for PseudoClass {
             PseudoClass::State { name, .. } => write!(dest, ":{name}"),
             PseudoClass::FocusVisible => dest.write_str(":focus-visible"),
             PseudoClass::Provider { name, .. } => write!(dest, ":state({name})"),
+            PseudoClass::Dir { rtl } => dest.write_str(if *rtl { ":dir(rtl)" } else { ":dir(ltr)" }),
             PseudoClass::Logical(Logical::Only) => dest.write_str(":only-child"),
             PseudoClass::Logical(Logical::Nth { a: 0, b: 1, from_end: false }) => dest.write_str(":first-child"),
             PseudoClass::Logical(Logical::Nth { a: 0, b: 1, from_end: true }) => dest.write_str(":last-child"),
@@ -309,6 +313,14 @@ impl<'i> selectors::Parser<'i> for SelectorParser<'_> {
                 return Err(ParseError::custom(StyleParseError::Other(format!(":{}(… of S) is not supported after ::part()", &lower[4..]))));
             }
             return Ok(PseudoClass::Logical(Logical::Nth { a, b, from_end: lower == "-sv-nth-last-child" }));
+        }
+        if lower == "dir" {
+            let v = input.expect_ident()?.to_ascii_lowercase();
+            return match &*v {
+                "ltr" => Ok(PseudoClass::Dir { rtl: false }),
+                "rtl" => Ok(PseudoClass::Dir { rtl: true }),
+                _ => Err(ParseError::custom(StyleParseError::Other(format!(":dir({v}): expected `ltr` or `rtl`")))),
+            };
         }
         if !name.eq_ignore_ascii_case("state") {
             return Err(ParseError::custom(StyleParseError::UnknownPseudo(format!(":{name}()"))));

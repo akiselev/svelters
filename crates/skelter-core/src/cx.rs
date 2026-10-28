@@ -95,6 +95,15 @@ impl<'a> NodeView<'a> {
     pub fn id(&self) -> NodeId {
         self.id
     }
+    /// The node's inline direction (its computed CSS `direction`, from `dir` on it or above it, or
+    /// the document's). Kinds mirror by it (part order, chevrons, fills), never by their text.
+    pub fn direction(&self) -> skelter_base::text::Direction {
+        self.style.direction
+    }
+    /// [`direction`](Self::direction) is right-to-left.
+    pub fn is_rtl(&self) -> bool {
+        self.style.direction.is_rtl()
+    }
     /// The JS listeners registered on the node ([`Document::listen`](crate::Document::listen)).
     pub fn listeners(&self) -> &'a [crate::tree::Listener] {
         self.doc.listeners(self.id)

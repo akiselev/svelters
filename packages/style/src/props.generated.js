@@ -401,6 +401,7 @@ export const STYLE_TABLES = {
       "content": {"via": "css", "type": "content"},
       "cursor": {"via": "css", "type": "enum", "values": ["auto", "default", "none", "context-menu", "help", "pointer", "progress", "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy", "move", "no-drop", "not-allowed", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out"]},
       "dialog-role": {"via": "setter", "prop": "dialog-role", "native": "dialog-role", "type": "enum", "kinds": ["Widget"], "tags": 26, "values": ["auto", "accept", "reject", "destructive", "apply", "reset", "help", "action"]},
+      "direction": {"via": "css", "type": "enum", "values": ["ltr", "rtl"]},
       "display": {"via": "css", "type": "enum", "values": ["flex", "grid", "none"]},
       "flex-basis": {"via": "setter", "prop": "flex-basis", "native": "flex-basis", "type": "length", "kinds": ["Widget"], "tags": 26, "range": {"min": 0.0}},
       "flex-direction": {"via": "setter", "prop": "flex-direction", "native": "flex-direction", "type": "enum", "kinds": ["Box"], "tags": 28, "values": ["column", "row", "column-reverse", "row-reverse"]},

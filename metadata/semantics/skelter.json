@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "676b64e8baff9b20"
+    "spec_hash": "a62127cfba7da24f"
   },
   "inline_text": {
     "kind": "span",
@@ -13321,6 +13321,26 @@
           ],
           "writable": true
         },
+        "dir": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "The direction, as HTML's `dir`: `ltr`, `rtl`, or `auto` (from the first strong character of its text or its descendants' text); empty inherits the parent's (a window root: the document's). Sets CSS `direction` below author rules: rows, `start`/`end`, grid columns, `text-align: start` and the kind's own parts mirror in `rtl`. `:dir(rtl)` matches it.",
+          "fingerprint": "0aabb218",
+          "id": 179024408,
+          "js": "dir",
+          "native": "dir",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Widget:dir",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "drag-data": {
           "change": "paint",
           "construct_only": false,
@@ -15893,6 +15913,15 @@
           "action"
         ],
         "via": "setter"
+      },
+      "direction": {
+        "change": "layout",
+        "decl_type": "enum",
+        "values": [
+          "ltr",
+          "rtl"
+        ],
+        "via": "css"
       },
       "display": {
         "change": "layout",
