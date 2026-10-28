@@ -64,6 +64,11 @@ fn effective_default(doc: &Document, scope: NodeId, dialog: bool, focused: Optio
     buttons(doc, scope, "default").into_iter().find(|&b| button_prop(doc, b, "default") == Some(true) && usable(doc, b))
 }
 
+/// The usable button of `scope` whose `default` prop is on (its own default, not auto-default's).
+pub(crate) fn default_button(doc: &Document, scope: NodeId) -> Option<NodeId> {
+    buttons(doc, scope, "default").into_iter().find(|&b| button_prop(doc, b, "default") == Some(true) && usable(doc, b))
+}
+
 /// Recomputes `:default` in the scope of `node` (a focus move, a `default` write).
 pub(crate) fn refresh_default(doc: &mut Document, node: NodeId) {
     let Some((s, dialog)) = scope(doc, node) else { return };
