@@ -33,8 +33,8 @@ pub const UA: Ua = Ua(&[UaRule::base(&[])]);
 /// `::part(value)`: the value text in the value box's metrics (6/3 padding, the field's text
 /// colour), so the editable box fits the same place.
 pub const VALUE_UA: Ua = Ua(&[
+    // no disabled colour: `slider:disabled` dims the whole slider (base.css R9), once
     UaRule::base(&[("color", Token("input-fg")), ("padding-left", Px(6.0)), ("padding-right", Px(6.0)), ("padding-top", Px(3.0)), ("padding-bottom", Px(3.0))]),
-    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
 ]);
 
 /// The default length of the rail (egui's `slider_width`).

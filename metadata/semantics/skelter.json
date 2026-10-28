@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "faab2a65256f9bb7"
+    "spec_hash": "676b64e8baff9b20"
   },
   "inline_text": {
     "kind": "span",
@@ -373,7 +373,28 @@
       "native": "skelter Bold",
       "native_state": [],
       "present": null,
-      "props": {},
+      "props": {
+        "href": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "Makes the run a link to `href` (its label raises `link-clicked`); empty for none.",
+          "fingerprint": "0049e416",
+          "id": 4842518,
+          "js": "href",
+          "native": "href",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Bold:href",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
       "provenance": {
         "kind": "crates/svelters-skelter/src/surface/tier0.rs"
       },
@@ -1516,7 +1537,28 @@
       "native": "skelter Code",
       "native_state": [],
       "present": null,
-      "props": {},
+      "props": {
+        "href": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "Makes the run a link to `href` (its label raises `link-clicked`); empty for none.",
+          "fingerprint": "09b97d19",
+          "id": 163151129,
+          "js": "href",
+          "native": "href",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Code:href",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
       "provenance": {
         "kind": "crates/svelters-skelter/src/surface/tier0.rs"
       },
@@ -2555,6 +2597,26 @@
           "phases": [],
           "sync": false,
           "sync_required": false
+        },
+        "toggle": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The list opened or closed.",
+          "fingerprint": "01294beb",
+          "handler_result": "none",
+          "id": 19483627,
+          "js_event": "toggle",
+          "name": "toggle",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
         }
       },
       "slot_ids": {},
@@ -2672,7 +2734,116 @@
       "provenance": {
         "kind": "crates/svelters-skelter/src/surface/tier1.rs"
       },
-      "signals": {},
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "item",
+              "type": "string"
+            },
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "An item was picked (its id and check state after the pick).",
+          "fingerprint": "099a9898",
+          "handler_result": "none",
+          "id": 161126552,
+          "js_event": "activate",
+          "name": "activate",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "close": {
+          "args": [
+            {
+              "name": "menu",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A menu level closed.",
+          "fingerprint": "0f31a791",
+          "handler_result": "none",
+          "id": 254912401,
+          "js_event": "close",
+          "name": "close",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "hover": {
+          "args": [
+            {
+              "name": "item",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The current row changed (pointer or keys).",
+          "fingerprint": "0883e29f",
+          "handler_result": "none",
+          "id": 142860959,
+          "js_event": "hover",
+          "name": "hover",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "open": {
+          "args": [
+            {
+              "name": "menu",
+              "type": "string"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A menu level opened.",
+          "fingerprint": "0d8ea8fd",
+          "handler_result": "none",
+          "id": 227453181,
+          "js_event": "open",
+          "name": "open",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggled": {
+          "args": [
+            {
+              "name": "item",
+              "type": "string"
+            },
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A check or radio item changed state (each item of a radio group that did).",
+          "fingerprint": "0006ecb1",
+          "handler_result": "none",
+          "id": 453809,
+          "js_event": "toggled",
+          "name": "toggled",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
       "slot_ids": {
         "items": 30480110
       },
@@ -3697,6 +3868,30 @@
           "sync": false,
           "sync_required": false
         },
+        "open-url": {
+          "args": [
+            {
+              "name": "url",
+              "type": "string"
+            },
+            {
+              "name": "new-tab",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The default of `clicked` with a `url`: the host opens `url`.",
+          "fingerprint": "01dcaf50",
+          "handler_result": "none",
+          "id": 31240016,
+          "js_event": "open-url",
+          "name": "open-url",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "secondary-clicked": {
           "args": [],
           "cancelable": false,
@@ -4639,7 +4834,28 @@
       "native": "skelter Italic",
       "native_state": [],
       "present": null,
-      "props": {},
+      "props": {
+        "href": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "Makes the run a link to `href` (its label raises `link-clicked`); empty for none.",
+          "fingerprint": "0e6c6ca9",
+          "id": 241986729,
+          "js": "href",
+          "native": "href",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Italic:href",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
       "provenance": {
         "kind": "crates/svelters-skelter/src/surface/tier0.rs"
       },
@@ -4737,6 +4953,26 @@
       ],
       "present": null,
       "props": {
+        "clickable": {
+          "change": "property",
+          "construct_only": false,
+          "default": false,
+          "doc": "It takes clicks and sends `clicked` (set while a runtime listens to `clicked`).",
+          "fingerprint": "0a65b16c",
+          "id": 174436716,
+          "js": "clickable",
+          "native": "clickable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Label:clickable",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "elide": {
           "change": "layout",
           "construct_only": false,
@@ -4944,6 +5180,54 @@
           "js_event": "copy",
           "name": "copy",
           "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "link-clicked": {
+          "args": [
+            {
+              "name": "index",
+              "type": "i64"
+            },
+            {
+              "name": "href",
+              "type": "string"
+            }
+          ],
+          "cancelable": true,
+          "disconnect_on_drop": true,
+          "doc": "A link run was clicked: its index in the runs and its `href`.",
+          "fingerprint": "034acfdc",
+          "handler_result": "bool_stop",
+          "id": 55234524,
+          "js_event": "link-clicked",
+          "name": "link-clicked",
+          "passive": false,
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "open-url": {
+          "args": [
+            {
+              "name": "url",
+              "type": "string"
+            },
+            {
+              "name": "new-tab",
+              "type": "bool"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The default of a `link-clicked` whose run has a target: the host opens `url` (skelter never opens anything itself).",
+          "fingerprint": "064b168c",
+          "handler_result": "none",
+          "id": 105584268,
+          "js_event": "open-url",
+          "name": "open-url",
+          "passive": true,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -6856,6 +7140,31 @@
           ],
           "writable": true
         },
+        "overscroll-behavior": {
+          "change": "property",
+          "construct_only": false,
+          "default": "auto",
+          "doc": "At an edge, a new gesture goes on to the scroll area around (`auto`) or stays (`contain`, `none`).",
+          "fingerprint": "029ab13c",
+          "id": 43692348,
+          "js": "overscroll-behavior",
+          "native": "overscroll-behavior",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:ScrollArea:overscroll-behavior",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "contain",
+            "none"
+          ],
+          "writable": true
+        },
         "scroll-x": {
           "change": "property",
           "construct_only": false,
@@ -6921,6 +7230,30 @@
           "js_event": "changed",
           "name": "changed",
           "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "scrollend": {
+          "args": [
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "A scroll gesture or animation stopped; carries the offsets.",
+          "fingerprint": "0973c0d7",
+          "handler_result": "none",
+          "id": 158580951,
+          "js_event": "scrollend",
+          "name": "scrollend",
+          "passive": true,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -7885,7 +8218,28 @@
       "native": "skelter Span",
       "native_state": [],
       "present": null,
-      "props": {},
+      "props": {
+        "href": {
+          "change": "paint",
+          "construct_only": false,
+          "default": "",
+          "doc": "Makes the run a link to `href` (its label raises `link-clicked`); empty for none.",
+          "fingerprint": "00f7975a",
+          "id": 16226138,
+          "js": "href",
+          "native": "href",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:Span:href",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
       "provenance": {
         "kind": "crates/svelters-skelter/src/surface/tier0.rs"
       },
@@ -11114,6 +11468,44 @@
           "value": {
             "arg": 0
           }
+        },
+        "expanded-ids": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "expanded-ids",
+          "provenance": "svelters-skelter: <tree-view> writes expanded-ids into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "selected-ids": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected-ids",
+          "provenance": "svelters-skelter: <tree-view> writes selected-ids into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
         }
       },
       "chain": [
@@ -11226,7 +11618,9 @@
       },
       "native": "skelter TreeView",
       "native_state": [
-        "current"
+        "current",
+        "expanded-ids",
+        "selected-ids"
       ],
       "present": null,
       "props": {
@@ -11275,6 +11669,27 @@
           ],
           "writable": true
         },
+        "expanded-ids": {
+          "change": "structure",
+          "construct_only": false,
+          "default": null,
+          "doc": "The expanded node ids (`bind:expanded-ids`; keys, presses and drags change it).",
+          "fingerprint": "0de74e22",
+          "id": 233262626,
+          "js": "expanded-ids",
+          "native": "expanded-ids",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:TreeView:expanded-ids",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "i64",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
         "indent": {
           "change": "layout",
           "construct_only": false,
@@ -11288,6 +11703,26 @@
           "observe": {
             "class": "set_only",
             "fact": "skelter:TreeView:indent",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "pool-limit": {
+          "change": "property",
+          "construct_only": false,
+          "default": 8,
+          "doc": "Free row slots kept for reuse beyond the window's needs.",
+          "fingerprint": "0bb5e2b5",
+          "id": 196469429,
+          "js": "pool-limit",
+          "native": "pool-limit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:TreeView:pool-limit",
             "mechanism": "tree",
             "verified": "weak"
           },
@@ -11373,6 +11808,27 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "selected-ids": {
+          "change": "paint",
+          "construct_only": false,
+          "default": null,
+          "doc": "The selected node ids (`bind:selected-ids`; clicks and keys change it).",
+          "fingerprint": "01984156",
+          "id": 26755414,
+          "js": "selected-ids",
+          "native": "selected-ids",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:TreeView:selected-ids",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "of": "i64",
+          "readable": true,
+          "type": "list",
           "writable": true
         },
         "selection": {
@@ -11514,6 +11970,26 @@
           "sync": false,
           "sync_required": false
         },
+        "current": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The cursor moved; carries its node id (-1: none).",
+          "fingerprint": "03a40d09",
+          "handler_result": "none",
+          "id": 61082889,
+          "js_event": "current",
+          "name": "current",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "drop-row": {
           "args": [
             {
@@ -11638,6 +12114,26 @@
           "sync": false,
           "sync_required": false
         },
+        "select": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The cursor's row was selected; carries its position.",
+          "fingerprint": "08ab104c",
+          "handler_result": "none",
+          "id": 145428556,
+          "js_event": "select",
+          "name": "select",
+          "passive": true,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "selection-changed": {
           "args": [],
           "cancelable": false,
@@ -11649,6 +12145,26 @@
           "js_event": "selection-changed",
           "name": "selection-changed",
           "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selectionchange": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The selection changed; carries the selected ids.",
+          "fingerprint": "03227ff3",
+          "handler_result": "none",
+          "id": 52592627,
+          "js_event": "selectionchange",
+          "name": "selectionchange",
+          "passive": true,
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -11967,6 +12483,26 @@
           ],
           "writable": true
         },
+        "pool-limit": {
+          "change": "property",
+          "construct_only": false,
+          "default": 8,
+          "doc": "Free row slots kept for reuse beyond the window's needs.",
+          "fingerprint": "0e56460f",
+          "id": 240535055,
+          "js": "pool-limit",
+          "native": "pool-limit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "skelter:VirtualList:pool-limit",
+            "mechanism": "tree",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
         "row-drag-type": {
           "change": "layout",
           "construct_only": false,
@@ -12188,6 +12724,26 @@
           "js_event": "copy",
           "name": "copy",
           "passive": false,
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "current": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "cancelable": false,
+          "disconnect_on_drop": true,
+          "doc": "The cursor moved; carries its item id (-1: none).",
+          "fingerprint": "0f172639",
+          "handler_result": "none",
+          "id": 253175353,
+          "js_event": "current",
+          "name": "current",
+          "passive": true,
           "phases": [],
           "sync": false,
           "sync_required": false

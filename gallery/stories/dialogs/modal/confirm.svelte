@@ -1,7 +1,7 @@
 <box padding={8} flex-grow={1}>
   <label>Board editor</label>
   <modal open heading="Delete footprint?">
-    <box padding={12} gap={12} width={300}>
+    <box gap={12} width={300}>
       <label>R12 and its 2 pads will be removed from the board.</label>
       <dialog-buttons>
         <button text="Cancel" dialog-role="reject" />

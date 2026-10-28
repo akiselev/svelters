@@ -362,3 +362,31 @@ fn a_scroll_container_has_the_overflow_states_of_its_offset() {
     frame(&mut d);
     assert_eq!(st(&d, s), StateMask::NONE);
 }
+
+/// POL2-LAYOUT Q2: `flex-start`/`flex-end` align as `start`/`end`, in `align-self` and
+/// `align-items`, from inline style and from a sheet.
+#[test]
+fn flex_start_and_flex_end_align_as_start_and_end() {
+    let (mut d, root) = doc();
+    d.add_sheet(".fs { align-items: flex-start } .fe { align-items: flex-end }");
+    let col = child(&mut d, root, BOX, "width: 100px; height: 100px");
+    // a box with no width sized by its content (none: 0 wide) unless it stretches
+    let cases: Vec<(NodeId, f32, f32)> = vec![
+        (child(&mut d, col, BOX, "height: 5px; align-self: flex-start"), 0.0, 0.0),
+        (child(&mut d, col, BOX, "width: 20px; height: 5px; align-self: flex-end"), 80.0, 100.0),
+        (child(&mut d, col, BOX, "width: 20px; height: 5px; align-self: start"), 0.0, 20.0),
+    ];
+    let fs = child(&mut d, root, BOX, "width: 100px; height: 20px");
+    d.set_style(fs, StyleInput { inline: Some("width: 100px; height: 20px".into()), ..classes(&["fs"]) });
+    let a = child(&mut d, fs, BOX, "width: 20px; height: 5px");
+    let fe = child(&mut d, root, BOX, "");
+    d.set_style(fe, StyleInput { inline: Some("width: 100px; height: 20px".into()), ..classes(&["fe"]) });
+    let b = child(&mut d, fe, BOX, "width: 20px; height: 5px");
+    frame(&mut d);
+    for (n, x0, x1) in cases {
+        let r = d.layout_rect(n).unwrap();
+        assert_eq!((r.min.x, r.max.x), (x0, x1), "align-self");
+    }
+    assert_eq!(d.layout_rect(a).unwrap().min.x, 0.0, "align-items: flex-start");
+    assert_eq!(d.layout_rect(b).unwrap().min.x, 80.0, "align-items: flex-end");
+}

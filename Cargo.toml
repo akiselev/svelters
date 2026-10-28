@@ -109,8 +109,8 @@ etagere = "0.3"
 lyon = "1.0"
 # GAL3 (gallery-b1 lane app): the gallery's source pane is quire on skelter, at a fixed rev. skelter_quire
 # names svelters' skelter crates by git (master); the `[patch]` below points them at this workspace.
-skelter_quire = { git = "https://github.com/akiselev/quire", rev = "ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f" }
-quire-core = { git = "https://github.com/akiselev/quire", rev = "ed0665bdb50a8a3b4b8fd8d20bd9bbde43f18f9f" }
+skelter_quire = { git = "https://github.com/akiselev/quire", rev = "388670c3f1d0a953592c6c96c5bd0d1a12f03a46" }
+quire-core = { git = "https://github.com/akiselev/quire", rev = "388670c3f1d0a953592c6c96c5bd0d1a12f03a46" }
 
 # QuickJS is C compiled by the cc crate; at the dev profile's opt-level 0 it runs 5-10x slower, which
 # makes JS-heavy tests (10k-row lists) hit the host's turn budget. Optimise it in every profile.

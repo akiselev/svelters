@@ -15,7 +15,9 @@ pub mod w {
     pub const TEXT_EDIT: KindId = KindId::of("text-edit");
     pub const SCROLL: KindId = KindId::of("scroll-area");
     pub const SELECT: KindId = KindId::of("select");
-    pub const CODE_EDITOR: KindId = KindId::of("code-editor");
+    /// The source pane: quire's `code-editor` registered under its own tag, so a host's `code-editor`
+    /// can sit beside it.
+    pub const GALLERY_SOURCE: KindId = KindId::of("gallery-source");
 
     pub const LABEL_TEXT: PropId = PropId::of("label", "text", "string");
     pub const LABEL_CLICKABLE: PropId = PropId::of("label", "clickable", "bool");
@@ -31,7 +33,7 @@ pub mod w {
     pub const SCROLL_DIRECTION: PropId = PropId::of("scroll-area", "direction", "enum");
     pub const SELECT_OPTIONS: PropId = PropId::of("select", "options", "list");
     pub const SELECT_SELECTED: PropId = PropId::of("select", "selected", "int");
-    pub const EDITOR_BUFFER: PropId = PropId::of("code-editor", "buffer", "string");
+    pub const EDITOR_BUFFER: PropId = PropId::of("gallery-source", "buffer", "string");
 
     pub const CLICKED: SignalId = SignalId::of("button", "clicked", "void");
     pub const LABEL_CLICKED: SignalId = SignalId::of("label", "clicked", "void");

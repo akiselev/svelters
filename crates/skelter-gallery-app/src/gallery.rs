@@ -191,7 +191,8 @@ fn stamp(p: &Path) -> Option<(std::time::SystemTime, u64)> {
 
 /// The kinds the gallery's document registers and JS sees: svelters' built-ins (what the app runner
 /// registers), the host's (`Kinds::with_app`, as `skelter_gallery::Renderer` builds them), and
-/// quire's `code-editor` for the source pane.
+/// quire's `code-editor` under the tag `gallery-source` for the source pane, so a host's own
+/// `code-editor` kind and the pane live side by side.
 pub fn kinds(ext: &Extensions) -> Result<Arc<Kinds>, String> {
     let failed: RefCell<Option<String>> = RefCell::new(None);
     let kinds = Kinds::with_app(&svelters_skelter::surface::builtin(), |reg| {
@@ -201,8 +202,8 @@ pub fn kinds(ext: &Extensions) -> Result<Arc<Kinds>, String> {
                 break;
             }
         }
-        if reg.by_name("code-editor").is_none() {
-            reg.register::<skelter_quire::kind::CodeEditorKind>()?;
+        if reg.by_name("gallery-source").is_none() {
+            skelter_quire::kind::CodeEditorKind::register_as(reg, "gallery-source")?;
         }
         Ok(())
     })
@@ -214,7 +215,7 @@ pub fn kinds(ext: &Extensions) -> Result<Arc<Kinds>, String> {
 }
 
 /// The gallery's own kind: the source pane's editor, which no story needs to cover.
-const CHROME_KINDS: &[&str] = &["code-editor"];
+const CHROME_KINDS: &[&str] = &["gallery-source"];
 
 /// Every story that parses under `roots`, and the errors of the rest: one bad `story.toml` hides
 /// only itself (`skelter_gallery::discover` refuses the whole catalog, as the CLI's `check` wants).
@@ -1238,12 +1239,9 @@ fn build(ui: &mut Ui<'_>) -> Nodes {
     ui.anchor(save, "save");
     let revert = ui.button(head, "Revert");
     ui.anchor(revert, "revert");
-    // G2: a host's own `code-editor` replaces quire's (one registry, one tag): say so rather
-    // than show an empty pane
-    let shadowed = ui.doc.registry().by_name("code-editor").is_some_and(|k| !std::ptr::eq(k.spec, &skelter_quire::kind::SPEC));
-    let errors = ui.label(right, if shadowed { SHADOWED } else { "" }, &["gal-error"]);
+    let errors = ui.label(right, "", &["gal-error"]);
     ui.anchor(errors, "source-errors");
-    let editor = ui.node(Some(right), w::CODE_EDITOR, &[], "flex-grow: 3; flex-shrink: 1; flex-basis: 0; min-height: 120px");
+    let editor = ui.node(Some(right), w::GALLERY_SOURCE, &[], "flex-grow: 3; flex-shrink: 1; flex-basis: 0; min-height: 120px");
     ui.aria_label(editor, "Source");
     ui.anchor(editor, "source");
     let (_, inspect) = ui.scroll(right, "flex-grow: 2; flex-shrink: 1; flex-basis: 0; min-height: 120px; border-top: 1px solid var(--vscode-panel-border)");
@@ -1253,9 +1251,6 @@ fn build(ui: &mut Ui<'_>) -> Nodes {
     let _ = (save, revert, filter);
     Nodes { root, bar, side, filter, list, cells, title, file, errors, editor, inspect }
 }
-
-/// The source pane's notice when a host's kind took the `code-editor` tag.
-pub const SHADOWED: &str = "The source pane is off: this host registers its own <code-editor>, which replaces the gallery's. Edit the variant file on disk; the file watcher reloads it.";
 
 /// `node` is `frame` or under it.
 fn is_within(d: &Document, node: NodeId, frame: NodeId) -> bool {

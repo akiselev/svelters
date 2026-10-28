@@ -1,6 +1,6 @@
 //! cadatomic's requests in the app (POL1-GALLERY): G1 frame hooks and G6 the backend hook run in
-//! the app's loop, G2 a host's `code-editor` turns the source pane off with a notice instead of an
-//! empty pane, G5 a host theme's tokens come from its own base.
+//! the app's loop, G2 a host's own `code-editor` and the gallery's source pane (quire's editor under
+//! `gallery-source`) work in one app, G5 a host theme's tokens come from its own base.
 
 use skelter_base::accesskit::Role;
 use skelter_core::{Kind, KindRegistry, Value};
@@ -69,11 +69,27 @@ fn source_notice(h: &Harness<GalleryDocument>) -> Option<String> {
 }
 
 #[test]
-fn g2_a_hosts_code_editor_turns_the_source_pane_off_with_a_notice() {
-    let quiet = gallery(Extensions::new().story_root(fixture("g2-quire")));
-    assert_eq!(source_notice(&quiet).as_deref(), Some(""), "quire's editor: no notice");
-    let h = gallery(Extensions::new().story_root(fixture("g2-host")).kinds(host_editor));
-    assert_eq!(source_notice(&h).as_deref(), Some(skelter_gallery_app::gallery::SHADOWED));
+fn g2_a_hosts_code_editor_and_the_source_pane_work_in_one_app() {
+    let mut h = gallery(Extensions::new().story_root(fixture("g2-host")).kinds(host_editor));
+    {
+        let g = &h.state().gallery;
+        let mut d = g.document().borrow_mut();
+        let reg = d.registry().clone();
+        assert!(reg.by_name("code-editor").is_some_and(|k| std::ptr::eq(k.spec, &HOST_EDITOR)), "the host's kind keeps its tag");
+        assert!(reg.by_name("gallery-source").is_some(), "the source pane's kind is there too");
+        let host = d.create(skelter_core::KindId::of("code-editor"));
+        assert_eq!(d.view(host).map(|v| v.kind().spec.name), Some("code-editor"), "the host's editor mounts");
+        let src = d.query().anchor("source").first().expect("the source pane");
+        assert_eq!(d.view(src).map(|v| v.kind().spec.name), Some("gallery-source"));
+    }
+    assert_eq!(source_notice(&h).as_deref(), Some(""), "no notice");
+    h.get_by_author_id("story:button").click();
+    h.run();
+    let g = &h.state().gallery;
+    let d = g.document().borrow();
+    let src = d.query().anchor("source").first().unwrap();
+    let buffer = d.get_prop(src, skelter_core::PropId::of("gallery-source", "buffer", "string"));
+    assert!(matches!(buffer, Some(Value::Str(ref s)) if !s.is_empty()), "the pane shows the variant's source: {buffer:?}");
 }
 
 #[test]

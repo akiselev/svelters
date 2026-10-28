@@ -279,6 +279,38 @@ impl Kind for Sel {
     }
 }
 
+const FLD: KindId = KindId::of("fld");
+const FLD_VALUE: PropId = PropId::of("fld", "value", "number");
+
+static FLD_SPEC: KindSpec = KindSpec {
+    props: &[PropSpec::new("value", ValueType::F64, ChangeClass::Paint).default(PropDefault::F64(0.0))],
+    ..KindSpec::new("fld")
+};
+
+/// A field whose prop write sets `:invalid` (a negative value) from `prop_changed`; a NaN write
+/// sets the bit and is then rejected.
+#[derive(Default)]
+struct Fld;
+
+impl Kind for Fld {
+    fn spec() -> &'static KindSpec {
+        &FLD_SPEC
+    }
+    fn prop_changed(&mut self, cx: &mut PropCx, prop: PropId, value: Option<&Value>) -> Result<(), crate::PropError> {
+        if prop == FLD_VALUE {
+            let v = value.and_then(Value::as_f64).unwrap_or(0.0);
+            cx.set_state(StateMask::INVALID, v < 0.0 || v.is_nan());
+            if v.is_nan() {
+                return Err(crate::PropError::Unknown(prop));
+            }
+        }
+        Ok(())
+    }
+    fn record(&self, cx: &mut RecordCx) {
+        cx.draw_box();
+    }
+}
+
 fn hdoc() -> (Document, NodeId) {
     let mut r = KindRegistry::new();
     r.register::<testkinds::BoxKind>().unwrap();
@@ -290,6 +322,7 @@ fn hdoc() -> (Document, NodeId) {
     r.register::<Lbl>().unwrap();
     r.register::<Pop>().unwrap();
     r.register::<Sel>().unwrap();
+    r.register::<Fld>().unwrap();
     let mut d = Document::new(Arc::new(r), Box::new(FixedText));
     d.set_text_shaper(Box::new(FixedText));
     let root = d.create_window(W, BOX, Size::new(200.0, 100.0), Scale(2.0));
@@ -321,6 +354,21 @@ fn part_styles_inherit_from_the_node_and_follow_part_rules() {
     frame(&mut d);
     let blue = d.view(deck).unwrap().part("caption").and_then(|c| c.get("color").cloned());
     assert_ne!(red, blue, "`:hover::part()` restyles the part with its host");
+}
+
+/// cadatomic gal2 S1: a prop write sets state bits through `PropCx::set_state`; a rejected write's
+/// bits are dropped with it.
+#[test]
+fn a_prop_write_sets_state_from_prop_changed() {
+    let (mut d, root) = hdoc();
+    let f = child(&mut d, root, FLD, "");
+    assert!(!d.state(f).contains(StateMask::INVALID));
+    d.set_prop(f, FLD_VALUE, Value::F64(-1.0)).unwrap();
+    assert!(d.state(f).contains(StateMask::INVALID), "`:invalid` from the write");
+    d.set_prop(f, FLD_VALUE, Value::F64(2.0)).unwrap();
+    assert!(!d.state(f).contains(StateMask::INVALID), "cleared by the next write");
+    assert!(d.set_prop(f, FLD_VALUE, Value::F64(f64::NAN)).is_err());
+    assert!(!d.state(f).contains(StateMask::INVALID), "a rejected write sets no state");
 }
 
 #[test]
