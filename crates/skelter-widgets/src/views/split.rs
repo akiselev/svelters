@@ -416,6 +416,9 @@ pub struct SplitView {
     now: Time,
     /// The pane count core last laid out ([`Kind::child_layout`] sees it; [`Kind::prepare`] needs it).
     panes: Cell<usize>,
+    /// Horizontal and `rtl` (at the last restyle): the first pane is at the right (core's flex row
+    /// mirrors), so the sashes, the pointer and Left/Right are mirrored too.
+    rtl: Cell<bool>,
 }
 
 /// How one pane takes its share of the main axis ([`SplitView::weights`]).
@@ -452,6 +455,7 @@ impl Default for SplitView {
             ghost: None,
             now: Time::ZERO,
             panes: Cell::new(0),
+            rtl: Cell::new(false),
         }
     }
 }
@@ -737,6 +741,7 @@ impl Kind for SplitView {
     /// A flex row (column when vertical) with the sash lines as gaps; the panes are placed by
     /// [`Kind::child_layout`].
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        self.rtl.set(!self.vertical && cx.is_rtl());
         let mut s = cx.default_layout();
         s.display = taffy::Display::Flex;
         s.flex_direction = if self.vertical { taffy::FlexDirection::Column } else { taffy::FlexDirection::Row };
@@ -790,13 +795,14 @@ impl Kind for SplitView {
         let ax = self.axis();
         let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme, inherited: cx.style.inherited };
         let mut pc = PaintCx::of(cx);
+        let m = |r: Rect| if self.rtl.get() { Rect::new(self.size.w - r.max.x, r.min.y, self.size.w - r.min.x, r.max.y) } else { r };
         for k in 0..self.sashes.len() {
-            let (line, _) = self.sash_rects(k);
+            let line = m(self.sash_rects(k).0);
             record_sash(&mut pc, &styles, line, ax, self.resizable && self.sashes[k].hover_shown(self.now), self.sashes[k].dragging());
         }
         if let Some((k, size)) = self.ghost {
             let at = self.laid[..k].iter().sum::<f32>() + self.line * k as f32 + size;
-            let g = if ax == 0 { Rect::new(at - 1.0, 0.0, at + 1.0, self.size.h) } else { Rect::new(0.0, at - 1.0, self.size.w, at + 1.0) };
+            let g = m(if ax == 0 { Rect::new(at - 1.0, 0.0, at + 1.0, self.size.h) } else { Rect::new(0.0, at - 1.0, self.size.w, at + 1.0) });
             let host = StyleView::new(styles.computed, Ua::NONE, styles.state, styles.dark).with_theme(styles.theme).with_inherited(styles.inherited);
             let guide = host.part(styles.part_css("guide"), GUIDE_UA);
             paint::paint_box(&mut pc, &guide, g);
@@ -818,6 +824,24 @@ impl Kind for SplitView {
             Event::CaptureLost => {
                 synthetic = Event::Pointer(leave_event(PointerPhase::Cancel));
                 &synthetic
+            }
+            e => e,
+        };
+        // `rtl`: the sashes work in the left-to-right geometry, so the pointer and Left/Right are
+        // mirrored into it
+        let mirrored;
+        let ev = match ev {
+            Event::Pointer(p) if self.rtl.get() => {
+                let mut p = p.clone();
+                p.pos.x = self.size.w - p.pos.x;
+                mirrored = Event::Pointer(p);
+                &mirrored
+            }
+            Event::Key(k) if self.rtl.get() && matches!(k.key, Some(Key::ArrowLeft | Key::ArrowRight)) => {
+                let mut k = k.clone();
+                k.key = if k.key == Some(Key::ArrowLeft) { Some(Key::ArrowRight) } else { Some(Key::ArrowLeft) };
+                mirrored = Event::Key(k);
+                &mirrored
             }
             e => e,
         };

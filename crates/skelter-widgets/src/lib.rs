@@ -6,6 +6,7 @@
 
 pub mod controls;
 pub mod dialogs;
+pub mod dir;
 pub mod dnd;
 pub mod host;
 pub mod interact;

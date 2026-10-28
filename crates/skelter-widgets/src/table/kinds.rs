@@ -271,6 +271,10 @@ pub struct TableKind {
     off: Vec2,
     /// The laid-out size (as of the last prepare).
     size: Size,
+    /// The table's direction is `rtl` (at the last prepare): the model lays out left to right and the
+    /// kind mirrors it in its box (columns from the right, the sort arrow at a header's left, the
+    /// vertical bar at the left; `crate::dir`), the pointer and Left/Right too.
+    rtl: bool,
     /// The last event's time (the clock `record` lacks).
     now: Time,
     /// The cell being edited.
@@ -446,6 +450,10 @@ impl TableKind {
             let host = crate::paint::StyleView::new(styles.computed, crate::paint::Ua::NONE, styles.state, styles.dark);
             crate::paint::paint_inset_shadows(&mut pc, &host, self.table.geom().body);
             self.scroller.record_bars(&mut pc, &styles, alpha, classic);
+        }
+        if self.rtl {
+            crate::dir::mirror_items(&mut list.items, self.size.w);
+            list.bounds = crate::dir::flip_rect(list.bounds, self.size.w);
         }
         let bounds = list.bounds;
         for item in list.items {
@@ -649,6 +657,7 @@ impl Kind for TableKind {
             self.set_policy(p);
         }
         self.size = node.size();
+        self.rtl = crate::shim::core::node_rtl(&node);
         self.table.set_viewport(self.size, self.off);
         self.clamp_off();
         self.table.set_viewport(self.size, self.off);
@@ -682,6 +691,8 @@ impl Kind for TableKind {
             && let Some(k) = shown.iter().position(|&d| d == edit.data)
         {
             let (cr, _) = g.cell_rect(edit.pos, k);
+            // the editor works in the box's own (physical) space
+            let cr = if self.rtl { crate::dir::flip_rect(cr, self.size.w) } else { cr };
             edit.rect = cr;
             let pad = self.look.cell_padding;
             let content = Rect::new(cr.min.x + pad, cr.min.y, (cr.max.x - pad).max(cr.min.x + pad), cr.max.y);
@@ -696,7 +707,8 @@ impl Kind for TableKind {
     }
 
     fn record(&self, cx: &mut RecordCx) {
-        record_core(cx, |p, list| self.table.record(&self.look, p, list, self.now));
+        let (rtl, w) = (self.rtl, self.size.w);
+        record_core(cx, |p, list| crate::dir::record_mirrored(list, p, rtl, w, |p, list| self.table.record(&self.look, p, list, self.now)));
         if let Some(edit) = &self.edit {
             // the field over the cell's own text
             let q = skelter_base::display::Quad {
@@ -724,6 +736,44 @@ impl Kind for TableKind {
         if let Some(h) = self.edit_event(cx, ev) {
             return h;
         }
+        // `rtl`: the model and the bars work left to right, so the pointer and Left/Right are
+        // mirrored into that space (the cell editor above took physical input)
+        let (pq, kq, wq);
+        let mirrored;
+        let ev = match ev {
+            _ if !self.rtl => ev,
+            Event::PointerDown(p) | Event::PointerMove(p) | Event::PointerUp(p) => {
+                let mut q = (*p).clone();
+                q.local.x = crate::dir::flip_x(q.local.x, self.size.w);
+                pq = q;
+                mirrored = match ev {
+                    Event::PointerDown(_) => Event::PointerDown(&pq),
+                    Event::PointerMove(_) => Event::PointerMove(&pq),
+                    _ => Event::PointerUp(&pq),
+                };
+                &mirrored
+            }
+            Event::Key(k) if matches!(k.key, Some(skelter_base::key::Key::ArrowLeft | skelter_base::key::Key::ArrowRight)) => {
+                use skelter_base::key::Key;
+                let mut k = (*k).clone();
+                k.key = if k.key == Some(Key::ArrowLeft) { Some(Key::ArrowRight) } else { Some(Key::ArrowLeft) };
+                kq = k;
+                mirrored = Event::Key(&kq);
+                &mirrored
+            }
+            Event::Wheel(w) => {
+                let mut w = (*w).clone();
+                w.delta = match w.delta {
+                    ScrollDelta::Lines(v) => ScrollDelta::Lines(Vec2::new(-v.x, v.y)),
+                    ScrollDelta::Pixels(v) => ScrollDelta::Pixels(Vec2::new(-v.x, v.y)),
+                    ScrollDelta::Pages(v) => ScrollDelta::Pages(Vec2::new(-v.x, v.y)),
+                };
+                wq = w;
+                mirrored = Event::Wheel(&wq);
+                &mirrored
+            }
+            e => e,
+        };
         if let Some(h) = self.bar_event(cx, ev) {
             return h;
         }
@@ -831,6 +881,8 @@ impl Kind for TableKind {
     fn a11y(&self, cx: &mut A11yCx) {
         use skelter_base::accesskit::{Action, Node, SortDirection};
         cx.default_a11y();
+        let (rtl, w) = (self.rtl, self.size.w);
+        let ax = |r: Rect| ax_rect(if rtl { crate::dir::flip_rect(r, w) } else { r });
         cx.out.set_role(Role::Table);
         let t = &self.table;
         let len = t.state.len();
@@ -841,7 +893,7 @@ impl Kind for TableKind {
         let cols: Vec<usize> = g.visible_cols().collect();
         let mut targets = Vec::new();
         let mut head = Node::new(Role::Row);
-        head.set_bounds(ax_rect(g.head));
+        head.set_bounds(ax(g.head));
         if let Some(hi) = cx.add_virtual_child(head) {
             targets.push(A11yTarget::HeaderRow);
             for &k in &cols {
@@ -851,7 +903,7 @@ impl Kind for TableKind {
                 let mut n = Node::new(Role::ColumnHeader);
                 n.set_label(col.title.as_str());
                 n.set_column_index(k);
-                n.set_bounds(ax_rect(r.intersect(&clip)));
+                n.set_bounds(ax(r.intersect(&clip)));
                 match t.state.shown_sort(d, col) {
                     "ascending" => n.set_sort_direction(SortDirection::Ascending),
                     "descending" => n.set_sort_direction(SortDirection::Descending),
@@ -871,7 +923,7 @@ impl Kind for TableKind {
             let texts: Vec<&str> = shown.iter().filter_map(|&d| t.state.cell(pos, d)).filter(|s| !s.is_empty()).collect();
             let mut row = Node::new(Role::Row);
             row.set_row_index(pos as usize);
-            row.set_bounds(ax_rect(g.row_rect(pos).intersect(&g.body)));
+            row.set_bounds(ax(g.row_rect(pos).intersect(&g.body)));
             match texts.is_empty() {
                 false => row.set_label(texts.join(" ")),
                 true => {
@@ -895,7 +947,7 @@ impl Kind for TableKind {
                 }
                 n.set_row_index(pos as usize);
                 n.set_column_index(k);
-                n.set_bounds(ax_rect(r.intersect(&clip)));
+                n.set_bounds(ax(r.intersect(&clip)));
                 n.set_selected(selected);
                 n.add_action(Action::Click);
                 if cx.add_virtual_child_of(ri, n).is_none() {
@@ -1003,7 +1055,7 @@ mod tests {
         assert_eq!(d.focused(crate::testdoc::W), Some(t));
         let c = frame(&mut d).expect("a commit");
         assert_eq!(named(&c), Some(Some((Role::Row, Some("r0 x".into())))));
-        for (k, want) in [(Key::ArrowDown, "r1 x"), (Key::ArrowDown, "r2 x"), (Key::Home, "r0 x")] {
+        for (k, want) in [(skelter_base::key::Key::ArrowDown, "r1 x"), (skelter_base::key::Key::ArrowDown, "r2 x"), (Key::Home, "r0 x")] {
             d.dispatch(&key(k, None));
             let c = frame(&mut d).expect("a commit");
             assert_eq!(named(&c), Some(Some((Role::Row, Some(want.into())))), "after {k:?}");
@@ -1110,7 +1162,7 @@ mod tests {
         // Tab commits (no editable cell after it: the edit ends)
         send(&mut d, &mut commits, Key::F2, None);
         // Right collapses the selection to its end on every platform (End moves nothing on macOS)
-        send(&mut d, &mut commits, Key::ArrowRight, None);
+        send(&mut d, &mut commits, skelter_base::key::Key::ArrowRight, None);
         send(&mut d, &mut commits, Key::A, Some("!"));
         send(&mut d, &mut commits, Key::Tab, None);
         assert_eq!(commits.last().and_then(|c| c.field("value")), Some(&Value::from("xz!")));
