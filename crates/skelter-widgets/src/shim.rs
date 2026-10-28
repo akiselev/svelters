@@ -287,7 +287,22 @@ pub mod core {
         pub theme: Option<&'a crate::theme::Theme>,
     }
 
+    /// The computed `direction` is `rtl` (POL4-DIR-WIDGETS; `false` with no computed style).
+    pub fn computed_rtl(c: Option<&ComputedStyle>) -> bool {
+        matches!(c.and_then(|c| svelters_style::overlay_get(c, &[], "direction")), Some(svelters_style::ComputedValue::Keyword("rtl")))
+    }
+
+    /// A live node's inline direction is right to left (kinds that read skelter-core's
+    /// `NodeView` directly).
+    pub fn node_rtl(v: &skelter_core::NodeView<'_>) -> bool {
+        v.is_rtl()
+    }
+
     impl StyleCx<'_> {
+        /// The node's inline direction is right to left.
+        pub fn is_rtl(&self) -> bool {
+            computed_rtl(self.computed)
+        }
         /// The layout style the cascade gives (CSS over the kind's defaults).
         pub fn default_layout(&self) -> taffy::Style {
             self.base.clone().unwrap_or_default()
@@ -314,6 +329,10 @@ pub mod core {
     }
 
     impl<'a> Styles<'a> {
+        /// The node's inline direction is right to left (its computed `direction`).
+        pub fn is_rtl(&self) -> bool {
+            computed_rtl(self.computed)
+        }
         pub fn part_css(&self, name: &str) -> Option<&'a ComputedStyle> {
             self.parts.iter().find(|(n, _)| *n == name).map(|(_, c)| *c)
         }
@@ -940,11 +959,20 @@ pub mod text {
         /// Cut the last line with `…` when it does not fit.
         pub ellipsis: bool,
         pub max_lines: Option<u32>,
+        /// The box is right to left: the paragraph's base direction is `rtl` (where `Start` is and
+        /// how mixed runs order); `false`: `ltr`. The box's resolved direction is always the base
+        /// (coordinator, 2026-10-28, dir-core Q1); `dir="auto"` resolves it from the content.
+        pub rtl: bool,
     }
 
     impl RichText {
         pub fn plain(text: &str, base: TextStyle) -> RichText {
             RichText { text: text.to_owned(), base, ..RichText::default() }
+        }
+        /// With the box's direction ([`RichText::rtl`]).
+        pub fn in_dir(mut self, rtl: bool) -> RichText {
+            self.rtl = rtl;
+            self
         }
     }
 

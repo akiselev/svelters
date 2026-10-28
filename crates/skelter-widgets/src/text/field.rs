@@ -191,6 +191,9 @@ pub struct TextField {
     /// The accessibility node is stale (text, selection, preedit, scroll or layout changed; never a
     /// caret blink).
     a11y_changed: bool,
+    /// The field's direction is `rtl` (its kind sets it): an unwrapped line starts at the right
+    /// whatever its text, an empty field's caret too.
+    pub rtl: bool,
 }
 
 impl TextField {
@@ -217,6 +220,7 @@ impl TextField {
             selection_painted: false,
             ranges: TextRanges::default(),
             a11y_changed: true,
+            rtl: false,
         }
     }
 
@@ -423,16 +427,18 @@ impl TextField {
         self.scroll = c;
     }
 
-    /// Where the layout starts in the content box: 0, or for unwrapped right-to-left text narrower
-    /// than the box, the room left of it, so the text starts at the right (the paragraph's start, as a
-    /// wrapped field aligns it; `dir=auto`). One point is kept for the caret, as on the left.
+    /// Where the layout starts in the content box: 0, or for unwrapped right-to-left text (or any
+    /// text in an `rtl` field) narrower than the box, the room left of it, so the text starts at the
+    /// right (the paragraph's start, as a wrapped field aligns it; `dir=auto`). One point is kept for
+    /// the caret, as on the left.
     fn align_x(&self) -> f32 {
         if self.wrap_width().is_some() {
             return 0.0;
         }
         let g = if self.shown.text.is_empty() { self.placeholder_geom.as_ref() } else { self.geom.as_ref() };
         match g {
-            Some(g) if g.is_rtl() => (self.content.width() - g.size().w - 1.0).max(0.0),
+            Some(g) if g.is_rtl() || self.rtl => (self.content.width() - g.size().w - 1.0).max(0.0),
+            None if self.rtl => (self.content.width() - 1.0).max(0.0),
             _ => 0.0,
         }
     }
@@ -804,7 +810,7 @@ impl TextField {
         let mut runs = Vec::with_capacity(w.len());
         for (k, r) in ranges.runs[w.clone()].iter().enumerate() {
             let mut n = accesskit::Node::new(accesskit::Role::TextRun);
-            n.set_text_direction(accesskit::TextDirection::LeftToRight);
+            n.set_text_direction(if self.rtl { accesskit::TextDirection::RightToLeft } else { accesskit::TextDirection::LeftToRight });
             let b = r.rect.translate(o);
             n.set_bounds(accesskit::Rect { x0: b.min.x as f64, y0: b.min.y as f64, x1: b.max.x as f64, y1: b.max.y as f64 });
             n.set_value(r.text.clone());

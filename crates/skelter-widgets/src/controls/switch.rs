@@ -5,7 +5,8 @@
 //! VS Code has no switch, so its look follows the user's Q4 decision: DESIGN R1–R18 with Fluent 2
 //! metrics on the VS Code tokens (40×20 track, radius 10, 12 px knob that grows to 14 on hover).
 //! R17: the state shows by fill **and** knob position, not colour alone: off is a bordered track
-//! with an `fg` knob on the left, on is the accent fill with an `accent-fg` knob on the right.
+//! with an `fg` knob on the left, on is the accent fill with an `accent-fg` knob on the right (mirrored in
+//! `rtl`: on at the left).
 //! The knob is drawn at its end position (as under reduced motion); its slide is a CSS
 //! `transition` on the part once skelter's animation engine runs part transitions.
 //! Signals: `changed(active)`, `clicked`.
@@ -87,7 +88,8 @@ pub fn paint(pc: &mut PaintCx, host: &StyleView<'_>, parts: &[(&'static str, &Co
     checkbox::paint_indicator(pc, host, parts, rect, IND, text, "", |pc, host, tr| {
         let knob = checkbox::part_with(host, knob_css, KNOB, false);
         let d = checkbox::part_size(host, KNOB, 12.0).x.min(tr.height());
-        let t = if active { 1.0 } else { 0.0 };
+        // on is the inline end: the right, or the left in `rtl` (the platforms' RTL switches)
+        let t = if active != host.is_rtl() { 1.0 } else { 0.0 };
         let inset = tr.height() / 2.0;
         let (x0, x1) = (tr.min.x + inset, tr.max.x - inset);
         let x = x0 + (x1 - x0) * t;

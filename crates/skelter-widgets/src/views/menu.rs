@@ -29,7 +29,7 @@
 
 use super::common::{emit, ms, platform};
 use super::menu_model::{Check, Entry, EntryIx, EntryKind, KeyIn, MenuModel, MenuNav, MenuOut, Picked, shortcut_text};
-use super::placement::{AnchorParams, Placement, place};
+use super::placement::{self, AnchorParams, Placement, Side, place};
 use crate::controls::common::host_view;
 use crate::interact::{Platform, StateBits};
 use crate::paint::{self, Align, Elide, PaintCx, StyleView, Ua, UaRule, UaValue::{Keyword, Px, Token}};
@@ -233,6 +233,13 @@ pub struct Menus {
     last_pointer: Option<Point>,
     /// Where the press that opened the menu was: a release there is not a pick.
     press_origin: Option<Point>,
+    /// The root's direction is `rtl` (at the last prepare): the bar's titles run from the right,
+    /// a menu opens toward the inline start (`bottom-end`), submenus open to the left, rows put
+    /// the check column at the right and the chevron (pointing left) at the left, and the arrow
+    /// keys swap.
+    pub rtl: bool,
+    /// The root's width at the last prepare (the bar's titles start at its right in `rtl`).
+    pub width: f32,
 }
 
 impl Menus {
@@ -340,6 +347,7 @@ impl Menus {
 
     /// Lays out the bar's titles and the open levels (after input, before recording).
     pub fn prepare(&mut self, text: &mut dyn TextShaper, style: &Styles) {
+        self.rtl = style.is_rtl();
         with_views(style, self.ua(), |v| self.prepare_with(text, v));
     }
 
@@ -351,25 +359,32 @@ impl Menus {
             let mut x = mt.bar_pad;
             for t in self.model.rows(MenuModel::ROOT) {
                 let w = paint::measure_text(text, &v.title, &self.model.get(t).label, None).w + mt.title_pad_x * 2.0;
-                self.titles.push((t, Rect::new(x, mt.bar_pad, x + w, mt.bar_pad + mt.title_h)));
+                let r = if self.rtl { Rect::new(self.width - x - w, mt.bar_pad, self.width - x, mt.bar_pad + mt.title_h) } else { Rect::new(x, mt.bar_pad, x + w, mt.bar_pad + mt.title_h) };
+                self.titles.push((t, r));
                 x += w;
             }
         }
         self.levels.clear();
+        // `rtl`: a menu's inline start is the anchor's right edge, a submenu goes to the left
+        let (first, sub) = if self.rtl {
+            (Placement { side: Side::Bottom, align: placement::Align::End }, Placement { side: Side::Left, align: placement::Align::Start })
+        } else {
+            (Placement::BOTTOM_START, Placement::RIGHT_START)
+        };
         for k in 0..self.nav.levels.len() {
             let container = self.nav.levels[k].container;
             let (anchor, placement, cross) = if k == 0 {
                 match (self.bar, self.point) {
                     (true, _) => match self.titles.iter().find(|(t, _)| *t == container) {
-                        Some((_, r)) => (*r, Placement::BOTTOM_START, 0.0),
+                        Some((_, r)) => (*r, first, 0.0),
                         None => break,
                     },
-                    (false, Some(p)) => (Rect::from_origin_size(p, Size::ZERO), Placement::BOTTOM_START, 0.0),
-                    (false, None) => (Rect::ZERO, Placement::BOTTOM_START, 0.0),
+                    (false, Some(p)) => (Rect::from_origin_size(p, Size::ZERO), first, 0.0),
+                    (false, None) => (Rect::ZERO, first, 0.0),
                 }
             } else {
                 match self.levels[k - 1].rows.iter().find(|(r, _)| *r == container) {
-                    Some((_, r)) => (*r, Placement::RIGHT_START, -mt.pad),
+                    Some((_, r)) => (*r, sub, -mt.pad),
                     None => break,
                 }
             };
@@ -420,7 +435,7 @@ impl Menus {
             size: Size::new(w.max(mt.min_w), h),
             bounds: self.bounds,
             placement,
-            gap: if placement == Placement::RIGHT_START { 0.0 } else { 2.0 },
+            gap: if !placement.side.vertical() { 0.0 } else { 2.0 },
             cross,
             fit: true,
             ..AnchorParams::default()
@@ -579,7 +594,13 @@ impl Menus {
 
     /// A key; `true` when used.
     pub fn key(&mut self, cx: &EventCx<'_>, ev: &skelter_base::event::KeyEvent, out: &mut Vec<MenuOut>) -> bool {
-        let k = KeyIn { key: ev.key, text: ev.text.as_deref(), state: ev.state, modifiers: ev.modifiers, now: cx.now };
+        // `rtl`: the arrows swap (Left opens a submenu and moves to the next title)
+        let key = match ev.key {
+            Some(Key::ArrowLeft) if self.rtl => Some(Key::ArrowRight),
+            Some(Key::ArrowRight) if self.rtl => Some(Key::ArrowLeft),
+            k => k,
+        };
+        let k = KeyIn { key, text: ev.text.as_deref(), state: ev.state, modifiers: ev.modifiers, now: cx.now };
         // Shift+F10 and the Menu key open a context menu from the keyboard
         if !self.bar && !self.nav.is_open() && ev.state == KeyState::Pressed && (ev.key == Some(Key::Menu) || (ev.key == Some(Key::F10) && ev.modifiers == Modifiers::SHIFT)) {
             self.open_at(Point::ZERO, true, out);
@@ -668,9 +689,13 @@ impl Menus {
         let fg = iv.color("color").unwrap_or(skelter_base::color::Color::BLACK);
         let mut x = g.content.min.x;
         let cy = (rr.min.y + rr.max.y) / 2.0;
+        // laid out from the left, then mirrored in the row in `rtl` (the check mark's shape stays)
+        let (rtl, mid2) = (self.rtl, g.content.min.x + g.content.max.x);
+        let fx = |x: f32| if rtl { mid2 - x } else { x };
+        let span = |a: f32, b: f32| if rtl { Rect::new(mid2 - b, rr.min.y, mid2 - a, rr.max.y) } else { Rect::new(a, rr.min.y, b, rr.max.y) };
         if l.checks {
             if e.checked {
-                let c = Point::new(x + CHECK_W / 2.0 - 3.0, cy);
+                let c = Point::new(fx(x + CHECK_W / 2.0 - 3.0), cy);
                 match e.check {
                     Check::Radio(_) => dot(pc, c, 3.0, fg),
                     _ => check_mark(pc, c, fg),
@@ -681,7 +706,7 @@ impl Menus {
         let right = g.content.max.x - if e.kind == EntryKind::Menu { CHEVRON_W } else { 0.0 };
         let shown = paint::elide(pc.text, &iv, &e.label, Elide::End, (right - x).max(0.0));
         let layout = paint::text_layout(pc.text, &iv, &shown, None);
-        let at = super::common::paint_text_in(pc, &layout, Rect::new(x, rr.min.y, right, rr.max.y), Align::Start, fg);
+        let at = super::common::paint_text_in(pc, &layout, span(x, right), Align::Start.physical(rtl), fg);
         if self.nav.keyboard && shown == e.label {
             underline(pc, &iv, &e.label, e.mnemonic_at, at, fg);
         }
@@ -689,12 +714,13 @@ impl Menus {
         if !s.is_empty() {
             let sv = iv.part(None, SHORTCUT_UA);
             let layout = paint::text_layout(pc.text, &sv, &s, None);
-            paint::paint_text(pc, &sv, &layout, Rect::new(x, rr.min.y, right, rr.max.y), Align::End);
+            paint::paint_text(pc, &sv, &layout, span(x, right), Align::End);
         }
         if e.kind == EntryKind::Menu {
+            // `>` at the end; mirrored in `rtl`: `<` at the left
             let cx = g.content.max.x - CHEVRON_W / 2.0 + 4.0;
-            stroke(pc, Point::new(cx - 2.0, cy - 4.0), Point::new(cx + 2.0, cy), 1.25, fg);
-            stroke(pc, Point::new(cx + 2.0, cy), Point::new(cx - 2.0, cy + 4.0), 1.25, fg);
+            stroke(pc, Point::new(fx(cx - 2.0), cy - 4.0), Point::new(fx(cx + 2.0), cy), 1.25, fg);
+            stroke(pc, Point::new(fx(cx + 2.0), cy), Point::new(fx(cx - 2.0), cy + 4.0), 1.25, fg);
         }
     }
 
@@ -1035,6 +1061,7 @@ impl Kind for MenuBar {
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         self.menus.sync_elements(cx.style.children);
+        self.menus.width = cx.size.w;
         self.menus.prepare(cx.text, &cx.style);
     }
     fn record(&self, cx: &mut RecordCx) {
@@ -1169,6 +1196,7 @@ impl Kind for ContextMenu {
     }
     fn prepare(&mut self, cx: &mut PrepareCx) {
         self.menus.sync_elements(cx.style.children);
+        self.menus.width = cx.size.w;
         self.menus.prepare(cx.text, &cx.style);
     }
     /// Out of flow: its levels are recorded into the overlay stack ([`Menus::record_overlay`]).

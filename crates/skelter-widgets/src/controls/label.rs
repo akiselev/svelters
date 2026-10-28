@@ -103,8 +103,9 @@ impl Look<'_> {
     /// (`wrap` wraps, a cut truncates them at the end), else the plain text (cut by measuring).
     fn paragraph(&self, shaper: &mut dyn TextShaper, s: &StyleView, width: Option<f32>) -> (RichText, Option<f32>) {
         let base = paint::text_style(s);
+        let rtl = s.is_rtl();
         if let Some(r) = self.rich {
-            let mut t = rich::rich_text(r, &base, &s.theme().fonts().mono);
+            let mut t = rich::rich_text(r, &base, &s.theme().fonts().mono).in_dir(rtl);
             if let (Some(w), true) = (width, self.wrap_mode == "truncate" || self.elision(s).is_some()) {
                 t.ellipsis = true;
                 t.max_lines = Some(1);
@@ -113,9 +114,9 @@ impl Look<'_> {
             return (t, (self.wrap_mode == "wrap").then_some(width).flatten());
         }
         match (self.elision(s), self.wrap_mode, width) {
-            (Some(mode), _, Some(w)) => (RichText::plain(&paint::elide(shaper, s, self.text, mode, w), base), None),
-            (None, "wrap", Some(w)) => (RichText::plain(self.text, base), Some(w)),
-            _ => (RichText::plain(self.text, base), None),
+            (Some(mode), _, Some(w)) => (RichText::plain(&paint::elide(shaper, s, self.text, mode, w), base).in_dir(rtl), None),
+            (None, "wrap", Some(w)) => (RichText::plain(self.text, base).in_dir(rtl), Some(w)),
+            _ => (RichText::plain(self.text, base).in_dir(rtl), None),
         }
     }
 }
@@ -151,10 +152,17 @@ pub fn place(shaper: &mut dyn TextShaper, s: &StyleView, look: &Look, r: Rect, s
     let (text, wrap) = look.paragraph(shaper, s, w);
     let layout = shaper.layout(&text, wrap.map(|w| w.max(0.0)));
     let size = layout.size();
-    let x = match Align::of(s, Align::Start) {
-        Align::Start => r.min.x,
-        Align::Center => (r.min.x + r.max.x) / 2.0 - size.w / 2.0,
-        Align::End => r.max.x - size.w,
+    let rtl = s.is_rtl();
+    // the runs' extent: a right-to-left paragraph laid out at a width sits at that width's right
+    // edge (skelter-text aligns it to its own start), so in `rtl` the ink, not the box, is placed
+    let (x0, x1) = layout.runs().iter().filter(|pr| !pr.run.glyphs.is_empty()).fold((f32::INFINITY, f32::NEG_INFINITY), |(a, b), pr| (a.min(pr.origin.x), b.max(pr.origin.x + pr.run.advance)));
+    let (x0, x1) = if x0.is_finite() { (x0, x1) } else { (0.0, size.w) };
+    let x = match (Align::of(s, Align::Start), rtl) {
+        (Align::Start, false) => r.min.x,
+        (Align::Start, true) => r.max.x - x1,
+        (Align::Center, _) => (r.min.x + r.max.x) / 2.0 - size.w / 2.0,
+        (Align::End, false) => r.max.x - size.w,
+        (Align::End, true) => r.min.x - x0,
     };
     let y = (r.min.y + r.max.y) / 2.0 - size.h / 2.0;
     let scale = if scale > 0.0 { scale } else { 1.0 };

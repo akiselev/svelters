@@ -12,7 +12,8 @@ use skelter_base::display::{Glyphs, Prim};
 use skelter_base::geom::{Point, Rect, Size};
 use std::sync::Arc;
 
-/// Horizontal placement of a layout in its box (`text-align`; `start` in LTR).
+/// Horizontal placement of a layout in its box (`text-align`), logical: `Start` is the inline start
+/// of the box (the left in `ltr`, the right in `rtl`; [`paint_text`] resolves it).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum Align {
     #[default]
@@ -22,13 +23,26 @@ pub enum Align {
 }
 
 impl Align {
-    /// `text-align` of `s`, else `default`.
+    /// `text-align` of `s`, else `default`; the physical `left`/`right` map to the logical side
+    /// they are in `s`'s direction.
     pub fn of(s: &StyleView, default: Align) -> Align {
+        let rtl = s.is_rtl();
         match s.keyword("text-align") {
             Some("center") => Align::Center,
-            Some("end" | "right") => Align::End,
-            Some("start" | "left") => Align::Start,
+            Some("end") => Align::End,
+            Some("start") => Align::Start,
+            Some("left") => if rtl { Align::End } else { Align::Start },
+            Some("right") => if rtl { Align::Start } else { Align::End },
             _ => default,
+        }
+    }
+
+    /// The physical side: `Start` and `End` swap in `rtl` (`Start` is then the right).
+    pub fn physical(self, rtl: bool) -> Align {
+        match (self, rtl) {
+            (Align::Start, true) => Align::End,
+            (Align::End, true) => Align::Start,
+            (a, _) => a,
         }
     }
 }
@@ -55,7 +69,7 @@ pub fn text_style(s: &StyleView) -> TextStyle {
 
 /// `text` laid out under `s`, wrapped at `wrap` points if given.
 pub fn text_layout(shaper: &mut dyn TextShaper, s: &StyleView, text: &str, wrap: Option<f32>) -> Arc<TextLayout> {
-    shaper.layout(&RichText::plain(text, text_style(s)), wrap.map(|w| w.max(0.0)))
+    shaper.layout(&RichText::plain(text, text_style(s)).in_dir(s.is_rtl()), wrap.map(|w| w.max(0.0)))
 }
 
 /// The size of `text` under `s`; `wrap` wraps it when given. A `line-height` in px sets the height of
@@ -71,20 +85,30 @@ pub fn measure_text(shaper: &mut dyn TextShaper, s: &StyleView, text: &str, wrap
     size
 }
 
-/// Paints `layout` in `content`: placed by `align`, vertically centred (single-line labels and
+/// Paints `layout` in `content`: placed by `align` (logical, in `s`'s direction), vertically centred (single-line labels and
 /// buttons, as VS Code), on the pixel grid, in `color` of `s`. Returns the rect it covers.
 pub fn paint_text(cx: &mut PaintCx, s: &StyleView, layout: &TextLayout, content: Rect, align: Align) -> Rect {
     let size = layout.size();
-    let x = match align {
+    let (x0, w) = ink_x(layout);
+    let x = match align.physical(s.is_rtl()) {
         Align::Start => content.min.x,
-        Align::Center => (content.min.x + content.max.x) / 2.0 - size.w / 2.0,
-        Align::End => content.max.x - size.w,
-    };
+        Align::Center => (content.min.x + content.max.x) / 2.0 - w / 2.0,
+        Align::End => content.max.x - w,
+    } - x0;
     let y = (content.min.y + content.max.y) / 2.0 - size.h / 2.0;
     let pos = cx.snap_point(Point::new(x, y));
     let color = s.color("color").unwrap_or(Color::BLACK);
     paint_runs(cx, layout, pos, &|_| color);
     Rect::from_origin_size(pos, size)
+}
+
+/// Where `layout`'s runs start and how wide they are: `(0, width)` for most layouts, but a
+/// right-to-left line laid out at a width (an elided caption) sits at that width's right edge, so
+/// placing it by its layout box would push it past the box it is aligned in (one line only: a
+/// paragraph keeps its lines' alignment).
+pub fn ink_x(layout: &TextLayout) -> (f32, f32) {
+    let (a, b) = layout.runs().iter().filter(|pr| !pr.run.glyphs.is_empty()).fold((f32::INFINITY, f32::NEG_INFINITY), |(a, b), pr| (a.min(pr.origin.x), b.max(pr.origin.x + pr.run.advance)));
+    if layout.lines <= 1 && a.is_finite() && a > 0.0 { (a, b - a) } else { (0.0, layout.size().w) }
 }
 
 /// Pushes the runs of `layout` with its top-left at `pos`, each in `color(style index)`.

@@ -157,6 +157,9 @@ pub struct InnerWindow {
     last_title_click: Option<Time>,
     /// The title bar button under the pointer (`:hover`).
     hot: Option<Zone>,
+    /// The window is right to left (at the last restyle): its title bar buttons sit at the left
+    /// (close outermost) and the heading starts at the right.
+    rtl: std::cell::Cell<bool>,
 }
 
 impl Default for InnerWindow {
@@ -169,6 +172,7 @@ impl Default for InnerWindow {
             gesture: None,
             last_title_click: None,
             hot: None,
+            rtl: std::cell::Cell::new(false),
         }
     }
 }
@@ -202,15 +206,21 @@ impl InnerWindow {
         matches!(self.gesture, Some(Gesture::Move { armed: true, .. }) | Some(Gesture::Resize { .. }))
     }
 
+    /// `r` mirrored in the frame when `rtl`.
+    fn inline(&self, r: Rect) -> Rect {
+        let f = self.frame;
+        if self.rtl.get() { Rect::new(f.min.x + f.max.x - r.max.x, r.min.y, f.min.x + f.max.x - r.min.x, r.max.y) } else { r }
+    }
+
     fn close_rect(&self) -> Option<Rect> {
         let f = self.frame;
-        self.props.closable.then(|| Rect::from_origin_size(Point::new(f.max.x - 4.0 - BUTTON, f.min.y + (TITLE_H - BUTTON) / 2.0), Size::new(BUTTON, BUTTON)))
+        self.props.closable.then(|| self.inline(Rect::from_origin_size(Point::new(f.max.x - 4.0 - BUTTON, f.min.y + (TITLE_H - BUTTON) / 2.0), Size::new(BUTTON, BUTTON))))
     }
 
     fn collapse_rect(&self) -> Option<Rect> {
         let f = self.frame;
         let right = if self.props.closable { f.max.x - 4.0 - BUTTON - 2.0 } else { f.max.x - 4.0 };
-        self.props.collapsible.then(|| Rect::from_origin_size(Point::new(right - BUTTON, f.min.y + (TITLE_H - BUTTON) / 2.0), Size::new(BUTTON, BUTTON)))
+        self.props.collapsible.then(|| self.inline(Rect::from_origin_size(Point::new(right - BUTTON, f.min.y + (TITLE_H - BUTTON) / 2.0), Size::new(BUTTON, BUTTON))))
     }
 
     /// What is under `p` (window points), if anything.
@@ -478,6 +488,7 @@ impl Kind for InnerWindow {
 
     /// The node is the frame: laid out out of flow at `x`/`y` in its parent, at the shown frame's size.
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        self.rtl.set(cx.is_rtl());
         let mut s = cx.default_layout();
         let f = self.shown_frame();
         s.position = taffy::Position::Absolute;
@@ -533,8 +544,13 @@ impl Kind for InnerWindow {
             let hair = pc.snap_width(1.0);
             line(&mut pc, Point::new(0.0, TITLE_H), Point::new(local.max.x, TITLE_H), hair, bar.color("border-color").unwrap_or(Color::TRANSPARENT));
         }
-        let title_right = self.collapse_rect().or(self.close_rect()).map_or(local.max.x, |r| r.min.x + o.x) - 8.0;
-        let row = Rect::new(8.0, 0.0, title_right.max(8.0), TITLE_H);
+        let row = if self.rtl.get() {
+            let title_left = self.collapse_rect().or(self.close_rect()).map_or(0.0, |r| r.max.x + o.x) + 8.0;
+            Rect::new(title_left.min(local.max.x - 8.0), 0.0, local.max.x - 8.0, TITLE_H)
+        } else {
+            let title_right = self.collapse_rect().or(self.close_rect()).map_or(local.max.x, |r| r.min.x + o.x) - 8.0;
+            Rect::new(8.0, 0.0, title_right.max(8.0), TITLE_H)
+        };
         let heading = paint::elide(pc.text, &bar, &self.props.heading, paint::Elide::End, row.width());
         let layout = paint::text_layout(pc.text, &bar, &heading, None);
         paint::paint_text(&mut pc, &bar, &layout, row, Align::Start);

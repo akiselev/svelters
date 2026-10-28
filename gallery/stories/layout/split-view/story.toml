@@ -21,3 +21,8 @@ file = "three.svelte"
 id = "dense"
 title = "Nested, in an editor layout"
 file = "dense.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

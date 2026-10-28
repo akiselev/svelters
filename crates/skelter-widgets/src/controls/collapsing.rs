@@ -123,6 +123,10 @@ pub struct CollapsingHeader {
     /// The header row's height as the last restyle measured it ([`Kind::chrome_padding`], which
     /// runs before the children are placed): what [`Kind::child_layout`] fits the end slot to.
     row: std::cell::Cell<f32>,
+    /// The header's direction is `rtl` (at the last restyle): the chevron at the right pointing
+    /// left when closed, the caption after it, the end slot at the left, the body indented from
+    /// the right.
+    rtl: std::cell::Cell<bool>,
     units: Units,
     hover: Hoverable,
     focus: Focusable,
@@ -186,6 +190,7 @@ impl Kind for CollapsingHeader {
     }
 
     fn layout_style(&self, cx: &StyleCx) -> Style {
+        self.rtl.set(cx.is_rtl());
         let mut s = cx.default_layout();
         let l = Layout { cx, explicit: self.explicit };
         let p = &self.props;
@@ -209,7 +214,9 @@ impl Kind for CollapsingHeader {
     fn chrome_padding(&self, cx: &mut MeasureCx) -> Option<[f32; 4]> {
         let h = self.head(&cx.style, cx.text);
         self.row.set(h.h);
-        Some([if self.props.open { h.indent } else { 0.0 }, 0.0, if self.props.open { h.h + h.gap } else { h.h }, 0.0])
+        let indent = if self.props.open { h.indent } else { 0.0 };
+        let (left, right) = if cx.style.is_rtl() { (0.0, indent) } else { (indent, 0.0) };
+        Some([left, right, if self.props.open { h.h + h.gap } else { h.h }, 0.0])
     }
 
     /// The header row's least size: its padding and the twistie (the caption elides, POL2-LAYOUT 3).
@@ -240,7 +247,9 @@ impl Kind for CollapsingHeader {
                 }
                 0.0
             };
-            style.inset = taffy::Rect { left: LengthPercentageAuto::auto(), right: LengthPercentageAuto::length(4.0), top: LengthPercentageAuto::length(top), bottom: LengthPercentageAuto::auto() };
+            let (end, start) = (LengthPercentageAuto::length(4.0), LengthPercentageAuto::auto());
+            let (left, right) = if self.rtl.get() { (end, start) } else { (start, end) };
+            style.inset = taffy::Rect { left, right, top: LengthPercentageAuto::length(top), bottom: LengthPercentageAuto::auto() };
             return true;
         }
         if !self.props.open {
@@ -265,9 +274,15 @@ impl Kind for CollapsingHeader {
         // the chevron: `>` closed, `v` open
         let twidth = tw.px("width").unwrap_or(16.0);
         let color = tw.color("color").unwrap_or(Color::TRANSPARENT);
-        let (c, s) = (Point::new(g.content.min.x + twidth / 2.0, (row.min.y + row.max.y) / 2.0), 3.0);
+        // `rtl`: the row mirrored (the chevron at the right, `<` closed)
+        let rtl = host.is_rtl();
+        let mid2 = g.content.min.x + g.content.max.x;
+        let cx0 = g.content.min.x + twidth / 2.0;
+        let (c, s) = (Point::new(if rtl { mid2 - cx0 } else { cx0 }, (row.min.y + row.max.y) / 2.0), 3.0);
         let (a, b, d) = if self.props.open {
             (Point::new(c.x - s, c.y - s / 2.0), Point::new(c.x, c.y + s / 2.0), Point::new(c.x + s, c.y - s / 2.0))
+        } else if rtl {
+            (Point::new(c.x + s / 2.0, c.y - s), Point::new(c.x - s / 2.0, c.y), Point::new(c.x + s / 2.0, c.y + s))
         } else {
             (Point::new(c.x - s / 2.0, c.y - s), Point::new(c.x + s / 2.0, c.y), Point::new(c.x - s / 2.0, c.y + s))
         };
@@ -281,6 +296,7 @@ impl Kind for CollapsingHeader {
             let text = paint::elide(pc.text, &label, &self.props.text, paint::Elide::End, w);
             let layout = paint::text_layout(pc.text, &label, &text, None);
             let tr = Rect { min: Point::new(x, row.min.y), max: Point::new(g.content.max.x.max(x), row.max.y) };
+            let tr = if rtl { Rect::new(mid2 - tr.max.x, tr.min.y, mid2 - tr.min.x, tr.max.y) } else { tr };
             paint::paint_text(&mut pc, &label, &layout, tr, Align::Start);
         }
         paint::paint_outline(&mut pc, &head_v, row);

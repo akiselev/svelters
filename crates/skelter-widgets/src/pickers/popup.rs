@@ -223,11 +223,17 @@ pub const POPUP_OFFSET: f32 = 2.0;
 /// it, start-aligned, flipped above when `bounds` (the window's room, button-local) lacks the room
 /// below, and shifted back inside `bounds`.
 pub fn place_popup(button: Size, popup: Size, bounds: Rect) -> Rect {
+    place_popup_dir(button, popup, bounds, false)
+}
+
+/// [`place_popup`] in a direction: `rtl` aligns the popup to the button's right edge.
+pub fn place_popup_dir(button: Size, popup: Size, bounds: Rect, rtl: bool) -> Rect {
+    use crate::views::placement::{Align, Side};
     place(&AnchorParams {
         anchor: Rect::from_origin_size(Point::ZERO, button),
         size: popup,
         bounds,
-        placement: Placement::BOTTOM_START,
+        placement: if rtl { Placement { side: Side::Bottom, align: Align::End } } else { Placement::BOTTOM_START },
         gap: POPUP_OFFSET,
         flip: true,
         shift: true,

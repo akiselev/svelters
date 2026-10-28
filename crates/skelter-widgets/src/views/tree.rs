@@ -79,6 +79,10 @@ pub struct TreeView {
     pub indent: f32,
     /// The collapsed node a drag hovers over, and since when.
     drag_hover: Option<(u64, Time)>,
+    /// The tree's direction is `rtl` (from its computed style at the last layout): the
+    /// disclosure column sits at the right, levels indent leftward, the chevrons point left and
+    /// the arrow keys swap (VS Code, the platforms).
+    rtl: std::cell::Cell<bool>,
 }
 
 impl Default for TreeView {
@@ -100,6 +104,7 @@ impl TreeView {
             facts: HashMap::new(),
             indent: 16.0,
             drag_hover: None,
+            rtl: std::cell::Cell::new(false),
         }
     }
 
@@ -355,6 +360,9 @@ impl TreeView {
         // `root-decorated={false}`: level 0 has no disclosure column, every level moves one indent left
         let level = r.depth.checked_sub(self.undecorated_levels())?;
         let x0 = level as f32 * self.indent;
+        if self.rtl.get() {
+            return Some(Rect::new(row.max.x - x0 - self.indent, row.min.y, row.max.x - x0, row.max.y));
+        }
         Some(Rect::new(x0, row.min.y, x0 + self.indent, row.max.y))
     }
 
@@ -426,6 +434,9 @@ impl skelter_core::VirtualChildren for TreeView {
     fn row_rect(&self, i: usize) -> Rect {
         let r = skelter_core::VirtualChildren::row_rect(&self.list, i);
         let x = self.rows.get(i).map_or(0.0, |row| (row.depth + 1).saturating_sub(self.undecorated_levels()) as f32 * self.indent);
+        if self.rtl.get() {
+            return Rect::new(r.min.x, r.min.y, (r.max.x - x).max(r.min.x), r.max.y);
+        }
         Rect::new((r.min.x + x).min(r.max.x), r.min.y, r.max.x, r.max.y)
     }
     fn content_extent(&self) -> Vec2 {
@@ -521,9 +532,11 @@ impl TreeView {
         match ev {
             Event::Key(k) if k.state == KeyState::Pressed => {
                 let m = Mods { shift: k.modifiers.contains(skelter_base::event::Modifiers::SHIFT), ctrl: k.modifiers.primary(macos) };
+                // `rtl`: the arrow toward the inline end (Left) expands, as the platforms do
+                let (expand, collapse) = if self.rtl.get() { (Key::ArrowLeft, Key::ArrowRight) } else { (Key::ArrowRight, Key::ArrowLeft) };
                 let done = match k.key {
-                    Some(Key::ArrowRight) => Some(self.right(cx, m)),
-                    Some(Key::ArrowLeft) => Some(self.left(cx, m)),
+                    Some(key) if key == expand => Some(self.right(cx, m)),
+                    Some(key) if key == collapse => Some(self.left(cx, m)),
                     _ if k.text.as_deref() == Some("*") => Some(self.expand_siblings(cx)),
                     _ => None,
                 };
@@ -698,6 +711,9 @@ impl Kind for TreeView {
             let row = self.rows[pos];
             let (a, b, d) = if row.expanded {
                 (Point::new(c.x - s, c.y - s / 2.0), Point::new(c.x, c.y + s / 2.0), Point::new(c.x + s, c.y - s / 2.0))
+            } else if self.rtl.get() {
+                // collapsed in `rtl`: `<`, pointing to the inline end
+                (Point::new(c.x + s / 2.0, c.y - s), Point::new(c.x - s / 2.0, c.y), Point::new(c.x + s / 2.0, c.y + s))
             } else {
                 (Point::new(c.x - s / 2.0, c.y - s), Point::new(c.x + s / 2.0, c.y), Point::new(c.x - s / 2.0, c.y + s))
             };
@@ -725,6 +741,8 @@ impl Kind for TreeView {
         h
     }
     fn layout_style(&self, cx: &crate::shim::core::StyleCx) -> taffy::Style {
+        self.rtl.set(cx.is_rtl());
+        self.list.bars.rtl.set(cx.is_rtl());
         super::virtual_list::scrolling_layout(cx)
     }
     fn methods() -> &'static [skelter_core::MethodSpec] {
@@ -892,6 +910,22 @@ mod tests {
         let star = Event::Key(KeyEvent { key: None, physical: 0, text: Some("*".into()), state: KeyState::Pressed, repeat: false, location: KeyLocation::Standard, modifiers: Modifiers::SHIFT });
         assert_eq!(send(&mut t, &pol, Time::ZERO, &star).handled, Handled::Yes);
         assert!(t.is_expanded(1) && t.is_expanded(2) && !t.is_expanded(3));
+    }
+
+    #[test]
+    fn rtl_puts_the_twisties_at_the_right_and_swaps_the_arrows() {
+        let pol = pol();
+        let mut t = tree();
+        t.rtl.set(true);
+        let row = t.list.row_rect(0).unwrap();
+        let d = t.disclosure_rect(0).unwrap();
+        assert_eq!((d.min.x, d.max.x), (row.max.x - 16.0, row.max.x), "level 0's twistie at the right edge");
+        assert_eq!(skelter_core::VirtualChildren::row_rect(&t, 0).max.x, row.max.x - 16.0, "its content ends before it");
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowDown));
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowLeft));
+        assert!(t.is_expanded(1), "Left expands in rtl");
+        send(&mut t, &pol, Time::ZERO, &key(Key::ArrowRight));
+        assert!(!t.is_expanded(1), "Right collapses");
     }
 
     #[test]

@@ -291,13 +291,21 @@ impl Kind for TextEdit {
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.bars.rtl.set(cx.node.is_rtl());
+        // `dir="auto"` on the field: its value's first strong character, as it is typed (HTML's
+        // `dir=auto` input; core resolves `auto` from text props, and a field's value is not one)
+        let auto = cx.node.prop_str(skelter_core::common::DIR) == Some("auto");
+        self.field.rtl = match auto {
+            true => skelter_base::text::first_strong(self.field.shown_text()).map_or(cx.node.is_rtl(), |d| d.is_rtl()),
+            false => cx.node.is_rtl(),
+        };
         let style = text_style(cx.style());
         let content = cx.content_box();
         let to_window = cx.window_transform();
         let offset = cx.scroll_offset();
         self.field.set_scroll_offset(offset);
         if let Some(ts) = cx.service::<skelter_text::TextSystem>() {
-            self.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window);
+            self.field.prepare(&mut SystemLayouter { system: ts, style, rtl: self.field.rtl }, content, to_window);
         }
         // the layout scrolled the caret into view: a compositor offset, and the caret follows
         if self.field.scroll_offset() != offset {
@@ -430,7 +438,7 @@ impl Kind for TextEdit {
         let (mut focus, mut capture, mut cursor) = (false, None::<bool>, None);
         let handled = {
             let Some(ts) = cx.service::<skelter_text::TextSystem>() else { return Handled::No };
-            let mut lay = SystemLayouter { system: ts, style };
+            let mut lay = SystemLayouter { system: ts, style, rtl: self.field.rtl };
             match ev {
                 Event::Key(k) => !matches!(self.field.key(k, now, &mut lay), KeyAction::Ignore),
                 Event::Ime(i) => {

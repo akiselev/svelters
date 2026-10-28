@@ -31,3 +31,8 @@ file = "rtl.svelte"
 id = "overflow"
 title = "More rows than fit"
 file = "overflow.svelte"
+
+[[variant]]
+id = "rtl-collapsed"
+title = "Right-to-left, collapsed"
+file = "rtl-collapsed.svelte"

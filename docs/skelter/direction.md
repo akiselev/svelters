@@ -39,7 +39,7 @@ where a line starts, which end of a `row` comes first, where `start` and `end` a
 | `align-items` / `align-self: start / end` | on a column's cross axis (the inline axis): `start` is the right |
 | grid columns | run from the right (a grid kind's tracks) |
 | `text-align: start / end` | `start` (the default) is the right; `left`, `right`, `center` stay physical |
-| text | an `rtl` box's paragraphs get a right-to-left base: mixed runs order from the right (`abc שלום` shows `abc` at the right end) |
+| text | an `rtl` box's paragraphs get a right-to-left base: mixed runs order from the right (`abc שלום` shows `abc` at the right end); an `ltr` box's get a left-to-right base (below) |
 | logical properties | `margin-inline-start/end`, `padding-inline-start/end`, `inset-inline-start/end`, `border-inline-start/end-{width,style,color}` and the shorthands `margin-inline`, `padding-inline`, `inset-inline`, `border-inline`, `border-inline-start`, `border-inline-end`: `start` is the right |
 | a horizontal scroll container | starts at its inline start (the right end of its content); content overflows to the left; `:state(sv.overflow-left)` says there is more to the left |
 | AccessKit | an `rtl` node carries `text_direction: RightToLeft` (an `ltr` node inside an `rtl` one, `LeftToRight`) |
@@ -49,9 +49,24 @@ sets both a logical side and the physical side it resolves to, the logical one w
 skelter's computed style no longer knows the order).
 
 Not supported yet: the `ms-`/`me-`/`ps-`/`pe-` utility classes (the utility table lists them as unsupported), vertical
-writing modes, `unicode-bidi`, and a base direction for `ltr` boxes: an `ltr` box's text still takes its paragraph
-direction from its first strong character, so Arabic text in an `ltr` document reads from the right, as it did before
-direction existed.
+writing modes and `unicode-bidi`.
+
+## The paragraph base direction
+
+A box's resolved direction is the base direction of its text, in `ltr` too (decided by the coordinator, 2026-10-28,
+as the web does): an Arabic string in an `ltr` box starts at the left, and its punctuation and mixed runs order
+left to right. Text whose direction should follow its content opts in with `dir="auto"`: the box takes the direction
+of its first strong character. Put it on fields and labels that show user content in any script (names, notes,
+comments):
+
+```svelte
+<text-edit dir="auto" bind:text={note} />
+<label dir="auto">{netName}</label>
+```
+
+A `text-edit` with `dir="auto"` re-reads its value's first strong character as it is typed (HTML's `dir=auto` on
+an input): its line starts at the right while the value begins with a right-to-left letter. Widgets pass the
+direction to skelter-text (`RichText::direction`, always `Some`).
 
 ## Scroll offsets
 

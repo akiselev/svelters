@@ -22,3 +22,8 @@ id = "open"
 title = "Open"
 file = "open.svelte"
 args = { value = ["2026-10-14", ""] }
+
+[[variant]]
+id = "rtl-open"
+title = "Right-to-left, open"
+file = "rtl-open.svelte"

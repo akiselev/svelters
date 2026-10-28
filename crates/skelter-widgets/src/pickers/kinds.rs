@@ -289,6 +289,24 @@ fn cancel_event() -> PointerEvent {
     PointerEvent { phase: PointerPhase::Cancel, pointer: 0, kind: PointerType::Mouse, button: None, buttons: 0, pos: Point::ZERO, modifiers: Default::default(), pressure: 0.0, tilt: Vec2::ZERO, history: Default::default() }
 }
 
+/// `p` with its position mirrored in a box `w` wide when `rtl` (the models lay out left to right;
+/// `crate::dir`).
+fn flip_pointer(mut p: PointerEvent, rtl: bool, w: f32) -> PointerEvent {
+    if rtl {
+        p.pos.x = crate::dir::flip_x(p.pos.x, w);
+    }
+    p
+}
+
+/// Left and Right swapped when `rtl` (the day grid and the drop's arrows run from the right).
+fn flip_key(key: Key, rtl: bool) -> Key {
+    match key {
+        Key::ArrowLeft if rtl => Key::ArrowRight,
+        Key::ArrowRight if rtl => Key::ArrowLeft,
+        k => k,
+    }
+}
+
 /// The model's pointer event for `ev`: pointer events as they are (a press also asks for focus),
 /// the hover ending and a lost capture as a cancel; `None` for other events.
 fn pointer_of(cx: &mut EventCx, ev: &Event) -> Option<PointerEvent> {
@@ -315,6 +333,10 @@ pub struct CalendarKind {
     pub model: Calendar,
     /// The document's today, from the last prepare.
     pub today: Option<Date>,
+    /// `rtl` and the node's width at the last prepare: the model's grid is mirrored in the box
+    /// (weekdays from the right, the previous-month button at the right pointing right).
+    rtl: bool,
+    width: f32,
 }
 
 impl CalendarKind {
@@ -402,9 +424,16 @@ impl w::Kind for CalendarKind {
         let state = cx.style.state;
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
         let look = &look_of(cx.style.theme, cx.style.dark);
+        let (rtl, w) = (cx.style.is_rtl(), cx.size.w);
         let RecordCx { list, text, res, .. } = cx;
-        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
-        self.model.record(list, &mut painter, look, self.today.unwrap_or_else(Date::today_utc), on, fv);
+        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res), rtl: false };
+        let today = self.today.unwrap_or_else(Date::today_utc);
+        crate::dir::record_mirrored(list, &mut painter, rtl, w, |p, list| self.model.record(list, p, look, today, on, fv));
+    }
+
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.rtl = cx.style.is_rtl();
+        self.width = cx.size.w;
     }
 
     fn event(&mut self, cx: &mut EventCx, ev: &Event) -> Handled {
@@ -412,6 +441,7 @@ impl w::Kind for CalendarKind {
         let today = self.today.unwrap_or_else(Date::today_utc);
         let look = look(true);
         if let Some(p) = pointer_of(cx, ev) {
+            let p = flip_pointer(p, self.rtl, self.width);
             let emits = self.model.pointer(&p, look, today, on);
             self.deliver(cx, emits);
             cx.repaint = true;
@@ -420,7 +450,7 @@ impl w::Kind for CalendarKind {
         match ev {
             Event::Key(k) if k.state == KeyState::Pressed => {
                 let Some(key) = k.key.filter(|key| CalBody::claims(*key)) else { return Handled::No };
-                let emits = self.model.key(key, k.modifiers, today, on);
+                let emits = self.model.key(flip_key(key, self.rtl), k.modifiers, today, on);
                 self.deliver(cx, emits);
                 cx.repaint = true;
                 Handled::Yes
@@ -589,7 +619,7 @@ impl w::Kind for ColorEditorKind {
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
         let look = &look_of(cx.style.theme, cx.style.dark);
         let RecordCx { list, text, res, .. } = cx;
-        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
+        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res), rtl: false };
         self.model.record(list, &mut painter, look, on, fv);
         // the editing hex box: the field's text with its selection, and the caret
         if let Some(h) = &self.hex {
@@ -684,7 +714,7 @@ struct Measured(Vec<(String, Size)>);
 
 impl Measured {
     fn fill(&mut self, text: &mut dyn w_text::TextShaper, look: &PickerLook) {
-        let mut p = ShaperPainter { text, res: None };
+        let mut p = ShaperPainter { text, res: None, rtl: false };
         let style = look.text(look.fg);
         self.0 = [popup::Footer::Save, popup::Footer::Cancel].iter().map(|f| (f.label().to_owned(), p.measure(f.label(), &style))).collect();
     }
@@ -713,11 +743,14 @@ pub struct PopupHost {
     measured: Measured,
     /// The primary button went down in the popup: its moves and release go there.
     pressed: bool,
+    /// The picker's direction is `rtl` (at the last prepare): the popup aligns to the button's
+    /// right edge, and a mirrored popup's pointer is mirrored in it.
+    pub rtl: bool,
 }
 
 impl Default for PopupHost {
     fn default() -> Self {
-        PopupHost { bounds: Rect::new(f32::NEG_INFINITY, f32::NEG_INFINITY, f32::INFINITY, f32::INFINITY), placed: None, button: Size::ZERO, measured: Measured::default(), pressed: false }
+        PopupHost { bounds: Rect::new(f32::NEG_INFINITY, f32::NEG_INFINITY, f32::INFINITY, f32::INFINITY), placed: None, button: Size::ZERO, measured: Measured::default(), pressed: false, rtl: false }
     }
 }
 
@@ -729,8 +762,9 @@ impl PopupHost {
 
     fn prepare(&mut self, cx: &mut PrepareCx, open: bool, popup_size: Size, look: &PickerLook) {
         self.button = cx.size;
+        self.rtl = cx.style.is_rtl();
         self.measured.fill(cx.text, look);
-        self.placed = open.then(|| popup::place_popup(cx.size, popup_size, self.bounds));
+        self.placed = open.then(|| popup::place_popup_dir(cx.size, popup_size, self.bounds, self.rtl));
     }
 
     /// The overlay-stack entry for the open popup: `origin` is the node's top-left in window points.
@@ -774,10 +808,10 @@ impl PopupHost {
     /// Records the open popup with `f` into `cx.list` in the node's local points, as the node's
     /// overlay part ([`w::Kind::record_overlay`]): a light-dismissable popup whose button counts as
     /// inside.
-    fn record_part(&self, cx: &mut RecordCx, f: impl FnOnce(&mut DisplayList, &mut dyn tshim::TextPainter)) -> Option<OverlayPart> {
+    fn record_part(&self, cx: &mut RecordCx, mirror: bool, f: impl FnOnce(&mut DisplayList, &mut dyn tshim::TextPainter)) -> Option<OverlayPart> {
         let r = self.placed?;
         let RecordCx { list, text, res, .. } = cx;
-        let mut popup = self.record(&mut **text, &mut **res, f)?;
+        let mut popup = self.record(&mut **text, &mut **res, mirror, f)?;
         popup.translate(Vec2::new(r.min.x, r.min.y));
         list.bounds = list.bounds.union(&popup.bounds);
         list.items.extend(popup.items);
@@ -787,11 +821,13 @@ impl PopupHost {
     }
 
     /// Records the popup (popup-local points) with `f`, registering its runs through `res`.
-    fn record(&self, text: &mut dyn w_text::TextShaper, res: &mut dyn w::Resources, f: impl FnOnce(&mut DisplayList, &mut dyn tshim::TextPainter)) -> Option<DisplayList> {
-        self.placed?;
+    /// `mirror`: the popup's content is mirrored in it in `rtl` (the calendar; not the colour
+    /// editor, whose gradients keep their axes).
+    fn record(&self, text: &mut dyn w_text::TextShaper, res: &mut dyn w::Resources, mirror: bool, f: impl FnOnce(&mut DisplayList, &mut dyn tshim::TextPainter)) -> Option<DisplayList> {
+        let r = self.placed?;
         let mut list = DisplayList::new();
-        let mut p = ShaperPainter { text, res: Some(res) };
-        f(&mut list, &mut p);
+        let mut p = ShaperPainter { text, res: Some(res), rtl: false };
+        crate::dir::record_mirrored(&mut list, &mut p, mirror && self.rtl, r.width(), |p, list| f(list, p));
         Some(list)
     }
 }
@@ -855,7 +891,7 @@ impl DatePickerKind {
     /// The open popup's display list (popup-local points), for its overlay layer; `None` while closed.
     pub fn record_popup(&self, text: &mut dyn w_text::TextShaper, res: &mut dyn w::Resources, dark: bool) -> Option<DisplayList> {
         let look = look(dark);
-        self.popup.record(text, res, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), self.today_date()))
+        self.popup.record(text, res, true, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), self.today_date()))
     }
 
     /// The overlay stack closed the popup (a press outside, Escape there).
@@ -916,7 +952,7 @@ impl w::Kind for DatePickerKind {
 
     fn measure(&self, cx: &mut MeasureCx, _known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
         let look = &look_of(cx.style.theme, cx.style.dark);
-        let mut p = ShaperPainter { text: &mut *cx.text, res: None };
+        let mut p = ShaperPainter { text: &mut *cx.text, res: None, rtl: false };
         let s = self.model.size(&mut p, look, self.today_date());
         taffy::Size { width: s.w, height: s.h }
     }
@@ -941,15 +977,16 @@ impl w::Kind for DatePickerKind {
         let look = &look_of(cx.style.theme, cx.style.dark);
         let size = cx.size;
         let RecordCx { list, text, res, .. } = cx;
-        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
+        let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res), rtl: false };
         let st = popup::ButtonState { open: self.model.drop.is_open(), focus_visible: fv, enabled: on, hovered: state.contains(StateBits::HOVERED) || self.model.drop.hovered(), pressed: state.contains(StateBits::PRESSED) || self.model.drop.pressed() };
-        self.model.record_button_in(list, &mut painter, look, size, self.today_date(), st);
+        // `rtl`: the drop button mirrored (its arrow at the left)
+        crate::dir::record_mirrored(list, &mut painter, self.popup.rtl, size.w, |p, list| self.model.record_button_in(list, p, look, size, self.today_date(), st));
     }
 
     /// The open popup, in a layer of the window's overlay stack.
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
         let look = &look_of(cx.style.theme, cx.style.dark);
-        self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), self.today_date()))
+        self.popup.record_part(cx, true, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), self.today_date()))
     }
 
     fn overlay_closed(&mut self, cx: &mut EventCx, _reason: DismissReason) -> Handled {
@@ -975,7 +1012,7 @@ impl w::Kind for DatePickerKind {
                 if !self.model.drop.is_open() && !self.model.drop.claims(key, k.modifiers) {
                     return Handled::No;
                 }
-                let emits = self.model.key(key, k.modifiers, today, on);
+                let emits = self.model.key(flip_key(key, self.popup.rtl && self.model.drop.is_open()), k.modifiers, today, on);
                 self.deliver(cx, emits);
                 Handled::Yes
             }
@@ -986,12 +1023,13 @@ impl w::Kind for DatePickerKind {
             }
             _ => {
                 let Some(p) = pointer_of(cx, ev) else { return Handled::No };
+                let (rtl, pw) = (self.popup.rtl, self.popup.placed().map_or(0.0, |r| r.width()));
                 let emits = match self.popup.in_popup(&p) {
                     Some(local) => {
                         let mut m = self.popup.measured.clone();
-                        self.model.popup_pointer(&local, &mut m, look, tshim::Platform::current(), today, on)
+                        self.model.popup_pointer(&flip_pointer(local, rtl, pw), &mut m, look, tshim::Platform::current(), today, on)
                     }
-                    None => self.model.button_pointer(&p, cx.size, on),
+                    None => self.model.button_pointer(&flip_pointer(p, rtl, cx.size.w), cx.size, on),
                 };
                 self.deliver(cx, emits);
                 Handled::Yes
@@ -1085,7 +1123,7 @@ impl ColorPickerKind {
     /// The open popup's display list (popup-local points), for its overlay layer; `None` while closed.
     pub fn record_popup(&self, text: &mut dyn w_text::TextShaper, res: &mut dyn w::Resources, dark: bool, focus_visible: bool) -> Option<DisplayList> {
         let look = look(dark);
-        self.popup.record(text, res, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), focus_visible))
+        self.popup.record(text, res, false, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), focus_visible))
     }
 
     /// The overlay stack closed the popup: live edits made in it are committed.
@@ -1159,14 +1197,19 @@ impl w::Kind for ColorPickerKind {
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
         let look = &look_of(cx.style.theme, cx.style.dark);
         let st = popup::ButtonState { open: self.model.drop.is_open(), focus_visible: fv, enabled: on, hovered: state.contains(StateBits::HOVERED) || self.model.drop.hovered(), pressed: state.contains(StateBits::PRESSED) || self.model.drop.pressed() };
+        let from = cx.list.items.len();
         self.model.record_button_in(cx.list, look, cx.size, st);
+        // `rtl`: the swatch and the drop arrow mirrored (no text in it)
+        if self.popup.rtl {
+            crate::dir::mirror_items(&mut cx.list.items[from..], cx.size.w);
+        }
     }
 
     /// The open popup, in a layer of the window's overlay stack.
     fn record_overlay(&self, cx: &mut RecordCx) -> Option<OverlayPart> {
         let look = &look_of(cx.style.theme, cx.style.dark);
         let fv = cx.style.state.contains(StateBits::FOCUS_VISIBLE);
-        self.popup.record_part(cx, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), fv))
+        self.popup.record_part(cx, false, |list, p| self.model.record_popup(list, p, look, tshim::Platform::current(), fv))
     }
 
     /// Live edits made in the popup are committed.

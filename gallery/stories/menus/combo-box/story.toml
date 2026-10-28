@@ -30,3 +30,8 @@ file = "rtl.svelte"
 id = "dense"
 title = "In a dense form row"
 file = "dense.svelte"
+
+[[variant]]
+id = "rtl-open"
+title = "Right-to-left, open"
+file = "rtl-open.svelte"
