@@ -468,6 +468,12 @@ impl Kind for Select {
     fn kind_spec(&self) -> &'static KindSpec {
         &SPEC
     }
+    /// The window's room, where the list stays: flipped above the button at the window's bottom
+    /// edge and shrunk to the room there (cadatomic FQ-161: a select near the bottom opened its
+    /// list below the window).
+    fn room(&mut self, room: Rect) {
+        self.bounds = room;
+    }
 
     fn set_prop(&mut self, prop: PropId, v: &Value) -> Result<(), PropError> {
         if prop == P::options.id() {
@@ -823,6 +829,11 @@ mod tests {
         // near the bottom: above the button
         let mut s = sel();
         s.bounds = Rect::new(0.0, -200.0, 400.0, 40.0);
+        send(&mut s, &policy, 0, key(Key::F4));
+        assert_eq!(s.list().unwrap().rect.max.y, -2.0);
+        // the room comes from the host, before each prepare
+        let mut s = sel();
+        Kind::room(&mut s, Rect::new(0.0, -200.0, 400.0, 40.0));
         send(&mut s, &policy, 0, key(Key::F4));
         assert_eq!(s.list().unwrap().rect.max.y, -2.0);
     }
