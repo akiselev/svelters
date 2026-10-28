@@ -153,6 +153,22 @@ colour; recommend `frame:disabled::part(caption) { color: var(--sv-disabled-fg) 
 disabled on a descendant, a late child, re-enabling, a child's own `disabled` holding); the existing
 `inert_children_are_disabled` still passes.
 
+## R2 (coordinator, from register): document timers in svelters' app
+
+**Finding.** `SkelterDocument` never ran skelter-core's document timers: no `run_timers`, no `next_wakeup`, and
+`needs_frame` ignored the document; `SveltersApp::sync` also replaced the timer the App armed with the JS host's
+deadline alone. Kind timers (`title` tips, toast timeouts, status messages, overlay bar fades) never fired in a svelters
+app, cadatomic included.
+
+**Fix** (`svelters-skelter/src/app.rs`, commit `2053fde`, on its own): `frame` runs `run_timers(target)` first and queues
+their JS events; `next_wakeup` is `Document::next_timer`; `needs_frame` also asks `Document::needs_frame` (item 2) and
+is true when a timer is due on the runner's clock (`SkelterDocument::with_clock`/`set_clock`; `SveltersApp::init` gives it
+the platform's); `sync` arms the earlier of the host's deadline and the document's next timer.
+
+**Test.** svelters-skelter `tests/app_timers.rs`: a kind's `wake_at` makes `next_wakeup` report it, no frame before it is
+due, a frame when it is, and the frame runs it (virtual clock). Not a toast test: skelter's `toast-host` has no Svelte
+surface or method on this base (its Rust `ToastQueue` needs a first tick), so register adds one with its `show`.
+
 ## Everything else unchanged
 
 `skelter-gallery sheet --all --states normal` with the master binary and with this branch, compared per sheet: only
@@ -183,7 +199,7 @@ text stayed on screen in the combo-box cells after it. No pixel snapshot test wa
 
 - `cargo test -p skelter-core`: 186 passed.
 - `cargo test -p skelter-widgets --lib -- views::virtual_list views::scroll views::tree text::kind table:: controls::collapsing`: 95 passed.
-- `cargo test -p svelters-skelter --test window`: 1 passed.
+- `cargo test -p svelters-skelter --test window`: 1 passed; `--test app_timers`: 1 passed.
 - `cargo check --all-targets` of skelter-core, skelter-widgets, svelters-skelter, skelter, skelter-test,
   skelter-gallery, skelter-gallery-app: clean.
 - `skelter-gallery check`: 32 stories, 138 variants, 0 problems.
