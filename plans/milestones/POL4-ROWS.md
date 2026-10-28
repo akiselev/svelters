@@ -62,4 +62,6 @@ Images under `/tmp/claude-0/-home-user-svelters/b857fdc6-78ad-5d32-808f-505920f1
 
 ## CI
 
-(filled in below)
+All six workflows green on `04bfbdc` (code `99bd15b` + the record, `origin/master` `a8937ea` included): js
+`40728397038`, linux-gtk `40728398123`, linux-qt `40728396920`, macos-appkit `40728397241`, skelter `40728397025`,
+windows-winui `40728397033`. This CI note is docs-only (no rerun).
