@@ -2,7 +2,7 @@
 
 **Branch:** `ci/pb3-overlays` (base `master` `242d688`).
 **Brief:** `plans/cloud/polish-b3/BRIEF.md`, `LANE-overlays.md`.
-**Status:** in progress.
+**Status:** done (pending the last CI run; see "Tests and CI"). All three items built, seen in the gallery, tested.
 
 ## Design note: the top layer (POL2-REGISTER Q2)
 
@@ -42,14 +42,99 @@ The shape (as the web's top layer: the node stays in the tree, only its box and 
 Not done: a top-layer node does not take a CSS transform of its own (only `at`); `fit` (shrinking a popup to the room)
 is left to the display-list kinds that already do it.
 
-## Scope and findings
+Built as designed. One core change beyond the note: a `Structure`-class prop write now re-runs the kind's layout
+style, as a `Layout`-class one did (popup's and modal's `open` are `Structure`; before, only `Layout` set
+`Dirty::STYLE`). CI on `4f824d1` (that commit alone) was green in all six workflows.
 
-(filled in as the lane goes)
+## What changed
+
+1. **Top layer (core):** `layout/mod.rs` (`in_top_layer`, `fixed` out of flow with the root as containing block),
+   `frame.rs` (deferred walk, `enter_top`, the stack's deltas before the top layer's items, `top_at`),
+   `toplayer.rs` (`sync_overlays` keeps top entries; `overlay_hit` hit-tests inside a top-layer subtree),
+   `overlay.rs` (`TopLayer`), `cx.rs` (`TopLayerCx`), `kind.rs` (`Kind::top_layer`), `input/dispatch.rs` (`hit_in`).
+2. **Kinds on it** (skelter-widgets): `popup` (open: fixed, placed next to its owner or `anchor` with
+   `placement.rs`, its anchor counts as inside, light dismiss by the stack instead of the subtree rule), `modal`
+   (open: fixed, inset 0: covers the window, a modal stack entry; it still cancels itself), `tooltip` element (fixed,
+   `top-center` of its owner, click-through), `toast-host` (fixed, inset 0, click-through, hit only on its toasts).
+   Shim `Kind::top_layer` and the host's forwarding (`shim.rs`, `host.rs`).
+   Menus, the combo's list and the pickers' drops were already overlay parts (display lists) in the same stack.
+3. **Pickers:** `open` (bindable, written back when the user opens or closes the drop) on `date-picker` and
+   `color-picker` (`combo-box` had it). `pickers::Today`, a document service for the pickers' today
+   (`pickers::set_today`; handed to the kinds before each prepare by shim `Kind::today`); the gallery pins
+   2026-10-22 (`skelter-gallery/src/render.rs`). An empty date picker shows its format's fields dimmed
+   (`yyyy-mm-dd`), not today.
+4. **Tab overflow:** an overflowing strip has scroll buttons (one caption per press, dimmed at the ends) and an
+   overflow button at its end, opening a menu of every tab (the shown one checked; Up/Down/Home/End/Enter/Escape;
+   an overlay part of the window's stack, light-dismissed); `menu-open` mirrors it (`bind:menu-open`). The wheel
+   still scrolls; a selection written before the first layout is revealed.
+
+## Findings (polish)
+
+| # | Finding (story) | Fix | Seen fixed |
+|---|---|---|---|
+| O-1 | `popup/*`: popup in its parent's flow, `placement` ignored (R-19) | top layer, placed next to its owner | yes (`a-popup.png`: four placements, flips) |
+| O-2 | (new story `popup/clipped`) a popup inside a short scroll area was cut by it and covered by the panel after it | top layer | yes (`a-popup.png`, `z2-popup.png`) |
+| O-3 | `date-picker`, `color-picker`: the drop could not be shown (R-20, Q5) | `open` prop; stories `*/open` | yes (`a-date-picker.png`, `a-color-picker.png`) |
+| O-4 | `calendar`, `date-picker/empty`: today was the real clock; an empty picker showed today (R-16, Q4) | `pickers::Today`, gallery's fixed day; placeholder | yes (`a-date-picker.png`) |
+| O-5 | `tab-view/closable`: overflowing captions cut with no sign (R-15, Q3) | scroll buttons, overflow menu | yes (`a-tabs.png`, `a-tab-view-closable.diff.png`) |
+| O-6 | (found) `tab-view`: `selected` written before the first layout was not scrolled into view | reveal at relayout | yes (`a-tabs2.png`) |
+| O-7 | (found) `tooltip/*`: a long tooltip ran off a 320 pt window's side (hover tip and element) | wrap to the window's width less 8 pt each side | yes (`a-tooltip2.png`) |
+| O-8 | (found) pickers in HC Dark/HC Light drew with the Modern theme of their scheme | the document's theme | yes (`z1-date-hc.png`) |
+| O-9 | (found) HC Dark: the picker's Save button black on black | `button-border` edge | yes (`z1-date-hc2.diff.png`) |
+| O-10 | (found) HC Dark: the overflow menu's current row invisible | outlined with `focus` in HC | yes (`a-tabs3.png`) |
+
+Before/after images (this container, not committed; "before" from a gallery built at `242d688`), all in
+`target/gallery/pb3/`: `a-popup-form.diff.png`, `a-modal-confirm.diff.png` and `a-toast-levels.diff.png` (unchanged
+pixels where the owner already covered the window: the same look, now from the top layer),
+`a-tab-view-closable.diff.png` (buttons, the selection revealed), `z1-date-hc2.diff.png`. Sheets looked at: popup,
+modal, toast, tooltip, date-picker, color-picker, tab-view in dark-modern, light-modern, hc-dark and hc-light, zoom 1
+and (popup, date-picker, tab-view) 2. No snapshot test moved; none re-blessed.
+
+Seen and left (not this lane's, or a design question): the `focus-visible` state shows no ring on a `tab-view`
+caption in the gallery (the forced state does not reach a core kind's own focus flag); `popup/clipped`'s panel is
+invisible in HC Dark (`--sv-surface` is black there; story only); the colour picker's drop shows `#2e86c1` for
+`#2e86c180` (alpha `opaque` by default: by design).
+
+## Cross-lane edits (small, additive; for the coordinator)
+
+- `crates/svelters-skelter/src/surface/tier1.rs` (finish lane's): three surface rows, `date-picker` `open`,
+  `color-picker` `open`, `tab-view` `menu-open`, with their `native_state`; `metadata/semantics/skelter.json`
+  regenerated (`SVELTERS_UPDATE=1 cargo test -p svelters-skelter --test spec`); `gen_props.py --check` clean. At a
+  merge with the finish lane, keep both sides' rows and rerun the generator.
+- `crates/skelter-widgets/src/{shim.rs,host.rs}` (the rest of `src/`, finish's): `Kind::top_layer` and `Kind::today`
+  hooks and their forwarding (a few lines each).
+- `crates/skelter-gallery/src/render.rs`: the gallery's fixed today (`GALLERY_TODAY`).
+- Stories: `dialogs/popup` (owner box, `placement` args, `clipped`), `pickers/{date-picker,color-picker}/open`,
+  `tabs/tab-view/overflow`, notes in `tooltip`, `calendar`.
 
 ## Tests and CI
 
-(filled in at the end)
+Added or changed (filtered runs on the last code commit, all pass):
+- `cargo test -p skelter-core --lib` 190 (3 new, `tests::toplayer`: a menu-like node in a clipped box draws whole
+  above a later sibling and takes the click; Escape one level and outside presses children first; the a11y parent
+  is the owner and removing the owner takes the entry and its layer).
+- `cargo test -p skelter-widgets --lib -- pickers:: tabs:: views::` 193 (new: popup top layer, picker `open` and
+  write-back, date picker placeholder and `set_open`, tab overflow buttons and menu, the reveal on first layout;
+  changed: popup light dismiss, the overflow test's edge, the empty date picker's text).
+- `cargo test -p svelters-skelter --test spec --test widgets_all` 11.
+- `skelter-gallery check`: 47 stories, 174 variants, no problems.
+- Not run locally: the full workspace, GPU gallery tests, conformance (CI runs them).
+
+CI: `4f824d1` green in all six (js 40630278355, linux-gtk 40630278372, linux-qt 40630278336, macos-appkit
+40630278348, skelter 40630278422, windows-winui 40630278420). Last code commit: see the end of this file.
 
 ## Questions (recommendations, for the coordinator)
 
+- **Q1 (`anchor-to`):** a popup anchors to its owner; the Rust `anchor` record (`{node}`, rect, point) is still
+  shadowed in Svelte by the common `anchor` (a name). Recommend a surface prop `anchor-to` naming another element's
+  `anchor` (core's anchor names, as `for` resolves them), so `<button anchor="t"/><popup anchor-to="t">` works
+  without a wrapper box. Small (kind prop + surface row); a design choice on the surface, so not built.
+- **Q2 (CSS `position: fixed`):** CSS `fixed` still maps to `absolute`; only kinds put nodes in the top layer.
+  Recommend keeping it so (the web's `fixed` is not the top layer); revisit if cadatomic needs viewport-fixed
+  boxes.
+
 ## Requests to the finish lane
+
+- Keep the three surface rows above at a merge (rerun the skelter.json generator).
+- `tab-view` captions get no focus ring under the gallery's forced `focus-visible` (finding above), if the review
+  of every story touches the forced states.
