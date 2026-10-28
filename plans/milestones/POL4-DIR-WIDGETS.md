@@ -129,8 +129,16 @@ Before/after (this container, not committed), under
 
 ## CI
 
-(filled in below)
+Earlier pushes' runs were cancelled by later pushes (the workflows cancel in progress). The code was last changed in
+`6c52fe4` (the paragraph base decision); this record's commit carries the same code. Runs: pending (see Handoff).
 
 ## Handoff
 
-(filled in below)
+- **Done:** every item of the lane (mirroring, stories, review), dir-core merged (`8ddfa09`, `c508a53`), `origin/master`
+  `728647b` merged, the coordinator's paragraph-base decision implemented and documented.
+- **In progress:** CI on this branch's head. Wait with `CI_WAIT_EXPECT=6 tools/dev/ci-wait <head sha> --jobs`; fix what
+  fails (filtered tests, `CARGO_PROFILE_DEV_DEBUG=0`), push, wait again.
+- **Next:** when all six workflows are green, write the sha and run ids above and send them to the coordinator
+  (`session_01HBbGRgGENFKUjsqyGryCSr`).
+- **Open (not this lane's to do unless asked):** R1 (small: popup `-start`/`-end` logical, accepted by small); a
+  context menu opened without a pointer point opens at the owner's top-left in rtl (recommend top-right).
