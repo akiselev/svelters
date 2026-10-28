@@ -974,6 +974,21 @@ fn throw<'js, T>(ctx: &Ctx<'js>, e: OpError) -> Res<T> {
     })
 }
 
+/// SV85: disposers an export registered during the call that just returned (`on_destroy`) go to
+/// the runtime's `__svelters_scope_bind(ids)`, which ties them to the running effect. Without the
+/// runtime they stay with the host.
+fn bind_scoped<'js>(ctx: &Ctx<'js>, c: &Core) {
+    let ids = c.apps.take_new_scoped();
+    if ids.is_empty() {
+        return;
+    }
+    let Ok(f) = ctx.globals().get::<_, Function>("__svelters_scope_bind") else { return };
+    let ids: Vec<f64> = ids.into_iter().map(|i| i as f64).collect();
+    if f.call::<_, Value>((ids,)).is_err() {
+        let _ = ctx.catch();
+    }
+}
+
 fn op<'js, T>(ctx: &Ctx<'js>, r: Result<T, OpError>) -> Res<T> {
     match r {
         Ok(v) => Ok(v),
@@ -1249,6 +1264,15 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 Ok(())
             })?,
         )?;
+        // SV85: the runtime releases a disposer an export tied to a component (`on_destroy`)
+        let w = core.clone();
+        host.set(
+            "releaseScoped",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, id: f64| -> Res<bool> {
+                let c = core_of(&ctx, &w)?;
+                Ok(c.apps.release_scoped(id as u64))
+            })?,
+        )?;
         let w = core.clone();
         host.set(
             "destroy",
@@ -1302,6 +1326,7 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                     let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
                     let h = handle_of(&ctx, h)?;
                     let r = msg(&ctx, conv.with_name(&method, |n| c.op_call(&conv, h, n, &args)))?;
+                    bind_scoped(&ctx, &c);
                     op_conv(&ctx, &conv, r)
                 },
             )?,
@@ -1317,6 +1342,7 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                     let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
                     let props = props.0.unwrap_or_else(|| Value::new_undefined(ctx.clone()));
                     let r = msg(&ctx, conv.with_name(&kind, |n| c.op_construct(&conv, n, &props)))?;
+                    bind_scoped(&ctx, &c);
                     op_conv(&ctx, &conv, r)
                 },
             )?,
@@ -1338,6 +1364,7 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                         conv.with_name(&kind, |nk| conv.with_name(&method, |nm| c.op_call_static(&conv, nk, nm, &args)))
                             .and_then(|x| x),
                     )?;
+                    bind_scoped(&ctx, &c);
                     op_conv(&ctx, &conv, r)
                 },
             )?,

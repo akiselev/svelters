@@ -30,6 +30,7 @@ export {
   release_context,
   flushing_sync,
   recover,
+  invalidate,
   subscriber,
   get_all_contexts,
   set_context,
