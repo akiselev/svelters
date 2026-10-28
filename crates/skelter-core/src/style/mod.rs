@@ -6,6 +6,7 @@
 
 pub(crate) mod cascade;
 mod computed;
+mod direction;
 mod inspect;
 mod invalidate;
 pub mod table;
@@ -41,6 +42,8 @@ pub(crate) struct NodeStyle {
     /// declare any (SV69): a change of an inherited custom property restyles the node only when
     /// these say it can change its values.
     pub deps: svelters_style::CustomDeps,
+    /// Its directionality (HTML's, what `:dir()` matches), set as the restyle reaches it.
+    pub dir: skelter_base::text::Direction,
 }
 
 /// What an inspector shows about a sheet ([`crate::Document::set_sheet_info`]).
@@ -61,6 +64,10 @@ pub(crate) struct DocStyle {
     pub state_names: StateNames,
     /// Sheet names and (dev) their `<style>` sources, for matched rules.
     pub sheet_info: std::collections::HashMap<SheetId, SheetInfo>,
+    /// The document's direction: a window root's ([`crate::Document::set_direction`]).
+    pub direction: skelter_base::text::Direction,
+    /// Some node has had `dir=auto`: text changes look for the nearest one above them.
+    pub any_dir_auto: bool,
 }
 
 impl Default for DocStyle {
@@ -72,6 +79,8 @@ impl Default for DocStyle {
             caches: svelters_style::MatchCaches::new(),
             state_names: StateNames::default(),
             sheet_info: std::collections::HashMap::new(),
+            direction: Default::default(),
+            any_dir_auto: false,
         }
     }
 }

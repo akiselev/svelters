@@ -93,6 +93,15 @@ impl Document {
                 self.kinds[pi] = Some(k);
             }
         }
+        // the text direction of an `rtl` node, and of an `ltr` one under an `rtl` parent (an `ltr`
+        // document needs none), unless the kind said
+        if out.text_direction().is_none() {
+            let dir = self.style.computed(i).direction;
+            let parent = self.core[i].parent.map_or(skelter_base::text::Direction::Ltr, |p| self.style.computed(self.ix(p)).direction);
+            if dir.is_rtl() || parent != dir {
+                out.set_text_direction(if dir.is_rtl() { accesskit::TextDirection::RightToLeft } else { accesskit::TextDirection::LeftToRight });
+            }
+        }
         // common props a behaviour may set win over the kind's own node
         {
             let v = self.view_at(i);

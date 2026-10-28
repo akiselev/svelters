@@ -33,7 +33,7 @@
 {"sel":{"tag":null,"classes":["x","svelte-setters"],"id":null},"spec":[0,2,0],"order":3,"decls":[["stretch",1],["contents-margins",{"top":4,"right":8,"bottom":4,"left":8}]]}
 
 === diagnostics ===
-warning [gtk] property 'direction' is not a gtk style property (it is one on qt); did you mean 'animation-direction'?
+warning [gtk] property 'direction' is not a gtk style property (it is one on qt, skelter); did you mean 'animation-direction'?
 warning [gtk] <box-layout> is not an element on gtk; rule dropped
 error [gtk] 'spacing' does not apply to <box-layout> on gtk; declaration dropped
 warning [gtk] property 'minimum-width' is not a gtk style property (it is one on qt)
