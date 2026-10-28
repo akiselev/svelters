@@ -292,6 +292,7 @@ impl Kind for TextEdit {
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
         self.bars.rtl.set(cx.node.is_rtl());
+        self.field.rtl = cx.node.is_rtl();
         let style = text_style(cx.style());
         let content = cx.content_box();
         let to_window = cx.window_transform();

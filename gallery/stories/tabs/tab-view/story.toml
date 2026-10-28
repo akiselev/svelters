@@ -27,3 +27,8 @@ id = "overflow"
 title = "Overflow: scroll buttons and the menu of every tab"
 file = "overflow.svelte"
 args = { menu = [false, true] }
+
+[[variant]]
+id = "rtl-overflow"
+title = "Right-to-left, overflowing"
+file = "rtl-overflow.svelte"

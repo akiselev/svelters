@@ -41,3 +41,8 @@ file = "vertical.svelte"
 id = "inverted"
 title = "Inverted"
 file = "inverted.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left, at a value"
+file = "rtl.svelte"

@@ -26,3 +26,8 @@ file = "fits.svelte"
 id = "empty"
 title = "Empty"
 file = "empty.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left, scrolled"
+file = "rtl.svelte"

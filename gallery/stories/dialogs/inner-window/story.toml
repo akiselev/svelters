@@ -16,3 +16,8 @@ args = { heading = ["Layer manager", "Properties of the selected footprint and i
 id = "collapsed"
 title = "Collapsed, no close button"
 file = "collapsed.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

@@ -16,3 +16,8 @@ args = { "weekday-format" = ["short", "narrow"] }
 id = "range"
 title = "min and max, no week numbers"
 file = "range.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

@@ -16,3 +16,8 @@ args = { message = ["", "Routing 12 of 40 nets…"] }
 id = "overflow"
 title = "Long text in a narrow bar"
 file = "overflow.svelte"
+
+[[variant]]
+id = "rtl"
+title = "Right-to-left"
+file = "rtl.svelte"

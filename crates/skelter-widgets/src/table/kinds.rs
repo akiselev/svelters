@@ -698,6 +698,7 @@ impl Kind for TableKind {
             let content = Rect::new(cr.min.x + pad, cr.min.y, (cr.max.x - pad).max(cr.min.x + pad), cr.max.y);
             let style = text_style(node.style());
             let to_window = node.window_transform();
+            edit.editor.field.rtl = self.rtl;
             match cx.service::<skelter_text::TextSystem>() {
                 Some(ts) => edit.editor.field.prepare(&mut SystemLayouter { system: ts, style }, content, to_window),
                 None => edit.editor.field.prepare(&mut MonoLayouter { advance: 8.0, line_height: 16.0 }, content, to_window),

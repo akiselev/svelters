@@ -31,3 +31,8 @@ file = "empty.svelte"
 id = "rtl"
 title = "Right-to-left cell text"
 file = "rtl.svelte"
+
+[[variant]]
+id = "rtl-sorted"
+title = "Right-to-left, sorted and selected"
+file = "rtl-sorted.svelte"
