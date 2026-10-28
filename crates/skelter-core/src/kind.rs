@@ -653,6 +653,17 @@ pub trait Kind: 'static {
         Handled::No
     }
 
+    /// What the node is while it is in its window's top layer, which it is while its layout style
+    /// ([`Kind::layout_style`]) is `position: fixed`: laid out against the window, drawn after the
+    /// whole content in a layer of the window's overlay stack (its z from the stack's bands and open
+    /// order), hit before the content, light-dismissed and closed by Escape in the stack's order
+    /// ([`Kind::overlay_closed`]), and still in its owner's subtree for focus and accessibility.
+    /// Asked at each rebuild, after the window's content (and the top-layer nodes met before it) is
+    /// placed. The default: a popup that nothing dismisses, where layout put it.
+    fn top_layer(&self, cx: &crate::cx::TopLayerCx) -> crate::overlay::TopLayer {
+        crate::overlay::TopLayer::new(crate::overlay::OverlayClass::Popup).with_dismiss(crate::overlay::Dismiss::NONE)
+    }
+
     /// The window's overlay stack closed the node's overlay surface ([`RecordCx::overlay`](crate::RecordCx::overlay)):
     /// a press outside it (`OutsidePress`), Escape, or its parent surface closing. The kind closes its
     /// state (and records no part); a part it keeps recording opens again.

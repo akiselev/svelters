@@ -839,6 +839,7 @@ pub static SCROLLBAR: KindSpec = KindSpec {
 };
 
 static TABVIEW_PROPS: &[PropSpec] = &[
+    PropSpec { name: "menu-open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The overflow menu (every tab, shown while the captions overflow the strip) is open; the user opening or closing it sets it (`bind:menu-open`)." },
     PropSpec { name: "selected", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Layout, native: true, doc: "Index of the shown page; a click on a caption changes it." },
 ];
 static TABVIEW_SIGNALS: &[SignalSpec] = &[
@@ -863,7 +864,7 @@ pub static TABVIEW: KindSpec = KindSpec {
     a11y: A11ySpec { role: "TabList", name_from: &["accessible-name"], name_required: false },
     text_content: None,
     toplevel: false,
-    native_state: &["selected"],
+    native_state: &["menu-open", "selected"],
 };
 
 static TAB_PROPS: &[PropSpec] = &[
@@ -940,6 +941,7 @@ static DATEPICKER_PROPS: &[PropSpec] = &[
     PropSpec { name: "max", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit." },
     PropSpec { name: "min", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit." },
     PropSpec { name: "navigation", ty: ValueType::Bool, default: DefaultValue::Bool(true), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows the header with the previous/next month buttons and the month and year." },
+    PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The calendar is shown; the user opening or closing it sets it (`bind:open`)." },
     PropSpec { name: "read-only", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "Shows and roves the calendar but never picks (Qt's `NoSelection`)." },
     PropSpec { name: "value", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: true, doc: "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day (and, with `commit-mode=\"confirm\"`, pressing Save) changes it." },
     PropSpec { name: "weekday-format", ty: ValueType::Enum(&["narrow", "short", "long", "none"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Paint, native: false, doc: "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row)." },
@@ -967,7 +969,7 @@ pub static DATEPICKER: KindSpec = KindSpec {
     a11y: A11ySpec { role: "DateInput", name_from: &["accessible-name"], name_required: false },
     text_content: None,
     toplevel: false,
-    native_state: &["value"],
+    native_state: &["open", "value"],
 };
 
 static COLOREDITOR_PROPS: &[PropSpec] = &[
@@ -1007,6 +1009,7 @@ static COLORPICKER_PROPS: &[PropSpec] = &[
     PropSpec { name: "commit-mode", ty: ValueType::Enum(&["live", "confirm"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Paint, native: false, doc: "`live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog)." },
     PropSpec { name: "custom-colors", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: true, doc: "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`." },
     PropSpec { name: "fields", ty: ValueType::Str, default: DefaultValue::Str("hex rgb"), nullable: false, change: ChangeClass::Layout, native: false, doc: "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100)." },
+    PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The colour editor is shown; the user opening or closing it sets it (`bind:open`)." },
     PropSpec { name: "swatches", ty: ValueType::StrList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Layout, native: false, doc: "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one." },
     PropSpec { name: "value", ty: ValueType::Str, default: DefaultValue::Str("#000000"), nullable: false, change: ChangeClass::Paint, native: true, doc: "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it." },
 ];
@@ -1032,7 +1035,7 @@ pub static COLORPICKER: KindSpec = KindSpec {
     a11y: A11ySpec { role: "ColorWell", name_from: &["accessible-name"], name_required: false },
     text_content: None,
     toplevel: false,
-    native_state: &["custom-colors", "value"],
+    native_state: &["custom-colors", "open", "value"],
 };
 
 

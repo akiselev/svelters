@@ -55,14 +55,19 @@ impl Document {
     /// Enters the parts drawn in `window` (tree order) in its overlay stack and sends their layers:
     /// new parts open (a part under another node's part opens from it), moved ones follow, and the
     /// entries whose node records no part any more close.
-    pub(crate) fn sync_overlays(&mut self, window: WindowId, root_t: PropNodeId, root_layer: LayerId, drawn: Vec<DrawnPart>, commit: &mut Commit) {
+    ///
+    /// `tops` are the window's top-layer nodes this rebuild entered (`Document::enter_top`): their
+    /// entries stay, and a part drawn inside one opens from it. A top-layer node's own part is not
+    /// shown.
+    pub(crate) fn sync_overlays(&mut self, window: WindowId, root_t: PropNodeId, root_layer: LayerId, mut drawn: Vec<DrawnPart>, tops: &[NodeId], commit: &mut Commit) {
+        drawn.retain(|d| !tops.contains(&d.node));
         let nodes: Vec<NodeId> = drawn.iter().map(|d| d.node).collect();
         let parents: Vec<Option<NodeId>> = drawn
             .iter()
             .map(|d| {
                 let mut a = self.parent(d.node);
                 while let Some(n) = a {
-                    if nodes.contains(&n) {
+                    if nodes.contains(&n) || tops.contains(&n) {
                         return Some(n);
                     }
                     a = self.parent(n);
@@ -73,7 +78,7 @@ impl Document {
         let boxes: Vec<Rect> = nodes.iter().map(|&n| self.world_rect(n).unwrap_or(Rect::ZERO)).collect();
         let ws = self.window_mut(window).expect("window");
         let stack = ws.overlays.get_or_insert_with(|| OverlayStack::with_z_base(root_layer, OVERLAY_Z));
-        let gone: Vec<OverlayId> = stack.entries().iter().filter(|e| !nodes.contains(&e.spec.node)).map(|e| e.id).collect();
+        let gone: Vec<OverlayId> = stack.entries().iter().filter(|e| !nodes.contains(&e.spec.node) && !tops.contains(&e.spec.node)).map(|e| e.id).collect();
         for id in gone {
             // a child still drawn under a closing parent opens again below
             stack.close(id, DismissReason::Programmatic);
@@ -104,18 +109,23 @@ impl Document {
         // each entry's layer draws its node's part list in the node's space
         let mut open = HashMap::new();
         for e in stack.entries() {
+            if tops.contains(&e.spec.node) {
+                open.insert(e.spec.node, OverlayNode { layer: e.spec.layer, transform: root_t, inverse: Affine::IDENTITY, subtree: true });
+                continue;
+            }
             let Some(d) = drawn.iter().find(|d| d.node == e.spec.node) else { continue };
             let prev = ws.overlay_nodes.get(&d.node).map(|o| (o.layer, o.transform));
             if prev != Some((e.spec.layer, d.transform)) {
                 let item = ItemRef { node: overlay_key(d.node), transform: d.transform, clip: None, effect: None };
                 commit.layers.push(LayerDelta::Items { layer: e.spec.layer, items: vec![item] });
             }
-            open.insert(d.node, OverlayNode { layer: e.spec.layer, transform: d.transform, inverse: d.world.inverse().unwrap_or(Affine::IDENTITY) });
+            open.insert(d.node, OverlayNode { layer: e.spec.layer, transform: d.transform, inverse: d.world.inverse().unwrap_or(Affine::IDENTITY), subtree: false });
         }
         let old = std::mem::replace(&mut ws.overlay_nodes, open);
         for o in old.values() {
             if !ws.overlay_nodes.values().any(|n| n.layer == o.layer) {
                 ws.layer_ids.free(o.layer.0);
+                ws.items.remove(&o.layer);
             }
         }
     }
@@ -123,10 +133,19 @@ impl Document {
     /// Where `p` (window points) lands on `window`'s overlay stack: `Some(Some(node))` on an open
     /// surface that takes input, `Some(None)` under a modal (nothing gets it), `None` through to the
     /// content.
-    pub(crate) fn overlay_hit(&self, window: WindowId, p: Point) -> Option<Option<NodeId>> {
-        let st = self.window(window)?.overlays.as_ref()?;
+    /// On a top-layer node's entry, the node of its subtree the hit list finds at `p` (the node itself
+    /// when none does).
+    pub(crate) fn overlay_hit(&self, window: WindowId, p: Point, scroll: bool) -> Option<Option<NodeId>> {
+        let w = self.window(window)?;
+        let st = w.overlays.as_ref()?;
         match st.hit(p) {
-            Hit::Overlay(id) => Some(st.get(id).map(|e| e.spec.node).filter(|&n| self.contains(n))),
+            Hit::Overlay(id) => {
+                let node = st.get(id).map(|e| e.spec.node).filter(|&n| self.contains(n));
+                match node {
+                    Some(top) if w.overlay_nodes.get(&top).is_some_and(|o| o.subtree) => Some(self.hit_in(window, p, scroll, Some(top)).or(Some(top))),
+                    n => Some(n),
+                }
+            }
             Hit::Blocked(_) => Some(None),
             Hit::Content => None,
         }
@@ -134,7 +153,7 @@ impl Document {
 
     /// `node`'s window → local transform when it shows an overlay part.
     pub(crate) fn overlay_inverse(&self, window: WindowId, node: NodeId) -> Option<Affine> {
-        self.window(window)?.overlay_nodes.get(&node).map(|o| o.inverse)
+        self.window(window)?.overlay_nodes.get(&node).filter(|o| !o.subtree).map(|o| o.inverse)
     }
 
     /// A press at `p`: closes the surfaces of `window`'s stack it is outside of (light dismiss).

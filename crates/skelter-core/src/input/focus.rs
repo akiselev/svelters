@@ -335,6 +335,13 @@ fn initial_in(doc: &Document, scope: NodeId) -> Option<NodeId> {
         }
         stack.extend(doc.children(n).iter().rev());
     }
+    // a dialog's default button before its first tab stop (Qt and GTK focus it, so Enter means it;
+    // with auto-default the first stop, often Cancel, would take the default look: O-1)
+    if is_dialog(doc, scope)
+        && let Some(b) = crate::input::scope::default_button(doc, scope).filter(|&b| can_focus(doc, b))
+    {
+        return Some(b);
+    }
     tab_sequence(doc, scope).first().copied()
 }
 

@@ -24,6 +24,25 @@
 //! | [`kinds`] | the skelter-core `KindSpec`s, and the `Kind` impls of `calendar` and `color-editor` |
 
 pub mod calendar;
+
+/// The date the pickers take as today (the calendar's today mark, the month an empty picker opens
+/// on): a document service ([`set_today`]), so the gallery and tests show the same day every run;
+/// `None` (or no service): today in UTC ([`date::Date::today_utc`]).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Today(pub Option<date::Date>);
+
+/// Sets the pickers' today for `doc` (`None`: the platform clock's, in UTC); they read it on their
+/// next prepare.
+pub fn set_today(doc: &mut skelter_core::Document, today: Option<date::Date>) {
+    doc.set_service(Today(today));
+    doc.rerecord_all();
+}
+
+/// `doc`'s today for the pickers.
+pub fn today_of(doc: &skelter_core::Document) -> date::Date {
+    doc.service_ref::<Today>().and_then(|t| t.0).unwrap_or_else(date::Date::today_utc)
+}
+
 pub mod color;
 pub mod color_editor;
 pub mod color_picker;
@@ -65,6 +84,11 @@ pub struct PickerLook {
     pub button_bg: Color,
     pub button_bg_hover: Color,
     pub button_fg: Color,
+    /// The primary (Save) button's edge (`button-border`, VS Code's `button.border`): transparent in
+    /// the Modern themes, the contrast border in the high-contrast ones, where its fill alone is black.
+    pub button_border: Color,
+    /// A high-contrast theme: selections are outlined (their fills are black or white there).
+    pub high_contrast: bool,
     /// `row-h`: list rows, the calendar header.
     pub row_h: f32,
     /// `control-h`: fields and footer buttons.
@@ -108,6 +132,8 @@ impl Default for PickerLook {
             button_bg: hex("#e5e5e5"),
             button_bg_hover: hex("#cccccc"),
             button_fg: hex("#3b3b3b"),
+            button_border: Color::TRANSPARENT,
+            high_contrast: false,
             row_h: 22.0,
             control_h: 26.0,
             radius: 4.0,

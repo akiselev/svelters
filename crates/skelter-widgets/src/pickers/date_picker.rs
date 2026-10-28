@@ -43,16 +43,53 @@ impl Default for DatePicker {
 }
 
 impl DatePicker {
-    /// The button's text: the value (else today) in `format`; ISO when `format` is bad.
-    pub fn text(&self, today: Date) -> String {
-        let d = self.value.unwrap_or(today);
-        d.strftime(&self.format).unwrap_or_else(|_| d.to_string())
+    /// The button's text: the value in `format` (ISO when `format` is bad); `""` for none, where
+    /// the button shows [`DatePicker::placeholder`]. `_today` is unused (an empty picker shows no date).
+    pub fn text(&self, _today: Date) -> String {
+        self.value.map(|d| d.strftime(&self.format).unwrap_or_else(|_| d.to_string())).unwrap_or_default()
     }
 
-    /// The closed button's size.
+    /// What an empty button shows, dimmed: `format` with its fields spelled out (`%Y-%m-%d` is
+    /// `yyyy-mm-dd`).
+    pub fn placeholder(&self) -> String {
+        let mut out = String::new();
+        let mut it = self.format.chars();
+        while let Some(c) = it.next() {
+            if c != '%' {
+                out.push(c);
+                continue;
+            }
+            out.push_str(match it.next() {
+                Some('Y') => "yyyy",
+                Some('y') => "yy",
+                Some('m') => "mm",
+                Some('d') | Some('e') => "dd",
+                Some('B') | Some('b') => "month",
+                Some('A') | Some('a') => "day",
+                Some('%') => "%",
+                _ => "",
+            });
+        }
+        out
+    }
+
+    /// The closed button's size (room for the placeholder too, so picking a date does not resize it).
     pub fn size(&self, text: &mut dyn TextPainter, look: &PickerLook, today: Date) -> Size {
-        let label = text.measure(&self.text(today), &look.text(look.control_fg));
-        popup::button_size(look, label, 0.0)
+        let style = look.text(look.control_fg);
+        let label = text.measure(&self.text(today), &style);
+        let hint = text.measure(&self.placeholder(), &style);
+        popup::button_size(look, Size::new(label.w.max(hint.w), label.h.max(hint.h)), 0.0)
+    }
+
+    /// Opens or closes the calendar from the `open` prop (no keyboard focus moves into it).
+    pub fn set_open(&mut self, open: bool) {
+        if open {
+            let out = self.drop.open(false);
+            let _ = self.opened(out);
+        } else {
+            self.drop.close(CloseReason::Done);
+            self.pending = None;
+        }
     }
 
     fn body_size(&self, look: &PickerLook) -> Size {
@@ -157,10 +194,20 @@ impl DatePicker {
     /// Records the closed button.
     #[allow(clippy::too_many_arguments)]
     pub fn record_button(&self, list: &mut DisplayList, text: &mut dyn TextPainter, look: &PickerLook, size: Size, today: Date, focus_visible: bool, enabled: bool) {
-        popup::record_button(list, look, size, ButtonState { open: self.drop.is_open(), focus_visible, enabled });
+        self.record_button_in(list, text, look, size, today, ButtonState { open: self.drop.is_open(), focus_visible, enabled, hovered: self.drop.hovered(), pressed: self.drop.pressed() });
+    }
+
+    /// [`DatePicker::record_button`] with the node's hover and press too.
+    pub fn record_button_in(&self, list: &mut DisplayList, text: &mut dyn TextPainter, look: &PickerLook, size: Size, today: Date, st: ButtonState) {
+        let enabled = st.enabled;
+        popup::record_button(list, look, size, st);
         let (_, _, label) = popup::button_parts(look, size);
         let fg = if enabled { look.control_fg } else { look.control_fg.with_alpha(look.control_fg.a * 0.4) };
-        text.draw(list, &self.text(today), &look.text(fg), label, HAlign::Start, true);
+        match self.value {
+            Some(_) => text.draw(list, &self.text(today), &look.text(fg), label, HAlign::Start, true),
+            // empty: the format's fields, in the muted (placeholder) colour
+            None => text.draw(list, &self.placeholder(), &look.text(if enabled { look.muted } else { fg }), label, HAlign::Start, true),
+        }
     }
 
     /// Records the popup (popup-local points): surface, calendar, footer.
@@ -236,7 +283,21 @@ mod tests {
     fn the_button_text_uses_the_format() {
         let p = DatePicker { value: Some(d("2026-10-02")), format: "%d %b %Y".into(), ..DatePicker::default() };
         assert_eq!(p.text(d("2026-10-22")), "02 Oct 2026");
-        let bad = DatePicker { format: "%Q".into(), ..DatePicker::default() };
+        let bad = DatePicker { value: Some(d("2026-10-22")), format: "%Q".into(), ..DatePicker::default() };
         assert_eq!(bad.text(d("2026-10-22")), "2026-10-22", "a bad format shows ISO");
+        // empty: no date (not today), the format's fields as the placeholder
+        let empty = DatePicker { format: "%d %B %Y".into(), ..DatePicker::default() };
+        assert_eq!(empty.text(d("2026-10-22")), "");
+        assert_eq!(empty.placeholder(), "dd month yyyy");
+        assert_eq!(DatePicker::default().placeholder(), "yyyy-mm-dd");
+    }
+
+    #[test]
+    fn open_opens_and_closes_the_calendar() {
+        let mut p = DatePicker::default();
+        p.set_open(true);
+        assert!(p.drop.is_open());
+        p.set_open(false);
+        assert!(!p.drop.is_open());
     }
 }

@@ -79,3 +79,24 @@ fn a_full_tree_on_demand() {
     let c = frame(&mut d).expect("the tree");
     assert!(c.a11y.unwrap().tree.is_some());
 }
+
+/// Q-E2 (cadatomic gal3): a hover restyle that relays out without moving anything leaves no work:
+/// the layout pass consumes the `LAYOUT`/`DESC_LAYOUT` bits it serves, so the window goes idle.
+#[test]
+fn a_relayout_that_records_nothing_leaves_the_window_idle() {
+    let (mut d, root) = doc();
+    let row = child(&mut d, root, BOX, "width: 120px; height: 20px");
+    let label = child(&mut d, row, TEXT, "width: 40px; height: 16px");
+    d.set_prop(label, testkinds::TEXT, crate::Value::from("Net")).unwrap();
+    // a layout property changes on hover, the geometry does not
+    d.add_sheet("text:hover { min-width: 1px }");
+    frame(&mut d);
+    assert!(!d.needs_frame(W));
+    d.dispatch(&pointer(PointerPhase::Move, 5.0, 5.0, 10));
+    assert!(d.needs_frame(W), "the hover restyles and relays out");
+    frame(&mut d);
+    assert!(!d.needs_frame(W), "nothing left to do after the frame");
+    d.dispatch(&pointer(PointerPhase::Move, 150.0, 80.0, 20));
+    frame(&mut d);
+    assert!(!d.needs_frame(W), "nor after the hover leaves");
+}

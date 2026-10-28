@@ -19,7 +19,7 @@
   "framework": "skelter (svelters-skelter; retained tree, taffy layout, wgpu compositor)",
   "ids": {
     "scheme": "skelter-core FNV-1a-32 of (declaring kind, member, type)",
-    "spec_hash": "83548507fddee92b"
+    "spec_hash": "676b64e8baff9b20"
   },
   "inline_text": {
     "kind": "span",
@@ -2022,6 +2022,29 @@
             "arg": 0
           }
         },
+        "open": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <color-picker> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "value": {
           "commit": {
             "arg": 0,
@@ -2060,6 +2083,7 @@
       "native": "skelter ColorPicker",
       "native_state": [
         "custom-colors",
+        "open",
         "value"
       ],
       "present": null,
@@ -2152,6 +2176,26 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The colour editor is shown; the user opening or closing it sets it (`bind:open`).",
+          "fingerprint": "0f91b248",
+          "id": 261206600,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:ColorPicker:open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "swatches": {
@@ -2817,6 +2861,29 @@
       "abstract": false,
       "attaches_to": null,
       "bindings": {
+        "open": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-skelter: <date-picker> writes open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "value": {
           "commit": {
             "arg": 0,
@@ -2854,6 +2921,7 @@
       "methods": {},
       "native": "skelter DatePicker",
       "native_state": [
+        "open",
         "value"
       ],
       "present": null,
@@ -3028,6 +3096,26 @@
             "fact": "skelter:DatePicker:navigation",
             "mechanism": "tree",
             "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The calendar is shown; the user opening or closing it sets it (`bind:open`).",
+          "fingerprint": "0c7d3605",
+          "id": 209532421,
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:DatePicker:open",
+            "mechanism": "kind",
+            "verified": "delivery"
           },
           "readable": true,
           "type": "bool",
@@ -9094,6 +9182,25 @@
       "abstract": false,
       "attaches_to": null,
       "bindings": {
+        "menu-open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "menu-open",
+          "provenance": "svelters-skelter: <tab-view> writes menu-open into the tree as native-owned state (architecture §4.5) and emits `changed` with it (arg 0); a JS write is never echoed",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -9141,10 +9248,31 @@
       "methods": {},
       "native": "skelter TabView",
       "native_state": [
+        "menu-open",
         "selected"
       ],
       "present": null,
       "props": {
+        "menu-open": {
+          "change": "paint",
+          "construct_only": false,
+          "default": false,
+          "doc": "The overflow menu (every tab, shown while the captions overflow the strip) is open; the user opening or closing it sets it (`bind:menu-open`).",
+          "fingerprint": "0af94fbd",
+          "id": 184111037,
+          "js": "menu-open",
+          "native": "menu-open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "skelter:TabView:menu-open",
+            "mechanism": "kind",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "selected": {
           "change": "layout",
           "construct_only": false,

@@ -4,7 +4,7 @@ family = "pickers"
 kinds = ["calendar"]
 size = [340, 300]
 states = ["normal", "focus-visible", "disabled"]
-notes = "An inline month grid with ISO week numbers and the month header. Every variant sets `value` (the shown month follows it; with none it would be today's, which changes). Look at the picked day, today, out-of-month days, the `min`/`max` greyed days and the header buttons."
+notes = "An inline month grid with ISO week numbers and the month header. Every variant sets `value` (the shown month follows it; with none, today's: the gallery's fixed 2026-10-22). Look at the picked day, today, out-of-month days, the `min`/`max` greyed days and the header buttons."
 
 [[variant]]
 id = "value"

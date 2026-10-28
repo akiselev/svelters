@@ -2,9 +2,9 @@ id = "date-picker"
 title = "Date picker"
 family = "pickers"
 kinds = ["date-picker"]
-size = [320, 96]
+size = [340, 360]
 states = ["normal", "hover", "active", "focus-visible", "disabled"]
-notes = "The closed date button (`format`, a strftime subset). Its drop has no prop that opens it, so a shot shows the closed button only (POL2-REGISTER records the question); `calendar` shows the drop's grid."
+notes = "The date button (`format`, a strftime subset; empty, the format's fields as a dimmed placeholder) and, with `open`, its calendar drop in the window's overlay stack. Today is the gallery's fixed day (2026-10-22), so an empty picker opens on October 2026 every run."
 
 [[variant]]
 id = "format"
@@ -16,3 +16,9 @@ args = { format = ["%Y-%m-%d", "%d %B %Y", "%A, %e %B %Y"] }
 id = "empty"
 title = "No value"
 file = "empty.svelte"
+
+[[variant]]
+id = "open"
+title = "Open"
+file = "open.svelte"
+args = { value = ["2026-10-14", ""] }

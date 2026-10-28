@@ -591,6 +591,32 @@ fn auto_default_moves_default_to_the_focused_button() {
     assert!(d.state(ok).contains(StateMask::DEFAULT) && !d.state(other).contains(StateMask::DEFAULT), "back to the declared default");
 }
 
+/// O-1 (POL3-FINISH): a dialog opening focuses its default button, not its first tab stop, so
+/// auto-default leaves the default look where it was declared.
+#[test]
+fn a_dialog_opens_on_its_default_button() {
+    let (mut d, root) = hdoc();
+    d.set_auto_default(true);
+    frame(&mut d);
+    let dialog = child(&mut d, root, BOX, "");
+    let cancel = child(&mut d, dialog, BTN, "");
+    let ok = child(&mut d, dialog, BTN, "");
+    d.set_prop(cancel, BTN_CANCEL, Value::Bool(true)).unwrap();
+    d.set_prop(ok, BTN_DEFAULT, Value::Bool(true)).unwrap();
+    d.set_prop(dialog, common::FOCUS_SCOPE, Value::Enum(2)).unwrap();
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(ok), "the default button, not Cancel before it");
+    assert!(d.state(ok).contains(StateMask::DEFAULT) && !d.state(cancel).contains(StateMask::DEFAULT));
+    // with no default button, the first tab stop
+    let plain = child(&mut d, root, BOX, "");
+    let first = child(&mut d, plain, BTN, "");
+    child(&mut d, plain, BTN, "");
+    d.remove(root, dialog).unwrap();
+    d.set_prop(plain, common::FOCUS_SCOPE, Value::Enum(2)).unwrap();
+    frame(&mut d);
+    assert_eq!(d.focused(W), Some(first));
+}
+
 #[test]
 fn a_label_focuses_and_labels_its_target() {
     let (mut d, root) = hdoc();

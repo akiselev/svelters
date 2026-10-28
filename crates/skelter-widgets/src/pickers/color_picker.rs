@@ -119,6 +119,13 @@ impl ColorPicker {
         e
     }
 
+    /// Opens or closes the editor from the `open` prop (no keyboard focus moves into it); closing
+    /// after live edits commits them.
+    pub fn set_open(&mut self, open: bool) -> Vec<Emit> {
+        let out = if open { self.drop.open(false) } else { self.drop.close(CloseReason::Done) };
+        self.after_drop(out)
+    }
+
     pub fn button_pointer(&mut self, ev: &PointerEvent, size: Size, enabled: bool) -> Vec<Emit> {
         let out = self.drop.button_pointer(ev, size, enabled);
         self.after_drop(out)
@@ -171,7 +178,12 @@ impl ColorPicker {
 
     /// Records the closed button: the swatch (a checkerboard under alpha) and the chevron.
     pub fn record_button(&self, list: &mut DisplayList, look: &PickerLook, size: Size, focus_visible: bool, enabled: bool) {
-        popup::record_button(list, look, size, ButtonState { open: self.drop.is_open(), focus_visible, enabled });
+        self.record_button_in(list, look, size, ButtonState { open: self.drop.is_open(), focus_visible, enabled, hovered: self.drop.hovered(), pressed: self.drop.pressed() });
+    }
+
+    /// [`ColorPicker::record_button`] with the node's hover and press too.
+    pub fn record_button_in(&self, list: &mut DisplayList, look: &PickerLook, size: Size, st: ButtonState) {
+        popup::record_button(list, look, size, st);
         let (content, _, _) = popup::button_parts(look, size);
         let cy = (content.min.y + content.max.y) / 2.0;
         let sw = Rect::new(content.min.x, cy - SWATCH.h / 2.0, content.min.x + SWATCH.w.min(content.width()), cy + SWATCH.h / 2.0);

@@ -690,6 +690,36 @@ impl RecordCx<'_> {
     }
 }
 
+/// [`Kind::top_layer`](crate::Kind::top_layer): the node, its window's size and the boxes the
+/// rebuild has placed (the window's content, then the top-layer nodes before this one).
+pub struct TopLayerCx<'a> {
+    pub node: NodeView<'a>,
+    pub(crate) window_size: Size,
+}
+
+impl<'a> std::ops::Deref for TopLayerCx<'a> {
+    type Target = NodeView<'a>;
+    fn deref(&self) -> &NodeView<'a> {
+        &self.node
+    }
+}
+
+impl TopLayerCx<'_> {
+    /// The window's size in points.
+    pub fn window_size(&self) -> Size {
+        self.window_size
+    }
+    /// `node`'s border box in window points: this rebuild's when it is placed already (the content
+    /// and earlier top-layer nodes), else the last rebuild's.
+    pub fn world_rect(&self, node: NodeId) -> Option<Rect> {
+        self.node.doc.world_rect(node)
+    }
+    /// The owner's (tree parent's) border box in window points.
+    pub fn owner_rect(&self) -> Option<Rect> {
+        self.node.doc.parent(self.node.id).and_then(|p| self.world_rect(p))
+    }
+}
+
 /// [`Kind::hit_test`](crate::Kind::hit_test).
 pub struct HitCx<'a> {
     pub node: NodeView<'a>,

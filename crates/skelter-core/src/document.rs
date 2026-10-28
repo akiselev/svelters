@@ -974,8 +974,9 @@ impl Document {
                 }
             }
         }
-        // a kind that derives layout from props (orientation, chrome) gets its layout style again
-        if class == ChangeClass::Layout && !is_text {
+        // a kind that derives layout from props (orientation, chrome, a popup's `open` putting it in
+        // the top layer) gets its layout style again
+        if matches!(class, ChangeClass::Layout | ChangeClass::Structure) && !is_text {
             self.core[i].dirty.insert(Dirty::STYLE);
             self.mark_up(i, Dirty::DESC_STYLE);
             if entry.spec.places_children {

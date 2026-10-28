@@ -632,6 +632,15 @@ pub mod core {
 
     /// Stands in for `skelter_core::Kind` (architecture §4.2). Prop storage is the kind's own: core calls
     /// [`Kind::set_prop`]/[`Kind::get_prop`] by spec index (skelter-core's API for this is not fixed yet).
+    /// [`Kind::top_layer`]: the node's size, its owner's box and the window's size (window points),
+    /// and the boxes of other nodes placed before it.
+    pub struct TopLayerCx<'a> {
+        pub size: Size,
+        pub window: Size,
+        pub owner: Option<Rect>,
+        pub rect_of: &'a dyn Fn(skelter_base::ids::NodeId) -> Option<Rect>,
+    }
+
     pub trait Kind: 'static {
         fn spec() -> &'static KindSpec
         where
@@ -686,6 +695,9 @@ pub mod core {
         /// draws around or between its children reads (the status bar's message area, the modal's
         /// dialog box).
         fn children_laid(&mut self, _children: &[(ChildInfo<'_>, Rect)]) {}
+        /// The document's today (the `pickers::Today` service, else UTC's), before each prepare: the
+        /// pickers' today mark and the month an empty one opens on.
+        fn today(&mut self, _today: crate::pickers::date::Date) {}
         fn prepare(&mut self, _cx: &mut PrepareCx) {}
         fn record(&self, cx: &mut RecordCx);
         /// Stands in for [`skelter_core::Kind::record_foreground`]: what paints above the kind's
@@ -776,8 +788,15 @@ pub mod core {
         fn record_overlay(&self, _cx: &mut RecordCx) -> Option<skelter_core::overlay::OverlayPart> {
             None
         }
-        /// The window's overlay stack closed the surface of [`Kind::record_overlay`] (a press
-        /// outside, Escape, its parent closing).
+        /// What the node is while [`Kind::layout_style`] makes it `position: fixed`, which puts it
+        /// and its children in the window's top layer (`skelter_core::Kind::top_layer`): drawn above
+        /// the content, hit first, closed by the overlay stack ([`Kind::overlay_closed`]). `None`:
+        /// core's default (a popup nothing dismisses, where layout put it).
+        fn top_layer(&self, _cx: &TopLayerCx) -> Option<skelter_core::overlay::TopLayer> {
+            None
+        }
+        /// The window's overlay stack closed the surface of [`Kind::record_overlay`] or the node's
+        /// top-layer entry ([`Kind::top_layer`]): a press outside, Escape, its parent closing.
         fn overlay_closed(&mut self, _cx: &mut EventCx, _reason: skelter_core::overlay::DismissReason) -> Handled {
             Handled::No
         }

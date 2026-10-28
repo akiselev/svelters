@@ -516,6 +516,7 @@ impl ColorBody {
     #[allow(clippy::too_many_arguments)]
     pub fn record(&self, list: &mut DisplayList, text: &mut dyn TextPainter, look: &PickerLook, g: &ColorGeom, cfg: &ColorCfg, value: [u8; 4], enabled: bool, focus_visible: bool) {
         let h = self.shown(value);
+        let first = list.items.len();
         let ring = |c: Ctl| focus_visible && self.focus == Some(c) && self.dragging.is_none();
         record_square(list, look, g.square, h);
         record_handle_ring(list, look, g.square, h, self.dragging == Some(Ctl::Square), ring(Ctl::Square));
@@ -557,6 +558,29 @@ impl ColorBody {
         }
         if let Some(r) = g.add {
             record_cell(list, look, r, None, false, self.hovered == Some(Hit::Add));
+        }
+        if !enabled {
+            // disabled: every part at the 0.4 opacity a disabled control takes (R9)
+            fade(&mut list.items[first..], 0.4);
+        }
+    }
+}
+
+/// Multiplies the alpha of every colour `items` paint by `k` (a display list has no opacity group).
+pub fn fade(items: &mut [Prim], k: f32) {
+    let f = |c: &mut Color| *c = c.with_alpha(c.a * k);
+    for p in items {
+        match p {
+            Prim::Quad(q) => {
+                match &mut q.fill {
+                    Fill::Solid(c) => f(c),
+                    Fill::Linear { stops, .. } => stops.iter_mut().for_each(|s| f(&mut s.color)),
+                }
+                f(&mut q.border_color);
+            }
+            Prim::Line(l) => f(&mut l.color),
+            Prim::Glyphs(g) => f(&mut g.color),
+            _ => {}
         }
     }
 }
@@ -606,12 +630,18 @@ pub fn record_alpha(list: &mut DisplayList, look: &PickerLook, r: Rect, h: Hsv) 
     shim::frame(list, r, Color::TRANSPARENT, look.control_border, look.stroke, look.radius);
 }
 
+/// The dark edge around the white handles (they vanished over light colours).
+const HANDLE_EDGE: Color = Color { r: 0.0, g: 0.0, b: 0.0, a: 0.55 };
+
 /// The square's handle: a white ring at (saturation, 1 − value).
 pub fn record_handle_ring(list: &mut DisplayList, look: &PickerLook, r: Rect, h: Hsv, dragging: bool, ring: bool) {
     let w = if dragging { HANDLE_W_DRAGGING } else { HANDLE_W };
     let c = Point::new(r.min.x + h.s.clamp(0.0, 1.0) * r.width(), r.min.y + (1.0 - h.v.clamp(0.0, 1.0)) * r.height());
     let hr = Rect::new(c.x - w / 2.0, c.y - w / 2.0, c.x + w / 2.0, c.y + w / 2.0);
+    // a white ring edged in dark on both sides, so it shows on white and on black
+    shim::frame(list, hr.inflate(1.0), Color::TRANSPARENT, HANDLE_EDGE, 1.0, w / 2.0 + 1.0);
     shim::frame(list, hr, Color::TRANSPARENT, Color::WHITE, 2.0, w / 2.0);
+    shim::frame(list, hr.inflate(-2.0), Color::TRANSPARENT, HANDLE_EDGE, 1.0, (w / 2.0 - 2.0).max(0.0));
     if ring {
         shim::frame(list, hr.inflate(3.0), Color::TRANSPARENT, look.focus, 2.0, w / 2.0 + 3.0);
     }
@@ -622,6 +652,7 @@ pub fn record_strip_handle(list: &mut DisplayList, look: &PickerLook, r: Rect, t
     let w = if dragging { HANDLE_W_DRAGGING } else { HANDLE_W } * 0.6;
     let x = r.min.x + t.clamp(0.0, 1.0) * r.width();
     let hr = Rect::new(x - w / 2.0, r.min.y - 1.0, x + w / 2.0, r.max.y + 1.0);
+    shim::frame(list, hr.inflate(1.0), Color::TRANSPARENT, HANDLE_EDGE, 1.0, 3.0);
     shim::frame(list, hr, Color::TRANSPARENT, Color::WHITE, 2.0, 2.0);
     if ring {
         shim::frame(list, hr.inflate(3.0), Color::TRANSPARENT, look.focus, 2.0, 5.0);

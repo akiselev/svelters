@@ -51,6 +51,8 @@ pub(crate) struct NodePaint {
     pub a11y_tf: Option<Affine>,
     /// The accessibility children the last accessibility node carried.
     pub a11y_kids: Vec<NodeId>,
+    /// In the window's top layer: where its border box goes (window points), from the last rebuild.
+    pub top_at: Option<skelter_base::geom::Point>,
 }
 
 impl Default for NodePaint {
@@ -78,6 +80,7 @@ impl Default for NodePaint {
             world_tf: Affine::IDENTITY,
             a11y_tf: None,
             a11y_kids: Vec::new(),
+            top_at: None,
         }
     }
 }

@@ -143,6 +143,9 @@ pub(crate) struct OverlayNode {
     pub layer: LayerId,
     pub transform: PropNodeId,
     pub inverse: skelter_base::geom::Affine,
+    /// A top-layer node's entry (its subtree draws in the layer, items from the rebuild walk), not
+    /// an overlay part.
+    pub subtree: bool,
 }
 
 /// The drag layer: an overlay layer above everything, moved by its own transform node.

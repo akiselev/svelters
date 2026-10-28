@@ -10,8 +10,10 @@
 //!   selection, Ctrl+Tab / Ctrl+Shift+Tab and Ctrl+PageDown / Ctrl+PageUp cycle it.
 //! - **Closing:** a `closable` tab has a close button; a primary click on it (press and release on
 //!   the button) or a middle click on the tab raises `close-requested` on the tab. JS removes it.
-//! - **Overflow:** captions wider than the strip scroll horizontally with the wheel; a selection
-//!   change scrolls the selected caption into view.
+//! - **Overflow:** captions wider than the strip scroll horizontally (the wheel, and the scroll
+//!   buttons at the strip's end, one caption per press, as Qt's tab bar does); a selection change
+//!   scrolls the selected caption into view. The overflow button next to them opens a menu listing
+//!   every tab (VS Code's "Show opened editors"), the shown one checked; picking a row selects it.
 //!
 //! [`TabView`] is the kind's native state (selection, hover, press, scroll); [`TabStrip`] is the
 //! caption geometry, rebuilt when captions, look or width change.
@@ -71,6 +73,16 @@ pub struct TabLook {
     pub radius: f32,
     pub min_tab_width: f32,
     pub max_tab_width: f32,
+    /// The strip's least height (`tab-h`, VS Code's 35 pt tabs), the indicator included.
+    pub min_height: f32,
+    /// The overflow menu's surface and its current row.
+    pub menu_bg: Color,
+    pub menu_border: Color,
+    pub menu_sel: Color,
+    pub menu_sel_fg: Color,
+    /// The current row's outline (VS Code's `menu.selectionBorder`: the high-contrast themes'
+    /// active border, where the selection fill alone does not show).
+    pub menu_sel_border: Option<Color>,
 }
 
 impl Default for TabLook {
@@ -96,6 +108,12 @@ impl Default for TabLook {
             radius: 4.0,
             min_tab_width: 40.0,
             max_tab_width: 240.0,
+            min_height: 0.0,
+            menu_bg: rgb(255, 255, 255),
+            menu_border: rgb(204, 204, 204),
+            menu_sel: rgb(0, 96, 192),
+            menu_sel_fg: rgb(255, 255, 255),
+            menu_sel_border: None,
         }
     }
 }
@@ -124,7 +142,7 @@ impl TabStrip {
     /// within `min_tab_width..=max_tab_width` (a longer title is elided).
     pub fn layout(captions: &[TabCaption], look: &TabLook, text: &mut dyn TextPainter) -> TabStrip {
         let line = text.measure("Ag", &look.text).h;
-        let height = (line + 2.0 * look.pad_y).max(look.close_size + 2.0 * look.pad_y) + look.indicator_width;
+        let height = ((line + 2.0 * look.pad_y).max(look.close_size + 2.0 * look.pad_y) + look.indicator_width).max(look.min_height);
         let mut x = 0.0;
         let mut tabs = Vec::with_capacity(captions.len());
         for c in captions {
@@ -147,20 +165,50 @@ impl TabStrip {
     }
 }
 
-/// What the pointer is over in the strip.
+/// The buttons at the end of an overflowing strip.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Ctl {
+    /// Scrolls one caption back.
+    Left,
+    /// Scrolls one caption on.
+    Right,
+    /// Opens the menu of every tab.
+    Menu,
+}
+
+/// What the pointer is over in the strip (or its overflow menu).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TabHit {
     Tab(usize),
     Close(usize),
+    Ctl(Ctl),
+    /// A row of the open overflow menu.
+    Item(usize),
 }
 
 impl TabHit {
-    fn tab(self) -> usize {
+    fn tab(self) -> Option<usize> {
         match self {
-            TabHit::Tab(k) | TabHit::Close(k) => k,
+            TabHit::Tab(k) | TabHit::Close(k) => Some(k),
+            _ => None,
         }
     }
 }
+
+/// The overflow menu's row metrics (from the last relayout).
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+struct MenuGeom {
+    row_h: f32,
+    width: f32,
+    pad_x: f32,
+}
+
+/// The overflow menu's inner padding above the first and below the last row.
+const MENU_PAD: f32 = 4.0;
+/// Room for the check mark before a row's title.
+const MENU_CHECK: f32 = 18.0;
+/// The gap between the strip and the menu.
+const MENU_GAP: f32 = 2.0;
 
 /// A `tab-view`'s native state.
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -176,6 +224,13 @@ pub struct TabView {
     scroll: f32,
     hover: Option<TabHit>,
     pressed: Option<(TabHit, MouseButton)>,
+    /// The overflow menu is open, and its current row (the pointer's or the arrow keys').
+    menu_open: bool,
+    menu_cur: Option<usize>,
+    menu: MenuGeom,
+    /// The page last scrolled into view: a new selection (a JS write before the strip was laid
+    /// out, too) is revealed at the next relayout; a wheel scroll away from it stays.
+    revealed: Option<usize>,
 }
 
 impl TabView {
@@ -225,17 +280,103 @@ impl TabView {
         self.strip = TabStrip::layout(captions, look, text);
         self.width = width;
         let n = captions.len();
-        if self.hover.is_some_and(|h| h.tab() >= n) {
+        let gone = |h: TabHit| h.tab().is_some_and(|t| t >= n) || matches!(h, TabHit::Item(k) if k >= n);
+        if self.hover.is_some_and(gone) {
             self.hover = None;
         }
-        if self.pressed.is_some_and(|(h, _)| h.tab() >= n) {
+        if self.pressed.is_some_and(|(h, _)| gone(h)) {
             self.pressed = None;
         }
+        let line = text.measure("Ag", &look.text).h;
+        let widest = captions.iter().map(|c| text.measure(&c.title, &look.text).w).fold(0.0f32, f32::max);
+        self.menu = MenuGeom { row_h: (line + 2.0 * look.pad_y).ceil(), width: (widest + MENU_CHECK + 3.0 * look.pad_x).clamp(120.0, 360.0), pad_x: look.pad_x };
+        if !self.overflows() {
+            self.menu_open = false;
+        }
+        if self.menu_cur.is_some_and(|k| k >= n) {
+            self.menu_cur = None;
+        }
         self.clamp_scroll();
+        if let Some(k) = self.shown(n).filter(|&k| self.revealed != Some(k)) {
+            self.reveal(k);
+        }
+    }
+
+    /// The captions are wider than the strip: it shows its scroll and overflow buttons.
+    pub fn overflows(&self) -> bool {
+        self.strip.content_width > self.width + 0.5
+    }
+
+    /// The width of one button at the strip's end.
+    fn ctl_w(&self) -> f32 {
+        (self.strip.height * 0.9).round()
+    }
+
+    /// The width the captions show in (the strip less its buttons when it overflows).
+    pub fn viewport(&self) -> f32 {
+        if self.overflows() { (self.width - 3.0 * self.ctl_w()).max(0.0) } else { self.width }
+    }
+
+    /// A button at the strip's end (tab-view coordinates); `None` while the captions fit.
+    pub fn ctl_rect(&self, c: Ctl) -> Option<Rect> {
+        if !self.overflows() {
+            return None;
+        }
+        let w = self.ctl_w();
+        let k = match c {
+            Ctl::Left => 0.0,
+            Ctl::Right => 1.0,
+            Ctl::Menu => 2.0,
+        };
+        let x = self.viewport() + k * w;
+        Some(Rect::new(x, 0.0, x + w, self.strip.height))
+    }
+
+    /// The open overflow menu's surface (tab-view coordinates): under the overflow button, its
+    /// right edge on the strip's.
+    pub fn menu_rect(&self) -> Option<Rect> {
+        if !self.menu_open {
+            return None;
+        }
+        let h = 2.0 * MENU_PAD + self.strip.tabs.len() as f32 * self.menu.row_h;
+        let y = self.strip.height + MENU_GAP;
+        Some(Rect::new(self.width - self.menu.width, y, self.width, y + h))
+    }
+
+    pub fn menu_open(&self) -> bool {
+        self.menu_open
+    }
+
+    /// Row `k` of the open menu.
+    fn menu_row(&self, k: usize) -> Option<Rect> {
+        let m = self.menu_rect()?;
+        let y = m.min.y + MENU_PAD + k as f32 * self.menu.row_h;
+        Some(Rect::new(m.min.x + MENU_PAD, y, m.max.x - MENU_PAD, y + self.menu.row_h))
+    }
+
+    /// Opens or closes the overflow menu (its current row: the shown tab).
+    pub fn set_menu(&mut self, open: bool) {
+        self.menu_open = open && self.overflows();
+        self.menu_cur = if self.menu_open { self.shown(self.strip.tabs.len()) } else { None };
+    }
+
+    /// One caption on (`forward`) or back: the next caption cut at that edge comes fully in.
+    pub fn scroll_step(&mut self, forward: bool) -> bool {
+        let before = self.scroll;
+        let view = self.viewport();
+        if forward {
+            if let Some(t) = self.strip.tabs.iter().find(|t| t.rect.max.x > self.scroll + view + 0.5) {
+                self.scroll = t.rect.max.x - view;
+            }
+        } else if let Some(t) = self.strip.tabs.iter().rev().find(|t| t.rect.min.x < self.scroll - 0.5) {
+            self.scroll = t.rect.min.x;
+        }
+        self.clamp_scroll();
+        self.scroll != before
     }
 
     fn max_scroll(&self) -> f32 {
-        (self.strip.content_width - self.width).max(0.0)
+        (self.strip.content_width - self.viewport()).max(0.0)
     }
 
     fn clamp_scroll(&mut self) {
@@ -245,8 +386,10 @@ impl TabView {
     /// Scrolls caption `k` fully into view (its left edge wins when it is wider than the strip).
     fn reveal(&mut self, k: usize) {
         let Some(t) = self.strip.tabs.get(k) else { return };
-        if t.rect.max.x - self.scroll > self.width {
-            self.scroll = t.rect.max.x - self.width;
+        self.revealed = Some(k);
+        let view = self.viewport();
+        if t.rect.max.x - self.scroll > view {
+            self.scroll = t.rect.max.x - view;
         }
         if t.rect.min.x - self.scroll < 0.0 {
             self.scroll = t.rect.min.x;
@@ -256,7 +399,16 @@ impl TabView {
 
     /// What is under `p` (tab-view coordinates).
     pub fn hit(&self, p: Point) -> Option<TabHit> {
+        if self.menu_rect().is_some_and(|m| m.contains(p)) {
+            return (0..self.strip.tabs.len()).find(|&k| self.menu_row(k).is_some_and(|r| r.contains(p))).map(TabHit::Item);
+        }
         if p.y < 0.0 || p.y >= self.strip.height || p.x < 0.0 || p.x >= self.width {
+            return None;
+        }
+        if let Some(c) = [Ctl::Left, Ctl::Right, Ctl::Menu].into_iter().find(|&c| self.ctl_rect(c).is_some_and(|r| r.contains(p))) {
+            return Some(TabHit::Ctl(c));
+        }
+        if p.x >= self.viewport() {
             return None;
         }
         let q = Point::new(p.x + self.scroll, p.y);
@@ -289,6 +441,10 @@ impl TabView {
             PointerPhase::Move | PointerPhase::Enter => {
                 o.repaint = hit != self.hover;
                 self.hover = hit;
+                if let Some(TabHit::Item(k)) = hit {
+                    o.repaint |= self.menu_cur != Some(k);
+                    self.menu_cur = Some(k);
+                }
             }
             PointerPhase::Leave => {
                 o.repaint = self.hover.is_some();
@@ -302,11 +458,29 @@ impl TabView {
                 let (Some(h), Some(b)) = (hit, ev.button) else { return o };
                 self.pressed = Some((h, b));
                 o.repaint = true;
-                if b == MouseButton::Primary
-                    && let TabHit::Tab(k) = h
-                {
-                    self.pick(k, &mut o.events);
-                    o.take_focus = true;
+                if b == MouseButton::Primary {
+                    match h {
+                        TabHit::Tab(k) => {
+                            self.pick(k, &mut o.events);
+                            o.take_focus = true;
+                        }
+                        TabHit::Ctl(Ctl::Left) => {
+                            self.scroll_step(false);
+                        }
+                        TabHit::Ctl(Ctl::Right) => {
+                            self.scroll_step(true);
+                        }
+                        TabHit::Ctl(Ctl::Menu) => {
+                            self.set_menu(!self.menu_open);
+                            o.take_focus = true;
+                        }
+                        TabHit::Item(k) => {
+                            self.set_menu(false);
+                            self.pick(k, &mut o.events);
+                            o.take_focus = true;
+                        }
+                        TabHit::Close(_) => {}
+                    }
                 }
             }
             PointerPhase::Up => {
@@ -317,7 +491,7 @@ impl TabView {
                 }
                 match (h, b) {
                     (TabHit::Close(k), MouseButton::Primary) if hit == Some(TabHit::Close(k)) => o.close.push(k),
-                    (_, MouseButton::Middle) if hit.map(TabHit::tab) == Some(h.tab()) && self.closable(h.tab()) => o.close.push(h.tab()),
+                    (TabHit::Tab(t) | TabHit::Close(t), MouseButton::Middle) if hit.and_then(TabHit::tab) == Some(t) && self.closable(t) => o.close.push(t),
                     _ => {}
                 }
             }
@@ -365,6 +539,25 @@ impl TabView {
             return o;
         }
         let cur = self.shown(n).unwrap_or(0);
+        if self.menu_open {
+            // the overflow menu has the keys: Up/Down move its row, Enter or Space picks, Escape closes
+            let row = self.menu_cur.unwrap_or(cur);
+            match ev.key {
+                Some(Key::ArrowDown) => self.menu_cur = Some((row + 1).min(n - 1)),
+                Some(Key::ArrowUp) => self.menu_cur = Some(row.saturating_sub(1)),
+                Some(Key::Home) => self.menu_cur = Some(0),
+                Some(Key::End) => self.menu_cur = Some(n - 1),
+                Some(Key::Enter) | Some(Key::Space) => {
+                    self.set_menu(false);
+                    self.pick(row, &mut o.events);
+                }
+                Some(Key::Escape) => self.set_menu(false),
+                _ => return o,
+            }
+            o.handled = true;
+            o.repaint = true;
+            return o;
+        }
         let ctrl = ev.modifiers.contains(Modifiers::CTRL);
         let shift = ev.modifiers.contains(Modifiers::SHIFT);
         let cycle = |d: i64| ((cur as i64 + d).rem_euclid(n as i64)) as usize;
@@ -392,19 +585,21 @@ impl TabView {
     /// focus ring. Pages record themselves.
     pub fn record(&self, captions: &[TabCaption], look: &TabLook, text: &mut dyn TextPainter, list: &mut DisplayList) {
         let h = self.strip.height;
-        let bar = Rect::new(0.0, 0.0, self.width, h);
-        shim::fill(list, bar, look.bar_bg, 0.0);
+        let full = Rect::new(0.0, 0.0, self.width, h);
+        shim::fill(list, full, look.bar_bg, 0.0);
         shim::line(list, Point::new(0.0, h - 0.5), Point::new(self.width, h - 0.5), 1.0, look.separator);
+        self.record_ctls(look, list);
+        let bar = Rect::new(0.0, 0.0, self.viewport(), h);
         list.push(Prim::PushClip(RoundedRect { rect: bar, radii: Corners::ZERO }), bar);
         let shown = self.shown(captions.len());
         for (k, (c, g)) in captions.iter().zip(&self.strip.tabs).enumerate() {
             let dx = skelter_base::geom::Vec2::new(-self.scroll, 0.0);
             let r = g.rect.translate(dx);
-            if r.max.x <= 0.0 || r.min.x >= self.width {
+            if r.max.x <= 0.0 || r.min.x >= self.viewport() {
                 continue;
             }
             let on = shown == Some(k);
-            let hovered = self.hover.map(TabHit::tab) == Some(k);
+            let hovered = self.hover.and_then(TabHit::tab) == Some(k);
             let pressed = self.pressed.is_some_and(|(h, b)| h == TabHit::Tab(k) && b == MouseButton::Primary);
             let body = Rect::new(r.min.x, r.min.y, r.max.x, r.max.y - look.indicator_width);
             let bg = if pressed {
@@ -438,7 +633,9 @@ impl TabView {
             }
             if on {
                 let y = r.max.y - look.indicator_width / 2.0;
-                shim::line(list, Point::new(r.min.x, y), Point::new(r.max.x, y), look.indicator_width, look.indicator);
+                // a disabled strip's marker dims with its captions
+                let marker = if self.enabled { look.indicator } else { look.disabled_fg };
+                shim::line(list, Point::new(r.min.x, y), Point::new(r.max.x, y), look.indicator_width, marker);
                 if self.focused && self.focus_visible {
                     let ring = body.inflate(-1.0);
                     shim::frame(list, ring, Color::TRANSPARENT, look.focus, 1.0, look.radius);
@@ -446,6 +643,63 @@ impl TabView {
             }
         }
         list.push(Prim::PopClip, Rect::ZERO);
+    }
+
+    /// The scroll and overflow buttons of an overflowing strip: chevrons, dimmed where there is
+    /// nothing more to scroll to, a hover fill, the overflow button pressed while its menu is open.
+    fn record_ctls(&self, look: &TabLook, list: &mut DisplayList) {
+        for c in [Ctl::Left, Ctl::Right, Ctl::Menu] {
+            let Some(r) = self.ctl_rect(c) else { continue };
+            let body = Rect::new(r.min.x + 1.0, r.min.y + 2.0, r.max.x - 1.0, r.max.y - look.indicator_width - 2.0);
+            let live = self.enabled
+                && match c {
+                    Ctl::Left => self.scroll > 0.5,
+                    Ctl::Right => self.scroll < self.max_scroll() - 0.5,
+                    Ctl::Menu => true,
+                };
+            if c == Ctl::Menu && self.menu_open {
+                shim::fill(list, body, look.pressed_bg, look.radius);
+            } else if live && self.hover == Some(TabHit::Ctl(c)) {
+                shim::fill(list, body, look.close_hover_bg, look.radius);
+            }
+            let fg = if live { look.text.color } else { look.disabled_fg };
+            let (cx, cy) = ((body.min.x + body.max.x) / 2.0, (body.min.y + body.max.y) / 2.0);
+            let s = 3.5;
+            let pts = match c {
+                Ctl::Left => [Point::new(cx + s * 0.5, cy - s), Point::new(cx - s * 0.5, cy), Point::new(cx + s * 0.5, cy + s)],
+                Ctl::Right => [Point::new(cx - s * 0.5, cy - s), Point::new(cx + s * 0.5, cy), Point::new(cx - s * 0.5, cy + s)],
+                Ctl::Menu => [Point::new(cx - s, cy - s * 0.5), Point::new(cx, cy + s * 0.5), Point::new(cx + s, cy - s * 0.5)],
+            };
+            shim::line(list, pts[0], pts[1], 1.3, fg);
+            shim::line(list, pts[1], pts[2], 1.3, fg);
+        }
+    }
+
+    /// Records the open overflow menu (tab-view coordinates): its surface, a row per tab (the
+    /// current row filled, the shown tab checked). Nothing while it is closed.
+    pub fn record_menu(&self, captions: &[TabCaption], look: &TabLook, text: &mut dyn TextPainter, list: &mut DisplayList) {
+        let Some(m) = self.menu_rect() else { return };
+        shim::frame(list, m, look.menu_bg, look.menu_border, 1.0, look.radius);
+        let shown = self.shown(captions.len());
+        for (k, c) in captions.iter().enumerate() {
+            let Some(r) = self.menu_row(k) else { continue };
+            let cur = self.menu_cur == Some(k);
+            if cur {
+                match look.menu_sel_border {
+                    Some(b) => shim::frame(list, r, look.menu_sel, b, 1.0, look.radius),
+                    None => shim::fill(list, r, look.menu_sel, look.radius),
+                }
+            }
+            let fg = if cur { look.menu_sel_fg } else { look.text.color };
+            if shown == Some(k) {
+                // a check mark in the row's first column
+                let (x, y) = (r.min.x + self.menu.pad_x * 0.6, (r.min.y + r.max.y) / 2.0);
+                shim::line(list, Point::new(x, y), Point::new(x + 3.5, y + 3.5), 1.3, fg);
+                shim::line(list, Point::new(x + 3.5, y + 3.5), Point::new(x + 10.0, y - 4.0), 1.3, fg);
+            }
+            let label = Rect::new(r.min.x + self.menu.pad_x * 0.6 + MENU_CHECK, r.min.y, r.max.x - self.menu.pad_x, r.max.y);
+            text.draw(list, &c.title, &look.text.with_color(fg), label, HAlign::Start, true);
+        }
     }
 
     /// The captions' AccessKit nodes (role `Tab`, selected state, bounds in tab-view coordinates);
@@ -589,7 +843,7 @@ mod tests {
         v.focused = true;
         v.key(&key(Key::End, Modifiers::default()));
         let last = v.strip().tabs[9].rect;
-        assert!((last.max.x - v.scroll() - 150.0).abs() < 1e-3, "the last caption ends at the strip's edge");
+        assert!((last.max.x - v.scroll() - v.viewport()).abs() < 1e-3, "the last caption ends at the scroll buttons");
         let wheel = WheelEvent { pos: Point::new(10.0, 5.0), delta: ScrollDelta::Lines(Vec2::new(0.0, 1.0)), phase: None, momentum: None, modifiers: Modifiers::default() };
         let before = v.scroll();
         assert!(v.wheel(&wheel));
@@ -597,6 +851,58 @@ mod tests {
         let fits = view(&caps(2, false), 600.0);
         let mut fits = fits;
         assert!(!fits.wheel(&wheel), "nothing to scroll");
+    }
+
+    #[test]
+    fn an_overflowing_strip_has_scroll_buttons_and_a_menu_of_every_tab() {
+        let c = caps(10, false);
+        let mut v = view(&c, 200.0);
+        assert!(v.overflows() && v.viewport() < 200.0);
+        let (l, r, m) = (v.ctl_rect(Ctl::Left).unwrap(), v.ctl_rect(Ctl::Right).unwrap(), v.ctl_rect(Ctl::Menu).unwrap());
+        assert_eq!((l.min.x, m.max.x), (v.viewport(), 200.0), "at the strip's end, in order");
+        let mid = |r: Rect| Point::new((r.min.x + r.max.x) / 2.0, (r.min.y + r.max.y) / 2.0);
+        assert_eq!(v.hit(mid(r)), Some(TabHit::Ctl(Ctl::Right)));
+        // the right button brings the first cut caption fully in; the left one goes back
+        v.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), mid(r)));
+        let first_cut = v.strip().tabs.iter().find(|t| t.rect.max.x > v.viewport()).unwrap().rect;
+        assert!((v.scroll() - (first_cut.max.x - v.viewport())).abs() < 1e-3);
+        v.pointer(&ptr(PointerPhase::Up, Some(MouseButton::Primary), mid(r)));
+        v.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), mid(l)));
+        assert_eq!(v.scroll(), 0.0, "back to the first caption");
+        v.pointer(&ptr(PointerPhase::Up, Some(MouseButton::Primary), mid(l)));
+        // the overflow button opens the menu under it, right-aligned to the strip
+        let o = v.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), mid(m)));
+        assert!(v.menu_open() && o.take_focus);
+        v.pointer(&ptr(PointerPhase::Up, Some(MouseButton::Primary), mid(m)));
+        let menu = v.menu_rect().unwrap();
+        assert_eq!(menu.max.x, 200.0);
+        assert!(menu.min.y > v.strip().height);
+        // a click on the last row selects page 9, closes the menu and reveals the caption
+        let row = Point::new(menu.min.x + 20.0, menu.max.y - MENU_PAD - 2.0);
+        assert_eq!(v.hit(row), Some(TabHit::Item(9)));
+        let o = v.pointer(&ptr(PointerPhase::Down, Some(MouseButton::Primary), row));
+        assert_eq!(o.events, vec![Emit::new("changed", vec![Value::I64(9)])]);
+        assert!(!v.menu_open());
+        let last = v.strip().tabs[9].rect;
+        assert!((last.max.x - v.scroll() - v.viewport()).abs() < 1e-3, "the picked caption in view");
+        // keys while it is open: Up moves the row, Enter picks, Escape closes
+        v.focused = true;
+        v.set_menu(true);
+        assert!(v.key(&key(Key::ArrowUp, Modifiers::default())).handled);
+        assert_eq!(v.key(&key(Key::Enter, Modifiers::default())).events, vec![Emit::new("changed", vec![Value::I64(8)])]);
+        v.set_menu(true);
+        v.key(&key(Key::Escape, Modifiers::default()));
+        assert!(!v.menu_open());
+        // a selection written before the strip was laid out is revealed at its first layout
+        let mut w = TabView::new();
+        w.set_selected(9);
+        w.relayout(&c, &TabLook::default(), &mut FixedText::default(), 200.0);
+        assert!((w.strip().tabs[9].rect.max.x - w.scroll() - w.viewport()).abs() < 1e-3);
+        // captions that fit: no buttons, no menu
+        let mut fits = view(&caps(2, false), 600.0);
+        assert!(fits.ctl_rect(Ctl::Menu).is_none());
+        fits.set_menu(true);
+        assert!(!fits.menu_open());
     }
 
     #[test]

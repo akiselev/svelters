@@ -4,7 +4,7 @@ family = "views"
 kinds = ["button", "tooltip"]
 size = [320, 120]
 states = ["normal", "hover"]
-notes = "The common `tooltip` prop on a widget, and the `tooltip` kind's surface on its own. In the `hover` state the gallery rests the pointer on the subject past the platform's tooltip delay, so the hover text shows as it would for a person; `element` draws the surface where it is placed (what the tooltip layer shows), in every state."
+notes = "The common `tooltip` prop on a widget, and the `tooltip` kind's surface on its own. In the `hover` state the gallery rests the pointer on the subject past the platform's tooltip delay, so the hover text shows as it would for a person; `element` is the `tooltip` kind: in the window's top layer next to its owner (`top-center`, flipped below when there is no room above), in every state. A long text wraps to stay inside the window."
 
 [[variant]]
 id = "button"
