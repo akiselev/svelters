@@ -90,6 +90,11 @@ pub struct HostConfig {
     /// ([`crate::HostSched`]; empty: rayon, the wall clock, the backend). A clock excludes `scripted`
     /// (which has its own virtual clock): `Host::new` refuses both.
     pub sched: crate::sched::HostSched,
+    /// SV87: the largest budget a block rebuild's retry may get. A block the turn budget stopped
+    /// mid-update is rebuilt from nothing (SV84); each time that rebuild is stopped again, entries
+    /// get twice the budget of the last, up to this. A rebuild stopped under this budget gives up
+    /// and leaves its block empty until the block's inputs change.
+    pub repair_budget: Duration,
 }
 
 impl Default for HostConfig {
@@ -110,6 +115,7 @@ impl Default for HostConfig {
             timing: false,
             quit_on_last_window: true,
             locale: None,
+            repair_budget: Duration::from_secs(2),
         }
     }
 }

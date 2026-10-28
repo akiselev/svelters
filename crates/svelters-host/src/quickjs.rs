@@ -239,6 +239,12 @@ pub(crate) struct QjsEngine {
     aborted: Arc<AtomicBool>,
     /// The budget `arm` armed (for `Core::last_interrupt`).
     armed_budget: std::cell::Cell<Option<Duration>>,
+    /// SV87: how many times in a row an abort stopped a block's update (SV84's rebuild included);
+    /// while above 0, entries get the turn budget doubled this many times, up to
+    /// `HostConfig::repair_budget`. Back to 0 once the runtime has no rebuild left to run.
+    repair_level: std::cell::Cell<u32>,
+    /// SV87: the interrupt of an aborted job, reported (or not) once `recover` says what it stopped.
+    held_interrupt: RefCell<Option<JsError>>,
     async_errors: Rc<RefCell<Vec<JsError>>>,
     core: Rc<Core>,
     callbacks: Rc<QjsCallbacks>,
@@ -374,6 +380,8 @@ impl QjsEngine {
             deadline_hit,
             aborted,
             armed_budget: std::cell::Cell::new(None),
+            repair_level: std::cell::Cell::new(0),
+            held_interrupt: RefCell::new(None),
             async_errors,
             core: core.clone(),
             callbacks,
@@ -386,7 +394,7 @@ impl QjsEngine {
     }
 
     fn arm(&self) {
-        let budget = self.core.budget.get();
+        let budget = self.core.budget.get().map(|b| repair_budget(b, self.repair_level.get(), self.core.cfg.repair_budget));
         let d = budget.map_or(0, |b| (self.base.elapsed() + b).as_nanos() as u64);
         self.armed_budget.set(budget);
         self.deadline_hit.store(false, Ordering::Relaxed);
@@ -401,7 +409,18 @@ impl QjsEngine {
                 self.core.last_interrupt.set(Some(crate::core::BudgetInterrupt { budget, late }));
             }
         }
-        self.recover_if_aborted();
+        if !self.recover_if_aborted() && self.repair_level.get() > 0 && !self.repairing() {
+            self.repair_level.set(0);
+        }
+    }
+
+    /// SV87: whether the runtime still has a block rebuild to run (`__svelters_repairing`).
+    fn repairing(&self) -> bool {
+        self.ctx.with(|ctx| {
+            let _running = RunningCtx::enter(&ctx);
+            let f: Value = ctx.globals().get("__svelters_repairing").ok()?;
+            f.as_function()?.call::<_, bool>(()).ok()
+        }) == Some(true)
     }
 
     /// FX6 (plans/milestones/FX6-embed-destroy-mutation.md): QuickJS stops a script with an
@@ -411,10 +430,20 @@ impl QjsEngine {
     /// with `state_unsafe_mutation`). Right after an aborted entry, with no budget armed, the
     /// runtime's `globalThis.__svelters_recover()` (if it has one) puts that state back at rest; it
     /// runs no component code. Its own errors are reported.
-    fn recover_if_aborted(&self) {
+    ///
+    /// SV87: SV84's `recover` marks the blocks the abort stopped mid-update to be rebuilt from
+    /// nothing, and returns how many. A rebuild that costs more than the budget would be stopped
+    /// again on every retry, so each abort that stops a block's update raises `repair_level` (the
+    /// next entries get twice the budget of the last, up to `HostConfig::repair_budget`), and only
+    /// the first one is reported. An abort under the largest budget gives up: `recover(true)` leaves
+    /// the blocks empty (no stale nodes) until their inputs change, reported once more. Returns
+    /// whether it recovered.
+    fn recover_if_aborted(&self) -> bool {
         if !self.aborted.swap(false, Ordering::Relaxed) {
-            return;
+            return false;
         }
+        let level = self.repair_level.get();
+        let give_up = level > 0 && self.armed_budget.get().is_some_and(|b| b >= self.core.cfg.repair_budget);
         let r = self.ctx.with(|ctx| {
             let _running = RunningCtx::enter(&ctx);
             let f: Value = match ctx.globals().get("__svelters_recover") {
@@ -422,13 +451,33 @@ impl QjsEngine {
                 Err(e) => return Err(js_err(&ctx, e)),
             };
             match f.as_function() {
-                Some(f) => f.call::<_, ()>(()).map_err(|e| js_err(&ctx, e)),
-                None => Ok(()),
+                Some(f) => f.call::<_, Option<f64>>((give_up,)).map(|n| n.unwrap_or(0.0) as u32).map_err(|e| js_err(&ctx, e)),
+                None => Ok(0),
             }
         });
-        if let Err(e) = r {
-            self.async_errors.borrow_mut().push(e);
+        let held = self.held_interrupt.borrow_mut().take();
+        let mut errors = self.async_errors.borrow_mut();
+        match r {
+            Ok(n) if n > 0 && give_up => {
+                self.repair_level.set(0);
+                let budget = self.armed_budget.get().unwrap_or_default();
+                let mut e = held.unwrap_or_else(|| JsError::new(ErrorKind::Interrupted, "interrupted"));
+                e.message = format!("interrupted: a block's rebuild ran past its largest budget ({budget:?}); the block stays empty until its inputs change");
+                errors.push(e);
+            }
+            // a retry of a rebuild stopped again: the first abort was reported
+            Ok(n) if n > 0 && level > 0 => self.repair_level.set(level + 1),
+            r => {
+                if matches!(r, Ok(n) if n > 0) {
+                    self.repair_level.set(1);
+                }
+                errors.extend(held);
+                if let Err(e) = r {
+                    errors.push(e);
+                }
+            }
         }
+        true
     }
 
     fn call_guarded<R>(&self, f: impl for<'js> FnOnce(&Ctx<'js>) -> Res<R>) -> Result<R, JsError> {
@@ -750,7 +799,12 @@ impl JsEngine for QjsEngine {
                 Err(job_ctx) => {
                     st.ran += 1;
                     let e = job_ctx.0.with(|c| describe(&c, c.catch()));
-                    self.async_errors.borrow_mut().push(e);
+                    // SV87: an interrupt is reported by `disarm`, unless it repeats a block rebuild's
+                    if self.aborted.load(Ordering::Relaxed) && e.kind == ErrorKind::Interrupted {
+                        *self.held_interrupt.borrow_mut() = Some(e);
+                    } else {
+                        self.async_errors.borrow_mut().push(e);
+                    }
                     // FX6b: an interrupted job left the runtime mid-update (no `finally` ran). The
                     // drain stops here, so `disarm` recovers before any other job runs: a job queued
                     // by the aborted one (a subscriber's cleanup) would run in its stale reaction,
@@ -891,6 +945,14 @@ impl QjsEngine {
             std::mem::forget(self.ctx.clone());
         }
     }
+}
+
+/// SV87: the turn budget `b` doubled `level` times, at most `max` (and never below `b`).
+fn repair_budget(b: Duration, level: u32, max: Duration) -> Duration {
+    if level == 0 {
+        return b;
+    }
+    b.saturating_mul(1u32 << level.min(20)).min(max.max(b))
 }
 
 // ---- errors ----
