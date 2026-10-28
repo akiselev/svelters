@@ -585,6 +585,36 @@ impl CoreBars {
         self.scroller.layout_bars(g.viewport, BAR_WIDTH, MIN_THUMB, show);
     }
 
+    /// The time and policy of an event that does not go through [`CoreBars::event`] (a kind that
+    /// implements skelter-core's `Kind` itself: the text field); `scrolled`: a wheel or a scroll
+    /// counts as activity (the overlay bars show).
+    pub fn note(&mut self, now: Time, policy: Option<Policy>, reduced: bool, scrolled: bool) {
+        self.now = now;
+        if policy.is_some() {
+            self.policy = policy;
+        }
+        self.reduced = reduced;
+        if scrolled {
+            self.scroller.touch(now);
+        }
+    }
+
+    /// When the overlay bars' look next changes without input (their fade).
+    pub fn wake(&self) -> Option<Time> {
+        self.scroller.bar_wake(self.now, &self.policy())
+    }
+
+    /// The foreground as a display list (edge shadows and bars: quads only), for a kind that records
+    /// through skelter-core's `RecordCx` itself.
+    pub fn record_list(&self, styles: &Styles, size: Size, scale: f32, g: Option<&skelter_core::ScrollGeometry>) -> skelter_base::display::DisplayList {
+        let mut list = skelter_base::display::DisplayList::new();
+        let mut res = crate::shim::testing::MemResources::default();
+        let mut text = crate::shim::testing::MonoShaper;
+        let mut cx = RecordCx { size, style: Styles { ..*styles }, list: &mut list, text: &mut text, res: &mut res, scale };
+        self.record(&mut cx, g);
+        list
+    }
+
     /// The scroller as last synced.
     pub fn scroller(&self) -> &Scroller {
         &self.scroller

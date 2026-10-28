@@ -499,11 +499,14 @@ impl Document {
         let mut shaper = self.shaper.take();
         let mut services = std::mem::take(&mut self.services);
         let mut emitted = Vec::new();
-        let (request, scroll, caret, native, placed) = {
-            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None, native: Vec::new(), placed: Vec::new() };
+        let (request, scroll, caret, native, placed, states) = {
+            let mut cx = PrepareCx { node: self.view_at(i), shaper: shaper.as_deref_mut(), images, request: Dirty::EMPTY, services: &mut services, emitted: &mut emitted, scroll: None, caret: None, native: Vec::new(), placed: Vec::new(), states: Vec::new() };
             k.prepare(&mut cx);
-            (cx.request, cx.scroll, cx.caret, cx.native, cx.placed)
+            (cx.request, cx.scroll, cx.caret, cx.native, cx.placed, cx.states)
         };
+        for (bits, on) in states {
+            self.set_state(node, bits, on);
+        }
         // a kind that scrolls itself may have grown or shrunk its content
         let own = k.self_scroll(&self.view_at(i));
         if self.self_scroll.get(&node) != own.as_ref() {
