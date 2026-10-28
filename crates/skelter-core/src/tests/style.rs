@@ -390,3 +390,43 @@ fn flex_start_and_flex_end_align_as_start_and_end() {
     assert_eq!(d.layout_rect(a).unwrap().min.x, 0.0, "align-items: flex-start");
     assert_eq!(d.layout_rect(b).unwrap().min.x, 80.0, "align-items: flex-end");
 }
+
+#[test]
+fn explain_style_names_origins_losers_and_token_chains() {
+    // SV88: a theme token, a user override of it, and an inline declaration
+    let (mut d, root) = doc();
+    let theme = d.add_sheet_with_origin(":root { --accent: #0000ff } box { background-color: var(--accent) }", crate::Origin::Theme);
+    let user = d.add_sheet_with_origin("#a { --accent: #00ff00 }", crate::Origin::User);
+    d.set_sheet_info(theme, Some("theme".into()), None);
+    d.set_sheet_info(user, Some("user.css".into()), None);
+    let a = child(&mut d, root, BOX, "");
+    d.set_style(a, StyleInput { id: Some("a".into()), ..Default::default() });
+    let b = child(&mut d, a, BOX, "background-color: var(--accent)");
+    frame(&mut d);
+
+    let e = d.explain_style(a, "background-color").unwrap();
+    let w = e.winner.as_ref().unwrap();
+    assert_eq!((w.origin, w.sheet_name.as_deref(), w.selectors.as_deref()), (crate::DeclOrigin::Theme, Some("theme"), Some("box")));
+    assert!(e.beaten.is_empty());
+    assert_eq!(e.specified.as_deref(), Some("#00ff00"));
+    let v = &e.vars[0];
+    assert_eq!((v.name.as_str(), v.declared_at, v.value.as_deref()), ("--accent", Some(a), Some("#00ff00")));
+    let decl = v.decl.as_ref().unwrap();
+    assert_eq!((decl.origin, decl.sheet_name.as_deref(), decl.selectors.as_deref()), (crate::DeclOrigin::User, Some("user.css"), Some("#a")));
+
+    let e = d.explain_style(b, "background-color").unwrap();
+    assert_eq!(e.winner.as_ref().map(|w| (w.origin, w.rule)), Some((crate::DeclOrigin::Inline, None)));
+    assert_eq!(e.beaten.iter().map(|x| (x.decl.origin, x.reason)).collect::<Vec<_>>(), [(crate::DeclOrigin::Theme, crate::LossReason::Origin)]);
+    assert_eq!(e.vars[0].declared_at, Some(a), "b inherits the user's --accent from a");
+    assert_eq!(d.computed(b).unwrap().background, Fill::Solid(Color::rgba(0.0, 1.0, 0.0, 1.0)));
+
+    let t = d.explain_style(b, "--accent").unwrap();
+    assert!(t.winner.is_none());
+    assert_eq!(t.inherited_from, Some(a));
+    // the token itself: the user's on a, the theme's on the root
+    let t = d.explain_style(a, "--accent").unwrap();
+    assert_eq!(t.winner.as_ref().map(|w| w.origin), Some(crate::DeclOrigin::User));
+    let t = d.explain_style(root, "--accent").unwrap();
+    assert_eq!(t.winner.as_ref().map(|w| (w.origin, w.value.as_str())), Some((crate::DeclOrigin::Theme, "#0000ff")));
+    assert_eq!(d.explain_style(root, "background-color").unwrap().specified.as_deref(), Some("#0000ff"));
+}
