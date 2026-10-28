@@ -2,16 +2,12 @@
 
 **Branch:** `ci/pb4-small` (base `8bcc50d`: master `9f0272b` plus the batch's brief commit).
 **Brief:** `plans/cloud/polish-b4/BRIEF.md`, `LANE-small.md`.
-**Status (2026-10-28 15:35 UTC):**
-- **Done:** items 1–3 (popup `anchor-to`, disabled progress bar, table rows by density FQ-146); the coordinator's
-  additions: the WCAG 24 px default-density rows (trial; no snapshot moved, none re-blessed) and S-L1 (host fonts
-  win over the gallery's bundled ones). `1986caf` (items 1–3 + 24 px rows) green in all six workflows.
-- **In progress:** CI on the latest head (S-L1 `b592347` plus this record).
-- **Next:** dir-widgets' R1 (popup `-start`/`-end` logical in rtl) once dir-core's `is_rtl()` is on master: merge
-  `origin/master`, build it in `views/popup.rs` (`top_rect`/`placement()`), a unit test, push, CI. Keep
-  dir-widgets' rtl line in `controls/progress.rs` at that merge. Then report sha and run ids to the coordinator
-  (`session_01HBbGRgGENFKUjsqyGryCSr`).
-- **Open questions:** none (`menu-bar` titles stay 22 under 2.5.8's spacing exception unless the coordinator wants 24).
+**Status (2026-10-28 16:05 UTC):** done. Items 1–3, the coordinator's additions (WCAG 24 px default-density rows,
+S-L1) and dir-widgets' R1 are built and tested; `origin/master` `e4bf38e` (dir-core) merged (`skelter.json`
+regenerated, no other conflict). Last code commit and its CI: see "CI". Next: report to the coordinator
+(`session_01HBbGRgGENFKUjsqyGryCSr`). At dir-widgets' merge keep its rtl line in `controls/progress.rs` and
+reconcile its `views/tooltip.rs` rtl alignment with popup's (the same rule). Open questions: none (`menu-bar` titles
+stay 22 under 2.5.8's spacing exception unless the coordinator wants 24).
 
 ## Design note: `anchor-to` and closing a top-layer entry from its kind (core, small)
 
@@ -97,11 +93,12 @@ new fixture `tests/fixtures/fonts/probe-mono.ttf` (the G4 probe renamed "JetBrai
 `cargo test -p skelter-gallery --test host` 6 pass. A host font covering a script now also comes first in that
 script's fallback (its own fonts, as a host would expect).
 
-## Pending: dir-widgets' request R1 (POL4-DIR-WIDGETS.md)
+## dir-widgets' request R1 (POL4-DIR-WIDGETS.md): logical `-start`/`-end` in rtl
 
-A popup's `placement` `-start`/`-end` become logical in rtl (swap the alignment on a vertical side for an rtl node, as
-`views/tooltip.rs` does). Needs dir-core's `is_rtl()`, not on master when this lane finished its first pass; small
-merges after both direction lanes, so it is built after merging `origin/master` once dir-core lands.
+Built after merging dir-core: `Popup::placement` swaps `Align::Start`/`End` on a top or bottom side when the node's
+direction is rtl (`left`/`right` sides stay physical); the shim `TopLayerCx` carries `rtl` (host: `NodeView::is_rtl`).
+Test `views::popup::tests::start_and_end_are_logical_in_rtl`. `cargo test -p skelter-widgets --lib` 586 pass,
+`skelter-core --lib toplayer` 4, `svelters-skelter --test spec --test widgets_all` 6 + 5.
 
 ## Seen (before: a gallery built at `8bcc50d`; images in this container, not committed)
 

@@ -13,7 +13,7 @@
 
 use super::common::emit;
 use super::overlay::{Closed, Dismiss, DismissReason, OverlayClass};
-use super::placement::{AnchorParams, Placed, Placement, place};
+use super::placement::{Align, AnchorParams, Placed, Placement, Side, place};
 use crate::controls::common::host_view;
 use crate::controls::props::PropValue;
 use crate::kind_props;
@@ -129,11 +129,23 @@ pub struct Popup {
     pub props: PopupProps,
     /// Where it went last ([`Popup::place_in`]).
     placed: Option<Placed>,
+    /// Right-to-left: `-start`/`-end` on a top or bottom side are logical (start is the right).
+    rtl: bool,
 }
 
 impl Popup {
+    /// `placement`, with `-start`/`-end` on a top or bottom side swapped in rtl (logical alignment;
+    /// `left`/`right` stay physical, as CSS's physical sides do).
     pub fn placement(&self) -> Placement {
-        Placement::parse(&self.props.placement).unwrap_or(Placement::BOTTOM_START)
+        let mut p = Placement::parse(&self.props.placement).unwrap_or(Placement::BOTTOM_START);
+        if self.rtl && matches!(p.side, Side::Top | Side::Bottom) {
+            p.align = match p.align {
+                Align::Start => Align::End,
+                Align::End => Align::Start,
+                a => a,
+            };
+        }
+        p
     }
 
     /// The overlay class it opens as.
@@ -179,12 +191,14 @@ impl Popup {
     }
 
     /// Where it goes in the top layer: next to `anchor` (its anchor's box, [`Popup::anchor_box`];
-    /// `None` centres it), inside the window, at its laid-out `size` (window points).
-    pub fn top_rect(&self, anchor: Option<Rect>, window: Size, size: Size) -> Rect {
+    /// `None` centres it), inside the window, at its laid-out `size` (window points); `rtl`: its
+    /// direction (logical `-start`/`-end`).
+    pub fn top_rect(&self, anchor: Option<Rect>, window: Size, size: Size, rtl: bool) -> Rect {
         let bounds = Rect::from_origin_size(Point::ZERO, window);
         // `fit` would shrink it, but its children are laid out at `size`: the stack draws it whole
         let mut p = self.clone();
         p.props.fit = false;
+        p.rtl = rtl;
         p.place_in(anchor, bounds, size).rect
     }
 
@@ -268,7 +282,7 @@ impl Kind for Popup {
         let anchor = self.anchor_box(cx.owner, cx.rect_of, cx.find_anchor);
         // a press on its anchor is the anchor's own (it toggles the popup), not outside it
         let a = anchor.unwrap_or(cx.owner);
-        let r = self.top_rect(a, cx.window, cx.size);
+        let r = self.top_rect(a, cx.window, cx.size, cx.rtl);
         let tl = skelter_core::overlay::TopLayer::new(self.class()).at(r.min).with_dismiss(self.dismiss_flags()).with_modal(self.props.modal).with_inside(a.into_iter().collect());
         // its `anchor-to` element went away: core closes it (`close` with `anchor-hidden`)
         Some(if anchor.is_err() { tl.closing(DismissReason::AnchorHidden) } else { tl })
@@ -472,7 +486,7 @@ mod tests {
         let owner = Rect::new(10.0, 10.0, 60.0, 30.0);
         let none = |_: NodeId| None;
         let no_anchor = |_: &str| None;
-        let tcx = TopLayerCx { size: Size::new(100.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &none, find_anchor: &no_anchor };
+        let tcx = TopLayerCx { size: Size::new(100.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &none, find_anchor: &no_anchor, rtl: false };
         let tl = p.top_layer(&tcx).expect("a top-layer entry");
         assert_eq!(tl.at, Some(Point::new(10.0, 34.0)), "bottom-start, 4 pt below its owner");
         assert_eq!(tl.inside, vec![owner], "a press on the owner is not outside it");
@@ -487,6 +501,25 @@ mod tests {
         assert_eq!(p.top_layer(&tcx).unwrap().at, Some(Point::new(0.0, 24.0)), "bottom-end shifted into the window");
     }
 
+    /// dir-widgets' R1: in rtl, `-start`/`-end` on a top or bottom side are logical (start is the
+    /// anchor's right edge); `left`/`right` sides stay physical.
+    #[test]
+    fn start_and_end_are_logical_in_rtl() {
+        let mut p = Popup::default();
+        p.props.open = true;
+        let owner = Rect::new(100.0, 10.0, 160.0, 30.0);
+        let none = |_: NodeId| None;
+        let no_anchor = |_: &str| None;
+        let ltr = TopLayerCx { size: Size::new(80.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &none, find_anchor: &no_anchor, rtl: false };
+        let rtl = TopLayerCx { rtl: true, ..ltr };
+        assert_eq!(p.top_layer(&ltr).unwrap().at, Some(Point::new(100.0, 34.0)), "bottom-start: left edges meet");
+        assert_eq!(p.top_layer(&rtl).unwrap().at, Some(Point::new(80.0, 34.0)), "rtl: right edges meet");
+        p.props.placement = "top-end".into();
+        assert_eq!(p.top_layer(&rtl).unwrap().at.map(|a| a.x), Some(100.0), "rtl end: the left edge");
+        p.props.placement = "right-start".into();
+        assert_eq!(p.top_layer(&ltr).unwrap().at, p.top_layer(&rtl).unwrap().at, "a physical side stays");
+    }
+
     #[test]
     fn anchor_to_names_the_element_it_positions_against() {
         let mut p = Popup::default();
@@ -496,7 +529,7 @@ mod tests {
         let button = Rect::new(100.0, 50.0, 160.0, 70.0);
         let rect_of = |n: NodeId| (n == NodeId(9)).then_some(button);
         let found = |a: &str| (a == "t").then_some(NodeId(9));
-        let tcx = TopLayerCx { size: Size::new(80.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &rect_of, find_anchor: &found };
+        let tcx = TopLayerCx { size: Size::new(80.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &rect_of, find_anchor: &found, rtl: false };
         let tl = p.top_layer(&tcx).unwrap();
         assert_eq!(tl.at, Some(Point::new(100.0, 74.0)), "below the named element, not its owner");
         assert_eq!((tl.inside, tl.close), (vec![button], None), "a press on the named element is not outside it");

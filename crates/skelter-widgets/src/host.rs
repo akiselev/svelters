@@ -1231,7 +1231,7 @@ impl<W: w::Kind + Default> Kind for Hosted<W> {
     fn top_layer(&self, cx: &skelter_core::TopLayerCx) -> skelter_core::overlay::TopLayer {
         let rect_of = |n: NodeId| cx.world_rect(n);
         let find_anchor = |a: &str| cx.find_anchor(a);
-        let wcx = w::TopLayerCx { size: cx.size(), window: cx.window_size(), owner: cx.owner_rect(), rect_of: &rect_of, find_anchor: &find_anchor };
+        let wcx = w::TopLayerCx { size: cx.size(), window: cx.window_size(), owner: cx.owner_rect(), rect_of: &rect_of, find_anchor: &find_anchor, rtl: cx.is_rtl() };
         self.reading(|| self.widget.top_layer(&wcx))
             .unwrap_or_else(|| skelter_core::overlay::TopLayer::new(skelter_core::overlay::OverlayClass::Popup).with_dismiss(skelter_core::overlay::Dismiss::NONE))
     }
