@@ -1265,17 +1265,19 @@ export function onRecover(fn) {
  * nesting, the HMR init, embed.js's current root, and Svelte's reaction context and scheduler
  * (`recover` in core/svelte.js). Runs no component code.
  */
-function recover() {
+function recover(empty = false) {
   scope = null;
   depth = 0;
   shows = [];
   hmrCtx = null;
   hmrClaims = null;
-  abortUpdates();
+  const n = abortUpdates(empty);
   recoverCore();
   for (const fn of recoverHooks) fn();
+  return n;
 }
 globalThis.__svelters_recover = recover;
+globalThis.__svelters_repairing = repairing;
 
 /** A mount target for `mount({ target })` (EM2, `embed.js`): its handle can change (`retarget`). */
 export function targetNode(h) {
@@ -1628,19 +1630,21 @@ class Branches {
     this.owner = owner;
     this.on = new Map();
     // SV84: the switch's update state; `aborted` when the host stopped a switch part-way
-    this.st = { effect: null, aborted: false };
+    this.st = updateState();
   }
 
   /**
-   * SV84: after a switch the host interrupted (its branches and `on` disagree), every branch goes;
-   * true when the block must show its branch again (whatever its own guard says).
+   * SV84: after a switch the host interrupted (its branches and `on` disagree), every branch goes.
+   * 0: nothing to repair; REBUILD: the block must show its branch again (whatever its own guard
+   * says); EMPTY (SV87): the rebuild overran its largest budget, the block stays empty until its
+   * inputs change (its guard reset, so the next change builds it).
    */
   repair() {
-    if (!this.st.aborted) return false;
-    this.st.aborted = false;
-    for (const b of [...this.r.items]) scrap(b);
-    this.on.clear();
-    return true;
+    this.st.effect = active();
+    return repairStart(this.st, () => {
+      for (const b of [...this.r.items]) scrap(b);
+      this.on.clear();
+    });
   }
 
   ensure(key, fn, ...args) {
@@ -1679,8 +1683,9 @@ export function if_block(container, test, consequent, alternate = null, elseif =
   block(
     () => {
       const v = !!test();
-      if (branches.repair()) shown = undefined;
-      if (v === shown) return;
+      const rep = branches.repair();
+      if (rep) shown = undefined;
+      if (rep === EMPTY || v === shown) return;
       shown = v;
       branches.ensure(v, v ? consequent : alternate);
     },
@@ -1701,22 +1706,23 @@ export function each_block(container, collection, key, render, fallback = null, 
   const gone = new Map();
   let fb = null;
   // SV84: the block's update state; `aborted` when the host stopped an update part-way
-  const st = { effect: null, aborted: false };
+  const st = updateState();
   block(() => {
     const c = collection();
     const arr = Array.isArray(c) ? [...c] : Array.from(c ?? []);
     const self = active();
     st.effect = self;
     $.untrack(() => {
-      if (st.aborted) {
-        // the last update stopped part-way (its items and the regions it built disagree): every
-        // item goes, and the collection is rendered again from nothing
-        st.aborted = false;
+      // the last update stopped part-way (its items and the regions it built disagree): every
+      // item goes, and the collection is rendered again from nothing (SV87: or not at all, when
+      // that rebuild overran its largest budget)
+      const rep = repairStart(st, () => {
         for (const b of [...r.items]) scrap(b);
         items = [];
         gone.clear();
         fb = null;
-      }
+      });
+      if (rep === EMPTY) return;
       updating.add(st);
       if (arr.length && fb && !fb.outro) {
         const f = fb;
@@ -1745,12 +1751,70 @@ export function each_block(container, collection, key, render, fallback = null, 
  */
 const updating = new Set();
 
-function abortUpdates() {
+/**
+ * SV87: blocks marked by `recover` whose rebuild has not run to its end yet. While one is left, the
+ * host gives entries a grown budget (`HostConfig::repair_budget`), so a rebuild that costs more
+ * than the interrupt budget still finishes.
+ */
+const repairs = new Set();
+
+/** SV84 `repair`/`repairStart` results. */
+const REBUILD = 1;
+const EMPTY = 2;
+
+function updateState() {
+  return { effect: null, aborted: false, empty: false };
+}
+
+/**
+ * SV84/SV87: the start of a block's run. When the host aborted the block's last update, `scrapAll()`
+ * takes every region away (registered as updating meanwhile, so an abort during it marks the block
+ * again) and the result says whether to build again (REBUILD) or stay empty (EMPTY). 0: no repair.
+ */
+function repairStart(st, scrapAll) {
+  if (!st.aborted) return 0;
+  updating.add(st);
+  scrapAll();
+  updating.delete(st);
+  st.aborted = false;
+  // a rebuild aborted in turn marks the block again (`abortUpdates`)
+  repairs.delete(st);
+  if (st.empty) {
+    st.empty = false;
+    return EMPTY;
+  }
+  return REBUILD;
+}
+
+/**
+ * `recover`: marks the blocks the abort stopped mid-update to run again, rebuilt (`empty`: left
+ * empty, SV87). Returns how many there were.
+ */
+function abortUpdates(empty) {
+  const n = updating.size;
   for (const st of updating) {
     st.aborted = true;
+    st.empty = empty;
+    repairs.add(st);
     invalidate(st.effect);
   }
   updating.clear();
+  return n;
+}
+
+/**
+ * SV87: whether a block marked by `recover` still has to run its rebuild (the host asks). A block
+ * whose effect, or an effect above it, was destroyed has none: an effect is linked to its parent
+ * only once its first run ends, so a block inside a branch the abort stopped mid-build is not
+ * destroyed with that branch, only left behind.
+ */
+function repairing() {
+  for (const st of repairs) {
+    let e = st.effect;
+    while (e && !effectDestroyed(e)) e = e.parent;
+    if (st.effect === null || e) repairs.delete(st);
+  }
+  return repairs.size > 0;
 }
 
 /**
@@ -1836,8 +1900,9 @@ export function key_block(container, getKey, render) {
   let key;
   block(() => {
     const k = getKey();
-    if (branches.repair()) has = false;
-    if (has && sameKey(k, key)) return;
+    const rep = branches.repair();
+    if (rep) has = false;
+    if (rep === EMPTY || (has && sameKey(k, key))) return;
     has = true;
     key = k;
     branches.ensure(k, render);
@@ -2257,8 +2322,9 @@ function swapping(container, get, render) {
   // when the enclosing block changes
   block(() => {
     const s = get() ?? null;
-    if (branches.repair()) first = true;
-    if (!first && s === fn) return;
+    const rep = branches.repair();
+    if (rep) first = true;
+    if (rep === EMPTY || (!first && s === fn)) return;
     first = false;
     fn = s;
     branches.ensure(s, s && ((anchor) => render(s, anchor)));
@@ -2422,7 +2488,9 @@ export function await_block(container, getInput, pending, then, catch_) {
   };
   block(() => {
     const input = getInput();
-    if (branches.repair()) shown = -1;
+    const rep = branches.repair();
+    if (rep) shown = -1;
+    if (rep === EMPTY) return;
     let destroyed = false;
     if (is_promise(input)) {
       const restore = capture_context();
