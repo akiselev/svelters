@@ -1713,6 +1713,8 @@ impl Kind for Scrollbar {
     }
 
     fn prepare(&mut self, cx: &mut PrepareCx) {
+        // `rtl`: a horizontal bar's minimum is at the right (its thumb mirrors, as a slider's)
+        self.scroller.rtl = cx.style.is_rtl();
         self.layout(cx.size, MIN_THUMB);
     }
 
