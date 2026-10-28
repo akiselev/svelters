@@ -1535,6 +1535,7 @@ impl Kind for VirtualList {
     }
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
         self.note_type_scale(cx.theme, cx.font_size);
+        self.bars.rtl.set(cx.is_rtl());
         scrolling_layout(cx)
     }
     fn record(&self, cx: &mut RecordCx) {

@@ -129,6 +129,11 @@ pub struct Scroller {
     hovered: bool,
     drag: Option<ThumbDrag>,
     hold: Option<TrackHold>,
+    /// The bars of a right-to-left scrollable: they are laid out left to right and mirrored in the
+    /// view (the vertical bar at the left, a horizontal thumb at the right at offset 0, the inline
+    /// start), and the pointer is mirrored into that layout. The offset stays the distance scrolled
+    /// from the inline start.
+    pub rtl: bool,
 }
 
 impl Scroller {
@@ -146,8 +151,23 @@ impl Scroller {
     pub fn viewport(&self) -> Size {
         self.viewport
     }
-    /// The bars at the current offset (empty until [`Scroller::layout_bars`]).
+    /// The bars at the current offset (empty until [`Scroller::layout_bars`]), where they are drawn
+    /// (mirrored in the view in [`rtl`](Self::rtl)).
     pub fn bars(&self) -> [Option<BarGeom>; 2] {
+        let mut b = self.lbars();
+        if self.rtl
+            && let Some((view, ..)) = self.bar_cfg
+        {
+            let m = |r: Rect| Rect::new(view.min.x + view.max.x - r.max.x, r.min.y, view.min.x + view.max.x - r.min.x, r.max.y);
+            for g in b.iter_mut().flatten() {
+                *g = BarGeom { track: m(g.track), thumb: m(g.thumb) };
+            }
+        }
+        b
+    }
+
+    /// The bars as laid out, left to right.
+    fn lbars(&self) -> [Option<BarGeom>; 2] {
         match self.bar_cfg {
             Some((view, width, min_thumb, show)) => self.compute_bars(view, width, min_thumb, show),
             None => [None, None],
@@ -326,7 +346,7 @@ impl Scroller {
 
     /// The offset on axis `d` that puts the thumb's start at `pos`.
     fn offset_for_thumb(&self, d: usize, pos: f32) -> Option<f32> {
-        let b = self.bars()[d]?;
+        let b = self.lbars()[d]?;
         let len = rmax(&b.track, d) - rmin(&b.track, d);
         let thumb = rmax(&b.thumb, d) - rmin(&b.thumb, d);
         let room = len - thumb;
@@ -339,6 +359,10 @@ impl Scroller {
     /// The pointer over the bars: thumb drag, track press (page or jump, per policy), hold repeat.
     /// Returns whether the event was the bars' (and whether the offset moved).
     pub fn pointer(&mut self, now: Time, policy: &Policy, phase: PointerPhase, primary: bool, pos: Point, shift: bool) -> (bool, bool) {
+        let pos = match (self.rtl, self.bar_cfg) {
+            (true, Some((view, ..))) => Point::new(view.min.x + view.max.x - pos.x, pos.y),
+            _ => pos,
+        };
         let before = self.offset;
         match phase {
             PointerPhase::Move | PointerPhase::Enter => {
@@ -367,7 +391,7 @@ impl Scroller {
                 (ours, false)
             }
             PointerPhase::Down if primary => {
-                let bars = self.bars();
+                let bars = self.lbars();
                 for d in 0..2 {
                     let Some(b) = bars[d] else { continue };
                     if b.thumb.contains(pos) {
@@ -416,7 +440,7 @@ impl Scroller {
         if now < h.next {
             return (false, Some(h.next));
         }
-        let Some(b) = self.bars()[h.axis] else {
+        let Some(b) = self.lbars()[h.axis] else {
             self.hold = None;
             return (false, None);
         };
@@ -581,6 +605,9 @@ pub struct CoreBars {
     now: Time,
     policy: Option<Policy>,
     reduced: bool,
+    /// The scrollable is right to left (its kind sets it at restyle): the bars mirror
+    /// ([`Scroller::rtl`]).
+    pub rtl: std::cell::Cell<bool>,
 }
 
 impl CoreBars {
@@ -594,6 +621,7 @@ impl CoreBars {
     }
 
     fn place(&mut self, g: &skelter_core::ScrollGeometry) {
+        self.scroller.rtl = self.rtl.get();
         self.scroller.set_geometry(g.content, g.viewport.size());
         self.scroller.set_offset(g.offset);
         let show = [g.axes.0 && self.scroller.overflows(0), g.axes.1 && self.scroller.overflows(1)];
@@ -1015,11 +1043,14 @@ pub struct ScrollArea {
     /// The last event's time and policy (recording has neither: the bars' fade reads them).
     now: Time,
     policy: Option<Policy>,
+    /// The area is right to left (at the last restyle): its bars mirror ([`Scroller::rtl`]).
+    rtl: std::cell::Cell<bool>,
 }
 
 impl Default for ScrollArea {
     fn default() -> Self {
         ScrollArea {
+            rtl: std::cell::Cell::new(false),
             props: ScrollAreaProps::default(),
             explicit: Default::default(),
             reduced_motion: false,
@@ -1069,6 +1100,7 @@ impl ScrollArea {
 
     /// The layout's geometry: content size and the padding box (local), the bars laid out over it.
     pub fn set_geometry(&mut self, content: Size, view: Rect, bar_width: f32, min_thumb: f32, force: [bool; 2]) {
+        self.scroller.rtl = self.rtl.get();
         self.scroller.set_geometry(content, view.size());
         let show = [self.axes[0] && (self.scroller.overflows(0) || force[0]), self.axes[1] && (self.scroller.overflows(1) || force[1])];
         self.scroller.layout_bars(view, bar_width, min_thumb, show);
@@ -1312,6 +1344,7 @@ impl Kind for ScrollArea {
     /// The cascade's layout with the box props the runtime set (a CSS rule for one still wins
     /// only where the runtime set none, as on `box`).
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        self.rtl.set(cx.is_rtl());
         let mut s = cx.default_layout();
         let p = &self.props;
         let boxed = [P::flex_direction, P::flex_wrap, P::gap, P::row_gap, P::column_gap, P::padding, P::align_items, P::justify_content];

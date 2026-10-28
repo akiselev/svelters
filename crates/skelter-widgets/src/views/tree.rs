@@ -742,6 +742,7 @@ impl Kind for TreeView {
     }
     fn layout_style(&self, cx: &crate::shim::core::StyleCx) -> taffy::Style {
         self.rtl.set(cx.is_rtl());
+        self.list.bars.rtl.set(cx.is_rtl());
         super::virtual_list::scrolling_layout(cx)
     }
     fn methods() -> &'static [skelter_core::MethodSpec] {
