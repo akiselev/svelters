@@ -6,13 +6,14 @@
 //! owns its layer, routes presses to it and light-dismisses it (the kind turns the stack's closing
 //! into its `close` signal, [`Popup::dismissed`] and `overlay_closed`).
 //!
-//! Props: `open`, `placement` (`bottom-start` …), `anchor` (a record: `{node}`, `{x, y, width, height}`
-//! rect, or `{x, y}` for a point), `gap`, `modal`, `light-dismiss`, `escape-dismiss`, `match-width`,
+//! Props: `open`, `placement` (`bottom-start` …), `anchor-to` (the common `anchor` name of the element
+//! it positions against; it closes, `anchor-hidden`, when no element of the window has it), `anchor`
+//! (a record: `{node}`, `{x, y, width, height}` rect, or `{x, y}` for a point), `gap`, `modal`, `light-dismiss`, `escape-dismiss`, `match-width`,
 //! `flip`, `shift`, `fit`. Signals: `open`, `close` (`reason`), `toggle` (`open`).
 
 use super::common::emit;
 use super::overlay::{Closed, Dismiss, DismissReason, OverlayClass};
-use super::placement::{AnchorParams, Placed, Placement, place};
+use super::placement::{Align, AnchorParams, Placed, Placement, Side, place};
 use crate::controls::common::host_view;
 use crate::controls::props::PropValue;
 use crate::kind_props;
@@ -92,6 +93,8 @@ kind_props! {
     placement "placement": String = Enum("bottom-start") ; Enum(PLACEMENTS), Property;
     /// A record: `{node}`, `{x, y, width, height}` or `{x, y}` (window points).
     anchor "anchor": Anchor = None ; Record, Property;
+    /// The common `anchor` name of the element it positions against (wins over `anchor`).
+    anchor_to "anchor-to": String = Str("") ; Str, Property;
     gap "gap": f64 = F64(4.0) ; F64, Property;
     modal "modal": bool = Bool(false) ; Bool, Structure;
     light_dismiss "light-dismiss": bool = Bool(true) ; Bool, Property;
@@ -126,11 +129,23 @@ pub struct Popup {
     pub props: PopupProps,
     /// Where it went last ([`Popup::place_in`]).
     placed: Option<Placed>,
+    /// Right-to-left: `-start`/`-end` on a top or bottom side are logical (start is the right).
+    rtl: bool,
 }
 
 impl Popup {
+    /// `placement`, with `-start`/`-end` on a top or bottom side swapped in rtl (logical alignment;
+    /// `left`/`right` stay physical, as CSS's physical sides do).
     pub fn placement(&self) -> Placement {
-        Placement::parse(&self.props.placement).unwrap_or(Placement::BOTTOM_START)
+        let mut p = Placement::parse(&self.props.placement).unwrap_or(Placement::BOTTOM_START);
+        if self.rtl && matches!(p.side, Side::Top | Side::Bottom) {
+            p.align = match p.align {
+                Align::Start => Align::End,
+                Align::End => Align::Start,
+                a => a,
+            };
+        }
+        p
     }
 
     /// The overlay class it opens as.
@@ -175,28 +190,30 @@ impl Popup {
         placed
     }
 
-    /// Where it goes in the top layer: next to its anchor (`anchor`, else `owner`), inside the
-    /// window, at its laid-out `size` (window points).
-    pub fn top_rect(&self, owner: Option<Rect>, window: Size, size: Size, rect_of: &dyn Fn(NodeId) -> Option<Rect>) -> Rect {
-        let anchor = match self.props.anchor {
-            Anchor::Node(n) => rect_of(n).or(owner),
-            Anchor::None => owner,
-            _ => self.fixed_anchor(),
-        };
+    /// Where it goes in the top layer: next to `anchor` (its anchor's box, [`Popup::anchor_box`];
+    /// `None` centres it), inside the window, at its laid-out `size` (window points); `rtl`: its
+    /// direction (logical `-start`/`-end`).
+    pub fn top_rect(&self, anchor: Option<Rect>, window: Size, size: Size, rtl: bool) -> Rect {
         let bounds = Rect::from_origin_size(Point::ZERO, window);
         // `fit` would shrink it, but its children are laid out at `size`: the stack draws it whole
         let mut p = self.clone();
         p.props.fit = false;
+        p.rtl = rtl;
         p.place_in(anchor, bounds, size).rect
     }
 
-    /// The anchor's box for light dismiss: a press on it is the anchor's own (it toggles the popup).
-    fn anchor_rect(&self, owner: Option<Rect>, rect_of: &dyn Fn(NodeId) -> Option<Rect>) -> Option<Rect> {
-        match self.props.anchor {
+    /// Its anchor's box (window points): the element `anchor-to` names, else the `anchor` record,
+    /// else its owner. `Err`: `anchor-to` names no element of the window (it was removed).
+    pub fn anchor_box(&self, owner: Option<Rect>, rect_of: &dyn Fn(NodeId) -> Option<Rect>, find_anchor: &dyn Fn(&str) -> Option<NodeId>) -> Result<Option<Rect>, ()> {
+        if !self.props.anchor_to.is_empty() {
+            let n = find_anchor(&self.props.anchor_to).ok_or(())?;
+            return Ok(rect_of(n).or(owner));
+        }
+        Ok(match self.props.anchor {
             Anchor::Node(n) => rect_of(n).or(owner),
             Anchor::None => owner,
             _ => self.fixed_anchor(),
-        }
+        })
     }
 
     /// The fixed anchor rect, when it is not another node.
@@ -262,9 +279,13 @@ impl Kind for Popup {
     }
 
     fn top_layer(&self, cx: &TopLayerCx) -> Option<skelter_core::overlay::TopLayer> {
-        let r = self.top_rect(cx.owner, cx.window, cx.size, cx.rect_of);
-        let inside = self.anchor_rect(cx.owner, cx.rect_of).into_iter().collect();
-        Some(skelter_core::overlay::TopLayer::new(self.class()).at(r.min).with_dismiss(self.dismiss_flags()).with_modal(self.props.modal).with_inside(inside))
+        let anchor = self.anchor_box(cx.owner, cx.rect_of, cx.find_anchor);
+        // a press on its anchor is the anchor's own (it toggles the popup), not outside it
+        let a = anchor.unwrap_or(cx.owner);
+        let r = self.top_rect(a, cx.window, cx.size, cx.rtl);
+        let tl = skelter_core::overlay::TopLayer::new(self.class()).at(r.min).with_dismiss(self.dismiss_flags()).with_modal(self.props.modal).with_inside(a.into_iter().collect());
+        // its `anchor-to` element went away: core closes it (`close` with `anchor-hidden`)
+        Some(if anchor.is_err() { tl.closing(DismissReason::AnchorHidden) } else { tl })
     }
 
     fn overlay_closed(&mut self, cx: &mut EventCx, reason: DismissReason) -> Handled {
@@ -464,7 +485,8 @@ mod tests {
         assert_eq!(p.layout_style(&cx).position, taffy::Position::Fixed);
         let owner = Rect::new(10.0, 10.0, 60.0, 30.0);
         let none = |_: NodeId| None;
-        let tcx = TopLayerCx { size: Size::new(100.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &none };
+        let no_anchor = |_: &str| None;
+        let tcx = TopLayerCx { size: Size::new(100.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &none, find_anchor: &no_anchor, rtl: false };
         let tl = p.top_layer(&tcx).expect("a top-layer entry");
         assert_eq!(tl.at, Some(Point::new(10.0, 34.0)), "bottom-start, 4 pt below its owner");
         assert_eq!(tl.inside, vec![owner], "a press on the owner is not outside it");
@@ -477,5 +499,85 @@ mod tests {
         p.props.anchor = Anchor::Node(NodeId(7));
         let tcx = TopLayerCx { rect_of: &other, ..tcx };
         assert_eq!(p.top_layer(&tcx).unwrap().at, Some(Point::new(0.0, 24.0)), "bottom-end shifted into the window");
+    }
+
+    /// dir-widgets' R1: in rtl, `-start`/`-end` on a top or bottom side are logical (start is the
+    /// anchor's right edge); `left`/`right` sides stay physical.
+    #[test]
+    fn start_and_end_are_logical_in_rtl() {
+        let mut p = Popup::default();
+        p.props.open = true;
+        let owner = Rect::new(100.0, 10.0, 160.0, 30.0);
+        let none = |_: NodeId| None;
+        let no_anchor = |_: &str| None;
+        let ltr = TopLayerCx { size: Size::new(80.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &none, find_anchor: &no_anchor, rtl: false };
+        let rtl = TopLayerCx { rtl: true, ..ltr };
+        assert_eq!(p.top_layer(&ltr).unwrap().at, Some(Point::new(100.0, 34.0)), "bottom-start: left edges meet");
+        assert_eq!(p.top_layer(&rtl).unwrap().at, Some(Point::new(80.0, 34.0)), "rtl: right edges meet");
+        p.props.placement = "top-end".into();
+        assert_eq!(p.top_layer(&rtl).unwrap().at.map(|a| a.x), Some(100.0), "rtl end: the left edge");
+        p.props.placement = "right-start".into();
+        assert_eq!(p.top_layer(&ltr).unwrap().at, p.top_layer(&rtl).unwrap().at, "a physical side stays");
+    }
+
+    #[test]
+    fn anchor_to_names_the_element_it_positions_against() {
+        let mut p = Popup::default();
+        p.props.open = true;
+        set(&mut p, "anchor-to", Value::str("t")).unwrap();
+        let owner = Rect::new(10.0, 10.0, 60.0, 30.0);
+        let button = Rect::new(100.0, 50.0, 160.0, 70.0);
+        let rect_of = |n: NodeId| (n == NodeId(9)).then_some(button);
+        let found = |a: &str| (a == "t").then_some(NodeId(9));
+        let tcx = TopLayerCx { size: Size::new(80.0, 40.0), window: Size::new(300.0, 200.0), owner: Some(owner), rect_of: &rect_of, find_anchor: &found, rtl: false };
+        let tl = p.top_layer(&tcx).unwrap();
+        assert_eq!(tl.at, Some(Point::new(100.0, 74.0)), "below the named element, not its owner");
+        assert_eq!((tl.inside, tl.close), (vec![button], None), "a press on the named element is not outside it");
+        // it wins over the `anchor` record
+        p.props.anchor = Anchor::Rect(Rect::new(0.0, 0.0, 5.0, 5.0));
+        assert_eq!(p.top_layer(&tcx).unwrap().at, Some(Point::new(100.0, 74.0)));
+        // no element has the name: it asks to close
+        let gone = |_: &str| None;
+        let tcx = TopLayerCx { find_anchor: &gone, ..tcx };
+        assert_eq!(p.top_layer(&tcx).unwrap().close, Some(DismissReason::AnchorHidden));
+    }
+
+    /// POL4-SMALL 1: `anchor-to` in a document: the popup follows the named button as its scroll
+    /// container scrolls, flips above it at the window's bottom edge, and closes when it is removed.
+    #[test]
+    fn anchor_to_follows_a_scrolled_button_flips_at_the_edge_and_closes_with_it() {
+        use crate::testdoc::{BOX, child, doc, frame};
+        use skelter_core::Value;
+        let (mut d, root) = doc(Size::new(300.0, 200.0), |r| {
+            crate::host::register::<Popup>(r).unwrap();
+        });
+        let kind = skelter_core::KindId::of("popup");
+        let spec = d.registry().get(kind).unwrap().spec;
+        let scroller = child(&mut d, root, BOX, "width: 300px; height: 200px; overflow: scroll; flex-shrink: 0");
+        child(&mut d, scroller, BOX, "width: 200px; height: 150px; flex-shrink: 0");
+        let button = child(&mut d, scroller, BOX, "width: 60px; height: 20px; flex-shrink: 0");
+        child(&mut d, scroller, BOX, "width: 200px; height: 300px; flex-shrink: 0");
+        d.set_prop(button, skelter_core::common::ANCHOR, Value::from("t")).unwrap();
+        // declared elsewhere: its owner is the root, not the button
+        let p = child(&mut d, root, kind, "width: 80px; height: 30px");
+        d.set_prop(p, spec.prop_named("anchor-to").unwrap(), Value::from("t")).unwrap();
+        d.set_prop(p, spec.prop_named("open").unwrap(), Value::Bool(true)).unwrap();
+        frame(&mut d);
+        frame(&mut d);
+        let b = d.world_rect(button).unwrap();
+        assert_eq!(b.min.y, 150.0);
+        // no room below (174 + 30 > 200): above it
+        assert_eq!(d.world_rect(p).unwrap().min, Point::new(b.min.x, b.min.y - 4.0 - 30.0), "flipped above the button");
+        d.set_scroll_offset(scroller, skelter_base::geom::Vec2::new(0.0, 100.0));
+        frame(&mut d);
+        let b = d.world_rect(button).unwrap();
+        assert_eq!(b.min.y, 50.0, "the button scrolled up");
+        assert_eq!(d.world_rect(p).unwrap().min, Point::new(b.min.x, b.max.y + 4.0), "below it again, following the scroll");
+        // the button goes away: it closes, `open` written back
+        d.remove(scroller, button).unwrap();
+        frame(&mut d);
+        assert_eq!(d.get_prop(p, spec.prop_named("open").unwrap()), Some(Value::Bool(false)));
+        frame(&mut d);
+        assert!(!d.needs_frame(crate::testdoc::W), "settled");
     }
 }

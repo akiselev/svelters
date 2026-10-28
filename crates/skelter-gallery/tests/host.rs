@@ -131,6 +131,24 @@ fn g4_host_fonts_join_the_hermetic_set() {
     assert_eq!(store.face(run.font).unwrap().data.data().len(), probe.len(), "drawn with the host's font");
 }
 
+/// S-L1 (cadatomic gal4): a host's font with a family the bundled set also has (a full JetBrains
+/// Mono, with its ligatures) wins over the bundled subset.
+#[test]
+fn a_host_font_wins_over_a_bundled_font_of_the_same_family() {
+    let host_mono = std::fs::read(fixture("fonts/probe-mono.ttf")).unwrap();
+    let store = fonts::store_with(FontSet::Bundled, &[host_mono.clone()]);
+    let mut text = TextSystem::new(store.clone());
+    let l = text.layout(&RichText::plain("A", TextStyle { family: "\"JetBrains Mono\"".into(), ..TextStyle::default() }), None);
+    let run = &l.runs().first().expect("a run").run;
+    assert_eq!(store.face(run.font).unwrap().data.data().len(), host_mono.len(), "drawn with the host's JetBrains Mono");
+    // without it, the bundled subset
+    let store = fonts::store(FontSet::Bundled);
+    let mut text = TextSystem::new(store.clone());
+    let l = text.layout(&RichText::plain("A", TextStyle { family: "\"JetBrains Mono\"".into(), ..TextStyle::default() }), None);
+    let run = &l.runs().first().expect("a run").run;
+    assert_eq!(store.face(run.font).unwrap().data.data().len(), fonts::BUNDLED[4].len(), "the bundled subset");
+}
+
 #[test]
 fn g5_a_host_theme_has_its_own_scheme_and_contrast() {
     let mut tokens = TokenMap::new();

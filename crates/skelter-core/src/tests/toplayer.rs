@@ -28,6 +28,8 @@ static FLOATER_SPEC: KindSpec = KindSpec {
 thread_local! {
     /// Why the stack closed each floater, in order.
     static CLOSED: RefCell<Vec<(NodeId, DismissReason)>> = const { RefCell::new(Vec::new()) };
+    /// The floaters ask to close (their anchor went away).
+    static ASK_CLOSE: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
 
 /// A floating surface: while `open` it is in the top layer, below its owner's box, light-dismissed.
@@ -47,10 +49,11 @@ impl Kind for Floater {
     }
     fn top_layer(&self, cx: &TopLayerCx) -> TopLayer {
         let owner = cx.owner_rect().unwrap_or(Rect::ZERO);
-        TopLayer::new(OverlayClass::Popup)
+        let tl = TopLayer::new(OverlayClass::Popup)
             .at(Point::new(owner.min.x, owner.max.y))
             .with_dismiss(Dismiss::LIGHT)
-            .with_inside(vec![owner])
+            .with_inside(vec![owner]);
+        if ASK_CLOSE.with(|a| a.get()) { tl.closing(DismissReason::AnchorHidden) } else { tl }
     }
     fn record(&self, cx: &mut RecordCx) {
         cx.draw_box();
@@ -64,6 +67,7 @@ impl Kind for Floater {
 
 fn tdoc() -> (Document, NodeId) {
     CLOSED.with(|c| c.borrow_mut().clear());
+    ASK_CLOSE.with(|a| a.set(false));
     let mut r = KindRegistry::new();
     r.register::<testkinds::BoxKind>().unwrap();
     r.register::<testkinds::ToggleKind>().unwrap();
@@ -325,4 +329,25 @@ fn it_goes_with_its_owner_and_stays_under_it_in_the_accessibility_tree() {
         c.layers
     );
     assert_eq!(d.hit_test(W, Point::new(10.0, 40.0)), Some(root));
+}
+
+#[test]
+fn a_top_layer_node_that_asks_to_close_is_closed_after_the_frame() {
+    let (mut d, root) = tdoc();
+    let owner = child(&mut d, root, BOX, "width: 40px; height: 20px");
+    let float = child(&mut d, owner, FLOATER, "width: 80px; height: 50px");
+    open(&mut d, float, true);
+    frame(&mut d);
+    assert!(is_open(&d, float));
+    assert!(closed().is_empty());
+    // its anchor goes away: the next rebuild's `top_layer` asks to close
+    ASK_CLOSE.with(|a| a.set(true));
+    child(&mut d, root, BOX, "width: 10px; height: 10px");
+    frame(&mut d);
+    assert_eq!(closed(), vec![(float, DismissReason::AnchorHidden)], "the kind heard why");
+    assert!(!is_open(&d, float), "it wrote `open` back");
+    ASK_CLOSE.with(|a| a.set(false));
+    frame(&mut d);
+    assert_eq!(d.world_rect(float).map(|r| r.min), Some(Point::ZERO), "back in its owner's flow (at its origin), not below it");
+    assert_eq!(closed().len(), 1, "closed once");
 }

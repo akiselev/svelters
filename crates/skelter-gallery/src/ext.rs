@@ -94,7 +94,8 @@ impl Extensions {
         self
     }
 
-    /// G4: font files (TTF/OTF/TTC bytes) added to the gallery's bundled set.
+    /// G4: font files (TTF/OTF/TTC bytes) added to the gallery's bundled set, ahead of it: a host family
+    /// the bundled set also has (JetBrains Mono) is the host's (S-L1).
     pub fn fonts(mut self, files: impl IntoIterator<Item = Vec<u8>>) -> Extensions {
         self.font_files.extend(files);
         self

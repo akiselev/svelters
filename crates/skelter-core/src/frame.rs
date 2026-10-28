@@ -132,6 +132,7 @@ impl Document {
         if rebuild {
             self.rebuild_walk(window, root, &mut commit);
             stats.rebuilt = true;
+            self.close_asked_tops(window);
         }
         self.sync_list_layer(window, crate::toplayer::ListLayer::App, &mut commit);
         self.sync_list_layer(window, crate::toplayer::ListLayer::Tip, &mut commit);
@@ -1112,6 +1113,11 @@ impl Document {
             let cx = crate::cx::TopLayerCx { node: self.view_at(i), window_size: size };
             k.top_layer(&cx)
         };
+        if let Some(reason) = tl.close
+            && let Some(ws) = self.window_mut(window)
+        {
+            ws.top_close.push((node, reason));
+        }
         let at = tl.at.unwrap_or(Point::new(l.location.x, l.location.y));
         if self.record[i].top_at != Some(at) {
             self.record[i].top_at = Some(at);

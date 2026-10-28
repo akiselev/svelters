@@ -252,7 +252,7 @@ fn main() -> std::process::ExitCode {
             .on_setup(|cx| { /* grid sources, the pick board: cx.with_doc(|d| …), cx.cell, cx.story */ })
             .on_frame(|cx| { /* before each frame: cx.with_doc(|d| sync(d, cx.frame, cx.now_ms)) */ })
             .busy(|doc| None)                                 // Some("why") while a highlight job is pending
-            .fonts(cadatomic_ui::theme::skelter::bundled_fonts()) // added to the hermetic set
+            .fonts(cadatomic_ui::theme::skelter::bundled_fonts()) // added to the hermetic set, ahead of the bundled fonts
             .theme("cad-dark", dark_tokens)                   // a TokenMap of overrides on Dark Modern
             .theme_with("cad-light", ColorScheme::Light, Contrast::Normal, light_tokens),
     )

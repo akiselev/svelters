@@ -287,6 +287,18 @@ pub struct TableKind {
     dark: bool,
     /// What each virtual child of the last a11y node is, by index (FQ-66): actions on them.
     a11y_targets: std::cell::RefCell<Vec<A11yTarget>>,
+    /// FQ-146: `row-height` was written (it wins over the theme's row height).
+    row_written: bool,
+    /// FQ-146: the theme's row and header heights for the table's font size, from the last restyle
+    /// ([`density_rows`]); `None` without a theme.
+    density_rows: std::cell::Cell<Option<(f32, f32)>>,
+}
+
+/// FQ-146: the density's `row-h` and `header-h`, grown with the text past the base size as
+/// SV83 grows a virtual list's rows ([`Theme::row_height_for`]).
+pub fn density_rows(theme: &Theme, font_size: f32) -> (f32, f32) {
+    let grow = (font_size / crate::theme::BASE_FONT_SIZE).max(1.0);
+    (theme.row_height_for(font_size), (theme.metrics().header_h * grow).round())
 }
 
 /// A virtual child of the table's a11y node: the header row, a column header (data column), a
@@ -313,6 +325,16 @@ struct Edit {
 }
 
 impl TableKind {
+    /// FQ-146: the row height and header height the table lays out with: a written `row-height`,
+    /// else the theme's density row (`row-h`); the header the theme's `header-h` (without a theme,
+    /// the row height plus 4).
+    fn row_heights(&self) -> (f32, Option<f32>) {
+        match self.density_rows.get() {
+            Some((row, header)) => (if self.row_written { self.table.state.row_height } else { row }, Some(header)),
+            None => (self.table.state.row_height, self.table.metrics.header_height),
+        }
+    }
+
     /// Re-reads the columns, keeping a width the user dragged while the column's prop is unchanged.
     fn read_columns(&mut self, node: NodeView<'_>) {
         let cols = columns_of(node);
@@ -601,6 +623,10 @@ impl Kind for TableKind {
         &TABLE
     }
 
+    fn as_any(&self) -> Option<&dyn std::any::Any> {
+        Some(self)
+    }
+
     fn prop_changed(&mut self, cx: &mut PropCx, prop: PropId, value: Option<&Value>) -> Result<(), PropError> {
         let Some(i) = (0..TABLE_PROPS.len()).find(|&i| TABLE.prop_id(i) == prop) else { return Ok(()) };
         let p = &TABLE_PROPS[i];
@@ -610,6 +636,9 @@ impl Kind for TableKind {
         };
         let Some(v) = v else { return Err(PropError::Rejected(format!("{}: not a value the table takes", p.name))) };
         let class = self.table.state.set_prop(p.name, &v).map_err(PropError::Rejected)?;
+        if p.name == "row-height" {
+            self.row_written = value.is_some();
+        }
         cx.request_a11y();
         if class >= ChangeClass::Layout {
             cx.request_layout();
@@ -624,6 +653,8 @@ impl Kind for TableKind {
     /// (header and ten rows) is a preference a smaller parent shrinks, not a minimum that pushes the
     /// bottom rows and the horizontal bar out of the parent.
     fn layout_style(&self, cx: &StyleCx) -> taffy::Style {
+        // FQ-146: the density's rows for this restyle (a theme or text size change restyles)
+        self.density_rows.set(cx.service::<Theme>().map(|t| density_rows(t, cx.style().font_size)));
         let mut s = cx.default_layout();
         let visible = taffy::Point { x: taffy::Overflow::Visible, y: taffy::Overflow::Visible };
         if s.overflow == visible {
@@ -638,7 +669,8 @@ impl Kind for TableKind {
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, _avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
-        let t = Table { columns: columns_of(cx.node), state: self.table.state.clone(), ..Table::default() };
+        let mut t = Table { columns: columns_of(cx.node), state: self.table.state.clone(), ..Table::default() };
+        (t.state.row_height, t.metrics.header_height) = self.row_heights();
         let width: f32 = t.shown().iter().map(|&d| t.columns[d].width()).sum();
         // the header and up to ten rows
         let header = t.metrics.header_height.unwrap_or(t.state.row_height + 4.0);
@@ -656,6 +688,7 @@ impl Kind for TableKind {
         if let Some(p) = cx.service::<Policy>().copied() {
             self.set_policy(p);
         }
+        (self.table.state.row_height, self.table.metrics.header_height) = self.row_heights();
         self.size = node.size();
         self.rtl = crate::shim::core::node_rtl(&node);
         self.table.set_viewport(self.size, self.off);
@@ -1031,6 +1064,53 @@ mod tests {
             })
             .collect();
         (d, t, cols)
+    }
+
+    /// FQ-146: an unset `row-height` follows the density's `row-h` (20 compact, 24 default, 28
+    /// comfortable) and the header its `header-h`, both grown with a larger text size; a written
+    /// `row-height` still wins.
+    #[test]
+    fn rows_follow_the_density_unless_row_height_is_written() {
+        use crate::testdoc::{child, doc, frame};
+        use crate::theme::Density;
+        let rows = |d: &skelter_core::Document, t| {
+            d.with_kind(t, |k| {
+                let k = k.as_any().and_then(|a| a.downcast_ref::<TableKind>()).expect("the table");
+                (k.table.state.row_height, k.table.header_h())
+            })
+            .unwrap()
+        };
+        let measured = |density: Density, css: &str, row_height: Option<f64>| {
+            let (mut d, root) = doc(Size::new(400.0, 600.0), |r| register(r).unwrap());
+            d.set_service(Theme::dark_modern().with_density(density));
+            let t = child(&mut d, root, TABLE.id(), css);
+            d.set_prop(t, TABLE.prop_named("row-count").unwrap(), Value::I64(3)).unwrap();
+            if let Some(h) = row_height {
+                d.set_prop(t, TABLE.prop_named("row-height").unwrap(), Value::F64(h)).unwrap();
+            }
+            let c = child(&mut d, t, TABLE_COLUMN.id(), "");
+            d.set_prop(c, column_width(), Value::F64(100.0)).unwrap();
+            frame(&mut d);
+            frame(&mut d);
+            let (row, header) = rows(&d, t);
+            assert_eq!(d.world_rect(t).unwrap().height(), header + 3.0 * row, "measured: the header and three rows");
+            if row_height.is_none() {
+                d.set_prop(t, TABLE.prop_named("row-height").unwrap(), Value::F64(30.0)).unwrap();
+                frame(&mut d);
+                assert_eq!(rows(&d, t).0, 30.0, "a written row height wins");
+                d.reset_prop(t, TABLE.prop_named("row-height").unwrap()).unwrap();
+                frame(&mut d);
+                assert_eq!(rows(&d, t).0, row, "unset again: the density's");
+            }
+            (row, header)
+        };
+        let base = "width: 300px; font-size: 13px";
+        assert_eq!(measured(Density::Compact, base, None), (20.0, 22.0));
+        assert_eq!(measured(Density::Default, base, None), (24.0, 24.0));
+        assert_eq!(measured(Density::Comfortable, base, None), (28.0, 28.0));
+        // SV83's growth: twice the text, twice the rows
+        assert_eq!(measured(Density::Default, "width: 300px; font-size: 26px", None), (48.0, 48.0));
+        assert_eq!(measured(Density::Comfortable, base, Some(24.0)), (24.0, 28.0), "written: its own rows, the density's header");
     }
 
     /// SV89: while the table has focus, the cursor row is its active descendant, so assistive

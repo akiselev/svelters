@@ -174,6 +174,29 @@ impl Document {
         !closed.is_empty()
     }
 
+    /// Closes the top-layer entries whose kinds asked to close at this rebuild
+    /// ([`crate::overlay::TopLayer::close`]) and tells the kinds, after the frame's walk.
+    pub(crate) fn close_asked_tops(&mut self, window: WindowId) {
+        let Some(w) = self.window_mut(window) else { return };
+        let asked = std::mem::take(&mut w.top_close);
+        if asked.is_empty() {
+            return;
+        }
+        let mut closed = Vec::new();
+        if let Some(st) = w.overlays.as_mut() {
+            for (node, reason) in asked {
+                if let Some(id) = st.find_node(node) {
+                    closed.extend(st.close(id, reason));
+                }
+            }
+        }
+        let mut emitted = Vec::new();
+        self.overlays_closed(window, &closed, false, &mut emitted);
+        for e in emitted {
+            crate::input::dispatch::queue_emitted(self, e);
+        }
+    }
+
     /// Tells the kinds whose surfaces closed (children first); with `restore`, keyboard focus inside
     /// a closed surface's node goes back to its opener.
     fn overlays_closed(&mut self, window: WindowId, closed: &[Closed], restore: bool, emitted: &mut Vec<Emitted>) {

@@ -117,6 +117,8 @@ pub(crate) struct WindowState {
     pub applied: Option<Revision>,
     /// The window's overlay stack (its top layer), made at the first rebuild.
     pub overlays: Option<crate::overlay::OverlayStack>,
+    /// Top-layer nodes that asked this rebuild for their entry to close ([`crate::overlay::TopLayer::close`]).
+    pub top_close: Vec<(NodeId, crate::overlay::DismissReason)>,
     /// Each open overlay part's node → its layer, the transform node its item was sent with, and
     /// the window → node-local transform (input positions on the part).
     pub overlay_nodes: HashMap<NodeId, OverlayNode>,
@@ -199,6 +201,7 @@ impl WindowState {
             built: None,
             applied: None,
             overlays: None,
+            top_close: Vec::new(),
             overlay_nodes: HashMap::new(),
             drag_layer: None,
             app_overlay: AppOverlay::default(),

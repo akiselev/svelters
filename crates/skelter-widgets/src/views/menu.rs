@@ -380,7 +380,9 @@ impl Menus {
                         None => break,
                     },
                     (false, Some(p)) => (Rect::from_origin_size(p, Size::ZERO), first, 0.0),
-                    (false, None) => (Rect::ZERO, first, 0.0),
+                    // no point (the keyboard, `open` written): the root's inline-start top corner,
+                    // its top right in `rtl`
+                    (false, None) => (Rect::from_origin_size(Point::new(if self.rtl { self.width } else { 0.0 }, 0.0), Size::ZERO), first, 0.0),
                 }
             } else {
                 match self.levels[k - 1].rows.iter().find(|(r, _)| *r == container) {
@@ -471,6 +473,14 @@ impl Menus {
     pub fn open_at(&mut self, p: Point, keyboard: bool, out: &mut Vec<MenuOut>) {
         self.point = Some(p);
         self.press_origin = (!keyboard).then_some(p);
+        self.nav.open_root(&self.model, keyboard, out);
+    }
+
+    /// Opens the root menu with no point: at the root's inline-start top corner (its top right in
+    /// `rtl`), resolved when the levels are laid out.
+    pub fn open_default(&mut self, keyboard: bool, out: &mut Vec<MenuOut>) {
+        self.point = None;
+        self.press_origin = None;
         self.nav.open_root(&self.model, keyboard, out);
     }
 
@@ -603,7 +613,7 @@ impl Menus {
         let k = KeyIn { key, text: ev.text.as_deref(), state: ev.state, modifiers: ev.modifiers, now: cx.now };
         // Shift+F10 and the Menu key open a context menu from the keyboard
         if !self.bar && !self.nav.is_open() && ev.state == KeyState::Pressed && (ev.key == Some(Key::Menu) || (ev.key == Some(Key::F10) && ev.modifiers == Modifiers::SHIFT)) {
-            self.open_at(Point::ZERO, true, out);
+            self.open_default(true, out);
             return true;
         }
         self.nav.key(&mut self.model, self.bar, cx.policy.alt_focuses_menu_bar, k, out)
@@ -1179,8 +1189,10 @@ impl Kind for ContextMenu {
         self.menus.enabled = self.props.enabled;
         let mut out = Vec::new();
         if self.props.open && !self.menus.nav.is_open() && self.menus.enabled {
-            let p = self.menus.point.unwrap_or(Point::ZERO);
-            self.menus.open_at(p, false, &mut out);
+            match self.menus.point {
+                Some(p) => self.menus.open_at(p, false, &mut out),
+                None => self.menus.open_default(false, &mut out),
+            }
         } else if !self.props.open || !self.menus.enabled {
             self.menus.close(&mut out);
         }
@@ -1760,6 +1772,32 @@ mod tests {
         let (h, _, _) = send_to(&mut c2, &policy, ms(0), Size::new(10.0, 10.0), ev);
         assert_eq!(h, Handled::Yes);
         assert_eq!(c2.menus.nav.current(), c2.menus.model.find("x"));
+    }
+
+    /// A context menu opened with no point (`open`, Shift+F10) opens at its inline-start top corner:
+    /// its top left, or its top right in `rtl` (a menu opening toward the inline start there).
+    #[test]
+    fn a_context_menu_without_a_point_opens_at_its_inline_start() {
+        for rtl in [false, true] {
+            let mut c = ContextMenu::default();
+            c.menus.model.add(MenuModel::ROOT, Entry::item("x", "Cut"));
+            c.menus.bounds = Rect::new(-100.0, -100.0, 500.0, 400.0);
+            c.set_prop(context_props::P::open.id(), &Value::Bool(true)).unwrap();
+            assert!(c.menus.nav.is_open());
+            c.menus.width = 300.0;
+            c.menus.rtl = rtl;
+            let ua = c.menus.ua();
+            let s = styles();
+            let m = &mut c.menus;
+            with_views(&s, ua, |v| m.prepare_with(&mut MonoShaper, v));
+            let r = c.menus.levels()[0].rect;
+            if rtl {
+                assert_eq!(r.max.x, 300.0, "rtl: its right edge at the top right: {r:?}");
+            } else {
+                assert_eq!(r.min.x, 0.0, "its left edge at the top left: {r:?}");
+            }
+            assert!((r.min.y - 0.0).abs() < 4.0, "at the top: {r:?}");
+        }
     }
 
     #[test]
