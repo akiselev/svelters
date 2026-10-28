@@ -205,6 +205,13 @@ text stayed on screen in the combo-box cells after it. No pixel snapshot test wa
 - `skelter-gallery check`: 32 stories, 138 variants, 0 problems.
 - Not run locally: the workspace tests, other crates, pixel snapshot tests, conformance (CI is the gate).
 
+## CI
+
+All six workflows green on `76c7bf7` (last code sha `2053fde`; `76c7bf7` adds only this record's R2 section): js
+40613113597, linux-gtk 40613113589, linux-qt 40613113578, macos-appkit 40613113587, skelter 40613113646, windows-winui
+40613113623. Earlier pushes (`e1fb334`, `2053fde`) were superseded before their runs were read. Later edits to this
+record are docs only (CI not rerun for them).
+
 ## Handoff
 
 Done. If a snapshot test moves in CI it is from item 1 (scroll-area bars now over the content; lists, trees and
