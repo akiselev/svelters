@@ -41,6 +41,8 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
     UaRule::when(StateBits::CHECKED, &[("background-color", Token("toggle-on-bg")), ("border-color", Token("toggle-on-border")), ("color", Token("fg"))]),
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
+    // a press on an on toggle keeps it on (the press shows in the release, as VS Code's toggles)
+    UaRule::when(StateBits(StateBits::CHECKED.0 | StateBits::PRESSED.0), &[("background-color", Token("toggle-on-bg"))]),
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
     UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
 ]);
@@ -308,8 +310,9 @@ mod tests {
         assert_eq!(q.border_color, ua_token(true, "toggle-on-border").unwrap());
         let Prim::Glyphs(g) = &list.items[1] else { unreachable!() };
         assert_eq!(g.color, ua_token(true, "fg").unwrap());
+        // a press on an on toggle keeps it on (POL3-FINISH)
         let (list, _) = testkit::record(&t, SIZE, StateBits::PRESSED);
-        assert_eq!(quad(&list.items[0]).fill, Fill::Solid(ua_token(true, "button-bg-active").unwrap()));
+        assert_eq!(quad(&list.items[0]).fill, Fill::Solid(ua_token(true, "toggle-on-bg").unwrap()));
 
         t.props.checked = false;
         let (list, _) = testkit::record(&t, SIZE, StateBits::HOVERED);

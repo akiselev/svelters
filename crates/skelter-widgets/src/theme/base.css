@@ -223,11 +223,13 @@
     background-color: var(--sv-accent-hover);
   }
   /* R17: a selected button is an on toggle (as `toggle-button:checked`) */
-  button:selected {
+  button:selected,
+  icon:selected {
     background-color: var(--sv-toggle-on-bg);
     border-color: var(--sv-toggle-on-border);
   }
-  button:selected:hover {
+  button:selected:hover,
+  icon:selected:hover {
     background-color: var(--sv-toggle-on-bg);
   }
 
@@ -291,7 +293,10 @@
   select:disabled,
   text-edit:disabled,
   progress-bar:disabled,
-  spinner:disabled {
+  spinner:disabled,
+  icon:disabled,
+  scrollbar:disabled,
+  table:disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
@@ -302,6 +307,10 @@
   }
   /* POL2-LAYOUT's request: a disabled frame's own caption dims as a disabled label does */
   frame:disabled::part(caption) {
+    color: var(--sv-disabled-fg);
+  }
+  /* a disabled tree's twisties dim with its labels */
+  tree-view:disabled::part(twisty) {
     color: var(--sv-disabled-fg);
   }
 
