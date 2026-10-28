@@ -34,7 +34,7 @@ use skelter_base::anim::FlingCurve;
 use crate::interact::{Kinetic, Platform, Policy, Scrollbars, StateBits, TrackClick};
 use crate::kind_props;
 use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, StyleCx, Styles, Value, ValueType};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, SignalSpec, StyleCx, Styles, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::color::{Color, Fill};
 use skelter_base::display::{Prim, Quad};
@@ -1620,6 +1620,26 @@ impl Kind for Scrollbar {
         self.props.get(prop)
     }
 
+    /// [`BAR_WIDTH`] across; along, the size layout gives (a stretch or a CSS length), else the
+    /// room there is, else room for two thumbs.
+    fn measure(&self, _cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        let along = |k: Option<f32>, a: taffy::AvailableSpace| {
+            k.unwrap_or(match a {
+                taffy::AvailableSpace::Definite(v) => v,
+                _ => 2.0 * MIN_THUMB,
+            })
+        };
+        if self.axis == 0 {
+            taffy::Size { width: along(known.width, avail.width), height: known.height.unwrap_or(BAR_WIDTH) }
+        } else {
+            taffy::Size { width: known.width.unwrap_or(BAR_WIDTH), height: along(known.height, avail.height) }
+        }
+    }
+
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.layout(cx.size, MIN_THUMB);
+    }
+
     fn record(&self, cx: &mut RecordCx) {
         let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme, inherited: cx.style.inherited };
         self.scroller.record_bars(&mut PaintCx::of(cx), &styles, 1.0, true);
@@ -2102,6 +2122,26 @@ mod tests {
         assert!(t.repaint);
         let list = crate::controls::testkit::record_foreground(&a, Size::new(100.0, 100.0), StateBits::NONE, None);
         assert!(list.items.is_empty());
+    }
+
+    /// R4: a hosted scroll bar measures itself (`BAR_WIDTH` across, its CSS length along) and lays
+    /// its thumb out at its laid-out size, so a press on the track below the thumb pages it.
+    #[test]
+    fn a_hosted_scrollbar_measures_and_prepares_itself() {
+        use crate::testdoc::{child, click, doc, frame};
+        let kind = skelter_core::KindId::of("scrollbar");
+        let (mut d, root) = doc(Size::new(300.0, 400.0), |r| {
+            crate::host::register::<Scrollbar>(r).unwrap();
+        });
+        let bar = child(&mut d, root, kind, "height: 120px; align-self: start");
+        frame(&mut d);
+        let r = d.world_rect(bar).expect("laid out");
+        assert_eq!((r.max.x - r.min.x, r.max.y - r.min.y), (BAR_WIDTH, 120.0));
+        let value = d.registry().get(kind).unwrap().spec.prop_named("value").unwrap();
+        click(&mut d, r.min.x + 5.0, r.min.y + 110.0);
+        frame(&mut d);
+        let v = d.view(bar).unwrap().prop(value).and_then(skelter_core::Value::as_f64).unwrap_or(0.0);
+        assert!(v > 0.0, "the track press paged the bar (value {v})");
     }
 
     #[test]

@@ -254,15 +254,20 @@ impl Document {
             let missed: Vec<PropId> = self.missed_props.iter().filter(|(n, _)| *n == node).map(|(_, p)| *p).collect();
             self.missed_props.retain(|(n, _)| *n != node);
             let mut request = Dirty::EMPTY;
+            let mut states = Vec::new();
             for p in missed {
                 let v = self.props[i].get(p).cloned();
-                let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
+                let mut cx = PropCx::new(self.view_at(i));
                 // the write is stored already: a rejection now cannot undo it
                 let _ = k.prop_changed(&mut cx, p, v.as_ref());
                 request.insert(cx.request);
+                states.append(&mut cx.states);
             }
             self.kinds[i] = Some(k);
             self.apply_request(i, request);
+            for (bits, on) in states {
+                self.set_state(node, bits, on);
+            }
         } else {
             self.kinds[i] = Some(k);
         }
@@ -883,15 +888,17 @@ impl Document {
         }
         // the kind sees the stored value; it may reject it (undo) or ask for more work
         let mut request = Dirty::EMPTY;
+        let mut states = Vec::new();
         if self.kinds[i].is_none() && !native {
             // the kind is mid-handler (JS runs inside it): it hears of the write when it is back
             self.missed_props.push((node, prop));
         }
         if let Some(mut k) = self.kinds[i].take() {
             let res = {
-                let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
+                let mut cx = PropCx::new(self.view_at(i));
                 let r = k.prop_changed(&mut cx, prop, v.as_ref());
                 request = cx.request;
+                states = cx.states;
                 r
             };
             self.kinds[i] = Some(k);
@@ -899,6 +906,9 @@ impl Document {
                 self.props[i].set(prop, old);
                 return Err(e);
             }
+        }
+        for (bits, on) in states {
+            self.set_state(node, bits, on);
         }
         let rev = self.stamp();
         self.core[i].changed = rev;
@@ -1078,13 +1088,17 @@ impl Document {
     /// Tells node `i`'s kind that JS started or stopped listening to `signal`.
     fn listen_changed(&mut self, i: usize, signal: SignalId, listened: bool) {
         let Some(mut k) = self.kinds[i].take() else { return };
-        let request = {
-            let mut cx = PropCx { node: self.view_at(i), request: Dirty::EMPTY };
+        let (request, states) = {
+            let mut cx = PropCx::new(self.view_at(i));
             k.listen_changed(&mut cx, signal, listened);
-            cx.request
+            (cx.request, cx.states)
         };
         self.kinds[i] = Some(k);
         self.apply_request(i, request);
+        let node = self.slots.id_at(i).expect("live");
+        for (bits, on) in states {
+            self.set_state(node, bits, on);
+        }
     }
 
     /// The extra work a kind asked for in a [`PropCx`].

@@ -252,6 +252,7 @@ impl<'a> ChildLayoutCx<'a> {
 pub struct PropCx<'a> {
     pub node: NodeView<'a>,
     pub(crate) request: Dirty,
+    pub(crate) states: Vec<(StateMask, bool)>,
 }
 
 impl<'a> std::ops::Deref for PropCx<'a> {
@@ -261,7 +262,16 @@ impl<'a> std::ops::Deref for PropCx<'a> {
     }
 }
 
-impl PropCx<'_> {
+impl<'a> PropCx<'a> {
+    pub(crate) fn new(node: NodeView<'a>) -> Self {
+        PropCx { node, request: Dirty::EMPTY, states: Vec::new() }
+    }
+    /// Sets or clears state bits on the node once the kind returns, as [`EventCx::set_state`] does:
+    /// a prop write that makes the node `:invalid` or `:checked`. Dropped when the kind rejects the
+    /// write.
+    pub fn set_state(&mut self, bits: StateMask, on: bool) {
+        self.states.push((bits, on));
+    }
     pub fn request_paint(&mut self) {
         self.request.insert(Dirty::PAINT);
     }
