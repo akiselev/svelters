@@ -523,6 +523,10 @@ mod tests {
         let thumb = fore(&c).expect("a foreground");
         let Prim::Quad(q) = &thumb.items[0] else { panic!("a thumb: {:?}", thumb.items) };
         assert!(q.rect.min.y < 10.0, "at the top: {:?}", q.rect);
+        // the first prepare asked for another pass (the field's repaint flag, R1): let it run
+        while d.needs_frame(skelter_base::ids::WindowId(1)) {
+            frame(&mut d);
+        }
         d.set_scroll_offset(f, skelter_base::geom::Vec2::new(0.0, 200.0));
         let c = frame(&mut d).expect("a frame");
         assert_eq!(c.lists.iter().map(|(k, _)| *k).collect::<Vec<_>>(), [fore_key], "only the bar re-records");

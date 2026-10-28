@@ -84,6 +84,10 @@ Before/after images (this container, not committed): `target/gallery/pb2/b-modal
   `skelter-core` `tests/prepare.rs`.
 - **R3 (skelter-core `cx.rs`):** `NodeView::layout_rect`, the node's box in its parent from the last layout (same
   test). Used by `host.rs` for `Kind::children_laid` and the first-prepare window room.
+- R1 makes a prepare's request take effect: the text field's one-shot repaint flag now brings one more frame after its
+  first. The layout lane's `text::kind::tests::a_multi_line_field_draws_its_bar_over_the_text_and_moves_it_alone`
+  scrolled on that frame and saw the whole node re-record; the test now settles the requested frame before it scrolls
+  (CI on `9dc01f1` was red on it in the skelter workflow, all three platforms).
 - Small edits outside the lane's listed files, all for hosting the new kinds: `skelter-widgets/src/{host.rs,shim.rs}`
   (`Kind::room`, `Kind::children_laid`, `ChildCx::children`, the folded `disabled`/`hidden`),
   `skelter-gallery/src/render.rs` (hover pointer, the runner's virtual clock), and the `ChildCx`
