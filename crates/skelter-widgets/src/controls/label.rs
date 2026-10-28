@@ -368,8 +368,11 @@ impl Kind for Label {
     }
 
     fn measure(&self, cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        // a wrapping label's min-content width is its longest word (CSS), so a row can shrink it
+        let wraps = self.props.wrap_mode == "wrap" && self.props.elide == "none";
         let width = known.width.or(match avail.width {
             taffy::AvailableSpace::Definite(w) => Some(w),
+            taffy::AvailableSpace::MinContent if wraps => Some(0.0),
             _ => None,
         });
         let rich = self.rich_with(cx.style.children);

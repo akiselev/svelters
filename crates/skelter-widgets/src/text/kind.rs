@@ -382,6 +382,49 @@ impl Kind for TextEdit {
             if let Some(t) = self.bars.wake() {
                 cx.wake_at(t);
             }
+            // POL2-LAYOUT Q3: a press on a bar drags its thumb or pages its track, before the text
+            if let Some(g) = cx.view(cx.node()).and_then(|v| v.scroll_geometry()) {
+                let bar = match ev {
+                    Event::PointerDown(p) | Event::PointerMove(p) | Event::PointerUp(p) => {
+                        let phase = match ev {
+                            Event::PointerDown(_) => PointerPhase::Down,
+                            Event::PointerMove(_) => PointerPhase::Move,
+                            _ => PointerPhase::Up,
+                        };
+                        let primary = p.button == Some(skelter_base::event::MouseButton::Primary) || (phase != PointerPhase::Down && p.buttons & 1 != 0);
+                        let shift = p.modifiers.contains(skelter_base::event::Modifiers::SHIFT);
+                        Some(self.bars.pointer(&g, phase, primary, p.local, shift))
+                    }
+                    Event::PointerCancel => Some(self.bars.pointer(&g, PointerPhase::Cancel, false, Point::ZERO, false)),
+                    Event::HoverLeave => Some(self.bars.pointer(&g, PointerPhase::Leave, false, Point::ZERO, false)),
+                    Event::Timer => {
+                        let (scroll, next) = self.bars.repeat(&g);
+                        Some(crate::views::scroll::BarPointer { scroll, wake: next, repaint: scroll.is_some(), ..Default::default() })
+                    }
+                    _ => None,
+                };
+                if let Some(b) = bar {
+                    match b.capture {
+                        Some(true) => cx.capture_pointer(),
+                        Some(false) => cx.release_pointer(),
+                        None => {}
+                    }
+                    if let Some(o) = b.scroll {
+                        cx.scroll_fast(o);
+                        self.field.set_scroll_offset(o);
+                    }
+                    if b.repaint {
+                        cx.request_foreground();
+                    }
+                    if let Some(t) = b.wake {
+                        cx.wake_at(t);
+                    }
+                    if b.ours {
+                        cx.set_cursor(CursorIcon::Default);
+                        return Handled::Yes;
+                    }
+                }
+            }
         }
         // what the input asks of the document, applied once the text system is given back
         let (mut focus, mut capture, mut cursor) = (false, None::<bool>, None);
@@ -532,6 +575,46 @@ mod tests {
         assert_eq!(c.lists.iter().map(|(k, _)| *k).collect::<Vec<_>>(), [fore_key], "only the bar re-records");
         let Prim::Quad(q2) = &fore(&c).unwrap().items[0] else { unreachable!() };
         assert!(q2.rect.min.y > q.rect.min.y, "the thumb moved down: {:?}", q2.rect);
+    }
+
+    #[test]
+    fn a_multi_line_fields_thumb_drags_and_its_track_pages() {
+        // POL2-LAYOUT Q3: a press on the bar is the bar's, not the text's
+        use crate::testdoc::{child, doc, frame, pointer};
+        use skelter_base::display::Prim;
+        use skelter_base::event::PointerPhase;
+        use skelter_base::ids::NodeId;
+        let (mut d, root) = doc(skelter_base::geom::Size::new(300.0, 100.0), |r| {
+            r.register::<TextEdit>().unwrap();
+        });
+        d.set_service(skelter_text::TextSystem::new(skelter_text::FontStore::new(skelter_text::FontConfig::testing())));
+        let f = child(&mut d, root, skelter_core::KindId::of("text-edit"), "width: 120px; height: 40px; padding: 2px; border-width: 1px; background-color: #ffffff");
+        d.set_prop(f, SPEC.prop_named("multiline").unwrap(), Value::Bool(true)).unwrap();
+        let text: Vec<String> = (1..=30).map(|i| format!("line {i}")).collect();
+        d.set_prop(f, SPEC.prop_named("text").unwrap(), Value::from(text.join("\n").as_str())).unwrap();
+        let fore_key = NodeId(f.0 | 3 << 62);
+        let c = frame(&mut d).expect("a frame");
+        while d.needs_frame(skelter_base::ids::WindowId(1)) {
+            frame(&mut d);
+        }
+        let list = c.lists.iter().find(|(k, _)| *k == fore_key).map(|(_, l)| l.clone()).expect("a foreground");
+        let Prim::Quad(q) = &list.items[0] else { panic!("a thumb: {:?}", list.items) };
+        let origin = d.world_rect(f).unwrap().min;
+        let (x, y) = (origin.x + (q.rect.min.x + q.rect.max.x) / 2.0, origin.y + (q.rect.min.y + q.rect.max.y) / 2.0);
+        let caret = |d: &skelter_core::Document| d.with_kind(f, |k| k.as_any().unwrap().downcast_ref::<TextEdit>().unwrap().field.editor.caret()).unwrap();
+        let before = caret(&d);
+        d.dispatch(&pointer(PointerPhase::Down, x, y, 1_000, false));
+        d.dispatch(&pointer(PointerPhase::Move, x, y + 10.0, 1_100, true));
+        let dragged = d.scroll_offset(f).y;
+        assert!(dragged > 0.0, "the thumb drag scrolled the text");
+        d.dispatch(&pointer(PointerPhase::Up, x, y + 10.0, 1_200, false));
+        assert_eq!(caret(&d), before, "the press left the caret where it was");
+        frame(&mut d);
+        // a press on the track below the thumb pages on
+        let bottom = origin.y + 40.0 - 3.0;
+        d.dispatch(&pointer(PointerPhase::Down, x, bottom, 2_000, false));
+        d.dispatch(&pointer(PointerPhase::Up, x, bottom, 2_050, false));
+        assert!(d.scroll_offset(f).y > dragged, "the track press paged down");
     }
 
     #[test]

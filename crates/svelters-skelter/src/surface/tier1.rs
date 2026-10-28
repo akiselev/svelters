@@ -12,9 +12,13 @@ static SCROLLAREA_PROPS: &[PropSpec] = &[
     PropSpec { name: "direction", ty: ValueType::Enum(&["vertical", "horizontal", "both"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "The axes that scroll (taffy `overflow: scroll` on them)." },
     PropSpec { name: "scroll-x", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Property, native: true, doc: "Horizontal offset in points; scrolling changes it, and a write scrolls (clamped to the content)." },
     PropSpec { name: "scroll-y", ty: ValueType::F64, default: DefaultValue::F64(0.0), nullable: false, change: ChangeClass::Property, native: true, doc: "Vertical offset in points; scrolling changes it, and a write scrolls (clamped to the content)." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "overscroll-behavior", ty: ValueType::Enum(&["auto", "contain", "none"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Property, native: false, doc: "At an edge, a new gesture goes on to the scroll area around (`auto`) or stays (`contain`, `none`)." },
 ];
 static SCROLLAREA_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "changed", args: &[("scroll-x", ValueType::F64), ("scroll-y", ValueType::F64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user scrolled (or a write was clamped); carries the new offsets." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    SignalSpec { name: "scrollend", args: &[("x", ValueType::F64), ("y", ValueType::F64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A scroll gesture or animation stopped; carries the offsets." },
 ];
 static SCROLLAREA_METHODS: &[MethodSpec] = &[
 ];
@@ -175,6 +179,10 @@ static TREEVIEW_PROPS: &[PropSpec] = &[
     PropSpec { name: "row-height", ty: ValueType::I64, default: DefaultValue::I64(24), nullable: false, change: ChangeClass::Layout, native: false, doc: "The height a row is assumed to have before it is measured, and its minimum, in points." },
     PropSpec { name: "selection", ty: ValueType::Enum(&["none", "single", "multi", "toggle", "range"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Layout, native: false, doc: "`single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable." },
     PropSpec { name: "uniform-rows", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`)." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "expanded-ids", ty: ValueType::IdList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Structure, native: true, doc: "The expanded node ids (`bind:expanded-ids`; keys, presses and drags change it)." },
+    PropSpec { name: "pool-limit", ty: ValueType::I64, default: DefaultValue::I64(8), nullable: false, change: ChangeClass::Property, native: false, doc: "Free row slots kept for reuse beyond the window's needs." },
+    PropSpec { name: "selected-ids", ty: ValueType::IdList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: true, doc: "The selected node ids (`bind:selected-ids`; clicks and keys change it)." },
 ];
 static TREEVIEW_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "activate", args: &[("pos", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user activated the row at `pos` (double click, Enter)." },
@@ -190,6 +198,10 @@ static TREEVIEW_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "setup", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Row slot `row` was created: give it content with `setRow`." },
     SignalSpec { name: "teardown", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` is gone: release its widget." },
     SignalSpec { name: "unbind", args: &[("row", ValueType::I64), ("gen", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` no longer shows binding `gen`." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    SignalSpec { name: "current", args: &[("id", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The cursor moved; carries its node id (-1: none)." },
+    SignalSpec { name: "select", args: &[("pos", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The cursor's row was selected; carries its position." },
+    SignalSpec { name: "selectionchange", args: &[("ids", ValueType::IdList)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The selection changed; carries the selected ids." },
 ];
 static TREEVIEW_METHODS: &[MethodSpec] = &[
     MethodSpec { name: "count", params: &[], ret: None, doc: "The number of visible rows." },
@@ -215,7 +227,7 @@ pub static TREEVIEW: KindSpec = KindSpec {
     a11y: A11ySpec { role: "Tree", name_from: &["accessible-name"], name_required: false },
     text_content: None,
     toplevel: false,
-    native_state: &["current"],
+    native_state: &["current", "expanded-ids", "selected-ids"],
 };
 
 static COMBOBOX_PROPS: &[PropSpec] = &[
@@ -233,6 +245,8 @@ static COMBOBOX_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "changed", args: &[("selected", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user picked a row; carries its index." },
     SignalSpec { name: "commit", args: &[("value", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "A pick finished the edit (§2.4); carries the index." },
     SignalSpec { name: "highlight", args: &[("value", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The current row of the open list moved (keyboard or pointer; `highlighted`)." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    SignalSpec { name: "toggle", args: &[("open", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The list opened or closed." },
 ];
 static COMBOBOX_METHODS: &[MethodSpec] = &[
 ];
@@ -288,6 +302,12 @@ static CONTEXTMENU_PROPS: &[PropSpec] = &[
     PropSpec { name: "open", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: true, doc: "The menu is open; the user opening or closing it changes it (`bind:open`). Setting it true opens it where it last opened (its own top left the first time); `popup` opens it below its owner or at a point." },
 ];
 static CONTEXTMENU_SIGNALS: &[SignalSpec] = &[
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    SignalSpec { name: "activate", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "An item was picked (its id and check state after the pick)." },
+    SignalSpec { name: "close", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A menu level closed." },
+    SignalSpec { name: "hover", args: &[("item", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The current row changed (pointer or keys)." },
+    SignalSpec { name: "open", args: &[("menu", ValueType::Str)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A menu level opened." },
+    SignalSpec { name: "toggled", args: &[("item", ValueType::Str), ("checked", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "A check or radio item changed state (each item of a radio group that did)." },
 ];
 static CONTEXTMENU_METHODS: &[MethodSpec] = &[
     MethodSpec { name: "popdown", params: &[], ret: None, doc: "Closes it." },
@@ -354,6 +374,8 @@ static VIRTUALLIST_PROPS: &[PropSpec] = &[
     PropSpec { name: "selected-ids", ty: ValueType::IdList, default: DefaultValue::Null, nullable: false, change: ChangeClass::Paint, native: true, doc: "The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters." },
     PropSpec { name: "selection", ty: ValueType::Enum(&["none", "single", "multi", "toggle", "range"]), default: DefaultValue::Enum(1), nullable: false, change: ChangeClass::Layout, native: false, doc: "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `toggle`: a click toggles its row, no modifier (checklists); `range`: one contiguous run, Shift extends; `none`: rows are not selectable." },
     PropSpec { name: "uniform-rows", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Paint, native: false, doc: "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`)." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "pool-limit", ty: ValueType::I64, default: DefaultValue::I64(8), nullable: false, change: ChangeClass::Property, native: false, doc: "Free row slots kept for reuse beyond the window's needs." },
 ];
 static VIRTUALLIST_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "activate", args: &[("pos", ValueType::I64)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "The user activated the item at `pos` (double click)." },
@@ -369,6 +391,8 @@ static VIRTUALLIST_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "setup", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Row slot `row` was created: give it content with `setRow`." },
     SignalSpec { name: "teardown", args: &[("row", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` is gone: release its widget." },
     SignalSpec { name: "unbind", args: &[("row", ValueType::I64), ("gen", ValueType::I64)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "Slot `row` no longer shows binding `gen`." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    SignalSpec { name: "current", args: &[("id", ValueType::I64)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The cursor moved; carries its item id (-1: none)." },
 ];
 static VIRTUALLIST_METHODS: &[MethodSpec] = &[
     MethodSpec { name: "count", params: &[], ret: None, doc: "The number of items." },

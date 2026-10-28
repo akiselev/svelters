@@ -204,11 +204,16 @@ static LABEL_PROPS: &[PropSpec] = &[
     PropSpec { name: "selection-start", ty: ValueType::I64, default: DefaultValue::I64(0), nullable: false, change: ChangeClass::Paint, native: true, doc: "The selection's start, in chars of the shown text (`bind:`)." },
     PropSpec { name: "text", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Layout, native: false, doc: "The text." },
     PropSpec { name: "wrap-mode", ty: ValueType::Enum(&["wrap", "truncate", "extend"]), default: DefaultValue::Enum(0), nullable: false, change: ChangeClass::Layout, native: false, doc: "What a line longer than the width does (`egui::TextWrapMode`)." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "clickable", ty: ValueType::Bool, default: DefaultValue::Bool(false), nullable: false, change: ChangeClass::Property, native: false, doc: "It takes clicks and sends `clicked` (set while a runtime listens to `clicked`)." },
 ];
 static LABEL_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "clicked", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Pressed and released (`Response::clicked`)." },
     // skelter's addition (not in egui.json): skelter-widgets' selectable label hands copies to the host
     SignalSpec { name: "copy", args: &[("text", ValueType::Str)], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Ctrl/Cmd+C on a focused selectable label: the selected text, for the host's clipboard." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    SignalSpec { name: "link-clicked", args: &[("index", ValueType::I64), ("href", ValueType::Str)], passive: false, cancelable: true, sync: true, bubbles: false, doc: "A link run was clicked: its index in the runs and its `href`." },
+    SignalSpec { name: "open-url", args: &[("url", ValueType::Str), ("new-tab", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The default of a `link-clicked` whose run has a target: the host opens `url` (skelter never opens anything itself)." },
 ];
 static LABEL_METHODS: &[MethodSpec] = &[
 ];
@@ -583,6 +588,8 @@ static HYPERLINK_PROPS: &[PropSpec] = &[
 static HYPERLINK_SIGNALS: &[SignalSpec] = &[
     SignalSpec { name: "clicked", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Pressed and released (before the url opens)." },
     SignalSpec { name: "secondary-clicked", args: &[], passive: false, cancelable: false, sync: false, bubbles: false, doc: "Right click." },
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    SignalSpec { name: "open-url", args: &[("url", ValueType::Str), ("new-tab", ValueType::Bool)], passive: true, cancelable: false, sync: false, bubbles: false, doc: "The default of `clicked` with a `url`: the host opens `url`." },
 ];
 static HYPERLINK_METHODS: &[MethodSpec] = &[
 ];
@@ -753,6 +760,8 @@ pub static RUN: KindSpec = KindSpec {
 };
 
 static SPAN_PROPS: &[PropSpec] = &[
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "href", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "Makes the run a link to `href` (its label raises `link-clicked`); empty for none." },
 ];
 static SPAN_SIGNALS: &[SignalSpec] = &[
 ];
@@ -777,6 +786,8 @@ pub static SPAN: KindSpec = KindSpec {
 };
 
 static BOLD_PROPS: &[PropSpec] = &[
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "href", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "Makes the run a link to `href` (its label raises `link-clicked`); empty for none." },
 ];
 static BOLD_SIGNALS: &[SignalSpec] = &[
 ];
@@ -801,6 +812,8 @@ pub static BOLD: KindSpec = KindSpec {
 };
 
 static ITALIC_PROPS: &[PropSpec] = &[
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "href", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "Makes the run a link to `href` (its label raises `link-clicked`); empty for none." },
 ];
 static ITALIC_SIGNALS: &[SignalSpec] = &[
 ];
@@ -825,6 +838,8 @@ pub static ITALIC: KindSpec = KindSpec {
 };
 
 static CODE_PROPS: &[PropSpec] = &[
+    // POL3-FINISH (POL2-REGISTER Q1): the kind's own member, which egui's surface lacks
+    PropSpec { name: "href", ty: ValueType::Str, default: DefaultValue::Str(""), nullable: false, change: ChangeClass::Paint, native: false, doc: "Makes the run a link to `href` (its label raises `link-clicked`); empty for none." },
 ];
 static CODE_SIGNALS: &[SignalSpec] = &[
 ];

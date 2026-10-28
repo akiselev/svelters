@@ -33,34 +33,10 @@ fn every_skelter_widgets_kind_has_a_hosted_surface_kind() {
         }
     }
     // members of the kinds registered before polish-b2 whose surface (egui's) has no name for them
-    // yet: POL2-REGISTER records them; a new gap fails here
-    const KNOWN: &[&str] = &[
-        "<hyperlink> signal open-url",
-        "<label> prop runs",
-        "<label> prop clickable",
-        "<label> signal link-clicked",
-        "<label> signal open-url",
-        "<span> prop href",
-        "<b> prop href",
-        "<i> prop href",
-        "<code> prop href",
-        "<scroll-area> prop overscroll-behavior",
-        "<scroll-area> signal scrollend",
-        "<virtual-list> prop pool-limit",
-        "<virtual-list> signal current",
-        "<tree-view> prop selected-ids",
-        "<tree-view> prop pool-limit",
-        "<tree-view> prop expanded-ids",
-        "<tree-view> signal select",
-        "<tree-view> signal selectionchange",
-        "<tree-view> signal current",
-        "<context-menu> signal activate",
-        "<context-menu> signal toggled",
-        "<context-menu> signal hover",
-        "<context-menu> signal open",
-        "<context-menu> signal close",
-        "<combo-box> signal toggle",
-    ];
+    // (POL2-REGISTER Q1, closed by POL3-FINISH but one); a new gap fails here
+    // `runs` stays: the surface has no list-of-records type, and Svelte gives a label its runs as
+    // inline children (the `runs` slot), not as a prop
+    const KNOWN: &[&str] = &["<label> prop runs"];
     missing.retain(|m| !KNOWN.contains(&m.as_str()));
     assert!(missing.is_empty(), "{missing:#?}");
 }

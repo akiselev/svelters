@@ -34,7 +34,7 @@ use skelter_base::anim::FlingCurve;
 use crate::interact::{Kinetic, Platform, Policy, Scrollbars, StateBits, TrackClick};
 use crate::kind_props;
 use crate::paint::{self, PaintCx, StyleView, Ua, UaRule, UaValue::*};
-use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, NameFrom, PropError, PropId, RecordCx, SignalSpec, StyleCx, Styles, Value, ValueType};
+use crate::shim::core::{A11yCx, Event, EventCx, Handled, Kind, KindSpec, MeasureCx, NameFrom, PrepareCx, PropError, PropId, RecordCx, SignalSpec, StyleCx, Styles, Value, ValueType};
 use skelter_base::accesskit;
 use skelter_base::color::{Color, Fill};
 use skelter_base::display::{Prim, Quad};
@@ -556,6 +556,21 @@ pub fn record_overlay_bars(cx: &mut RecordCx, scroller: &Scroller, now: Time, po
     scroller.record_bars(&mut pc, &styles, alpha, policy.scrollbars == Scrollbars::Classic);
 }
 
+/// What [`CoreBars::pointer`] did with a pointer event.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct BarPointer {
+    /// The bars took the event: the kind's own handling skips it.
+    pub ours: bool,
+    /// Capture the pointer (`Some(true)`: a drag or track hold started) or release it.
+    pub capture: Option<bool>,
+    /// The new scroll offset, for core.
+    pub scroll: Option<Vec2>,
+    /// The foreground looks different (hover, the pressed thumb, a moved thumb).
+    pub repaint: bool,
+    /// When to wake next (a track press's repeat, the fade).
+    pub wake: Option<Time>,
+}
+
 /// The bars of a kind core scrolls by its own offset (a list, a tree, a multi-line field: core's
 /// [`skelter_core::Kind::self_scroll`]): a [`Scroller`] following core's geometry, drawn in the
 /// node's foreground with the scroll area's look, fade and thumb drag (POL2-LAYOUT 1).
@@ -597,6 +612,34 @@ impl CoreBars {
         if scrolled {
             self.scroller.touch(now);
         }
+    }
+
+    /// A pointer event for a kind that implements skelter-core's `Kind` itself (the multi-line text
+    /// field), after [`CoreBars::note`]: `pos` in the node's local space, `g` core's geometry now.
+    /// The bars take a press on a thumb (a drag) or a track (a page or jump, repeating while held)
+    /// and what follows it until the release.
+    pub fn pointer(&mut self, g: &skelter_core::ScrollGeometry, phase: PointerPhase, primary: bool, pos: Point, shift: bool) -> BarPointer {
+        self.place(g);
+        let policy = self.policy();
+        let hovered = self.scroller.hovered();
+        let was = self.scroller.dragging(0) || self.scroller.dragging(1) || self.scroller.hold.is_some();
+        let (ours, moved) = self.scroller.pointer(self.now, &policy, phase, primary, pos, shift);
+        let now_held = self.scroller.dragging(0) || self.scroller.dragging(1) || self.scroller.hold.is_some();
+        BarPointer {
+            ours,
+            capture: (now_held != was).then_some(now_held),
+            scroll: moved.then(|| self.scroller.offset()),
+            repaint: ours || moved || hovered != self.scroller.hovered(),
+            wake: self.scroller.hold_wake().or_else(|| self.scroller.bar_wake(self.now, &policy)),
+        }
+    }
+
+    /// A held track press repeating (the kind's timer, after [`CoreBars::note`]): the new offset,
+    /// if it moved, and when to repeat next.
+    pub fn repeat(&mut self, g: &skelter_core::ScrollGeometry) -> (Option<Vec2>, Option<Time>) {
+        self.place(g);
+        let (moved, next) = self.scroller.repeat(self.now);
+        (moved.then(|| self.scroller.offset()), next)
     }
 
     /// When the overlay bars' look next changes without input (their fade).
@@ -1620,6 +1663,26 @@ impl Kind for Scrollbar {
         self.props.get(prop)
     }
 
+    /// [`BAR_WIDTH`] across; along, the size layout gives (a stretch or a CSS length), else the
+    /// room there is, else room for two thumbs.
+    fn measure(&self, _cx: &mut MeasureCx, known: taffy::Size<Option<f32>>, avail: taffy::Size<taffy::AvailableSpace>) -> taffy::Size<f32> {
+        let along = |k: Option<f32>, a: taffy::AvailableSpace| {
+            k.unwrap_or(match a {
+                taffy::AvailableSpace::Definite(v) => v,
+                _ => 2.0 * MIN_THUMB,
+            })
+        };
+        if self.axis == 0 {
+            taffy::Size { width: along(known.width, avail.width), height: known.height.unwrap_or(BAR_WIDTH) }
+        } else {
+            taffy::Size { width: known.width.unwrap_or(BAR_WIDTH), height: along(known.height, avail.height) }
+        }
+    }
+
+    fn prepare(&mut self, cx: &mut PrepareCx) {
+        self.layout(cx.size, MIN_THUMB);
+    }
+
     fn record(&self, cx: &mut RecordCx) {
         let styles = Styles { computed: cx.style.computed, parts: cx.style.parts, children: cx.style.children, state: cx.style.state, dark: cx.style.dark, theme: cx.style.theme, inherited: cx.style.inherited };
         self.scroller.record_bars(&mut PaintCx::of(cx), &styles, 1.0, true);
@@ -2102,6 +2165,26 @@ mod tests {
         assert!(t.repaint);
         let list = crate::controls::testkit::record_foreground(&a, Size::new(100.0, 100.0), StateBits::NONE, None);
         assert!(list.items.is_empty());
+    }
+
+    /// R4: a hosted scroll bar measures itself (`BAR_WIDTH` across, its CSS length along) and lays
+    /// its thumb out at its laid-out size, so a press on the track below the thumb pages it.
+    #[test]
+    fn a_hosted_scrollbar_measures_and_prepares_itself() {
+        use crate::testdoc::{child, click, doc, frame};
+        let kind = skelter_core::KindId::of("scrollbar");
+        let (mut d, root) = doc(Size::new(300.0, 400.0), |r| {
+            crate::host::register::<Scrollbar>(r).unwrap();
+        });
+        let bar = child(&mut d, root, kind, "height: 120px; align-self: start");
+        frame(&mut d);
+        let r = d.world_rect(bar).expect("laid out");
+        assert_eq!((r.max.x - r.min.x, r.max.y - r.min.y), (BAR_WIDTH, 120.0));
+        let value = d.registry().get(kind).unwrap().spec.prop_named("value").unwrap();
+        click(&mut d, r.min.x + 5.0, r.min.y + 110.0);
+        frame(&mut d);
+        let v = d.view(bar).unwrap().prop(value).and_then(skelter_core::Value::as_f64).unwrap_or(0.0);
+        assert!(v > 0.0, "the track press paged the bar (value {v})");
     }
 
     #[test]

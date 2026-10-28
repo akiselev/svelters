@@ -208,6 +208,8 @@ color_set! {
         border = "border" <- "sideBar.border",
         /// Popover and menu outline.
         border_widget = "border-widget" <- "widget.border",
+        /// Menu outline and separators (a theme without `menu.border` takes `widget.border`).
+        border_menu = "border-menu" <- "menu.border",
         shadow_color = "shadow-color" <- "widget.shadow",
         scroll_shadow = "scroll-shadow" <- "scrollbar.shadow",
         fg = "fg" <- "foreground",
@@ -289,7 +291,7 @@ color_set! {
         input_fg = "input-fg" <- "control-fg",
         /// Windows, menus and popups.
         menu_bg = "menu-bg" <- "surface-raised",
-        menu_border_color = "menu-border-color" <- "border-widget",
+        menu_border_color = "menu-border-color" <- "border-menu",
         tooltip_bg = "tooltip-bg" <- "surface-raised",
         /// Side and bottom panels, the status bar.
         panel_bg = "panel-bg" <- "bg",
@@ -703,6 +705,14 @@ impl Theme {
                 sv.insert(role.to_string(), v.clone());
                 follows.insert(format!("--sv-{role}"), vscode_var(key));
             }
+        }
+        // POL3-FINISH: VS Code's menus have their own outline (Dark Modern `#454545` over
+        // `widget.border` `#313131`); a theme that names none keeps the widget outline
+        if !sv.contains_key("border-menu")
+            && let Some(v) = sv.get("border-widget").cloned()
+        {
+            sv.insert("border-menu".into(), v);
+            follows.insert("--sv-border-menu".into(), vscode_var("widget.border"));
         }
         let layers = [&d.shape, &d.density[density as usize], &set.tokens];
         for (name, v) in layers.into_iter().flatten() {

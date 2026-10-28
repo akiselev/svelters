@@ -26,9 +26,12 @@ def sample():
             chars.update(ch for ch in line if ord(ch) > 0x2E7F)
     return ",".join(f"U+{ord(c):04X}" for c in sorted(chars))
 
-def cut(font, unicodes, name):
+def cut(font, unicodes, name, drop_features=()):
     opts = subset.Options()
     opts.layout_features = ["*"]
+    if drop_features:
+        tags = {r.FeatureTag for t in ("GSUB", "GPOS") if t in font for r in font[t].table.FeatureList.FeatureRecord}
+        opts.layout_features = sorted(tags - set(drop_features))
     opts.name_IDs = ["*"]
     opts.notdef_outline = True
     opts.drop_tables += ["SVG ", "STAT", "MATH"]
@@ -43,7 +46,8 @@ def static(path, **axes):
 
 for w, n in [(300, "Light"), (400, "Regular"), (600, "SemiBold"), (700, "Bold")]:
     cut(static("Inter.ttf", opsz=14, wght=w), LATIN, f"Inter-{n}.subset.ttf")
-cut(TTFont(src / "JetBrainsMono-Regular.ttf"), LATIN + ",U+2500-259F", "JetBrainsMono-Regular.subset.ttf")
+# no code ligatures: `calt` draws `<=` as ≤ and `!=` as ≠ (cadatomic gal2 S2); code shows what was typed
+cut(TTFont(src / "JetBrainsMono-Regular.ttf"), LATIN + ",U+2500-259F", "JetBrainsMono-Regular.subset.ttf", drop_features=("calt", "liga", "dlig"))
 cut(TTFont(src / "NotoSansArabic-Regular.ttf"), "U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F", "NotoSansArabic-Regular.subset.ttf")
 cut(TTFont(src / "NotoSansSymbols2-Regular.ttf"), SYMBOLS, "NotoSansSymbols2-Regular.subset.ttf")
 cut(TTFont(src / "NotoSansSymbols-Regular.ttf"), SYMBOLS, "NotoSansSymbols-Regular.subset.ttf")
