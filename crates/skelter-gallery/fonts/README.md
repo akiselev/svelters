@@ -17,7 +17,7 @@ uses a Reserved Font Name (Noto CJK's is "Source").
 | File | Source | Subset | Licence |
 |---|---|---|---|
 | `Inter-{Light,Regular,SemiBold,Bold}.subset.ttf` | google/fonts `ofl/inter/Inter[opsz,wght].ttf`, static instances at opsz 14, wght 300/400/600/700 | Latin (ASCII, Latin-1, Latin Extended-A), basic Greek and Cyrillic, punctuation, € ™, four arrows, − | `OFL-Inter.txt` |
-| `JetBrainsMono-Regular.subset.ttf` | JetBrains/JetBrainsMono `fonts/ttf/JetBrainsMono-Regular.ttf` | as Inter, plus box drawing and blocks | `OFL-JetBrainsMono.txt` |
+| `JetBrainsMono-Regular.subset.ttf` | JetBrains/JetBrainsMono `fonts/ttf/JetBrainsMono-Regular.ttf` | as Inter, plus box drawing and blocks; no code ligatures (`calt`, `liga`, `dlig` dropped: code shows `<=` and `!=` as typed) | `OFL-JetBrainsMono.txt` |
 | `NotoSansArabic-Regular.subset.ttf` | notofonts.github.io `fonts/NotoSansArabic/hinted/ttf/` | Arabic, Arabic Supplement and Extended-A, presentation forms, ZWNJ/ZWJ and the marks | `OFL-Noto.txt` |
 | `NotoSansSymbols2-Regular.subset.ttf`, `NotoSansSymbols-Regular.subset.ttf` | notofonts.github.io `fonts/NotoSansSymbols{2,}/hinted/ttf/` | arrows, technical (⌘ ⌫ ⏎), enclosed, box drawing, shapes (▶ ◀), misc symbols (★ ⚙), dingbats (✂ ✎ ✓), misc symbols and arrows | `OFL-Noto.txt` |
 | `NotoSansMath-Regular.subset.ttf` | notofonts.github.io `fonts/NotoSansMath/hinted/ttf/` | mathematical operators (⋯) and supplements; `MATH` table dropped | `OFL-Noto.txt` |
