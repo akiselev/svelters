@@ -2,7 +2,7 @@
 
 **Branch:** `ci/pb3-overlays` (base `master` `242d688`).
 **Brief:** `plans/cloud/polish-b3/BRIEF.md`, `LANE-overlays.md`.
-**Status:** done (pending the last CI run; see "Tests and CI"). All three items built, seen in the gallery, tested.
+**Status:** done; last code sha `c0428b8` green in all six workflows. All three items built, seen in the gallery, tested.
 
 ## Design note: the top layer (POL2-REGISTER Q2)
 
@@ -144,7 +144,7 @@ Added or changed (filtered runs on the last code commit, all pass):
 - `skelter-gallery check`: 47 stories, 174 variants, no problems.
 - Not run locally: the full workspace, GPU gallery tests, conformance (CI runs them).
 
-CI: `09e2f13` (top layer, pickers, tabs, Q-E2) green in all six (js 40633564142, linux-gtk 40633564088, linux-qt 40633564161, macos-appkit 40633564091, skelter 40633564100, windows-winui 40633564110). `4f824d1` green in all six (js 40630278355, linux-gtk 40630278372, linux-qt 40630278336, macos-appkit
+CI: last code sha `c0428b8` (master `0a3ab14` merged, the finish lane's requests) green in all six (js 40635638225, linux-gtk 40635638251, linux-qt 40635638275, macos-appkit 40635638304, skelter 40635638229, windows-winui 40635638201). `09e2f13` (top layer, pickers, tabs, Q-E2) green in all six (js 40633564142, linux-gtk 40633564088, linux-qt 40633564161, macos-appkit 40633564091, skelter 40633564100, windows-winui 40633564110). `4f824d1` green in all six (js 40630278355, linux-gtk 40630278372, linux-qt 40630278336, macos-appkit
 40630278348, skelter 40630278422, windows-winui 40630278420). Last code commit: see the end of this file.
 
 ## Questions (recommendations, for the coordinator)
