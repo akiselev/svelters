@@ -87,6 +87,8 @@ pub struct PickerLook {
     /// The primary (Save) button's edge (`button-border`, VS Code's `button.border`): transparent in
     /// the Modern themes, the contrast border in the high-contrast ones, where its fill alone is black.
     pub button_border: Color,
+    /// A high-contrast theme: selections are outlined (their fills are black or white there).
+    pub high_contrast: bool,
     /// `row-h`: list rows, the calendar header.
     pub row_h: f32,
     /// `control-h`: fields and footer buttons.
@@ -131,6 +133,7 @@ impl Default for PickerLook {
             button_bg_hover: hex("#cccccc"),
             button_fg: hex("#3b3b3b"),
             button_border: Color::TRANSPARENT,
+            high_contrast: false,
             row_h: 22.0,
             control_h: 26.0,
             radius: 4.0,

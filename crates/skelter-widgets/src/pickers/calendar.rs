@@ -356,8 +356,9 @@ impl CalBody {
                 Color::TRANSPARENT
             };
             shim::fill(list, rect, bg, look.radius);
-            if d == today && !selected {
-                shim::frame(list, rect, Color::TRANSPARENT, look.accent, 1.0, look.radius);
+            if selected && look.high_contrast {
+                // the selection fill is the window's own colour in High Contrast: outline it
+                shim::frame(list, rect, Color::TRANSPARENT, look.fg, 1.0, look.radius);
             }
             let fg = if !in_range {
                 look.disabled_fg
@@ -369,6 +370,12 @@ impl CalBody {
                 look.fg
             };
             text.draw(list, &d.day().to_string(), &look.text(fg), rect, HAlign::Center, false);
+            if d == today {
+                // today: a short bar under its number (the keyboard cursor is the ring)
+                let mark = if selected { look.list_sel_fg } else if look.high_contrast { look.fg } else { look.accent };
+                let (cx, y) = ((rect.min.x + rect.max.x) / 2.0, rect.max.y - 4.0);
+                shim::line(list, skelter_base::geom::Point::new(cx - 6.0, y), skelter_base::geom::Point::new(cx + 6.0, y), 2.0, mark);
+            }
             if ring && d == cursor {
                 shim::frame(list, rect.inflate(-1.0), Color::TRANSPARENT, look.focus, 1.0, look.radius);
             }

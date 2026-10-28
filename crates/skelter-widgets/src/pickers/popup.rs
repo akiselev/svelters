@@ -162,6 +162,9 @@ pub struct ButtonState {
     pub open: bool,
     pub focus_visible: bool,
     pub enabled: bool,
+    /// The pointer is over it, or it is pressed (the node's `:hover`/`:active`, or the drop's own).
+    pub hovered: bool,
+    pub pressed: bool,
 }
 
 /// Records the closed button's box (R4 field look: `control-bg`, `control-border`, the `focus`
@@ -172,6 +175,11 @@ pub fn record_button(list: &mut DisplayList, look: &PickerLook, size: Size, st: 
     let r = Rect::from_origin_size(Point::ZERO, size);
     let border = if st.open { look.focus } else { look.control_border };
     shim::frame(list, r, fade(look.control_bg), fade(border), look.stroke, look.radius);
+    // hover and press tint the field (`toolbar-hover`, `list-hover`) inside its border
+    if st.enabled && (st.hovered || st.pressed) {
+        let tint = if st.pressed { look.toolbar_hover } else { look.list_hover };
+        shim::fill(list, r.inflate(-look.stroke), tint, (look.radius - look.stroke).max(0.0));
+    }
     if st.focus_visible {
         shim::frame(list, r.inflate(-look.stroke), Color::TRANSPARENT, look.focus, 1.0, (look.radius - look.stroke).max(0.0));
     }

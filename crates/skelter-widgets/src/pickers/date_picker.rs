@@ -194,7 +194,13 @@ impl DatePicker {
     /// Records the closed button.
     #[allow(clippy::too_many_arguments)]
     pub fn record_button(&self, list: &mut DisplayList, text: &mut dyn TextPainter, look: &PickerLook, size: Size, today: Date, focus_visible: bool, enabled: bool) {
-        popup::record_button(list, look, size, ButtonState { open: self.drop.is_open(), focus_visible, enabled });
+        self.record_button_in(list, text, look, size, today, ButtonState { open: self.drop.is_open(), focus_visible, enabled, hovered: self.drop.hovered(), pressed: self.drop.pressed() });
+    }
+
+    /// [`DatePicker::record_button`] with the node's hover and press too.
+    pub fn record_button_in(&self, list: &mut DisplayList, text: &mut dyn TextPainter, look: &PickerLook, size: Size, today: Date, st: ButtonState) {
+        let enabled = st.enabled;
+        popup::record_button(list, look, size, st);
         let (_, _, label) = popup::button_parts(look, size);
         let fg = if enabled { look.control_fg } else { look.control_fg.with_alpha(look.control_fg.a * 0.4) };
         match self.value {

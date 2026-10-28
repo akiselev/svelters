@@ -215,6 +215,7 @@ impl PickerLook {
             button_bg_hover: c("button-bg-hover", d.button_bg_hover),
             button_fg: c("button-fg", d.button_fg),
             button_border: c("button-border", d.button_border),
+            high_contrast: theme.contrast() == crate::theme::Contrast::High,
             row_h: px("row-h", d.row_h),
             control_h: px("control-h", d.control_h),
             radius: px("radius", d.radius),
@@ -941,7 +942,8 @@ impl w::Kind for DatePickerKind {
         let size = cx.size;
         let RecordCx { list, text, res, .. } = cx;
         let mut painter = ShaperPainter { text: &mut **text, res: Some(&mut **res) };
-        self.model.record_button(list, &mut painter, look, size, self.today_date(), fv, on);
+        let st = popup::ButtonState { open: self.model.drop.is_open(), focus_visible: fv, enabled: on, hovered: state.contains(StateBits::HOVERED) || self.model.drop.hovered(), pressed: state.contains(StateBits::PRESSED) || self.model.drop.pressed() };
+        self.model.record_button_in(list, &mut painter, look, size, self.today_date(), st);
     }
 
     /// The open popup, in a layer of the window's overlay stack.
@@ -1156,7 +1158,8 @@ impl w::Kind for ColorPickerKind {
         let state = cx.style.state;
         let (on, fv) = (!state.contains(StateBits::DISABLED) && !self.props.disabled, state.contains(StateBits::FOCUS_VISIBLE));
         let look = &look_of(cx.style.theme, cx.style.dark);
-        self.model.record_button(cx.list, look, cx.size, fv, on);
+        let st = popup::ButtonState { open: self.model.drop.is_open(), focus_visible: fv, enabled: on, hovered: state.contains(StateBits::HOVERED) || self.model.drop.hovered(), pressed: state.contains(StateBits::PRESSED) || self.model.drop.pressed() };
+        self.model.record_button_in(cx.list, look, cx.size, st);
     }
 
     /// The open popup, in a layer of the window's overlay stack.
