@@ -1,6 +1,7 @@
 # svelters: instructions for agents
 
-svelters is a Rust Svelte compiler (`crates/svelters-compiler`) plus `@svelters/native-runtime`,
+svelters is its own open-source GUI metaframework (user, 2026-10-29): a Rust Svelte compiler
+(`crates/svelters-compiler`) plus `@svelters/native-runtime`,
 running stock svelte@5.57.2 on native backends through a QuickJS host (`crates/svelters-host`) and
 a generic backend C ABI. Status comes from `STATUS.md` (handoff block and milestone rows),
 `MATRIX.md` and `plans/milestones/`, never from plan or research files alone.
@@ -11,8 +12,9 @@ a generic backend C ABI. Status comes from `STATUS.md` (handoff block and milest
 cadatomic's UI is built on **skelter**, svelters' own retained GUI framework (`crates/skelter-*`, the facade `skelter`,
 the Svelte backend `svelters-skelter`), which replaced the egui backend (user, 2026-10-25, "go with svelters-skelter";
 2026-10-26, cadatomic removes egui). Rust owns the shell plumbing (docking, tabs, toolbars, menus, windows); Svelte
-renders the contents of panels, dialogs, windows and overlays, with many roots at once. svelters-egui, AppKit, WinUI and
-Qt get maintenance only; skelter-test and svelters-automation must build without egui by default.
+renders the contents of panels, dialogs, windows and overlays, with many roots at once. Every backend (skelter, egui,
+GTK, AppKit, WinUI, Qt) is a first-class part of svelters, not maintenance only (user, 2026-10-29); skelter-test and
+svelters-automation must build without egui by default.
 
 Read, in order:
 1. `plans/research/skelter/README.md` and `architecture.md`: skelter's design; `plan.md` for its tracks.
