@@ -84,6 +84,22 @@ coordinator and does not want sessions asking them questions.
 - Record each decision where the next session will find it: `STATUS.md` or the relevant
   `plans/research/*.md` ("Decided (coordinator, date)").
 
+## Reviews are exhaustive: no spot checks (user, 2026-10-29)
+
+A review, verification, fact-check or audit checks **everything** in its scope: every claim, every
+`file:line`, every count, every table row, every changed line. Sampling or "spot-checking N%" is
+banned and is not a review. A guide reviewed by spot check on 2026-10-29 kept teaching the user
+wrong things.
+
+- Every claim gets evidence from the code: the `file:line` read or the exact command run and its
+  result. Doc comments and plan files are not evidence of what the code does.
+- "Unused", "no caller", "dead" and "only X uses it" need a search of every repository that could
+  call the item, including tests, build scripts, macros and string ids. State the scope searched.
+- If the scope is too big for one pass, split it across more agents or sessions. Never shrink it by
+  sampling.
+- A report never calls something reviewed or verified if any part of it was sampled or skipped. It
+  says exactly what was not checked.
+
 ## Building and testing: as little as possible
 
 **GitHub CI is the gate, not your container.** No build or test run that doesn't answer a question
